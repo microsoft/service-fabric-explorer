@@ -579,12 +579,12 @@ gulp.task("Publish:prepare",
 gulp.task("Publish:pack-windows", ["Publish:prepare"],
     () => generatePackage(Platform.Windows));
 
-gulp.task("Publish:versioninfo-windows", ["Publish:pack-windows"],
+gulp.task("Publish:versioninfo-windows",
     () => generateVersionInfo(
         Platform.Windows,
         (baseUrl) => <IPackageInfo>{ x86: baseUrl + util.format("setup-%s.x86.msi", buildInfos.buildNumber) }));
 
-gulp.task("Publish:copy-msi.wxs", ["Publish:prepare"],
+gulp.task("Publish:copy-msi.wxs",
     () => gulp.src(formGlobs(".build/msi.wxs")).pipe(gulp.dest(buildInfos.paths.buildDir)));
 
 gulp.task("Publish:update-wix-version", ["Publish:copy-msi.wxs"],
@@ -594,7 +594,7 @@ gulp.task("Publish:update-wix-version", ["Publish:copy-msi.wxs"],
             .replace("$MSIVERSION$", [semver.major(buildInfos.buildNumber), semver.minor(buildInfos.buildNumber), semver.patch(buildInfos.buildNumber)].join(".")),
         { encoding: "utf8" }));
 
-gulp.task("Publish:msi", ["Publish:pack-windows", "Publish:update-wix-version"],
+gulp.task("Publish:msi", ["Publish:update-wix-version"],
     (gcallback) => {
         let packDirName = util.format("%s-%s-%s", buildInfos.targetExecutableName, toPackagerPlatform(Platform.Windows), convertToPackagerArch(Architecture.X86));
         let packDirPath = path.resolve(path.join(buildInfos.paths.buildDir, packDirName));
@@ -619,7 +619,11 @@ gulp.task("Publish:msi", ["Publish:pack-windows", "Publish:update-wix-version"],
                 .then(() => exec(lightCmd)));
     });
 
-gulp.task("Publish:win32", ["Publish:versioninfo-windows", "Publish:msi"]);
+gulp.task("Publish:win32",
+    (callback) => runSequence(
+        "Publish:pack-windows",
+        ["Publish:versioninfo-windows", "Publish:msi"],
+        callback));
 
 /* Publish tasks for Mac OS / OSX */
 

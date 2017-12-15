@@ -7,6 +7,10 @@
     "start": "electron ./build/app/."
   },
   "homepage": "https://docs.microsoft.com/en-us/azure/service-fabric/",
+  "repository": {
+    "url": "https://github.com/Azure/service-fabric-explorer.git",
+    "type": "git"
+  },
   "author": "Microsoft Corporation <support@microsoft.com>",
   "license": "MIT",
   "dependencies": {
