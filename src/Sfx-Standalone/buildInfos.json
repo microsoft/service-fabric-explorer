@@ -6,6 +6,15 @@
     "appId": "com.microsoft.servicefabric.explorer",
     "appCategory": "Utilities",
     "buildNumber": "*",
+    "licensing": {
+        "thirdPartyNoticesFileName": "ThirdPartyNotices.txt",
+        "packageLicenses": {
+            "adal-angular": "Apache-2.0",
+            "jquery-ui": "MIT",
+            "lodash": "MIT",
+            "moment": "MIT"
+        }
+    },
     "upgradeBaseUrl": "https://aka.ms/sfx-update",
     "targets": {
         "windows": {

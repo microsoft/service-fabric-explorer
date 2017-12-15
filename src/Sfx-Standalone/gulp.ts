@@ -545,7 +545,7 @@ gulp.task("Publish:update-version",
     () => exec(util.format("npm version %s --allow-same-version", buildInfos.buildNumber)));
 
 gulp.task("Publish:licensing", ["Publish:node_modules"],
-    (callback) => {
+    () => {
         let msInternalDeps: Array<ILicensingDependency> = [];
         let prodDeps: Array<ILicensingDependency> = [];
 
