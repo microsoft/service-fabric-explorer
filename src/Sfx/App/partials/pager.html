@@ -1,0 +1,24 @@
+﻿<nav class="detail-list-pager" ng-if="listSettings.pageCount > 1">
+    <uib-pagination boundary-links="true"
+                    total-items="listSettings.count"
+                    max-size="5"
+                    items-per-page="listSettings.limit"
+                    ng-model="listSettings.currentPage"
+                    class="pagination-sm"
+                    template-url="partials/uib-pagination.html">
+    </uib-pagination>
+
+    <div class="pager-control">
+        <span class="pager-info">
+            Showing {{listSettings.begin + 1 | number}} - {{(listSettings.begin + listSettings.limit) > listSettings.count ? listSettings.count : (listSettings.begin + listSettings.limit) | number}} of {{listSettings.count | number}} items
+        </span>
+        <span>Page: &nbsp;</span>
+        <input class="input-flat" 
+               type="number"
+               autocomplete="off"
+               onkeypress="return event.charCode >= 48 && event.charCode <= 57"
+               ng-model="listSettings.currentPage"
+               ng-model-options="{ debounce: 300 }" />
+               <span> / {{listSettings.pageCount}}</span>
+    </div>
+</nav>

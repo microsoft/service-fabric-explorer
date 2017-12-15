@@ -1,0 +1,119 @@
+﻿<sfx-detail-view-navbar ctrl="appCtrl" actions="app.actions" type="Application" name="{{app.name}}"></sfx-detail-view-navbar>
+
+<div class="main-view">
+    <div sfx-include src="'tab_' + appCtrl.activeTabId" ng-if="appCtrl.activeTabId"></div>
+
+    <!-- Essentials tab -->
+    <script type="text/ng-template" id="tab_essentials">
+        <div class="detail-pane essen-pane">
+            <div class="table-responsive">
+                <table class="essen-table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Application Type</th>
+                    </tr>
+                    <tr>
+                        <td>{{app.name}}</td>
+                        <td><a href="{{app.appTypeViewPath}}">{{app.raw.TypeName}}</a></td>
+                    </tr>
+                    <tr>
+                        <th>Health State</th>
+                        <th>Version</th>
+                    </tr>
+
+                    <tr>
+                        <td><sfx-badge badge-class="app.healthState.badgeClass" text="app.healthState.text"></sfx-badge></td>
+                        <td>{{app.raw.TypeVersion}}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                    </tr>
+                    <tr>
+                        <td>{{app.raw.Status}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="detail-pane" ng-if="app.isUpgrading && upgradeProgress">
+            <h4>Upgrade In Progress</h4>
+            <div class="table-responsive">
+                <table class="table detail-list">
+                    <thead>
+                        <tr>
+                            <th>Current Version</th>
+                            <th>Target Version</th>
+                            <th>Progress by Upgrade Domain</th>
+                            <th>Upgrade State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{upgradeProgress.parent.raw.TypeVersion}}</td>
+                            <td>{{upgradeProgress.raw.TargetApplicationTypeVersion}}</td>
+                            <td><sfx-upgrade-progress upgrade-domains="upgradeProgress.upgradeDomains"></sfx-upgrade-progress></td>
+                            <td>{{upgradeProgress.raw.UpgradeState}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <a href="" data-toggle="collapse" data-target="#upgradeDetailsSection" aria-expanded="false"
+               ng-click="upgradeDetailsSectionExpanded = !upgradeDetailsSectionExpanded">
+                {{upgradeDetailsSectionExpanded ? 'Hide upgrade details' : 'Show upgrade details'}}
+            </a>
+        </div>
+
+        <div id="upgradeDetailsSection" class="collapse" ng-if="app.isUpgrading && upgradeProgress && upgradeProgress.isInitialized">
+            <div class="detail-pane">
+                <h4>Upgrade Details</h4>
+                <sfx-detail-view-part data="upgradeProgress"></sfx-detail-view-part>
+            </div>
+
+            <div class="detail-pane">
+                <h4>Unhealthy Evaluations (Upgrade)</h4>
+                <sfx-detail-list list="upgradeProgress.unhealthyEvaluations" list-settings="upgradeProgressUnhealthyEvaluationsListSettings"></sfx-detail-list>
+            </div>
+        </div>
+
+        <div class="detail-pane">
+            <h4>Unhealthy Evaluations</h4>
+            <sfx-detail-list list="app.health.unhealthyEvaluations" list-settings="unhealthyEvaluationsListSettings"></sfx-detail-list>
+        </div>
+
+        <div class="detail-pane">
+            <h4>Services</h4>
+            <sfx-detail-list list="app.services" list-settings="listSettings"></sfx-detail-list>
+        </div>
+
+        <div class="detail-pane">
+            <h4>Service Types</h4>
+            <sfx-detail-list list="app.serviceTypes" list-settings="serviceTypesListSettings"></sfx-detail-list>
+        </div>
+    </script>
+
+    <!-- Details tab -->
+    <script type="text/ng-template" id="tab_details">
+        <div class="detail-pane">
+            <sfx-detail-view-part data="app"></sfx-detail-view-part>
+        </div>
+
+        <div class="detail-pane">
+            <h4>Health Events</h4>
+            <sfx-detail-list list="app.health.healthEvents" list-settings="healthEventsListSettings"></sfx-detail-list>
+        </div>
+    </script>
+
+    <!-- Deployments tab -->
+    <script type="text/ng-template" id="tab_deployments">
+        <div class="detail-pane">
+            <sfx-detail-list list="deployedApplicationsHealthStates" list-settings="deployedApplicationsHealthStatesListSettings"></sfx-detail-list>
+        </div>
+    </script>
+
+    <!-- Manifest tab -->
+    <script type="text/ng-template" id="tab_manifest">
+        <div class="detail-pane">
+            <pre><code>{{app.manifest.raw.Manifest}}</code></pre>
+        </div>
+    </script>
+</div>

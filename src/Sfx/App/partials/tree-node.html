@@ -1,0 +1,66 @@
+﻿<div class="children" ng-show="node.isExpanded">
+    <!-- use inline style to work around IE bug that list-style=none gets ignored for first load -->
+    <ul class="tree" style="list-style: none" sfx-include src="'nodeTemplate'"></ul>
+    <div class="more-children"
+         ng-show="node.loadingChildren"
+         ng-style="::{ 'marginLeft': node.paddingLeftPx }">
+
+        <span class="icon bowtie-icon bowtie-spinner rotate"></span>
+        <span>Loading...</span>
+    </div>
+
+    <script type="text/ng-template" id="nodeTemplate">
+        <li class="pager-control" ng-if="node.owningNode.listSettings && node.owningNode.listSettings.pageCount > 1"
+            ng-class="{'disabled': node.owningNode.listSettings && node.owningNode.listSettings.currentPage === 1}">
+            <div ng-style="::{ 'paddingLeft': node.paddingLeftPx }">
+                <span ng-click="node.pageFirst()" class="pageup-icon bowtie-icon bowtie-chevron-up-end" title="First {{node.owningNode.listSettings.limit}} items" aria-hidden="true"></span>
+                <span ng-click="node.pageUp()" class="pageup-icon bowtie-icon bowtie-chevron-up" title="Previous {{node.owningNode.listSettings.limit}} items" aria-hidden="true"></span>
+            </div>
+        </li>
+        <li sfx-tree-scroll-to selected="{{child.selected}}" scroll-parent="tree-body" class="node"
+            ng-repeat="child in node.displayedChildren track by child.nodeId" ng-show="child.isVisibleByBadge" ng-class="{ 'selected': child.selected }">
+            <div class="self" ng-click="child.handleClick()" ng-dblclick="child.toggle()" ng-style="::{ 'paddingLeft': child.paddingLeftPx }">
+                <span class="expander icon bowtie-icon" aria-hidden="true"
+                      ng-click="child.toggle(); $event.stopPropagation()" ng-show="child.hasExpander"
+                      ng-class="{ 'bowtie-chevron-right-light': child.isCollapsed, 'bowtie-chevron-down-light': child.isExpanded }"
+                      ng-style="::{ 'left': (child.paddingLeft - 18) + 'px' }">
+                </span>
+                <image ng-if="child.badge && child.badge() && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
+                       class="tree-badge" title="{{child.badge().text}}"
+                       ng-src="images/{{child.badge().badgeClass}}.svg"></image>
+                <span class="tree-label" ng-bind-html="child.displayHtml" title="{{ child.displayName() }}"></span>
+                <div ng-if="::child.actions && child.actions.length > 0"
+                     class="btn-group actions-menu"
+                     uib-dropdown dropdown-append-to-body on-toggle="child.contextMenuToggled(open)"
+                     ng-click="$event.stopPropagation()"
+                     ng-dblclick="$event.stopPropagation()">
+                    <a role="button" uib-dropdown-toggle
+                       class="dark-background-link actions-expander"
+                       ng-disabled="child.actions && child.actions.anyRunning">
+                        <span class="bowtie-icon bowtie-ellipsis"></span>
+                    </a>
+                    <ul role="menu" class="dropdown-menu dropdown-menu-right" uib-dropdown-menu style="list-style: none">
+                        <li role="menuitem" ng-repeat="action in ::child.actions.collection track by action.name">
+                            <a role="menuitem"
+                               tabindex="-1"
+                               href=""
+                               ng-click="child.actions.runWithTelemetry(action, 'ContextMenu')"
+                               ng-disabled="!action.canRun()">
+                                {{::action.title}}
+                            </a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div sfx-tree-node node="child.childGroupViewModel"></div>
+        </li>
+        <li class="pager-control"
+            ng-if="node.owningNode.listSettings && node.owningNode.listSettings.pageCount > 1"
+            ng-class="{'disabled': node.owningNode.listSettings && node.owningNode.listSettings.currentPage === node.owningNode.listSettings.pageCount}">
+            <div ng-style="::{ 'paddingLeft': node.paddingLeftPx }">
+                <span ng-click="node.pageDown()" class="pagedown-icon bowtie-icon bowtie-chevron-down" title="Next {{node.owningNode.listSettings.limit}} items" aria-hidden="true"></span>
+                <span ng-click="node.pageLast()" class="pagedown-icon bowtie-icon bowtie-chevron-down-end" title="Last {{node.owningNode.listSettings.limit}} items" aria-hidden="true"></span>
+            </div>
+        </li>
+    </script>
+</div>

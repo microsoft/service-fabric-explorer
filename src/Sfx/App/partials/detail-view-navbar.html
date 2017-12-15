@@ -1,0 +1,35 @@
+﻿<div class="main-header">
+    <div class="detail-view-title-bar">
+        <div class="detail-view-title" title="{{type}} {{name}}">
+            <b>{{type}}</b> {{name}}
+        </div>
+
+        <div class="detail-view-actions btn-group" uib-dropdown ng-if="::actions && actions.length > 0">
+            <button class="btn btn-primary" uib-dropdown-toggle type="button" ng-disabled="actions.anyRunning">
+                <span>{{actions.title | uppercase}}</span>
+                <span class="caret"></span>
+            </button>
+
+            <!-- use inline style to work around IE bug that list-style=none gets ignored for first load -->
+            <ul role="menu" class="dropdown-menu dropdown-menu-right" uib-dropdown-menu style="list-style: none">
+                <li role="menuitem" ng-repeat="action in ::actions.collection track by action.name">
+                    <a role="menuitem"
+                       tabindex="-1"
+                       href=""
+                       ng-click="actions.runWithTelemetry(action, 'ActionsButton')"
+                       ng-disabled="!action.canRun()">
+                        {{::action.title}}
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+
+    <div class="detail-view-navbar">
+        <div class="detail-view-navbar-tab" ng-repeat-start="(id, tab) in mainViewCtrl.tabs">
+            <a href="" ng-class="{ active: mainViewCtrl.isActiveTab(id) }" ng-click="mainViewCtrl.navigateToTab(id)" title="{{::tab.name}}">{{::tab.name}}</a>
+            <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div>
+        </div>
+        <div class="spacer" ng-repeat-end></div>
+    </div>
+</div>

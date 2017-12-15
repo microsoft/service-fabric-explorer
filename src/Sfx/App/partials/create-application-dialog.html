@@ -1,0 +1,14 @@
+﻿<form name="createApplicationForm">
+    <div class="modal-header">
+        <h4 class="modal-title">Create Application Instance</h4>
+    </div>
+    <div class="modal-body">
+        <p>Supply the full application name to create an application instance of {{::action.typeName}}@{{::action.typeVersion}}:</p>
+        <input class="input-flat" type="text" placeholder="Application name must start with fabric:/"
+               autocomplete="off" ng-model="action.newInstanceUri" required ng-pattern="/^fabric:\/.+/">
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-disabled="createApplicationForm.$invalid" ng-click="ok()">{{::action.title}}</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancel()">Cancel</button>
+    </div>
+</form>

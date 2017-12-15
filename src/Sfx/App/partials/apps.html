@@ -1,0 +1,18 @@
+﻿<sfx-detail-view-navbar ctrl="appsCtrl" type="Applications" actions="actions"></sfx-detail-view-navbar>
+
+<div class="main-view">
+    <div sfx-include src="'tab_' + appsCtrl.activeTabId" ng-if="appsCtrl.activeTabId"></div>
+
+    <script type="text/ng-template" id="tab_applications">
+        <div class="detail-pane">
+            <sfx-detail-list list="apps" list-settings="listSettings"></sfx-detail-list>
+        </div>
+    </script>
+
+    <!-- Upgrades in progress -->
+    <script type="text/ng-template" id="tab_upgrades">
+        <div class="detail-pane">
+            <sfx-detail-list list="upgradeProgresses" list-settings="upgradeAppsListSettings"></sfx-detail-list>
+        </div>
+    </script>
+</div>

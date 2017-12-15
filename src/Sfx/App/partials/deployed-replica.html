@@ -1,0 +1,54 @@
+<sfx-detail-view-navbar ctrl="deployedReplicaCtrl" type="{{replica.isStatelessService ? 'Deployed Instance' : 'Deployed Replica'}}" name="{{replica.id}}"></sfx-detail-view-navbar>
+
+<div class="main-view">
+    <div sfx-include src="'tab_' + deployedReplicaCtrl.activeTabId" ng-if="deployedReplicaCtrl.activeTabId"></div>
+
+    <script type="text/ng-template" id="tab_essentials">
+        <div class="detail-pane essen-pane">
+            <div class="table-responsive">
+                <table class="essen-table">
+                    <tr>
+                        <th>Id</th>
+                        <th>Service Kind</th>
+                    </tr>
+                    <tr>
+                        <td>{{replica.id}}</td>
+                        <td>{{replica.raw.ServiceKind}}</td>
+                    </tr>
+                    <tr>
+                        <th>Status</th>
+                        <th>Service Name</th>
+                    </tr>
+                    <tr>
+                        <td>{{replica.raw.ReplicaStatus}}</td>
+                        <td><a href="{{replica.serviceViewPath}}">{{replica.raw.ServiceName}}</a></td>
+                    </tr>
+                    <tr>
+                        <th ng-if="replica.isStatefulService">Replica Role</th>
+                        <th ng-if="replica.servicePackageActivationId">Service Package Activation Id</th>
+                    </tr>
+                    <tr>
+                        <td ng-if="replica.isStatefulService">{{replica.raw.ReplicaRole}}</td>
+                        <td ng-if="replica.servicePackageActivationId">{{replica.servicePackageActivationId}}</td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <sfx-replica-address address="replica.address"></sfx-replica-address>
+    </script>
+
+
+    <script type="text/ng-template" id="tab_details">
+        <div class="detail-pane">
+            <sfx-detail-view-part data="replica"></sfx-detail-view-part>
+        </div>
+
+        <div class="detail-pane" ng-if="replica.detail.isInitialized">
+            <h4>
+                Details
+            </h4>
+            <sfx-detail-view-part data="replica.detail"></sfx-detail-view-part>
+        </div>
+    </script>
+</div>

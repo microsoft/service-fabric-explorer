@@ -1,0 +1,52 @@
+﻿//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+//-----------------------------------------------------------------------------
+
+module Sfx {
+
+    (function () {
+
+        angular.module("sfx", [
+            "authenticationBootstrap",
+            "routes",
+            "messages",
+            "filters",
+            "directives",
+            "authenticationService",
+            "settingsService",
+            "storageService",
+            "clusterTreeService",
+            "refreshService",
+            "telemetryService",
+            "themeService",
+            "dataService",
+            "controllerManagerService",
+            "authenticationController",
+            "treeViewController",
+            "navbarController",
+            "clusterViewController",
+            "nodeViewController",
+            "nodesViewController",
+            "appTypeViewController",
+            "appsViewController",
+            "appViewController",
+            "actionController",
+            "serviceViewController",
+            "partitionViewController",
+            "replicaViewController",
+            "deployedAppViewController",
+            "deployedServiceViewController",
+            "deployedCodePackageViewController",
+            "deployedReplicaViewController",
+            "deployedServiceCodePackagesViewController",
+            "deployedServiceReplicasViewController",
+            "systemAppsViewController",
+            "themeController",
+            "settingsController",
+            "templates", // Template cache module generated from partials by gulp-angular-templatecache plugin
+            "responseHeadersService",
+        ]);
+
+    })();
+}
+

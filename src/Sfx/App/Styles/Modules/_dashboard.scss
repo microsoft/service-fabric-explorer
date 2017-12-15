@@ -1,0 +1,250 @@
+﻿@import "../Base/_config.scss";
+
+$dashboard-chart-margin: 3px;
+$dashboard-margin: 12px;
+$dashboard-donut-size: 206px;
+$dashboard-padding: 9px;
+$dashboard-datapoint-leftbar-width: 3px;
+$dashboard-title-font-size: $font-size-medium;
+$dashboard-number-font-size: 72px;
+$dashboard-tile-title-font-size: 9pt;
+$dashboard-tile-number-font-size: $dashboard-number-font-size;
+$dashboard-datapoint-title-font-size: $font-size-default;
+$dashboard-datapoint-number-font-size: 24pt;
+$dashboard-datapoint-large-width: 80px;
+
+$dashboard-large-padding-vertical: 17px;
+
+$dashboard-small-donut-size: 126px;
+$dashboard-small-title-font-size: 8pt;
+$dashboard-small-number-font-size: 50px;
+$dashboard-small-datapoint-number-font-size: 18pt;
+$dashboard-small-datapoint-title-font-size: 8pt;
+$dashboard-small-padding-horizontal: 20px;
+
+.dashboard-container {
+    margin-bottom: -$dashboard-margin;
+
+    &.container-fluid {
+        padding-left: 0;
+        padding-right: 0;
+    }
+
+    .dashboard-container-small {
+        display: inline-block;
+        vertical-align: middle;
+        width: 270px;
+    }
+
+    .dashboard-wrapper {
+        display: inline-block;
+        vertical-align: top;
+        margin-right: $dashboard-margin;
+        margin-bottom: $dashboard-margin;
+
+        a {
+            text-decoration: none;
+            color: $font-color !important;
+        }
+
+        &:last-child {
+            margin-right: 0;
+        }
+
+        .dashboard {
+            color: $dashboard-color;
+            padding: $dashboard-padding;
+            background: $dashboard-background-color;
+            text-align: center;
+
+            &.has-view-path {
+                cursor: pointer;
+            }
+
+            .dashboard-title {
+                fill: $dashboard-color;
+            }
+
+            .dashboard-number {
+                fill: $dashboard-color;
+            }
+
+            .dashboard-donut-chart {
+                display: inline-block;
+                position: relative;
+
+                .dashboard-arc-bg {
+                    fill: $right-panel-background-color;
+                }
+
+                .dashboard-arc {
+                    &.badge-ok {
+                        fill: $dashboard-ok-color;
+                    }
+
+                    &.badge-warning {
+                        fill: $dashboard-warning-color;
+                    }
+
+                    &.badge-error {
+                        fill: $dashboard-error-color;
+                    }
+
+                    &.badge-unknown {
+                        fill: $dashboard-unknown-color;
+                    }
+                }
+            }
+
+            .dashboard-datapoints {
+                vertical-align: top;
+                text-align: left;
+                margin: 10px 0 0 25px;
+
+                .dashboard-datapoint {
+                    position: relative;
+                    padding: 0 0 0 $dashboard-datapoint-leftbar-width + 5px;
+
+                    .dashboard-datapoint-leftbar {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        bottom: 0;
+                        width: $dashboard-datapoint-leftbar-width;
+
+                        &.badge-ok {
+                            background: $dashboard-ok-color;
+                        }
+
+                        &.badge-warning {
+                            background: $dashboard-warning-color;
+                        }
+
+                        &.badge-error {
+                            background: $dashboard-error-color;
+                        }
+
+                        &.badge-unknown {
+                            background: $dashboard-unknown-color;
+                        }
+                    }
+
+                    .dashboard-datapoint-title {
+                        display: block;
+                        line-height: 1;
+                        margin-top: -2px;
+                    }
+
+                    .dashboard-datapoint-number {
+                        display: block;
+                        line-height: 1;
+                    }
+                }
+            }
+
+            .dashboard-tile {
+                display: block;
+                position: relative;
+                text-align: left;
+                width: 240px;
+                height: 130px;
+
+                .dashboard-tile-inner {
+                    position: relative;
+                    display: inline-block;
+                    padding-left: $dashboard-datapoint-leftbar-width * 2 + 10px !important;
+
+                    .dashboard-tile-leftbar {
+                        width: $dashboard-datapoint-leftbar-width * 2;
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        bottom: 0;
+
+                        &.badge-upgrade-active {
+                            background: $dashboard-upgrade-active-color;
+                        }
+
+                        &.badge-upgrade-inactive {
+                            background: $dashboard-upgrade-inactive-color;
+                        }
+                    }
+
+                    .dashboard-tile-title {
+                        display: block;
+                        font-size: $dashboard-tile-title-font-size;
+                        line-height: 0.9;
+                    }
+
+                    .dashboard-tile-number {
+                        display: block;
+                        font-size: $dashboard-tile-number-font-size;
+                        line-height: 1;
+                        margin: 20px 0;
+                    }
+                }
+            }
+        }
+
+        .dashboard-large {
+            padding: $dashboard-large-padding-vertical $dashboard-padding;
+
+            .dashboard-title {
+                font-size: $dashboard-title-font-size;
+            }
+
+            .dashboard-number {
+                font-size: $dashboard-number-font-size;
+            }
+
+            .dashboard-datapoints {
+                margin: 20px 0 0 0;
+
+                .dashboard-datapoint {
+                    display: inline-block;
+                    width: $dashboard-datapoint-large-width;
+
+                    .dashboard-datapoint-title {
+                        font-size: $dashboard-datapoint-title-font-size;
+                    }
+
+                    .dashboard-datapoint-number {
+                        font-size: $dashboard-datapoint-number-font-size;
+                    }
+                }
+            }
+        }
+
+        .dashboard-small {
+            padding: $dashboard-padding $dashboard-small-padding-horizontal;
+
+            .dashboard-title {
+                font-size: $dashboard-small-title-font-size;
+            }
+
+            .dashboard-number {
+                font-size: $dashboard-small-number-font-size;
+            }
+
+            .dashboard-datapoints {
+                display: inline-block;
+                margin: 0 0 0 20px;
+
+                .dashboard-datapoint {
+                    height: 36px;
+                    padding: 0 0 0 14px;
+                    margin: 4px 0 8px 0;
+
+                    .dashboard-datapoint-title {
+                        font-size: $dashboard-small-datapoint-title-font-size;
+                    }
+
+                    .dashboard-datapoint-number {
+                        font-size: $dashboard-small-datapoint-number-font-size;
+                        width: 54px;
+                    }
+                }
+            }
+        }
+    }
+}

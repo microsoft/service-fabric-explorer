@@ -1,0 +1,16 @@
+{
+    "compileOnSave": false,
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "target": "es5"
+    },
+    "exclude": [
+        "build",
+        "node_modules",
+        "gulp.ts"
+    ],
+    "include": [
+        "**/*.ts"
+    ]
+}

@@ -1,0 +1,44 @@
+﻿<sfx-detail-view-navbar ctrl="systemAppsCtrl" type="System Application" name="fabric:/System"></sfx-detail-view-navbar>
+
+<section class="main-view">
+    <div sfx-include src="'tab_' + systemAppsCtrl.activeTabId" ng-if="systemAppsCtrl.activeTabId"></div>
+
+    <script type="text/ng-template" id="tab_essentials">
+        <div class="detail-pane essen-pane">
+            <div class="table-responsive">
+                <table class="essen-table">
+                    <tr>
+                        <th>Name</th>
+                        <th>Health State</th>
+                    </tr>
+
+                    <tr>
+                        <td>fabric:/System</td>
+                        <td><sfx-badge badge-class="systemApp.healthState.badgeClass" text="systemApp.healthState.text"></sfx-badge></td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+
+        <div class="detail-pane">
+            <h4>Unhealthy Evaluations</h4>
+            <sfx-detail-list list="systemApp.health.unhealthyEvaluations" list-settings="unhealthyEvaluationsListSettings"></sfx-detail-list>
+        </div>
+
+        <div class="detail-pane">
+            <h4>System</h4>
+            <sfx-detail-list list="systemApp.services" list-settings="listSettings"></sfx-detail-list>
+        </div>
+    </script>
+
+
+    <!-- Details tab -->
+    <script type="text/ng-template" id="tab_details">
+        <div class="detail-pane">
+            <h4>
+                Health Events
+            </h4>
+            <sfx-detail-list list="systemApp.health.healthEvents" list-settings="healthEventsListSettings"></sfx-detail-list>
+        </div>
+    </script>
+</section>

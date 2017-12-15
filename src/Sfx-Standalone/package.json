@@ -1,0 +1,49 @@
+{
+  "name": "sfxstandalone",
+  "version": "1.0.0-private",
+  "description": "Service Fabric Explorer desktop version.",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ./build/app/."
+  },
+  "homepage": "https://docs.microsoft.com/en-us/azure/service-fabric/",
+  "author": "Microsoft Corporation <support@microsoft.com>",
+  "license": "MIT",
+  "dependencies": {
+    "applicationinsights": "^1.0.1",
+    "caller": "^1.0.1",
+    "jquery": "^3.2.1",
+    "tmp": "0.0.33",
+    "uuid": "^3.1.0"
+  },
+  "devDependencies": {
+    "@types/jquery": "^3.2.15",
+    "@types/node": "^8.0.53",
+    "@types/semver": "^5.4.0",
+    "asar": "0.13.1",
+    "async": "^2.6.0",
+    "del": "3.0.0",
+    "electron": "1.7.9",
+    "electron-packager": "^9.1.0",
+    "gulp": "^3.9.1",
+    "gulp-tslint": "^8.1.2",
+    "gulp-typescript": "^3.2.2",
+    "gulp-util": "^3.0.8",
+    "pify": "^3.0.0",
+    "run-sequence": "2.2.0",
+    "semver": "^5.4.1",
+    "temp": "^0.8.3",
+    "tslint": "^5.8.0",
+    "typescript": "^2.5.3",
+    "yargs": "10.0.3"
+  },
+  "sfxDependencies": {
+    "electron-installer-debian": {
+      "version": "^0.7.1",
+      "dependencyTypes": [
+        "dev"
+      ],
+      "platform": "linux"
+    }
+  }
+}

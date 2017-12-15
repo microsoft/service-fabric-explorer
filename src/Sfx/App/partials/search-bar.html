@@ -1,0 +1,10 @@
+﻿<div class="search-bar {{customClass}}">
+    <input type="search" class="input-flat"
+           autocomplete="off"
+           placeholder="{{placeholder}}"
+           ng-model="model"
+           ng-model-options="{ debounce: 300 }" />
+    <span class="bowtie-icon bowtie-search" ng-show="!model"></span>
+    <span class="bowtie-icon bowtie-edit-delete" ng-show="model" ng-click="model = ''"></span>
+    <a class="reset-link" ng-if="reset" href="" ng-click="reset()">Reset All</a>
+</div>

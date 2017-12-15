@@ -1,0 +1,208 @@
+﻿@import "../Base/_config.scss";
+
+.navbar-custom.navbar-inverse {
+    background-color: $navbar-background-color;
+    border-width: 0;
+    margin: 0;
+
+    .navbar-brand {
+        color: $navbar-color;
+        font-size: $font-size-large;
+        position: relative;
+        font-weight: lighter;
+        padding: 14px;
+
+        &.navbar-brand-azure {
+            background-color: $navbar-brand-background-color;
+        }
+
+        &.navbar-brand-icon {
+            margin-left: 0;
+            img {
+                display: inline-block;
+                position: relative;
+                top: 47%;
+                transform: translateY(-50%);
+            }
+        }
+    }
+}
+
+#navbar-right-control {
+    overflow: visible; // to display the settings drop down menu
+}
+
+.navbar-control-section {
+    font-size: $navbar-font-size;
+    position: relative;
+
+    > div {
+        display: inline-block;
+        line-height: 1.0;
+        height: 100%;
+
+        &:not(:last-child) {
+            margin-right: -4px;
+        }
+    }
+
+    .dropdown {
+        font-weight: $font-weight-normal;
+
+        &.open {
+            background-color: $navbar-dropdown-toggle-hover-background-color;
+        }
+
+        &:hover {
+            background-color: $navbar-dropdown-toggle-hover-background-color;
+        }
+    }
+
+    .dropdown-toggle {
+        height: 100%;
+        cursor: pointer;
+        padding-top: 17px;
+        padding-bottom: 17px;
+        padding-right: 12px;
+        padding-left: 12px;
+    }
+
+    .dropdown-menu {
+        padding: 0;
+        color: $navbar-color;
+        background-color: $navbar-dropdown-menu-background-color;
+
+        li {
+            padding: 12px;
+
+            i {
+                float: right;
+            }
+
+            &.divider {
+                background-color: $settings-divider-color;
+                padding: 0;
+                margin: 0;
+            }
+
+            &.hoverable {
+                cursor: pointer;
+
+                &:hover {
+                    background-color: $navbar-dropdown-menu-item-hover-color;
+                }
+            }
+        }
+    }
+
+    .slider-control {
+        #refresh-rate-label {
+            display: inline-block;
+            width: 30px;
+            cursor: default;
+        }
+
+        .slider-label {
+            color: $navbar-color;
+            cursor: pointer;
+        }
+
+        .slider-title {
+            margin-right: 8px;
+            color: $slider-title-color;
+        }
+
+        .slider {
+            width: 130px;
+            border-top: 5px solid $navbar-background-color;
+            border-bottom: 5px solid $navbar-background-color;
+            border-left: none;
+            border-right: none;
+            height: 12px;
+            display: inline-block;
+            margin-left: 5px;
+            margin-right: 5px;
+            background-color: $slider-background-color;
+            top: 1px;
+
+            .ui-slider-handle {
+                height: 14px;
+                width: 5px;
+                top: -6px;
+                margin-left: -2px;
+                background-color: $slider-handler-active-color;
+
+                &:focus {
+                    outline: none;
+                }
+
+                &.ui-state-active, &.ui-state-hover, &.ui-state-focus {
+                    border: none;
+                    background-color: $slider-handler-active-color;
+                }
+            }
+        }
+    }
+
+    .user-control {
+        color: $navbar-color;
+        height: 100%;
+
+        .user-icon {
+            color: $link-color;
+            margin-left: 2px;
+        }
+
+        .dropdown-menu {
+            min-width: 200px;
+
+            .sign-out-icon {
+                width: 14px;
+                height: 14px;
+                float: right;
+            }
+        }
+    }
+
+    .settings-control {
+        display: inline-block;
+
+        .dropdown-menu {
+            li input {
+                margin-left: 12px;
+                display: inline;
+                width: 50px;
+            }
+
+            .choose-theme-container {
+                white-space: nowrap;
+                margin-top: 5px;
+
+                img {
+                    cursor: pointer;
+                    border-width: 5px;
+                    border-style: solid;
+                    border-color: transparent;
+                    display: inline-block;
+                    width: 220px;
+
+                    &:not(:last-child) {
+                        margin-right: 5px;
+                    }
+
+                    &:hover {
+                        border-color: $settings-theme-hover-border-color;
+                    }
+
+                    &.selected {
+                        border-color: $settings-theme-selected-border-color;
+                    }
+                }
+            }
+
+            .settings-item-title {
+                color: $slider-title-color;
+            }
+        }
+    }
+}

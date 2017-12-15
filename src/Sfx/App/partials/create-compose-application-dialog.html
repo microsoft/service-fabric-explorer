@@ -1,0 +1,43 @@
+﻿<form name="createComposeApplicationForm">
+    <div class="modal-header">
+        <h4 class="modal-title">Create Compose Application</h4>
+    </div>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+            <dt>Application name</dt>
+            <dd>
+                <input type="text" class="input-flat" ng-model="action.applicationName" required>
+            </dd>
+            <dt>Compose file content</dt>
+            <dd>
+               <sfx-text-file-input ng-model="action.composeFileContent" accept=".yml" required></sfx-text-file-input>
+            </dd>
+            <dd class="checkbox-container">
+                <label>
+                    <input type="checkbox" ng-model="action.hasRepositoryCredential" />
+                    <label><!-- this is left empty intentionally --></label>Repository credential
+                </label>
+            </dd>
+        </dl>
+        <dl class="dl-horizontal collapse" uib-collapse="!action.hasRepositoryCredential">
+            <dt>User name</dt>
+            <dd>
+                <input type="text" class="input-flat" ng-model="action.repositoryUserName">
+            </dd>
+            <dt>Password</dt>
+            <dd>
+                <input type="text" class="input-flat" ng-model="action.repositoryPassword" autocomplete="off">
+            </dd>
+            <dd class="checkbox-container">
+                <label>
+                    <input type="checkbox" ng-model="action.passwordEncrypted" />
+                    <label><!-- this is left empty intentionally --></label>Password encrypted
+                </label>
+            </dd>
+        </dl>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-disabled="createComposeApplicationForm.$invalid" ng-click="ok()">{{::action.title}}</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancel()">Cancel</button>
+    </div>
+</form>

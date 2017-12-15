@@ -1,0 +1,113 @@
+﻿@import "../Base/_config.scss";
+
+// Smaller than extra small screen / phone
+@media (max-width: $screen-xs-min) {
+    .left-panel {
+        position: static !important;
+        display: block !important;
+        width: auto !important;
+        margin-top: 50px !important;
+
+        .tree-body {
+            position: static !important;
+            margin-left: -15px !important;
+            margin-right: -15px !important;
+            margin-top: 10px !important;
+        }
+    }
+
+    .right-panel {
+        position: static !important;
+        display: block !important;
+
+        .main-view {
+            position: static !important;
+            margin-top: 10px !important;
+            margin-bottom: 10px !important;
+
+            pre {
+                word-wrap: normal !important;
+
+                code {
+                    white-space: pre !important;
+                    overflow: auto !important;
+                }
+            }
+        }
+    }
+
+    .settings-control {
+        // hide settings control
+        display: none !important;
+    }
+
+    .navbar-brand-title {
+        display: none !important;
+    }
+
+    #refresh-rate-title {
+        display: none !important;
+    }
+
+    #refresh-rate-label {
+        display: none !important;
+    }
+
+    #splitter {
+        display: none !important;
+    }
+}
+
+// Extra small screen / phone
+@media screen and (max-width: $screen-xs-max) {
+    .table-responsive {
+        border: none !important;
+        margin-bottom: 0 !important;
+
+        .table {
+            &.table-layout-fixed {
+                margin-bottom: 0 !important;
+            }
+
+            margin-bottom: 14px !important;
+        }
+    }
+
+    .pager-control {
+        // hide pager control
+        display: none !important;
+    }
+
+    .choose-theme-container img {
+        // display theme selection vertically
+        display: block !important;
+        margin-right: 0 !important;
+
+        &:not(:last-child) {
+            margin-bottom: 10px !important;
+        }
+    }
+}
+
+// Small screen / tablet / phone
+@media (max-width: $screen-sm-min) {
+    .navbar-brand-azure {
+        display: none !important;
+    }
+
+    .main-header {
+        .detail-view-title-bar {
+            .detail-view-navbar .detail-view-navbar-tab {
+                margin-right: auto !important;
+            }
+        }
+    }
+
+    .modal {
+        .modal-header, .modal-body {
+            dd {
+                margin-left: auto !important;
+            }
+        }
+    }
+}

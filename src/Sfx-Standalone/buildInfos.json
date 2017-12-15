@@ -1,0 +1,30 @@
+{
+    "productName": "Service Fabric Explorer",
+    "description": "Microsoft Service Fabric Explorer.",
+    "copyright": "Microsoft Corporation",
+    "targetExecutableName": "sfxstandalone",
+    "appId": "com.microsoft.servicefabric.explorer",
+    "appCategory": "Utilities",
+    "buildNumber": "*",
+    "upgradeBaseUrl": "https://aka.ms/sfx-update",
+    "targets": {
+        "windows": {
+            "archs": [
+                "x86"
+            ]
+        },
+        "linux": {
+            "archs": [
+                "x86",
+                "x64"
+            ]
+        }
+    },
+    "paths": {
+        "buildDir": "./build",
+        "publishDir": "./publish",
+        "appDir": "*",
+        "sfxDir": "*",
+        "buildResDir": "*"
+    }
+}

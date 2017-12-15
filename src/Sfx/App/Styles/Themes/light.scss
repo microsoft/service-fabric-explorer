@@ -1,0 +1,70 @@
+﻿// common
+$font-color: black;
+$font-color-invert: white;
+$input-border-color: #B3B3B3;
+$input-border-color-dark-bg: #727272;
+$dialog-input-bg-color: transparent;
+
+// navbar
+$navbar-background-color: #151515;
+
+// tree
+$tree-background-color: #3d3d3d;
+$tree-node-hover-background-color: #555555;
+
+// detail view area
+$right-panel-background-color: #f1f1f8;
+$details-pane-table-sub-title-color: #2D3239;
+$table-border-color: #CCCCCC;
+$table-vertical-group-left-border-color: #CCCCCC;
+$table-section-divider-color: #B3B3B3;
+$detail-tab-color: #6C7074;
+$detail-tab-active-color: #2D3239;
+$detail-pane-main-title-color: #2D3239;
+$detail-pane-sub-title-color: #6C7074;
+$detail-table-header-color: #6C7074;
+$detail-table-cell-color: #2D3239;
+$essen-pane-background-color: #ffffff;
+$detail-pane-pre-color: #434343;
+$detail-pane-pre-background-color: $essen-pane-background-color;
+
+// Candybar
+$candybar-background-color: #ffffff;
+$candybar-inner-background-color: #ffffff;
+$candybar-border-color: #8e8e8e;
+
+// Dashboard
+$dashboard-color: #2D3239;
+
+// Charts
+$chart-text-color: #6C7074;
+$tooltip-background: rgba(black, 0.8);
+
+//--------------------------------------------------------------
+// Bootstrap variables overrides
+//--------------------------------------------------------------
+$link-color: #0E70C0;
+$link-hover-color: #0E70C0;
+$link-light-background-color: $link-color;
+$link-light-background-hover-color: $link-hover-color;
+$link-dark-background-color: #00BCF2;
+$link-dark-background-hover-color: #00BCF2;
+
+// Input
+$input-color-disabled: lighten($font-color, 50%);
+$input-background-color-disabled: darken($essen-pane-background-color, 8%);
+$input-invalid-border-color: red;
+
+// Modal dialogs
+$modal-content-bg: white;
+
+// Pagination
+$pagination-hover-bg: $table-border-color;
+
+// Buttons
+$btn-default-color: #2D3239;
+$btn-default-bg: #EBEBEB;
+$btn-default-border: #EBEBEB;
+
+@import "../Base/_config.scss";
+@import "../app";

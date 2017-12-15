@@ -1,0 +1,156 @@
+﻿//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+//-----------------------------------------------------------------------------
+
+module Sfx {
+
+    export class HealthEvent extends DataModelBase<IRawHealthEvent> {
+        public constructor(data: DataService, raw: IRawHealthEvent) {
+            super(data, raw);
+        }
+
+        public get uniqueId(): string {
+            return `${this.raw.SourceId}_${this.raw.Property}_${this.raw.SequenceNumber}`;
+        }
+
+        public get description(): string {
+            return this.raw.Description.trim();
+        }
+
+        public get sourceUtcTimestamp(): string {
+            return TimeUtils.timestampToUTCString(this.raw.SourceUtcTimestamp);
+        }
+
+        public get TTL(): string {
+            return TimeUtils.getDuration(this.raw.TimeToLiveInMilliSeconds);
+        }
+    }
+
+    export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
+        public constructor(raw: IRawHealthEvaluation, public level: number = 0) {
+            super(null, raw);
+        }
+
+        public get kind(): string {
+            if (this.level > 0) {
+                return _.repeat(" ", this.level * 4) + this.raw.Kind;
+            } else {
+                return this.raw.Kind;
+            }
+        }
+
+        public get uniqueId(): string {
+            // Explicitly set this to null to allow detail-list directive to use angular build-in parameter $id to track the list.
+            return null;
+        }
+
+        public get description(): string {
+            if (this.raw.UnhealthyEvent) {
+                return (this.raw.Description + "\n" + this.raw.UnhealthyEvent.Description).trim();
+            } else {
+                return this.raw.Description.trim();
+            }
+        }
+    }
+
+    export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformation> {
+        public decorators: IDecorators = {
+            showList: [
+                "Name",
+                "BalancingThreshold",
+                "Action",
+                "IsBalancedBefore",
+                "DeviationBefore",
+                "IsBalancedAfter",
+                "DeviationAfter"
+            ]
+        };
+
+        public selected: boolean;
+
+        public get minNodeLoadId(): string {
+            return this.raw.MinNodeLoadId.Id;
+        }
+
+        public get maxNodeLoadId(): string {
+            return this.raw.MaxNodeLoadId.Id;
+        }
+
+        public get hasCapacity(): boolean {
+            return this.raw.ClusterCapacity && +this.raw.ClusterCapacity > 0;
+        }
+
+        public get isSystemMetric(): boolean {
+            return _.startsWith(this.raw.Name, "__") && _.endsWith(this.raw.Name, "__");
+        }
+
+        public get loadCapacityRatio(): number {
+            return this.hasCapacity ? this.raw.ClusterLoad / this.raw.ClusterCapacity : 0;
+        }
+
+        public get loadCapacityRatioString(): string {
+            return (this.loadCapacityRatio * 100).toFixed(1) + "%";
+        }
+
+        public constructor(data: DataService, raw: IRawLoadMetricInformation) {
+            super(data, raw);
+        }
+    }
+
+    export class UpgradeDescription extends DataModelBase<IRawUpgradeDescription> {
+        public monitoringPolicy: MonitoringPolicy;
+
+        public constructor(data: DataService, raw: IRawUpgradeDescription) {
+            super(data, raw);
+
+            this.monitoringPolicy = new MonitoringPolicy(this.data, raw.MonitoringPolicy);
+        }
+    }
+
+    export class MonitoringPolicy extends DataModelBase<IRawMonitoringPolicy> {
+        public decorators: IDecorators = {
+            decorators: {
+                "HealthCheckWaitDurationInMilliseconds": {
+                    displayName: (name) => "Health Check Wait Duration",
+                    displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                },
+                "HealthCheckStableDurationInMilliseconds": {
+                    displayName: (name) => "Health Check Stable Duration",
+                    displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                },
+                "HealthCheckRetryTimeoutInMilliseconds": {
+                    displayName: (name) => "Health Check Retry Timeout",
+                    displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                },
+                "UpgradeTimeoutInMilliseconds": {
+                    displayName: (name) => "Upgrade Timeout",
+                    displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                },
+                "UpgradeDomainTimeoutInMilliseconds": {
+                    displayName: (name) => "Upgrade Domain Timeout",
+                    displayValueInHtml: (value) => TimeUtils.getDuration(value)
+                }
+            }
+        };
+
+        public constructor(data: DataService, raw: IRawMonitoringPolicy) {
+            super(data, raw);
+        }
+    }
+
+    export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain> {
+        public constructor(data: DataService, raw: IRawUpgradeDomain) {
+            super(data, raw);
+        }
+
+        public get badgeClass(): string {
+            if (UpgradeDomainStateRegexes.Completed.test(this.raw.State)) {
+                return BadgeConstants.BadgeOK;
+            } else if (UpgradeDomainStateRegexes.InProgress.test(this.raw.State)) {
+                return BadgeConstants.BadgeWarning;
+            }
+            return BadgeConstants.BadgeUnknown;
+        }
+    }
+}
+
