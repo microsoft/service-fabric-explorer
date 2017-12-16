@@ -1,4 +1,4 @@
-export default interface IInputOptions {
+interface IInputOptions {
     password?: boolean;
     title: string;
     message: string;

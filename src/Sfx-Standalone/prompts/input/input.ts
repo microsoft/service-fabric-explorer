@@ -3,7 +3,6 @@ import * as $ from "jquery";
 import * as Url from "url";
 
 import { PromptContext } from "../prompts.context";
-import IInputOptions from "./options";
 
 let inputOptions: IInputOptions = PromptContext.getInstance().promptOptions.data;
 let $input = $("#input");
