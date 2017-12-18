@@ -88,7 +88,7 @@ function createMainWindow() {
 
     let window = new BrowserWindow(windowOptions);
 
-    window.setMenuBarVisibility(true);
+    window.setMenuBarVisibility(false);
 
     handleSslCert(window);
     handleNewWindow(window);
