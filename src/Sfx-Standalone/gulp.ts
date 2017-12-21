@@ -225,7 +225,7 @@ function formGlobs(globs: string | Array<string>): Array<string> {
     outputGlobs.push(util.format("!%s/**/*", buildInfos.paths.publishDir));
     outputGlobs.push(util.format("!%s/**/*", buildInfos.paths.buildDir));
     outputGlobs.push(util.format("!%s/**/*", "node_modules"));
-    outputGlobs.push("!**/tsconfig.json", "!**/tslint.json", "!./buildInfos.json");
+    outputGlobs.push("!**/tsconfig.json", "!**/jsconfig.json", "!**/tslint.json", "!./buildInfos.json");
     outputGlobs.push("!**/*.md");
 
     if (util.isString(globs)) {
