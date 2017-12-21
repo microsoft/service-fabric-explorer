@@ -4,7 +4,7 @@ import * as Url from "url";
 
 import { PromptContext } from "../prompts.context";
 
-let inputOptions: IInputOptions = PromptContext.getInstance().promptOptions.data;
+let inputOptions: IInputPromptOptions = PromptContext.getInstance().promptOptions.data;
 let $input = $("#input");
 
 $("#title").text(inputOptions.title);

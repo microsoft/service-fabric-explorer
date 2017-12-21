@@ -37,3 +37,7 @@ $("#btn-connect").click(() => {
 });
 
 $("#btn-exit").click(() => PromptContext.getInstance().close());
+
+$(document).ready(() => {
+    $("#input-cluster-url").focus();
+});

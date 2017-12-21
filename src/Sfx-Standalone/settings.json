@@ -3,7 +3,6 @@
         "baseUrl": "https://aka.ms/sfx-update"
     },
     "logging": {
-        "autoInitialization": true,
         "loggers": {
             "appInsights": {
                 "type": "app-insights",

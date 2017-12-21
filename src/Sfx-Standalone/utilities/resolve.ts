@@ -1,4 +1,4 @@
-import { app } from "electron";
+import { app, remote } from "electron";
 import * as url from "url";
 import * as path from "path";
 import * as getCaller from "caller";
@@ -10,7 +10,7 @@ export interface IPathObject {
     search?: string;
 }
 
-const appDir: string = app.getAppPath();
+const appDir: string = (app || remote.app).getAppPath();
 
 function getCallerDirName(): string {
     let localFuncPath = getCaller(2);
