@@ -3,8 +3,9 @@ import * as https from "https";
 import * as util from "util";
 import * as url from "url";
 import * as querystring from "querystring";
+import * as fs from "fs";
 
-import error from "./errorUtil";
+import newError from "./errorUtil";
 import { logInfo, logError, log } from "./log";
 
 export enum HttpMethod {
@@ -94,7 +95,7 @@ function getRequestBody(contentType: HttpContentType, data: any): string {
             return JSON.stringify(data);
 
         default:
-            throw error("unsupported content type: %s", contentType);
+            throw newError("unsupported content type: %s", contentType);
     }
 }
 
@@ -244,11 +245,11 @@ const responseProcessors: Array<ResponseProcessor> = [handleRedirections, handle
 
 export function request(requestOptions: IHttpClientOptions, callback: ResponseHandler): void {
     if (!util.isObject(requestOptions)) {
-        throw error("requestOptions must be supplied.");
+        throw newError("requestOptions must be supplied.");
     }
 
     if (!util.isFunction(callback)) {
-        throw error("callback must be supplied.");
+        throw newError("callback must be supplied.");
     }
 
     let finalRequestOptions: IHttpClientOptions = {
@@ -333,4 +334,47 @@ export function del(url: string, callback: ResponseHandler): void {
             method: HttpMethod.delete
         },
         callback);
+}
+
+export function createJsonResponseHandler<TJson>(callback: (error: Error, json: TJson) => void): ResponseHandler {
+    if (!util.isFunction(callback)) {
+        throw newError("callback function must be supplied.");
+    }
+
+    return (error, response) => {
+        if (error) {
+            callback(error, null);
+        } else if (response.statusCode >= 200 && response.statusCode < 300) {
+            let json: string = "";
+
+            response.on("data", (chunk) => json += chunk);
+            response.on("end", () => {
+                try {
+                    let jsonObject = <TJson>JSON.parse(json);
+                    callback(null, jsonObject);
+                } catch (error) {
+                    callback(error, null);
+                }
+            });
+        } else {
+            callback(newError("Unexpected response: \nHTTP %s %s\n%s", response.statusCode, response.statusMessage, response.rawHeaders.join("\n")), null);
+        }
+    };
+}
+
+export function createFileResponseHandler(fd: number, autoClose: boolean, callback: (error: Error) => void): ResponseHandler {
+    return (error, response) => {
+        if (error) {
+            callback(error);
+        } else if (response.statusCode >= 200 && response.statusCode < 300) {
+            let fileStream = fs.createWriteStream(null, { fd: fd, autoClose: autoClose });
+
+            response
+                .pipe(fileStream)
+                .on("finish", () => fileStream.end());
+            callback(null);
+        } else {
+            callback(newError("Unexpected response: \nHTTP %s %s\n%s", response.statusCode, response.statusMessage, response.rawHeaders.join("\n")));
+        }
+    };
 }

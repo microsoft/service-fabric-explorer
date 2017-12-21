@@ -1,58 +1,38 @@
-import { IncomingMessage } from "http";
 import * as util from "util";
 import * as semver from "semver";
 import { app, dialog } from "electron";
 import * as tmp from "tmp";
-import * as fs from "fs";
 import * as path from "path";
 import * as url from "url";
+import * as fs from "fs";
 
-import { Platform, Architecture } from "./env";
-import error from "./errorUtil";
+import { Architecture } from "./env";
 import env from "../utilities/env";
 import settings from "./settings";
 import { logWarning, logVerbose, logInfo, logError } from "./log";
 import * as httpsClient from "./httpsClient";
 
-function requestVersionInfo(callback: (error: Error, versionInfo: IVersionInfo) => void): void {
-    if (!util.isFunction(callback)) {
-        throw error("callback must be a function.");
-    }
-
-    const channel = semver.prerelease(app.getVersion());
-    const versionInfoBaseUrl = settings.default.get("update/baseUrl");
-
-    let versionInfoUrl = util.format("%s/%s/%s", versionInfoBaseUrl, channel, env.platform);
-
-    let handleResponse = (error: Error, response: IncomingMessage): void => {
-        if (error) {
-            logError("Failed to retrieve versioninfo.json: %s \r\n Error: %s", versionInfoUrl, error);
-            callback(error, null);
-        } else if (response.statusCode === 200) {
-            let versionInfoJson = "";
-
-            response.on("data", (chunk) => versionInfoJson += chunk);
-            response.on("end", () => {
-                try {
-                    let versionInfo = <IVersionInfo>JSON.parse(versionInfoJson);
-
-                    logInfo("Succeeded retrieving versioninfo.json => version = %s.", versionInfo.version);
-                    callback(null, versionInfo);
-                } catch (error) {
-                    logError("Failed to parse versioninfo.json: ", error);
-                    callback(error, null);
-                }
-            });
-        } else {
-            logError("Unexpected response: \nHTTP %s %s\n%s", response.statusCode, response.statusMessage, response.rawHeaders.join("\n"));
-        }
-    };
+function requestVersionInfo(callback: (versionInfo: IVersionInfo) => void): void {
+    const versionInfoUrl =
+        util.format(
+            "%s/%s/%s",
+            settings.default.get("update/baseUrl"),  // Update Base Url
+            semver.prerelease(app.getVersion()),     // Channel
+            env.platform);                           // Platform
 
     logInfo("Retrieving version.json: %s", versionInfoUrl);
-    httpsClient.get(versionInfoUrl, handleResponse);
+    httpsClient.get(
+        versionInfoUrl,
+        httpsClient.createJsonResponseHandler<IVersionInfo>((error, versionInfo) => {
+            if (error) {
+                logError("Failed to request versioninfo.json: %s \r\n Error: %s", versionInfoUrl, error);
+            }
+
+            callback(versionInfo);
+        }));
 }
 
-function askForUpdate(versionInfo: IVersionInfo, path: string, cleanupCallback: () => void): void {
+function confirmUpate(versionInfo: IVersionInfo, path: string): void {
     let buttons = ["Yes", "No"];
 
     dialog.showMessageBox(
@@ -73,35 +53,26 @@ function askForUpdate(versionInfo: IVersionInfo, path: string, cleanupCallback: 
 
                 case 1: // No
                 default:
-                    cleanupCallback();
-                    logInfo("Removed the local update package.");
+                    if (fs.existsSync(path)) {
+                        fs.unlinkSync(path);
+                        logInfo("Removed the local update package.");
+                    }
                     break;
             }
         });
 }
 
-function startUpdate(versionInfo: IVersionInfo): void {
-    let packageInfo: IPackageInfo | string = versionInfo[env.platform];
-    let packagePath: string;
+function isUpdateAvailable(versionInfo: IVersionInfo): boolean {
+    let updateAvailable = semver.lt(app.getVersion(), versionInfo.version);
 
-    if (!packageInfo) {
-        logError("No package info found for platform: %s.", env.platform);
-        return;
-    }
+    updateAvailable = semver.lt(app.getVersion(), versionInfo.version);
+    logInfo("Checking update: updateAvailable: %s => currentVersion: %s, versionInfo.version: %s", updateAvailable, app.getVersion(), versionInfo.version);
 
-    if (util.isString(packageInfo)) {
-        packagePath = packageInfo;
+    return updateAvailable;
+}
 
-        try {
-            askForUpdate(versionInfo, url.parse(packagePath).href, null);
-        } catch (error) {
-            logError("Invalid packagePath: %s", packagePath);
-        }
-
-        return;
-    }
-
-    packagePath = packageInfo[env.arch];
+function getPackagePath(packageInfo: IPackageInfo): string {
+    let packagePath = packageInfo[env.arch];
 
     if (!packagePath) {
         logInfo("Fall back to x86 for platform %s. (current arch: %s)", env.platform, env.arch);
@@ -111,63 +82,48 @@ function startUpdate(versionInfo: IVersionInfo): void {
 
     if (!packagePath) {
         logError("Architecture %s is NOT found in %s package info.", env.arch, env.platform);
-        return;
+        return null;
     }
 
-    logInfo("Retrieving the update package: %s", packagePath);
-    httpsClient.get(packagePath, (errorObject, response) => {
-        if (errorObject) {
-            logError("Failed to retrieve the update package: %s \r\n Error: %s", packagePath, error);
-            return;
-        }
-
-        if (response.statusCode !== 200) {
-            logError("Failed to retrieve update package (HTTP: %d): %s", response.statusCode, packagePath);
-            return;
-        }
-
-        tmp.file(
-            {
-                keep: true,
-                postfix: path.extname(packagePath)
-            },
-            (err, path: string, fd: number, cleanupCallback: () => void) => {
-                let tmpStream = fs.createWriteStream(null, { fd: fd });
-
-                logInfo("Saving the update package to local temp file: %s", path);
-                response.pipe(tmpStream)
-                    .on("finish", () => {
-                        tmpStream.end();
-                        askForUpdate(versionInfo, path, cleanupCallback);
-                    });
-            });
-    });
+    return packagePath;
 }
 
-function checkUpdate(callback: (updateAvailable: boolean, versionInfo: IVersionInfo) => void): void {
-    if (!util.isFunction(callback)) {
-        throw error("callback must be a function.");
-    }
+function requestPackage(packagePath: string, callback: (filePath: string) => void): void {
+    let tempFile: { name: string; fd: number } = tmp.fileSync({ keep: true, postfix: path.extname(packagePath) });
+    logInfo("Created temp file for the update package: %s", tempFile.name);
 
-    requestVersionInfo((error, versionInfo) => {
-        let updateAvailable = !util.isNullOrUndefined(error) ? false : semver.lt(app.getVersion(), versionInfo.version);
+    logInfo("Retrieving the update package: %s ...", packagePath);
+    httpsClient.get(
+        packagePath,
+        httpsClient.createFileResponseHandler(tempFile.fd, true, (error) => callback(tempFile.name)));
+}
 
-        if (util.isNullOrUndefined(error)) {
-            updateAvailable = semver.lt(app.getVersion(), versionInfo.version);
-            logInfo("Checking update: updateAvailable: %s => currentVersion: %s, versionInfo.version: %s", updateAvailable, app.getVersion(), versionInfo.version);
+export function start() {
+    requestVersionInfo((versionInfo) => {
+        if (!isUpdateAvailable(versionInfo)) {
+            return;
+        }
+
+        let packageInfo: IPackageInfo | string = versionInfo[env.platform];
+        let packagePath: string;
+
+        if (!packageInfo) {
+            logError("No package info found for platform: %s.", env.platform);
+            return;
+        }
+
+        if (util.isString(packageInfo)) {
+            packagePath = packageInfo;
+
+            try {
+                confirmUpate(versionInfo, url.parse(packagePath).href);
+            } catch (error) {
+                logError("Invalid packagePath: %s", packagePath);
+            }
         } else {
-            updateAvailable = false;
-            logInfo("Checking update: updateAvailable: false => error: ", error);
-        }
+            packagePath = getPackagePath(packageInfo);
 
-        callback(updateAvailable, versionInfo);
-    });
-}
-
-export function checkAndUpdate() {
-    checkUpdate((updateAvailable, versionInfo) => {
-        if (updateAvailable) {
-            startUpdate(versionInfo);
+            requestPackage(packagePath, (filePath) => confirmUpate(versionInfo, filePath));
         }
     });
 }
