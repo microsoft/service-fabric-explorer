@@ -15,7 +15,15 @@
             "moment": "MIT"
         }
     },
-    "upgradeBaseUrl": "https://aka.ms/sfx-update",
+    "updateInfos": {
+        "baseUrl": "https://aka.ms/sfx-update",
+        "packageInfos": {
+            "windows": {
+                "x86": ""
+            },
+            "linux": "https://aka.ms/sfx-update/linux"
+        }
+    },
     "targets": {
         "windows": {
             "archs": [
