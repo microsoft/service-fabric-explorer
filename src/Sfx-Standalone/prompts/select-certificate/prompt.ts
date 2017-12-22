@@ -24,8 +24,7 @@ export default function open(
             parentWindow: parentWindow,
             pageUrl: resolve("select-certificate.html"),
             height: 640,
-            data: certificates,
-            showMenu: true
+            data: certificates
         },
         promptCallback
     );
