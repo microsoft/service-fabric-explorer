@@ -1,5 +1,3 @@
-import * as $ from "jquery";
-import * as angular from "angular";
 import { Certificate, remote } from "electron";
 import * as util from "util";
 import * as path from "path";
@@ -8,6 +6,10 @@ import promptInput from "../input/prompt";
 import env, { Platform } from "../../utilities/env";
 import { PromptContext } from "../prompts.context";
 import { ISelectCertificatePromptResults } from "./prompt";
+
+// JQuery & angular already referenced in select-certificate.html.
+declare let $: JQuery;
+declare let angular: angular.IAngularStatic;
 
 interface ISelectCertScope extends angular.IScope {
     certificates: Array<Certificate>;

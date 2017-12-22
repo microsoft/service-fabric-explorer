@@ -27,3 +27,7 @@ $("#btn-ok").click(() => {
 });
 
 $("#btn-cancel").click(() => PromptContext.getInstance().close());
+
+$(document).ready(() => {
+    $input.focus();
+});

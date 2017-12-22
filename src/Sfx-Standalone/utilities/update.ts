@@ -26,6 +26,7 @@ function requestVersionInfo(callback: (versionInfo: IVersionInfo) => void): void
         httpsClient.createJsonResponseHandler<IVersionInfo>((error, versionInfo) => {
             if (error) {
                 logError("Failed to request versioninfo.json: %s \r\n Error: %s", versionInfoUrl, error);
+                return;
             }
 
             callback(versionInfo);

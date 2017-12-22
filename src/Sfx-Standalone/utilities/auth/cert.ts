@@ -1,10 +1,11 @@
-import { BrowserWindow, Certificate, app, remote } from "electron";
+import { BrowserWindow, Certificate, remote } from "electron";
 import * as url from "url";
 import * as fs from "fs";
 import * as tmp from "tmp";
 import { Buffer } from "buffer";
 import * as util from "util";
 
+import electron from "../electronAdapter";
 import env, { Platform } from "../env";
 import promptSelectCerts from "../../prompts/select-certificate/prompt";
 import { local } from "../resolve";
@@ -77,9 +78,10 @@ function handleGenerally(window: BrowserWindow): void {
 
                             delete clientCertManager[certIdentifier];
                         } else if (certsImported) {
+                            certHandlingRecord.handling = false;
                             window.reload();
                         } else {
-                            (app || remote.app).quit();
+                            electron.app.quit();
                         }
                     });
             }
@@ -94,7 +96,7 @@ function handleLinux(): void {
     let dummayCertFile = tmp.fileSync();
 
     fs.writeFileSync(dummayCertFile.fd, dummyCertData);
-    (app || remote.app).importCertificate(
+    electron.app.importCertificate(
         {
             certificate: dummayCertFile.name,
             password: "123456"

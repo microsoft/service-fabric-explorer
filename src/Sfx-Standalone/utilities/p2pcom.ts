@@ -1,6 +1,7 @@
-import { remote, ipcMain, ipcRenderer, BrowserWindow } from "electron";
+import { remote, ipcRenderer } from "electron";
 import * as util from "util";
 
+import electron from "./electronAdapter";
 import error from "./errorUtil";
 
 interface IEventEmmiter {
@@ -60,22 +61,17 @@ export class Communicator {
             this.eventEmmiter = ipcRenderer;
             this.eventListener = ipcRenderer;
         } else {
-
-            if (!util.isNullOrUndefined(remote)) {
-                throw error("wndId must not be supplied in the child process.");
-            }
-
             // For main process.
             this.wndId = wndId;
 
-            let window = BrowserWindow.fromId(this.wndId);
+            let window = electron.BrowserWindow.fromId(this.wndId);
 
             if (!window) {
                 throw error("The wndId supplied is not associated with any browswer window.");
             }
 
             this.eventEmmiter = window.webContents;
-            this.eventListener = ipcMain;
+            this.eventListener = electron.ipcMain;
         }
 
         if (!util.isString(channelName)) {
@@ -103,7 +99,7 @@ export function prepareData(wndId: number, data: any): void {
         throw error("wndId must be specified.");
     }
 
-    ipcMain.once(getP2pComEventName(wndId), (event, args) => event.returnValue = data);
+    electron.ipcMain.once(getP2pComEventName(wndId), (event, args) => event.returnValue = data);
 }
 
 export function requestData<T>(): T {

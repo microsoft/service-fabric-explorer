@@ -523,6 +523,9 @@ gulp.task("Build:json",
     () => gulp.src(formGlobs(["**/*.json"]))
         .pipe(gulp.dest(buildInfos.paths.appDir)));
 
+gulp.task("Build:node_modules", ["Build:json"],
+    () => exec("npm install --production"));
+
 gulp.task("Build:sfx",
     () => gulp.src(["../Sfx/wwwroot/**/*.*"])
         .pipe(gulp.dest(buildInfos.paths.sfxDir)));
@@ -531,11 +534,8 @@ gulp.task("Build:licenses",
     () => gulp.src(formGlobs(["LICENSE"]))
         .pipe(gulp.dest(buildInfos.paths.appDir)));
 
-gulp.task("Build:All", ["Build:sfx", "Build:ts", "Build:html", "Build:json", "Build:img", "Build:licenses"]);
+gulp.task("Build:All", ["Build:sfx", "Build:ts", "Build:html", "Build:node_modules", "Build:json", "Build:img", "Build:licenses"]);
 /* Common publish tasks */
-
-gulp.task("Publish:node_modules",
-    () => exec("npm install --production"));
 
 gulp.task("Publish:resources",
     () => gulp.src(formGlobs(["icons/**/*.*"]))
@@ -544,7 +544,7 @@ gulp.task("Publish:resources",
 gulp.task("Publish:update-version",
     () => exec(util.format("npm version %s --allow-same-version", buildInfos.buildNumber)));
 
-gulp.task("Publish:licensing", ["Publish:node_modules"],
+gulp.task("Publish:licensing",
     () => {
         let msInternalDeps: Array<ILicensingDependency> = [];
         let prodDeps: Array<ILicensingDependency> = [];
@@ -571,7 +571,7 @@ gulp.task("Publish:licensing", ["Publish:node_modules"],
 gulp.task("Publish:prepare",
     (callback) => runSequence(
         "Publish:update-version",
-        ["Publish:resources", "Publish:node_modules", "Publish:licensing"],
+        ["Publish:resources", "Publish:licensing"],
         callback));
 
 /* Publish tasks for Windows */
