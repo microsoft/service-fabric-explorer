@@ -14,6 +14,7 @@
   "author": "Microsoft Corporation <support@microsoft.com>",
   "license": "MIT",
   "dependencies": {
+    "angular": "^1.6.7",
     "applicationinsights": "^1.0.1",
     "caller": "^1.0.1",
     "jquery": "^3.2.1",
@@ -21,6 +22,7 @@
     "uuid": "^3.1.0"
   },
   "devDependencies": {
+    "@types/angular": "^1.6.39",
     "@types/jquery": "^3.2.15",
     "@types/node": "^8.0.53",
     "@types/semver": "^5.4.0",

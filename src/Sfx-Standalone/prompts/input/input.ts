@@ -3,9 +3,8 @@ import * as $ from "jquery";
 import * as Url from "url";
 
 import { PromptContext } from "../prompts.context";
-import IInputOptions from "./options";
 
-let inputOptions: IInputOptions = PromptContext.getInstance().promptOptions.data;
+let inputOptions: IInputPromptOptions = PromptContext.getInstance().promptOptions.data;
 let $input = $("#input");
 
 $("#title").text(inputOptions.title);
@@ -28,3 +27,7 @@ $("#btn-ok").click(() => {
 });
 
 $("#btn-cancel").click(() => PromptContext.getInstance().close());
+
+$(document).ready(() => {
+    $input.focus();
+});

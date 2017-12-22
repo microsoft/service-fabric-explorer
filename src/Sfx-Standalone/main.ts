@@ -7,7 +7,6 @@ import openConnectClusterPrompt from "./prompts/connect-cluster/prompt";
 import * as authCert from "./utilities/auth/cert";
 import * as authAad from "./utilities/auth/aad";
 import resolve from "./utilities/resolve";
-import prompt from "./prompts/prompts";
 import env from "./utilities/env";
 import * as update from "./utilities/update";
 import { logEvent } from "./utilities/log";
@@ -29,15 +28,22 @@ function handleSslCert(window: BrowserWindow): void {
                 window,
                 {
                     type: "warning",
-                    buttons: ["Yes", "No", "Cancel"],
+                    buttons: ["Yes", "Exit"],
                     title: "Untrusted certificate",
                     message: "Do you want to trust this certificate?",
                     detail: "Subject: " + certificate.subjectName + "\r\nIssuer: " + certificate.issuerName + "\r\nThumbprint: " + certificate.fingerprint,
-                    cancelId: 2
+                    cancelId: 1,
+                    defaultId: 0,
+                    noLink: true,
                 },
                 (response, checkboxChecked) => {
-                    trustedCertManager[certIdentifier] = response === 0;
-                    trustCertificate(response === 0);
+                    if (response !== 0) {
+                        app.quit();
+                        return;
+                    }
+
+                    trustedCertManager[certIdentifier] = true;
+                    trustCertificate(true);
                 });
         }
     });

@@ -172,8 +172,3 @@ export function getLoggerSettings(name: string): ILoggerSettings {
 
     return settings.default.get("logging/loggers/" + name);
 }
-
-// Initialization
-if (settings.default.get("logging/autoInitialization") === true) {
-    initialize();
-}

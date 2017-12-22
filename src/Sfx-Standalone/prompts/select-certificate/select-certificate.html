@@ -1,0 +1,62 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+
+    <!-- CSS imports -->
+    <link href="../../sfx/css/lib.min.css" rel="stylesheet" />
+    <link href="../../sfx/css/dark.min.css" rel="stylesheet" />
+
+    <style>
+        .card {
+            border: 1px solid #3A3A3A;
+            border-radius: .25rem;
+            margin-top: 20px;
+        }
+
+        .card-body {
+            padding: 20px;
+        }
+
+        .card-text {
+            margin-bottom: 10px;
+        }
+    </style>
+</head>
+
+<body style="overflow:hidden" ng-app="select-certificate" ng-controller="selectCertController">
+    <div class="modal modal-content" style="display: block">
+        <div class="modal-header">
+            <h4 id="title" class="modal-title">Which client certificate to connect with?</h4>
+            <p>Please select a client certificate below to connect to the server.</p>
+        </div>
+        <div class="modal-body" style="height: 474px">
+            <div class="card" ng-repeat="cert in certificates">
+                <div class="card-body">
+                    <h4 class="card-title">{{cert.subjectName}}</h4>
+                    <div class="card-text">
+                        <div>Issuer: {{cert.issuerName}}</div>
+                        <div>Serial: {{cert.serialNumber}}</div>
+                        <div>Fingerprint: {{cert.fingerprint}}</div>
+                        <div ng-style="{ 'color': isCertValid(cert.validStart, cert.validExpiry) ? 'greenyellow' : null}">Valid from {{getDateString(cert.validStart)}} to {{getDateString(cert.validExpiry)}}.</div>
+                    </div>
+                    <button class="btn btn-primary" ng-click="selectCert(cert)">Select</button>
+                </div>
+            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-primary" ng-show="supportImportCerts()" ng-click="importCerts()">Import ...</button>
+            <button class="btn btn-default" ng-click="cancel()">Exit</button>
+        </div>
+    </div>
+
+    <script type="text/javascript">var exports = {};</script>
+    <script type="text/javascript" src="../../node_modules/jquery/dist/jquery.min.js"></script>
+    <script type="text/javascript" src="../../node_modules/angular/angular.min.js"></script>
+    <script type="text/javascript" src="select-certificate.js"></script>
+</body>
+
+</html>

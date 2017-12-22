@@ -1,4 +1,4 @@
-import { app } from "electron";
+import * as electron from "electron";
 import * as path from "path";
 import * as fs from "fs";
 import * as util from "util";
@@ -153,6 +153,8 @@ class SettingsService {
     private readonly settingsDir: string;
 
     constructor() {
+        let app = electron.app || electron.remote.app;
+        
         this.appDir = app.getAppPath();
         this.appName = app.getName();
         this.settingsDir = path.join(app.getPath("appData"), this.appName);
@@ -198,7 +200,7 @@ class SettingsService {
         let settingsPath = local(name + ".json", true);
 
         if (!fs.existsSync(settingsPath)) {
-            settingsPath = path.join(app.getPath("appData"), this.appName, name + ".json");
+            settingsPath = path.join(this.settingsDir, name + ".json");
         }
 
         return new FileSettings(settingsPath, null, parentSettings);

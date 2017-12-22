@@ -1,6 +1,6 @@
-import { BrowserWindow, ipcMain } from "electron";
 import * as util from "util";
 
+import electron from "../utilities/electronAdapter";
 import { local } from "../utilities/resolve";
 import { IPromptOptions, CommunicatorChannelName, EventNames } from "./prompts.common";
 import env from "../utilities/env";
@@ -11,7 +11,7 @@ export default function open<TPromptResults>(
     promptOptions: IPromptOptions,
     promptCallback: (error: any, results: TPromptResults) => void = null): void {
 
-    let promptWindow = new BrowserWindow({
+    let promptWindow = new electron.BrowserWindow({
         frame: getEither(promptOptions.frame, true),
         minimizable: getEither(promptOptions.minimizable, false),
         closable: getEither(promptOptions.closable, true),
