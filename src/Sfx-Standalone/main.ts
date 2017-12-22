@@ -8,7 +8,7 @@ import * as authCert from "./utilities/auth/cert";
 import * as authAad from "./utilities/auth/aad";
 import resolve from "./utilities/resolve";
 import env from "./utilities/env";
-import { checkAndUpdate } from "./utilities/update";
+import * as update from "./utilities/update";
 import { logEvent } from "./utilities/log";
 
 function handleSslCert(window: BrowserWindow): void {
@@ -94,7 +94,7 @@ function createMainWindow() {
 
     let window = new BrowserWindow(windowOptions);
 
-    window.setMenuBarVisibility(true);
+    window.setMenuBarVisibility(false);
 
     handleSslCert(window);
     handleNewWindow(window);
@@ -134,7 +134,7 @@ function mainWindowStartup() {
 
     app.on("ready", (launchInfo) => {
         mainWindowStartup();
-        setTimeout(checkAndUpdate, 1000); // Check upgrade after 1 sec.
+        setTimeout(update.start, 1000); // Check upgrade after 1 sec.
     });
 
     app.on("window-all-closed", () => {

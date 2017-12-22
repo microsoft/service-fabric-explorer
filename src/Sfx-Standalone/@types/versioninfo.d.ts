@@ -7,7 +7,7 @@ interface IVersionInfo {
     version: string;
     description?: string;
 
-    linux?: IPackageInfo;
-    windows?: IPackageInfo;
-    macos?: IPackageInfo;
+    linux?: IPackageInfo | string;
+    windows?: IPackageInfo | string;
+    macos?: IPackageInfo | string;
 }
