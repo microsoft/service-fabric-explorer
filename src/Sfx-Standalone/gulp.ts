@@ -16,9 +16,46 @@ import * as packager from "electron-packager";
 import * as semver from "semver";
 import * as https from "https";
 import * as url from "url";
-import { IncomingMessage } from "http";
 
 const pified_exec = pify(child_process.exec, { multiArgs: true });
+
+declare global {
+    interface StringConstructor {
+        format: (format: string, ...args: Array<any>) => string;
+    }
+}
+
+String.format = (format, ...args) => {
+    if (!util.isString(format)) {
+        throw new Error("format must be a string");
+    }
+
+    if (!util.isArray(args)) {
+        throw new Error("args must be an array.");
+    }
+
+    if (util.isNullOrUndefined(args)) {
+        return format;
+    }
+
+    let matchIndex = -1;
+
+    return format.replace(/(\{*)(\{(\d*)\})/gi, (substring, escapeChar, argIdentifier, argIndexStr, offset, str) => {
+        matchIndex++;
+
+        if (escapeChar.length > 0) {
+            return argIdentifier
+        }
+
+        let argIndex = argIndexStr.length === 0 ? matchIndex : parseInt(argIndexStr);
+
+        if (isNaN(argIndex) || argIndex < 0 || argIndex >= args.length) {
+            throw new Error(String.format("Referenced arg index, '{}',is out of range of the args.", argIndexStr));
+        }
+
+        return args[argIndex];
+    });
+}
 
 enum Architecture {
     X86 = "x86",
@@ -42,7 +79,6 @@ interface IBuildPaths {
     publishDir: string;
     appDir: string;
     sfxDir: string;
-    buildResDir: string;
 }
 
 interface IBuildLicensing {
@@ -58,6 +94,11 @@ interface IBuildLicensing {
     packageLicenses: IDictionary<string>
 }
 
+interface IUpdateInfos {
+    baseUrl: string;
+    packageInfos: IDictionary<IPackageInfo | string>
+}
+
 interface IBuildInfos {
     productName: string;
     description: string;
@@ -66,7 +107,7 @@ interface IBuildInfos {
     appId: string,
     appCategory: string,
     buildNumber: string;
-    upgradeBaseUrl: string;
+    updateInfos: IUpdateInfos;
     targets: IDictionary<IBuildTarget>;
     paths: IBuildPaths;
     licensing: IBuildLicensing;
@@ -181,11 +222,6 @@ if (buildInfos.buildNumber === "*") {
     gutil.log("Initialized", "buildInfos.buildNumber:", "=", buildInfos.buildNumber);
 }
 
-if (buildInfos.paths.buildResDir === "*") {
-    buildInfos.paths.buildResDir = path.join(buildInfos.paths.buildDir, "resources");
-    gutil.log("Initialized", "buildInfos.paths.buildResDir", "=", buildInfos.paths.buildResDir);
-}
-
 if (buildInfos.paths.appDir === "*") {
     buildInfos.paths.appDir = path.join(buildInfos.paths.buildDir, "app");
     gutil.log("Initialized", "buildInfos.paths.appDir", "=", buildInfos.paths.appDir);
@@ -199,7 +235,6 @@ if (buildInfos.paths.sfxDir === "*") {
 gutil.log("Finished", "buildInfos auto-initializiation", ".");
 
 /* Utility functions */
-
 function logExec(cmd: string, pifyResults: any): void {
     const [error, stdout, stderr] = pifyResults;
 
@@ -222,9 +257,9 @@ function exec(cmd: string): any {
 function formGlobs(globs: string | Array<string>): Array<string> {
     let outputGlobs: Array<string> = [];
 
-    outputGlobs.push(util.format("!%s/**/*", buildInfos.paths.publishDir));
-    outputGlobs.push(util.format("!%s/**/*", buildInfos.paths.buildDir));
-    outputGlobs.push(util.format("!%s/**/*", "node_modules"));
+    outputGlobs.push(String.format("!{}/**/*", buildInfos.paths.publishDir));
+    outputGlobs.push(String.format("!{}/**/*", buildInfos.paths.buildDir));
+    outputGlobs.push(String.format("!{}/**/*", "node_modules"));
     outputGlobs.push("!**/tsconfig.json", "!**/jsconfig.json", "!**/tslint.json", "!./buildInfos.json");
     outputGlobs.push("!**/*.md");
 
@@ -256,9 +291,13 @@ function ensureDirExists(dirname: string): void {
     }
 }
 
-function generateVersionInfo(platform: Platform, getPackageInfo: (baseUrl: string) => IPackageInfo): void {
+function generateVersionInfo(platform: Platform, getPackageInfo: (baseUrl: string, arch: Architecture) => string): void {
     if (!util.isFunction(getPackageInfo)) {
-        throw "getPackageInfo must be supplied.";
+        throw new Error("getPackageInfo must be supplied.");
+    }
+
+    if (!util.isObject(buildInfos.updateInfos) || !util.isString(buildInfos.updateInfos.baseUrl)) {
+        throw new Error("buildInfos.updateInfos.baseUrl must be specified.");
     }
 
     let channel: string = "public";
@@ -272,11 +311,34 @@ function generateVersionInfo(platform: Platform, getPackageInfo: (baseUrl: strin
         version: buildInfos.buildNumber
     };
 
-    let baseUrl = util.format("%s/%s/%s/", buildInfos.upgradeBaseUrl, channel, platform);
+    let baseUrl = String.format("{}/{}/{}", buildInfos.updateInfos.baseUrl, channel, platform);
+    let buildPackageInfo = null;
 
-    versionInfo[platform] = getPackageInfo(baseUrl);
+    if (util.isObject(buildInfos.updateInfos.packageInfos)) {
+        buildPackageInfo = buildInfos.updateInfos.packageInfos[platform];
+    } else if (!util.isNullOrUndefined(buildInfos.updateInfos.packageInfos)) {
+        throw new Error("Invalid value for parameter: buildInfos.updateInfos.packageInfos");
+    }
 
-    let versionInfoPath = path.resolve(path.join(buildInfos.paths.publishDir, util.format("version.%s.json", platform)));
+    if (util.isString(buildPackageInfo)) {
+        versionInfo[platform] = buildPackageInfo;
+    } else if (util.isNullOrUndefined(buildPackageInfo) || util.isObject(buildPackageInfo)) {
+        versionInfo[platform] = {};
+
+        for (let arch of buildInfos.targets[platform].archs) {
+            if (util.isNullOrUndefined(buildPackageInfo) || util.isNullOrUndefined(buildPackageInfo[arch])) {
+                versionInfo[platform][arch] = getPackageInfo(baseUrl, arch);
+            } else if (util.isString(buildPackageInfo[arch])) {
+                versionInfo[platform][arch] = String.format(buildPackageInfo[arch], baseUrl, buildInfos.buildNumber, arch);
+            } else {
+                throw new Error(String.format("Invalid value for parameter: buildInfos.updateInfos.packageInfos.{}.{}", platform, arch));
+            }
+        }
+    } else {
+        throw new Error(String.format("Invalid value for parameter: buildInfos.updateInfos.packageInfos.{}", platform));
+    }
+
+    let versionInfoPath = path.resolve(path.join(buildInfos.paths.publishDir, String.format("version.{}.json", platform)));
 
     ensureDirExists(path.dirname(versionInfoPath));
     fs.writeFileSync(versionInfoPath, JSON.stringify(versionInfo, null, '\t'));
@@ -361,7 +423,7 @@ function generateDep(depName: string, depsDir: string, packageJsonName: string):
     const depDir: string = path.resolve(path.join(depsDir, depName));
 
     if (!fs.existsSync(depDir)) {
-        throw new Error(util.format('Cannot find dependency "%s".'));
+        throw new Error(String.format('Cannot find dependency "{}".'));
     }
 
     const depJson: IPackageJson = require(path.join(depDir, packageJsonName));
@@ -384,7 +446,7 @@ function generateDep(depName: string, depsDir: string, packageJsonName: string):
     }
 
     if (util.isNullOrUndefined(depLicense)) {
-        throw new Error(util.format('Cannot find license file for dependency, "%s".', depName));
+        throw new Error(String.format('Cannot find license file for dependency, "{}".', depName));
     }
 
     return {
@@ -401,7 +463,7 @@ function generateLicensingDeps(depType: "dev" | "prod", packageFormat: "npm" | "
     }
 
     if (!fs.existsSync(depsDir)) {
-        throw new Error(util.format('depsDir "%s" does not exist.', depsDir));
+        throw new Error(String.format('depsDir "{}" does not exist.', depsDir));
     }
 
     let depNames: Array<string>;
@@ -437,7 +499,7 @@ function generateLicensingDeps(depType: "dev" | "prod", packageFormat: "npm" | "
             dep.depType = depType;
             licensingDeps.push(dep);
         } catch (error) {
-            gutil.log("Failed to generate licensing dep for package:", depName, "Error:", error.message || error);
+            gutil.log("Failed to generate licensing dep for package:", depName, "Error:", error);
             hasErrors = true;
         }
     });
@@ -475,17 +537,17 @@ function generateThirdPartyNotice(deps: Array<ILicensingDependency>, noticeFileP
         fs.appendFileSync(noticeFd, "\r\n");
 
         deps.forEach((dep, depIndex) => {
-            fs.appendFileSync(noticeFd, util.format("%d.\t%s (%s)\r\n", depIndex + 1, dep.name, dep.homepage));
+            fs.appendFileSync(noticeFd, String.format("{}.\t{} ({})\r\n", depIndex + 1, dep.name, dep.homepage));
         });
 
         for (const dep of deps) {
             fs.appendFileSync(noticeFd, "\r\n");
-            fs.appendFileSync(noticeFd, util.format("%s NOTICES AND INFORMATION BEGIN HERE\r\n", dep.name));
+            fs.appendFileSync(noticeFd, String.format("{} NOTICES AND INFORMATION BEGIN HERE\r\n", dep.name));
             fs.appendFileSync(noticeFd, "=========================================\r\n");
-            fs.appendFileSync(noticeFd, dep.license.getLicenseText() || util.format("%s License: %s", dep.license.spdxId, dep.homepage));
+            fs.appendFileSync(noticeFd, dep.license.getLicenseText() || String.format("{} License: {}", dep.license.spdxId, dep.homepage));
             fs.appendFileSync(noticeFd, "\r\n");
             fs.appendFileSync(noticeFd, "=========================================\r\n");
-            fs.appendFileSync(noticeFd, util.format("END OF %s NOTICES AND INFORMATION\r\n", dep.name));
+            fs.appendFileSync(noticeFd, String.format("END OF {} NOTICES AND INFORMATION\r\n", dep.name));
         }
     } finally {
         fs.closeSync(noticeFd);
@@ -535,16 +597,12 @@ gulp.task("Build:licenses",
         .pipe(gulp.dest(buildInfos.paths.appDir)));
 
 gulp.task("Build:All", ["Build:sfx", "Build:ts", "Build:html", "Build:node_modules", "Build:json", "Build:img", "Build:licenses"]);
-/* Common publish tasks */
 
-gulp.task("Publish:resources",
-    () => gulp.src(formGlobs(["icons/**/*.*"]))
-        .pipe(gulp.dest(path.join(buildInfos.paths.buildResDir, "icons"))));
+/* Pack tasks */
+gulp.task("Pack:update-version",
+    () => exec(String.format("npm version {} --allow-same-version", buildInfos.buildNumber)));
 
-gulp.task("Publish:update-version",
-    () => exec(util.format("npm version %s --allow-same-version", buildInfos.buildNumber)));
-
-gulp.task("Publish:licensing",
+gulp.task("Pack:licensing",
     () => {
         let msInternalDeps: Array<ILicensingDependency> = [];
         let prodDeps: Array<ILicensingDependency> = [];
@@ -568,21 +626,23 @@ gulp.task("Publish:licensing",
         generateThirdPartyNotice(prodDeps, path.join(buildInfos.paths.appDir, buildInfos.licensing.thirdPartyNoticesFileName));
     });
 
-gulp.task("Publish:prepare",
+gulp.task("Pack:prepare",
     (callback) => runSequence(
-        "Publish:update-version",
-        ["Publish:resources", "Publish:licensing"],
+        "Build:All",
+        ["Pack:update-version", "Pack:licensing"],
         callback));
 
-/* Publish tasks for Windows */
-
-gulp.task("Publish:pack-windows", ["Publish:prepare"],
+gulp.task("Pack:windows", ["Pack:prepare"],
     () => generatePackage(Platform.Windows));
 
+gulp.task("Pack:linux", ["Pack:prepare"],
+    () => generatePackage(Platform.Linux));
+
+/* Tasks for Windows */
 gulp.task("Publish:versioninfo-windows",
     () => generateVersionInfo(
         Platform.Windows,
-        (baseUrl) => <IPackageInfo>{ x86: baseUrl + util.format("setup-%s.x86.msi", buildInfos.buildNumber) }));
+        (baseUrl, arch) => String.format("{}/setup-{}.{}.msi", baseUrl, buildInfos.buildNumber, arch)));
 
 gulp.task("Publish:copy-msi.wxs",
     () => gulp.src(formGlobs(".build/msi.wxs")).pipe(gulp.dest(buildInfos.paths.buildDir)));
@@ -596,7 +656,7 @@ gulp.task("Publish:update-wix-version", ["Publish:copy-msi.wxs"],
 
 gulp.task("Publish:msi", ["Publish:update-wix-version"],
     (gcallback) => {
-        let packDirName = util.format("%s-%s-%s", buildInfos.targetExecutableName, toPackagerPlatform(Platform.Windows), convertToPackagerArch(Architecture.X86));
+        let packDirName = String.format("{}-{}-{}", buildInfos.targetExecutableName, toPackagerPlatform(Platform.Windows), convertToPackagerArch(Architecture.X86));
         let packDirPath = path.resolve(path.join(buildInfos.paths.buildDir, packDirName));
         let publishDir = path.join(buildInfos.paths.publishDir, Platform.Windows);
         let filesWixPath = path.resolve(path.join(buildInfos.paths.buildDir, "files.msi.wxs"));
@@ -604,14 +664,14 @@ gulp.task("Publish:msi", ["Publish:update-wix-version"],
         let heatPath = path.resolve("./.vendor/wix/heat.exe");
         let candlePath = path.resolve("./.vendor/wix/candle.exe");
         let lightPath = path.resolve("./.vendor/wix/light.exe");
-        let heatCmd = util.format("\"%s\" dir \"%s\" -ag -srd -cg MainComponentsGroup -dr INSTALLFOLDER -o \"%s\"", heatPath, packDirPath, filesWixPath);
-        let candleCmd = util.format("\"%s\" -arch x86 -out \"%s\\\\\" \"%s\" \"%s\"", candlePath, wxsobjDir, path.resolve("./build/msi.wxs"), filesWixPath);
+        let heatCmd = String.format("\"{}\" dir \"{}\" -ag -srd -cg MainComponentsGroup -dr INSTALLFOLDER -o \"{}\"", heatPath, packDirPath, filesWixPath);
+        let candleCmd = String.format("\"{}\" -arch x86 -out \"{}\\\\\" \"{}\" \"{}\"", candlePath, wxsobjDir, path.resolve("./build/msi.wxs"), filesWixPath);
         let lightCmd =
-            util.format(
-                "\"%s\" -b \"%s\" -spdb -out \"%s\" \"%s\" \"%s\"",
+            String.format(
+                "\"{}\" -b \"{}\" -spdb -out \"{}\" \"{}\" \"{}\"",
                 lightPath,
                 packDirPath,
-                path.resolve(path.join(publishDir, buildInfos.buildNumber ? util.format("setup-%s.x86.msi", buildInfos.buildNumber) : "setup.x86.msi")),
+                path.resolve(path.join(publishDir, buildInfos.buildNumber ? String.format("setup-{}.x86.msi", buildInfos.buildNumber) : "setup.x86.msi")),
                 path.join(wxsobjDir, "msi.wixobj"), path.join(wxsobjDir, "files.msi.wixobj"));
 
         return exec(heatCmd)
@@ -621,24 +681,11 @@ gulp.task("Publish:msi", ["Publish:update-wix-version"],
 
 gulp.task("Publish:win32",
     (callback) => runSequence(
-        "Publish:pack-windows",
+        "Pack:windows",
         ["Publish:versioninfo-windows", "Publish:msi"],
         callback));
 
-/* Publish tasks for Mac OS / OSX */
-
-gulp.task("Publish:versioninfo-macOS",
-    () => generateVersionInfo(
-        Platform.MacOs,
-        (baseUrl) =>
-            <IPackageInfo>{
-                x86: baseUrl + util.format("setup-%s.x86.msi", buildInfos.buildNumber)
-            }));
-
-gulp.task("Publish:darwin", ["Publish:prepare", "Publish:versioninfo-macOS"],
-    () => generatePackage(Platform.MacOs));
-
-/* Publish tasks for Debian-based linux */
+/* Tasks for Debian-based linux */
 function toDebArch(arch: Architecture): string {
     switch (arch) {
         case Architecture.X86:
@@ -653,7 +700,7 @@ function toDebArch(arch: Architecture): string {
 }
 
 function getDebOptions(arch: Architecture): object {
-    let packDirName = util.format("%s-%s-%s", buildInfos.targetExecutableName, toPackagerPlatform(Platform.Linux), convertToPackagerArch(arch));
+    let packDirName = String.format("{}-{}-{}", buildInfos.targetExecutableName, toPackagerPlatform(Platform.Linux), convertToPackagerArch(arch));
     let packDirPath = path.resolve(path.join(buildInfos.paths.buildDir, packDirName));
 
     return {
@@ -684,19 +731,12 @@ function getDebOptions(arch: Architecture): object {
     };
 }
 
-gulp.task("Publish:pack-linux", ["Publish:prepare"],
-    () => generatePackage(Platform.Linux));
-
-gulp.task("Publish:versioninfo-linux", ["Publish:pack-linux"],
+gulp.task("Publish:versioninfo-linux",
     () => generateVersionInfo(
         Platform.Linux,
-        (baseUrl) =>
-            <IPackageInfo>{
-                x64: baseUrl + util.format("%s_%s_%s.deb", buildInfos.targetExecutableName, buildInfos.buildNumber, toDebArch(Architecture.X64)),
-                x86: baseUrl + util.format("%s_%s_%s.deb", buildInfos.targetExecutableName, buildInfos.buildNumber, toDebArch(Architecture.X86))
-            }));
+        (baseUrl, arch) => String.format("{}/{}_{}_{}.deb", baseUrl, buildInfos.targetExecutableName, buildInfos.buildNumber, toDebArch(arch))));
 
-gulp.task("Publish:deb-x86", ["Publish:pack-linux"],
+gulp.task("Publish:deb-x86",
     (callback) => {
         let debBuilder = require('electron-installer-debian');
         let debOptions = getDebOptions(Architecture.X86);
@@ -704,7 +744,7 @@ gulp.task("Publish:deb-x86", ["Publish:pack-linux"],
         debBuilder(debOptions, callback);
     });
 
-gulp.task("Publish:deb-x64", ["Publish:pack-linux"],
+gulp.task("Publish:deb-x64",
     (callback) => {
         let debBuilder = require('electron-installer-debian');
         let debOptions = getDebOptions(Architecture.X64);
@@ -712,4 +752,8 @@ gulp.task("Publish:deb-x64", ["Publish:pack-linux"],
         debBuilder(debOptions, callback);
     });
 
-gulp.task("Publish:linux", ["Publish:versioninfo-linux", "Publish:deb-x86", "Publish:deb-x64"]);
+gulp.task("Publish:linux",
+    (callback) => runSequence(
+        "Pack:linux",
+        ["Publish:versioninfo-linux", "Publish:deb-x86", "Publish:deb-x64"],
+        callback));

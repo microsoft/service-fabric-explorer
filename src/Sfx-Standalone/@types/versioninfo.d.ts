@@ -1,5 +1,5 @@
 interface IPackageInfo {
-    x86: string;
+    x86?: string;
     x64?: string;
 }
 

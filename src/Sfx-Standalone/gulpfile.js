@@ -81,31 +81,21 @@ gulp.task("Build", ["Import:gulp-ts"],
         runSequence("Build:All", callback);
     });
 
-gulp.task("Clean", ["Import:gulp-ts"],
+gulp.task("Clean",
     function () {
         return del([
             buildInfos.paths.buildDir,
             buildInfos.paths.publishDir]);
     });
 
-gulp.task("Publish", ["Clean-Build", "Import:gulp-ts"],
+gulp.task("Pack", ["Clean", "Import:gulp-ts"],
+    function (callback) {
+        runSequence("Pack:" + process.platform, callback);
+    });
+
+gulp.task("Publish", ["Clean", "Import:gulp-ts"],
     function (callback) {
         runSequence("Publish:" + process.platform, callback);
-    });
-
-gulp.task("Publish-Linux", ["Clean-Build", "Import:gulp-ts"],
-    function (callback) {
-        runSequence("Publish:linux", callback);
-    });
-
-gulp.task("Publish-Windows", ["Clean-Build", "Import:gulp-ts"],
-    function (callback) {
-        runSequence("Publish:win32", callback);
-    });
-
-gulp.task("Publish-macOS", ["Clean-Build", "Import:gulp-ts"],
-    function (callback) {
-        runSequence("Publish:darwin", callback);
     });
 
 gulp.task("Clean-Build",
