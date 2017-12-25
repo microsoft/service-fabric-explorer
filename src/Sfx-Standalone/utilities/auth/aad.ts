@@ -9,7 +9,7 @@ export function handle(window: BrowserWindow) {
         let targetClusterUrl = Url.parse(global["TargetClusterUrl"]);
 
         if (newUrl.hostname.toUpperCase() === targetClusterUrl.hostname.toUpperCase()) {
-            window.loadURL(resolve({ path: "index.html", hash: newUrl.hash }));
+            window.loadURL(resolve({ path: "sfx/index.html", hash: newUrl.hash }, true));
         }
     });
 }
