@@ -13,12 +13,22 @@ import { logWarning, logVerbose, logInfo, logError } from "./log";
 import * as httpsClient from "./httpsClient";
 
 function requestVersionInfo(callback: (versionInfo: IVersionInfo) => void): void {
+    const prereleases = semver.prerelease(app.getVersion());
+    let updateChannel: string;
+
+    if (!util.isNullOrUndefined(prereleases) && prereleases.length > 0) {
+        updateChannel = prereleases[0];
+    } else {
+        updateChannel = settings.default.get("update/defaultChannel") || "stable";
+    }
+
+    const baseUrl = settings.default.get("update/baseUrl");
     const versionInfoUrl =
         util.format(
             "%s/%s/%s",
-            settings.default.get("update/baseUrl"),  // Update Base Url
-            semver.prerelease(app.getVersion()),     // Channel
-            env.platform);                           // Platform
+            baseUrl,       // Update Base Url
+            updateChannel, // Channel
+            env.platform); // Platform
 
     logInfo("Retrieving version.json: %s", versionInfoUrl);
     httpsClient.get(

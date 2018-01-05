@@ -1,6 +1,7 @@
 {
     "update": {
-        "baseUrl": "https://aka.ms/sfx-update"
+        "baseUrl": "https://aka.ms/sfx-update",
+        "defaultChannel": "stable"
     },
     "logging": {
         "loggers": {
