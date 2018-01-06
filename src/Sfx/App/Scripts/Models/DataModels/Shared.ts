@@ -80,8 +80,16 @@ module Sfx {
             return this.raw.ClusterCapacity && +this.raw.ClusterCapacity > 0;
         }
 
+        public get isResourceGovernanceMetric(): boolean {
+            return _.startsWith(this.raw.Name, "servicefabric:/_");
+        }
+
         public get isSystemMetric(): boolean {
             return _.startsWith(this.raw.Name, "__") && _.endsWith(this.raw.Name, "__");
+        }
+
+        public get isLoadMetric(): boolean {
+            return !(this.isResourceGovernanceMetric || this.isSystemMetric);
         }
 
         public get loadCapacityRatio(): number {
@@ -90,6 +98,10 @@ module Sfx {
 
         public get loadCapacityRatioString(): string {
             return (this.loadCapacityRatio * 100).toFixed(1) + "%";
+        }
+
+        public get displayName(): string {
+            return this.name.replace(/^servicefabric:\/_/, "Reserved ");
         }
 
         public constructor(data: DataService, raw: IRawLoadMetricInformation) {

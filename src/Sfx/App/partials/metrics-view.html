@@ -1,19 +1,12 @@
 ﻿<div class="metrics-view">
-    <div class="metrics-view-options">
+    <div class="metrics-column-container">
         <div class="checkbox-container">
+            <label><input type="checkbox" ng-model="metrics.showResourceGovernanceMetrics" /><label><!-- this is left empty intentionally --></label>Show resource capacity</label>
+            <label><input type="checkbox" ng-model="metrics.showLoadMetrics" /><label><!-- this is left empty intentionally --></label>Show load metrics</label>
             <label><input type="checkbox" ng-model="metrics.showSystemMetrics" /><label><!-- this is left empty intentionally --></label>Show system metrics</label>
         </div>
-        <div class="checkbox-container" ng-if="metrics.selectedMetrics.length > 0 && metrics.selectedMetrics[0].hasCapacity">
-            <label><input type="checkbox" ng-model="metrics.normalizeMetricsData" /><label><!-- this is left empty intentionally --></label>Normalize metric data</label>
-        </div>
-        <div class="metrics-view-expander" ng-if="metrics.isExpanderEnabled">
-            <a class="bowtie-icon bowtie-view-full-screen-exit" title="Collapse the chart" ng-if="metrics.isFullScreen" ng-click="metrics.toggleFullScreen(false)"></a>
-            <a class="bowtie-icon bowtie-view-full-screen" title="Expand the chart" ng-if="!metrics.isFullScreen" ng-click="metrics.toggleFullScreen(true)"></a>
-        </div>
-    </div>
-    <div class="metrics-column-container">
         <div class="metric-column-title">
-            <span class="pull-right">Capacity</span>
+            <span class="pull-right">Used Capacity</span>
             <span>Metric Name</span>
         </div>
         <div class="metrics-column">
@@ -27,13 +20,22 @@
                  tooltip-popup-delay="600"
                  ng-repeat="metric in metrics.filteredMetrics | orderBy: ['!hasCapacity', 'isSystemCapacity'] track by metric.name">
                 <div class="metric-legend" ng-style="{'background-color': metrics.getLegendColor(metric.name)}"></div>
-                <div class="metric-title">{{::metric.name}}</div>
+                <div class="metric-title">{{::metric.displayName}}</div>
                 <div class="metric-ratio" is-capacity-violation="{{metric.hasCapacity && metric.raw.IsClusterCapacityViolation}}">{{metric.hasCapacity? metric.loadCapacityRatioString : "N/A"}}</div>
             </div>
         </div>
     </div>
 
-    <div sfx-metrics-bar-chart class="metrics-chart"></div>
+    <div class="chart-column">
+        <div class="checkbox-container">
+            <label ng-if="metrics.selectedMetrics.length > 0 && metrics.selectedMetrics[0].hasCapacity"><input type="checkbox" ng-model="metrics.normalizeMetricsData" /><label><!-- this is left empty intentionally --></label>Normalize metric data</label>
+        </div>
+        <div class="metrics-view-expander" ng-if="metrics.isExpanderEnabled">
+            <a class="bowtie-icon bowtie-view-full-screen-exit" title="Collapse the chart" ng-if="metrics.isFullScreen" ng-click="metrics.toggleFullScreen(false)"></a>
+            <a class="bowtie-icon bowtie-view-full-screen" title="Expand the chart" ng-if="!metrics.isFullScreen" ng-click="metrics.toggleFullScreen(true)"></a>
+        </div>
+        <div sfx-metrics-bar-chart class="metrics-chart"></div>
+    </div>
 
     <script type="text/ng-template" id="metric-tooltip.html">
         <div ng-if="metric.hasCapacity && metric.raw.IsClusterCapacityViolation"><b>Capacity Violation</b></div>
