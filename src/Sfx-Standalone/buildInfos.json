@@ -21,7 +21,7 @@
             "windows": {
                 "x86": ""
             },
-            "linux": "https://aka.ms/sfx-update/linux"
+            "linux": "https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-visualizing-your-cluster"
         }
     },
     "targets": {
