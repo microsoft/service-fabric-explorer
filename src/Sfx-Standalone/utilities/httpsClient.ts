@@ -371,8 +371,10 @@ export function createFileResponseHandler(fd: number, autoClose: boolean, callba
 
             response
                 .pipe(fileStream)
-                .on("finish", () => fileStream.end());
-            callback(null);
+                .on("finish", () => {
+                    fileStream.end();
+                    callback(null);
+                });
         } else {
             callback(newError("Unexpected response: \nHTTP %s %s\n%s", response.statusCode, response.statusMessage, response.rawHeaders.join("\n")));
         }
