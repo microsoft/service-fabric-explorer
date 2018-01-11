@@ -2,14 +2,17 @@
   "version": "1.0.0",
   "name": "sfxtest",
   "private": true,
+  "scripts": {
+    "bower-install": "bower install --config.interactive=false -s --allow-root"
+  },
   "devDependencies": {
-    "@types/jquery": "2.0.41",
     "@types/angular": "1.5.23",
     "@types/angular-mocks": "1.5.9",
     "@types/angular-route": "1.3.3",
     "@types/angular-sanitize": "1.3.4",
     "@types/angular-ui-bootstrap": "0.13.41",
     "@types/jasmine": "2.5.45",
+    "@types/jquery": "2.0.41",
     "bower": "1.8.0",
     "del": "2.2.2",
     "gulp": "3.9.1",
@@ -20,14 +23,17 @@
     "jasmine-core": "2.5.2",
     "jasmine-spec-reporter": "3.2.0",
     "karma": "1.5.0",
-    "karma-chrome-launcher": "2.0.0",
     "karma-htmlfile-reporter": "0.3.5",
     "karma-ie-launcher": "1.0.0",
     "karma-jasmine": "1.1.0",
     "karma-sourcemap-loader": "0.3.7",
     "karma-spec-reporter": "0.0.30",
-    "typescript": "2.2.1",
     "protractor": "5.1.1",
-    "protractor-jasmine2-screenshot-reporter": "0.3.3"
+    "protractor-jasmine2-screenshot-reporter": "0.3.3",
+    "puppeteer": "^0.13.0",
+    "typescript": "2.2.1"
+  },
+  "dependencies": {
+    "karma-chrome-launcher": "^2.2.0"
   }
 }

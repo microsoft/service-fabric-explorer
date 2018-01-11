@@ -1,5 +1,6 @@
 // Karma configuration
 // Generated on Tue Jan 05 2016 15:52:42 GMT-0800 (Pacific Standard Time)
+process.env.CHROME_BIN = require('puppeteer').executablePath();
 
 module.exports = function (config) {
     config.set({
@@ -72,7 +73,7 @@ module.exports = function (config) {
                 flags: ["-extoff"]
             },
             Chrome_without_security: {
-                base: "Chrome",
+                base: "ChromeHeadless",
                 flags: ["--test-type", "--disable-web-security", "--no-sandbox"]
             }
         },
