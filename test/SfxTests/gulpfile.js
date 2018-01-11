@@ -86,7 +86,7 @@ gulp.task("ut", ["build-ut"], function (done) {
     launchKarma(true, done, ["Chrome", "IE"]);
 });
 
-gulp.task("automation: UnitTests", function (done){
+gulp.task("automation: UnitTests", ["build-ut"], function (done){
     launchKarma(true, done)
 });
 
