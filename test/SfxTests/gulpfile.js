@@ -38,11 +38,11 @@ paths.specs = {
 //-----------------------------------------------------------------------------
 
 gulp.task("build-ut", function () {
-    buildSpec(paths.specs.ut);
+    return buildSpec(paths.specs.ut);
 });
 
 gulp.task("build-e2e", function () {
-    buildSpec(paths.specs.e2e);
+    return buildSpec(paths.specs.e2e);
 });
 
 gulp.task("clean-build", ["clean", "build-ut", "build-e2e"]);
@@ -99,8 +99,8 @@ gulp.task("webdriver_update", plugins.protractor.webdriver_update_specific({
 gulp.task("webdriver_standalone", ["webdriver_update"], plugins.protractor.webdriver_standalone);
 
 // Run E2E tests
-gulp.task("e2e", ["build-e2e", "webdriver_update"], function (cb) {
-    gulp.src([])
+gulp.task("e2e", ["build-e2e", "webdriver_update"], function () {
+    return gulp.src([])
         .pipe(plugins.protractor.protractor({
             configFile: "protractor.conf.js"
         }))
