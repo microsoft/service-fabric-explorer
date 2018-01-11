@@ -385,9 +385,6 @@ module Sfx {
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
-            // TODO: remove this query after the following item is finished by service fabric team.
-            //   RDBug 5348560: [DCR] Change existing get deployed entity list to include health state
-            //   http://vstfrd.redmond.corp.microsoft.com:8080/Azure/RD/_workitems#_a=edit&id=5348560
             // The deployed application does not include "HealthState" information by default.
             // Trigger a health chunk query to fill the health state information.
             if (this.length > 0) {
@@ -429,9 +426,6 @@ module Sfx {
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
-            // TODO: remove this query after the following item is finished by service fabric team.
-            //   RDBug 5348560: [DCR] Change existing get deployed entity list to include health state
-            //   http://vstfrd.redmond.corp.microsoft.com:8080/Azure/RD/_workitems#_a=edit&id=5348560
             // The deployed application does not include "HealthState" information by default.
             // Trigger a health chunk query to fill the health state information.
             if (this.length > 0) {
