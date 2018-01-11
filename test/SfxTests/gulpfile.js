@@ -24,12 +24,6 @@ paths.specs = {
         tsConfig: "App/ut/tsconfig.json",
         target: "ut.specs.js",
         dest: paths.webroot
-    },
-    e2e: {
-        src: "App/e2e/**/*.ts",
-        tsConfig: "App/e2e/tsconfig.json",
-        target: "e2e.specs.js",
-        dest: paths.webroot
     }
 };
 
@@ -41,11 +35,7 @@ gulp.task("build-ut", function () {
     return buildSpec(paths.specs.ut);
 });
 
-gulp.task("build-e2e", function () {
-    return buildSpec(paths.specs.e2e);
-});
-
-gulp.task("clean-build", ["clean", "build-ut", "build-e2e"]);
+gulp.task("clean-build", ["clean", "build-ut"]);
 
 function buildSpec(path) {
     var tsProject = plugins.typescript.createProject(path.tsConfig, { outFile: path.target });
@@ -69,7 +59,6 @@ gulp.task("clean", function () {
 //-----------------------------------------------------------------------------
 gulp.task("watch-test", ["clean-build"], function () {
     gulp.watch(paths.specs.ut.src, ["build-ut"]);
-    gulp.watch(paths.specs.e2e.src, ["build-e2e"]);
 });
 
 //-----------------------------------------------------------------------------
@@ -97,17 +86,6 @@ gulp.task("webdriver_update", plugins.protractor.webdriver_update_specific({
 
 // Start the standalone selenium server
 gulp.task("webdriver_standalone", ["webdriver_update"], plugins.protractor.webdriver_standalone);
-
-// Run E2E tests
-gulp.task("e2e", ["build-e2e", "webdriver_update"], function () {
-    return gulp.src([])
-        .pipe(plugins.protractor.protractor({
-            configFile: "protractor.conf.js"
-        }))
-        .on("error", function (e) {
-            console.log(e);
-        });
-});
 
 function launchKarma(singleRun, done, browsers, reporters) {
     new plugins.karma.Server({
