@@ -87,7 +87,7 @@ gulp.task("ut", ["build-ut"], function (done) {
 });
 
 gulp.task("automation:unittests", ["build-ut"], function (done){
-    launchKarma(true, done, ["spec", "junit"]);
+    launchKarma(true, done, ["IE_no_addons", "Chrome_without_security"], ["spec", "junit"]);
 });
 
 // Downloads the selenium webdriver
