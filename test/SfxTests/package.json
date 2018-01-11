@@ -26,6 +26,7 @@
     "karma-htmlfile-reporter": "0.3.5",
     "karma-ie-launcher": "1.0.0",
     "karma-jasmine": "1.1.0",
+    "karma-junit-reporter": "^1.2.0",
     "karma-sourcemap-loader": "0.3.7",
     "karma-spec-reporter": "0.0.30",
     "protractor": "5.1.1",

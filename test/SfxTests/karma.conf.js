@@ -44,7 +44,7 @@ module.exports = function (config) {
         // test results reporter to use
         // possible values: "dots", "progress"
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ["spec", "html"],
+        reporters: ["spec", "html", "junit"],
 
 
         // web server port
@@ -87,7 +87,11 @@ module.exports = function (config) {
         concurrency: Infinity,
 
         htmlReporter: {
-            outputFile: "../../artifacts/karma_report.html"
+            outputFile: "results/karma_report.html"
+        },
+
+        junitReporter: {
+            outputDir: "results"
         }
     });
 };

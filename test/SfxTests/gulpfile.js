@@ -61,7 +61,7 @@ function buildSpec(path) {
 // Clean tasks
 //-----------------------------------------------------------------------------
 gulp.task("clean", function () {
-    return plugins.del.sync([paths.webroot + "/*"]);
+    return plugins.del.sync([paths.webroot, "results"]);
 });
 
 //-----------------------------------------------------------------------------
@@ -83,11 +83,11 @@ gulp.task("karma", function (done) {
 
 // Run unit tests
 gulp.task("ut", ["build-ut"], function (done) {
-    launchKarma(true, done, ["Chrome", "IE"]);
+    launchKarma(true, done, ["Chrome", "IE"], ["spec", "html"]);
 });
 
 gulp.task("automation:unittests", ["build-ut"], function (done){
-    launchKarma(true, done)
+    launchKarma(true, done, ["spec", "junit"]);
 });
 
 // Downloads the selenium webdriver
@@ -109,10 +109,11 @@ gulp.task("e2e", ["build-e2e", "webdriver_update"], function (cb) {
         });
 });
 
-function launchKarma(singleRun, done, browsers) {
+function launchKarma(singleRun, done, browsers, reporters) {
     new plugins.karma.Server({
         configFile: __dirname + "/karma.conf.js",
         browsers: browsers,
+        reporters: reporters,
         singleRun: singleRun
     }, function (err) {
         done();
