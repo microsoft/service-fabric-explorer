@@ -1,5 +1,6 @@
 // Karma configuration
 // Generated on Tue Jan 05 2016 15:52:42 GMT-0800 (Pacific Standard Time)
+process.env.CHROME_BIN = require('puppeteer').executablePath();
 
 module.exports = function (config) {
     config.set({
@@ -43,7 +44,7 @@ module.exports = function (config) {
         // test results reporter to use
         // possible values: "dots", "progress"
         // available reporters: https://npmjs.org/browse/keyword/karma-reporter
-        reporters: ["spec", "html"],
+        reporters: ["spec", "html", "junit"],
 
 
         // web server port
@@ -72,7 +73,7 @@ module.exports = function (config) {
                 flags: ["-extoff"]
             },
             Chrome_without_security: {
-                base: "Chrome",
+                base: "ChromeHeadless",
                 flags: ["--test-type", "--disable-web-security", "--no-sandbox"]
             }
         },
@@ -86,7 +87,11 @@ module.exports = function (config) {
         concurrency: Infinity,
 
         htmlReporter: {
-            outputFile: "../../artifacts/karma_report.html"
+            outputFile: "results/karma_report.html"
+        },
+
+        junitReporter: {
+            outputDir: "results"
         }
     });
 };
