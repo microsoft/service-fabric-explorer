@@ -46,6 +46,7 @@ module Sfx {
 
                             if (StandaloneIntegration.clusterUrl !== "") {
                                 aadConfigOptions.redirectUri = StandaloneIntegration.clusterUrl + "/Explorer/index.html";
+                                aadConfigOptions.postLogoutRedirectUri = StandaloneIntegration.clusterUrl + "/Explorer/index.html";
                             }
 
                             if (adalData.login) {
