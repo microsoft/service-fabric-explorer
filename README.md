@@ -33,7 +33,7 @@ To develop Service Fabric Explorer, the following components are required.
 The main IDE for Service Fabric Explorer development is VSCode but you can use whatever editor to develop. Here's a list of common IDE used.
 
 * VSCode: https://code.visualstudio.com/
-  *[Recommended] VSCode is a cross-platform editor on Windows, Linux and macOS.*
+*[Recommended] VSCode is a cross-platform editor on Windows, Linux and macOS.*
 * Visual Studio: https://www.visualstudio.com/
 
 ### Set up the development environment
