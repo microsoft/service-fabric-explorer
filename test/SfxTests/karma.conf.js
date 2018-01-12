@@ -1,3 +1,8 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+//-----------------------------------------------------------------------------
+
 // Karma configuration
 // Generated on Tue Jan 05 2016 15:52:42 GMT-0800 (Pacific Standard Time)
 process.env.CHROME_BIN = require('puppeteer').executablePath();

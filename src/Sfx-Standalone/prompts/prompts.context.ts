@@ -1,3 +1,8 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+//-----------------------------------------------------------------------------
+
 import { remote, BrowserWindow, ipcRenderer } from "electron";
 
 import { IPromptOptions, EventNames, CommunicatorChannelName } from "./prompts.common";

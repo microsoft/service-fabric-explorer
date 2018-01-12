@@ -1,3 +1,8 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+//-----------------------------------------------------------------------------
+
 var gulp = require("gulp");
 var typescript = require("gulp-typescript");
 var gutil = require("gulp-util");
