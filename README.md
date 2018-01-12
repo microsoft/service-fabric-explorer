@@ -19,9 +19,70 @@ For more information about the application and how to use it: https://docs.micro
 
 Service Fabric Explorer consists of two main components, an Angular based application (Sfx) and an Electron part to host the Angular application (Sfx-Stanalone).
 
-The Sfx component is setup as a Visual Studio 2017 solution, the Sfx-Standalone component has VS Code launch and build scripts.
+### Preparing the development machine
 
-More developer help and documentation will come soon to this place...
+To develop Service Fabric Explorer, the following components are required.
+
+* Git: https://git-scm.com/
+* Python 2: https://www.python.org/
+* Node.js (LTS is preferred): https://nodejs.org/
+* C++ Compiler
+   * Windows: Visual C++ https://www.visualstudio.com/
+   * Ubuntu: `sudo apt-get install -y build-essential`
+
+The main IDE for Service Fabric Explorer development is VSCode but you can use whatever editor to develop. Here's a list of common IDE used.
+
+* VSCode: https://code.visualstudio.com/
+  *[Recommended] VSCode is a cross-platform editor on Windows, Linux and macOS.*
+* Visual Studio: https://www.visualstudio.com/
+
+### Set up the development environment
+
+1. Clone the master branch.
+`git clone https://github.com/Azure/service-fabric-explorer.git <path to the local folder>`
+2. Install project dependencies: *This can be done inside VSCode or use a console window.*
+   1. [SFX] Navigate to `src/Sfx` and run the following scripts.
+   ```Shell
+   npm install
+   npm run bower-install
+   ```
+   2. [SFX Standalone] Navigate to `src/Sfx-Standalone` and run the following scripts.
+   ```Shell
+   npm install
+   ```
+   3. [SFX Tests] Navigate to `test/SfxTests` and run the following scripts.
+   ```Shell
+   npm install
+   npm run bower-install
+   ```
+3. Build projects
+   * VSCode
+      1. Open `src/Sfx`, `src/Sfx-Standalone` and `test/SfxTests` in VSCode with multiple-root workspce.
+      2. Run following tasks orderly.
+         * `clean-build` for Sfx
+         * `Clean-Build` for Sfx-Standalone
+         * `clean-build` for SfxTests
+   * Console
+      1. Install Gulp globally on the machine.
+      ```Shell
+      npm install gulp -g
+      ```
+      2. [SFX] Navigate to `src/Sfx` and run the following scripts.
+      ```Shell
+      gulp clean-build
+      ```
+      3. [SFX Standalone] Navigate to `src/Sfx-Standalone` and run the following scripts.
+      ```Shell
+      gulp Clean-Build
+      ```
+      4. [SFX Tests] Navigate to `test/SfxTests` and run the following scripts.
+      ```Shell
+      gulp clean-build
+      ```
+
+### Run unit tests for Sfx
+
+Open `test/SfxTests` in VSCode or Navigate to `test/SfxTests` in console and run the `ut` gulp task.
 
 ## Issues and questions
 
