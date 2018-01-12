@@ -1,0 +1,18 @@
+﻿{
+  "compilerOptions": {
+    "target": "es5",
+    "removeComments": true,
+    "declaration": true,
+    "types": [
+      "jquery",
+      "bootstrap",
+      "angular",
+      "angular-animate",
+      "angular-route",
+      "angular-sanitize",
+      "angular-ui-bootstrap",
+      "lodash",
+      "d3"
+    ]
+  }
+}

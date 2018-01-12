@@ -1,0 +1,204 @@
+﻿@import "../Base/_config.scss";
+
+// Keep the chart size consistent with MetricsBarChartDirective.ts
+$metric-chart-height: 630px;
+$metric-chart-body-width: 760px;
+$metric-chart-left-width: 80px;
+$metric-chart-right-width: 100px;
+$metric-column-width: 250px;
+$metric-column-height: 428px;
+$metric-container-margin: 12px;
+$metric-container-padding: 6px;
+
+$metric-capacity-violation-fill-color: $badge-error-color;
+$metric-capacity-violation-stroke-color: $badge-error-color;
+$metrics-view-expander-hover-color: lighten($essen-pane-background-color, 10%);
+
+.metrics-view {
+    white-space: nowrap;
+
+    .chart-column {
+        display: inline-block;
+        vertical-align: top;
+        width: $metric-chart-left-width + $metric-chart-body-width;
+
+        .checkbox-container {
+            display: inline-block;
+            margin-left: 65px;
+            margin-bottom: $metric-container-margin;
+            height: 19px;
+
+            &:not(:first-child) {
+                margin-left: 130px;
+            }
+        }
+
+        .metrics-view-expander {
+            float: right;
+
+            .bowtie-icon {
+                padding: 4px;
+
+                &:hover, &:active {
+                    background-color: $metrics-view-expander-hover-color;
+                }
+            }
+        }
+
+        .metrics-chart {
+            height: $metric-chart-height;
+
+            text {
+                fill: $chart-text-color;
+            }
+
+            .axis path, line {
+                fill: none;
+                stroke: $chart-text-color;
+                shape-rendering: crispEdges;
+            }
+
+            .metrics-chart-left {
+                display: inline-block;
+                vertical-align: top;
+                width: $metric-chart-left-width;
+                height: $metric-chart-height;
+            }
+
+            .metrics-chart-right {
+                display: inline-block;
+                vertical-align: top;
+                width: $metric-chart-right-width;
+                height: $metric-chart-height;
+            }
+
+            .metrics-chart-body-container {
+                display: inline-block;
+                vertical-align: top;
+                position: relative;
+                width: $metric-chart-body-width;
+                height: $metric-chart-height;
+                overflow-x: auto;
+                overflow-y: visible;
+
+                .metrics-chart-body {
+                    // leave 25 pixel for the horizontal scroll bar
+                    height: $metric-chart-height - 25px;
+
+                    .metric:hover {
+                        fill: $azure-blue !important;
+                    }
+
+                    .metric-rect {
+                        shape-rendering: crispEdges;
+
+                        &[is-capacity-violation=true] {
+                            fill: $metric-capacity-violation-fill-color;
+                        }
+
+                        &[is-capacity-violation=false] {
+                            fill: unset;
+                        }
+                    }
+
+                    .metric-cap-rect {
+                        shape-rendering: crispEdges;
+                        fill: $essen-pane-background-color;
+                        fill-opacity: 1;
+
+                        &:hover {
+                            fill: $azure-blue !important;
+                            fill-opacity: 0.4;
+                        }
+
+                        &[is-capacity-violation=true] {
+                            stroke: lighten($metric-capacity-violation-stroke-color, 20%);
+                            fill: lighten($metric-capacity-violation-fill-color, 30%);
+                            fill-opacity: 0.4;
+                        }
+                    }
+
+                    .mean-line {
+                        stroke: $metric-capacity-violation-stroke-color;
+                    }
+
+                    .mean-label {
+                        fill: $chart-text-color;
+                    }
+                }
+            }
+        }
+    }
+
+    .metrics-column-container {
+        display: inline-block;
+
+        .checkbox-container {
+            display: inline-block;
+            margin-bottom: $metric-container-margin;
+
+            &:not(:first-child) {
+                margin-left: 130px;
+            }
+
+            label {
+                display: block;
+            }
+        }
+
+        .metric-column-title {
+            margin-bottom: $metric-container-margin;
+            padding-bottom: $metric-container-padding;
+            border-bottom: 1px solid $input-border-color;
+            margin-right: $metric-container-margin;
+        }
+
+        .metrics-column {
+            height: $metric-column-height;
+            overflow-x: hidden;
+            width: $metric-column-width;
+            padding-right: $metric-container-margin;
+
+            .metric-container {
+                margin-bottom: $metric-container-margin;
+                padding: $metric-container-padding;
+                background-color: $essen-pane-background-color;
+                border-style: solid;
+                border-width: 2px;
+                border-color: transparent;
+                cursor: pointer;
+                position: relative;
+
+                &.selected {
+                    border-color: $azure-blue;
+                }
+
+                .metric-legend {
+                    width: 16px;
+                    height: 16px;
+                    margin-top: 2px;
+                    float: left;
+                }
+
+                .metric-title {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    padding-left: $metric-container-padding;
+                    padding-right: 25px;
+                }
+
+                .metric-ratio {
+                    position: absolute;
+                    right: $metric-container-padding;
+                    top: 47%;
+                    transform: translate(0, -50%);
+
+                    &[is-capacity-violation=true] {
+                        color: $badge-error-color;
+                    }
+                }
+            }
+        }
+    }
+}

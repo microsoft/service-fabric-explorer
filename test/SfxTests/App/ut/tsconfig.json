@@ -1,0 +1,14 @@
+﻿{
+  "compilerOptions": {
+    "target": "es5",
+    "removeComments": true,
+    "types": [
+      "angular",
+      "angular-route",
+      "angular-sanitize",
+      "angular-ui-bootstrap",
+      "angular-mocks",
+      "jasmine"
+    ]
+  }
+}

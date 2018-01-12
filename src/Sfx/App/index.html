@@ -1,0 +1,190 @@
+﻿<!DOCTYPE html>
+<!-- NOTE: We no longer have ng-app in the html tag,
+     as we want to control the Angular bootstrapping
+     until after our query against the cluster.-->
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="version" content="{{::SfxVersion}}">
+    <meta name="build" content="{{::SfxBuild}}">
+    <title>Service Fabric Explorer</title>
+    <link rel="icon" type="image/png" href="images/favicon.png" />
+
+    <!-- Make sure ng-cloak gets processed first so users do not see flashing binding template -->
+    <style>
+        [ng-cloak], .ng-cloak, .ng-hide {
+            display: none !important;
+        }
+    </style>
+
+    <!-- CSS imports -->
+    <link href="css/lib.min.css" rel="stylesheet" />
+    <link href="css/dark.min.css" rel="stylesheet" sfx-theme-import />
+</head>
+<body ng-cloak ng-show="authCtrl.isApplicationBootstrapped" ng-controller="AuthenticationController as authCtrl">
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-inverse navbar-custom navbar-fixed-top" ng-controller="NavbarController as navbarCtrl">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand navbar-brand-azure" href="http://aka.ms/portalsfx" target="_blank">Microsoft Azure</a>
+                <!-- Use inline style to limit the icon size to prevent a huge icon show up in browser before css is downloaded -->
+                <a class="navbar-brand navbar-brand-icon" href="#" ng-click="navbarCtrl.navigateToCluster()"><img style="width: 24px" src="images/favicon.svg" title="Service Fabric Explorer" /></a>
+                <a class="navbar-brand navbar-brand-title" href="#" ng-click="navbarCtrl.navigateToCluster()">Service Fabric Explorer</a>
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-right-control">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-right-control">
+                <div class="navbar-control-section navbar-right">
+                    <div class="slider-control" ng-controller="RefreshSliderController as refreshCtrl">
+                        <span class="slider-title" id="refresh-rate-title">REFRESH RATE</span>
+                        <span class="slider-label" id="refresh-rate-label" ng-if="refreshCtrl.refreshRate > 0">{{refreshCtrl.refreshRate}}s</span>
+                        <span class="slider-label" id="slider-min-label">OFF</span>
+                        <sfx-slider min-label-id="slider-min-label" max-label-id="slider-max-label" class="slider"
+                                    title="Change how often content is updated."></sfx-slider>
+                        <span class="slider-label" id="slider-max-label">FAST</span>
+                        <a class="dropdown-toggle dark-background-link bowtie-icon bowtie-navigate-refresh"
+                           ng-class="{'disabled rotate': navbarCtrl.isRefreshing}" ng-click="navbarCtrl.refreshAll()"></a>
+                    </div>
+
+                    <div class="settings-control dropdown">
+                        <a class="dropdown-toggle dark-background-link bowtie-icon bowtie-settings-gear" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></a>
+                        <!-- use inline style to work around IE bug that list-style=none gets ignored for first load -->
+                        <ul class="dropdown-menu dropdown-menu-right" style="list-style: none" ng-controller="SettingsController as settingsCtrl">
+                            <li ng-controller="ThemeController as themeCtrl">
+                                <div class="settings-item-title">Choose a theme</div>
+                                <div class="choose-theme-container">
+                                    <img ng-class="{'selected': themeCtrl.getActiveThemeName() === 'dark'}"
+                                         ng-click="themeCtrl.changeToTheme('dark'); $event.stopPropagation()"
+                                         title="Dark" src="images/dark-theme.png" />
+                                    <img ng-class="{'selected': themeCtrl.getActiveThemeName() === 'light'}"
+                                         ng-click="themeCtrl.changeToTheme('light'); $event.stopPropagation()"
+                                         title="Light" src="images/light-theme.png" />
+                                </div>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <span class="settings-item-title">Display items per page: </span>
+                                <input class="input-flat dark-bg" autocomplete="off" onkeypress="return event.charCode >= 48 && event.charCode <= 57" type="number"
+                                       ng-model="settingsCtrl.settings.paginationLimit" ng-model-options="{ updateOn: 'blur' }" />
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li class="hoverable" ng-click="navbarCtrl.openPrivacyLink()">
+                                <span>Privacy and Cookies</span>
+                                <i class="bowtie-icon bowtie-navigate-external"></i>
+                            </li>
+                            <li class="hoverable" ng-click="navbarCtrl.openSuggestionLink()">
+                                <span>Suggest an improvement</span>
+                                <i class="bowtie-icon bowtie-navigate-external"></i>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <div class="user-control dropdown" ng-if="authCtrl.isAadAuthenticated && !anthCtrl.isStandalone">
+                        <div class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            {{authCtrl.userName}}
+                            <i class="user-icon bowtie-icon bowtie-user"></i>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-right" style="list-style: none">
+                            <li class="hoverable" ng-click="authCtrl.logOut()">
+                                <span>Sign out</span>
+                                <img class="sign-out-icon" src="images/logout.svg" />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Tree -->
+    <div id="tree" class="left-panel">
+        <div sfx-include src="'treeViewPanel'" ng-controller="TreeViewController as treeCtrl"></div>
+        <div sfx-splitter id="splitter" ng-controller="SplitterController"></div>
+    </div>
+
+    <!-- View -->
+    <div id="main" class="right-panel">
+        <div id="view-container" ng-view></div>
+    </div>
+
+    <!-- Messages -->
+    <div class="message-container" ng-controller="MessageController as msgCtrl">
+        <div ng-repeat="msg in msgCtrl.messages" class="alert alert-dismissible" role="alert"
+             ng-class="{'alert-info': msg.severity === 0, 'alert-warning': msg.severity === 1, 'alert-danger': msg.severity === 2 }">
+            <button type="button" class="close" ng-click="msgCtrl.removeMsg(msg.message)"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+            <strong ng-show="msg.severity === 0">Information:</strong>
+            <strong ng-show="msg.severity === 1">Warning:</strong>
+            <strong ng-show="msg.severity === 2">Error:</strong>
+            <span class="preserve-whitespace-wrap">{{msg.message}}</span>
+        </div>
+    </div>
+
+    <script type="text/ng-template" id="treeViewPanel">
+        <div class="tree-header">
+            <div class="toolbar container-fluid">
+                <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showOkItems}" ng-click="treeCtrl.tree.showOkItems = !treeCtrl.tree.showOkItems">
+                    <sfx-badge badge-class="'badge-ok'" text="'OK'"></sfx-badge>
+                </div>
+                <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showWarningItems}" ng-click="treeCtrl.tree.showWarningItems = !treeCtrl.tree.showWarningItems">
+                    <sfx-badge badge-class="'badge-warning'" text="'Warning'"></sfx-badge>
+                </div>
+                <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showErrorItems}" ng-click="treeCtrl.tree.showErrorItems = !treeCtrl.tree.showErrorItems">
+                    <sfx-badge badge-class="'badge-error'" text="'Error'"></sfx-badge>
+                </div>
+            </div>
+            <sfx-search-bar class="tree-search-bar" custom-class="dark-bg" placeholder="Search Cluster" model="treeCtrl.tree.searchTerm"></sfx-search-bar>
+        </div>
+
+        <div class="tree-body">
+            <div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate" ng-show="treeCtrl.tree.isLoading">
+            </div>
+
+            <div ng-show="!treeCtrl.tree.isLoading && treeCtrl.tree.isEmpty" class="informative content">
+                <p>Nothing to display</p>
+            </div>
+
+            <div ng-show="!treeCtrl.tree.isLoading && !treeCtrl.tree.isEmpty"
+                 ng-keydown="treeCtrl.tree.onKeyDown($event)" class="tree-view" tabindex="0">
+                <div sfx-tree-node node="treeCtrl.tree.childGroupViewModel"></div>
+            </div>
+        </div>
+    </script>
+
+    <!-- Nodejs integration for standalone SFX -->
+    <script type="text/javascript">
+        if (typeof require !== 'undefined'
+            && require !== null) {
+
+            window.nodeRequire = require;
+
+            delete window.require;
+            delete window.exports;
+            delete window.module;
+        }
+    </script>
+
+    <!-- Application Insights -->
+    <script type="text/javascript">
+        var appInsights = window.appInsights || function (config) {
+            function r(config) { t[config] = function () { var i = arguments; t.queue.push(function () { t[config].apply(t, i) }) } } var t = { config: config }, u = document, e = window, o = "script", s = u.createElement(o), i, f; for (s.src = config.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js", u.getElementsByTagName(o)[0].parentNode.appendChild(s), t.cookie = u.cookie, t.queue = [], i = ["Event", "Exception", "Metric", "PageView", "Trace"]; i.length;) r("track" + i.pop()); return r("setAuthenticatedUserContext"), r("clearAuthenticatedUserContext"), config.disableExceptionTracking || (i = "onerror", r("_" + i), f = e[i], e[i] = function (config, r, u, e, o) { var s = f && f(config, r, u, e, o); return s !== !0 && t["_" + i](config, r, u, e, o), s }), t
+        }({
+            instrumentationKey: "84c71119-d044-4bc2-86b3-d65a8968c241",
+            disableAjaxTracking: true,
+            disableTelemetry: true // Disable telemetry by default, which will be enabled in TelemetryService
+        });
+
+        window.appInsights = appInsights;
+    </script>
+
+    <!-- Script imports -->
+    <script src="js/lib.min.js"></script>
+    <script src="js/templates.min.js"></script>
+    <script src="js/app.min.js"></script>
+</body>
+</html>

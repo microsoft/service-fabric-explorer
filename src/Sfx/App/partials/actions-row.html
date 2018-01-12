@@ -1,0 +1,8 @@
+﻿<div class="actions-row">
+    <a href="javascript:void(0)"
+       ng-repeat="action in ::actions.collection track by action.name"
+       ng-disabled="action.running"
+       ng-click="actions.runWithTelemetry(action, source)">
+        {{ action.displayTitle }}
+    </a>
+</div>

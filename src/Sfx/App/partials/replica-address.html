@@ -1,0 +1,5 @@
+﻿<div class="detail-pane" ng-show="address">
+    <h4>Address</h4>
+    <sfx-detail-view-part ng-if="!isString" no-fixed-layout="true" data="address"></sfx-detail-view-part>
+    <span ng-if="isString" ng-bind-html="address"></span>
+</div>

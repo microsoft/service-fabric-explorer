@@ -1,0 +1,17 @@
+{
+    "update": {
+        "baseUrl": "https://aka.ms/sfx-update",
+        "defaultChannel": "stable"
+    },
+    "logging": {
+        "loggers": {
+            "appInsights": {
+                "type": "app-insights",
+                "instrumentationKey": "84c71119-d044-4bc2-86b3-d65a8968c241"
+            },
+            "console": {
+                "type": "console"
+            }
+        }
+    }
+}
