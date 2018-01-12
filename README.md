@@ -30,10 +30,10 @@ To develop Service Fabric Explorer, the following components are required.
    * Windows: Visual C++ https://www.visualstudio.com/
    * Ubuntu: `sudo apt-get install -y build-essential`
 
-The main IDE for Service Fabric Explorer development is VSCode but you can use whatever editor to develop. Here's a list of common IDE used.
+The recommended IDE for Service Fabric Explorer development is VSCode because VSCode is a cross-platform editor, which supports Windows, Linux and macOS. But you can use whatever editor to develop. 
 
-* VSCode: https://code.visualstudio.com/
-*[Recommended] VSCode is a cross-platform editor on Windows, Linux and macOS.*
+Here's a list of common IDE used.
+* VSCode: https://code.visualstudio.com/ 
 * Visual Studio: https://www.visualstudio.com/
 
 ### Set up the development environment
