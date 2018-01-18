@@ -50,6 +50,13 @@
         "dev"
       ],
       "platform": "linux"
+    },
+    "electron-installer-zip": {
+      "version": "",
+      "dependencyTypes": [
+        "dev"
+      ],
+      "platform": "darwin"
     }
   }
 }
