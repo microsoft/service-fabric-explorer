@@ -86,7 +86,7 @@ function handleGenerally(window: BrowserWindow): void {
                             certHandlingRecord.handling = false;
                             window.reload();
                         } else {
-                            electron.app.quit();
+                            electron.app.exit();
                         }
                     });
             }
