@@ -398,7 +398,7 @@ function generatePackage(platform: Platform): any {
         arch: <any>toPackagerArch(buildInfos.targets[platform].archs),
         asar: false,
         icon: path.join(buildInfos.paths.appDir, "icons/icon"),
-        name: buildInfos.targetExecutableName,
+        name: platform === Platform.MacOs ? buildInfos.productName : buildInfos.targetExecutableName,
         out: buildInfos.paths.buildDir,
         overwrite: true,
         platform: toPackagerPlatform(platform),
@@ -786,8 +786,8 @@ gulp.task("Publish:zip-darwin-x64",
         }
 
         const macZipper = require('electron-installer-zip');
-        const packDirName = String.format("{}-{}-{}", buildInfos.targetExecutableName, toPackagerPlatform(Platform.MacOs), Architecture.X64);
-        const appDirName = String.format("{}.app", buildInfos.targetExecutableName);
+        const packDirName = String.format("{}-{}-{}", buildInfos.productName, toPackagerPlatform(Platform.MacOs), Architecture.X64);
+        const appDirName = String.format("{}.app", buildInfos.productName);
 
         macZipper(
             {

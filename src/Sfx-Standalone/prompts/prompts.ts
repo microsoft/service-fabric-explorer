@@ -28,11 +28,8 @@ export default function open<TPromptResults>(
         icon: getEither(promptOptions.icon, env.getIconPath())
     });
 
-    promptWindow.setMenuBarVisibility(promptOptions.showMenu || false);
-
-    if (promptOptions.menu) {
-        promptWindow.setMenu(promptOptions.menu);
-    }
+    promptWindow.setMenuBarVisibility(getEither(promptOptions.showMenu, true));
+    promptWindow.setMenu(getEither(promptOptions.menu, null));
 
     // Size has to be set after menu settings applied, otherwise the size will be inaccurate.
     promptWindow.setContentSize(getEither(promptOptions.width, 640), getEither(promptOptions.height, 480));
