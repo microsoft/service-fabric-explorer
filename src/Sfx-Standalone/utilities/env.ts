@@ -29,7 +29,10 @@ export enum Platform {
 class Environment {
     public readonly appInstanceId: string;
 
+    private readonly menuCache: IDictionary<Menu>;
+
     constructor() {
+        this.menuCache = {};
         this.appInstanceId = settings.default.get("appInstanceId");
 
         if (util.isNullOrUndefined(this.appInstanceId)) {
@@ -114,13 +117,21 @@ class Environment {
     }
 
     public getDefaultMenu(): Menu {
-        const template = settings.default.get<Array<MenuItemConstructorOptions>>("defaultMenu/" + this.platform);
+        let menu: Menu = this.menuCache[this.platform];
 
-        if (util.isNullOrUndefined(template)) {
-            return null;
+        if (util.isNullOrUndefined(menu)) {
+            const template = settings.default.get<Array<MenuItemConstructorOptions>>("defaultMenu/" + this.platform);
+
+            if (util.isNullOrUndefined(template)) {
+                menu = null;
+            } else {
+                menu = Menu.buildFromTemplate(template);
+            }
+
+            this.menuCache[this.platform] = menu;
         }
 
-        return Menu.buildFromTemplate(template);
+        return menu;
     }
 }
 

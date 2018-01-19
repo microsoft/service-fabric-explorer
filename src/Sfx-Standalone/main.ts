@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { app, BrowserWindow, dialog, Certificate, BrowserWindowConstructorOptions } from "electron";
+import { app, BrowserWindow, dialog, Certificate, BrowserWindowConstructorOptions, Menu } from "electron";
 import * as url from "url";
 import * as uuidv5 from "uuid/v5";
 
@@ -12,7 +12,7 @@ import openConnectClusterPrompt from "./prompts/connect-cluster/prompt";
 import * as authCert from "./utilities/auth/cert";
 import * as authAad from "./utilities/auth/aad";
 import resolve from "./utilities/resolve";
-import env from "./utilities/env";
+import env, { Platform } from "./utilities/env";
 import * as update from "./utilities/update";
 import { logEvent } from "./utilities/log";
 
@@ -99,7 +99,9 @@ function createMainWindow() {
 
     let window = new BrowserWindow(windowOptions);
 
-    window.setMenuBarVisibility(false);
+    if (env.platform !== Platform.MacOs) {
+        window.setMenu(env.getDefaultMenu());
+    }
 
     handleSslCert(window);
     handleNewWindow(window);
@@ -133,11 +135,13 @@ function mainWindowStartup() {
 
     logging.initialize();
 
-    app.commandLine.appendSwitch("incognito");
-
     app.setName("Service Fabric Explorer");
 
     app.on("ready", (launchInfo) => {
+        if (env.platform === Platform.MacOs) {
+            Menu.setApplicationMenu(env.getDefaultMenu());
+        }
+
         mainWindowStartup();
         setTimeout(update.start, 1000); // Check upgrade after 1 sec.
     });

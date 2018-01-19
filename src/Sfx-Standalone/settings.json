@@ -17,6 +17,13 @@
     "defaultMenu": {
         "macos": [
             {
+                "submenu": [
+                    {
+                        "role": "quit"
+                    }
+                ]
+            },
+            {
                 "label": "Edit",
                 "submenu": [
                     {
@@ -38,9 +45,6 @@
                         "role": "paste"
                     },
                     {
-                        "role": "delete"
-                    },
-                    {
                         "role": "selectall"
                     }
                 ]
@@ -52,7 +56,7 @@
                         "role": "minimize"
                     },
                     {
-                        "role": "close"
+                        "role": "togglefullscreen"
                     }
                 ]
             }
