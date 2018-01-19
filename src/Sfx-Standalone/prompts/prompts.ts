@@ -22,6 +22,7 @@ export default function open<TPromptResults>(
         closable: getEither(promptOptions.closable, true),
         show: false,
         modal: true,
+        fullscreenable: false,
         useContentSize: true,
         resizable: getEither(promptOptions.resizable, false),
         parent: getEither(promptOptions.parentWindow, null),
@@ -29,7 +30,7 @@ export default function open<TPromptResults>(
     });
 
     promptWindow.setMenuBarVisibility(getEither(promptOptions.showMenu, true));
-    promptWindow.setMenu(getEither(promptOptions.menu, null));
+    promptWindow.setMenu(getEither(promptOptions.menu, env.getDefaultMenu()));
 
     // Size has to be set after menu settings applied, otherwise the size will be inaccurate.
     promptWindow.setContentSize(getEither(promptOptions.width, 640), getEither(promptOptions.height, 480));

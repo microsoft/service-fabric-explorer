@@ -6,6 +6,7 @@
 import { execSync } from "child_process";
 import * as uuidv4 from "uuid/v4";
 import * as util from "util";
+import { Menu, MenuItemConstructorOptions } from "electron";
 
 import { local } from "./resolve";
 import error from "./errorUtil";
@@ -110,6 +111,16 @@ class Environment {
             default:
                 return local("../icons/icon128x128.png");
         }
+    }
+
+    public getDefaultMenu(): Menu {
+        const template = settings.default.get<Array<MenuItemConstructorOptions>>("defaultMenu/" + this.platform);
+
+        if (util.isNullOrUndefined(template)) {
+            return null;
+        }
+
+        return Menu.buildFromTemplate(template);
     }
 }
 
