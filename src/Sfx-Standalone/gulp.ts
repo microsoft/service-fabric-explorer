@@ -21,6 +21,7 @@ import * as packager from "electron-packager";
 import * as semver from "semver";
 import * as https from "https";
 import * as url from "url";
+import { fullReporter } from "gulp-typescript/release/reporter";
 
 const pified_exec = pify(child_process.exec, { multiArgs: true });
 
@@ -397,7 +398,7 @@ function generatePackage(platform: Platform): any {
         arch: <any>toPackagerArch(buildInfos.targets[platform].archs),
         asar: false,
         icon: path.join(buildInfos.paths.appDir, "icons/icon"),
-        name: buildInfos.targetExecutableName,
+        name: platform === Platform.MacOs ? buildInfos.productName : buildInfos.targetExecutableName,
         out: buildInfos.paths.buildDir,
         overwrite: true,
         platform: toPackagerPlatform(platform),
@@ -643,6 +644,9 @@ gulp.task("Pack:windows", ["Pack:prepare"],
 gulp.task("Pack:linux", ["Pack:prepare"],
     () => generatePackage(Platform.Linux));
 
+gulp.task("Pack:darwin", ["Pack:prepare"],
+    () => generatePackage(Platform.MacOs));
+
 /* Tasks for Windows */
 gulp.task("Publish:versioninfo-windows",
     () => generateVersionInfo(
@@ -761,4 +765,40 @@ gulp.task("Publish:linux",
     (callback) => runSequence(
         "Pack:linux",
         ["Publish:versioninfo-linux", "Publish:deb-x86", "Publish:deb-x64"],
+        callback));
+
+/* Tasks for darwin (macOS) */
+function getZipName(arch: Architecture): string {
+    return String.format("{}-{}-{}.zip", buildInfos.targetExecutableName, buildInfos.buildNumber, arch);
+}
+
+gulp.task("Publish:versioninfo-darwin",
+    () => generateVersionInfo(
+        Platform.MacOs,
+        (baseUrl, arch) => String.format("{}/{}", baseUrl, getZipName(arch))));
+
+gulp.task("Publish:zip-darwin-x64",
+    (callback) => {
+        if (buildInfos.targets[Platform.MacOs].archs.indexOf(Architecture.X64) < 0) {
+            gutil.log("Skipping", "zip-darwin-64:", "No x64 architecture specified in buildinfos.");
+            callback();
+            return;
+        }
+
+        const macZipper = require('electron-installer-zip');
+        const packDirName = String.format("{}-{}-{}", buildInfos.productName, toPackagerPlatform(Platform.MacOs), Architecture.X64);
+        const appDirName = String.format("{}.app", buildInfos.productName);
+
+        macZipper(
+            {
+                dir: path.resolve(path.join(buildInfos.paths.buildDir, packDirName, appDirName)),
+                out: path.resolve(path.join(buildInfos.paths.publishDir, Platform.MacOs, getZipName(Architecture.X64)))
+            },
+            (err, res) => callback(err))
+    });
+
+gulp.task("Publish:darwin",
+    (callback) => runSequence(
+        "Pack:darwin",
+        ["Publish:versioninfo-darwin", "Publish:zip-darwin-x64"],
         callback));

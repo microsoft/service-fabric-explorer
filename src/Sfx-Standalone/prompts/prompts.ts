@@ -4,11 +4,12 @@
 //-----------------------------------------------------------------------------
 
 import * as util from "util";
+import { Menu } from "electron";
 
 import electron from "../utilities/electronAdapter";
 import { local } from "../utilities/resolve";
 import { IPromptOptions, CommunicatorChannelName, EventNames } from "./prompts.common";
-import env from "../utilities/env";
+import env, { Platform } from "../utilities/env";
 import { getEither } from "../utilities/typeUtil";
 import { prepareData, Communicator } from "../utilities/p2pcom";
 
@@ -18,20 +19,21 @@ export default function open<TPromptResults>(
 
     let promptWindow = new electron.BrowserWindow({
         frame: getEither(promptOptions.frame, true),
+        maximizable: false,
         minimizable: getEither(promptOptions.minimizable, false),
         closable: getEither(promptOptions.closable, true),
         show: false,
         modal: true,
+        fullscreenable: false,
         useContentSize: true,
         resizable: getEither(promptOptions.resizable, false),
         parent: getEither(promptOptions.parentWindow, null),
         icon: getEither(promptOptions.icon, env.getIconPath())
     });
 
-    promptWindow.setMenuBarVisibility(promptOptions.showMenu || false);
-
-    if (promptOptions.menu) {
-        promptWindow.setMenu(promptOptions.menu);
+    if (env.platform !== Platform.MacOs) {
+        promptWindow.setMenuBarVisibility(getEither(promptOptions.showMenu, true));
+        promptWindow.setMenu(getEither(promptOptions.menu, env.getDefaultMenu()));
     }
 
     // Size has to be set after menu settings applied, otherwise the size will be inaccurate.

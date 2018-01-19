@@ -6,6 +6,7 @@
 import { execSync } from "child_process";
 import * as uuidv4 from "uuid/v4";
 import * as util from "util";
+import { Menu, MenuItemConstructorOptions } from "electron";
 
 import { local } from "./resolve";
 import error from "./errorUtil";
@@ -28,7 +29,10 @@ export enum Platform {
 class Environment {
     public readonly appInstanceId: string;
 
+    private readonly menuCache: IDictionary<Menu>;
+
     constructor() {
+        this.menuCache = {};
         this.appInstanceId = settings.default.get("appInstanceId");
 
         if (util.isNullOrUndefined(this.appInstanceId)) {
@@ -110,6 +114,24 @@ class Environment {
             default:
                 return local("../icons/icon128x128.png");
         }
+    }
+
+    public getDefaultMenu(): Menu {
+        let menu: Menu = this.menuCache[this.platform];
+
+        if (util.isNullOrUndefined(menu)) {
+            const template = settings.default.get<Array<MenuItemConstructorOptions>>("defaultMenu/" + this.platform);
+
+            if (util.isNullOrUndefined(template)) {
+                menu = null;
+            } else {
+                menu = Menu.buildFromTemplate(template);
+            }
+
+            this.menuCache[this.platform] = menu;
+        }
+
+        return menu;
     }
 }
 
