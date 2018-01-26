@@ -29,7 +29,7 @@
     "asar": "0.13.1",
     "async": "^2.6.0",
     "del": "3.0.0",
-    "electron": "1.7.9",
+    "electron": "^1.7.11",
     "electron-packager": "^9.1.0",
     "gulp": "^3.9.1",
     "gulp-tslint": "^8.1.2",
