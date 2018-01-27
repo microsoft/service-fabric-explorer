@@ -5,7 +5,7 @@ Service Fabric Explorer is an application for inspecting and managing cloud appl
 ## Build Status
 Windows | Linux
 ------------ | -------------
-![Image of Windows Build Badge](https://msazure.visualstudio.com/_apis/public/build/definitions/b32aa71e-8ed2-41b2-9d77-5bc261222004/17866/badge) | ![Image of Linux Build Badge](https://msazure.visualstudio.com/_apis/public/build/definitions/b32aa71e-8ed2-41b2-9d77-5bc261222004/17867/badge) 
+![Image of Windows Build Badge](https://msazure.visualstudio.com/_apis/public/build/definitions/b32aa71e-8ed2-41b2-9d77-5bc261222004/17273/badge) | ![Image of Linux Build Badge](https://msazure.visualstudio.com/_apis/public/build/definitions/b32aa71e-8ed2-41b2-9d77-5bc261222004/17274/badge) 
 
 ## Installation
 
