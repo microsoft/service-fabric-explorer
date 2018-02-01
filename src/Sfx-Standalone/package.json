@@ -32,6 +32,8 @@
     "electron": "^1.7.11",
     "electron-packager": "^9.1.0",
     "gulp": "^3.9.1",
+    "gulp-if": "^2.0.2",
+    "gulp-sourcemaps": "^2.6.4",
     "gulp-tslint": "^8.1.2",
     "gulp-typescript": "^3.2.2",
     "gulp-util": "^3.0.8",
