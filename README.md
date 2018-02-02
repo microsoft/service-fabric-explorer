@@ -3,9 +3,9 @@
 Service Fabric Explorer is an application for inspecting and managing cloud applications and nodes in a Microsoft Azure Service Fabric cluster.
 
 ## Build Status
-Windows | Linux
------------- | -------------
-![Image of Windows Build Badge](https://msazure.visualstudio.com/_apis/public/build/definitions/b32aa71e-8ed2-41b2-9d77-5bc261222004/17273/badge) | ![Image of Linux Build Badge](https://msazure.visualstudio.com/_apis/public/build/definitions/b32aa71e-8ed2-41b2-9d77-5bc261222004/17274/badge) 
+Windows | Linux | macOS
+------------ | ------------- | -------------
+![Image of Windows Build Badge](https://msazure.visualstudio.com/_apis/public/build/definitions/b32aa71e-8ed2-41b2-9d77-5bc261222004/17273/badge) | ![Image of Linux Build Badge](https://msazure.visualstudio.com/_apis/public/build/definitions/b32aa71e-8ed2-41b2-9d77-5bc261222004/17274/badge) | ![Image of macOS Build Badge](https://msazure.visualstudio.com/_apis/public/build/definitions/b32aa71e-8ed2-41b2-9d77-5bc261222004/18832/badge) 
 
 ## Installation
 
@@ -17,6 +17,9 @@ Microsoft publishes the following installer packages for SFX:
 - Linux
   - https://aka.ms/sfx-linux-x86
   - https://aka.ms/sfx-linux-x64
+
+- macOS
+  - https://aka.ms/sfx-macos
 
 For more information about the application and how to use it: https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-visualizing-your-cluster
 
