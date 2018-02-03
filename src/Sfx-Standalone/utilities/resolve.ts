@@ -7,7 +7,8 @@ import * as url from "url";
 import * as path from "path";
 import * as getCaller from "caller";
 
-import electron from "./electronAdapter";
+import "./utils";
+import { electron } from "./electron-adapter";
 
 export interface IPathObject {
     path: string;
@@ -37,7 +38,7 @@ export default function resolve(
         slashes: true
     };
 
-    if (typeof pathObject === "string") {
+    if (String.isString(pathObject)) {
         urlObject.pathname = local(pathObject, fromAppDir);
     } else {
         urlObject.pathname = local(pathObject.path, fromAppDir);

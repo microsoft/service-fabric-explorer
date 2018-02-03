@@ -7,14 +7,40 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Launch Program",
+            "name": "Debug",
             "cwd": "${workspaceRoot}",
+            "sourceMaps": true,
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "windows": {
-              "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
             },
-            "args" : ["./build/app/."],
+            "args": [
+                "./build/app/."
+            ],
             "preLaunchTask": "gulp: Build"
-        }
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug without build",
+            "cwd": "${workspaceRoot}",
+            "sourceMaps": true,
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "windows": {
+                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+            },
+            "args": [
+                "./build/app/."
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug gulp Clean-Build",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": [
+                "Clean-Build"
+            ]
+        },
     ]
 }

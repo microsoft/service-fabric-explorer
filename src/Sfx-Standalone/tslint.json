@@ -39,7 +39,7 @@
         "no-duplicate-variable": true,
         "no-empty": false,
         "no-eval": true,
-        "no-for-in-array": false,
+        "no-for-in-array": true,
         "no-inferrable-types": [
             false
         ],
@@ -47,7 +47,6 @@
         "no-string-literal": false,
         "no-switch-case-fall-through": true,
         "no-unused-expression": true,
-        "no-use-before-declare": true,
         "no-var-keyword": true,
         "object-literal-sort-keys": false,
         "one-line": [

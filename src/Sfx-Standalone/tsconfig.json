@@ -3,11 +3,13 @@
     "compilerOptions": {
         "module": "commonjs",
         "moduleResolution": "node",
-        "target": "es2015"
+        "target": "es2017",
+        "sourceMap": true,
+        "declaration": false
     },
     "exclude": [
-        "build",
-        "node_modules",
+        "build/",
+        "node_modules/",
         "gulp.ts"
     ],
     "include": [

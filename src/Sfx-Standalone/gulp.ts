@@ -3,15 +3,13 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-/// <reference path="./@types/collections.d.ts" />
-/// <reference path="./@types/versioninfo.d.ts" />
+/// <reference path="./@types/common.d.ts" />
 
 import * as gulp from "gulp";
 import * as gutil from "gulp-util";
-import * as typescript from "gulp-typescript";
-import tslint from "gulp-tslint";
+import * as tslint from "tslint";
+import gtslint from "gulp-tslint";
 import * as fs from "fs";
-import * as util from "util";
 import * as path from "path";
 import * as del from "del";
 import * as pify from "pify";
@@ -21,7 +19,10 @@ import * as packager from "electron-packager";
 import * as semver from "semver";
 import * as https from "https";
 import * as url from "url";
-import { fullReporter } from "gulp-typescript/release/reporter";
+import * as ts from "typescript";
+import * as globby from "globby";
+
+import * as tsc from "./.build/tsc";
 
 const pified_exec = pify(child_process.exec, { multiArgs: true });
 
@@ -31,29 +32,45 @@ declare global {
     }
 }
 
+function isObject(value: any): value is object | Object {
+    return typeof value === "object" && value !== null;
+}
+
+function isNullOrUndefined(value: any): value is null | undefined {
+    return value === null || value === undefined;
+}
+
+function isString(value: any): value is string | String {
+    return typeof value === "string" || value instanceof String;
+}
+
+function isFunction(value: any): value is Function {
+    return typeof value === "function";
+}
+
 String.format = (format, ...args) => {
-    if (!util.isString(format)) {
+    if (!isString(format)) {
         throw new Error("format must be a string");
     }
 
-    if (!util.isArray(args)) {
+    if (!Array.isArray(args)) {
         throw new Error("args must be an array.");
     }
 
-    if (util.isNullOrUndefined(args)) {
+    if (isNullOrUndefined(args)) {
         return format;
     }
 
     let matchIndex = -1;
 
-    return format.replace(/(\{*)(\{(\d*)\})/gi, (substring, escapeChar, argIdentifier, argIndexStr, offset, str) => {
+    return format.replace(/(\{*)(\{(\d*)\})/gi, (substring, escapeChar: string, argIdentifier: string, argIndexStr: string) => {
         matchIndex++;
 
         if (escapeChar.length > 0) {
-            return argIdentifier
+            return argIdentifier;
         }
 
-        let argIndex = argIndexStr.length === 0 ? matchIndex : parseInt(argIndexStr);
+        let argIndex = argIndexStr.length === 0 ? matchIndex : parseInt(argIndexStr, 10);
 
         if (isNaN(argIndex) || argIndex < 0 || argIndex >= args.length) {
             throw new Error(String.format("Referenced arg index, '{}',is out of range of the args.", argIndexStr));
@@ -61,7 +78,7 @@ String.format = (format, ...args) => {
 
         return args[argIndex];
     });
-}
+};
 
 enum Architecture {
     X86 = "x86",
@@ -72,6 +89,20 @@ enum Platform {
     Windows = "windows",
     Linux = "linux",
     MacOs = "macos"
+}
+
+interface IPackageInfo {
+    x86?: string;
+    x64?: string;
+}
+
+interface IVersionInfo {
+    version: string | String;
+    description?: string | String;
+
+    linux?: IPackageInfo | string | String;
+    windows?: IPackageInfo | string | String;
+    macos?: IPackageInfo | string | String;
 }
 
 interface IBuildTarget {
@@ -160,7 +191,7 @@ abstract class License implements ILicense {
     public readonly spdxId: string;
 
     constructor(spdxId: string) {
-        if (util.isNullOrUndefined(spdxId) || spdxId.trim() === "") {
+        if (isNullOrUndefined(spdxId) || spdxId.trim() === "") {
             throw Error("spdxId should not be null/undefined/empty.");
         }
 
@@ -176,7 +207,7 @@ class FileLicense extends License {
     constructor(spdxId: string, licensePath: string) {
         super(spdxId);
 
-        if (util.isNullOrUndefined(licensePath) || !fs.existsSync(licensePath)) {
+        if (isNullOrUndefined(licensePath) || !fs.existsSync(licensePath)) {
             throw Error("licensePath should not be null/undefined and the pointing file should exist.");
         }
 
@@ -246,38 +277,65 @@ function logExec(cmd: string, pifyResults: any): void {
 
     gutil.log("Executed:", cmd);
 
-    if (util.isString(stdout) && stdout.trim() !== "") {
+    if (isString(stdout) && stdout.trim() !== "") {
         gutil.log(stdout);
     }
 
-    if (util.isString(stderr) && stderr.trim() !== "") {
+    if (isString(stderr) && stderr.trim() !== "") {
         gutil.log(stderr);
     }
 }
 
-function exec(cmd: string): any {
-    return pified_exec(cmd, { cwd: path.resolve(buildInfos.paths.appDir) })
+function appdirExec(cmd: string): any {
+    return exec(path.resolve(buildInfos.paths.appDir), cmd);
+}
+
+function exec(cwd: string, cmd: string): any {
+    return pified_exec(cmd, { cwd: cwd })
         .then((pifyResults) => logExec(cmd, pifyResults));
 }
 
-function formGlobs(globs: string | Array<string>): Array<string> {
-    let outputGlobs: Array<string> = [];
+function normalizeGlob(pattern: string, basePath: string): string {
+    let finalPattern = pattern;
 
-    outputGlobs.push(String.format("!{}/**/*", buildInfos.paths.publishDir));
-    outputGlobs.push(String.format("!{}/**/*", buildInfos.paths.buildDir));
-    outputGlobs.push(String.format("!{}/**/*", "node_modules"));
-    outputGlobs.push("!**/tsconfig.json", "!**/jsconfig.json", "!**/tslint.json", "!./buildInfos.json");
-    outputGlobs.push("!**/*.md");
+    if (pattern[0] === "!") {
+        finalPattern = pattern.slice(1);
+    }
 
-    if (util.isString(globs)) {
-        outputGlobs.push(globs);
+    finalPattern = path.relative(basePath, path.resolve(finalPattern));
+
+    if (pattern[0] === "!") {
+        finalPattern = "!" + finalPattern;
     }
-    else if (util.isArray(globs)) {
-        globs.forEach((glob) => outputGlobs.push(glob));
+
+    return finalPattern;
+}
+
+function formGlobs(globs?: string | Array<string>): Array<string> {
+    const outputGlobs: Array<string> = [];
+    const basePath = path.resolve(".");
+    const patterns: Array<string> = [
+        String.format("!{}/**/*", buildInfos.paths.publishDir),
+        String.format("!{}/**/*", buildInfos.paths.buildDir),
+        String.format("!{}/**/*", "node_modules"),
+        "!**/tsconfig.json",
+        "!**/jsconfig.json",
+        "!**/tslint.json",
+        "!./buildInfos.json",
+        "!**/*.md"
+    ];
+
+    if (isString(globs)) {
+        outputGlobs.push(normalizeGlob(globs, basePath));
     }
-    else {
+    else if (Array.isArray(globs)) {
+        globs.forEach((glob) => outputGlobs.push(normalizeGlob(glob, basePath)));
+    }
+    else if (!isNullOrUndefined(globs)) {
         throw "Unsupported globs: " + typeof globs;
     }
+
+    patterns.forEach((pattern) => outputGlobs.push(normalizeGlob(pattern, basePath)));
 
     return outputGlobs;
 }
@@ -298,18 +356,18 @@ function ensureDirExists(dirname: string): void {
 }
 
 function generateVersionInfo(platform: Platform, getPackageInfo: (baseUrl: string, arch: Architecture) => string): void {
-    if (!util.isFunction(getPackageInfo)) {
+    if (isFunction(getPackageInfo)) {
         throw new Error("getPackageInfo must be supplied.");
     }
 
-    if (!util.isObject(buildInfos.updateInfos) || !util.isString(buildInfos.updateInfos.baseUrl)) {
+    if (!isObject(buildInfos.updateInfos) || !isString(buildInfos.updateInfos.baseUrl)) {
         throw new Error("buildInfos.updateInfos.baseUrl must be specified.");
     }
 
     let channel: string = "public";
     let prerelease = semver.prerelease(buildInfos.buildNumber);
 
-    if (util.isArray(prerelease) && prerelease.length > 0) {
+    if (Array.isArray(prerelease) && prerelease.length > 0) {
         channel = prerelease[0];
     }
 
@@ -320,21 +378,21 @@ function generateVersionInfo(platform: Platform, getPackageInfo: (baseUrl: strin
     let baseUrl = String.format("{}/{}/{}", buildInfos.updateInfos.baseUrl, channel, platform);
     let buildPackageInfo = null;
 
-    if (util.isObject(buildInfos.updateInfos.packageInfos)) {
+    if (isObject(buildInfos.updateInfos.packageInfos)) {
         buildPackageInfo = buildInfos.updateInfos.packageInfos[platform];
-    } else if (!util.isNullOrUndefined(buildInfos.updateInfos.packageInfos)) {
+    } else if (!isNullOrUndefined(buildInfos.updateInfos.packageInfos)) {
         throw new Error("Invalid value for parameter: buildInfos.updateInfos.packageInfos");
     }
 
-    if (util.isString(buildPackageInfo)) {
+    if (isString(buildPackageInfo)) {
         versionInfo[platform] = buildPackageInfo;
-    } else if (util.isNullOrUndefined(buildPackageInfo) || util.isObject(buildPackageInfo)) {
+    } else if (isNullOrUndefined(buildPackageInfo) || isObject(buildPackageInfo)) {
         versionInfo[platform] = {};
 
         for (let arch of buildInfos.targets[platform].archs) {
-            if (util.isNullOrUndefined(buildPackageInfo) || util.isNullOrUndefined(buildPackageInfo[arch])) {
+            if (isNullOrUndefined(buildPackageInfo) || isNullOrUndefined(buildPackageInfo[arch])) {
                 versionInfo[platform][arch] = getPackageInfo(baseUrl, arch);
-            } else if (util.isString(buildPackageInfo[arch])) {
+            } else if (isString(buildPackageInfo[arch])) {
                 versionInfo[platform][arch] = String.format(buildPackageInfo[arch], baseUrl, buildInfos.buildNumber, arch);
             } else {
                 throw new Error(String.format("Invalid value for parameter: buildInfos.updateInfos.packageInfos.{}.{}", platform, arch));
@@ -364,7 +422,7 @@ function convertToPackagerArch(arch: Architecture): string {
 }
 
 function toPackagerArch(archs: Array<Architecture>): Array<string> {
-    if (!util.isArray(archs)) {
+    if (!Array.isArray(archs)) {
         throw "archs has to be an array.";
     }
 
@@ -410,13 +468,13 @@ function generatePackage(platform: Platform): any {
 }
 
 function getLicense(dep: IPackageJson): string {
-    if (util.isString(dep.license)) {
+    if (isString(dep.license)) {
         return dep.license;
     }
 
     const license = buildInfos.licensing.packageLicenses[dep.name];
 
-    if (!util.isString(license)) {
+    if (!isString(license)) {
         throw Error("Cannot determine the license of dep: " + dep.name);
     }
 
@@ -447,11 +505,11 @@ function generateDep(depName: string, depsDir: string, packageJsonName: string):
         }
     }
 
-    if (util.isNull(depLicense) && fs.existsSync(path.join(depDir, readmeFileName))) {
+    if (depLicense === null && fs.existsSync(path.join(depDir, readmeFileName))) {
         depLicense = new ReadmeLicense(getLicense(depJson), path.join(depDir, readmeFileName));
     }
 
-    if (util.isNullOrUndefined(depLicense)) {
+    if (isNullOrUndefined(depLicense)) {
         throw new Error(String.format('Cannot find license file for dependency, "{}".', depName));
     }
 
@@ -464,7 +522,7 @@ function generateDep(depName: string, depsDir: string, packageJsonName: string):
 }
 
 function generateLicensingDeps(depType: "dev" | "prod", packageFormat: "npm" | "bower", depsDir: string, deps: IDictionary<string> | Array<string>): Array<ILicensingDependency> {
-    if (util.isNullOrUndefined(deps)) {
+    if (isNullOrUndefined(deps)) {
         return [];
     }
 
@@ -474,9 +532,9 @@ function generateLicensingDeps(depType: "dev" | "prod", packageFormat: "npm" | "
 
     let depNames: Array<string>;
 
-    if (util.isArray(deps)) {
+    if (Array.isArray(deps)) {
         depNames = deps;
-    } else if (util.isObject(deps)) {
+    } else if (isObject(deps)) {
         depNames = Object.keys(deps);
     } else {
         throw new Error("unknow type of deps: " + typeof deps);
@@ -518,11 +576,11 @@ function generateLicensingDeps(depType: "dev" | "prod", packageFormat: "npm" | "
 }
 
 function generateThirdPartyNotice(deps: Array<ILicensingDependency>, noticeFilePath: string): void {
-    if (!util.isArray(deps)) {
+    if (!Array.isArray(deps)) {
         throw new Error("deps must be a valid array of ILicensingDependency.");
     }
 
-    if (!util.isString(noticeFilePath)) {
+    if (!isString(noticeFilePath)) {
         throw new Error("noticeFilePath must be a valid string.");
     }
 
@@ -561,22 +619,53 @@ function generateThirdPartyNotice(deps: Array<ILicensingDependency>, noticeFileP
     }
 }
 
+function getTypescriptsGlobs() {
+    const tsconfig: { include: Array<string>, exclude: Array<string>, compilerOptions: any } = require("./tsconfig.json");
+    const globs = new Array<string>();
+
+    // Include
+    if (Array.isArray(tsconfig.include)) {
+        globs.push(...tsconfig.include);
+    } else if (!isNullOrUndefined(tsconfig.include)) {
+        throw new Error("tsconfig.include must be an array!");
+    }
+
+    // Exclude
+    if (Array.isArray(tsconfig.exclude)) {
+        tsconfig.exclude.forEach((pattern) => globs.push("!" + pattern));
+    } else if (!isNullOrUndefined(tsconfig.include)) {
+        throw new Error("tsconfig.exclude must be an array!");
+    }
+
+    return formGlobs(globs);
+}
+
 /* Build tasks */
 
 gulp.task("Build:tslint",
-    () => typescript.createProject("tsconfig.json")
-        .src()
-        .pipe(tslint({ formatter: "prose" }))
-        .pipe(tslint.report({ summarizeFailureOutput: true })));
+    () => gulp.src(getTypescriptsGlobs())
+        .pipe(gtslint({ program: tslint.Linter.createProgram("./tsconfig.json") }))
+        .pipe(gtslint.report({ summarizeFailureOutput: true })));
 
 gulp.task("Build:ts", ["Build:tslint"],
     () => {
-        let tsProject = typescript.createProject("tsconfig.json");
+        const tsconfig: { include: Array<string>, exclude: Array<string>, compilerOptions: any } = require("./tsconfig.json");
+        const compilterOptionsParseResult = ts.convertCompilerOptionsFromJson(tsconfig.compilerOptions, undefined);
 
-        return tsProject.src()
-            .pipe(tsProject())
-            .js
-            .pipe(gulp.dest(buildInfos.paths.appDir));
+        if (Array.isArray(compilterOptionsParseResult.errors) && compilterOptionsParseResult.errors.length > 0) {
+            compilterOptionsParseResult.errors.forEach((error) => tsc.logDiagnostic(error));
+            throw new Error("Failed to load typescript compiler options.");
+        }
+
+        compilterOptionsParseResult.options.outDir = buildInfos.paths.appDir;
+
+        if (process.argv.indexOf("--production") >= 0) {
+            compilterOptionsParseResult.options.sourceMap = false;
+        }
+
+        tsc.compile(
+            compilterOptionsParseResult.options,
+            globby.sync(getTypescriptsGlobs(), { dot: true }));
     });
 
 gulp.task("Build:html",
@@ -592,7 +681,7 @@ gulp.task("Build:json",
         .pipe(gulp.dest(buildInfos.paths.appDir)));
 
 gulp.task("Build:node_modules", ["Build:json"],
-    () => exec("npm install --production"));
+    () => appdirExec("npm install --production"));
 
 gulp.task("Build:sfx",
     () => gulp.src(["../Sfx/wwwroot/**/*.*"])
@@ -606,7 +695,7 @@ gulp.task("Build:All", ["Build:sfx", "Build:ts", "Build:html", "Build:node_modul
 
 /* Pack tasks */
 gulp.task("Pack:update-version",
-    () => exec(String.format("npm version {} --allow-same-version", buildInfos.buildNumber)));
+    () => appdirExec(String.format("npm version {} --allow-same-version", buildInfos.buildNumber)));
 
 gulp.task("Pack:licensing",
     () => {
@@ -683,9 +772,9 @@ gulp.task("Publish:msi", ["Publish:update-wix-version"],
                 path.resolve(path.join(publishDir, buildInfos.buildNumber ? String.format("setup-{}.x86.msi", buildInfos.buildNumber) : "setup.x86.msi")),
                 path.join(wxsobjDir, "msi.wixobj"), path.join(wxsobjDir, "files.msi.wixobj"));
 
-        return exec(heatCmd)
-            .then(() => exec(candleCmd)
-                .then(() => exec(lightCmd)));
+        return appdirExec(heatCmd)
+            .then(() => appdirExec(candleCmd)
+                .then(() => appdirExec(lightCmd)));
     });
 
 gulp.task("Publish:win32",

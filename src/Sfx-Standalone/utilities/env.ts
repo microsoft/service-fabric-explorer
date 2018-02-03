@@ -4,13 +4,8 @@
 //-----------------------------------------------------------------------------
 
 import { execSync } from "child_process";
-import * as uuidv4 from "uuid/v4";
-import * as util from "util";
-import { Menu, MenuItemConstructorOptions } from "electron";
 
-import { local } from "./resolve";
 import error from "./errorUtil";
-import settings from "./settings";
 
 export enum Architecture {
     Unknown = "unknown",
@@ -26,21 +21,7 @@ export enum Platform {
     Unknown = "unknown"
 }
 
-class Environment {
-    public readonly appInstanceId: string;
-
-    private readonly menuCache: IDictionary<Menu>;
-
-    constructor() {
-        this.menuCache = {};
-        this.appInstanceId = settings.default.get("appInstanceId");
-
-        if (util.isNullOrUndefined(this.appInstanceId)) {
-            this.appInstanceId = uuidv4();
-            settings.default.set("appInstanceId", this.appInstanceId);
-        }
-    }
-
+class Environment implements IEnvironment {
     public get platform(): Platform {
         switch (process.platform) {
             case "win32":
@@ -73,18 +54,18 @@ class Environment {
         }
     }
 
-    public startFile(filePath: string) {
+    public start(path: string) {
         const escape = (str: string) => {
             return str.replace(/"/g, '\\\"');
         };
 
         let cmd: string = "";
 
-        if (!filePath) {
-            throw error("filePath must be specified!");
+        if (!path) {
+            throw error("path must be specified!");
         }
 
-        switch (environment.platform) {
+        switch (this.platform) {
             case Platform.Windows:
                 cmd = "start \"sfx-standalone-upgrade\"";
                 break;
@@ -99,42 +80,16 @@ class Environment {
                 break;
         }
 
-        execSync(cmd + ' "' + escape(filePath) + '"');
-    }
-
-    public getIconPath(): string {
-        switch (environment.platform) {
-            case Platform.Windows:
-                return local("../icons/icon.ico");
-
-            case Platform.MacOs:
-                return local("../icons/icon.icns");
-
-            case Platform.Linux:
-            default:
-                return local("../icons/icon128x128.png");
-        }
-    }
-
-    public getDefaultMenu(): Menu {
-        let menu: Menu = this.menuCache[this.platform];
-
-        if (util.isNullOrUndefined(menu)) {
-            const template = settings.default.get<Array<MenuItemConstructorOptions>>("defaultMenu/" + this.platform);
-
-            if (util.isNullOrUndefined(template)) {
-                menu = null;
-            } else {
-                menu = Menu.buildFromTemplate(template);
-            }
-
-            this.menuCache[this.platform] = menu;
-        }
-
-        return menu;
+        execSync(cmd + ' "' + escape(path) + '"');
     }
 }
 
-const environment = new Environment();
+export interface IEnvironment {
+    readonly arch;
+    
+    readonly platform;
 
-export default environment;
+    start(path: string): void;
+}
+
+export const env: IEnvironment = new Environment();

@@ -3,18 +3,25 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-var gulp = require("gulp");
-var typescript = require("gulp-typescript");
-var gutil = require("gulp-util");
-var util = require("util");
-var del = require("del");
-var fs = require("fs");
-var runSequence = require("run-sequence");
-var packagejson = require("./package.json");
-var buildInfos = require("./buildInfos.json");
-var exec = require("child_process").execSync;
+const gulp = require("gulp");
+const gutil = require("gulp-util");
+const del = require("del");
+const fs = require("fs");
+const util = require("util");
+const runSequence = require("run-sequence");
+const ts = require("typescript");
+
+const tsc = require("./.build/tsc");
+const packagejson = require("./package.json");
+const buildInfos = require("./buildInfos.json");
+
+const exec = require("child_process").execSync;
 
 // Please ensure all the dependencies above is under package.json/devDependencies or dependencies.
+
+function isString(value) {
+    return typeof value === "string" || value instanceof String;
+}
 
 gulp.task("npm:Install-sfx-dependencies",
     function () {
@@ -36,23 +43,24 @@ gulp.task("npm:Install-sfx-dependencies",
             gutil.log("Skipping sfx-dependency:", dependencyName, propertyName, "=>", "required:" + propertyValue, "current:" + currentValue);
         }
 
-        for (var dependencyName in packagejson.sfxDependencies) {
+        for (const dependencyName in packagejson.sfxDependencies) {
             if (!isInstalled(dependencyName)) {
-                var dependency = packagejson.sfxDependencies[dependencyName];
-                var dependencyTypeArgs = "";
-                var versionArg = "";
+                const dependency = packagejson.sfxDependencies[dependencyName];
+                const versionArg = "";
 
-                if (util.isString(dependency.platform) && dependency.platform !== process.platform) {
+                let dependencyTypeArgs = "";
+
+                if (isString(dependency.platform) && dependency.platform !== process.platform) {
                     logSkipping(dependencyName, "Platform", dependency.platform, process.platform);
                     continue;
                 }
 
-                if (util.isString(dependency.arch) && dependency.arch !== process.arch) {
+                if (isString(dependency.arch) && dependency.arch !== process.arch) {
                     logSkipping(dependencyName, "Arch", dependency.arch, process.arch);
                     continue;
                 }
 
-                if (!util.isArray(dependency.dependencyTypes)) {
+                if (!Array.isArray(dependency.dependencyTypes)) {
                     dependency.dependencyTypes = ["dev"];
                 }
 
@@ -71,9 +79,15 @@ gulp.task("npm:Install-sfx-dependencies",
 
 gulp.task("Build:gulp-ts", ["npm:Install-sfx-dependencies"],
     function () {
-        return gulp.src(["gulp.ts"])
-            .pipe(typescript())
-            .pipe(gulp.dest("."));
+        tsc.compile(
+            {
+                target: ts.ScriptTarget.ES2015,
+                module: ts.ModuleKind.CommonJS,
+                moduleResolution: ts.ModuleResolutionKind.NodeJs,
+                sourceMap: true,
+                declaration: false
+            },
+            ["gulp.ts"]);
     });
 
 gulp.task("Import:gulp-ts", ["Build:gulp-ts"],

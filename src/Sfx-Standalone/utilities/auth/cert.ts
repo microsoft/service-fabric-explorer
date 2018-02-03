@@ -3,19 +3,19 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { BrowserWindow, Certificate, remote } from "electron";
+import { BrowserWindow, Certificate } from "electron";
 import * as url from "url";
 import * as fs from "fs";
 import * as tmp from "tmp";
 import { Buffer } from "buffer";
-import * as util from "util";
 
-import electron from "../electronAdapter";
-import env, { Platform } from "../env";
-import promptSelectCerts from "../../prompts/select-certificate/prompt";
+import { electron } from "../electron-adapter";
+import { env, Platform } from "../env";
 import { local } from "../resolve";
+import * as utils from "../utils";
 
 function showCertSelectPrompt(
+    moduleManager: IModuleManager,
     window: BrowserWindow,
     certificateList: Array<Certificate>,
     callback: (selectedCert: Certificate, certsImported: boolean) => void): void {
@@ -23,7 +23,7 @@ function showCertSelectPrompt(
     let certSelectionButtons = new Array<string>();
     let importCertsResponse = -1;
 
-    if (util.isArray(certificateList)) {
+    if (Array.isArray(certificateList)) {
         certificateList.forEach(certificate => certSelectionButtons.push(certificate.subjectName + "\r\nIssuer: " + certificate.issuerName + "\r\nThumbprint: " + certificate.fingerprint));
     }
 
@@ -31,15 +31,18 @@ function showCertSelectPrompt(
         importCertsResponse = certSelectionButtons.push("Import more certificates ...") - 1;
     }
 
-    promptSelectCerts(window, certificateList, (error, results) => {
-        if (util.isNullOrUndefined(results)) {
-            callback(null, false);
-        } else if (results.selectedCertificate) {
-            callback(results.selectedCertificate, false);
-        } else {
-            callback(null, results.certificatesImported);
-        }
-    });
+    moduleManager.getComponent("prompt-select-certificate",
+        window.id,
+        certificateList,
+        (error, results) => {
+            if (utils.isNullOrUndefined(results)) {
+                callback(null, false);
+            } else if (results.selectedCertificate) {
+                callback(results.selectedCertificate, false);
+            } else {
+                callback(null, results.certificatesImported);
+            }
+        });
 }
 
 interface ICertHandlingRecord {
@@ -47,7 +50,7 @@ interface ICertHandlingRecord {
     callbacks: Array<(cert: Certificate) => void>;
 }
 
-function handleGenerally(window: BrowserWindow): void {
+function handleGenerally(moduleManager: IModuleManager, window: BrowserWindow): void {
     let clientCertManager: IDictionary<ICertHandlingRecord> = {};
 
     window.webContents.on("select-client-certificate",
@@ -61,7 +64,7 @@ function handleGenerally(window: BrowserWindow): void {
             } else {
                 let certHandlingRecord = clientCertManager[certIdentifier];
 
-                if (util.isNullOrUndefined(certHandlingRecord)) {
+                if (utils.isNullOrUndefined(certHandlingRecord)) {
                     certHandlingRecord = {
                         handling: true,
                         callbacks: []
@@ -75,6 +78,7 @@ function handleGenerally(window: BrowserWindow): void {
                 certHandlingRecord.callbacks.push(selectCertificate);
 
                 showCertSelectPrompt(
+                    moduleManager,
                     window,
                     certificateList,
                     (selectedCert, certsImported) => {
@@ -109,10 +113,10 @@ function handleLinux(): void {
         (result) => dummayCertFile.removeCallback());
 }
 
-export function handle(window: BrowserWindow): void {
+export function handle(moduleManager: IModuleManager, window: BrowserWindow): void {
     if (env.platform === Platform.Linux) {
         handleLinux();
     }
 
-    handleGenerally(window);
+    handleGenerally(moduleManager, window);
 }
