@@ -43,6 +43,7 @@ export class Log implements ILog {
 
         this.loggers = {};
         this.defaultPropertiesInJson = undefined;
+        this.moduleManager = moduleManager;
 
         if (Object.isObject(loggingSettings.properties)) {
             this.defaultPropertiesInJson = JSON.stringify(loggingSettings.properties);
@@ -52,11 +53,19 @@ export class Log implements ILog {
             for (const loggerName in loggingSettings.loggers) {
                 if (loggingSettings.loggers.hasOwnProperty(loggerName)) {
                     const loggerSettings: ILoggerSettings = loggingSettings.loggers[loggerName];
+                    const logger: ILogger = this.moduleManager.getComponent(
+                        String.format("loggers.{}", loggerSettings.type),
+                        loggerSettings);
 
-                    this.loggers[loggerName] =
-                        this.moduleManager.getComponent(
-                            String.format("loggers.{}", loggerSettings.type),
-                            loggerSettings);
+                    if (logger === undefined) {
+                        throw error(
+                            "failed to load logger, {}, named '{}', with component identity: {}.", 
+                            loggerSettings.type, 
+                            loggerName, 
+                            String.format("loggers.{}", loggerSettings.type));
+                    }
+
+                    this.loggers[loggerName] = logger;
                 }
             }
         }
