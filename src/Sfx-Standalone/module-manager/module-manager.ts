@@ -387,7 +387,13 @@ export class ModuleManager implements IModuleManager {
             throw error("componentIdentityString, '{}', is Invalid!", componentIdentityString);
         }
 
-        return this.di.getInstance(componentIdentity.identity, ...extraArgs);
+        const instance = this.di.getInstance<T>(componentIdentity.identity, ...extraArgs);
+
+        if (instance === undefined) {
+            throw error("Failed to get component: {}", componentIdentityString);
+        }
+
+        return instance;
     }
 
     public readonly onHostVersionMismatch = (callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler => {

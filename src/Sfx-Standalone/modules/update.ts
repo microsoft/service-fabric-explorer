@@ -10,6 +10,7 @@ import * as path from "path";
 import * as url from "url";
 import * as fs from "fs";
 
+import { ILog } from "../@types/log";
 import { IHttpClient } from "../@types/http";
 import { ISettings } from "../@types/settings";
 import { IUpdateService } from "../@types/update";
@@ -24,6 +25,8 @@ interface IUpdateSettings {
 }
 
 class UpdateService implements IUpdateService {
+    private readonly log: ILog;
+
     private readonly settings: IUpdateSettings;
 
     private readonly httpClient: IHttpClient;
@@ -75,7 +78,11 @@ class UpdateService implements IUpdateService {
         return packagePath;
     }
 
-    constructor(updateSettings: IUpdateSettings, httpClient: IHttpClient) {
+    constructor(log: ILog, updateSettings: IUpdateSettings, httpClient: IHttpClient) {
+        if (!Object.isObject(log)) {
+            throw error("log must be supplied.");
+        }
+
         if (!Object.isObject(updateSettings)) {
             throw error("updateSettings must be supplied.");
         }
@@ -84,41 +91,19 @@ class UpdateService implements IUpdateService {
             throw error("httpClient must be supplied.");
         }
 
+        this.log = log;
         this.settings = updateSettings;
         this.httpClient = httpClient;
     }
 
     public update(): void {
         this.requestVersionInfo((error, versionInfo) => {
-            if (error || semver.gte(app.getVersion(), versionInfo.version)) {
+            if (!utils.isNullOrUndefined(error)) {
+                this.log.writeError("Failed to check version info, error: {}", error.toString());
                 return;
             }
 
-            let packageInfo: IPackageInfo | string = versionInfo[env.platform];
-            let packagePath: string;
-
-            if (!packageInfo) {
-                //logError("No package info found for platform: {}.", env.platform);
-                return;
-            }
-
-            if (String.isString(packageInfo)) {
-                packagePath = packageInfo;
-
-                try {
-                    UpdateService.confirmUpate(versionInfo, url.parse(packagePath).href);
-                } catch (error) {
-                    //logError("Invalid packagePath: {}", packagePath);
-                }
-            } else {
-                packagePath = UpdateService.getPackagePath(packageInfo);
-
-                this.requestPackage(packagePath, (error, filePath) => {
-                    if (String.isString(filePath)) {
-                        UpdateService.confirmUpate(versionInfo, filePath);
-                    }
-                });
-            }
+            this.tryUpdate(versionInfo);
         });
     }
 
@@ -140,6 +125,7 @@ class UpdateService implements IUpdateService {
                 env.platform);         // Platform
 
         try {
+            this.log.writeInfo("Requesting version info json: {}", versionInfoUrl);
             this.httpClient.get(
                 versionInfoUrl,
                 ResponseHandlerHelper.handleJsonResponse<IVersionInfo>(callback));
@@ -164,6 +150,39 @@ class UpdateService implements IUpdateService {
             callback(exception, null);
         }
     }
+
+    private tryUpdate(versionInfo: IVersionInfo): void {
+        if (semver.gte(app.getVersion(), versionInfo.version)) {
+            this.log.writeInfo("No update needed: version => current: {} remote: {}", app.getVersion(), versionInfo.version);
+            return;
+        }
+
+        let packageInfo: IPackageInfo | string = versionInfo[env.platform];
+        let packagePath: string;
+
+        if (!packageInfo) {
+            //logError("No package info found for platform: {}.", env.platform);
+            return;
+        }
+
+        if (String.isString(packageInfo)) {
+            packagePath = packageInfo;
+
+            try {
+                UpdateService.confirmUpate(versionInfo, url.parse(packagePath).href);
+            } catch (error) {
+                //logError("Invalid packagePath: {}", packagePath);
+            }
+        } else {
+            packagePath = UpdateService.getPackagePath(packageInfo);
+
+            this.requestPackage(packagePath, (error, filePath) => {
+                if (String.isString(filePath)) {
+                    UpdateService.confirmUpate(versionInfo, filePath);
+                }
+            });
+        }
+    }
 }
 
 export function getModuleMetadata(): IModuleInfo {
@@ -175,8 +194,8 @@ export function getModuleMetadata(): IModuleInfo {
                 name: "update-service",
                 version: "1.0.0",
                 singleton: true,
-                descriptor: (settings: ISettings, httpsClient: IHttpClient) => new UpdateService(settings.get("update"), httpsClient),
-                deps: ["settings", "https-client"]
+                descriptor: (log: ILog, settings: ISettings, httpsClient: IHttpClient) => new UpdateService(log, settings.get("update"), httpsClient),
+                deps: ["log", "settings", "https-client"]
             }
         ]
     };
