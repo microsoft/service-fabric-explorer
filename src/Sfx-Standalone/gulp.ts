@@ -22,6 +22,8 @@ import * as semver from "semver";
 import * as https from "https";
 import * as url from "url";
 import { fullReporter } from "gulp-typescript/release/reporter";
+import { init as initmap, write as writemap } from "gulp-sourcemaps";
+import * as gulpif from "gulp-if"
 
 const pified_exec = pify(child_process.exec, { multiArgs: true });
 
@@ -574,8 +576,15 @@ gulp.task("Build:ts", ["Build:tslint"],
         let tsProject = typescript.createProject("tsconfig.json");
 
         return tsProject.src()
+            .pipe(gulpif(gutil.env.sourcemaps, initmap()))
             .pipe(tsProject())
             .js
+            .pipe(gulpif(gutil.env.sourcemaps, writemap('.', {
+                sourceRoot: function (file) {
+                  var sourceFile = path.join(file.cwd, file.sourceMap.file);
+                  return path.relative(path.dirname(sourceFile), file.cwd);
+                }
+              })))
             .pipe(gulp.dest(buildInfos.paths.appDir));
     });
 

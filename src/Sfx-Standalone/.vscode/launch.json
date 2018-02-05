@@ -14,7 +14,7 @@
               "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
             },
             "args" : ["./build/app/."],
-            "preLaunchTask": "gulp: Build"
+            "preLaunchTask": "gulp: Build:Debug"
         }
     ]
 }
