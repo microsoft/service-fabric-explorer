@@ -286,6 +286,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
 
         try {
             this.log.writeInfo("[pid:{}] Requesting object, objectIdentity: {}, oid: {}.", this.id, objectIdentity, objectItem.id);
+
             const resultInfo: IVariableInfo = proxy.sendSync(EventNames.requestObject, objectIdentity, objectItem.id, ...this.toArgInfos(proxy, objectItem.id, args));
             objectInfo = this.toArg(proxy, objectItem.id, resultInfo);
 
@@ -328,7 +329,6 @@ export default class ElectronProxy extends Disposable implements IProxy {
         }
 
         this.log.writeInfo("[pid:{}] Proxy with communicator (cid:{}) is disposed.", this.id, this.communicator.id);
-
         this.communicator = undefined;
         this.eventHandlerTable = undefined;
         this.proxyTable = undefined;
@@ -423,6 +423,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
             }
 
             this.log.writeVerbose("[pid:{}] Returning resolved object. (objectIdentity: {}, oid: {})", this.id, objectIdentity, objectItem.id);
+          
             return VariableInfos.value({
                 objectId: objectItem.id,
                 schema: objectType.schema
@@ -466,6 +467,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
                 responser.id,
                 request.objectId,
                 request.propertyName);
+
             const propertyFuction: Function = objectItem.instance[request.propertyName];
             const result = propertyFuction.apply(objectItem.instance, ...this.toArgs(responser, request.objectId, request.argInfos));
 
@@ -504,6 +506,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
                 responser.id,
                 request.objectId,
                 request.functionId);
+
             const result = fn(...this.toArgs(responser, request.objectId, request.argInfos));
 
             return this.toArgInfo(responser, request.objectId, result);
@@ -534,6 +537,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
             responser.id,
             request.objectId,
             request.propertyName);
+
         return this.toArgInfo(responser, objectItem.id, objectItem.instance[request.propertyName]);
     }
 
@@ -556,6 +560,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
                 responser.id,
                 request.objectId,
                 request.propertyName);
+
             objectItem.instance[request.propertyName] =
                 this.toArg(
                     responser,
@@ -576,6 +581,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
         this.proxyTable[responser.id] = responser;
 
         this.log.writeInfo("[pid:{}] New proxy connected with communicator cid:{}.", this.id, responser.id);
+      
         const result = this.triggerEvent("proxy-connected", responser);
 
         if (result !== undefined) {

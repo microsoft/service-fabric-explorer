@@ -26,7 +26,7 @@ interface IUpdateSettings {
 
 class UpdateService implements IUpdateService {
     private readonly log: ILog;
-
+  
     private readonly settings: IUpdateSettings;
 
     private readonly httpClient: IHttpClient;
