@@ -3,12 +3,11 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import "./utils";
+import { CompilerOptions, Diagnostic } from "typescript";
 
-export default function error(messageOrFormat: string, ...params: Array<any>): Error {
-    if (!Array.isArray(params)) {
-        return new Error(messageOrFormat);
-    }
-
-    return new Error(String.format(messageOrFormat, ...params));
+declare namespace tsc {
+    function compile(options: CompilerOptions, files?: Array<string>): void;
+    function logDiagnostic(diagnostic: Diagnostic, basePath?: string): void;
 }
+
+export = tsc;

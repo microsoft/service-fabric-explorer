@@ -7,14 +7,21 @@ import { BrowserWindow } from "electron";
 import * as querystring from "querystring";
 import * as Url from "url";
 
+import "../../utilities/utils";
 import resolve from "../../utilities/resolve";
+import error from "../../utilities/errorUtil";
 
-export function handle(window: BrowserWindow) {
+export function handle(window: BrowserWindow, targetHostName: string) {
+    if (String.isNullUndefinedOrWhitespace(targetHostName)) {
+        throw error("targetHostName must be supplied.");
+    }
+
+    targetHostName = Url.parse(targetHostName).hostname;
+
     window.webContents.on("did-get-redirect-request", (event, oldUrlString, newUrlString, isMainFrame, httpResponseCode, requestMethod, referrer, headers) => {
         let newUrl = Url.parse(newUrlString);
-        let targetClusterUrl = Url.parse(global["TargetClusterUrl"]);
 
-        if (newUrl.hostname.toUpperCase() === targetClusterUrl.hostname.toUpperCase()) {
+        if (newUrl.hostname.toUpperCase() === targetHostName.toUpperCase()) {
             if (isMainFrame) {
                 window.loadURL(resolve({ path: "sfx/index.html", hash: newUrl.hash }, true));
             } else {

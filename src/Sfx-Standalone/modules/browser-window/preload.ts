@@ -3,12 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import "./utils";
+import { ModuleManagerAgent } from "../../module-manager/module-manager-host";
 
-export default function error(messageOrFormat: string, ...params: Array<any>): Error {
-    if (!Array.isArray(params)) {
-        return new Error(messageOrFormat);
-    }
-
-    return new Error(String.format(messageOrFormat, ...params));
-}
+global["exports"] = exports;
+global["moduleManager"] = new ModuleManagerAgent();

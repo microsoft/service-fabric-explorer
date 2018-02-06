@@ -3,12 +3,13 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import "./utils";
+import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
 
-export default function error(messageOrFormat: string, ...params: Array<any>): Error {
-    if (!Array.isArray(params)) {
-        return new Error(messageOrFormat);
+declare global {
+    interface IModuleManager {
+        getComponent(componentIdentity: "browser-window",
+            options?: BrowserWindowConstructorOptions,
+            handleAuth?: boolean,
+            aadTargetHostName?: string): BrowserWindow;
     }
-
-    return new Error(String.format(messageOrFormat, ...params));
 }

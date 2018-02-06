@@ -3,12 +3,14 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import "./utils";
+export interface IUpdateService {
+    update(): void;
 
-export default function error(messageOrFormat: string, ...params: Array<any>): Error {
-    if (!Array.isArray(params)) {
-        return new Error(messageOrFormat);
+    requestVersionInfo(callback: (error, versionInfo: IVersionInfo) => void): void;
+}
+
+declare global {
+    interface IModuleManager {
+        getComponent(componentIdentity: "update-service"): IUpdateService;
     }
-
-    return new Error(String.format(messageOrFormat, ...params));
 }
