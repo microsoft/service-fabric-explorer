@@ -32,8 +32,6 @@
     "electron-packager": "^9.1.0",
     "globby": "^7.1.1",
     "gulp": "^3.9.1",
-    "gulp-if": "^2.0.2",
-    "gulp-sourcemaps": "^2.6.4",
     "gulp-tslint": "^8.1.2",
     "gulp-util": "^3.0.8",
     "pify": "^3.0.0",
