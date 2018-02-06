@@ -61,6 +61,7 @@ interface IModuleManager {
 
     registerComponents(componentInfos: Array<IComponentInfo>): Array<Error>;
     
+    resolveComponentIdentity(componentIdentity: string): string;
     getComponent(componentIdentity: "module-manager"): IModuleManager;
     getComponent<T>(componentIdentity: string, ...extraArgs: Array<any>): T;
 

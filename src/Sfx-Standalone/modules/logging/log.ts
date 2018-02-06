@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import { ILog, ILogger, ILoggingSettings, ILoggerSettings, Severity } from "../../@types/log";
+import { IConsoleLoggerSettings } from "./console";
 import * as utils from "../../utilities/utils";
 import error from "../../utilities/errorUtil";
 
@@ -16,6 +17,17 @@ export enum Severities {
     Critical = "critical"
 }
 
+const defaultLoggingSettings: ILoggingSettings = {
+    logCallerInfo: true,
+    loggers: {
+        console: <IConsoleLoggerSettings>{
+            type: "console",
+            logAllProperties: false,
+            logCallerInfo: true
+        }
+    }
+};
+
 export class Log implements ILog {
     private readonly moduleManager: IModuleManager;
 
@@ -23,26 +35,23 @@ export class Log implements ILog {
 
     private readonly defaultPropertiesInJson: string;
 
-    constructor(moduleManager: IModuleManager, loggingSettings?: ILoggingSettings) {
-        if (utils.isNullOrUndefined(moduleManager)
-            || !Object.isObject(moduleManager)) {
-            throw error("Valid moduleManager must be supplied.");
-        }
+    private readonly logCallerInfo: boolean;
 
-        if (utils.isNullOrUndefined(loggingSettings)) {
-            loggingSettings = {
-                loggers: {
-                    console: {
-                        type: "loggers.console"
-                    }
-                }
-            };
+    constructor(moduleManager?: IModuleManager, loggingSettings?: ILoggingSettings) {
+        if (utils.isNullOrUndefined(moduleManager)) {
+            this.moduleManager = undefined;
+            loggingSettings = defaultLoggingSettings;
+        } else if (!Object.isObject(moduleManager)) {
+            throw error("Valid moduleManager must be supplied.");
+        } else if (utils.isNullOrUndefined(loggingSettings)) {
+            loggingSettings = defaultLoggingSettings;
         } else if (!Object.isObject(loggingSettings)) {
             throw error("valid loggingSetting must be supplied.");
         }
 
         this.loggers = {};
         this.defaultPropertiesInJson = undefined;
+        this.moduleManager = moduleManager;
 
         if (Object.isObject(loggingSettings.properties)) {
             this.defaultPropertiesInJson = JSON.stringify(loggingSettings.properties);
@@ -52,14 +61,36 @@ export class Log implements ILog {
             for (const loggerName in loggingSettings.loggers) {
                 if (loggingSettings.loggers.hasOwnProperty(loggerName)) {
                     const loggerSettings: ILoggerSettings = loggingSettings.loggers[loggerName];
+                    let logger: ILogger;
 
-                    this.loggers[loggerName] =
-                        this.moduleManager.getComponent(
+                    if (this.moduleManager !== undefined) {
+                        logger = this.moduleManager.getComponent(
                             String.format("loggers.{}", loggerSettings.type),
                             loggerSettings);
+                    } else {
+                        const loggerModule = require("./" + loggerSettings.type);
+
+                        if (loggerModule.default !== undefined) {
+                            logger = new loggerModule.default(loggerSettings);
+                        } else {
+                            logger = new (loggerModule[loggerSettings.type])(loggerSettings);
+                        }
+                    }
+
+                    if (logger === undefined) {
+                        throw error(
+                            "failed to load logger, {}, named '{}', with component identity: {}.",
+                            loggerSettings.type,
+                            loggerName,
+                            String.format("loggers.{}", loggerSettings.type));
+                    }
+
+                    this.loggers[loggerName] = logger;
                 }
             }
         }
+
+        this.logCallerInfo = utils.getEither(loggingSettings.logCallerInfo, false);
     }
 
     public writeMore(properties: IDictionary<string>, severity: Severity, messageOrFormat: string, ...params: Array<any>): void {
@@ -163,6 +194,14 @@ export class Log implements ILog {
 
         if (Object.isObject(properties)) {
             finalProperties = finalProperties === null ? properties : Object.assign(finalProperties, properties);
+        }
+
+        if (this.logCallerInfo) {
+            const callerInfo = utils.getCallerInfo();
+
+            finalProperties = finalProperties || {};
+            finalProperties["Caller.FileName"] = callerInfo.fileName;
+            finalProperties["Caller.Name"] = String.format("{}.{}()", callerInfo.typeName, callerInfo.functionName);
         }
 
         return finalProperties;

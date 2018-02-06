@@ -5,6 +5,7 @@
 
 import * as uuidv4 from "uuid/v4";
 
+import { ILog } from "../../@types/log";
 import { ICommunicator, ISender, IProxy } from "../../@types/ipc";
 import * as utils from "../../utilities/utils";
 import { Disposable } from "./common";
@@ -111,7 +112,7 @@ function getPropertyDescriptors(obj: Object): IDictionary<PropertyDescriptor> {
             }
         }
 
-        objPrototype = Object.getPrototypeOf(obj);
+        objPrototype = Object.getPrototypeOf(objPrototype);
     } while (objPrototype !== Object.prototype);
 
     return propertyDescriptors;
@@ -132,12 +133,12 @@ function generateObjectSchema(obj: object): IDictionary<IVariableInfo> {
                 };
             } else {
                 variableInfo = {
-                    kind: Function.isFunction(propertyDescriptor.value) ? VariableKind.function : variableInfo.value
+                    kind: Function.isFunction(propertyDescriptor.value) ? VariableKind.function : VariableKind.value
                 };
             }
         } else {
             variableInfo = {
-                kind: Function.isFunction(obj[propertyName]) ? VariableKind.function : variableInfo.value
+                kind: Function.isFunction(obj[propertyName]) ? VariableKind.function : VariableKind.value
             };
         }
 
@@ -149,6 +150,8 @@ function generateObjectSchema(obj: object): IDictionary<IVariableInfo> {
 
 export default class ElectronProxy extends Disposable implements IProxy {
     public id: string;
+
+    private readonly log: ILog;
 
     private readonly autoclose: boolean;
 
@@ -166,13 +169,18 @@ export default class ElectronProxy extends Disposable implements IProxy {
 
     private proxyTable: IDictionary<ISender>;
 
-    constructor(communicator: ICommunicator, autoclose: boolean = false) {
+    constructor(log: ILog, communicator: ICommunicator, autoclose: boolean = false) {
         super();
+
+        if (!Object.isObject(log)) {
+            throw error("log must be supplied.");
+        }
 
         if (!Object.isObject(communicator)) {
             throw error("communicator must be supplied.");
         }
 
+        this.log = log;
         this.objectTable = {};
         this.objectTypeTable = {};
         this.eventHandlerTable = {};
@@ -194,6 +202,8 @@ export default class ElectronProxy extends Disposable implements IProxy {
         if (!this.communicator.isHost) {
             this.communicator.send(EventNames.proxyConnected);
         }
+
+        this.log.writeInfo("[id:{}] Proxy with communicator (id:{}) is created.", this.id, this.communicator.id);
     }
 
     public on(eventName: "resolve-object", handler: (objectIdentity: string, ...args: Array<any>) => object): void;
@@ -275,6 +285,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
         let objectInfo: IObjectInfo = undefined;
 
         try {
+            this.log.writeInfo("[pid:{}] Requesting object, objectIdentity: {}, oid: {}.", this.id, objectIdentity, objectItem.id);
             const resultInfo: IVariableInfo = proxy.sendSync(EventNames.requestObject, objectIdentity, objectItem.id, ...this.toArgInfos(proxy, objectItem.id, args));
             objectInfo = this.toArg(proxy, objectItem.id, resultInfo);
 
@@ -304,6 +315,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
         const proxy: ISender = this.proxyTable === undefined ? this.communicator : this.proxyTable[proxyObject[this.symbol_proxyId]];
 
         if (!utils.isNullOrUndefined(proxy)) {
+            this.log.writeInfo("[pid:{}] Releasing object, {}.", this.id, proxyObject[this.symbol_objectId]);
             proxy.sendSync(EventNames.releaseObject, proxyObject[this.symbol_objectId]);
         }
     }
@@ -314,6 +326,8 @@ export default class ElectronProxy extends Disposable implements IProxy {
         } else {
             Object.values(this.proxyTable).forEach((proxy) => proxy.sendSync(EventNames.proxyDisconnected));
         }
+
+        this.log.writeInfo("[pid:{}] Proxy with communicator (cid:{}) is disposed.", this.id, this.communicator.id);
 
         this.communicator = undefined;
         this.eventHandlerTable = undefined;
@@ -336,15 +350,15 @@ export default class ElectronProxy extends Disposable implements IProxy {
 
             const propertyDescriptor: PropertyDescriptor = {
                 enumerable: variableInfo.enumerable,
-                configurable: false,
-                writable: variableInfo.writable
+                configurable: false
             };
 
             if (variableInfo.kind === VariableKind.function) {
                 propertyDescriptor.value = this.toDelegateCallPropertyFunction(proxy, objectInfo.objectId, propertyName);
+                propertyDescriptor.writable = variableInfo.writable;
             } else {
                 propertyDescriptor.get = this.toDelegatePullPropertyFunction(proxy, objectInfo.objectId, propertyName);
-                propertyDescriptor.set = propertyDescriptor.writable ? this.toDelegatePushPropertyFunction(proxy, objectInfo.objectId, propertyName) : undefined;
+                propertyDescriptor.set = variableInfo.writable ? this.toDelegatePushPropertyFunction(proxy, objectInfo.objectId, propertyName) : undefined;
             }
 
             Object.defineProperty(proxyObject, propertyName, propertyDescriptor);
@@ -386,14 +400,17 @@ export default class ElectronProxy extends Disposable implements IProxy {
         };
 
         this.objectTable[objectItem.id] = objectItem;
+        this.log.writeInfo("[pid:{}] Object request received. (objectIdentity: {}, oid: {})", this.id, objectIdentity, objectItem.id);
 
         try {
             obj = this.triggerEvent("resolve-object", objectIdentity, ...this.toArgs(responser, objectItem.id, argInfos));
 
             if (obj === undefined) {
+                this.log.writeError("[pid:{}] Failed to resolve object. (objectIdentity: {}, oid: {})", this.id, objectIdentity, objectItem.id);
                 return VariableInfos.undefined;
             }
 
+            this.log.writeVerbose("[pid:{}] Resolve object successfully. (objectIdentity: {}, oid: {})", this.id, objectIdentity, objectItem.id);
             objectItem.instance = obj;
 
             let objectType = this.objectTypeTable[objectIdentity];
@@ -405,11 +422,14 @@ export default class ElectronProxy extends Disposable implements IProxy {
                 };
             }
 
+            this.log.writeVerbose("[pid:{}] Returning resolved object. (objectIdentity: {}, oid: {})", this.id, objectIdentity, objectItem.id);
             return VariableInfos.value({
                 objectId: objectItem.id,
                 schema: objectType.schema
             });
         } catch (exception) {
+            this.log.writeException(exception);
+
             if (exception instanceof Error) {
                 return VariableInfos.error(exception.message);
             } else {
@@ -423,17 +443,29 @@ export default class ElectronProxy extends Disposable implements IProxy {
     }
 
     private readonly onReleaseObject = (responser: ISender, objectId: string): boolean => {
+        this.log.writeInfo("[pid:{}] Object, oid:{}, is released.", this.id, objectId);
         return delete this.objectTable[objectId];
     }
 
     private readonly onCallPropertyRequest = (responser: ISender, request: IPropertyRequest): IVariableInfo => {
         const objectItem = this.objectTable[request.objectId];
 
+        this.log.writeVerbose("[pid:{}] Request to call property received from communicator cid:{}. (oid:{}, propertyName:{})",
+            this.id,
+            responser.id,
+            request.objectId,
+            request.propertyName);
+
         if (objectItem === undefined) {
             return VariableInfos.error("object, {}, doesn't exist.", request.objectId);
         }
 
         try {
+            this.log.writeVerbose("[pid:{}] Calling property. (cid:{}, oid:{}, propertyName:{})",
+                this.id,
+                responser.id,
+                request.objectId,
+                request.propertyName);
             const propertyFuction: Function = objectItem.instance[request.propertyName];
             const result = propertyFuction.apply(objectItem.instance, ...this.toArgs(responser, request.objectId, request.argInfos));
 
@@ -450,6 +482,12 @@ export default class ElectronProxy extends Disposable implements IProxy {
     private readonly onCallFunctionRequest = (responser: ISender, request: IFunctionRequest): IVariableInfo => {
         const objectItem = this.objectTable[request.objectId];
 
+        this.log.writeVerbose("[pid:{}] Request to call function received from communicator cid:{}. (oid:{}, fnid:{})",
+            this.id,
+            responser.id,
+            request.objectId,
+            request.functionId);
+
         if (objectItem === undefined) {
             return VariableInfos.error("object, {}, doesn't exist.", request.objectId);
         }
@@ -461,6 +499,11 @@ export default class ElectronProxy extends Disposable implements IProxy {
         }
 
         try {
+            this.log.writeVerbose("[pid:{}] Calling function. (cid:{}, oid:{}, fnid:{})",
+                this.id,
+                responser.id,
+                request.objectId,
+                request.functionId);
             const result = fn(...this.toArgs(responser, request.objectId, request.argInfos));
 
             return this.toArgInfo(responser, request.objectId, result);
@@ -476,21 +519,43 @@ export default class ElectronProxy extends Disposable implements IProxy {
     private readonly onPullRequest = (responser: ISender, request: IPropertyRequest): IVariableInfo => {
         const objectItem = this.objectTable[request.objectId];
 
+        this.log.writeVerbose("[pid:{}] Request to pull property received from communicator cid:{}. (oid:{}, propertyName:{})",
+            this.id,
+            responser.id,
+            request.objectId,
+            request.propertyName);
+
         if (objectItem === undefined) {
             return VariableInfos.error("object, {}, doesn't exist.", request.objectId);
         }
 
+        this.log.writeVerbose("[pid:{}] Pulling property. (cid:{}, oid:{}, propertyName:{})",
+            this.id,
+            responser.id,
+            request.objectId,
+            request.propertyName);
         return this.toArgInfo(responser, objectItem.id, objectItem.instance[request.propertyName]);
     }
 
     private readonly onPushRequest = (responser: ISender, request: IPropertyRequest): IVariableInfo => {
         const objectItem = this.objectTable[request.objectId];
 
+        this.log.writeVerbose("[pid:{}] Request to push property received from communicator cid:{}. (oid:{}, propertyName:{})",
+            this.id,
+            responser.id,
+            request.objectId,
+            request.propertyName);
+
         if (objectItem === undefined) {
             return VariableInfos.error("object, {}, doesn't exist.", request.objectId);
         }
 
         try {
+            this.log.writeVerbose("[pid:{}] Pushing property. (cid:{}, oid:{}, propertyName:{})",
+                this.id,
+                responser.id,
+                request.objectId,
+                request.propertyName);
             objectItem.instance[request.propertyName] =
                 this.toArg(
                     responser,
@@ -510,6 +575,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
         // Write Info.
         this.proxyTable[responser.id] = responser;
 
+        this.log.writeInfo("[pid:{}] New proxy connected with communicator cid:{}.", this.id, responser.id);
         const result = this.triggerEvent("proxy-connected", responser);
 
         if (result !== undefined) {
@@ -528,6 +594,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
             }
         });
 
+        this.log.writeInfo("[pid:{}] Proxy disconnected with communicator cid:{}.", this.id, responser.id);
         const result = this.triggerEvent("proxy-disconnected", responser);
 
         if (!this.communicator.isHost) {
