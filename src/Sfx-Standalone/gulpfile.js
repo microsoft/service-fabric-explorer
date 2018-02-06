@@ -100,6 +100,12 @@ gulp.task("Build", ["Import:gulp-ts"],
         runSequence("Build:All", callback);
     });
 
+gulp.task("Build:Debug", ["Import:gulp-ts"],
+    function (callback) {
+        gutil.env.sourcemaps = true;
+        runSequence("Build:All", callback);
+    });
+
 gulp.task("Clean",
     function () {
         return del([
