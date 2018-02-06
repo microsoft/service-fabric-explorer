@@ -33,9 +33,9 @@ export class PromptContext implements IPromptContext {
     constructor() {
         this.promptWindow = remote.getCurrentWindow();
         this.finished = false;
-        this.communicator = new ElectronCommunicator(null, String.format(ChannelNameFormat, this.promptWindow.webContents.id));
+        this.communicator = moduleManager.getComponent("ipc-communicator-electron", null, String.format(ChannelNameFormat, this.promptWindow.webContents.id));
         this.options = this.communicator.sendSync(EventNames.RequestPromptOptions, null);
-        
+
         this.promptWindow.on("close",
             (event) => {
                 event.preventDefault();

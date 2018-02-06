@@ -6,8 +6,8 @@
 import { ISettings } from "../../@types/settings";
 import { ILoggerSettings } from "../../@types/log";
 import { Log } from "./log";
-import { ConsoleLogger } from "./console";
-import { AppInsightsLogger } from "./app-insights";
+import ConsoleLogger from "./console";
+import AppInsightsLogger from "./app-insights";
 
 export function getModuleMetadata(): IModuleInfo {
     return {

@@ -11,7 +11,6 @@ import error from "../utilities/errorUtil";
 import * as utils from "../utilities/utils";
 import * as di from "../utilities/di";
 import * as diExt from "../utilities/di.ext";
-import { DiDescriptorConstructor } from "../utilities/di.ext";
 
 interface IModule {
     getModuleMetadata?(): IModuleInfo;
@@ -206,10 +205,12 @@ export class Identity {
     }
 }
 
-export class ModuleManager implements IModuleManager {
+export class ModuleManager extends di.DiContainer implements IModuleManager {
     public readonly hostVersion: string;
 
-    private readonly di: di.IDiContainer;
+    private readonly throwIfComponentNotFound: boolean;
+
+    private readonly options: boolean;
 
     private hostVersionMismatchEvent: HostVersionMismatchEventHandler;
 
@@ -250,10 +251,17 @@ export class ModuleManager implements IModuleManager {
         delete referenceStack[identity];
     }
 
-    constructor(hostVersion?: string) {
+    constructor(hostVersion?: string, throwIfComponentNotFound?: boolean) {
+        super(new VersionedDiDescriptorDictionary());
         this.hostVersion = !String.isNullUndefinedOrWhitespace(hostVersion) ? hostVersion : "*";
-        this.di = new di.DiContainer(new VersionedDiDescriptorDictionary());
-        this.di.set("module-manager", diExt.DiDescriptorConstructor.singleton(this));
+        this.throwIfComponentNotFound = utils.getEither(throwIfComponentNotFound, true);
+        this.set("module-manager", diExt.DiDescriptorConstructor.singleton(this));
+    }
+
+    public resolveComponentIdentity(componentIdentity: string): string {
+        const resolvedIdentity = this.loadComponentByIdentity(null, Identity.fromIdentityString(componentIdentity), {}, undefined);
+
+        return resolvedIdentity ? resolvedIdentity.identity : null;
     }
 
     public loadModules(folderPath: string): IDictionary<Array<Error>> {
@@ -380,20 +388,24 @@ export class ModuleManager implements IModuleManager {
         return this.loadComponents(componentInfoDictionary);
     }
 
-    public getComponent<T>(componentIdentityString: string, ...extraArgs: Array<any>): T {
+    public getInstance<T>(componentIdentityString: string, ...extraArgs: Array<any>): T {
         const componentIdentity = Identity.fromIdentityString(componentIdentityString);
 
         if (componentIdentity === null) {
             throw error("componentIdentityString, '{}', is Invalid!", componentIdentityString);
         }
 
-        const instance = this.di.getInstance<T>(componentIdentity.identity, ...extraArgs);
+        const instance = super.getInstance<T>(componentIdentity.identity, ...extraArgs);
 
-        if (instance === undefined) {
+        if (instance === undefined && this.throwIfComponentNotFound) {
             throw error("Failed to get component: {}", componentIdentityString);
         }
 
         return instance;
+    }
+
+    public getComponent<T>(componentIdentityString: string, ...extraArgs: Array<any>): T {
+        return this.getInstance(componentIdentityString, ...extraArgs);
     }
 
     public readonly onHostVersionMismatch = (callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler => {
@@ -426,6 +438,47 @@ export class ModuleManager implements IModuleManager {
         }
 
         return errors.length > 0 ? errors : null;
+    }
+
+    protected loadComponentByIdentity(
+        parentComponentIdentity: Identity,
+        componentIdentity: Identity,
+        componentInfoDictionary: IDictionary<IComponentInfo>,
+        referenceStack?: IDictionary<string>): Identity {
+
+        // Try to find the dependency with the name + version identity in NOT-loaded components.
+        if (undefined !== componentInfoDictionary[componentIdentity.identity]) {
+            return this.loadComponent(componentInfoDictionary[componentIdentity.identity], componentInfoDictionary, referenceStack);
+        }
+
+        // Try to find the dependency with the name + version identity in loaded components.
+        if (undefined !== this.get(componentIdentity.identity)) {
+            return componentIdentity;
+        }
+
+        // Try to find the dependency with the name identity in NOT-loaded components.
+        const matchedComponentIdentities = Identity.findByIdentityName(componentIdentity.name, Object.keys(componentInfoDictionary));
+
+        if (matchedComponentIdentities.length > 0) {
+            if (Function.isFunction(this.depVersionMismatchEvent)) {
+                if (!this.depVersionMismatchEvent(
+                    utils.isNullOrUndefined(parentComponentIdentity) ? undefined : parentComponentIdentity.identity,
+                    componentIdentity.identity)) {
+                    throw error("{}: dependency, '{}', is missing.", parentComponentIdentity.identity, componentIdentity.identity);
+                }
+            }
+
+            matchedComponentIdentities.forEach((identity) => this.loadComponent(componentInfoDictionary[identity], componentInfoDictionary, referenceStack));
+
+            return Identity.fromIdentityString(componentIdentity.name);
+        }
+
+        // Try to find the dependency with the name identity in loaded components.
+        if (undefined !== this.get(componentIdentity.name)) {
+            return Identity.fromIdentityString(componentIdentity.name);
+        }
+
+        return null;
     }
 
     private initializeModule(module: IModule): void {
@@ -481,66 +534,31 @@ export class ModuleManager implements IModuleManager {
                     continue;
                 }
 
-                const depIdentity = Identity.fromIdentityString(componentInfo.deps[depIndex]);
+                let depIdentity = Identity.fromIdentityString(componentInfo.deps[depIndex]);
 
                 if (depIdentity === null) {
                     throw error("{}: dependency identity, '{}', is invalid.", componentIdentity.identity, componentInfo.deps[depIndex]);
                 }
 
-                componentInfo.deps[depIndex] = this.loadComponentByIdentity(componentIdentity, depIdentity, componentInfoDictionary, referenceStack).identity;
+                depIdentity = this.loadComponentByIdentity(componentIdentity, depIdentity, componentInfoDictionary, referenceStack);
+
+                if (depIdentity === null) {
+                    throw error("{}: dependency, '{}', is missing.", componentIdentity.identity, componentInfo.deps[depIndex]);
+                }
+
+                componentInfo.deps[depIndex] = depIdentity.identity;
             }
         }
 
         if (utils.getEither(componentInfo.singleton, false)) {
-            this.di.set(componentIdentity.identity, ComponentDescriptors.lazySingleton(componentIdentity.identity, componentInfo.descriptor, componentInfo.deps));
+            this.set(componentIdentity.identity, ComponentDescriptors.lazySingleton(componentIdentity.identity, componentInfo.descriptor, componentInfo.deps));
         } else {
-            this.di.set(componentIdentity.identity, ComponentDescriptors.dedication(componentIdentity.identity, componentInfo.descriptor, componentInfo.deps));
+            this.set(componentIdentity.identity, ComponentDescriptors.dedication(componentIdentity.identity, componentInfo.descriptor, componentInfo.deps));
         }
 
         delete componentInfoDictionary[componentIdentity.identity];
         ModuleManager.popReferenceStack(componentIdentity.identity, referenceStack);
 
         return componentIdentity;
-    }
-
-    private loadComponentByIdentity(
-        parentComponentIdentity: Identity,
-        componentIdentity: Identity,
-        componentInfoDictionary: IDictionary<IComponentInfo>,
-        referenceStack?: IDictionary<string>): Identity {
-
-        // Try to find the dependency with the name + version identity in NOT-loaded components.
-        if (undefined !== componentInfoDictionary[componentIdentity.identity]) {
-            return this.loadComponent(componentInfoDictionary[componentIdentity.identity], componentInfoDictionary, referenceStack);
-        }
-
-        // Try to find the dependency with the name + version identity in loaded components.
-        if (undefined !== this.di.get(componentIdentity.identity)) {
-            return componentIdentity;
-        }
-
-        // Try to find the dependency with the name identity in NOT-loaded components.
-        const matchedComponentIdentities = Identity.findByIdentityName(componentIdentity.name, Object.keys(componentInfoDictionary));
-
-        if (matchedComponentIdentities.length > 0) {
-            if (Function.isFunction(this.depVersionMismatchEvent)) {
-                if (!this.depVersionMismatchEvent(
-                    utils.isNullOrUndefined(parentComponentIdentity) ? undefined : parentComponentIdentity.identity,
-                    componentIdentity.identity)) {
-                    throw error("{}: dependency, '{}', is missing.", parentComponentIdentity.identity, componentIdentity.identity);
-                }
-            }
-
-            matchedComponentIdentities.forEach((identity) => this.loadComponent(componentInfoDictionary[identity], componentInfoDictionary, referenceStack));
-
-            return Identity.fromIdentityString(componentIdentity.name);
-        }
-
-        // Try to find the dependency with the name identity in loaded components.
-        if (undefined !== this.di.get(componentIdentity.name)) {
-            return Identity.fromIdentityString(componentIdentity.name);
-        }
-
-        throw error("{}: dependency, '{}', is missing.", parentComponentIdentity.identity, componentIdentity.identity);
     }
 }

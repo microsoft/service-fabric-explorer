@@ -3,6 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import { ILog } from "../../@types/log";
+import { ICommunicator } from "../../@types/ipc";
 import ElectronCommunicator from "./communicator-electron";
 import ElectronProxy from "./proxy-electron";
 
@@ -14,12 +16,14 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "ipc-communicator-electron",
                 version: "1.0.0",
-                descriptor: (webContentId, subchannelName) => new ElectronCommunicator(webContentId, subchannelName)
+                descriptor: (log: ILog, webContentId: number, subchannelName: string) => new ElectronCommunicator(log, webContentId, subchannelName),
+                deps: ["log"]
             },
             {
                 name: "ipc-proxy-electron",
                 version: "1.0.0",
-                descriptor: (communicator, autoDipsoseCommunicator) => new ElectronProxy(communicator, autoDipsoseCommunicator)
+                descriptor: (log: ILog, communicator: ICommunicator, autoDipsoseCommunicator: boolean) => new ElectronProxy(log, communicator, autoDipsoseCommunicator),
+                deps: ["log"]
             }
         ]
     };

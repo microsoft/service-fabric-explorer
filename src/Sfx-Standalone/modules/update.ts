@@ -31,53 +31,6 @@ class UpdateService implements IUpdateService {
 
     private readonly httpClient: IHttpClient;
 
-    private static confirmUpate(versionInfo: IVersionInfo, path: string): void {
-        let buttons = ["Yes", "No"];
-
-        dialog.showMessageBox(
-            {
-                message: String.format("A newer version, {}, is found. Would you like to update now?", versionInfo.version),
-                detail: versionInfo.description ? versionInfo.description : undefined,
-                buttons: buttons,
-                defaultId: 1
-            },
-            (response) => {
-                //logInfo("The user response whether to apply the update: {} ({})", buttons[response], response);
-                switch (response) {
-                    case 0: // Yes
-                        //logInfo("Applying the update package and quit the app.");
-                        env.start(path);
-                        app.quit();
-                        break;
-
-                    case 1: // No
-                    default:
-                        if (fs.existsSync(path)) {
-                            fs.unlinkSync(path);
-                            //logInfo("Removed the local update package.");
-                        }
-                        break;
-                }
-            });
-    }
-
-    private static getPackagePath(packageInfo: IPackageInfo): string {
-        let packagePath = packageInfo[env.arch];
-
-        if (!packagePath) {
-            //logInfo("Fall back to x86 for platform {}. (current arch: {})", env.platform, env.arch);
-            // fall back to x86 if the current one doesn't exist.
-            packagePath = packageInfo[Architecture.X86];
-        }
-
-        if (!packagePath) {
-            //logError("Architecture {} is NOT found in {} package info.", env.arch, env.platform);
-            return null;
-        }
-
-        return packagePath;
-    }
-
     constructor(log: ILog, updateSettings: IUpdateSettings, httpClient: IHttpClient) {
         if (!Object.isObject(log)) {
             throw error("log must be supplied.");
@@ -130,23 +83,71 @@ class UpdateService implements IUpdateService {
                 versionInfoUrl,
                 ResponseHandlerHelper.handleJsonResponse<IVersionInfo>(callback));
         } catch (exception) {
-            // write log.
+            this.log.writeException(exception);
             callback(exception, null);
         }
+    }
+
+    private confirmUpate(versionInfo: IVersionInfo, path: string): void {
+        let buttons = ["Yes", "No"];
+
+        this.log.writeVerbose("Requesting update confirmation from the user ...");
+        dialog.showMessageBox(
+            {
+                message: String.format("A newer version, {}, is found. Would you like to update now?", versionInfo.version),
+                detail: versionInfo.description ? versionInfo.description : undefined,
+                buttons: buttons,
+                defaultId: 1
+            },
+            (response) => {
+                this.log.writeInfo("Update confirmation result: {} ({})", buttons[response], response);
+                switch (response) {
+                    case 0: // Yes
+                        this.log.writeVerbose("Applying the update package and quit the app: {}", path);
+                        env.start(path);
+                        app.quit();
+                        break;
+
+                    case 1: // No
+                    default:
+                        if (fs.existsSync(path)) {
+                            fs.unlinkSync(path);
+                            this.log.writeVerbose("Removed the local update package: {}", path);
+                        }
+                        break;
+                }
+            });
+    }
+
+    private getPackagePath(packageInfo: IPackageInfo): string {
+        let packagePath = packageInfo[env.arch];
+
+        if (!packagePath) {
+            // fall back to x86 if the current one doesn't exist.
+            packagePath = packageInfo[Architecture.X86];
+            this.log.writeVerbose("Fall back to x86 for platform {} from arch {}.", env.platform, env.arch);
+        }
+
+        if (!packagePath) {
+            this.log.writeError("Arch {1} is NOT found in {0} package info.", env.platform, env.arch);
+            return null;
+        }
+
+        return packagePath;
     }
 
     private requestPackage(packagePath: string, callback: (error, filePath: string) => void): void {
         const tempFile: { name: string; fd: number } =
             tmp.fileSync({ keep: true, postfix: path.extname(packagePath) });
-        //logInfo("Created temp file for the update package: {}", tempFile.name);
+        this.log.writeInfo("Created temp file for the update package: {}", tempFile.name);
 
-        //logInfo("Retrieving the update package: {} ...", packagePath);
         try {
+            this.log.writeInfo("Requesting the update package: {}", packagePath);
             this.httpClient.get(
                 packagePath,
                 ResponseHandlerHelper.saveToFile(tempFile.fd, true, (error) => callback(error, tempFile.name)));
         } catch (exception) {
-            // log exception.
+            this.log.writeException(exception);
             callback(exception, null);
         }
     }
@@ -161,7 +162,7 @@ class UpdateService implements IUpdateService {
         let packagePath: string;
 
         if (!packageInfo) {
-            //logError("No package info found for platform: {}.", env.platform);
+            this.log.writeError("No package info found for platform: {}.", env.platform);
             return;
         }
 
@@ -169,16 +170,16 @@ class UpdateService implements IUpdateService {
             packagePath = packageInfo;
 
             try {
-                UpdateService.confirmUpate(versionInfo, url.parse(packagePath).href);
+                this.confirmUpate(versionInfo, url.parse(packagePath).href);
             } catch (error) {
-                //logError("Invalid packagePath: {}", packagePath);
+                this.log.writeException(error);
             }
         } else {
-            packagePath = UpdateService.getPackagePath(packageInfo);
+            packagePath = this.getPackagePath(packageInfo);
 
             this.requestPackage(packagePath, (error, filePath) => {
                 if (String.isString(filePath)) {
-                    UpdateService.confirmUpate(versionInfo, filePath);
+                    this.confirmUpate(versionInfo, filePath);
                 }
             });
         }

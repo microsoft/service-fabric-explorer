@@ -16,6 +16,7 @@ export interface ILoggerSettings extends IDictionary<any> {
 }
 
 export interface ILoggingSettings {
+    logCallerInfo?: boolean;
     loggers?: IDictionary<ILoggerSettings>;
     properties?: IDictionary<string>;
 }
@@ -40,6 +41,6 @@ declare global {
     interface IModuleManager {
         getComponent(componentIdentity: "log"): ILog;
         getComponent(componentIdentity: "loggers.console", loggerSettings: ILoggerSettings, targetConsole?: Console): ILogger;
-        getComponent(componentIdentity: "loggers.appinsights", loggerSettings: ILoggerSettings): ILogger;
+        getComponent(componentIdentity: "loggers.app-insights", loggerSettings: ILoggerSettings): ILogger;
     }
 }

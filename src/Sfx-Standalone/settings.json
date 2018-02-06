@@ -4,13 +4,16 @@
         "defaultChannel": "stable"
     },
     "logging": {
+        "logCallerInfo": true,
         "loggers": {
-            "appInsights": {
+            "app-insights": {
                 "type": "app-insights",
                 "instrumentationKey": "84c71119-d044-4bc2-86b3-d65a8968c241"
             },
             "console": {
-                "type": "console"
+                "type": "console",
+                "logAllProperties": false,
+                "logCallerInfo": true
             }
         }
     },
