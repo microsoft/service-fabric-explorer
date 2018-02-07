@@ -26,28 +26,6 @@ declare global {
     interface NumberConstructor {
         isNumber(value: any): value is number | Number;
     }
-
-    /* DOC:https://github.com/v8/v8/wiki/Stack-Trace-API */
-    interface CallSite {
-        getThis(): any;
-        getTypeName(): string;
-        getFunction(): Function;
-        getFunctionName(): string;
-        getMethodName(): string;
-        getFileName(): string;
-        getLineNumber(): number;
-        getColumnNumber(): number;
-        getEvalOrigin(): CallSite;
-        isTopLevel(): boolean;
-        isEval(): boolean;
-        isNative(): boolean;
-        isConstructor(): boolean;
-    }
-
-    /* DOC:https://github.com/v8/v8/wiki/Stack-Trace-API */
-    interface ErrorConstructor {
-        prepareStackTrace(error: Error, structuredStackTrace: Array<CallSite>);
-    }
 }
 
 Number.isNumber = (value: any): value is number | Number => {
@@ -124,7 +102,7 @@ export interface ICallerInfo {
     typeName: string;
 }
 
-function prepareStackTraceOverride(error: Error, structuredStackTrace: Array<CallSite>): any {
+function prepareStackTraceOverride(error: Error, structuredStackTrace: Array<NodeJS.CallSite>): any {
     return structuredStackTrace;
 }
 
@@ -134,7 +112,7 @@ export function getCallerInfo(): ICallerInfo {
     try {
         Error.prepareStackTrace = prepareStackTraceOverride;
 
-        const callStack: Array<CallSite> = <any>(new Error()).stack;
+        const callStack: Array<NodeJS.CallSite> = <any>(new Error()).stack;
         let directCallerInfo: ICallerInfo = undefined;
 
         for (let callStackIndex = 0; callStackIndex < callStack.length; callStackIndex++) {

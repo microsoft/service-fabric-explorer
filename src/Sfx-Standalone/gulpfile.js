@@ -46,7 +46,7 @@ gulp.task("npm:Install-sfx-dependencies",
         for (const dependencyName in packagejson.sfxDependencies) {
             if (!isInstalled(dependencyName)) {
                 const dependency = packagejson.sfxDependencies[dependencyName];
-                const versionArg = "";
+                let versionArg = "";
 
                 let dependencyTypeArgs = "";
 
