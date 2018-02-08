@@ -220,7 +220,7 @@ module Sfx {
             return this.get(formedUrl, "Get deployed code package", messageHandler);
         }
 
-        public getDeployedContainerLogs(nodeName: string, applicationId: string, servicePackageName: string, codePackageName: string, tail: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawContainerLogs> {
+        public getDeployedContainerLogs(nodeName: string, applicationId: string, servicePackageName: string, codePackageName: string, servicePackageActivationId: string, tail: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawContainerLogs> {
             let url = "Nodes/" + encodeURIComponent(nodeName)
                 + "/$/GetApplications/" + encodeURIComponent(applicationId)
                 + "/$/GetCodePackages"
@@ -229,6 +229,7 @@ module Sfx {
             let formedUrl = this.getApiUrl(url)
                 + "&ServiceManifestName=" + encodeURIComponent(servicePackageName)
                 + "&CodePackageName=" + encodeURIComponent(codePackageName)
+                + "&ServicePackageActivationId=" + encodeURIComponent(servicePackageActivationId)
                 + "&Tail=" + encodeURIComponent(tail);
 
             return this.get(formedUrl, "Get deployed container logs", messageHandler);
