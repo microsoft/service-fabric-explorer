@@ -112,7 +112,7 @@ module Sfx {
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawContainerLogs> {
             let deployedCodePackage = <DeployedCodePackage>(this.parent);
             return Utils.getHttpResponseData(
-                this.data.restClient.getDeployedContainerLogs(deployedCodePackage.parent.parent.parent.name, deployedCodePackage.parent.parent.id, deployedCodePackage.parent.name, deployedCodePackage.name, deployedCodePackage.containerLogsTail, messageHandler));
+                this.data.restClient.getDeployedContainerLogs(deployedCodePackage.parent.parent.parent.name, deployedCodePackage.parent.parent.id, deployedCodePackage.parent.name, deployedCodePackage.name, deployedCodePackage.servicePackageActivationId, deployedCodePackage.containerLogsTail, messageHandler));
         }
     }
 }
