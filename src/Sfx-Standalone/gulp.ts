@@ -356,7 +356,7 @@ function ensureDirExists(dirname: string): void {
 }
 
 function generateVersionInfo(platform: Platform, getPackageInfo: (baseUrl: string, arch: Architecture) => string): void {
-    if (isFunction(getPackageInfo)) {
+    if (!isFunction(getPackageInfo)) {
         throw new Error("getPackageInfo must be supplied.");
     }
 

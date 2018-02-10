@@ -3,8 +3,11 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import { webContents } from "electron";
 import * as uuidv4 from "uuid/v4";
+import * as uuidv5 from "uuid/v5";
 
+import { ILog } from "../../@types/log";
 import { ISender } from "../../@types/ipc";
 import * as utils from "../../utilities/utils";
 import error from "../../utilities/errorUtil";
@@ -29,10 +32,10 @@ class ElectronResponser implements ISender {
 
     private readonly eventEmmiter: IEventEmmiter;
 
-    constructor(channelName: string, eventEmmiter: IEventEmmiter) {
-        this.eventEmmiter = eventEmmiter;
+    constructor(channelName: string, webContents: webContents) {
+        this.eventEmmiter = webContents;
         this.channelName = channelName;
-        this.id = uuidv4();
+        this.id = uuidv5(webContents.id.toString(), idNamespace);
     }
 
     public send<TResult>(eventName: string, ...args: Array<any>): void {
@@ -56,10 +59,14 @@ class ElectronResponser implements ISender {
     }
 }
 
+const idNamespace = "4133573E-F47F-487B-A1C5-5A6AECA17FF2";
+
 export default class ElectronCommunicator extends Communicator {
     public readonly isHost: boolean;
 
     public readonly id: string;
+
+    private readonly log: ILog;
 
     private readonly channelName: string;
 
@@ -69,8 +76,14 @@ export default class ElectronCommunicator extends Communicator {
 
     private responsers: IDictionary<ISender>;
 
-    constructor(webContentId?: number, channelName?: string) {
+    constructor(log: ILog, webContentId?: number, channelName?: string) {
         super();
+
+        if (!Object.isObject(log)) {
+            throw error("log must be supplied.");
+        }
+
+        this.log = log;
 
         let webContents: Electron.WebContents;
 
@@ -110,8 +123,14 @@ export default class ElectronCommunicator extends Communicator {
 
         this.isHost = this.eventEmmiter === undefined;
         this.responsers = this.isHost ? {} : undefined;
-        this.id = uuidv4();
+        this.id = this.isHost ? uuidv4() : uuidv5(webContents.id.toString(), idNamespace);
         this.eventListener.on(this.channelName, this.onData);
+
+        if (this.isHost) {
+            this.log.writeInfo("[ipc:{}, cid:{}] Host is created.", this.channelName, this.id);
+        } else {
+            this.log.writeInfo("[ipc:{}, cid:{}] client is created.", this.channelName, this.id);
+        }
     }
 
     public send<TResult>(eventName: string, ...args: Array<any>): void {
@@ -148,6 +167,7 @@ export default class ElectronCommunicator extends Communicator {
 
     protected disposing(): void {
         this.eventListener.removeListener(this.channelName, this.onData);
+        this.log.writeInfo("[ipc:{}, cid:{}] Host is disposed.", this.channelName, this.id);
         this.eventEmmiter = undefined;
         this.eventListener = undefined;
         this.responsers = undefined;
@@ -172,6 +192,7 @@ export default class ElectronCommunicator extends Communicator {
             responser = this.responsers[responserId];
         }
 
+        this.log.writeVerbose("[ipc:{}, cid:{}] Event, {}, recevied from cid:{}.", this.channelName, this.id, eventName, responser.id);
         const result = this.triggerEvent(eventName, responser, ...args);
 
         if (result !== undefined) {

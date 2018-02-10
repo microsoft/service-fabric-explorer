@@ -3,14 +3,6 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-export function isNullOrUndefined(value: any): value is undefined | null {
-    return value === undefined || value === null;
-}
-
-export function getEither<T>(arg: T, defaultValue: T): T {
-    return (arg === undefined || arg === null) ? defaultValue : arg;
-}
-
 declare global {
     interface StringConstructor {
         isString(value: any): value is string | String;
@@ -95,3 +87,57 @@ String.format = (format, ...args) => {
         return args[argIndex];
     });
 };
+
+export function isNullOrUndefined(value: any): value is undefined | null {
+    return value === undefined || value === null;
+}
+
+export function getEither<T>(arg: T, defaultValue: T): T {
+    return (arg === undefined || arg === null) ? defaultValue : arg;
+}
+
+export interface ICallerInfo {
+    fileName: string;
+    functionName: string;
+    typeName: string;
+}
+
+function prepareStackTraceOverride(error: Error, structuredStackTrace: Array<NodeJS.CallSite>): any {
+    return structuredStackTrace;
+}
+
+export function getCallerInfo(): ICallerInfo {
+    const previousPrepareStackTraceFn = Error.prepareStackTrace;
+
+    try {
+        Error.prepareStackTrace = prepareStackTraceOverride;
+
+        const callStack: Array<NodeJS.CallSite> = <any>(new Error()).stack;
+        let directCallerInfo: ICallerInfo = undefined;
+
+        for (let callStackIndex = 0; callStackIndex < callStack.length; callStackIndex++) {
+            const stack = callStack[callStackIndex];
+            const stackFileName = stack.getFileName();
+
+            if (directCallerInfo === undefined) {
+                if (stackFileName !== module.filename) {
+                    directCallerInfo = {
+                        fileName: stackFileName,
+                        functionName: stack.getFunctionName(),
+                        typeName: stack.getTypeName()
+                    };
+                }
+            } else if (stackFileName !== directCallerInfo.fileName) {
+                return {
+                    fileName: stackFileName,
+                    functionName: stack.getFunctionName(),
+                    typeName: stack.getTypeName()
+                };
+            }
+        }
+
+        return directCallerInfo;
+    } finally {
+        Error.prepareStackTrace = previousPrepareStackTraceFn;
+    }
+}

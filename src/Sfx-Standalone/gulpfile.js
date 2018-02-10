@@ -46,7 +46,7 @@ gulp.task("npm:Install-sfx-dependencies",
         for (const dependencyName in packagejson.sfxDependencies) {
             if (!isInstalled(dependencyName)) {
                 const dependency = packagejson.sfxDependencies[dependencyName];
-                const versionArg = "";
+                let versionArg = "";
 
                 let dependencyTypeArgs = "";
 
@@ -97,12 +97,6 @@ gulp.task("Import:gulp-ts", ["Build:gulp-ts"],
 
 gulp.task("Build", ["Import:gulp-ts"],
     function (callback) {
-        runSequence("Build:All", callback);
-    });
-
-gulp.task("Build:Debug", ["Import:gulp-ts"],
-    function (callback) {
-        gutil.env.sourcemaps = true;
         runSequence("Build:All", callback);
     });
 

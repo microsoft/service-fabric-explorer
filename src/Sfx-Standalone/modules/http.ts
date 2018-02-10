@@ -9,7 +9,18 @@ import * as url from "url";
 import * as fs from "fs";
 import * as path from "path";
 
-import { ResponseHandler, HttpContentType, IHttpClient, HttpProtocol, RequestProcessor, IResponseHandlerContructor, IRequestProcessorConstructor, IRequestOptions, HttpMethod } from "../@types/http";
+import { ILog } from "../@types/log";
+import {
+    ResponseHandler,
+    HttpContentType,
+    IHttpClient,
+    HttpProtocol,
+    RequestProcessor,
+    IResponseHandlerContructor,
+    IRequestProcessorConstructor,
+    IRequestOptions,
+    HttpMethod
+} from "../@types/http";
 import * as utils from "../utilities/utils";
 import error from "../utilities/errorUtil";
 import { HandlerChainBuilder } from "../utilities/handlerChainBuilder";
@@ -54,12 +65,12 @@ class HttpClientBuilder {
         this.protocol = utils.getEither(protocol, HttpProtocols.any);
     }
 
-    public build(): IHttpClient {
-        this.handleRequest(() => (client, requestOptions, requestData, request) => request.end());
+    public build(log: ILog): IHttpClient {
+        this.handleRequest(() => (client, log, requestOptions, requestData, request) => request.end());
         this.responseHandlerBuilder.handle(() =>
-            (client, requestOptions, requestData, response, exception, callback) => callback(client, requestOptions, requestData, response, exception, callback));
+            (client, log, requestOptions, requestData, response, exception, callback) => callback(client, log, requestOptions, requestData, response, exception, callback));
 
-        return new HttpClient(this.protocol, this.headers, this.requestProcessorBuilder.build(), this.responseHandlerBuilder.build());
+        return new HttpClient(log, this.protocol, this.headers, this.requestProcessorBuilder.build(), this.responseHandlerBuilder.build());
     }
 
     public configureHeader(name: string, values: string | Array<string>): HttpClientBuilder {
@@ -88,7 +99,7 @@ class HttpClientBuilder {
 
     public handleRedirectionResponse(): HttpClientBuilder {
         return this.handleResponse((nextHandler) =>
-            (client, requestOptions, data, response, error, callback) => {
+            (client, log, requestOptions, data, response, error, callback) => {
                 if (utils.isNullOrUndefined(error) &&
                     (response.statusCode === 301
                         || response.statusCode === 302
@@ -98,16 +109,17 @@ class HttpClientBuilder {
                     let redirectionRequestOptions: IRequestOptions = JSON.parse(JSON.stringify(requestOptions));
 
                     redirectionRequestOptions.url = location;
+                    log.writeInfo("HTTP{}: Redirecting to {}", response.statusCode, redirectionRequestOptions.url);
                     client.request(redirectionRequestOptions, data, callback);
                 } else if (Function.isFunction(nextHandler)) {
-                    nextHandler(client, requestOptions, data, response, error, callback);
+                    nextHandler(client, log, requestOptions, data, response, error, callback);
                 }
             });
     }
 
     public handleJsonRequest(): HttpClientBuilder {
         return this.handleRequest((nextHandler) =>
-            (client, requestOptions, data, request) => {
+            (client, log, requestOptions, data, request) => {
                 const contentType = request.getHeader("Content-Type");
 
                 if (String.isString(contentType)
@@ -121,7 +133,7 @@ class HttpClientBuilder {
                 }
 
                 if (Function.isFunction(nextHandler)) {
-                    nextHandler(client, requestOptions, data, request);
+                    nextHandler(client, log, requestOptions, data, request);
                 }
             });
     }
@@ -135,7 +147,7 @@ export abstract class ResponseHandlerHelper {
             throw error("callback function must be supplied.");
         }
 
-        return (client, requestOptions, requestData, response, exception) => {
+        return (client, log, requestOptions, requestData, response, exception) => {
             if (!utils.isNullOrUndefined(exception)) {
                 callback(exception, null);
             } else if (response.statusCode >= 200 && response.statusCode < 300) {
@@ -148,6 +160,8 @@ export abstract class ResponseHandlerHelper {
                         if (!ResponseHandlerHelper.regex_filename_json.test(contentDisposition)) {
                             callback(error("Unable to handle non-json response."), null);
                         }
+
+                        log.writeVerbose("Treat Content-Type: {} as JSON since Content-Disposition header indicates JSON extention.", contentType);
                     }
 
                     let json: string = "";
@@ -174,10 +188,11 @@ export abstract class ResponseHandlerHelper {
             throw error("file must be either the path of the file or the fd");
         }
 
-        return (client, requestOptions, requestData, response, exception) => {
+        return (client, log, requestOptions, requestData, response, exception) => {
             if (!utils.isNullOrUndefined(exception)) {
                 callback(exception);
             } else if (response.statusCode >= 200 && response.statusCode < 300) {
+                log.writeVerbose("Writing HTTP response to file: {}", file);
                 const fileStream = fs.createWriteStream(
                     String.isString(file) ? file : null,
                     {
@@ -198,6 +213,8 @@ export abstract class ResponseHandlerHelper {
 }
 
 export class HttpClient implements IHttpClient {
+    private readonly log: ILog;
+
     private readonly protocol: HttpProtocol;
 
     private readonly defaultHeadersJSON: string;
@@ -207,17 +224,22 @@ export class HttpClient implements IHttpClient {
     private readonly responseHandler: ResponseHandler;
 
     constructor(
+        log: ILog,
         protocol: HttpProtocol,
         defaultHeaders: IDictionary<string | Array<string>>,
         requestProcessor: RequestProcessor,
         responseHandler: ResponseHandler) {
 
+        if (!Object.isObject(log)) {
+            throw error("log must be supplied.");
+        }
+
         if (String.isString(protocol) && protocol.trim() === "") {
             protocol = undefined;
         }
 
+        this.log = log;
         this.protocol = utils.getEither(protocol, HttpProtocols.any);
-
         this.defaultHeadersJSON = undefined;
 
         if (!utils.isNullOrUndefined(defaultHeaders)) {
@@ -236,7 +258,7 @@ export class HttpClient implements IHttpClient {
         // response processor.
         if (utils.isNullOrUndefined(responseHandler)) {
             this.responseHandler =
-                (client, requestOptions, requestData, response, error, callback) => callback(client, requestOptions, requestData, response, error, callback);
+                (client, log, requestOptions, requestData, response, error, callback) => callback(client, log, requestOptions, requestData, response, error, callback);
         } else if (!Function.isFunction(responseHandler)) {
             throw error("responseHandler must be a function.");
         } else {
@@ -327,10 +349,11 @@ export class HttpClient implements IHttpClient {
         options.method = requestOptions.method;
         options.headers = headers;
 
-        const request = this.sendRequest(options, (error, response) => this.responseHandler(this, requestOptions, data, response, error, callback));
+        this.log.writeInfo("{}: {}", requestOptions.method, requestOptions.url);
+        const request = this.sendRequest(options, (error, response) => this.responseHandler(this, this.log, requestOptions, data, response, error, callback));
 
         if (request !== undefined) {
-            this.requestProcessor(this, requestOptions, data, request);
+            this.requestProcessor(this, this.log, requestOptions, data, request);
         }
     }
 
@@ -353,6 +376,7 @@ export class HttpClient implements IHttpClient {
                 throw error("unsupported protocol: {}", protocol);
             }
         } catch (exception) {
+            this.log.writeException(exception);
             callback(exception, null);
             return undefined;
         }
@@ -372,28 +396,30 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "http-client",
                 version: "1.0.0",
-                descriptor: () => {
+                descriptor: (log: ILog) => {
                     const httpClientBuilder = new HttpClientBuilder(HttpProtocols.any);
 
                     httpClientBuilder
                         .handleJsonRequest()
                         .handleRedirectionResponse();
 
-                    return httpClientBuilder.build();
+                    return httpClientBuilder.build(log);
                 },
+                deps: ["log"]
             },
             {
                 name: "https-client",
                 version: "1.0.0",
-                descriptor: () => {
+                descriptor: (log: ILog) => {
                     const httpClientBuilder = new HttpClientBuilder(HttpProtocols.https);
 
                     httpClientBuilder
                         .handleJsonRequest()
                         .handleRedirectionResponse();
 
-                    return httpClientBuilder.build();
+                    return httpClientBuilder.build(log);
                 },
+                deps: ["log"]
             }
         ]
     };

@@ -31,7 +31,7 @@ function toAppInsightsSeverity(severity: Severity): Contracts.SeverityLevel {
     }
 }
 
-export class AppInsightsLogger implements ILogger {
+export default class AppInsightsLogger implements ILogger {
     private readonly client: TelemetryClient;
 
     constructor(settings: ILoggerSettings) {

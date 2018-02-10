@@ -5,6 +5,8 @@
 
 import * as http from "http";
 
+import { ILog } from "./log";
+
 export type HttpProtocol = "*" | "http:" | "https:";
 
 export type HttpMethod  = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -18,11 +20,11 @@ export interface IRequestOptions {
 }
 
 export interface RequestProcessor {
-    (client: IHttpClient, requestOptions: IRequestOptions, requestData: any, request: http.ClientRequest): void;
+    (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: http.ClientRequest): void;
 }
 
 export interface ResponseHandler {
-    (client: IHttpClient, requestOptions: IRequestOptions, requestData: any, response: http.IncomingMessage, error: any, callback?: ResponseHandler): void;
+    (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: http.IncomingMessage, error: any, callback?: ResponseHandler): void;
 }
 
 export interface IRequestProcessorConstructor extends IHandlerConstructor<RequestProcessor> {

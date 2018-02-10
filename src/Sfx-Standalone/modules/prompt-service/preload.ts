@@ -15,6 +15,6 @@ moduleManager.registerComponents([
         name: "prompt-context",
         version: electron.app.getVersion(),
         singleton: true,
-        descriptor: DiDescriptorConstructor.singleton(new PromptContext())
+        descriptor: () => new PromptContext()
     }
 ]);
