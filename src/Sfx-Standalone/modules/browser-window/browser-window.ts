@@ -113,6 +113,9 @@ export default function createBrowserWindow(moduleManager: IModuleManager, optio
 
     const window = new BrowserWindow(windowOptions);
 
+    window.on("page-title-updated", (event, title) => event.preventDefault());
+    window.setTitle(String.format("{} - {}", window.getTitle(), app.getVersion()));
+
     handleSslCert(window);
     handleNewWindow(window);
 
