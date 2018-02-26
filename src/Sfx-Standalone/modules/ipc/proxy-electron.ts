@@ -467,7 +467,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
                 request.objectId,
                 request.propertyName);
             const propertyFuction: Function = objectItem.instance[request.propertyName];
-            const result = propertyFuction.apply(objectItem.instance, ...this.toArgs(responser, request.objectId, request.argInfos));
+            const result = propertyFuction.apply(objectItem.instance, this.toArgs(responser, request.objectId, request.argInfos));
 
             return this.toArgInfo(responser, request.objectId, result);
         } catch (exception) {
@@ -621,7 +621,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
     private toArgs(proxy: ISender, objectId: string, argInfos: Array<IVariableInfo>): Array<any> {
         const args = new Array();
 
-        argInfos.forEach((argInfo) => this.toArg(proxy, objectId, argInfo));
+        argInfos.forEach((argInfo) => args.push(this.toArg(proxy, objectId, argInfo)));
 
         return args;
     }
@@ -639,11 +639,11 @@ export default class ElectronProxy extends Disposable implements IProxy {
     private toArgInfos(proxy: ISender, objectId: string, args: Array<any>): Array<IVariableInfo> {
         const argInfos = new Array();
 
-        args.forEach((argValue) => args.push(this.toArgInfo(proxy, objectId, argValue)));
+        args.forEach((argValue) => argInfos.push(this.toArgInfo(proxy, objectId, argValue)));
 
         return argInfos;
     }
-
+    
     private toHostFunction(proxy: ISender, objectId: string, fn: Function): string {
         const fnId = uuidv4();
 
