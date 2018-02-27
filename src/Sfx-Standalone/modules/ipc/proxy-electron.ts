@@ -643,7 +643,7 @@ export default class ElectronProxy extends Disposable implements IProxy {
 
         return argInfos;
     }
-    
+
     private toHostFunction(proxy: ISender, objectId: string, fn: Function): string {
         const fnId = uuidv4();
 
@@ -681,11 +681,25 @@ export default class ElectronProxy extends Disposable implements IProxy {
 
     private toDelegateFunction(proxy: ISender, objectId: string, functionId: string): Function {
         return (...args: Array<any>): any => {
-            const resultInfo: IVariableInfo = proxy.sendSync(EventNames.callFunction, <IFunctionRequest>{
-                objectId: objectId,
-                functionId: functionId,
-                argInfos: this.toArgInfos(proxy, objectId, args)
-            });
+            // BUG: in main process, there is no sendSync method. So apply temporary fix.
+
+            let resultInfo: IVariableInfo;
+
+            if (proxy.sendSync) {
+                resultInfo = proxy.sendSync(EventNames.callFunction, <IFunctionRequest>{
+                    objectId: objectId,
+                    functionId: functionId,
+                    argInfos: this.toArgInfos(proxy, objectId, args)
+                });
+            } else {
+                proxy.send(EventNames.callFunction, <IFunctionRequest>{
+                    objectId: objectId,
+                    functionId: functionId,
+                    argInfos: this.toArgInfos(proxy, objectId, args)
+                });
+
+                resultInfo = VariableInfos.undefined;
+            }
 
             return this.toArg(proxy, objectId, resultInfo);
         };
