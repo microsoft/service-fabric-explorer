@@ -36,6 +36,10 @@ class ElectronResponser implements ISender {
         this.eventEmmiter = webContents;
         this.channelName = channelName;
         this.id = uuidv5(webContents.id.toString(), idNamespace);
+
+        if (utils.isNullOrUndefined(this.eventEmmiter.sendSync)) {
+            this.sendSync = undefined;
+        }
     }
 
     public send<TResult>(eventName: string, ...args: Array<any>): void {
@@ -47,10 +51,6 @@ class ElectronResponser implements ISender {
     }
 
     public sendSync<TData, TResult>(eventName: string, ...args: Array<any>): TResult {
-        if (this.eventEmmiter.sendSync === undefined) {
-            throw error("sendSync is not supported.");
-        }
-
         if (String.isNullUndefinedOrWhitespace(eventName)) {
             throw error("eventName must be supplied.");
         }
@@ -130,6 +130,10 @@ export default class ElectronCommunicator extends Communicator {
             this.log.writeInfo("[ipc:{}, cid:{}] Host is created.", this.channelName, this.id);
         } else {
             this.log.writeInfo("[ipc:{}, cid:{}] client is created.", this.channelName, this.id);
+        }
+
+        if (this.isHost || utils.isNullOrUndefined(this.eventEmmiter.sendSync)) {
+            this.sendSync = undefined;
         }
     }
 
