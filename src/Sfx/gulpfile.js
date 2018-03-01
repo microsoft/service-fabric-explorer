@@ -1,6 +1,7 @@
 /// <binding BeforeBuild="build" Clean="clean" ProjectOpened="watch" />
 
 var gulp = require("gulp");
+var merge = require("merge2");
 var plugins = require("gulp-load-plugins")({
     pattern: ["*", "!bower", "!typescript", "!tslint"],
     camelize: true,
@@ -92,20 +93,20 @@ gulp.task("clean", function () {
 
 // Copy static files to wwwroot folder
 gulp.task("build:static", function () {
-    gulp.src(paths.statics.src, { base: "App" })
+    return gulp.src(paths.statics.src, { base: "App" })
         .pipe(gulp.dest(paths.statics.dest));
 });
 
 // Minify and templateCache the Angular Templates
 gulp.task("build:templates", function () {
-    gulp.src(paths.templates.src)
-      .pipe(plugins.htmlmin())
-      .pipe(plugins.angularTemplatecache(paths.templates.target, {
-          standalone: true,
-          module: "templates",
-          root: "partials/"
-      }))
-      .pipe(gulp.dest(paths.templates.dest));
+    return gulp.src(paths.templates.src)
+        .pipe(plugins.htmlmin())
+        .pipe(plugins.angularTemplatecache(paths.templates.target, {
+            standalone: true,
+            module: "templates",
+            root: "partials/"
+        }))
+        .pipe(gulp.dest(paths.templates.dest));
 });
 
 // Inject commit id and build number into VersionInfo.ts
@@ -113,31 +114,31 @@ gulp.task("build:versionInfo", function () {
     if (!process.env.BUILD_BUILDNUMBER || !process.env.BUILD_SOURCEVERSION) {
         return;
     }
-    gulp.src(paths.versionInfo.src)
+
+    return gulp.src(paths.versionInfo.src)
         .pipe(plugins.replace("[Dev]", process.env.BUILD_BUILDNUMBER + "-" + process.env.BUILD_SOURCEVERSION))
         .pipe(gulp.dest(paths.versionInfo.dest));
 });
 
-// Concat and minify third party libaries
-// Uses wiredep to analyse dependencies, custom ordering is done in bower.json via overrides.
-gulp.task("build:lib", function () {
-
+gulp.task("build:lib-js", function () {
     console.log("Bower ordered javascripts:");
     console.log(plugins.wiredep().js);
 
-    console.log("Bower styles:");
-    console.log(plugins.wiredep().css);
-
     // Create lib.min.js
-    gulp.src(plugins.wiredep().js, { base: "bower_components" })
+    return gulp.src(plugins.wiredep().js, { base: "bower_components" })
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(plugins.concat(paths.libs_scripts.target))
         .pipe(plugins.if(isProductionEnv, plugins.uglify({ preserveComments: "license" })))
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.write(".", { includeContent: true })))
         .pipe(gulp.dest(paths.libs_scripts.dest));
+});
+
+gulp.task("build:lib-css", function () {
+    console.log("Bower styles:");
+    console.log(plugins.wiredep().css);
 
     // Create lib.min.css
-    gulp.src(plugins.wiredep().css)
+    return gulp.src(plugins.wiredep().css)
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(plugins.concat(paths.libs_styles.target))
         .pipe(plugins.cleanCss())
@@ -145,12 +146,13 @@ gulp.task("build:lib", function () {
         .pipe(gulp.dest(paths.libs_styles.dest));
 });
 
-// Compile TypeScript, concat/uglify into app.min.js, create sourcemap to help TS debugging
-gulp.task("build:js", ["build:templates", "build:versionInfo"], function () {
-    console.log("isProductionEnvironment = " + isProductionEnv);
+// Concat and minify third party libaries
+// Uses wiredep to analyse dependencies, custom ordering is done in bower.json via overrides.
+gulp.task("build:lib", ["build:lib-js", "build:lib-css"]);
 
+gulp.task("build:tslint", function () {
     // Run tslint for .ts files under App/Scripts folder
-    gulp.src(paths.scripts.src)
+    return gulp.src(paths.scripts.src)
         .pipe(plugins.plumber({
             errorHandler: function (err) {
                 console.log(err);
@@ -163,6 +165,11 @@ gulp.task("build:js", ["build:templates", "build:versionInfo"], function () {
         .pipe(plugins.tslint.report({
             summarizeFailureOutput: true
         }));
+});
+
+// Compile TypeScript, concat/uglify into app.min.js, create sourcemap to help TS debugging
+gulp.task("build:js", ["build:templates", "build:versionInfo", "build:tslint"], function () {
+    console.log("isProductionEnvironment = " + isProductionEnv);
 
     var tsProject = plugins.typescript.createProject("App/Scripts/tsconfig.json", {
         outFile: paths.scripts.target
@@ -173,18 +180,18 @@ gulp.task("build:js", ["build:templates", "build:versionInfo"], function () {
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(tsProject());
 
-    result.js
-        .pipe(plugins.if(isProductionEnv, plugins.uglify({ compress: { drop_console: true } })))
-        .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.write(".", { includeContent: true })))
-        .pipe(gulp.dest(paths.scripts.dest));
-
-    result.dts.pipe(gulp.dest(paths.scripts.dest));
+    return merge([
+        result.js
+            .pipe(plugins.if(isProductionEnv, plugins.uglify({ compress: { drop_console: true } })))
+            .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.write(".", { includeContent: true })))
+            .pipe(gulp.dest(paths.scripts.dest)),
+        result.dts.pipe(gulp.dest(paths.scripts.dest))]);
 });
 
 // Compile SASS, concat/minify into app.min.css, create sourcemap to help debugging
 gulp.task("build:css", function () {
     var compileTheme = function (theme) {
-        gulp.src(theme.src)
+        return gulp.src(theme.src)
             .pipe(plugins.plumber({
                 errorHandler: function (err) {
                     console.log(err);
@@ -198,18 +205,22 @@ gulp.task("build:css", function () {
             .pipe(gulp.dest(theme.dest));
     };
 
+    let streams = [];
+
     // Compile all themes
     paths.styles.themes.forEach(function (theme) {
-        compileTheme(theme);
+        streams.push(compileTheme(theme));
     });
+
+    return merge(streams);
 });
 
 // Build
 gulp.task("build", ["build:lib", "build:static", "build:js", "build:css"]);
 
 // Clean build
-gulp.task("clean-build", function () {
-    plugins.runSequence("clean", "build");
+gulp.task("clean-build", function (callback) {
+    plugins.runSequence("clean", "build", callback);
 });
 
 //-----------------------------------------------------------------------------
