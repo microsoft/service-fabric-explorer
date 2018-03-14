@@ -119,4 +119,4 @@ We encourage everyone to contribute to this project, following the contribution 
 
 # Contribution guidelines
 
-For contribution guidelines, plese see here: https://github.com/Azure/service-fabric
+For general contribution guidelines, plese see here: https://github.com/Microsoft/service-fabric/blob/master/CONTRIBUTING.md
