@@ -5,7 +5,7 @@
 
 declare global {
     interface StringConstructor {
-        isString(value: any): value is string | String;
+        isString(value: any): value is string;
         format(format: string, ...args: Array<any>): string;
         isNullUndefinedOrEmpty(value: any): boolean;
         isNullUndefinedOrWhitespace(value: any): boolean;
@@ -44,7 +44,7 @@ Array.isNullUndefinedOrEmpty = (value: any): boolean => {
     return value === undefined || value === null || (Array.isArray(value) && value.length <= 0);
 };
 
-String.isString = (value: any): value is string | String => {
+String.isString = (value: any): value is string => {
     return typeof value === "string" || value instanceof String;
 };
 

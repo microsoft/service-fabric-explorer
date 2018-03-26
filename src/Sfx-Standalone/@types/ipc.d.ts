@@ -3,42 +3,29 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-export interface ISender {
+interface RequestHandler {
+    (path: string, content: any): any;
+}
+
+interface ICommunicator extends IDisposable {
     readonly id: string;
 
-    send<TResult>(eventName: string, ...args: Array<any>): void;
-    sendSync?<TResult>(eventName: string, ...args: Array<any>): TResult;
+    getRequestHandler(): RequestHandler;
+    setRequestHandler(handler: RequestHandler): void;
+
+    sendAsync<TRequest, TResponse>(path: string, content: TRequest): Promise<TResponse>;
 }
 
-export interface ICommunicator extends IDisposable, ISender {
-    readonly isHost: boolean;
-
-    on(eventName: string, handler: (responser: ISender, ...args: Array<any>) => any): void;
-    once(eventName: string, handler: (responser: ISender, ...args: Array<any>) => any): void;
-    removeListener(eventName: string, handler: Function): void;
+interface ObjectResolver {
+    (objectName: string, ...extraArgs: Array<any>): Object;
 }
 
-export interface IProxy extends IDisposable {
+interface IProxy extends IDisposable {
     readonly id: string;
 
-    on(eventName: "resolve-object", handler: (objectIdentity: string, ...args: Array<any>) => object): void;
-    on(eventName: "proxy-connected", handler: (responser: ISender) => void): void;
-    on(eventName: "proxy-disconnected", handler: (responser: ISender) => void): void;
-    removeListener(eventName: string, handler: Function): void;
+    requestObjectByNameAsync<T>(name: string, ...extraArgs: Array<any>): Promise<T>;
+    requestObjectByIdAsync<T>(id: string): Promise<T>;
 
-    requestObject<T extends object>(objectIdentity: string, ...args: Array<any>): T;
-    requestObjectFromProxy<T extends Object>(proxyId: string, objectIdentity: string, ...args: Array<any>): T;
-    releaseObject(proxyObject: object): void;
-}
-
-declare global {
-    interface IModuleManager {
-        getComponent(componentIdentity: "ipc-communicator-electron",
-            webContentId?: number,
-            channelName?: string): ICommunicator;
-
-        getComponent(componentIdentity: "ipc-proxy-electron",
-            communicator: ICommunicator,
-            autoclose?: boolean): IProxy;
-    }
+    setObjectResolver(resolver: ObjectResolver): void;
+    getObjectResolver(): ObjectResolver;
 }
