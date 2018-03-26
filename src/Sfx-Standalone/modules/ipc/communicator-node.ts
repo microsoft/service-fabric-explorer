@@ -9,6 +9,7 @@ import * as uuidv4 from "uuid/v4";
 
 import * as utils from "../../utilities/utils";
 import error from "../../utilities/errorUtil";
+import { isRegExp } from "util";
 
 interface IMessage {
     id: string;
@@ -20,6 +21,48 @@ interface IMessage {
 interface IPromiseResolver {
     resolve: (value?: any) => void;
     reject: (reason?: any) => void;
+}
+
+interface IPattern {
+    match(path: string): boolean;
+    equals(pattern: any): boolean;
+}
+
+interface IRoute {
+    pattern: IPattern;
+    handler: RequestHandler;
+}
+
+class StringPattern implements IPattern {
+    private readonly pattern: string;
+
+    constructor(pattern: string) {
+        this.pattern = pattern;
+    }
+
+    public equals(pattern: any): boolean {
+        return pattern === this.pattern;
+    }
+
+    public match(path: string): boolean {
+        return this.pattern === path;
+    }
+}
+
+class RegexPattern implements IPattern {
+    private readonly pattern: RegExp;
+
+    constructor(pattern: RegExp) {
+        this.pattern = pattern;
+    }
+
+    public equals(pattern: any): boolean {
+        return pattern === this.pattern;
+    }
+
+    public match(path: string): boolean {
+        return this.pattern.test(path);
+    }
 }
 
 // Process and ChildProcess share the same functions but ChildProcess has more detailed type information.
@@ -52,11 +95,65 @@ function isMessage(msg: any): msg is IMessage {
 }
 
 class NodeCommunicator implements ICommunicator {
+    private validateDisposal(): void {
+        if (this.disposed) {
+            throw error("Communicator ({}) already disposed.", this.id);
+        }
+    }
+
+    public map(pattern: string | RegExp, handler: RequestHandler): void {
+        this.validateDisposal();
+
+        if (!Function.isFunction(handler)) {
+            throw error("handler must be a function.");
+        }
+
+        let route: IRoute = {
+            pattern: undefined,
+            handler: handler
+        }
+
+        if (utils.isNullOrUndefined(pattern)) {
+            throw error("pattern must be supplied.");
+        }
+        else if (String.isString(pattern)) {
+            route.pattern = new StringPattern(pattern);
+        }
+        else if (pattern instanceof RegExp) {
+            route.pattern = new RegexPattern(pattern);
+        }
+        else {
+            throw error("Only string and regex pattern are supported.");
+        }
+
+        this.routes.push(route);
+    }
+
+    public unmap(pattern: string | RegExp): RequestHandler {
+        this.validateDisposal();
+
+        if (utils.isNullOrUndefined(pattern)) {
+            throw error("pattern must be supplied.");
+        }
+
+        const routeIndex = this.routes.findIndex((route) => route.pattern.equals(pattern));
+
+        if (routeIndex < 0) {
+            return undefined;
+        }
+
+        const handler = this.routes[routeIndex].handler;
+
+        this.routes.splice(routeIndex, 1);
+
+        return handler;
+    }
+
     public readonly id: string;
 
     private ongoingPromiseDict: IDictionary<IPromiseResolver>;
 
-    private requestHandler: RequestHandler;
+    private routes: Array<IRoute>
 
     private disposing: () => void;
 
@@ -77,24 +174,30 @@ class NodeCommunicator implements ICommunicator {
                 promise.reject(msg.body);
             }
         }
-        else if (!utils.isNullOrUndefined(this.requestHandler)) {
-            let response: any;
-            let succeeded: boolean = false;
+        else {
+            const route = this.routes.find((route) => route.pattern.match(msg.path));
 
-            try {
-                response = this.requestHandler(msg.path, msg.body);
-                succeeded = true;
-            } catch (error) {
-                response = error;
-            }
+            if (route !== undefined) {
+                let response: any;
+                let succeeded: boolean;
 
-            if (!this.sendMessage({
-                id: uuidv4(),
-                path: msg.path,
-                succeeded: succeeded,
-                body: response
-            })) {
-                // Log if failed.
+                try {
+                    response = route.handler(this, msg.path, msg.body);
+                    succeeded = true;
+                }
+                catch (exception) {
+                    response = exception;
+                    succeeded = false;
+                }
+
+                if (!this.sendMessage({
+                    id: uuidv4(),
+                    path: msg.path,
+                    succeeded: succeeded,
+                    body: response
+                })) {
+                    // Log if failed.
+                }
             }
         }
     }
@@ -143,40 +246,16 @@ class NodeCommunicator implements ICommunicator {
             throw error("Unknown channel type. Only supports NodeJS.Process, NodeJS.ChildProcess, NodeJS.Socket.");
         }
 
-        this.requestHandler = requestHandler;
+        this.routes = [];
         this.ongoingPromiseDict = {};
         this.id = String.isNullUndefinedOrWhitespace(id) ? uuidv4() : id;
     }
 
-    public getRequestHandler(): RequestHandler {
-        if (this.disposing === undefined) {
-            throw error("Communicator ({}) already disposed.", this.id);
-        }
-
-        return this.requestHandler;
-    }
-
-    public setRequestHandler(handler: RequestHandler): void {
-        if (this.disposing === undefined) {
-            throw error("Communicator ({}) already disposed.", this.id);
-        }
-
-        if (!utils.isNullOrUndefined(handler) && !Function.isFunction(handler)) {
-            throw error("handler must be a function.");
-        }
-
-        this.requestHandler = handler;
-    }
-
     public sendAsync<TRequest, TResponse>(path: string, content: TRequest): Promise<TResponse> {
-        if (this.disposing === undefined) {
-            throw error("Communicator ({}) already disposed.", this.id);
-        }
+        this.validateDisposal();
 
-        if (!utils.isNullOrUndefined(path)) {
-            if (!String.isString(path)) {
-                throw error("path must be a string.");
-            }
+        if (String.isNullUndefinedOrWhitespace(path)) {
+            throw error("path must be a string and not empty/whitespaces.");
         }
 
         return new Promise((resolve, reject) => {
@@ -199,6 +278,10 @@ class NodeCommunicator implements ICommunicator {
         });
     }
 
+    public get disposed(): boolean {
+        return this.disposing === undefined;
+    }
+
     public dispose(): void {
         if (this.disposing !== undefined) {
             this.disposing();
@@ -211,7 +294,7 @@ class NodeCommunicator implements ICommunicator {
         this.sendMessage = undefined;
         this.channelDataHandler = undefined;
         this.disposing = undefined;
-        this.requestHandler = undefined;
+        this.routes = undefined;
         this.ongoingPromiseDict = undefined;
     }
 }

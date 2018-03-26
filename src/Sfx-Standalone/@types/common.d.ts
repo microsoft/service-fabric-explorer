@@ -8,6 +8,7 @@ interface IDictionary<Tvalue> {
 }
 
 interface IDisposable {
+    readonly disposed: boolean;
     dispose(): void;
 }
 
@@ -60,7 +61,7 @@ interface IModuleManager {
     loadModule(path: string, callback?: (error: Array<Error>) => void): Array<Error>;
 
     registerComponents(componentInfos: Array<IComponentInfo>): Array<Error>;
-    
+
     resolveComponentIdentity(componentIdentity: string): string;
     getComponent(componentIdentity: "module-manager"): IModuleManager;
     getComponent<T>(componentIdentity: string, ...extraArgs: Array<any>): T;
@@ -73,7 +74,7 @@ interface IHandlerConstructor<THandler> {
     (nextHandler: THandler): THandler;
 }
 
-interface IHandlerChainBuilder<THandler> {
+interface IHandlerChainBuilder<THandler extends Function> {
     handle(constructor: IHandlerConstructor<THandler>): IHandlerChainBuilder<THandler>;
     build(): THandler;
 }
