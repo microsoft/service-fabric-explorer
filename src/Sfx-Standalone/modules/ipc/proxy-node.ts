@@ -5,57 +5,85 @@
 
 import * as uuidv4 from "uuid/v4";
 
-import { isCommunicator, ObjectSchema, PathBasedRequestHandlerDelegate } from "./common";
+import { isCommunicator, DataType, IDataInfo, IActionInfo, isActionInfo, ActionType, ISetActionInfo, IGetActionInfo, IApplyActionInfo, toDataInfo } from "./common";
 import { HandlerChainBuilder } from "../../utilities/handlerChainBuilder";
 import * as utils from "../../utilities/utils";
 import error from "../../utilities/errorUtil";
 
-enum ProxyActionType {
-    RequestObjectByName = "RequestObjectByName",
-    RequestObjectById = "RequestObjectById",
-    ReleaseObject = "ReleaseObject"
-}
-
-enum ObjectActionType {
-    Get = "Get",
-    Set = "Set",
-    Call = "Call"
-}
-
-interface INodeProxyMessage<TContent> {
-    action: ProxyActionType;
-    identifier: string;
-    content?: TContent;
-}
-
-interface INodeProxyObjectMessage<TContent> {
-    action: ObjectActionType;
-    objectId: string;
-    propertyName: string;
-    content?: TContent;
-}
-
-interface IObjectRecord {
-    id: string;
-    object: any;
-    schema: ObjectSchema;
-}
-
-function isNodeProxyMessage(msg: any): msg is INodeProxyMessage<any> {
-    return !utils.isNullOrUndefined(msg)
-        && !String.isNullUndefinedOrWhitespace(msg.action)
-        && !String.isNullUndefinedOrWhitespace(msg.identifier);
-}
-
-function isNodeProxyObjectMessage(msg: any): msg is INodeProxyObjectMessage<any> {
-    return !utils.isNullOrUndefined(msg)
-        && !String.isNullUndefinedOrWhitespace(msg.action)
-        && !String.isNullUndefinedOrWhitespace(msg.objectId)
-        && !String.isNullUndefinedOrWhitespace(msg.propertyName);
-}
-
 function escapeRegex(str: string): string {
     return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+class ResourceRecord implements IDisposable {
+    private masterList: IDictionary<ResourceRecord>;
+
+    public parent: ResourceRecord;
+
+    public children: IDictionary<ResourceRecord>;
+
+    public readonly id: string;
+
+    public readonly type: DataType;
+
+    public data: any;
+
+    constructor(masterList: IDictionary<ResourceRecord>, parent: ResourceRecord, dataInfo: IDataInfo, data: any) {
+        if (utils.isNullOrUndefined(masterList)) {
+            throw error("masterList must be supplied.");
+        }
+
+        if (utils.isNullOrUndefined(dataInfo)) {
+            this.id = uuidv4();
+            this.data = data;
+            this.type = <DataType>typeof data;
+        }
+        else {
+            if (dataInfo.type !== DataType.Object && dataInfo.type !== DataType.Function) {
+                throw error("Only Function and Object are recordable.");
+            }
+
+            this.id = dataInfo.data;
+            this.data = new Proxy({}, {});
+            this.type = dataInfo.type;
+        }
+
+        this.masterList = masterList;
+        this.children = {};
+        this.parent = undefined;
+
+        if (!utils.isNullOrUndefined(parent)) {
+            this.parent = parent;
+            this.parent.children[this.id] = this;
+        }
+
+        this.masterList[this.id] = this;
+    }
+
+    public get disposed(): boolean {
+        return this.masterList === undefined;
+    }
+
+    public dispose(): void {
+        if (!this.disposed) {
+            delete this.masterList[this.id];
+
+            if (this.parent != undefined) {
+                delete this.parent.children[this.id];
+            }
+        }
+
+        this.children = undefined;
+        this.parent = undefined;
+        this.masterList = undefined;
+        this.data = undefined;
+    }
+
+    public toDataInfo(): IDataInfo {
+        return {
+            type: this.type,
+            data: this.id
+        };
+    }
 }
 
 class NodeProxy implements IProxy {
@@ -65,88 +93,100 @@ class NodeProxy implements IProxy {
 
     private communicator: ICommunicator;
 
+    private resourceMap: IDictionary<ResourceRecord>;
+
+    private resolver: Resolver;
+
     public get id(): string {
         return this.proxyId;
     }
 
-    private onProxyMessage: RequestHandler = (communicator, path, content) => {
-        if (isNodeProxyMessage(content)) {
+    private onMessageAsync: RequestHandler = (communicator, path, content) => {
+        if (isActionInfo(content)) {
             switch (content.action) {
-                case ProxyActionType.RequestObjectById:
-                    return this.onRequestObjectById(content);
+                case ActionType.Get:
 
-                case ProxyActionType.RequestObjectByName:
-                    return this.onRequestObjectByName(content);
+                    break;
+
+                case ActionType.Set:
+                    const setActionInfo = <ISetActionInfo>content;
+
+                    break;
 
                 default:
-                    return;
+                    throw error("Unsupported action, {}.", content.action);
             }
         }
     };
 
-    private onRequestObjectById(msg: INodeProxyMessage): any {
+    private async GetResourceRecord(id: string, extraArgs: Array<any>): Promise<ResourceRecord> {
+        const resourceRecord = this.resourceMap[actionInfo.id];
+
+        if (utils.isNullOrUndefined(resourceRecord)){
+            await this.resolver()
+        }
+
+        return resourceRecord;
+    }
+
+    private async onGetActionInfoAsync(actionInfo: IGetActionInfo): Promise<IDataInfo> {
+        const resourceRecord = this.resourceMap[actionInfo.id];
+
+        if (utils.isNullOrUndefined(resourceRecord)) {
+            throw error("No resource found for id:{}.", actionInfo.id);
+        }
+        else if (utils.isNullOrUndefined(actionInfo.propertyName)) {
+            return resourceRecord.toDataInfo();
+        }
+        else if (resourceRecord.type === DataType.Object) {
+            const dataInfo = toDataInfo(resourceRecord.data[actionInfo.propertyName]);
+
+            
+        }
+        else {
+            throw error("")
+        }
+    }
+
+    private onSetActionInfoAsync(actionInfo: ISetActionInfo): Promise<IDataInfo> {
+    }
+
+    private onApplyActionInfoAsync(actionInfo: IApplyActionInfo): Promise<IDataInfo> {
 
     }
 
-    private onRequestObjectByName(msg: INodeProxyMessage): any {
-
-    }
-
-    private onReleaseObject(msg: INodeProxyMessage): any {
-
-    }
-
-    constructor(communicator: ICommunicator, objectResolver?: ObjectResolver, autoDisposeCommunicator: boolean = true, id?: string) {
+    constructor(communicator: ICommunicator, resolver?: Resolver, autoDisposeCommunicator: boolean = true, id?: string) {
         if (!isCommunicator(communicator)) {
             throw error("communicator must be supplied.");
         }
 
-        if (!utils.isNullOrUndefined(objectResolver) && !Function.isFunction(objectResolver)) {
+        if (!utils.isNullOrUndefined(resolver) && !Function.isFunction(resolver)) {
             throw error("objectResolver must be a function.");
         }
 
         this.autoDisposeCommunicator = autoDisposeCommunicator === true;
         this.proxyId = String.isNullUndefinedOrWhitespace(id) ? uuidv4() : id;
         this.communicator = communicator;
+        this.resourceMap = {};
 
         this.communicator.map(
             new RegExp("^" + escapeRegex(this.id) + "$", "gi"),
-            this.onProxyMessage);
+            this.onMessageAsync);
     }
 
     public get disposed(): boolean {
         throw new Error("Method not implemented.");
     }
 
-    public requestObjectByNameAsync<T>(name: string, ...extraArgs: any[]): Promise<T> {
+    public requestAsync<T extends IDisposable>(name: string, ...extraArgs: any[]): Promise<T> {
         throw new Error("Method not implemented.");
     }
 
-    public requestObjectByIdAsync<T>(id: string): Promise<T> {
+    public setResolver(resolver: Resolver): void {
         throw new Error("Method not implemented.");
     }
 
-    public releaseObject(id: string): void {
-        throw new Error("Method not implemented.");
-    }
-
-    public addObject(obj: Object): string {
-        throw new Error("Method not implemented.");
-    }
-
-    public removeObject(obj: Object): void {
-        throw new Error("Method not implemented.");
-    }
-
-    public removeObjectById(objId: string): Object {
-        throw new Error("Method not implemented.");
-    }
-
-    public setObjectResolver(resolver: ObjectResolver): void {
-        throw new Error("Method not implemented.");
-    }
-
-    public getObjectResolver(): ObjectResolver {
+    public getResolver(): Resolver {
         throw new Error("Method not implemented.");
     }
 

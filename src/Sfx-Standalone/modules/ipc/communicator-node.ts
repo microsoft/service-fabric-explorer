@@ -161,7 +161,7 @@ class NodeCommunicator implements ICommunicator {
 
     private channelDataHandler: (data: any) => void;
 
-    private onMessage(msg: IMessage): void {
+    private async onMessageAsync(msg: IMessage): Promise<void> {
         const promise = this.ongoingPromiseDict[msg.id];
 
         if (!utils.isNullOrUndefined(promise)) {
@@ -182,7 +182,7 @@ class NodeCommunicator implements ICommunicator {
                 let succeeded: boolean;
 
                 try {
-                    response = route.handler(this, msg.path, msg.body);
+                    response = await route.handler(this, msg.path, msg.body);
                     succeeded = true;
                 }
                 catch (exception) {
@@ -204,12 +204,7 @@ class NodeCommunicator implements ICommunicator {
 
     constructor(
         channel: NodeJS.Process | ChildProcess | Socket,
-        id?: string,
-        requestHandler?: RequestHandler) {
-
-        if (!utils.isNullOrUndefined(requestHandler) && !Function.isFunction(requestHandler)) {
-            throw error("requestHandler must be a function.");
-        }
+        id?: string) {
 
         if (utils.isNullOrUndefined(channel)) {
             throw error("channel must be supplied.");
@@ -218,7 +213,7 @@ class NodeCommunicator implements ICommunicator {
             this.sendMessage = (msg) => channel.send(msg);
             this.channelDataHandler = (data) => {
                 if (isMessage(data)) {
-                    this.onMessage(data);
+                    this.onMessageAsync(data);
                 }
             };
             this.disposing = () => channel.removeListener("message", this.channelDataHandler);
@@ -233,7 +228,7 @@ class NodeCommunicator implements ICommunicator {
                         const msg = JSON.parse(data);
 
                         if (isMessage(msg)) {
-                            this.onMessage(msg);
+                            this.onMessageAsync(msg);
                         }
                     } catch { }
                 }

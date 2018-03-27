@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 interface RequestHandler {
-    (communicator: ICommunicator, path: string, content: any): any;
+    (communicator: ICommunicator, path: string, content: any): any | Promise<any>;
 }
 
 interface ICommunicator extends IDisposable {
@@ -16,21 +16,15 @@ interface ICommunicator extends IDisposable {
     sendAsync<TRequest, TResponse>(path: string, content: TRequest): Promise<TResponse>;
 }
 
-interface ObjectResolver {
-    (objectName: string, ...extraArgs: Array<any>): Object;
+interface Resolver {
+    (name: string, ...extraArgs: Array<any>): any | Promise<any>;
 }
 
 interface IProxy extends IDisposable {
     readonly id: string;
 
-    requestObjectByNameAsync<T>(name: string, ...extraArgs: Array<any>): Promise<T>;
-    requestObjectByIdAsync<T>(id: string): Promise<T>;
-    releaseObject(id: string): void;
+    requestAsync<T extends IDisposable>(name: string, ...extraArgs: Array<any>): Promise<T>;
 
-    addObject(obj: Object): string;
-    removeObject(obj: Object): void;
-    removeObjectById(objId: string): Object;
-
-    setObjectResolver(resolver: ObjectResolver): void;
-    getObjectResolver(): ObjectResolver;
+    setResolver(resolver: Resolver): void;
+    getResolver(): Resolver;
 }
