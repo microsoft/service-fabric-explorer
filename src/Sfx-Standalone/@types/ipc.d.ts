@@ -23,7 +23,7 @@ interface Resolver {
 interface IProxy extends IDisposable {
     readonly id: string;
 
-    requestAsync<T extends IDisposable>(name: string, ...extraArgs: Array<any>): Promise<T>;
+    requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: Array<any>): Promise<T>;
 
     setResolver(resolver: Resolver): void;
     getResolver(): Resolver;

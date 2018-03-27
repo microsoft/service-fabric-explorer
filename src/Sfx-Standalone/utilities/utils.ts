@@ -141,3 +141,15 @@ export function getCallerInfo(): ICallerInfo {
         Error.prepareStackTrace = previousPrepareStackTraceFn;
     }
 }
+
+export function dispose(data: any): void {
+    if (!isNullOrUndefined(data) && Function.isFunction(data.dispose)) {
+        data.dispose();
+    }
+}
+
+export async function disposeAsync(data: any): Promise<void> {
+    if (!isNullOrUndefined(data) && Function.isFunction(data.dispose)) {
+        await data.dispose();
+    }
+}

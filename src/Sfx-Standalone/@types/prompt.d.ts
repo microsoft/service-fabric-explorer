@@ -5,8 +5,6 @@
 
 import { MenuItemConstructorOptions, Certificate } from "electron";
 
-import { ICommunicator } from "./ipc";
-
 export interface IPromptOptions {
     pageUrl: string;
     frame?: boolean;

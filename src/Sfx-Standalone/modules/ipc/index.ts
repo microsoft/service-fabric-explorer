@@ -4,9 +4,6 @@
 //-----------------------------------------------------------------------------
 
 import { ILog } from "../../@types/log";
-import { ICommunicator } from "../../@types/ipc";
-import ElectronCommunicator from "./communicator-electron";
-import ElectronProxy from "./proxy-electron";
 
 export function getModuleMetadata(): IModuleInfo {
     return {

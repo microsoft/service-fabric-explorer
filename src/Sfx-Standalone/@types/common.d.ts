@@ -9,7 +9,7 @@ interface IDictionary<Tvalue> {
 
 interface IDisposable {
     readonly disposed: boolean;
-    dispose(): void;
+    dispose(): void | Promise<void>;
 }
 
 interface IPackageInfo {

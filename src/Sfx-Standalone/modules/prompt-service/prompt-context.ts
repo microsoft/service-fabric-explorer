@@ -5,9 +5,7 @@
 
 import { IPromptOptions } from "../../@types/prompt";
 import { IPromptContext } from "../../@types/prompt-window";
-import { ICommunicator } from "../../@types/ipc";
 import { remote, electron } from "../../utilities/electron-adapter";
-import ElectronCommunicator from "../../modules/ipc/communicator-electron";
 import { EventNames, ChannelNameFormat } from "./prompt-service";
 
 export class PromptContext implements IPromptContext {

@@ -13,7 +13,7 @@ import { isRegExp } from "util";
 
 interface IMessage {
     id: string;
-    succeeded: boolean,
+    succeeded: boolean;
     path?: string;
     body?: any;
 }
@@ -95,10 +95,57 @@ function isMessage(msg: any): msg is IMessage {
 }
 
 class NodeCommunicator implements ICommunicator {
-    private validateDisposal(): void {
-        if (this.disposed) {
-            throw error("Communicator ({}) already disposed.", this.id);
+    public readonly id: string;
+
+    private ongoingPromiseDict: IDictionary<IPromiseResolver>;
+
+    private routes: Array<IRoute>;
+
+    private disposing: () => void;
+
+    private sendMessage: (msg: IMessage) => boolean;
+
+    private channelDataHandler: (data: any) => void;
+
+    constructor(
+        channel: NodeJS.Process | ChildProcess | Socket,
+        id?: string) {
+
+        if (utils.isNullOrUndefined(channel)) {
+            throw error("channel must be supplied.");
+        } else if (isProcess(channel)) {
+            this.sendMessage = (msg) => channel.send(msg);
+            this.channelDataHandler = (data) => {
+                if (isMessage(data)) {
+                    this.onMessageAsync(data);
+                }
+            };
+            this.disposing = () => channel.removeListener("message", this.channelDataHandler);
+
+            channel.on("message", this.channelDataHandler);
+        } else if (isSocket(channel)) {
+            this.sendMessage = (msg) => channel.write(JSON.stringify(msg));
+            this.channelDataHandler = (data) => {
+                if (String.isString(data)) {
+                    try {
+                        const msg = JSON.parse(data);
+
+                        if (isMessage(msg)) {
+                            this.onMessageAsync(msg);
+                        }
+                    } catch { }
+                }
+            };
+            this.disposing = () => channel.removeListener("data", this.channelDataHandler);
+
+            channel.on("data", this.channelDataHandler);
+        } else {
+            throw error("Unknown channel type. Only supports NodeJS.Process, NodeJS.ChildProcess, NodeJS.Socket.");
         }
+
+        this.routes = [];
+        this.ongoingPromiseDict = {};
+        this.id = String.isNullUndefinedOrWhitespace(id) ? uuidv4() : id;
     }
 
     public map(pattern: string | RegExp, handler: RequestHandler): void {
@@ -111,18 +158,15 @@ class NodeCommunicator implements ICommunicator {
         let route: IRoute = {
             pattern: undefined,
             handler: handler
-        }
+        };
 
         if (utils.isNullOrUndefined(pattern)) {
             throw error("pattern must be supplied.");
-        }
-        else if (String.isString(pattern)) {
+        } else if (String.isString(pattern)) {
             route.pattern = new StringPattern(pattern);
-        }
-        else if (pattern instanceof RegExp) {
+        } else if (pattern instanceof RegExp) {
             route.pattern = new RegexPattern(pattern);
-        }
-        else {
+        } else {
             throw error("Only string and regex pattern are supported.");
         }
 
@@ -147,103 +191,6 @@ class NodeCommunicator implements ICommunicator {
         this.routes.splice(routeIndex, 1);
 
         return handler;
-    }
-
-    public readonly id: string;
-
-    private ongoingPromiseDict: IDictionary<IPromiseResolver>;
-
-    private routes: Array<IRoute>
-
-    private disposing: () => void;
-
-    private sendMessage: (msg: IMessage) => boolean;
-
-    private channelDataHandler: (data: any) => void;
-
-    private async onMessageAsync(msg: IMessage): Promise<void> {
-        const promise = this.ongoingPromiseDict[msg.id];
-
-        if (!utils.isNullOrUndefined(promise)) {
-            delete this.ongoingPromiseDict[msg.id];
-
-            if (msg.succeeded === true) {
-                promise.resolve(msg.body);
-            }
-            else {
-                promise.reject(msg.body);
-            }
-        }
-        else {
-            const route = this.routes.find((route) => route.pattern.match(msg.path));
-
-            if (route !== undefined) {
-                let response: any;
-                let succeeded: boolean;
-
-                try {
-                    response = await route.handler(this, msg.path, msg.body);
-                    succeeded = true;
-                }
-                catch (exception) {
-                    response = exception;
-                    succeeded = false;
-                }
-
-                if (!this.sendMessage({
-                    id: uuidv4(),
-                    path: msg.path,
-                    succeeded: succeeded,
-                    body: response
-                })) {
-                    // Log if failed.
-                }
-            }
-        }
-    }
-
-    constructor(
-        channel: NodeJS.Process | ChildProcess | Socket,
-        id?: string) {
-
-        if (utils.isNullOrUndefined(channel)) {
-            throw error("channel must be supplied.");
-        }
-        else if (isProcess(channel)) {
-            this.sendMessage = (msg) => channel.send(msg);
-            this.channelDataHandler = (data) => {
-                if (isMessage(data)) {
-                    this.onMessageAsync(data);
-                }
-            };
-            this.disposing = () => channel.removeListener("message", this.channelDataHandler);
-
-            channel.on("message", this.channelDataHandler);
-        }
-        else if (isSocket(channel)) {
-            this.sendMessage = (msg) => channel.write(JSON.stringify(msg));
-            this.channelDataHandler = (data) => {
-                if (String.isString(data)) {
-                    try {
-                        const msg = JSON.parse(data);
-
-                        if (isMessage(msg)) {
-                            this.onMessageAsync(msg);
-                        }
-                    } catch { }
-                }
-            };
-            this.disposing = () => channel.removeListener("data", this.channelDataHandler);
-
-            channel.on("data", this.channelDataHandler);
-        }
-        else {
-            throw error("Unknown channel type. Only supports NodeJS.Process, NodeJS.ChildProcess, NodeJS.Socket.");
-        }
-
-        this.routes = [];
-        this.ongoingPromiseDict = {};
-        this.id = String.isNullUndefinedOrWhitespace(id) ? uuidv4() : id;
     }
 
     public sendAsync<TRequest, TResponse>(path: string, content: TRequest): Promise<TResponse> {
@@ -291,5 +238,49 @@ class NodeCommunicator implements ICommunicator {
         this.disposing = undefined;
         this.routes = undefined;
         this.ongoingPromiseDict = undefined;
+    }
+
+    private validateDisposal(): void {
+        if (this.disposed) {
+            throw error("Communicator ({}) already disposed.", this.id);
+        }
+    }
+
+    private async onMessageAsync(msg: IMessage): Promise<void> {
+        const promise = this.ongoingPromiseDict[msg.id];
+
+        if (!utils.isNullOrUndefined(promise)) {
+            delete this.ongoingPromiseDict[msg.id];
+
+            if (msg.succeeded === true) {
+                promise.resolve(msg.body);
+            } else {
+                promise.reject(msg.body);
+            }
+        } else {
+            const route = this.routes.find((route) => route.pattern.match(msg.path));
+
+            if (route !== undefined) {
+                let response: any;
+                let succeeded: boolean;
+
+                try {
+                    response = await route.handler(this, msg.path, msg.body);
+                    succeeded = true;
+                } catch (exception) {
+                    response = exception;
+                    succeeded = false;
+                }
+
+                if (!this.sendMessage({
+                    id: uuidv4(),
+                    path: msg.path,
+                    succeeded: succeeded,
+                    body: response
+                })) {
+                    // Log if failed.
+                }
+            }
+        }
     }
 }
