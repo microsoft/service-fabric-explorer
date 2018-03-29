@@ -273,7 +273,7 @@ class NodeCommunicator implements ICommunicator {
                 }
 
                 if (!this.sendMessage({
-                    id: uuidv4(),
+                    id: msg.id,
                     path: msg.path,
                     succeeded: succeeded,
                     body: response

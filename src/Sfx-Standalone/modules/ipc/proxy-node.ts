@@ -167,6 +167,7 @@ class NodeProxy implements IProxy, IActionProxy {
             throw error("objectResolver must be a function.");
         }
 
+        this.resolver = resolver;
         this.autoDisposeCommunicator = autoDisposeCommunicator === true;
         this.proxyId = String.isNullUndefinedOrWhitespace(id) ? uuidv4() : id;
         this.communicator = communicator;
@@ -182,7 +183,7 @@ class NodeProxy implements IProxy, IActionProxy {
             this.path_resources,
             this.onResourceMessageAsync);
     }
-    
+
     public async requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: Array<any>): Promise<T> {
         this.validateDisposal();
 
@@ -353,7 +354,7 @@ class NodeProxy implements IProxy, IActionProxy {
                 return functionProxy;
 
             case DataType.Object:
-                const objectProxy = this.generateFunctionProxy(dataInfo.data);
+                const objectProxy = this.generateObjectProxy(dataInfo.data);
                 this.resourceManager.addIfAbsent(dataInfo, objectProxy, parentId);
                 return objectProxy;
 
