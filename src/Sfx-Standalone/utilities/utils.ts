@@ -26,6 +26,14 @@ declare global {
     interface NumberConstructor {
         isNumber(value: any): value is number | Number;
     }
+
+    interface SymbolConstructor {
+        isSymbol(value: any): value is symbol;
+    }
+}
+
+Symbol.isSymbol = (value: any): value is symbol => {
+    return typeof value === "symbol";
 }
 
 Number.isNumber = (value: any): value is number | Number => {

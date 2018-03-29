@@ -45,7 +45,7 @@ export interface IDataInfo {
 export interface IActionInfo<TData> {
     action: ActionType;
     id: string;
-    propertyName?: string;
+    propertyName?: string | number;
     data?: TData;
 }
 

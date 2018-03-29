@@ -8,7 +8,7 @@ import { Socket } from "net";
 import * as uuidv4 from "uuid/v4";
 
 import * as utils from "../../utilities/utils";
-import error from "../../utilities/errorUtil";
+import error, { SerializableError } from "../../utilities/errorUtil";
 import { isRegExp } from "util";
 
 interface IMessage {
@@ -207,7 +207,7 @@ class NodeCommunicator implements ICommunicator {
                 succeeded: true,
                 body: content
             };
-
+            
             if (!this.sendMessage(msg)) {
                 reject(error("Failed to send request. The remote channel may be closed."));
                 return;
@@ -255,7 +255,7 @@ class NodeCommunicator implements ICommunicator {
             if (msg.succeeded === true) {
                 promise.resolve(msg.body);
             } else {
-                promise.reject(msg.body);
+                promise.reject(SerializableError.from(msg.body));
             }
         } else {
             const route = this.routes.find((route) => route.pattern.match(msg.path));

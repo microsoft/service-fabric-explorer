@@ -38,8 +38,8 @@ class DataSymbols {
 }
 
 interface IActionProxy {
-    getAsync(id: string, property: string): Promise<any>;
-    setAsync(id: string, property: string, value: any): Promise<boolean>;
+    getAsync(id: string, property: string | number): Promise<any>;
+    setAsync(id: string, property: string | number, value: any): Promise<boolean>;
     applyAsync(id: string, thisArg: any, args: Array<any>): Promise<any>;
 }
 
@@ -240,25 +240,25 @@ class NodeProxy implements IProxy, IActionProxy {
         this.resourceManager = undefined;
     }
 
-    public async getAsync(id: string, property: PropertyKey): Promise<any> {
+    public async getAsync(id: string, property: string | number): Promise<any> {
         const dataInfo = await this.communicator.sendAsync<IGetActionInfo, IDataInfo>(
             this.path_resources,
             {
                 action: ActionType.Get,
                 id: id,
-                propertyName: <string>property
+                propertyName: property
             });
 
         return this.realizeDataInfo(dataInfo, id);
     }
 
-    public async setAsync(id: string, property: PropertyKey, value: any): Promise<boolean> {
+    public async setAsync(id: string, property: string | number, value: any): Promise<boolean> {
         const dataInfo = await this.communicator.sendAsync<ISetActionInfo, IDataInfo>(
             this.path_resources,
             {
                 action: ActionType.Set,
                 id: id,
-                propertyName: <string>property,
+                propertyName: property,
                 data: this.convertToDataInfo(value, id)
             });
 
@@ -314,29 +314,33 @@ class NodeProxy implements IProxy, IActionProxy {
     private generateObjectProxy(id: string): Object {
         const actionProxy: IActionProxy = this;
 
-        return new Proxy({ then: undefined, catch: undefined, finally: undefined, toJSON: undefined },
+        return new Proxy(
+            {
+                then: undefined,
+                catch: undefined,
+                finally: undefined,
+                toJSON: undefined,
+                dispose: () => this.releaseAsync(id)
+            },
             {
                 get: (target, property) => {
-                    if (property === "dispose") {
-                        return this.releaseAsync(id);
-                    } else if (!(property in target) && String.isString(property)) {
+                    if (!(property in target) && (String.isString(property) || Number.isNumber(property))) {
                         return this.getAsync(id, property);
                     } else {
                         return target[property];
                     }
                 },
                 set: (target, property, value) => {
-                    if (property === "dispose") {
+                    if (property in target) {
                         return false;
-                    } else if (!(property in target) && String.isString(property)) {
+                    } else if (String.isString(property) || Number.isNumber(property)) {
                         actionProxy.setAsync(id, property, value);
                     } else {
                         target[property] = value;
                     }
 
                     return true;
-                },
-                has: (target, property) => !(property in target)
+                }
             });
     }
 
@@ -487,7 +491,7 @@ class NodeProxy implements IProxy, IActionProxy {
                 actionInfo.id);
         }
 
-        resourceRecord.data[actionInfo.id] = this.realizeDataInfo(actionInfo.data, actionInfo.id);
+        resourceRecord.data[actionInfo.propertyName] = this.realizeDataInfo(actionInfo.data, actionInfo.id);
         return this.convertToDataInfo(true, actionInfo.id);
     }
 
