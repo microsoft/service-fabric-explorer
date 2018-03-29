@@ -314,26 +314,29 @@ class NodeProxy implements IProxy, IActionProxy {
     private generateObjectProxy(id: string): Object {
         const actionProxy: IActionProxy = this;
 
-        return new Proxy({},
+        return new Proxy({ then: undefined, catch: undefined, finally: undefined, toJSON: undefined },
             {
                 get: (target, property) => {
                     if (property === "dispose") {
                         return this.releaseAsync(id);
-                    } else if (String.isString(property)) {
-                        return actionProxy.getAsync(id, property);
+                    } else if (!(property in target) && String.isString(property)) {
+                        return this.getAsync(id, property);
                     } else {
                         return target[property];
                     }
                 },
                 set: (target, property, value) => {
-                    if (String.isString(property)) {
+                    if (property === "dispose") {
+                        return false;
+                    } else if (!(property in target) && String.isString(property)) {
                         actionProxy.setAsync(id, property, value);
                     } else {
                         target[property] = value;
                     }
 
                     return true;
-                }
+                },
+                has: (target, property) => !(property in target)
             });
     }
 
