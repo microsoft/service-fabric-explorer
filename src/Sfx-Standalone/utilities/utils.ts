@@ -3,6 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import error from "./errorUtil";
+
 declare global {
     interface StringConstructor {
         isString(value: any): value is string;
@@ -21,6 +23,15 @@ declare global {
 
     interface Function {
         isObject(value: any): value is object | Object;
+        /**
+         * Check if the value is serializable. 
+         * @param {any} value The value to be checked.
+         * @param {boolean} [checkDeep=false] Check recursively.
+         * @return {boolean} True if the value is serializable for sure. Otherwise, false, 
+         * which indicates the value cannot be serialized or cannot be determined whether it can be serialized or not.
+         */
+        isSerializable(value: any, checkDeep?: boolean): boolean;
+        markSerializable(value: any, serializable?: boolean): any;
     }
 
     interface NumberConstructor {
@@ -30,6 +41,10 @@ declare global {
     interface SymbolConstructor {
         isSymbol(value: any): value is symbol;
     }
+}
+
+namespace Symbols {
+    export const Serializable = Symbol("serializable");
 }
 
 Symbol.isSymbol = (value: any): value is symbol => {
@@ -46,6 +61,63 @@ Function.isFunction = (value: any): value is Function => {
 
 Object.isObject = (value: any): value is object | Object => {
     return value !== null && typeof value === "object";
+};
+
+Object.markSerializable = (value: any, serializable: boolean = true) => {
+    if (!isNullOrUndefined(value)) {
+        if (Function.isFunction(value)) {
+            throw error("Cannot mark function objects as serializable.");
+        }
+
+        if (Symbol.isSymbol(value)) {
+            throw error("Cannot mark symbol objects as serializable.");
+        }
+
+        serializable = serializable === true;
+
+        value[Symbols.Serializable] = serializable;
+    }
+
+    return value;
+};
+
+Object.isSerializable = (value: any, deepCheck: boolean = false) => {
+    const valueType = typeof value;
+
+    switch (valueType) {
+        case "object":
+            return value === null
+                || value[Symbols.Serializable] === true
+                || Function.isFunction(value["toJSON"])
+                || (Object.getPrototypeOf(value) === Object.prototype
+                    && Object.values(value).every((propertyValue) => {
+                        switch (typeof propertyValue) {
+                            case "object":
+                                return deepCheck && Object.isSerializable(propertyValue);
+
+                            case "number":
+                            case "boolean":
+                            case "string":
+                                return true;
+
+                            case "function":
+                            case "symbol":
+                            default:
+                                return false;
+                        }
+                    }));
+
+        case "undefined":
+        case "number":
+        case "boolean":
+        case "string":
+            return true;
+
+        case "symbol":
+        case "function":
+        default:
+            return false;
+    }
 };
 
 Array.isNullUndefinedOrEmpty = (value: any): boolean => {
