@@ -28,10 +28,12 @@ module Sfx {
         constructor($injector: angular.auto.IInjectorService, public $scope: INodeViewScope) {
             super($injector, {
                 "essentials": { name: "Essentials" },
-                "details": { name: "Details" }
+                "details": { name: "Details" },
+                "events": { name: "Events" }
             });
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
             this.tabs["details"].refresh = (messageHandler) => this.refreshDetails(messageHandler);
+            this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
 
             this.nodeName = IdUtils.getNodeName(this.routeParams);
 
@@ -49,6 +51,13 @@ module Sfx {
             ]);
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
+            
+            this.$scope.nodeEvents = this.data.createNodeEventList(this.nodeName);
+            this.$scope.nodeEventsListSettings = this.settings.getNewOrExistingListSettings("nodeEvents", ["raw.timeStamp"], [
+                new ListColumnSettingWithFilter("raw.kind", "Type"),
+                new ListColumnSetting("raw.timeStamp", "Timestamp"),
+                new ListColumnSetting("raw.eventProperties", "Properties"),
+            ]);
 
             this.refresh();
         }
@@ -70,6 +79,10 @@ module Sfx {
             return this.$scope.node.deployedApps.refresh(messageHandler).then(deployedApps => {
                 this.$scope.deployedApps = deployedApps;
             });
+        }
+
+        private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.nodeEvents.refresh(messageHandler);
         }
     }
 

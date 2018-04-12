@@ -509,14 +509,43 @@ module Sfx {
             return this.post(this.getApiUrl(url), "Replica deletion", null, messageHandler);
         }
 
+        public getNodeEvents(nodeName?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<NodeEvent[]> {
+            let url = "EventsStore/"
+                + "Nodes/"
+                + (nodeName ? (encodeURIComponent(nodeName) + "/$/") : "")
+                + "Events";
+            return this.getEvents(NodeEvent, url, messageHandler);
+        }
+
+        private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, messageHandler?: IResponseMessageHandler, startTime?: Date, endTime?: Date): angular.IPromise<T[]> {
+            if (!startTime) {
+                startTime = new Date();
+                startTime.setTime(startTime.getTime() - (7 * 24 * 60 * 60 * 1000));
+            }
+            if (!endTime) {
+                endTime = new Date();
+            }
+
+            let urlWithTimeWindow = url
+                + "?starttimeutc=" + startTime.toISOString().substr(0, 19) + "Z"
+                + "&endtimeutc=" + endTime.toISOString().substr(0, 19) + "Z";
+            // Skip caching token, because an exact events api call will always return same data.
+            let fullUrl = this.getApiUrl(urlWithTimeWindow, "6.2-preview", null, true);
+            return this.get<IRawList<{}>>(fullUrl, null, messageHandler)
+                .then(response => {
+                    return new EventsResponseAdapter(eventType).getEvents(response.data);
+                });
+        }
+
         /**
          * Appends apiVersion and a random token to aid in working with the brower's cache.
          * @param path The Input URI path.
          * @param apiVersion An optional parameter to specify the API Version.  If no API Version specified, defaults to "1.0"  This is due to the platform having independent versions for each type of call.
          */
-        private getApiUrl(path: string, apiVersion = RestClient.defaultApiVersion, continuationToken?: string): string {
+        private getApiUrl(path: string, apiVersion = RestClient.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean): string {
             // token to allow for invalidation of browser api call cache
-            return StandaloneIntegration.clusterUrl + `/${path}${path.indexOf("?") === -1 ? "?" : "&"}api-version=${apiVersion ? apiVersion : RestClient.defaultApiVersion}&_cacheToken=${this.cacheAllowanceToken}${continuationToken ? `&ContinuationToken=${continuationToken}` : ""}`;
+            return StandaloneIntegration.clusterUrl +
+                `/${path}${path.indexOf("?") === -1 ? "?" : "&"}api-version=${apiVersion ? apiVersion : RestClient.defaultApiVersion}${skipCacheToken === true ? "" : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ""}`;
         }
 
         private getFullCollection<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler, continuationToken?: string): angular.IPromise<T[]> {

@@ -236,6 +236,10 @@ module Sfx {
             });
         }
 
+        public createNodeEventList(nodeName: string): NodeEventList {
+            return new NodeEventList(this, nodeName);
+        }
+
         private tryGetValidItem<T extends IDataModel<any>>(collection: IDataModelCollection<T>, uniqueId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             let item = collection.find(uniqueId);
             if (item) {

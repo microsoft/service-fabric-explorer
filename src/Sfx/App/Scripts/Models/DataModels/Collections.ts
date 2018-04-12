@@ -482,5 +482,28 @@ module Sfx {
                 });
         }
     }
+
+    export class NodeEventList extends DataModelCollectionBase<FabricEventInstanceModel<NodeEvent>> {
+        public decorators: IDecorators = {
+            hideList: []
+        };
+        private nodeName?: string;
+        //TODO have SetTimeWindow method taking startTime and endTime as part of EventListModelBase
+
+        public constructor(data: DataService, nodeName?: string) {
+            super(data);
+            this.nodeName = nodeName;
+            if (this.nodeName) {
+                this.decorators.hideList.push("nodeName");
+            }
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> { 
+            return this.data.restClient.getNodeEvents(this.nodeName, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<NodeEvent>(this.data, event));
+                });
+        }
+    }
 }
 
