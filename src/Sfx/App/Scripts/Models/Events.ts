@@ -56,6 +56,8 @@ module Sfx {
     }
 
     export class FabricEventInstanceModel<T extends FabricEventBase> extends DataModelBase<T> {
+        // Initially keep correlated events if-any not visible.
+        public isSecondRowCollapsed: boolean = true;
         public constructor(data: DataService, raw: T) {
             super(data, raw);
         }

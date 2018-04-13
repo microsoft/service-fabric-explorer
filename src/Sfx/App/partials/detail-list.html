@@ -36,7 +36,7 @@
             <tr ng-repeat-start="item in sortedFilteredList | limitTo: listSettings.limit: listSettings.begin track by (item.uniqueId || $id(item))">
                  <td ng-repeat="columnSetting in ::listSettings.columnSettings track by columnSetting.propertyPath">
                     <i class="bowtie-icon row-expander"
-                       ng-if="$index === 0 && listSettings.secondRowCollapsible"
+                       ng-if="$index === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)"
                        ng-click="ctrl.handleClickRow(item)"
                        title="{{item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row' }}"
                        ng-class="{'bowtie-chevron-right': item.isSecondRowCollapsed, 'bowtie-chevron-down': !item.isSecondRowCollapsed}"></i>
@@ -53,7 +53,10 @@
                     </div>
                 </td>
             </tr>
-            <tr ng-if="sortedFilteredList.length === 0">
+            <tr ng-if="sortedFilteredList.length === 0 && list && list.isRefreshing !== undefined && !list.isInitialized">
+                <td colspan="100">Loading...</td>
+            </tr>
+            <tr ng-if="sortedFilteredList.length === 0 && (!list || list.isRefreshing === undefined || list.isInitialized)">
                 <td colspan="100">No items to display.</td>
             </tr>
         </tbody>

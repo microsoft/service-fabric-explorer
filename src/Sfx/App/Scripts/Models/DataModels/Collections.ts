@@ -485,10 +485,9 @@ module Sfx {
 
     export abstract class EventListBase<T extends FabricEventBase> extends DataModelCollectionBase<FabricEventInstanceModel<T>> {
         public settings: ListSettings;
-        
         // This will skip refreshing if it is set too quick by user, as currently requests take ~3 secs.
         public readonly minimumRefreshTimeInSecs: number = 10;
-        public readonly pageSize: number = 20;
+        public readonly pageSize: number = 5;
 
         private _startTime: Date;
         private _endTime: Date;
@@ -580,8 +579,11 @@ module Sfx {
             super(data);
             this.nodeName = nodeName;
             if (!this.nodeName) {
-                //TODO add to this.settings.columnSettings at front
-                //new ListColumnSettingWithFilter("raw.nodeName", "Node Name")
+                // Show NodeName as the first column.
+                this.settings.columnSettings.unshift(
+                    new ListColumnSettingWithFilter(
+                        "raw.nodeName",
+                        "Node Name"));
             }
         }
 

@@ -20,6 +20,7 @@ module Sfx {
         listSettings: ListSettings;
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
+        nodeEvents: NodeEventList;
     }
 
     export class NodeViewController extends MainViewController {
