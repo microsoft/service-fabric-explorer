@@ -483,23 +483,110 @@ module Sfx {
         }
     }
 
-    export class NodeEventList extends DataModelCollectionBase<FabricEventInstanceModel<NodeEvent>> {
-        public decorators: IDecorators = {
-            hideList: []
-        };
+    export abstract class EventListBase<T extends FabricEventBase> extends DataModelCollectionBase<FabricEventInstanceModel<T>> {
+        public settings: ListSettings;
+        
+        // This will skip refreshing if it is set too quick by user, as currently requests take ~3 secs.
+        public readonly minimumRefreshTimeInSecs: number = 10;
+        public readonly pageSize: number = 20;
+
+        private _startTime: Date;
+        private _endTime: Date;
+        private timeWindowExternallySet: boolean = false;
+        private lastRefreshTime?: Date;
+
+        public get startTime() { return this._startTime; }
+        public get endTime() { return this._endTime; }
+
+        public constructor(data: DataService, startTime?: Date, endTime?: Date) {
+            super(data);
+            this.settings = this.createListSettings();
+            if (startTime && endTime) {
+                this.setTimeWindow(startTime, endTime);
+            }
+        }
+
+        public setTimeWindow(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            this._startTime = startTime;
+            this._endTime = endTime;
+            this.timeWindowExternallySet = true;
+            this.lastRefreshTime = null;
+            return this.refresh(messageHandler);
+        }
+
+        public resetTimeWindow(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            this.timeWindowExternallySet = false;
+            this.lastRefreshTime = null;
+            return this.refresh(messageHandler);
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            // Use existing collection if a refresh is called in less than minimumRefreshTimeInSecs.
+            if (this.lastRefreshTime &&
+                (new Date().getTime() - this.lastRefreshTime.getTime()) < (this.minimumRefreshTimeInSecs * 1000)) {
+                return this.data.$q.when(this.collection);
+            }
+
+            if (!this.timeWindowExternallySet) {
+                this.setDefaultTimeWindow();
+            }
+
+            // TODO logic to skip retrieval if a window is set and its endTime is more than 10-20 mins ago
+            // there will be no new events, and no updates because no new correlation info needs to be updated.
+            this.lastRefreshTime = new Date();
+            return this.retrieveEvents(messageHandler);
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<T>[]> {
+            // Should be overriden to retrieve actual events.
+            return this.data.$q.when([]);
+        }
+
+        private createListSettings(): ListSettings {
+            let listSettings = new ListSettings(
+                this.pageSize,
+                ["raw.timeStamp"],
+                [ new ListColumnSettingWithFilter("raw.kind", "Type"),
+                new ListColumnSetting("raw.timeStamp", "Timestamp"),
+                new ListColumnSetting(
+                    "raw.eventProperties",
+                    "Properties",
+                    [],
+                    null,
+                    (item) => ("Properties: " + JSON.stringify(item.raw.eventProperties, null, "</br>"))), ],
+                [], //TODO add second row cols
+                true, //TODO not opened by default
+                (item) => (item.raw.hasCorrelatedEvents === true),
+                true);
+            listSettings.sortReverse = true;
+            return listSettings;
+        }
+
+        private setDefaultTimeWindow() {
+            // Last 1 week.
+            const endTime = new Date();
+            const startTime = new Date();
+            startTime.setTime(endTime.getTime() - (7 * 24 * 60 * 60 * 1000));
+
+            this._startTime = startTime;
+            this._endTime = endTime;
+        }
+    }
+
+    export class NodeEventList extends EventListBase<NodeEvent> {
         private nodeName?: string;
-        //TODO have SetTimeWindow method taking startTime and endTime as part of EventListModelBase
 
         public constructor(data: DataService, nodeName?: string) {
             super(data);
             this.nodeName = nodeName;
-            if (this.nodeName) {
-                this.decorators.hideList.push("nodeName");
+            if (!this.nodeName) {
+                //TODO add to this.settings.columnSettings at front
+                //new ListColumnSettingWithFilter("raw.nodeName", "Node Name")
             }
         }
 
-        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> { 
-            return this.data.restClient.getNodeEvents(this.nodeName, messageHandler)
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<NodeEvent>[]> {
+            return this.data.restClient.getNodeEvents(this.startTime, this.endTime, this.nodeName, messageHandler)
                 .then(result => {
                     return result.map(event => new FabricEventInstanceModel<NodeEvent>(this.data, event));
                 });

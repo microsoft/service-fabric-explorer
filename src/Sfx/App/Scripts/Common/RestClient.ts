@@ -509,23 +509,15 @@ module Sfx {
             return this.post(this.getApiUrl(url), "Replica deletion", null, messageHandler);
         }
 
-        public getNodeEvents(nodeName?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<NodeEvent[]> {
+        public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<NodeEvent[]> {
             let url = "EventsStore/"
                 + "Nodes/"
                 + (nodeName ? (encodeURIComponent(nodeName) + "/$/") : "")
                 + "Events";
-            return this.getEvents(NodeEvent, url, messageHandler);
+            return this.getEvents(NodeEvent, url, startTime, endTime, messageHandler);
         }
 
-        private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, messageHandler?: IResponseMessageHandler, startTime?: Date, endTime?: Date): angular.IPromise<T[]> {
-            if (!startTime) {
-                startTime = new Date();
-                startTime.setTime(startTime.getTime() - (7 * 24 * 60 * 60 * 1000));
-            }
-            if (!endTime) {
-                endTime = new Date();
-            }
-
+        private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<T[]> {
             let urlWithTimeWindow = url
                 + "?starttimeutc=" + startTime.toISOString().substr(0, 19) + "Z"
                 + "&endtimeutc=" + endTime.toISOString().substr(0, 19) + "Z";

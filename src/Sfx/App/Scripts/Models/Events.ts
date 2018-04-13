@@ -8,30 +8,20 @@ module Sfx {
     export interface IFabricEventMetadata {
         kind: string;
         eventInstanceId: string;
-        timeStamp: string;
+        timeStamp: Date;
         hasCorrelatedEvents?: boolean;
     }
 
-    export class EventProperty {
-        readonly name: string;
-        readonly value: any;
-
-        public constructor(name: string, value: any) {
-            this.name = name;
-            this.value = value;
-        }
-    }
-
     export interface IEventPropertiesCollection {
-        eventProperties: EventProperty[];
+        eventProperties: { [key: string]: any; };
     }
 
     export abstract class FabricEventBase implements IFabricEventMetadata, IEventPropertiesCollection {
         private _kind: string;
         private _eventInstanceId: string;
-        private _timeStamp: string;
+        private _timeStamp: Date;
         private _hasCorrelatedEvents?: boolean;
-        private _eventProperties: EventProperty[] = [];
+        private _eventProperties: { [key: string]: any; } = {};
 
         public get kind() { return this._kind; }
         public get eventInstanceId() { return this._eventInstanceId; }
@@ -42,10 +32,7 @@ module Sfx {
         public fillFromJSON(responseItem: any) {
             for (const property in responseItem) {
                 if (!this.extractField(property, responseItem[property])) {
-                    this.eventProperties.push(
-                        new EventProperty(
-                            property,
-                            responseItem[property]));
+                    this.eventProperties[property] = responseItem[property];
                 }
             }
         }
@@ -58,7 +45,7 @@ module Sfx {
                 this._eventInstanceId = value;
                 return true;
             } else if (name === "TimeStamp") {
-                this._timeStamp = value;
+                this._timeStamp = new Date(value);
                 return true;
             } else if (name === "HasCorrelatedEvents") {
                 this._hasCorrelatedEvents = value;

@@ -51,13 +51,7 @@ module Sfx {
             ]);
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-            
             this.$scope.nodeEvents = this.data.createNodeEventList(this.nodeName);
-            this.$scope.nodeEventsListSettings = this.settings.getNewOrExistingListSettings("nodeEvents", ["raw.timeStamp"], [
-                new ListColumnSettingWithFilter("raw.kind", "Type"),
-                new ListColumnSetting("raw.timeStamp", "Timestamp"),
-                new ListColumnSetting("raw.eventProperties", "Properties"),
-            ]);
 
             this.refresh();
         }
