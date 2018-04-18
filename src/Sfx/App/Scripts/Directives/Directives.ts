@@ -106,6 +106,25 @@ module Sfx {
             };
         });
 
+        // When navigating in the tree view through arrow keys, make sure the selected node also gets
+        // the focus since it could have been set on some other elements by using the tab key.
+        module.directive("sfxTreeSetFocus", ["$timeout", function ($timeout) {
+            return {
+                restrict: "A",
+                link: function ($scope: any, $element: any, $attributes: any) {
+                    $attributes.$observe("selected", function (selected) {
+                        if (selected !== "true") {
+                            return;
+                        }
+
+                        $timeout(function () {
+                            $(".self:first", $element).focus();
+                        });
+                    });
+                }
+            };
+        }]);
+
         module.directive("sfxTreeNode", (): angular.IDirective => {
             return {
                 restrict: "A",

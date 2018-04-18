@@ -17,7 +17,7 @@
                 <span ng-click="node.pageUp()" class="pageup-icon bowtie-icon bowtie-chevron-up" title="Previous {{node.owningNode.listSettings.limit}} items" aria-hidden="true"></span>
             </div>
         </li>
-        <li sfx-tree-scroll-to selected="{{child.selected}}" scroll-parent="tree-body" class="node"
+        <li sfx-tree-scroll-to sfx-tree-set-focus selected="{{child.selected}}" scroll-parent="tree-body" class="node"
             ng-repeat="child in node.displayedChildren track by child.nodeId" ng-show="child.isVisibleByBadge" ng-class="{ 'selected': child.selected }">
             <div class="self" ng-click="child.handleClick()" ng-dblclick="child.toggle()" ng-style="::{ 'paddingLeft': child.paddingLeftPx }">
                 <span class="expander icon bowtie-icon" aria-hidden="true"
@@ -34,7 +34,7 @@
                      uib-dropdown dropdown-append-to-body on-toggle="child.contextMenuToggled(open)"
                      ng-click="$event.stopPropagation()"
                      ng-dblclick="$event.stopPropagation()">
-                    <a role="button" uib-dropdown-toggle
+                    <a href="" role="button" uib-dropdown-toggle
                        class="dark-background-link actions-expander"
                        ng-disabled="child.actions && child.actions.anyRunning">
                         <span class="bowtie-icon bowtie-ellipsis"></span>

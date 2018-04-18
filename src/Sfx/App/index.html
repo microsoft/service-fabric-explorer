@@ -53,7 +53,7 @@
                     </div>
 
                     <div class="settings-control dropdown">
-                        <a class="dropdown-toggle dark-background-link bowtie-icon bowtie-settings-gear" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></a>
+                        <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-settings-gear" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true"></a>
                         <!-- use inline style to work around IE bug that list-style=none gets ignored for first load -->
                         <ul class="dropdown-menu dropdown-menu-right" style="list-style: none" ng-controller="SettingsController as settingsCtrl">
                             <li ng-controller="ThemeController as themeCtrl">
@@ -74,13 +74,17 @@
                                        ng-model="settingsCtrl.settings.paginationLimit" ng-model-options="{ updateOn: 'blur' }" />
                             </li>
                             <li role="separator" class="divider"></li>
-                            <li class="hoverable" ng-click="navbarCtrl.openPrivacyLink()">
-                                <span>Privacy and Cookies</span>
-                                <i class="bowtie-icon bowtie-navigate-external"></i>
+                            <li class="hoverable-link">
+                                <a href="http://go.microsoft.com/fwlink/?LinkId=512132" title="Privacy and Cookies" target="_blank">
+                                    <span>Privacy and Cookies</span>
+                                    <i class="bowtie-icon bowtie-navigate-external"></i>
+                                </a>
                             </li>
-                            <li class="hoverable" ng-click="navbarCtrl.openSuggestionLink()">
-                                <span>Suggest an improvement</span>
-                                <i class="bowtie-icon bowtie-navigate-external"></i>
+                            <li class="hoverable-link">
+                                <a href="http://aka.ms/servicefabricfeedback" title="Suggest an improvement" target="_blank">
+                                    <span>Suggest an improvement</span>
+                                    <i class="bowtie-icon bowtie-navigate-external"></i>
+                                </a>
                             </li>
                         </ul>
                     </div>

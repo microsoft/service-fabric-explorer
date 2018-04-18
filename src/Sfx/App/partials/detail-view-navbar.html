@@ -14,7 +14,6 @@
             <ul role="menu" class="dropdown-menu dropdown-menu-right" uib-dropdown-menu style="list-style: none">
                 <li role="menuitem" ng-repeat="action in ::actions.collection track by action.name">
                     <a role="menuitem"
-                       tabindex="-1"
                        href=""
                        ng-click="actions.runWithTelemetry(action, 'ActionsButton')"
                        ng-disabled="!action.canRun()">
