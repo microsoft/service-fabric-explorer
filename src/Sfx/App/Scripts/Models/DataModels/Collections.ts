@@ -704,8 +704,8 @@ module Sfx {
         protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<FabricEvent>[]> {
             //Mocking for now
             const correlatedEvents: FabricEvent[] = [ new FabricEvent(), new FabricEvent() ];
-            correlatedEvents[0].fillFromJSON({ eventInstanceId: "test1", propertyX: "testprop1" });
-            correlatedEvents[0].fillFromJSON({ eventInstanceId: "test2", propertyY: "testprop2" });
+            correlatedEvents[0].fillFromJSON({ Kind: "Type1", TimeStamp: "2018-04-18T00:00:00Z", EventInstanceId: "test1", PropertyX: "testprop1" });
+            correlatedEvents[1].fillFromJSON({ Kind: "Type2", TimeStamp: "2018-04-18T00:00:00Z", EventInstanceId: "test2", PropertyY: "testprop2" });
 
             //return this.data.restClient.getCorrelatedEvents(this.eventInstanceId, messageHandler)
             return this.data.$q.when(correlatedEvents)

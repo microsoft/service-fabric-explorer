@@ -64,6 +64,7 @@ module Sfx {
 
         public get uniqueId() { return this.raw.eventInstanceId; }
         public get id() { return this.raw.eventInstanceId; }
+        public get name() { return `${this.raw.kind} (${this.raw.eventInstanceId})`; }
     }
 
     export class FabricEvent extends FabricEventBase {

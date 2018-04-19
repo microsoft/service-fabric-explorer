@@ -474,6 +474,10 @@ table.detail-list {
         padding-top: 7px;
     }
 
+    h4.no-uppercase {
+        text-transform: none;
+    }
+
     pre {
         color: $detail-pane-pre-color;
         background-color: $detail-pane-pre-background-color;
@@ -482,13 +486,18 @@ table.detail-list {
     }
 }
 
+.overlay-details-wrapper {
+    position: relative;
+}
+
 .overlay-details {
     left: 0;
+    top: 0;
+    bottom: 0;
     width: 100%;
     height: 100%;
     display: block;
     position: absolute;
-    top: 0;
-    bottom: 0;
     background-color: $right-panel-background-color;
+    z-index: 3;
 }

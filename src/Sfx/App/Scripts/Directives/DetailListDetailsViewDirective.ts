@@ -15,14 +15,15 @@ module Sfx {
 
         public link($scope: any, element: JQuery, attributes: any, ctrl: DetailListController) {
             $scope.parentController = ctrl;
-            $scope.detailsList = null;
 
             $scope.parentController.showDetails = (itemId: string) => {
                 let parentList = $scope.parentController.$scope.list;
-                if (parentList) {
+                if (parentList && parentList.getDetailsList) {
                     let parentListItems = parentList.collection || parentList;
-                    let matchItems = parentListItems.filter(item => (item.uniqueId === itemId));
+                    let matchItems = parentListItems.filter(
+                        (item) => (item.uniqueId === itemId || item.id === itemId));
                     if (matchItems.length === 1) {
+                        $scope.itemName = matchItems[0].name || null;
                         $scope.detailsList = parentList.getDetailsList(matchItems[0]);
                         $scope.detailsList.refresh();
                     }
@@ -30,6 +31,7 @@ module Sfx {
             };
 
             $scope.goBack = () => {
+                $scope.itemName = null;
                 $scope.detailsList = null;
             };
         }

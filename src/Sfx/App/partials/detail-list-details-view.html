@@ -1,6 +1,5 @@
-<div>
-    <div class="overlay-details" ng-show="!!detailsList">
-        <sfx-detail-list list="detailsList" list-settings="detailsListSettings">
-        <button type="button" class="btn btn-default" ng-click="goBack()">Back</button>
-    </div>
+<div class="detail-pane overlay-details" ng-show="!!detailsList">
+    <h4 class="no-uppercase" ng-show="!!itemName">{{itemName}}</h4>
+    <sfx-detail-list list="detailsList" list-settings="detailsListSettings"></sfx-detail-list>
+    <button type="button" class="btn btn-default" ng-click="goBack()">Back</button>
 </div>
