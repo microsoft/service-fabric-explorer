@@ -15,9 +15,9 @@ module Sfx {
             list: "=",
             listSettings: "="
         };
+        public transclude = true;
 
         public link($scope: any, element: JQuery, attributes: any, ctrl: DetailListController) {
-
             // The list passed in can be a normal array or a DataModelCollection object.
             // When it is a normal array, the directive only updates when the list reference
             // itself is changed or any items are added/removed from the list.
@@ -30,6 +30,13 @@ module Sfx {
                 // Only update if list is a normal array since the DataModelCollection will be updated
                 // via the isRefreshing watcher below and we don't want to update the list twice.
                 if ($scope.list && !angular.isDefined($scope.list.isRefreshing)) {
+                    ctrl.updateList();
+                }
+            });
+
+            $scope.$watch("list.isInitialized", (newVal, oldVal) => {
+                //When isInitialized becomes false which means it got cleared.
+                if ($scope.list && newVal === false && oldVal === true) {
                     ctrl.updateList();
                 }
             });

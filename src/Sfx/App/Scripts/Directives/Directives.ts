@@ -16,6 +16,7 @@ module Sfx {
         module.directive("sfxSlider", () => new SliderDirective());
         module.directive("sfxDetailViewPart", () => new DetailViewPartDirective());
         module.directive("sfxDetailList", () => new DetailListDirective());
+        module.directive("sfxDetailListDetailsView", () => new DetailListDetailsViewDirective());
         module.directive("sfxMetricsBarChart", MetricsBarChartDirective.factory());
         module.directive("sfxDashboard", DashboardChartDirective.factory());
 

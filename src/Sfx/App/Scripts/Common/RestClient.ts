@@ -13,6 +13,7 @@ module Sfx {
         private static defaultApiVersion: string = "3.0";
         private static apiVersion40: string = "4.0";
         private static apiVersion60: string = "6.0";
+        private static apiVersion62preview: string = "6.2-preview";
 
         private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -517,12 +518,20 @@ module Sfx {
             return this.getEvents(NodeEvent, url, startTime, endTime, messageHandler);
         }
 
-        private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<T[]> {
-            let urlWithTimeWindow = url
-                + "?starttimeutc=" + startTime.toISOString().substr(0, 19) + "Z"
-                + "&endtimeutc=" + endTime.toISOString().substr(0, 19) + "Z";
+        //public getCorrelatedEvents(eventInstanceId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEvent[]> {
+        //    //TODO
+        //}
+
+        private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<T[]> {
+            let apiUrl = url;
+            if (startTime && endTime) {
+                apiUrl = apiUrl
+                    + "?starttimeutc=" + startTime.toISOString().substr(0, 19) + "Z"
+                    + "&endtimeutc=" + endTime.toISOString().substr(0, 19) + "Z";
+            }
+
             // Skip caching token, because an exact events api call will always return same data.
-            let fullUrl = this.getApiUrl(urlWithTimeWindow, "6.2-preview", null, true);
+            let fullUrl = this.getApiUrl(apiUrl, RestClient.apiVersion62preview, null, true);
             return this.get<IRawList<{}>>(fullUrl, null, messageHandler)
                 .then(response => {
                     return new EventsResponseAdapter(eventType).getEvents(response.data);

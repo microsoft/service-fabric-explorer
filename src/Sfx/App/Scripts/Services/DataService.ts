@@ -236,8 +236,12 @@ module Sfx {
             });
         }
 
-        public createNodeEventList(nodeName: string): NodeEventList {
+        public createNodeEventList(nodeName?: string): NodeEventList {
             return new NodeEventList(this, nodeName);
+        }
+
+        public createCorrelatedEventList(eventInstanceId: string) {
+            return new CorrelatedEventList(this, eventInstanceId);
         }
 
         private tryGetValidItem<T extends IDataModel<any>>(collection: IDataModelCollection<T>, uniqueId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {

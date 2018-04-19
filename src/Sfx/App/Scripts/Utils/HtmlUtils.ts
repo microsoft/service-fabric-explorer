@@ -46,5 +46,14 @@ module Sfx {
             // Keep the template here in sync with badge.html
             return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="images/${badge.badgeClass}.svg"></img><span> ${badge.text}</span></div>`;
         }
+
+        public static getEventSecondRowHtml(event: FabricEventBase): string {
+            return "Properties: " + JSON.stringify(event.eventProperties, null, "</br>");
+        }
+
+        public static getEventDetailsViewLinkHtml(event: FabricEventBase): string {
+            //return event.hasCorrelatedEvents ? `<a href ng-click="ctrl.showDetails('` + event.eventInstanceId + `')">View</a>` : "";
+            return `<a href ng-click="ctrl.showDetails('` + event.eventInstanceId + `')">View</a>`;
+        }
     }
 }

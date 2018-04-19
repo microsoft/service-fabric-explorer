@@ -47,7 +47,7 @@
             <tr ng-repeat-end ng-if="listSettings.secondRowColumnSettings.length > 0 && listSettings.showSecondRow(item)">
                 <td class="no-border"
                     ng-repeat="columnSetting in ::listSettings.secondRowColumnSettings track by columnSetting.propertyPath"
-                    colspan="{{::columnSetting.colspan}}"
+                    colspan="{{::columnSetting.colspan === -1 ? (listSettings.columnSettings.length - listSettings.secondRowColumnSettings.length + 1) : columnSetting.colspan}}"
                     ng-class="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed }">
                     <div uib-collapse="listSettings.secondRowCollapsible && item.isSecondRowCollapsed" sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)">
                     </div>
@@ -62,4 +62,5 @@
         </tbody>
     </table>
     <sfx-pager list="sortedFilteredList" list-settings="listSettings"></sfx-pager>
+    <ng-transclude></ng-transclude>
 </div>

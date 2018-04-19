@@ -34,15 +34,67 @@ module Sfx {
         mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): angular.IPromise<any>;
     }
 
+    export class CancelablePromise<T> {
+        private defer: angular.IDeferred<T> = null;
+
+        public constructor(private dataService: DataService) {
+        }
+
+        public reset(loadData: () => angular.IPromise<T>): void {
+            if (this.hasPromise()) {
+                this.cancel();
+            }
+
+            this.defer = this.dataService.$q.defer<T>();
+            this.loadDataInternal(this.defer, loadData);
+        }
+
+        public hasPromise(): boolean {
+            return this.defer !== null;
+        }
+
+        public getPromise(): angular.IPromise<T> {
+            if (!this.hasPromise()) {
+                return this.dataService.$q.when(null);
+            }
+            return this.defer.promise;
+        }
+
+        public cancel(): void {
+            if (this.hasPromise()) {
+                this.defer.reject({ isCanceled: true });
+                this.defer = null;
+            }
+        }
+
+        private loadDataInternal(
+            capturedDefer: angular.IDeferred<T>,
+            loadData: () => angular.IPromise<T>): void {
+            loadData().then(result => {
+                if (this.defer === capturedDefer) {
+                    this.defer.resolve(result);
+                }
+            }).catch((rejected) => {
+                if (this.defer === capturedDefer) {
+                    this.defer.reject(rejected);
+                }
+            }).finally(() => {
+                if (this.defer === capturedDefer) {
+                    this.defer = null;
+                }
+            });
+        }
+    }
+
     export class DataModelCollectionBase<T extends IDataModel<any>> implements IDataModelCollection<T> {
-        public isInitialized: boolean;
+        public isInitialized: boolean = false;
         public parent: any;
         public collection: T[] = [];
 
         protected valueResolver: ValueResolver = new ValueResolver();
 
         private hash: _.Dictionary<T>;
-        private refreshingPromise: angular.IPromise<any>;
+        private refreshingPromise: CancelablePromise<any>;
 
         public get viewPath(): string {
             return "";
@@ -53,7 +105,7 @@ module Sfx {
         }
 
         public get isRefreshing(): boolean {
-            return !!this.refreshingPromise;
+            return this.refreshingPromise.hasPromise();
         }
 
         protected get indexPropery(): string {
@@ -63,20 +115,37 @@ module Sfx {
 
         public constructor(public data: DataService, parent?: any) {
             this.parent = parent;
+            this.refreshingPromise = new CancelablePromise(data);
         }
 
         // Base refresh logic, do not override
         public refresh(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            if (!this.refreshingPromise) {
-                this.refreshingPromise = this.retrieveNewCollection(messageHandler).then(collection => {
-                    return this.update(collection);
-                }).then(() => {
-                    return this;
-                }).finally(() => {
-                    this.refreshingPromise = null;
+            if (!this.refreshingPromise.hasPromise()) {
+                this.refreshingPromise.reset(() => {
+                    return this.retrieveNewCollection(messageHandler).then(collection => {
+                        return this.update(collection);
+                    }).catch((rejected) => {
+                        if (!rejected || rejected.isCanceled !== true) {
+                            throw rejected;
+                        }
+                    }).then(() => {
+                        return this;
+                    });
                 });
             }
-            return this.refreshingPromise;
+            return this.refreshingPromise.getPromise();
+        }
+
+        public cancelRefresh(): void {
+            if (this.isRefreshing) {
+                this.refreshingPromise.cancel();
+            }
+        }
+
+        public clear(): void {
+            this.cancelRefresh();
+            this.collection = [];
+            this.isInitialized = false;
         }
 
         protected update(collection: T[]): angular.IPromise<any> {
@@ -142,6 +211,11 @@ module Sfx {
                 });
 
             return this.data.$q.all(updatePromises);
+        }
+
+        // Derived class should implement this if it is going to use details-view directive as child and call showDetails(itemId).
+        protected getDetailsList(item: any): IDataModelCollection<any> {
+            return null;
         }
     }
 
@@ -484,22 +558,32 @@ module Sfx {
     }
 
     export abstract class EventListBase<T extends FabricEventBase> extends DataModelCollectionBase<FabricEventInstanceModel<T>> {
-        public settings: ListSettings;
-        // This will skip refreshing if it is set too quick by user, as currently requests take ~3 secs.
+        public readonly settings: ListSettings;
+        public readonly detailsSettings: ListSettings;
+        // This will skip refreshing if period is set to be too quick by user, as currently events
+        // requests take ~3 secs, and so we shouldn't be delaying every global refresh.
         public readonly minimumRefreshTimeInSecs: number = 10;
-        public readonly pageSize: number = 5;
+        public readonly pageSize: number = 15;
 
-        private _startTime: Date;
-        private _endTime: Date;
         private timeWindowExternallySet: boolean = false;
         private lastRefreshTime?: Date;
 
+        private _startTime: Date;
+        private _endTime: Date;
         public get startTime() { return this._startTime; }
         public get endTime() { return this._endTime; }
 
         public constructor(data: DataService, startTime?: Date, endTime?: Date) {
             super(data);
-            this.settings = this.createListSettings();
+            this.settings = this.createListSettings(
+                [ new ListColumnSetting(
+                    "",
+                    "Correlated Events",
+                    [],
+                    null,
+                    (item) => HtmlUtils.getEventDetailsViewLinkHtml(item.raw)),
+                ]);
+            this.detailsSettings = this.createListSettings();
             if (startTime && endTime) {
                 this.setTimeWindow(startTime, endTime);
             }
@@ -510,12 +594,14 @@ module Sfx {
             this._endTime = endTime;
             this.timeWindowExternallySet = true;
             this.lastRefreshTime = null;
+            this.clear();
             return this.refresh(messageHandler);
         }
 
         public resetTimeWindow(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             this.timeWindowExternallySet = false;
             this.lastRefreshTime = null;
+            this.clear();
             return this.refresh(messageHandler);
         }
 
@@ -530,10 +616,14 @@ module Sfx {
                 this.setDefaultTimeWindow();
             }
 
-            // TODO logic to skip retrieval if a window is set and its endTime is more than 10-20 mins ago
+            // TODO logic to skip retrieval if a window is set and its endTime is more than 1 hr or so ago
             // there will be no new events, and no updates because no new correlation info needs to be updated.
             this.lastRefreshTime = new Date();
             return this.retrieveEvents(messageHandler);
+        }
+
+        protected getDetailsList(item: any): IDataModelCollection<any> {
+            return this.data.createCorrelatedEventList(item.raw.eventInstanceId);
         }
 
         protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<T>[]> {
@@ -541,23 +631,31 @@ module Sfx {
             return this.data.$q.when([]);
         }
 
-        private createListSettings(): ListSettings {
+        private createListSettings(additionalCols?: ListColumnSetting[]): ListSettings {
             let listSettings = new ListSettings(
                 this.pageSize,
                 ["raw.timeStamp"],
                 [ new ListColumnSettingWithFilter("raw.kind", "Type"),
-                new ListColumnSetting("raw.timeStamp", "Timestamp"),
+                new ListColumnSetting("raw.timeStamp", "Timestamp"), ],
+                [ new ListColumnSetting("", ""),
                 new ListColumnSetting(
                     "raw.eventProperties",
                     "Properties",
                     [],
                     null,
-                    (item) => ("Properties: " + JSON.stringify(item.raw.eventProperties, null, "</br>"))), ],
-                [], //TODO add second row cols
-                true, //TODO not opened by default
-                (item) => (item.raw.hasCorrelatedEvents === true),
+                    (item) => HtmlUtils.getEventSecondRowHtml(item.raw),
+                    -1), ],
+                true,
+                (item) => (Object.keys(item.raw.eventProperties).length > 0),
                 true);
             listSettings.sortReverse = true;
+
+            if (additionalCols && additionalCols.length > 0) {
+                additionalCols.forEach(col => {
+                    listSettings.columnSettings.push(col);
+                });
+            }
+
             return listSettings;
         }
 
@@ -591,6 +689,28 @@ module Sfx {
             return this.data.restClient.getNodeEvents(this.startTime, this.endTime, this.nodeName, messageHandler)
                 .then(result => {
                     return result.map(event => new FabricEventInstanceModel<NodeEvent>(this.data, event));
+                });
+        }
+    }
+
+    export class CorrelatedEventList extends EventListBase<FabricEvent> {
+        private eventInstanceId: string;
+
+        public constructor(data: DataService, eventInstanceId: string) {
+            super(data);
+            this.eventInstanceId = eventInstanceId;
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<FabricEvent>[]> {
+            //Mocking for now
+            const correlatedEvents: FabricEvent[] = [ new FabricEvent(), new FabricEvent() ];
+            correlatedEvents[0].fillFromJSON({ eventInstanceId: "test1", propertyX: "testprop1" });
+            correlatedEvents[0].fillFromJSON({ eventInstanceId: "test2", propertyY: "testprop2" });
+
+            //return this.data.restClient.getCorrelatedEvents(this.eventInstanceId, messageHandler)
+            return this.data.$q.when(correlatedEvents)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<FabricEvent>(this.data, event));
                 });
         }
     }
