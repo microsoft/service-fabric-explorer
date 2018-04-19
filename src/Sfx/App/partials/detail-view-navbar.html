@@ -24,9 +24,9 @@
         </div>
     </div>
 
-    <div class="detail-view-navbar">
+    <div class="detail-view-navbar" role="tablist">
         <div class="detail-view-navbar-tab" ng-repeat-start="(id, tab) in mainViewCtrl.tabs">
-            <a href="" ng-class="{ active: mainViewCtrl.isActiveTab(id) }" ng-click="mainViewCtrl.navigateToTab(id)" title="{{::tab.name}}">{{::tab.name}}</a>
+            <a href="" ng-class="{ active: mainViewCtrl.isActiveTab(id) }" ng-click="mainViewCtrl.navigateToTab(id)" title="{{::tab.name}}" role="tab">{{::tab.name}}</a>
             <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div>
         </div>
         <div class="spacer" ng-repeat-end></div>
