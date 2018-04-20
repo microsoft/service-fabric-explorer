@@ -248,5 +248,7 @@ module Sfx {
         });
 
         module.directive("sfxTextFileInput", () => new TextFileInputDirective());
+
+        module.directive("sfxDatePicker", () => new DatePickerDirective());
     })();
 }

@@ -1,4 +1,5 @@
 ﻿<div class="detail-list-container table-responsive">
+    <ng-transclude></ng-transclude>
     <sfx-search-bar ng-if="::listSettings.searchable" class="list-search-bar" placeholder="Search list" model="listSettings.search" reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar>
     <table class="table detail-list">
         <thead>
@@ -62,5 +63,4 @@
         </tbody>
     </table>
     <sfx-pager list="sortedFilteredList" list-settings="listSettings"></sfx-pager>
-    <ng-transclude></ng-transclude>
 </div>

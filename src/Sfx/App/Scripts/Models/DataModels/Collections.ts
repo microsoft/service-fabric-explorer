@@ -570,8 +570,17 @@ module Sfx {
 
         private _startTime: Date;
         private _endTime: Date;
+        private _newStartTime: Date;
+        private _newEndTime: Date;
+
         public get startTime() { return this._startTime; }
         public get endTime() { return this._endTime; }
+
+        // Exposing newStartTime & newEndTime to allow it being set with new values through ng-model.
+        public set newStartTime(value) { this._newStartTime = value; }
+        public get newStartTime() { return this._newStartTime; }
+        public set newEndTime(value) { this._newEndTime = value; }
+        public get newEndTime() { return this._newEndTime; }
 
         public constructor(data: DataService, startTime?: Date, endTime?: Date) {
             super(data);
@@ -715,4 +724,3 @@ module Sfx {
         }
     }
 }
-
