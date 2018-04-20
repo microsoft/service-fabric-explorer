@@ -1,7 +1,7 @@
 ﻿<sfx-detail-view-navbar ctrl="appsCtrl" type="Applications" actions="actions"></sfx-detail-view-navbar>
 
 <div class="main-view">
-    <div sfx-include src="'tab_' + appsCtrl.activeTabId" ng-if="appsCtrl.activeTabId"></div>
+    <div sfx-include src="'tab_' + appsCtrl.activeTabId" ng-if="appsCtrl.activeTabId" role="tabpanel"></div>
 
     <script type="text/ng-template" id="tab_applications">
         <div class="detail-pane">

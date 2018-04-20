@@ -1,12 +1,12 @@
 ﻿<sfx-detail-view-navbar ctrl="clusterCtrl" type="Cluster" name="{{SFXClusterName}}"></sfx-detail-view-navbar>
 
 <div class="main-view">
-    <div sfx-include src="'tab_' + clusterCtrl.activeTabId" ng-if="clusterCtrl.activeTabId"></div>
+    <div sfx-include src="'tab_' + clusterCtrl.activeTabId" ng-if="clusterCtrl.activeTabId" role="tabpanel"></div>
 
     <script type="text/ng-template" id="tab_essentials">
         <div class="detail-pane essen-pane">
             <div class="table-responsive">
-                <table class="essen-table">
+                <table class="essen-table" role="presentation">
                     <tr>
                         <th>Cluster Health State</th>
                         <th>Upgrade Domains</th>
@@ -139,7 +139,7 @@
             <h4>
                 <span id="clusterManifestName">{{clusterManifest.clusterManifestName}}</span>
             </h4>
-            <pre><code>{{clusterManifest.raw.Manifest}}</code></pre>
+            <pre role="presentation"><code>{{clusterManifest.raw.Manifest}}</code></pre>
         </div>
     </script>
 </div>

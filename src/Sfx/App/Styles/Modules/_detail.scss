@@ -295,8 +295,7 @@ table.detail-list {
             position: relative;
             top: 2px;
             font-size: $font-size-large;
-            cursor: pointer;
-            margin-left: -3px;
+            cursor: pointer;            
 
             &.transparent-icon {
                 pointer-events: none;
