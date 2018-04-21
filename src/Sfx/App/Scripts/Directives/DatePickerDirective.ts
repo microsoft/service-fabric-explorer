@@ -4,7 +4,6 @@
 //-----------------------------------------------------------------------------
 
 module Sfx {
-//<sfx-date-picker ng-model="dtSelectedTime" min-date="'2018-01-01'" max-date="'2019-01-01'" datepicker-options="dateOptions"></sfx-date-picker>
     export class DatePickerDirective implements ng.IDirective {
         public restrict = "E";
         public controller = DatePickerController;
@@ -14,18 +13,20 @@ module Sfx {
             ngModel: "=",
             minDate: "=?",
             maxDate: "=?",
-            dtpRequired: "=?",
-            dateOptions: "=?"
+            dateOptions: "=?",
+            readOnly: "=?",
+            placeHolderText: "=?"
         };
-        public require: "ngModel";
 
-        public link($scope: any, element: JQuery) {
+        public link($scope: any, element: JQuery, attributes: any) {
             $scope.dateOptions = $scope.dateOptions || {
                 formatYear: "yy",
                 startingDay: 1,
                 showWeeks: false
             };
 
+            $scope.readOnly = $scope.readOnly || true;
+            $scope.placeHolderText = $scope.placeHolderText || "";
             $scope.formats = ["dd-MMMM-yyyy", "yyyy/MM/dd", "dd.MM.yyyy", "shortDate"];
             $scope.format = $scope.formats[0];
         }

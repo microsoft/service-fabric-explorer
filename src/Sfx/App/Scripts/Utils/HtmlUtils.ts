@@ -52,8 +52,8 @@ module Sfx {
         }
 
         public static getEventDetailsViewLinkHtml(event: FabricEventBase): string {
-            //return event.hasCorrelatedEvents ? `<a href ng-click="ctrl.showDetails('` + event.eventInstanceId + `')">View</a>` : "";
-            return `<a href ng-click="ctrl.showDetails('${event.eventInstanceId}')">View</a>`;
+            //return `<a href ng-click="ctrl.showDetails('${event.eventInstanceId}')">View</a>`;
+            return event.hasCorrelatedEvents ? `<a href ng-click="ctrl.showDetails('` + event.eventInstanceId + `')">View</a>` : "";
         }
     }
 }

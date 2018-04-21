@@ -502,7 +502,7 @@ table.detail-list {
     z-index: 3;
 }
 
-// hide clear button of bootstrap datepicker
-.btn-sm.btn-danger {
-    display: none;
+a.calendar-link {
+    padding-left: 10px;
+    cursor: pointer; 
 }

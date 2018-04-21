@@ -518,9 +518,21 @@ module Sfx {
             return this.getEvents(NodeEvent, url, startTime, endTime, messageHandler);
         }
 
-        //public getCorrelatedEvents(eventInstanceId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEvent[]> {
-        //    //TODO
-        //}
+        public getPartitionEvents(startTime: Date, endTime: Date, partitionId?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<PartitionEvent[]> {
+            let url = "EventsStore/"
+                + "Partitions/"
+                + (partitionId ? (encodeURIComponent(partitionId) + "/$/") : "")
+                + "Events";
+            return this.getEvents(PartitionEvent, url, startTime, endTime, messageHandler);
+        }
+
+        public getCorrelatedEvents(eventInstanceId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEvent[]> {
+            let url = "EventsStore/"
+                + "CorrelatedEvents/"
+                + encodeURIComponent(eventInstanceId) + "/$/"
+                + "Events";
+            return this.getEvents(FabricEvent, url, null, null, messageHandler);
+        }
 
         private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<T[]> {
             let apiUrl = url;
@@ -530,7 +542,6 @@ module Sfx {
                     + "&endtimeutc=" + endTime.toISOString().substr(0, 19) + "Z";
             }
 
-            // Skip caching token, because an exact events api call will always return same data.
             let fullUrl = this.getApiUrl(apiUrl, RestClient.apiVersion62preview, null, true);
             return this.get<IRawList<{}>>(fullUrl, null, messageHandler)
                 .then(response => {

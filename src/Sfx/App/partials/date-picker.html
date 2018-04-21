@@ -1,14 +1,15 @@
 <div>
-    <div class="col-md-6">
+    <div class="col-md-3">
             <p class="input-group">
                 <input type="text" class="input-flat" uib-datepicker-popup="{{format}}"
                         ng-model="ngModel" is-open="opened"
                             min-date="minDate" max-date="maxDate"
-                            datepicker-options="dateOptions"
-                            ng-required close-text="Close" ng-readonly="true" ng-click="ctrl.openPopup($event)" />
+                            datepicker-options="dateOptions" placeholder="{{placeHolderText}}" show-button-bar="false"
+                            ng-required close-text="Close" ng-readonly="readOnly" ng-click="ctrl.openPopup($event)" />
                 <span class="input-group-btn">
-                    <button type="button" class="btn btn-default" ng-click="ctrl.openPopup($event)">
-                    <i class="glyphicon glyphicon-calendar"></i></button>
+                    <a class="calendar-link" ng-click="ctrl.openPopup($event)" >
+                        <i class="bowtie-icon bowtie-calendar"></i>
+                    </a>
                 </span>
             </p>
     </div>

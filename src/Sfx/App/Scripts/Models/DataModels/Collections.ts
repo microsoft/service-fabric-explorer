@@ -576,7 +576,7 @@ module Sfx {
         public get startTime() { return this._startTime; }
         public get endTime() { return this._endTime; }
 
-        // Exposing newStartTime & newEndTime to allow it being set with new values through ng-model.
+        // Exposing newStartTime & newEndTime to allow it being set with new values through picker ng-model.
         public set newStartTime(value) { this._newStartTime = value; }
         public get newStartTime() { return this._newStartTime; }
         public set newEndTime(value) { this._newEndTime = value; }
@@ -702,6 +702,29 @@ module Sfx {
         }
     }
 
+    export class PartitionEventList extends EventListBase<PartitionEvent> {
+        private partitionId?: string;
+
+        public constructor(data: DataService, partitionId?: string) {
+            super(data);
+            this.partitionId = partitionId;
+            if (!this.partitionId) {
+                // Show PartitionId as the first column.
+                this.settings.columnSettings.unshift(
+                    new ListColumnSettingWithFilter(
+                        "raw.partitionId",
+                        "Partition Id"));
+            }
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<PartitionEvent>[]> {
+            return this.data.restClient.getPartitionEvents(this.startTime, this.endTime, this.partitionId, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<PartitionEvent>(this.data, event));
+                });
+        }
+    }
+
     export class CorrelatedEventList extends EventListBase<FabricEvent> {
         private eventInstanceId: string;
 
@@ -712,12 +735,12 @@ module Sfx {
 
         protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<FabricEvent>[]> {
             //Mocking for now
-            const correlatedEvents: FabricEvent[] = [ new FabricEvent(), new FabricEvent() ];
-            correlatedEvents[0].fillFromJSON({ Kind: "Type1", TimeStamp: "2018-04-18T00:00:00Z", EventInstanceId: "test1", PropertyX: "testprop1" });
-            correlatedEvents[1].fillFromJSON({ Kind: "Type2", TimeStamp: "2018-04-18T00:00:00Z", EventInstanceId: "test2", PropertyY: "testprop2" });
+            //const correlatedEvents: FabricEvent[] = [ new FabricEvent(), new FabricEvent() ];
+            //correlatedEvents[0].fillFromJSON({ Kind: "Type1", TimeStamp: "2018-04-18T00:00:00Z", EventInstanceId: "test1", PropertyX: "testprop1" });
+            //correlatedEvents[1].fillFromJSON({ Kind: "Type2", TimeStamp: "2018-04-18T00:00:00Z", EventInstanceId: "test2", PropertyY: "testprop2" });
 
-            //return this.data.restClient.getCorrelatedEvents(this.eventInstanceId, messageHandler)
-            return this.data.$q.when(correlatedEvents)
+            //return this.data.$q.when(correlatedEvents)
+            return this.data.restClient.getCorrelatedEvents(this.eventInstanceId, messageHandler)
                 .then(result => {
                     return result.map(event => new FabricEventInstanceModel<FabricEvent>(this.data, event));
                 });

@@ -1,7 +1,7 @@
-﻿<div class="detail-list-container table-responsive">
+﻿<div class="detail-list-container">
     <ng-transclude></ng-transclude>
     <sfx-search-bar ng-if="::listSettings.searchable" class="list-search-bar" placeholder="Search list" model="listSettings.search" reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar>
-    <table class="table detail-list">
+    <table class="table detail-list table-responsive">
         <thead>
             <tr>
                 <th class="sort-filter-th" ng-repeat="columnSetting in ::listSettings.columnSettings track by columnSetting.propertyPath">

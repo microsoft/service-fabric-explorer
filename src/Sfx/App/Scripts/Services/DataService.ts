@@ -240,6 +240,10 @@ module Sfx {
             return new NodeEventList(this, nodeName);
         }
 
+        public createPartitionEventList(partitionId?: string): PartitionEventList {
+            return new PartitionEventList(this, partitionId);
+        }
+
         public createCorrelatedEventList(eventInstanceId: string) {
             return new CorrelatedEventList(this, eventInstanceId);
         }
