@@ -565,24 +565,24 @@ module Sfx {
         public readonly minimumRefreshTimeInSecs: number = 10;
         public readonly pageSize: number = 15;
 
-        private timeWindowExternallySet: boolean = false;
         private lastRefreshTime?: Date;
 
-        private _startTime: Date;
-        private _endTime: Date;
-        private _newStartTime: Date;
-        private _newEndTime: Date;
+        private _startDate: Date;
+        private _endDate: Date;
 
-        public get startTime() { return this._startTime; }
-        public get endTime() { return this._endTime; }
+        public get startDate() { return this._startDate; }
 
-        // Exposing newStartTime & newEndTime to allow it being set with new values through picker ng-model.
-        public set newStartTime(value) { this._newStartTime = value; }
-        public get newStartTime() { return this._newStartTime; }
-        public set newEndTime(value) { this._newEndTime = value; }
-        public get newEndTime() { return this._newEndTime; }
+        public get endDate() {
+            let endDate = this._endDate;
+            let timeNow = new Date();
+            if (endDate > timeNow) {
+                endDate = timeNow;
+            }
 
-        public constructor(data: DataService, startTime?: Date, endTime?: Date) {
+            return endDate;
+        }
+
+        public constructor(data: DataService, startDate?: Date, endDate?: Date) {
             super(data);
             this.settings = this.createListSettings(
                 [ new ListColumnSetting(
@@ -593,25 +593,22 @@ module Sfx {
                     (item) => HtmlUtils.getEventDetailsViewLinkHtml(item.raw)),
                 ]);
             this.detailsSettings = this.createListSettings();
-            if (startTime && endTime) {
-                this.setTimeWindow(startTime, endTime);
+            this.setNewDateWindowInternal(startDate, endDate);
+        }
+
+        public setDateWindow(startDate?: Date, endDate?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            if (this.setNewDateWindowInternal(startDate, endDate)) {
+                this.lastRefreshTime = null;
+                this.clear();
+                return this.refresh(messageHandler);
             }
+
+            // No change.
+            return this.data.$q.when(this);
         }
 
-        public setTimeWindow(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            this._startTime = startTime;
-            this._endTime = endTime;
-            this.timeWindowExternallySet = true;
-            this.lastRefreshTime = null;
-            this.clear();
-            return this.refresh(messageHandler);
-        }
-
-        public resetTimeWindow(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            this.timeWindowExternallySet = false;
-            this.lastRefreshTime = null;
-            this.clear();
-            return this.refresh(messageHandler);
+        public resetDateWindow(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.setDateWindow(null, null, messageHandler);
         }
 
         protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
@@ -621,12 +618,6 @@ module Sfx {
                 return this.data.$q.when(this.collection);
             }
 
-            if (!this.timeWindowExternallySet) {
-                this.setDefaultTimeWindow();
-            }
-
-            // TODO logic to skip retrieval if a window is set and its endTime is more than 1 hr or so ago
-            // there will be no new events, and no updates because no new correlation info needs to be updated.
             this.lastRefreshTime = new Date();
             return this.retrieveEvents(messageHandler);
         }
@@ -668,14 +659,29 @@ module Sfx {
             return listSettings;
         }
 
-        private setDefaultTimeWindow() {
-            // Last 1 week.
-            const endTime = new Date();
-            const startTime = new Date();
-            startTime.setTime(endTime.getTime() - (7 * 24 * 60 * 60 * 1000));
+        private setNewDateWindowInternal(startDate?: Date, endDate?: Date): boolean {
+            // Default to Yesterday.
+            if (!startDate) {
+                startDate = new Date();
+                startDate.setTime(startDate.getTime() - (24 * 60 * 60 * 1000));
+            }
+            // Default to Today
+            if (!endDate) {
+                endDate = new Date();
+            }
 
-            this._startTime = startTime;
-            this._endTime = endTime;
+            let bodStartDate = startDate;
+            let eodEndDate = endDate;
+            bodStartDate.setHours(0, 0, 0, 0);
+            eodEndDate.setHours(23, 59, 59, 999);
+
+            if (this._startDate !== bodStartDate || this._endDate !== eodEndDate) {
+                this._startDate = bodStartDate;
+                this._endDate = eodEndDate;
+                return true;
+            }
+
+            return false;
         }
     }
 
@@ -695,7 +701,7 @@ module Sfx {
         }
 
         protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<NodeEvent>[]> {
-            return this.data.restClient.getNodeEvents(this.startTime, this.endTime, this.nodeName, messageHandler)
+            return this.data.restClient.getNodeEvents(this.startDate, this.endDate, this.nodeName, messageHandler)
                 .then(result => {
                     return result.map(event => new FabricEventInstanceModel<NodeEvent>(this.data, event));
                 });
@@ -718,7 +724,7 @@ module Sfx {
         }
 
         protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<PartitionEvent>[]> {
-            return this.data.restClient.getPartitionEvents(this.startTime, this.endTime, this.partitionId, messageHandler)
+            return this.data.restClient.getPartitionEvents(this.startDate, this.endDate, this.partitionId, messageHandler)
                 .then(result => {
                     return result.map(event => new FabricEventInstanceModel<PartitionEvent>(this.data, event));
                 });
@@ -734,12 +740,6 @@ module Sfx {
         }
 
         protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<FabricEvent>[]> {
-            //Mocking for now
-            //const correlatedEvents: FabricEvent[] = [ new FabricEvent(), new FabricEvent() ];
-            //correlatedEvents[0].fillFromJSON({ Kind: "Type1", TimeStamp: "2018-04-18T00:00:00Z", EventInstanceId: "test1", PropertyX: "testprop1" });
-            //correlatedEvents[1].fillFromJSON({ Kind: "Type2", TimeStamp: "2018-04-18T00:00:00Z", EventInstanceId: "test2", PropertyY: "testprop2" });
-
-            //return this.data.$q.when(correlatedEvents)
             return this.data.restClient.getCorrelatedEvents(this.eventInstanceId, messageHandler)
                 .then(result => {
                     return result.map(event => new FabricEventInstanceModel<FabricEvent>(this.data, event));

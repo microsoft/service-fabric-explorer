@@ -1,0 +1,9 @@
+<div class="detail-pane overlay-details-wrapper">
+    <sfx-detail-list list="eventsList" list-settings="eventsList.settings">
+        <sfx-detail-list-details-view details-list-settings="eventsList.detailsSettings"></sfx-detail-list-details-view>
+        <div class="row" style="margin-right:0px;">
+            <sfx-date-picker ng-model="startDate" min-date="startDateMin" max-date="startDateMax" place-holder-text="'Pick Start Date'"></sfx-date-picker>
+            <sfx-date-picker ng-model="endDate" min-date="endDateMin" max-date="endDateMax" place-holder-text="'Pick End Date'"></sfx-date-picker>
+        </div>
+    </sfx-detail-list>
+</div>

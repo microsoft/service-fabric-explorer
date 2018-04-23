@@ -27,15 +27,18 @@ module Sfx {
             // When it is a DataModelCollection list, list.isRefreshing will be watched so
             // we know exactly when to refresh the list.
             $scope.$watchCollection("list", () => {
-                // Only update if list is a normal array since the DataModelCollection will be updated
-                // via the isRefreshing watcher below and we don't want to update the list twice.
-                if ($scope.list && !angular.isDefined($scope.list.isRefreshing)) {
+                // If list set to null/undefined, clear.
+                if (!$scope.list) {
+                    ctrl.updateList();
+                } else if (!angular.isDefined($scope.list.isRefreshing)) {
+                    // Only update if list is a normal array since the DataModelCollection will be updated
+                    // via the isRefreshing watcher below and we don't want to update the list twice.
                     ctrl.updateList();
                 }
             });
 
             $scope.$watch("list.isInitialized", (newVal, oldVal) => {
-                //When isInitialized becomes false which means it got cleared.
+                // When isInitialized becomes false which means it got cleared.
                 if ($scope.list && newVal === false && oldVal === true) {
                     ctrl.updateList();
                 }
@@ -62,10 +65,13 @@ module Sfx {
         }
 
         public updateList() {
-            if (this.$scope.list) {
+            if (!this.$scope.list) {
+                this.$scope.sortedFilteredList = [];
+            } else {
                 this.$scope.sortedFilteredList = this.getSortedFilteredList();
-                this.$scope.listSettings.count = this.$scope.sortedFilteredList.length;
             }
+
+            this.$scope.listSettings.count = this.$scope.sortedFilteredList.length;
         }
 
         public handleClickRow(item: any): void {

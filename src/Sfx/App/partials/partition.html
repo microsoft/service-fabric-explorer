@@ -77,14 +77,6 @@
     </script>
 
     <script type="text/ng-template" id="tab_events">
-        <div class="detail-pane overlay-details-wrapper">
-            <sfx-detail-list list="partitionEvents" list-settings="partitionEvents.settings">
-                <sfx-detail-list-details-view details-list-settings="partitionEvents.detailsSettings"></sfx-detail-list-details-view>
-                <div class="row" style="margin-right:0px;">
-                    <sfx-date-picker ng-model="partitionEvents.newStartTime" place-holder-text="'Start Time'"></sfx-date-picker>
-                    <sfx-date-picker ng-model="partitionEvents.newEndTime" place-holder-text="'End Time'"></sfx-date-picker>
-                </div>
-            </sfx-detail-list>
-        </div>
+        <sfx-events-view events-list="partitionEvents"></sfx-events-view>
     </script>
 </div>

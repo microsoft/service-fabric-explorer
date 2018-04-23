@@ -30,9 +30,13 @@ module Sfx {
                 }
             };
 
-            $scope.goBack = () => {
+            $scope.reset = () => {
                 $scope.itemName = null;
                 $scope.detailsList = null;
+            };
+
+            $scope.goBack = () => {
+                $scope.reset();
             };
         }
     }
