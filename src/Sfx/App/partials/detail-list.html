@@ -1,54 +1,49 @@
 ﻿<div class="detail-list-container table-responsive">
-    <sfx-search-bar ng-if="::listSettings.searchable" class="list-search-bar" placeholder="Search list" model="listSettings.search" reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar>
+    <sfx-search-bar ng-if="::listSettings.searchable" class="list-search-bar" placeholder="Search list" model="listSettings.search"
+        reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar>
     <table class="table detail-list">
         <thead>
             <tr>
                 <th class="sort-filter-th" ng-repeat="columnSetting in ::listSettings.columnSettings track by columnSetting.propertyPath">
                     <!-- Header lable -->
-                    <span ng-class="::{'active': columnSetting.sortable}"
-                          ng-click="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()">
+                    <span ng-class="::{'active': columnSetting.sortable}" ng-click="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()">
                         {{::columnSetting.displayName}}
                     </span>
 
                     <!-- Filter menu and icon -->
                     <div class="btn-group" uib-dropdown dropdown-append-to-body on-toggle="listSettings.filterContextMenuToggled(open)" ng-if="columnSetting.hasFilters">
-                        <a role="button" uib-dropdown-toggle>
+                        <a role="button" uib-dropdown-toggle aria-label="Filter">
                             <span class="bowtie-icon filter-icon" ng-class="{'bowtie-search-filter': !columnSetting.hasEffectiveFilters, 'bowtie-search-filter-fill active': columnSetting.hasEffectiveFilters}"></span>
                         </a>
                         <ul class="dropdown-menu" role="menu" uib-dropdown-menu ng-class="{'dropdown-menu-right': $last}" style="list-style: none">
-                            <li role="menuitem" ng-repeat="filterValue in columnSetting.filterValues track by $index" class="checkbox-container" ng-click="$event.stopPropagation()">
-                                <label><input type="checkbox" ng-model="filterValue.isChecked" ng-change="ctrl.updateList()" /><label><!-- this is left empty intentionally --></label>{{filterValue.value}}</label>
+                            <li role="menuitem" ng-repeat="filterValue in columnSetting.filterValues track by $index" class="checkbox-container-default" ng-click="$event.stopPropagation()">
+                                <label>
+                                    <input type="checkbox" ng-model="filterValue.isChecked" ng-change="ctrl.updateList()" />                                    
+                                    {{filterValue.value}}</label>
                             </li>
                         </ul>
                     </div>
 
                     <!-- Sort direction icon -->
                     <!-- Use transparent color to hide the icon instead of using ng-show to avoid the table layout changes when the icon showed up -->
-                    <span class="bowtie-icon sort-icon"
-                          ng-if="::columnSetting.sortable"
-                          ng-click="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()"
-                          ng-class="{'transparent-icon': !listSettings.isSortedByColumn(columnSetting), 'bowtie-triangle-up': !listSettings.sortReverse, 'bowtie-triangle-down': listSettings.sortReverse}">
+                    <span class="bowtie-icon sort-icon" ng-if="::columnSetting.sortable" ng-click="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()"
+                        ng-class="{'transparent-icon': !listSettings.isSortedByColumn(columnSetting), 'bowtie-triangle-up': !listSettings.sortReverse, 'bowtie-triangle-down': listSettings.sortReverse}" aria-label="Sort">
                     </span>
                 </th>
             </tr>
         </thead>
         <tbody>
             <tr ng-repeat-start="item in sortedFilteredList | limitTo: listSettings.limit: listSettings.begin track by (item.uniqueId || $id(item))">
-                 <td ng-repeat="columnSetting in ::listSettings.columnSettings track by columnSetting.propertyPath">
-                    <i class="bowtie-icon row-expander"
-                       ng-if="$index === 0 && listSettings.secondRowCollapsible"
-                       ng-click="ctrl.handleClickRow(item)"
-                       title="{{item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row' }}"
-                       ng-class="{'bowtie-chevron-right': item.isSecondRowCollapsed, 'bowtie-chevron-down': !item.isSecondRowCollapsed}"></i>
+                <td ng-repeat="columnSetting in ::listSettings.columnSettings track by columnSetting.propertyPath">
+                    <i class="bowtie-icon row-expander" ng-if="$index === 0 && listSettings.secondRowCollapsible" ng-click="ctrl.handleClickRow(item)"
+                        title="{{item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row' }}" ng-class="{'bowtie-chevron-right': item.isSecondRowCollapsed, 'bowtie-chevron-down': !item.isSecondRowCollapsed}"></i>
                     <span sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)"></span>
                 </td>
             </tr>
             <!-- Optional second row -->
             <tr ng-repeat-end ng-if="listSettings.secondRowColumnSettings.length > 0 && listSettings.showSecondRow(item)">
-                <td class="no-border"
-                    ng-repeat="columnSetting in ::listSettings.secondRowColumnSettings track by columnSetting.propertyPath"
-                    colspan="{{::columnSetting.colspan}}"
-                    ng-class="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed }">
+                <td class="no-border" ng-repeat="columnSetting in ::listSettings.secondRowColumnSettings track by columnSetting.propertyPath"
+                    colspan="{{::columnSetting.colspan}}" ng-class="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed }">
                     <div uib-collapse="listSettings.secondRowCollapsible && item.isSecondRowCollapsed" sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)">
                     </div>
                 </td>
