@@ -14,7 +14,7 @@ module Sfx {
             return this._paginationLimit;
         }
 
-        public set paginationLimit(limit: number) {            
+        public set paginationLimit(limit: number) {
             if (!limit) {
                 return;
             }
