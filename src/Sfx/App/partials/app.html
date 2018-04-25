@@ -7,7 +7,7 @@
     <script type="text/ng-template" id="tab_essentials">
         <div class="detail-pane essen-pane">
             <div class="table-responsive">
-                <table class="essen-table">
+                <table class="essen-table" role="presentation">
                     <tr>
                         <th>Name</th>
                         <th>Application Type</th>
@@ -113,7 +113,7 @@
     <!-- Manifest tab -->
     <script type="text/ng-template" id="tab_manifest">
         <div class="detail-pane">
-            <pre role="presentation"><code>{{app.manifest.raw.Manifest}}</code></pre>
+            <pre role="presentation"><code aria-label="manifest of {{app.name}}">{{app.manifest.raw.Manifest}}</code></pre>
         </div>
     </script>
 </div>

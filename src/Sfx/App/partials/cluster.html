@@ -5,7 +5,7 @@
 
     <script type="text/ng-template" id="tab_essentials">
         <div class="detail-pane essen-pane">
-            <div class="table-responsive">
+            <div class="table-responsive">      
                 <table class="essen-table" role="presentation">
                     <tr>
                         <th>Cluster Health State</th>
@@ -139,7 +139,7 @@
             <h4>
                 <span id="clusterManifestName">{{clusterManifest.clusterManifestName}}</span>
             </h4>
-            <pre role="presentation"><code>{{clusterManifest.raw.Manifest}}</code></pre>
+            <pre role="presentation"><code aria-label="manifest of {{clusterManifest.clusterManifestName}}">{{clusterManifest.raw.Manifest}}</code></pre>
         </div>
     </script>
 </div>

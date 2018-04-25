@@ -6,7 +6,7 @@
     <script type="text/ng-template" id="tab_essentials">
         <div class="detail-pane essen-pane">
             <div class="table-responsive">
-                <table class="essen-table">
+                <table class="essen-table" role="presentation">
                     <tr>
                         <th>Name</th>
                         <th>Version</th>
@@ -52,10 +52,11 @@
                        autocomplete="off"
                        placeholder="{{deployedCodePackage.containerLogsTail}}"
                        ng-model="deployedCodePackage.containerLogsTail"
-                       ng-model-options="{ updateOn: 'blur' }" />
+                       ng-model-options="{ updateOn: 'blur' }" 
+                       aria-label="Logs tail" />
                 <a class="reset-link" href="" ng-click="codePackageCtrl.refresh()">Get Logs</a>
             </div>
-            <pre role="presentation"><code>{{containerLogs}}</code></pre>
+            <pre role="presentation"><code aria-label="container logs">{{containerLogs}}</code></pre>
          </div>
     </script>
 </div>
