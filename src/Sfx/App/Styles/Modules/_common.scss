@@ -201,8 +201,8 @@ h1, h2, h3, h4, h5, h6 {
 .dropdown-toggle {
 
     &:focus {
-        outline: 1px dotted;
-        outline: 5px auto -webkit-focus-ring-color;
+        outline: 2px dotted;
+        outline: 2px solid -webkit-focus-ring-color;
     }
 }
 

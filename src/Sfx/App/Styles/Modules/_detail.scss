@@ -69,17 +69,17 @@
             a {
                 text-align: right;
                 text-decoration: none;
-                text-transform: uppercase;
-                border-bottom-width: 4px;
-                border-bottom-color: transparent;
-                border-bottom-style: solid;
-                padding-bottom: 2px;
+                text-transform: uppercase;                
+                padding-bottom: 6px;
                 color: $detail-tab-color;
                 font-size: $detail-tab-title-font-size;
 
                 &.active {
                     border-bottom-color: $detail-tab-active-border-color;
                     color: $detail-tab-active-color;
+                    padding-bottom: 2px;
+                    border-bottom-width: 4px;                    
+                    border-bottom-style: solid;
                 }
             }
 

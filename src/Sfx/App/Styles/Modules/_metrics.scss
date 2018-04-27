@@ -8,7 +8,7 @@ $metric-chart-right-width: 100px;
 $metric-column-width: 250px;
 $metric-column-height: 428px;
 $metric-container-margin: 12px;
-$metric-container-padding: 6px;
+$metric-container-padding: 8px;
 
 $metric-capacity-violation-fill-color: $badge-error-color;
 $metric-capacity-violation-stroke-color: $badge-error-color;
@@ -163,14 +163,20 @@ $metrics-view-expander-hover-color: lighten($essen-pane-background-color, 10%);
                 margin-bottom: $metric-container-margin;
                 padding: $metric-container-padding;
                 background-color: $essen-pane-background-color;
-                border-style: solid;
-                border-width: 2px;
-                border-color: transparent;
                 cursor: pointer;
                 position: relative;
+                border-color: transparent;
+                border-width: 1px;
+                border-style: solid;
 
                 &.selected {
-                    border-color: $azure-blue;
+                    border-color: $azure-blue;                    
+                    border-width: 3px;
+                    padding: $metric-container-padding - 2px;
+
+                    .metric-ratio {
+                        right: $metric-container-padding - 2px;
+                    }
                 }
 
                 .metric-legend {
@@ -191,7 +197,7 @@ $metrics-view-expander-hover-color: lighten($essen-pane-background-color, 10%);
                 .metric-ratio {
                     position: absolute;
                     right: $metric-container-padding;
-                    top: 47%;
+                    top: 50%;
                     transform: translate(0, -50%);
 
                     &[is-capacity-violation=true] {
@@ -201,4 +207,28 @@ $metrics-view-expander-hover-color: lighten($essen-pane-background-color, 10%);
             }
         }
     }
+}
+
+@media screen and (-ms-high-contrast: white-on-black) {
+    .metrics-view {
+        .chart-column {
+            .metrics-chart {
+                text {
+                    fill: white;
+                }
+            }
+        }
+    }   
+}
+
+@media screen and (-ms-high-contrast: black-on-white) {
+    .metrics-view {
+        .chart-column {
+            .metrics-chart {
+                text {
+                    fill: black;
+                }
+            }
+        }
+    }   
 }

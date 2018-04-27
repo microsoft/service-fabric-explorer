@@ -134,7 +134,7 @@
                                         </td>
                                     </tr>
                                     <tr ng-if="action.description.raw.PartitionDescription.Names.length === 0">
-                                        <td colspan="100">No items to display</td>
+                                        <td colspan="2">No items to display</td>
                                     </tr>
                                 </tbody>
                             </table>
@@ -159,7 +159,7 @@
                             <tr ng-repeat="placementPolicy in action.description.raw.ServicePlacementPolicies track by $index">
                                 <td>
                                     <div uib-dropdown dropdown-append-to-body>
-                                        <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle>
+                                        <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select a placement policy">
                                             {{action.description.resolvePlacementPolicyType(placementPolicy.Type)}}
                                             <span class="caret"></span>
                                         </button>
@@ -178,7 +178,7 @@
                                 </td>
                             </tr>
                             <tr ng-if="action.description.raw.ServicePlacementPolicies.length === 0">
-                                <td colspan="100">No items to display</td>
+                                <td colspan="3">No items to display</td>
                             </tr>
                         </tbody>
                     </table>
@@ -201,7 +201,7 @@
                             <tr ng-repeat="correlation in action.description.raw.CorrelationScheme track by $index">
                                 <td>
                                     <div uib-dropdown dropdown-append-to-body>
-                                        <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle>
+                                        <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select a scheme">
                                             {{action.description.resolveCorrelationScheme(correlation.Scheme)}}
                                             <span class="caret"></span>
                                         </button>
@@ -221,7 +221,7 @@
                                 </td>
                             </tr>
                             <tr ng-if="action.description.raw.CorrelationScheme.length === 0">
-                                <td colspan="100">No items to display</td>
+                                <td colspan="3">No items to display</td>
                             </tr>
                         </tbody>
                     </table>
@@ -255,7 +255,7 @@
                                 </td>
                                 <td>
                                     <div uib-dropdown dropdown-append-to-body>
-                                        <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle>
+                                        <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select a weight">
                                             {{action.description.resolveLoadMetricWeight(loadMetric.Weight)}}
                                             <span class="caret"></span>
                                         </button>
@@ -271,7 +271,7 @@
                                 </td>
                             </tr>
                             <tr ng-if="action.description.raw.ServiceLoadMetrics.length === 0">
-                                <td colspan="100">No items to display</td>
+                                <td colspan="5">No items to display</td>
                             </tr>
                         </tbody>
                     </table>

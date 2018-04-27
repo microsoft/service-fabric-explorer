@@ -125,6 +125,25 @@ module Sfx {
             };
         }]);
 
+        module.directive("sfxTabSetFocus", ["$timeout", function ($timeout) {
+            return {
+                restrict: "A",
+                link: function ($scope: any, $element: any, $attributes: any) {
+                    $attributes.$observe("active", function (active) {
+                        if (active !== "true") {
+                            return;
+                        }
+
+                        $timeout(function () {
+                            if ($(":focus").length === 0) {
+                                $($element).focus();
+                            }
+                        }, 100);
+                    });
+                }
+            };
+        }]);
+
         module.directive("sfxTreeNode", (): angular.IDirective => {
             return {
                 restrict: "A",

@@ -248,3 +248,35 @@ $dashboard-small-padding-horizontal: 20px;
         }
     }
 }
+
+@media screen and (-ms-high-contrast: white-on-black) {
+    .dashboard-container {    
+        .dashboard-wrapper {        
+            .dashboard {            
+                .dashboard-title {
+                    fill: white;
+                }
+    
+                .dashboard-number {
+                    fill: white;
+                }
+            }
+        }
+    }
+}
+
+@media screen and (-ms-high-contrast: black-on-white) {
+    .dashboard-container {    
+        .dashboard-wrapper {        
+            .dashboard {            
+                .dashboard-title {
+                    fill: black;
+                }
+    
+                .dashboard-number {
+                    fill: black;
+                }
+            }
+        }
+    }
+}
