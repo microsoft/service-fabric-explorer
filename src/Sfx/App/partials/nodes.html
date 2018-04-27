@@ -1,7 +1,7 @@
 ﻿<sfx-detail-view-navbar ctrl="nodesCtrl" type="Nodes"></sfx-detail-view-navbar>
 
 <div class="main-view">
-    <div sfx-include src="'tab_' + nodesCtrl.activeTabId" ng-if="nodesCtrl.activeTabId"></div>
+    <div sfx-include src="'tab_' + nodesCtrl.activeTabId" ng-if="nodesCtrl.activeTabId" class="flex-child"></div>
     
     <script type="text/ng-template" id="tab_nodes">
         <div class="detail-pane">
@@ -10,6 +10,6 @@
     </script>
 
     <script type="text/ng-template" id="tab_events">
-        <sfx-events-view events-list="nodeEvents"></sfx-events-view>
+        <sfx-events-view events-list="nodeEvents" class="flex-child"></sfx-events-view>
     </script>
 </div>

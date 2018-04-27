@@ -1,12 +1,14 @@
-﻿<div class="detail-list-container">
+﻿<div class="detail-list-container flex-child">
     <ng-transclude></ng-transclude>
     <sfx-search-bar ng-if="::listSettings.searchable" class="list-search-bar" placeholder="Search list" model="listSettings.search" reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar>
-    <table class="table detail-list table-responsive">
+    <div class="table-responsive" ng-class="{'inner-scroll': innerScroll === true}">
+    <table class="table detail-list">
         <thead>
             <tr>
-                <th class="sort-filter-th" ng-repeat="columnSetting in ::listSettings.columnSettings track by columnSetting.propertyPath">
-                    <!-- Header lable -->
-                    <span ng-class="::{'active': columnSetting.sortable}"
+                <th class="sort-filter-th" ng-repeat="columnSetting in ::listSettings.columnSettings track by columnSetting.propertyPath"
+                    ng-style="{'width': columnSetting.fixedWidthPx ? columnSetting.fixedWidthPx + 'px' : ''}">
+                    <!-- Header label -->
+                    <span ng-class="::{'active': columnSetting.sortable, 'shift-expander-col': $index === 0 && listSettings.secondRowCollapsible}"
                           ng-click="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()">
                         {{::columnSetting.displayName}}
                     </span>
@@ -34,7 +36,7 @@
             </tr>
         </thead>
         <tbody>
-            <tr ng-repeat-start="item in sortedFilteredList | limitTo: listSettings.limit: listSettings.begin track by (item.uniqueId || $id(item))">
+            <tr ng-repeat-start="item in sortedFilteredList | limitTo: listSettings.limit: listSettings.begin track by (item.uniqueId || $id(item))" ng-click="ctrl.handleClickRow(item)">
                  <td ng-repeat="columnSetting in ::listSettings.columnSettings track by columnSetting.propertyPath">
                     <i class="bowtie-icon row-expander"
                        ng-if="$index === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)"
@@ -49,8 +51,9 @@
                 <td class="no-border"
                     ng-repeat="columnSetting in ::listSettings.secondRowColumnSettings track by columnSetting.propertyPath"
                     colspan="{{::columnSetting.colspan === -1 ? (listSettings.columnSettings.length - listSettings.secondRowColumnSettings.length + 1) : columnSetting.colspan}}"
-                    ng-class="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed }">
-                    <div uib-collapse="listSettings.secondRowCollapsible && item.isSecondRowCollapsed" sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)">
+                    ng-class="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed}">
+                    <div uib-collapse="listSettings.secondRowCollapsible && item.isSecondRowCollapsed" sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)"
+                        ng-class="{'shift-expander-col': $index === 0 && listSettings.secondRowCollapsible}">
                     </div>
                 </td>
             </tr>
@@ -62,5 +65,6 @@
             </tr>
         </tbody>
     </table>
+    </div>
     <sfx-pager list="sortedFilteredList" list-settings="listSettings"></sfx-pager>
 </div>

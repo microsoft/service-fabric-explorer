@@ -14,10 +14,8 @@ module Sfx {
         public require = "^sfxDetailList";
 
         public link($scope: any, element: JQuery, attributes: any, ctrl: DetailListController) {
-            $scope.parentController = ctrl;
-
-            $scope.parentController.showDetails = (itemId: string) => {
-                let parentList = $scope.parentController.$scope.list;
+            ctrl.$scope.showDetails = (itemId: string) => {
+                let parentList = ctrl.$scope.list;
                 if (parentList && parentList.getDetailsList) {
                     let parentListItems = parentList.collection || parentList;
                     let matchItems = parentListItems.filter(

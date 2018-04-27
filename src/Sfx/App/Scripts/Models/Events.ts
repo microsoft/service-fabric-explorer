@@ -26,6 +26,7 @@ module Sfx {
         public get kind() { return this._kind; }
         public get eventInstanceId() { return this._eventInstanceId; }
         public get timeStamp() { return this._timeStamp; }
+        public get timeStampString() { return TimeUtils.datetimeToString(this._timeStamp); }
         public get hasCorrelatedEvents() { return this._hasCorrelatedEvents; }
         public get eventProperties() { return this._eventProperties; }
 

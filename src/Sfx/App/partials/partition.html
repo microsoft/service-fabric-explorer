@@ -1,7 +1,7 @@
 <sfx-detail-view-navbar ctrl="partitionCtrl" type="Partition" name="{{partitionCtrl.partitionId}}"></sfx-detail-view-navbar>
 
 <div class="main-view">
-    <div sfx-include src="'tab_' + partitionCtrl.activeTabId" ng-if="partitionCtrl.activeTabId"></div>
+    <div sfx-include src="'tab_' + partitionCtrl.activeTabId" ng-if="partitionCtrl.activeTabId" class="flex-child"></div>
 
     <script type="text/ng-template" id="tab_essentials">
         <div class="detail-pane essen-pane">
@@ -77,6 +77,6 @@
     </script>
 
     <script type="text/ng-template" id="tab_events">
-        <sfx-events-view events-list="partitionEvents"></sfx-events-view>
+        <sfx-events-view events-list="partitionEvents" class="flex-child"></sfx-events-view>
     </script>
 </div>

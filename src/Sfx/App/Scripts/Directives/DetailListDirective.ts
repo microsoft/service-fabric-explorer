@@ -13,7 +13,8 @@ module Sfx {
         public templateUrl = "partials/detail-list.html";
         public scope = {
             list: "=",
-            listSettings: "="
+            listSettings: "=",
+            innerScroll: "=?"
         };
         public transclude = true;
 
@@ -27,12 +28,9 @@ module Sfx {
             // When it is a DataModelCollection list, list.isRefreshing will be watched so
             // we know exactly when to refresh the list.
             $scope.$watchCollection("list", () => {
-                // If list set to null/undefined, clear.
-                if (!$scope.list) {
-                    ctrl.updateList();
-                } else if (!angular.isDefined($scope.list.isRefreshing)) {
-                    // Only update if list is a normal array since the DataModelCollection will be updated
-                    // via the isRefreshing watcher below and we don't want to update the list twice.
+                // Only update if list is a normal array since the DataModelCollection will be updated
+                // via the isRefreshing watcher below and we don't want to update the list twice.
+                if ($scope.list && !angular.isDefined($scope.list.isRefreshing)) {
                     ctrl.updateList();
                 }
             });
@@ -61,21 +59,18 @@ module Sfx {
     export class DetailListController {
         public static $inject = ["$filter", "$scope"];
 
-        public constructor(private $filter: angular.IFilterService, private $scope: any) {
+        public constructor(private $filter: angular.IFilterService, public $scope: any) {
         }
 
         public updateList() {
-            if (!this.$scope.list) {
-                this.$scope.sortedFilteredList = [];
-            } else {
+            if (this.$scope.list) {
                 this.$scope.sortedFilteredList = this.getSortedFilteredList();
+                this.$scope.listSettings.count = this.$scope.sortedFilteredList.length;
             }
-
-            this.$scope.listSettings.count = this.$scope.sortedFilteredList.length;
         }
 
         public handleClickRow(item: any): void {
-            if (this.$scope.listSettings.secondRowCollapsible) {
+            if (this.$scope.listSettings.secondRowCollapsible && this.$scope.listSettings.showSecondRow(item)) {
                 item.isSecondRowCollapsed = !item.isSecondRowCollapsed;
             }
         }

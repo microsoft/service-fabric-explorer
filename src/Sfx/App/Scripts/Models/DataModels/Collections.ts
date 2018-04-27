@@ -565,6 +565,8 @@ module Sfx {
         public readonly minimumRefreshTimeInSecs: number = 10;
         public readonly pageSize: number = 15;
 
+        protected readonly optionalColsStartIndex: number = 2;
+
         private lastRefreshTime?: Date;
 
         private _startDate: Date;
@@ -584,15 +586,19 @@ module Sfx {
 
         public constructor(data: DataService, startDate?: Date, endDate?: Date) {
             super(data);
-            this.settings = this.createListSettings(
-                [ new ListColumnSetting(
-                    "",
-                    "Correlated Events",
-                    [],
-                    null,
-                    (item) => HtmlUtils.getEventDetailsViewLinkHtml(item.raw)),
-                ]);
+            this.settings = this.createListSettings();
             this.detailsSettings = this.createListSettings();
+
+            // Add correlated event col.
+            let correlatedEventsCol = new ListColumnSetting(
+                "",
+                "",
+                [],
+                null,
+                (item) => HtmlUtils.getEventDetailsViewLinkHtml(item.raw));
+            correlatedEventsCol.fixedWidthPx = 40;
+            this.settings.columnSettings.splice(1, 0, correlatedEventsCol);
+
             this.setNewDateWindowInternal(startDate, endDate);
         }
 
@@ -631,16 +637,15 @@ module Sfx {
             return this.data.$q.when([]);
         }
 
-        private createListSettings(additionalCols?: ListColumnSetting[]): ListSettings {
+        private createListSettings(): ListSettings {
             let listSettings = new ListSettings(
                 this.pageSize,
                 ["raw.timeStamp"],
                 [ new ListColumnSettingWithFilter("raw.kind", "Type"),
-                new ListColumnSetting("raw.timeStamp", "Timestamp"), ],
-                [ new ListColumnSetting("", ""),
-                new ListColumnSetting(
-                    "raw.eventProperties",
-                    "Properties",
+                new ListColumnSetting("raw.timeStampString", "Timestamp"), ],
+                [ new ListColumnSetting(
+                    "",
+                    "",
                     [],
                     null,
                     (item) => HtmlUtils.getEventSecondRowHtml(item.raw),
@@ -649,12 +654,7 @@ module Sfx {
                 (item) => (Object.keys(item.raw.eventProperties).length > 0),
                 true);
             listSettings.sortReverse = true;
-
-            if (additionalCols && additionalCols.length > 0) {
-                additionalCols.forEach(col => {
-                    listSettings.columnSettings.push(col);
-                });
-            }
+            listSettings.columnSettings[0].fixedWidthPx = 300;
 
             return listSettings;
         }
@@ -662,8 +662,7 @@ module Sfx {
         private setNewDateWindowInternal(startDate?: Date, endDate?: Date): boolean {
             // Default to Yesterday.
             if (!startDate) {
-                startDate = new Date();
-                startDate.setTime(startDate.getTime() - (24 * 60 * 60 * 1000));
+                startDate = TimeUtils.AddDays(new Date(), -4);
             }
             // Default to Today
             if (!endDate) {
@@ -674,11 +673,9 @@ module Sfx {
             let eodEndDate = endDate;
             bodStartDate.setHours(0, 0, 0, 0);
             eodEndDate.setHours(23, 59, 59, 999);
-
             if (this._startDate !== bodStartDate || this._endDate !== eodEndDate) {
                 this._startDate = bodStartDate;
                 this._endDate = eodEndDate;
-                return true;
             }
 
             return false;
@@ -692,8 +689,10 @@ module Sfx {
             super(data);
             this.nodeName = nodeName;
             if (!this.nodeName) {
-                // Show NodeName as the first column.
-                this.settings.columnSettings.unshift(
+                // Show NodeName as the second column.
+                this.settings.columnSettings.splice(
+                    this.optionalColsStartIndex,
+                    0,
                     new ListColumnSettingWithFilter(
                         "raw.nodeName",
                         "Node Name"));
@@ -716,7 +715,9 @@ module Sfx {
             this.partitionId = partitionId;
             if (!this.partitionId) {
                 // Show PartitionId as the first column.
-                this.settings.columnSettings.unshift(
+                this.settings.columnSettings.splice(
+                    this.optionalColsStartIndex,
+                    0,
                     new ListColumnSettingWithFilter(
                         "raw.partitionId",
                         "Partition Id"));

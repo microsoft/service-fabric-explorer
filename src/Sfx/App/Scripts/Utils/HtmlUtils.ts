@@ -48,11 +48,13 @@ module Sfx {
         }
 
         public static getEventSecondRowHtml(event: FabricEventBase): string {
-            return `Id: ${event.eventInstanceId}</br>Properties: ${JSON.stringify(event.eventProperties, null, "</br>")}`;
+            let json = `EventInstanceId: ${event.eventInstanceId}</br>` +
+                `AdditionalProperties: ${JSON.stringify(event.eventProperties, null, "&nbsp;")}`;
+            return `<div style="margin-left:20px">${json.replace(new RegExp("\\n", "g"), "<br/>")}</div>`;
         }
 
         public static getEventDetailsViewLinkHtml(event: FabricEventBase): string {
-            return event.hasCorrelatedEvents ? `<a href ng-click="ctrl.showDetails('` + event.eventInstanceId + `')">View</a>` : "";
+            return event.hasCorrelatedEvents ? `<a title="Correlated Events" href ng-click="showDetails('` + event.eventInstanceId + `')">View</a>` : "";
         }
     }
 }
