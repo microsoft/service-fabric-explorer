@@ -93,8 +93,9 @@ module Sfx {
 
         protected valueResolver: ValueResolver = new ValueResolver();
 
+        private appendOnly: boolean;
         private hash: _.Dictionary<T>;
-        private refreshingPromise: CancelablePromise<any>;
+        private refreshingPromise: CancelablePromise<T[]>;
 
         public get viewPath(): string {
             return "";
@@ -113,8 +114,9 @@ module Sfx {
             return "uniqueId";
         }
 
-        public constructor(public data: DataService, parent?: any) {
+        public constructor(public data: DataService, parent?: any, appendOnly: boolean = false) {
             this.parent = parent;
+            this.appendOnly = appendOnly;
             this.refreshingPromise = new CancelablePromise(data);
         }
 
@@ -122,18 +124,19 @@ module Sfx {
         public refresh(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             if (!this.refreshingPromise.hasPromise()) {
                 this.refreshingPromise.reset(() => {
-                    return this.retrieveNewCollection(messageHandler).then(collection => {
-                        return this.update(collection);
-                    }).catch((rejected) => {
-                        if (!rejected || rejected.isCanceled !== true) {
-                            throw rejected;
-                        }
-                    }).then(() => {
-                        return this;
-                    });
+                    return this.retrieveNewCollection(messageHandler);
                 });
             }
-            return this.refreshingPromise.getPromise();
+            return this.refreshingPromise.getPromise().then(collection => {
+                    return this.update(collection);
+                }).then(() => {
+                    return this;
+                }).catch((rejected) => {
+                    if (!rejected || rejected.isCanceled !== true) {
+                        throw rejected;
+                    }
+                    // Else the update is skipped because of cancellation.
+                });
         }
 
         public cancelRefresh(): void {
@@ -150,7 +153,7 @@ module Sfx {
 
         protected update(collection: T[]): angular.IPromise<any> {
             this.isInitialized = true;
-            CollectionUtils.updateDataModelCollection(this.collection, collection);
+            CollectionUtils.updateDataModelCollection(this.collection, collection, this.appendOnly);
             this.hash = _.keyBy(this.collection, this.indexPropery);
             return this.data.$q.when(this.updateInternal());
         }
@@ -564,16 +567,16 @@ module Sfx {
         // requests take ~3 secs, and so we shouldn't be delaying every global refresh.
         public readonly minimumRefreshTimeInSecs: number = 10;
         public readonly pageSize: number = 15;
+        public readonly defaultDateWindowInDays: number = 3;
+        public readonly latestRefreshPeriodInSecs: number = 60 * 60;
 
         protected readonly optionalColsStartIndex: number = 2;
 
         private lastRefreshTime?: Date;
-
         private _startDate: Date;
         private _endDate: Date;
 
         public get startDate() { return this._startDate; }
-
         public get endDate() {
             let endDate = this._endDate;
             let timeNow = new Date();
@@ -584,8 +587,23 @@ module Sfx {
             return endDate;
         }
 
+        public get queryStartDate() {
+            if (this.isInitialized) {
+                // Only retrieving the latest, including a period that allows refreshing
+                // previously retrieved events with new correlation information if any.
+                if ((this.endDate.getTime() - this.startDate.getTime()) / 1000 > this.latestRefreshPeriodInSecs) {
+                    return TimeUtils.AddSeconds(this.endDate, (-1 * this.latestRefreshPeriodInSecs));
+                }
+            }
+
+            return this.startDate;
+        }
+        public get queryEndDate() { return this.endDate; }
+
         public constructor(data: DataService, startDate?: Date, endDate?: Date) {
-            super(data);
+            // Using appendOnly, because we refresh by retrieving latest,
+            // and collection gets cleared when dates window changes.
+            super(data, null, true);
             this.settings = this.createListSettings();
             this.detailsSettings = this.createListSettings();
 
@@ -602,19 +620,16 @@ module Sfx {
             this.setNewDateWindowInternal(startDate, endDate);
         }
 
-        public setDateWindow(startDate?: Date, endDate?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+        public setDateWindow(startDate?: Date, endDate?: Date): void {
             if (this.setNewDateWindowInternal(startDate, endDate)) {
                 this.lastRefreshTime = null;
                 this.clear();
-                return this.refresh(messageHandler);
+                this.refresh();
             }
-
-            // No change.
-            return this.data.$q.when(this);
         }
 
-        public resetDateWindow(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            return this.setDateWindow(null, null, messageHandler);
+        public resetDateWindow(): void {
+            this.setDateWindow(null, null);
         }
 
         protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
@@ -660,9 +675,9 @@ module Sfx {
         }
 
         private setNewDateWindowInternal(startDate?: Date, endDate?: Date): boolean {
-            // Default to Yesterday.
+            // Default to 3 days ago.
             if (!startDate) {
-                startDate = TimeUtils.AddDays(new Date(), -4);
+                startDate = TimeUtils.AddDays(new Date(), (-1 * this.defaultDateWindowInDays));
             }
             // Default to Today
             if (!endDate) {
@@ -673,9 +688,11 @@ module Sfx {
             let eodEndDate = endDate;
             bodStartDate.setHours(0, 0, 0, 0);
             eodEndDate.setHours(23, 59, 59, 999);
-            if (this._startDate !== bodStartDate || this._endDate !== eodEndDate) {
+            if (!this._startDate || this._startDate.getTime() !== bodStartDate.getTime() ||
+                !this._endDate || this._endDate.getTime() !== eodEndDate.getTime()) {
                 this._startDate = bodStartDate;
                 this._endDate = eodEndDate;
+                return true;
             }
 
             return false;
@@ -700,7 +717,7 @@ module Sfx {
         }
 
         protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<NodeEvent>[]> {
-            return this.data.restClient.getNodeEvents(this.startDate, this.endDate, this.nodeName, messageHandler)
+            return this.data.restClient.getNodeEvents(this.queryStartDate, this.queryEndDate, this.nodeName, messageHandler)
                 .then(result => {
                     return result.map(event => new FabricEventInstanceModel<NodeEvent>(this.data, event));
                 });
@@ -725,7 +742,7 @@ module Sfx {
         }
 
         protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<PartitionEvent>[]> {
-            return this.data.restClient.getPartitionEvents(this.startDate, this.endDate, this.partitionId, messageHandler)
+            return this.data.restClient.getPartitionEvents(this.queryStartDate, this.queryEndDate, this.partitionId, messageHandler)
                 .then(result => {
                     return result.map(event => new FabricEventInstanceModel<PartitionEvent>(this.data, event));
                 });

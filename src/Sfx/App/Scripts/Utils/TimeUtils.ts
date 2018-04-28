@@ -15,6 +15,12 @@ module Sfx {
         //     int64.max / 10000000 = 922337203685477.5807;
         public static MaxDurationInMilliseconds: number = 922337203685477.5807;
 
+        public static AddSeconds(toDate: Date, seconds: number): Date {
+            let date = new Date(toDate.valueOf());
+            date.setTime(date.getTime() + (seconds * 1000));
+            return date;
+        }
+
         public static AddDays(toDate: Date, days: number): Date {
             let date = new Date(toDate.valueOf());
             date.setDate(date.getDate() + days);

@@ -6,8 +6,6 @@
 module Sfx {
     export interface IEventsViewScope extends angular.IScope {
         eventsList: EventListBase<any>;
-        startDate: Date;
-        endDate: Date;
     }
 
     export class EventsViewDirective implements ng.IDirective {
@@ -18,49 +16,82 @@ module Sfx {
         };
 
         public link($scope: any, element: JQuery, attributes: any) {
-
-            $scope.reset = (readDateWindow: boolean = true) => {
-                if (readDateWindow) {
-                    $scope.startDate = $scope.eventsList.startDate;
-                    $scope.endDate = $scope.eventsList.endDate;
-                }
-
-                $scope.startDateMax = $scope.endDateMax = new Date(); //Today
-                $scope.startDateMin = $scope.endDateMin = null;
-                $scope.isStartSelected = $scope.isEndSelected = false;
-            };
-
-            $scope.$watch("startDate", () => {
-                if (!$scope.isEndSelected) {
-                    $scope.endDateMin = $scope.startDate;
-                    $scope.endDateMax = TimeUtils.AddDays($scope.startDate, 7);
-                    if ($scope.endDateMax > new Date()) {
-                        $scope.endDateMax = new Date();
-                    }
-                    $scope.isStartSelected = true;
-                } else {
-                    $scope.eventsList.setDateWindow($scope.startDate, $scope.endDate);
-                    $scope.reset(false);
-                }
-            });
-
-            $scope.$watch("endDate", () => {
-                if (!$scope.isStartSelected) {
-                    $scope.startDateMax = $scope.endDate;
-                    $scope.startDateMin = TimeUtils.AddDays($scope.endDate, -7);
-                    $scope.isEndSelected = true;
-                } else {
-                    $scope.eventsList.setDateWindow($scope.startDate, $scope.endDate);
-                    $scope.reset(false);
-                }
-            });
-
+            $scope.dwSelector = new DateWindowSelector($scope.eventsList);
             $scope.resetClick = () => {
-                $scope.eventsList.resetDateWindow();
-                $scope.reset();
+                $scope.dwSelector.reset();
             };
+        }
+    }
 
-            $scope.reset();
+    // Wrapper for datepickers models.
+    class DateWindowSelector {
+        public static MaxWindowInDays: number = 7;
+        public startDateMin: Date;
+        public endDateMin: Date;
+        public startDateMax: Date;
+        public endDateMax: Date;
+
+        private eventsList: EventListBase<any>;
+        private isStartSelected: boolean;
+        private isEndSelected: boolean;
+        private _startDate: Date = null;
+        private _endDate: Date = null;
+
+        public constructor(eventsList: EventListBase<any>) {
+            this.eventsList = eventsList;
+            this._startDate = this.eventsList.startDate;
+            this._endDate = this.eventsList.endDate;
+            this.resetSelectionProperties();
+        }
+
+        public get startDate() { return this._startDate; }
+        public get endDate() { return this._endDate; }
+        public set startDate(value: Date) {
+            this._startDate = value;
+            if (!this.isEndSelected) {
+                this._endDate = null;
+                this.endDateMin = this.startDate;
+                this.endDateMax = TimeUtils.AddDays(
+                    this.startDate,
+                    DateWindowSelector.MaxWindowInDays);
+                if (this.endDateMax > new Date()) {
+                    this.endDateMax = new Date();
+                }
+                this.isStartSelected = true;
+            } else {
+                this.setNewDateWindow();
+            }
+        }
+        public set endDate(value: Date) {
+            this._endDate = value;
+            if (!this.isStartSelected) {
+                this._startDate = null;
+                this.startDateMax = this.endDate;
+                this.startDateMin = TimeUtils.AddDays(
+                    this.endDate,
+                    (-1 * DateWindowSelector.MaxWindowInDays));
+                this.isEndSelected = true;
+            } else {
+                this.setNewDateWindow();
+            }
+        }
+
+        public reset(): void {
+            this.resetSelectionProperties();
+            this.eventsList.resetDateWindow();
+            this._startDate = this.eventsList.startDate;
+            this._endDate = this.eventsList.endDate;
+        }
+
+        private resetSelectionProperties(): void {
+            this.startDateMin = this.endDateMin = null;
+            this.startDateMax = this.endDateMax = new Date(); //Today
+            this.isStartSelected = this.isEndSelected = false;
+        }
+
+        private setNewDateWindow(): void {
+            this.resetSelectionProperties();
+            this.eventsList.setDateWindow(this.startDate, this.endDate);
         }
     }
 }
