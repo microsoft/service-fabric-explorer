@@ -620,16 +620,18 @@ module Sfx {
             this.setNewDateWindowInternal(startDate, endDate);
         }
 
-        public setDateWindow(startDate?: Date, endDate?: Date): void {
+        public setDateWindow(startDate?: Date, endDate?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             if (this.setNewDateWindowInternal(startDate, endDate)) {
                 this.lastRefreshTime = null;
                 this.clear();
-                this.refresh();
+                return this.refresh(messageHandler);
             }
+
+            return this.data.$q.when(this);
         }
 
-        public resetDateWindow(): void {
-            this.setDateWindow(null, null);
+        public resetDateWindow(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.setDateWindow(null, null, messageHandler);
         }
 
         protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
