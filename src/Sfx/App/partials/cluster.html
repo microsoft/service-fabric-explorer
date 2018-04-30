@@ -1,7 +1,7 @@
 ﻿<sfx-detail-view-navbar ctrl="clusterCtrl" type="Cluster" name="{{SFXClusterName}}"></sfx-detail-view-navbar>
 
 <div class="main-view">
-    <div sfx-include src="'tab_' + clusterCtrl.activeTabId" ng-if="clusterCtrl.activeTabId" role="tabpanel"></div>
+    <div sfx-include src="'tab_' + clusterCtrl.activeTabId" ng-if="clusterCtrl.activeTabId" role="tabpanel" aria-label="{{clusterCtrl.activeTabId}}"></div>
 
     <script type="text/ng-template" id="tab_essentials">
         <div class="detail-pane essen-pane">
@@ -102,7 +102,7 @@
     <script type="text/ng-template" id="tab_clustermap">
         <div class="detail-pane">
             <div class="table-responsive">
-                <table class="table map-table">
+                <table class="table map-table" role="presentation">
                     <tbody>
                         <tr>
                             <td class="legend" colspan="2" rowspan="2"></td>
@@ -139,7 +139,7 @@
             <h4>
                 <span id="clusterManifestName">{{clusterManifest.clusterManifestName}}</span>
             </h4>
-            <pre role="presentation"><code aria-label="manifest of {{clusterManifest.clusterManifestName}}">{{clusterManifest.raw.Manifest}}</code></pre>
+            <pre role="presentation" tabindex="0"><code aria-label="manifest of {{clusterManifest.clusterManifestName}}">{{clusterManifest.raw.Manifest}}</code></pre>
         </div>
     </script>
 </div>

@@ -1,6 +1,7 @@
 ﻿<div class="detail-list-container table-responsive">
     <sfx-search-bar ng-if="::listSettings.searchable" class="list-search-bar" placeholder="Search list" model="listSettings.search"
         reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar>
+    <label id="sr-only-search-summary" aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
     <table class="table detail-list">
         <thead>
             <tr>
@@ -49,7 +50,7 @@
                 </td>
             </tr>
             <tr ng-if="sortedFilteredList.length === 0">
-                <td colspan="100">No items to display.</td>
+                <td colspan="{{listSettings.columnSettings.length}}">No items to display.</td>
             </tr>
         </tbody>
     </table>

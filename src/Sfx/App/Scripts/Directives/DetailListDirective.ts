@@ -42,8 +42,11 @@ module Sfx {
             });
 
             // Watch search keyword, the sort and filter will be controlled on view through controller
-            $scope.$watch("listSettings.search", () => {
-                ctrl.updateList();
+            $scope.$watch("listSettings.search", (searchText) => {
+                if (searchText !== undefined) {
+                    $("#sr-only-search-summary", element).attr("aria-live", "polite");
+                    ctrl.updateList();
+                }
             });
         }
     }

@@ -49,10 +49,10 @@
                     <div class="slider-control" ng-controller="RefreshSliderController as refreshCtrl">
                         <span class="slider-title" id="refresh-rate-title">REFRESH RATE</span>
                         <span class="slider-label" id="refresh-rate-label" ng-if="refreshCtrl.refreshRate > 0">{{refreshCtrl.refreshRate}}s</span>
-                        <a href="" class="slider-label" id="slider-min-label" role="button">OFF</a>
-                        <sfx-slider min-label-id="slider-min-label" max-label-id="slider-max-label" class="slider" title="Change how often content is updated by clicking or using arrow keys."
+                        <a href="" class="slider-label" id="slider-min-label" role="button" aria-label="Turn off refresh">OFF</a>
+                        <sfx-slider min-label-id="slider-min-label" max-label-id="slider-max-label" class="slider" title="Change how often content is updated by clicking or using arrow keys"
                             aria-label="Change how often content is updated" role="slider"></sfx-slider>
-                        <a href="" class="slider-label" id="slider-max-label" role="button">FAST</a>
+                        <a href="" class="slider-label" id="slider-max-label" role="button" aria-label="Set the refresh rate to the fastest">FAST</a>
                         <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-navigate-refresh" ng-class="{'disabled rotate': navbarCtrl.isRefreshing}"
                             ng-click="navbarCtrl.refreshAll()" role="button" aria-label="refresh"></a>
                     </div>
@@ -66,9 +66,9 @@
                                 <div class="settings-item-title">Choose a theme</div>
                                 <div class="choose-theme-container">
                                     <img ng-class="{'selected': themeCtrl.getActiveThemeName() === 'dark'}" ng-click="themeCtrl.changeToTheme('dark'); $event.stopPropagation()"
-                                        title="Dark" src="images/dark-theme.png" role="menuitemradio" />
+                                        title="Use the dark theme" src="images/dark-theme.png" role="menuitemradio" />
                                     <img ng-class="{'selected': themeCtrl.getActiveThemeName() === 'light'}" ng-click="themeCtrl.changeToTheme('light'); $event.stopPropagation()"
-                                        title="Light" src="images/light-theme.png" role="menuitemradio" />
+                                        title="Use the light theme" src="images/light-theme.png" role="menuitemradio" />
                                 </div>
                             </li>
                             <li role="separator" class="divider"></li>
@@ -114,7 +114,7 @@
     <!-- Tree -->
     <div id="tree" class="left-panel">
         <div sfx-include src="'treeViewPanel'" ng-controller="TreeViewController as treeCtrl"></div>
-        <div sfx-splitter id="splitter" ng-controller="SplitterController"></div>
+        <div sfx-splitter id="splitter" aria-valuemin="150" aria-valuemax="600" ng-controller="SplitterController" tabindex="0" role="separator" aria-label="splitter - please use arrow key to resize the tree panel"></div>
     </div>
 
     <!-- View -->
