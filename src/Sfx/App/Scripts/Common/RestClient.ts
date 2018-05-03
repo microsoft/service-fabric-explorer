@@ -510,6 +510,12 @@ module Sfx {
             return this.post(this.getApiUrl(url), "Replica deletion", null, messageHandler);
         }
 
+        public getClusterEvents(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<ClusterEvent[]> {
+            let url = "EventsStore/"
+                + "Cluster/Events";
+            return this.getEvents(ClusterEvent, url, startTime, endTime, messageHandler);
+        }
+
         public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<NodeEvent[]> {
             let url = "EventsStore/"
                 + "Nodes/"
@@ -518,12 +524,37 @@ module Sfx {
             return this.getEvents(NodeEvent, url, startTime, endTime, messageHandler);
         }
 
+        public getApplicationEvents(startTime: Date, endTime: Date, applicationId?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<ApplicationEvent[]> {
+            let url = "EventsStore/"
+                + "Applications/"
+                + (applicationId ? (encodeURIComponent(applicationId) + "/$/") : "")
+                + "Events";
+            return this.getEvents(ApplicationEvent, url, startTime, endTime, messageHandler);
+        }
+
+        public getServiceEvents(startTime: Date, endTime: Date, serviceId?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<ServiceEvent[]> {
+            let url = "EventsStore/"
+                + "Services/"
+                + (serviceId ? (encodeURIComponent(serviceId) + "/$/") : "")
+                + "Events";
+            return this.getEvents(ServiceEvent, url, startTime, endTime, messageHandler);
+        }
+
         public getPartitionEvents(startTime: Date, endTime: Date, partitionId?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<PartitionEvent[]> {
             let url = "EventsStore/"
                 + "Partitions/"
                 + (partitionId ? (encodeURIComponent(partitionId) + "/$/") : "")
                 + "Events";
             return this.getEvents(PartitionEvent, url, startTime, endTime, messageHandler);
+        }
+
+        public getReplicaEvents(startTime: Date, endTime: Date, partitionId: string, replicaId?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<ReplicaEvent[]> {
+            let url = "EventsStore/"
+                + "Partitions/"
+                + encodeURIComponent(partitionId) + "/$/"
+                + (replicaId ? (encodeURIComponent(replicaId) + "/$/") : "")
+                + "Events";
+            return this.getEvents(ReplicaEvent, url, startTime, endTime, messageHandler);
         }
 
         public getCorrelatedEvents(eventInstanceId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEvent[]> {

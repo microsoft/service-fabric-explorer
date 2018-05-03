@@ -1,7 +1,7 @@
 ﻿<div class="detail-list-container flex-child">
     <ng-transclude></ng-transclude>
     <sfx-search-bar ng-if="::listSettings.searchable" class="list-search-bar" placeholder="Search list" model="listSettings.search" reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar>
-    <div class="table-responsive" ng-class="{'inner-scroll': innerScroll === true}">
+    <div class="table-responsive" ng-class="{'inner-scroll': innerScroll}">
     <table class="table detail-list">
         <thead>
             <tr>

@@ -1,7 +1,7 @@
 ﻿<sfx-detail-view-navbar ctrl="appCtrl" actions="app.actions" type="Application" name="{{app.name}}"></sfx-detail-view-navbar>
 
 <div class="main-view">
-    <div sfx-include src="'tab_' + appCtrl.activeTabId" ng-if="appCtrl.activeTabId"></div>
+    <div sfx-include src="'tab_' + appCtrl.activeTabId" ng-if="appCtrl.activeTabId" class="flex-child"></div>
 
     <!-- Essentials tab -->
     <script type="text/ng-template" id="tab_essentials">
@@ -115,5 +115,9 @@
         <div class="detail-pane">
             <pre><code>{{app.manifest.raw.Manifest}}</code></pre>
         </div>
+    </script>
+
+    <script type="text/ng-template" id="tab_events">
+        <sfx-events-view events-list="appEvents" class="flex-child"></sfx-events-view>
     </script>
 </div>

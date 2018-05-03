@@ -13,6 +13,7 @@ module Sfx {
             ngModel: "=",
             minDate: "=?",
             maxDate: "=?",
+            initDate: "=?",
             dateOptions: "=?",
             readOnly: "=?",
             placeHolderText: "=?"
@@ -25,6 +26,7 @@ module Sfx {
                 showWeeks: false
             };
 
+            $scope.initDate = $scope.initDate || new Date();
             $scope.readOnly = $scope.readOnly || true;
             $scope.placeHolderText = $scope.placeHolderText || "";
             $scope.formats = ["dd-MMMM-yyyy", "yyyy/MM/dd", "dd.MM.yyyy", "shortDate"];

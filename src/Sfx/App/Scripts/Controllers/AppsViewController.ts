@@ -11,13 +11,15 @@ module Sfx {
         listSettings: ListSettings;
         upgradeAppsListSettings: ListSettings;
         upgradeProgresses: ApplicationUpgradeProgress[];
+        appEvents: ApplicationEventList;
     }
 
     export class AppsViewController extends MainViewController {
         constructor($injector: angular.auto.IInjectorService, public $scope: IAppsViewScope) {
             super($injector, {
                 "applications": { name: "All Applications" },
-                "upgrades": { name: "Upgrades in Progress", superscriptClass: "tab-superscript-number" }
+                "upgrades": { name: "Upgrades in Progress", superscriptClass: "tab-superscript-number" },
+                "events": { name: "Events" }
             });
 
             $scope.actions = new ActionCollection(this.data.telemetry, this.data.$q);
@@ -27,6 +29,7 @@ module Sfx {
             }
 
             this.tabs["upgrades"].refresh = (messageHandler) => this.refreshUpgradesTab(messageHandler);
+            this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
 
             this.selectTreeNode([
                 IdGenerator.cluster(),
@@ -48,6 +51,7 @@ module Sfx {
                 new ListColumnSetting("upgrade", "Progress by Upgrade Domain", null, false, (item) => HtmlUtils.getUpgradeProgressHtml("item.upgradeDomains")),
                 new ListColumnSettingWithFilter("raw.UpgradeState", "Upgrade State")
             ]);
+            this.$scope.appEvents = this.data.createApplicationEventList(null);
 
             this.refresh();
         }
@@ -74,6 +78,10 @@ module Sfx {
 
         private setupActions(actions: ActionCollection) {
             actions.add(new ActionCreateComposeApplication(this.data));
+        }
+
+        private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.appEvents.refresh(messageHandler);
         }
     }
 

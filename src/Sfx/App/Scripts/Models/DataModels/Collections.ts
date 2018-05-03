@@ -37,16 +37,17 @@ module Sfx {
     export class CancelablePromise<T> {
         private defer: angular.IDeferred<T> = null;
 
-        public constructor(private dataService: DataService) {
+        public constructor(private $q: angular.IQService) {
         }
 
-        public reset(loadData: () => angular.IPromise<T>): void {
+        public load(loadHandler: () => angular.IPromise<T>): angular.IPromise<T> {
             if (this.hasPromise()) {
                 this.cancel();
             }
 
-            this.defer = this.dataService.$q.defer<T>();
-            this.loadDataInternal(this.defer, loadData);
+            this.defer = this.$q.defer<T>();
+            this.executeInternal(loadHandler);
+            return this.getPromise();
         }
 
         public hasPromise(): boolean {
@@ -55,7 +56,7 @@ module Sfx {
 
         public getPromise(): angular.IPromise<T> {
             if (!this.hasPromise()) {
-                return this.dataService.$q.when(null);
+                return null;
             }
             return this.defer.promise;
         }
@@ -67,10 +68,9 @@ module Sfx {
             }
         }
 
-        private loadDataInternal(
-            capturedDefer: angular.IDeferred<T>,
-            loadData: () => angular.IPromise<T>): void {
-            loadData().then(result => {
+        private executeInternal(loadHandler: () => angular.IPromise<T>): void {
+            let capturedDefer = this.defer;
+            loadHandler().then(result => {
                 if (this.defer === capturedDefer) {
                     this.defer.resolve(result);
                 }
@@ -95,7 +95,8 @@ module Sfx {
 
         private appendOnly: boolean;
         private hash: _.Dictionary<T>;
-        private refreshingPromise: CancelablePromise<T[]>;
+        private refreshingLoadPromise: CancelablePromise<T[]>;
+        private refreshingPromise: angular.IPromise<any>;
 
         public get viewPath(): string {
             return "";
@@ -106,7 +107,7 @@ module Sfx {
         }
 
         public get isRefreshing(): boolean {
-            return this.refreshingPromise.hasPromise();
+            return !!this.refreshingPromise;
         }
 
         protected get indexPropery(): string {
@@ -117,38 +118,46 @@ module Sfx {
         public constructor(public data: DataService, parent?: any, appendOnly: boolean = false) {
             this.parent = parent;
             this.appendOnly = appendOnly;
-            this.refreshingPromise = new CancelablePromise(data);
+            this.refreshingLoadPromise = new CancelablePromise(this.data.$q);
         }
 
         // Base refresh logic, do not override
         public refresh(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            if (!this.refreshingPromise.hasPromise()) {
-                this.refreshingPromise.reset(() => {
-                    return this.retrieveNewCollection(messageHandler);
-                });
+            if (!this.refreshingPromise) {
+                this.refreshingPromise =
+                    this.refreshingLoadPromise.load(() => {
+                        return this.retrieveNewCollection(messageHandler);
+                    }).catch((error) => {
+                        if (!error || error.isCanceled !== true) {
+                            throw error;
+                        }
+                        // Else skipping as load got canceled.
+                        return this.data.$q.when(null);
+                    }).then(collection => {
+                        if (collection) {
+                            return this.update(collection);
+                        }
+                    }).then(() => {
+                        return this;
+                    }).finally(() => {
+                        this.refreshingPromise = null;
+                    });
             }
-            return this.refreshingPromise.getPromise().then(collection => {
-                    return this.update(collection);
-                }).then(() => {
-                    return this;
-                }).catch((rejected) => {
-                    if (!rejected || rejected.isCanceled !== true) {
-                        throw rejected;
-                    }
-                    // Else the update is skipped because of cancellation.
-                });
+            return this.refreshingPromise;
         }
 
-        public cancelRefresh(): void {
-            if (this.isRefreshing) {
-                this.refreshingPromise.cancel();
-            }
+        public clear(): angular.IPromise<any> {
+            this.cancelLoad();
+            return this.data.$q.when(this.refreshingPromise ? this.refreshingPromise : true).then(() => {
+                this.collection = [];
+                this.isInitialized = false;
+            });
         }
 
-        public clear(): void {
-            this.cancelRefresh();
-            this.collection = [];
-            this.isInitialized = false;
+        protected cancelLoad(): void {
+            if (this.refreshingLoadPromise.hasPromise()) {
+                this.refreshingLoadPromise.cancel();
+            }
         }
 
         protected update(collection: T[]): angular.IPromise<any> {
@@ -620,18 +629,19 @@ module Sfx {
             this.setNewDateWindowInternal(startDate, endDate);
         }
 
-        public setDateWindow(startDate?: Date, endDate?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            if (this.setNewDateWindowInternal(startDate, endDate)) {
-                this.lastRefreshTime = null;
-                this.clear();
-                return this.refresh(messageHandler);
-            }
-
-            return this.data.$q.when(this);
+        public setDateWindow(startDate?: Date, endDate?: Date): boolean {
+            return this.setNewDateWindowInternal(startDate, endDate);
         }
 
-        public resetDateWindow(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            return this.setDateWindow(null, null, messageHandler);
+        public resetDateWindow(): boolean {
+            return this.setDateWindow(null, null);
+        }
+
+        public reload(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            this.lastRefreshTime = null;
+            return this.clear().then(() => {
+                return this.refresh(messageHandler);
+            });
         }
 
         protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
@@ -677,13 +687,16 @@ module Sfx {
         }
 
         private setNewDateWindowInternal(startDate?: Date, endDate?: Date): boolean {
-            // Default to 3 days ago.
             if (!startDate) {
-                startDate = TimeUtils.AddDays(new Date(), (-1 * this.defaultDateWindowInDays));
+                startDate = TimeUtils.AddDays(
+                    endDate ? endDate : new Date(),
+                    (-1 * this.defaultDateWindowInDays));
             }
-            // Default to Today
+
             if (!endDate) {
-                endDate = new Date();
+                endDate = TimeUtils.AddDays(
+                    startDate,
+                    this.defaultDateWindowInDays);
             }
 
             let bodStartDate = startDate;
@@ -698,6 +711,19 @@ module Sfx {
             }
 
             return false;
+        }
+    }
+
+    export class ClusterEventList extends EventListBase<ClusterEvent> {
+        public constructor(data: DataService, partitionId?: string) {
+            super(data);
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<ClusterEvent>[]> {
+            return this.data.restClient.getClusterEvents(this.queryStartDate, this.queryEndDate, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<ClusterEvent>(this.data, event));
+                });
         }
     }
 
@@ -726,6 +752,56 @@ module Sfx {
         }
     }
 
+    export class ApplicationEventList extends EventListBase<ApplicationEvent> {
+        private applicationId?: string;
+
+        public constructor(data: DataService, applicationId?: string) {
+            super(data);
+            this.applicationId = applicationId;
+            if (!this.applicationId) {
+                // Show ApplicationId as the first column.
+                this.settings.columnSettings.splice(
+                    this.optionalColsStartIndex,
+                    0,
+                    new ListColumnSettingWithFilter(
+                        "raw.applicationId",
+                        "Application Id"));
+            }
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<ApplicationEvent>[]> {
+            return this.data.restClient.getApplicationEvents(this.queryStartDate, this.queryEndDate, this.applicationId, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<ApplicationEvent>(this.data, event));
+                });
+        }
+    }
+
+    export class ServiceEventList extends EventListBase<ServiceEvent> {
+        private serviceId?: string;
+
+        public constructor(data: DataService, serviceId?: string) {
+            super(data);
+            this.serviceId = serviceId;
+            if (!this.serviceId) {
+                // Show ServiceId as the first column.
+                this.settings.columnSettings.splice(
+                    this.optionalColsStartIndex,
+                    0,
+                    new ListColumnSettingWithFilter(
+                        "raw.serviceId",
+                        "Service Id"));
+            }
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<ServiceEvent>[]> {
+            return this.data.restClient.getServiceEvents(this.queryStartDate, this.queryEndDate, this.serviceId, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<ServiceEvent>(this.data, event));
+                });
+        }
+    }
+
     export class PartitionEventList extends EventListBase<PartitionEvent> {
         private partitionId?: string;
 
@@ -747,6 +823,33 @@ module Sfx {
             return this.data.restClient.getPartitionEvents(this.queryStartDate, this.queryEndDate, this.partitionId, messageHandler)
                 .then(result => {
                     return result.map(event => new FabricEventInstanceModel<PartitionEvent>(this.data, event));
+                });
+        }
+    }
+
+    export class ReplicaEventList extends EventListBase<ReplicaEvent> {
+        private partitionId: string;
+        private replicaId?: string;
+
+        public constructor(data: DataService, partitionId: string, replicaId?: string) {
+            super(data);
+            this.partitionId = partitionId;
+            this.replicaId = replicaId;
+            if (!this.replicaId) {
+                // Show ReplicaId as the first column.
+                this.settings.columnSettings.splice(
+                    this.optionalColsStartIndex,
+                    0,
+                    new ListColumnSettingWithFilter(
+                        "raw.replicaId",
+                        "Replica Id"));
+            }
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<ReplicaEvent>[]> {
+            return this.data.restClient.getReplicaEvents(this.queryStartDate, this.queryEndDate, this.partitionId, this.replicaId, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<ReplicaEvent>(this.data, event));
                 });
         }
     }

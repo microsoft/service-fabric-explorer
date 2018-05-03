@@ -23,6 +23,7 @@ module Sfx {
             public $location: angular.ILocationService,
             public $http: angular.IHttpService,
             public $q: angular.IQService,
+            public $timeout: angular.ITimeoutService,
             public $uibModal: angular.ui.bootstrap.IModalService,
             public $route: angular.route.IRouteService,
             public $sanitize: angular.sanitize.ISanitizeService,
@@ -236,12 +237,28 @@ module Sfx {
             });
         }
 
+        public createClusterEventList(): ClusterEventList {
+            return new ClusterEventList(this);
+        }
+
         public createNodeEventList(nodeName?: string): NodeEventList {
             return new NodeEventList(this, nodeName);
         }
 
+        public createApplicationEventList(applicationId?: string): ApplicationEventList {
+            return new ApplicationEventList(this, applicationId);
+        }
+
+        public createServiceEventList(serviceId?: string): ServiceEventList {
+            return new ServiceEventList(this, serviceId);
+        }
+
         public createPartitionEventList(partitionId?: string): PartitionEventList {
             return new PartitionEventList(this, partitionId);
+        }
+
+        public createReplicaEventList(partitionId: string, replicaId?: string): ReplicaEventList {
+            return new ReplicaEventList(this, partitionId, replicaId);
         }
 
         public createCorrelatedEventList(eventInstanceId: string) {
@@ -300,9 +317,9 @@ module Sfx {
     (function () {
 
         let module = angular.module("dataService", ["routes", "messages", "ui.bootstrap", "ngSanitize"]);
-        module.factory("data", ["routes", "message", "telemetry", "$location", "$http", "$q", "$uibModal", "$route", "$sanitize", "$rootScope",
-            (routes, message, telemetry, $location, $http, $q, $uibModal, $route, $sanitize, $rootScope) =>
-                new DataService(routes, message, telemetry, $location, $http, $q, $uibModal, $route, $sanitize, $rootScope)]);
+        module.factory("data", ["routes", "message", "telemetry", "$location", "$http", "$q", "$timeout", "$uibModal", "$route", "$sanitize", "$rootScope",
+            (routes, message, telemetry, $location, $http, $q, $timeout, $uibModal, $route, $sanitize, $rootScope) =>
+                new DataService(routes, message, telemetry, $location, $http, $q, $timeout, $uibModal, $route, $sanitize, $rootScope)]);
 
         module.run(["$http", function ($http: angular.IHttpService) {
             $http.defaults.headers.common[Constants.SfxVersionMetadataName] = VersionInfo.Version;

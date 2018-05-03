@@ -2,8 +2,12 @@
     <sfx-detail-list list="eventsList" list-settings="eventsList.settings" inner-scroll="true">
         <sfx-detail-list-details-view details-list-settings="eventsList.detailsSettings"></sfx-detail-list-details-view>
         <div class="row" style="margin-right:0px;">
-                <sfx-date-picker ng-model="dwSelector.startDate" min-date="dwSelector.startDateMin" max-date="dwSelector.startDateMax" place-holder-text="'Start Date'"></sfx-date-picker>
-                <sfx-date-picker ng-model="dwSelector.endDate" min-date="dwSelector.endDateMin" max-date="dwSelector.endDateMax" place-holder-text="'End Date'"></sfx-date-picker>
+                <sfx-date-picker ng-model="dwSelector.startDate" min-date="dwSelector.startDateMin"
+                    max-date="dwSelector.startDateMax" init-date="dwSelector.startDateInit" place-holder-text="'Start Date'">
+                </sfx-date-picker>
+                <sfx-date-picker ng-model="dwSelector.endDate" min-date="dwSelector.endDateMin"
+                    max-date="dwSelector.endDateMax" init-date="dwSelector.endDateInit" place-holder-text="'End Date'">
+                </sfx-date-picker>
                 <div class="col-md-3">
                     <div class="btn-group" style="margin-bottom:3px;">
                         <a class="reset-link" href="" ng-click="resetClick()">Reset</a>

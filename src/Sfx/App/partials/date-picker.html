@@ -2,7 +2,7 @@
     <p class="input-group">
         <input type="text" class="input-flat clear-disabled" uib-datepicker-popup="{{format}}"
             ng-model="ngModel" is-open="opened"
-            min-date="minDate" max-date="maxDate"
+            min-date="minDate" max-date="maxDate" init-date="initDate"
             datepicker-options="dateOptions" placeholder="{{placeHolderText}}" show-button-bar="false"
             ng-required ng-readonly="readOnly" ng-click="ctrl.openPopup($event)" />
         <span class="input-group-btn">

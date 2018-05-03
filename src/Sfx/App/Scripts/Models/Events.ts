@@ -57,13 +57,13 @@ module Sfx {
     }
 
     export class FabricEventInstanceModel<T extends FabricEventBase> extends DataModelBase<T> {
-        // Initially keep correlated events if-any not visible.
+        // Initially keep additional details collapsed.
         public isSecondRowCollapsed: boolean = true;
         public constructor(data: DataService, raw: T) {
             super(data, raw);
         }
 
-        public get uniqueId() { return this.raw.eventInstanceId; }
+        public get uniqueId() { return this.raw.kind + this.raw.eventInstanceId; }
         public get id() { return this.raw.eventInstanceId; }
         public get name() { return `${this.raw.kind} (${this.raw.eventInstanceId})`; }
     }

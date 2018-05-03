@@ -30,6 +30,8 @@ module Sfx {
         public endDateMin: Date;
         public startDateMax: Date;
         public endDateMax: Date;
+        public startDateInit: Date;
+        public endDateInit: Date;
 
         private eventsList: EventListBase<any>;
         private isStartSelected: boolean;
@@ -50,13 +52,14 @@ module Sfx {
             this._startDate = value;
             if (!this.isEndSelected) {
                 this._endDate = null;
-                this.endDateMin = this.startDate;
+                this.endDateMin = this._startDate;
                 this.endDateMax = TimeUtils.AddDays(
-                    this.startDate,
+                    this._startDate,
                     DateWindowSelector.MaxWindowInDays);
                 if (this.endDateMax > new Date()) {
                     this.endDateMax = new Date();
                 }
+                this.endDateInit = this._startDate;
                 this.isStartSelected = true;
             } else {
                 this.setNewDateWindow();
@@ -66,10 +69,11 @@ module Sfx {
             this._endDate = value;
             if (!this.isStartSelected) {
                 this._startDate = null;
-                this.startDateMax = this.endDate;
+                this.startDateMax = this._endDate;
                 this.startDateMin = TimeUtils.AddDays(
-                    this.endDate,
+                    this._endDate,
                     (-1 * DateWindowSelector.MaxWindowInDays));
+                this.startDateInit = this._endDate;
                 this.isEndSelected = true;
             } else {
                 this.setNewDateWindow();
@@ -78,20 +82,25 @@ module Sfx {
 
         public reset(): void {
             this.resetSelectionProperties();
-            this.eventsList.resetDateWindow();
-            this._startDate = this.eventsList.startDate;
-            this._endDate = this.eventsList.endDate;
+            if (this.eventsList.resetDateWindow()) {
+                this._startDate = this.eventsList.startDate;
+                this._endDate = this.eventsList.endDate;
+                this.eventsList.reload();
+            }
         }
 
         private resetSelectionProperties(): void {
             this.startDateMin = this.endDateMin = null;
             this.startDateMax = this.endDateMax = new Date(); //Today
+            this.startDateInit = this.endDateInit = new Date(); //Today
             this.isStartSelected = this.isEndSelected = false;
         }
 
         private setNewDateWindow(): void {
             this.resetSelectionProperties();
-            this.eventsList.setDateWindow(this.startDate, this.endDate);
+            if (this.eventsList.setDateWindow(this._startDate, this._endDate)) {
+                this.eventsList.reload();
+            }
         }
     }
 }
