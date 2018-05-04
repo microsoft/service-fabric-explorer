@@ -618,7 +618,7 @@ module Sfx {
 
             // Add correlated event col.
             let correlatedEventsCol = new ListColumnSetting(
-                "",
+                "#CorrelatedEvents",
                 "",
                 [],
                 null,
@@ -668,10 +668,15 @@ module Sfx {
             let listSettings = new ListSettings(
                 this.pageSize,
                 ["raw.timeStamp"],
-                [ new ListColumnSettingWithFilter("raw.kind", "Type"),
+                [ new ListColumnSetting(
+                    "#Type",
+                    "Type",
+                    ["raw.kind"],
+                    true,
+                    (item) => HtmlUtils.getEventNameHtml(item.raw)),
                 new ListColumnSetting("raw.timeStampString", "Timestamp"), ],
                 [ new ListColumnSetting(
-                    "",
+                    "#Details",
                     "",
                     [],
                     null,

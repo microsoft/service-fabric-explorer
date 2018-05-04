@@ -63,7 +63,8 @@ module Sfx {
             super(data, raw);
         }
 
-        public get uniqueId() { return this.raw.kind + this.raw.eventInstanceId; }
+        // A temp solution till we have instanceId unique.
+        public get uniqueId() { return this.raw.kind + this.raw.eventInstanceId + this.raw.timeStamp; }
         public get id() { return this.raw.eventInstanceId; }
         public get name() { return `${this.raw.kind} (${this.raw.eventInstanceId})`; }
     }

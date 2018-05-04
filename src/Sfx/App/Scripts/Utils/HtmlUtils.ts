@@ -47,6 +47,22 @@ module Sfx {
             return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="images/${badge.badgeClass}.svg"></img><span> ${badge.text}</span></div>`;
         }
 
+        public static getEventNameHtml(event: FabricEventBase): string {
+            // A temp solution till we have level information as part of events.
+            if (_.endsWith(event.kind, "HealthReportCreated")) {
+                let color = "";
+                if (event.eventProperties.HealthState === "Ok") {
+                    color = "#3AA655";
+                } else if (event.eventProperties.HealthState === "Warning") {
+                    color = "#F2C649";
+                } else if (event.eventProperties.HealthState === "Error") {
+                    color = "#FF5349";
+                }
+                return `<span style="color:${color}">${event.kind}</span>`;
+            }
+            return event.kind;
+        }
+
         public static getEventSecondRowHtml(event: FabricEventBase): string {
             let json = `EventInstanceId: ${event.eventInstanceId}</br>` +
                 `Additional Properties: ${JSON.stringify(event.eventProperties, null, "&nbsp;")}`;

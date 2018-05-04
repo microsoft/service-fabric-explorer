@@ -77,7 +77,7 @@ module Sfx {
         }
 
         private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            return this.$scope.nodeEvents.refresh(messageHandler);
+            return this.$scope.nodeEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler));
         }
     }
 
