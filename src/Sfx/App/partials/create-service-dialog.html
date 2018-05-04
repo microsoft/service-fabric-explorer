@@ -54,7 +54,7 @@
             </dd>
             <dt ng-if="!action.serviceType.raw.ServiceTypeDescription.IsStateful">Instance Count</dt>
             <dd ng-if="!action.serviceType.raw.ServiceTypeDescription.IsStateful">
-                <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.InstanceCount" aria-label="Instance Count" min="1">
+                <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.InstanceCount" aria-label="Instance Count" min="1" aria-valuemin="1" integer>
             </dd>
             <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">Has Persisted State</dt>
             <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">
@@ -62,26 +62,27 @@
             </dd>
             <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">Min Replica Set Size</dt>
             <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">
-                <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.MinReplicaSetSize" aria-label="Min Replica Set Size" min="1">
+                <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.MinReplicaSetSize" name="MinReplicaSetSize" 
+                aria-label="Min Replica Set Size" min="1" aria-valuemin="1" integer>                
             </dd>
             <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">Target Replica Set Size</dt>
             <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">
-                <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.TargetReplicaSetSize" aria-label="Target Replica Set Size" min="1">
+                <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.TargetReplicaSetSize" aria-label="Target Replica Set Size" min="1" aria-valuemin="1" integer>
             </dd>
             <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful" title="Replica Restart Wait Duration">Replica Restart Wait Duration</dt>
             <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">
                 <input type="number" class="input-flat" autocomplete="off" placeholder="Duration in seconds" ng-model="action.description.raw.ReplicaRestartWaitDurationSeconds"
-                    aria-label="Replica Restart Wait Duration" min="0">
+                    aria-label="Replica Restart Wait Duration" min="0" aria-valuemin="0">
             </dd>
             <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful" title="Quorum Loss Wait Duration">Quorum Loss Wait Duration</dt>
             <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">
                 <input type="number" class="input-flat" autocomplete="off" placeholder="Duration in seconds" ng-model="action.description.raw.QuorumLossWaitDurationSeconds"
-                    aria-label="Quorum Loss Wait Duration" min="0">
+                    aria-label="Quorum Loss Wait Duration" min="0" aria-valuemin="0">
             </dd>
             <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful" title="Stand By Replica Keep Duration">Stand By Replica Keep Duration</dt>
             <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">
                 <input type="number" class="input-flat" autocomplete="off" placeholder="Duration in seconds" ng-model="action.description.raw.StandByReplicaKeepDurationSeconds"
-                    aria-label="Stand By Replica Keep Duration" min="0">
+                    aria-label="Stand By Replica Keep Duration" min="0" aria-valuemin="0">
             </dd>
             <dt>Placement Constraints</dt>
             <dd>
@@ -99,7 +100,7 @@
                     <dt ng-if="action.description.raw.PartitionDescription.PartitionScheme !== '1'">Count</dt>
                     <dd ng-if="action.description.raw.PartitionDescription.PartitionScheme !== '1'">
                         <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.PartitionDescription.Count" required
-                            aria-label="Count" min="1">
+                            aria-label="Count" min="1" aria-valuemin="1">
                     </dd>
                     <dt ng-if="action.description.raw.PartitionDescription.PartitionScheme === '2'">Low Key</dt>
                     <dd ng-if="action.description.raw.PartitionDescription.PartitionScheme === '2'">
@@ -248,10 +249,10 @@
                                     <input type="text" class="input-flat" autocomplete="off" ng-model="loadMetric.Name" required aria-label="Metric name">
                                 </td>
                                 <td>
-                                    <input type="number" class="input-flat" autocomplete="off" ng-model="loadMetric.PrimaryDefaultLoad" required aria-label="Primary default load" min="0">
+                                    <input type="number" class="input-flat" autocomplete="off" ng-model="loadMetric.PrimaryDefaultLoad" required aria-label="Primary default load" min="0" aria-valuemin="0">
                                 </td>
                                 <td>
-                                    <input type="number" class="input-flat" autocomplete="off" ng-model="loadMetric.SecondaryDefaultLoad" required aria-label="Secondary default load" min="0">
+                                    <input type="number" class="input-flat" autocomplete="off" ng-model="loadMetric.SecondaryDefaultLoad" required aria-label="Secondary default load" min="0" aria-valuemin="0">
                                 </td>
                                 <td>
                                     <div uib-dropdown dropdown-append-to-body>
@@ -281,7 +282,7 @@
     </div>
     <div class="modal-footer">
         <a href="" id="reset-dialog-link" ng-click="action.description.reset()" title="Reset dialog with default settings">Reset</a>
-        <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="ok()" ng-disabled="createServiceForm.$invalid">{{action.title}}</button>
+        <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="createServiceForm.$invalid ? return : ok()" >{{action.title}}</button>
         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancel()">Cancel</button>
     </div>
 </form>
