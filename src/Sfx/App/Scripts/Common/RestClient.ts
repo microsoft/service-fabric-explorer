@@ -551,7 +551,7 @@ module Sfx {
         public getReplicaEvents(startTime: Date, endTime: Date, partitionId: string, replicaId?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<ReplicaEvent[]> {
             let url = "EventsStore/"
                 + "Partitions/"
-                + encodeURIComponent(partitionId) + "/$/"
+                + encodeURIComponent(partitionId) + "/$/" + "Replicas/"
                 + (replicaId ? (encodeURIComponent(replicaId) + "/$/") : "")
                 + "Events";
             return this.getEvents(ReplicaEvent, url, startTime, endTime, messageHandler);

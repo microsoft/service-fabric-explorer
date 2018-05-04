@@ -11,6 +11,7 @@ module Sfx {
         listSettings: ListSettings;
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
+        serviceEvents: ServiceEventList;
     }
 
     export class ServiceViewController extends MainViewController {
@@ -22,10 +23,12 @@ module Sfx {
             super($injector, {
                 "essentials": { name: "Essentials" },
                 "details": { name: "Details" },
-                "manifest": { name: "Manifest" }
+                "manifest": { name: "Manifest" },
+                "events": { name: "Events" }
             });
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
             this.tabs["manifest"].refresh = (messageHandler) => this.refreshManifest(messageHandler);
+            this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
 
             let routeParams = this.routeParams;
             this.appTypeName = IdUtils.getAppTypeName(routeParams);
@@ -60,6 +63,7 @@ module Sfx {
 
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
+            this.$scope.serviceEvents = this.data.createServiceEventList(this.serviceId);
 
             this.refresh();
         }
@@ -88,6 +92,10 @@ module Sfx {
                         this.$scope.serviceManifest = serviceType.manifest.raw.Manifest;
                     });
                 });
+        }
+
+        private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.serviceEvents.refresh(messageHandler);
         }
     }
 

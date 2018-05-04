@@ -757,7 +757,10 @@ module Sfx {
 
         public constructor(data: DataService, applicationId?: string) {
             super(data);
-            this.applicationId = applicationId;
+            if (applicationId) {
+                this.applicationId = applicationId.replace(new RegExp("/", "g"), "~");
+            }
+
             if (!this.applicationId) {
                 // Show ApplicationId as the first column.
                 this.settings.columnSettings.splice(
@@ -782,7 +785,9 @@ module Sfx {
 
         public constructor(data: DataService, serviceId?: string) {
             super(data);
-            this.serviceId = serviceId;
+            if (serviceId) {
+                this.serviceId = serviceId.replace(new RegExp("/", "g"), "~");
+            }
             if (!this.serviceId) {
                 // Show ServiceId as the first column.
                 this.settings.columnSettings.splice(

@@ -1,7 +1,7 @@
 ﻿<sfx-detail-view-navbar ctrl="serviceCtrl" actions="service.actions" type="Service" name="{{service.name}}"></sfx-detail-view-navbar>
 
 <div class="main-view">
-    <div sfx-include src="'tab_' + serviceCtrl.activeTabId" ng-if="serviceCtrl.activeTabId"></div>
+    <div sfx-include src="'tab_' + serviceCtrl.activeTabId" ng-if="serviceCtrl.activeTabId" class="flex-child"></div>
 
     <script type="text/ng-template" id="tab_essentials">
         <div class="detail-pane essen-pane">
@@ -106,6 +106,10 @@
         <div class="detail-pane">
             <pre><code>{{serviceManifest}}</code></pre>
         </div>
+    </script>
+
+    <script type="text/ng-template" id="tab_events">
+        <sfx-events-view events-list="serviceEvents" class="flex-child"></sfx-events-view>
     </script>
 
 </div>
