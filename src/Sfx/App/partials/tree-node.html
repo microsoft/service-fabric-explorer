@@ -1,6 +1,6 @@
 ﻿<div class="children" ng-show="node.isExpanded">
     <!-- use inline style to work around IE bug that list-style=none gets ignored for first load -->
-    <ul class="tree" style="list-style: none" sfx-include src="'nodeTemplate'"></ul>
+    <ul class="tree" style="list-style: none" sfx-include src="'nodeTemplate'" role="{{ node.owningNode ? 'group' : 'tree'}}"></ul>
     <div class="more-children"
          ng-show="node.loadingChildren"
          ng-style="::{ 'marginLeft': node.paddingLeftPx }">
@@ -17,9 +17,10 @@
                 <span ng-click="node.pageUp()" class="pageup-icon bowtie-icon bowtie-chevron-up" title="Previous {{node.owningNode.listSettings.limit}} items" aria-hidden="true"></span>
             </div>
         </li>
-        <li sfx-tree-scroll-to selected="{{child.selected}}" scroll-parent="tree-body" class="node"
-            ng-repeat="child in node.displayedChildren track by child.nodeId" ng-show="child.isVisibleByBadge" ng-class="{ 'selected': child.selected }">
-            <div class="self" ng-click="child.handleClick()" ng-dblclick="child.toggle()" ng-style="::{ 'paddingLeft': child.paddingLeftPx }">
+        <li sfx-tree-scroll-to sfx-tree-set-focus selected="{{child.selected}}" scroll-parent="tree-body" class="node"
+            ng-repeat="child in node.displayedChildren track by child.nodeId" ng-show="child.isVisibleByBadge" ng-class="{ 'selected': child.selected }" 
+            role="treeitem" aria-expanded="{{child.isExpanded}}" aria-label="{{ child.displayName() }}">
+            <div class="self" ng-click="child.handleClick()" ng-dblclick="child.toggle()" ng-style="::{ 'paddingLeft': child.paddingLeftPx }" aria-label="{{ child.displayName() }}">
                 <span class="expander icon bowtie-icon" aria-hidden="true"
                       ng-click="child.toggle(); $event.stopPropagation()" ng-show="child.hasExpander"
                       ng-class="{ 'bowtie-chevron-right-light': child.isCollapsed, 'bowtie-chevron-down-light': child.isExpanded }"
@@ -27,16 +28,16 @@
                 </span>
                 <image ng-if="child.badge && child.badge() && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
                        class="tree-badge" title="{{child.badge().text}}"
-                       ng-src="images/{{child.badge().badgeClass}}.svg"></image>
+                       ng-src="images/{{child.badge().badgeClass}}.svg" role="presentation"></image>
                 <span class="tree-label" ng-bind-html="child.displayHtml" title="{{ child.displayName() }}"></span>
                 <div ng-if="::child.actions && child.actions.length > 0"
                      class="btn-group actions-menu"
                      uib-dropdown dropdown-append-to-body on-toggle="child.contextMenuToggled(open)"
                      ng-click="$event.stopPropagation()"
                      ng-dblclick="$event.stopPropagation()">
-                    <a role="button" uib-dropdown-toggle
+                    <a href="" role="button" uib-dropdown-toggle
                        class="dark-background-link actions-expander"
-                       ng-disabled="child.actions && child.actions.anyRunning">
+                       ng-disabled="child.actions && child.actions.anyRunning" aria-label="Click to open context menu">
                         <span class="bowtie-icon bowtie-ellipsis"></span>
                     </a>
                     <ul role="menu" class="dropdown-menu dropdown-menu-right" uib-dropdown-menu style="list-style: none">

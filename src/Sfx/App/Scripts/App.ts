@@ -46,8 +46,10 @@ module Sfx {
             "settingsController",
             "templates", // Template cache module generated from partials by gulp-angular-templatecache plugin
             "responseHeadersService",
-        ]);
-
+            "ngAria"
+        ]).config(["$rootScopeProvider", function ($rootScopeProvider) {
+            $rootScopeProvider.digestTtl(20);
+        }]);
     })();
 }
 

@@ -16,14 +16,11 @@
             background-color: $navbar-brand-background-color;
         }
 
-        &.navbar-brand-icon {
-            margin-left: 0;
-            img {
-                display: inline-block;
-                position: relative;
-                top: 47%;
-                transform: translateY(-50%);
-            }
+        .navbar-brand-icon {
+            display: inline-block;
+            
+            margin-left: 14px;
+            margin-right: 14px;
         }
     }
 }
@@ -202,6 +199,7 @@
 
             .settings-item-title {
                 color: $slider-title-color;
+                font-weight: normal;
             }
         }
     }

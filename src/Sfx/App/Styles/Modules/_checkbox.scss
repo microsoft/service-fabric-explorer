@@ -1,5 +1,21 @@
 ﻿@import "../Base/_config.scss";
 
+.checkbox-container-default {
+
+    label {
+        font-weight: $font-weight-normal;
+
+        input[type="checkbox"] {
+            margin: 0 5px;
+            vertical-align: middle;
+            height: 14px;
+            width: 14px;
+        }
+    }
+}
+
+/*  Currently the custom checkbox control (below) is not being used for accessbility reasons. */
+
 .checkbox-container {
     $checkbox-width: 16px;
     $checkbox-height: 16px;

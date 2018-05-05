@@ -2,7 +2,7 @@
     <div sfx-include src="'view-part-template'" ng-if="data"></div>
 
     <script type="text/ng-template" id="view-part-template">
-        <table class="table detail-table" ng-class="{ 'table-layout-fixed': !noFixedLayout }">
+        <table class="table detail-table" ng-class="{ 'table-layout-fixed': !noFixedLayout }" role="presentation">
 
             <tbody ng-repeat="(name, value) in resolvedData track by name"
                    ng-switch="::ctrl.getResolvedPropertyType(value)">

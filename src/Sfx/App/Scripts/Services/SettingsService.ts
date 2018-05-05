@@ -15,6 +15,9 @@ module Sfx {
         }
 
         public set paginationLimit(limit: number) {
+            if (!limit) {
+                return;
+            }
             if (limit < Constants.PaginationLimitMin) {
                 limit = Constants.PaginationLimitMin;
             } else if (limit > Constants.PaginationLimitMax) {

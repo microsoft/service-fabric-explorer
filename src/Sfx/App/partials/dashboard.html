@@ -1,5 +1,5 @@
 <div class="dashboard-wrapper">
-    <div class="dashboard {{data.largeTile ? 'dashboard-large' : 'dashboard-small'}}" ng-class="{'has-view-path' : data.viewPath}" ng-click="data.onClick()">
+    <div class="dashboard {{data.largeTile ? 'dashboard-large' : 'dashboard-small'}}" ng-class="{'has-view-path' : data.viewPath}" ng-click="data.onClick()" role="group" aria-label="{{data.displayTitle}}">
         <svg class="dashboard-donut-chart"></svg>
         <div class="dashboard-datapoints"
              ng-repeat="dataPoint in data.dataPoints"

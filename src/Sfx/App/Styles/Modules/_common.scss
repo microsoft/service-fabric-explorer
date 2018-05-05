@@ -5,11 +5,6 @@ body {
     background-color: $right-panel-background-color;
 }
 
-// Remove chrome input/textarea focus glow effect
-textarea, input {
-    outline: none;
-}
-
 .table {
     @extend .table-condensed;
 
@@ -19,7 +14,6 @@ textarea, input {
 }
 
 a, a:active, a:focus, a:hover {
-    outline: none !important;
     text-decoration: none !important;
 }
 
@@ -111,10 +105,6 @@ h1, h2, h3, h4, h5, h6 {
     bottom: 0;
     width: $splitter-width;
     cursor: col-resize;
-
-    &:focus {
-        outline: none;
-    }
 }
 
 .right-panel {
@@ -208,9 +198,16 @@ h1, h2, h3, h4, h5, h6 {
     }
 }
 
+.dropdown-toggle {
+
+    &:focus {
+        outline: 2px dotted;
+        outline: 2px solid -webkit-focus-ring-color;
+    }
+}
+
 .btn {
     padding: 4px 20px 6px;
-    outline: none !important;
 }
 
 .search-bar {
