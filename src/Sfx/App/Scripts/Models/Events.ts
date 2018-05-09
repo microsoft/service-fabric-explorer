@@ -39,19 +39,23 @@ module Sfx {
         }
 
         protected extractField(name: string, value: any): boolean {
-            if (name === "Kind") {
-                this._kind = value;
-                return true;
-            } else if (name === "EventInstanceId") {
-                this._eventInstanceId = value;
-                return true;
-            } else if (name === "TimeStamp") {
-                this._timeStamp = new Date(value);
-                return true;
-            } else if (name === "HasCorrelatedEvents") {
-                this._hasCorrelatedEvents = value;
-                return true;
+            switch (name) {
+                case "Kind":
+                    this._kind = value;
+                    return true;
+                case "EventInstanceId":
+                    this._eventInstanceId = value;
+                    return true;
+                case "TimeStamp":
+                    this._timeStamp = value;
+                    return true;
+                case "HasCorrelatedEvents":
+                    this._hasCorrelatedEvents = value;
+                    return true;
+                default:
+                    break;
             }
+
             return false;
         }
     }
@@ -85,9 +89,12 @@ module Sfx {
                 return true;
             }
 
-            if (name === "NodeName") {
-                this._nodeName = value;
-                return true;
+            switch (name) {
+                case "NodeName":
+                    this._nodeName = value;
+                    return true;
+                default:
+                    break;
             }
 
             return false;
@@ -104,9 +111,12 @@ module Sfx {
                 return true;
             }
 
-            if (name === "ApplicationId") {
-                this._applicationId = value;
-                return true;
+            switch (name) {
+                case "ApplicationId":
+                    this._applicationId = value;
+                    return true;
+                default:
+                    break;
             }
 
             return false;
@@ -123,9 +133,12 @@ module Sfx {
                 return true;
             }
 
-            if (name === "ServiceId") {
-                this._serviceId = value;
-                return true;
+            switch (name) {
+                case "ServiceId":
+                    this._serviceId = value;
+                    return true;
+                default:
+                    break;
             }
 
             return false;
@@ -142,9 +155,12 @@ module Sfx {
                 return true;
             }
 
-            if (name === "PartitionId") {
-                this._partitionId = value;
-                return true;
+            switch (name) {
+                case "PartitionId":
+                    this._partitionId = value;
+                    return true;
+                default:
+                    break;
             }
 
             return false;
@@ -163,12 +179,15 @@ module Sfx {
                 return true;
             }
 
-            if (name === "PartitionId") {
-                this._partitionId = value;
-                return true;
-            } else if (name === "ReplicaId") {
-                this._replicaId = value;
-                return true;
+            switch (name) {
+                case "PartitionId":
+                    this._partitionId = value;
+                    return true;
+                case "ReplicaId":
+                    this._replicaId = value;
+                    return true;
+                default:
+                    break;
             }
 
             return false;

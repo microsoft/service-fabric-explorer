@@ -47,7 +47,6 @@ module Sfx {
 
         public popupFocus(event: any): void {
             if (!this.$scope.opened) {
-                event.stopPropagation();
                 this.$scope.opened = true;
             }
         }

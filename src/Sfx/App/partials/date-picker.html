@@ -4,9 +4,11 @@
             ng-model="ngModel" is-open="opened"
             min-date="minDate" max-date="maxDate" init-date="initDate"
             datepicker-options="dateOptions" placeholder="{{placeHolderText}}" show-button-bar="false"
-            ng-required ng-readonly="readOnly" ng-focus="ctrl.popupFocus($event)" />
+            ng-required ng-readonly="readOnly" ng-click="ctrl.popupClick($event)"
+            ng-keydown="$event.keyCode === 13 && ctrl.popupFocus($event)" aria-haspopup="true" />
         <span class="input-group-btn">
-            <a class="calendar-link" ng-click="ctrl.popupClick($event)" >
+            <a role="button" class="calendar-link" href="" ng-click="ctrl.popupClick($event)"
+                aria-haspopup="true" aria-label="Click to open the calendar">
                 <i class="bowtie-icon bowtie-calendar" style="margin-bottom:2px;"></i>
             </a>
         </span>

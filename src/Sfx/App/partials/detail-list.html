@@ -39,12 +39,13 @@
                 </tr>
             </thead>
             <tbody>
-            <tr ng-repeat-start="item in sortedFilteredList | limitTo: listSettings.limit: listSettings.begin track by (item.uniqueId || $id(item))" ng-click="ctrl.handleClickRow(item)">
+            <tr ng-repeat-start="item in sortedFilteredList | limitTo: listSettings.limit: listSettings.begin track by (item.uniqueId || $id(item))"
+                ng-mousedown="ctrl.handleClickRow(item)">
                  <td ng-repeat="columnSetting in ::listSettings.columnSettings track by columnSetting.propertyPath">
                     <i class="bowtie-icon row-expander"
                        ng-if="$index === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)"
-                       ng-click="ctrl.handleClickRow(item); $event.stopPropagation()"
                        title="{{item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row' }}"
+                       ng-click="ctrl.handleClickRow(item)" ng-mousedown="$event.stopPropagation()"
                        ng-class="{'bowtie-chevron-right': item.isSecondRowCollapsed, 'bowtie-chevron-down': !item.isSecondRowCollapsed}"></i>
                         <span sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)"></span>
                     </td>

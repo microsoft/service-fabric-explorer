@@ -128,7 +128,7 @@ module Sfx {
                     this.refreshingLoadPromise.load(() => {
                         return this.retrieveNewCollection(messageHandler);
                     }).catch((error) => {
-                        if (!error || error.isCanceled !== true) {
+                        if (error && error.isCanceled !== true) {
                             throw error;
                         }
                         // Else skipping as load got canceled.
