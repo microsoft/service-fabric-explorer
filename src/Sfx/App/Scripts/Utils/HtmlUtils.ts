@@ -64,7 +64,7 @@ module Sfx {
         }
 
         public static getEventSecondRowHtml(event: FabricEventBase): string {
-            let json = `EventInstanceId: ${event.eventInstanceId}</br>` +
+            let json = `EventInstanceId: "${event.eventInstanceId}"</br>` +
                 `Additional Properties: ${JSON.stringify(event.eventProperties, null, "&nbsp;")}`;
             return `<div style="margin-left:20px">${json.replace(new RegExp("\\n", "g"), "<br/>")}</div>`;
         }

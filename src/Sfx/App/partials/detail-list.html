@@ -43,7 +43,7 @@
                  <td ng-repeat="columnSetting in ::listSettings.columnSettings track by columnSetting.propertyPath">
                     <i class="bowtie-icon row-expander"
                        ng-if="$index === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)"
-                       ng-click="ctrl.handleClickRow(item)"
+                       ng-click="ctrl.handleClickRow(item); $event.stopPropagation()"
                        title="{{item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row' }}"
                        ng-class="{'bowtie-chevron-right': item.isSecondRowCollapsed, 'bowtie-chevron-down': !item.isSecondRowCollapsed}"></i>
                         <span sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)"></span>

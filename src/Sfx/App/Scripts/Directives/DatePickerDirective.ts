@@ -40,9 +40,16 @@ module Sfx {
         public constructor(private $scope: any) {
         }
 
-        public openPopup(event: any): void {
+        public popupClick(event: any): void {
             event.stopPropagation();
             this.$scope.opened = !this.$scope.opened;
+        }
+
+        public popupFocus(event: any): void {
+            if (!this.$scope.opened) {
+                event.stopPropagation();
+                this.$scope.opened = true;
+            }
         }
     }
 }

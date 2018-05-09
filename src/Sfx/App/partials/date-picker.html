@@ -4,9 +4,9 @@
             ng-model="ngModel" is-open="opened"
             min-date="minDate" max-date="maxDate" init-date="initDate"
             datepicker-options="dateOptions" placeholder="{{placeHolderText}}" show-button-bar="false"
-            ng-required ng-readonly="readOnly" ng-click="ctrl.openPopup($event)" />
+            ng-required ng-readonly="readOnly" ng-focus="ctrl.popupFocus($event)" />
         <span class="input-group-btn">
-            <a class="calendar-link" ng-click="ctrl.openPopup($event)" >
+            <a class="calendar-link" ng-click="ctrl.popupClick($event)" >
                 <i class="bowtie-icon bowtie-calendar" style="margin-bottom:2px;"></i>
             </a>
         </span>

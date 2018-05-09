@@ -585,9 +585,11 @@ module Sfx {
         private _startDate: Date;
         private _endDate: Date;
 
-        public get startDate() { return this._startDate; }
+        public get startDate() {
+            return new Date(this._startDate.valueOf());
+        }
         public get endDate() {
-            let endDate = this._endDate;
+            let endDate = new Date(this._endDate.valueOf());
             let timeNow = new Date();
             if (endDate > timeNow) {
                 endDate = timeNow;
@@ -704,8 +706,8 @@ module Sfx {
                     this.defaultDateWindowInDays);
             }
 
-            let bodStartDate = startDate;
-            let eodEndDate = endDate;
+            let bodStartDate = new Date(startDate.valueOf());
+            let eodEndDate = new Date(endDate.valueOf());
             bodStartDate.setHours(0, 0, 0, 0);
             eodEndDate.setHours(23, 59, 59, 999);
             if (!this._startDate || this._startDate.getTime() !== bodStartDate.getTime() ||

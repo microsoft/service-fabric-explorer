@@ -41,8 +41,6 @@ module Sfx {
 
         public constructor(eventsList: EventListBase<any>) {
             this.eventsList = eventsList;
-            this._startDate = this.eventsList.startDate;
-            this._endDate = this.eventsList.endDate;
             this.resetSelectionProperties();
         }
 
@@ -81,15 +79,17 @@ module Sfx {
         }
 
         public reset(): void {
-            this.resetSelectionProperties();
             if (this.eventsList.resetDateWindow()) {
-                this._startDate = this.eventsList.startDate;
-                this._endDate = this.eventsList.endDate;
+                this.resetSelectionProperties();
                 this.eventsList.reload();
+            } else {
+                this.resetSelectionProperties();
             }
         }
 
         private resetSelectionProperties(): void {
+            this._startDate = this.eventsList.startDate;
+            this._endDate = this.eventsList.endDate;
             this.startDateMin = this.endDateMin = null;
             this.startDateMax = this.endDateMax = new Date(); //Today
             this.startDateInit = this.endDateInit = new Date(); //Today
@@ -97,9 +97,11 @@ module Sfx {
         }
 
         private setNewDateWindow(): void {
-            this.resetSelectionProperties();
             if (this.eventsList.setDateWindow(this._startDate, this._endDate)) {
+                this.resetSelectionProperties();
                 this.eventsList.reload();
+            } else {
+                this.resetSelectionProperties();
             }
         }
     }
