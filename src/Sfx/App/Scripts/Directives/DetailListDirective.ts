@@ -72,7 +72,8 @@ module Sfx {
             }
         }
 
-        public handleClickRow(item: any): void {
+        public handleClickRow(item: any, event: any): void {
+            if (event && event.target !== event.currentTarget) { return; }
             if (this.$scope.listSettings.secondRowCollapsible && this.$scope.listSettings.showSecondRow(item)) {
                 item.isSecondRowCollapsed = !item.isSecondRowCollapsed;
             }
