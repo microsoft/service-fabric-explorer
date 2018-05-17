@@ -302,6 +302,18 @@ module Sfx {
             return this.post(this.getApiUrl(url), "Application instance creation", body, messageHandler);
         }
 
+        public startChaos(messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Tools/Chaos/$/Start";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion60),
+                "Start chaos",
+                {
+                    "TimeToRunInSeconds": "600",
+                    "MaxConcurrentFaults": 3,
+                    "WaitTimeBetweenIterationsInSeconds": 5
+                },
+                messageHandler);
+        }
+
         public activateNode(nodeName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Nodes/" + encodeURIComponent(nodeName) + "/$/Activate";
             return this.post(this.getApiUrl(url), "Node Activation", null, messageHandler);

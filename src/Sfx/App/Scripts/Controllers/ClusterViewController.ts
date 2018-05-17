@@ -69,6 +69,10 @@ module Sfx {
             return _.filter(this.$scope.nodes.collection, (node) => node.upgradeDomain === upgradeDomain && node.faultDomain === faultDomain);
         }
 
+        public startChaos(): angular.IHttpPromise<any> {
+            return this.data.restClient.startChaos();
+        }
+
         private refreshEssentials(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             let promises: angular.IPromise<any>[] = [];
 
