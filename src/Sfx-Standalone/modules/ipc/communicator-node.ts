@@ -94,7 +94,7 @@ function isMessage(msg: any): msg is IMessage {
         && (utils.isNullOrUndefined(msg.path) || String.isString(msg.path));
 }
 
-class NodeCommunicator implements ICommunicator {
+export class NodeCommunicator implements ICommunicator {
     public readonly id: string;
 
     private ongoingPromiseDict: IDictionary<IPromiseResolver>;

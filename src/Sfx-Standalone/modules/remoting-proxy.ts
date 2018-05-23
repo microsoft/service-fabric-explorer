@@ -5,10 +5,8 @@
 
 import * as uuidv4 from "uuid/v4";
 
-import * as utils from "../../utilities/utils";
-import error from "../../utilities/errorUtil";
-import { isCommunicator } from "./common";
-import { writeLog } from "../../utilities/log";
+import * as utils from "../utilities/utils";
+import error from "../utilities/errorUtil";
 
 enum ActionType {
     RequestResource = "RequestResource",
@@ -84,12 +82,6 @@ interface IApplyProxyMessage extends IProxyMessage {
     args: IArrayDataInfo;
 }
 
-interface IResourceRecord {
-    id: string;
-    data: Object | Function;
-    children: Array<string>;
-}
-
 namespace DataInfos {
     export const True: IDataInfo = {
         type: DataType.Boolean,
@@ -159,7 +151,109 @@ function flattenArrayDataInfo(arrayDataInfo: IArrayDataInfo): IArrayDataInfo {
     return flattenArray;
 }
 
-class RoamingProxy implements IProxy {
+class ReferenceRecord {
+    public readonly owner: IDictionary<ReferenceRecord>;
+
+    public readonly id: string;
+
+    public readonly target: Object | Function;
+
+    public readonly referees: IDictionary<ReferenceRecord>;
+
+    public refCount: number;
+
+    constructor(owner: IDictionary<ReferenceRecord>, target: Object | Function) {
+        this.owner = owner;
+        this.id = uuidv4();
+        this.target = target;
+        this.referees = {};
+        this.refCount = 1;
+
+        this.owner[this.id] = this;
+    }
+
+    public addReferee(refereeId: string): void {
+        const referee = this.owner[refereeId];
+
+        if (referee === undefined) {
+            return;
+        }
+
+        this.referees[referee.id] = referee;
+        referee.refCount++;
+    }
+
+    public removeReferer(): void {
+        this.refCount--;
+
+        if (this.refCount <= 0) {
+            this.release();
+        }
+    }
+
+    private release(): void {
+        delete this.owner[this.id];
+
+        Object.values(this.referees).forEach((referee) => referee.removeReferer());
+    }
+}
+
+class ReferenceManager {
+    private readonly symbol_refId = Symbol("refId");
+
+    private refMap: IDictionary<ReferenceRecord>;
+
+    constructor() {
+        this.refMap = {};
+    }
+
+    public addReferee(refererId: string, refereeId: string): void {
+        const referer = this.refMap[refererId];
+
+        if (referer === undefined) {
+            return;
+        }
+
+        referer.addReferee(refereeId);
+    }
+
+    public newOrGetReferer(target: Object | Function): string {
+        if (utils.isNullOrUndefined(target)) {
+            throw new Error("target cannot be null or undefined.");
+        }
+
+        if (target[this.symbol_refId] !== undefined) {
+            return target[this.symbol_refId];
+        }
+
+        const refId = new ReferenceRecord(this.refMap, target).id;
+
+        target[this.symbol_refId] = refId;
+        return refId;
+    }
+
+    public removeReferer(refererId: string): void {
+        const referer = this.refMap[refererId];
+
+        if (referer === undefined) {
+            return;
+        }
+
+        referer.removeReferer();
+    }
+
+    public getTarget(refId: string): Object | Function {
+        const referer = this.refMap[refId];
+
+        if (referer === undefined) {
+            return undefined;
+        }
+
+        return referer.target;
+    }
+}
+
+class RemotingProxy implements IRemotingProxy {
     private readonly _id: string;
 
     private readonly autoDisposeCommunicator: boolean;
@@ -237,13 +331,14 @@ class RoamingProxy implements IProxy {
     }
 
     constructor(
+        ipcUtilities: IIpcUtilities,
         communicator: ICommunicator,
         resolver?: Resolver,
-        path: string = "proxy",
+        path: string = "remoting",
         id?: string,
         audoDisposeCommunicator: boolean = true) {
 
-        if (!isCommunicator(communicator)) {
+        if (!ipcUtilities.isCommunicator(communicator)) {
             throw error("communicator must implement ICommunicator interface.");
         }
 
@@ -269,7 +364,6 @@ class RoamingProxy implements IProxy {
     private onMessage = (communicator, path, content) => {
         this.validateDisposal();
 
-        writeLog("message recevied on path: " + path + ".", content);
         if (!isProxyMessage(content)) {
             // Log if necessary.
             return;
@@ -343,7 +437,7 @@ class RoamingProxy implements IProxy {
         Object.markSerializable(target, false);
         Object.keys(schema).forEach(propertyName => {
             const propertyDescriptor = schema[propertyName];
-            
+
             Object.defineProperty(target, propertyName,
                 {
                     enumerable: propertyDescriptor.enumerable,
@@ -512,7 +606,7 @@ class RoamingProxy implements IProxy {
                 };
 
             case DataType.Object:
-                if (!Object.isSerializable(data, true)) {
+                if (!Object.isSerializable(data)) {
                     const objRecord = this.newResourceRecord(data);
 
                     return {
@@ -608,7 +702,7 @@ class RoamingProxy implements IProxy {
         let dataInfo: IDataInfo;
 
         if (Array.isArray(extraArgs)) {
-            if (Object.isSerializable(data, true)) {
+            if (Object.isSerializable(data)) {
                 await this.releaseReferencesAsync(requestMsg.extraArgs);
             } else {
                 dataInfo = this.toDataInfo(data, true, true);
@@ -683,7 +777,7 @@ class RoamingProxy implements IProxy {
         let resultDataInfo: IDataInfo;
 
         if (refArgs.value.length > 0) {
-            if (Object.isSerializable(result, true)) {
+            if (Object.isSerializable(result)) {
                 await this.releaseReferencesAsync(refArgs);
             } else {
                 resultDataInfo = this.toDataInfo(result, true, true);
@@ -716,4 +810,8 @@ class RoamingProxy implements IProxy {
             throw error("Proxy ({}) already disposed.", this.id);
         }
     }
+}
+
+class TestProxy implements IRemotingProxy {
+
 }

@@ -16,15 +16,6 @@ interface ICommunicator extends IDisposable {
     sendAsync<TRequest, TResponse>(path: string, content: TRequest): Promise<TResponse>;
 }
 
-interface Resolver {
-    (name: string, ...extraArgs: Array<any>): any | Promise<any>;
-}
-
-interface IProxy extends IDisposable {
-    readonly id: string;
-
-    requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: Array<any>): Promise<T>;
-
-    setResolver(resolver: Resolver): void;
-    getResolver(): Resolver;
+interface IIpcUtilities {
+    isCommunicator(communicator: any): communicator is ICommunicator;
 }

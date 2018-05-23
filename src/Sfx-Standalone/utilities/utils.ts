@@ -30,7 +30,7 @@ declare global {
          * @return {boolean} True if the value is serializable for sure. Otherwise, false, 
          * which indicates the value cannot be serialized or cannot be determined whether it can be serialized or not.
          */
-        isSerializable(value: any, checkDeep?: boolean): boolean;
+        isSerializable(value: any): boolean;
         markSerializable(value: any, serializable?: boolean): any;
     }
 
@@ -81,31 +81,22 @@ Object.markSerializable = (value: any, serializable: boolean = true) => {
     return value;
 };
 
-Object.isSerializable = (value: any, deepCheck: boolean = false) => {
+Object.isSerializable = (value: any) => {
     const valueType = typeof value;
 
     switch (valueType) {
         case "object":
-            return value === null
-                || value[Symbols.Serializable] === true
-                || Function.isFunction(value["toJSON"])
+            if (value === null) {
+                return true;
+            }
+
+            if (Object.prototype.hasOwnProperty.call(value, Symbols.Serializable)){
+                return value[Symbols.Serializable] === true;
+            }
+
+            return Function.isFunction(value["toJSON"])
                 || (Object.getPrototypeOf(value) === Object.prototype
-                    && Object.values(value).every((propertyValue) => {
-                        switch (typeof propertyValue) {
-                            case "object":
-                                return deepCheck && Object.isSerializable(propertyValue);
-
-                            case "number":
-                            case "boolean":
-                            case "string":
-                                return true;
-
-                            case "function":
-                            case "symbol":
-                            default:
-                                return false;
-                        }
-                    }));
+                    && Object.values(value).every((propertyValue) => Object.isSerializable(propertyValue)));
 
         case "undefined":
         case "number":
