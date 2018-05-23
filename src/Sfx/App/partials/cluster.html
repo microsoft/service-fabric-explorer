@@ -65,11 +65,7 @@
                             </div>
                         </a>
                     </div>
-                </div>
-                <div class="dashboard-container-small">
-                    <button  ng-click="clusterCtrl.startChaos()"
-                    style="width: 250px; height: 100px; background-color: red;                    border: none;                    font-size: 30px;                    font-weight: bold;" >START CHAOS</button>
-                </div>
+                </div>                
             </div>
         </div>
 
@@ -144,6 +140,12 @@
                 <span id="clusterManifestName">{{clusterManifest.clusterManifestName}}</span>
             </h4>
             <pre role="presentation" tabindex="0"><code aria-label="manifest of {{clusterManifest.clusterManifestName}}">{{clusterManifest.raw.Manifest}}</code></pre>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="tab_chaos">
+        <div class="detail-pane">
+            <div sfx-chaos-view></div>
         </div>
     </script>
 </div>

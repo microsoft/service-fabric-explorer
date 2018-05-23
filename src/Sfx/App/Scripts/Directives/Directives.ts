@@ -284,6 +284,17 @@ module Sfx {
             };
         });
 
+        module.directive("sfxChaosView", (): angular.IDirective => {
+            return {
+                restrict: "AE",
+                replace: true,
+                scope: {
+                    metrics: "="
+                },
+                templateUrl: "partials/chaos-view.html"
+            };
+        });
+
         module.directive("sfxTextFileInput", () => new TextFileInputDirective());
     })();
 }
