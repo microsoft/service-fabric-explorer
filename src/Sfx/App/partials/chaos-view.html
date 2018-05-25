@@ -1,6 +1,15 @@
-﻿<div class="metrics-view">
-    <div class="dashboard-container-small">
-        <button ng-click="clusterCtrl.startChaos()" style="width: 250px; height: 100px; background-color: red;                    border: none;                    font-size: 30px;                    font-weight: bold;">START CHAOS</button>
+﻿<div>
+    <h4>Service Fabric Chaos</h4>
+    <div>
+        <p>Please follow this link to learn more about Service Fabric Chaos before starting one:
+            <a target="_blank" href="https://docs.microsoft.com/azure/service-fabric/service-fabric-controlled-chaos">https://docs.microsoft.com/azure/service-fabric/service-fabric-controlled-chaos</a>
+        </p>       
+    </div>
+    <div class="dashboard-container-small" style="text-align: center;">
+        <button ng-click="clusterCtrl.startChaos()" style="width: 250px; height: 100px; background-color: green; border: none;font-size: 30px;font-weight: bold;">START CHAOS</button>
+    </div>
+    <div>
+        <p>Click Stop Chaos to immediately end your Chaos experiment.</p>
     </div>
     <div>
         result goes here
