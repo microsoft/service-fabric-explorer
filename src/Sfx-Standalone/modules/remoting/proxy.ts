@@ -5,8 +5,10 @@
 
 import * as uuidv4 from "uuid/v4";
 
-import * as utils from "../utilities/utils";
-import error from "../utilities/errorUtil";
+import * as utils from "../../utilities/utils";
+import error from "../../utilities/errorUtil";
+
+import { ReferenceNode } from "./reference-node";
 
 enum ActionType {
     RequestResource = "RequestResource",
@@ -17,49 +19,18 @@ enum ActionType {
     Apply = "Apply"
 }
 
-export enum DataType {
-    Undefined = "undefined",
-    Null = "null",
-    Object = "object",
-    Boolean = "boolean",
-    Number = "number",
-    String = "string",
-    Symbol = "symbol",
-    Function = "function",
-    Array = "array"
-}
-
-interface IPropertyInfo {
-    writable: boolean;
-    configurable: boolean;
-    enumerable: boolean;
-    dataInfo: IDataInfo;
-}
-
-interface ISchema extends IDictionary<IPropertyInfo> {
-}
-
-interface IDataInfo {
-    type: DataType,
-
-    // For DataType.Function and DataType.Object,
-    // this value property contains the id of the remote object.
-    value: any,
-    schema?: ISchema;
-}
-
-interface IArrayDataInfo extends IDataInfo {
-    type: DataType.Array;
-    value: Array<IDataInfo>;
-}
-
 interface IProxyMessage {
     action: ActionType;
+}
+
+interface IReleaseResourceProxyMessage extends IProxyMessage {
+    action: ActionType.ReleaseResource;
     resourceId: string;
 }
 
 interface IRequestResourceProxyMessage extends IProxyMessage {
     action: ActionType.RequestResource;
+    resourceId: string;
     extraArgs?: IArrayDataInfo;
 }
 
@@ -82,27 +53,7 @@ interface IApplyProxyMessage extends IProxyMessage {
     args: IArrayDataInfo;
 }
 
-namespace DataInfos {
-    export const True: IDataInfo = {
-        type: DataType.Boolean,
-        value: true
-    };
 
-    export const False: IDataInfo = {
-        type: DataType.Boolean,
-        value: false
-    };
-
-    export const Null: IDataInfo = {
-        type: DataType.Null,
-        value: null
-    };
-
-    export const Undefined: IDataInfo = {
-        type: DataType.Undefined,
-        value: undefined
-    };
-}
 
 function dataTypeOf(data: any, treatArrayAsObject: boolean = false): DataType {
     const sysType = typeof data;
@@ -151,108 +102,6 @@ function flattenArrayDataInfo(arrayDataInfo: IArrayDataInfo): IArrayDataInfo {
     return flattenArray;
 }
 
-class ReferenceRecord {
-    public readonly owner: IDictionary<ReferenceRecord>;
-
-    public readonly id: string;
-
-    public readonly target: Object | Function;
-
-    public readonly referees: IDictionary<ReferenceRecord>;
-
-    public refCount: number;
-
-    constructor(owner: IDictionary<ReferenceRecord>, target: Object | Function) {
-        this.owner = owner;
-        this.id = uuidv4();
-        this.target = target;
-        this.referees = {};
-        this.refCount = 1;
-
-        this.owner[this.id] = this;
-    }
-
-    public addReferee(refereeId: string): void {
-        const referee = this.owner[refereeId];
-
-        if (referee === undefined) {
-            return;
-        }
-
-        this.referees[referee.id] = referee;
-        referee.refCount++;
-    }
-
-    public removeReferer(): void {
-        this.refCount--;
-
-        if (this.refCount <= 0) {
-            this.release();
-        }
-    }
-
-    private release(): void {
-        delete this.owner[this.id];
-
-        Object.values(this.referees).forEach((referee) => referee.removeReferer());
-    }
-}
-
-class ReferenceManager {
-    private readonly symbol_refId = Symbol("refId");
-
-    private refMap: IDictionary<ReferenceRecord>;
-
-    constructor() {
-        this.refMap = {};
-    }
-
-    public addReferee(refererId: string, refereeId: string): void {
-        const referer = this.refMap[refererId];
-
-        if (referer === undefined) {
-            return;
-        }
-
-        referer.addReferee(refereeId);
-    }
-
-    public newOrGetReferer(target: Object | Function): string {
-        if (utils.isNullOrUndefined(target)) {
-            throw new Error("target cannot be null or undefined.");
-        }
-
-        if (target[this.symbol_refId] !== undefined) {
-            return target[this.symbol_refId];
-        }
-
-        const refId = new ReferenceRecord(this.refMap, target).id;
-
-        target[this.symbol_refId] = refId;
-        return refId;
-    }
-
-    public removeReferer(refererId: string): void {
-        const referer = this.refMap[refererId];
-
-        if (referer === undefined) {
-            return;
-        }
-
-        referer.removeReferer();
-    }
-
-    public getTarget(refId: string): Object | Function {
-        const referer = this.refMap[refId];
-
-        if (referer === undefined) {
-            return undefined;
-        }
-
-        return referer.target;
-    }
-}
-
 class RemotingProxy implements IRemotingProxy {
     private readonly _id: string;
 
@@ -262,7 +111,7 @@ class RemotingProxy implements IRemotingProxy {
 
     private readonly symbol_resourceId: symbol;
 
-    private resourceMap: IDictionary<IResourceRecord>;
+    private referenceRoot: ReferenceNode;
 
     private resolver: Resolver;
 
@@ -325,7 +174,6 @@ class RemotingProxy implements IRemotingProxy {
             }
         }
 
-        this.resourceMap = undefined;
         this.communicator = undefined;
         this.resolver = undefined;
     }
@@ -348,7 +196,7 @@ class RemotingProxy implements IRemotingProxy {
 
         this.symbol_resourceId = Symbol("ResourceId");
         this._id = String.isNullUndefinedOrWhitespace(id) ? uuidv4() : id;
-        this.resourceMap = {};
+        this.referenceRoot = ReferenceRecord.createRoot();
         this.path = path;
         this.communicator = communicator;
         this.autoDisposeCommunicator = audoDisposeCommunicator;
@@ -813,5 +661,89 @@ class RemotingProxy implements IRemotingProxy {
 }
 
 class TestProxy implements IRemotingProxy {
+    public readonly id: string;
 
+    private resolver: Resolver;
+
+    private messageHandlers: IDictionary<RequestHandler>;
+
+    private referenceRoot: ReferenceNode;
+
+    constructor() {
+        this.messageHandlers = {};
+        this.referenceRoot = ReferenceNode.createRoot();
+    }
+
+    public requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: any[]): Promise<T> {
+        this.validateDisposal();
+        
+        
+    }
+
+    public setResolver(resolver: Resolver): void {
+        this.validateDisposal();
+
+        if (resolver && !Function.isFunction(resolver)) {
+            throw error("resolver must be a function.");
+        }
+
+        this.resolver = resolver;
+    }
+
+    public getResolver(): Resolver {
+        this.validateDisposal();
+        return this.resolver;
+    }
+
+    public get disposed(): boolean {
+        return !this.messageHandlers || !this.referenceRoot;
+    }
+
+    public dispose(): void | Promise<void> {
+        this.referenceRoot = undefined;
+        this.messageHandlers = undefined;
+    }
+
+    private resolve(name: string, ...extraArgs: Array<any>): any | Promise<any> {
+        if (this.resolver) {
+            return this.resolver(name, ...extraArgs);
+        }
+
+        return undefined;
+    }
+
+    private validateDisposal(): void {
+        if (this.disposed) {
+            throw error("Proxy ({}) already disposed.", this.id);
+        }
+    }
+
+    private initializeMessageHandlers() {
+        this.messageHandlers[ActionType.RequestResource] = this.onRequestResource;
+        this.messageHandlers[ActionType.ReleaseResource] = this.onReleaseResource;
+    }
+
+    private onMessage = (communicator, path, proxyMsg: IProxyMessage) => {
+        if (!isProxyMessage(proxyMsg)) {
+            // Log Error.
+            return;
+        }
+
+        const requestHandler = this.messageHandlers[proxyMsg.action];
+
+        if (!requestHandler) {
+            // Log Error.
+            return;
+        }
+
+        return requestHandler(communicator, path, proxyMsg);
+    }
+
+    private onRequestResource = (communicator, path, msg: IRequestResourceProxyMessage) => {
+        
+    }
+
+    private onReleaseResource = (communicator, path, msg: IReleaseResourceProxyMessage) => {
+
+    }
 }

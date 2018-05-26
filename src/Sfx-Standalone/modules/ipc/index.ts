@@ -8,7 +8,7 @@ import { Socket } from "net";
 
 import { ILog } from "../../@types/log";
 import * as utilities from "./utilities";
-import { NodeCommunicator } from "./communicator-node";
+import { NodeCommunicator } from "./communicator.node";
 
 export function getModuleMetadata(): IModuleInfo {
     return {

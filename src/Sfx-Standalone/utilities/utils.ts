@@ -23,6 +23,15 @@ declare global {
 
     interface Function {
         isObject(value: any): value is object | Object;
+
+        /**
+         * Check if an object is empty or not. It also checks if the prototype chains are empty (pure empty).
+         * @param {object | Object} value The target object to be checked. Error will be thrown if the value is null or undefined.
+         * @returns {boolean} True if the object is empty include the prototype chains are also empty. 
+         * Otherwise, false.
+         */
+        isEmpty(value: object | Object): boolean;
+
         /**
          * Check if the value is serializable. 
          * @param {any} value The value to be checked.
@@ -31,6 +40,7 @@ declare global {
          * which indicates the value cannot be serialized or cannot be determined whether it can be serialized or not.
          */
         isSerializable(value: any): boolean;
+
         markSerializable(value: any, serializable?: boolean): any;
     }
 
@@ -63,6 +73,18 @@ Object.isObject = (value: any): value is object | Object => {
     return value !== null && typeof value === "object";
 };
 
+Object.isEmpty = (value: Object | object) => {
+    if (isNullOrUndefined(value)) {
+        throw error("value cannot be null/undefined.");
+    }
+
+    for (let key in value) {
+        return false;
+    }
+
+    return true;
+}
+
 Object.markSerializable = (value: any, serializable: boolean = true) => {
     if (!isNullOrUndefined(value)) {
         if (Function.isFunction(value)) {
@@ -90,7 +112,7 @@ Object.isSerializable = (value: any) => {
                 return true;
             }
 
-            if (Object.prototype.hasOwnProperty.call(value, Symbols.Serializable)){
+            if (Object.prototype.hasOwnProperty.call(value, Symbols.Serializable)) {
                 return value[Symbols.Serializable] === true;
             }
 
