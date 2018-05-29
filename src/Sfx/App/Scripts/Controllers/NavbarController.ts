@@ -18,14 +18,6 @@ module Sfx {
             this.refreshSvc.refreshAll();
         }
 
-        public openPrivacyLink(): void {
-            this.$window.open("http://go.microsoft.com/fwlink/?LinkId=512132", "_blank");
-        }
-
-        public openSuggestionLink(): void {
-            this.$window.open("http://aka.ms/servicefabricfeedback", "_blank");
-        }
-
         public navigateToCluster(): void {
             this.routes.navigate(() => this.routes.getClusterViewPath());
         }

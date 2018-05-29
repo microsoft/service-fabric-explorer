@@ -61,7 +61,7 @@ $modal-short-dt-width: 100px;
 
                 .btn {
                     margin-top: -1px;
-                    padding: 1px 12px 2px;
+                    padding: 2px 12px 3px;
                     font-weight: $font-weight-normal;
 
                     &[uib-btn-radio] {
@@ -71,6 +71,11 @@ $modal-short-dt-width: 100px;
                             color: white;
                         }
                     }
+                }
+
+                .btn.active {
+                    padding-bottom: 1px;
+                    border-bottom-width: 3px;
                 }
                 
                 .table-responsive {

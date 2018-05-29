@@ -5,7 +5,7 @@
     <div class="modal-body">
         <p>Supply the full application name to create an application instance of {{::action.typeName}}@{{::action.typeVersion}}:</p>
         <input class="input-flat" type="text" placeholder="Application name must start with fabric:/"
-               autocomplete="off" ng-model="action.newInstanceUri" required ng-pattern="/^fabric:\/.+/">
+               autocomplete="off" ng-model="action.newInstanceUri" required ng-pattern="/^fabric:\/.+/" aria-label="Full application name">
     </div>
     <div class="modal-footer">
         <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-disabled="createApplicationForm.$invalid" ng-click="ok()">{{::action.title}}</button>
