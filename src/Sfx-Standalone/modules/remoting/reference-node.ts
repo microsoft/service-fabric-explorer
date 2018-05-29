@@ -9,48 +9,82 @@ import error from "../../utilities/errorUtil";
 import * as utils from "../../utilities/utils";
 
 export class ReferenceNode {
-    private static symbol_refId: symbol = Symbol("refId");
+    private readonly symbol_refId: symbol;
 
-    public readonly root: ReferenceNode;
+    private readonly _root: ReferenceNode;
 
-    public readonly id: string;
+    private readonly _id: string;
 
-    public readonly target: Object | Function;
+    private _target: Object | Function;
 
-    public referees: IDictionary<ReferenceNode>;
+    private referees: IDictionary<ReferenceNode>;
 
-    public referers: IDictionary<ReferenceNode>;
+    private referers: IDictionary<ReferenceNode>;
+
+    public get root(): ReferenceNode {
+        return this._root;
+    }
+
+    public get id(): string {
+        return this._id;
+    }
+
+    public get target(): Object | Function {
+        return this._target;
+    }
 
     public static createRoot(): ReferenceNode {
         return new ReferenceNode(undefined, undefined);
     }
 
-    private constructor(root: ReferenceNode, target: Object | Function) {
+    private constructor(root: ReferenceNode, target: Object | Function, refId?: string) {
         if (utils.isNullOrUndefined(root) !== utils.isNullOrUndefined(target)) {
             throw error("root and target must be provided togehter or none are provided.");
         }
 
-        this.root = root;
-        this.id = uuidv4();
-        this.target = target;
+        refId = refId || uuidv4();
+
+        this._root = root;
+        this._id = refId;
+        this._target = target;
         this.referees = {};
-        this.target[ReferenceNode.symbol_refId] = this.id;
 
         if (!utils.isNullOrUndefined(root)) {
+            this.symbol_refId = this._root.symbol_refId;
             this.referers = {};
-            this.root.internallyAddReferee(this);
+
+            this._root.internallyAddReferee(this);
+            this.target[this.symbol_refId] = this._id;
         } else {
             // When this is a root node.
-            this.referees[this.id] = this;
+            this.symbol_refId = Symbol("refId");
+            this.referers = undefined;
+            this.referees[this._id] = this;
         }
     }
 
-    public addReferee(refereeId: string): void {
-        if (String.isNullUndefinedOrWhitespace(refereeId)) {
-            throw error("refereeId cannot be null/undefined/empty/whitespaces.");
+    public getRefereeIds(): Array<string> {
+        return Object.values(this.referees).map((ref) => ref.id);
+    }
+
+    public addReferee(target: Object | Function, newRefId?: string): ReferenceNode {
+        if (!Object.isObject(target) && !Function.isFunction(target)) {
+            throw error("target cannot be null/undefined or types other than Object or Function.");
         }
 
-        const referee = this.root.referees[refereeId];
+        if (!utils.isNullOrUndefined(newRefId)
+            && (newRefId === "" || !String.isString(newRefId))) {
+            throw error("newRefId must be non-empty string.");
+        }
+
+        const referee = this.create(target, newRefId);
+
+        this.addRefereeById(referee.id);
+        return referee;
+    }
+
+    public addRefereeById(refereeId: string): void {
+        const referee = this._root.referees[refereeId];
 
         if (!referee) {
             throw error("unknown refereeId '{}'.", refereeId);
@@ -60,8 +94,8 @@ export class ReferenceNode {
         this.internallyAddReferee(referee);
     }
 
-    public removeReferee(refereeId: string): void {
-        const referee = this.root.referees[refereeId];
+    public removeRefereeById(refereeId: string): void {
+        const referee = this._root.referees[refereeId];
 
         if (!referee) {
             return;
@@ -71,12 +105,24 @@ export class ReferenceNode {
         this.internallyRemoveReferee(referee);
     }
 
-    public addReferer(refererId: string): void {
-        if (String.isNullUndefinedOrWhitespace(refererId)) {
-            throw error("refererId cannot be null/undefined/empty/whitespaces.");
+    public addReferer(target: Object | Function, newRefId?: string): ReferenceNode {
+        if (!Object.isObject(target) && !Function.isFunction(target)) {
+            throw error("target cannot be null/undefined or types other than Object or Function.");
         }
 
-        const referer = this.root.referees[refererId];
+        if (!utils.isNullOrUndefined(newRefId)
+            && (newRefId === "" || !String.isString(newRefId))) {
+            throw error("newRefId must be non-empty string.");
+        }
+
+        const referer = this.create(target, newRefId);
+
+        this.addRefererById(referer.id);
+        return referer;
+    }
+
+    public addRefererById(refererId: string): void {
+        const referer = this._root.referees[refererId];
 
         if (!referer) {
             throw error("unknown refererId '{}'.", refererId);
@@ -86,8 +132,8 @@ export class ReferenceNode {
         this.internallyAddReferer(referer);
     }
 
-    public removeReferer(refererId?: string): void {
-        const referer = this.root.referees[refererId || this.root.id];
+    public removeRefererById(refererId: string): void {
+        const referer = this._root.referees[refererId];
 
         if (!referer) {
             return;
@@ -97,30 +143,61 @@ export class ReferenceNode {
         this.internallyRemoveReferer(referer);
     }
 
-    public refer(refereeId: string, refererId?: string): Object | Function {
-        const referee = this.root.referees[refereeId];
+    public referById(refereeId: string, refererId?: string): ReferenceNode {
+        const referee = this._root.referees[refereeId];
 
         if (!referee) {
-            throw error("refereeId '{}' doesn't exist.", refereeId);
+            return undefined;
         }
 
-        referee.addReferer(refererId || this.root.id);
+        if (refererId) {
+            referee.addRefererById(refererId);
+        }
 
-        return referee.target;
+        return referee;
     }
 
-    public generate(target: Object | Function): ReferenceNode {
-        if (utils.isNullOrUndefined(target)) {
-            throw error("target must be provided.");
+    public refer(target: Object | Function, refererId?: string): ReferenceNode {
+        if (!Object.isObject(target) && !Function.isFunction(target)) {
+            throw error("target cannot be null/undefined or types other than Object or Function.");
         }
 
-        const refId = target[ReferenceNode.symbol_refId];
+        const existingRefId = this.getRefId(target);
+        let referee: ReferenceNode;
+
+        if (existingRefId) {
+            referee = this._root.referees[existingRefId];
+
+            if (!referee) {
+                throw error("The target already been referenced but refId: {} is unknown.", existingRefId);
+            }
+        } else {
+            referee = this.create(target);
+        }
+
+        if (refererId) {
+            referee.addRefererById(refererId);
+        }
+
+        return referee;
+    }
+
+    public getRefId(target: Object | Function): string {
+        if (!Object.isObject(target) && !Function.isFunction(target)) {
+            return undefined;
+        }
+
+        return target[this.symbol_refId];
+    }
+
+    private create(target: Object | Function, newRefId?: string): ReferenceNode {
+        const refId = target[this.symbol_refId];
 
         if (refId) {
-            return this.root.referees[refId];
+            throw error("target has already been referenced. refId={}", refId);
         }
 
-        return new ReferenceNode(this.root, target);
+        return new ReferenceNode(this._root, target, newRefId);
     }
 
     private isOrphan(): boolean {
@@ -148,9 +225,14 @@ export class ReferenceNode {
     }
 
     private release(): void {
-        Object.values(this.referees).forEach(referee => referee.removeReferer(this.id));
+        Object.values(this.referees).forEach(referee => referee.removeRefererById(this._id));
 
-        delete this.root.referees[this.id];
+        if (this._target) {
+            delete this._target[this.symbol_refId];
+            this._target = undefined;
+        }
+
+        delete this._root.referees[this._id];
 
         this.referees = undefined;
         this.referers = undefined;

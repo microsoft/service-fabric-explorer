@@ -1,0 +1,266 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+//-----------------------------------------------------------------------------
+
+import error from "../../utilities/errorUtil";
+
+import { IDataInfo, DataType, dataTypeOf } from "./data-info";
+import { ReferenceNode } from "./reference-node";
+import { IDelegation } from "./delegate";
+
+interface IObjectDataInfo extends IDataInfo {
+    memberInfos: IDictionary<IDataInfo>;
+}
+
+export class DataInfoManager implements IDisposable {
+    private refRoot: ReferenceNode;
+
+    private delegation: IDelegation;
+
+    constructor(delegation: IDelegation) {
+        if (!Object.isObject(delegation) || delegation === null) {
+            throw error("delegate must be supplied.");
+        }
+
+        this.delegation = delegation;
+        this.refRoot = ReferenceNode.createRoot();
+    }
+
+    public get disposed(): boolean {
+        return this.refRoot === undefined || this.delegation === undefined;
+    }
+
+    public get(refId: string): Object | Function {
+        this.validateDisposal();
+        
+        const referee = this.refRoot.referById(refId);
+
+        if (!referee) {
+            return undefined;
+        }
+
+        return referee.target;
+    }
+
+    public async dispose(): Promise<void> {
+        if (!this.disposed) {
+            const disposingRefRoot = this.refRoot;
+
+            this.refRoot = undefined;
+
+            const promises = disposingRefRoot.getRefereeIds().map((refId) => this.releaseByIdAsync(refId));
+            await Promise.all(promises);
+
+            this.delegation = undefined;
+        }
+    }
+
+    public AddReferenceById(refereeId: string, parentId?: string): void {
+        this.validateDisposal();
+
+        const referee = this.refRoot.referById(refereeId);
+
+        if (!referee) {
+            throw error("refereeId ({}) doesn't exist.", refereeId);
+        }
+
+        parentId = parentId || this.refRoot.id;
+        referee.addRefererById(parentId);
+    }
+
+    public ReferAsDataInfo(target: any, parentId?: string): IDataInfo {
+        this.validateDisposal();
+
+        return this.toDataInfo(target, parentId);
+    }
+
+    public realizeDataInfo(dataInfo: IDataInfo, parentId?: string): any {
+        this.validateDisposal();
+
+        if (dataInfo.id) {
+            parentId = parentId || this.refRoot.id;
+
+            const existingRef = this.refRoot.referById(dataInfo.id, parentId);
+
+            if (existingRef) {
+                return existingRef.target;
+            }
+
+            if (dataInfo.type === DataType.Object) {
+                return this.realizeObjectDataInfo(<IObjectDataInfo>dataInfo, parentId);
+            } else if (dataInfo.type === DataType.Function) {
+                return this.realizeFunctionDataInfo(dataInfo, parentId);
+            } else {
+                // Log Error [BUG].
+            }
+        }
+
+        return dataInfo.value;
+    }
+
+    public async releaseByIdAsync(refId: string, parentId?: string, locally?: boolean): Promise<void> {
+        this.validateDisposal();
+
+        const referee = this.refRoot.referById(refId);
+
+        if (referee) {
+            if (locally !== true) {
+                await this.delegation.dispose(refId, parentId);
+            }
+
+            parentId = parentId || this.refRoot.id;
+            referee.removeRefererById(parentId);
+        }
+    }
+
+    private validateDisposal(): void {
+        if (this.disposed) {
+            throw error("DataInfoManager already disposed.");
+        }
+    }
+
+    private toDataInfo(target: any, parentId?: string, recursive?: boolean): IDataInfo {
+        const dataInfo: IDataInfo = {
+            type: dataTypeOf(target)
+        };
+        const existingRefId = this.refRoot.getRefId(target);
+
+        parentId = parentId || this.refRoot.id;
+        recursive = !(recursive === false);
+
+        if (existingRefId) {
+            dataInfo.id = existingRefId;
+            this.refRoot.referById(existingRefId, parentId);
+        } else if (Object.isSerializable(target)) {
+            dataInfo.value = target;
+        } else if (recursive && dataInfo.type === DataType.Object) {
+            return this.toObjectDataInfo(target, parentId);
+        } else {
+            const ref = this.refRoot.refer(target, parentId);
+
+            dataInfo.id = ref.id;
+        }
+
+        return dataInfo;
+    }
+
+    private toObjectDataInfo(target: Object, parentId?: string): IDataInfo {
+        const currentObjDataInfo: IObjectDataInfo = {
+            type: DataType.Object,
+            id: this.refRoot.refer(target, parentId).id,
+            memberInfos: {}
+        }
+        const memberInfos: IDictionary<IDataInfo> = currentObjDataInfo.memberInfos;
+
+        let currentObj = Object.getPrototypeOf(target);
+
+        while (currentObj && currentObj !== Object.prototype) {
+            for (const propertyName of Object.getOwnPropertyNames(currentObj)) {
+                if (!Object.prototype.hasOwnProperty.call(memberInfos, propertyName)
+                    && !Object.prototype.hasOwnProperty.call(target, propertyName)
+                    && dataTypeOf(currentObj[propertyName]) === DataType.Function) {
+                    memberInfos[propertyName] = this.toDataInfo(currentObj[propertyName], currentObjDataInfo.id, false);
+                }
+            }
+
+            currentObj = Object.getPrototypeOf(currentObj);
+        }
+
+        return currentObjDataInfo;
+    }
+
+    private generateDisposeFunc(refId: string, parentId?: string, superDisposeFunc?: () => Promise<void>): () => Promise<void> {
+        return async () => {
+            if (superDisposeFunc) {
+                await superDisposeFunc();
+            }
+
+            await this.releaseByIdAsync(refId, parentId, false);
+        };
+    }
+
+    private realizeFunctionDataInfo(dataInfo: IDataInfo, parentId?: string): any {
+        const base = () => undefined;
+
+        base["dispose"] = this.generateDisposeFunc(dataInfo.id, parentId);
+
+        const handlers: ProxyHandler<Function> = {
+            apply: async (target, thisArg, args): Promise<any> => {
+                const refId = this.refRoot.getRefId(target);
+                const thisArgDataInfo = this.toDataInfo(thisArg, refId);
+                const argsDataInfos = new Array<IDataInfo>();
+
+                for (const arg of args) {
+                    argsDataInfos.push(this.toDataInfo(arg, refId));
+                }
+
+                const resultDataInfo = await this.delegation.apply(refId, thisArgDataInfo, argsDataInfos);
+
+                return this.realizeDataInfo(resultDataInfo, refId);
+            }
+        };
+
+        const funcProxy = new Proxy(base, handlers);
+        const parentRef = this.refRoot.referById(parentId);
+
+        parentRef.addReferee(funcProxy, dataInfo.id);
+
+        return funcProxy;
+    }
+
+    private realizeObjectDataInfo(dataInfo: IObjectDataInfo, parentId?: string): any {
+        const base = {};
+
+        if (dataInfo.memberInfos) {
+            for (const propertyName of Object.getOwnPropertyNames(dataInfo.memberInfos)) {
+                base[propertyName] = this.realizeDataInfo(dataInfo.memberInfos[propertyName], dataInfo.id);
+            }
+        }
+
+        base["dispose"] = this.generateDisposeFunc(dataInfo.id, parentId, base["dispose"]);
+
+        const handlers: ProxyHandler<Function> = {
+            get: async (target, property, receiver): Promise<any> => {
+                const baseValue = target[property];
+
+                if (baseValue || typeof property === "symbol") {
+                    return baseValue;
+                }
+
+                const refId = this.refRoot.getRefId(target);
+
+                const resultDataInfo = await this.delegation.getProperty(refId, property);
+
+                return this.realizeDataInfo(resultDataInfo, refId);
+            },
+
+            set: (target, property, value, receiver) => {
+                if (typeof property === "symbol") {
+                    target[property] = value;
+                    return true;
+                }
+
+                if (property in target) {
+                    return false;
+                }
+
+                const refId = this.refRoot.getRefId(target);
+                const valueDataInfo = this.toDataInfo(value, refId);
+
+                this.delegation.setProperty(refId, property, valueDataInfo);
+            },
+
+            has: (target, prop): boolean => {
+                return true;
+            }
+        };
+
+        const objProxy = new Proxy(base, handlers);
+        const parentRef = this.refRoot.referById(parentId);
+
+        parentRef.addReferee(objProxy, dataInfo.id);
+
+        return objProxy;
+    }
+}

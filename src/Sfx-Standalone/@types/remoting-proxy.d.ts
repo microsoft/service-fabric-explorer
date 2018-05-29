@@ -10,7 +10,7 @@ interface Resolver {
 interface IRemotingProxy extends IDisposable {
     readonly id: string;
 
-    requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: Array<any>): Promise<T>;
+    requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: Array<any>): T | Promise<T>;
 
     setResolver(resolver: Resolver): void;
     getResolver(): Resolver;
