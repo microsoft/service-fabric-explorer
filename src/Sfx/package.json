@@ -13,7 +13,6 @@
     "@types/d3": "3.5.36",
     "@types/jquery": "2.0.41",
     "@types/lodash": "4.14.30",
-    "browserify": "^16.2.2",
     "del": "2.2.2",
     "gulp": "3.9.1",
     "gulp-angular-templatecache": "2.0.0",
@@ -34,14 +33,11 @@
     "run-sequence": "1.2.2",
     "tslint": "4.5.1",
     "typescript": "2.2.1",
-    "vinyl-buffer": "^1.0.1",
-    "vinyl-source-stream": "^2.0.0",
-    "wiredep": "4.0.0",
     "yargs": "7.0.1"
   },
   "dependencies": {
+    "adal-angular": "1.0.9",
     "angular": "1.5.0",
-    "adal-angular": "1.0.9",    
     "angular-animate": "1.5.0",
     "angular-aria": "1.5.0",
     "angular-route": "1.5.0",
