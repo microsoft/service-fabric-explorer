@@ -7,6 +7,16 @@ var plugins = require("gulp-load-plugins")({
     camelize: true,
     lazy: true
 });
+var packageConfiguration = require("./package.json");
+var browserify = require("browserify");
+var source = require('vinyl-source-stream');
+var buffer = require('vinyl-buffer');
+var wiredep = require("wiredep")({
+    directory: "./node_modules",
+    bowerJson: require("./build.json")
+});
+
+// console.log(wiredep);
 
 // To get production bits, right click project, choose publish.
 // This env variable will be set through prepublish command defined in project.json
@@ -122,23 +132,33 @@ gulp.task("build:versionInfo", function () {
 
 gulp.task("build:lib-js", function () {
     console.log("Bower ordered javascripts:");
-    console.log(plugins.wiredep().js);
+    console.log(Object.keys(packageConfiguration.dependencies));
 
-    // Create lib.min.js
-    return gulp.src(plugins.wiredep().js, { base: "bower_components" })
-        .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
-        .pipe(plugins.concat(paths.libs_scripts.target))
+    return browserify({ entries:["./entry.js"]})
+        //.require(Object.keys(packageConfiguration.dependencies))
+        .bundle()        
+        .pipe(source(paths.libs_scripts.target))
+        .pipe(buffer())
+        .pipe(plugins.sourcemaps.init())        
         .pipe(plugins.if(isProductionEnv, plugins.uglify({ preserveComments: "license" })))
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.write(".", { includeContent: true })))
         .pipe(gulp.dest(paths.libs_scripts.dest));
+
+    // Create lib.min.js
+    // return gulp.src(wiredep.js, { base: "node_modules" })
+    //     .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
+    //     .pipe(plugins.concat(paths.libs_scripts.target))
+    //     .pipe(plugins.if(isProductionEnv, plugins.uglify({ preserveComments: "license" })))
+    //     .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.write(".", { includeContent: true })))
+    //     .pipe(gulp.dest(paths.libs_scripts.dest));
 });
 
 gulp.task("build:lib-css", function () {
     console.log("Bower styles:");
-    console.log(plugins.wiredep().css);
+    console.log(wiredep.css);
 
     // Create lib.min.css
-    return gulp.src(plugins.wiredep().css)
+    return gulp.src(wiredep.css)
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(plugins.concat(paths.libs_styles.target))
         .pipe(plugins.cleanCss())
