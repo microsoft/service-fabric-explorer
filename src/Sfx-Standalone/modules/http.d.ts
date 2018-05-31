@@ -47,7 +47,7 @@ export interface IHttpClient {
     request(requestOptions: IRequestOptions, data: any, callback?: ResponseHandler): void;
 }
 
-declare global {
+declare module 'sfx' {
     interface IModuleManager {
         getComponent(componentIdentity: "http-client"): IHttpClient;
         getComponent(componentIdentity: "https-client"): IHttpClient;

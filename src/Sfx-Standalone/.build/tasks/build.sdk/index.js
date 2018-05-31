@@ -11,7 +11,6 @@ const config = require("../../config");
 const gulp = require("gulp");
 const path = require("path");
 const fs = require("fs");
-const sfx = require("sfx");
 
 const buildInfos = config.buildInfos;
 const utils = common.utils;

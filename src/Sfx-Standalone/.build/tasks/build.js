@@ -47,7 +47,7 @@ function getTypescriptsGlobs() {
 }
 
 require("./clean");
-require("./build.sdk/build");
+require("./build.sdk");
 
 gulp.task("build:tslint",
     () => gulp.src(getTypescriptsGlobs())
