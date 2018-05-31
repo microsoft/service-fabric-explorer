@@ -4,6 +4,8 @@
 //-----------------------------------------------------------------------------
 "use strict";
 
+const common = require("./build.common");
+
 /**
  * @typedef IBuildTarget
  * @property {Array.<'x86'|'x64'>} archs - Array of Architecture
@@ -32,12 +34,6 @@
  * @property {string} project
  * @property {string} thirdPartyNoticesFileName;
  * @property {Object.<string, string>} packageLicenses
- */
-
-/**
- * @typedef IPackageInfo
- * @property {string} [x86]
- * @property {string} [x64]
  */
 
 /**
@@ -89,3 +85,38 @@ if (buildInfos.paths.sfxDir === "*") {
 }
 
 gutil.log("Finished", "buildInfos auto-initializiation", ".");
+
+/**
+ * @typedef ITypeScriptConfig
+ * @property {Array.<string>} include
+ * @property {Array.<string>} exclude
+ * @property {*} compilerOptions
+ */
+
+/** @type {ITypeScriptConfig} */
+export const tsConfig = require("../tsconfig.json");
+
+/**
+ * @typedef ISfxDependency
+ * @property {string} version
+ * @property {Array.<'dev'|'prod'>} dependencyTypes
+ * @property {string} platform
+ */
+
+/**
+  * @typedef IPackageJson
+  * @property {string} name
+  * @property {string} version
+  * @property {string} homepage
+  * @property {string} [license]
+  * @property {Array.<string>} [devDependencies]
+  * @property {Array.<string>} [dependencies]
+  * @property {Array.<string>} [optionalDependencies]
+  * @property {Array.<string>} [peerDependencies]
+  * @property {Array.<string>} [bundleDependencies]
+  * @property {Array.<string>} [extensionDependencies]
+  * @property {Array.<ISfxDependency>} [sfxDependencies]
+  */
+
+/** @type {IPackageJson} */
+export const packageJson = require("../package.json");
