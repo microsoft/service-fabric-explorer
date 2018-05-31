@@ -150,7 +150,8 @@ export class DataInfoManager implements IDisposable {
             type: DataType.Object,
             id: this.refRoot.refer(target, parentId).id,
             memberInfos: {}
-        }
+        };
+
         const memberInfos: IDictionary<IDataInfo> = currentObjDataInfo.memberInfos;
 
         let currentObj = Object.getPrototypeOf(target);

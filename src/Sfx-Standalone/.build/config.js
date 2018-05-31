@@ -4,8 +4,6 @@
 //-----------------------------------------------------------------------------
 "use strict";
 
-const common = require("./common");
-
 const path = require("path");
 
 /**

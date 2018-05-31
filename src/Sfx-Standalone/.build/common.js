@@ -5,6 +5,8 @@
 
 "use strict";
 
+const config = require("./config");
+
 const gutil = require("gulp-util");
 const path = require("path");
 const child_process = require("child_process");
@@ -12,6 +14,7 @@ const fs = require("fs");
 const pify = require("pify");
 
 const pified_exec = pify(child_process.exec, { multiArgs: true });
+const buildInfos = config.buildInfos;
 
 /**
  * @readonly
@@ -157,20 +160,21 @@ exports.Platform = {
  * @param {string} cmd - The command line to run.
  * @param {*} pifyResults - The pify results.
  */
-exports.logExec =
-    (cmd, pifyResults) => {
-        const [error, stdout, stderr] = pifyResults;
+function logExec(cmd, pifyResults) {
+    const [error, stdout, stderr] = pifyResults;
 
-        gutil.log("Executed:", cmd);
+    gutil.log("Executed:", cmd);
 
-        if (utils.isString(stdout) && stdout.trim() !== "") {
-            gutil.log(stdout);
-        }
+    if (utils.isString(stdout) && stdout.trim() !== "") {
+        gutil.log(stdout);
+    }
 
-        if (utils.isString(stderr) && stderr.trim() !== "") {
-            gutil.log(stderr);
-        }
-    };
+    if (utils.isString(stderr) && stderr.trim() !== "") {
+        gutil.log(stderr);
+    }
+}
+
+exports.logExec = logExec;
 
 /**
  * Execute the command line in a promised way.
@@ -178,10 +182,13 @@ exports.logExec =
  * @param {string} cmd 
  * @returns {*} pifiedResults
  */
-exports.exec =
-    (cwd, cmd) =>
-        pified_exec(cmd, { cwd: cwd })
-            .then((pifyResults) => logExec(cmd, pifyResults));
+function exec(cwd, cmd) {
+    return pified_exec(cmd, { cwd: cwd })
+        .then((pifyResults) => logExec(cmd, pifyResults));
+}
+
+exports.exec = exec;
+
 /**
  * Run a command line under appDir directory.
  * @param {string} cmd - the command line to run.
@@ -194,22 +201,23 @@ exports.appdirExec = (cmd) => exec(path.resolve(buildInfos.paths.appDir), cmd);
  * @param {string} basePath 
  * @returns {string} resolved glob pattern.
  */
-exports.normalizeGlob =
-    (pattern, basePath) => {
-        let finalPattern = pattern;
+function normalizeGlob(pattern, basePath) {
+    let finalPattern = pattern;
 
-        if (pattern[0] === "!") {
-            finalPattern = pattern.slice(1);
-        }
-
-        finalPattern = path.relative(basePath, path.resolve(finalPattern));
-
-        if (pattern[0] === "!") {
-            finalPattern = "!" + finalPattern;
-        }
-
-        return finalPattern;
+    if (pattern[0] === "!") {
+        finalPattern = pattern.slice(1);
     }
+
+    finalPattern = path.relative(basePath, path.resolve(finalPattern));
+
+    if (pattern[0] === "!") {
+        finalPattern = "!" + finalPattern;
+    }
+
+    return finalPattern;
+}
+
+exports.normalizeGlob = normalizeGlob;
 
 /**
  * Generate globs for given glob patterns.
@@ -227,11 +235,11 @@ exports.formGlobs =
             utils.format("!{}/**/*", buildInfos.paths.publishDir),
             utils.format("!{}/**/*", buildInfos.paths.buildDir),
             utils.format("!{}/**/*", "node_modules"),
-            "!../**/tsconfig.json",
-            "!../**/jsconfig.json",
-            "!../**/tslint.json",
-            "!./buildInfos.json",
-            "!../**/*.md"
+            "!**/tsconfig.json",
+            "!**/jsconfig.json",
+            "!**/tslint.json",
+            "!./.build/buildInfos.json",
+            "!**/*.md"
         ];
 
         if (utils.isString(globs)) {

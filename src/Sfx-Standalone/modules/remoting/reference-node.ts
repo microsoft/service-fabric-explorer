@@ -37,32 +37,6 @@ export class ReferenceNode {
         return new ReferenceNode(undefined, undefined);
     }
 
-    private constructor(root: ReferenceNode, target: Object | Function, refId?: string) {
-        if (utils.isNullOrUndefined(root) !== utils.isNullOrUndefined(target)) {
-            throw error("root and target must be provided togehter or none are provided.");
-        }
-
-        refId = refId || uuidv4();
-
-        this._root = root;
-        this._id = refId;
-        this._target = target;
-        this.referees = {};
-
-        if (!utils.isNullOrUndefined(root)) {
-            this.symbol_refId = this._root.symbol_refId;
-            this.referers = {};
-
-            this._root.internallyAddReferee(this);
-            this.target[this.symbol_refId] = this._id;
-        } else {
-            // When this is a root node.
-            this.symbol_refId = Symbol("refId");
-            this.referers = undefined;
-            this.referees[this._id] = this;
-        }
-    }
-
     public getRefereeIds(): Array<string> {
         return Object.values(this.referees).map((ref) => ref.id);
     }
@@ -188,6 +162,32 @@ export class ReferenceNode {
         }
 
         return target[this.symbol_refId];
+    }
+
+    private constructor(root: ReferenceNode, target: Object | Function, refId?: string) {
+        if (utils.isNullOrUndefined(root) !== utils.isNullOrUndefined(target)) {
+            throw error("root and target must be provided togehter or none are provided.");
+        }
+
+        refId = refId || uuidv4();
+
+        this._root = root;
+        this._id = refId;
+        this._target = target;
+        this.referees = {};
+
+        if (!utils.isNullOrUndefined(root)) {
+            this.symbol_refId = this._root.symbol_refId;
+            this.referers = {};
+
+            this._root.internallyAddReferee(this);
+            this.target[this.symbol_refId] = this._id;
+        } else {
+            // When this is a root node.
+            this.symbol_refId = Symbol("refId");
+            this.referers = undefined;
+            this.referees[this._id] = this;
+        }
     }
 
     private create(target: Object | Function, newRefId?: string): ReferenceNode {

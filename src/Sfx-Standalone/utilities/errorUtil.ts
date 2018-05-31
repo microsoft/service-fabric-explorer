@@ -11,18 +11,18 @@ export interface ISerializedError {
 }
 
 export class SerializableError extends Error {
+    public static from(serializedError: ISerializedError): Error {
+        const error = new SerializableError(serializedError.message);
+
+        error.stack = serializedError.stack;
+        return error;
+   }
+   
     public toJSON(): ISerializedError {
         return {
             message: this.message,
             stack: this.stack
         };
-    }
-
-    public static from(serializedError: ISerializedError): Error {
-         const error = new SerializableError(serializedError.message);
-
-         error.stack = serializedError.stack;
-         return error;
     }
 }
 

@@ -9,11 +9,13 @@ const common = require("../common");
 const config = require("../config");
 const tsc = require("../tsc");
 
+const path = require("path");
 const ts = require("typescript");
 const gulp = require("gulp");
 const gtslint = require("gulp-tslint");
 const tslint = require("tslint");
 const runSequence = require("run-sequence");
+const globby = require("globby");
 
 const buildInfos = config.buildInfos;
 
@@ -29,26 +31,26 @@ function getTypescriptsGlobs() {
 
     // Include
     if (Array.isArray(tsconfig.include)) {
-        tsconfig.include.forEach((pattern) => globs.push("../" + pattern));
+        globs.push(...tsconfig.include);
     } else if (!isNullOrUndefined(tsconfig.include)) {
         throw new Error("tsconfig.include must be an array!");
     }
 
     // Exclude
     if (Array.isArray(tsconfig.exclude)) {
-        tsconfig.exclude.forEach((pattern) => globs.push("!../" + pattern));
+        tsconfig.exclude.forEach((pattern) => globs.push("!" + pattern));
     } else if (!isNullOrUndefined(tsconfig.include)) {
         throw new Error("tsconfig.exclude must be an array!");
     }
 
-    return formGlobs(globs);
+    return common.formGlobs(globs);
 }
 
 require("./clean");
 
 gulp.task("build:tslint",
     () => gulp.src(getTypescriptsGlobs())
-        .pipe(gtslint({ program: tslint.Linter.createProgram("../tsconfig.json") }))
+        .pipe(gtslint({ program: tslint.Linter.createProgram("../../tsconfig.json") }))
         .pipe(gtslint.report({ summarizeFailureOutput: true })));
 
 gulp.task("build:ts", ["build:tslint"],
@@ -73,15 +75,15 @@ gulp.task("build:ts", ["build:tslint"],
     });
 
 gulp.task("build:html",
-    () => gulp.src(common.formGlobs("../**/*.html"))
+    () => gulp.src(common.formGlobs("**/*.html"))
         .pipe(gulp.dest(buildInfos.paths.appDir)));
 
 gulp.task("build:img",
-    () => gulp.src(common.formGlobs(["../icons/**/*.*"]))
+    () => gulp.src(common.formGlobs(["icons/**/*.*"]))
         .pipe(gulp.dest(path.join(buildInfos.paths.appDir, "icons"))));
 
 gulp.task("build:json",
-    () => gulp.src(common.formGlobs(["../**/*.json"]))
+    () => gulp.src(common.formGlobs(["**/*.json"]))
         .pipe(gulp.dest(buildInfos.paths.appDir)));
 
 gulp.task("build:node_modules", ["build:json"],

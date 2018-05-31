@@ -59,7 +59,7 @@ namespace Symbols {
 
 Symbol.isSymbol = (value: any): value is symbol => {
     return typeof value === "symbol";
-}
+};
 
 Number.isNumber = (value: any): value is number | Number => {
     return typeof value === "number" || value instanceof Number;
@@ -78,12 +78,12 @@ Object.isEmpty = (value: Object | object) => {
         throw error("value cannot be null/undefined.");
     }
 
-    for (let key in value) {
+    for (const key in value) {
         return false;
     }
 
     return true;
-}
+};
 
 Object.markSerializable = (value: any, serializable: boolean = true) => {
     if (!isNullOrUndefined(value)) {
