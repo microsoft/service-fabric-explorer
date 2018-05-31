@@ -47,6 +47,8 @@
         "publishDir": "./publish",
         "appDir": "*",
         "sfxDir": "*",
-        "buildResDir": "*"
+        "buildResDir": "*",
+        "modulesDir": "./modules",
+        "sdkDir": "*"
     }
 }

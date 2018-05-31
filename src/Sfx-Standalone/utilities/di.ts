@@ -12,7 +12,7 @@ export interface IDiDescriptor {
 }
 
 export interface IDiContainer {
-    getInstance<T>(name: string, ...extraArgs: Array<any>): T;
+    getDep<T>(name: string, ...extraArgs: Array<any>): T;
     get(name: string): IDiDescriptor;
     set(name: string, descriptor: IDiDescriptor): IDiContainer;
 }
@@ -61,7 +61,7 @@ export class DiContainer implements IDiContainer {
         }
     }
 
-    public getInstance<T>(name: string, ...extraArgs: Array<any>): T {
+    public getDep<T>(name: string, ...extraArgs: Array<any>): T {
         const descriptor = this.get(name);
 
         if (utils.isNullOrUndefined(descriptor)) {

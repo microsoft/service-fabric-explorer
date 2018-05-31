@@ -43,7 +43,7 @@ export namespace DiDescriptorConstructor {
                     const inject = injects[injectIndex];
 
                     if (inject !== undefined) {
-                        const arg = container.getInstance(inject);
+                        const arg = container.getDep(inject);
 
                         if (arg === undefined) {
                             throw error("Required inject is not available in the container.");

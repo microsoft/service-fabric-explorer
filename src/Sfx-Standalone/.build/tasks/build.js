@@ -47,13 +47,14 @@ function getTypescriptsGlobs() {
 }
 
 require("./clean");
+require("./build.sdk/build");
 
 gulp.task("build:tslint",
     () => gulp.src(getTypescriptsGlobs())
         .pipe(gtslint({ program: tslint.Linter.createProgram("../../tsconfig.json") }))
         .pipe(gtslint.report({ summarizeFailureOutput: true })));
 
-gulp.task("build:ts", ["build:tslint"],
+gulp.task("build:ts", ["build:tslint", "build:sdk"],
     () => {
         const tsconfig = config.tsConfig;
         const compilterOptionsParseResult = ts.convertCompilerOptionsFromJson(tsconfig.compilerOptions, undefined);

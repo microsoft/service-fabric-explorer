@@ -50,6 +50,8 @@ exports.packageJson = packageJson;
  * @property {string} publishDir
  * @property {string} appDir
  * @property {string} sfxDir
+ * @property {string} modulesDir
+ * @property {string} sdkDir
  */
 
 /**
@@ -109,6 +111,11 @@ if (buildInfos.paths.appDir === "*") {
 if (buildInfos.paths.sfxDir === "*") {
     buildInfos.paths.sfxDir = path.join(buildInfos.paths.appDir, "sfx");
     gutil.log("Initialized", "buildInfos.paths.sfxDir", "=", buildInfos.paths.sfxDir);
+}
+
+if (buildInfos.paths.sdkDir === "*") {
+    buildInfos.paths.sdkDir = path.join(buildInfos.paths.buildDir, "sdk");
+    gutil.log("Initialized", "buildInfos.paths.sdkDir", "=", buildInfos.paths.sdkDir);
 }
 
 gutil.log("Finished", "buildInfos auto-initializiation", ".");

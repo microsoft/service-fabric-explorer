@@ -17,7 +17,7 @@
             "args": [
                 "./build/app/."
             ],
-            "preLaunchTask": "gulp: Build"
+            "preLaunchTask": "gulp: build"
         },
         {
             "type": "node",
