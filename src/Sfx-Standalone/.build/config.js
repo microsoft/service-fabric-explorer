@@ -4,7 +4,35 @@
 //-----------------------------------------------------------------------------
 "use strict";
 
-const common = require("./build.common");
+const common = require("./common");
+
+const path = require("path");
+
+/**
+ * @typedef ISfxDependency
+ * @property {string} version
+ * @property {Array.<'dev'|'prod'>} dependencyTypes
+ * @property {string} platform
+ */
+
+/**
+  * @typedef IPackageJson
+  * @property {string} name
+  * @property {string} version
+  * @property {string} homepage
+  * @property {string} [license]
+  * @property {Array.<string>} [devDependencies]
+  * @property {Array.<string>} [dependencies]
+  * @property {Array.<string>} [optionalDependencies]
+  * @property {Array.<string>} [peerDependencies]
+  * @property {Array.<string>} [bundleDependencies]
+  * @property {Array.<string>} [extensionDependencies]
+  * @property {Array.<ISfxDependency>} [sfxDependencies]
+  */
+
+/** @type {IPackageJson} */
+const packageJson = require("../package.json");
+exports.packageJson = packageJson;
 
 /**
  * @typedef IBuildTarget
@@ -62,15 +90,16 @@ const common = require("./build.common");
 /**
  * @type {IBuildInfos}
  */
-export const buildInfos = require("./buildInfos.json");
+const buildInfos = require("./buildInfos.json");
+exports.buildInfos = buildInfos;
 
 // buildInfos auto-initializiation
 gutil.log("Starting", "buildInfos auto-initializiation", "...");
 
 if (buildInfos.buildNumber === "*") {
     gutil.log("Read", "BUILD_BUILDNUMBER", "=", process.env["BUILD_BUILDNUMBER"]);
-    gutil.log("Read", "packagejson.version", "=", packagejson.version)
-    buildInfos.buildNumber = process.env["BUILD_BUILDNUMBER"] || packagejson.version;
+    gutil.log("Read", "packageJson.version", "=", packageJson.version)
+    buildInfos.buildNumber = process.env["BUILD_BUILDNUMBER"] || packageJson.version;
     gutil.log("Initialized", "buildInfos.buildNumber:", "=", buildInfos.buildNumber);
 }
 
@@ -94,29 +123,4 @@ gutil.log("Finished", "buildInfos auto-initializiation", ".");
  */
 
 /** @type {ITypeScriptConfig} */
-export const tsConfig = require("../tsconfig.json");
-
-/**
- * @typedef ISfxDependency
- * @property {string} version
- * @property {Array.<'dev'|'prod'>} dependencyTypes
- * @property {string} platform
- */
-
-/**
-  * @typedef IPackageJson
-  * @property {string} name
-  * @property {string} version
-  * @property {string} homepage
-  * @property {string} [license]
-  * @property {Array.<string>} [devDependencies]
-  * @property {Array.<string>} [dependencies]
-  * @property {Array.<string>} [optionalDependencies]
-  * @property {Array.<string>} [peerDependencies]
-  * @property {Array.<string>} [bundleDependencies]
-  * @property {Array.<string>} [extensionDependencies]
-  * @property {Array.<ISfxDependency>} [sfxDependencies]
-  */
-
-/** @type {IPackageJson} */
-export const packageJson = require("../package.json");
+exports.tsConfig = require("../tsconfig.json");

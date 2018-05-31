@@ -26,8 +26,8 @@ function normalizePlatform(platform) {
     }
 }
 
-require("./.build/tasks/publish.windows");
-require("./.build/tasks/publish.linux");
-require("./.build/tasks/publish.macos");
+require("./publish.windows");
+require("./publish.linux");
+require("./publish.macos");
 
 gulp.task("publish", ["publish:" + normalizePlatform(process.platform)]);

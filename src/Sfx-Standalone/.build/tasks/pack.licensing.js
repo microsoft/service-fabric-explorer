@@ -5,8 +5,9 @@
 
 "use strict";
 
-const common = require("./build.common");
-const config = require("./build.config");
+const common = require("../common");
+const config = require("../config");
+
 const fs = require("fs");
 const path = require("path");
 const gulp = require("gulp");
