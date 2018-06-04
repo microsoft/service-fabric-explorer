@@ -13,6 +13,7 @@ module Sfx {
         private static defaultApiVersion: string = "3.0";
         private static apiVersion40: string = "4.0";
         private static apiVersion60: string = "6.0";
+        private static apiVersion62: string = "6.2";
 
         private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -302,6 +303,14 @@ module Sfx {
             return this.post(this.getApiUrl(url), "Application instance creation", body, messageHandler);
         }
 
+        public getChaos(messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawChaos> {
+            return this.get(this.getApiUrl("Tools/Chaos", RestClient.apiVersion62), "Get chaos");
+        }
+
+        public getChaosEvents(messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawChaosEvents> {
+            return this.get(this.getApiUrl("Tools/Chaos/Events", RestClient.apiVersion62), "Get chaos events");
+        }
+
         public startChaos(messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Tools/Chaos/$/Start";
             return this.post(this.getApiUrl(url, RestClient.apiVersion60),
@@ -312,6 +321,11 @@ module Sfx {
                     "WaitTimeBetweenIterationsInSeconds": 5
                 },
                 messageHandler);
+        }
+
+        public stopChaos(messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Tools/Chaos/$/Stop";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion60), "Stop chaos", null, messageHandler);
         }
 
         public activateNode(nodeName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {

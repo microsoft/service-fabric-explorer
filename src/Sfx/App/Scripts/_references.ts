@@ -77,6 +77,7 @@
 /// <reference path="directives/splitterdirective.ts" />
 /// <reference path="directives/detailviewpartdirective.ts" />
 /// <reference path="directives/detaillistdirective.ts" />
+/// <reference path="directives/chaosviewdirective.ts" />
 /// <reference path="directives/metricsbarchartdirective.ts" />
 /// <reference path="directives/dashboardchartdirective.ts" />
 /// <reference path="directives/directives.ts" />

@@ -77,6 +77,15 @@ module Sfx {
                 ]);
         }
 
+        public getNewOrExistingChaosEventListSettings(listKey: string = "chaosEvents") {
+            return this.getNewOrExistingListSettings(listKey, null,
+                [
+                    new ListColumnSetting("Kind", "Kind"),
+                    new ListColumnSetting("TimeStampUtc", "Time Stamp (Utc)"),
+                    new ListColumnSetting("Reason", "Description")
+                ]);
+        }
+
         public getNewOrExistingHealthEventsListSettings(listKey: string = "healthEvents") {
             return this.getNewOrExistingListSettings(listKey, ["raw.SequenceNumber"],
                 [

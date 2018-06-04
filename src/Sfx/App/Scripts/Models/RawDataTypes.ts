@@ -657,4 +657,21 @@ module Sfx {
         ComposeFileContent: string;
         RepositoryCredential?: IRawRepositoryCredential;
     }
+
+    export interface IRawChaos {
+        Status: string;
+    }
+
+    export interface IRawChaosEvent {
+        ChaosEvent: {
+            Kind: string;
+            TimeStampUtc: string;
+            Reason?: string;
+            Faults?: string[];
+        };
+    }
+
+    export interface IRawChaosEvents {
+        History: IRawChaosEvent[];
+    }
 }

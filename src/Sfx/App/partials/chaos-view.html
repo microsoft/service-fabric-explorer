@@ -1,17 +1,28 @@
-﻿<div>
+﻿<div class="chaos-view">
     <h4>Service Fabric Chaos</h4>
     <div>
-        <p>Please follow this link to learn more about Service Fabric Chaos before starting one:
-            <a target="_blank" href="https://docs.microsoft.com/azure/service-fabric/service-fabric-controlled-chaos">https://docs.microsoft.com/azure/service-fabric/service-fabric-controlled-chaos</a>
-        </p>       
-    </div>
-    <div class="dashboard-container-small" style="text-align: center;">
-        <button ng-click="clusterCtrl.startChaos()" style="width: 250px; height: 100px; background-color: green; border: none;font-size: 30px;font-weight: bold;">START CHAOS</button>
+        <h5>
+            What's this?
+        </h5>
+        <p>
+            Large-scale distributed systems like cloud infrastructures are inherently unreliable. Azure Service Fabric enables you to
+            write reliable distributed services on top of an unreliable infrastructure. To write verifiably robust distributed
+            services on top of an unreliable infrastructure, you need to be able to test the stability of your services while
+            the underlying unreliable infrastructure is going through complicated state transitions due to faults. This is
+            where Chaos comes in: Service Fabric Chaos provides a very simple way to induce targeted, simulated, realistic
+            faults that can help identify bugs that show up only in hard-to-predict, long, and complicated sequences of state
+            transitions.
+        </p>
     </div>
     <div>
         <p>Click Stop Chaos to immediately end your Chaos experiment.</p>
     </div>
+    <div class="dashboard-container-small" style="text-align: center;">
+        <button ng-click="ctrl.handleClick($event)" class="chaos-btn start-chaos-btn" >START CHAOS</button>
+    </div>    
     <div>
-        result goes here
-    </div>
+        <p>Learn more about Service Fabric controlled Chaos:
+            <a target="_blank" href="https://docs.microsoft.com/azure/service-fabric/service-fabric-controlled-chaos">https://docs.microsoft.com/azure/service-fabric/service-fabric-controlled-chaos</a>
+        </p>
+    </div>    
 </div>

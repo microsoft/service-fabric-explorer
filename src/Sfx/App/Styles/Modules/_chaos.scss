@@ -1,0 +1,142 @@
+﻿@import "../Base/_config.scss";
+
+// Keep the chart size consistent with chaosBarChartDirective.ts
+$chaos-chart-height: 630px;
+$chaos-chart-body-width: 760px;
+$chaos-chart-left-width: 80px;
+$chaos-chart-right-width: 100px;
+$chaos-column-width: 250px;
+$chaos-column-height: 428px;
+$chaos-container-margin: 12px;
+$chaos-container-padding: 8px;
+
+$chaos-view-expander-hover-color: lighten($essen-pane-background-color, 10%);
+
+.chaos-view {    
+
+    div {
+        margin-top: 12px;
+        margin-bottom: 12px;
+    }
+
+    .chaos-btn {
+        width: 250px; height: 100px;  border: none;font-size: 30px;font-weight: bold; margin: 12px;
+    }
+    .start-chaos-btn {
+        background-color: green; 
+    }
+
+    .stop-chaos-btn {
+        background-color: red;
+    }
+
+
+
+    .chart-column {
+        display: inline-block;
+        vertical-align: top;
+        width: $chaos-chart-left-width + $chaos-chart-body-width;
+    }
+
+    .chaos-column-container {
+        display: inline-block;
+
+        .checkbox-container {
+            display: inline-block;
+            margin-bottom: $chaos-container-margin;
+
+            &:not(:first-child) {
+                margin-left: 130px;
+            }
+
+            label {
+                display: block;
+            }
+        }
+
+        .chaos-column-title {
+            margin-bottom: $chaos-container-margin;
+            padding-bottom: $chaos-container-padding;
+            border-bottom: 1px solid $input-border-color;
+            margin-right: $chaos-container-margin;
+        }
+
+        .chaos-column {
+            height: $chaos-column-height;
+            overflow-x: hidden;
+            width: $chaos-column-width;
+            padding-right: $chaos-container-margin;
+
+            .chaos-container {
+                margin-bottom: $chaos-container-margin;
+                padding: $chaos-container-padding;
+                background-color: $essen-pane-background-color;
+                cursor: pointer;
+                position: relative;
+                border-color: transparent;
+                border-width: 1px;
+                border-style: solid;
+
+                &.selected {
+                    border-color: $azure-blue;                    
+                    border-width: 3px;
+                    padding: $chaos-container-padding - 2px;
+
+                    .chaos-ratio {
+                        right: $chaos-container-padding - 2px;
+                    }
+                }
+
+                .chaos-legend {
+                    width: 16px;
+                    height: 16px;
+                    margin-top: 2px;
+                    float: left;
+                }
+
+                .chaos-title {
+                    overflow: hidden;
+                    text-overflow: ellipsis;
+                    white-space: nowrap;
+                    padding-left: $chaos-container-padding;
+                    padding-right: 25px;
+                }
+
+                .chaos-ratio {
+                    position: absolute;
+                    right: $chaos-container-padding;
+                    top: 50%;
+                    transform: translate(0, -50%);
+
+                    &[is-capacity-violation=true] {
+                        color: $badge-error-color;
+                    }
+                }
+            }
+        }
+    }
+}
+
+@media screen and (-ms-high-contrast: white-on-black) {
+    .chaos-view {
+        .chart-column {
+            .chaos-chart {
+                text {
+                    fill: white;
+                }
+            }
+        }
+    }   
+}
+
+@media screen and (-ms-high-contrast: black-on-white) {
+    .chaos-view {
+        .chart-column {
+            .chaos-chart {
+                text {
+                    fill: black;
+                }
+            }
+        }
+    }   
+}

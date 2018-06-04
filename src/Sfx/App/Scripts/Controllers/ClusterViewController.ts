@@ -44,6 +44,7 @@ module Sfx {
             this.tabs["clustermap"].refresh = (messageHandler) => this.refreshClusterMap(messageHandler);
             this.tabs["metrics"].refresh = (messageHandler) => this.refreshMetrics(messageHandler);
             this.tabs["manifest"].refresh = (messageHandler) => this.refreshManifest(messageHandler);
+            this.tabs["chaos"].refresh = (messageHandler) => this.refreshChaos(messageHandler);
 
             $scope.clusterAddress = this.$location.protocol() + "://" + this.$location.host();
 
@@ -62,16 +63,14 @@ module Sfx {
             this.$scope.systemApp = this.data.systemApp;
             this.$scope.nodes = this.data.nodes;
             this.$scope.appsUpgradeTabViewPath = this.routes.getTabViewPath(this.routes.getAppsViewPath(), "upgrades");
+            this.$scope.chaos = this.data.chaos;
+            this.$scope.chaosEventListSettings = this.settings.getNewOrExistingChaosEventListSettings();
 
             this.refresh();
         }
 
         public getNodesForDomains(upgradeDomain: string, faultDomain: string): Node[] {
             return _.filter(this.$scope.nodes.collection, (node) => node.upgradeDomain === upgradeDomain && node.faultDomain === faultDomain);
-        }
-
-        public startChaos(): angular.IHttpPromise<any> {
-            return this.data.restClient.startChaos();
         }
 
         private refreshEssentials(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
@@ -143,6 +142,10 @@ module Sfx {
 
         private refreshManifest(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.$scope.clusterManifest.refresh(messageHandler);
+        }
+
+        private refreshChaos(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.chaos.refresh(messageHandler);
         }
     }
 

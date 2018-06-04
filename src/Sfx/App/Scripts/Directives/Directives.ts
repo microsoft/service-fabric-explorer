@@ -18,6 +18,7 @@ module Sfx {
         module.directive("sfxDetailList", () => new DetailListDirective());
         module.directive("sfxMetricsBarChart", MetricsBarChartDirective.factory());
         module.directive("sfxDashboard", DashboardChartDirective.factory());
+        module.directive("sfxChaosView", () => new ChaosViewDirective());
 
         module.directive("sfxThemeImport", ["theme", (themeService: ThemeService): angular.IDirective => {
             return {
@@ -284,16 +285,16 @@ module Sfx {
             };
         });
 
-        module.directive("sfxChaosView", (): angular.IDirective => {
-            return {
-                restrict: "AE",
-                replace: true,
-                scope: {
-                    metrics: "="
-                },
-                templateUrl: "partials/chaos-view.html"
-            };
-        });
+        // module.directive("sfxChaosView", (): angular.IDirective => {
+        //     return {
+        //         restrict: "AE",
+        //         replace: true,
+        //         scope: {
+        //             chaos: "="
+        //         },
+        //         templateUrl: "partials/chaos-view.html"
+        //     };
+        // });
 
         module.directive("sfxTextFileInput", () => new TextFileInputDirective());
     })();
