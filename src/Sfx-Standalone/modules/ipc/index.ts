@@ -3,10 +3,12 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import { IModuleInfo } from "sfx";
+import { ILog } from "sfx.logging";
+
 import { ChildProcess } from "child_process";
 import { Socket } from "net";
 
-import { ILog } from "../../@types/log";
 import * as utilities from "./utilities";
 import { NodeCommunicator } from "./communicator.node";
 

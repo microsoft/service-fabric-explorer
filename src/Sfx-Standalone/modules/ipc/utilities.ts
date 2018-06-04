@@ -3,6 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import { ICommunicator } from "sfx.ipc";
+
 import * as utils from "../../utilities/utils";
 
 export function isCommunicator(communicator: any): communicator is ICommunicator {

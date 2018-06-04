@@ -3,6 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import * as sfxRemoting from "sfx.remoting";
+
 import * as uuidv4 from "uuid/v4";
 
 import * as utils from "../../utilities/utils";
@@ -39,7 +41,7 @@ function isProxyMessage(msg: any): msg is IProxyMessage {
         && !String.isNullUndefinedOrWhitespace(msg.resourceId);
 }
 
-class RemotingProxy implements IRemotingProxy, IDelegator {
+class RemotingProxy implements sfxRemoting.IRemotingProxy, IDelegator {
     public readonly id: string;
 
     private readonly path: string;

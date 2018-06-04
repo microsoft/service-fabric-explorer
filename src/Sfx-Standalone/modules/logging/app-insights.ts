@@ -3,10 +3,12 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import { IDictionary } from "sfx";
+import { Severity, ILogger, ILoggerSettings } from "sfx.logging";
+
 import { TelemetryClient, Contracts } from "applicationinsights";
 import { Telemetry, TraceTelemetry, ExceptionTelemetry, MetricTelemetry } from "applicationinsights/out/Declarations/Contracts";
 
-import { Severity, ILogger, ILoggerSettings } from "../../@types/log";
 import * as utils from "../../utilities/utils";
 import error from "../../utilities/errorUtil";
 import { Severities } from "./log";

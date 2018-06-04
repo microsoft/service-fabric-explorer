@@ -3,19 +3,23 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-interface RequestHandler {
-    (communicator: ICommunicator, path: string, content: any): any | Promise<any>;
-}
+declare module "sfx.ipc" {
+    import * as common from "sfx";
 
-interface ICommunicator extends IDisposable {
-    readonly id: string;
+    export interface RequestHandler {
+        (communicator: ICommunicator, path: string, content: any): any | Promise<any>;
+    }
 
-    map(pattern: string | RegExp, handler: RequestHandler): void;
-    unmap(pattern: string | RegExp): RequestHandler;
+    export interface ICommunicator extends common.IDisposable {
+        readonly id: string;
 
-    sendAsync<TRequest, TResponse>(path: string, content: TRequest): Promise<TResponse>;
-}
+        map(pattern: string | RegExp, handler: RequestHandler): void;
+        unmap(pattern: string | RegExp): RequestHandler;
 
-interface IIpcUtilities {
-    isCommunicator(communicator: any): communicator is ICommunicator;
+        sendAsync<TRequest, TResponse>(path: string, content: TRequest): Promise<TResponse>;
+    }
+
+    export interface IIpcUtilities {
+        isCommunicator(communicator: any): communicator is ICommunicator;
+    }
 }

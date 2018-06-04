@@ -3,6 +3,9 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import { IDictionary } from "sfx";
+import { RequestHandler, ICommunicator } from "sfx.ipc";
+
 import { ChildProcess } from "child_process";
 import { Socket } from "net";
 import * as uuidv4 from "uuid/v4";
@@ -207,7 +210,7 @@ export class NodeCommunicator implements ICommunicator {
                 succeeded: true,
                 body: content
             };
-            
+
             if (!this.sendMessage(msg)) {
                 reject(error("Failed to send request. The remote channel may be closed."));
                 return;

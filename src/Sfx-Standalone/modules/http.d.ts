@@ -3,53 +3,57 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import * as http from "http";
+declare module "sfx" {
+    import * as http from "sfx.http";
 
-import { ILog } from "./log";
-
-export type HttpProtocol = "*" | "http:" | "https:";
-
-export type HttpMethod  = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-
-export type HttpContentType = "application/json" | "application/octet-stream" | string;
-
-export interface IRequestOptions {
-    method: HttpMethod;
-    url: string;
-    headers?: IDictionary<string | Array<string>>;
+    export interface IModuleManager {
+        getComponent(componentIdentity: "http-client"): http.IHttpClient;
+        getComponent(componentIdentity: "https-client"): http.IHttpClient;
+    }
 }
 
-export interface RequestProcessor {
-    (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: http.ClientRequest): void;
-}
+declare module "sfx.http" {
+    import * as common from "sfx";
+    import * as logging from "sfx.logging";
+    import * as nodehttp from "http";
 
-export interface ResponseHandler {
-    (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: http.IncomingMessage, error: any, callback?: ResponseHandler): void;
-}
+    export type HttpProtocol = "*" | "http:" | "https:";
 
-export interface IRequestProcessorConstructor extends IHandlerConstructor<RequestProcessor> {
-}
+    export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-export interface IResponseHandlerContructor extends IHandlerConstructor<ResponseHandler> {
-}
+    export type HttpContentType = "application/json" | "application/octet-stream" | string;
 
-export interface IHttpClient {
-    delete(url: string, callback?: ResponseHandler): void;
+    export interface IRequestOptions {
+        method: HttpMethod;
+        url: string;
+        headers?: common.IDictionary<string | Array<string>>;
+    }
 
-    get(url: string, callback?: ResponseHandler): void;
+    export interface RequestProcessor {
+        (client: IHttpClient, log: logging.ILog, requestOptions: IRequestOptions, requestData: any, request: nodehttp.ClientRequest): void;
+    }
 
-    patch(url: string, data: any, callback?: ResponseHandler): void;
+    export interface ResponseHandler {
+        (client: IHttpClient, log: logging.ILog, requestOptions: IRequestOptions, requestData: any, response: nodehttp.IncomingMessage, error: any, callback?: ResponseHandler): void;
+    }
 
-    post(url: string, data: any, callback?: ResponseHandler): void;
+    export interface IRequestProcessorConstructor extends common.IHandlerConstructor<RequestProcessor> {
+    }
 
-    put(url: string, data: any, callback?: ResponseHandler): void;
+    export interface IResponseHandlerContructor extends common.IHandlerConstructor<ResponseHandler> {
+    }
 
-    request(requestOptions: IRequestOptions, data: any, callback?: ResponseHandler): void;
-}
+    export interface IHttpClient {
+        delete(url: string, callback?: ResponseHandler): void;
 
-declare module 'sfx' {
-    interface IModuleManager {
-        getComponent(componentIdentity: "http-client"): IHttpClient;
-        getComponent(componentIdentity: "https-client"): IHttpClient;
+        get(url: string, callback?: ResponseHandler): void;
+
+        patch(url: string, data: any, callback?: ResponseHandler): void;
+
+        post(url: string, data: any, callback?: ResponseHandler): void;
+
+        put(url: string, data: any, callback?: ResponseHandler): void;
+
+        request(requestOptions: IRequestOptions, data: any, callback?: ResponseHandler): void;
     }
 }

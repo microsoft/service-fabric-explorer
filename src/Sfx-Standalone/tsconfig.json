@@ -3,9 +3,13 @@
     "compilerOptions": {
         "module": "commonjs",
         "moduleResolution": "node",
-        "target": "ES6",
+        "target": "ES2017",
         "sourceMap": true,
-        "declaration": false
+        "declaration": false,
+        "types": [
+            "*",
+            "sfx.d.ts"
+        ]
     },
     "exclude": [
         "build/",

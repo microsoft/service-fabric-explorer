@@ -2,6 +2,9 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+import { IHandlerChainBuilder, IDictionary } from "sfx";
+import { HttpProtocol, IHttpClient } from "sfx.http";
+import { ILog } from "sfx.logging";
 
 import * as http from "http";
 import * as https from "https";
@@ -9,18 +12,6 @@ import * as url from "url";
 import * as fs from "fs";
 import * as path from "path";
 
-import { ILog } from "../@types/log";
-import {
-    ResponseHandler,
-    HttpContentType,
-    IHttpClient,
-    HttpProtocol,
-    RequestProcessor,
-    IResponseHandlerContructor,
-    IRequestProcessorConstructor,
-    IRequestOptions,
-    HttpMethod
-} from "../@types/http";
 import * as utils from "../utilities/utils";
 import error from "../utilities/errorUtil";
 import { HandlerChainBuilder } from "../utilities/handlerChainBuilder";

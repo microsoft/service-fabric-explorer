@@ -3,8 +3,10 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ISettings } from "../../@types/settings";
-import { ILoggerSettings } from "../../@types/log";
+import { IModuleInfo } from "sfx";
+import { ISettings } from "sfx.settings";
+import { ILoggerSettings } from "sfx.logging";
+
 import { Log } from "./log";
 import ConsoleLogger from "./console";
 import AppInsightsLogger from "./app-insights";

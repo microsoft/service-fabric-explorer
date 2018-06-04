@@ -3,7 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-// *** Dependency Injection ***
+import * as sfx from "sfx";
+
 import error from "./errorUtil";
 import * as utils from "./utils";
 
@@ -23,7 +24,7 @@ export interface IDiDescriptorDictionary {
 }
 
 export class DiDescriptorDictionary implements IDiDescriptorDictionary {
-    private readonly descriptorDictionary: IDictionary<IDiDescriptor>;
+    private readonly descriptorDictionary: sfx.IDictionary<IDiDescriptor>;
 
     constructor() {
         this.descriptorDictionary = {};

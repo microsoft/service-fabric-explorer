@@ -29,9 +29,7 @@ const sdkPackageJson = require("./package.json");
  * @returns {Array.<string>} 
  */
 function getTypeDeclarationGlobs() {
-    return common.formGlobs([
-        path.join(buildInfos.paths.modulesDir, "**/*.d.ts"),
-        "./.build/tasks/build.sdk/package/**/*"]);
+    return common.formGlobs(["**/*.d.ts"]);
 }
 
 /**
@@ -58,17 +56,6 @@ function getDeclarationFilePaths(dir) {
     return filePaths;
 }
 
-function updateTypeDeclarationFile() {
-    const dTsFiles = getDeclarationFilePaths(buildInfos.paths.sdkDir);
-    const sfxDts = path.join(buildInfos.paths.sdkDir, sdkPackageJson.types);
-
-    dTsFiles.forEach(
-        (fileName) =>
-            fs.appendFileSync(
-                sfxDts,
-                utils.format("/// <reference path='{}' />\r\n", path.relative(buildInfos.paths.sdkDir, fileName).replace('\\', '/'))));
-}
-
 gulp.task("build:gather-declarations",
     () => gulp.src(getTypeDeclarationGlobs())
         .pipe(gulp.dest(buildInfos.paths.sdkDir)));
@@ -77,12 +64,7 @@ gulp.task("build:generate-sdk-packagejson",
     () => {
         sdkPackageJson.version = buildInfos.buildNumber;
         common.ensureDirExists(buildInfos.paths.sdkDir);
-        fs.writeFileSync(path.join(buildInfos.paths.sdkDir, "package.json"), sdkPackageJson);
+        fs.writeFileSync(path.join(buildInfos.paths.sdkDir, "package.json"), JSON.stringify(sdkPackageJson, undefined, 4));
     });
 
-gulp.task("build:update-sdk-declarations", ["build:gather-declarations"],
-    () => updateTypeDeclarationFile());
-
-gulp.task("build:sdk", ["build:update-sdk-declarations", "build:generate-sdk-packagejson"],
-    () => gulp.src(path.join(buildInfos.paths.sdkDir, "**/*"))
-        .pipe(gulp.dest(path.join("./node_modules", sdkPackageJson.name))));
+gulp.task("build:sdk", ["build:gather-declarations", "build:generate-sdk-packagejson"]);
