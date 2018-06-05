@@ -51,24 +51,22 @@ declare module "sfx" {
         (moduleInfo: IModuleInfo, currentVersion: string, expectedVersion: string): boolean;
     }
 
-    export interface DepVersionMismatchEventHandler {
-        (componentIdentity: string, depIdentity: string): boolean;
-    }
-
     export interface IModuleManager {
         hostVersion: string;
 
-        loadModules(folderPath: string, callback?: (error: Array<Error>) => void): IDictionary<Array<Error>>;
-        loadModule(path: string, callback?: (error: Array<Error>) => void): Array<Error>;
+        newHostAsync(hostName: string): Promise<void>;
+        destroyHostAsync(hostName: string): Promise<void>;
 
-        registerComponents(componentInfos: Array<IComponentInfo>): Array<Error>;
+        loadModuleDirectoryAsync(dirName: string, hostName?: string): Promise<void>;
+        loadModuleAsync(path: string, hostName?: string): Promise<void>;
 
-        resolveComponentIdentity(componentIdentity: string): string;
-        getComponent(componentIdentity: "module-manager"): IModuleManager;
-        getComponent<T>(componentIdentity: string, ...extraArgs: Array<any>): T;
+        registerComponentsAsync(componentInfos: Array<IComponentInfo>): Promise<void>;
+
+        getComponentAsync<T>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T>;
 
         onHostVersionMismatch(callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler;
-        onDepVersionMismatch(callback?: DepVersionMismatchEventHandler): void | DepVersionMismatchEventHandler;
+
+        getComponentAsync(componentIdentity: "module-manager"): Promise<IModuleManager>;
     }
 
     export interface IHandlerConstructor<THandler> {

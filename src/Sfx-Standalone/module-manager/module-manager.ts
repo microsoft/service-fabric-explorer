@@ -3,10 +3,23 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import {
+    IDictionary,
+    IModuleInfo,
+    IModuleManager,
+    IComponentDescriptor,
+    IComponentInfo,
+    HostVersionMismatchEventHandler
+} from "sfx";
+
+import { ICommunicator } from "sfx.ipc";
+
 import * as fs from "fs";
 import * as path from "path";
+import * as child_process from "child_process";
 import * as semver from "semver";
 
+import { NodeCommunicator } from "../modules/ipc/communicator.node";
 import error from "../utilities/errorUtil";
 import * as utils from "../utilities/utils";
 import * as di from "../utilities/di";
@@ -43,7 +56,7 @@ namespace ComponentDescriptors {
                     const inject = injects[injectIndex];
 
                     if (inject !== undefined) {
-                        let dep: any = container.getInstance(inject);
+                        let dep: any = container.getDep(inject);
 
                         if (dep === undefined) {
                             throw error("{}: dependency, '{}', is missing.", componentIdentity, inject);
@@ -560,5 +573,89 @@ export class ModuleManager extends di.DiContainer implements IModuleManager {
         ModuleManager.popReferenceStack(componentIdentity.identity, referenceStack);
 
         return componentIdentity;
+    }
+}
+
+interface IHostRecord {
+    process: child_process.ChildProcess;
+    communicator: ICommunicator;
+}
+
+export class NewModuleManager implements IModuleManager {
+    private readonly _hostVersion: string;
+
+    private hostVersionMismatchHandler: HostVersionMismatchEventHandler;
+
+    private children: IDictionary<IHostRecord>;
+
+    private parentCommunicator: ICommunicator;
+
+    private container: di.IDiContainer;
+
+    public get hostVersion(): string {
+        return this._hostVersion;
+    }
+
+    constructor(hostVersion: string, parentCommunicator?: ICommunicator) {
+        this._hostVersion = hostVersion;
+        this.container = new di.DiContainer();
+        this.parentCommunicator = parentCommunicator;
+    }
+
+    public async newHostAsync(hostName: string): Promise<void> {
+        const childProcess: child_process.ChildProcess = child_process.spawn("./bootstrap.js");
+        const childCommunicator = new NodeCommunicator(childProcess, hostName);
+
+        if (!this.children) {
+            this.children = {};
+        }
+
+        this.children[hostName] = {
+            process: childProcess,
+            communicator: childCommunicator
+        };
+    }
+
+    public async destroyHostAsync(hostName: string): Promise<void> {
+        if (!this.children) {
+            return;
+        }
+
+        const child = this.children[hostName];
+
+        if (!child) {
+            return;
+        }
+
+        await child.communicator.dispose();
+        child.process.kill();
+    }
+
+    public loadModuleDirectoryAsync(dirName: string, hostName?: string): Promise<void> {
+
+    }
+
+    public loadModuleAsync(path: string, hostName?: string): Promise<void> {
+
+    }
+
+    public registerComponentsAsync(componentInfos: Array<IComponentInfo>): Promise<void> {
+
+    }
+
+    public getComponentAsync<T>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T> {
+
+    }
+
+    public onHostVersionMismatch(callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler {
+        if (callback === undefined) {
+            return this.hostVersionMismatchHandler;
+        } else if (callback === null) {
+            this.hostVersionMismatchHandler = null;
+        } else if (Function.isFunction(callback)) {
+            this.hostVersionMismatchHandler = callback;
+        } else {
+            throw new Error("Provided callback must be a function.");
+        }
     }
 }

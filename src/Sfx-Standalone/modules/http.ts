@@ -2,8 +2,22 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
-import { IHandlerChainBuilder, IDictionary } from "sfx";
-import { HttpProtocol, IHttpClient } from "sfx.http";
+import {
+    IHandlerChainBuilder,
+    IDictionary,
+    IModuleInfo
+} from "sfx";
+
+import {
+    HttpProtocol,
+    IHttpClient,
+    IResponseHandlerContructor,
+    IRequestProcessorConstructor,
+    ResponseHandler,
+    RequestProcessor,
+    IRequestOptions
+} from "sfx.http";
+
 import { ILog } from "sfx.logging";
 
 import * as http from "http";

@@ -3,43 +3,64 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { MenuItemConstructorOptions, Certificate } from "electron";
+declare module "sfx.prompt" {
+    import { ICommunicator } from "sfx.ipc";
+    import { MenuItemConstructorOptions, Certificate } from "electron";
 
-export interface IPromptOptions {
-    pageUrl: string;
-    frame?: boolean;
-    showMenu?: boolean;
-    menuTemplate?: MenuItemConstructorOptions[];
-    data?: any;
-    width?: number;
-    height?: number;
-    resizable?: boolean;
-    icon?: string;
-    parentWindowId?: number;
-    minimizable?: boolean;
-    closable?: boolean;
+    export interface IPromptOptions {
+        pageUrl: string;
+        frame?: boolean;
+        showMenu?: boolean;
+        menuTemplate?: MenuItemConstructorOptions[];
+        data?: any;
+        width?: number;
+        height?: number;
+        resizable?: boolean;
+        icon?: string;
+        parentWindowId?: number;
+        minimizable?: boolean;
+        closable?: boolean;
+    }
+
+    export interface IPromptService {
+        open<TPromptResults>(
+            promptOptions: IPromptOptions,
+            promptCallback?: (error: any, results: TPromptResults) => void): ICommunicator;
+    }
+
+    export interface IInputPromptOptions {
+        password?: boolean;
+        title: string;
+        message: string;
+    }
+
+    export interface ISelectCertificatePromptResults {
+        selectedCertificate?: Certificate;
+        certificatesImported?: boolean;
+    }
+
+    export interface IPromptContext {
+        readonly promptOptions: IPromptOptions;
+    
+        finish<TPromptResults>(results: TPromptResults): void;
+        close(): void;
+    }
 }
 
-export interface IPromptService {
-    open<TPromptResults>(
-        promptOptions: IPromptOptions,
-        promptCallback?: (error: any, results: TPromptResults) => void): ICommunicator;
-}
+declare module "sfx" {
+    import { Certificate } from "electron";
+    import { ICommunicator } from "sfx.ipc";
+    import {
+        IPromptService,
+        IPromptContext,
+        IInputPromptOptions, 
+        ISelectCertificatePromptResults
+    } from "sfx.prompt";
 
-export interface IInputPromptOptions {
-    password?: boolean;
-    title: string;
-    message: string;
-}
-
-export interface ISelectCertificatePromptResults {
-    selectedCertificate?: Certificate;
-    certificatesImported?: boolean;
-}
-
-declare global {
-    interface IModuleManager {
+    export interface IModuleManager {
         getComponent(componentIdentity: "prompt-service"): IPromptService;
+
+        getComponent(componentIdentity: "prompt-context"): IPromptContext;
 
         getComponent(componentIdentity: "prompt-input",
             parentWindowId: number,
