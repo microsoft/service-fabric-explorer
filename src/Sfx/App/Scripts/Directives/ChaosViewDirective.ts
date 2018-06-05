@@ -58,14 +58,17 @@ module Sfx {
         }
 
         public handleClick(event: any): void {
-            $(event.target).prop("disabled", true);
+            let $button = $(event.target);
+            $button.prop("disabled", true);
 
             if (this.$scope.chaos.status === "Stopped") {
                 this.$scope.chaos.start();
+                $button.text("Starting chaos...");
             }
 
             if (this.$scope.chaos.status === "Running") {
                 this.$scope.chaos.stop();
+                $button.text("Stopping chaos...");
             }
         }
 
