@@ -7,6 +7,7 @@ var plugins = require("gulp-load-plugins")({
     camelize: true,
     lazy: true
 });
+var libConfiguration = require("./build/lib.json");
 
 // To get production bits, right click project, choose publish.
 // This env variable will be set through prepublish command defined in project.json
@@ -121,11 +122,11 @@ gulp.task("build:versionInfo", function () {
 });
 
 gulp.task("build:lib-js", function () {
-    console.log("Bower ordered javascripts:");
-    console.log(plugins.wiredep().js);
+    console.log("Lib ordered javascripts:");
+    console.log(libConfiguration.js);
 
     // Create lib.min.js
-    return gulp.src(plugins.wiredep().js, { base: "bower_components" })
+    return gulp.src(libConfiguration.js)
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(plugins.concat(paths.libs_scripts.target))
         .pipe(plugins.if(isProductionEnv, plugins.uglify({ preserveComments: "license" })))
@@ -134,11 +135,11 @@ gulp.task("build:lib-js", function () {
 });
 
 gulp.task("build:lib-css", function () {
-    console.log("Bower styles:");
-    console.log(plugins.wiredep().css);
+    console.log("Lib styles:");
+    console.log(libConfiguration.css);
 
     // Create lib.min.css
-    return gulp.src(plugins.wiredep().css)
+    return gulp.src(libConfiguration.css)
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(plugins.concat(paths.libs_styles.target))
         .pipe(plugins.cleanCss())
