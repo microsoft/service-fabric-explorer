@@ -18,7 +18,7 @@ module Sfx {
         module.directive("sfxDetailList", () => new DetailListDirective());
         module.directive("sfxMetricsBarChart", MetricsBarChartDirective.factory());
         module.directive("sfxDashboard", DashboardChartDirective.factory());
-        //module.directive("sfxChaosView", () => new ChaosViewDirective());
+        module.directive("sfxChaosView", () => new ChaosViewDirective());
 
         module.directive("sfxThemeImport", ["theme", (themeService: ThemeService): angular.IDirective => {
             return {
