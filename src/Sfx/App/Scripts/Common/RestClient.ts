@@ -308,7 +308,7 @@ module Sfx {
         }
 
         public getChaosEvents(messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawChaosEvents> {
-            return this.get(this.getApiUrl("Tools/Chaos/Events", RestClient.apiVersion62), "Get chaos events");
+            return this.get(this.getApiUrl("Tools/Chaos/Events?MaxResults=100", RestClient.apiVersion62), "Get chaos events");
         }
 
         public startChaos(messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
