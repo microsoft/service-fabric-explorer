@@ -3,7 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-// *** Dependency Injection ***
+import * as sfx from "sfx";
+
 import error from "./errorUtil";
 import * as utils from "./utils";
 
@@ -12,7 +13,7 @@ export interface IDiDescriptor {
 }
 
 export interface IDiContainer {
-    getInstance<T>(name: string, ...extraArgs: Array<any>): T;
+    getDep<T>(name: string, ...extraArgs: Array<any>): T;
     get(name: string): IDiDescriptor;
     set(name: string, descriptor: IDiDescriptor): IDiContainer;
 }
@@ -23,7 +24,7 @@ export interface IDiDescriptorDictionary {
 }
 
 export class DiDescriptorDictionary implements IDiDescriptorDictionary {
-    private readonly descriptorDictionary: IDictionary<IDiDescriptor>;
+    private readonly descriptorDictionary: sfx.IDictionary<IDiDescriptor>;
 
     constructor() {
         this.descriptorDictionary = {};
@@ -61,7 +62,7 @@ export class DiContainer implements IDiContainer {
         }
     }
 
-    public getInstance<T>(name: string, ...extraArgs: Array<any>): T {
+    public getDep<T>(name: string, ...extraArgs: Array<any>): T {
         const descriptor = this.get(name);
 
         if (utils.isNullOrUndefined(descriptor)) {

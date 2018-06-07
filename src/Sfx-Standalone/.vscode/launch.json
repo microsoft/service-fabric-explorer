@@ -17,7 +17,7 @@
             "args": [
                 "./build/app/."
             ],
-            "preLaunchTask": "gulp: Build"
+            "preLaunchTask": "gulp: build"
         },
         {
             "type": "node",
@@ -36,10 +36,10 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Debug gulp Clean-Build",
+            "name": "Debug gulp clean-build",
             "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
             "args": [
-                "Clean-Build"
+                "clean-build"
             ]
         }
     ]

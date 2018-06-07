@@ -3,14 +3,9 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-export interface IUpdateService {
-    update(): void;
-
-    requestVersionInfo(callback: (error, versionInfo: IVersionInfo) => void): void;
-}
-
-declare global {
-    interface IModuleManager {
-        getComponent(componentIdentity: "update-service"): IUpdateService;
-    }
-}
+/// <reference path="common.d.ts" />
+/// <reference path="./modules/http.d.ts" />
+/// <reference path="./modules/logging/logging.d.ts" />
+/// <reference path="./modules/remoting/remoting.d.ts" />
+/// <reference path="./modules/settings.d.ts" />
+/// <reference path="./modules/update.d.ts" />

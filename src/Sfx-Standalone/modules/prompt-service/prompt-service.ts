@@ -5,7 +5,6 @@
 
 import { MenuItemConstructorOptions, Menu, app, BrowserWindow, ipcMain, BrowserWindowConstructorOptions } from "electron";
 
-import { ICommunicator } from "../../@types/ipc";
 import { IPromptOptions, IPromptService } from "../../@types/prompt";
 import * as utils from "../../utilities/utils";
 import { electron } from "../../utilities/electron-adapter";

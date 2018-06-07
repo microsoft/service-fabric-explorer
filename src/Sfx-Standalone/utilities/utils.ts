@@ -3,9 +3,11 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import error from "./errorUtil";
+
 declare global {
     interface StringConstructor {
-        isString(value: any): value is string | String;
+        isString(value: any): value is string;
         format(format: string, ...args: Array<any>): string;
         isNullUndefinedOrEmpty(value: any): boolean;
         isNullUndefinedOrWhitespace(value: any): boolean;
@@ -21,12 +23,43 @@ declare global {
 
     interface Function {
         isObject(value: any): value is object | Object;
+
+        /**
+         * Check if an object is empty or not. It also checks if the prototype chains are empty (pure empty).
+         * @param {object | Object} value The target object to be checked. Error will be thrown if the value is null or undefined.
+         * @returns {boolean} True if the object is empty include the prototype chains are also empty. 
+         * Otherwise, false.
+         */
+        isEmpty(value: object | Object): boolean;
+
+        /**
+         * Check if the value is serializable. 
+         * @param {any} value The value to be checked.
+         * @param {boolean} [checkDeep=false] Check recursively.
+         * @return {boolean} True if the value is serializable for sure. Otherwise, false, 
+         * which indicates the value cannot be serialized or cannot be determined whether it can be serialized or not.
+         */
+        isSerializable(value: any): boolean;
+
+        markSerializable(value: any, serializable?: boolean): any;
     }
 
     interface NumberConstructor {
         isNumber(value: any): value is number | Number;
     }
+
+    interface SymbolConstructor {
+        isSymbol(value: any): value is symbol;
+    }
 }
+
+namespace Symbols {
+    export const Serializable = Symbol("serializable");
+}
+
+Symbol.isSymbol = (value: any): value is symbol => {
+    return typeof value === "symbol";
+};
 
 Number.isNumber = (value: any): value is number | Number => {
     return typeof value === "number" || value instanceof Number;
@@ -40,11 +73,71 @@ Object.isObject = (value: any): value is object | Object => {
     return value !== null && typeof value === "object";
 };
 
+Object.isEmpty = (value: Object | object) => {
+    if (isNullOrUndefined(value)) {
+        throw error("value cannot be null/undefined.");
+    }
+
+    for (const key in value) {
+        return false;
+    }
+
+    return true;
+};
+
+Object.markSerializable = (value: any, serializable: boolean = true) => {
+    if (!isNullOrUndefined(value)) {
+        if (Function.isFunction(value)) {
+            throw error("Cannot mark function objects as serializable.");
+        }
+
+        if (Symbol.isSymbol(value)) {
+            throw error("Cannot mark symbol objects as serializable.");
+        }
+
+        serializable = serializable === true;
+
+        value[Symbols.Serializable] = serializable;
+    }
+
+    return value;
+};
+
+Object.isSerializable = (value: any) => {
+    const valueType = typeof value;
+
+    switch (valueType) {
+        case "object":
+            if (value === null) {
+                return true;
+            }
+
+            if (Object.prototype.hasOwnProperty.call(value, Symbols.Serializable)) {
+                return value[Symbols.Serializable] === true;
+            }
+
+            return Function.isFunction(value["toJSON"])
+                || (Object.getPrototypeOf(value) === Object.prototype
+                    && Object.values(value).every((propertyValue) => Object.isSerializable(propertyValue)));
+
+        case "undefined":
+        case "number":
+        case "boolean":
+        case "string":
+            return true;
+
+        case "symbol":
+        case "function":
+        default:
+            return false;
+    }
+};
+
 Array.isNullUndefinedOrEmpty = (value: any): boolean => {
     return value === undefined || value === null || (Array.isArray(value) && value.length <= 0);
 };
 
-String.isString = (value: any): value is string | String => {
+String.isString = (value: any): value is string => {
     return typeof value === "string" || value instanceof String;
 };
 
@@ -139,5 +232,17 @@ export function getCallerInfo(): ICallerInfo {
         return directCallerInfo;
     } finally {
         Error.prepareStackTrace = previousPrepareStackTraceFn;
+    }
+}
+
+export function dispose(data: any): void {
+    if (!isNullOrUndefined(data) && Function.isFunction(data.dispose)) {
+        data.dispose();
+    }
+}
+
+export async function disposeAsync(data: any): Promise<void> {
+    if (!isNullOrUndefined(data) && Function.isFunction(data.dispose)) {
+        await data.dispose();
     }
 }

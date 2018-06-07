@@ -3,13 +3,10 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ICommunicator, IProxy, ISender } from "../@types/ipc";
 import { ILog, ILogger } from "../@types/log";
 import * as utils from "../utilities/utils";
 import error from "../utilities/errorUtil";
 import { ModuleManager, Identity } from "./module-manager";
-import ElectronCommunicator from "../modules/ipc/communicator-electron";
-import ElectronProxy from "../modules/ipc/proxy-electron";
 import { appCodeName } from "../utilities/appUtils";
 import { Log } from "../modules/logging/log";
 import { local } from "../utilities/resolve";

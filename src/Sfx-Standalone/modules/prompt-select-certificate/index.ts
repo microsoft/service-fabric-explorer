@@ -6,7 +6,6 @@
 import { Certificate } from "electron";
 
 import { IPromptService, ISelectCertificatePromptResults } from "../../@types/prompt";
-import { ICommunicator } from "../../@types/ipc";
 import "../../utilities/utils";
 import error from "../../utilities/errorUtil";
 import resolve from "../../utilities/resolve";

@@ -3,7 +3,9 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ILog, ILogger, ILoggingSettings, ILoggerSettings, Severity } from "../../@types/log";
+import { IDictionary } from "sfx";
+import { ILog, ILogger, ILoggerSettings, ILoggingSettings, Severity } from "sfx.logging";
+
 import { IConsoleLoggerSettings } from "./console";
 import * as utils from "../../utilities/utils";
 import error from "../../utilities/errorUtil";

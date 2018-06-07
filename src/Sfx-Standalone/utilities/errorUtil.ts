@@ -5,10 +5,31 @@
 
 import "./utils";
 
+export interface ISerializedError {
+    message: string;
+    stack: string;
+}
+
+export class SerializableError extends Error {
+    public static from(serializedError: ISerializedError): Error {
+        const error = new SerializableError(serializedError.message);
+
+        error.stack = serializedError.stack;
+        return error;
+   }
+   
+    public toJSON(): ISerializedError {
+        return {
+            message: this.message,
+            stack: this.stack
+        };
+    }
+}
+
 export default function error(messageOrFormat: string, ...params: Array<any>): Error {
     if (!Array.isArray(params)) {
-        return new Error(messageOrFormat);
+        return new SerializableError(messageOrFormat);
     }
 
-    return new Error(String.format(messageOrFormat, ...params));
+    return new SerializableError(String.format(messageOrFormat, ...params));
 }

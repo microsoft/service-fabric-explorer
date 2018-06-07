@@ -3,9 +3,11 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import { IDictionary } from "sfx";
+import { ILogger, ILoggerSettings, Severity } from "sfx.logging";
+
 import * as path from "path";
 
-import { ILogger, ILoggerSettings, Severity } from "../../@types/log";
 import * as utils from "../../utilities/utils";
 import { Severities } from "./log";
 

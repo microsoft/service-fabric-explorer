@@ -3,10 +3,14 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ILog } from "../../@types/log";
-import { ICommunicator } from "../../@types/ipc";
-import ElectronCommunicator from "./communicator-electron";
-import ElectronProxy from "./proxy-electron";
+import { IModuleInfo } from "sfx";
+import { ILog } from "sfx.logging";
+
+import { ChildProcess } from "child_process";
+import { Socket } from "net";
+
+import * as utilities from "./utilities";
+import { NodeCommunicator } from "./communicator.node";
 
 export function getModuleMetadata(): IModuleInfo {
     return {
@@ -14,16 +18,16 @@ export function getModuleMetadata(): IModuleInfo {
         version: "1.0.0",
         components: [
             {
-                name: "ipc-communicator-electron",
+                name: "ipc-communicator-node",
                 version: "1.0.0",
-                descriptor: (log: ILog, webContentId: number, subchannelName: string) => new ElectronCommunicator(log, webContentId, subchannelName),
-                deps: ["log"]
+                deps: ["log"],
+                descriptor: (log: ILog, channel: NodeJS.Process | ChildProcess | Socket, id?: string) => new NodeCommunicator(channel, id)
             },
             {
-                name: "ipc-proxy-electron",
+                name: "ipc-communicator-utilities",
                 version: "1.0.0",
-                descriptor: (log: ILog, communicator: ICommunicator, autoDipsoseCommunicator: boolean) => new ElectronProxy(log, communicator, autoDipsoseCommunicator),
-                deps: ["log"]
+                deps: [],
+                descriptor: () => utilities
             }
         ]
     };
