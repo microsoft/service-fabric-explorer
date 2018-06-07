@@ -58,21 +58,21 @@ declare module "sfx" {
     } from "sfx.prompt";
 
     export interface IModuleManager {
-        getComponent(componentIdentity: "prompt-service"): IPromptService;
+        getComponentAsync(componentIdentity: "prompt-service"): Promise<IPromptService>;
 
-        getComponent(componentIdentity: "prompt-context"): IPromptContext;
+        getComponentAsync(componentIdentity: "prompt-context"):  Promise<IPromptContext>;
 
-        getComponent(componentIdentity: "prompt-input",
+        getComponentAsync(componentIdentity: "prompt-input",
             parentWindowId: number,
             options: IInputPromptOptions,
-            promptCallback: (error: any, input: string) => void): ICommunicator;
+            promptCallback: (error: any, input: string) => void):  Promise<ICommunicator>;
 
-        getComponent(componentIdentity: "prompt-connect-cluster",
-            promptCallback: (error: any, targetClusterUrl: string) => void): ICommunicator;
+        getComponentAsync(componentIdentity: "prompt-connect-cluster",
+            promptCallback: (error: any, targetClusterUrl: string) => void):  Promise<ICommunicator>;
 
-        getComponent(componentIdentity: "prompt-select-certificate",
+        getComponentAsync(componentIdentity: "prompt-select-certificate",
             parentWindowId: number,
             certificates: Array<Certificate>,
-            promptCallback: (error: any, results: ISelectCertificatePromptResults) => void): ICommunicator;
+            promptCallback: (error: any, results: ISelectCertificatePromptResults) => void):  Promise<ICommunicator>;
     }
 }

@@ -23,3 +23,9 @@ declare module "sfx.ipc" {
         isCommunicator(communicator: any): communicator is ICommunicator;
     }
 }
+
+declare module "sfx" {
+    export interface IModuleManager {
+        
+    }
+}

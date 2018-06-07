@@ -4,18 +4,18 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx" {
-    import * as http from "sfx.http";
+    import { IHttpClient } from "sfx.http";
 
     export interface IModuleManager {
-        getComponent(componentIdentity: "http-client"): http.IHttpClient;
-        getComponent(componentIdentity: "https-client"): http.IHttpClient;
+        getComponentAsync(componentIdentity: "http-client"): Promise<IHttpClient>;
+        getComponentAsync(componentIdentity: "https-client"): Promise<IHttpClient>;
     }
 }
 
 declare module "sfx.http" {
-    import * as common from "sfx";
-    import * as logging from "sfx.logging";
-    import * as nodehttp from "http";
+    import { IDictionary, IHandlerConstructor } from "sfx";
+    import { ILog } from "sfx.logging";
+    import { ClientRequest, IncomingMessage } from "http";
 
     export type HttpProtocol = "*" | "http:" | "https:";
 
@@ -26,21 +26,21 @@ declare module "sfx.http" {
     export interface IRequestOptions {
         method: HttpMethod;
         url: string;
-        headers?: common.IDictionary<string | Array<string>>;
+        headers?: IDictionary<string | Array<string>>;
     }
 
     export interface RequestProcessor {
-        (client: IHttpClient, log: logging.ILog, requestOptions: IRequestOptions, requestData: any, request: nodehttp.ClientRequest): void;
+        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: ClientRequest): void;
     }
 
     export interface ResponseHandler {
-        (client: IHttpClient, log: logging.ILog, requestOptions: IRequestOptions, requestData: any, response: nodehttp.IncomingMessage, error: any, callback?: ResponseHandler): void;
+        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IncomingMessage, error: any, callback?: ResponseHandler): void;
     }
 
-    export interface IRequestProcessorConstructor extends common.IHandlerConstructor<RequestProcessor> {
+    export interface IRequestProcessorConstructor extends IHandlerConstructor<RequestProcessor> {
     }
 
-    export interface IResponseHandlerContructor extends common.IHandlerConstructor<ResponseHandler> {
+    export interface IResponseHandlerContructor extends IHandlerConstructor<ResponseHandler> {
     }
 
     export interface IHttpClient {

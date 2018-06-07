@@ -4,16 +4,16 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.remoting" {
-    import * as common from "sfx";
+    import { IDisposable } from "sfx";
 
     export interface Resolver {
-        (name: string, ...extraArgs: Array<any>): any | Promise<any>;
+        (name: string, ...extraArgs: Array<any>): IDisposable | Promise<IDisposable>;
     }
 
-    export interface IRemotingProxy extends common.IDisposable {
+    export interface IRemotingProxy extends IDisposable {
         readonly id: string;
 
-        requestAsync<T extends common.IDisposable>(identifier: string, ...extraArgs: Array<any>): T | Promise<T>;
+        requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: Array<any>): T | Promise<T>;
 
         setResolver(resolver: Resolver): void;
         getResolver(): Resolver;

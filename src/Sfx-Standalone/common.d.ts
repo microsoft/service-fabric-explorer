@@ -34,7 +34,7 @@ declare module "sfx" {
 
     export interface IComponentInfo {
         name: string;
-        version: string;
+        version?: string;
         descriptor: IComponentDescriptor;
         singleton?: boolean;
         deps?: Array<string>;
@@ -57,15 +57,14 @@ declare module "sfx" {
         newHostAsync(hostName: string): Promise<void>;
         destroyHostAsync(hostName: string): Promise<void>;
 
-        loadModuleDirectoryAsync(dirName: string, hostName?: string): Promise<void>;
+        loadModuleDirAsync(dirName: string, hostName?: string): Promise<void>;
         loadModuleAsync(path: string, hostName?: string): Promise<void>;
 
-        registerComponentsAsync(componentInfos: Array<IComponentInfo>): Promise<void>;
-
-        getComponentAsync<T>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T>;
+        registerComponents(componentInfos: Array<IComponentInfo>): void;
 
         onHostVersionMismatch(callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler;
 
+        getComponentAsync<T extends IDisposable>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T>;
         getComponentAsync(componentIdentity: "module-manager"): Promise<IModuleManager>;
     }
 
