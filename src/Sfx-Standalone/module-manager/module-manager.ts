@@ -96,7 +96,7 @@ export class ModuleManager implements IModuleManager {
             throw error("hostName, \"{}\", already exists.", hostName);
         }
 
-        const childProcess: child_process.ChildProcess = child_process.spawn("./bootstrap.js");
+        const childProcess: child_process.ChildProcess = child_process.spawn("./bootstrap.js", [this.hostVersion]);
         const childCommunicator = new NodeCommunicator(childProcess, hostName);
         const proxy = new RemotingProxy(childCommunicator, true);
 
