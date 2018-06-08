@@ -9,6 +9,7 @@ import { ILogger, ILoggerSettings, Severity } from "sfx.logging";
 import * as path from "path";
 
 import * as utils from "../../../utilities/utils";
+import error from "../../../utilities/errorUtil";
 import { Severities } from "../log";
 
 export interface IConsoleLoggerSettings extends ILoggerSettings {
@@ -19,17 +20,26 @@ export interface IConsoleLoggerSettings extends ILoggerSettings {
 export default class ConsoleLogger implements ILogger {
     private readonly settings: IConsoleLoggerSettings;
 
-    private readonly console: Console;
+    private console: Console;
+
+    public get name(): string {
+        return this.settings.name;
+    }
+
+    public get disposed(): boolean {
+        return this.console === undefined;
+    }
 
     constructor(settings: IConsoleLoggerSettings, targetConsole?: Console) {
         if (!Object.isObject(settings)) {
             settings = {
+                name: "console",
                 type: "console"
             };
         }
 
         this.settings = settings;
-        this.settings.logAllProperties = utils.getEither(settings.logAllProperties, false);
+        this.settings.logAllProperties = settings.logAllProperties === true;
         this.settings.logCallerInfo = utils.getEither(settings.logCallerInfo, true);
 
         if (utils.isNullOrUndefined(targetConsole)) {
@@ -40,6 +50,7 @@ export default class ConsoleLogger implements ILogger {
     }
 
     public write(properties: IDictionary<string>, severity: Severity, message: string): void {
+        this.validateDisposal();
         let consoleMsg: string = this.formatConsoleMsg(properties, message);
 
         switch (severity) {
@@ -69,6 +80,7 @@ export default class ConsoleLogger implements ILogger {
     }
 
     public writeException(properties: IDictionary<string>, error: Error): void {
+        this.validateDisposal();
         let exceptionMsg: string = "";
 
         exceptionMsg += error.name + ": " + error.message;
@@ -79,7 +91,18 @@ export default class ConsoleLogger implements ILogger {
     }
 
     public writeMetric(properties: IDictionary<string>, name: string, value: number): void {
+        this.validateDisposal();
         this.console.info(this.formatConsoleMsg(properties, name + ": " + value.toString()));
+    }
+
+    public dispose(): void {
+        this.console === undefined;
+    }
+
+    private validateDisposal(): void {
+        if (this.disposed) {
+            throw error("Logger, \"{}\", already disposed.", this.name);
+        }
     }
 
     private formatProperties(properties: IDictionary<string>): string {

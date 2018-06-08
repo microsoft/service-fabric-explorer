@@ -17,12 +17,13 @@ declare module "sfx.logging" {
     }
 
     export interface ILoggerSettings extends IDictionary<any> {
+        name: string;
         type: string;
     }
 
     export interface ILoggingSettings {
         logCallerInfo?: boolean;
-        loggers?: IDictionary<ILoggerSettings>;
+        loggers?: Array<ILoggerSettings>;
         properties?: IDictionary<string>;
     }
 

@@ -12,7 +12,8 @@ import {
     Severity
 } from "sfx.logging";
 
-import { IConsoleLoggerSettings } from "./console";
+import { IConsoleLoggerSettings } from "./loggers/console";
+
 import * as utils from "../../utilities/utils";
 import error from "../../utilities/errorUtil";
 
@@ -27,13 +28,14 @@ export enum Severities {
 
 const defaultLoggingSettings: ILoggingSettings = {
     logCallerInfo: true,
-    loggers: {
-        console: <IConsoleLoggerSettings>{
+    loggers: [
+        <IConsoleLoggerSettings>{
+            name: "console",
             type: "console",
             logAllProperties: false,
             logCallerInfo: true
         }
-    }
+    ]
 };
 
 export async function create(loggingSettings?: ILoggingSettings): Promise<ILog> {
@@ -71,7 +73,7 @@ export async function create(loggingSettings?: ILoggingSettings): Promise<ILog> 
             }
         }
 
-        if (logger === undefined) {
+        if (!logger) {
             throw error(
                 "failed to load logger, {}, named '{}', with component identity: {}.",
                 loggerSettings.type,
@@ -79,7 +81,7 @@ export async function create(loggingSettings?: ILoggingSettings): Promise<ILog> 
                 String.format("loggers.{}", loggerSettings.type));
         }
 
-        this.loggers[loggerName] = logger;
+        log.addLogger(logger);
     }
 }
 
@@ -107,7 +109,7 @@ export class Log implements ILog {
 
     public writeMore(properties: IDictionary<string>, severity: Severity, messageOrFormat: string, ...params: Array<any>): void {
         this.validateDisposal();
-        
+
         if (!String.isString(messageOrFormat)) {
             return;
         }
@@ -120,32 +122,26 @@ export class Log implements ILog {
     }
 
     public write(severity: Severity, messageOrFormat: string, ...params: Array<any>): void {
-        this.validateDisposal();
         this.writeMore(null, severity, messageOrFormat, ...params);
     }
 
     public writeInfo(messageOrFormat: string, ...params: Array<any>) {
-        this.validateDisposal();
         this.write(Severities.Information, messageOrFormat, ...params);
     }
 
     public writeVerbose(messageOrFormat: string, ...params: Array<any>) {
-        this.validateDisposal();
         this.write(Severities.Verbose, messageOrFormat, ...params);
     }
 
     public writeWarning(messageOrFormat: string, ...params: Array<any>) {
-        this.validateDisposal();
         this.write(Severities.Warning, messageOrFormat, ...params);
     }
 
     public writeError(messageOrFormat: string, ...params: Array<any>) {
-        this.validateDisposal();
         this.write(Severities.Error, messageOrFormat, ...params);
     }
 
     public writeCritical(messageOrFormat: string, ...params: Array<any>) {
-        this.validateDisposal();
         this.write(Severities.Critical, messageOrFormat, ...params);
     }
 
@@ -217,7 +213,7 @@ export class Log implements ILog {
         this.loggers = undefined;
     }
 
-    private validateDisposal(){
+    private validateDisposal() {
         if (this.disposed) {
             throw error("Already disposed.");
         }
