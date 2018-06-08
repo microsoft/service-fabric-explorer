@@ -8,8 +8,8 @@ import { ILogger, ILoggerSettings, Severity } from "sfx.logging";
 
 import * as path from "path";
 
-import * as utils from "../../utilities/utils";
-import { Severities } from "./log";
+import * as utils from "../../../utilities/utils";
+import { Severities } from "../log";
 
 export interface IConsoleLoggerSettings extends ILoggerSettings {
     logAllProperties?: boolean;

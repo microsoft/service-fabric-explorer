@@ -36,72 +36,78 @@ const defaultLoggingSettings: ILoggingSettings = {
     }
 };
 
-export class Log implements ILog {
-    private readonly moduleManager: IModuleManager;
+export async function create(loggingSettings?: ILoggingSettings): Promise<ILog> {
+    if (!utils.isNullOrUndefined(loggingSettings)
+        && !Object.isObject(loggingSettings)) {
+        throw error("loggingSettings must be an Object implementing ILoggingSettings.");
+    }
 
-    private readonly loggers: IDictionary<ILogger>;
+    loggingSettings = loggingSettings || defaultLoggingSettings;
+    const log = new Log(loggingSettings.logCallerInfo, loggingSettings.properties);
 
-    private readonly defaultPropertiesInJson: string;
+    if (!loggingSettings.loggers) {
+        return log;
+    }
 
-    private readonly logCallerInfo: boolean;
+    if (!Object.isObject(loggingSettings.loggers)) {
+        throw error("loggingSettings.loggers must be an object implementing IDicionary<ILoggerSettings>.");
+    }
 
-    constructor(moduleManager?: IModuleManager, loggingSettings?: ILoggingSettings) {
-        if (utils.isNullOrUndefined(moduleManager)) {
-            this.moduleManager = undefined;
-            loggingSettings = defaultLoggingSettings;
-        } else if (!Object.isObject(moduleManager)) {
-            throw error("Valid moduleManager must be supplied.");
-        } else if (utils.isNullOrUndefined(loggingSettings)) {
-            loggingSettings = defaultLoggingSettings;
-        } else if (!Object.isObject(loggingSettings)) {
-            throw error("valid loggingSetting must be supplied.");
-        }
+    for (const loggerName in loggingSettings.loggers) {
+        const loggerSettings: ILoggerSettings = loggingSettings.loggers[loggerName];
+        let logger: ILogger;
 
-        this.loggers = {};
-        this.defaultPropertiesInJson = undefined;
-        this.moduleManager = moduleManager;
+        if (sfxModuleManager !== undefined) {
+            logger = await sfxModuleManager.getComponentAsync<ILogger>(
+                String.format("loggers.{}", loggerSettings.type),
+                loggerSettings);
+        } else {
+            const loggerModule = require("./loggers/" + loggerSettings.type);
 
-        if (Object.isObject(loggingSettings.properties)) {
-            this.defaultPropertiesInJson = JSON.stringify(loggingSettings.properties);
-        }
-
-        if (!utils.isNullOrUndefined(loggingSettings.loggers)) {
-            for (const loggerName in loggingSettings.loggers) {
-                if (loggingSettings.loggers.hasOwnProperty(loggerName)) {
-                    const loggerSettings: ILoggerSettings = loggingSettings.loggers[loggerName];
-                    let logger: ILogger;
-
-                    if (this.moduleManager !== undefined) {
-                        logger = this.moduleManager.getComponentAsync(
-                            String.format("loggers.{}", loggerSettings.type),
-                            loggerSettings);
-                    } else {
-                        const loggerModule = require("./" + loggerSettings.type);
-
-                        if (loggerModule.default !== undefined) {
-                            logger = new loggerModule.default(loggerSettings);
-                        } else {
-                            logger = new (loggerModule[loggerSettings.type])(loggerSettings);
-                        }
-                    }
-
-                    if (logger === undefined) {
-                        throw error(
-                            "failed to load logger, {}, named '{}', with component identity: {}.",
-                            loggerSettings.type,
-                            loggerName,
-                            String.format("loggers.{}", loggerSettings.type));
-                    }
-
-                    this.loggers[loggerName] = logger;
-                }
+            if (loggerModule.default !== undefined) {
+                logger = new loggerModule.default(loggerSettings);
+            } else {
+                logger = new (loggerModule[loggerSettings.type])(loggerSettings);
             }
         }
 
-        this.logCallerInfo = utils.getEither(loggingSettings.logCallerInfo, false);
+        if (logger === undefined) {
+            throw error(
+                "failed to load logger, {}, named '{}', with component identity: {}.",
+                loggerSettings.type,
+                loggerName,
+                String.format("loggers.{}", loggerSettings.type));
+        }
+
+        this.loggers[loggerName] = logger;
+    }
+}
+
+export class Log implements ILog {
+    private loggers: Array<ILogger>;
+
+    private defaultProperties: IDictionary<any>;
+
+    private readonly logCallerInfo: boolean;
+
+    public get disposed(): boolean {
+        return this.loggers === undefined;
+    }
+
+    constructor(includeCallerInfo?: boolean, defaultProperties?: IDictionary<any>) {
+        if (!utils.isNullOrUndefined(defaultProperties)
+            && !Object.isObject(defaultProperties)) {
+            throw error("defaultProperties must be an object.");
+        }
+
+        this.loggers = [];
+        this.defaultProperties = defaultProperties;
+        this.logCallerInfo = includeCallerInfo === true;
     }
 
     public writeMore(properties: IDictionary<string>, severity: Severity, messageOrFormat: string, ...params: Array<any>): void {
+        this.validateDisposal();
+        
         if (!String.isString(messageOrFormat)) {
             return;
         }
@@ -110,48 +116,60 @@ export class Log implements ILog {
             messageOrFormat = String.format(messageOrFormat, ...params);
         }
         properties = this.generateProperties(properties);
-        this.foreachLogger((logger) => logger.write(properties, severity, messageOrFormat));
+        this.loggers.forEach((logger) => logger.write(properties, severity, messageOrFormat));
     }
 
     public write(severity: Severity, messageOrFormat: string, ...params: Array<any>): void {
+        this.validateDisposal();
         this.writeMore(null, severity, messageOrFormat, ...params);
     }
 
     public writeInfo(messageOrFormat: string, ...params: Array<any>) {
+        this.validateDisposal();
         this.write(Severities.Information, messageOrFormat, ...params);
     }
 
     public writeVerbose(messageOrFormat: string, ...params: Array<any>) {
+        this.validateDisposal();
         this.write(Severities.Verbose, messageOrFormat, ...params);
     }
 
     public writeWarning(messageOrFormat: string, ...params: Array<any>) {
+        this.validateDisposal();
         this.write(Severities.Warning, messageOrFormat, ...params);
     }
 
     public writeError(messageOrFormat: string, ...params: Array<any>) {
+        this.validateDisposal();
         this.write(Severities.Error, messageOrFormat, ...params);
     }
 
     public writeCritical(messageOrFormat: string, ...params: Array<any>) {
+        this.validateDisposal();
         this.write(Severities.Critical, messageOrFormat, ...params);
     }
 
     public writeException(exception: Error, properties?: IDictionary<string>): void {
+        this.validateDisposal();
+
         properties = this.generateProperties(properties);
-        this.foreachLogger((logger) => logger.writeException(properties, exception));
+        this.loggers.forEach((logger) => logger.writeException(properties, exception));
     }
 
     public writeEvent(name: string, properties?: IDictionary<string>) {
+        this.validateDisposal();
+
         if (!String.isString(name)) {
             return;
         }
 
         properties = this.generateProperties(properties);
-        this.foreachLogger((logger) => logger.write(properties, Severities.Event, name));
+        this.loggers.forEach((logger) => logger.write(properties, Severities.Event, name));
     }
 
     public writeMetric(name: string, value?: number, properties?: IDictionary<string>): void {
+        this.validateDisposal();
+
         if (!String.isString(name)) {
             return;
         }
@@ -161,46 +179,60 @@ export class Log implements ILog {
         }
 
         properties = this.generateProperties(properties);
-        this.foreachLogger((logger) => logger.writeMetric(properties, name, value));
+        this.loggers.forEach((logger) => logger.writeMetric(properties, name, value));
     }
 
-    public getLogger(name: string): ILogger {
+    public removeLogger(name: string): ILogger {
+        this.validateDisposal();
+
         if (!String.isString(name)) {
             throw error("name must be supplied.");
         }
 
-        return this.loggers[name];
-    }
+        const loggerIndex = this.loggers.findIndex((logger) => logger.name === name);
 
-    public setLogger(name: string, logger: ILogger = undefined): void {
-        if (!String.isString(name) || name.trim() === "") {
-            throw error("name must be supplied.");
+        if (loggerIndex >= 0) {
+            return this.loggers.splice(loggerIndex, 1)[0];
         }
 
-        if (utils.isNullOrUndefined(logger)) {
-            delete this.loggers[name];
-        } else {
-            this.loggers[name] = logger;
-        }
+        return undefined;
     }
 
-    private foreachLogger(callback: (logger: ILogger) => void): void {
-        for (const loggerName in this.loggers) {
-            if (this.loggers.hasOwnProperty(loggerName)) {
-                callback(this.loggers[loggerName]);
-            }
+    public addLogger(logger: ILogger): void {
+        this.validateDisposal();
+
+        if (!logger) {
+            throw error("logger must be provided.");
+        }
+
+        if (!Object.isObject(logger)) {
+            throw error("logger must be an object implementing ILogger.");
+        }
+
+        this.loggers.push(logger);
+    }
+
+    public dispose(): void {
+        this.defaultProperties = undefined;
+        this.loggers = undefined;
+    }
+
+    private validateDisposal(){
+        if (this.disposed) {
+            throw error("Already disposed.");
         }
     }
 
     private generateProperties(properties: IDictionary<string>): IDictionary<string> {
         let finalProperties: IDictionary<string> = null;
 
-        if (this.defaultPropertiesInJson !== undefined) {
-            finalProperties = JSON.parse(this.defaultPropertiesInJson);
+        if (this.defaultProperties) {
+            finalProperties = Object.create(this.defaultProperties);
         }
 
         if (Object.isObject(properties)) {
-            finalProperties = finalProperties === null ? properties : Object.assign(finalProperties, properties);
+            finalProperties = finalProperties || {};
+            finalProperties = Object.assign(finalProperties, properties);
         }
 
         if (this.logCallerInfo) {

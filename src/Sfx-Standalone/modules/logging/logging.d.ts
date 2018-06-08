@@ -4,11 +4,13 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.logging" {
-    import { IDictionary } from "sfx";
+    import { IDictionary, IDisposable } from "sfx";
 
     export type Severity = "event" | "verbose" | "info" | "warning" | "error" | "critical";
 
-    export interface ILogger {
+    export interface ILogger extends IDisposable {
+        readonly name: string;
+
         write(properties: IDictionary<string>, severity: Severity, message: string): void;
         writeException(properties: IDictionary<string>, error: Error): void;
         writeMetric(properties: IDictionary<string>, name: string, value: number): void;
@@ -24,7 +26,7 @@ declare module "sfx.logging" {
         properties?: IDictionary<string>;
     }
 
-    export interface ILog {
+    export interface ILog extends IDisposable {
         writeMore(properties: IDictionary<string>, severity: Severity, messageOrFormat: string, ...params: Array<any>): void;
         write(severity: Severity, messageOrFormat: string, ...params: Array<any>): void;
         writeInfo(messageOrFormat: string, ...params: Array<any>): void;
@@ -36,8 +38,8 @@ declare module "sfx.logging" {
         writeEvent(name: string, properties?: IDictionary<string>): void;
         writeMetric(name: string, value?: number, properties?: IDictionary<string>): void;
 
-        setLogger(name: string, logger?: ILogger): void;
-        getLogger(name: string): ILogger;
+        removeLogger(name: string): ILogger;
+        addLogger(logger: ILogger): void;
     }
 }
 
