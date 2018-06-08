@@ -1,65 +1,39 @@
-// //-----------------------------------------------------------------------------
-// // Copyright (c) Microsoft Corporation.  All rights reserved.
-// // Licensed under the MIT License. See License file under the project root for license information.
-// //-----------------------------------------------------------------------------
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+//-----------------------------------------------------------------------------
 import { app, dialog, Menu, BrowserWindow } from "electron";
 import * as uuidv5 from "uuid/v5";
 
-import { ILog } from "./@types/log";
-import { ISettings } from "./@types/settings";
 import { env, Platform } from "./utilities/env";
 import resolve, { local } from "./utilities/resolve";
 import { ModuleManager } from "./module-manager/module-manager";
-import { ModuleManagerHostAgent } from "./module-manager/module-manager-host";
-import { DiDescriptorConstructor } from "./utilities/di.ext";
 
-const moduleManager: IModuleManager = new ModuleManager(app.getVersion());
-
-(function loadBuiltInModules(): void {
-    const errors = moduleManager.loadModules(local("modules"));
-
-    if (Object.isObject(errors)) {
-        console.error("Failed to load built-in modules. Errors:");
-
-        for (const topic in errors) {
-            if (errors.hasOwnProperty(topic)) {
-                console.error(topic);
-                errors[topic].forEach((error) => console.error(error));
-            }
-        }
-
-        app.exit(1);
-    } else {
-        const hostAgent = new ModuleManagerHostAgent(moduleManager);
-
-        moduleManager.registerComponents([{
-            name: "module-manager-host-agent",
-            version: app.getVersion(),
-            singleton: true,
-            descriptor: DiDescriptorConstructor.singleton(hostAgent)
-        }]);
-    }
-})();
+// Initialize main module manager.
+global["sfxModuleManager"] = new ModuleManager(app.getVersion());
 
 app.setName("Service Fabric Explorer");
 
-app.on("ready", () => {
-    const log: ILog = moduleManager.getComponent("log");
+app.on("ready", async () => {
+    // Load built-in modules.
+    await sfxModuleManager.loadModuleDirAsync(local("modules"));
+
+    const log = await sfxModuleManager.getComponentAsync("log");
 
     if (env.platform === Platform.MacOs) {
-        const settings: ISettings = moduleManager.getComponent("settings");
+        const settings = await sfxModuleManager.getComponentAsync("settings");
 
         Menu.setApplicationMenu(
             Menu.buildFromTemplate(
                 settings.get("defaultMenu/" + env.platform)));
     }
 
-    moduleManager.getComponent("prompt-connect-cluster",
-        (error, clusterUrl) => {
+    sfxModuleManager.getComponentAsync("prompt-connect-cluster",
+        async (error, clusterUrl) => {
             if (clusterUrl) {
                 global["TargetClusterUrl"] = clusterUrl;
 
-                const mainWindow: BrowserWindow = moduleManager.getComponent("browser-window", null, true, clusterUrl);
+                const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null, true, clusterUrl);
 
                 mainWindow.setMenuBarVisibility(false);
 
@@ -68,7 +42,7 @@ app.on("ready", () => {
             }
         });
 
-    setTimeout(() => moduleManager.getComponent("update-service").update(), 1000); // Check upgrade after 1 sec.
+    setTimeout(async () => (await sfxModuleManager.getComponentAsync("update-service")).update(), 1000); // Check upgrade after 1 sec.
 });
 
 app.on("window-all-closed", () => app.quit());

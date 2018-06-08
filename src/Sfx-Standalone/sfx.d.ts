@@ -5,6 +5,7 @@
 
 /// <reference path="common.d.ts" />
 /// <reference path="./modules/http.d.ts" />
+/// <reference path="./modules/browser-window/browser-window.d.ts" />
 /// <reference path="./modules/logging/logging.d.ts" />
 /// <reference path="./modules/remoting/remoting.d.ts" />
 /// <reference path="./modules/settings.d.ts" />

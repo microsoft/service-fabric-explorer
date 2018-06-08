@@ -3,8 +3,14 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IDictionary } from "sfx";
-import { ILog, ILogger, ILoggerSettings, ILoggingSettings, Severity } from "sfx.logging";
+import { IDictionary, IModuleManager } from "sfx";
+import {
+    ILog,
+    ILogger,
+    ILoggerSettings,
+    ILoggingSettings,
+    Severity
+} from "sfx.logging";
 
 import { IConsoleLoggerSettings } from "./console";
 import * as utils from "../../utilities/utils";
@@ -66,7 +72,7 @@ export class Log implements ILog {
                     let logger: ILogger;
 
                     if (this.moduleManager !== undefined) {
-                        logger = this.moduleManager.getComponent(
+                        logger = this.moduleManager.getComponentAsync(
                             String.format("loggers.{}", loggerSettings.type),
                             loggerSettings);
                     } else {
@@ -103,7 +109,6 @@ export class Log implements ILog {
         if (Array.isArray(params) && params.length > 0) {
             messageOrFormat = String.format(messageOrFormat, ...params);
         }
-
         properties = this.generateProperties(properties);
         this.foreachLogger((logger) => logger.write(properties, severity, messageOrFormat));
     }

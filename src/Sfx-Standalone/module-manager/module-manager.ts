@@ -80,11 +80,14 @@ export class ModuleManager implements IModuleManager {
         }
 
         this._hostVersion = hostVersion;
-        this.parentProxy = new RemotingProxy(parentCommunicator);
+
+        if (parentCommunicator) {
+            this.parentProxy = new RemotingProxy(parentCommunicator);
+            parentCommunicator.map(this.ipcPath, this.onModuleManagerMessage);
+        }
+
         this.ipcPath = ipcPath || "module-manager";
         this.container = new di.DiContainer();
-
-        parentCommunicator.map(this.ipcPath, this.onModuleManagerMessage);
     }
 
     public async newHostAsync(hostName: string): Promise<void> {
@@ -301,7 +304,7 @@ export class ModuleManager implements IModuleManager {
     }
 
     private onProxyResolving: Resolver =
-        (name: string, ...extraArgs: Array<any>): IDisposable | Promise<IDisposable> => this.container.getDep(name, ...extraArgs);
+        (name: string, ...extraArgs: Array<any>): IDisposable | Promise<IDisposable> => this.container.getDep(name, ...extraArgs)
 
     private onModuleManagerMessage: RequestHandler =
         async (communicator: ICommunicator, path: string, content: IModuleManagerMessage): Promise<any> => {
@@ -319,5 +322,5 @@ export class ModuleManager implements IModuleManager {
                 default:
                     throw error("Unknown ModuleManagerAction: {}", content.action);
             }
-        };
+        }
 }
