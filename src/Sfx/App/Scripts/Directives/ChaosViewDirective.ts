@@ -11,14 +11,12 @@ module Sfx {
         public controllerAs = "ctrl";
         public templateUrl = "partials/chaos-view.html";
         public scope = {
-            chaos: "=",
-            settings: "="
+            chaos: "="
         };
 
         public link($scope: any, element: JQuery, attributes: any, ctrl: ChaosViewController) {
             $scope.$watch("chaos", () => {
                 if ($scope.chaos && !angular.isDefined($scope.chaos.isRefreshing)) {
-
                     ctrl.updateButton($scope.chaos, $("button.chaos-btn", element));
                 }
             });
@@ -26,7 +24,6 @@ module Sfx {
             // Update the list every time the list has finished refreshing
             $scope.$watch("chaos.isRefreshing", () => {
                 if ($scope.chaos && angular.isDefined($scope.chaos.isRefreshing) && !$scope.chaos.isRefreshing) {
-
                     ctrl.updateButton($scope.chaos, $("button.chaos-btn", element));
                 }
             });
@@ -41,6 +38,7 @@ module Sfx {
 
         public handleClick(event: any): void {
             let $button = $(event.target);
+
             $button.prop("disabled", true);
             if (this.$scope.chaos.status === "Stopped") {
                 this.$scope.chaos.start();
@@ -57,11 +55,10 @@ module Sfx {
 
         public updateButton(chaos: any, button: JQuery): void {
             button.prop("disabled", false);
-
             if (chaos.status === "Stopped") {
-                button.text("START CHAOS").removeClass("stop-chaos-btn").addClass("start-chaos-btn");
-            } else {
-                button.text("STOP CHAOS").removeClass("start-chaos-btn").addClass("stop-chaos-btn");
+                button.text("Start chaos").removeClass("stop-chaos-btn").addClass("start-chaos-btn");
+            } else if (chaos.status === "Running") {
+                button.text("Stop chaos").removeClass("start-chaos-btn").addClass("stop-chaos-btn");
             }
         }
     }
