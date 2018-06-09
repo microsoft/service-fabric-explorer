@@ -20,7 +20,6 @@ import * as child_process from "child_process";
 import * as semver from "semver";
 
 import * as utils from "../utilities/utils";
-import error from "../utilities/errorUtil";
 import * as di from "../utilities/di";
 import * as diExt from "../utilities/di.ext";
 import { NodeCommunicator } from "../modules/ipc/communicator.node";
@@ -76,7 +75,7 @@ export class ModuleManager implements IModuleManager {
 
     constructor(hostVersion: string, parentCommunicator?: ICommunicator, ipcPath?: string) {
         if (!semver.valid(hostVersion)) {
-            throw error("Invalid hostVersion \"{}\".", hostVersion);
+            throw new Error(`Invalid hostVersion "${hostVersion}".`);
         }
 
         this._hostVersion = hostVersion;
@@ -91,12 +90,12 @@ export class ModuleManager implements IModuleManager {
     }
 
     public async newHostAsync(hostName: string): Promise<void> {
-        if (String.isNullUndefinedOrEmpty(hostName)) {
-            throw error("hostName cannot be null/undefined/empty.");
+        if (String.isEmptyOrWhitespace(hostName)) {
+            throw new Error("hostName cannot be null/undefined/empty.");
         }
 
         if (0 <= this.children.findIndex((child) => child.proxy.id === hostName)) {
-            throw error("hostName, \"{}\", already exists.", hostName);
+            throw new Error(`hostName, "${hostName}", already exists.`);
         }
 
         const childProcess: child_process.ChildProcess = child_process.spawn("./bootstrap.js", [this.hostVersion]);
@@ -117,8 +116,8 @@ export class ModuleManager implements IModuleManager {
     }
 
     public async destroyHostAsync(hostName: string): Promise<void> {
-        if (String.isNullUndefinedOrEmpty(hostName)) {
-            throw error("hostName cannot be null/undefined/empty.");
+        if (String.isEmptyOrWhitespace(hostName)) {
+            throw new Error("hostName cannot be null/undefined/empty.");
         }
 
         if (!this.children) {
@@ -145,16 +144,16 @@ export class ModuleManager implements IModuleManager {
 
     public async loadModuleDirAsync(dirName: string, hostName?: string): Promise<void> {
         if (!fs.existsSync(dirName)) {
-            throw error("Directory \"{}\" doesn't exist.", dirName);
+            throw new Error(`Directory "${dirName}" doesn't exist.`);
         }
 
         const dirStat = fs.statSync(dirName);
 
         if (!dirStat.isDirectory()) {
-            throw error("Path \"{}\" is not a directory.", dirName);
+            throw new Error(`Path "${dirName}" is not a directory.`);
         }
 
-        if (!String.isNullUndefinedOrEmpty(hostName)) {
+        if (!String.isEmptyOrWhitespace(hostName)) {
             let childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
 
             if (childIndex < 0) {
@@ -183,10 +182,10 @@ export class ModuleManager implements IModuleManager {
 
     public async loadModuleAsync(path: string, hostName?: string): Promise<void> {
         if (!fs.existsSync(path)) {
-            throw error("path \"{}\" doesn't exist.", path);
+            throw new Error(`path "${path}" doesn't exist.`);
         }
 
-        if (!String.isNullUndefinedOrEmpty(hostName)) {
+        if (!String.isEmptyOrWhitespace(hostName)) {
             let childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
 
             if (childIndex < 0) {
@@ -209,7 +208,7 @@ export class ModuleManager implements IModuleManager {
 
     public registerComponents(componentInfos: Array<IComponentInfo>): void {
         if (!Array.isArray(componentInfos)) {
-            throw error("componentInfos must be an array of IComponentInfo.");
+            throw new Error("componentInfos must be an array of IComponentInfo.");
         }
 
         for (const componentInfo of componentInfos) {
@@ -222,8 +221,8 @@ export class ModuleManager implements IModuleManager {
     }
 
     public async getComponentAsync<T extends IDisposable>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T> {
-        if (String.isNullUndefinedOrEmpty(componentIdentity)) {
-            throw error("componentIdentity cannot be null/undefined/empty.");
+        if (String.isEmptyOrWhitespace(componentIdentity)) {
+            throw new Error("componentIdentity cannot be null/undefined/empty.");
         }
 
         const component = this.container.getDep<T>(componentIdentity, ...extraArgs);
@@ -251,28 +250,24 @@ export class ModuleManager implements IModuleManager {
         const module: IModule = require(path);
 
         if (!Function.isFunction(module.getModuleMetadata)) {
-            throw error("Invalid module \"{}\": missing getModuleMetadata().", path);
+            throw new Error(`Invalid module "${path}": missing getModuleMetadata().`);
         }
 
         const moduleInfo = module.getModuleMetadata();
 
-        if (!String.isNullUndefinedOrEmpty(moduleInfo.hostVersion)
+        if (!String.isEmptyOrWhitespace(moduleInfo.hostVersion)
             && !semver.gte(this.hostVersion, moduleInfo.hostVersion)) {
             if (!Function.isFunction(this.hostVersionMismatchHandler)
                 || !this.hostVersionMismatchHandler(moduleInfo, this.hostVersion, moduleInfo.hostVersion)) {
-                throw error(
-                    "Invalid module \"{}\": Expected host version: {}. Current host version: {}",
-                    path,
-                    moduleInfo.hostVersion,
-                    this.hostVersion);
+                throw new Error(
+                    `Invalid module "${path}": Expected host version: ${moduleInfo.hostVersion}. Current host version: ${this.hostVersion}`);
             }
         }
 
         if (moduleInfo.components) {
             if (!Array.isArray(moduleInfo.components)) {
-                throw error(
-                    "Invalid module \"{}\": ModuleMetadata.components must be an array of IComponentInfo.",
-                    path);
+                throw new Error(
+                    `Invalid module "${path}": ModuleMetadata.components must be an array of IComponentInfo.`);
             }
 
             this.registerComponents(moduleInfo.components);
@@ -320,7 +315,7 @@ export class ModuleManager implements IModuleManager {
                     break;
 
                 default:
-                    throw error("Unknown ModuleManagerAction: {}", content.action);
+                    throw new Error(`Unknown ModuleManagerAction: ${content.action}`);
             }
         }
 }

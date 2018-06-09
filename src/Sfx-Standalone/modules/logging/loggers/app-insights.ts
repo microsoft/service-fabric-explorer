@@ -7,10 +7,9 @@ import { IDictionary } from "sfx";
 import { Severity, ILogger, ILoggerSettings } from "sfx.logging";
 
 import { TelemetryClient, Contracts } from "applicationinsights";
-import { Telemetry, TraceTelemetry, ExceptionTelemetry, MetricTelemetry } from "applicationinsights/out/Declarations/Contracts";
+import { TraceTelemetry, ExceptionTelemetry, MetricTelemetry } from "applicationinsights/out/Declarations/Contracts";
 
 import * as utils from "../../../utilities/utils";
-import error from "../../../utilities/errorUtil";
 import { Severities } from "../log";
 
 function toAppInsightsSeverity(severity: Severity): Contracts.SeverityLevel {
@@ -34,9 +33,9 @@ function toAppInsightsSeverity(severity: Severity): Contracts.SeverityLevel {
 }
 
 export default class AppInsightsLogger implements ILogger {
-    private client: TelemetryClient;
-
     public readonly name: string;
+
+    private client: TelemetryClient;
 
     public get disposed(): boolean {
         return this.client === undefined;
@@ -44,7 +43,7 @@ export default class AppInsightsLogger implements ILogger {
 
     constructor(settings: ILoggerSettings) {
         if (!Object.isObject(settings)) {
-            throw error("settings must be supplied.");
+            throw new Error("settings must be supplied.");
         }
 
         this.name = settings.name;
@@ -101,7 +100,7 @@ export default class AppInsightsLogger implements ILogger {
 
     private validateDisposal(): void {
         if (this.disposed) {
-            throw error("Logger, \"{}\", already disposed.", this.name);
+            throw new Error(`Logger, "${this.name}", already disposed.`);
         }
     }
 }

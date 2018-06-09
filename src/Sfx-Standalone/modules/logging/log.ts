@@ -3,11 +3,10 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IDictionary, IModuleManager } from "sfx";
+import { IDictionary } from "sfx";
 import {
     ILog,
     ILogger,
-    ILoggerSettings,
     ILoggingSettings,
     Severity
 } from "sfx.logging";
@@ -15,7 +14,6 @@ import {
 import { IConsoleLoggerSettings } from "./loggers/console";
 
 import * as utils from "../../utilities/utils";
-import error from "../../utilities/errorUtil";
 
 export enum Severities {
     Event = "event",
@@ -31,7 +29,7 @@ const defaultLoggingSettings: ILoggingSettings = {
     loggers: [
         <IConsoleLoggerSettings>{
             name: "console",
-            type: "console",
+            component: "logging.logger.console",
             logAllProperties: false,
             logCallerInfo: true
         }
@@ -41,7 +39,7 @@ const defaultLoggingSettings: ILoggingSettings = {
 export async function create(loggingSettings?: ILoggingSettings): Promise<ILog> {
     if (!utils.isNullOrUndefined(loggingSettings)
         && !Object.isObject(loggingSettings)) {
-        throw error("loggingSettings must be an Object implementing ILoggingSettings.");
+        throw new Error("loggingSettings must be an Object implementing ILoggingSettings.");
     }
 
     loggingSettings = loggingSettings || defaultLoggingSettings;
@@ -52,40 +50,35 @@ export async function create(loggingSettings?: ILoggingSettings): Promise<ILog> 
     }
 
     if (!Object.isObject(loggingSettings.loggers)) {
-        throw error("loggingSettings.loggers must be an object implementing IDicionary<ILoggerSettings>.");
+        throw new Error("loggingSettings.loggers must be an object implementing IDicionary<ILoggerSettings>.");
     }
 
-    for (const loggerName in loggingSettings.loggers) {
-        const loggerSettings: ILoggerSettings = loggingSettings.loggers[loggerName];
+    for (const loggerSettings of loggingSettings.loggers) {
         let logger: ILogger;
 
         if (sfxModuleManager !== undefined) {
             logger = await sfxModuleManager.getComponentAsync<ILogger>(
-                String.format("loggers.{}", loggerSettings.type),
+                loggerSettings.component,
                 loggerSettings);
         } else {
-            const loggerModule = require("./loggers/" + loggerSettings.type);
+            const loggerModule = require("./loggers/" + loggerSettings.component.substr(loggerSettings.component.lastIndexOf(".") + 1));
 
             if (loggerModule.default !== undefined) {
                 logger = new loggerModule.default(loggerSettings);
             } else {
-                logger = new (loggerModule[loggerSettings.type])(loggerSettings);
+                logger = new (loggerModule[loggerSettings.component])(loggerSettings);
             }
         }
 
         if (!logger) {
-            throw error(
-                "failed to load logger, {}, named '{}', with component identity: {}.",
-                loggerSettings.type,
-                loggerName,
-                String.format("loggers.{}", loggerSettings.type));
+            throw new Error(`failed to load logger, ${loggerSettings.component}, named '${loggerSettings.name}'.`);
         }
 
         log.addLogger(logger);
     }
 }
 
-export class Log implements ILog {
+class Log implements ILog {
     private loggers: Array<ILogger>;
 
     private defaultProperties: IDictionary<any>;
@@ -99,7 +92,7 @@ export class Log implements ILog {
     constructor(includeCallerInfo?: boolean, defaultProperties?: IDictionary<any>) {
         if (!utils.isNullOrUndefined(defaultProperties)
             && !Object.isObject(defaultProperties)) {
-            throw error("defaultProperties must be an object.");
+            throw new Error("defaultProperties must be an object.");
         }
 
         this.loggers = [];
@@ -115,7 +108,7 @@ export class Log implements ILog {
         }
 
         if (Array.isArray(params) && params.length > 0) {
-            messageOrFormat = String.format(messageOrFormat, ...params);
+            messageOrFormat = utils.format(messageOrFormat, ...params);
         }
         properties = this.generateProperties(properties);
         this.loggers.forEach((logger) => logger.write(properties, severity, messageOrFormat));
@@ -182,7 +175,7 @@ export class Log implements ILog {
         this.validateDisposal();
 
         if (!String.isString(name)) {
-            throw error("name must be supplied.");
+            throw new Error("name must be supplied.");
         }
 
         const loggerIndex = this.loggers.findIndex((logger) => logger.name === name);
@@ -198,11 +191,11 @@ export class Log implements ILog {
         this.validateDisposal();
 
         if (!logger) {
-            throw error("logger must be provided.");
+            throw new Error("logger must be provided.");
         }
 
         if (!Object.isObject(logger)) {
-            throw error("logger must be an object implementing ILogger.");
+            throw new Error("logger must be an object implementing ILogger.");
         }
 
         this.loggers.push(logger);
@@ -215,7 +208,7 @@ export class Log implements ILog {
 
     private validateDisposal() {
         if (this.disposed) {
-            throw error("Already disposed.");
+            throw new Error("Already disposed.");
         }
     }
 
@@ -236,7 +229,7 @@ export class Log implements ILog {
 
             finalProperties = finalProperties || {};
             finalProperties["Caller.FileName"] = callerInfo.fileName;
-            finalProperties["Caller.Name"] = String.format("{}.{}()", callerInfo.typeName, callerInfo.functionName);
+            finalProperties["Caller.Name"] = `${callerInfo.typeName}.${callerInfo.functionName}()`;
         }
 
         return finalProperties;

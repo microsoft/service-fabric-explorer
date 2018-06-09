@@ -18,7 +18,7 @@ declare module "sfx.logging" {
 
     export interface ILoggerSettings extends IDictionary<any> {
         name: string;
-        type: string;
+        component: string;
     }
 
     export interface ILoggingSettings {
@@ -48,8 +48,8 @@ declare module "sfx" {
     import { ILog, ILoggerSettings, ILogger } from "sfx.logging";
 
     export interface IModuleManager {
-        getComponentAsync(componentIdentity: "log"): Promise<ILog>;
-        getComponentAsync(componentIdentity: "loggers.console", loggerSettings: ILoggerSettings, targetConsole?: Console): Promise<ILogger>;
-        getComponentAsync(componentIdentity: "loggers.app-insights", loggerSettings: ILoggerSettings): Promise<ILogger>;
+        getComponentAsync(componentIdentity: "logging"): Promise<ILog>;
+        getComponentAsync(componentIdentity: "logging.logger.console", loggerSettings: ILoggerSettings, targetConsole?: Console): Promise<ILogger>;
+        getComponentAsync(componentIdentity: "logging.logger.app-insights", loggerSettings: ILoggerSettings): Promise<ILogger>;
     }
 }

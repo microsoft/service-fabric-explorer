@@ -64,7 +64,7 @@ declare module "sfx" {
 
         onHostVersionMismatch(callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler;
 
-        getComponentAsync<T extends IDisposable>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T>;
+        getComponentAsync<T>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T>;
         getComponentAsync(componentIdentity: "module-manager"): Promise<IModuleManager>;
     }
 

@@ -9,7 +9,6 @@ import { ILogger, ILoggerSettings, Severity } from "sfx.logging";
 import * as path from "path";
 
 import * as utils from "../../../utilities/utils";
-import error from "../../../utilities/errorUtil";
 import { Severities } from "../log";
 
 export interface IConsoleLoggerSettings extends ILoggerSettings {
@@ -34,13 +33,13 @@ export default class ConsoleLogger implements ILogger {
         if (!Object.isObject(settings)) {
             settings = {
                 name: "console",
-                type: "console"
+                component: "logging.logger.console"
             };
         }
 
         this.settings = settings;
         this.settings.logAllProperties = settings.logAllProperties === true;
-        this.settings.logCallerInfo = utils.getEither(settings.logCallerInfo, true);
+        this.settings.logCallerInfo = utils.getValue(settings.logCallerInfo, true);
 
         if (utils.isNullOrUndefined(targetConsole)) {
             this.console = console;
@@ -96,12 +95,12 @@ export default class ConsoleLogger implements ILogger {
     }
 
     public dispose(): void {
-        this.console === undefined;
+        this.console = undefined;
     }
 
     private validateDisposal(): void {
         if (this.disposed) {
-            throw error("Logger, \"{}\", already disposed.", this.name);
+            throw new Error(`Logger, "${this.name}", already disposed.`);
         }
     }
 
@@ -113,18 +112,15 @@ export default class ConsoleLogger implements ILogger {
             if (this.settings.logAllProperties) {
                 for (let propertyName in properties) {
                     if (properties.hasOwnProperty(propertyName) && !propertyName.startsWith("Caller.")) {
-                        consoleMsg += String.format("<{}:{}>", propertyName, properties[propertyName]);
+                        consoleMsg += `<${propertyName}:${properties[propertyName]}>`;
                     }
                 }
             }
 
             if (this.settings.logCallerInfo
-                && (!String.isNullUndefinedOrWhitespace(properties["Caller.FileName"])
-                    || !String.isNullUndefinedOrWhitespace(properties["Caller.Name"]))) {
-                consoleMsg +=
-                    String.format("[{}:{}]",
-                        path.basename(properties["Caller.FileName"]),
-                        properties["Caller.Name"]);
+                && (!String.isEmptyOrWhitespace(properties["Caller.FileName"])
+                    || !String.isEmptyOrWhitespace(properties["Caller.Name"]))) {
+                consoleMsg += `[${path.basename(properties["Caller.FileName"])}:${properties["Caller.Name"]}]`;
             }
         }
 
@@ -136,7 +132,7 @@ export default class ConsoleLogger implements ILogger {
 
         const formatedProperties = this.formatProperties(properties);
 
-        if (!String.isNullUndefinedOrWhitespace(formatedProperties)) {
+        if (!String.isEmptyOrWhitespace(formatedProperties)) {
             consoleMsg += " ";
             consoleMsg += formatedProperties;
         }

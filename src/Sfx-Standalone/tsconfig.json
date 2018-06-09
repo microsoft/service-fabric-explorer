@@ -7,8 +7,9 @@
         "sourceMap": true,
         "declaration": false,
         "types": [
-            "./*",
-            "./sfx.d.ts"
+            "node",
+            "angular",
+            "sfx.d.ts"
         ]
     },
     "exclude": [

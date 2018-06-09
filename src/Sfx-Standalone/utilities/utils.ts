@@ -7,10 +7,10 @@ import error from "./errorUtil";
 
 declare global {
     interface StringConstructor {
+        possibleString(value: any): value is string;
         isString(value: any): value is string;
-        format(format: string, ...args: Array<any>): string;
-        isNullUndefinedOrEmpty(value: any): boolean;
-        isNullUndefinedOrWhitespace(value: any): boolean;
+        isEmpty(value: string): boolean;
+        isEmptyOrWhitespace(value: string): boolean;
     }
 
     interface ArrayConstructor {
@@ -137,19 +137,23 @@ Array.isNullUndefinedOrEmpty = (value: any): boolean => {
     return value === undefined || value === null || (Array.isArray(value) && value.length <= 0);
 };
 
+String.possibleString = (value: any): value is string => {
+    return isNullOrUndefined(value) || String.isString(value);
+};
+
 String.isString = (value: any): value is string => {
     return typeof value === "string" || value instanceof String;
 };
 
-String.isNullUndefinedOrEmpty = (value: any): boolean => {
-    return value === undefined || value === null || (String.isString(value) && value === "");
+String.isEmpty = (value: string): boolean => {
+    return value === "";
 };
 
-String.isNullUndefinedOrWhitespace = (value: any): boolean => {
-    return value === undefined || value === null || (String.isString(value) && value.trim() === "");
+String.isEmptyOrWhitespace = (value: string): boolean => {
+    return value.trim() === "";
 };
 
-String.format = (format, ...args) => {
+export function format(format: string, ...args: Array<any>) {
     if (!String.isString(format)) {
         throw new Error("format must be a string");
     }
@@ -179,13 +183,13 @@ String.format = (format, ...args) => {
 
         return args[argIndex];
     });
-};
+}
 
 export function isNullOrUndefined(value: any): value is undefined | null {
     return value === undefined || value === null;
 }
 
-export function getEither<T>(arg: T, defaultValue: T): T {
+export function getValue<T>(arg: T, defaultValue: T): T {
     return (arg === undefined || arg === null) ? defaultValue : arg;
 }
 
@@ -232,17 +236,5 @@ export function getCallerInfo(): ICallerInfo {
         return directCallerInfo;
     } finally {
         Error.prepareStackTrace = previousPrepareStackTraceFn;
-    }
-}
-
-export function dispose(data: any): void {
-    if (!isNullOrUndefined(data) && Function.isFunction(data.dispose)) {
-        data.dispose();
-    }
-}
-
-export async function disposeAsync(data: any): Promise<void> {
-    if (!isNullOrUndefined(data) && Function.isFunction(data.dispose)) {
-        await data.dispose();
     }
 }

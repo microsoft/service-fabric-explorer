@@ -4,15 +4,13 @@
 //-----------------------------------------------------------------------------
 
 import "../browser-window/preload";
+
 import { PromptContext } from "./prompt-context";
 import { electron } from "../../utilities/electron-adapter";
-import { DiDescriptorConstructor } from "../../utilities/di.ext";
 
-const moduleManager: IModuleManager = global["moduleManager"];
-
-moduleManager.registerComponents([
+sfxModuleManager.registerComponents([
     {
-        name: "prompt-context",
+        name: "prompt.prompt-context",
         version: electron.app.getVersion(),
         singleton: true,
         descriptor: () => new PromptContext()

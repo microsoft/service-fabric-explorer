@@ -3,21 +3,21 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import { IPrompt } from "sfx.prompt";
+import { ISelectCertificatePromptResults  } from "sfx.prompt.select-certificate";
 import { Certificate } from "electron";
 
-import { IPromptService, ISelectCertificatePromptResults } from "../../@types/prompt";
 import "../../utilities/utils";
-import error from "../../utilities/errorUtil";
 import resolve from "../../utilities/resolve";
+import { electron } from "../../utilities/electron-adapter";
 
 function open(
-    promptsvc: IPromptService,
+    prompt: IPrompt,
     parentWindowId: number,
-    certificates: Array<Certificate>,
-    promptCallback: (error: any, results: ISelectCertificatePromptResults) => void = null): ICommunicator {
+    certificates: Array<Certificate>): Promise<IPrompt> {
 
-    if (!Object.isObject(promptsvc)) {
-        throw error("promptsvc must be supplied.");
+    if (!Object.isObject(prompt)) {
+        throw new Error("prompt must be supplied.");
     }
 
     if (!Array.isArray(certificates)) {
@@ -38,14 +38,14 @@ function open(
 
 export function getModuleMetadata(): IModuleInfo {
     return {
-        name: "prompt-select-certificate",
-        version: "1.0.0",
+        name: "prompt.select-certificate",
+        version: electron.app.getVersion(),
         components: [
             {
-                name: "prompt-select-certificate",
-                version: "1.0.0",
+                name: "prompt.select-certificate",
+                version: electron.app.getVersion(),
                 descriptor: open,
-                deps: ["prompt-service"]
+                deps: ["prompt"]
             }
         ]
     };
