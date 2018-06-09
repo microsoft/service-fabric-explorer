@@ -13,6 +13,7 @@ export function getModuleMetadata(): IModuleInfo {
     return {
         name: "remoting",
         version: electron.app.getVersion(),
+        loadingMode: "Always",
         components: [
             {
                 name: "remoting.proxy",

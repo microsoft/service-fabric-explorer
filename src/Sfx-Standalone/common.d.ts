@@ -40,10 +40,16 @@ declare module "sfx" {
         deps?: Array<string>;
     }
 
+    export type LoadingMode = "RefFromParent" | "Always";
+
     export interface IModuleInfo {
         name: string;
         version: string;
         hostVersion?: string;
+        /**
+         * Indicates the loading mode of the module. Default: RefFromParent.
+         */
+        loadingMode?: LoadingMode;
         components?: Array<IComponentInfo>;
     }
 

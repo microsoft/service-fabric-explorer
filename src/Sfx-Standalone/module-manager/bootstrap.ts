@@ -6,4 +6,12 @@
 import { ModuleManager } from "./module-manager";
 import { NodeCommunicator } from "../modules/ipc/communicator.node";
 
-global["sfxModuleManager"] = new ModuleManager(process.argv0, new NodeCommunicator(process));
+(async () => {
+    const moduleManager = new ModuleManager(process.argv0, new NodeCommunicator(process));
+
+    global["sfxModuleManager"] = moduleManager;
+
+    for (let argIndex = 1; argIndex < process.argv.length; argIndex++) {
+        moduleManager.loadModuleDirAsync(process.argv[argIndex], null, true);
+    }
+})();

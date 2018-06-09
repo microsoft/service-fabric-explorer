@@ -17,6 +17,7 @@ export function getModuleMetadata(): IModuleInfo {
     return {
         name: "ipc",
         version: electron.app.getVersion(),
+        loadingMode: "Always",
         components: [
             {
                 name: "ipc.communicator-node",

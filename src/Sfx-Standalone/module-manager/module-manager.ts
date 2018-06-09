@@ -69,6 +69,8 @@ export class ModuleManager implements IModuleManager {
 
     private container: di.IDiContainer;
 
+    private loadedDirectories: Array<string>;
+
     public get hostVersion(): string {
         return this._hostVersion;
     }
@@ -79,6 +81,7 @@ export class ModuleManager implements IModuleManager {
         }
 
         this._hostVersion = hostVersion;
+        this.loadedDirectories = [];
 
         if (parentCommunicator) {
             this.parentProxy = new RemotingProxy(parentCommunicator);
@@ -98,7 +101,14 @@ export class ModuleManager implements IModuleManager {
             throw new Error(`hostName, "${hostName}", already exists.`);
         }
 
-        const childProcess: child_process.ChildProcess = child_process.spawn("./bootstrap.js", [this.hostVersion]);
+        const args: Array<string> = [];
+
+        args.push(this.hostVersion);
+        args.push(...this.loadedDirectories);
+
+        const childProcess: child_process.ChildProcess =
+            child_process.spawn("./bootstrap.js", args);
+
         const childCommunicator = new NodeCommunicator(childProcess, hostName);
         const proxy = new RemotingProxy(childCommunicator, true);
 
@@ -142,7 +152,7 @@ export class ModuleManager implements IModuleManager {
         child.proxy = undefined;
     }
 
-    public async loadModuleDirAsync(dirName: string, hostName?: string): Promise<void> {
+    public async loadModuleDirAsync(dirName: string, hostName?: string, respectLoadingMode?: boolean): Promise<void> {
         if (!fs.existsSync(dirName)) {
             throw new Error(`Directory "${dirName}" doesn't exist.`);
         }
@@ -172,15 +182,17 @@ export class ModuleManager implements IModuleManager {
         } else {
             const loadingTasks: Array<Promise<void>> = [];
 
+            this.loadedDirectories.push(path.resolve(dirName));
+
             for (const subName of fs.readdirSync(dirName)) {
-                loadingTasks.push(this.loadModuleAsync(path.join(dirName, subName), hostName));
+                loadingTasks.push(this.loadModuleAsync(path.join(dirName, subName), hostName, respectLoadingMode));
             }
 
             await Promise.all(loadingTasks);
         }
     }
 
-    public async loadModuleAsync(path: string, hostName?: string): Promise<void> {
+    public async loadModuleAsync(path: string, hostName?: string, respectLoadingMode?: boolean): Promise<void> {
         if (!fs.existsSync(path)) {
             throw new Error(`path "${path}" doesn't exist.`);
         }
@@ -202,7 +214,7 @@ export class ModuleManager implements IModuleManager {
                     content: path
                 });
         } else {
-            this.loadModule(path);
+            this.loadModule(path, respectLoadingMode);
         }
     }
 
@@ -246,7 +258,7 @@ export class ModuleManager implements IModuleManager {
         }
     }
 
-    private loadModule(path: string): void {
+    private loadModule(path: string, respectLoadingMode?: boolean): void {
         const module: IModule = require(path);
 
         if (!Function.isFunction(module.getModuleMetadata)) {
@@ -254,6 +266,10 @@ export class ModuleManager implements IModuleManager {
         }
 
         const moduleInfo = module.getModuleMetadata();
+
+        if (respectLoadingMode === true && moduleInfo.loadingMode !== "Always") {
+            return;
+        }
 
         if (!String.isEmptyOrWhitespace(moduleInfo.hostVersion)
             && !semver.gte(this.hostVersion, moduleInfo.hostVersion)) {
