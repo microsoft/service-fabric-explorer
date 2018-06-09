@@ -18,7 +18,7 @@ app.on("ready", async () => {
     // Load built-in modules.
     await sfxModuleManager.loadModuleDirAsync(local("modules"));
 
-    const log = await sfxModuleManager.getComponentAsync("log");
+    const log = await sfxModuleManager.getComponentAsync("logging");
 
     if (env.platform === Platform.MacOs) {
         const settings = await sfxModuleManager.getComponentAsync("settings");
@@ -28,21 +28,20 @@ app.on("ready", async () => {
                 settings.get("defaultMenu/" + env.platform)));
     }
 
-    sfxModuleManager.getComponentAsync("prompt-connect-cluster",
-        async (error, clusterUrl) => {
-            if (clusterUrl) {
-                global["TargetClusterUrl"] = clusterUrl;
+    const prompt_connectCluster = await sfxModuleManager.getComponentAsync("prompt.connect-cluster");
+    const clusterUrl = await prompt_connectCluster.openAsync();
 
-                const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null, true, clusterUrl);
+    if (clusterUrl) {
+        global["TargetClusterUrl"] = clusterUrl;
+        const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null, true, clusterUrl);
 
-                mainWindow.setMenuBarVisibility(false);
+        mainWindow.setMenuBarVisibility(false);
 
-                log.writeEvent("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
-                mainWindow.loadURL(resolve("sfx/index.html"));
-            }
-        });
+        log.writeEvent("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
+        mainWindow.loadURL(resolve("sfx/index.html"));
+    }
 
-    setTimeout(async () => (await sfxModuleManager.getComponentAsync("update-service")).update(), 1000); // Check upgrade after 1 sec.
+    setTimeout(async () => (await sfxModuleManager.getComponentAsync("update")).update(), 1000); // Check upgrade after 1 sec.
 });
 
 app.on("window-all-closed", () => app.quit());

@@ -6,14 +6,13 @@
 import { IHandlerChainBuilder, IHandlerConstructor } from "sfx";
 
 import * as utils from "./utils";
-import error from "./errorUtil";
 
 export class HandlerChainBuilder<THandler extends Function> implements IHandlerChainBuilder<THandler> {
     private readonly chain: Array<IHandlerConstructor<THandler>> = new Array<IHandlerConstructor<THandler>>();
 
     public handle(constructor: IHandlerConstructor<THandler>): IHandlerChainBuilder<THandler> {
         if (!Function.isFunction(constructor)) {
-            throw error("constructor should be a function.");
+            throw new Error("constructor should be a function.");
         }
 
         this.chain.push(constructor);
@@ -29,7 +28,7 @@ export class HandlerChainBuilder<THandler extends Function> implements IHandlerC
             nextHandler = constructor(nextHandler);
 
             if (!utils.isNullOrUndefined(nextHandler) && !Function.isFunction(nextHandler)) {
-                throw error("Contructed handler must be a function.");
+                throw new Error("Contructed handler must be a function.");
             }
         }
 

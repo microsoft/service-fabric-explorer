@@ -3,9 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import * as sfx from "sfx";
+import { IDictionary } from "sfx";
 
-import error from "./errorUtil";
 import * as utils from "./utils";
 
 export interface IDiDescriptor {
@@ -24,23 +23,23 @@ export interface IDiDescriptorDictionary {
 }
 
 export class DiDescriptorDictionary implements IDiDescriptorDictionary {
-    private readonly descriptorDictionary: sfx.IDictionary<IDiDescriptor>;
+    private readonly descriptorDictionary: IDictionary<IDiDescriptor>;
 
     constructor() {
         this.descriptorDictionary = {};
     }
 
     public get(name: string): IDiDescriptor {
-        if (String.isNullUndefinedOrWhitespace(name)) {
-            throw error("name should not be null/undefined/empty.");
+        if (String.isEmptyOrWhitespace(name)) {
+            throw new Error("name should not be null/undefined/empty.");
         }
 
         return this.descriptorDictionary[name];
     }
 
     public set(name: string, descriptor: IDiDescriptor): void {
-        if (String.isNullUndefinedOrWhitespace(name)) {
-            throw error("name should not be null/undefined/empty.");
+        if (String.isEmptyOrWhitespace(name)) {
+            throw new Error("name should not be null/undefined/empty.");
         }
 
         if (utils.isNullOrUndefined(descriptor)) {
@@ -73,16 +72,16 @@ export class DiContainer implements IDiContainer {
     }
 
     public get(name: string): IDiDescriptor {
-        if (String.isNullUndefinedOrWhitespace(name)) {
-            throw error("name should not be null/undefined/empty.");
+        if (String.isEmptyOrWhitespace(name)) {
+            throw new Error("name should not be null/undefined/empty.");
         }
 
         return this.descriptorDictionary.get(name);
     }
 
     public set(name: string, descriptor: IDiDescriptor): IDiContainer {
-        if (String.isNullUndefinedOrWhitespace(name)) {
-            throw error("name should not be null/undefined/empty.");
+        if (String.isEmptyOrWhitespace(name)) {
+            throw new Error("name should not be null/undefined/empty.");
         }
 
         if (utils.isNullOrUndefined(descriptor)) {

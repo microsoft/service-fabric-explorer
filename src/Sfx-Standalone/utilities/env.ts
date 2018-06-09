@@ -5,8 +5,6 @@
 
 import { execSync } from "child_process";
 
-import error from "./errorUtil";
-
 export enum Architecture {
     Unknown = "unknown",
     X86 = "x86",
@@ -62,7 +60,7 @@ class Environment implements IEnvironment {
         let cmd: string = "";
 
         if (!path) {
-            throw error("path must be specified!");
+            throw new Error("path must be specified!");
         }
 
         switch (this.platform) {

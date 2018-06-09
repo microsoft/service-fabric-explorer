@@ -3,8 +3,6 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import error from "./errorUtil";
-
 declare global {
     interface StringConstructor {
         possibleString(value: any): value is string;
@@ -75,7 +73,7 @@ Object.isObject = (value: any): value is object | Object => {
 
 Object.isEmpty = (value: Object | object) => {
     if (isNullOrUndefined(value)) {
-        throw error("value cannot be null/undefined.");
+        throw new Error("value cannot be null/undefined.");
     }
 
     for (const key in value) {
@@ -88,11 +86,11 @@ Object.isEmpty = (value: Object | object) => {
 Object.markSerializable = (value: any, serializable: boolean = true) => {
     if (!isNullOrUndefined(value)) {
         if (Function.isFunction(value)) {
-            throw error("Cannot mark function objects as serializable.");
+            throw new Error("Cannot mark function objects as serializable.");
         }
 
         if (Symbol.isSymbol(value)) {
-            throw error("Cannot mark symbol objects as serializable.");
+            throw new Error("Cannot mark symbol objects as serializable.");
         }
 
         serializable = serializable === true;
@@ -178,7 +176,7 @@ export function format(format: string, ...args: Array<any>) {
         let argIndex = argIndexStr.length === 0 ? matchIndex : parseInt(argIndexStr, 10);
 
         if (isNaN(argIndex) || argIndex < 0 || argIndex >= args.length) {
-            throw new Error(String.format("Referenced arg index, '{}',is out of range of the args.", argIndexStr));
+            throw new Error(`Referenced arg index, '${argIndexStr}',is out of range of the args.`);
         }
 
         return args[argIndex];
