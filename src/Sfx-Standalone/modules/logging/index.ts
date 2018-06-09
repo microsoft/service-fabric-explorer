@@ -20,16 +20,15 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "logging",
                 version: electron.app.getVersion(),
-                descriptor: (moduleManager: IModuleManager, settings: ISettings) => logging.create(settings.get("logging")),
+                descriptor: (settings: ISettings) => logging.create(settings.get("logging")),
                 singleton: true,
-                deps: ["module-manager", "settings"]
+                deps: ["settings"]
             },
             {
                 name: "logging.logger.console",
                 version: electron.app.getVersion(),
                 descriptor: (loggerSettings: ILoggerSettings, targetConsole: Console) => new ConsoleLogger(loggerSettings, targetConsole)
             },
-            ,
             {
                 name: "logging.logger.app-insights",
                 version: electron.app.getVersion(),

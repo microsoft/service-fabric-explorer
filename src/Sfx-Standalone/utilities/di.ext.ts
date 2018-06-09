@@ -42,7 +42,7 @@ export function dedication(typeDescriptor: IDescriptor, injects: Array<string>):
                     const arg = container.getDep(inject);
 
                     if (arg === undefined) {
-                        throw new Error("Required inject is not available in the container.");
+                        throw new Error(`Required inject, "${inject}", is not available in the container.`);
                     }
 
                     args.push(arg);

@@ -90,6 +90,7 @@ export class ModuleManager implements IModuleManager {
 
         this.ipcPath = ipcPath || "module-manager";
         this.container = new di.DiContainer();
+        this.container.set("module-manager", diExt.singleton(this));
     }
 
     public async newHostAsync(hostName: string): Promise<void> {
@@ -163,7 +164,7 @@ export class ModuleManager implements IModuleManager {
             throw new Error(`Path "${dirName}" is not a directory.`);
         }
 
-        if (!String.isEmptyOrWhitespace(hostName)) {
+        if (!utils.isNullOrUndefined(hostName) && !String.isEmptyOrWhitespace(hostName)) {
             let childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
 
             if (childIndex < 0) {
@@ -185,7 +186,14 @@ export class ModuleManager implements IModuleManager {
             this.loadedDirectories.push(path.resolve(dirName));
 
             for (const subName of fs.readdirSync(dirName)) {
-                loadingTasks.push(this.loadModuleAsync(path.join(dirName, subName), hostName, respectLoadingMode));
+                const modulePath = path.join(dirName, subName);
+                const moduleStat = fs.statSync(modulePath);
+
+                if (moduleStat.isFile() && path.extname(modulePath) !== ".js") {
+                    continue;
+                }
+
+                loadingTasks.push(this.loadModuleAsync(modulePath, hostName, respectLoadingMode));
             }
 
             await Promise.all(loadingTasks);
@@ -197,7 +205,7 @@ export class ModuleManager implements IModuleManager {
             throw new Error(`path "${path}" doesn't exist.`);
         }
 
-        if (!String.isEmptyOrWhitespace(hostName)) {
+        if (!utils.isNullOrUndefined(hostName) && !String.isEmptyOrWhitespace(hostName)) {
             let childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
 
             if (childIndex < 0) {
@@ -271,7 +279,8 @@ export class ModuleManager implements IModuleManager {
             return;
         }
 
-        if (!String.isEmptyOrWhitespace(moduleInfo.hostVersion)
+        if (!utils.isNullOrUndefined(moduleInfo.hostVersion)
+            && !String.isEmptyOrWhitespace(moduleInfo.hostVersion)
             && !semver.gte(this.hostVersion, moduleInfo.hostVersion)) {
             if (!Function.isFunction(this.hostVersionMismatchHandler)
                 || !this.hostVersionMismatchHandler(moduleInfo, this.hostVersion, moduleInfo.hostVersion)) {
