@@ -44,7 +44,7 @@ declare let angular: angular.IAngularStatic;
                     title: "Importing certificate: " + path.basename(certPath),
                     message: "Please provide the password to decrypt the certificate:"
                 });
-            
+
             if (utils.isNullOrUndefined(input) || input === "") {
                 input = null;
             }
@@ -81,7 +81,7 @@ declare let angular: angular.IAngularStatic;
 
             $scope.supportImportCerts = () => env.platform === Platform.Linux;
 
-            $scope.cancel = () => promptContext.close();
+            $scope.cancel = () => promptContext.finish(null);
 
             $scope.selectCert = (cert) => promptContext.finish(<ISelectCertificatePromptResults>{
                 selectedCertificate: cert,

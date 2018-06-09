@@ -22,7 +22,7 @@ declare module "sfx" {
     import { ISettingsService, ISettings } from "sfx.settings";
 
     export interface IModuleManager {
-        getComponentAsync(componentIdentity: "settings-service"): Promise<ISettingsService>;
+        getComponentAsync(componentIdentity: "settings.service"): Promise<ISettingsService>;
         getComponentAsync(componentIdentity: "settings"): Promise<ISettings>;
     }
 }

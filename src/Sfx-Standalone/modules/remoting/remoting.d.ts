@@ -19,3 +19,15 @@ declare module "sfx.remoting" {
         getResolver(): Resolver;
     }
 }
+
+declare module "sfx" {
+    import { ICommunicator } from "sfx.ipc";
+    import { IRemotingProxy } from "sfx.remoting";
+
+    export interface IModuleManager {
+        getComponentAsync(
+            componentIdentity: "remoting.proxy",
+            communicator: ICommunicator,
+            ownCommunicator?: boolean): Promise<IRemotingProxy>;
+    }
+}

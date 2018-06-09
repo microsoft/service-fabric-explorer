@@ -3,7 +3,9 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import error from "../../utilities/errorUtil";
+import { IDictionary, IDisposable } from "sfx";
+
+import "../../utilities/utils";
 
 import { IDataInfo, DataType, dataTypeOf } from "./data-info";
 import { ReferenceNode } from "./reference-node";
@@ -20,7 +22,7 @@ export class DataInfoManager implements IDisposable {
 
     constructor(delegation: IDelegation) {
         if (!Object.isObject(delegation) || delegation === null) {
-            throw error("delegate must be supplied.");
+            throw new Error("delegate must be supplied.");
         }
 
         this.delegation = delegation;
@@ -33,7 +35,7 @@ export class DataInfoManager implements IDisposable {
 
     public get(refId: string): Object | Function {
         this.validateDisposal();
-        
+
         const referee = this.refRoot.referById(refId);
 
         if (!referee) {
@@ -62,7 +64,7 @@ export class DataInfoManager implements IDisposable {
         const referee = this.refRoot.referById(refereeId);
 
         if (!referee) {
-            throw error("refereeId ({}) doesn't exist.", refereeId);
+            throw new Error(`refereeId (${refereeId}) doesn't exist.`);
         }
 
         parentId = parentId || this.refRoot.id;
@@ -116,7 +118,7 @@ export class DataInfoManager implements IDisposable {
 
     private validateDisposal(): void {
         if (this.disposed) {
-            throw error("DataInfoManager already disposed.");
+            throw new Error("DataInfoManager already disposed.");
         }
     }
 

@@ -2,10 +2,10 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+import { IDictionary } from "sfx";
 
 import * as uuidv4 from "uuid/v4";
 
-import error from "../../utilities/errorUtil";
 import * as utils from "../../utilities/utils";
 
 export class ReferenceNode {
@@ -43,12 +43,12 @@ export class ReferenceNode {
 
     public addReferee(target: Object | Function, newRefId?: string): ReferenceNode {
         if (!Object.isObject(target) && !Function.isFunction(target)) {
-            throw error("target cannot be null/undefined or types other than Object or Function.");
+            throw new Error("target cannot be null/undefined or types other than Object or Function.");
         }
 
         if (!utils.isNullOrUndefined(newRefId)
             && (newRefId === "" || !String.isString(newRefId))) {
-            throw error("newRefId must be non-empty string.");
+            throw new Error("newRefId must be non-empty string.");
         }
 
         const referee = this.create(target, newRefId);
@@ -61,7 +61,7 @@ export class ReferenceNode {
         const referee = this._root.referees[refereeId];
 
         if (!referee) {
-            throw error("unknown refereeId '{}'.", refereeId);
+            throw new Error(`unknown refereeId '${refereeId}'.`);
         }
 
         referee.internallyAddReferer(this);
@@ -81,12 +81,12 @@ export class ReferenceNode {
 
     public addReferer(target: Object | Function, newRefId?: string): ReferenceNode {
         if (!Object.isObject(target) && !Function.isFunction(target)) {
-            throw error("target cannot be null/undefined or types other than Object or Function.");
+            throw new Error("target cannot be null/undefined or types other than Object or Function.");
         }
 
         if (!utils.isNullOrUndefined(newRefId)
             && (newRefId === "" || !String.isString(newRefId))) {
-            throw error("newRefId must be non-empty string.");
+            throw new Error("newRefId must be non-empty string.");
         }
 
         const referer = this.create(target, newRefId);
@@ -99,7 +99,7 @@ export class ReferenceNode {
         const referer = this._root.referees[refererId];
 
         if (!referer) {
-            throw error("unknown refererId '{}'.", refererId);
+            throw new Error(`unknown refererId '${refererId}'.`);
         }
 
         referer.internallyAddReferee(this);
@@ -133,7 +133,7 @@ export class ReferenceNode {
 
     public refer(target: Object | Function, refererId?: string): ReferenceNode {
         if (!Object.isObject(target) && !Function.isFunction(target)) {
-            throw error("target cannot be null/undefined or types other than Object or Function.");
+            throw new Error("target cannot be null/undefined or types other than Object or Function.");
         }
 
         const existingRefId = this.getRefId(target);
@@ -143,7 +143,7 @@ export class ReferenceNode {
             referee = this._root.referees[existingRefId];
 
             if (!referee) {
-                throw error("The target already been referenced but refId: {} is unknown.", existingRefId);
+                throw new Error(`The target already been referenced but refId: ${existingRefId} is unknown.`);
             }
         } else {
             referee = this.create(target);
@@ -166,7 +166,7 @@ export class ReferenceNode {
 
     private constructor(root: ReferenceNode, target: Object | Function, refId?: string) {
         if (utils.isNullOrUndefined(root) !== utils.isNullOrUndefined(target)) {
-            throw error("root and target must be provided togehter or none are provided.");
+            throw new Error("root and target must be provided togehter or none are provided.");
         }
 
         refId = refId || uuidv4();
@@ -194,7 +194,7 @@ export class ReferenceNode {
         const refId = target[this.symbol_refId];
 
         if (refId) {
-            throw error("target has already been referenced. refId={}", refId);
+            throw new Error(`target has already been referenced. refId=${refId}`);
         }
 
         return new ReferenceNode(this._root, target, newRefId);

@@ -2,6 +2,11 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+import { IVersionInfo, IPackageInfo, IModuleInfo } from "sfx";
+import { ISettings } from "sfx.settings";
+import { ILog } from "sfx.logging";
+import { IHttpClient } from "sfx.http";
+import { IUpdateService } from "sfx.update";
 
 import * as semver from "semver";
 import { app, dialog } from "electron";
@@ -10,14 +15,10 @@ import * as path from "path";
 import * as url from "url";
 import * as fs from "fs";
 
-import { ILog } from "../@types/log";
-import { IHttpClient } from "../@types/http";
-import { ISettings } from "../@types/settings";
-import { IUpdateService } from "../@types/update";
 import * as utils from "../utilities/utils";
-import error from "../utilities/errorUtil";
 import { env, Architecture } from "../utilities/env";
 import { ResponseHandlerHelper } from "./http";
+import { electron } from "../utilities/electron-adapter";
 
 interface IUpdateSettings {
     baseUrl: string;
@@ -33,15 +34,15 @@ class UpdateService implements IUpdateService {
 
     constructor(log: ILog, updateSettings: IUpdateSettings, httpClient: IHttpClient) {
         if (!Object.isObject(log)) {
-            throw error("log must be supplied.");
+            throw new Error("log must be supplied.");
         }
 
         if (!Object.isObject(updateSettings)) {
-            throw error("updateSettings must be supplied.");
+            throw new Error("updateSettings must be supplied.");
         }
 
         if (!Object.isObject(httpClient)) {
-            throw error("httpClient must be supplied.");
+            throw new Error("httpClient must be supplied.");
         }
 
         this.log = log;
@@ -70,12 +71,7 @@ class UpdateService implements IUpdateService {
             updateChannel = this.settings.defaultChannel || "stable";
         }
 
-        const versionInfoUrl =
-            String.format(
-                "{}/{}/{}",
-                this.settings.baseUrl, // Update Base Url
-                updateChannel,         // Channel
-                env.platform);         // Platform
+        const versionInfoUrl = `${this.settings.baseUrl}/${updateChannel}/${env.platform}`;
 
         try {
             this.log.writeInfo("Requesting version info json: {}", versionInfoUrl);
@@ -94,7 +90,7 @@ class UpdateService implements IUpdateService {
         this.log.writeVerbose("Requesting update confirmation from the user ...");
         dialog.showMessageBox(
             {
-                message: String.format("A newer version, {}, is found. Would you like to update now?", versionInfo.version),
+                message: `A newer version, ${versionInfo.version}, is found. Would you like to update now?`,
                 detail: versionInfo.description ? versionInfo.description : undefined,
                 buttons: buttons,
                 defaultId: 1
@@ -188,15 +184,15 @@ class UpdateService implements IUpdateService {
 
 export function getModuleMetadata(): IModuleInfo {
     return {
-        name: "http",
-        version: "1.0.0",
+        name: "update",
+        version: electron.app.getVersion(),
         components: [
             {
-                name: "update-service",
-                version: "1.0.0",
+                name: "update",
+                version: electron.app.getVersion(),
                 singleton: true,
                 descriptor: (log: ILog, settings: ISettings, httpsClient: IHttpClient) => new UpdateService(log, settings.get("update"), httpsClient),
-                deps: ["log", "settings", "https-client"]
+                deps: ["logging", "settings", "http.https-client"]
             }
         ]
     };

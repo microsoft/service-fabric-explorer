@@ -2,6 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+import "../../utilities/utils";
 
 export enum DataType {
     Undefined = "undefined",
@@ -59,6 +60,6 @@ export function dataTypeOf(data: any): DataType {
 }
 
 export function isDataInfo(dataInfo: IDataInfo): dataInfo is IDataInfo {
-    return !String.isNullUndefinedOrWhitespace(dataInfo.type)
+    return !String.isEmptyOrWhitespace(dataInfo.type)
         && DataTypeValues.includes(dataInfo.type);
 }

@@ -13,8 +13,12 @@ declare module "sfx.prompt.input" {
 
 declare module "sfx" {
     import { IPrompt } from "sfx.prompt";
+    import { IInputPromptOptions } from "sfx.prompt.input";
 
     export interface IModuleManager {
-        getComponentAsync(componentIdentity: "prompt.input"): Promise<IPrompt<string>>;
+        getComponentAsync(
+            componentIdentity: "prompt.input",
+            parentWindowId: number,
+            options: IInputPromptOptions): Promise<IPrompt<string>>;
     }
 }

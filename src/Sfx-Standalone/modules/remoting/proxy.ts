@@ -18,13 +18,9 @@ import {
     Resolver
 } from "sfx.remoting";
 
-import * as uuidv4 from "uuid/v4";
-
 import * as utils from "../../utilities/utils";
-import error from "../../utilities/errorUtil";
 
 import { IDataInfo, dataTypeOf, DataType, isDataInfo } from "./data-info";
-import { ReferenceNode } from "./reference-node";
 import { IDelegateMessage, IDelegator, DelegationType, IPropertyDelegationMessage, Delegation, ISetPropertyDelegationMessage, IApplyDelegationMessage, IDisposeDelegateMessage } from "./delegate";
 import { DataInfoManager } from "./data-info-manager";
 
@@ -51,7 +47,7 @@ interface IGenericProxyMessage extends IProxyMessage {
 function isProxyMessage(msg: any): msg is IProxyMessage {
     return !utils.isNullOrUndefined(msg)
         && ProxyActionTypeValues.includes(msg.action)
-        && !String.isNullUndefinedOrWhitespace(msg.resourceId);
+        && !String.isEmptyOrWhitespace(msg.resourceId);
 }
 
 export class RemotingProxy implements IRemotingProxy, IDelegator {
@@ -73,7 +69,7 @@ export class RemotingProxy implements IRemotingProxy, IDelegator {
 
     constructor(communicator: ICommunicator, ownCommunicator?: boolean) {
         if (utils.isNullOrUndefined(communicator)) {
-            throw error("communicator must be provided.");
+            throw new Error("communicator must be provided.");
         }
 
         this.communicator = communicator;
@@ -115,7 +111,7 @@ export class RemotingProxy implements IRemotingProxy, IDelegator {
         this.validateDisposal();
 
         if (resolver && !Function.isFunction(resolver)) {
-            throw error("resolver must be a function.");
+            throw new Error("resolver must be a function.");
         }
 
         this.resolver = resolver;
@@ -161,7 +157,7 @@ export class RemotingProxy implements IRemotingProxy, IDelegator {
 
     private validateDisposal(): void {
         if (this.disposed) {
-            throw error("Proxy ({}) already disposed.", this.id);
+            throw new Error(`Proxy (${this.id}) already disposed.`);
         }
     }
 
@@ -194,7 +190,7 @@ export class RemotingProxy implements IRemotingProxy, IDelegator {
         const target = this.dataInfoManager.get(delegationMsg.refId);
 
         if (target === undefined) {
-            throw error("Target ({}) doesn't exist.", delegationMsg.refId);
+            throw new Error(`Target (${delegationMsg.refId}) doesn't exist.`);
         }
 
         return this.dataInfoManager.ReferAsDataInfo(target[delegationMsg.property], delegationMsg.refId);
@@ -205,7 +201,7 @@ export class RemotingProxy implements IRemotingProxy, IDelegator {
         const target = this.dataInfoManager.get(delegationMsg.refId);
 
         if (target === undefined) {
-            throw error("Target ({}) doesn't exist.", delegationMsg.refId);
+            throw new Error(`Target (${delegationMsg.refId}) doesn't exist.`);
         }
 
         target[delegationMsg.property] = this.dataInfoManager.realizeDataInfo(delegationMsg.value, delegationMsg.refId);
@@ -218,11 +214,11 @@ export class RemotingProxy implements IRemotingProxy, IDelegator {
         const target = this.dataInfoManager.get(delegationMsg.refId);
 
         if (target === undefined) {
-            throw error("Target ({}) doesn't exist.", delegationMsg.refId);
+            throw new Error(`Target (${delegationMsg.refId}) doesn't exist.`);
         }
 
         if (typeof target !== "function") {
-            throw error("Target ({}) is not a function which cannot be applied.", delegationMsg.refId);
+            throw new Error(`Target (${delegationMsg.refId}) is not a function which cannot be applied.`);
         }
 
         const result =

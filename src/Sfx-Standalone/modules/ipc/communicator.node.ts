@@ -11,7 +11,6 @@ import { Socket } from "net";
 import * as uuidv4 from "uuid/v4";
 
 import * as utils from "../../utilities/utils";
-import error, { SerializableError } from "../../utilities/errorUtil";
 import { isRegExp } from "util";
 
 interface IMessage {
@@ -93,7 +92,7 @@ function isSocket(channel: any): channel is Socket {
 
 function isMessage(msg: any): msg is IMessage {
     return !utils.isNullOrUndefined(msg)
-        && !String.isNullUndefinedOrWhitespace(msg.id)
+        && !String.isEmptyOrWhitespace(msg.id)
         && (utils.isNullOrUndefined(msg.path) || String.isString(msg.path));
 }
 
@@ -115,7 +114,7 @@ export class NodeCommunicator implements ICommunicator {
         id?: string) {
 
         if (utils.isNullOrUndefined(channel)) {
-            throw error("channel must be supplied.");
+            throw new Error("channel must be supplied.");
         } else if (isProcess(channel)) {
             this.sendMessage = (msg) => channel.send(msg);
             this.channelDataHandler = (data) => {
@@ -143,19 +142,19 @@ export class NodeCommunicator implements ICommunicator {
 
             channel.on("data", this.channelDataHandler);
         } else {
-            throw error("Unknown channel type. Only supports NodeJS.Process, NodeJS.ChildProcess, NodeJS.Socket.");
+            throw new Error("Unknown channel type. Only supports NodeJS.Process, NodeJS.ChildProcess, NodeJS.Socket.");
         }
 
         this.routes = [];
         this.ongoingPromiseDict = {};
-        this.id = String.isNullUndefinedOrWhitespace(id) ? uuidv4() : id;
+        this.id = String.isEmptyOrWhitespace(id) ? uuidv4() : id;
     }
 
     public map(pattern: string | RegExp, handler: RequestHandler): void {
         this.validateDisposal();
 
         if (!Function.isFunction(handler)) {
-            throw error("handler must be a function.");
+            throw new Error("handler must be a function.");
         }
 
         let route: IRoute = {
@@ -164,13 +163,13 @@ export class NodeCommunicator implements ICommunicator {
         };
 
         if (utils.isNullOrUndefined(pattern)) {
-            throw error("pattern must be supplied.");
+            throw new Error("pattern must be supplied.");
         } else if (String.isString(pattern)) {
             route.pattern = new StringPattern(pattern);
         } else if (pattern instanceof RegExp) {
             route.pattern = new RegexPattern(pattern);
         } else {
-            throw error("Only string and regex pattern are supported.");
+            throw new Error("Only string and regex pattern are supported.");
         }
 
         this.routes.push(route);
@@ -180,7 +179,7 @@ export class NodeCommunicator implements ICommunicator {
         this.validateDisposal();
 
         if (utils.isNullOrUndefined(pattern)) {
-            throw error("pattern must be supplied.");
+            throw new Error("pattern must be supplied.");
         }
 
         const routeIndex = this.routes.findIndex((route) => route.pattern.equals(pattern));
@@ -199,8 +198,8 @@ export class NodeCommunicator implements ICommunicator {
     public sendAsync<TRequest, TResponse>(path: string, content: TRequest): Promise<TResponse> {
         this.validateDisposal();
 
-        if (String.isNullUndefinedOrWhitespace(path)) {
-            throw error("path must be a string and not empty/whitespaces.");
+        if (String.isEmptyOrWhitespace(path)) {
+            throw new Error("path must be a string and not empty/whitespaces.");
         }
 
         return new Promise((resolve, reject) => {
@@ -212,7 +211,7 @@ export class NodeCommunicator implements ICommunicator {
             };
 
             if (!this.sendMessage(msg)) {
-                reject(error("Failed to send request. The remote channel may be closed."));
+                reject(new Error("Failed to send request. The remote channel may be closed."));
                 return;
             }
 
@@ -233,7 +232,7 @@ export class NodeCommunicator implements ICommunicator {
         }
 
         if (this.ongoingPromiseDict !== undefined) {
-            Object.values(this.ongoingPromiseDict).forEach((resolver) => resolver.reject(error("Communicator ({}) is disposed.", this.id)));
+            Object.values(this.ongoingPromiseDict).forEach((resolver) => resolver.reject(new Error(`Communicator (${this.id}) is disposed.`)));
         }
 
         this.sendMessage = undefined;
@@ -245,7 +244,7 @@ export class NodeCommunicator implements ICommunicator {
 
     private validateDisposal(): void {
         if (this.disposed) {
-            throw error("Communicator ({}) already disposed.", this.id);
+            throw new Error(`Communicator (${this.id}) already disposed.`);
         }
     }
 
@@ -258,7 +257,7 @@ export class NodeCommunicator implements ICommunicator {
             if (msg.succeeded === true) {
                 promise.resolve(msg.body);
             } else {
-                promise.reject(SerializableError.from(msg.body));
+                promise.reject(msg.body);
             }
         } else {
             const route = this.routes.find((route) => route.pattern.match(msg.path));

@@ -18,14 +18,17 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "prompt.input",
                 version: electron.app.getVersion(),
-                descriptor: (promptService: IPromptService, parentWindowId: number, options: IInputPromptOptions) =>
-                    promptService.createAsync(
-                        {
-                            parentWindowId: parentWindowId,
-                            pageUrl: resolve("input.html"),
-                            height: 225,
-                            data: options
-                        }),
+                descriptor:
+                    (promptService: IPromptService,
+                        parentWindowId: number,
+                        options: IInputPromptOptions) =>
+                        promptService.createAsync(
+                            {
+                                parentWindowId: parentWindowId,
+                                pageUrl: resolve("input.html"),
+                                height: 225,
+                                data: options
+                            }),
                 deps: ["prompt.prompt-service"]
             }
         ]

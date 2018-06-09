@@ -4,11 +4,11 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx" {
-    import { IHttpClient } from "sfx.http";
+    import { IHttpClient, HttpProtocol } from "sfx.http";
 
     export interface IModuleManager {
-        getComponentAsync(componentIdentity: "http-client"): Promise<IHttpClient>;
-        getComponentAsync(componentIdentity: "https-client"): Promise<IHttpClient>;
+        getComponentAsync(componentIdentity: "http.http-client"): Promise<IHttpClient>;
+        getComponentAsync(componentIdentity: "http.https-client"): Promise<IHttpClient>;
     }
 }
 

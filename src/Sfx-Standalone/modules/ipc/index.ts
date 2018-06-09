@@ -11,21 +11,22 @@ import { Socket } from "net";
 
 import * as utilities from "./utilities";
 import { NodeCommunicator } from "./communicator.node";
+import { electron } from "../../utilities/electron-adapter";
 
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "ipc",
-        version: "1.0.0",
+        version: electron.app.getVersion(),
         components: [
             {
-                name: "ipc-communicator-node",
-                version: "1.0.0",
-                deps: ["log"],
+                name: "ipc.communicator-node",
+                version: electron.app.getVersion(),
+                deps: ["logging"],
                 descriptor: (log: ILog, channel: NodeJS.Process | ChildProcess | Socket, id?: string) => new NodeCommunicator(channel, id)
             },
             {
-                name: "ipc-communicator-utilities",
-                version: "1.0.0",
+                name: "ipc.communicator-utilities",
+                version: electron.app.getVersion(),
                 deps: [],
                 descriptor: () => utilities
             }

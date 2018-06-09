@@ -13,9 +13,14 @@ declare module "sfx.prompt.select-certificate" {
 }
 
 declare module "sfx" {
+    import { IPrompt } from "sfx.prompt";
     import { ISelectCertificatePromptResults } from "sfx.prompt.select-certificate";
+    import { Certificate } from "electron";
 
     export interface IModuleManager {
-        getComponentAsync(componentIdentity: "prompt.select-certificate"): Promise<Promise<ISelectCertificatePromptResults>>;
+        getComponentAsync(
+            componentIdentity: "prompt.select-certificate",
+            parentWindowId: number,
+            certificates: Array<Certificate>): Promise<IPrompt<ISelectCertificatePromptResults>>;
     }
 }

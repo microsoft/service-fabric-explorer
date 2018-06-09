@@ -3,38 +3,13 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IPrompt } from "sfx.prompt";
-import { ISelectCertificatePromptResults  } from "sfx.prompt.select-certificate";
+import { IModuleInfo } from "sfx";
+import { IPromptService } from "sfx.prompt";
 import { Certificate } from "electron";
 
 import "../../utilities/utils";
 import resolve from "../../utilities/resolve";
 import { electron } from "../../utilities/electron-adapter";
-
-function open(
-    prompt: IPrompt,
-    parentWindowId: number,
-    certificates: Array<Certificate>): Promise<IPrompt> {
-
-    if (!Object.isObject(prompt)) {
-        throw new Error("prompt must be supplied.");
-    }
-
-    if (!Array.isArray(certificates)) {
-        throw error("certificates must be supplied.");
-    }
-
-    return promptsvc.open(
-        {
-            parentWindowId: parentWindowId,
-            pageUrl: resolve("select-certificate.html"),
-            height: 640,
-            data: certificates
-        },
-        promptCallback
-    );
-}
-
 
 export function getModuleMetadata(): IModuleInfo {
     return {
@@ -44,11 +19,28 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "prompt.select-certificate",
                 version: electron.app.getVersion(),
-                descriptor: open,
-                deps: ["prompt"]
+                descriptor:
+                    (promptService: IPromptService,
+                        parentWindowId: number,
+                        certificates: Array<Certificate>) => {
+                        if (!Object.isObject(promptService)) {
+                            throw new Error("promptService must be supplied.");
+                        }
+
+                        if (!Array.isArray(certificates)) {
+                            throw new Error("certificates must be supplied.");
+                        }
+
+                        return promptService.createAsync(
+                            {
+                                parentWindowId: parentWindowId,
+                                pageUrl: resolve("select-certificate.html"),
+                                height: 640,
+                                data: certificates
+                            });
+                    },
+                deps: ["prompt.prompt-service"]
             }
         ]
     };
 }
-
-

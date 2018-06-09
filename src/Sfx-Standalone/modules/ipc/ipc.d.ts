@@ -25,7 +25,16 @@ declare module "sfx.ipc" {
 }
 
 declare module "sfx" {
+    import { ICommunicator, IIpcUtilities } from "sfx.ipc";
+    import { ChildProcess } from "child_process";
+    import { Socket } from "net";
+
     export interface IModuleManager {
-        
+        getComponentAsync(
+            componentIdentity: "ipc.communicator-node",
+            channel: NodeJS.Process | ChildProcess | Socket,
+            id?: string): Promise<ICommunicator>;
+
+        getComponentAsync(componentIdentity: "ipc.communicator-utilities"): Promise<IIpcUtilities>;
     }
 }

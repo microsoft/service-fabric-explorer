@@ -2,17 +2,17 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+import { IDictionary, IModuleInfo } from "sfx";
+import { ISettings, ISettingsService } from "sfx.settings";
 
-import * as electron from "electron";
 import * as path from "path";
 import * as fs from "fs";
 
-import { ISettingsService, ISettings } from "../@types/settings";
 import * as utils from "../utilities/utils";
-import error from "../utilities/errorUtil";
 import { local } from "../utilities/resolve";
 import * as fileSystem from "../utilities/fileSystem";
 import { appCodeName } from "../utilities/appUtils";
+import { electron } from "../utilities/electron-adapter";
 
 class Settings implements ISettings {
     public readonly readonly: boolean;
@@ -34,7 +34,7 @@ class Settings implements ISettings {
 
     public get<T>(settingPath: string): T {
         if (!settingPath || !String.isString(settingPath)) {
-            throw error("Invalid setting path: {}", settingPath);
+            throw new Error(`Invalid setting path: ${settingPath}`);
         }
 
         let pathParts = settingPath.split("/");
@@ -58,11 +58,11 @@ class Settings implements ISettings {
 
     public set<T>(settingPath: string, value: T): void {
         if (this.readonly) {
-            throw error("Readonly settings cannot be modified.");
+            throw new Error("Readonly settings cannot be modified.");
         }
 
         if (!settingPath || !String.isString(settingPath)) {
-            throw error("Invalid setting path: {}", settingPath);
+            throw new Error(`Invalid setting path: ${settingPath}`);
         }
 
         let pathParts = settingPath.split("/");
@@ -70,7 +70,7 @@ class Settings implements ISettings {
 
         for (let pathPartIndex = 0; pathPartIndex < pathParts.length; pathPartIndex++) {
             if (!Array.isArray(settingValue) && !Object.isObject(settingValue)) {
-                throw error("Unable to travel the settings path because the settings type is not array or object or it is null.");
+                throw new Error("Unable to travel the settings path because the settings type is not array or object or it is null.");
             }
 
             let pathPart = pathParts[pathPartIndex];
@@ -95,14 +95,14 @@ class FileSettings extends Settings {
 
     constructor(settingsPath: string, readOnly?: boolean, parentSettings?: ISettings) {
         if (utils.isNullOrUndefined(settingsPath)) {
-            throw error("settingsPath must be supplied.");
+            throw new Error("settingsPath must be supplied.");
         }
 
         let initialSettings: any;
 
         if (!fs.existsSync(settingsPath)) {
             if (readOnly === true) {
-                throw error("Settings file, {}, doesn't exist.", settingsPath);
+                throw new Error(`Settings file, ${settingsPath}, doesn't exist.`);
             }
 
             initialSettings = {};
@@ -116,7 +116,7 @@ class FileSettings extends Settings {
                     readOnly = false;
                 } catch (err) {
                     if (readOnly === false) {
-                        throw error("No permission to write settings file, {}. error: {}", settingsPath, err);
+                        throw new Error(`No permission to write settings file, {settingsPath}. error: {err}`);
                     } else {
                         readOnly = true;
                     }
@@ -174,7 +174,7 @@ class SettingsService implements ISettingsService {
      */
     public open(...names: Array<string>): ISettings {
         if (!Array.isArray(names)) {
-            throw error("names must be an array of string.");
+            throw new Error("names must be an array of string.");
         }
 
         let parentSettings: ISettings = null;
@@ -192,7 +192,7 @@ class SettingsService implements ISettingsService {
 
     private openSettings(parentSettings: ISettings, name: string): ISettings {
         if (!String.isString(name)) {
-            throw error("Invalid settings name!");
+            throw new Error("Invalid settings name!");
         }
 
         let settingsPath = local(name + ".json", true);
@@ -207,21 +207,21 @@ class SettingsService implements ISettingsService {
 
 export function getModuleMetadata(): IModuleInfo {
     return {
-        name: "http",
-        version: "1.0.0",
+        name: "settings",
+        version: electron.app.getVersion(),
         components: [
             {
-                name: "settings-service",
-                version: "1.0.0",
+                name: "settings.service",
+                version: electron.app.getVersion(),
                 singleton: true,
                 descriptor: () => new SettingsService()
             },
             {
                 name: "settings",
-                version: "1.0.0",
+                version: electron.app.getVersion(),
                 singleton: true,
                 descriptor: (settingsSvc: SettingsService) => settingsSvc.default,
-                deps: ["settings-service"]
+                deps: ["settings.service"]
             }
         ]
     };

@@ -3,6 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import { IDictionary, IModuleManager } from "sfx";
+
 import { dialog, BrowserWindow, app, BrowserWindowConstructorOptions } from "electron";
 import * as url from "url";
 
@@ -11,7 +13,6 @@ import * as authCert from "../../utilities/auth/cert";
 import * as authAad from "../../utilities/auth/aad";
 import * as appUtils from "../../utilities/appUtils";
 import * as utils from "../../utilities/utils";
-import error from "../../utilities/errorUtil";
 import { local } from "../../utilities/resolve";
 
 function handleSslCert(window: BrowserWindow): void {
@@ -87,10 +88,10 @@ function handleZoom(window: BrowserWindow) {
 }
 
 export default function createBrowserWindow(moduleManager: IModuleManager, options?: BrowserWindowConstructorOptions, handleAuth?: boolean, aadTargetHostName?: string): BrowserWindow {
-    handleAuth = utils.getEither(handleAuth, false);
+    handleAuth = utils.getValue(handleAuth, false);
 
-    if (handleAuth && String.isNullUndefinedOrWhitespace(aadTargetHostName)) {
-        throw error("if auth handling is required, aadTargetHostName must be supplied.");
+    if (handleAuth && String.isEmptyOrWhitespace(aadTargetHostName)) {
+        throw new Error("if auth handling is required, aadTargetHostName must be supplied.");
     }
 
     const windowOptions: BrowserWindowConstructorOptions = {
@@ -114,7 +115,7 @@ export default function createBrowserWindow(moduleManager: IModuleManager, optio
     const window = new BrowserWindow(windowOptions);
 
     window.on("page-title-updated", (event, title) => event.preventDefault());
-    window.setTitle(String.format("{} - {}", window.getTitle(), app.getVersion()));
+    window.setTitle(`${window.getTitle()} - ${app.getVersion()}`);
 
     handleSslCert(window);
     handleNewWindow(window);
