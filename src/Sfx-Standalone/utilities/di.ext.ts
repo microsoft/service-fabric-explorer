@@ -3,9 +3,6 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-// *** Dependency Injection Extensions ***
-
-import error from "./errorUtil";
 import "./utils";
 import { IDiDescriptor } from "./di";
 
@@ -15,21 +12,21 @@ export interface IDescriptor {
 
 export function dedication(typeDescriptor: IDescriptor, injects: Array<string>): IDiDescriptor {
     if (!Function.isFunction(typeDescriptor)) {
-        throw error("typeDescriptor must be a function.");
+        throw new Error("typeDescriptor must be a function.");
     }
 
     if (Array.isNullUndefinedOrEmpty(injects)) {
         injects = undefined;
     } else if (!Array.isArray(injects)) {
-        throw error("inject must be an array of string.");
+        throw new Error("inject must be an array of string.");
     } else {
         for (let injectIndex = 0; injectIndex < injects.length; injectIndex++) {
             const inject = injects[injectIndex];
 
-            if (String.isNullUndefinedOrWhitespace(inject)) {
+            if (String.isEmptyOrWhitespace(inject)) {
                 injects[injectIndex] = undefined;
             } else if (!String.isString(inject)) {
-                throw error("Inject identity must be a string.");
+                throw new Error("Inject identity must be a string.");
             }
         }
     }
@@ -45,7 +42,7 @@ export function dedication(typeDescriptor: IDescriptor, injects: Array<string>):
                     const arg = container.getDep(inject);
 
                     if (arg === undefined) {
-                        throw error("Required inject is not available in the container.");
+                        throw new Error("Required inject is not available in the container.");
                     }
 
                     args.push(arg);

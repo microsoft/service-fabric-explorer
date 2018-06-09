@@ -2,6 +2,7 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+import { IModuleManager, IDictionary } from "sfx";
 
 import { BrowserWindow, Certificate } from "electron";
 import * as url from "url";
@@ -14,11 +15,11 @@ import { env, Platform } from "../env";
 import { local } from "../resolve";
 import * as utils from "../utils";
 
-function showCertSelectPrompt(
+async function showCertSelectPrompt(
     moduleManager: IModuleManager,
     window: BrowserWindow,
     certificateList: Array<Certificate>,
-    callback: (selectedCert: Certificate, certsImported: boolean) => void): void {
+    callback: (selectedCert: Certificate, certsImported: boolean) => void): Promise<void> {
 
     let certSelectionButtons = new Array<string>();
     let importCertsResponse = -1;
@@ -31,18 +32,20 @@ function showCertSelectPrompt(
         importCertsResponse = certSelectionButtons.push("Import more certificates ...") - 1;
     }
 
-    moduleManager.getComponent("prompt-select-certificate",
-        window.id,
-        certificateList,
-        (error, results) => {
-            if (utils.isNullOrUndefined(results)) {
-                callback(null, false);
-            } else if (results.selectedCertificate) {
-                callback(results.selectedCertificate, false);
-            } else {
-                callback(null, results.certificatesImported);
-            }
-        });
+    const prompt =
+        await moduleManager.getComponentAsync("prompt.select-certificate",
+            window.id,
+            certificateList,
+            (error, results) => {
+                if (utils.isNullOrUndefined(results)) {
+                    callback(null, false);
+                } else if (results.selectedCertificate) {
+                    callback(results.selectedCertificate, false);
+                } else {
+                    callback(null, results.certificatesImported);
+                }
+            });
+    prompt.
 }
 
 interface ICertHandlingRecord {

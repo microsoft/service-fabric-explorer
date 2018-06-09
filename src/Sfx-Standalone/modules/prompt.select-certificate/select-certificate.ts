@@ -62,8 +62,7 @@ declare let angular: angular.IAngularStatic;
                     }
                 });
         }
-    }
-
+    };
 
     let selectCertificateModule = angular.module("select-certificate", []);
 
