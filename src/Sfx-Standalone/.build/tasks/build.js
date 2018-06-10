@@ -91,7 +91,7 @@ gulp.task("build:node_modules", ["build:json"],
     () => common.appdirExec("npm install --production"));
 
 gulp.task("build:sfx",
-    () => gulp.src(["../../Sfx/wwwroot/**/*.*"])
+    () => gulp.src(["../Sfx/wwwroot/**/*.*"])
         .pipe(gulp.dest(buildInfos.paths.sfxDir)));
 
 gulp.task("build:licenses",
