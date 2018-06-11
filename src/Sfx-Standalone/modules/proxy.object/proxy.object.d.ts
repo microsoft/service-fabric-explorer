@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.proxy.object" {
-    import { IDisposable } from "sfx";
+    import { IDisposable } from "sfx.common";
     import { IRoutePattern, ICommunicator } from "sfx.remoting";
 
     export interface Resolver {
@@ -23,7 +23,7 @@ declare module "sfx.proxy.object" {
     }
 }
 
-declare module "sfx" {
+declare module "sfx.module-manager" {
     import { ICommunicator, IRoutePattern } from "sfx.remoting";
     import { IObjectRemotingProxy } from "sfx.proxy.object";
 

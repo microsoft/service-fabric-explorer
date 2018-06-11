@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IDisposable, IDictionary } from "sfx";
+import { IDisposable, IDictionary } from "sfx.common";
 import { ICommunicator, RequestHandler, IRoutePattern } from "sfx.remoting";
 import { IObjectRemotingProxy, Resolver } from "sfx.proxy.object";
 
@@ -58,7 +58,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
     }
 
     public get communicator(): ICommunicator {
-        return this.communicator;
+        return this._communicator;
     }
 
     private readonly symbol_refId: symbol = Symbol("refId");

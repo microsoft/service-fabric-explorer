@@ -3,13 +3,13 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import { IDisposable } from "sfx.common";
 import {
     IModuleInfo,
     IModuleManager,
     IComponentInfo,
     HostVersionMismatchEventHandler,
-    IDisposable
-} from "sfx";
+} from "sfx.module-manager";
 
 import { ICommunicator, RequestHandler, IRoutePattern } from "sfx.remoting";
 import { IObjectRemotingProxy, Resolver } from "sfx.proxy.object";
@@ -105,24 +105,30 @@ export class ModuleManager implements IModuleManager {
         this.container.set("module-manager", diExt.singleton(this));
     }
 
-    public async newHostAsync(hostName: string): Promise<void> {
+    public async newHostAsync(hostName: string, hostCommunicator?: ICommunicator): Promise<void> {
         if (String.isEmptyOrWhitespace(hostName)) {
             throw new Error("hostName cannot be null/undefined/empty.");
+        }
+
+        if (!this.children) {
+            this.children = [];
         }
 
         if (0 <= this.children.findIndex((child) => child.proxy.id === hostName)) {
             throw new Error(`hostName, "${hostName}", already exists.`);
         }
 
-        const constructorOptions = mmutils.generateModuleManagerConstructorOptions(this);
-        const childProcess: child_process.ChildProcess =
-            child_process.fork("./bootstrap.js", [JSON.stringify(constructorOptions)]);
+        let proxy: IObjectRemotingProxy;
+        let childProcess: child_process.ChildProcess;
 
-        const childCommunicator = new Communicator(childProcess, hostName);
-        const proxy = await ObjectRemotingProxy.create(this.pattern_proxy, childCommunicator, true);
+        if (!hostCommunicator) {
+            const constructorOptions = mmutils.generateModuleManagerConstructorOptions(this);
 
-        if (!this.children) {
-            this.children = [];
+            childProcess = child_process.fork("./bootstrap.js", [JSON.stringify(constructorOptions)]);
+            hostCommunicator = new Communicator(childProcess, hostName);
+            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, true);
+        } else {
+            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, false);
         }
 
         proxy.setResolver(this.onProxyResolvingAsync);
@@ -130,7 +136,7 @@ export class ModuleManager implements IModuleManager {
         this.children.push({
             process: childProcess,
             proxy: proxy,
-            communicator: childCommunicator
+            communicator: hostCommunicator
         });
     }
 
@@ -152,7 +158,10 @@ export class ModuleManager implements IModuleManager {
         const child = this.children[childIndex];
 
         await child.proxy.dispose();
-        child.process.kill();
+
+        if (child.process) {
+            child.process.kill();
+        }
 
         this.children.splice(childIndex, 1);
 

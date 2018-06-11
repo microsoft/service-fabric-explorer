@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 declare module "sfx.update" {
-    import { IVersionInfo } from "sfx";
+    import { IVersionInfo } from "sfx.common";
 
     export interface IUpdateService {
         update(): void;
@@ -12,7 +12,7 @@ declare module "sfx.update" {
     }
 }
 
-declare module "sfx" {
+declare module "sfx.module-manager" {
     import { IUpdateService } from "sfx.update";
 
     export interface IModuleManager {

@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.prompt" {
-    import { IDisposable } from "sfx";
+    import { IDisposable } from "sfx.common";
     import { MenuItemConstructorOptions } from "electron";
 
     export interface IPromptOptions {
@@ -37,7 +37,7 @@ declare module "sfx.prompt" {
     }
 }
 
-declare module "sfx" {
+declare module "sfx.module-manager" {
     import {
         IPromptService,
         IPromptContext,

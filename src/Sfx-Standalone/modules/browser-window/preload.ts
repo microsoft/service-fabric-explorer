@@ -10,5 +10,5 @@ import { Communicator } from "../ipc/communicator";
 process.once("loaded", async () => {
     const constructorOptions = ipcRenderer.sendSync("request-module-manager-constructor-options");
 
-    global["sfxModuleManager"] = await mmutils.createModuleManagerAsync(constructorOptions, new Communicator(process));
+    global["sfxModuleManager"] = await mmutils.createModuleManagerAsync(constructorOptions, new Communicator(ipcRenderer));
 });

@@ -18,7 +18,7 @@ declare module "sfx.settings" {
     }
 }
 
-declare module "sfx" {
+declare module "sfx.module-manager" {
     import { ISettingsService, ISettings } from "sfx.settings";
 
     export interface IModuleManager {

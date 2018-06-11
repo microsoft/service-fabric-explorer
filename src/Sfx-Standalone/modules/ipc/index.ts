@@ -3,11 +3,9 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleInfo } from "sfx";
+import { ChannelType } from "sfx.ipc";
+import { IModuleInfo } from "sfx.module-manager";
 import { ILog } from "sfx.logging";
-
-import { ChildProcess } from "child_process";
-import { Socket } from "net";
 
 import { Communicator } from "./communicator";
 import { electron } from "../../utilities/electron-adapter";
@@ -22,7 +20,7 @@ export function getModuleMetadata(): IModuleInfo {
                 name: "ipc.communicator",
                 version: electron.app.getVersion(),
                 deps: ["logging"],
-                descriptor: (log: ILog, channel: NodeJS.Process | ChildProcess | Socket, id?: string) => new Communicator(channel, id)
+                descriptor: (log: ILog, channel: ChannelType, id?: string) => new Communicator(channel, id)
             }
         ]
     };

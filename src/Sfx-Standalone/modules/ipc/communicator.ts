@@ -3,8 +3,9 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IDictionary, IDisposable } from "sfx";
+import { IDictionary, IDisposable } from "sfx.common";
 import { RequestHandler, ICommunicator, IRoutePattern } from "sfx.remoting";
+import { ChannelType } from "sfx.ipc";
 
 import { ChildProcess } from "child_process";
 import { Socket } from "net";
@@ -251,7 +252,7 @@ function generateChannelProxy(channel: any, dataHandler: ChannelProxyDataHandler
     } else if (SocketChannelProxy.isValidChannel(channel)) {
         return new SocketChannelProxy(channel, dataHandler);
     } else {
-        throw new Error("Unknown channel type. Only supports NodeJS.Process, NodeJS.ChildProcess, NodeJS.Socket.");
+        throw new Error("Unknown channel type. Only supports NodeJS.Process, NodeJS.ChildProcess, NodeJS.Socket, Electron.IpcRenderer, Electron.WebContents.");
     }
 }
 
@@ -265,11 +266,11 @@ export class Communicator implements ICommunicator {
     private channelProxy: IChannelProxy;
 
     constructor(
-        channel: NodeJS.Process | ChildProcess | Socket,
+        channel: ChannelType,
         id?: string) {
         this.routes = [];
         this.ongoingPromiseDict = {};
-        this.id = String.isEmptyOrWhitespace(id) ? uuidv4() : id;
+        this.id = String.isString(id) && !String.isEmptyOrWhitespace(id) ? id : uuidv4();
         this.channelProxy = generateChannelProxy(channel, this.onMessageAsync);
     }
 

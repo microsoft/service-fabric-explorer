@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-declare module "sfx" {
+declare module "sfx.module-manager" {
     import { IHttpClient, HttpProtocol } from "sfx.http";
 
     export interface IModuleManager {
@@ -13,7 +13,7 @@ declare module "sfx" {
 }
 
 declare module "sfx.http" {
-    import { IDictionary, IHandlerConstructor } from "sfx";
+    import { IDictionary, IHandlerConstructor } from "sfx.common";
     import { ILog } from "sfx.logging";
     import { ClientRequest, IncomingMessage } from "http";
 

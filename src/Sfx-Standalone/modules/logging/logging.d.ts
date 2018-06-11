@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.logging" {
-    import { IDictionary, IDisposable } from "sfx";
+    import { IDictionary, IDisposable } from "sfx.common";
 
     export type Severity = "event" | "verbose" | "info" | "warning" | "error" | "critical";
 
@@ -44,7 +44,7 @@ declare module "sfx.logging" {
     }
 }
 
-declare module "sfx" {
+declare module "sfx.module-manager" {
     import { ILog, ILoggerSettings, ILogger } from "sfx.logging";
 
     export interface IModuleManager {

@@ -11,7 +11,7 @@ declare module "sfx.prompt.input" {
     }
 }
 
-declare module "sfx" {
+declare module "sfx.module-manager" {
     import { IPrompt } from "sfx.prompt";
     import { IInputPromptOptions } from "sfx.prompt.input";
 

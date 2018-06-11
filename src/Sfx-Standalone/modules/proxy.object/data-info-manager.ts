@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IDictionary, IDisposable } from "sfx";
+import { IDictionary, IDisposable } from "sfx.common";
 
 import "../../utilities/utils";
 

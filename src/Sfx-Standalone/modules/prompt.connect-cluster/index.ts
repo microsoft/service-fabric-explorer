@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleInfo } from "sfx";
+import { IModuleInfo } from "sfx.module-manager";
 import { IPromptService } from "sfx.prompt";
 
 import resolve from "../../utilities/resolve";

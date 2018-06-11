@@ -3,10 +3,12 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IDictionary, IModuleManager } from "sfx";
+import { IDictionary } from "sfx.common";
+import { IModuleManager } from "sfx.module-manager";
 
 import { dialog, BrowserWindow, app, BrowserWindowConstructorOptions, ipcMain } from "electron";
 import * as url from "url";
+import * as uuidv5 from "uuid/v5";
 
 import { env, Platform } from "../../utilities/env";
 import * as authCert from "../../utilities/auth/cert";
@@ -15,6 +17,8 @@ import * as appUtils from "../../utilities/appUtils";
 import * as utils from "../../utilities/utils";
 import { local } from "../../utilities/resolve";
 import * as mmutils from "../../module-manager/utils";
+
+const UuidNamespace = "614e2e95-a80d-4ee5-9fd5-fb970b4b01a3";
 
 function handleSslCert(window: BrowserWindow): void {
     let trustedCertManager: IDictionary<boolean> = {};
@@ -88,7 +92,13 @@ function handleZoom(window: BrowserWindow) {
         });
 }
 
-export default function createBrowserWindow(moduleManager: IModuleManager, options?: BrowserWindowConstructorOptions, handleAuth?: boolean, aadTargetHostName?: string): BrowserWindow {
+export default async function createBrowserWindowAsync(
+    moduleManager: IModuleManager,
+    options?: BrowserWindowConstructorOptions,
+    handleAuth?: boolean,
+    aadTargetHostName?: string)
+    : Promise<BrowserWindow> {
+
     handleAuth = utils.getValue(handleAuth, false);
 
     if (handleAuth && String.isEmptyOrWhitespace(aadTargetHostName)) {
@@ -115,6 +125,7 @@ export default function createBrowserWindow(moduleManager: IModuleManager, optio
     }
 
     const window = new BrowserWindow(windowOptions);
+    const hostName = uuidv5(window.id.toString(), UuidNamespace);
 
     ipcMain.once("request-module-manager-constructor-options",
         (event: Electron.Event) => event.returnValue = mmutils.generateModuleManagerConstructorOptions(moduleManager));
@@ -134,7 +145,15 @@ export default function createBrowserWindow(moduleManager: IModuleManager, optio
         authAad.handle(window, aadTargetHostName);
     }
 
-    window.on("ready-to-show", () => window.show());
+    try {
+        await moduleManager.newHostAsync(hostName, await moduleManager.getComponentAsync("ipc.communicator", window.webContents));
+    } catch (error) {
+        console.log(error);
+    }
+
+    window.once("closed", async () => await moduleManager.destroyHostAsync(hostName));
+
+    window.once("ready-to-show", () => window.show());
 
     return window;
 }

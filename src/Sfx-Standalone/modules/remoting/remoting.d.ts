@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.remoting" {
-    import * as common from "sfx";
+    import { IDisposable } from "sfx.common";
 
     export interface IUtils {
         isCommunicator(communicator: any): communicator is ICommunicator;
@@ -21,7 +21,7 @@ declare module "sfx.remoting" {
         equals(pattern: IRoutePattern): boolean;
     }
 
-    export interface ICommunicator extends common.IDisposable {
+    export interface ICommunicator extends IDisposable {
         readonly id: string;
 
         map(pattern: IRoutePattern, handler: RequestHandler): void;
@@ -31,7 +31,7 @@ declare module "sfx.remoting" {
     }
 }
 
-declare module "sfx" {
+declare module "sfx.module-manager" {
     import { IUtils, IRoutePattern } from "sfx.remoting";
 
     export interface IModuleManager {

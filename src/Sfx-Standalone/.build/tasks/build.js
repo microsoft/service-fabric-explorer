@@ -54,7 +54,7 @@ gulp.task("build:tslint",
         .pipe(gtslint({ program: tslint.Linter.createProgram("../../tsconfig.json") }))
         .pipe(gtslint.report({ summarizeFailureOutput: true })));
 
-gulp.task("build:ts", ["build:tslint", "build:sdk"],
+gulp.task("build:ts", ["build:tslint"],
     () => {
         const tsconfig = config.tsConfig;
         const compilterOptionsParseResult = ts.convertCompilerOptionsFromJson(tsconfig.compilerOptions, undefined);
@@ -98,7 +98,8 @@ gulp.task("build:licenses",
     () => gulp.src(common.formGlobs(["../LICENSE"]))
         .pipe(gulp.dest(buildInfos.paths.appDir)));
 
-gulp.task("build:all", ["build:sfx", "build:ts", "build:html", "build:node_modules", "build:json", "build:img", "build:licenses"]);
+gulp.task("build", ["build:sfx", "build:ts", "build:html", "build:json", "build:img"])
+gulp.task("build:all", ["build", "build:licenses", "build:sdk", "build:node_modules"]);
 
-gulp.task("build", ["build:all"]);
 gulp.task("clean-build", (callback) => runSequence("clean:build", "build", callback));
+gulp.task("clean-build:all", (callback) => runSequence("clean:build", "build:all", callback));

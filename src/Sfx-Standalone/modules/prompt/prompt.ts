@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleManager } from "sfx";
+import { IModuleManager } from "sfx.module-manager";
 import { IPrompt, IPromptService, IPromptOptions } from "sfx.prompt";
 
 import { Menu, BrowserWindow, ipcMain, BrowserWindowConstructorOptions } from "electron";

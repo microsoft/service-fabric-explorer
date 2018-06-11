@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IHandlerChainBuilder, IHandlerConstructor } from "sfx";
+import { IHandlerChainBuilder, IHandlerConstructor } from "sfx.common";
 
 import * as utils from "./utils";
 

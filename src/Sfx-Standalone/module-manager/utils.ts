@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleManager } from "sfx";
+import { IModuleManager } from "sfx.module-manager";
 import { ICommunicator } from "sfx.remoting";
 
 import { ModuleManager } from "./module-manager";
