@@ -8,9 +8,9 @@ import {
     IPromptOptions
 } from "sfx.prompt";
 
-import { remote, electron } from "../../utilities/electron-adapter";
+import { remote } from "../../utilities/electron-adapter";
 import * as utils from "../../utilities/utils";
-import { EventNames, ChannelNameFormat } from "./prompt";
+import { EventNames, ChannelNameFormat } from "./constants";
 import { ipcRenderer } from "electron";
 
 export class PromptContext implements IPromptContext {

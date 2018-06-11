@@ -3,11 +3,10 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import * as mmutils from "./utils";
+export enum EventNames {
+    RequestModuleManagerConstructorOptions = "request-module-manager-constructor-options",
+    RequestPromptOptions = "request-prompt-options",
+    Finished = "finished"
+}
 
-(async () => {
-    const constructorOptions = JSON.parse(process.argv0);
-    const moduleManager = await mmutils.createModuleManagerAsync(constructorOptions);
-
-    global["sfxModuleManager"] = moduleManager;
-})();
+export const ChannelNameFormat = "prompt://{}/{}";

@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IDisposable, IDictionary, IModuleManager } from "sfx";
+import { IDisposable, IDictionary } from "sfx";
 import { ICommunicator, RequestHandler, IRoutePattern } from "sfx.remoting";
 import { IObjectRemotingProxy, Resolver } from "sfx.proxy.object";
 
@@ -181,7 +181,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
 
     private async resolveAsync(name: string, ...extraArgs: Array<any>): Promise<any> {
         if (this.resolver) {
-            return await this.resolver(name, ...extraArgs);
+            return await this.resolver(this, name, ...extraArgs);
         }
 
         return undefined;

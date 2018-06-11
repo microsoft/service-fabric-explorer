@@ -5,7 +5,7 @@
 
 import { IDictionary, IModuleManager } from "sfx";
 
-import { dialog, BrowserWindow, app, BrowserWindowConstructorOptions } from "electron";
+import { dialog, BrowserWindow, app, BrowserWindowConstructorOptions, ipcMain } from "electron";
 import * as url from "url";
 
 import { env, Platform } from "../../utilities/env";
@@ -14,6 +14,7 @@ import * as authAad from "../../utilities/auth/aad";
 import * as appUtils from "../../utilities/appUtils";
 import * as utils from "../../utilities/utils";
 import { local } from "../../utilities/resolve";
+import * as mmutils from "../../module-manager/utils";
 
 function handleSslCert(window: BrowserWindow): void {
     let trustedCertManager: IDictionary<boolean> = {};
@@ -113,6 +114,9 @@ export default function createBrowserWindow(moduleManager: IModuleManager, optio
     }
 
     const window = new BrowserWindow(windowOptions);
+
+    ipcMain.once("request-module-manager-constructor-options",
+        (event: Electron.Event) => event.returnValue = mmutils.generateModuleManagerConstructorOptions(moduleManager));
 
     window.on("page-title-updated", (event, title) => event.preventDefault());
     window.setTitle(`${window.getTitle()} - ${app.getVersion()}`);

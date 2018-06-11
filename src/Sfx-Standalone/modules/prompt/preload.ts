@@ -3,13 +3,20 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import "../browser-window/preload";
-
 import { PromptContext } from "./prompt-context";
 import { electron } from "../../utilities/electron-adapter";
+import * as mmutils from "../../module-manager/utils";
+import { NodeCommunicator } from "../ipc/communicator.node";
+import * as utils from "../../utilities/utils";
+import { ChannelNameFormat, EventNames } from "./constants";
 
-process.once("loaded", () => {
-    console.log(sfxModuleManager);
+process.once("loaded", async () => {
+    const promptWindow = electron.remote.getCurrentWindow();
+    const constructorOptions =
+        electron.ipcRenderer.sendSync(utils.format(ChannelNameFormat, promptWindow.id, EventNames.RequestModuleManagerConstructorOptions));
+
+    global["sfxModuleManager"] = await mmutils.createModuleManagerAsync(constructorOptions, new NodeCommunicator(process));
+
     sfxModuleManager.registerComponents([
         {
             name: "prompt.prompt-context",

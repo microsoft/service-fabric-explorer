@@ -4,57 +4,46 @@
 //-----------------------------------------------------------------------------
 
 import { IModuleManager } from "sfx";
+import { ICommunicator } from "sfx.remoting";
 
-import * as child_process from "child_process";
-import { local } from "../utilities/resolve";
 import { ModuleManager } from "./module-manager";
 import { electron } from "../utilities/electron-adapter";
-import { ICommunicator } from "sfx.ipc";
 
 export interface IModuleManagerConstructorOptions {
     hostVersion: string;
     initialModules: Array<string>;
-    ipcPath: string;
 }
 
-export function createModuleManager(
+export async function createModuleManagerAsync(
     options?: IModuleManagerConstructorOptions,
-    parentCommunicator?: ICommunicator,
-    ipcPath?: string)
-    : IModuleManager {
+    parentCommunicator?: ICommunicator)
+    : Promise<IModuleManager> {
+    const hostVersion: string =
+        options && String.isString(options.hostVersion) ? options.hostVersion : electron.app.getVersion();
 
-    let hostVersion: string = electron.app.getVersion();
-    let initialModules: Array<string> = null;
+    const initialModules: Array<string> =
+        options && Array.isArray(options.initialModules) ? options.initialModules : null;
 
-    if (options) {
-        if (options.hostVersion) {
-            hostVersion = options.hostVersion;
-        }
+    const moduleManager = new ModuleManager(hostVersion, parentCommunicator);
 
-        if (Array.isArray(options.initialModules)) {
-            initialModules = options.initialModules;
+    if (Array.isArray(initialModules)) {
+        for (const modulePath of initialModules) {
+            await moduleManager.loadModuleAsync(modulePath, null, true);
         }
     }
 
-    const moduleManager = new ModuleManager(hostVersion);
-
-    if (options) {
-
-    }
+    return moduleManager;
 }
 
-export function createModuleManagerNodeProcess(
+export function generateModuleManagerConstructorOptions(
     moduleManager: IModuleManager)
-    : child_process.ChildProcess {
+    : IModuleManagerConstructorOptions {
     if (!moduleManager) {
         throw new Error("moduleManager must be provided.");
     }
 
-    const options: IModuleManagerConstructorOptions = {
+    return {
         hostVersion: moduleManager.hostVersion,
-        initialModules: moduleManager.loadedModules,
-        ipcPath: moduleManager.ipcPath;
+        initialModules: moduleManager.loadedModules
     };
-
-    return child_process.fork(local("./bootstrap.js"), [JSON.stringify(options)]);
 }

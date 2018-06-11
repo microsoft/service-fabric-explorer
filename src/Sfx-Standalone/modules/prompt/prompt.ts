@@ -13,13 +13,8 @@ import { electron } from "../../utilities/electron-adapter";
 import { env, Platform } from "../../utilities/env";
 import * as appUtils from "../../utilities/appUtils";
 import { local } from "../../utilities/resolve";
-
-export enum EventNames {
-    RequestPromptOptions = "request-prompt-options",
-    Finished = "finished"
-}
-
-export const ChannelNameFormat = "prompt://{}/{}";
+import * as mmutils from "../../module-manager/utils";
+import { ChannelNameFormat, EventNames } from "./constants";
 
 class Prompt<TResult> implements IPrompt<TResult> {
     public get disposed(): boolean {
@@ -98,6 +93,10 @@ class Prompt<TResult> implements IPrompt<TResult> {
             this.cleanupIpcListeners();
             this.promise_resolve(this.promptResult);
         });
+
+        ipcMain.once(
+            utils.format(ChannelNameFormat, this.promptWindow.id, EventNames.RequestModuleManagerConstructorOptions),
+            (event: Electron.Event) => event.returnValue = mmutils.generateModuleManagerConstructorOptions(this.moduleManager));
 
         ipcMain.once(
             utils.format(ChannelNameFormat, this.promptWindow.id, EventNames.Finished),

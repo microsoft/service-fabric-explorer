@@ -25,6 +25,7 @@ import * as diExt from "../utilities/di.ext";
 import { NodeCommunicator } from "../modules/ipc/communicator.node";
 import { ObjectRemotingProxy } from "../modules/proxy.object/proxy.object";
 import StringPattern from "../modules/remoting/pattern/string";
+import * as mmutils from "./utils";
 
 enum ModuleManagerAction {
     loadModuleAsync = "loadModuleAsync",
@@ -60,7 +61,9 @@ interface ILoadModuleDirAsyncMessage extends IModuleManagerMessage {
 export class ModuleManager implements IModuleManager {
     private readonly _hostVersion: string;
 
-    private readonly pattern: IRoutePattern;
+    private readonly pattern_moduleManager: IRoutePattern;
+
+    private readonly pattern_proxy: IRoutePattern;
 
     private hostVersionMismatchHandler: HostVersionMismatchEventHandler;
 
@@ -80,7 +83,7 @@ export class ModuleManager implements IModuleManager {
         return this.modulePaths.slice();
     }
 
-    private constructor(
+    constructor(
         hostVersion: string,
         parentCommunicator?: ICommunicator) {
         if (!semver.valid(hostVersion)) {
@@ -88,24 +91,18 @@ export class ModuleManager implements IModuleManager {
         }
 
         this._hostVersion = hostVersion;
-        this.pattern = new StringPattern("module-manager");
+        this.pattern_moduleManager = new StringPattern("module-manager");
+        this.pattern_proxy = new StringPattern("module-manager/object-proxy");
         this.modulePaths = [];
         this.container = new di.DiContainer();
 
         if (parentCommunicator) {
-            this.parentProxy = ObjectRemotingProxy.create(this.pattern, parentCommunicator, true);
-            this.parentProxy.setResolver(this.onProxyResolving);
-            parentCommunicator.map(this.pattern, this.onModuleManagerMessage);
+            this.parentProxy = ObjectRemotingProxy.create(this.pattern_proxy, parentCommunicator, true);
+            this.parentProxy.setResolver(this.onProxyResolvingAsync);
+            parentCommunicator.map(this.pattern_moduleManager, this.onModuleManagerMessageAsync);
         }
 
         this.container.set("module-manager", diExt.singleton(this));
-    }
-
-    public static async createAsync(
-        hostVersion: string,
-        parentCommunicator?: ICommunicator)
-        : Promise<ModuleManager> {
-        const moduleManager = new ModuleManager()
     }
 
     public async newHostAsync(hostName: string): Promise<void> {
@@ -117,22 +114,18 @@ export class ModuleManager implements IModuleManager {
             throw new Error(`hostName, "${hostName}", already exists.`);
         }
 
-        const args: Array<string> = [];
-
-        args.push(this.hostVersion);
-        args.push(...this.loadedModules);
-
+        const constructorOptions = mmutils.generateModuleManagerConstructorOptions(this);
         const childProcess: child_process.ChildProcess =
-            child_process.spawn("./bootstrap.js", args);
+            child_process.fork("./bootstrap.js", [JSON.stringify(constructorOptions)]);
 
         const childCommunicator = new NodeCommunicator(childProcess, hostName);
-        const proxy = await ObjectRemotingProxy.create(this, childCommunicator, true);
+        const proxy = await ObjectRemotingProxy.create(this.pattern_proxy, childCommunicator, true);
 
         if (!this.children) {
             this.children = [];
         }
 
-        proxy.setResolver(this.onProxyResolving);
+        proxy.setResolver(this.onProxyResolvingAsync);
 
         this.children.push({
             process: childProcess,
@@ -190,7 +183,7 @@ export class ModuleManager implements IModuleManager {
             const child = this.children[childIndex];
 
             await child.communicator.sendAsync<ILoadModuleDirAsyncMessage, void>(
-                this.ipcPath,
+                this.pattern_moduleManager.getRaw(),
                 {
                     action: ModuleManagerAction.loadModuleDirAsync,
                     content: dirName
@@ -229,7 +222,7 @@ export class ModuleManager implements IModuleManager {
             const child = this.children[childIndex];
 
             await child.communicator.sendAsync<ILoadModuleAsyncMessage, void>(
-                this.ipcPath,
+                this.pattern_moduleManager.getRaw(),
                 {
                     action: ModuleManagerAction.loadModuleAsync,
                     content: path
@@ -264,7 +257,7 @@ export class ModuleManager implements IModuleManager {
             return component;
         }
 
-        return this.getComponentFromProxies<T>(componentIdentity, ...extraArgs);
+        return this.getComponentFromProxiesAsync<T>(null, componentIdentity, ...extraArgs);
     }
 
     public onHostVersionMismatch(callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler {
@@ -318,31 +311,46 @@ export class ModuleManager implements IModuleManager {
         }
     }
 
-    private async getComponentFromProxies<T extends IDisposable>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T> {
-        if (!this.children) {
-            return undefined;
-        }
+    private async getComponentFromProxiesAsync<T extends IDisposable>(
+        fromProxy: IObjectRemotingProxy,
+        componentIdentity: string,
+        ...extraArgs: Array<any>)
+        : Promise<T> {
+        const fromProxyId = fromProxy ? fromProxy.id : null;
 
-        for (const child of this.children) {
-            const component = await child.proxy.requestAsync<T>(componentIdentity, ...extraArgs);
+        if (this.children) {
+            for (const child of this.children) {
+                if (fromProxyId === child.proxy.id) {
+                    continue;
+                }
 
-            if (component) {
-                return component;
+                const component = await child.proxy.requestAsync<T>(componentIdentity, ...extraArgs);
+
+                if (component) {
+                    return component;
+                }
             }
         }
 
-        if (!this.parentProxy) {
-            return undefined;
+        if (this.parentProxy && this.parentProxy.id !== fromProxyId) {
+            return await this.parentProxy.requestAsync<T>(componentIdentity, ...extraArgs);
         }
 
-        return await this.parentProxy.requestAsync<T>(componentIdentity, ...extraArgs);
+        return undefined;
     }
 
-    private onProxyResolving: Resolver =
-        (name: string, ...extraArgs: Array<any>): IDisposable | Promise<IDisposable> =>
-            this.container.getDep(name, ...extraArgs)
+    private onProxyResolvingAsync: Resolver =
+        async (proxy: IObjectRemotingProxy, name: string, ...extraArgs: Array<any>): Promise<IDisposable> => {
+            const dep = this.container.getDep<IDisposable>(name, ...extraArgs);
 
-    private onModuleManagerMessage: RequestHandler =
+            if (dep) {
+                return dep;
+            }
+
+            return await this.getComponentFromProxiesAsync(proxy, name, ...extraArgs);
+        };
+
+    private onModuleManagerMessageAsync: RequestHandler =
         async (communicator: ICommunicator, path: string, content: IModuleManagerMessage): Promise<any> => {
             switch (content.action) {
                 case ModuleManagerAction.loadModuleDirAsync:

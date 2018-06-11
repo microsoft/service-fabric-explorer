@@ -8,7 +8,7 @@ declare module "sfx.proxy.object" {
     import { IRoutePattern, ICommunicator } from "sfx.remoting";
 
     export interface Resolver {
-        (name: string, ...extraArgs: Array<any>): IDisposable | Promise<IDisposable>;
+        (proxy: IObjectRemotingProxy, name: string, ...extraArgs: Array<any>): IDisposable | Promise<IDisposable>;
     }
 
     export interface IObjectRemotingProxy extends IDisposable {

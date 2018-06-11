@@ -59,7 +59,6 @@ declare module "sfx" {
 
     export interface IModuleManager {
         readonly hostVersion: string;
-        readonly route: string;
         readonly loadedModules: Array<string>;
 
         newHostAsync(hostName: string): Promise<void>;
