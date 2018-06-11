@@ -5,10 +5,10 @@
 
 import { ipcRenderer } from "electron";
 import * as mmutils from "../../module-manager/utils";
-import { NodeCommunicator } from "../ipc/communicator.node";
+import { Communicator } from "../ipc/communicator";
 
 process.once("loaded", async () => {
     const constructorOptions = ipcRenderer.sendSync("request-module-manager-constructor-options");
 
-    global["sfxModuleManager"] = await mmutils.createModuleManagerAsync(constructorOptions, new NodeCommunicator(process));
+    global["sfxModuleManager"] = await mmutils.createModuleManagerAsync(constructorOptions, new Communicator(process));
 });

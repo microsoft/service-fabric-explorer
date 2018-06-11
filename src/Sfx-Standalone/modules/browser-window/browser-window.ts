@@ -101,7 +101,8 @@ export default function createBrowserWindow(moduleManager: IModuleManager, optio
         show: false,
         icon: appUtils.getIconPath(),
         webPreferences: {
-            preload: local("./preload.js", false)
+            preload: local("./preload.js", false),
+            nodeIntegration: true
         }
     };
 

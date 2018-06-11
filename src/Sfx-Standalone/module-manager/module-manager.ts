@@ -22,7 +22,7 @@ import * as semver from "semver";
 import * as utils from "../utilities/utils";
 import * as di from "../utilities/di";
 import * as diExt from "../utilities/di.ext";
-import { NodeCommunicator } from "../modules/ipc/communicator.node";
+import { Communicator } from "../modules/ipc/communicator";
 import { ObjectRemotingProxy } from "../modules/proxy.object/proxy.object";
 import StringPattern from "../modules/remoting/pattern/string";
 import * as mmutils from "./utils";
@@ -118,7 +118,7 @@ export class ModuleManager implements IModuleManager {
         const childProcess: child_process.ChildProcess =
             child_process.fork("./bootstrap.js", [JSON.stringify(constructorOptions)]);
 
-        const childCommunicator = new NodeCommunicator(childProcess, hostName);
+        const childCommunicator = new Communicator(childProcess, hostName);
         const proxy = await ObjectRemotingProxy.create(this.pattern_proxy, childCommunicator, true);
 
         if (!this.children) {
