@@ -36,7 +36,7 @@ const defaultLoggingSettings: ILoggingSettings = {
     ]
 };
 
-export async function create(loggingSettings?: ILoggingSettings): Promise<ILog> {
+export async function createAsync(loggingSettings?: ILoggingSettings): Promise<ILog> {
     if (!utils.isNullOrUndefined(loggingSettings)
         && !Object.isObject(loggingSettings)) {
         throw new Error("loggingSettings must be an Object implementing ILoggingSettings.");
@@ -76,6 +76,8 @@ export async function create(loggingSettings?: ILoggingSettings): Promise<ILog> 
 
         log.addLogger(logger);
     }
+
+    return log;
 }
 
 class Log implements ILog {

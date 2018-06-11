@@ -20,7 +20,7 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "logging",
                 version: electron.app.getVersion(),
-                descriptor: (settings: ISettings) => logging.create(settings.get("logging")),
+                descriptor: async (settings: ISettings) => await logging.createAsync(settings.get("logging")),
                 singleton: true,
                 deps: ["settings"]
             },

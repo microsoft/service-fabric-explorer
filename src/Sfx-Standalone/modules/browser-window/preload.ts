@@ -7,6 +7,9 @@ import { ipcRenderer } from "electron";
 import * as mmutils from "../../module-manager/utils";
 import { Communicator } from "../ipc/communicator";
 
+// TODO: Remove global.exports when the node v10 is integrated with electron.
+global["exports"] = exports;
+
 process.once("loaded", async () => {
     const constructorOptions = ipcRenderer.sendSync("request-module-manager-constructor-options");
 

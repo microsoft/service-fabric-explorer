@@ -369,7 +369,6 @@ export class HttpClient implements IHttpClient {
         }
 
         try {
-
             if (protocol === "http:" || protocol === "http") {
                 return http.request(options, (res) => callback(null, res));
             } else if (protocol === "https:" || protocol === "https") {

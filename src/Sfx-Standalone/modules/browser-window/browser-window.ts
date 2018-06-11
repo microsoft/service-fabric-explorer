@@ -145,14 +145,9 @@ export default async function createBrowserWindowAsync(
         authAad.handle(window, aadTargetHostName);
     }
 
-    try {
-        await moduleManager.newHostAsync(hostName, await moduleManager.getComponentAsync("ipc.communicator", window.webContents));
-    } catch (error) {
-        console.log(error);
-    }
-
+    await moduleManager.newHostAsync(hostName, await moduleManager.getComponentAsync("ipc.communicator", window.webContents));
+    
     window.once("closed", async () => await moduleManager.destroyHostAsync(hostName));
-
     window.once("ready-to-show", () => window.show());
 
     return window;

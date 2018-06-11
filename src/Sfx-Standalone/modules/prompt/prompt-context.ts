@@ -21,7 +21,7 @@ export class PromptContext implements IPromptContext {
     private readonly promptWindow: Electron.BrowserWindow;
 
     public finish<TPromptResults>(results: TPromptResults): void {
-        ipcRenderer.send(utils.format(ChannelNameFormat, this.promptWindow.id, EventNames.Finished));
+        ipcRenderer.send(utils.format(ChannelNameFormat, this.promptWindow.id, EventNames.Finished), results);
         this.promptWindow.close();
     }
 

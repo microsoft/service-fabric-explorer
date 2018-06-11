@@ -10,6 +10,9 @@ import { Communicator } from "../ipc/communicator";
 import * as utils from "../../utilities/utils";
 import { ChannelNameFormat, EventNames } from "./constants";
 
+// TODO: Remove global.exports when the node v10 is integrated with electron.
+global["exports"] = exports;
+
 process.once("loaded", async () => {
     const promptWindow = electron.remote.getCurrentWindow();
     const constructorOptions =
