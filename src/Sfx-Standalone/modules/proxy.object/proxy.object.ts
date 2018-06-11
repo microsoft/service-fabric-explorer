@@ -75,26 +75,6 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
 
     private _communicator: ICommunicator;
 
-    private constructor(
-        pathPattern: IRoutePattern,
-        communicator: ICommunicator,
-        ownCommunicator?: boolean) {
-        if (!Object.isObject(pathPattern)) {
-            throw new Error("pathPattern must be provided.");
-        }
-
-        if (utils.isNullOrUndefined(communicator)) {
-            throw new Error("communicator must be provided.");
-        }
-
-        this._communicator = communicator;
-        this.ownCommunicator = ownCommunicator === true;
-        this.messageHandlers = {};
-        this.dataInfoManager = new DataInfoManager(new Delegation(this));
-
-        this.communicator.map(pathPattern, this.onMessage);
-    }
-
     public static create(
         pathPattern: IRoutePattern,
         communicator: ICommunicator,
@@ -177,6 +157,26 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
                 action: type,
                 content: msg
             });
+    }
+
+    private constructor(
+        pathPattern: IRoutePattern,
+        communicator: ICommunicator,
+        ownCommunicator?: boolean) {
+        if (!Object.isObject(pathPattern)) {
+            throw new Error("pathPattern must be provided.");
+        }
+
+        if (utils.isNullOrUndefined(communicator)) {
+            throw new Error("communicator must be provided.");
+        }
+
+        this._communicator = communicator;
+        this.ownCommunicator = ownCommunicator === true;
+        this.messageHandlers = {};
+        this.dataInfoManager = new DataInfoManager(new Delegation(this));
+
+        this.communicator.map(pathPattern, this.onMessage);
     }
 
     private async resolveAsync(name: string, ...extraArgs: Array<any>): Promise<any> {

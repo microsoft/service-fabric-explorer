@@ -115,7 +115,9 @@ export class NodeCommunicator implements ICommunicator {
     public map(pattern: IRoutePattern, handler: RequestHandler): void {
         this.validateDisposal();
 
-        if (!pattern )
+        if (!pattern) {
+            throw new Error("pattern must be provided.");
+        }
 
         if (!Function.isFunction(handler)) {
             throw new Error("handler must be a function.");

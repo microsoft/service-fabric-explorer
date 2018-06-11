@@ -348,7 +348,7 @@ export class ModuleManager implements IModuleManager {
             }
 
             return await this.getComponentFromProxiesAsync(proxy, name, ...extraArgs);
-        };
+        }
 
     private onModuleManagerMessageAsync: RequestHandler =
         async (communicator: ICommunicator, path: string, content: IModuleManagerMessage): Promise<any> => {
