@@ -11,8 +11,8 @@ import {
     IDisposable
 } from "sfx";
 
-import { ICommunicator, RequestHandler } from "sfx.ipc";
-import { IRemotingProxy, Resolver } from "sfx.remoting";
+import { ICommunicator, RequestHandler, IRoutePattern } from "sfx.remoting";
+import { IObjectRemotingProxy, Resolver } from "sfx.proxy.object";
 
 import * as fs from "fs";
 import * as path from "path";
@@ -23,7 +23,8 @@ import * as utils from "../utilities/utils";
 import * as di from "../utilities/di";
 import * as diExt from "../utilities/di.ext";
 import { NodeCommunicator } from "../modules/ipc/communicator.node";
-import { RemotingProxy } from "../modules/remoting/proxy";
+import { ObjectRemotingProxy } from "../modules/proxy.object/proxy.object";
+import StringPattern from "../modules/remoting/pattern/string";
 
 enum ModuleManagerAction {
     loadModuleAsync = "loadModuleAsync",
@@ -37,7 +38,7 @@ interface IModule {
 
 interface IHostRecord {
     process: child_process.ChildProcess;
-    proxy: IRemotingProxy;
+    proxy: IObjectRemotingProxy;
     communicator: ICommunicator;
 }
 
@@ -59,38 +60,52 @@ interface ILoadModuleDirAsyncMessage extends IModuleManagerMessage {
 export class ModuleManager implements IModuleManager {
     private readonly _hostVersion: string;
 
-    private readonly ipcPath: string;
+    private readonly pattern: IRoutePattern;
 
     private hostVersionMismatchHandler: HostVersionMismatchEventHandler;
 
     private children: Array<IHostRecord>;
 
-    private parentProxy: IRemotingProxy;
+    private parentProxy: IObjectRemotingProxy;
 
     private container: di.IDiContainer;
 
-    private loadedDirectories: Array<string>;
+    private modulePaths: Array<string>;
 
     public get hostVersion(): string {
         return this._hostVersion;
     }
 
-    constructor(hostVersion: string, parentCommunicator?: ICommunicator, ipcPath?: string) {
+    public get loadedModules(): Array<string> {
+        return this.modulePaths.slice();
+    }
+
+    private constructor(
+        hostVersion: string,
+        parentCommunicator?: ICommunicator) {
         if (!semver.valid(hostVersion)) {
             throw new Error(`Invalid hostVersion "${hostVersion}".`);
         }
 
         this._hostVersion = hostVersion;
-        this.loadedDirectories = [];
+        this.pattern = new StringPattern("module-manager");
+        this.modulePaths = [];
+        this.container = new di.DiContainer();
 
         if (parentCommunicator) {
-            this.parentProxy = new RemotingProxy(parentCommunicator);
-            parentCommunicator.map(this.ipcPath, this.onModuleManagerMessage);
+            this.parentProxy = ObjectRemotingProxy.create(this.pattern, parentCommunicator, true);
+            this.parentProxy.setResolver(this.onProxyResolving);
+            parentCommunicator.map(this.pattern, this.onModuleManagerMessage);
         }
 
-        this.ipcPath = ipcPath || "module-manager";
-        this.container = new di.DiContainer();
         this.container.set("module-manager", diExt.singleton(this));
+    }
+
+    public static async createAsync(
+        hostVersion: string,
+        parentCommunicator?: ICommunicator)
+        : Promise<ModuleManager> {
+        const moduleManager = new ModuleManager()
     }
 
     public async newHostAsync(hostName: string): Promise<void> {
@@ -105,13 +120,13 @@ export class ModuleManager implements IModuleManager {
         const args: Array<string> = [];
 
         args.push(this.hostVersion);
-        args.push(...this.loadedDirectories);
+        args.push(...this.loadedModules);
 
         const childProcess: child_process.ChildProcess =
             child_process.spawn("./bootstrap.js", args);
 
         const childCommunicator = new NodeCommunicator(childProcess, hostName);
-        const proxy = new RemotingProxy(childCommunicator, true);
+        const proxy = await ObjectRemotingProxy.create(this, childCommunicator, true);
 
         if (!this.children) {
             this.children = [];
@@ -182,8 +197,6 @@ export class ModuleManager implements IModuleManager {
                 });
         } else {
             const loadingTasks: Array<Promise<void>> = [];
-
-            this.loadedDirectories.push(path.resolve(dirName));
 
             for (const subName of fs.readdirSync(dirName)) {
                 const modulePath = path.join(dirName, subName);
@@ -273,6 +286,8 @@ export class ModuleManager implements IModuleManager {
             throw new Error(`Invalid module "${path}": missing getModuleMetadata().`);
         }
 
+        this.modulePaths.push(path);
+
         const moduleInfo = module.getModuleMetadata();
 
         if (respectLoadingMode === true && moduleInfo.loadingMode !== "Always") {
@@ -324,7 +339,8 @@ export class ModuleManager implements IModuleManager {
     }
 
     private onProxyResolving: Resolver =
-        (name: string, ...extraArgs: Array<any>): IDisposable | Promise<IDisposable> => this.container.getDep(name, ...extraArgs)
+        (name: string, ...extraArgs: Array<any>): IDisposable | Promise<IDisposable> =>
+            this.container.getDep(name, ...extraArgs)
 
     private onModuleManagerMessage: RequestHandler =
         async (communicator: ICommunicator, path: string, content: IModuleManagerMessage): Promise<any> => {

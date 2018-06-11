@@ -4,10 +4,12 @@
 //-----------------------------------------------------------------------------
 
 import { IModuleInfo } from "sfx";
-import { ICommunicator } from "sfx.ipc";
 
 import { electron } from "../../utilities/electron-adapter";
-import { RemotingProxy } from "./proxy";
+import { Utils } from "./utils";
+
+import StringPattern from "./pattern/string";
+import RegexPattern from "./pattern/regex";
 
 export function getModuleMetadata(): IModuleInfo {
     return {
@@ -16,10 +18,22 @@ export function getModuleMetadata(): IModuleInfo {
         loadingMode: "Always",
         components: [
             {
-                name: "remoting.proxy",
+                name: "remoting.utils",
                 version: electron.app.getVersion(),
-                descriptor:
-                    (communicator: ICommunicator, ownCommunicator?: boolean) => new RemotingProxy(communicator, ownCommunicator)
+                singleton: true,
+                descriptor: () => new Utils()
+            },
+            {
+                name: "remoting.pattern.string",
+                version: electron.app.getVersion(),
+                singleton: false,
+                descriptor: (pattern: string) => new StringPattern(pattern)
+            },
+            {
+                name: "remoting.pattern.string",
+                version: electron.app.getVersion(),
+                singleton: false,
+                descriptor: (pattern: RegExp) => new RegexPattern(pattern)
             }
         ]
     };

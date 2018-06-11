@@ -3,25 +3,25 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import {
-    IDisposable,
-    IDictionary
-} from "sfx";
-
-import {
-    ICommunicator,
-    RequestHandler
-} from "sfx.ipc";
-
-import {
-    IRemotingProxy,
-    Resolver
-} from "sfx.remoting";
+import { IDisposable, IDictionary, IModuleManager } from "sfx";
+import { ICommunicator, RequestHandler, IRoutePattern } from "sfx.remoting";
+import { IObjectRemotingProxy, Resolver } from "sfx.proxy.object";
 
 import * as utils from "../../utilities/utils";
 
-import { IDataInfo, dataTypeOf, DataType, isDataInfo } from "./data-info";
-import { IDelegateMessage, IDelegator, DelegationType, IPropertyDelegationMessage, Delegation, ISetPropertyDelegationMessage, IApplyDelegationMessage, IDisposeDelegateMessage } from "./delegate";
+import { IDataInfo } from "./data-info";
+
+import {
+    IDelegateMessage,
+    IDelegator,
+    DelegationType,
+    IPropertyDelegationMessage,
+    Delegation,
+    ISetPropertyDelegationMessage,
+    IApplyDelegationMessage,
+    IDisposeDelegateMessage
+} from "./delegate";
+
 import { DataInfoManager } from "./data-info-manager";
 
 enum ProxyActionType {
@@ -50,14 +50,22 @@ function isProxyMessage(msg: any): msg is IProxyMessage {
         && !String.isEmptyOrWhitespace(msg.resourceId);
 }
 
-export class RemotingProxy implements IRemotingProxy, IDelegator {
+export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
     public readonly id: string;
 
-    private readonly path: string;
+    public get routePattern(): IRoutePattern {
+        return this.pattern;
+    }
+
+    public get communicator(): ICommunicator {
+        return this.communicator;
+    }
 
     private readonly symbol_refId: symbol = Symbol("refId");
 
     private readonly ownCommunicator: boolean;
+
+    private pattern: IRoutePattern;
 
     private resolver: Resolver;
 
@@ -65,18 +73,42 @@ export class RemotingProxy implements IRemotingProxy, IDelegator {
 
     private dataInfoManager: DataInfoManager;
 
-    private communicator: ICommunicator;
+    private _communicator: ICommunicator;
 
-    constructor(communicator: ICommunicator, ownCommunicator?: boolean) {
+    private constructor(
+        pathPattern: IRoutePattern,
+        communicator: ICommunicator,
+        ownCommunicator?: boolean) {
+        if (!Object.isObject(pathPattern)) {
+            throw new Error("pathPattern must be provided.");
+        }
+
         if (utils.isNullOrUndefined(communicator)) {
             throw new Error("communicator must be provided.");
         }
 
-        this.communicator = communicator;
+        this._communicator = communicator;
         this.ownCommunicator = ownCommunicator === true;
-
         this.messageHandlers = {};
         this.dataInfoManager = new DataInfoManager(new Delegation(this));
+
+        this.communicator.map(pathPattern, this.onMessage);
+    }
+
+    public static create(
+        pathPattern: IRoutePattern,
+        communicator: ICommunicator,
+        ownCommunicator?: boolean)
+        : IObjectRemotingProxy {
+        if (!Object.isObject(pathPattern)) {
+            throw new Error("pathPattern must be provided.");
+        }
+
+        if (utils.isNullOrUndefined(communicator)) {
+            throw new Error("communicator must be provided.");
+        }
+
+        return new ObjectRemotingProxy(pathPattern, communicator, ownCommunicator);
     }
 
     public async requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: any[]): Promise<T> {
@@ -87,7 +119,7 @@ export class RemotingProxy implements IRemotingProxy, IDelegator {
 
         const targetDataInfo: IDataInfo =
             await this.communicator.sendAsync<IRequestResourceProxyMessage, IDataInfo>(
-                this.path,
+                this.pattern.getRaw(),
                 {
                     action: ProxyActionType.RequestResource,
                     resourceId: identifier,
@@ -128,8 +160,8 @@ export class RemotingProxy implements IRemotingProxy, IDelegator {
 
     public async dispose(): Promise<void> {
         if (!this.disposed) {
-            this.communicator.unmap(this.path);
-            this.communicator = undefined;
+            this.communicator.unmap(this.pattern);
+            this._communicator = undefined;
 
             this.messageHandlers = undefined;
 
@@ -140,7 +172,7 @@ export class RemotingProxy implements IRemotingProxy, IDelegator {
 
     public delegate(type: DelegationType, msg: IDelegateMessage): IDataInfo | Promise<IDataInfo> {
         return this.communicator.sendAsync<IGenericProxyMessage, IDataInfo>(
-            this.path,
+            this.pattern.getRaw(),
             {
                 action: type,
                 content: msg

@@ -4,14 +4,13 @@
 //-----------------------------------------------------------------------------
 
 import { IDictionary } from "sfx";
-import { RequestHandler, ICommunicator } from "sfx.ipc";
+import { RequestHandler, ICommunicator, IRoutePattern } from "sfx.remoting";
 
 import { ChildProcess } from "child_process";
 import { Socket } from "net";
 import * as uuidv4 from "uuid/v4";
 
 import * as utils from "../../utilities/utils";
-import { isRegExp } from "util";
 
 interface IMessage {
     id: string;
@@ -25,46 +24,9 @@ interface IPromiseResolver {
     reject: (reason?: any) => void;
 }
 
-interface IPattern {
-    match(path: string): boolean;
-    equals(pattern: any): boolean;
-}
-
 interface IRoute {
-    pattern: IPattern;
+    pattern: IRoutePattern;
     handler: RequestHandler;
-}
-
-class StringPattern implements IPattern {
-    private readonly pattern: string;
-
-    constructor(pattern: string) {
-        this.pattern = pattern;
-    }
-
-    public equals(pattern: any): boolean {
-        return pattern === this.pattern;
-    }
-
-    public match(path: string): boolean {
-        return this.pattern === path;
-    }
-}
-
-class RegexPattern implements IPattern {
-    private readonly pattern: RegExp;
-
-    constructor(pattern: RegExp) {
-        this.pattern = pattern;
-    }
-
-    public equals(pattern: any): boolean {
-        return pattern === this.pattern;
-    }
-
-    public match(path: string): boolean {
-        return this.pattern.test(path);
-    }
 }
 
 // Process and ChildProcess share the same functions but ChildProcess has more detailed type information.
@@ -150,32 +112,24 @@ export class NodeCommunicator implements ICommunicator {
         this.id = String.isEmptyOrWhitespace(id) ? uuidv4() : id;
     }
 
-    public map(pattern: string | RegExp, handler: RequestHandler): void {
+    public map(pattern: IRoutePattern, handler: RequestHandler): void {
         this.validateDisposal();
+
+        if (!pattern )
 
         if (!Function.isFunction(handler)) {
             throw new Error("handler must be a function.");
         }
 
         let route: IRoute = {
-            pattern: undefined,
+            pattern: pattern,
             handler: handler
         };
-
-        if (utils.isNullOrUndefined(pattern)) {
-            throw new Error("pattern must be supplied.");
-        } else if (String.isString(pattern)) {
-            route.pattern = new StringPattern(pattern);
-        } else if (pattern instanceof RegExp) {
-            route.pattern = new RegexPattern(pattern);
-        } else {
-            throw new Error("Only string and regex pattern are supported.");
-        }
 
         this.routes.push(route);
     }
 
-    public unmap(pattern: string | RegExp): RequestHandler {
+    public unmap(pattern: IRoutePattern): RequestHandler {
         this.validateDisposal();
 
         if (utils.isNullOrUndefined(pattern)) {

@@ -4,30 +4,40 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.remoting" {
-    import { IDisposable } from "sfx";
+    import * as common from "sfx";
 
-    export interface Resolver {
-        (name: string, ...extraArgs: Array<any>): IDisposable | Promise<IDisposable>;
+    export interface IUtils {
+        isCommunicator(communicator: any): communicator is ICommunicator;
+        isRoutePattern(pattern: IRoutePattern): pattern is IRoutePattern;
     }
 
-    export interface IRemotingProxy extends IDisposable {
+    export interface RequestHandler {
+        (communicator: ICommunicator, path: string, content: any): any | Promise<any>;
+    }
+
+    export interface IRoutePattern {
+        getRaw(): any;
+        match(path: string): boolean;
+        equals(pattern: IRoutePattern): boolean;
+    }
+
+    export interface ICommunicator extends common.IDisposable {
         readonly id: string;
 
-        requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: Array<any>): T | Promise<T>;
+        map(pattern: IRoutePattern, handler: RequestHandler): void;
+        unmap(pattern: IRoutePattern): RequestHandler;
 
-        setResolver(resolver: Resolver): void;
-        getResolver(): Resolver;
+        sendAsync<TRequest, TResponse>(path: string, content: TRequest): Promise<TResponse>;
     }
 }
 
 declare module "sfx" {
-    import { ICommunicator } from "sfx.ipc";
-    import { IRemotingProxy } from "sfx.remoting";
+    import { IUtils, IRoutePattern } from "sfx.remoting";
 
     export interface IModuleManager {
-        getComponentAsync(
-            componentIdentity: "remoting.proxy",
-            communicator: ICommunicator,
-            ownCommunicator?: boolean): Promise<IRemotingProxy>;
+        getComponentAsync(componentIdentity: "remoting.utils"): Promise<IUtils>;
+
+        getComponentAsync(componentIdentity: "remoting.pattern.string", pattern: string): Promise<IRoutePattern>;
+        getComponentAsync(componentIdentity: "remoting.pattern.regex", pattern: RegExp): Promise<IRoutePattern>;
     }
 }

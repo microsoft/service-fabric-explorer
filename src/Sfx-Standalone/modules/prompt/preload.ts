@@ -8,11 +8,14 @@ import "../browser-window/preload";
 import { PromptContext } from "./prompt-context";
 import { electron } from "../../utilities/electron-adapter";
 
-sfxModuleManager.registerComponents([
-    {
-        name: "prompt.prompt-context",
-        version: electron.app.getVersion(),
-        singleton: true,
-        descriptor: () => new PromptContext()
-    }
-]);
+process.once("loaded", () => {
+    console.log(sfxModuleManager);
+    sfxModuleManager.registerComponents([
+        {
+            name: "prompt.prompt-context",
+            version: electron.app.getVersion(),
+            singleton: true,
+            descriptor: () => new PromptContext()
+        }
+    ]);
+});

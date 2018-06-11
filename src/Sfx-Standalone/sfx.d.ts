@@ -8,6 +8,7 @@
 /// <reference path="./modules/browser-window/browser-window.d.ts" />
 /// <reference path="./modules/logging/logging.d.ts" />
 /// <reference path="./modules/remoting/remoting.d.ts" />
+/// <reference path="./modules/proxy.object/proxy.object.d.ts" />
 /// <reference path="./modules/prompt/prompt.d.ts" />
 /// <reference path="./modules/prompt.input/prompt.input.d.ts" />
 /// <reference path="./modules/prompt.select-certificate/prompt.select-certificate.d.ts" />

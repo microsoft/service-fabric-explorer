@@ -11,7 +11,13 @@ import { NodeCommunicator } from "../modules/ipc/communicator.node";
 
     global["sfxModuleManager"] = moduleManager;
 
+    console.log("bootstrap: moduleManager");
+    console.log(moduleManager);
+
+    console.log("bootstrap: global['sfxModuleManager']");
+    console.log(global["sfxModuleManager"]);
+
     for (let argIndex = 1; argIndex < process.argv.length; argIndex++) {
-        moduleManager.loadModuleDirAsync(process.argv[argIndex], null, true);
+        await moduleManager.loadModuleDirAsync(process.argv[argIndex], null, true);
     }
 })();
