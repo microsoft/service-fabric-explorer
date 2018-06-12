@@ -274,8 +274,9 @@ export class ModuleManager implements IModuleManager {
                     content: dirName
                 });
         } else {
-            const loadingTasks: Array<Promise<void>> = [];
+            const loadedModules: Array<IModule> = [];
 
+            // Load modules.
             for (const subName of fs.readdirSync(dirName)) {
                 const modulePath = path.join(dirName, subName);
                 const moduleStat = fs.statSync(modulePath);
@@ -284,10 +285,13 @@ export class ModuleManager implements IModuleManager {
                     continue;
                 }
 
-                loadingTasks.push(this.loadModuleAsync(modulePath, hostName, respectLoadingMode));
+                loadedModules.push(this.loadModule(modulePath, respectLoadingMode));
             }
 
-            await Promise.all(loadingTasks);
+            // Initialize modules.
+            for (const module of loadedModules) {
+                this.initializeModule(module);
+            }
         }
     }
 
@@ -357,7 +361,7 @@ export class ModuleManager implements IModuleManager {
         }
     }
 
-    private loadModule(path: string, respectLoadingMode?: boolean): void {
+    private loadModule(path: string, respectLoadingMode?: boolean): IModule {
         const module: IModule = require(path);
 
         if (!Function.isFunction(module.getModuleMetadata)) {
@@ -391,6 +395,10 @@ export class ModuleManager implements IModuleManager {
             this.registerComponents(moduleInfo.components);
         }
 
+        return module;
+    }
+
+    private initializeModule(module: IModule): void {
         if (Function.isFunction(module.initialize)) {
             module.initialize(this);
         }
