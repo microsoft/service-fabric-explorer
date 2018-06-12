@@ -28,6 +28,11 @@ declare module "sfx.module-manager" {
         components?: Array<IComponentInfo>;
     }
 
+    export interface IModule {
+        getModuleMetadata?(): IModuleInfo;
+        initialize?(moduleManager: IModuleManager): void;
+    }
+
     export interface HostVersionMismatchEventHandler {
         (moduleInfo: IModuleInfo, currentVersion: string, expectedVersion: string): boolean;
     }

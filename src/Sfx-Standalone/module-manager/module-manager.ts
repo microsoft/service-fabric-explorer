@@ -5,7 +5,7 @@
 
 import { IDisposable } from "sfx.common";
 import {
-    IModuleInfo,
+    IModule,
     IModuleManager,
     IComponentInfo,
     HostVersionMismatchEventHandler,
@@ -32,11 +32,6 @@ import * as mmutils from "./utils";
 enum ModuleManagerAction {
     loadModuleAsync = "loadModuleAsync",
     loadModuleDirAsync = "loadModuleDirAsync"
-}
-
-interface IModule {
-    getModuleMetadata?(): IModuleInfo;
-    initialize?(moduleManager: IModuleManager): void;
 }
 
 interface IHostRecord {
