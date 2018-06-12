@@ -21,7 +21,6 @@ import * as http from "http";
 import * as https from "https";
 import * as url from "url";
 import * as fs from "fs";
-import * as path from "path";
 
 import * as utils from "../utilities/utils";
 import { HandlerChainBuilder } from "../utilities/handlerChainBuilder";

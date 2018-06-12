@@ -14,34 +14,57 @@ global["sfxModuleManager"] = new ModuleManager(app.getVersion());
 
 app.setName("Service Fabric Explorer");
 
-app.on("ready", async () => {
+(async () => {
+    let startingUp: boolean = true;
+
     // Load built-in modules.
     await sfxModuleManager.loadModuleDirAsync(local("modules"));
-
     const log = await sfxModuleManager.getComponentAsync("logging");
 
-    if (env.platform === Platform.MacOs) {
-        const settings = await sfxModuleManager.getComponentAsync("settings");
+    app.on("ready", async () => {
+        log.writeInfo("'ready': Application starting up ...");
 
-        Menu.setApplicationMenu(
-            Menu.buildFromTemplate(
-                settings.get("defaultMenu/" + env.platform)));
-    }
+        if (env.platform === Platform.MacOs) {
+            const settings = await sfxModuleManager.getComponentAsync("settings");
 
-    const prompt_connectCluster = await sfxModuleManager.getComponentAsync("prompt.connect-cluster");
-    const clusterUrl = await prompt_connectCluster.openAsync();
+            log.writeInfo("'ready': Initialize application menu for macOS.");
+            Menu.setApplicationMenu(
+                Menu.buildFromTemplate(
+                    settings.get("defaultMenu/" + env.platform)));
+        }
 
-    if (clusterUrl) {
-        global["TargetClusterUrl"] = clusterUrl;
-        const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null, true, clusterUrl);
+        log.writeInfo("'ready': Starting up connect-cluster prompt.");
+        const prompt_connectCluster = await sfxModuleManager.getComponentAsync("prompt.connect-cluster");
+        const clusterUrl = await prompt_connectCluster.openAsync();
 
-        mainWindow.setMenuBarVisibility(false);
+        if (clusterUrl) {
+            global["TargetClusterUrl"] = clusterUrl;
+            const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null, true, clusterUrl);
 
-        log.writeEvent("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
-        mainWindow.loadURL(resolve("sfx/index.html"));
-    }
+            mainWindow.setMenuBarVisibility(false);
 
-    setTimeout(async () => (await sfxModuleManager.getComponentAsync("update")).update(), 1000); // Check upgrade after 1 sec.
-});
+            log.writeEvent("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
+            mainWindow.loadURL(resolve("sfx/index.html"));
+        } else {
+            log.writeInfo("'ready': No cluster url provided.");
+            log.writeInfo("'ready': app.quit().");
 
-app.on("window-all-closed", () => app.quit());
+            app.quit();
+            return;
+        }
+
+        setTimeout(async () => (await sfxModuleManager.getComponentAsync("update")).update(), 1000); // Check upgrade after 1 sec.
+        startingUp = false;
+        log.writeInfo("'ready': application startup finished.");
+    });
+
+    app.on("window-all-closed", () => {
+        if (startingUp) {
+            log.writeInfo("'window-all-closed': skip during application startup.");
+            return;
+        }
+
+        log.writeInfo("'window-all-closed': app.quit().");
+        app.quit();
+    });
+})();
