@@ -28,6 +28,14 @@ declare module "sfx.module-manager" {
         components?: Array<IComponentInfo>;
     }
 
+    export interface IModuleLoadingInfo {
+        location: string;
+        name: string;
+        version: string;
+        hostVersion?: string;
+        loadingMode?: LoadingMode;
+    }
+
     export interface IModule {
         getModuleMetadata?(): IModuleInfo;
         initialize?(moduleManager: IModuleManager): void;
@@ -39,7 +47,7 @@ declare module "sfx.module-manager" {
 
     export interface IModuleManager {
         readonly hostVersion: string;
-        readonly loadedModules: Array<string>;
+        readonly loadedModules: Array<IModuleLoadingInfo>;
 
         newHostAsync(hostName: string, hostCommunicator?: ICommunicator): Promise<void>;
         destroyHostAsync(hostName: string): Promise<void>;

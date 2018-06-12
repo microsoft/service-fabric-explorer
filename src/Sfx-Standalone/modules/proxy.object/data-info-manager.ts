@@ -108,7 +108,7 @@ export class DataInfoManager implements IDisposable {
 
         if (referee) {
             if (locally !== true) {
-                await this.delegation.dispose(refId, parentId);
+                await this.delegation.disposeAsync(refId, parentId);
             }
 
             parentId = parentId || this.refRoot.id;
@@ -198,7 +198,7 @@ export class DataInfoManager implements IDisposable {
                     argsDataInfos.push(this.toDataInfo(arg, refId));
                 }
 
-                const resultDataInfo = await this.delegation.apply(refId, thisArgDataInfo, argsDataInfos);
+                const resultDataInfo = await this.delegation.applyAsync(refId, thisArgDataInfo, argsDataInfos);
 
                 return this.realizeDataInfo(resultDataInfo, refId);
             }
@@ -214,17 +214,8 @@ export class DataInfoManager implements IDisposable {
 
     private realizeObjectDataInfo(dataInfo: IObjectDataInfo, parentId?: string): any {
         const base = {};
-
-        if (dataInfo.memberInfos) {
-            for (const propertyName of Object.getOwnPropertyNames(dataInfo.memberInfos)) {
-                base[propertyName] = this.realizeDataInfo(dataInfo.memberInfos[propertyName], dataInfo.id);
-            }
-        }
-
-        base["dispose"] = this.generateDisposeFunc(dataInfo.id, parentId, base["dispose"]);
-
         const handlers: ProxyHandler<Function> = {
-            get: async (target, property, receiver): Promise<any> => {
+            get: (target, property, receiver): any | Promise<any> => {
                 const baseValue = target[property];
 
                 if (baseValue || typeof property === "symbol") {
@@ -233,9 +224,9 @@ export class DataInfoManager implements IDisposable {
 
                 const refId = this.refRoot.getRefId(target);
 
-                const resultDataInfo = await this.delegation.getProperty(refId, property);
+                const resultDataInfoPromise = this.delegation.getPropertyAsync(refId, property);
 
-                return this.realizeDataInfo(resultDataInfo, refId);
+                return resultDataInfoPromise.then((resultDataInfo) => this.realizeDataInfo(resultDataInfo, refId));
             },
 
             set: (target, property, value, receiver) => {
@@ -251,7 +242,7 @@ export class DataInfoManager implements IDisposable {
                 const refId = this.refRoot.getRefId(target);
                 const valueDataInfo = this.toDataInfo(value, refId);
 
-                this.delegation.setProperty(refId, property, valueDataInfo);
+                this.delegation.setPropertyAsync(refId, property, valueDataInfo);
             },
 
             has: (target, prop): boolean => {
@@ -262,7 +253,16 @@ export class DataInfoManager implements IDisposable {
         const objProxy = new Proxy(base, handlers);
         const parentRef = this.refRoot.referById(parentId);
 
+        // Register the dataInfo before initialize the members.
         parentRef.addReferee(objProxy, dataInfo.id);
+
+        if (dataInfo.memberInfos) {
+            for (const propertyName of Object.getOwnPropertyNames(dataInfo.memberInfos)) {
+                base[propertyName] = this.realizeDataInfo(dataInfo.memberInfos[propertyName], dataInfo.id);
+            }
+        }
+
+        base["dispose"] = this.generateDisposeFunc(dataInfo.id, parentId, base["dispose"]);
 
         return objProxy;
     }

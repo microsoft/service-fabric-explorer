@@ -21,6 +21,10 @@ export class ReferenceNode {
 
     private referers: IDictionary<ReferenceNode>;
 
+    private get internalRoot(): ReferenceNode {
+        return this._root || this;
+    }
+
     public get root(): ReferenceNode {
         return this._root;
     }
@@ -58,7 +62,7 @@ export class ReferenceNode {
     }
 
     public addRefereeById(refereeId: string): void {
-        const referee = this._root.referees[refereeId];
+        const referee = this.internalRoot.referees[refereeId];
 
         if (!referee) {
             throw new Error(`unknown refereeId '${refereeId}'.`);
@@ -69,7 +73,7 @@ export class ReferenceNode {
     }
 
     public removeRefereeById(refereeId: string): void {
-        const referee = this._root.referees[refereeId];
+        const referee = this.internalRoot.referees[refereeId];
 
         if (!referee) {
             return;
@@ -96,7 +100,7 @@ export class ReferenceNode {
     }
 
     public addRefererById(refererId: string): void {
-        const referer = this._root.referees[refererId];
+        const referer = this.internalRoot.referees[refererId];
 
         if (!referer) {
             throw new Error(`unknown refererId '${refererId}'.`);
@@ -107,7 +111,7 @@ export class ReferenceNode {
     }
 
     public removeRefererById(refererId: string): void {
-        const referer = this._root.referees[refererId];
+        const referer = this.internalRoot.referees[refererId];
 
         if (!referer) {
             return;
@@ -118,7 +122,7 @@ export class ReferenceNode {
     }
 
     public referById(refereeId: string, refererId?: string): ReferenceNode {
-        const referee = this._root.referees[refereeId];
+        const referee = this.internalRoot.referees[refereeId];
 
         if (!referee) {
             return undefined;
@@ -140,7 +144,7 @@ export class ReferenceNode {
         let referee: ReferenceNode;
 
         if (existingRefId) {
-            referee = this._root.referees[existingRefId];
+            referee = this.internalRoot.referees[existingRefId];
 
             if (!referee) {
                 throw new Error(`The target already been referenced but refId: ${existingRefId} is unknown.`);
@@ -177,10 +181,10 @@ export class ReferenceNode {
         this.referees = {};
 
         if (!utils.isNullOrUndefined(root)) {
-            this.symbol_refId = this._root.symbol_refId;
+            this.symbol_refId = this.internalRoot.symbol_refId;
             this.referers = {};
 
-            this._root.internallyAddReferee(this);
+            this.internalRoot.internallyAddReferee(this);
             this.target[this.symbol_refId] = this._id;
         } else {
             // When this is a root node.
@@ -197,7 +201,7 @@ export class ReferenceNode {
             throw new Error(`target has already been referenced. refId=${refId}`);
         }
 
-        return new ReferenceNode(this._root, target, newRefId);
+        return new ReferenceNode(this.internalRoot, target, newRefId);
     }
 
     private isOrphan(): boolean {

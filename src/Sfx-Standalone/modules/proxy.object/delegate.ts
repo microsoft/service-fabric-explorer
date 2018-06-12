@@ -13,10 +13,10 @@ export enum DelegationType {
 }
 
 export interface IDelegation {
-    getProperty(refId: string, property: string | number): IDataInfo | Promise<IDataInfo>;
-    setProperty(refId: string, property: string | number, valueDataInfo: IDataInfo): IDataInfo | Promise<IDataInfo>;
-    apply(refId: string, thisArgDataInfo: IDataInfo, argsDataInfos: Array<IDataInfo>): IDataInfo | Promise<IDataInfo>;
-    dispose(refId: string, parentId?: string): IDataInfo | Promise<IDataInfo>;
+    getPropertyAsync(refId: string, property: string | number): Promise<IDataInfo>;
+    setPropertyAsync(refId: string, property: string | number, valueDataInfo: IDataInfo): Promise<IDataInfo>;
+    applyAsync(refId: string, thisArgDataInfo: IDataInfo, argsDataInfos: Array<IDataInfo>): Promise<IDataInfo>;
+    disposeAsync(refId: string, parentId?: string): Promise<IDataInfo>;
 }
 
 export interface IDelegateMessage {
@@ -45,7 +45,7 @@ export interface IApplyDelegationMessage
 }
 
 export interface IDelegator {
-    delegate(type: DelegationType, msg: IDelegateMessage): IDataInfo | Promise<IDataInfo>;
+    delegateAsync(type: DelegationType, msg: IDelegateMessage): Promise<IDataInfo>;
 }
 
 export class Delegation {
@@ -55,41 +55,41 @@ export class Delegation {
         this.delegator = delegator;
     }
 
-    public getProperty(refId: string, property: string | number): IDataInfo | Promise<IDataInfo> {
+    public getPropertyAsync(refId: string, property: string | number): Promise<IDataInfo> {
         const msg: IPropertyDelegationMessage = {
             refId: refId,
             property: property
         };
 
-        return this.delegator.delegate(DelegationType.GetProperty, msg);
+        return this.delegator.delegateAsync(DelegationType.GetProperty, msg);
     }
 
-    public setProperty(refId: string, property: string | number, valueDataInfo: IDataInfo): IDataInfo | Promise<IDataInfo> {
+    public setPropertyAsync(refId: string, property: string | number, valueDataInfo: IDataInfo): Promise<IDataInfo> {
         const msg: ISetPropertyDelegationMessage = {
             refId: refId,
             property: property,
             value: valueDataInfo
         };
 
-        return this.delegator.delegate(DelegationType.SetProperty, msg);
+        return this.delegator.delegateAsync(DelegationType.SetProperty, msg);
     }
 
-    public apply(refId: string, thisArgDataInfo: IDataInfo, argsDataInfos: Array<IDataInfo>): IDataInfo | Promise<IDataInfo> {
+    public applyAsync(refId: string, thisArgDataInfo: IDataInfo, argsDataInfos: Array<IDataInfo>): Promise<IDataInfo> {
         const msg: IApplyDelegationMessage = {
             refId: refId,
             thisArg: thisArgDataInfo,
             args: argsDataInfos
         };
 
-        return this.delegator.delegate(DelegationType.Apply, msg);
+        return this.delegator.delegateAsync(DelegationType.Apply, msg);
     }
 
-    public dispose(refId: string, parentId?: string): IDataInfo | Promise<IDataInfo> {
+    public disposeAsync(refId: string, parentId?: string): Promise<IDataInfo> {
         const msg: IDisposeDelegateMessage = {
             refId: refId,
             parentId: parentId
         };
 
-        return this.delegator.delegate(DelegationType.Dispose, msg);
+        return this.delegator.delegateAsync(DelegationType.Dispose, msg);
     }
 }

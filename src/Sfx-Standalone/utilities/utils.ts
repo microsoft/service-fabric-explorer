@@ -195,6 +195,8 @@ export interface ICallerInfo {
     fileName: string;
     functionName: string;
     typeName: string;
+    lineNumber: number;
+    columnNumber: number;
 }
 
 function prepareStackTraceOverride(error: Error, structuredStackTrace: Array<NodeJS.CallSite>): any {
@@ -219,14 +221,18 @@ export function getCallerInfo(): ICallerInfo {
                     directCallerInfo = {
                         fileName: stackFileName,
                         functionName: stack.getFunctionName(),
-                        typeName: stack.getTypeName()
+                        typeName: stack.getTypeName(),
+                        lineNumber: stack.getLineNumber(),
+                        columnNumber: stack.getColumnNumber()
                     };
                 }
             } else if (stackFileName !== directCallerInfo.fileName) {
                 return {
                     fileName: stackFileName,
                     functionName: stack.getFunctionName(),
-                    typeName: stack.getTypeName()
+                    typeName: stack.getTypeName(),
+                    lineNumber: stack.getLineNumber(),
+                    columnNumber: stack.getColumnNumber()
                 };
             }
         }

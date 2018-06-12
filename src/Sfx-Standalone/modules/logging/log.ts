@@ -228,10 +228,16 @@ class Log implements ILog {
 
         if (this.logCallerInfo) {
             const callerInfo = utils.getCallerInfo();
+            const typeName = callerInfo.typeName || "";
+            let functionName = callerInfo.functionName;
+
+            if (!functionName) {
+                functionName = `<Anonymous>@{${callerInfo.lineNumber},${callerInfo.columnNumber}}`;
+            }
 
             finalProperties = finalProperties || {};
             finalProperties["Caller.FileName"] = callerInfo.fileName;
-            finalProperties["Caller.Name"] = `${callerInfo.typeName ? callerInfo.typeName + "." : ""}${callerInfo.functionName}()`;
+            finalProperties["Caller.Name"] = `${typeName}.${functionName}()`;
         }
 
         return finalProperties;

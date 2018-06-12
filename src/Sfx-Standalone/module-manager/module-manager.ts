@@ -10,6 +10,7 @@ import {
     IComponentInfo,
     HostVersionMismatchEventHandler,
     IComponentDescriptor,
+    IModuleLoadingInfo
 } from "sfx.module-manager";
 
 import { ICommunicator, RequestHandler, IRoutePattern } from "sfx.remoting";
@@ -144,14 +145,14 @@ export class ModuleManager implements IModuleManager {
 
     private container: di.IDiContainer;
 
-    private modulePaths: Array<string>;
+    private moduleLoadingInfos: Array<IModuleLoadingInfo>;
 
     public get hostVersion(): string {
         return this._hostVersion;
     }
 
-    public get loadedModules(): Array<string> {
-        return this.modulePaths.slice();
+    public get loadedModules(): Array<IModuleLoadingInfo> {
+        return this.moduleLoadingInfos.slice();
     }
 
     constructor(
@@ -164,7 +165,7 @@ export class ModuleManager implements IModuleManager {
         this._hostVersion = hostVersion;
         this.pattern_moduleManager = new StringPattern("module-manager");
         this.pattern_proxy = new StringPattern("module-manager/object-proxy");
-        this.modulePaths = [];
+        this.moduleLoadingInfos = [];
         this.container = new di.DiContainer();
 
         if (parentCommunicator) {
@@ -363,9 +364,15 @@ export class ModuleManager implements IModuleManager {
             throw new Error(`Invalid module "${path}": missing getModuleMetadata().`);
         }
 
-        this.modulePaths.push(path);
-
         const moduleInfo = module.getModuleMetadata();
+
+        this.moduleLoadingInfos.push({
+            location: path,
+            name: moduleInfo.name,
+            version: moduleInfo.version,
+            hostVersion: moduleInfo.hostVersion,
+            loadingMode: moduleInfo.loadingMode
+        });
 
         if (respectLoadingMode === true && moduleInfo.loadingMode !== "Always") {
             return;

@@ -41,6 +41,8 @@ interface IChannelProxy extends IDisposable {
     sendMessage(msg: IMessage): boolean;
 }
 
+const UuidNamespace = "65ef6f94-e6c9-4c95-8360-6d29de87b1dd";
+
 class ProcessChannelProxy implements IChannelProxy {
     private channel: ChildProcess;
 
@@ -61,6 +63,8 @@ class ProcessChannelProxy implements IChannelProxy {
     // https://nodejs.org/docs/latest-v8.x/api/child_process.html#child_process_subprocess_send_message_sendhandle_options_callback
     public static isValidChannel(channel: any): channel is ChildProcess {
         return !utils.isNullOrUndefined(channel)
+            && Function.isFunction(channel.kill)
+            && Number.isNumber(channel.pid)
             && Function.isFunction(channel.send)
             && Function.isFunction(channel.on)
             && Function.isFunction(channel.removeListener);
@@ -90,8 +94,6 @@ class ProcessChannelProxy implements IChannelProxy {
 }
 
 class ElectronWebContentsChannelProxy implements IChannelProxy {
-    private static readonly UuidNamespace = "65ef6f94-e6c9-4c95-8360-6d29de87b1dd";
-
     private readonly channelName: string;
 
     private channel: electron.WebContents;
@@ -105,6 +107,10 @@ class ElectronWebContentsChannelProxy implements IChannelProxy {
     public static isValidChannel(channel: any): channel is electron.WebContents {
         return !utils.isNullOrUndefined(channel)
             && !utils.isNullOrUndefined(electron.ipcMain)
+            && Function.isFunction(channel.executeJavaScript)
+            && Function.isFunction(channel.setAudioMuted)
+            && Function.isFunction(channel.setZoomFactor)
+            && Function.isFunction(channel.findInPage)
             && Function.isFunction(channel.send);
     }
 
@@ -129,8 +135,8 @@ class ElectronWebContentsChannelProxy implements IChannelProxy {
     constructor(channel: electron.WebContents, dataHandler: ChannelProxyDataHandler) {
         this.channel = channel;
         this.dataHandler = dataHandler;
+        this.channelName = uuidv5(channel.id.toString(), UuidNamespace);
 
-        this.channelName = uuidv5(channel.id.toString(), ElectronWebContentsChannelProxy.UuidNamespace);
         electron.ipcMain.on(this.channelName, this.onChannelData);
     }
 
@@ -140,8 +146,6 @@ class ElectronWebContentsChannelProxy implements IChannelProxy {
 }
 
 class ElectronIpcRendererChannelProxy implements IChannelProxy {
-    private static readonly UuidNamespace = "d25c86c1-491f-4afc-a520-33329e11d2a8";
-
     private readonly channelName: string;
 
     private channel: electron.IpcRenderer;
@@ -155,6 +159,9 @@ class ElectronIpcRendererChannelProxy implements IChannelProxy {
     public static isValidChannel(channel: any): channel is electron.IpcRenderer {
         return !utils.isNullOrUndefined(channel)
             && !utils.isNullOrUndefined(electron.remote)
+            && Function.isFunction(channel.sendSync)
+            && Function.isFunction(channel.sendTo)
+            && Function.isFunction(channel.sendToHost)
             && Function.isFunction(channel.send)
             && Function.isFunction(channel.on)
             && Function.isFunction(channel.removeListener);
@@ -181,8 +188,8 @@ class ElectronIpcRendererChannelProxy implements IChannelProxy {
     constructor(channel: electron.IpcRenderer, dataHandler: ChannelProxyDataHandler) {
         this.channel = channel;
         this.dataHandler = dataHandler;
-        this.channelName = uuidv5(electron.remote.getCurrentWebContents().id, ElectronIpcRendererChannelProxy.UuidNamespace);
-
+        this.channelName = uuidv5(electron.remote.getCurrentWebContents().id.toString(), UuidNamespace);
+        
         this.channel.on(this.channelName, this.onChannelData);
     }
 
@@ -245,12 +252,16 @@ function generateChannelProxy(channel: any, dataHandler: ChannelProxyDataHandler
         throw new Error("channel must be supplied.");
     } else if (ProcessChannelProxy.isValidChannel(channel)) {
         return new ProcessChannelProxy(channel, dataHandler);
+
     } else if (ElectronWebContentsChannelProxy.isValidChannel(channel)) {
         return new ElectronWebContentsChannelProxy(channel, dataHandler);
+
     } else if (ElectronIpcRendererChannelProxy.isValidChannel(channel)) {
         return new ElectronIpcRendererChannelProxy(channel, dataHandler);
+
     } else if (SocketChannelProxy.isValidChannel(channel)) {
         return new SocketChannelProxy(channel, dataHandler);
+
     } else {
         throw new Error("Unknown channel type. Only supports NodeJS.Process, NodeJS.ChildProcess, NodeJS.Socket, Electron.IpcRenderer, Electron.WebContents.");
     }
@@ -363,7 +374,7 @@ export class Communicator implements ICommunicator {
         }
     }
 
-    private async onMessageAsync(msg: IMessage): Promise<void> {
+    private onMessageAsync = async (msg: IMessage): Promise<void> => {
         const promise = this.ongoingPromiseDict[msg.id];
 
         if (!utils.isNullOrUndefined(promise)) {

@@ -25,7 +25,8 @@ import {
 import { DataInfoManager } from "./data-info-manager";
 
 enum ProxyActionType {
-    RequestResource = "RequestResource"
+    RequestResource = "RequestResource",
+    Delegate = "Delegate"
 }
 
 const ProxyActionTypeValues: Array<string> = Object.values(ProxyActionType);
@@ -40,21 +41,21 @@ interface IRequestResourceProxyMessage extends IProxyMessage {
     extraArgs: Array<IDataInfo>;
 }
 
-interface IGenericProxyMessage extends IProxyMessage {
+interface IDelegationProxyMessage extends IProxyMessage {
+    delegateType: DelegationType;
     content: IDelegateMessage;
 }
 
 function isProxyMessage(msg: any): msg is IProxyMessage {
     return !utils.isNullOrUndefined(msg)
-        && ProxyActionTypeValues.includes(msg.action)
-        && !String.isEmptyOrWhitespace(msg.resourceId);
+        && ProxyActionTypeValues.includes(msg.action);
 }
 
 export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
     public readonly id: string;
 
     public get routePattern(): IRoutePattern {
-        return this.pattern;
+        return this.pathPattern;
     }
 
     public get communicator(): ICommunicator {
@@ -65,7 +66,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
 
     private readonly ownCommunicator: boolean;
 
-    private pattern: IRoutePattern;
+    private pathPattern: IRoutePattern;
 
     private resolver: Resolver;
 
@@ -99,7 +100,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
 
         const targetDataInfo: IDataInfo =
             await this.communicator.sendAsync<IRequestResourceProxyMessage, IDataInfo>(
-                this.pattern.getRaw(),
+                this.pathPattern.getRaw(),
                 {
                     action: ProxyActionType.RequestResource,
                     resourceId: identifier,
@@ -140,7 +141,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
 
     public async dispose(): Promise<void> {
         if (!this.disposed) {
-            this.communicator.unmap(this.pattern);
+            this.communicator.unmap(this.pathPattern);
             this._communicator = undefined;
 
             this.messageHandlers = undefined;
@@ -150,11 +151,12 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         }
     }
 
-    public delegate(type: DelegationType, msg: IDelegateMessage): IDataInfo | Promise<IDataInfo> {
-        return this.communicator.sendAsync<IGenericProxyMessage, IDataInfo>(
-            this.pattern.getRaw(),
+    public delegateAsync(type: DelegationType, msg: IDelegateMessage): Promise<IDataInfo> {
+        return this.communicator.sendAsync<IDelegationProxyMessage, IDataInfo>(
+            this.pathPattern.getRaw(),
             {
-                action: type,
+                action: ProxyActionType.Delegate,
+                delegateType: type,
                 content: msg
             });
     }
@@ -173,10 +175,12 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
 
         this._communicator = communicator;
         this.ownCommunicator = ownCommunicator === true;
+        this.pathPattern = pathPattern;
         this.messageHandlers = {};
         this.dataInfoManager = new DataInfoManager(new Delegation(this));
+        this.initializeMessageHandlers();
 
-        this.communicator.map(pathPattern, this.onMessage);
+        this.communicator.map(this.pathPattern, this.onMessage);
     }
 
     private async resolveAsync(name: string, ...extraArgs: Array<any>): Promise<any> {
@@ -195,10 +199,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
 
     private initializeMessageHandlers() {
         this.messageHandlers[ProxyActionType.RequestResource] = this.onRequestResource;
-        this.messageHandlers[DelegationType.GetProperty] = this.onGetProperty;
-        this.messageHandlers[DelegationType.SetProperty] = this.onSetProperty;
-        this.messageHandlers[DelegationType.Apply] = this.onApply;
-        this.messageHandlers[DelegationType.Dispose] = this.onDispose;
+        this.messageHandlers[ProxyActionType.Delegate] = this.onDelegate;
     }
 
     private onMessage = (communicator, path, proxyMsg: IProxyMessage): any | Promise<any> => {
@@ -217,7 +218,26 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         return requestHandler(communicator, path, proxyMsg);
     }
 
-    private onGetProperty = (communicator, path, msg: IGenericProxyMessage): any | Promise<any> => {
+    private onDelegate = (communicator: ICommunicator, path: string, msg: IDelegationProxyMessage): any | Promise<any> => {
+        switch (msg.delegateType) {
+            case DelegationType.Apply:
+                return this.onApply(communicator, path, msg);
+
+            case DelegationType.Dispose:
+                return this.onDispose(communicator, path, msg);
+
+            case DelegationType.GetProperty:
+                return this.onGetProperty(communicator, path, msg);
+
+            case DelegationType.SetProperty:
+                return this.onSetProperty(communicator, path, msg);
+
+            default:
+                throw new Error(`Unknown delegation type: ${msg.delegateType}`);
+        }
+    }
+
+    private onGetProperty = (communicator: ICommunicator, path: string, msg: IDelegationProxyMessage): any | Promise<any> => {
         const delegationMsg = <IPropertyDelegationMessage>msg.content;
         const target = this.dataInfoManager.get(delegationMsg.refId);
 
@@ -228,7 +248,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         return this.dataInfoManager.ReferAsDataInfo(target[delegationMsg.property], delegationMsg.refId);
     }
 
-    private onSetProperty = (communicator, path, msg: IGenericProxyMessage): any | Promise<any> => {
+    private onSetProperty = (communicator: ICommunicator, path: string, msg: IDelegationProxyMessage): any | Promise<any> => {
         const delegationMsg = <ISetPropertyDelegationMessage>msg.content;
         const target = this.dataInfoManager.get(delegationMsg.refId);
 
@@ -241,7 +261,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         return true;
     }
 
-    private onApply = (communicator, path, msg: IGenericProxyMessage): any | Promise<any> => {
+    private onApply = (communicator: ICommunicator, path: string, msg: IDelegationProxyMessage): any | Promise<any> => {
         const delegationMsg = <IApplyDelegationMessage>msg.content;
         const target = this.dataInfoManager.get(delegationMsg.refId);
 
@@ -261,13 +281,13 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         return this.dataInfoManager.ReferAsDataInfo(result, delegationMsg.refId);
     }
 
-    private onDispose = async (communicator, path, msg: IGenericProxyMessage): Promise<void> => {
+    private onDispose = async (communicator: ICommunicator, path: string, msg: IDelegationProxyMessage): Promise<void> => {
         const delegationMsg = <IDisposeDelegateMessage>msg.content;
 
         await this.dataInfoManager.releaseByIdAsync(delegationMsg.refId, delegationMsg.parentId, true);
     }
 
-    private onRequestResource = async (communicator, path, msg: IRequestResourceProxyMessage): Promise<IDataInfo> => {
+    private onRequestResource = async (communicator: ICommunicator, path: string, msg: IRequestResourceProxyMessage): Promise<IDataInfo> => {
         const tempReferer = this.dataInfoManager.ReferAsDataInfo(() => undefined);
         const extraArgs = msg.extraArgs.map((argDataInfo) => this.dataInfoManager.realizeDataInfo(argDataInfo, tempReferer.id));
 
