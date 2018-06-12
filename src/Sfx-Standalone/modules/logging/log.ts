@@ -231,7 +231,7 @@ class Log implements ILog {
 
             finalProperties = finalProperties || {};
             finalProperties["Caller.FileName"] = callerInfo.fileName;
-            finalProperties["Caller.Name"] = `${callerInfo.typeName}.${callerInfo.functionName}()`;
+            finalProperties["Caller.Name"] = `${callerInfo.typeName ? callerInfo.typeName + "." : ""}${callerInfo.functionName}()`;
         }
 
         return finalProperties;
