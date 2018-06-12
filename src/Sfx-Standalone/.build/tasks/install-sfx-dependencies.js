@@ -9,7 +9,7 @@ const common = require("../common");
 const config = require("../config");
 
 const gulp = require("gulp");
-const gutil = require("gulp-util");
+const log = require("fancy-log");
 
 const packagejson = config.packageJson;
 const utils = common.utils;
@@ -50,7 +50,7 @@ function isInstalled(moduleName) {
  * @param {string} currentValue The current conditional value.
  */
 function logSkipping(dependencyName, propertyName, propertyValue, currentValue) {
-    gutil.log("Skipping sfx-dependency:", dependencyName, propertyName, "=>", "required:" + propertyValue, "current:" + currentValue);
+    log.info("Skipping sfx-dependency:", dependencyName, propertyName, "=>", "required:" + propertyValue, "current:" + currentValue);
 }
 
 gulp.task("install-sfx-dependencies",

@@ -51,7 +51,7 @@ require("./build.sdk");
 
 gulp.task("build:tslint",
     () => gulp.src(getTypescriptsGlobs())
-        .pipe(gtslint({ program: tslint.Linter.createProgram("../../tsconfig.json") }))
+        .pipe(gtslint({ program: tslint.Linter.createProgram("./tsconfig.json") }))
         .pipe(gtslint.report({ summarizeFailureOutput: true })));
 
 gulp.task("build:ts", ["build:tslint"],

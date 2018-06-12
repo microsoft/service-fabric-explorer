@@ -7,7 +7,7 @@
 
 const config = require("./config");
 
-const gutil = require("gulp-util");
+const log = require("fancy-log");
 const path = require("path");
 const child_process = require("child_process");
 const fs = require("fs");
@@ -163,14 +163,14 @@ exports.Platform = {
 function logExec(cmd, pifyResults) {
     const [error, stdout, stderr] = pifyResults;
 
-    gutil.log("Executed:", cmd);
+    log.info("Executed:", cmd);
 
     if (utils.isString(stdout) && stdout.trim() !== "") {
-        gutil.log(stdout);
+        log.info(stdout);
     }
 
     if (utils.isString(stderr) && stderr.trim() !== "") {
-        gutil.log(stderr);
+        log.info(stderr);
     }
 }
 

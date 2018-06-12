@@ -11,7 +11,7 @@ const config = require("../config");
 const fs = require("fs");
 const path = require("path");
 const gulp = require("gulp");
-const gutil = require("gulp-util");
+const log = require("fancy-log");
 
 const utils = common.utils;
 const buildInfos = config.buildInfos;
@@ -240,7 +240,7 @@ function generateLicensingDeps(depType, packageFormat, depsDir, deps) {
             dep.depType = depType;
             licensingDeps.push(dep);
         } catch (error) {
-            gutil.log("Failed to generate licensing dep for package:", depName, "Error:", error);
+            log.info("Failed to generate licensing dep for package:", depName, "Error:", error);
             hasErrors = true;
         }
     });
@@ -276,7 +276,7 @@ function generateThirdPartyNotice(deps, noticeFilePath) {
     const noticeFd = fs.openSync(path.join(buildInfos.paths.appDir, buildInfos.licensing.thirdPartyNoticesFileName), "w");
 
     try {
-        gutil.log("Generating third party notices files:", buildInfos.licensing.thirdPartyNoticesFileName, "...");
+        log.info("Generating third party notices files:", buildInfos.licensing.thirdPartyNoticesFileName, "...");
         fs.appendFileSync(noticeFd, "THIRD-PARTY SOFTWARE NOTICES AND INFORMATION\r\n");
         fs.appendFileSync(noticeFd, "Do Not Translate or Localize\r\n");
         fs.appendFileSync(noticeFd, "\r\n");
@@ -298,7 +298,7 @@ function generateThirdPartyNotice(deps, noticeFilePath) {
         }
     } finally {
         fs.closeSync(noticeFd);
-        gutil.log("Finished generation of the third party notices files:", buildInfos.licensing.thirdPartyNoticesFileName, ".");
+        log.info("Finished generation of the third party notices files:", buildInfos.licensing.thirdPartyNoticesFileName, ".");
     }
 }
 

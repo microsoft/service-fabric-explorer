@@ -85,7 +85,7 @@ exports.packageJson = packageJson;
  * @property {IBuildLicensing} licensing
  */
 
- const gutil = require("gulp-util");
+ const log = require("fancy-log");
 
 /**
  * @type {IBuildInfos}
@@ -94,31 +94,31 @@ const buildInfos = require("./buildInfos.json");
 exports.buildInfos = buildInfos;
 
 // buildInfos auto-initializiation
-gutil.log("Starting", "buildInfos auto-initializiation", "...");
+log.info("Starting", "buildInfos auto-initializiation", "...");
 
 if (buildInfos.buildNumber === "*") {
-    gutil.log("Read", "BUILD_BUILDNUMBER", "=", process.env["BUILD_BUILDNUMBER"]);
-    gutil.log("Read", "packageJson.version", "=", packageJson.version)
+    log.info("Read", "BUILD_BUILDNUMBER", "=", process.env["BUILD_BUILDNUMBER"]);
+    log.info("Read", "packageJson.version", "=", packageJson.version)
     buildInfos.buildNumber = process.env["BUILD_BUILDNUMBER"] || packageJson.version;
-    gutil.log("Initialized", "buildInfos.buildNumber:", "=", buildInfos.buildNumber);
+    log.info("Initialized", "buildInfos.buildNumber:", "=", buildInfos.buildNumber);
 }
 
 if (buildInfos.paths.appDir === "*") {
     buildInfos.paths.appDir = path.join(buildInfos.paths.buildDir, "app");
-    gutil.log("Initialized", "buildInfos.paths.appDir", "=", buildInfos.paths.appDir);
+    log.info("Initialized", "buildInfos.paths.appDir", "=", buildInfos.paths.appDir);
 }
 
 if (buildInfos.paths.sfxDir === "*") {
     buildInfos.paths.sfxDir = path.join(buildInfos.paths.appDir, "sfx");
-    gutil.log("Initialized", "buildInfos.paths.sfxDir", "=", buildInfos.paths.sfxDir);
+    log.info("Initialized", "buildInfos.paths.sfxDir", "=", buildInfos.paths.sfxDir);
 }
 
 if (buildInfos.paths.sdkDir === "*") {
     buildInfos.paths.sdkDir = path.join(buildInfos.paths.buildDir, "sdk");
-    gutil.log("Initialized", "buildInfos.paths.sdkDir", "=", buildInfos.paths.sdkDir);
+    log.info("Initialized", "buildInfos.paths.sdkDir", "=", buildInfos.paths.sdkDir);
 }
 
-gutil.log("Finished", "buildInfos auto-initializiation", ".");
+log.info("Finished", "buildInfos auto-initializiation", ".");
 
 /**
  * @typedef ITypeScriptConfig

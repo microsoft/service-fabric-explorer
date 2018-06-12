@@ -11,7 +11,7 @@ const config = require("../config");
 const versioning = require("../versioning");
 
 const gulp = require("gulp");
-const gutil = require("gulp-util");
+const log = require("fancy-log");
 const runSequence = require("run-sequence");
 
 const Architecture = common.Architecture;
@@ -36,7 +36,7 @@ gulp.task("publish:versioninfo-macos", ["pack:macos"],
 gulp.task("publish:zip-macos-x64", ["pack:macos"],
     (callback) => {
         if (buildInfos.targets[Platform.MacOs].archs.indexOf(Architecture.X64) < 0) {
-            gutil.log("Skipping", "zip-macos-64:", "No x64 architecture specified in buildinfos.");
+            log.info("Skipping", "zip-macos-64:", "No x64 architecture specified in buildinfos.");
             callback();
             return;
         }
