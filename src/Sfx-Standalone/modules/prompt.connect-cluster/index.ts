@@ -21,8 +21,7 @@ export function getModuleMetadata(): IModuleInfo {
                     promptService.createAsync(
                         {
                             pageUrl: resolve("connect-cluster.html"),
-                            height: 225,
-                            showMenu: true
+                            height: 225
                         }),
                 deps: ["prompt.prompt-service"]
             }
