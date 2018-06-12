@@ -10,6 +10,7 @@ const pack = require("./pack");
 const config = require("../config");
 const versioning = require("../versioning");
 
+const path = require("path");
 const gulp = require("gulp");
 const runSequence = require("run-sequence");
 const fs = require("fs");
@@ -26,14 +27,18 @@ gulp.task("publish:versioninfo-windows", ["pack:windows"],
         (baseUrl, arch) => utils.format("{}/setup-{}.{}.msi", baseUrl, buildInfos.buildNumber, arch)));
 
 gulp.task("publish:copy-msi.wxs", ["pack:windows"],
-    () => gulp.src(common.formGlobs("./msi.wxs")).pipe(gulp.dest(buildInfos.paths.buildDir)));
+    () => gulp.src(common.formGlobs("./.build/msi.wxs")).pipe(gulp.dest(buildInfos.paths.buildDir)));
 
 gulp.task("publish:update-wix-version", ["publish:copy-msi.wxs"],
-    () => fs.writeFileSync(
-        "./msi.wxs",
-        fs.readFileSync("./msi.wxs", { encoding: "utf8" })
-            .replace("$MSIVERSION$", [semver.major(buildInfos.buildNumber), semver.minor(buildInfos.buildNumber), semver.patch(buildInfos.buildNumber)].join(".")),
-        { encoding: "utf8" }));
+    () => {
+        const wxsPath = path.resolve(path.join(buildInfos.paths.buildDir, "./msi.wxs"));
+
+        return fs.writeFileSync(
+            wxsPath,
+            fs.readFileSync(wxsPath, { encoding: "utf8" })
+                .replace("$MSIVERSION$", [semver.major(buildInfos.buildNumber), semver.minor(buildInfos.buildNumber), semver.patch(buildInfos.buildNumber)].join(".")),
+            { encoding: "utf8" });
+    });
 
 gulp.task("publish:msi", ["publish:update-wix-version"],
     (gcallback) => {
@@ -42,11 +47,11 @@ gulp.task("publish:msi", ["publish:update-wix-version"],
         const publishDir = path.join(buildInfos.paths.publishDir, Platform.Windows);
         const filesWixPath = path.resolve(path.join(buildInfos.paths.buildDir, "files.msi.wxs"));
         const wxsobjDir = path.resolve(path.join(buildInfos.paths.buildDir, "wxsobj"));
-        const heatPath = path.resolve("../../.vendor/wix/heat.exe");
-        const candlePath = path.resolve("../../.vendor/wix/candle.exe");
-        const lightPath = path.resolve("../../.vendor/wix/light.exe");
+        const heatPath = path.resolve("./.vendor/wix/heat.exe");
+        const candlePath = path.resolve("./.vendor/wix/candle.exe");
+        const lightPath = path.resolve("./.vendor/wix/light.exe");
         const heatCmd = utils.format("\"{}\" dir \"{}\" -ag -srd -cg MainComponentsGroup -dr INSTALLFOLDER -o \"{}\"", heatPath, packDirPath, filesWixPath);
-        const candleCmd = utils.format("\"{}\" -arch x86 -out \"{}\\\\\" \"{}\" \"{}\"", candlePath, wxsobjDir, path.resolve("./msi.wxs"), filesWixPath);
+        const candleCmd = utils.format("\"{}\" -arch x86 -out \"{}\\\\\" \"{}\" \"{}\"", candlePath, wxsobjDir, path.resolve(path.join(buildInfos.paths.buildDir, "./msi.wxs")), filesWixPath);
         const lightCmd =
             utils.format(
                 "\"{}\" -b \"{}\" -spdb -out \"{}\" \"{}\" \"{}\"",

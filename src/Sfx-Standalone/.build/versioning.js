@@ -60,24 +60,24 @@ exports.generateVersionInfo =
             version: buildInfos.buildNumber
         };
 
-        const baseUrl = String.format("{}/{}/{}", buildInfos.updateInfos.baseUrl, channel, platform);
+        const baseUrl = utils.format("{}/{}/{}", buildInfos.updateInfos.baseUrl, channel, platform);
         let buildPackageInfo = null;
 
-        if (isObject(buildInfos.updateInfos.packageInfos)) {
+        if (utils.isObject(buildInfos.updateInfos.packageInfos)) {
             buildPackageInfo = buildInfos.updateInfos.packageInfos[platform];
-        } else if (!isNullOrUndefined(buildInfos.updateInfos.packageInfos)) {
+        } else if (!utils.isNullOrUndefined(buildInfos.updateInfos.packageInfos)) {
             throw new Error("Invalid value for parameter: buildInfos.updateInfos.packageInfos");
         }
 
-        if (isString(buildPackageInfo)) {
+        if (utils.isString(buildPackageInfo)) {
             versionInfo[platform] = buildPackageInfo;
-        } else if (isNullOrUndefined(buildPackageInfo) || isObject(buildPackageInfo)) {
+        } else if (utils.isNullOrUndefined(buildPackageInfo) || utils.isObject(buildPackageInfo)) {
             versionInfo[platform] = {};
 
             for (const arch of buildInfos.targets[platform].archs) {
-                if (isNullOrUndefined(buildPackageInfo) || isNullOrUndefined(buildPackageInfo[arch])) {
+                if (utils.isNullOrUndefined(buildPackageInfo) || utils.isNullOrUndefined(buildPackageInfo[arch])) {
                     versionInfo[platform][arch] = getPackageInfo(baseUrl, arch);
-                } else if (isString(buildPackageInfo[arch])) {
+                } else if (utils.isString(buildPackageInfo[arch])) {
                     versionInfo[platform][arch] = utils.format(buildPackageInfo[arch], baseUrl, buildInfos.buildNumber, arch);
                 } else {
                     throw new Error(utils.format("Invalid value for parameter: buildInfos.updateInfos.packageInfos.{}.{}", platform, arch));

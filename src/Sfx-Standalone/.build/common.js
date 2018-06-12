@@ -122,7 +122,7 @@ const utils = {
          * @param {*} value The given string to check.
          * @returns {boolean} True if the given string, value, is null/undefined/empty string. Otherwise, false.
          */
-        isNullUndefinedOrEmpty: (value) => value === undefined || value === null || (String.isString(value) && value === ""),
+        isNullUndefinedOrEmpty: (value) => value === undefined || value === null || (utils.isString(value) && value === ""),
 
         /**
          * Check if the given string, value, is null/undefined/empty string/whitespaces.
@@ -130,7 +130,7 @@ const utils = {
          * @param {*} value The given string to check.
          * @returns {boolean} True if the given string, value, is null/undefined/empty string. Otherwise, false.
          */
-        isNullUndefinedOrWhitespaces: (value) => value === undefined || value === null || (String.isString(value) && value.trim() === "")
+        isNullUndefinedOrWhitespaces: (value) => value === undefined || value === null || (utils.isString(value) && value.trim() === "")
     }
 };
 

@@ -70,7 +70,7 @@ class FileLicense extends License {
     constructor(spdxId, licensePath) {
         super(spdxId);
 
-        if (isNullOrUndefined(licensePath) || !fs.existsSync(licensePath)) {
+        if (utils.isNullOrUndefined(licensePath) || !fs.existsSync(licensePath)) {
             throw Error("licensePath should not be null/undefined and the pointing file should exist.");
         }
 
@@ -173,7 +173,7 @@ function generateDep(depName, depsDir, packageJsonName) {
         depLicense = new ReadmeLicense(getLicense(depJson), path.join(depDir, readmeFileName));
     }
 
-    if (isNullOrUndefined(depLicense)) {
+    if (utils.isNullOrUndefined(depLicense)) {
         throw new Error(utils.format('Cannot find license file for dependency, "{}".', depName));
     }
 
@@ -304,6 +304,8 @@ function generateThirdPartyNotice(deps, noticeFilePath) {
 
 gulp.task("pack:licensing",
     () => {
+        const packagejson = config.packageJson;
+
         /** @type {Array.<ILicensingDependency>} */
         let msInternalDeps = [];
 
@@ -315,7 +317,7 @@ gulp.task("pack:licensing",
 
         if (fs.existsSync("../Sfx/package.json")) {
             /** @type {IPackageJson} */
-            const sfxPackageJson = require("../Sfx/package.json");
+            const sfxPackageJson = require("../../../Sfx/package.json");
 
             prodDeps = prodDeps.concat(generateLicensingDeps("prod", "npm", "../Sfx/node_modules", sfxPackageJson.dependencies));
             prodDeps = prodDeps.concat(generateLicensingDeps("prod", "npm", "../Sfx/node_modules", sfxPackageJson.optionalDependencies));

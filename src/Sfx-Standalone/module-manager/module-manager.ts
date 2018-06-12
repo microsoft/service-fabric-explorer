@@ -9,10 +9,12 @@ import {
     IModuleManager,
     IComponentInfo,
     HostVersionMismatchEventHandler,
+    IComponentDescriptor,
 } from "sfx.module-manager";
 
 import { ICommunicator, RequestHandler, IRoutePattern } from "sfx.remoting";
 import { IObjectRemotingProxy, Resolver } from "sfx.proxy.object";
+import { IDiDescriptor } from "../utilities/di";
 
 import * as fs from "fs";
 import * as path from "path";
@@ -56,6 +58,80 @@ interface ILoadModuleAsyncMessage extends IModuleManagerMessage {
 interface ILoadModuleDirAsyncMessage extends IModuleManagerMessage {
     action: ModuleManagerAction.loadModuleDirAsync;
     content: string;
+}
+
+function createDedicationDiDescriptor(
+    moduleManager: IModuleManager,
+    descriptor: IComponentDescriptor,
+    injects: Array<string>)
+    : IDiDescriptor {
+    if (!Function.isFunction(descriptor)) {
+        throw new Error("descriptor must be a function.");
+    }
+
+    if (Array.isNullUndefinedOrEmpty(injects)) {
+        injects = undefined;
+    } else if (!Array.isArray(injects)) {
+        throw new Error("inject must be an array of string.");
+    } else {
+        for (let injectIndex = 0; injectIndex < injects.length; injectIndex++) {
+            const inject = injects[injectIndex];
+
+            if (String.isEmptyOrWhitespace(inject)) {
+                injects[injectIndex] = undefined;
+            } else if (!String.isString(inject)) {
+                throw new Error("Inject identity must be a string.");
+            }
+        }
+    }
+
+    return async (container, ...extraArgs) => {
+        const args = new Array<any>();
+
+        if (injects !== undefined) {
+            for (let injectIndex = 0; injectIndex < injects.length; injectIndex++) {
+                const inject = injects[injectIndex];
+
+                if (inject !== undefined) {
+                    const arg = await moduleManager.getComponentAsync(inject);
+
+                    if (arg === undefined) {
+                        throw new Error(`Required inject, "${inject}", is not available in the module manager.`);
+                    }
+
+                    args.push(arg);
+                } else {
+                    args.push(null);
+                }
+            }
+        }
+
+        if (Array.isArray(extraArgs) && extraArgs.length > 0) {
+            for (let extraArgIndex = 0; extraArgIndex < extraArgs.length; extraArgIndex++) {
+                args.push(extraArgs[extraArgIndex]);
+            }
+        }
+
+        return descriptor(...args);
+    };
+}
+
+function createLazySingletonDiDescriptor(
+    moduleManager: IModuleManager,
+    descriptor: IComponentDescriptor,
+    injects: Array<string>)
+    : IDiDescriptor {
+    const dedicationDescriptor = createDedicationDiDescriptor(moduleManager, descriptor, injects);
+    let singleton: any = undefined;
+
+    return (container, ...extraArgs) => {
+        if (singleton === undefined) {
+            singleton = dedicationDescriptor(container, ...extraArgs);
+            descriptor = undefined;
+        }
+
+        return singleton;
+    };
 }
 
 export class ModuleManager implements IModuleManager {
@@ -248,9 +324,9 @@ export class ModuleManager implements IModuleManager {
 
         for (const componentInfo of componentInfos) {
             if (componentInfo.singleton === true) {
-                this.container.set(componentInfo.name, diExt.lazySingleton(componentInfo.descriptor, componentInfo.deps));
+                this.container.set(componentInfo.name, createLazySingletonDiDescriptor(this, componentInfo.descriptor, componentInfo.deps));
             } else {
-                this.container.set(componentInfo.name, diExt.dedication(componentInfo.descriptor, componentInfo.deps));
+                this.container.set(componentInfo.name, createDedicationDiDescriptor(this, componentInfo.descriptor, componentInfo.deps));
             }
         }
     }

@@ -8,6 +8,7 @@
 const common = require("../common");
 const config = require("../config");
 
+const path = require("path");
 const gulp = require("gulp");
 const runSequence = require("run-sequence");
 const packager = require("electron-packager");
@@ -21,94 +22,94 @@ const buildInfos = config.buildInfos;
  * @param {string} arch The value of Common.Architecture to convert from.
  * @returns {string} The corresponding architecture of electron-packager.
  */
-exports.toPackagerArch =
-    (arch) => {
-        switch (arch) {
-            case Architecture.X86:
-                return "ia32";
+function toPackagerArch(arch) {
+    switch (arch) {
+        case Architecture.X86:
+            return "ia32";
 
-            case Architecture.X64:
-                return "x64";
+        case Architecture.X64:
+            return "x64";
 
-            default:
-                throw new Error("unsupported architecture: " + arch);
-        };
+        default:
+            throw new Error("unsupported architecture: " + arch);
     };
+}
+exports.toPackagerArch = toPackagerArch;
 
 /**
  * Convert array of Common.Architecture to the array of architecture of electron-packager.
  * @param {Array.<string>} archs The array of the value of Common.Architecture to convert from.
  * @returns {Array.<string>} The array of the corresponding architecture of electron-packager.
  */
-exports.toPackagerArchs =
-    (archs) => {
-        if (!Array.isArray(archs)) {
-            throw "archs has to be an array.";
-        }
+function toPackagerArchs(archs) {
+    if (!Array.isArray(archs)) {
+        throw "archs has to be an array.";
+    }
 
-        /** @type {Array.<string>} */
-        let convertedArchs = [];
+    /** @type {Array.<string>} */
+    let convertedArchs = [];
 
-        archs.forEach((arch) => convertedArchs.push(toPackagerArch(arch)));
+    archs.forEach((arch) => convertedArchs.push(toPackagerArch(arch)));
 
-        return convertedArchs;
-    };
+    return convertedArchs;
+}
+exports.toPackagerArchs = toPackagerArchs;
 
 /**
  * Convert Common.Platform to platform of electron-packager.
  * @param {string} platform The value of Common.Platform to convert from.
  * @returns {string} The corresponding platform of electron-packager.
  */
-exports.toPackagerPlatform =
-    (platform) => {
-        switch (platform) {
-            case Platform.Linux:
-                return "linux";
+function toPackagerPlatform(platform) {
+    switch (platform) {
+        case Platform.Linux:
+            return "linux";
 
-            case Platform.Windows:
-                return "win32";
+        case Platform.Windows:
+            return "win32";
 
-            case Platform.MacOs:
-                return "darwin";
+        case Platform.MacOs:
+            return "darwin";
 
-            default:
-                throw "unsupported platform: " + platform;
-        };
+        default:
+            throw "unsupported platform: " + platform;
     };
+}
+exports.toPackagerPlatform = toPackagerPlatform;
 
 /**
  * Generate package for given platform.
  * @param {string} platform The target platform (Common.Platform).
  * @returns {Promise.<Array.<string>>} The promise of packaging async operation.
  */
-exports.generatePackage =
-    (platform) => {
-        const packConfig = {
-            dir: buildInfos.paths.appDir,
-            appCopyright: buildInfos.copyright,
-            arch: toPackagerArch(buildInfos.targets[platform].archs),
-            asar: false,
-            icon: path.join(buildInfos.paths.appDir, "icons/icon"),
-            name: platform === Platform.MacOs ? buildInfos.productName : buildInfos.targetExecutableName,
-            out: buildInfos.paths.buildDir,
-            overwrite: true,
-            platform: toPackagerPlatform(platform),
-            appBundleId: buildInfos.appId,
-            appCategoryType: buildInfos.appCategory
-        };
-
-        return packager(packConfig);
+function generatePackage(platform) {
+    const packConfig = {
+        dir: buildInfos.paths.appDir,
+        appCopyright: buildInfos.copyright,
+        arch: toPackagerArchs(buildInfos.targets[platform].archs),
+        asar: false,
+        icon: path.join(buildInfos.paths.appDir, "icons/icon"),
+        name: platform === Platform.MacOs ? buildInfos.productName : buildInfos.targetExecutableName,
+        out: buildInfos.paths.buildDir,
+        overwrite: true,
+        platform: toPackagerPlatform(platform),
+        appBundleId: buildInfos.appId,
+        appCategoryType: buildInfos.appCategory
     };
+
+    return packager(packConfig);
+}
+exports.generatePackage = generatePackage;
 
 require("./build");
 require("./pack.licensing");
 
 gulp.task("pack:update-version",
-    () => common.appdirExec(String.format("npm version {} --allow-same-version", buildInfos.buildNumber)));
+    () => common.appdirExec(common.utils.format("npm version {} --allow-same-version", buildInfos.buildNumber)));
 
 gulp.task("pack:prepare",
     (callback) => runSequence(
-        "clean-build",
+        "clean-build:all",
         ["pack:update-version", "pack:licensing"],
         callback));
 
