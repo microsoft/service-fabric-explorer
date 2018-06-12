@@ -3,27 +3,24 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ILog } from "../../@types/log";
-import { ICommunicator } from "../../@types/ipc";
-import ElectronCommunicator from "./communicator-electron";
-import ElectronProxy from "./proxy-electron";
+import { ChannelType } from "sfx.ipc";
+import { IModuleInfo } from "sfx.module-manager";
+import { ILog } from "sfx.logging";
+
+import { Communicator } from "./communicator";
+import { electron } from "../../utilities/electron-adapter";
 
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "ipc",
-        version: "1.0.0",
+        version: electron.app.getVersion(),
+        loadingMode: "Always",
         components: [
             {
-                name: "ipc-communicator-electron",
-                version: "1.0.0",
-                descriptor: (log: ILog, webContentId: number, subchannelName: string) => new ElectronCommunicator(log, webContentId, subchannelName),
-                deps: ["log"]
-            },
-            {
-                name: "ipc-proxy-electron",
-                version: "1.0.0",
-                descriptor: (log: ILog, communicator: ICommunicator, autoDipsoseCommunicator: boolean) => new ElectronProxy(log, communicator, autoDipsoseCommunicator),
-                deps: ["log"]
+                name: "ipc.communicator",
+                version: electron.app.getVersion(),
+                deps: ["logging"],
+                descriptor: (log: ILog, channel: ChannelType, id?: string) => new Communicator(channel, id)
             }
         ]
     };

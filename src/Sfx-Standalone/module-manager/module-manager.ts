@@ -3,562 +3,463 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import { IDisposable } from "sfx.common";
+import {
+    IModule,
+    IModuleManager,
+    IComponentInfo,
+    HostVersionMismatchEventHandler,
+    IComponentDescriptor,
+    IModuleLoadingInfo
+} from "sfx.module-manager";
+
+import { ICommunicator, RequestHandler, IRoutePattern } from "sfx.remoting";
+import { IObjectRemotingProxy, Resolver } from "sfx.proxy.object";
+import { IDiDescriptor } from "../utilities/di";
+
 import * as fs from "fs";
 import * as path from "path";
+import * as child_process from "child_process";
 import * as semver from "semver";
 
-import error from "../utilities/errorUtil";
 import * as utils from "../utilities/utils";
 import * as di from "../utilities/di";
 import * as diExt from "../utilities/di.ext";
+import { Communicator } from "../modules/ipc/communicator";
+import { ObjectRemotingProxy } from "../modules/proxy.object/proxy.object";
+import StringPattern from "../modules/remoting/pattern/string";
+import * as mmutils from "./utils";
 
-interface IModule {
-    getModuleMetadata?(): IModuleInfo;
-    initialize?(moduleManager: IModuleManager): void;
+enum ModuleManagerAction {
+    loadModuleAsync = "loadModuleAsync",
+    loadModuleDirAsync = "loadModuleDirAsync"
 }
 
-namespace ComponentDescriptors {
-    export function lazySingleton(componentIdentity: string, componentDescriptor: IComponentDescriptor, injects: Array<string>): di.IDiDescriptor {
-        let instance: any = null;
+interface IHostRecord {
+    process: child_process.ChildProcess;
+    proxy: IObjectRemotingProxy;
+    communicator: ICommunicator;
+}
 
-        return (container, ...extraArgs) => {
-            if (instance === null) {
-                instance = dedication(componentIdentity, componentDescriptor, injects)(container, extraArgs);
+interface IModuleManagerMessage {
+    action: ModuleManagerAction;
+    content: any;
+}
 
-                componentIdentity = undefined;
-                componentDescriptor = undefined;
-                injects = undefined;
-            }
+interface ILoadModuleAsyncMessage extends IModuleManagerMessage {
+    action: ModuleManagerAction.loadModuleAsync;
+    content: string;
+}
 
-            return instance;
-        };
+interface ILoadModuleDirAsyncMessage extends IModuleManagerMessage {
+    action: ModuleManagerAction.loadModuleDirAsync;
+    content: string;
+}
+
+function createDedicationDiDescriptor(
+    moduleManager: IModuleManager,
+    descriptor: IComponentDescriptor,
+    injects: Array<string>)
+    : IDiDescriptor {
+    if (!Function.isFunction(descriptor)) {
+        throw new Error("descriptor must be a function.");
     }
 
-    export function dedication(componentIdentity: string, componentDescriptor: IComponentDescriptor, injects: Array<string>): di.IDiDescriptor {
-        return (container, ...extraArgs) => {
-            const deps = new Array<any>();
+    if (Array.isNullUndefinedOrEmpty(injects)) {
+        injects = undefined;
+    } else if (!Array.isArray(injects)) {
+        throw new Error("inject must be an array of string.");
+    } else {
+        for (let injectIndex = 0; injectIndex < injects.length; injectIndex++) {
+            const inject = injects[injectIndex];
 
-            if (injects !== undefined) {
-                for (let injectIndex = 0; injectIndex < injects.length; injectIndex++) {
-                    const inject = injects[injectIndex];
+            if (String.isEmptyOrWhitespace(inject)) {
+                injects[injectIndex] = undefined;
+            } else if (!String.isString(inject)) {
+                throw new Error("Inject identity must be a string.");
+            }
+        }
+    }
 
-                    if (inject !== undefined) {
-                        let dep: any = container.getInstance(inject);
+    return async (container, ...extraArgs) => {
+        const args = new Array<any>();
 
-                        if (dep === undefined) {
-                            throw error("{}: dependency, '{}', is missing.", componentIdentity, inject);
-                        }
+        if (injects !== undefined) {
+            for (let injectIndex = 0; injectIndex < injects.length; injectIndex++) {
+                const inject = injects[injectIndex];
 
-                        deps.push(dep);
+                if (inject !== undefined) {
+                    const arg = await moduleManager.getComponentAsync(inject);
+
+                    if (arg === undefined) {
+                        throw new Error(`Required inject, "${inject}", is not available in the module manager.`);
                     }
+
+                    args.push(arg);
+                } else {
+                    args.push(null);
                 }
             }
+        }
 
+        if (Array.isArray(extraArgs) && extraArgs.length > 0) {
             for (let extraArgIndex = 0; extraArgIndex < extraArgs.length; extraArgIndex++) {
-                deps.push(extraArgs[extraArgIndex]);
+                args.push(extraArgs[extraArgIndex]);
             }
+        }
 
-            return componentDescriptor(...deps);
-        };
-    }
+        return descriptor(...args);
+    };
 }
 
-class VersionedDiDescriptorDictionary implements di.IDiDescriptorDictionary {
+function createLazySingletonDiDescriptor(
+    moduleManager: IModuleManager,
+    descriptor: IComponentDescriptor,
+    injects: Array<string>)
+    : IDiDescriptor {
+    const dedicationDescriptor = createDedicationDiDescriptor(moduleManager, descriptor, injects);
+    let singleton: any = undefined;
 
-    private readonly dictionary: IDictionary<IDictionary<di.IDiDescriptor>>;
+    return (container, ...extraArgs) => {
+        if (singleton === undefined) {
+            singleton = dedicationDescriptor(container, ...extraArgs);
+            descriptor = undefined;
+        }
 
-    constructor() {
-        this.dictionary = {};
+        return singleton;
+    };
+}
+
+export class ModuleManager implements IModuleManager {
+    private readonly _hostVersion: string;
+
+    private readonly pattern_moduleManager: IRoutePattern;
+
+    private readonly pattern_proxy: IRoutePattern;
+
+    private hostVersionMismatchHandler: HostVersionMismatchEventHandler;
+
+    private children: Array<IHostRecord>;
+
+    private parentProxy: IObjectRemotingProxy;
+
+    private container: di.IDiContainer;
+
+    private moduleLoadingInfos: Array<IModuleLoadingInfo>;
+
+    public get hostVersion(): string {
+        return this._hostVersion;
     }
 
-    public get(name: string): di.IDiDescriptor {
-        const identity = Identity.fromIdentityString(name);
+    public get loadedModules(): Array<IModuleLoadingInfo> {
+        return this.moduleLoadingInfos.slice();
+    }
 
-        if (identity === null) {
-            throw error("name must follow format: {{name: [A-Za-z0-9\-\.]+}@{{version: [A-Za-z0-9\-\.]+} or {{name: [A-Za-z0-9\-\.]+} only.");
+    constructor(
+        hostVersion: string,
+        parentCommunicator?: ICommunicator) {
+        if (!semver.valid(hostVersion)) {
+            throw new Error(`Invalid hostVersion "${hostVersion}".`);
         }
 
-        const descriptors = this.dictionary[identity.name];
+        this._hostVersion = hostVersion;
+        this.pattern_moduleManager = new StringPattern("module-manager");
+        this.pattern_proxy = new StringPattern("module-manager/object-proxy");
+        this.moduleLoadingInfos = [];
+        this.container = new di.DiContainer();
 
-        if (descriptors === undefined) {
-            return undefined;
+        if (parentCommunicator) {
+            this.parentProxy = ObjectRemotingProxy.create(this.pattern_proxy, parentCommunicator, true);
+            this.parentProxy.setResolver(this.onProxyResolvingAsync);
+            parentCommunicator.map(this.pattern_moduleManager, this.onModuleManagerMessageAsync);
         }
 
-        if (identity.version === undefined) {
-            return descriptors["*"];
+        this.container.set("module-manager", diExt.singleton(this));
+    }
+
+    public async newHostAsync(hostName: string, hostCommunicator?: ICommunicator): Promise<void> {
+        if (String.isEmptyOrWhitespace(hostName)) {
+            throw new Error("hostName cannot be null/undefined/empty.");
+        }
+
+        if (!this.children) {
+            this.children = [];
+        }
+
+        if (0 <= this.children.findIndex((child) => child.proxy.id === hostName)) {
+            throw new Error(`hostName, "${hostName}", already exists.`);
+        }
+
+        let proxy: IObjectRemotingProxy;
+        let childProcess: child_process.ChildProcess;
+
+        if (!hostCommunicator) {
+            const constructorOptions = mmutils.generateModuleManagerConstructorOptions(this);
+
+            childProcess = child_process.fork("./bootstrap.js", [JSON.stringify(constructorOptions)]);
+            hostCommunicator = new Communicator(childProcess, hostName);
+            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, true);
         } else {
-            return descriptors[identity.version];
+            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, false);
         }
+
+        proxy.setResolver(this.onProxyResolvingAsync);
+
+        this.children.push({
+            process: childProcess,
+            proxy: proxy,
+            communicator: hostCommunicator
+        });
     }
 
-    public set(name: string, descriptor: di.IDiDescriptor): void {
-        const identity = Identity.fromIdentityString(name);
-
-        if (identity === null) {
-            throw error("name must follow format: {{name: [A-Za-z0-9\-\.]+}@{{semver} or {{name: [A-Za-z0-9\-\.]+} only.");
+    public async destroyHostAsync(hostName: string): Promise<void> {
+        if (String.isEmptyOrWhitespace(hostName)) {
+            throw new Error("hostName cannot be null/undefined/empty.");
         }
 
-        if (!Function.isFunction(descriptor)) {
-            throw error("descriptor must be a function.");
+        if (!this.children) {
+            return;
         }
 
-        let descriptors = this.dictionary[identity.name];
+        const childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
 
-        if (descriptors === undefined) {
-            descriptors = {};
-            descriptors["*"] = descriptor;
+        if (childIndex < 0) {
+            return;
+        }
 
-            if (identity.version !== undefined) {
-                descriptors[identity.version] = descriptor;
+        const child = this.children[childIndex];
+
+        await child.proxy.dispose();
+
+        if (child.process) {
+            child.process.kill();
+        }
+
+        this.children.splice(childIndex, 1);
+
+        child.communicator = undefined;
+        child.process = undefined;
+        child.proxy = undefined;
+    }
+
+    public async loadModuleDirAsync(dirName: string, hostName?: string, respectLoadingMode?: boolean): Promise<void> {
+        if (!fs.existsSync(dirName)) {
+            throw new Error(`Directory "${dirName}" doesn't exist.`);
+        }
+
+        const dirStat = fs.statSync(dirName);
+
+        if (!dirStat.isDirectory()) {
+            throw new Error(`Path "${dirName}" is not a directory.`);
+        }
+
+        if (!utils.isNullOrUndefined(hostName) && !String.isEmptyOrWhitespace(hostName)) {
+            let childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
+
+            if (childIndex < 0) {
+                await this.newHostAsync(hostName);
+                childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
             }
 
-            this.dictionary[identity.name] = descriptors;
-            return;
-        } else {
-            let highestVersion = "0.0.0";
+            const child = this.children[childIndex];
 
-            Object.keys(descriptors).forEach((version) => {
-                if (version !== "*" && semver.gt(version, highestVersion)) {
-                    highestVersion = version;
+            await child.communicator.sendAsync<ILoadModuleDirAsyncMessage, void>(
+                this.pattern_moduleManager.getRaw(),
+                {
+                    action: ModuleManagerAction.loadModuleDirAsync,
+                    content: dirName
+                });
+        } else {
+            const loadedModules: Array<IModule> = [];
+
+            // Load modules.
+            for (const subName of fs.readdirSync(dirName)) {
+                const modulePath = path.join(dirName, subName);
+                const moduleStat = fs.statSync(modulePath);
+
+                if (moduleStat.isFile() && path.extname(modulePath) !== ".js") {
+                    continue;
                 }
-            });
 
-            if (semver.gt(identity.version, highestVersion)) {
-                descriptors["*"] = descriptor;
+                loadedModules.push(this.loadModule(modulePath, respectLoadingMode));
             }
 
-            descriptors[identity.version] = descriptor;
+            // Initialize modules.
+            for (const module of loadedModules) {
+                this.initializeModule(module);
+            }
         }
     }
-}
 
-export class Identity {
-    private static readonly nameRegex = /^[\w\-\.]+$/i;
-    private static readonly identityRegex = /^([\w\-\.]+)(?:\@([\w\-\.]+))?$/i;
-
-    public readonly name: string;
-
-    public readonly version: string;
-
-    public readonly identity: string;
-
-    public static fromIdentityString(identityString: string): Identity {
-        const regexMatches = Identity.identityRegex.exec(identityString);
-
-        if (regexMatches === null) {
-            return null;
+    public async loadModuleAsync(path: string, hostName?: string, respectLoadingMode?: boolean): Promise<void> {
+        if (!fs.existsSync(path)) {
+            throw new Error(`path "${path}" doesn't exist.`);
         }
 
-        return Identity.fromNameVersion(regexMatches[1], regexMatches[2]);
-    }
+        if (!utils.isNullOrUndefined(hostName) && !String.isEmptyOrWhitespace(hostName)) {
+            let childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
 
-    public static fromNameVersion(name: string, version?: string): Identity {
-        if (Identity.nameRegex.test(name)
-            && (String.isNullUndefinedOrWhitespace(version)
-                || semver.valid(version) !== null)) {
-            return Object.freeze(new Identity(name, version));
-        }
-
-        return null;
-    }
-
-    public static findByIdentityName<T>(identityName: string, identities: Array<string>): Array<string> {
-        const results = new Array<string>();
-
-        identities.forEach((identity) => {
-            const matches = Identity.identityRegex.exec(identity);
-
-            if (matches === null) {
-                return;
+            if (childIndex < 0) {
+                await this.newHostAsync(hostName);
+                childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
             }
 
-            if (matches[1] !== identityName) {
-                return;
-            }
+            const child = this.children[childIndex];
 
-            results.push(identity);
-        });
-
-        return results;
-    }
-
-    public toString() {
-        return this.identity;
-    }
-
-    private constructor(name: string, version?: string) {
-        if (String.isNullUndefinedOrWhitespace(name) || !String.isString(name)) {
-            throw error("name must be a string with value (not empty or whitespaces).");
-        } else if (String.isString(name)) {
-            this.name = name;
-        }
-
-        if (String.isNullUndefinedOrWhitespace(version)) {
-            this.version = undefined;
-        } else if (String.isString(version)) {
-            this.version = version;
+            await child.communicator.sendAsync<ILoadModuleAsyncMessage, void>(
+                this.pattern_moduleManager.getRaw(),
+                {
+                    action: ModuleManagerAction.loadModuleAsync,
+                    content: path
+                });
         } else {
-            throw error("version must be a string or null/undefined/empty.");
-        }
-
-        this.identity = this.name + (this.version ? "@" + this.version : "");
-    }
-}
-
-export class ModuleManager extends di.DiContainer implements IModuleManager {
-    public readonly hostVersion: string;
-
-    private readonly throwIfComponentNotFound: boolean;
-
-    private readonly options: boolean;
-
-    private hostVersionMismatchEvent: HostVersionMismatchEventHandler;
-
-    private depVersionMismatchEvent: DepVersionMismatchEventHandler;
-
-    private static loadModule(modulePath: string): IModule {
-        return require(modulePath);
-    }
-
-    private static pushToComponentDictionary(
-        dictionary: IDictionary<IComponentInfo>,
-        componentInfos: Array<IComponentInfo>): Array<Error> {
-        const errors = new Array<Error>();
-
-        componentInfos.forEach((componentInfo) => {
-            const componentIdentity = Identity.fromNameVersion(componentInfo.name, componentInfo.version);
-
-            if (componentIdentity === null) {
-                errors.push(error("The name or version of component is invalid. name should follow [\w\-\.]+ and version should be null/undefined/semver."));
-                return;
-            }
-
-            dictionary[componentIdentity.identity] = componentInfo;
-        });
-
-        return errors.length > 0 ? errors : null;
-    }
-
-    private static pushReferenceStack(identity: string, referenceStack: IDictionary<string>): void {
-        if (undefined !== referenceStack[identity]) {
-            throw error("{}: circle reference detected.", identity);
-        } else {
-            referenceStack[identity] = identity;
+            this.loadModule(path, respectLoadingMode);
         }
     }
 
-    private static popReferenceStack(identity: string, referenceStack: IDictionary<string>): void {
-        delete referenceStack[identity];
-    }
-
-    constructor(hostVersion?: string, throwIfComponentNotFound?: boolean) {
-        super(new VersionedDiDescriptorDictionary());
-        this.hostVersion = !String.isNullUndefinedOrWhitespace(hostVersion) ? hostVersion : "*";
-        this.throwIfComponentNotFound = utils.getEither(throwIfComponentNotFound, true);
-        this.set("module-manager", diExt.DiDescriptorConstructor.singleton(this));
-    }
-
-    public resolveComponentIdentity(componentIdentity: string): string {
-        const resolvedIdentity = this.loadComponentByIdentity(null, Identity.fromIdentityString(componentIdentity), {}, undefined);
-
-        return resolvedIdentity ? resolvedIdentity.identity : null;
-    }
-
-    public loadModules(folderPath: string): IDictionary<Array<Error>> {
-        if (String.isNullUndefinedOrWhitespace(folderPath)) {
-            throw error("folderPath must be a string containing the path to the folder.");
-        }
-
-        if (!fs.existsSync(folderPath)) {
-            return null;
-        }
-
-        const items = fs.readdirSync(folderPath);
-        const componentInfoDictionary: IDictionary<IComponentInfo> = {};
-        const errorDictionary: IDictionary<Array<Error>> = {};
-        const modules = new Array<IModule>();
-
-        items.forEach((itemName) => {
-            const modulePath = path.resolve(path.join(folderPath, itemName));
-
-            if (fs.statSync(modulePath).isFile()
-                && path.extname(modulePath).toUpperCase() !== ".JS") {
-                return;
-            }
-
-            const module = ModuleManager.loadModule(modulePath);
-
-            modules.push(module);
-
-            const moduleInfo = this.loadModuleInfo(module);
-
-            if (utils.isNullOrUndefined(moduleInfo)) {
-                // Write warning.
-                return;
-            }
-
-            const moduleIdentity = Identity.fromNameVersion(moduleInfo.name, moduleInfo.version);
-
-            if (moduleIdentity === null) {
-                errorDictionary[path.resolve(path.join(folderPath, itemName))] = [error("The name or version of the module is invalid. name should follow [\w\-\.]+ and version should be null/undefined/semver.")];
-                return;
-            }
-
-            if (!Array.isArray(moduleInfo.components)) {
-                // Write warning.
-                return;
-            }
-
-            const errors = ModuleManager.pushToComponentDictionary(componentInfoDictionary, moduleInfo.components);
-
-            if (errors !== null) {
-                errorDictionary[moduleIdentity.toString()] = errors;
-            }
-        });
-
-        const componentErrors = this.loadComponents(componentInfoDictionary);
-
-        if (componentErrors !== null) {
-            errorDictionary["@components"] = componentErrors;
-        }
-        modules.forEach((module) => this.initializeModule(module));
-
-        return Object.keys(errorDictionary).length > 0 ? errorDictionary : null;
-    }
-
-    public loadModule(modulePath: string): Array<Error> {
-        if (String.isNullUndefinedOrWhitespace(path)) {
-            throw error("path must be a string containing the path to the module.");
-        }
-
-        modulePath = path.resolve(modulePath);
-        fs.accessSync(modulePath);
-
-        const module = ModuleManager.loadModule(modulePath);
-        const moduleInfo = this.loadModuleInfo(module);
-
-        if (utils.isNullOrUndefined(moduleInfo)) {
-            // Write warning.
-            return;
-        }
-
-        const moduleIdentity = Identity.fromNameVersion(moduleInfo.name, moduleInfo.version);
-
-        if (moduleIdentity === null) {
-            return [error("The name or version of the module is invalid. name should follow [\w\-\.]+ and version should be null/undefined/semver.")];
-        }
-
-        if (!Array.isArray(moduleInfo.components)) {
-            // Write info: indicate the module doesn't have any components (possible it is a plugin).
-            return null;
-        }
-
-        const mergedErrors = new Array<Error>();
-        const componentInfoDictionary: IDictionary<IComponentInfo> = {};
-        let errors: Array<Error>;
-
-        errors = ModuleManager.pushToComponentDictionary(componentInfoDictionary, moduleInfo.components);
-
-        if (errors !== null) {
-            mergedErrors.push(...mergedErrors);
-        }
-
-        errors = this.loadComponents(componentInfoDictionary);
-        this.initializeModule(module);
-
-        if (errors !== null) {
-            mergedErrors.push(...errors);
-        }
-
-        return mergedErrors.length > 0 ? mergedErrors : null;
-    }
-
-    public registerComponents(componentInfos: Array<IComponentInfo>): Array<Error> {
+    public registerComponents(componentInfos: Array<IComponentInfo>): void {
         if (!Array.isArray(componentInfos)) {
-            throw error("componentInfo must be supplied.");
+            throw new Error("componentInfos must be an array of IComponentInfo.");
         }
 
-        const componentInfoDictionary: IDictionary<IComponentInfo> = {};
-        let errors = ModuleManager.pushToComponentDictionary(componentInfoDictionary, componentInfos);
-
-        if (errors && errors.length > 0) {
-            return errors;
-        }
-
-        return this.loadComponents(componentInfoDictionary);
-    }
-
-    public getInstance<T>(componentIdentityString: string, ...extraArgs: Array<any>): T {
-        const componentIdentity = Identity.fromIdentityString(componentIdentityString);
-
-        if (componentIdentity === null) {
-            throw error("componentIdentityString, '{}', is Invalid!", componentIdentityString);
-        }
-
-        const instance = super.getInstance<T>(componentIdentity.identity, ...extraArgs);
-
-        if (instance === undefined && this.throwIfComponentNotFound) {
-            throw error("Failed to get component: {}", componentIdentityString);
-        }
-
-        return instance;
-    }
-
-    public getComponent<T>(componentIdentityString: string, ...extraArgs: Array<any>): T {
-        return this.getInstance(componentIdentityString, ...extraArgs);
-    }
-
-    public readonly onHostVersionMismatch = (callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler => {
-        if (callback === undefined) {
-            return this.hostVersionMismatchEvent;
-        } else {
-            this.hostVersionMismatchEvent = callback;
-        }
-    }
-
-    public readonly onDepVersionMismatch = (callback?: DepVersionMismatchEventHandler): void | DepVersionMismatchEventHandler => {
-        if (callback === undefined) {
-            return this.depVersionMismatchEvent;
-        } else {
-            this.depVersionMismatchEvent = callback;
-        }
-    }
-
-    protected loadComponents(componentInfoDictionary: IDictionary<IComponentInfo>): Array<Error> {
-        const errors = new Array<Error>();
-
-        for (const componentIdentity in componentInfoDictionary) {
-            if (componentInfoDictionary.hasOwnProperty(componentIdentity)) {
-                try {
-                    this.loadComponent(componentInfoDictionary[componentIdentity], componentInfoDictionary);
-                } catch (exception) {
-                    errors.push(exception);
-                }
+        for (const componentInfo of componentInfos) {
+            if (componentInfo.singleton === true) {
+                this.container.set(componentInfo.name, createLazySingletonDiDescriptor(this, componentInfo.descriptor, componentInfo.deps));
+            } else {
+                this.container.set(componentInfo.name, createDedicationDiDescriptor(this, componentInfo.descriptor, componentInfo.deps));
             }
         }
-
-        return errors.length > 0 ? errors : null;
     }
 
-    protected loadComponentByIdentity(
-        parentComponentIdentity: Identity,
-        componentIdentity: Identity,
-        componentInfoDictionary: IDictionary<IComponentInfo>,
-        referenceStack?: IDictionary<string>): Identity {
-
-        // Try to find the dependency with the name + version identity in NOT-loaded components.
-        if (undefined !== componentInfoDictionary[componentIdentity.identity]) {
-            return this.loadComponent(componentInfoDictionary[componentIdentity.identity], componentInfoDictionary, referenceStack);
+    public async getComponentAsync<T extends IDisposable>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T> {
+        if (String.isEmptyOrWhitespace(componentIdentity)) {
+            throw new Error("componentIdentity cannot be null/undefined/empty.");
         }
 
-        // Try to find the dependency with the name + version identity in loaded components.
-        if (undefined !== this.get(componentIdentity.identity)) {
-            return componentIdentity;
+        const component = this.container.getDep<T>(componentIdentity, ...extraArgs);
+
+        if (component !== undefined) {
+            return component;
         }
 
-        // Try to find the dependency with the name identity in NOT-loaded components.
-        const matchedComponentIdentities = Identity.findByIdentityName(componentIdentity.name, Object.keys(componentInfoDictionary));
-
-        if (matchedComponentIdentities.length > 0) {
-            if (Function.isFunction(this.depVersionMismatchEvent)) {
-                if (!this.depVersionMismatchEvent(
-                    utils.isNullOrUndefined(parentComponentIdentity) ? undefined : parentComponentIdentity.identity,
-                    componentIdentity.identity)) {
-                    throw error("{}: dependency, '{}', is missing.", parentComponentIdentity.identity, componentIdentity.identity);
-                }
-            }
-
-            matchedComponentIdentities.forEach((identity) => this.loadComponent(componentInfoDictionary[identity], componentInfoDictionary, referenceStack));
-
-            return Identity.fromIdentityString(componentIdentity.name);
-        }
-
-        // Try to find the dependency with the name identity in loaded components.
-        if (undefined !== this.get(componentIdentity.name)) {
-            return Identity.fromIdentityString(componentIdentity.name);
-        }
-
-        return null;
+        return this.getComponentFromProxiesAsync<T>(null, componentIdentity, ...extraArgs);
     }
 
-    private initializeModule(module: IModule): void {
-        if (!Function.isFunction(module.initialize)) {
-            // Write Info.
-            return;
+    public onHostVersionMismatch(callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler {
+        if (callback === undefined) {
+            return this.hostVersionMismatchHandler;
+        } else if (callback === null) {
+            this.hostVersionMismatchHandler = null;
+        } else if (Function.isFunction(callback)) {
+            this.hostVersionMismatchHandler = callback;
+        } else {
+            throw new Error("Provided callback must be a function.");
         }
-
-        module.initialize(this);
     }
 
-    private loadModuleInfo(module: IModule): IModuleInfo {
+    private loadModule(path: string, respectLoadingMode?: boolean): IModule {
+        const module: IModule = require(path);
+
         if (!Function.isFunction(module.getModuleMetadata)) {
-            // Write warning.
-            return null;
+            throw new Error(`Invalid module "${path}": missing getModuleMetadata().`);
         }
 
         const moduleInfo = module.getModuleMetadata();
 
-        if (!utils.isNullOrUndefined(moduleInfo)
-            && this.hostVersion !== "*"
-            && !String.isNullUndefinedOrWhitespace(moduleInfo.hostVersion)
-            && moduleInfo.hostVersion !== "*"
-            && !semver.eq(this.hostVersion, moduleInfo.hostVersion)
-            && Function.isFunction(this.hostVersionMismatchEvent)) {
-            if (!this.hostVersionMismatchEvent(moduleInfo, this.hostVersion, moduleInfo.hostVersion)) {
-                return null;
+        this.moduleLoadingInfos.push({
+            location: path,
+            name: moduleInfo.name,
+            version: moduleInfo.version,
+            hostVersion: moduleInfo.hostVersion,
+            loadingMode: moduleInfo.loadingMode
+        });
+
+        if (respectLoadingMode === true && moduleInfo.loadingMode !== "Always") {
+            return;
+        }
+
+        if (!utils.isNullOrUndefined(moduleInfo.hostVersion)
+            && !String.isEmptyOrWhitespace(moduleInfo.hostVersion)
+            && !semver.gte(this.hostVersion, moduleInfo.hostVersion)) {
+            if (!Function.isFunction(this.hostVersionMismatchHandler)
+                || !this.hostVersionMismatchHandler(moduleInfo, this.hostVersion, moduleInfo.hostVersion)) {
+                throw new Error(
+                    `Invalid module "${path}": Expected host version: ${moduleInfo.hostVersion}. Current host version: ${this.hostVersion}`);
             }
         }
 
-        return moduleInfo;
+        if (moduleInfo.components) {
+            if (!Array.isArray(moduleInfo.components)) {
+                throw new Error(
+                    `Invalid module "${path}": ModuleMetadata.components must be an array of IComponentInfo.`);
+            }
+
+            this.registerComponents(moduleInfo.components);
+        }
+
+        return module;
     }
 
-    private loadComponent(componentInfo: IComponentInfo, componentInfoDictionary: IDictionary<IComponentInfo>, referenceStack?: IDictionary<string>): Identity {
-        const componentIdentity = Identity.fromNameVersion(componentInfo.name, componentInfo.version);
-
-        if (!Function.isFunction(componentInfo.descriptor)) {
-            throw error("{}: descriptor function must be supplied.", componentIdentity.identity);
+    private initializeModule(module: IModule): void {
+        if (Function.isFunction(module.initialize)) {
+            module.initialize(this);
         }
+    }
 
-        ModuleManager.pushReferenceStack(componentIdentity.identity, referenceStack = referenceStack || {});
+    private async getComponentFromProxiesAsync<T extends IDisposable>(
+        fromProxy: IObjectRemotingProxy,
+        componentIdentity: string,
+        ...extraArgs: Array<any>)
+        : Promise<T> {
+        const fromProxyId = fromProxy ? fromProxy.id : null;
 
-        if (Array.isNullUndefinedOrEmpty(componentInfo.deps)) {
-            componentInfo.deps = undefined;
-        } else if (!Array.isArray(componentInfo.deps)) {
-            throw error("{}: deps must be an array of dependency identity.", componentIdentity.identity);
-        }
-
-        if (componentInfo.deps !== undefined) {
-            for (let depIndex = 0; depIndex < componentInfo.deps.length; depIndex++) {
-                if (String.isNullUndefinedOrWhitespace(componentInfo.deps[depIndex])) {
-                    componentInfo.deps[depIndex] = undefined;
+        if (this.children) {
+            for (const child of this.children) {
+                if (fromProxyId === child.proxy.id) {
                     continue;
                 }
 
-                let depIdentity = Identity.fromIdentityString(componentInfo.deps[depIndex]);
+                const component = await child.proxy.requestAsync<T>(componentIdentity, ...extraArgs);
 
-                if (depIdentity === null) {
-                    throw error("{}: dependency identity, '{}', is invalid.", componentIdentity.identity, componentInfo.deps[depIndex]);
+                if (component) {
+                    return component;
                 }
-
-                depIdentity = this.loadComponentByIdentity(componentIdentity, depIdentity, componentInfoDictionary, referenceStack);
-
-                if (depIdentity === null) {
-                    throw error("{}: dependency, '{}', is missing.", componentIdentity.identity, componentInfo.deps[depIndex]);
-                }
-
-                componentInfo.deps[depIndex] = depIdentity.identity;
             }
         }
 
-        if (utils.getEither(componentInfo.singleton, false)) {
-            this.set(componentIdentity.identity, ComponentDescriptors.lazySingleton(componentIdentity.identity, componentInfo.descriptor, componentInfo.deps));
-        } else {
-            this.set(componentIdentity.identity, ComponentDescriptors.dedication(componentIdentity.identity, componentInfo.descriptor, componentInfo.deps));
+        if (this.parentProxy && this.parentProxy.id !== fromProxyId) {
+            return await this.parentProxy.requestAsync<T>(componentIdentity, ...extraArgs);
         }
 
-        delete componentInfoDictionary[componentIdentity.identity];
-        ModuleManager.popReferenceStack(componentIdentity.identity, referenceStack);
-
-        return componentIdentity;
+        return undefined;
     }
+
+    private onProxyResolvingAsync: Resolver =
+        async (proxy: IObjectRemotingProxy, name: string, ...extraArgs: Array<any>): Promise<IDisposable> => {
+            const dep = this.container.getDep<IDisposable>(name, ...extraArgs);
+
+            if (dep) {
+                return dep;
+            }
+
+            return await this.getComponentFromProxiesAsync(proxy, name, ...extraArgs);
+        }
+
+    private onModuleManagerMessageAsync: RequestHandler =
+        async (communicator: ICommunicator, path: string, content: IModuleManagerMessage): Promise<any> => {
+            switch (content.action) {
+                case ModuleManagerAction.loadModuleDirAsync:
+                    const loadDirMsg = <ILoadModuleDirAsyncMessage>content;
+                    await this.loadModuleDirAsync(loadDirMsg.content);
+                    break;
+
+                case ModuleManagerAction.loadModuleAsync:
+                    const loadModuleMsg = <ILoadModuleAsyncMessage>content;
+                    await this.loadModuleAsync(loadModuleMsg.content);
+                    break;
+
+                default:
+                    throw new Error(`Unknown ModuleManagerAction: ${content.action}`);
+            }
+        }
 }

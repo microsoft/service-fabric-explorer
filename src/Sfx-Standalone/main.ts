@@ -1,74 +1,70 @@
-// //-----------------------------------------------------------------------------
-// // Copyright (c) Microsoft Corporation.  All rights reserved.
-// // Licensed under the MIT License. See License file under the project root for license information.
-// //-----------------------------------------------------------------------------
-import { app, dialog, Menu, BrowserWindow } from "electron";
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+//-----------------------------------------------------------------------------
+import { app, Menu } from "electron";
 import * as uuidv5 from "uuid/v5";
 
-import { ILog } from "./@types/log";
-import { ISettings } from "./@types/settings";
 import { env, Platform } from "./utilities/env";
 import resolve, { local } from "./utilities/resolve";
 import { ModuleManager } from "./module-manager/module-manager";
-import { ModuleManagerHostAgent } from "./module-manager/module-manager-host";
-import { DiDescriptorConstructor } from "./utilities/di.ext";
 
-const moduleManager: IModuleManager = new ModuleManager(app.getVersion());
-
-(function loadBuiltInModules(): void {
-    const errors = moduleManager.loadModules(local("modules"));
-
-    if (Object.isObject(errors)) {
-        console.error("Failed to load built-in modules. Errors:");
-
-        for (const topic in errors) {
-            if (errors.hasOwnProperty(topic)) {
-                console.error(topic);
-                errors[topic].forEach((error) => console.error(error));
-            }
-        }
-
-        app.exit(1);
-    } else {
-        const hostAgent = new ModuleManagerHostAgent(moduleManager);
-
-        moduleManager.registerComponents([{
-            name: "module-manager-host-agent",
-            version: app.getVersion(),
-            singleton: true,
-            descriptor: DiDescriptorConstructor.singleton(hostAgent)
-        }]);
-    }
-})();
+// Initialize main module manager.
+global["sfxModuleManager"] = new ModuleManager(app.getVersion());
 
 app.setName("Service Fabric Explorer");
 
-app.on("ready", () => {
-    const log: ILog = moduleManager.getComponent("log");
+(async () => {
+    let startingUp: boolean = true;
 
-    if (env.platform === Platform.MacOs) {
-        const settings: ISettings = moduleManager.getComponent("settings");
+    // Load built-in modules.
+    await sfxModuleManager.loadModuleDirAsync(local("modules"));
+    const log = await sfxModuleManager.getComponentAsync("logging");
 
-        Menu.setApplicationMenu(
-            Menu.buildFromTemplate(
-                settings.get("defaultMenu/" + env.platform)));
-    }
+    app.on("ready", async () => {
+        log.writeInfo("'ready': Application starting up ...");
 
-    moduleManager.getComponent("prompt-connect-cluster",
-        (error, clusterUrl) => {
-            if (clusterUrl) {
-                global["TargetClusterUrl"] = clusterUrl;
+        if (env.platform === Platform.MacOs) {
+            const settings = await sfxModuleManager.getComponentAsync("settings");
 
-                const mainWindow: BrowserWindow = moduleManager.getComponent("browser-window", null, true, clusterUrl);
+            log.writeInfo("'ready': Initialize application menu for macOS.");
+            Menu.setApplicationMenu(
+                Menu.buildFromTemplate(
+                    settings.get("defaultMenu/" + env.platform)));
+        }
 
-                mainWindow.setMenuBarVisibility(false);
+        log.writeInfo("'ready': Starting up connect-cluster prompt.");
+        const prompt_connectCluster = await sfxModuleManager.getComponentAsync("prompt.connect-cluster");
+        const clusterUrl = await prompt_connectCluster.openAsync();
 
-                log.writeEvent("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
-                mainWindow.loadURL(resolve("sfx/index.html"));
-            }
-        });
+        if (clusterUrl) {
+            global["TargetClusterUrl"] = clusterUrl;
+            const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null, true, clusterUrl);
 
-    setTimeout(() => moduleManager.getComponent("update-service").update(), 1000); // Check upgrade after 1 sec.
-});
+            mainWindow.setMenuBarVisibility(false);
 
-app.on("window-all-closed", () => app.quit());
+            log.writeEvent("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
+            mainWindow.loadURL(resolve("sfx/index.html"));
+        } else {
+            log.writeInfo("'ready': No cluster url provided.");
+            log.writeInfo("'ready': app.quit().");
+
+            app.quit();
+            return;
+        }
+
+        setTimeout(async () => (await sfxModuleManager.getComponentAsync("update")).update(), 1000); // Check upgrade after 1 sec.
+        startingUp = false;
+        log.writeInfo("'ready': application startup finished.");
+    });
+
+    app.on("window-all-closed", () => {
+        if (startingUp) {
+            log.writeInfo("'window-all-closed': skip during application startup.");
+            return;
+        }
+
+        log.writeInfo("'window-all-closed': app.quit().");
+        app.quit();
+    });
+})();
