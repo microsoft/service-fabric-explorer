@@ -68,7 +68,7 @@ Here's a list of common IDE used.
       1. Open `src/Sfx`, `src/Sfx-Standalone` and `test/SfxTests` in VSCode with multiple-root workspce.
       2. Run following tasks orderly.
          * `clean-build` for Sfx
-         * `Clean-Build` for Sfx-Standalone
+         * `clean-build` for Sfx-Standalone
          * `clean-build` for SfxTests
    * Console
       1. Install Gulp globally on the machine.
@@ -81,7 +81,7 @@ Here's a list of common IDE used.
       ```
       3. [SFX Standalone] Navigate to `src/Sfx-Standalone` and run the following scripts.
       ```Shell
-      gulp Clean-Build
+      gulp clean-build
       ```
       4. [SFX Tests] Navigate to `test/SfxTests` and run the following scripts.
       ```Shell
