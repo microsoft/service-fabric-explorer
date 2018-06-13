@@ -43,16 +43,14 @@
     "typescript": "^2.9.1",
     "yargs": "10.0.3"
   },
-  "sfxDependencies": {
-    "electron-installer-debian": {
-      "version": "^0.7.1",
+  "publishDependencies": {
+    "electron-installer-linux": {
       "dependencyTypes": [
         "dev"
       ],
       "platform": "linux"
     },
     "electron-installer-zip": {
-      "version": "",
       "dependencyTypes": [
         "dev"
       ],
