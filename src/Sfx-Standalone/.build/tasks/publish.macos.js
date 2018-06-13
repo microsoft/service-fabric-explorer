@@ -28,12 +28,12 @@ function getZipName(arch) {
     return utils.format("{}-{}-{}.zip", buildInfos.targetExecutableName, buildInfos.buildNumber, arch);
 }
 
-gulp.task("publish:versioninfo-macos", ["pack:macos"],
+gulp.task("publish:versioninfo-macos",
     () => versioning.generateVersionInfo(
         Platform.MacOs,
         (baseUrl, arch) => utils.format("{}/{}", baseUrl, getZipName(arch))));
 
-gulp.task("publish:zip-macos-x64", ["pack:macos"],
+gulp.task("publish:zip-macos-x64",
     (callback) => {
         if (buildInfos.targets[Platform.MacOs].archs.indexOf(Architecture.X64) < 0) {
             log.info("Skipping", "zip-macos-64:", "No x64 architecture specified in buildinfos.");
@@ -55,6 +55,7 @@ gulp.task("publish:zip-macos-x64", ["pack:macos"],
 
 gulp.task("publish:macos",
     (callback) => runSequence(
-        "clean:publish",
+        "clean:all",
+        "pack:macos",
         ["publish:versioninfo-macos", "publish:zip-macos-x64"],
         callback));
