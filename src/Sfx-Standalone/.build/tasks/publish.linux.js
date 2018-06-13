@@ -73,12 +73,12 @@ function getDebOptions(arch) {
     };
 }
 
-gulp.task("publish:versioninfo-linux", ["pack:linux"],
+gulp.task("publish:versioninfo-linux",
     () => versioning.generateVersionInfo(
         Platform.Linux,
         (baseUrl, arch) => utils.format("{}/{}_{}_{}.deb", baseUrl, buildInfos.targetExecutableName, buildInfos.buildNumber, toDebArch(arch))));
 
-gulp.task("publish:deb-x86", ["pack:linux"],
+gulp.task("publish:deb-x86",
     (callback) => {
         const debBuilder = require('electron-installer-debian');
         const debOptions = getDebOptions(Architecture.X86);
@@ -86,7 +86,7 @@ gulp.task("publish:deb-x86", ["pack:linux"],
         debBuilder(debOptions, callback);
     });
 
-gulp.task("publish:deb-x64", ["pack:linux"],
+gulp.task("publish:deb-x64",
     (callback) => {
         const debBuilder = require('electron-installer-debian');
         const debOptions = getDebOptions(Architecture.X64);
@@ -96,6 +96,7 @@ gulp.task("publish:deb-x64", ["pack:linux"],
 
 gulp.task("publish:linux",
     (callback) => runSequence(
-        "clean:publish",
+        "clean:all",
+        "pack:linux",
         ["publish:versioninfo-linux", "publish:deb-x86", "publish:deb-x64"],
         callback));

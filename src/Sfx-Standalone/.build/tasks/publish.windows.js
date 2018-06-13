@@ -21,12 +21,12 @@ const Platform = common.Platform;
 const buildInfos = config.buildInfos;
 const utils = common.utils;
 
-gulp.task("publish:versioninfo-windows", ["pack:windows"],
+gulp.task("publish:versioninfo-windows",
     () => versioning.generateVersionInfo(
         Platform.Windows,
         (baseUrl, arch) => utils.format("{}/setup-{}.{}.msi", baseUrl, buildInfos.buildNumber, arch)));
 
-gulp.task("publish:copy-msi.wxs", ["pack:windows"],
+gulp.task("publish:copy-msi.wxs",
     () => gulp.src(common.formGlobs("./.build/msi.wxs")).pipe(gulp.dest(buildInfos.paths.buildDir)));
 
 gulp.task("publish:update-wix-version", ["publish:copy-msi.wxs"],
@@ -67,6 +67,7 @@ gulp.task("publish:msi", ["publish:update-wix-version"],
 
 gulp.task("publish:windows",
     (callback) => runSequence(
-        "clean:publish",
+        "clean:all",
+        "pack:windows",
         ["publish:versioninfo-windows", "publish:msi"],
         callback));
