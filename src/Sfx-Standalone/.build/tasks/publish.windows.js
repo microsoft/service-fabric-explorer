@@ -40,7 +40,7 @@ gulp.task("publish:update-wix-version", ["publish:copy-msi.wxs"],
             { encoding: "utf8" });
     });
 
-gulp.task("publish:msi", ["publish:update-wix-version"],
+gulp.task("publish:msi", ["publish:update-wix-version", "publish:prepare"],
     (gcallback) => {
         const packDirName = utils.format("{}-{}-{}", buildInfos.targetExecutableName, pack.toPackagerPlatform(Platform.Windows), pack.toPackagerArch(Architecture.X86));
         const packDirPath = path.resolve(path.join(buildInfos.paths.buildDir, packDirName));
@@ -67,7 +67,6 @@ gulp.task("publish:msi", ["publish:update-wix-version"],
 
 gulp.task("publish:windows",
     (callback) => runSequence(
-        "clean:all",
         "pack:windows",
         ["publish:versioninfo-windows", "publish:msi"],
         callback));

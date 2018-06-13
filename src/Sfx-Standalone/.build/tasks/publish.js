@@ -8,6 +8,7 @@
 const common = require("../common");
 
 const gulp = require("gulp");
+const runSequence = require("run-sequence");
 
 const Platform = common.Platform;
 
@@ -26,8 +27,13 @@ function normalizePlatform(platform) {
     }
 }
 
+require("./publish.prepare");
 require("./publish.windows");
 require("./publish.linux");
 require("./publish.macos");
 
-gulp.task("publish", ["publish:" + normalizePlatform(process.platform)]);
+gulp.task("publish", ["clean:publish"],
+    (callback) =>
+        runSequence(
+            "publish:" + normalizePlatform(process.platform),
+            callback));
