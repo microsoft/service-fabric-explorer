@@ -33,7 +33,7 @@ To develop Service Fabric Explorer, the following components are required.
 
 * Git: https://git-scm.com/
 * Python 2: https://www.python.org/
-* Node.js (LTS is preferred): https://nodejs.org/
+* Node.js (Current is preferred): https://nodejs.org/
 * C++ Compiler
    * Windows: Visual C++ https://www.visualstudio.com/
    * Ubuntu: `sudo apt-get install -y build-essential`
@@ -51,8 +51,7 @@ Here's a list of common IDE used.
 2. Install project dependencies: *This can be done inside VSCode or use a console window.*
    1. [SFX] Navigate to `src/Sfx` and run the following scripts.
    ```Shell
-   npm install
-   npm run bower-install
+   npm install   
    ```
    2. [SFX Standalone] Navigate to `src/Sfx-Standalone` and run the following scripts.
    ```Shell
@@ -60,8 +59,7 @@ Here's a list of common IDE used.
    ```
    3. [SFX Tests] Navigate to `test/SfxTests` and run the following scripts.
    ```Shell
-   npm install
-   npm run bower-install
+   npm install   
    ```
 3. Build projects
    * VSCode
