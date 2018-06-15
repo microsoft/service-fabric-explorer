@@ -18,5 +18,3 @@ export function getIconPath(): string {
             return local("../icons/icon128x128.png");
     }
 }
-
-export const appCodeName: string = require("../package.json").name;

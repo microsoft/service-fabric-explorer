@@ -12,7 +12,6 @@ import * as fs from "fs";
 import * as utils from "../utilities/utils";
 import { local } from "../utilities/resolve";
 import * as fileSystem from "../utilities/fileSystem";
-import { appCodeName } from "../utilities/appUtils";
 import { electron } from "../utilities/electron-adapter";
 
 class Settings implements ISettings {
@@ -143,22 +142,14 @@ class FileSettings extends Settings {
 
 class SettingsService implements ISettingsService {
 
-    private readonly appDir: string;
-
     private readonly defaultSettings: ISettings;
 
-    private readonly appName: string;
-
-    private readonly settingsDir: string;
+    private readonly userDataDir: string;
 
     constructor() {
-        let app = electron.app || electron.remote.app;
+        this.userDataDir = electron.app.getPath("userData");
 
-        this.appDir = app.getAppPath();
-        this.appName = appCodeName;
-        this.settingsDir = path.join(app.getPath("appData"), this.appName);
-
-        fileSystem.ensureDirExists(this.settingsDir);
+        fileSystem.ensureDirExists(this.userDataDir);
 
         this.defaultSettings = this.open("settings");
     }
@@ -185,7 +176,7 @@ class SettingsService implements ISettingsService {
         if (parentSettings.readonly) {
             // if the last settings doesn't allow writing,
             // create a writable settings file in appData folder to wrap the readonly settings.
-            parentSettings = new FileSettings(path.join(this.settingsDir, names[names.length - 1] + ".json"), false, parentSettings);
+            parentSettings = new FileSettings(path.join(this.userDataDir, names[names.length - 1] + ".json"), false, parentSettings);
         }
 
         return parentSettings;
@@ -199,7 +190,7 @@ class SettingsService implements ISettingsService {
         let settingsPath = local(name + ".json", true);
 
         if (!fs.existsSync(settingsPath)) {
-            settingsPath = path.join(this.settingsDir, name + ".json");
+            settingsPath = path.join(this.userDataDir, name + ".json");
         }
 
         return new FileSettings(settingsPath, null, parentSettings);
