@@ -1,23 +1,24 @@
 /// <binding BeforeBuild="build" Clean="clean" ProjectOpened="watch" />
 
-var gulp = require("gulp");
-var merge = require("merge2");
-var plugins = require("gulp-load-plugins")({
+let gulp = require("gulp");
+let merge = require("merge2");
+let plugins = require("gulp-load-plugins")({
     pattern: ["*", "!bower", "!typescript", "!tslint"],
     camelize: true,
     lazy: true
 });
+let libConfiguration = require("./build/lib.json");
 
 // To get production bits, right click project, choose publish.
 // This env variable will be set through prepublish command defined in project.json
-var isProductionEnv = plugins.yargs.argv.production === undefined ? false : true;
+let isProductionEnv = plugins.yargs.argv.production === undefined ? false : true;
 
 //-----------------------------------------------------------------------------
 // Paths
 //-----------------------------------------------------------------------------
 
 // Base paths
-var paths = {
+let paths = {
     webroot: "wwwroot/"
 };
 
@@ -121,11 +122,11 @@ gulp.task("build:versionInfo", function () {
 });
 
 gulp.task("build:lib-js", function () {
-    console.log("Bower ordered javascripts:");
-    console.log(plugins.wiredep().js);
+    console.log("Lib ordered javascripts:");
+    console.log(libConfiguration.js);
 
     // Create lib.min.js
-    return gulp.src(plugins.wiredep().js, { base: "bower_components" })
+    return gulp.src(libConfiguration.js)
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(plugins.concat(paths.libs_scripts.target))
         .pipe(plugins.if(isProductionEnv, plugins.uglify({ preserveComments: "license" })))
@@ -134,11 +135,11 @@ gulp.task("build:lib-js", function () {
 });
 
 gulp.task("build:lib-css", function () {
-    console.log("Bower styles:");
-    console.log(plugins.wiredep().css);
+    console.log("Lib styles:");
+    console.log(libConfiguration.css);
 
     // Create lib.min.css
-    return gulp.src(plugins.wiredep().css)
+    return gulp.src(libConfiguration.css)
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(plugins.concat(paths.libs_styles.target))
         .pipe(plugins.cleanCss())
@@ -171,12 +172,12 @@ gulp.task("build:tslint", function () {
 gulp.task("build:js", ["build:templates", "build:versionInfo", "build:tslint"], function () {
     console.log("isProductionEnvironment = " + isProductionEnv);
 
-    var tsProject = plugins.typescript.createProject("App/Scripts/tsconfig.json", {
+    let tsProject = plugins.typescript.createProject("App/Scripts/tsconfig.json", {
         outFile: paths.scripts.target
     });
 
     // tsProject.src() retrieves all .ts files in the folder which contains tsconfig.json
-    var result = tsProject.src()
+    let result = tsProject.src()
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(tsProject());
 
@@ -190,7 +191,7 @@ gulp.task("build:js", ["build:templates", "build:versionInfo", "build:tslint"], 
 
 // Compile SASS, concat/minify into app.min.css, create sourcemap to help debugging
 gulp.task("build:css", function () {
-    var compileTheme = function (theme) {
+    let compileTheme = function (theme) {
         return gulp.src(theme.src)
             .pipe(plugins.plumber({
                 errorHandler: function (err) {
