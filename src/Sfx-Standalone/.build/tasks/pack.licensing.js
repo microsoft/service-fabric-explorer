@@ -283,6 +283,7 @@ function generateThirdPartyNotice(deps, noticeFilePath) {
         fs.appendFileSync(noticeFd, "This project incorporates components from the projects listed below. The original copyright notices and the licenses under which Microsoft received such components are set forth below. Microsoft reserves all rights not expressly granted herein, whether by implication, estoppel or otherwise.\r\n");
         fs.appendFileSync(noticeFd, "\r\n");
 
+        // Remove the duplications
         deps = deps.filter((value, index, self) => self.findIndex((item) => item.name === value.name) === index);
         deps.forEach((dep, depIndex) => {
             fs.appendFileSync(noticeFd, utils.format("{}.\t{} ({})\r\n", depIndex + 1, dep.name, dep.homepage));
@@ -299,7 +300,7 @@ function generateThirdPartyNotice(deps, noticeFilePath) {
         }
     }
     catch (e) {
-        log.error(e);
+        log.error("Generating third party notices files failed.", e);
     } finally {
         fs.closeSync(noticeFd);
         log.info("Finished generation of the third party notices files:", buildInfos.licensing.thirdPartyNoticesFileName, ".");
