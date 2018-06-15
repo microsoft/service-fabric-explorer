@@ -9,11 +9,10 @@ import * as Url from "url";
 
 import "../../utilities/utils";
 import resolve from "../../utilities/resolve";
-import error from "../../utilities/errorUtil";
 
 export function handle(window: BrowserWindow, targetHostName: string) {
-    if (String.isNullUndefinedOrWhitespace(targetHostName)) {
-        throw error("targetHostName must be supplied.");
+    if (String.isEmptyOrWhitespace(targetHostName)) {
+        throw new Error("targetHostName must be supplied.");
     }
 
     targetHostName = Url.parse(targetHostName).hostname;

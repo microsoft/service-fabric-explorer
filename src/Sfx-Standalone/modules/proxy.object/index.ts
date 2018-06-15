@@ -1,0 +1,43 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+//-----------------------------------------------------------------------------
+
+import { IModuleInfo, IModuleManager } from "sfx.module-manager";
+import { ICommunicator, IRoutePattern } from "sfx.remoting";
+
+import { electron } from "../../utilities/electron-adapter";
+import { ObjectRemotingProxy } from "./proxy.object";
+import * as utils from "../../utilities/utils";
+import * as util from "util";
+
+export function getModuleMetadata(): IModuleInfo {
+    return {
+        name: "remoting",
+        version: electron.app.getVersion(),
+        loadingMode: "Always",
+        components: [
+            {
+                name: "remoting.proxy",
+                version: electron.app.getVersion(),
+                deps: ["module-manager"],
+                descriptor:
+                    async (moduleManager: IModuleManager, pattern: string | RegExp, communicator: ICommunicator, ownCommunicator?: boolean) => {
+                        let routePattern: IRoutePattern;
+
+                        if (utils.isNullOrUndefined(pattern)) {
+                            routePattern = await moduleManager.getComponentAsync("remoting.pattern.string", "proxy.object");
+                        } else if (String.isString(pattern)) {
+                            routePattern = await moduleManager.getComponentAsync("remoting.pattern.string", pattern);
+                        } else if (util.isRegExp(pattern)) {
+                            routePattern = await moduleManager.getComponentAsync("remoting.pattern.regex", pattern);
+                        } else {
+                            throw new Error("The type of pattern is not suppored.");
+                        }
+
+                        return ObjectRemotingProxy.create(routePattern, communicator, ownCommunicator);
+                    }
+            }
+        ]
+    };
+}

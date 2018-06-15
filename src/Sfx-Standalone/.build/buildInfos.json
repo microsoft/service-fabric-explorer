@@ -1,0 +1,54 @@
+{
+    "productName": "Service Fabric Explorer",
+    "description": "Microsoft Service Fabric Explorer.",
+    "copyright": "Microsoft Corporation",
+    "targetExecutableName": "sfxstandalone",
+    "appId": "com.microsoft.servicefabric.explorer",
+    "appCategory": "Utilities",
+    "buildNumber": "*",
+    "licensing": {
+        "thirdPartyNoticesFileName": "ThirdPartyNotices.txt",
+        "packageLicenses": {
+            "adal-angular": "Apache-2.0",
+            "jquery-ui": "MIT",
+            "lodash": "MIT",
+            "moment": "MIT"
+        }
+    },
+    "updateInfos": {
+        "baseUrl": "https://aka.ms/sfx-update",
+        "packageInfos": {
+            "windows": {
+                "x86": ""
+            },
+            "linux": "https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-visualizing-your-cluster"
+        }
+    },
+    "targets": {
+        "windows": {
+            "archs": [
+                "x86"
+            ]
+        },
+        "linux": {
+            "archs": [
+                "x86",
+                "x64"
+            ]
+        },
+        "macos": {
+            "archs": [
+                "x64"
+            ]
+        }
+    },
+    "paths": {
+        "buildDir": "./build",
+        "publishDir": "./publish",
+        "appDir": "*",
+        "sfxDir": "*",
+        "buildResDir": "*",
+        "modulesDir": "./modules",
+        "sdkDir": "*"
+    }
+}

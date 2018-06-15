@@ -2,6 +2,8 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+import { IDictionary } from "sfx.common";
+import { IModuleManager } from "sfx.module-manager";
 
 import { BrowserWindow, Certificate } from "electron";
 import * as url from "url";
@@ -14,11 +16,16 @@ import { env, Platform } from "../env";
 import { local } from "../resolve";
 import * as utils from "../utils";
 
-function showCertSelectPrompt(
+interface ICertSelectionPromptResults {
+    selectedCert: Certificate;
+    certsImported: boolean;
+}
+
+async function showCertSelectPromptAsync(
     moduleManager: IModuleManager,
     window: BrowserWindow,
-    certificateList: Array<Certificate>,
-    callback: (selectedCert: Certificate, certsImported: boolean) => void): void {
+    certificateList: Array<Certificate>)
+    : Promise<ICertSelectionPromptResults> {
 
     let certSelectionButtons = new Array<string>();
     let importCertsResponse = -1;
@@ -31,18 +38,27 @@ function showCertSelectPrompt(
         importCertsResponse = certSelectionButtons.push("Import more certificates ...") - 1;
     }
 
-    moduleManager.getComponent("prompt-select-certificate",
-        window.id,
-        certificateList,
-        (error, results) => {
-            if (utils.isNullOrUndefined(results)) {
-                callback(null, false);
-            } else if (results.selectedCertificate) {
-                callback(results.selectedCertificate, false);
-            } else {
-                callback(null, results.certificatesImported);
-            }
-        });
+    const prompt =
+        await moduleManager.getComponentAsync(
+            "prompt.select-certificate",
+            window.id,
+            certificateList);
+
+    const promptResults = await prompt.openAsync();
+    const results: ICertSelectionPromptResults = {
+        selectedCert: null,
+        certsImported: false
+    };
+
+    if (!utils.isNullOrUndefined(promptResults)) {
+        if (promptResults.selectedCertificate) {
+            results.selectedCert = promptResults.selectedCertificate;
+        } else {
+            results.certsImported = promptResults.certificatesImported;
+        }
+    }
+
+    return results;
 }
 
 interface ICertHandlingRecord {
@@ -54,7 +70,7 @@ function handleGenerally(moduleManager: IModuleManager, window: BrowserWindow): 
     let clientCertManager: IDictionary<ICertHandlingRecord> = {};
 
     window.webContents.on("select-client-certificate",
-        (event, urlString, certificateList, selectCertificate) => {
+        async (event, urlString, certificateList, selectCertificate) => {
             event.preventDefault();
 
             let certIdentifier: string = url.parse(urlString).hostname;
@@ -77,22 +93,20 @@ function handleGenerally(moduleManager: IModuleManager, window: BrowserWindow): 
 
                 certHandlingRecord.callbacks.push(selectCertificate);
 
-                showCertSelectPrompt(
+                const results = await showCertSelectPromptAsync(
                     moduleManager,
                     window,
-                    certificateList,
-                    (selectedCert, certsImported) => {
-                        if (selectedCert) {
-                            certHandlingRecord.callbacks.forEach((selectCertificateFunc) => selectCertificateFunc(selectedCert));
+                    certificateList);
 
-                            delete clientCertManager[certIdentifier];
-                        } else if (certsImported) {
-                            certHandlingRecord.handling = false;
-                            window.reload();
-                        } else {
-                            electron.app.exit();
-                        }
-                    });
+                if (results.selectedCert) {
+                    certHandlingRecord.callbacks.forEach((selectCertificateFunc) => selectCertificateFunc(results.selectedCert));
+                    delete clientCertManager[certIdentifier];
+                } else if (results.certsImported) {
+                    certHandlingRecord.handling = false;
+                    window.reload();
+                } else {
+                    electron.app.exit();
+                }
             }
         });
 }

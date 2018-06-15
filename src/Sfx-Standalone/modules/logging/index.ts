@@ -3,33 +3,35 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ISettings } from "../../@types/settings";
-import { ILoggerSettings } from "../../@types/log";
-import { Log } from "./log";
-import ConsoleLogger from "./console";
-import AppInsightsLogger from "./app-insights";
+import { IModuleInfo, IModuleManager } from "sfx.module-manager";
+import { ISettings } from "sfx.settings";
+import { ILoggerSettings } from "sfx.logging";
+
+import * as logging from "./log";
+import ConsoleLogger from "./loggers/console";
+import AppInsightsLogger from "./loggers/app-insights";
+import { electron } from "../../utilities/electron-adapter";
 
 export function getModuleMetadata(): IModuleInfo {
     return {
-        name: "log",
-        version: "1.0.0",
+        name: "logging",
+        version: electron.app.getVersion(),
         components: [
             {
-                name: "log",
-                version: "1.0.0",
-                descriptor: (moduleManager: IModuleManager, settings: ISettings) => new Log(moduleManager, settings.get("logging")),
+                name: "logging",
+                version: electron.app.getVersion(),
+                descriptor: async (settings: ISettings) => await logging.createAsync(settings.get("logging")),
                 singleton: true,
-                deps: ["module-manager", "settings"]
+                deps: ["settings"]
             },
             {
-                name: "loggers.console",
-                version: "1.0.0",
+                name: "logging.logger.console",
+                version: electron.app.getVersion(),
                 descriptor: (loggerSettings: ILoggerSettings, targetConsole: Console) => new ConsoleLogger(loggerSettings, targetConsole)
             },
-            ,
             {
-                name: "loggers.app-insights",
-                version: "1.0.0",
+                name: "logging.logger.app-insights",
+                version: electron.app.getVersion(),
                 descriptor: (loggerSettings: ILoggerSettings) => new AppInsightsLogger(loggerSettings)
             }
         ]

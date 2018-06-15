@@ -2,28 +2,29 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+import { IHandlerChainBuilder, IDictionary } from "sfx.common";
+import { IModuleInfo } from "sfx.module-manager";
+
+import {
+    HttpProtocol,
+    IHttpClient,
+    IResponseHandlerContructor,
+    IRequestProcessorConstructor,
+    ResponseHandler,
+    RequestProcessor,
+    IRequestOptions
+} from "sfx.http";
+
+import { ILog } from "sfx.logging";
 
 import * as http from "http";
 import * as https from "https";
 import * as url from "url";
 import * as fs from "fs";
-import * as path from "path";
 
-import { ILog } from "../@types/log";
-import {
-    ResponseHandler,
-    HttpContentType,
-    IHttpClient,
-    HttpProtocol,
-    RequestProcessor,
-    IResponseHandlerContructor,
-    IRequestProcessorConstructor,
-    IRequestOptions,
-    HttpMethod
-} from "../@types/http";
 import * as utils from "../utilities/utils";
-import error from "../utilities/errorUtil";
 import { HandlerChainBuilder } from "../utilities/handlerChainBuilder";
+import { electron } from "../utilities/electron-adapter";
 
 enum HttpProtocols {
     any = "*",
@@ -62,7 +63,7 @@ class HttpClientBuilder {
             protocol = undefined;
         }
 
-        this.protocol = utils.getEither(protocol, HttpProtocols.any);
+        this.protocol = utils.getValue(protocol, HttpProtocols.any);
     }
 
     public build(log: ILog): IHttpClient {
@@ -75,7 +76,7 @@ class HttpClientBuilder {
 
     public configureHeader(name: string, values: string | Array<string>): HttpClientBuilder {
         if (!String.isString(name) || name.trim() === "") {
-            throw error("name must not be null/undefined or whitespaces.");
+            throw new Error("name must not be null/undefined or whitespaces.");
         }
 
         if (utils.isNullOrUndefined(values)) {
@@ -129,7 +130,7 @@ class HttpClientBuilder {
                     request.setHeader("Content-Length", Buffer.byteLength(jsonBody));
                     request.write(jsonBody);
                 } else if (!utils.isNullOrUndefined(data)) {
-                    throw error("Header Content-Type is missing in the request but the data is supplied.");
+                    throw new Error("Header Content-Type is missing in the request but the data is supplied.");
                 }
 
                 if (Function.isFunction(nextHandler)) {
@@ -144,7 +145,7 @@ export abstract class ResponseHandlerHelper {
 
     public static handleJsonResponse<TJson>(callback: (error, json: TJson) => void): ResponseHandler {
         if (!Function.isFunction(callback)) {
-            throw error("callback function must be supplied.");
+            throw new Error("callback function must be supplied.");
         }
 
         return (client, log, requestOptions, requestData, response, exception) => {
@@ -158,7 +159,7 @@ export abstract class ResponseHandlerHelper {
                         const contentDisposition = response.headers["content-disposition"];
 
                         if (!ResponseHandlerHelper.regex_filename_json.test(contentDisposition)) {
-                            callback(error("Unable to handle non-json response."), null);
+                            callback(new Error("Unable to handle non-json response."), null);
                         }
 
                         log.writeVerbose("Treat Content-Type: {} as JSON since Content-Disposition header indicates JSON extention.", contentType);
@@ -178,14 +179,14 @@ export abstract class ResponseHandlerHelper {
                     return;
                 }
             } else {
-                callback(error("Response status code, {}, cannot be handled.", response.statusCode), null);
+                callback(new Error(`Response status code, ${response.statusCode}, cannot be handled.`), null);
             }
         };
     }
 
     public static saveToFile(file: string | number, autoClose: boolean, callback: (error) => void): ResponseHandler {
         if (!String.isString(file) && !Number.isNumber(file)) {
-            throw error("file must be either the path of the file or the fd");
+            throw new Error("file must be either the path of the file or the fd");
         }
 
         return (client, log, requestOptions, requestData, response, exception) => {
@@ -231,7 +232,7 @@ export class HttpClient implements IHttpClient {
         responseHandler: ResponseHandler) {
 
         if (!Object.isObject(log)) {
-            throw error("log must be supplied.");
+            throw new Error("log must be supplied.");
         }
 
         if (String.isString(protocol) && protocol.trim() === "") {
@@ -239,7 +240,7 @@ export class HttpClient implements IHttpClient {
         }
 
         this.log = log;
-        this.protocol = utils.getEither(protocol, HttpProtocols.any);
+        this.protocol = utils.getValue(protocol, HttpProtocols.any);
         this.defaultHeadersJSON = undefined;
 
         if (!utils.isNullOrUndefined(defaultHeaders)) {
@@ -250,7 +251,7 @@ export class HttpClient implements IHttpClient {
         if (utils.isNullOrUndefined(requestProcessor)) {
             this.requestProcessor = (client, requestOptions, requestData, request) => request.end();
         } else if (!Function.isFunction(requestProcessor)) {
-            throw error("requestProcessor must be a function.");
+            throw new Error("requestProcessor must be a function.");
         } else {
             this.requestProcessor = requestProcessor;
         }
@@ -260,7 +261,7 @@ export class HttpClient implements IHttpClient {
             this.responseHandler =
                 (client, log, requestOptions, requestData, response, error, callback) => callback(client, log, requestOptions, requestData, response, error, callback);
         } else if (!Function.isFunction(responseHandler)) {
-            throw error("responseHandler must be a function.");
+            throw new Error("responseHandler must be a function.");
         } else {
             this.responseHandler = responseHandler;
         }
@@ -318,20 +319,20 @@ export class HttpClient implements IHttpClient {
 
     public request(requestOptions: IRequestOptions, data: any, callback?: ResponseHandler): void {
         if (!Object.isObject(requestOptions)) {
-            throw error("requestOptions must be supplied.");
+            throw new Error("requestOptions must be supplied.");
         }
 
         if (!String.isString(requestOptions.url)) {
-            throw error("requestOptions.url must be supplied.");
+            throw new Error("requestOptions.url must be supplied.");
         }
 
         if (!String.isString(requestOptions.method) || requestOptions.method.trim() === "") {
-            throw error("requestOptions.method must be supplied.");
+            throw new Error("requestOptions.method must be supplied.");
         }
 
         if (!utils.isNullOrUndefined(data)
             && (requestOptions.method === HttpMethods.get || requestOptions.method === HttpMethods.delete)) {
-            throw error("For HTTP method, GET and DELETE, data cannot be supplied.");
+            throw new Error("For HTTP method, GET and DELETE, data cannot be supplied.");
         }
 
         let headers: IDictionary<string | Array<string>> = undefined;
@@ -367,13 +368,12 @@ export class HttpClient implements IHttpClient {
         }
 
         try {
-
             if (protocol === "http:" || protocol === "http") {
                 return http.request(options, (res) => callback(null, res));
             } else if (protocol === "https:" || protocol === "https") {
                 return https.request(options, (res) => callback(null, res));
             } else {
-                throw error("unsupported protocol: {}", protocol);
+                throw new Error(`unsupported protocol: ${protocol}`);
             }
         } catch (exception) {
             this.log.writeException(exception);
@@ -386,16 +386,11 @@ export class HttpClient implements IHttpClient {
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "http",
-        version: "1.0.0",
+        version: electron.app.getVersion(),
         components: [
             {
-                name: "https-client-builder",
-                version: "1.0.0",
-                descriptor: (protocol?: HttpProtocol) => new HttpClientBuilder(protocol),
-            },
-            {
-                name: "http-client",
-                version: "1.0.0",
+                name: "http.http-client",
+                version: electron.app.getVersion(),
                 descriptor: (log: ILog) => {
                     const httpClientBuilder = new HttpClientBuilder(HttpProtocols.any);
 
@@ -405,11 +400,11 @@ export function getModuleMetadata(): IModuleInfo {
 
                     return httpClientBuilder.build(log);
                 },
-                deps: ["log"]
+                deps: ["logging"]
             },
             {
-                name: "https-client",
-                version: "1.0.0",
+                name: "http.https-client",
+                version: electron.app.getVersion(),
                 descriptor: (log: ILog) => {
                     const httpClientBuilder = new HttpClientBuilder(HttpProtocols.https);
 
@@ -419,7 +414,7 @@ export function getModuleMetadata(): IModuleInfo {
 
                     return httpClientBuilder.build(log);
                 },
-                deps: ["log"]
+                deps: ["logging"]
             }
         ]
     };

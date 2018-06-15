@@ -3,16 +3,22 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { dialog, BrowserWindow, app, BrowserWindowConstructorOptions } from "electron";
+import { IDictionary } from "sfx.common";
+import { IModuleManager } from "sfx.module-manager";
+
+import { dialog, BrowserWindow, app, BrowserWindowConstructorOptions, ipcMain } from "electron";
 import * as url from "url";
+import * as uuidv5 from "uuid/v5";
 
 import { env, Platform } from "../../utilities/env";
 import * as authCert from "../../utilities/auth/cert";
 import * as authAad from "../../utilities/auth/aad";
 import * as appUtils from "../../utilities/appUtils";
 import * as utils from "../../utilities/utils";
-import error from "../../utilities/errorUtil";
 import { local } from "../../utilities/resolve";
+import * as mmutils from "../../module-manager/utils";
+
+const UuidNamespace = "614e2e95-a80d-4ee5-9fd5-fb970b4b01a3";
 
 function handleSslCert(window: BrowserWindow): void {
     let trustedCertManager: IDictionary<boolean> = {};
@@ -86,11 +92,17 @@ function handleZoom(window: BrowserWindow) {
         });
 }
 
-export default function createBrowserWindow(moduleManager: IModuleManager, options?: BrowserWindowConstructorOptions, handleAuth?: boolean, aadTargetHostName?: string): BrowserWindow {
-    handleAuth = utils.getEither(handleAuth, false);
+export default async function createBrowserWindowAsync(
+    moduleManager: IModuleManager,
+    options?: BrowserWindowConstructorOptions,
+    handleAuth?: boolean,
+    aadTargetHostName?: string)
+    : Promise<BrowserWindow> {
 
-    if (handleAuth && String.isNullUndefinedOrWhitespace(aadTargetHostName)) {
-        throw error("if auth handling is required, aadTargetHostName must be supplied.");
+    handleAuth = utils.getValue(handleAuth, false);
+
+    if (handleAuth && String.isEmptyOrWhitespace(aadTargetHostName)) {
+        throw new Error("if auth handling is required, aadTargetHostName must be supplied.");
     }
 
     const windowOptions: BrowserWindowConstructorOptions = {
@@ -99,7 +111,8 @@ export default function createBrowserWindow(moduleManager: IModuleManager, optio
         show: false,
         icon: appUtils.getIconPath(),
         webPreferences: {
-            preload: local("./preload.js", false)
+            preload: local("./preload.js", false),
+            nodeIntegration: true
         }
     };
 
@@ -112,9 +125,13 @@ export default function createBrowserWindow(moduleManager: IModuleManager, optio
     }
 
     const window = new BrowserWindow(windowOptions);
+    const hostName = uuidv5(window.id.toString(), UuidNamespace);
+
+    ipcMain.once("request-module-manager-constructor-options",
+        (event: Electron.Event) => event.returnValue = mmutils.generateModuleManagerConstructorOptions(moduleManager));
 
     window.on("page-title-updated", (event, title) => event.preventDefault());
-    window.setTitle(String.format("{} - {}", window.getTitle(), app.getVersion()));
+    window.setTitle(`${window.getTitle()} - ${app.getVersion()}`);
 
     handleSslCert(window);
     handleNewWindow(window);
@@ -128,7 +145,10 @@ export default function createBrowserWindow(moduleManager: IModuleManager, optio
         authAad.handle(window, aadTargetHostName);
     }
 
-    window.on("ready-to-show", () => window.show());
+    await moduleManager.newHostAsync(hostName, await moduleManager.getComponentAsync("ipc.communicator", window.webContents));
+    
+    window.once("closed", async () => await moduleManager.destroyHostAsync(hostName));
+    window.once("ready-to-show", () => window.show());
 
     return window;
 }

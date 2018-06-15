@@ -7,11 +7,10 @@ import * as path from "path";
 import * as fs from "fs";
 
 import "./utils";
-import error from "./errorUtil";
 
 export function ensureDirExists(dirname: string): void {
     if (!String.isString(dirname)) {
-        throw error("dirname should be a string.");
+        throw new Error("dirname should be a string.");
     }
 
     dirname = path.resolve(dirname);
