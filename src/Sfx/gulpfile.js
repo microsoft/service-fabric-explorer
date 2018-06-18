@@ -7,7 +7,7 @@ let plugins = require("gulp-load-plugins")({
     camelize: true,
     lazy: true
 });
-let libConfiguration = require("./build/lib.json");
+let libConfiguration = require("./lib.json");
 
 // To get production bits, right click project, choose publish.
 // This env variable will be set through prepublish command defined in project.json
