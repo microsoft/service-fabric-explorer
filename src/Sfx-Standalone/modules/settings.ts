@@ -37,7 +37,7 @@ class Settings implements ISettings {
             throw new Error(`Invalid setting path: ${settingPath}`);
         }
 
-        let pathParts = settingPath.split("/");
+        const pathParts = settingPath.split("/");
         let settingValue: any = this.settings;
 
         for (let pathPartIndex = 0; pathPartIndex < pathParts.length; pathPartIndex++) {
@@ -65,7 +65,7 @@ class Settings implements ISettings {
             throw new Error(`Invalid setting path: ${settingPath}`);
         }
 
-        let pathParts = settingPath.split("/");
+        const pathParts = settingPath.split("/");
         let settingValue: any = this.settings;
 
         for (let pathPartIndex = 0; pathPartIndex < pathParts.length; pathPartIndex++) {
@@ -77,7 +77,11 @@ class Settings implements ISettings {
 
             if (settingValue[pathPart] === undefined) {
                 if (pathPartIndex === pathParts.length - 1) {
-                    settingValue[pathPart] = value;
+                    if (value === undefined) {
+                        delete settingValue[pathPart];
+                    } else {
+                        settingValue[pathPart] = value;
+                    }
                 } else {
                     settingValue[pathPart] = {};
                 }
@@ -134,7 +138,6 @@ class FileSettings extends Settings {
     }
 
     set<T>(settingPath: string, value: T): void {
-        console.log(this.settingsPath);
         super.set(settingPath, value);
         fs.writeFileSync(this.settingsPath, JSON.stringify(this.settings), { encoding: "utf8" });
     }
@@ -160,7 +163,7 @@ class SettingsService implements ISettingsService {
 
     /**
      * Open a set of settings as a settings chain. If the last settings doesn't support writing,
-     * a new writable settings will be created and placed under appData to wrap the settings chain
+     * a new writable settings will be created and placed under userData to wrap the settings chain
      * as the last settings object, which provides a writing capability.
      * @param names the names of settings to be open as a settings chain.
      */
