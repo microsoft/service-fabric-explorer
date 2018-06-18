@@ -4,7 +4,7 @@ os:
   - osx
 node_js:
   - "node"
-before-install:
+before_install:
   - npm install -g npm@latest
 install:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install fakeroot; fi
