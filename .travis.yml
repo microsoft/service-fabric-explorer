@@ -1,13 +1,13 @@
-before_script:
-  - npm install -g npm@latest
-  - npm install -g gulp-cli
 language: node-js
 node_js:
   - "node"
 cache:
   directories:
     - node_modules
+before-install:
+  - npm install -g npm@latest
 install:
+  - npm install -g gulp-cli
   - npm install --prefix ./src/sfx
   - npm install --prefix ./src/Sfx-Standalone
 script:
