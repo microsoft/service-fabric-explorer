@@ -1,0 +1,15 @@
+before_script:
+  - npm install -g npm@latest
+  - npm install -g gulp-cli
+language: node-js
+node_js:
+  - "node"
+cache:
+  directories:
+    - node_modules
+install:
+  - npm install --prefix ./src/sfx
+  - npm install --prefix ./src/Sfx-Standalone
+script:
+  - gulp -f ./src/sfx/gulpfile.js clean-build
+  - gulp -f ./src/Sfx-Standalone/gulpfile.js publish
