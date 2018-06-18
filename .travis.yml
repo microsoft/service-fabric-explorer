@@ -4,9 +4,6 @@ os:
   - osx
 node_js:
   - "node"
-cache:
-  directories:
-    - node_modules
 before-install:
   - npm install -g npm@latest
 install:
