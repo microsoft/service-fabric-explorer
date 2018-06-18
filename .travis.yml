@@ -7,6 +7,8 @@ cache:
 before-install:
   - npm install -g npm@latest
 install:
+  - apt-get install fakeroot
+  - apt-get install rpm
   - npm install -g gulp-cli
   - npm install --prefix ./src/Sfx
   - npm install --prefix ./src/Sfx-Standalone
