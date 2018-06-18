@@ -8,8 +8,8 @@ before-install:
   - npm install -g npm@latest
 install:
   - npm install -g gulp-cli
-  - npm install --prefix ./src/sfx
+  - npm install --prefix ./src/Sfx
   - npm install --prefix ./src/Sfx-Standalone
 script:
-  - gulp -f ./src/sfx/gulpfile.js clean-build
+  - gulp -f ./src/Sfx/gulpfile.js clean-build
   - gulp -f ./src/Sfx-Standalone/gulpfile.js publish
