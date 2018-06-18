@@ -1,4 +1,7 @@
 language: node-js
+os:
+  - linux
+  - osx
 node_js:
   - "node"
 cache:
@@ -7,8 +10,8 @@ cache:
 before-install:
   - npm install -g npm@latest
 install:
-  - sudo apt-get install fakeroot
-  - sudo apt-get install rpm
+  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install fakeroot; fi
+  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install rpm; fi
   - npm install -g gulp-cli
   - npm install --prefix ./src/Sfx
   - npm install --prefix ./src/Sfx-Standalone
