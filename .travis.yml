@@ -13,7 +13,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install fakeroot; fi
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install rpm; fi
   - npm install -g gulp-cli
-  - npm install --prefix ./src/Sfx
+  - sudo npm install --prefix ./src/Sfx
   - npm install --prefix ./src/Sfx-Standalone
 script:
   - gulp -f ./src/Sfx/gulpfile.js clean-build
