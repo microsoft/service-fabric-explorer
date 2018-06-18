@@ -199,7 +199,7 @@ function generateLicensingDeps(depType, packageFormat, depsDir, deps) {
     }
 
     if (!fs.existsSync(depsDir)) {
-        throw new Error(String.format('depsDir "{}" does not exist.', depsDir));
+        throw new Error(utils.format('depsDir "{}" does not exist.', depsDir));
     }
 
     /** @type {Array.<string>} */

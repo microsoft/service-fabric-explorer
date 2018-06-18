@@ -89,7 +89,7 @@ const utils = {
                 let argIndex = argIndexStr.length === 0 ? matchIndex : parseInt(argIndexStr, 10);
 
                 if (isNaN(argIndex) || argIndex < 0 || argIndex >= args.length) {
-                    throw new Error(String.format("Referenced arg index, '{}',is out of range of the args.", argIndexStr));
+                    throw new Error(utils.format("Referenced arg index, '{}',is out of range of the args.", argIndexStr));
                 }
 
                 return args[argIndex];
