@@ -5,24 +5,23 @@ This project incorporates components from the projects listed below. The origina
 
 1.	angular (http://angularjs.org)
 2.	applicationinsights (https://github.com/Microsoft/ApplicationInsights-node.js#readme)
-3.	caller (https://github.com/totherik/caller#readme)
-4.	jquery (https://jquery.com)
+3.	jquery (https://jquery.com)
+4.	semver (https://github.com/npm/node-semver#readme)
 5.	tmp (http://github.com/raszi/node-tmp)
 6.	uuid (https://github.com/kelektiv/node-uuid#readme)
-7.	path (http://nodejs.org/docs/latest/api/path.html)
-8.	url (https://github.com/defunctzombie/node-url#readme)
-9.	adal-angular (https://github.com/AzureAD/azure-activedirectory-library-for-js)
-10.	angular (https://github.com/angular/bower-angular)
-11.	angular-animate (https://github.com/angular/bower-angular-animate)
-12.	angular-bootstrap (https://github.com/angular-ui/bootstrap-bower)
-13.	angular-route (https://github.com/angular/bower-angular-route)
-14.	angular-sanitize (https://github.com/angular/bower-angular-sanitize)
-15.	bootstrap-sass (https://github.com/twbs/bootstrap-sass)
-16.	d3 (https://github.com/mbostock-bower/d3-bower)
-17.	jquery (https://github.com/jquery/jquery-dist)
-18.	jquery-ui (https://github.com/components/jqueryui)
-19.	lodash (https://github.com/lodash/lodash)
-20.	moment (https://github.com/moment/moment)
+7.	adal-angular (https://github.com/AzureAD/azure-activedirectory-library-for-js#readme)
+8.	angular-animate (http://angularjs.org)
+9.	angular-aria (http://angularjs.org)
+10.	angular-route (http://angularjs.org)
+11.	angular-sanitize (http://angularjs.org)
+12.	angular-ui-bootstrap (http://angular-ui.github.io/bootstrap/)
+13.	bootstrap-sass (https://github.com/twbs/bootstrap-sass#readme)
+14.	d3 (http://d3js.org)
+15.	jquery-ui (http://jqueryui.com)
+16.	lodash (https://lodash.com/)
+17.	moment (http://momentjs.com)
+18.	path (http://nodejs.org/docs/latest/api/path.html)
+19.	url (https://github.com/defunctzombie/node-url#readme)
 
 angular NOTICES AND INFORMATION BEGIN HERE
 =========================================
@@ -65,29 +64,6 @@ THE SOFTWARE IS PROVIDED “AS IS”, WITHOUT WARRANTY OF ANY KIND, EXPRESS OR I
 =========================================
 END OF applicationinsights NOTICES AND INFORMATION
 
-caller NOTICES AND INFORMATION BEGIN HERE
-=========================================
-This software is released under the MIT license:
-
-Permission is hereby granted, free of charge, to any person obtaining a copy of
-this software and associated documentation files (the "Software"), to deal in
-the Software without restriction, including without limitation the rights to
-use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of
-the Software, and to permit persons to whom the Software is furnished to do so,
-subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS
-FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR
-COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER
-IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN
-CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-=========================================
-END OF caller NOTICES AND INFORMATION
-
 jquery NOTICES AND INFORMATION BEGIN HERE
 =========================================
 Copyright JS Foundation and other contributors, https://js.foundation/
@@ -129,6 +105,27 @@ the terms above.
 
 =========================================
 END OF jquery NOTICES AND INFORMATION
+
+semver NOTICES AND INFORMATION BEGIN HERE
+=========================================
+The ISC License
+
+Copyright (c) Isaac Z. Schlueter and Contributors
+
+Permission to use, copy, modify, and/or distribute this software for any
+purpose with or without fee is hereby granted, provided that the above
+copyright notice and this permission notice appear in all copies.
+
+THE SOFTWARE IS PROVIDED "AS IS" AND THE AUTHOR DISCLAIMS ALL WARRANTIES
+WITH REGARD TO THIS SOFTWARE INCLUDING ALL IMPLIED WARRANTIES OF
+MERCHANTABILITY AND FITNESS. IN NO EVENT SHALL THE AUTHOR BE LIABLE FOR
+ANY SPECIAL, DIRECT, INDIRECT, OR CONSEQUENTIAL DAMAGES OR ANY DAMAGES
+WHATSOEVER RESULTING FROM LOSS OF USE, DATA OR PROFITS, WHETHER IN AN
+ACTION OF CONTRACT, NEGLIGENCE OR OTHER TORTIOUS ACTION, ARISING OUT OF OR
+IN CONNECTION WITH THE USE OR PERFORMANCE OF THIS SOFTWARE.
+
+=========================================
+END OF semver NOTICES AND INFORMATION
 
 tmp NOTICES AND INFORMATION BEGIN HERE
 =========================================
@@ -183,57 +180,6 @@ SOFTWARE.
 
 =========================================
 END OF uuid NOTICES AND INFORMATION
-
-path NOTICES AND INFORMATION BEGIN HERE
-=========================================
-Copyright Joyent, Inc. and other Node contributors. All rights reserved.
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to
-deal in the Software without restriction, including without limitation the
-rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
-sell copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
-FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
-IN THE SOFTWARE.
-
-=========================================
-END OF path NOTICES AND INFORMATION
-
-url NOTICES AND INFORMATION BEGIN HERE
-=========================================
-The MIT License (MIT)
-
-Copyright Joyent, Inc. and other Node contributors.
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in all
-copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
-SOFTWARE.
-
-=========================================
-END OF url NOTICES AND INFORMATION
 
 adal-angular NOTICES AND INFORMATION BEGIN HERE
 =========================================
@@ -442,33 +388,6 @@ adal-angular NOTICES AND INFORMATION BEGIN HERE
 =========================================
 END OF adal-angular NOTICES AND INFORMATION
 
-angular NOTICES AND INFORMATION BEGIN HERE
-=========================================
-The MIT License
-
-Copyright (c) 2010-2015 Google, Inc. http://angularjs.org
-
-Permission is hereby granted, free of charge, to any person obtaining a copy
-of this software and associated documentation files (the "Software"), to deal
-in the Software without restriction, including without limitation the rights
-to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
-copies of the Software, and to permit persons to whom the Software is
-furnished to do so, subject to the following conditions:
-
-The above copyright notice and this permission notice shall be included in
-all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
-THE SOFTWARE.
-
-=========================================
-END OF angular NOTICES AND INFORMATION
-
 angular-animate NOTICES AND INFORMATION BEGIN HERE
 =========================================
 The MIT License
@@ -496,11 +415,32 @@ THE SOFTWARE.
 =========================================
 END OF angular-animate NOTICES AND INFORMATION
 
-angular-bootstrap NOTICES AND INFORMATION BEGIN HERE
+angular-aria NOTICES AND INFORMATION BEGIN HERE
 =========================================
-MIT License: https://github.com/angular-ui/bootstrap-bower
+The MIT License
+
+Copyright (c) 2010-2015 Google, Inc. http://angularjs.org
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
 =========================================
-END OF angular-bootstrap NOTICES AND INFORMATION
+END OF angular-aria NOTICES AND INFORMATION
 
 angular-route NOTICES AND INFORMATION BEGIN HERE
 =========================================
@@ -556,11 +496,40 @@ THE SOFTWARE.
 =========================================
 END OF angular-sanitize NOTICES AND INFORMATION
 
+angular-ui-bootstrap NOTICES AND INFORMATION BEGIN HERE
+=========================================
+The MIT License
+
+Copyright (c) 2012-2017 the AngularUI Team, https://github.com/organizations/angular-ui/teams/291112
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
+THE SOFTWARE.
+
+
+=========================================
+END OF angular-ui-bootstrap NOTICES AND INFORMATION
+
 bootstrap-sass NOTICES AND INFORMATION BEGIN HERE
 =========================================
 The MIT License (MIT)
 
-Copyright (c) 2013 Twitter, Inc
+Copyright (c) 2011-2016 Twitter, Inc
+Copyright (c) 2011-2016 The Bootstrap Authors
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -615,52 +584,9 @@ EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =========================================
 END OF d3 NOTICES AND INFORMATION
 
-jquery NOTICES AND INFORMATION BEGIN HERE
-=========================================
-Copyright jQuery Foundation and other contributors, https://jquery.org/
-
-This software consists of voluntary contributions made by many
-individuals. For exact contribution history, see the revision history
-available at https://github.com/jquery/jquery
-
-The following license applies to all parts of this software except as
-documented below:
-
-====
-
-Permission is hereby granted, free of charge, to any person obtaining
-a copy of this software and associated documentation files (the
-"Software"), to deal in the Software without restriction, including
-without limitation the rights to use, copy, modify, merge, publish,
-distribute, sublicense, and/or sell copies of the Software, and to
-permit persons to whom the Software is furnished to do so, subject to
-the following conditions:
-
-The above copyright notice and this permission notice shall be
-included in all copies or substantial portions of the Software.
-
-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
-EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
-MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
-NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
-LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
-OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
-WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
-
-====
-
-All files located in the node_modules and external directories are
-externally maintained libraries used by this software which have their
-own licenses; we recommend you read them, as their terms may differ from
-the terms above.
-
-=========================================
-END OF jquery NOTICES AND INFORMATION
-
 jquery-ui NOTICES AND INFORMATION BEGIN HERE
 =========================================
-Copyright 2007, 2014 jQuery Foundation and other contributors,
-https://jquery.org/
+Copyright jQuery Foundation and other contributors, https://jquery.org/
 
 This software consists of voluntary contributions made by many
 individuals. For exact contribution history, see the revision history
@@ -703,12 +629,13 @@ All files located in the node_modules and external directories are
 externally maintained libraries used by this software which have their
 own licenses; we recommend you read them, as their terms may differ from
 the terms above.
+
 =========================================
 END OF jquery-ui NOTICES AND INFORMATION
 
 lodash NOTICES AND INFORMATION BEGIN HERE
 =========================================
-Copyright jQuery Foundation and other contributors <https://jquery.org/>
+Copyright JS Foundation and other contributors <https://js.foundation/>
 
 Based on Underscore.js, copyright Jeremy Ashkenas,
 DocumentCloud and Investigative Reporters & Editors <http://underscorejs.org/>
@@ -786,3 +713,54 @@ OTHER DEALINGS IN THE SOFTWARE.
 
 =========================================
 END OF moment NOTICES AND INFORMATION
+
+path NOTICES AND INFORMATION BEGIN HERE
+=========================================
+Copyright Joyent, Inc. and other Node contributors. All rights reserved.
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to
+deal in the Software without restriction, including without limitation the
+rights to use, copy, modify, merge, publish, distribute, sublicense, and/or
+sell copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in
+all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE.
+
+=========================================
+END OF path NOTICES AND INFORMATION
+
+url NOTICES AND INFORMATION BEGIN HERE
+=========================================
+The MIT License (MIT)
+
+Copyright Joyent, Inc. and other Node contributors.
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+
+=========================================
+END OF url NOTICES AND INFORMATION

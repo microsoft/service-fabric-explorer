@@ -1,12 +1,12 @@
 ﻿<nav class="detail-list-pager" ng-if="listSettings.pageCount > 1">
-    <uib-pagination boundary-links="true"
+    <ul uib-pagination boundary-links="true"
                     total-items="listSettings.count"
                     max-size="5"
                     items-per-page="listSettings.limit"
                     ng-model="listSettings.currentPage"
                     class="pagination-sm"
                     template-url="partials/uib-pagination.html">
-    </uib-pagination>
+    </ul>
 
     <div class="pager-control">
         <span class="pager-info">
