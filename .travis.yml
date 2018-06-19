@@ -1,12 +1,10 @@
-language: node-js
+language: node_js
+node_js:
+  - "node"
 os:
   - linux
   - osx
-node_js:
-  - "node"
 before_install:
-  - npm -v
-  - node -v
   - npm install -g npm@latest
 install:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install fakeroot; fi
