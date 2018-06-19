@@ -1,24 +1,25 @@
 /// <binding BeforeBuild="build" Clean="clean" ProjectOpened="watch" />
 
-var gulp = require("gulp");
-var merge = require("merge2");
-var plugins = require("gulp-load-plugins")({
+let gulp = require("gulp");
+let merge = require("merge2");
+let plugins = require("gulp-load-plugins")({
     pattern: ["*", "!bower", "!typescript", "!tslint"],
     camelize: true,
     lazy: true
 });
-var libConfiguration = require("./build/lib.json");
+
+let libConfiguration = require("./lib.json");
 
 // To get production bits, right click project, choose publish.
 // This env variable will be set through prepublish command defined in project.json
-var isProductionEnv = plugins.yargs.argv.production === undefined ? false : true;
+let isProductionEnv = plugins.yargs.argv.production === undefined ? false : true;
 
 //-----------------------------------------------------------------------------
 // Paths
 //-----------------------------------------------------------------------------
 
 // Base paths
-var paths = {
+let paths = {
     webroot: "wwwroot/"
 };
 
@@ -172,12 +173,12 @@ gulp.task("build:tslint", function () {
 gulp.task("build:js", ["build:templates", "build:versionInfo", "build:tslint"], function () {
     console.log("isProductionEnvironment = " + isProductionEnv);
 
-    var tsProject = plugins.typescript.createProject("App/Scripts/tsconfig.json", {
+    let tsProject = plugins.typescript.createProject("App/Scripts/tsconfig.json", {
         outFile: paths.scripts.target
     });
 
     // tsProject.src() retrieves all .ts files in the folder which contains tsconfig.json
-    var result = tsProject.src()
+    let result = tsProject.src()
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(tsProject());
 
@@ -191,7 +192,7 @@ gulp.task("build:js", ["build:templates", "build:versionInfo", "build:tslint"], 
 
 // Compile SASS, concat/minify into app.min.css, create sourcemap to help debugging
 gulp.task("build:css", function () {
-    var compileTheme = function (theme) {
+    let compileTheme = function (theme) {
         return gulp.src(theme.src)
             .pipe(plugins.plumber({
                 errorHandler: function (err) {

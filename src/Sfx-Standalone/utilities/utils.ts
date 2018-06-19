@@ -5,10 +5,10 @@
 
 declare global {
     interface StringConstructor {
-        isString(value: any): value is string | String;
-        format(format: string, ...args: Array<any>): string;
-        isNullUndefinedOrEmpty(value: any): boolean;
-        isNullUndefinedOrWhitespace(value: any): boolean;
+        possibleString(value: any): value is string;
+        isString(value: any): value is string;
+        isEmpty(value: string): boolean;
+        isEmptyOrWhitespace(value: string): boolean;
     }
 
     interface ArrayConstructor {
@@ -21,12 +21,43 @@ declare global {
 
     interface Function {
         isObject(value: any): value is object | Object;
+
+        /**
+         * Check if an object is empty or not. It also checks if the prototype chains are empty (pure empty).
+         * @param {object | Object} value The target object to be checked. Error will be thrown if the value is null or undefined.
+         * @returns {boolean} True if the object is empty include the prototype chains are also empty. 
+         * Otherwise, false.
+         */
+        isEmpty(value: object | Object): boolean;
+
+        /**
+         * Check if the value is serializable. 
+         * @param {any} value The value to be checked.
+         * @param {boolean} [checkDeep=false] Check recursively.
+         * @return {boolean} True if the value is serializable for sure. Otherwise, false, 
+         * which indicates the value cannot be serialized or cannot be determined whether it can be serialized or not.
+         */
+        isSerializable(value: any): boolean;
+
+        markSerializable(value: any, serializable?: boolean): any;
     }
 
     interface NumberConstructor {
         isNumber(value: any): value is number | Number;
     }
+
+    interface SymbolConstructor {
+        isSymbol(value: any): value is symbol;
+    }
 }
+
+namespace Symbols {
+    export const Serializable = Symbol("serializable");
+}
+
+Symbol.isSymbol = (value: any): value is symbol => {
+    return typeof value === "symbol";
+};
 
 Number.isNumber = (value: any): value is number | Number => {
     return typeof value === "number" || value instanceof Number;
@@ -40,23 +71,87 @@ Object.isObject = (value: any): value is object | Object => {
     return value !== null && typeof value === "object";
 };
 
+Object.isEmpty = (value: Object | object) => {
+    if (isNullOrUndefined(value)) {
+        throw new Error("value cannot be null/undefined.");
+    }
+
+    for (const key in value) {
+        return false;
+    }
+
+    return true;
+};
+
+Object.markSerializable = (value: any, serializable: boolean = true) => {
+    if (!isNullOrUndefined(value)) {
+        if (Function.isFunction(value)) {
+            throw new Error("Cannot mark function objects as serializable.");
+        }
+
+        if (Symbol.isSymbol(value)) {
+            throw new Error("Cannot mark symbol objects as serializable.");
+        }
+
+        serializable = serializable === true;
+
+        value[Symbols.Serializable] = serializable;
+    }
+
+    return value;
+};
+
+Object.isSerializable = (value: any) => {
+    const valueType = typeof value;
+
+    switch (valueType) {
+        case "object":
+            if (value === null) {
+                return true;
+            }
+
+            if (Object.prototype.hasOwnProperty.call(value, Symbols.Serializable)) {
+                return value[Symbols.Serializable] === true;
+            }
+
+            return Function.isFunction(value["toJSON"])
+                || (Object.getPrototypeOf(value) === Object.prototype
+                    && Object.values(value).every((propertyValue) => Object.isSerializable(propertyValue)));
+
+        case "undefined":
+        case "number":
+        case "boolean":
+        case "string":
+            return true;
+
+        case "symbol":
+        case "function":
+        default:
+            return false;
+    }
+};
+
 Array.isNullUndefinedOrEmpty = (value: any): boolean => {
     return value === undefined || value === null || (Array.isArray(value) && value.length <= 0);
 };
 
-String.isString = (value: any): value is string | String => {
+String.possibleString = (value: any): value is string => {
+    return isNullOrUndefined(value) || String.isString(value);
+};
+
+String.isString = (value: any): value is string => {
     return typeof value === "string" || value instanceof String;
 };
 
-String.isNullUndefinedOrEmpty = (value: any): boolean => {
-    return value === undefined || value === null || (String.isString(value) && value === "");
+String.isEmpty = (value: string): boolean => {
+    return value === "";
 };
 
-String.isNullUndefinedOrWhitespace = (value: any): boolean => {
-    return value === undefined || value === null || (String.isString(value) && value.trim() === "");
+String.isEmptyOrWhitespace = (value: string): boolean => {
+    return value.trim() === "";
 };
 
-String.format = (format, ...args) => {
+export function format(format: string, ...args: Array<any>) {
     if (!String.isString(format)) {
         throw new Error("format must be a string");
     }
@@ -81,18 +176,18 @@ String.format = (format, ...args) => {
         let argIndex = argIndexStr.length === 0 ? matchIndex : parseInt(argIndexStr, 10);
 
         if (isNaN(argIndex) || argIndex < 0 || argIndex >= args.length) {
-            throw new Error(String.format("Referenced arg index, '{}',is out of range of the args.", argIndexStr));
+            throw new Error(`Referenced arg index, '${argIndexStr}',is out of range of the args.`);
         }
 
         return args[argIndex];
     });
-};
+}
 
 export function isNullOrUndefined(value: any): value is undefined | null {
     return value === undefined || value === null;
 }
 
-export function getEither<T>(arg: T, defaultValue: T): T {
+export function getValue<T>(arg: T, defaultValue: T): T {
     return (arg === undefined || arg === null) ? defaultValue : arg;
 }
 
@@ -100,6 +195,8 @@ export interface ICallerInfo {
     fileName: string;
     functionName: string;
     typeName: string;
+    lineNumber: number;
+    columnNumber: number;
 }
 
 function prepareStackTraceOverride(error: Error, structuredStackTrace: Array<NodeJS.CallSite>): any {
@@ -124,14 +221,18 @@ export function getCallerInfo(): ICallerInfo {
                     directCallerInfo = {
                         fileName: stackFileName,
                         functionName: stack.getFunctionName(),
-                        typeName: stack.getTypeName()
+                        typeName: stack.getTypeName(),
+                        lineNumber: stack.getLineNumber(),
+                        columnNumber: stack.getColumnNumber()
                     };
                 }
             } else if (stackFileName !== directCallerInfo.fileName) {
                 return {
                     fileName: stackFileName,
                     functionName: stack.getFunctionName(),
-                    typeName: stack.getTypeName()
+                    typeName: stack.getTypeName(),
+                    lineNumber: stack.getLineNumber(),
+                    columnNumber: stack.getColumnNumber()
                 };
             }
         }

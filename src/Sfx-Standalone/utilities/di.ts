@@ -3,8 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-// *** Dependency Injection ***
-import error from "./errorUtil";
+import { IDictionary } from "sfx.common";
+
 import * as utils from "./utils";
 
 export interface IDiDescriptor {
@@ -12,7 +12,7 @@ export interface IDiDescriptor {
 }
 
 export interface IDiContainer {
-    getInstance<T>(name: string, ...extraArgs: Array<any>): T;
+    getDep<T>(name: string, ...extraArgs: Array<any>): T;
     get(name: string): IDiDescriptor;
     set(name: string, descriptor: IDiDescriptor): IDiContainer;
 }
@@ -30,16 +30,16 @@ export class DiDescriptorDictionary implements IDiDescriptorDictionary {
     }
 
     public get(name: string): IDiDescriptor {
-        if (String.isNullUndefinedOrWhitespace(name)) {
-            throw error("name should not be null/undefined/empty.");
+        if (String.isEmptyOrWhitespace(name)) {
+            throw new Error("name should not be null/undefined/empty.");
         }
 
         return this.descriptorDictionary[name];
     }
 
     public set(name: string, descriptor: IDiDescriptor): void {
-        if (String.isNullUndefinedOrWhitespace(name)) {
-            throw error("name should not be null/undefined/empty.");
+        if (String.isEmptyOrWhitespace(name)) {
+            throw new Error("name should not be null/undefined/empty.");
         }
 
         if (utils.isNullOrUndefined(descriptor)) {
@@ -61,7 +61,7 @@ export class DiContainer implements IDiContainer {
         }
     }
 
-    public getInstance<T>(name: string, ...extraArgs: Array<any>): T {
+    public getDep<T>(name: string, ...extraArgs: Array<any>): T {
         const descriptor = this.get(name);
 
         if (utils.isNullOrUndefined(descriptor)) {
@@ -72,16 +72,16 @@ export class DiContainer implements IDiContainer {
     }
 
     public get(name: string): IDiDescriptor {
-        if (String.isNullUndefinedOrWhitespace(name)) {
-            throw error("name should not be null/undefined/empty.");
+        if (String.isEmptyOrWhitespace(name)) {
+            throw new Error("name should not be null/undefined/empty.");
         }
 
         return this.descriptorDictionary.get(name);
     }
 
     public set(name: string, descriptor: IDiDescriptor): IDiContainer {
-        if (String.isNullUndefinedOrWhitespace(name)) {
-            throw error("name should not be null/undefined/empty.");
+        if (String.isEmptyOrWhitespace(name)) {
+            throw new Error("name should not be null/undefined/empty.");
         }
 
         if (utils.isNullOrUndefined(descriptor)) {

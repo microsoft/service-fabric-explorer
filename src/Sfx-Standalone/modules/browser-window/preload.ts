@@ -3,7 +3,15 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ModuleManagerAgent } from "../../module-manager/module-manager-host";
+import { ipcRenderer } from "electron";
+import * as mmutils from "../../module-manager/utils";
+import { Communicator } from "../ipc/communicator";
 
+// TODO: Remove global.exports when the node v10 is integrated with electron.
 global["exports"] = exports;
-global["moduleManager"] = new ModuleManagerAgent();
+
+process.once("loaded", async () => {
+    const constructorOptions = ipcRenderer.sendSync("request-module-manager-constructor-options");
+
+    global["sfxModuleManager"] = await mmutils.createModuleManagerAsync(constructorOptions, new Communicator(ipcRenderer));
+});
