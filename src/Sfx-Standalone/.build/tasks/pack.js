@@ -87,7 +87,7 @@ function generatePackage(platform) {
         appCopyright: buildInfos.copyright,
         arch: toPackagerArchs(buildInfos.targets[platform].archs),
         asar: false,
-        icon: path.join(buildInfos.paths.appDir, "icons/icon"),
+        icon: "icons/icon",
         name: platform === Platform.MacOs ? buildInfos.productName : buildInfos.targetExecutableName,
         out: buildInfos.paths.buildDir,
         overwrite: true,
