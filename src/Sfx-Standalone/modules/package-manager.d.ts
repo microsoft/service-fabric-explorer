@@ -8,22 +8,40 @@ declare module "sfx.package-manager" {
     import { IModuleLoadingPolicy } from "sfx.module-manager";
 
     export interface IPackageRepositoryConfig {
+        readonly type: string;
         readonly name: string;
         readonly url: string;
     }
 
-    export interface IPackageRepository {
-        installPackage(packageName: string): void;
+    export interface ISearchResult {
+        continueToken: string;
+    }
+
+    export interface IPackageMetadata {
+
+    }
+
+    export interface IPackageInfo {
+
+    }
+
+    export interface IPackageRepository extends IPackageRepositoryConfig {
+        installPackageAsync(packageName: string): Promise<boolean>;
+        getPackageMetadataAsync(packageName: string): Promise<IPackageMetadata>;
+        searchAsync(text: string, resultSize: number): Promise<ISearchResult>;
     }
 
     export interface IPackageManager extends IModuleLoadingPolicy {
         addRepo(repoConfig: IPackageRepositoryConfig): void;
         removeRepo(repoName: string): void;
+        getRepo(repoName: string): IPackageRepository;
+        getRepoConfig(repoName: string): IPackageRepositoryConfig;
 
         getRepos(): Array<IPackageRepository>;
         getRepoConfigs(): Array<IPackageRepositoryConfig>;
 
-        installPackage(repoName: string, packageName: string): void;
+        getInstalledPackageInfos(): Array<IPackageInfo>;
+
         uninstallPackage(packageName: string): void;
     }
 }

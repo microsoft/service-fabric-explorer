@@ -39,15 +39,47 @@ export function rmdir(dirname: string): void {
     }
 
     for (const subName of fs.readdirSync(dirname)) {
-        const subDirName = path.join(dirname, subName);
-        const stat = fs.statSync(subDirName);
+        const subFullName = path.join(dirname, subName);
+        const stat = fs.statSync(subFullName);
 
         if (stat.isDirectory()) {
-            rmdir(subDirName);
+            rmdir(subFullName);
         } else {
-            fs.unlinkSync(subDirName);
+            fs.unlinkSync(subFullName);
         }
     }
 
     fs.rmdirSync(dirname);
+}
+
+export function copyfiles(srcDir: string, destDir: string): void {
+    if (!String.isString(srcDir)) {
+        throw new Error("srcDir should be a string.");
+    }
+
+    if (!String.isString(destDir)) {
+        throw new Error("destDir should be a string.");
+    }
+
+    srcDir = path.resolve(srcDir);
+
+    if (!fs.statSync(srcDir).isDirectory()) {
+        throw new Error("srcDir must point to a directory.");
+    }
+
+    destDir = path.resolve(destDir);
+
+    ensureDirExists(destDir);
+
+    for (const subName of fs.readdirSync(srcDir)) {
+        const subFullName = path.join(srcDir, subName);
+        const destFullName = path.join(destDir, subName);
+        const stat = fs.statSync(subFullName);
+
+        if (stat.isDirectory()) {
+            copyfiles(subFullName, destFullName);
+        } else {
+            fs.copyFileSync(subFullName, destFullName);
+        }
+    }
 }
