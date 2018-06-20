@@ -6,9 +6,7 @@
 "use strict";
 
 const common = require("../common");
-
 const gulp = require("gulp");
-const runSequence = require("run-sequence");
 
 const Platform = common.Platform;
 
@@ -32,8 +30,4 @@ require("./publish.windows");
 require("./publish.linux");
 require("./publish.macos");
 
-gulp.task("publish", ["clean:publish"],
-    (callback) =>
-        runSequence(
-            "publish:" + normalizePlatform(process.platform),
-            callback));
+gulp.task("publish", gulp.series("clean:publish", "publish:" + normalizePlatform(process.platform)));
