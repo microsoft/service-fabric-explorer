@@ -7,15 +7,13 @@ declare module "sfx.package-manager" {
     import { IDictionary } from "sfx.common";
     import { IModuleLoadingPolicy } from "sfx.module-manager";
 
-    export type PackagePropertyName = "Enabled";
-
     export interface IPackageRepositoryConfig {
         readonly name: string;
         readonly url: string;
     }
 
     export interface IPackageRepository {
-
+        installPackage(packageName: string): void;
     }
 
     export interface IPackageManager extends IModuleLoadingPolicy {
@@ -27,9 +25,6 @@ declare module "sfx.package-manager" {
 
         installPackage(repoName: string, packageName: string): void;
         uninstallPackage(packageName: string): void;
-
-        setPackageProperty(packageName: string, propertyName: PackagePropertyName, value: any): void;
-        getPackageProperty(packageName: string, propertyName: PackagePropertyName): any;
     }
 }
 

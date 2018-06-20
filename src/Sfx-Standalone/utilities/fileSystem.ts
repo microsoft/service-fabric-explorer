@@ -26,3 +26,28 @@ export function ensureDirExists(dirname: string): void {
         fs.mkdirSync(dirs.pop());
     }
 }
+
+export function rmdir(dirname: string): void {
+    if (!String.isString(dirname)) {
+        throw new Error("dirname should be a string.");
+    }
+
+    dirname = path.resolve(dirname);
+
+    if (!fs.existsSync(dirname)) {
+        return;
+    }
+
+    for (const subName of fs.readdirSync(dirname)) {
+        const subDirName = path.join(dirname, subName);
+        const stat = fs.statSync(subDirName);
+
+        if (stat.isDirectory()) {
+            rmdir(subDirName);
+        } else {
+            fs.unlinkSync(subDirName);
+        }
+    }
+
+    fs.rmdirSync(dirname);
+}

@@ -15,10 +15,10 @@ import * as tmp from "tmp";
 import * as path from "path";
 import * as url from "url";
 import * as fs from "fs";
+import * as http from "http";
 
 import * as utils from "../utilities/utils";
 import { env, Architecture } from "../utilities/env";
-import { ResponseHandlerHelper } from "./http";
 import { electron } from "../utilities/electron-adapter";
 
 interface IUpdateSettings {
@@ -51,18 +51,13 @@ class UpdateService implements IUpdateService {
         this.httpClient = httpClient;
     }
 
-    public update(): void {
-        this.requestVersionInfo((error, versionInfo) => {
-            if (!utils.isNullOrUndefined(error)) {
-                this.log.writeError("Failed to check version info, error: {}", error.toString());
-                return;
-            }
+    public async updateAsync(): Promise<void> {
+        const versionInfo = await this.requestVersionInfoAsync();
 
-            this.tryUpdate(versionInfo);
-        });
+        this.tryUpdate(versionInfo);
     }
 
-    public requestVersionInfo(callback: (error, versionInfo: IVersionInfo) => void): void {
+    public async requestVersionInfoAsync(): Promise<IVersionInfo> {
         const prereleases = semver.prerelease(app.getVersion());
         let updateChannel: string;
 
@@ -74,15 +69,14 @@ class UpdateService implements IUpdateService {
 
         const versionInfoUrl = `${this.settings.baseUrl}/${updateChannel}/${env.platform}`;
 
-        try {
-            this.log.writeInfo("Requesting version info json: {}", versionInfoUrl);
-            this.httpClient.get(
-                versionInfoUrl,
-                ResponseHandlerHelper.handleJsonResponse<IVersionInfo>(callback));
-        } catch (exception) {
-            this.log.writeException(exception);
-            callback(exception, null);
+        this.log.writeInfo("Requesting version info json: {}", versionInfoUrl);
+        const response = await this.httpClient.getAsync(versionInfoUrl);
+
+        if (response instanceof http.IncomingMessage) {
+            throw new Error(`Failed to retrieve version info. Response: ${response}`);
         }
+
+        return response;
     }
 
     private confirmUpate(versionInfo: IVersionInfo, path: string): void {
@@ -155,7 +149,7 @@ class UpdateService implements IUpdateService {
             return;
         }
 
-        let packageInfo: IPackageInfo | string = versionInfo[env.platform];
+        const packageInfo: IPackageInfo | string = versionInfo[env.platform];
         let packagePath: string;
 
         if (!packageInfo) {

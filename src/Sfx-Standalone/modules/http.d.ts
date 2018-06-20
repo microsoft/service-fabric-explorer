@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.module-manager" {
-    import { IHttpClient, HttpProtocol } from "sfx.http";
+    import { IHttpClient } from "sfx.http";
 
     export interface IModuleManager {
         getComponentAsync(componentIdentity: "http.http-client"): Promise<IHttpClient>;
@@ -13,15 +13,10 @@ declare module "sfx.module-manager" {
 }
 
 declare module "sfx.http" {
-    import { IDictionary, IHandlerConstructor } from "sfx.common";
-    import { ILog } from "sfx.logging";
-    import { ClientRequest, IncomingMessage } from "http";
-
-    export type HttpProtocol = "*" | "http:" | "https:";
+    import { IDictionary } from "sfx.common";
+    import { IncomingMessage } from "http";
 
     export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-
-    export type HttpContentType = "application/json" | "application/octet-stream" | string;
 
     export interface IRequestOptions {
         method: HttpMethod;
@@ -29,31 +24,17 @@ declare module "sfx.http" {
         headers?: IDictionary<string | Array<string>>;
     }
 
-    export interface RequestProcessor {
-        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: ClientRequest): void;
-    }
-
-    export interface ResponseHandler {
-        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IncomingMessage, error: any, callback?: ResponseHandler): void;
-    }
-
-    export interface IRequestProcessorConstructor extends IHandlerConstructor<RequestProcessor> {
-    }
-
-    export interface IResponseHandlerContructor extends IHandlerConstructor<ResponseHandler> {
-    }
-
     export interface IHttpClient {
-        delete(url: string, callback?: ResponseHandler): void;
+        deleteAsync(url: string): Promise<IncomingMessage | any>;
 
-        get(url: string, callback?: ResponseHandler): void;
+        getAsync(url: string): Promise<IncomingMessage | any>;
 
-        patch(url: string, data: any, callback?: ResponseHandler): void;
+        patchAsync(url: string, data: any): Promise<IncomingMessage | any>;
 
-        post(url: string, data: any, callback?: ResponseHandler): void;
+        postAsync(url: string, data: any): Promise<IncomingMessage | any>;
 
-        put(url: string, data: any, callback?: ResponseHandler): void;
+        putAsync(url: string, data: any): Promise<IncomingMessage | any>;
 
-        request(requestOptions: IRequestOptions, data: any, callback?: ResponseHandler): void;
+        requestAsync(requestOptions: IRequestOptions, data: any): Promise<IncomingMessage | any>;
     }
 }

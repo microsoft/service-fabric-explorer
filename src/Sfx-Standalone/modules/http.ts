@@ -2,25 +2,14 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
-import { IHandlerChainBuilder, IDictionary } from "sfx.common";
 import { IModuleInfo } from "sfx.module-manager";
-
-import {
-    HttpProtocol,
-    IHttpClient,
-    IResponseHandlerContructor,
-    IRequestProcessorConstructor,
-    ResponseHandler,
-    RequestProcessor,
-    IRequestOptions
-} from "sfx.http";
+import { IHttpClient, IRequestOptions } from "sfx.http";
 
 import { ILog } from "sfx.logging";
 
 import * as http from "http";
 import * as https from "https";
 import * as url from "url";
-import * as fs from "fs";
 
 import * as utils from "../utilities/utils";
 import { HandlerChainBuilder } from "../utilities/handlerChainBuilder";
@@ -45,191 +34,28 @@ enum HttpContentTypes {
     binary = "application/octet-stream"
 }
 
-class HttpClientBuilder {
-    private readonly responseHandlerBuilder: IHandlerChainBuilder<ResponseHandler>;
-
-    private readonly requestProcessorBuilder: IHandlerChainBuilder<RequestProcessor>;
-
-    private readonly headers: IDictionary<string | Array<string>>;
-
-    private readonly protocol: HttpProtocol;
-
-    constructor(protocol?: HttpProtocol) {
-        this.requestProcessorBuilder = new HandlerChainBuilder();
-        this.responseHandlerBuilder = new HandlerChainBuilder();
-        this.headers = {};
-
-        if (String.isString(protocol) && protocol.trim() === "") {
-            protocol = undefined;
-        }
-
-        this.protocol = utils.getValue(protocol, HttpProtocols.any);
-    }
-
-    public build(log: ILog): IHttpClient {
-        this.handleRequest(() => (client, log, requestOptions, requestData, request) => request.end());
-        this.responseHandlerBuilder.handle(() =>
-            (client, log, requestOptions, requestData, response, exception, callback) => callback(client, log, requestOptions, requestData, response, exception, callback));
-
-        return new HttpClient(log, this.protocol, this.headers, this.requestProcessorBuilder.build(), this.responseHandlerBuilder.build());
-    }
-
-    public configureHeader(name: string, values: string | Array<string>): HttpClientBuilder {
-        if (!String.isString(name) || name.trim() === "") {
-            throw new Error("name must not be null/undefined or whitespaces.");
-        }
-
-        if (utils.isNullOrUndefined(values)) {
-            delete this.headers[name];
-        } else {
-            this.headers[name] = values;
-        }
-
-        return this;
-    }
-
-    public handleResponse(constructor: IResponseHandlerContructor): HttpClientBuilder {
-        this.responseHandlerBuilder.handle(constructor);
-        return this;
-    }
-
-    public handleRequest(constructor: IRequestProcessorConstructor): HttpClientBuilder {
-        this.requestProcessorBuilder.handle(constructor);
-        return this;
-    }
-
-    public handleRedirectionResponse(): HttpClientBuilder {
-        return this.handleResponse((nextHandler) =>
-            (client, log, requestOptions, data, response, error, callback) => {
-                if (utils.isNullOrUndefined(error) &&
-                    (response.statusCode === 301
-                        || response.statusCode === 302
-                        || response.statusCode === 307
-                        || response.statusCode === 308)) {
-                    const location = response.headers["location"];
-                    let redirectionRequestOptions: IRequestOptions = JSON.parse(JSON.stringify(requestOptions));
-
-                    redirectionRequestOptions.url = location;
-                    log.writeInfo("HTTP{}: Redirecting to {}", response.statusCode, redirectionRequestOptions.url);
-                    client.request(redirectionRequestOptions, data, callback);
-                } else if (Function.isFunction(nextHandler)) {
-                    nextHandler(client, log, requestOptions, data, response, error, callback);
-                }
-            });
-    }
-
-    public handleJsonRequest(): HttpClientBuilder {
-        return this.handleRequest((nextHandler) =>
-            (client, log, requestOptions, data, request) => {
-                const contentType = request.getHeader("Content-Type");
-
-                if (String.isString(contentType)
-                    && contentType.indexOf(HttpContentTypes.json) >= 0) {
-                    const jsonBody = JSON.stringify(data);
-
-                    request.setHeader("Content-Length", Buffer.byteLength(jsonBody));
-                    request.write(jsonBody);
-                } else if (!utils.isNullOrUndefined(data)) {
-                    throw new Error("Header Content-Type is missing in the request but the data is supplied.");
-                }
-
-                if (Function.isFunction(nextHandler)) {
-                    nextHandler(client, log, requestOptions, data, request);
-                }
-            });
-    }
+interface RequestAsyncProcessor {
+    (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: http.ClientRequest): Promise<void>;
 }
 
-export abstract class ResponseHandlerHelper {
-    private static regex_filename_json = /filename=.+\.json/i;
-
-    public static handleJsonResponse<TJson>(callback: (error, json: TJson) => void): ResponseHandler {
-        if (!Function.isFunction(callback)) {
-            throw new Error("callback function must be supplied.");
-        }
-
-        return (client, log, requestOptions, requestData, response, exception) => {
-            if (!utils.isNullOrUndefined(exception)) {
-                callback(exception, null);
-            } else if (response.statusCode >= 200 && response.statusCode < 300) {
-                const contentType = response.headers["content-type"];
-
-                if (String.isString(contentType)) {
-                    if (contentType.indexOf(HttpContentTypes.binary)) {
-                        const contentDisposition = response.headers["content-disposition"];
-
-                        if (!ResponseHandlerHelper.regex_filename_json.test(contentDisposition)) {
-                            callback(new Error("Unable to handle non-json response."), null);
-                        }
-
-                        log.writeVerbose("Treat Content-Type: {} as JSON since Content-Disposition header indicates JSON extention.", contentType);
-                    }
-
-                    let json: string = "";
-
-                    response.setEncoding("utf8");
-                    response.on("data", (chunk) => json += chunk);
-                    response.on("end", () => {
-                        try {
-                            callback(null, <TJson>JSON.parse(json));
-                        } catch (error) {
-                            callback(error, null);
-                        }
-                    });
-                    return;
-                }
-            } else {
-                callback(new Error(`Response status code, ${response.statusCode}, cannot be handled.`), null);
-            }
-        };
-    }
-
-    public static saveToFile(file: string | number, autoClose: boolean, callback: (error) => void): ResponseHandler {
-        if (!String.isString(file) && !Number.isNumber(file)) {
-            throw new Error("file must be either the path of the file or the fd");
-        }
-
-        return (client, log, requestOptions, requestData, response, exception) => {
-            if (!utils.isNullOrUndefined(exception)) {
-                callback(exception);
-            } else if (response.statusCode >= 200 && response.statusCode < 300) {
-                log.writeVerbose("Writing HTTP response to file: {}", file);
-                const fileStream = fs.createWriteStream(
-                    String.isString(file) ? file : null,
-                    {
-                        fd: Number.isNumber(file) ? file : undefined,
-                        autoClose: autoClose
-                    });
-
-                response
-                    .pipe(fileStream)
-                    .on("error", (error) => callback(error))
-                    .on("finish", () => {
-                        fileStream.end();
-                        callback(null);
-                    });
-            }
-        };
-    }
+interface ResponseAsyncHandler {
+    (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: http.IncomingMessage): Promise<any>;
 }
 
-export class HttpClient implements IHttpClient {
+class HttpClient implements IHttpClient {
     private readonly log: ILog;
 
-    private readonly protocol: HttpProtocol;
+    private readonly protocol: string;
 
-    private readonly defaultHeadersJSON: string;
+    private readonly requestAsyncProcessor: RequestAsyncProcessor;
 
-    private readonly requestProcessor: RequestProcessor;
-
-    private readonly responseHandler: ResponseHandler;
+    private readonly responseAsyncHandler: ResponseAsyncHandler;
 
     constructor(
         log: ILog,
-        protocol: HttpProtocol,
-        defaultHeaders: IDictionary<string | Array<string>>,
-        requestProcessor: RequestProcessor,
-        responseHandler: ResponseHandler) {
+        protocol: string,
+        requestAsyncProcessor: RequestAsyncProcessor,
+        responseAsyncHandler: ResponseAsyncHandler) {
 
         if (!Object.isObject(log)) {
             throw new Error("log must be supplied.");
@@ -241,83 +67,75 @@ export class HttpClient implements IHttpClient {
 
         this.log = log;
         this.protocol = utils.getValue(protocol, HttpProtocols.any);
-        this.defaultHeadersJSON = undefined;
-
-        if (!utils.isNullOrUndefined(defaultHeaders)) {
-            this.defaultHeadersJSON = JSON.stringify(defaultHeaders);
-        }
 
         // request processor.
-        if (utils.isNullOrUndefined(requestProcessor)) {
-            this.requestProcessor = (client, requestOptions, requestData, request) => request.end();
-        } else if (!Function.isFunction(requestProcessor)) {
-            throw new Error("requestProcessor must be a function.");
+        if (utils.isNullOrUndefined(requestAsyncProcessor) || Function.isFunction(requestAsyncProcessor)) {
+            this.requestAsyncProcessor = requestAsyncProcessor;
         } else {
-            this.requestProcessor = requestProcessor;
+            throw new Error("requestAsyncProcessor must be a function.");
         }
 
         // response processor.
-        if (utils.isNullOrUndefined(responseHandler)) {
-            this.responseHandler =
-                (client, log, requestOptions, requestData, response, error, callback) => callback(client, log, requestOptions, requestData, response, error, callback);
-        } else if (!Function.isFunction(responseHandler)) {
-            throw new Error("responseHandler must be a function.");
+        if (utils.isNullOrUndefined(responseAsyncHandler)) {
+            this.responseAsyncHandler =
+                async (client: IHttpClient,
+                    log: ILog,
+                    requestOptions: IRequestOptions,
+                    requestData: any,
+                    response: http.IncomingMessage) => response;
+        } else if (!Function.isFunction(responseAsyncHandler)) {
+            throw new Error("responseAsyncHandler must be a function.");
         } else {
-            this.responseHandler = responseHandler;
+            this.responseAsyncHandler = responseAsyncHandler;
         }
     }
 
-    public delete(url: string, callback?: ResponseHandler): void {
-        this.request(
+    public deleteAsync(url: string): Promise<http.IncomingMessage | any> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.delete
             },
-            null,
-            callback);
+            null);
     }
 
-    public get(url: string, callback?: ResponseHandler): void {
-        this.request(
+    public getAsync(url: string): Promise<http.IncomingMessage | any> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.get
             },
-            null,
-            callback);
+            null);
     }
 
-    public patch(url: string, data: any, callback?: ResponseHandler): void {
-        this.request(
+    public patchAsync(url: string, data: any): Promise<http.IncomingMessage | any> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.patch,
             },
-            data,
-            callback);
+            data);
     }
 
-    public post(url: string, data: any, callback?: ResponseHandler): void {
-        this.request(
+    public postAsync(url: string, data: any): Promise<http.IncomingMessage | any> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.post,
             },
-            data,
-            callback);
+            data);
     }
 
-    public put(url: string, data: any, callback?: ResponseHandler): void {
-        this.request(
+    public putAsync(url: string, data: any): Promise<http.IncomingMessage | any> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.put,
             },
-            data,
-            callback);
+            data);
     }
 
-    public request(requestOptions: IRequestOptions, data: any, callback?: ResponseHandler): void {
+    public requestAsync(requestOptions: IRequestOptions, data: any): Promise<http.IncomingMessage | any> {
         if (!Object.isObject(requestOptions)) {
             throw new Error("requestOptions must be supplied.");
         }
@@ -335,30 +153,27 @@ export class HttpClient implements IHttpClient {
             throw new Error("For HTTP method, GET and DELETE, data cannot be supplied.");
         }
 
-        let headers: IDictionary<string | Array<string>> = undefined;
-
-        if (!utils.isNullOrUndefined(this.defaultHeadersJSON)) {
-            headers = JSON.parse(this.defaultHeadersJSON);
-        }
-
-        if (Object.isObject(requestOptions.headers)) {
-            Object.assign(headers || {}, requestOptions.headers);
-        }
-
         const options: http.RequestOptions = url.parse(requestOptions.url);
 
         options.method = requestOptions.method;
-        options.headers = headers;
+
+        if (Object.isObject(requestOptions.headers)) {
+            options.headers = requestOptions.headers;
+        }
 
         this.log.writeInfo("{}: {}", requestOptions.method, requestOptions.url);
-        const request = this.sendRequest(options, (error, response) => this.responseHandler(this, this.log, requestOptions, data, response, error, callback));
+        const request = this.makeRequest(options);
 
-        if (request !== undefined) {
-            this.requestProcessor(this, this.log, requestOptions, data, request);
-        }
+        return this.requestAsyncProcessor(this, this.log, requestOptions, data, request)
+            .then(() => new Promise<http.IncomingMessage>((resolve, reject) => {
+                request.on("response", (response) => resolve(response));
+                request.on("error", (err: Error) => reject(err));
+                request.end();
+            }))
+            .then((response) => this.responseAsyncHandler(this, this.log, requestOptions, data, response));
     }
 
-    private sendRequest(options: http.RequestOptions, callback?: (error, res: http.IncomingMessage) => void): http.ClientRequest {
+    private makeRequest(options: http.RequestOptions): http.ClientRequest {
         let protocol: string;
 
         if (this.protocol === HttpProtocols.any) {
@@ -369,18 +184,131 @@ export class HttpClient implements IHttpClient {
 
         try {
             if (protocol === "http:" || protocol === "http") {
-                return http.request(options, (res) => callback(null, res));
+                return http.request(options);
             } else if (protocol === "https:" || protocol === "https") {
-                return https.request(options, (res) => callback(null, res));
+                return https.request(options);
             } else {
                 throw new Error(`unsupported protocol: ${protocol}`);
             }
         } catch (exception) {
             this.log.writeException(exception);
-            callback(exception, null);
-            return undefined;
+            throw exception;
         }
     }
+}
+
+namespace ResponseHandlers {
+    export function handleRedirection(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
+        return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: http.IncomingMessage): Promise<any> => {
+            if (response.statusCode === 301
+                || response.statusCode === 302
+                || response.statusCode === 307
+                || response.statusCode === 308) {
+                const location = response.headers["location"];
+                const redirectionRequestOptions: IRequestOptions = JSON.parse(JSON.stringify(requestOptions));
+
+                redirectionRequestOptions.url = location;
+                log.writeInfo("HTTP{}: Redirecting to {}", response.statusCode, redirectionRequestOptions.url);
+
+                return client.requestAsync(redirectionRequestOptions, requestData);
+            }
+
+            if (Function.isFunction(nextHandler)) {
+                return nextHandler(client, log, requestOptions, requestData, response);
+            }
+
+            return Promise.resolve(response);
+        };
+    }
+
+    function isJsonResponse(log: ILog, response: http.IncomingMessage): boolean {
+        const regex_filename_json = /filename=.+\.json/i;
+
+        const contentType = response.headers["content-type"];
+        const contentDisposition = response.headers["content-disposition"];
+
+        if (!String.isString(contentType)) {
+            return false;
+        }
+
+        if (contentType.indexOf(HttpContentTypes.json) >= 0) {
+            return true;
+        }
+
+        if (contentType.indexOf(HttpContentTypes.binary) >= 0
+            && regex_filename_json.test(contentDisposition)) {
+
+            log.writeVerbose(`Treat Content-Type (${contentType}) as JSON since Content-Disposition header (${contentDisposition}) indicates JSON extension.`);
+            return true;
+        }
+
+        return false;
+    }
+
+    export function handleJson(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
+        const regex_filename_json = /filename=.+\.json/i;
+
+        return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: http.IncomingMessage): Promise<any> => {
+            if (response.statusCode >= 200 && response.statusCode < 300 && isJsonResponse(log, response)) {
+                response.setEncoding("utf8");
+
+                return new Promise((resolve, reject) => {
+                    let json: string = "";
+
+                    response.on("data", (chunk) => json += chunk);
+                    response.on("end", () => {
+                        try {
+                            resolve(JSON.parse(json));
+                        } catch (exception) {
+                            reject(exception);
+                        }
+                    });
+                });
+            }
+
+            if (Function.isFunction(nextHandler)) {
+                return nextHandler(client, log, requestOptions, requestData, response);
+            }
+
+            return Promise.resolve(response);
+        };
+    }
+}
+
+namespace RequestHandlers {
+    export function handleJson(nextHandler: RequestAsyncProcessor): RequestAsyncProcessor {
+        return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: http.ClientRequest) => {
+            const contentType = request.getHeader("Content-Type");
+
+            if (String.isString(contentType)
+                && contentType.indexOf(HttpContentTypes.json) >= 0) {
+                const jsonBody = JSON.stringify(requestData);
+
+                request.setHeader("Content-Length", Buffer.byteLength(jsonBody));
+                request.write(jsonBody);
+            } else if (!utils.isNullOrUndefined(requestData)) {
+                throw new Error("Header Content-Type is missing in the request but the data is supplied.");
+            }
+
+            if (Function.isFunction(nextHandler)) {
+                await nextHandler(client, log, requestOptions, requestData, request);
+            }
+        };
+    }
+}
+
+function buildHttpClient(log: ILog, protocol: string): IHttpClient {
+    const requestHandlerBuilder = new HandlerChainBuilder<RequestAsyncProcessor>();
+    const responseHandlerBuilder = new HandlerChainBuilder<ResponseAsyncHandler>();
+
+    // Request handlers
+    requestHandlerBuilder.handle(RequestHandlers.handleJson);
+
+    // Response handlers
+    responseHandlerBuilder.handle(ResponseHandlers.handleRedirection);
+    responseHandlerBuilder.handle(ResponseHandlers.handleJson);
+
+    return new HttpClient(log, HttpProtocols.http, requestHandlerBuilder.build(), responseHandlerBuilder.build());
 }
 
 export function getModuleMetadata(): IModuleInfo {
@@ -391,29 +319,13 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "http.http-client",
                 version: electron.app.getVersion(),
-                descriptor: (log: ILog) => {
-                    const httpClientBuilder = new HttpClientBuilder(HttpProtocols.any);
-
-                    httpClientBuilder
-                        .handleJsonRequest()
-                        .handleRedirectionResponse();
-
-                    return httpClientBuilder.build(log);
-                },
+                descriptor: (log: ILog) => buildHttpClient(log, HttpProtocols.http),
                 deps: ["logging"]
             },
             {
                 name: "http.https-client",
                 version: electron.app.getVersion(),
-                descriptor: (log: ILog) => {
-                    const httpClientBuilder = new HttpClientBuilder(HttpProtocols.https);
-
-                    httpClientBuilder
-                        .handleJsonRequest()
-                        .handleRedirectionResponse();
-
-                    return httpClientBuilder.build(log);
-                },
+                descriptor: (log: ILog) => buildHttpClient(log, HttpProtocols.https),
                 deps: ["logging"]
             }
         ]

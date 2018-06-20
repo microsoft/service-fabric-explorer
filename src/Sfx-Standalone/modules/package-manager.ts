@@ -3,17 +3,35 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import { IDictionary, IPackageInfo } from "sfx.common";
 import { ISettings } from "sfx.settings";
 import { IModuleManager, IModuleInfo } from "sfx.module-manager";
 import {
     IPackageManager,
     IPackageRepository,
-    IPackageRepositoryConfig,
-    PackagePropertyName
+    IPackageRepositoryConfig
 } from "sfx.package-manager";
+import { IHttpClient } from "sfx.http";
+
+import * as path from "path";
+import * as url from "url";
+import * as tar from "tar";
+import * as fs from "fs";
+import * as tmp from "tmp";
 
 import { electron } from "../utilities/electron-adapter";
 import * as utils from "../utilities/utils";
+import * as fileSystem from "../utilities/fileSystem";
+
+interface IPackageConfig {
+    enabled: boolean;
+}
+
+interface IPackageManagerConfig {
+    packagesDir: string;
+    repos: IDictionary<IPackageRepositoryConfig>;
+    packages: IDictionary<IPackageConfig>;
+}
 
 function isPackageRepositoryConfig(repoConfig: IPackageRepositoryConfig): boolean {
     return !utils.isNullOrUndefined(repoConfig)
@@ -22,116 +40,116 @@ function isPackageRepositoryConfig(repoConfig: IPackageRepositoryConfig): boolea
 }
 
 class PackageRepository implements IPackageRepository {
-    constructor(repoConfig: IPackageRepositoryConfig) {
+    private readonly packagesDir: string;
+    private readonly httpClient: IHttpClient;
+    private readonly config: IPackageRepositoryConfig;
 
-    }
-}
-
-class PackageManagerSettings {
-    private readonly settings: ISettings;
-    private readonly sectionName: string;
-
-    constructor(settings: ISettings, sectionName: string) {
-        this.settings = settings;
-        this.sectionName = sectionName;
+    public installPackage(packageName: string): void {
+        const packageUrl = new URL(packageName, this.config.url);
     }
 
-    public addRepo(repoConfig: IPackageRepositoryConfig): void {
-        if (!isPackageRepositoryConfig(repoConfig)) {
-            throw new Error("repoConfig must be provided and implements IPackageRepositoryConfig.");
-        }
-
-        this.settings.set(this.generatePath("repos", repoConfig.name), repoConfig);
-    }
-
-    public getRepoConfigs(): Array<IPackageRepositoryConfig> {
-        const reposConfig = this.settings.get(this.generatePath("repos"));
-
-        return Object.values(reposConfig);
-    }
-
-    public removeRepo(repoName: string): void {
-        if (!String.isString(repoName)) {
-            return;
-        }
-
-        this.settings.set(this.generatePath("repos", repoName), undefined);
-    }
-
-    public setPackageProperty(packageName: string, propertyName: PackagePropertyName, value: any): void {
-        if (!String.isString(packageName)) {
-            throw new Error("packageName (string) must be provided.");
-        }
-
-        if (!String.isString(propertyName)) {
-            throw new Error("propertyName (string) must be provided.");
-        }
-
-        this.settings.set(this.generatePath("packages", packageName, propertyName), value);
-    }
-
-    public getPackageProperty(packageName: string, propertyName: PackagePropertyName): any {
-        if (!String.isString(packageName)) {
-            throw new Error("packageName (string) must be provided.");
-        }
-
-        if (!String.isString(propertyName)) {
-            throw new Error("propertyName (string) must be provided.");
-        }
-
-        return this.settings.get(this.generatePath("packages", packageName, propertyName));
-    }
-
-    private generatePath(...segements: Array<string>): string {
-        if (!this.sectionName) {
-            return segements.join("/");
-        }
-
-        return this.sectionName + "/" + segements.join("/");
+    constructor(packagesDir: string, httpClient: IHttpClient, repoConfig: IPackageRepositoryConfig) {
+        this.packagesDir = packagesDir;
+        this.httpClient = httpClient;
+        this.config = repoConfig;
     }
 }
 
 class PackageManager implements IPackageManager {
-    private settings: PackageManagerSettings;
+    private static readonly SettingsName = "package-manager";
 
-    constructor(settings: ISettings) {
+    private httpClient: IHttpClient;
+
+    private settings: ISettings;
+
+    private config: IPackageManagerConfig;
+
+    constructor(settings: ISettings, httpClient: IHttpClient) {
         if (!Object.isObject(settings)) {
             throw new Error("settings must be provided.");
         }
 
-        this.settings = new PackageManagerSettings(settings, "package-manager");
+        if (!Object.isObject(httpClient)) {
+            throw new Error("httpClient must be provided.");
+        }
+
+        this.httpClient = httpClient;
+        this.settings = settings;
+        this.config = this.settings.get(PackageManager.SettingsName);
+
+        if (!Object.isObject(this.config.repos)) {
+            this.config.repos = Object.create(null);
+        }
+
+        if (!Object.isObject(this.config.packages)) {
+            this.config.packages = Object.create(null);
+        }
+
+        if (!String.isString(this.config.packagesDir)) {
+            this.config.packagesDir = path.join(electron.app.getPath("userData"), "packages");
+        } else {
+            this.config.packagesDir = path.join(electron.app.getPath("userData"), this.config.packagesDir);
+        }
+
+        fileSystem.ensureDirExists(this.config.packagesDir);
     }
 
     public addRepo(repoConfig: IPackageRepositoryConfig): void {
-        this.settings.addRepo(repoConfig);
+        if (!isPackageRepositoryConfig(repoConfig)) {
+            throw new Error("A valid repoConfig must be provided.");
+        }
+
+        this.config.repos[repoConfig.name] = repoConfig;
+        this.saveConfig();
     }
 
     public removeRepo(repoName: string): void {
-        this.settings.removeRepo(repoName);
+        delete this.config.repos[repoName];
+        this.saveConfig();
     }
 
-    public getRepos(): Array<IPackageRepository> {
-        return this.getRepoConfigs().map((repoConfig) => new PackageRepository(repoConfig));
+    public getRepo(repoName: string): IPackageRepository {
+        if (!String.isString(repoName)) {
+            throw new Error("A valid repoName must be provided.");
+        }
+
+        if (!this.config.repos[repoName]) {
+            return undefined;
+        }
+
+        return new PackageRepository(this.config.packagesDir, this.httpClient, this.config.repos[repoName]);
     }
 
     public getRepoConfigs(): Array<IPackageRepositoryConfig> {
-        return this.settings.getRepoConfigs();
+        return Object.values(this.config.repos);
     }
 
-    public installPackage(repo: string, packageName: string): void {
-        throw new Error("Method not implemented.");
+    public installPackage(repoName: string, packageName: string): void {
+        const repo = this.getRepo(repoName);
+
+        if (!repo) {
+            throw new Error(`Unknown repo: ${repoName}`);
+        }
+
+        repo.installPackage(packageName);
+        this.relaunch();
     }
 
     public uninstallPackage(packageName: string): void {
-        throw new Error("Method not implemented.");
+        if (!String.isString(packageName) || String.isEmptyOrWhitespace(packageName)) {
+            throw new Error("packageName must be provided.");
+        }
+
+        fileSystem.rmdir(path.join(this.config.packagesDir, packageName));
+
+        delete this.config.packages[packageName];
+        this.saveConfig();
+        this.relaunch();
     }
 
-    public setPackageProperty(packageName: string, propertyName: PackagePropertyName, value: any): void {
-        this.settings.setPackageProperty(packageName, propertyName, value);
-    }
-
-    public getPackageProperty(packageName: string, propertyName: PackagePropertyName) {
-        return this.settings.getPackageProperty(packageName, propertyName);
+    public relaunch(): void {
+        electron.app.relaunch();
+        electron.app.quit();
     }
 
     public shouldLoad(moduleManager: IModuleManager, nameOrInfo: string | IModuleInfo): boolean {
@@ -139,7 +157,21 @@ class PackageManager implements IPackageManager {
             return true;
         }
 
-        return this.settings.getPackageProperty(nameOrInfo, "Enabled");
+        const packageConfig = this.config.packages[nameOrInfo];
+
+        if (!packageConfig) {
+            return true;
+        }
+
+        if (packageConfig.enabled === false) {
+            return false;
+        }
+
+        return true;
+    }
+
+    private saveConfig(): void {
+        this.settings.set(PackageManager.SettingsName, this.config);
     }
 }
 
@@ -152,8 +184,8 @@ export function getModuleMetadata(): IModuleInfo {
                 name: "settings.service",
                 version: electron.app.getVersion(),
                 singleton: true,
-                descriptor: (settings: ISettings) => new PackageManager(settings),
-                deps: ["settings"]
+                descriptor: (settings: ISettings, httpsClient: IHttpClient) => new PackageManager(settings, httpsClient),
+                deps: ["settings", "http.https-client"]
             }
         ]
     };
