@@ -1,6 +1,6 @@
 {
   "name": "sfxstandalone",
-  "version": "1.0.0-private",
+  "version": "1.0.0",
   "description": "Service Fabric Explorer desktop version.",
   "main": "main.js",
   "scripts": {
@@ -27,6 +27,7 @@
     "@types/jquery": "^3.2.15",
     "@types/node": "^8.5.10",
     "@types/semver": "^5.4.0",
+    "@types/tar": "^4.0.0",
     "asar": "0.13.1",
     "async": "^2.6.0",
     "del": "3.0.0",

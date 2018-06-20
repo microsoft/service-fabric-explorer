@@ -308,7 +308,7 @@ function buildHttpClient(log: ILog, protocol: string): IHttpClient {
     responseHandlerBuilder.handle(ResponseHandlers.handleRedirection);
     responseHandlerBuilder.handle(ResponseHandlers.handleJson);
 
-    return new HttpClient(log, HttpProtocols.http, requestHandlerBuilder.build(), responseHandlerBuilder.build());
+    return new HttpClient(log, protocol, requestHandlerBuilder.build(), responseHandlerBuilder.build());
 }
 
 export function getModuleMetadata(): IModuleInfo {
