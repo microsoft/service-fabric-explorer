@@ -12,10 +12,8 @@ const del = require("del");
 
 const buildInfos = config.buildInfos;
 
-gulp.task("clean:build",
-    () => del([buildInfos.paths.buildDir]));
+gulp.task("clean:build", () => del([buildInfos.paths.buildDir]));
 
-gulp.task("clean:publish",
-    () => del([buildInfos.paths.publishDir]));
+gulp.task("clean:publish", () => del([buildInfos.paths.publishDir]));
 
-gulp.task("clean:all", ["clean:build", "clean:publish"]);
+gulp.task("clean:all", gulp.parallel("clean:build", "clean:publish"));

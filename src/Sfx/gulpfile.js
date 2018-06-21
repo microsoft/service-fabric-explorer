@@ -84,8 +84,9 @@ paths.libs_styles = {
 // Clean tasks
 //-----------------------------------------------------------------------------
 
-gulp.task("clean", function () {
-    return plugins.del.sync([paths.webroot + "/*", "!" + paths.webroot + "/bin"]);
+gulp.task("clean", function (done) {
+    plugins.del.sync([paths.webroot + "/*", "!" + paths.webroot + "/bin"]);
+    done();
 });
 
 //-----------------------------------------------------------------------------
@@ -111,8 +112,9 @@ gulp.task("build:templates", function () {
 });
 
 // Inject commit id and build number into VersionInfo.ts
-gulp.task("build:versionInfo", function () {
+gulp.task("build:versionInfo", function (done) {
     if (!process.env.BUILD_BUILDNUMBER || !process.env.BUILD_SOURCEVERSION) {
+        done();
         return;
     }
 
@@ -149,7 +151,7 @@ gulp.task("build:lib-css", function () {
 
 // Concat and minify third party libaries
 // Uses wiredep to analyse dependencies, custom ordering is done in bower.json via overrides.
-gulp.task("build:lib", ["build:lib-js", "build:lib-css"]);
+gulp.task("build:lib", gulp.parallel("build:lib-js", "build:lib-css"));
 
 gulp.task("build:tslint", function () {
     // Run tslint for .ts files under App/Scripts folder
@@ -169,7 +171,7 @@ gulp.task("build:tslint", function () {
 });
 
 // Compile TypeScript, concat/uglify into app.min.js, create sourcemap to help TS debugging
-gulp.task("build:js", ["build:templates", "build:versionInfo", "build:tslint"], function () {
+gulp.task("build:js", gulp.series(gulp.parallel("build:templates", "build:versionInfo", "build:tslint"), function () {
     console.log("isProductionEnvironment = " + isProductionEnv);
 
     let tsProject = plugins.typescript.createProject("App/Scripts/tsconfig.json", {
@@ -187,7 +189,7 @@ gulp.task("build:js", ["build:templates", "build:versionInfo", "build:tslint"], 
             .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.write(".", { includeContent: true })))
             .pipe(gulp.dest(paths.scripts.dest)),
         result.dts.pipe(gulp.dest(paths.scripts.dest))]);
-});
+}));
 
 // Compile SASS, concat/minify into app.min.css, create sourcemap to help debugging
 gulp.task("build:css", function () {
@@ -217,20 +219,22 @@ gulp.task("build:css", function () {
 });
 
 // Build
-gulp.task("build", ["build:lib", "build:static", "build:js", "build:css"]);
+gulp.task("build", gulp.parallel(["build:lib", "build:static", "build:js", "build:css"]));
 
 // Clean build
-gulp.task("clean-build", function (callback) {
-    plugins.runSequence("clean", "build", callback);
-});
+gulp.task("clean-build", gulp.series("clean", "build"));
 
 //-----------------------------------------------------------------------------
 // Watch tasks
 //-----------------------------------------------------------------------------
 
 // Watch task which monitor all TS and SCSS file changes
-gulp.task("watch", ["build"], function () {
-    gulp.watch(paths.statics.src, ["build:static"]);
-    gulp.watch(paths.styles.src, ["build:css"]);
-    gulp.watch([paths.scripts.src, paths.templates.src], ["build:js"]);
-});
+gulp.task("watch", gulp.series(["build"], function (done) {
+    gulp.watch(paths.statics.src, gulp.series("build:static"));
+    gulp.watch(paths.styles.src, gulp.series("build:css"));
+    gulp.watch([paths.scripts.src, paths.templates.src], gulp.series("build:js"));
+
+    // To signal completion
+    done();
+}));
+
