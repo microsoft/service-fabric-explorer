@@ -21,7 +21,14 @@ class Settings implements ISettings {
 
     private readonly parentSettings: ISettings;
 
+    private readonly symbol_settingsWrapper: symbol;
+
+    private readonly symbol_settingsPath: symbol;
+
     constructor(initialSettings?: IDictionary<any>, readonly?: boolean, parentSettings?: ISettings) {
+        this.symbol_settingsPath = Symbol("settings-path");
+        this.symbol_settingsWrapper = Symbol("settings-wrapper");
+
         this.parentSettings = utils.isNullOrUndefined(parentSettings) ? undefined : parentSettings;
         this.readonly = utils.isNullOrUndefined(readonly) ? false : readonly;
 
@@ -53,7 +60,7 @@ class Settings implements ISettings {
             return this.parentSettings.get(settingPath);
         }
 
-        return settingValue;
+        return this.wrapValue(settingPath, settingValue);
     }
 
     public set<T>(settingPath: string, value: T): void {
@@ -69,26 +76,81 @@ class Settings implements ISettings {
         let settingValue: any = this.settings;
 
         for (let pathPartIndex = 0; pathPartIndex < pathParts.length; pathPartIndex++) {
-            if (!Array.isArray(settingValue) && !Object.isObject(settingValue)) {
+            if (settingValue === null || (!Array.isArray(settingValue) && !Object.isObject(settingValue))) {
                 throw new Error("Unable to travel the settings path because the settings type is not array or object or it is null.");
             }
 
-            let pathPart = pathParts[pathPartIndex];
+            const pathPart = pathParts[pathPartIndex];
 
-            if (settingValue[pathPart] === undefined) {
-                if (pathPartIndex === pathParts.length - 1) {
-                    if (value === undefined) {
-                        delete settingValue[pathPart];
-                    } else {
-                        settingValue[pathPart] = value;
-                    }
+            if (pathPartIndex === pathParts.length - 1) {
+                if (value === undefined) {
+                    delete settingValue[pathPart];
                 } else {
-                    settingValue[pathPart] = {};
+                    this.removeWrapper(settingValue[pathPart]);
+                    settingValue[pathPart] = value;
                 }
+            } else if (settingValue[pathPart] === undefined) {
+                settingValue[pathPart] = {};
             }
 
             settingValue = settingValue[pathPart];
         }
+    }
+
+    private removeWrapper(value: any): void {
+        if (typeof value !== "object" || value === null) {
+            return;
+        }
+
+        delete value[this.symbol_settingsPath];
+        delete value[this.symbol_settingsWrapper];
+    }
+
+    private wrapValue(settingsPath: string, value: any): any {
+        if (typeof value !== "object" || value === null) {
+            return value;
+        }
+
+        if (!value[this.symbol_settingsWrapper]) {
+            value[this.symbol_settingsPath] = settingsPath;
+            value[this.symbol_settingsWrapper] =
+                new Proxy(value,
+                    {
+                        get: (target, property, receiver) => {
+                            const settingsPath = target[this.symbol_settingsPath];
+
+                            if (!settingsPath || typeof property === "symbol") {
+                                return target[property];
+                            }
+
+                            return this.wrapValue(settingsPath + "/" + property.toString(), target[property]);
+                        },
+                        set: (target, property, value, receiver) => {
+                            const settingsPath = target[this.symbol_settingsPath];
+
+                            if (!settingsPath || typeof property === "symbol") {
+                                target[property] = value;
+                                return true;
+                            }
+
+                            this.set(settingsPath + "/" + property.toString(), value);
+                            return true;
+                        },
+                        deleteProperty: (target, property) => {
+                            const settingsPath = target[this.symbol_settingsPath];
+
+                            if (!settingsPath || typeof property === "symbol") {
+                                delete target[property];
+                                return true;
+                            }
+
+                            this.set(settingsPath + "/" + property.toString(), undefined);
+                            return true;
+                        }
+                    });
+        }
+
+        return value[this.symbol_settingsWrapper];
     }
 }
 

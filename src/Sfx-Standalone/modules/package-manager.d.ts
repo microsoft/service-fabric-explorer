@@ -7,6 +7,8 @@ declare module "sfx.package-manager" {
     import { IDictionary } from "sfx.common";
     import { IModuleLoadingPolicy } from "sfx.module-manager";
 
+    export type PackageStatus = "Installed" | "Enabled" | "Disabled" | "Uninstalled";
+
     export interface IPackageRepositoryConfig {
         readonly name?: string;
         readonly url: string;
@@ -29,7 +31,6 @@ declare module "sfx.package-manager" {
     }
 
     export interface IPackageInfo {
-        operationTag?: string;
         name: string;
         description?: string;
         version: string;
@@ -40,19 +41,19 @@ declare module "sfx.package-manager" {
         homepage?: string;
         license?: string;
         keywords?: Array<string>;
-        enabled?: boolean;
+        status?: PackageStatus;
     }
 
     export interface IPackageRepository extends IPackageRepositoryConfig {
         installPackageAsync(packageName: string): Promise<boolean>;
-        
+
         getPackageMetadataAsync(packageName: string): Promise<IPackageInfo>;
 
         searchAsync(text: string, resultSize: number): Promise<ISearchResult>;
         searchNextAsync(continuationToken: string): Promise<ISearchResult>;
     }
 
-    export interface IPackageManager extends IModuleLoadingPolicy {
+    export interface IPackageManager {
         addRepo(repoConfig: IPackageRepositoryConfig): void;
         removeRepo(repoName: string): void;
 
@@ -68,6 +69,7 @@ declare module "sfx.package-manager" {
         enablePackage(packageName: string, enable?: boolean): void;
 
         uninstallPackage(packageName: string): void;
+        relaunch(): void;
     }
 }
 

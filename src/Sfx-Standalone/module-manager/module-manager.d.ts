@@ -47,7 +47,7 @@ declare module "sfx.module-manager" {
 
     export interface IModule {
         getModuleMetadata?(): IModuleInfo;
-        initialize?(moduleManager: IModuleManager): void;
+        initializeAsync?(moduleManager: IModuleManager): Promise<void>;
     }
 
     export interface HostVersionMismatchEventHandler {

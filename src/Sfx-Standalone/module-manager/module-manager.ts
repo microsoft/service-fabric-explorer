@@ -307,7 +307,7 @@ export class ModuleManager implements IModuleManager {
 
             // Initialize modules.
             for (const module of loadedModules) {
-                this.initializeModule(module);
+                await this.initializeModuleAsync(module);
             }
         }
     }
@@ -441,9 +441,9 @@ export class ModuleManager implements IModuleManager {
         return module;
     }
 
-    private initializeModule(module: IModule): void {
-        if (Function.isFunction(module.initialize)) {
-            module.initialize(this);
+    private async initializeModuleAsync(module: IModule): Promise<void> {
+        if (Function.isFunction(module.initializeAsync)) {
+            await module.initializeAsync(this);
         }
     }
 

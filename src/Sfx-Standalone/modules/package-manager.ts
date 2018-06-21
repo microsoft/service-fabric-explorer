@@ -5,7 +5,7 @@
 
 import { IDictionary } from "sfx.common";
 import { ISettings } from "sfx.settings";
-import { IModuleManager, IModuleInfo } from "sfx.module-manager";
+import { IModuleManager, IModuleInfo, IModuleLoadingPolicy } from "sfx.module-manager";
 import {
     IPackageManager,
     IPackageRepository,
@@ -26,9 +26,9 @@ import * as uuidv4 from "uuid/v4";
 import { electron } from "../utilities/electron-adapter";
 import * as utils from "../utilities/utils";
 import * as fileSystem from "../utilities/fileSystem";
+import { version } from "punycode";
 
 interface IPackageConfig {
-    operationTag: string;
     enabled: boolean;
 }
 
@@ -196,8 +196,18 @@ function ModuleInfoToPackageInfo(moduleInfo: NpmRegistry.IModuleInfo): IPackageI
     };
 }
 
-function NpmPackageToPackageInfo(): IPackageInfo {
-
+function NpmPackageToPackageInfo(npmPackage: NpmRegistry.INpmPackage): IPackageInfo {
+    return {
+        name: npmPackage.name,
+        description: npmPackage.description,
+        version: npmPackage.version,
+        maintainers: npmPackage.maintainers,
+        author: npmPackage.author,
+        sourceRepository: npmPackage.repository,
+        homepage: npmPackage.homepage,
+        license: npmPackage.license,
+        keywords: npmPackage.keywords
+    };
 }
 
 function SearchResultPackageToPackageInfo(packageInfo: NpmRegistry.ISearchResultPackage): IPackageInfo {
@@ -365,20 +375,14 @@ class PackageRepository implements IPackageRepository {
     }
 }
 
+const PackageManagerSettingsName = "package-manager";
+
 class PackageManager implements IPackageManager {
-    private static readonly SettingsName = "package-manager";
-
     private httpClient: IHttpClient;
-
-    private settings: ISettings;
 
     private config: IPackageManagerConfig;
 
     private repos: IDictionary<IPackageRepository>;
-
-    private packages: IDictionary<IPackageInfo>;
-
-    public readonly operationTag: string;
 
     constructor(settings: ISettings, httpClient: IHttpClient) {
         if (!Object.isObject(settings)) {
@@ -389,12 +393,9 @@ class PackageManager implements IPackageManager {
             throw new Error("httpClient must be provided.");
         }
 
-        this.operationTag = uuidv4();
-        this.packages = Object.create(null);
         this.repos = Object.create(null);
         this.httpClient = httpClient;
-        this.settings = settings;
-        this.config = this.settings.get(PackageManager.SettingsName);
+        this.config = settings.get(PackageManagerSettingsName);
 
         if (!Object.isObject(this.config.repos)) {
             this.config.repos = Object.create(null);
@@ -411,6 +412,8 @@ class PackageManager implements IPackageManager {
         }
 
         fileSystem.ensureDirExists(this.config.packagesDir);
+
+        this.loadInstalledPackageInfos(true);
     }
 
     public addRepo(repoConfig: IPackageRepositoryConfig): void {
@@ -419,12 +422,10 @@ class PackageManager implements IPackageManager {
         }
 
         this.config.repos[repoConfig.name] = repoConfig;
-        this.saveConfig();
     }
 
     public removeRepo(repoName: string): void {
         delete this.config.repos[repoName];
-        this.saveConfig();
     }
 
     public getRepo(repoName: string): IPackageRepository {
@@ -461,6 +462,14 @@ class PackageManager implements IPackageManager {
         return repo;
     }
 
+    public getRepoConfig(repoName: string): IPackageRepositoryConfig {
+        if (!String.isString(repoName) || String.isEmptyOrWhitespace(repoName)) {
+            throw new Error("repoName must be provided.");
+        }
+
+        return this.config.repos[repoName];
+    }
+
     public getRepos(): Array<IPackageRepository> {
         return Object.keys(this.config.repos).map((repoName) => this.getRepo(repoName));
     }
@@ -470,9 +479,7 @@ class PackageManager implements IPackageManager {
     }
 
     public getInstalledPackageInfos(): Array<IPackageInfo> {
-
-
-        return Object.values(this.packages);
+        return this.loadInstalledPackageInfos(false);
     }
 
     public uninstallPackage(packageName: string): void {
@@ -481,15 +488,84 @@ class PackageManager implements IPackageManager {
         }
 
         fileSystem.rmdir(path.join(this.config.packagesDir, packageName));
-
-        delete this.packages[packageName].operationTag;
-        delete this.config.packages[packageName];
-        this.saveConfig();
     }
 
     public relaunch(): void {
         electron.app.relaunch();
         electron.app.quit();
+    }
+
+    public enablePackage(packageName: string, enable?: boolean): void {
+        if (!String.isString(packageName) || String.isEmptyOrWhitespace(packageName)) {
+            throw new Error("packageName must be provided.");
+        }
+
+        let packageConfig = this.config.packages[packageName];
+
+        if (!packageConfig) {
+            this.config.packages[packageName] = {
+                enabled: true
+            };
+
+            packageConfig = this.config.packages[packageName];
+        }
+
+        packageConfig.enabled = utils.getValue(enable, true);
+    }
+
+    private loadInstalledPackageInfos(removeUninstalled: boolean): Array<IPackageInfo> {
+        const packageInfos = new Array<IPackageInfo>();
+        const knownPackageNames =
+            new Set(
+                Object.keys(this.config.packages)
+                    .concat(fs.readdirSync(this.config.packagesDir)));
+
+        for (const packageName of knownPackageNames) {
+            const subDir = path.join(this.config.packagesDir, packageName);
+
+            if (!fs.existsSync(subDir)) {
+                if (!removeUninstalled) {
+                    packageInfos.push({
+                        name: packageName,
+                        version: null,
+                        maintainers: null,
+                        author: null,
+                        status: "Uninstalled"
+                    });
+                } else {
+                    delete this.config.packages[packageName];
+                }
+
+                continue;
+            }
+
+            const stat = fs.statSync(subDir);
+
+            if (!stat.isDirectory()) {
+                continue;
+            }
+
+            const packageInfo = NpmPackageToPackageInfo(JSON.parse(fs.readFileSync(path.join(subDir, "package.json"), { encoding: "utf8" })));
+            const packageConfig = this.config.packages[packageInfo.name];
+
+            packageInfo.status = "Installed";
+
+            if (packageConfig) {
+                packageInfo.status = packageConfig.enabled ? "Enabled" : "Disabled";
+            }
+
+            packageInfos.push(packageInfo);
+        }
+
+        return packageInfos;
+    }
+}
+
+class ModuleLoadingPolicy implements IModuleLoadingPolicy {
+    private readonly config: IPackageManagerConfig;
+
+    constructor(settings: ISettings) {
+        this.config = settings.get(PackageManagerSettingsName);
     }
 
     public shouldLoad(moduleManager: IModuleManager, nameOrInfo: string | IModuleInfo): boolean {
@@ -500,6 +576,10 @@ class PackageManager implements IPackageManager {
         const packageConfig = this.config.packages[nameOrInfo];
 
         if (!packageConfig) {
+            this.config.packages[nameOrInfo] = {
+                enabled: true
+            };
+
             return true;
         }
 
@@ -509,25 +589,6 @@ class PackageManager implements IPackageManager {
 
         return true;
     }
-
-    private saveConfig(): void {
-        this.settings.set(PackageManager.SettingsName, this.config);
-    }
-
-    private preloadInstalledPackageInfos(): void {
-        for (const subDirName of fs.readdirSync(this.config.packagesDir)) {
-            const subDir = path.join(this.config.packagesDir, subDirName);
-            const stat = fs.statSync(subDir);
-
-            if (!stat.isDirectory()) {
-                continue;
-            }
-
-            const packageJson = JSON.parse(fs.readFileSync(path.join(subDir, "package.json"), { encoding: "utf8" }));
-
-
-        }
-    }
 }
 
 export function getModuleMetadata(): IModuleInfo {
@@ -536,7 +597,7 @@ export function getModuleMetadata(): IModuleInfo {
         version: electron.app.getVersion(),
         components: [
             {
-                name: "settings.service",
+                name: "package-manager",
                 version: electron.app.getVersion(),
                 singleton: true,
                 descriptor: (settings: ISettings, httpsClient: IHttpClient) => new PackageManager(settings, httpsClient),
@@ -544,4 +605,8 @@ export function getModuleMetadata(): IModuleInfo {
             }
         ]
     };
+}
+
+export async function initializeAsync(moduleManager: IModuleManager): Promise<void> {
+    moduleManager.setModuleLoadingPolicy(new ModuleLoadingPolicy(await moduleManager.getComponentAsync("settings")));
 }
