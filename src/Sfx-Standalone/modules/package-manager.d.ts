@@ -8,39 +8,69 @@ declare module "sfx.package-manager" {
     import { IModuleLoadingPolicy } from "sfx.module-manager";
 
     export interface IPackageRepositoryConfig {
-        readonly type: string;
-        readonly name: string;
+        readonly name?: string;
         readonly url: string;
     }
 
     export interface ISearchResult {
-        continueToken: string;
+        continuationToken: string;
+        packages: Array<IPackageInfo>;
     }
 
-    export interface IPackageMetadata {
+    export interface IContact {
+        name: string;
+        email: string;
+        url?: string;
+    }
 
+    export interface ISourceRepository {
+        type: string;
+        url: string;
+    }
+
+    export interface ILicense {
+        type: string;
+        url: string;
     }
 
     export interface IPackageInfo {
-
+        operationTag?: string;
+        name: string;
+        description?: string;
+        version: string;
+        readme?: string;
+        maintainers: Array<IContact>;
+        author: IContact;
+        sourceRepository?: ISourceRepository;
+        homepage?: string;
+        license?: Array<ILicense>;
+        keywords?: Array<string>;
+        enabled?: boolean;
     }
 
     export interface IPackageRepository extends IPackageRepositoryConfig {
         installPackageAsync(packageName: string): Promise<boolean>;
-        getPackageMetadataAsync(packageName: string): Promise<IPackageMetadata>;
+        
+        getPackageMetadataAsync(packageName: string): Promise<IPackageInfo>;
+
         searchAsync(text: string, resultSize: number): Promise<ISearchResult>;
+        searchNextAsync(continuationToken: string): Promise<ISearchResult>;
     }
 
     export interface IPackageManager extends IModuleLoadingPolicy {
         addRepo(repoConfig: IPackageRepositoryConfig): void;
         removeRepo(repoName: string): void;
+
         getRepo(repoName: string): IPackageRepository;
+        getRepoByUrl(repoUrl: string): IPackageRepository;
         getRepoConfig(repoName: string): IPackageRepositoryConfig;
 
         getRepos(): Array<IPackageRepository>;
         getRepoConfigs(): Array<IPackageRepositoryConfig>;
 
         getInstalledPackageInfos(): Array<IPackageInfo>;
+
+        enablePackage(packageName: string, enable?: boolean): void;
 
         uninstallPackage(packageName: string): void;
     }
