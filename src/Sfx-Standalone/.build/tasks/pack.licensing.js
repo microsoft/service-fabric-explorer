@@ -314,7 +314,7 @@ function generateThirdPartyNotice(deps, noticeFilePath) {
 }
 
 gulp.task("pack:licensing",
-    () => {
+    (done) => {
         const packagejson = config.packageJson;
 
         /** @type {Array.<ILicensingDependency>} */
@@ -341,4 +341,6 @@ gulp.task("pack:licensing",
         msInternalDeps = msInternalDeps.concat(generateLicensingDeps("dev", "npm", "./node_modules", packagejson.devDependencies));
 
         generateThirdPartyNotice(prodDeps, path.join(buildInfos.paths.appDir, buildInfos.licensing.thirdPartyNoticesFileName));
+
+        done();
     });
