@@ -21,12 +21,10 @@ import * as crypto from "crypto";
 import * as tar from "tar";
 import * as fs from "fs";
 import * as tmp from "tmp";
-import * as uuidv4 from "uuid/v4";
 
 import { electron } from "../utilities/electron-adapter";
 import * as utils from "../utilities/utils";
 import * as fileSystem from "../utilities/fileSystem";
-import { version } from "punycode";
 
 interface IPackageConfig {
     enabled: boolean;
