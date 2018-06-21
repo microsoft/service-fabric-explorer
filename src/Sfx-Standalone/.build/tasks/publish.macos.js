@@ -13,7 +13,6 @@ const versioning = require("../versioning");
 const path = require("path");
 const gulp = require("gulp");
 const log = require("fancy-log");
-const runSequence = require("run-sequence");
 
 const Architecture = common.Architecture;
 const Platform = common.Platform;
@@ -30,11 +29,9 @@ function getZipName(arch) {
 }
 
 gulp.task("publish:versioninfo-macos",
-    () => versioning.generateVersionInfo(
-        Platform.MacOs,
-        (baseUrl, arch) => utils.format("{}/{}", baseUrl, getZipName(arch))));
+    (done) => { versioning.generateVersionInfo(Platform.MacOs, (baseUrl, arch) => utils.format("{}/{}", baseUrl, getZipName(arch))); done(); });
 
-gulp.task("publish:zip-macos-x64", ["publish:prepare"],
+gulp.task("publish:zip-macos-x64", gulp.series("publish:prepare",
     (callback) => {
         if (buildInfos.targets[Platform.MacOs].archs.indexOf(Architecture.X64) < 0) {
             log.info("Skipping", "zip-macos-64:", "No x64 architecture specified in buildinfos.");
@@ -51,11 +48,9 @@ gulp.task("publish:zip-macos-x64", ["publish:prepare"],
                 dir: path.resolve(path.join(buildInfos.paths.buildDir, packDirName, appDirName)),
                 out: path.resolve(path.join(buildInfos.paths.publishDir, Platform.MacOs, getZipName(pack.toPackagerArch(Architecture.X64))))
             },
-            (err, res) => callback(err))
-    });
+            (err, res) => callback(err));
 
-gulp.task("publish:macos",
-    (callback) => runSequence(
-        "pack:macos",
-        ["publish:versioninfo-macos", "publish:zip-macos-x64"],
-        callback));
+        callback();
+    }));
+
+gulp.task("publish:macos", gulp.series("pack:macos", gulp.parallel("publish:versioninfo-macos", "publish:zip-macos-x64")));
