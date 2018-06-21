@@ -59,8 +59,8 @@ namespace NpmRegistry {
         keywords: Array<string>;
         date: Date;
         links: ILinks;
-        publisher: IContact;
-        maintainers: Array<IContact>;
+        publisher: IContact | string;
+        maintainers: Array<IContact | string>;
     }
 
     export interface ISearchResultStoreDetail {
@@ -100,13 +100,13 @@ namespace NpmRegistry {
         name: string;
         description: string;
         version: string;
-        homepage: string;
-        repository: ISourceRepository;
-        author: IContact;
-        licenses: Array<ILicense>;
-        dist: IDistribution;
-        maintainers: Array<IContact>;
-        keywords: Array<string>;
+        homepage?: string;
+        repository?: ISourceRepository;
+        author: IContact | string;
+        license?: string;
+        dist?: IDistribution;
+        maintainers?: Array<IContact | string>;
+        keywords?: Array<string>;
     }
 
     export interface IContact {
@@ -124,19 +124,14 @@ namespace NpmRegistry {
         url: string;
     }
 
-    export interface ILicense {
-        type: string;
-        url: string;
-    }
-
     export interface IModuleInfo {
         name: string;
         description: string;
         "dist-tags": IDistTags;
         versions: IDictionary<INpmPackage>;
         readme: string;
-        maintainers: Array<IContact>;
-        author: IContact;
+        maintainers: Array<IContact | string>;
+        author: IContact | string;
         repository: ISourceRepository;
         readmeFilename: string;
         homepage: string;
@@ -196,9 +191,13 @@ function ModuleInfoToPackageInfo(moduleInfo: NpmRegistry.IModuleInfo): IPackageI
         author: moduleInfo.author,
         sourceRepository: moduleInfo.repository,
         homepage: moduleInfo.homepage,
-        license: versionInfo.licenses,
+        license: versionInfo.license,
         keywords: keywords
     };
+}
+
+function NpmPackageToPackageInfo(): IPackageInfo {
+
 }
 
 function SearchResultPackageToPackageInfo(packageInfo: NpmRegistry.ISearchResultPackage): IPackageInfo {
@@ -513,6 +512,21 @@ class PackageManager implements IPackageManager {
 
     private saveConfig(): void {
         this.settings.set(PackageManager.SettingsName, this.config);
+    }
+
+    private preloadInstalledPackageInfos(): void {
+        for (const subDirName of fs.readdirSync(this.config.packagesDir)) {
+            const subDir = path.join(this.config.packagesDir, subDirName);
+            const stat = fs.statSync(subDir);
+
+            if (!stat.isDirectory()) {
+                continue;
+            }
+
+            const packageJson = JSON.parse(fs.readFileSync(path.join(subDir, "package.json"), { encoding: "utf8" }));
+
+
+        }
     }
 }
 

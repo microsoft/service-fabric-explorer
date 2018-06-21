@@ -28,22 +28,17 @@ declare module "sfx.package-manager" {
         url: string;
     }
 
-    export interface ILicense {
-        type: string;
-        url: string;
-    }
-
     export interface IPackageInfo {
         operationTag?: string;
         name: string;
         description?: string;
         version: string;
         readme?: string;
-        maintainers: Array<IContact>;
-        author: IContact;
+        maintainers: Array<IContact | string>;
+        author: IContact | string;
         sourceRepository?: ISourceRepository;
         homepage?: string;
-        license?: Array<ILicense>;
+        license?: string;
         keywords?: Array<string>;
         enabled?: boolean;
     }
