@@ -12,7 +12,6 @@ import * as fs from "fs";
 import * as utils from "../utilities/utils";
 import { local } from "../utilities/resolve";
 import * as fileSystem from "../utilities/fileSystem";
-import { appCodeName } from "../utilities/appUtils";
 import { electron } from "../utilities/electron-adapter";
 
 class Settings implements ISettings {
@@ -22,7 +21,14 @@ class Settings implements ISettings {
 
     private readonly parentSettings: ISettings;
 
+    private readonly symbol_settingsWrapper: symbol;
+
+    private readonly symbol_settingsPath: symbol;
+
     constructor(initialSettings?: IDictionary<any>, readonly?: boolean, parentSettings?: ISettings) {
+        this.symbol_settingsPath = Symbol("settings-path");
+        this.symbol_settingsWrapper = Symbol("settings-wrapper");
+
         this.parentSettings = utils.isNullOrUndefined(parentSettings) ? undefined : parentSettings;
         this.readonly = utils.isNullOrUndefined(readonly) ? false : readonly;
 
@@ -38,7 +44,7 @@ class Settings implements ISettings {
             throw new Error(`Invalid setting path: ${settingPath}`);
         }
 
-        let pathParts = settingPath.split("/");
+        const pathParts = settingPath.split("/");
         let settingValue: any = this.settings;
 
         for (let pathPartIndex = 0; pathPartIndex < pathParts.length; pathPartIndex++) {
@@ -54,7 +60,7 @@ class Settings implements ISettings {
             return this.parentSettings.get(settingPath);
         }
 
-        return settingValue;
+        return this.wrapValue(settingPath, settingValue);
     }
 
     public set<T>(settingPath: string, value: T): void {
@@ -66,26 +72,85 @@ class Settings implements ISettings {
             throw new Error(`Invalid setting path: ${settingPath}`);
         }
 
-        let pathParts = settingPath.split("/");
+        const pathParts = settingPath.split("/");
         let settingValue: any = this.settings;
 
         for (let pathPartIndex = 0; pathPartIndex < pathParts.length; pathPartIndex++) {
-            if (!Array.isArray(settingValue) && !Object.isObject(settingValue)) {
+            if (settingValue === null || (!Array.isArray(settingValue) && !Object.isObject(settingValue))) {
                 throw new Error("Unable to travel the settings path because the settings type is not array or object or it is null.");
             }
 
-            let pathPart = pathParts[pathPartIndex];
+            const pathPart = pathParts[pathPartIndex];
 
-            if (settingValue[pathPart] === undefined) {
-                if (pathPartIndex === pathParts.length - 1) {
-                    settingValue[pathPart] = value;
+            if (pathPartIndex === pathParts.length - 1) {
+                if (value === undefined) {
+                    delete settingValue[pathPart];
                 } else {
-                    settingValue[pathPart] = {};
+                    this.removeWrapper(settingValue[pathPart]);
+                    settingValue[pathPart] = value;
                 }
+            } else if (settingValue[pathPart] === undefined) {
+                settingValue[pathPart] = {};
             }
 
             settingValue = settingValue[pathPart];
         }
+    }
+
+    private removeWrapper(value: any): void {
+        if (typeof value !== "object" || value === null) {
+            return;
+        }
+
+        delete value[this.symbol_settingsPath];
+        delete value[this.symbol_settingsWrapper];
+    }
+
+    private wrapValue(settingsPath: string, value: any): any {
+        if (typeof value !== "object" || value === null) {
+            return value;
+        }
+
+        if (!value[this.symbol_settingsWrapper]) {
+            value[this.symbol_settingsPath] = settingsPath;
+            value[this.symbol_settingsWrapper] =
+                new Proxy(value,
+                    {
+                        get: (target, property, receiver) => {
+                            const settingsPath = target[this.symbol_settingsPath];
+
+                            if (!settingsPath || typeof property === "symbol") {
+                                return target[property];
+                            }
+
+                            return this.wrapValue(settingsPath + "/" + property.toString(), target[property]);
+                        },
+                        set: (target, property, value, receiver) => {
+                            const settingsPath = target[this.symbol_settingsPath];
+
+                            if (!settingsPath || typeof property === "symbol") {
+                                target[property] = value;
+                                return true;
+                            }
+
+                            this.set(settingsPath + "/" + property.toString(), value);
+                            return true;
+                        },
+                        deleteProperty: (target, property) => {
+                            const settingsPath = target[this.symbol_settingsPath];
+
+                            if (!settingsPath || typeof property === "symbol") {
+                                delete target[property];
+                                return true;
+                            }
+
+                            this.set(settingsPath + "/" + property.toString(), undefined);
+                            return true;
+                        }
+                    });
+        }
+
+        return value[this.symbol_settingsWrapper];
     }
 }
 
@@ -135,7 +200,6 @@ class FileSettings extends Settings {
     }
 
     set<T>(settingPath: string, value: T): void {
-        console.log(this.settingsPath);
         super.set(settingPath, value);
         fs.writeFileSync(this.settingsPath, JSON.stringify(this.settings), { encoding: "utf8" });
     }
@@ -143,22 +207,14 @@ class FileSettings extends Settings {
 
 class SettingsService implements ISettingsService {
 
-    private readonly appDir: string;
-
     private readonly defaultSettings: ISettings;
 
-    private readonly appName: string;
-
-    private readonly settingsDir: string;
+    private readonly userDataDir: string;
 
     constructor() {
-        let app = electron.app || electron.remote.app;
+        this.userDataDir = electron.app.getPath("userData");
 
-        this.appDir = app.getAppPath();
-        this.appName = appCodeName;
-        this.settingsDir = path.join(app.getPath("appData"), this.appName);
-
-        fileSystem.ensureDirExists(this.settingsDir);
+        fileSystem.ensureDirExists(this.userDataDir);
 
         this.defaultSettings = this.open("settings");
     }
@@ -169,7 +225,7 @@ class SettingsService implements ISettingsService {
 
     /**
      * Open a set of settings as a settings chain. If the last settings doesn't support writing,
-     * a new writable settings will be created and placed under appData to wrap the settings chain
+     * a new writable settings will be created and placed under userData to wrap the settings chain
      * as the last settings object, which provides a writing capability.
      * @param names the names of settings to be open as a settings chain.
      */
@@ -185,7 +241,7 @@ class SettingsService implements ISettingsService {
         if (parentSettings.readonly) {
             // if the last settings doesn't allow writing,
             // create a writable settings file in appData folder to wrap the readonly settings.
-            parentSettings = new FileSettings(path.join(this.settingsDir, names[names.length - 1] + ".json"), false, parentSettings);
+            parentSettings = new FileSettings(path.join(this.userDataDir, names[names.length - 1] + ".json"), false, parentSettings);
         }
 
         return parentSettings;
@@ -199,7 +255,7 @@ class SettingsService implements ISettingsService {
         let settingsPath = local(name + ".json", true);
 
         if (!fs.existsSync(settingsPath)) {
-            settingsPath = path.join(this.settingsDir, name + ".json");
+            settingsPath = path.join(this.userDataDir, name + ".json");
         }
 
         return new FileSettings(settingsPath, null, parentSettings);

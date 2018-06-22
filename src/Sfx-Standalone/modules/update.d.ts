@@ -6,9 +6,9 @@ declare module "sfx.update" {
     import { IVersionInfo } from "sfx.common";
 
     export interface IUpdateService {
-        update(): void;
+        updateAsync(): Promise<void>;
 
-        requestVersionInfo(callback: (error, versionInfo: IVersionInfo) => void): void;
+        requestVersionInfoAsync(): Promise<IVersionInfo>;
     }
 }
 

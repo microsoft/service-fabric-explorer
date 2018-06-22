@@ -15,10 +15,10 @@ import * as tmp from "tmp";
 import * as path from "path";
 import * as url from "url";
 import * as fs from "fs";
+import * as http from "http";
 
 import * as utils from "../utilities/utils";
 import { env, Architecture } from "../utilities/env";
-import { ResponseHandlerHelper } from "./http";
 import { electron } from "../utilities/electron-adapter";
 
 interface IUpdateSettings {
@@ -51,18 +51,60 @@ class UpdateService implements IUpdateService {
         this.httpClient = httpClient;
     }
 
-    public update(): void {
-        this.requestVersionInfo((error, versionInfo) => {
-            if (!utils.isNullOrUndefined(error)) {
-                this.log.writeError("Failed to check version info, error: {}", error.toString());
-                return;
-            }
+    public async updateAsync(): Promise<void> {
+        const versionInfo = await this.requestVersionInfoAsync();
 
-            this.tryUpdate(versionInfo);
-        });
+        if (semver.gte(app.getVersion(), versionInfo.version)) {
+            this.log.writeInfo("No update needed: version => current: {} remote: {}", app.getVersion(), versionInfo.version);
+            return;
+        }
+
+        const packageInfo: IPackageInfo | string = versionInfo[env.platform];
+        let packageUrl: string;
+
+        if (!packageInfo) {
+            this.log.writeError("No package info found for platform: {}.", env.platform);
+            return;
+        }
+
+        if (String.isString(packageInfo)) {
+            packageUrl = packageInfo;
+
+            await this.requestConfirmationAsync(versionInfo)
+                .then((toUpdate) => {
+                    if (!toUpdate) {
+                        return;
+                    }
+
+                    this.log.writeVerbose("Applying the update package and quit the app: {}", path);
+                    env.start(url.parse(packageUrl).href);
+                    app.quit();
+                });
+        } else {
+            packageUrl = this.getPackagePath(packageInfo);
+
+            await this.requestPackageAsync(packageUrl)
+                .then((packagePath) => {
+                    return this.requestConfirmationAsync(versionInfo)
+                        .then((toUpdate) => {
+                            if (!toUpdate) {
+                                if (fs.existsSync(packagePath)) {
+                                    fs.unlinkSync(packagePath);
+                                    this.log.writeVerbose("Removed the local update package: {}", packagePath);
+                                }
+
+                                return;
+                            }
+
+                            this.log.writeVerbose("Applying the update package and quit the app: {}", packagePath);
+                            env.start(packagePath);
+                            app.quit();
+                        });
+                });
+        }
     }
 
-    public requestVersionInfo(callback: (error, versionInfo: IVersionInfo) => void): void {
+    public async requestVersionInfoAsync(): Promise<IVersionInfo> {
         const prereleases = semver.prerelease(app.getVersion());
         let updateChannel: string;
 
@@ -74,46 +116,33 @@ class UpdateService implements IUpdateService {
 
         const versionInfoUrl = `${this.settings.baseUrl}/${updateChannel}/${env.platform}`;
 
-        try {
-            this.log.writeInfo("Requesting version info json: {}", versionInfoUrl);
-            this.httpClient.get(
-                versionInfoUrl,
-                ResponseHandlerHelper.handleJsonResponse<IVersionInfo>(callback));
-        } catch (exception) {
-            this.log.writeException(exception);
-            callback(exception, null);
+        this.log.writeInfo("Requesting version info json: {}", versionInfoUrl);
+        const response = await this.httpClient.getAsync(versionInfoUrl);
+
+        if (response instanceof http.IncomingMessage) {
+            throw new Error(`Failed to retrieve version info. Response: ${response}`);
         }
+
+        return response;
     }
 
-    private confirmUpate(versionInfo: IVersionInfo, path: string): void {
-        let buttons = ["Yes", "No"];
+    private requestConfirmationAsync(versionInfo: IVersionInfo): Promise<boolean> {
+        return new Promise<boolean>((resolve) => {
+            const buttons = ["Yes", "No"];
 
-        this.log.writeVerbose("Requesting update confirmation from the user ...");
-        dialog.showMessageBox(
-            {
-                message: `A newer version, ${versionInfo.version}, is found. Would you like to update now?`,
-                detail: versionInfo.description ? versionInfo.description : undefined,
-                buttons: buttons,
-                defaultId: 1
-            },
-            (response) => {
-                this.log.writeInfo("Update confirmation result: {} ({})", buttons[response], response);
-                switch (response) {
-                    case 0: // Yes
-                        this.log.writeVerbose("Applying the update package and quit the app: {}", path);
-                        env.start(path);
-                        app.quit();
-                        break;
-
-                    case 1: // No
-                    default:
-                        if (fs.existsSync(path)) {
-                            fs.unlinkSync(path);
-                            this.log.writeVerbose("Removed the local update package: {}", path);
-                        }
-                        break;
-                }
-            });
+            this.log.writeVerbose("Requesting update confirmation from the user ...");
+            dialog.showMessageBox(
+                {
+                    message: `A newer version, ${versionInfo.version}, is found. Would you like to update now?`,
+                    detail: versionInfo.description ? versionInfo.description : undefined,
+                    buttons: buttons,
+                    defaultId: 1
+                },
+                (response) => {
+                    this.log.writeInfo("Update confirmation result: {} ({})", buttons[response], response);
+                    resolve(response === 0);
+                });
+        });
     }
 
     private getPackagePath(packageInfo: IPackageInfo): string {
@@ -133,53 +162,35 @@ class UpdateService implements IUpdateService {
         return packagePath;
     }
 
-    private requestPackage(packagePath: string, callback: (error, filePath: string) => void): void {
+    private async requestPackageAsync(packagePath: string): Promise<string> {
         const tempFile: { name: string; fd: number } =
             tmp.fileSync({ keep: true, postfix: path.extname(packagePath) });
         this.log.writeInfo("Created temp file for the update package: {}", tempFile.name);
 
-        try {
-            this.log.writeInfo("Requesting the update package: {}", packagePath);
-            this.httpClient.get(
-                packagePath,
-                ResponseHandlerHelper.saveToFile(tempFile.fd, true, (error) => callback(error, tempFile.name)));
-        } catch (exception) {
-            this.log.writeException(exception);
-            callback(exception, null);
-        }
-    }
+        this.log.writeInfo("Requesting the update package: {}", packagePath);
+        return this.httpClient.getAsync(packagePath)
+            .then((response: http.IncomingMessage) => {
+                if (response.statusCode >= 200 && response.statusCode < 300) {
+                    this.log.writeVerbose("Writing update package to file: {}", tempFile.name);
+                    const fileStream = fs.createWriteStream(
+                        null,
+                        {
+                            fd: tempFile.fd,
+                            autoClose: true
+                        });
 
-    private tryUpdate(versionInfo: IVersionInfo): void {
-        if (semver.gte(app.getVersion(), versionInfo.version)) {
-            this.log.writeInfo("No update needed: version => current: {} remote: {}", app.getVersion(), versionInfo.version);
-            return;
-        }
-
-        let packageInfo: IPackageInfo | string = versionInfo[env.platform];
-        let packagePath: string;
-
-        if (!packageInfo) {
-            this.log.writeError("No package info found for platform: {}.", env.platform);
-            return;
-        }
-
-        if (String.isString(packageInfo)) {
-            packagePath = packageInfo;
-
-            try {
-                this.confirmUpate(versionInfo, url.parse(packagePath).href);
-            } catch (error) {
-                this.log.writeException(error);
-            }
-        } else {
-            packagePath = this.getPackagePath(packageInfo);
-
-            this.requestPackage(packagePath, (error, filePath) => {
-                if (String.isString(filePath)) {
-                    this.confirmUpate(versionInfo, filePath);
+                    return new Promise<string>((resolve, reject) => {
+                        response.pipe(fileStream)
+                            .on("error", (error) => reject(error))
+                            .on("finish", () => {
+                                fileStream.end();
+                                resolve(tempFile.name);
+                            });
+                    });
                 }
+
+                return Promise.reject(new Error(`Downloading update package failed. HTTP ${response.statusCode}: ${response.statusMessage}`));
             });
-        }
     }
 }
 

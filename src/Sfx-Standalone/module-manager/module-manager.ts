@@ -10,7 +10,9 @@ import {
     IComponentInfo,
     HostVersionMismatchEventHandler,
     IComponentDescriptor,
-    IModuleLoadingInfo
+    IModuleLoadingConfig,
+    IModuleLoadingPolicy,
+    IModuleInfo
 } from "sfx.module-manager";
 
 import { ICommunicator, RequestHandler, IRoutePattern } from "sfx.remoting";
@@ -130,6 +132,16 @@ function createLazySingletonDiDescriptor(
     };
 }
 
+class DefaultModuleLoadingPolicy implements IModuleLoadingPolicy {
+    public shouldLoad(moduleManager: IModuleManager, nameOrInfo: string | IModuleInfo): boolean {
+        if (!utils.isNullOrUndefined(nameOrInfo) && String.isString((<IModuleInfo>nameOrInfo).hostVersion)) {
+            return moduleManager.hostVersion === (<IModuleInfo>nameOrInfo).hostVersion;
+        }
+
+        return true;
+    }
+}
+
 export class ModuleManager implements IModuleManager {
     private readonly _hostVersion: string;
 
@@ -145,13 +157,15 @@ export class ModuleManager implements IModuleManager {
 
     private container: di.IDiContainer;
 
-    private moduleLoadingInfos: Array<IModuleLoadingInfo>;
+    private moduleLoadingInfos: Array<IModuleLoadingConfig>;
+
+    private moduleLoadingPolicy: IModuleLoadingPolicy;
 
     public get hostVersion(): string {
         return this._hostVersion;
     }
 
-    public get loadedModules(): Array<IModuleLoadingInfo> {
+    public get loadedModules(): Array<IModuleLoadingConfig> {
         return this.moduleLoadingInfos.slice();
     }
 
@@ -166,6 +180,7 @@ export class ModuleManager implements IModuleManager {
         this.pattern_moduleManager = new StringPattern("module-manager");
         this.pattern_proxy = new StringPattern("module-manager/object-proxy");
         this.moduleLoadingInfos = [];
+        this.moduleLoadingPolicy = new DefaultModuleLoadingPolicy();
         this.container = new di.DiContainer();
 
         if (parentCommunicator) {
@@ -281,14 +296,32 @@ export class ModuleManager implements IModuleManager {
                     continue;
                 }
 
-                loadedModules.push(this.loadModule(modulePath, respectLoadingMode));
+                const loadedModule = this.loadModule(modulePath, respectLoadingMode);
+
+                if (!loadedModule) {
+                    continue;
+                }
+
+                loadedModules.push(loadedModule);
             }
 
             // Initialize modules.
             for (const module of loadedModules) {
-                this.initializeModule(module);
+                await this.initializeModuleAsync(module);
             }
         }
+    }
+
+    public setModuleLoadingPolicy(policy: IModuleLoadingPolicy): void {
+        if (utils.isNullOrUndefined(policy)) {
+            this.moduleLoadingPolicy = new DefaultModuleLoadingPolicy();
+        }
+
+        if (!Function.isFunction(policy.shouldLoad)) {
+            throw new Error("policy must implement shouldLoad() function.");
+        }
+
+        this.moduleLoadingPolicy = policy;
     }
 
     public async loadModuleAsync(path: string, hostName?: string, respectLoadingMode?: boolean): Promise<void> {
@@ -357,17 +390,25 @@ export class ModuleManager implements IModuleManager {
         }
     }
 
-    private loadModule(path: string, respectLoadingMode?: boolean): IModule {
-        const module: IModule = require(path);
+    private loadModule(modulePath: string, respectLoadingMode?: boolean): IModule {
+        if (!this.moduleLoadingPolicy.shouldLoad(this, path.basename(modulePath))) {
+            return undefined;
+        }
+
+        const module: IModule = require(modulePath);
 
         if (!Function.isFunction(module.getModuleMetadata)) {
-            throw new Error(`Invalid module "${path}": missing getModuleMetadata().`);
+            throw new Error(`Invalid module "${modulePath}": missing getModuleMetadata().`);
         }
 
         const moduleInfo = module.getModuleMetadata();
 
+        if (!this.moduleLoadingPolicy.shouldLoad(this, moduleInfo)) {
+            return;
+        }
+
         this.moduleLoadingInfos.push({
-            location: path,
+            location: modulePath,
             name: moduleInfo.name,
             version: moduleInfo.version,
             hostVersion: moduleInfo.hostVersion,
@@ -400,9 +441,9 @@ export class ModuleManager implements IModuleManager {
         return module;
     }
 
-    private initializeModule(module: IModule): void {
-        if (Function.isFunction(module.initialize)) {
-            module.initialize(this);
+    private async initializeModuleAsync(module: IModule): Promise<void> {
+        if (Function.isFunction(module.initializeAsync)) {
+            await module.initializeAsync(this);
         }
     }
 

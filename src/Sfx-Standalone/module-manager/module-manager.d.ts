@@ -21,7 +21,7 @@ declare module "sfx.module-manager" {
 
     export type LoadingMode = "RefFromParent" | "Always";
 
-    export interface IModuleInfo {
+    export interface IModuleBasicInfo {
         name: string;
         version: string;
         hostVersion?: string;
@@ -29,20 +29,25 @@ declare module "sfx.module-manager" {
          * Indicates the loading mode of the module. Default: RefFromParent.
          */
         loadingMode?: LoadingMode;
+    }
+
+    export interface IModuleInfo extends IModuleBasicInfo {
         components?: Array<IComponentInfo>;
     }
 
-    export interface IModuleLoadingInfo {
+    export interface IModuleLoadingConfig extends IModuleBasicInfo {
         location: string;
-        name: string;
-        version: string;
-        hostVersion?: string;
-        loadingMode?: LoadingMode;
+        loadingMode: LoadingMode;
+    }
+
+    export interface IModuleLoadingPolicy {
+        shouldLoad(moduleManager: IModuleManager, moduleName: string): boolean;
+        shouldLoad(moduleManager: IModuleManager, moduleInfo: IModuleInfo): boolean;
     }
 
     export interface IModule {
         getModuleMetadata?(): IModuleInfo;
-        initialize?(moduleManager: IModuleManager): void;
+        initializeAsync?(moduleManager: IModuleManager): Promise<void>;
     }
 
     export interface HostVersionMismatchEventHandler {
@@ -51,13 +56,15 @@ declare module "sfx.module-manager" {
 
     export interface IModuleManager {
         readonly hostVersion: string;
-        readonly loadedModules: Array<IModuleLoadingInfo>;
+        readonly loadedModules: Array<IModuleLoadingConfig>;
 
         newHostAsync(hostName: string, hostCommunicator?: ICommunicator): Promise<void>;
         destroyHostAsync(hostName: string): Promise<void>;
 
         loadModuleDirAsync(dirName: string, hostName?: string): Promise<void>;
         loadModuleAsync(path: string, hostName?: string): Promise<void>;
+
+        setModuleLoadingPolicy(policy: IModuleLoadingPolicy): void;
 
         registerComponents(componentInfos: Array<IComponentInfo>): void;
 
