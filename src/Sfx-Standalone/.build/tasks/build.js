@@ -14,6 +14,7 @@ const gulp = require("gulp");
 const gtslint = require("gulp-tslint");
 const tslint = require("tslint");
 const globby = require("globby");
+const fs = require("fs");
 
 const buildInfos = config.buildInfos;
 
@@ -47,18 +48,21 @@ function getTypescriptsGlobs() {
 require("./clean");
 require("./build.sdk");
 
-gulp.task("build:tslint",
-    () => gulp.src(getTypescriptsGlobs())
-        .pipe(gtslint({ program: tslint.Linter.createProgram("./tsconfig.json") }))
-        .pipe(gtslint.report({ summarizeFailureOutput: true })));
+gulp.task("build:ts@lint",
+    () =>
+        gulp.src(getTypescriptsGlobs())
+            .pipe(gtslint({ program: tslint.Linter.createProgram("./tsconfig.json") }))
+            .pipe(gtslint.report({ summarizeFailureOutput: true })));
 
-gulp.task("build:ts",
-    gulp.series("build:tslint",
-        (done) => {
+gulp.task("build:ts@compile",
+    () => new Promise((resolve, reject) => {
+        try {
             const tsconfig = config.tsConfig;
             const compilterOptionsParseResult = ts.convertCompilerOptionsFromJson(tsconfig.compilerOptions, undefined);
 
-            if (Array.isArray(compilterOptionsParseResult.errors) && compilterOptionsParseResult.errors.length > 0) {
+            if (Array.isArray(compilterOptionsParseResult.errors)
+                && compilterOptionsParseResult.errors.length > 0) {
+
                 compilterOptionsParseResult.errors.forEach((error) => tsc.logDiagnostic(error));
                 throw new Error("Failed to load typescript compiler options.");
             }
@@ -69,25 +73,68 @@ gulp.task("build:ts",
                 compilterOptionsParseResult.options.sourceMap = false;
             }
 
-            tsc.compile(compilterOptionsParseResult.options, globby.sync(getTypescriptsGlobs(), { dot: true }));
+            tsc.compile(
+                compilterOptionsParseResult.options,
+                globby.sync(getTypescriptsGlobs(), { dot: true }));
 
-            done();
-        }));
+            resolve();
+        } catch (exception) {
+            reject(exception);
+        }
+    }));
 
-gulp.task("build:html", () => gulp.src(common.formGlobs("**/*.html")).pipe(gulp.dest(buildInfos.paths.appDir)));
+gulp.task("build:ts",
+    gulp.series("build:ts@lint", "build:ts@compile"));
 
-gulp.task("build:img", () => gulp.src(common.formGlobs(["icons/**/*.*"])).pipe(gulp.dest(buildInfos.paths.appDir)));
+gulp.task("build:html",
+    () =>
+        gulp.src(common.formGlobs("**/*.html"))
+            .pipe(gulp.dest(buildInfos.paths.appDir)));
 
-gulp.task("build:json", () => gulp.src(common.formGlobs(["**/*.json"])).pipe(gulp.dest(buildInfos.paths.appDir)));
+gulp.task("build:img",
+    () =>
+        gulp.src(common.formGlobs(["icons/**/*.*"]))
+            .pipe(gulp.dest(buildInfos.paths.appDir)));
 
-gulp.task("build:node_modules", gulp.series("build:json", () => common.appdirExec("npm install --production")));
+gulp.task("build:json",
+    () =>
+        gulp.src(common.formGlobs(["**/*.json"]))
+            .pipe(gulp.dest(buildInfos.paths.appDir)));
 
-gulp.task("build:sfx", () => gulp.src(["../Sfx/wwwroot/**/*.*"]).pipe(gulp.dest(buildInfos.paths.sfxDir)));
+gulp.task("build:node_modules", () => common.appdirExec("npm install --production"));
 
-gulp.task("build:licenses", () => gulp.src(common.formGlobs(["LICENSE"])).pipe(gulp.dest(buildInfos.paths.appDir)));
+gulp.task("build:sfx",
+    () => {
+        if (!fs.existsSync("../Sfx/wwwroot")) {
+            throw new Error("Missing Sfx build: Please first run 'gulp clean-build' under /src/Sfx.");
+        }
 
-gulp.task("build", gulp.parallel("build:sfx", "build:ts", "build:html", "build:json", "build:img"));
-gulp.task("build:all", gulp.parallel("build", "build:licenses", "build:sdk", "build:node_modules"));
+        return gulp.src(["../Sfx/wwwroot/**/*.*"])
+            .pipe(gulp.dest(buildInfos.paths.sfxDir))
+    });
 
-gulp.task("clean-build", gulp.series("clean:build", "build"));
-gulp.task("clean-build:all", gulp.series("clean:build", "build:all"));
+gulp.task("build:licenses",
+    () =>
+        gulp.src(common.formGlobs(["LICENSE"]))
+            .pipe(gulp.dest(buildInfos.paths.appDir)));
+
+gulp.task("build",
+    gulp.parallel(
+        "build:sfx",
+        "build:ts",
+        "build:html",
+        "build:json",
+        "build:img"));
+
+gulp.task("build:all",
+    gulp.parallel(
+        "build",
+        "build:licenses",
+        "build:sdk",
+        "build:node_modules"));
+
+gulp.task("clean-build",
+    gulp.series("clean:build", "build"));
+
+gulp.task("clean-build:all",
+    gulp.series("clean:build", "build:all"));

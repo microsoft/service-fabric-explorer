@@ -10,5 +10,9 @@
     "type": "git"
   },
   "author": "Microsoft Corporation <support@microsoft.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^2.0.2",
+    "typescript": "^2.9.1"
+  }
 }

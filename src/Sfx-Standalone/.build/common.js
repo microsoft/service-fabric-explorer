@@ -255,7 +255,7 @@ exports.formGlobs =
         patterns.forEach((pattern) => outputGlobs.push(normalizeGlob(pattern, basePath)));
 
         return outputGlobs;
-    }
+    };
 
 /**
  * Ensure the directory name exists by creating the directories.
@@ -276,4 +276,4 @@ exports.ensureDirExists =
         while (dirs.length > 0) {
             fs.mkdirSync(dirs.pop());
         }
-    }
+    };

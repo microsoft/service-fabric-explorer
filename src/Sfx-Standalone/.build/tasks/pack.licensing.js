@@ -146,7 +146,7 @@ function generateDep(depName, depsDir, packageJsonName) {
     const depDir = path.resolve(path.join(depsDir, depName));
 
     if (!fs.existsSync(depDir)) {
-        throw new Error(utils.format('Cannot find dependency "{}".'));
+        throw new Error(`Cannot find dependency "${depDir}".'`);
     }
 
     /** @type {IPackageJson} */
@@ -314,7 +314,7 @@ function generateThirdPartyNotice(deps, noticeFilePath) {
 }
 
 gulp.task("pack:licensing",
-    (done) => {
+    () => {
         const packagejson = config.packageJson;
 
         /** @type {Array.<ILicensingDependency>} */
@@ -342,5 +342,5 @@ gulp.task("pack:licensing",
 
         generateThirdPartyNotice(prodDeps, path.join(buildInfos.paths.appDir, buildInfos.licensing.thirdPartyNoticesFileName));
 
-        done();
+        return Promise.resolve();
     });
