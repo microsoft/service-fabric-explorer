@@ -319,7 +319,7 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "http.http-client",
                 version: electron.app.getVersion(),
-                descriptor: (log: ILog) => buildHttpClient(log, HttpProtocols.http),
+                descriptor: (log: ILog) => buildHttpClient(log, HttpProtocols.any),
                 deps: ["logging"]
             },
             {
