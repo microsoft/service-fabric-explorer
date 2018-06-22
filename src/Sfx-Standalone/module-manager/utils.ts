@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleManager, IModuleLoadingInfo } from "sfx.module-manager";
+import { IModuleManager, IModuleLoadingConfig } from "sfx.module-manager";
 import { ICommunicator } from "sfx.remoting";
 
 import { ModuleManager } from "./module-manager";
@@ -11,7 +11,7 @@ import { electron } from "../utilities/electron-adapter";
 
 export interface IModuleManagerConstructorOptions {
     hostVersion: string;
-    initialModules: Array<IModuleLoadingInfo>;
+    initialModules: Array<IModuleLoadingConfig>;
 }
 
 export async function createModuleManagerAsync(
@@ -21,7 +21,7 @@ export async function createModuleManagerAsync(
     const hostVersion: string =
         options && String.isString(options.hostVersion) ? options.hostVersion : electron.app.getVersion();
 
-    const initialModules: Array<IModuleLoadingInfo> =
+    const initialModules: Array<IModuleLoadingConfig> =
         options && Array.isArray(options.initialModules) ? options.initialModules : null;
 
     const moduleManager = new ModuleManager(hostVersion, parentCommunicator);

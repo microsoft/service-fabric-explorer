@@ -9,12 +9,10 @@ const common = require("../common");
 const config = require("../config");
 const tsc = require("../tsc");
 
-const path = require("path");
 const ts = require("typescript");
 const gulp = require("gulp");
 const gtslint = require("gulp-tslint");
 const tslint = require("tslint");
-const runSequence = require("run-sequence");
 const globby = require("globby");
 
 const buildInfos = config.buildInfos;
@@ -54,52 +52,42 @@ gulp.task("build:tslint",
         .pipe(gtslint({ program: tslint.Linter.createProgram("./tsconfig.json") }))
         .pipe(gtslint.report({ summarizeFailureOutput: true })));
 
-gulp.task("build:ts", ["build:tslint"],
-    () => {
-        const tsconfig = config.tsConfig;
-        const compilterOptionsParseResult = ts.convertCompilerOptionsFromJson(tsconfig.compilerOptions, undefined);
+gulp.task("build:ts",
+    gulp.series("build:tslint",
+        (done) => {
+            const tsconfig = config.tsConfig;
+            const compilterOptionsParseResult = ts.convertCompilerOptionsFromJson(tsconfig.compilerOptions, undefined);
 
-        if (Array.isArray(compilterOptionsParseResult.errors) && compilterOptionsParseResult.errors.length > 0) {
-            compilterOptionsParseResult.errors.forEach((error) => tsc.logDiagnostic(error));
-            throw new Error("Failed to load typescript compiler options.");
-        }
+            if (Array.isArray(compilterOptionsParseResult.errors) && compilterOptionsParseResult.errors.length > 0) {
+                compilterOptionsParseResult.errors.forEach((error) => tsc.logDiagnostic(error));
+                throw new Error("Failed to load typescript compiler options.");
+            }
 
-        compilterOptionsParseResult.options.outDir = buildInfos.paths.appDir;
+            compilterOptionsParseResult.options.outDir = buildInfos.paths.appDir;
 
-        if (process.argv.indexOf("--production") >= 0) {
-            compilterOptionsParseResult.options.sourceMap = false;
-        }
+            if (process.argv.indexOf("--production") >= 0) {
+                compilterOptionsParseResult.options.sourceMap = false;
+            }
 
-        tsc.compile(
-            compilterOptionsParseResult.options,
-            globby.sync(getTypescriptsGlobs(), { dot: true }));
-    });
+            tsc.compile(compilterOptionsParseResult.options, globby.sync(getTypescriptsGlobs(), { dot: true }));
 
-gulp.task("build:html",
-    () => gulp.src(common.formGlobs("**/*.html"))
-        .pipe(gulp.dest(buildInfos.paths.appDir)));
+            done();
+        }));
 
-gulp.task("build:img",
-    () => gulp.src(common.formGlobs(["icons/**/*.*"]))
-        .pipe(gulp.dest(path.join(buildInfos.paths.appDir, "icons"))));
+gulp.task("build:html", () => gulp.src(common.formGlobs("**/*.html")).pipe(gulp.dest(buildInfos.paths.appDir)));
 
-gulp.task("build:json",
-    () => gulp.src(common.formGlobs(["**/*.json"]))
-        .pipe(gulp.dest(buildInfos.paths.appDir)));
+gulp.task("build:img", () => gulp.src(common.formGlobs(["icons/**/*.*"])).pipe(gulp.dest(buildInfos.paths.appDir)));
 
-gulp.task("build:node_modules", ["build:json"],
-    () => common.appdirExec("npm install --production"));
+gulp.task("build:json", () => gulp.src(common.formGlobs(["**/*.json"])).pipe(gulp.dest(buildInfos.paths.appDir)));
 
-gulp.task("build:sfx",
-    () => gulp.src(["../Sfx/wwwroot/**/*.*"])
-        .pipe(gulp.dest(buildInfos.paths.sfxDir)));
+gulp.task("build:node_modules", gulp.series("build:json", () => common.appdirExec("npm install --production")));
 
-gulp.task("build:licenses",
-    () => gulp.src(common.formGlobs(["../LICENSE"]))
-        .pipe(gulp.dest(buildInfos.paths.appDir)));
+gulp.task("build:sfx", () => gulp.src(["../Sfx/wwwroot/**/*.*"]).pipe(gulp.dest(buildInfos.paths.sfxDir)));
 
-gulp.task("build", ["build:sfx", "build:ts", "build:html", "build:json", "build:img"])
-gulp.task("build:all", ["build", "build:licenses", "build:sdk", "build:node_modules"]);
+gulp.task("build:licenses", () => gulp.src(common.formGlobs(["LICENSE"])).pipe(gulp.dest(buildInfos.paths.appDir)));
 
-gulp.task("clean-build", (callback) => runSequence("clean:build", "build", callback));
-gulp.task("clean-build:all", (callback) => runSequence("clean:build", "build:all", callback));
+gulp.task("build", gulp.parallel("build:sfx", "build:ts", "build:html", "build:json", "build:img"));
+gulp.task("build:all", gulp.parallel("build", "build:licenses", "build:sdk", "build:node_modules"));
+
+gulp.task("clean-build", gulp.series("clean:build", "build"));
+gulp.task("clean-build:all", gulp.series("clean:build", "build:all"));

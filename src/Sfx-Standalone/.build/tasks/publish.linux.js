@@ -12,7 +12,6 @@ const versioning = require("../versioning");
 
 const path = require("path");
 const gulp = require("gulp");
-const runSequence = require("run-sequence");
 
 const Architecture = common.Architecture;
 const Platform = common.Platform;
@@ -96,38 +95,21 @@ function publishRpm(arch) {
 }
 
 gulp.task("publish:versioninfo-linux",
-    () => versioning.generateVersionInfo(
-        Platform.Linux,
-        (baseUrl, arch) => `https://github.com/Microsoft/service-fabric-explorer/releases/tag/v${buildInfos.buildNumber}`));
+    (done) => {
+        versioning.generateVersionInfo(Platform.Linux, (baseUrl, arch) => `https://github.com/Microsoft/service-fabric-explorer/releases/tag/v${buildInfos.buildNumber}`);
+        done();
+    });
 
-gulp.task("publish:linux-deb-x86", ["publish:prepare"],
-    () => publishDeb(Architecture.X86));
+gulp.task("publish:linux-deb-x86", gulp.series("publish:prepare", () => publishDeb(Architecture.X86)));
 
-gulp.task("publish:linux-deb-x64", ["publish:prepare"],
-    () => publishDeb(Architecture.X64));
+gulp.task("publish:linux-deb-x64", gulp.series("publish:prepare", () => publishDeb(Architecture.X64)));
 
-gulp.task("publish:linux-rpm-x86", ["publish:prepare"],
-    () => publishRpm(Architecture.X86));
+gulp.task("publish:linux-rpm-x86", gulp.series("publish:prepare", () => publishRpm(Architecture.X86)));
 
-gulp.task("publish:linux-rpm-x64", ["publish:prepare"],
-    () => publishRpm(Architecture.X64));
+gulp.task("publish:linux-rpm-x64", gulp.series("publish:prepare", () => publishRpm(Architecture.X64)));
 
-gulp.task("publish:linux-deb", ["publish:linux-deb-x86", "publish:linux-deb-x64"]);
+gulp.task("publish:linux-deb", gulp.parallel("publish:linux-deb-x86", "publish:linux-deb-x64"));
 
-gulp.task("publish:linux-rpm",
-    (callback) =>
-        runSequence(
-            "publish:linux-rpm-x86",
-            "publish:linux-rpm-x64",
-            callback));
+gulp.task("publish:linux-rpm", gulp.series("publish:linux-rpm-x86", "publish:linux-rpm-x64"));
 
-gulp.task("publish:linux",
-    (callback) => runSequence(
-        "pack:linux",
-        [
-            "publish:versioninfo-linux",
-
-            "publish:linux-deb",
-            "publish:linux-rpm",
-        ],
-        callback));
+gulp.task("publish:linux", gulp.series("pack:linux", gulp.parallel("publish:versioninfo-linux", "publish:linux-deb", "publish:linux-rpm")));

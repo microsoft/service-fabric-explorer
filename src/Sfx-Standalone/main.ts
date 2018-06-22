@@ -56,7 +56,7 @@ app.setName("Service Fabric Explorer");
         //     return;
         // }
 
-        //setTimeout(async () => (await sfxModuleManager.getComponentAsync("update")).update(), 1000); // Check upgrade after 1 sec.
+        setTimeout(async () => (await sfxModuleManager.getComponentAsync("update")).updateAsync(), 1000); // Check upgrade after 1 sec.
         startingUp = false;
         log.writeInfo("'ready': application startup finished.");
     });
