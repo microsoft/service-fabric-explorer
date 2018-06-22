@@ -6,6 +6,7 @@
 "use strict";
 
 const common = require("../common");
+const utilities = require("../utilities");
 const pack = require("./pack");
 const config = require("../config");
 const versioning = require("../versioning");
@@ -69,9 +70,9 @@ gulp.task("publish:msi@build-msi",
                 path.resolve(path.join(publishDir, buildInfos.buildNumber ? utils.format("setup-{}.x86.msi", buildInfos.buildNumber) : "setup.x86.msi")),
                 path.join(wxsobjDir, "msi.wixobj"), path.join(wxsobjDir, "files.msi.wixobj"));
 
-        return common.appdirExec(heatCmd)
-            .then(() => common.appdirExec(candleCmd)
-                .then(() => common.appdirExec(lightCmd)));
+        return utilities.appdirExec(heatCmd)
+            .then(() => utilities.appdirExec(candleCmd)
+                .then(() => utilities.appdirExec(lightCmd)));
     });
 
 gulp.task("publish:msi",

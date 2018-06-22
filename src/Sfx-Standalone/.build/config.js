@@ -4,7 +4,13 @@
 //-----------------------------------------------------------------------------
 "use strict";
 
+const common = require("./common");
+
 const path = require("path");
+const log = require("fancy-log");
+const fs = require("fs");
+
+const utils = common.utils;
 
 /**
  * @typedef ISfxDependency
@@ -17,6 +23,7 @@ const path = require("path");
   * @typedef IPackageJson
   * @property {string} name
   * @property {string} version
+  * @property {string} main
   * @property {string} homepage
   * @property {string} [license]
   * @property {Array.<string>} [devDependencies]
@@ -27,10 +34,6 @@ const path = require("path");
   * @property {Array.<string>} [extensionDependencies]
   * @property {Array.<ISfxDependency>} [sfxDependencies]
   */
-
-/** @type {IPackageJson} */
-const packageJson = require("../package.json");
-exports.packageJson = packageJson;
 
 /**
  * @typedef IBuildTarget
@@ -85,12 +88,35 @@ exports.packageJson = packageJson;
  * @property {IBuildLicensing} licensing
  */
 
- const log = require("fancy-log");
+/**
+ * Create a JSON object from a file.
+ * @param {string} fileName
+ * @param {string} [baseDir]
+ * @returns {any} the JSON object.
+ */
+function loadJson(fileName, baseDir) {
+    if (!utils.isNullOrUndefined(baseDir) && !utils.isString(baseDir)) {
+        throw new Error("baseDir must be a string.");
+    }
+
+    if (!utils.string.isNullUndefinedOrWhitespaces(baseDir)) {
+        fileName = path.join(baseDir, fileName);
+    } else {
+        fileName = path.resolve(fileName);
+    }
+
+    return JSON.parse(fs.readFileSync(fileName, { encoding: "utf8" }));
+}
+exports.loadJson = loadJson;
+
+/** @type {IPackageJson} */
+const packageJson = loadJson("./package.json");
+exports.packageJson = packageJson;
 
 /**
  * @type {IBuildInfos}
  */
-const buildInfos = require("./buildInfos.json");
+const buildInfos = loadJson("./.build/buildInfos.json");
 exports.buildInfos = buildInfos;
 
 // buildInfos auto-initializiation
@@ -128,4 +154,4 @@ log.info("Finished", "buildInfos auto-initializiation", ".");
  */
 
 /** @type {ITypeScriptConfig} */
-exports.tsConfig = require("../tsconfig.json");
+exports.tsConfig = loadJson("./tsconfig.json");

@@ -6,6 +6,7 @@
 "use strict";
 
 const common = require("../common");
+const utilities = require("../utilities");
 const config = require("../config");
 const tsc = require("../tsc");
 
@@ -42,7 +43,7 @@ function getTypescriptsGlobs() {
         throw new Error("tsconfig.exclude must be an array!");
     }
 
-    return common.formGlobs(globs);
+    return utilities.formGlobs(globs);
 }
 
 require("./clean");
@@ -88,21 +89,21 @@ gulp.task("build:ts",
 
 gulp.task("build:html",
     () =>
-        gulp.src(common.formGlobs("**/*.html"))
+        gulp.src(utilities.formGlobs("**/*.html"))
             .pipe(gulp.dest(buildInfos.paths.appDir)));
 
 gulp.task("build:img",
     () =>
-        gulp.src(common.formGlobs(["icons/**/*.*"]))
+        gulp.src(utilities.formGlobs(["icons/**/*.*"]))
             .pipe(gulp.dest(buildInfos.paths.appDir)));
 
 gulp.task("build:json",
     () =>
-        gulp.src(common.formGlobs(["**/*.json"]))
+        gulp.src(utilities.formGlobs(["**/*.json"]))
             .pipe(gulp.dest(buildInfos.paths.appDir)));
 
 gulp.task("build:node_modules",
-    () => common.appdirExec("npm install --production"));
+    () => utilities.appdirExec("npm install --production"));
 
 gulp.task("build:sfx",
     () => {
@@ -116,7 +117,7 @@ gulp.task("build:sfx",
 
 gulp.task("build:licenses",
     () =>
-        gulp.src(common.formGlobs(["LICENSE"]))
+        gulp.src(utilities.formGlobs(["LICENSE"]))
             .pipe(gulp.dest(buildInfos.paths.appDir)));
 
 gulp.task("build",

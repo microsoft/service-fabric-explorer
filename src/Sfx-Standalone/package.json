@@ -1,6 +1,6 @@
 {
   "name": "sfxstandalone",
-  "version": "1.0.0",
+  "version": "1.0.0-private",
   "description": "Service Fabric Explorer desktop version.",
   "main": "main.js",
   "scripts": {

@@ -5,6 +5,7 @@
 
 "use strict";
 
+const utilities = require("./utilities");
 const common = require("./common");
 const config = require("./config");
 
@@ -81,7 +82,7 @@ function generateVersionInfo(platform, getPackageInfo) {
 
     const versionInfoPath = path.resolve(path.join(buildInfos.paths.publishDir, utils.format("version.{}.json", platform)));
 
-    common.ensureDirExists(path.dirname(versionInfoPath));
+    utilities.ensureDirExists(path.dirname(versionInfoPath));
     fs.writeFileSync(versionInfoPath, JSON.stringify(versionInfo, null, '\t'));
 }
 

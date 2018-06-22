@@ -328,7 +328,7 @@ gulp.task("pack:licensing",
 
         if (fs.existsSync("../Sfx/package.json")) {
             /** @type {IPackageJson} */
-            const sfxPackageJson = require("../../../Sfx/package.json");
+            const sfxPackageJson = config.loadJson("../Sfx/package.json");
 
             prodDeps = prodDeps.concat(generateLicensingDeps("prod", "npm", "../Sfx/node_modules", sfxPackageJson.dependencies));
             prodDeps = prodDeps.concat(generateLicensingDeps("prod", "npm", "../Sfx/node_modules", sfxPackageJson.optionalDependencies));

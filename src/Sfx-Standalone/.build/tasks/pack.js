@@ -7,13 +7,14 @@
 
 const common = require("../common");
 const config = require("../config");
+const utilities = require("../utilities");
 
-const path = require("path");
 const gulp = require("gulp");
 const packager = require("electron-packager");
 
 const Architecture = common.Architecture;
 const Platform = common.Platform;
+const utils = common.utils;
 const buildInfos = config.buildInfos;
 
 /**
@@ -113,8 +114,8 @@ require("./pack.licensing");
 gulp.task("pack:update-version",
     () =>
         Promise.resolve(
-            common.appdirExec(
-                common.utils.format("npm version {} --allow-same-version", buildInfos.buildNumber))));
+            utilities.appdirExec(
+                utils.format("npm version {} --allow-same-version", buildInfos.buildNumber))));
 
 gulp.task("pack:prepare",
     gulp.series(
