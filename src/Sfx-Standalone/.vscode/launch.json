@@ -10,6 +10,7 @@
             "name": "Debug: Main",
             "cwd": "${workspaceRoot}",
             "sourceMaps": true,
+            "autoAttachChildProcesses": true,
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "windows": {
                 "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"

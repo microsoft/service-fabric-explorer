@@ -10,28 +10,28 @@ import { ILoggerSettings } from "sfx.logging";
 import * as logging from "./log";
 import ConsoleLogger from "./loggers/console";
 import AppInsightsLogger from "./loggers/app-insights";
-import { electron } from "../../utilities/electron-adapter";
+import * as appUtils from "../../utilities/appUtils";
 
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "logging",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         components: [
             {
                 name: "logging",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 descriptor: async (settings: ISettings) => await logging.createAsync(settings.get("logging")),
                 singleton: true,
                 deps: ["settings"]
             },
             {
                 name: "logging.logger.console",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 descriptor: (loggerSettings: ILoggerSettings, targetConsole: Console) => new ConsoleLogger(loggerSettings, targetConsole)
             },
             {
                 name: "logging.logger.app-insights",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 descriptor: (loggerSettings: ILoggerSettings) => new AppInsightsLogger(loggerSettings)
             }
         ]

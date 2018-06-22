@@ -19,7 +19,16 @@ app.setName("Service Fabric Explorer");
 
     // Load built-in modules.
     await sfxModuleManager.loadModuleDirAsync(local("modules"));
+
     const log = await sfxModuleManager.getComponentAsync("logging");
+    const packageManager = await sfxModuleManager.getComponentAsync("package-manager");
+    const exentsionsHostName = "exenstions";
+
+    log.writeInfo(`Initializing module host (${exentsionsHostName}) ...`);
+    await sfxModuleManager.newHostAsync(exentsionsHostName);
+
+    log.writeInfo(`Loading exentsions in the directory "${packageManager.packagesDir}" to module host (${exentsionsHostName}) ...`);
+    await sfxModuleManager.loadModuleDirAsync(packageManager.packagesDir, exentsionsHostName);
 
     app.on("ready", async () => {
         log.writeInfo("'ready': Application starting up ...");

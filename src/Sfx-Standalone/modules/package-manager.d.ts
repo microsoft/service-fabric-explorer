@@ -54,6 +54,8 @@ declare module "sfx.package-manager" {
     }
 
     export interface IPackageManager {
+        readonly packagesDir: string;
+
         addRepo(repoConfig: IPackageRepositoryConfig): void;
         removeRepo(repoName: string): void;
 

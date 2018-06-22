@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import { PromptContext } from "./prompt-context";
+import * as appUtils from "../../utilities/appUtils";
 import { electron } from "../../utilities/electron-adapter";
 import * as mmutils from "../../module-manager/utils";
 import { Communicator } from "../ipc/communicator";
@@ -23,7 +24,7 @@ process.once("loaded", async () => {
     sfxModuleManager.registerComponents([
         {
             name: "prompt.prompt-context",
-            version: electron.app.getVersion(),
+            version: appUtils.getAppVersion(),
             singleton: true,
             descriptor: () => new PromptContext()
         }

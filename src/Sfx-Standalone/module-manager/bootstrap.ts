@@ -6,7 +6,8 @@
 import * as mmutils from "./utils";
 
 (async () => {
-    const constructorOptions = JSON.parse(process.argv0);
+    console.log(process.argv);
+    const constructorOptions = JSON.parse(process.argv[3]);
     const moduleManager = await mmutils.createModuleManagerAsync(constructorOptions);
 
     global["sfxModuleManager"] = moduleManager;

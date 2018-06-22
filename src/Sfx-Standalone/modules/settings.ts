@@ -12,6 +12,7 @@ import * as fs from "fs";
 import * as utils from "../utilities/utils";
 import { local } from "../utilities/resolve";
 import * as fileSystem from "../utilities/fileSystem";
+import * as appUtils from "../utilities/appUtils";
 import { electron } from "../utilities/electron-adapter";
 
 class Settings implements ISettings {
@@ -265,17 +266,17 @@ class SettingsService implements ISettingsService {
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "settings",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         components: [
             {
                 name: "settings.service",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 singleton: true,
                 descriptor: () => new SettingsService()
             },
             {
                 name: "settings",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 singleton: true,
                 descriptor: (settingsSvc: SettingsService) => settingsSvc.default,
                 deps: ["settings.service"]

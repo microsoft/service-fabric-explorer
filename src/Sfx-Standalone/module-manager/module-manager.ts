@@ -31,6 +31,8 @@ import { Communicator } from "../modules/ipc/communicator";
 import { ObjectRemotingProxy } from "../modules/proxy.object/proxy.object";
 import StringPattern from "../modules/remoting/pattern/string";
 import * as mmutils from "./utils";
+import { local } from "../utilities/resolve";
+import * as appUtils from "../utilities/appUtils";
 
 enum ModuleManagerAction {
     loadModuleAsync = "loadModuleAsync",
@@ -211,8 +213,9 @@ export class ModuleManager implements IModuleManager {
         if (!hostCommunicator) {
             const constructorOptions = mmutils.generateModuleManagerConstructorOptions(this);
 
-            childProcess = child_process.fork("./bootstrap.js", [JSON.stringify(constructorOptions)]);
+            childProcess = appUtils.fork(local("./bootstrap.js"), [JSON.stringify(constructorOptions)]);
             hostCommunicator = new Communicator(childProcess, hostName);
+            
             proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, true);
         } else {
             proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, false);

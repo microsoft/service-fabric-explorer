@@ -6,7 +6,7 @@
 import { IModuleInfo, IModuleManager } from "sfx.module-manager";
 import { ICommunicator, IRoutePattern } from "sfx.remoting";
 
-import { electron } from "../../utilities/electron-adapter";
+import * as appUtils from "../../utilities/appUtils";
 import { ObjectRemotingProxy } from "./proxy.object";
 import * as utils from "../../utilities/utils";
 import * as util from "util";
@@ -14,12 +14,12 @@ import * as util from "util";
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "remoting",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         loadingMode: "Always",
         components: [
             {
                 name: "remoting.proxy",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 deps: ["module-manager"],
                 descriptor:
                     async (moduleManager: IModuleManager, pattern: string | RegExp, communicator: ICommunicator, ownCommunicator?: boolean) => {

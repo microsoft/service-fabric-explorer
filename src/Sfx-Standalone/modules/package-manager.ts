@@ -23,6 +23,7 @@ import * as fs from "fs";
 import * as tmp from "tmp";
 
 import { electron } from "../utilities/electron-adapter";
+import * as appUtils from "../utilities/appUtils";
 import * as utils from "../utilities/utils";
 import * as fileSystem from "../utilities/fileSystem";
 
@@ -382,6 +383,10 @@ class PackageManager implements IPackageManager {
 
     private repos: IDictionary<IPackageRepository>;
 
+    public get packagesDir(): string {
+        return this.config.packagesDir;
+    }
+
     constructor(settings: ISettings, httpClient: IHttpClient) {
         if (!Object.isObject(settings)) {
             throw new Error("settings must be provided.");
@@ -592,11 +597,11 @@ class ModuleLoadingPolicy implements IModuleLoadingPolicy {
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "package-manager",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         components: [
             {
                 name: "package-manager",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 singleton: true,
                 descriptor: (settings: ISettings, httpsClient: IHttpClient) => new PackageManager(settings, httpsClient),
                 deps: ["settings", "http.https-client"]

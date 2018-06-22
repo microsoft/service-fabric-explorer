@@ -13,7 +13,7 @@ import * as url from "url";
 
 import * as utils from "../utilities/utils";
 import { HandlerChainBuilder } from "../utilities/handlerChainBuilder";
-import { electron } from "../utilities/electron-adapter";
+import * as appUtils from "../utilities/appUtils";
 
 enum HttpProtocols {
     any = "*",
@@ -314,17 +314,17 @@ function buildHttpClient(log: ILog, protocol: string): IHttpClient {
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "http",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         components: [
             {
                 name: "http.http-client",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 descriptor: (log: ILog) => buildHttpClient(log, HttpProtocols.any),
                 deps: ["logging"]
             },
             {
                 name: "http.https-client",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 descriptor: (log: ILog) => buildHttpClient(log, HttpProtocols.https),
                 deps: ["logging"]
             }

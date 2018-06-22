@@ -16,7 +16,7 @@ export interface IPathObject {
     search?: string;
 }
 
-const appDir: string = electron.app.getAppPath();
+const appDir: string = electron.app ? electron.app.getAppPath() : process.cwd();
 
 export default function resolve(
     pathObject: string | IPathObject,

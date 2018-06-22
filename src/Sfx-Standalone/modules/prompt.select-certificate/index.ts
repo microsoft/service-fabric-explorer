@@ -9,16 +9,16 @@ import { Certificate } from "electron";
 
 import "../../utilities/utils";
 import resolve from "../../utilities/resolve";
-import { electron } from "../../utilities/electron-adapter";
+import * as appUtils from "../../utilities/appUtils";
 
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "prompt.select-certificate",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         components: [
             {
                 name: "prompt.select-certificate",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 descriptor:
                     (promptService: IPromptService,
                         parentWindowId: number,
