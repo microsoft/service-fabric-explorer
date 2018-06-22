@@ -34,26 +34,29 @@ app.setName("Service Fabric Explorer");
         }
 
         log.writeInfo("'ready': Starting up connect-cluster prompt.");
-        const prompt_connectCluster = await sfxModuleManager.getComponentAsync("prompt.connect-cluster");
-        const clusterUrl = await prompt_connectCluster.openAsync();
 
-        if (clusterUrl) {
-            global["TargetClusterUrl"] = clusterUrl;
-            const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null, true, clusterUrl);
+        await sfxModuleManager.getComponentAsync("main-window");
 
-            mainWindow.setMenuBarVisibility(false);
+        // const prompt_connectCluster = await sfxModuleManager.getComponentAsync("prompt.connect-cluster");
+        // const clusterUrl = await prompt_connectCluster.openAsync();
 
-            log.writeEvent("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
-            mainWindow.loadURL(resolve("sfx/index.html"));
-        } else {
-            log.writeInfo("'ready': No cluster url provided.");
-            log.writeInfo("'ready': app.quit().");
+        // if (clusterUrl) {
+        //     global["TargetClusterUrl"] = clusterUrl;
+        //     const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null, true, clusterUrl);
 
-            app.quit();
-            return;
-        }
+        //     mainWindow.setMenuBarVisibility(false);
 
-        setTimeout(async () => (await sfxModuleManager.getComponentAsync("update")).update(), 1000); // Check upgrade after 1 sec.
+        //     log.writeEvent("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
+        //     mainWindow.loadURL(resolve("sfx/index.html"));
+        // } else {
+        //     log.writeInfo("'ready': No cluster url provided.");
+        //     log.writeInfo("'ready': app.quit().");
+
+        //     app.quit();
+        //     return;
+        // }
+
+        //setTimeout(async () => (await sfxModuleManager.getComponentAsync("update")).update(), 1000); // Check upgrade after 1 sec.
         startingUp = false;
         log.writeInfo("'ready': application startup finished.");
     });
