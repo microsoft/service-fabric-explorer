@@ -101,7 +101,8 @@ gulp.task("build:json",
         gulp.src(common.formGlobs(["**/*.json"]))
             .pipe(gulp.dest(buildInfos.paths.appDir)));
 
-gulp.task("build:node_modules", () => common.appdirExec("npm install --production"));
+gulp.task("build:node_modules",
+    () => common.appdirExec("npm install --production"));
 
 gulp.task("build:sfx",
     () => {
@@ -127,9 +128,10 @@ gulp.task("build",
         "build:img"));
 
 gulp.task("build:all",
-    gulp.parallel(
-        "build",
-        "build:licenses",
+    gulp.series(
+        gulp.parallel(
+            "build",
+            "build:licenses"),
         "build:sdk",
         "build:node_modules"));
 

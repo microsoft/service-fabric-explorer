@@ -28,12 +28,14 @@ gulp.task("publish:versioninfo@windows",
 
 gulp.task("publish:msi@copy-msi.wxs",
     () =>
-        gulp.src(common.formGlobs("./.build/msi.wxs"))
-            .pipe(gulp.dest(buildInfos.paths.buildDir)));
+        Promise.resolve(
+            fs.copyFileSync(
+                "./.build/msi.wxs",
+                path.join(buildInfos.paths.buildDir, "msi.wxs"))));
 
 gulp.task("publish:msi@write-version",
     () => {
-        const wxsPath = path.resolve(path.join(buildInfos.paths.buildDir, "./.build/msi.wxs"));
+        const wxsPath = path.resolve(path.join(buildInfos.paths.buildDir, "msi.wxs"));
 
         fs.writeFileSync(
             wxsPath,
@@ -58,7 +60,7 @@ gulp.task("publish:msi@build-msi",
         const candlePath = path.resolve("./.vendor/wix/candle.exe");
         const lightPath = path.resolve("./.vendor/wix/light.exe");
         const heatCmd = utils.format("\"{}\" dir \"{}\" -ag -srd -cg MainComponentsGroup -dr INSTALLFOLDER -o \"{}\"", heatPath, packDirPath, filesWixPath);
-        const candleCmd = utils.format("\"{}\" -arch x86 -out \"{}\\\\\" \"{}\" \"{}\"", candlePath, wxsobjDir, path.resolve(path.join(buildInfos.paths.buildDir, "./.build/msi.wxs")), filesWixPath);
+        const candleCmd = utils.format("\"{}\" -arch x86 -out \"{}\\\\\" \"{}\" \"{}\"", candlePath, wxsobjDir, path.resolve(path.join(buildInfos.paths.buildDir, "msi.wxs")), filesWixPath);
         const lightCmd =
             utils.format(
                 "\"{}\" -b \"{}\" -spdb -out \"{}\" \"{}\" \"{}\"",
