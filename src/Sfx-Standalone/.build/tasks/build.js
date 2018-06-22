@@ -132,8 +132,8 @@ gulp.task("build:all",
         gulp.parallel(
             "build",
             "build:licenses"),
-        "build:sdk",
-        "build:node_modules"));
+        "build:node_modules",
+        "build:sdk"));
 
 gulp.task("clean-build",
     gulp.series("clean:build", "build"));

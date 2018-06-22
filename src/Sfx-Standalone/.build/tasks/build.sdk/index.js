@@ -31,17 +31,32 @@ function getTypeDeclarationGlobs() {
     return common.formGlobs(["**/*.d.ts"]);
 }
 
-gulp.task("build:gather-declarations",
-    () => gulp.src(getTypeDeclarationGlobs())
-        .pipe(gulp.dest(buildInfos.paths.sdkDir)));
+gulp.task("build:sdk@prepare",
+    () => Promise.resolve(common.ensureDirExists(buildInfos.paths.sdkDir)));
 
-gulp.task("build:generate-sdk-packagejson",
-    (done) => {
+gulp.task("build:sdk@ts-declarations",
+    () =>
+        gulp.src(getTypeDeclarationGlobs())
+            .pipe(gulp.dest(buildInfos.paths.sdkDir)));
+
+gulp.task("build:sdk@packagejson",
+    () => {
         sdkPackageJson.version = buildInfos.buildNumber;
-        common.ensureDirExists(buildInfos.paths.sdkDir);
         fs.writeFileSync(path.join(buildInfos.paths.sdkDir, "package.json"), JSON.stringify(sdkPackageJson, undefined, 4));
 
-        done();
+        return Promise.resolve();
     });
 
-gulp.task("build:sdk", gulp.parallel("build:gather-declarations", "build:generate-sdk-packagejson"));
+gulp.task("build:sdk@sfx-standalone",
+    () => {
+        return gulp.src(buildInfos.paths.appDir + "/**/*")
+            .pipe(gulp.dest(buildInfos.paths.sdkDir + "/app"));
+    });
+
+gulp.task("build:sdk",
+    gulp.series(
+        "build:sdk@prepare",
+        gulp.parallel(
+            "build:sdk@ts-declarations",
+            "build:sdk@packagejson",
+            "build:sdk@sfx-standalone")));
