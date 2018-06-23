@@ -202,7 +202,7 @@ class FileSettings extends Settings {
 
     set<T>(settingPath: string, value: T): void {
         super.set(settingPath, value);
-        fs.writeFileSync(this.settingsPath, JSON.stringify(this.settings), { encoding: "utf8" });
+        fs.writeFileSync(this.settingsPath, JSON.stringify(this.settings, null, 4), { encoding: "utf8" });
     }
 }
 

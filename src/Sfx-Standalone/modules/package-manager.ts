@@ -409,9 +409,9 @@ class PackageManager implements IPackageManager {
         }
 
         if (!String.isString(this.config.packagesDir)) {
-            this.config.packagesDir = path.join(electron.app.getPath("userData"), "packages");
+            this.config.packagesDir = path.resolve(electron.app.getPath("userData"), "packages");
         } else {
-            this.config.packagesDir = path.join(electron.app.getPath("userData"), this.config.packagesDir);
+            this.config.packagesDir = path.resolve(electron.app.getPath("userData"), this.config.packagesDir);
         }
 
         fileSystem.ensureDirExists(this.config.packagesDir);
