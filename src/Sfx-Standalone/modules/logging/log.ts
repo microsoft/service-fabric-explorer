@@ -87,6 +87,14 @@ class Log implements ILog {
 
     private readonly logCallerInfo: boolean;
 
+    private static stringifier(obj: any): string {
+        if (obj instanceof Error) {
+            obj = obj.toJSON();
+        }
+
+        return utils.defaultStringifier(obj);
+    }
+
     public get disposed(): boolean {
         return this.loggers === undefined;
     }
@@ -206,14 +214,6 @@ class Log implements ILog {
     public dispose(): void {
         this.defaultProperties = undefined;
         this.loggers = undefined;
-    }
-
-    private static stringifier(obj: any): string {
-        if (obj instanceof Error) {
-            obj = obj.toJSON();
-        }
-
-        return utils.defaultStringifier(obj);
     }
 
     private validateDisposal() {
