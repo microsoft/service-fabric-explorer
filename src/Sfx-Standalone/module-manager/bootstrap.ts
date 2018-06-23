@@ -9,19 +9,7 @@ import * as mmutils from "./utils";
 import * as appUtils from "../utilities/appUtils";
 import { Communicator } from "../modules/ipc/communicator";
 
-process.on("unhandledRejection", (reason, promise) => {
-    console.log("Unhandled promise rejection: ", promise);
-    console.log("  reason: ", reason);
-
-    if (sfxModuleManager) {
-        sfxModuleManager.getComponentAsync("logging")
-            .then((log) => {
-                if (log) {
-                    log.writeError("Unhandled promise rejection: {}", reason);
-                }
-            });
-    }
-});
+appUtils.logUnhandledRejection();
 
 (async () => {
     const constructorOptionsArg = appUtils.getCmdArg(mmutils.ConstructorOptionsArgName);

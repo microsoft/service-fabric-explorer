@@ -14,19 +14,7 @@ import startupMainWindow from "./main";
 
 global["sfxModuleManager"] = new ModuleManager(appUtils.getAppVersion());
 
-process.on("unhandledRejection", (reason, promise) => {
-    console.log("Unhandled promise rejection: ", promise);
-    console.log("  reason: ", reason);
-
-    if (sfxModuleManager) {
-        sfxModuleManager.getComponentAsync("logging")
-            .then((log) => {
-                if (log) {
-                    log.writeError("Unhandled promise rejection: {}", reason);
-                }
-            });
-    }
-});
+appUtils.logUnhandledRejection();
 
 Promise.resolve()
     // Load built-in modules.
@@ -43,7 +31,7 @@ Promise.resolve()
         if (adhocModuleArg) {
             return sfxModuleManager.loadModuleAsync(adhocModuleArg, "extensions");
         }
-
+        
         return Promise.resolve();
     })
 

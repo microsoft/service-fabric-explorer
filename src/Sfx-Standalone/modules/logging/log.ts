@@ -110,7 +110,7 @@ class Log implements ILog {
         }
 
         if (Array.isArray(params) && params.length > 0) {
-            messageOrFormat = utils.format(messageOrFormat, ...params);
+            messageOrFormat = utils.formatEx(Log.stringifier, messageOrFormat, ...params);
         }
         properties = this.generateProperties(properties);
         this.loggers.forEach((logger) => logger.write(properties, severity, messageOrFormat));
@@ -206,6 +206,14 @@ class Log implements ILog {
     public dispose(): void {
         this.defaultProperties = undefined;
         this.loggers = undefined;
+    }
+
+    private static stringifier(obj: any): string {
+        if (obj instanceof Error) {
+            obj = obj.toJSON();
+        }
+
+        return utils.defaultStringifier(obj);
     }
 
     private validateDisposal() {

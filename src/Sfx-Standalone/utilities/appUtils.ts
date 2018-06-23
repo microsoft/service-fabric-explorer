@@ -161,3 +161,20 @@ export function resolve(
 export function local(target: string, fromAppDir: boolean = false): string {
     return path.join(fromAppDir ? appDir : path.dirname(utils.getCallerInfo().fileName), target);
 }
+
+export function logUnhandledRejection(): void {
+    process.on("unhandledRejection", (reason, promise) => {
+        if (sfxModuleManager) {
+            sfxModuleManager.getComponentAsync("logging")
+                .then((log) => {
+                    if (log) {
+                        log.writeError("Unhandled promise rejection: {}", reason);
+                    } else {
+                        console.error("Unhandled promise rejection: ", promise);
+                    }
+                });
+        } else {
+            console.error("Unhandled promise rejection: ", promise);
+        }
+    });
+}
