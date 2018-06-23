@@ -7,7 +7,6 @@ import { IModuleInfo } from "sfx.module-manager";
 import { IPromptService } from "sfx.prompt";
 import { IInputPromptOptions } from "sfx.prompt.input";
 
-import resolve from "../../utilities/resolve";
 import * as appUtils from "../../utilities/appUtils";
 
 export function getModuleMetadata(): IModuleInfo {
@@ -25,7 +24,7 @@ export function getModuleMetadata(): IModuleInfo {
                         promptService.createAsync(
                             {
                                 parentWindowId: parentWindowId,
-                                pageUrl: resolve("input.html"),
+                                pageUrl: appUtils.resolve("input.html"),
                                 height: 225,
                                 data: options
                             }),

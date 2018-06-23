@@ -15,18 +15,17 @@ import * as authCert from "../../utilities/auth/cert";
 import * as authAad from "../../utilities/auth/aad";
 import * as appUtils from "../../utilities/appUtils";
 import * as utils from "../../utilities/utils";
-import { local } from "../../utilities/resolve";
 import * as mmutils from "../../module-manager/utils";
 
 const UuidNamespace = "614e2e95-a80d-4ee5-9fd5-fb970b4b01a3";
 
 function handleSslCert(window: BrowserWindow): void {
-    let trustedCertManager: IDictionary<boolean> = Object.create(null);
+    const trustedCertManager: IDictionary<boolean> = Object.create(null);
 
     window.webContents.on("certificate-error", (event, urlString, error, certificate, trustCertificate) => {
         event.preventDefault();
 
-        let certIdentifier = url.parse(urlString).hostname + certificate.subjectName;
+        const certIdentifier = url.parse(urlString).hostname + certificate.subjectName;
 
         if (certIdentifier in trustedCertManager) {
             trustCertificate(trustedCertManager[certIdentifier]);
@@ -111,7 +110,7 @@ export default async function createBrowserWindowAsync(
         show: false,
         icon: appUtils.getIconPath(),
         webPreferences: {
-            preload: local("./preload.js", false),
+            preload: appUtils.local("./preload.js"),
             nodeIntegration: true
         }
     };

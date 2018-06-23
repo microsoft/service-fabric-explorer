@@ -53,7 +53,7 @@ export default class AppInsightsLogger implements ILogger {
     public write(properties: IDictionary<string>, severity: Severity, message: string): void {
         this.validateDisposal();
 
-        let telemetry: TraceTelemetry = {
+        const telemetry: TraceTelemetry = {
             severity: toAppInsightsSeverity(severity),
             message: message
         };
@@ -68,7 +68,7 @@ export default class AppInsightsLogger implements ILogger {
     public writeException(properties: IDictionary<string>, error: Error): void {
         this.validateDisposal();
 
-        let telemetry: ExceptionTelemetry = {
+        const telemetry: ExceptionTelemetry = {
             exception: error
         };
 
@@ -82,7 +82,7 @@ export default class AppInsightsLogger implements ILogger {
     public writeMetric(properties: IDictionary<string>, name: string, value: number): void {
         this.validateDisposal();
         
-        let telemetry: MetricTelemetry = {
+        const telemetry: MetricTelemetry = {
             name: name,
             value: value
         };

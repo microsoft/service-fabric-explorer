@@ -217,7 +217,7 @@ export function formatEx(stringifier: (obj: any) => string, format: string, ...a
             return argIdentifier;
         }
 
-        let argIndex = argIndexStr.length === 0 ? matchIndex : parseInt(argIndexStr, 10);
+        const argIndex = argIndexStr.length === 0 ? matchIndex : parseInt(argIndexStr, 10);
 
         if (isNaN(argIndex) || argIndex < 0 || argIndex >= args.length) {
             throw new Error(`Referenced arg index, '${argIndexStr}',is out of range of the args.`);

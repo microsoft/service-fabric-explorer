@@ -7,7 +7,7 @@ import { BrowserWindow } from "electron";
 import * as querystring from "querystring";
 import * as Url from "url";
 
-import resolve from "../../utilities/resolve";
+import { resolve } from "../appUtils";
 
 export function handle(window: BrowserWindow, targetHostName: string) {
     if (String.isEmptyOrWhitespace(targetHostName)) {

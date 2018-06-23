@@ -31,7 +31,6 @@ import { Communicator } from "../modules/ipc/communicator";
 import { ObjectRemotingProxy } from "../modules/proxy.object/proxy.object";
 import StringPattern from "../modules/remoting/pattern/string";
 import * as mmutils from "./utils";
-import { local } from "../utilities/resolve";
 import * as appUtils from "../utilities/appUtils";
 
 enum ModuleManagerAction {
@@ -215,7 +214,7 @@ export class ModuleManager implements IModuleManager {
 
             childProcess =
                 appUtils.fork(
-                    local("./bootstrap.js"),
+                    appUtils.local("./bootstrap.js"),
                     [appUtils.toCmdArg(
                         mmutils.ConstructorOptionsArgName,
                         JSON.stringify(constructorOptions))]);

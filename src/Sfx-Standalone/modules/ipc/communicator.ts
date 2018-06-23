@@ -296,7 +296,7 @@ export class Communicator implements ICommunicator {
             throw new Error("handler must be a function.");
         }
 
-        let route: IRoute = {
+        const route: IRoute = {
             pattern: pattern,
             handler: handler
         };

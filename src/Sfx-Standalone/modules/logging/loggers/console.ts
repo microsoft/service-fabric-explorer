@@ -50,7 +50,7 @@ export default class ConsoleLogger implements ILogger {
 
     public write(properties: IDictionary<string>, severity: Severity, message: string): void {
         this.validateDisposal();
-        let consoleMsg: string = this.formatConsoleMsg(properties, message);
+        const consoleMsg: string = this.formatConsoleMsg(properties, message);
 
         switch (severity) {
             case Severities.Critical:
@@ -110,7 +110,7 @@ export default class ConsoleLogger implements ILogger {
         if (!utils.isNullOrUndefined(properties)) {
 
             if (this.settings.logAllProperties) {
-                for (let propertyName in properties) {
+                for (const propertyName in properties) {
                     if (properties.hasOwnProperty(propertyName) && !propertyName.startsWith("Caller.")) {
                         consoleMsg += `<${propertyName}:${properties[propertyName]}>`;
                     }

@@ -8,14 +8,29 @@ import "./utilities/utils";
 
 import * as appUtils from "./utilities/appUtils";
 import { ModuleManager } from "./module-manager/module-manager";
-import { local } from "./utilities/resolve";
+
+// TODO: Remove startupMainWindow once the main frame is ready.
 import startupMainWindow from "./main";
 
 global["sfxModuleManager"] = new ModuleManager(appUtils.getAppVersion());
 
+process.on("unhandledRejection", (reason, promise) => {
+    console.log("Unhandled promise rejection: ", promise);
+    console.log("  reason: ", reason);
+
+    if (sfxModuleManager) {
+        sfxModuleManager.getComponentAsync("logging")
+            .then((log) => {
+                if (log) {
+                    log.writeError("Unhandled promise rejection: {}", reason);
+                }
+            });
+    }
+});
+
 Promise.resolve()
     // Load built-in modules.
-    .then(() => sfxModuleManager.loadModuleDirAsync(local("modules")))
+    .then(() => sfxModuleManager.loadModuleDirAsync(appUtils.local("modules")))
 
     // Load extension modules.
     .then(() => sfxModuleManager.getComponentAsync("package-manager"))

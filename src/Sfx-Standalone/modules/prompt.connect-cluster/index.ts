@@ -6,7 +6,6 @@
 import { IModuleInfo } from "sfx.module-manager";
 import { IPromptService } from "sfx.prompt";
 
-import resolve from "../../utilities/resolve";
 import * as appUtils from "../../utilities/appUtils";
 
 export function getModuleMetadata(): IModuleInfo {
@@ -20,7 +19,7 @@ export function getModuleMetadata(): IModuleInfo {
                 descriptor: (promptService: IPromptService) =>
                     promptService.createAsync(
                         {
-                            pageUrl: resolve("connect-cluster.html"),
+                            pageUrl: appUtils.resolve("connect-cluster.html"),
                             height: 225
                         }),
                 deps: ["prompt.prompt-service"]

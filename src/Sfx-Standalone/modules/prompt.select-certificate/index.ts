@@ -7,7 +7,6 @@ import { IModuleInfo } from "sfx.module-manager";
 import { IPromptService } from "sfx.prompt";
 import { Certificate } from "electron";
 
-import resolve from "../../utilities/resolve";
 import * as appUtils from "../../utilities/appUtils";
 
 export function getModuleMetadata(): IModuleInfo {
@@ -33,7 +32,7 @@ export function getModuleMetadata(): IModuleInfo {
                         return promptService.createAsync(
                             {
                                 parentWindowId: parentWindowId,
-                                pageUrl: resolve("select-certificate.html"),
+                                pageUrl: appUtils.resolve("select-certificate.html"),
                                 height: 640,
                                 data: certificates
                             });

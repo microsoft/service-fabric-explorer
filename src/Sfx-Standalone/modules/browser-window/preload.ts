@@ -13,6 +13,20 @@ import { Communicator } from "../ipc/communicator";
 // TODO: Remove global.exports when the node v10 is integrated with electron.
 global["exports"] = exports;
 
+process.on("unhandledRejection", (reason, promise) => {
+    console.log("Unhandled promise rejection: ", promise);
+    console.log("  reason: ", reason);
+
+    if (sfxModuleManager) {
+        sfxModuleManager.getComponentAsync("logging")
+            .then((log) => {
+                if (log) {
+                    log.writeError("Unhandled promise rejection: {}", reason);
+                }
+            });
+    }
+});
+
 process.once("loaded", async () => {
     const constructorOptions = ipcRenderer.sendSync("request-module-manager-constructor-options");
 

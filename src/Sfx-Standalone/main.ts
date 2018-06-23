@@ -7,7 +7,7 @@ import { app, Menu } from "electron";
 import * as uuidv5 from "uuid/v5";
 
 import { env, Platform } from "./utilities/env";
-import resolve from "./utilities/resolve";
+import { resolve } from "./utilities/appUtils";
 
 async function startup(): Promise<void> {
     const log = await sfxModuleManager.getComponentAsync("logging");

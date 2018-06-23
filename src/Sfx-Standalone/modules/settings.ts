@@ -10,7 +10,6 @@ import * as path from "path";
 import * as fs from "fs";
 
 import * as utils from "../utilities/utils";
-import { local } from "../utilities/resolve";
 import * as fileSystem from "../utilities/fileSystem";
 import * as appUtils from "../utilities/appUtils";
 import { electron } from "../utilities/electron-adapter";
@@ -253,7 +252,7 @@ class SettingsService implements ISettingsService {
             throw new Error("Invalid settings name!");
         }
 
-        let settingsPath = local(name + ".json", true);
+        let settingsPath = appUtils.local(name + ".json", true);
 
         if (!fs.existsSync(settingsPath)) {
             settingsPath = path.join(this.userDataDir, name + ".json");
