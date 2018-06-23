@@ -40,7 +40,7 @@ gulp.task("build:sdk@packagejson",
         sdkPackageJson.main = sfxPackageJson.main;
 
         if (!sdkPackageJson.dependencies) {
-            sdkPackageJson.dependencies = {};
+            sdkPackageJson.dependencies = Object.create(null);
         } else {
             for (const depName of Object.keys(sdkPackageJson.dependencies)) {
                 const depVersion = sdkPackageJson.dependencies[depName];

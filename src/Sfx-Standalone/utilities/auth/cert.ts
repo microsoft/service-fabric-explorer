@@ -27,7 +27,7 @@ async function showCertSelectPromptAsync(
     certificateList: Array<Certificate>)
     : Promise<ICertSelectionPromptResults> {
 
-    let certSelectionButtons = new Array<string>();
+    let certSelectionButtons: Array<string> = [];
     let importCertsResponse = -1;
 
     if (Array.isArray(certificateList)) {
@@ -67,7 +67,7 @@ interface ICertHandlingRecord {
 }
 
 function handleGenerally(moduleManager: IModuleManager, window: BrowserWindow): void {
-    let clientCertManager: IDictionary<ICertHandlingRecord> = {};
+    let clientCertManager: IDictionary<ICertHandlingRecord> = Object.create(null);
 
     window.webContents.on("select-client-certificate",
         async (event, urlString, certificateList, selectCertificate) => {

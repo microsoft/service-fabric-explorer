@@ -45,7 +45,7 @@ export function toCmdArgs(argDict: IDictionary<string>): Array<string> {
         throw new Error("argDict must be an IDictionary<string>.");
     }
 
-    const args = new Array<string>();
+    const args: Array<string> = [];
 
     for (const key in argDict) {
         args.push(`--${key}=${argDict[key]}`);
@@ -87,7 +87,7 @@ export function fork(modulePath: string, forkArgs: Array<string>): child_process
         throw new Error("forkArgs must be an array of string.");
     }
 
-    const args = new Array<string>();
+    const args: Array<string> = [];
 
     if (Array.isArray(process.argv)) {
         if (0 <= process.argv.findIndex((arg) => arg.startsWith("--inspect-brk"))) {

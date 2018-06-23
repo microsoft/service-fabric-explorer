@@ -7,7 +7,6 @@ import { IModuleInfo } from "sfx.module-manager";
 import { IPromptService } from "sfx.prompt";
 import { Certificate } from "electron";
 
-import "../../utilities/utils";
 import resolve from "../../utilities/resolve";
 import * as appUtils from "../../utilities/appUtils";
 

@@ -21,7 +21,7 @@ import * as mmutils from "../../module-manager/utils";
 const UuidNamespace = "614e2e95-a80d-4ee5-9fd5-fb970b4b01a3";
 
 function handleSslCert(window: BrowserWindow): void {
-    let trustedCertManager: IDictionary<boolean> = {};
+    let trustedCertManager: IDictionary<boolean> = Object.create(null);
 
     window.webContents.on("certificate-error", (event, urlString, error, certificate, trustCertificate) => {
         event.preventDefault();

@@ -49,6 +49,10 @@ declare global {
     interface SymbolConstructor {
         isSymbol(value: any): value is symbol;
     }
+
+    interface Error {
+        toJSON?(): any;
+    }
 }
 
 namespace Symbols {
@@ -151,7 +155,47 @@ String.isEmptyOrWhitespace = (value: string): boolean => {
     return value.trim() === "";
 };
 
-export function format(format: string, ...args: Array<any>) {
+Error.prototype.toJSON = function (): any {
+    const error = Object.create(null);
+
+    error.message = `Error: ${this.message}`;
+    error.stack = this.stack;
+
+    return error;
+};
+
+export function defaultStringifier(obj: any): string {
+    if (obj === null) {
+        return "null";
+    } else if (obj === undefined) {
+        return "undefined";
+    } else {
+        const objType = typeof obj;
+
+        if ((objType !== "object")
+            || (objType === "object"
+                && Function.isFunction(obj.toString)
+                && obj.toString !== Object.prototype.toString)) {
+            return obj.toString();
+        } else {
+            let str: string = "{\n";
+
+            for (const propertyName of Object.getOwnPropertyNames(obj)) {
+                str += `${propertyName}: ${defaultStringifier(obj[propertyName])}\n`;
+            }
+
+            str += "}";
+
+            return str;
+        }
+    }
+}
+
+export function formatEx(stringifier: (obj: any) => string, format: string, ...args: Array<any>): string {
+    if (!Function.isFunction(stringifier)) {
+        throw new Error("stringifier must be a function.");
+    }
+
     if (!String.isString(format)) {
         throw new Error("format must be a string");
     }
@@ -179,9 +223,11 @@ export function format(format: string, ...args: Array<any>) {
             throw new Error(`Referenced arg index, '${argIndexStr}',is out of range of the args.`);
         }
 
-        return args[argIndex];
+        return stringifier(args[argIndex]);
     });
 }
+
+export const format: (format: string, ...args: Array<any>) => string = formatEx.bind(null, defaultStringifier);
 
 export function isNullOrUndefined(value: any): value is undefined | null {
     return value === undefined || value === null;

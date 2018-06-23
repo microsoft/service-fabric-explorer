@@ -3,12 +3,13 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import * as utils from "../../utilities/utils";
+
 import { PromptContext } from "./prompt-context";
 import * as appUtils from "../../utilities/appUtils";
 import { electron } from "../../utilities/electron-adapter";
 import * as mmutils from "../../module-manager/utils";
 import { Communicator } from "../ipc/communicator";
-import * as utils from "../../utilities/utils";
 import { ChannelNameFormat, EventNames } from "./constants";
 
 // TODO: Remove global.exports when the node v10 is integrated with electron.

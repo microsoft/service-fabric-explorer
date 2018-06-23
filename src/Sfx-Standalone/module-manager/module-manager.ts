@@ -86,7 +86,7 @@ function createDedicationDiDescriptor(
     }
 
     return async (container, ...extraArgs) => {
-        const args = new Array<any>();
+        const args: Array<any> = [];
 
         if (injects !== undefined) {
             for (let injectIndex = 0; injectIndex < injects.length; injectIndex++) {

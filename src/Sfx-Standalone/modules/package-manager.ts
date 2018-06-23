@@ -171,7 +171,7 @@ function getHashAsync(hashName: string, filePath: string): Promise<string> {
 
 function ModuleInfoToPackageInfo(moduleInfo: NpmRegistry.IModuleInfo): IPackageInfo {
     const versionInfo = moduleInfo.versions[moduleInfo["dist-tags"].latest];
-    const keywords = new Array<string>();
+    const keywords: Array<string> = [];
 
     if (Array.isArray(moduleInfo.keywords)) {
         keywords.push(...moduleInfo.keywords);
@@ -517,7 +517,7 @@ class PackageManager implements IPackageManager {
     }
 
     private loadInstalledPackageInfos(removeUninstalled: boolean): Array<IPackageInfo> {
-        const packageInfos = new Array<IPackageInfo>();
+        const packageInfos: Array<IPackageInfo> = [];
         const knownPackageNames =
             new Set(
                 Object.keys(this.config.packages)

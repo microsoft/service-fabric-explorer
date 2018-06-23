@@ -222,7 +222,7 @@ class Log implements ILog {
         }
 
         if (Object.isObject(properties)) {
-            finalProperties = finalProperties || {};
+            finalProperties = finalProperties || Object.create(null);
             finalProperties = Object.assign(finalProperties, properties);
         }
 
@@ -235,7 +235,7 @@ class Log implements ILog {
                 functionName = `<Anonymous>@{${callerInfo.lineNumber},${callerInfo.columnNumber}}`;
             }
 
-            finalProperties = finalProperties || {};
+            finalProperties = finalProperties || Object.create(null);
             finalProperties["Caller.FileName"] = callerInfo.fileName;
             finalProperties["Caller.Name"] = `${typeName}.${functionName}()`;
         }

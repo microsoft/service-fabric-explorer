@@ -26,7 +26,7 @@ export class DiDescriptorDictionary implements IDiDescriptorDictionary {
     private readonly descriptorDictionary: IDictionary<IDiDescriptor>;
 
     constructor() {
-        this.descriptorDictionary = {};
+        this.descriptorDictionary = Object.create(null);
     }
 
     public get(name: string): IDiDescriptor {

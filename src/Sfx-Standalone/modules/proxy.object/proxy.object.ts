@@ -95,7 +95,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         return new ObjectRemotingProxy(pathPattern, communicator, ownCommunicator, proxyId);
     }
 
-    public async requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: any[]): Promise<T> {
+    public async requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: Array<any>): Promise<T> {
         this.validateDisposal();
 
         const tempReferer = this.dataInfoManager.ReferAsDataInfo(() => undefined);
@@ -180,7 +180,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         this._communicator = communicator;
         this.ownCommunicator = ownCommunicator === true;
         this.pathPattern = pathPattern;
-        this.messageHandlers = {};
+        this.messageHandlers = Object.create(null);
         this.dataInfoManager = new DataInfoManager(new Delegation(this));
         this.initializeMessageHandlers();
 

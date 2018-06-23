@@ -34,7 +34,7 @@ class Settings implements ISettings {
         this.readonly = utils.isNullOrUndefined(readonly) ? false : readonly;
 
         if (utils.isNullOrUndefined(initialSettings)) {
-            this.settings = {};
+            this.settings = Object.create(null);
         } else {
             this.settings = initialSettings;
         }
@@ -91,7 +91,7 @@ class Settings implements ISettings {
                     settingValue[pathPart] = value;
                 }
             } else if (settingValue[pathPart] === undefined) {
-                settingValue[pathPart] = {};
+                settingValue[pathPart] = Object.create(null);
             }
 
             settingValue = settingValue[pathPart];
@@ -172,7 +172,7 @@ class FileSettings extends Settings {
                 throw new Error(`Settings file, ${settingsPath}, doesn't exist.`);
             }
 
-            initialSettings = {};
+            initialSettings = Object.create(null);
             fs.writeFileSync(settingsPath, JSON.stringify(initialSettings), { encoding: "utf8" });
         } else {
             initialSettings = JSON.parse(fs.readFileSync(settingsPath, { encoding: "utf8" }));

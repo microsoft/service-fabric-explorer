@@ -4,6 +4,9 @@
 //-----------------------------------------------------------------------------
 
 import { ipcRenderer } from "electron";
+
+import "../../utilities/utils";
+
 import * as mmutils from "../../module-manager/utils";
 import { Communicator } from "../ipc/communicator";
 

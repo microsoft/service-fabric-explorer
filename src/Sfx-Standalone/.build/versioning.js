@@ -65,7 +65,7 @@ function generateVersionInfo(platform, getPackageInfo) {
     if (utils.isString(buildPackageInfo)) {
         versionInfo[platform] = buildPackageInfo;
     } else if (utils.isNullOrUndefined(buildPackageInfo) || utils.isObject(buildPackageInfo)) {
-        versionInfo[platform] = {};
+        versionInfo[platform] = Object.create(null);
 
         for (const arch of buildInfos.targets[platform].archs) {
             if (utils.isNullOrUndefined(buildPackageInfo) || utils.isNullOrUndefined(buildPackageInfo[arch])) {

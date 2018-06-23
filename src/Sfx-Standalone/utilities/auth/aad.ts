@@ -7,7 +7,6 @@ import { BrowserWindow } from "electron";
 import * as querystring from "querystring";
 import * as Url from "url";
 
-import "../../utilities/utils";
 import resolve from "../../utilities/resolve";
 
 export function handle(window: BrowserWindow, targetHostName: string) {
