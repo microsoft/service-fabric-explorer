@@ -213,12 +213,17 @@ export class ModuleManager implements IModuleManager {
         if (!hostCommunicator) {
             const constructorOptions = mmutils.generateModuleManagerConstructorOptions(this);
 
-            childProcess = appUtils.fork(local("./bootstrap.js"), [JSON.stringify(constructorOptions)]);
+            childProcess =
+                appUtils.fork(
+                    local("./bootstrap.js"),
+                    [appUtils.toCmdArg(
+                        mmutils.ConstructorOptionsArgName,
+                        JSON.stringify(constructorOptions))]);
             hostCommunicator = new Communicator(childProcess, hostName);
-            
-            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, true);
+
+            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, true, hostName);
         } else {
-            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, false);
+            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, false, hostName);
         }
 
         proxy.setResolver(this.onProxyResolvingAsync);
@@ -272,14 +277,7 @@ export class ModuleManager implements IModuleManager {
         }
 
         if (!utils.isNullOrUndefined(hostName) && !String.isEmptyOrWhitespace(hostName)) {
-            let childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
-
-            if (childIndex < 0) {
-                await this.newHostAsync(hostName);
-                childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
-            }
-
-            const child = this.children[childIndex];
+            const child = await this.obtainChildAsync(hostName);
 
             await child.communicator.sendAsync<ILoadModuleDirAsyncMessage, void>(
                 this.pattern_moduleManager.getRaw(),
@@ -333,14 +331,7 @@ export class ModuleManager implements IModuleManager {
         }
 
         if (!utils.isNullOrUndefined(hostName) && !String.isEmptyOrWhitespace(hostName)) {
-            let childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
-
-            if (childIndex < 0) {
-                await this.newHostAsync(hostName);
-                childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
-            }
-
-            const child = this.children[childIndex];
+            const child = await this.obtainChildAsync(hostName);
 
             await child.communicator.sendAsync<ILoadModuleAsyncMessage, void>(
                 this.pattern_moduleManager.getRaw(),
@@ -391,6 +382,17 @@ export class ModuleManager implements IModuleManager {
         } else {
             throw new Error("Provided callback must be a function.");
         }
+    }
+
+    private async obtainChildAsync(hostName: string): Promise<IHostRecord> {
+        let childIndex = this.children ? this.children.findIndex((child) => child.proxy.id === hostName) : -1;
+
+        if (childIndex < 0) {
+            await this.newHostAsync(hostName);
+            childIndex = this.children.findIndex((child) => child.proxy.id === hostName);
+        }
+
+        return this.children[childIndex];
     }
 
     private loadModule(modulePath: string, respectLoadingMode?: boolean): IModule {

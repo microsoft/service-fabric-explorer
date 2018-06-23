@@ -14,6 +14,8 @@ export interface IModuleManagerConstructorOptions {
     initialModules: Array<IModuleLoadingConfig>;
 }
 
+export const ConstructorOptionsArgName = "constructorOptions";
+
 export async function createModuleManagerAsync(
     options?: IModuleManagerConstructorOptions,
     parentCommunicator?: ICommunicator)

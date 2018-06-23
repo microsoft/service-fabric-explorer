@@ -115,6 +115,15 @@ gulp.task("build:sfx",
             .pipe(gulp.dest(buildInfos.paths.sfxDir))
     });
 
+gulp.task("build:sfx@debug",
+    (done) => {
+        if (fs.existsSync(buildInfos.paths.sfxDir)) {
+            return Promise.resolve();
+        }
+
+        return gulp.task("build:sfx")(done);
+    });
+
 gulp.task("build:licenses",
     () =>
         gulp.src(utilities.formGlobs(["LICENSE"]))
@@ -124,6 +133,14 @@ gulp.task("build",
     gulp.parallel(
         "build:sfx",
         "build:ts",
+        "build:html",
+        "build:json",
+        "build:img"));
+
+gulp.task("build:debug",
+    gulp.parallel(
+        "build:sfx@debug",
+        "build:ts@compile",
         "build:html",
         "build:json",
         "build:img"));

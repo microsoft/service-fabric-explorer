@@ -11,6 +11,9 @@
             "cwd": "${workspaceRoot}",
             "sourceMaps": true,
             "autoAttachChildProcesses": true,
+            "protocol": "inspector",
+            "trace": true,
+            "outputCapture": "std",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "windows": {
                 "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
@@ -19,7 +22,7 @@
                 "--remote-debugging-port=9223",
                 "./build/app/."
             ],
-            "preLaunchTask": "gulp: build"
+            "preLaunchTask": "gulp: build:debug"
         },
         {
             "name": "Debug: Renderer",

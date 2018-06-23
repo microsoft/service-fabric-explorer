@@ -2,35 +2,46 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+
 import { app, Menu } from "electron";
 import * as uuidv5 from "uuid/v5";
 
 import { env, Platform } from "./utilities/env";
 import resolve, { local } from "./utilities/resolve";
 import { ModuleManager } from "./module-manager/module-manager";
+import * as appUtils from "./utilities/appUtils";
 
 // Initialize main module manager.
 global["sfxModuleManager"] = new ModuleManager(app.getVersion());
 
 app.setName("Service Fabric Explorer");
 
-(async () => {
-    let startingUp: boolean = true;
-
-    // Load built-in modules.
-    await sfxModuleManager.loadModuleDirAsync(local("modules"));
-
+async function loadExtensions(): Promise<void> {
     const log = await sfxModuleManager.getComponentAsync("logging");
     const packageManager = await sfxModuleManager.getComponentAsync("package-manager");
     const exentsionsHostName = "exenstions";
 
-    log.writeInfo(`Initializing module host (${exentsionsHostName}) ...`);
-    await sfxModuleManager.newHostAsync(exentsionsHostName);
-
     log.writeInfo(`Loading exentsions in the directory "${packageManager.packagesDir}" to module host (${exentsionsHostName}) ...`);
     await sfxModuleManager.loadModuleDirAsync(packageManager.packagesDir, exentsionsHostName);
 
-    app.on("ready", async () => {
+    const adhocModuleArg = appUtils.getCmdArg("adhocModule");
+
+    if (adhocModuleArg) {
+        log.writeInfo(`Loading ad-hoc module: ${adhocModuleArg} ...`);
+        await sfxModuleManager.loadModuleAsync(adhocModuleArg, exentsionsHostName);
+    }
+}
+
+(() => {
+    const startingUpPromise =
+        sfxModuleManager
+            .loadModuleDirAsync(local("modules"))
+            .then(() => loadExtensions());
+
+    app.once("ready", async () => {
+        await startingUpPromise;
+
+        const log = await sfxModuleManager.getComponentAsync("logging");
         log.writeInfo("'ready': Application starting up ...");
 
         if (env.platform === Platform.MacOs) {
@@ -63,17 +74,17 @@ app.setName("Service Fabric Explorer");
         }
 
         setTimeout(async () => (await sfxModuleManager.getComponentAsync("update")).updateAsync(), 1000); // Check upgrade after 1 sec.
-        startingUp = false;
+
+        app.removeAllListeners("window-all-closed");
+        app.once("window-all-closed", async () => {
+            const log = await sfxModuleManager.getComponentAsync("logging");
+
+            log.writeInfo("'window-all-closed': app.quit().");
+            app.quit();
+        });
+
         log.writeInfo("'ready': application startup finished.");
     });
 
-    app.on("window-all-closed", () => {
-        if (startingUp) {
-            log.writeInfo("'window-all-closed': skip during application startup.");
-            return;
-        }
-
-        log.writeInfo("'window-all-closed': app.quit().");
-        app.quit();
-    });
+    app.on("window-all-closed", (event) => undefined);
 })();

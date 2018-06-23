@@ -49,11 +49,10 @@ export class DataInfoManager implements IDisposable {
         if (!this.disposed) {
             const disposingRefRoot = this.refRoot;
 
-            this.refRoot = undefined;
-
             const promises = disposingRefRoot.getRefereeIds().map((refId) => this.releaseByIdAsync(refId));
             await Promise.all(promises);
 
+            this.refRoot = undefined;
             this.delegation = undefined;
         }
     }
