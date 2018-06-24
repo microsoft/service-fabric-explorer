@@ -12,8 +12,7 @@ import { ModuleManager } from "./module-manager/module-manager";
 // TODO: Remove startupMainWindow once the main frame is ready.
 import startupMainWindow from "./main";
 
-global["sfxModuleManager"] = new ModuleManager(appUtils.getAppVersion());
-
+appUtils.injectModuleManager(new ModuleManager(appUtils.getAppVersion()));
 appUtils.logUnhandledRejection();
 
 Promise.resolve()

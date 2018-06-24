@@ -20,6 +20,5 @@ appUtils.logUnhandledRejection();
 
     const constructorOptions = JSON.parse(constructorOptionsArg);
     const moduleManager = await mmutils.createModuleManagerAsync(constructorOptions, new Communicator(process));
-
-    global["sfxModuleManager"] = moduleManager;
+    appUtils.injectModuleManager(moduleManager);
 })();

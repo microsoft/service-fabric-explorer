@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import { IDictionary } from "sfx.common";
+import { IModuleManager } from "sfx.module-manager";
 
 import * as utils from "./utils";
 
@@ -176,5 +177,14 @@ export function logUnhandledRejection(): void {
         } else {
             console.error("Unhandled promise rejection: ", promise);
         }
+    });
+}
+
+export function injectModuleManager(moduleManager: IModuleManager): void {
+    Object.defineProperty(global, "sfxModuleManager", {
+        writable: false,
+        configurable: false,
+        enumerable: false,
+        value: moduleManager
     });
 }
