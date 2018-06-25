@@ -280,7 +280,7 @@ export class Communicator implements ICommunicator {
         channel: ChannelType,
         id?: string) {
         this.routes = [];
-        this.ongoingPromiseDict = {};
+        this.ongoingPromiseDict = Object.create(null);
         this.id = String.isString(id) && !String.isEmptyOrWhitespace(id) ? id : uuidv4();
         this.channelProxy = generateChannelProxy(channel, this.onMessageAsync);
     }
@@ -296,7 +296,7 @@ export class Communicator implements ICommunicator {
             throw new Error("handler must be a function.");
         }
 
-        let route: IRoute = {
+        const route: IRoute = {
             pattern: pattern,
             handler: handler
         };

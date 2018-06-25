@@ -10,8 +10,8 @@ import * as path from "path";
 import * as fs from "fs";
 
 import * as utils from "../utilities/utils";
-import { local } from "../utilities/resolve";
 import * as fileSystem from "../utilities/fileSystem";
+import * as appUtils from "../utilities/appUtils";
 import { electron } from "../utilities/electron-adapter";
 
 class Settings implements ISettings {
@@ -33,7 +33,7 @@ class Settings implements ISettings {
         this.readonly = utils.isNullOrUndefined(readonly) ? false : readonly;
 
         if (utils.isNullOrUndefined(initialSettings)) {
-            this.settings = {};
+            this.settings = Object.create(null);
         } else {
             this.settings = initialSettings;
         }
@@ -90,7 +90,7 @@ class Settings implements ISettings {
                     settingValue[pathPart] = value;
                 }
             } else if (settingValue[pathPart] === undefined) {
-                settingValue[pathPart] = {};
+                settingValue[pathPart] = Object.create(null);
             }
 
             settingValue = settingValue[pathPart];
@@ -171,7 +171,7 @@ class FileSettings extends Settings {
                 throw new Error(`Settings file, ${settingsPath}, doesn't exist.`);
             }
 
-            initialSettings = {};
+            initialSettings = Object.create(null);
             fs.writeFileSync(settingsPath, JSON.stringify(initialSettings), { encoding: "utf8" });
         } else {
             initialSettings = JSON.parse(fs.readFileSync(settingsPath, { encoding: "utf8" }));
@@ -201,7 +201,7 @@ class FileSettings extends Settings {
 
     set<T>(settingPath: string, value: T): void {
         super.set(settingPath, value);
-        fs.writeFileSync(this.settingsPath, JSON.stringify(this.settings), { encoding: "utf8" });
+        fs.writeFileSync(this.settingsPath, JSON.stringify(this.settings, null, 4), { encoding: "utf8" });
     }
 }
 
@@ -252,7 +252,7 @@ class SettingsService implements ISettingsService {
             throw new Error("Invalid settings name!");
         }
 
-        let settingsPath = local(name + ".json", true);
+        let settingsPath = appUtils.local(name + ".json", true);
 
         if (!fs.existsSync(settingsPath)) {
             settingsPath = path.join(this.userDataDir, name + ".json");
@@ -265,17 +265,17 @@ class SettingsService implements ISettingsService {
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "settings",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         components: [
             {
                 name: "settings.service",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 singleton: true,
                 descriptor: () => new SettingsService()
             },
             {
                 name: "settings",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 singleton: true,
                 descriptor: (settingsSvc: SettingsService) => settingsSvc.default,
                 deps: ["settings.service"]

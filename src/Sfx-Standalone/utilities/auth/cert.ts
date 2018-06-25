@@ -13,8 +13,8 @@ import { Buffer } from "buffer";
 
 import { electron } from "../electron-adapter";
 import { env, Platform } from "../env";
-import { local } from "../resolve";
 import * as utils from "../utils";
+import { local } from "../appUtils";
 
 interface ICertSelectionPromptResults {
     selectedCert: Certificate;
@@ -27,7 +27,7 @@ async function showCertSelectPromptAsync(
     certificateList: Array<Certificate>)
     : Promise<ICertSelectionPromptResults> {
 
-    let certSelectionButtons = new Array<string>();
+    const certSelectionButtons: Array<string> = [];
     let importCertsResponse = -1;
 
     if (Array.isArray(certificateList)) {
@@ -67,13 +67,13 @@ interface ICertHandlingRecord {
 }
 
 function handleGenerally(moduleManager: IModuleManager, window: BrowserWindow): void {
-    let clientCertManager: IDictionary<ICertHandlingRecord> = {};
+    const clientCertManager: IDictionary<ICertHandlingRecord> = Object.create(null);
 
     window.webContents.on("select-client-certificate",
         async (event, urlString, certificateList, selectCertificate) => {
             event.preventDefault();
 
-            let certIdentifier: string = url.parse(urlString).hostname;
+            const certIdentifier: string = url.parse(urlString).hostname;
 
             if (certIdentifier in clientCertManager && clientCertManager[certIdentifier].handling) {
                 clientCertManager[certIdentifier].callbacks.push(selectCertificate);
@@ -115,8 +115,8 @@ function handleLinux(): void {
     // Because it is possible that there is no cert in the chromium cert store.
     // Add a dummy cert to the store first, which can ensure that event "select-client-certificate" fires correctly.
 
-    let dummyCertData = new Buffer(require(local("./dummycert.json")).data, "base64");
-    let dummayCertFile = tmp.fileSync();
+    const dummyCertData = new Buffer(JSON.parse(fs.readFileSync(local("./dummycert.json"), { encoding: "utf8" })).data, "base64");
+    const dummayCertFile = tmp.fileSync();
 
     fs.writeFileSync(dummayCertFile.fd, dummyCertData);
     electron.app.importCertificate(

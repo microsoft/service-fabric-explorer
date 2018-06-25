@@ -8,7 +8,7 @@ import { IHandlerChainBuilder, IHandlerConstructor } from "sfx.common";
 import * as utils from "./utils";
 
 export class HandlerChainBuilder<THandler extends Function> implements IHandlerChainBuilder<THandler> {
-    private readonly chain: Array<IHandlerConstructor<THandler>> = new Array<IHandlerConstructor<THandler>>();
+    private readonly chain: Array<IHandlerConstructor<THandler>> = [];
 
     public handle(constructor: IHandlerConstructor<THandler>): IHandlerChainBuilder<THandler> {
         if (!Function.isFunction(constructor)) {

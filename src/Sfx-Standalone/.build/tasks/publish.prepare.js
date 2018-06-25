@@ -7,6 +7,7 @@
 
 const common = require("../common");
 const config = require("../config");
+const utilities = require("../utilities");
 
 const gulp = require("gulp");
 const log = require("fancy-log");
@@ -86,7 +87,7 @@ gulp.task("publish:prepare",
 
                 const cmd = `npm install ${dependencyName}${versionArg} ${dependencyTypeArgs}`;
 
-                promises.push(common.exec(".", cmd));
+                promises.push(utilities.exec(".", cmd));
             }
         }
 

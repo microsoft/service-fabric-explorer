@@ -6,16 +6,16 @@
 import { IModuleInfo } from "sfx.module-manager";
 
 import { PromptService } from "./prompt";
-import { electron } from "../../utilities/electron-adapter";
+import * as appUtils from "../../utilities/appUtils";
 
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "prompt",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         components: [
             {
                 name: "prompt.prompt-service",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 singleton: true,
                 descriptor: (moduleManager) => new PromptService(moduleManager),
                 deps: ["module-manager"]

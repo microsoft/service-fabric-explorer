@@ -178,11 +178,11 @@ export class ReferenceNode {
         this._root = root;
         this._id = refId;
         this._target = target;
-        this.referees = {};
+        this.referees = Object.create(null);
 
         if (!utils.isNullOrUndefined(root)) {
             this.symbol_refId = this.internalRoot.symbol_refId;
-            this.referers = {};
+            this.referers = Object.create(null);
 
             this.internalRoot.internallyAddReferee(this);
             this.target[this.symbol_refId] = this._id;

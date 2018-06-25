@@ -2,7 +2,7 @@
   "name": "sfxstandalone",
   "version": "1.0.0",
   "description": "Service Fabric Explorer desktop version.",
-  "main": "main.js",
+  "main": "bootstrap.js",
   "scripts": {
     "start": "electron ./build/app/."
   },

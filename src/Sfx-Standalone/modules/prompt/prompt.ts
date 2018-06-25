@@ -12,7 +12,6 @@ import * as utils from "../../utilities/utils";
 import { electron } from "../../utilities/electron-adapter";
 import { env, Platform } from "../../utilities/env";
 import * as appUtils from "../../utilities/appUtils";
-import { local } from "../../utilities/resolve";
 import * as mmutils from "../../module-manager/utils";
 import { ChannelNameFormat, EventNames } from "./constants";
 
@@ -58,7 +57,7 @@ class Prompt<TResult> implements IPrompt<TResult> {
                     parent: this.promptOptions.parentWindowId ? electron.BrowserWindow.fromId(this.promptOptions.parentWindowId) : null,
                     icon: utils.getValue(this.promptOptions.icon, appUtils.getIconPath()),
                     webPreferences: {
-                        preload: local("./preload.js")
+                        preload: appUtils.local("./preload.js")
                     }
                 });
 

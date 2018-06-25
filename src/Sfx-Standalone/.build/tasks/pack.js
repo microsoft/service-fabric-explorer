@@ -7,13 +7,14 @@
 
 const common = require("../common");
 const config = require("../config");
+const utilities = require("../utilities");
 
-const path = require("path");
 const gulp = require("gulp");
 const packager = require("electron-packager");
 
 const Architecture = common.Architecture;
 const Platform = common.Platform;
+const utils = common.utils;
 const buildInfos = config.buildInfos;
 
 /**
@@ -100,16 +101,39 @@ function generatePackage(platform) {
 }
 exports.generatePackage = generatePackage;
 
+function createPackagingTask(platform) {
+    const taskFn = generatePackage.bind(undefined, platform);
+
+    taskFn.displayName = `pack:packaging@${platform}`;
+    return taskFn;
+}
+
 require("./build");
 require("./pack.licensing");
 
-gulp.task("pack:update-version", () => common.appdirExec(common.utils.format("npm version {} --allow-same-version", buildInfos.buildNumber)));
+gulp.task("pack:update-version",
+    () =>
+        Promise.resolve(
+            utilities.appdirExec(
+                utils.format("npm version {} --allow-same-version", buildInfos.buildNumber))));
 
-gulp.task("pack:prepare", gulp.series("clean-build:all", gulp.parallel("pack:update-version", "pack:licensing")));
+gulp.task("pack:prepare",
+    gulp.series(
+        "clean-build:all",
+        gulp.parallel("pack:update-version", "pack:licensing")));
 
-gulp.task("pack:windows", gulp.series("pack:prepare", () => generatePackage(Platform.Windows)));
+gulp.task("pack:windows",
+    gulp.series(
+        "pack:prepare",
+        createPackagingTask(Platform.Windows)));
 
-gulp.task("pack:linux", gulp.series("pack:prepare", () => generatePackage(Platform.Linux)));
+gulp.task("pack:linux",
+    gulp.series(
+        "pack:prepare",
+        createPackagingTask(Platform.Linux)));
 
-gulp.task("pack:macos", gulp.series("pack:prepare", () => generatePackage(Platform.MacOs)));
+gulp.task("pack:macos",
+    gulp.series(
+        "pack:prepare",
+        createPackagingTask(Platform.MacOs)));
 

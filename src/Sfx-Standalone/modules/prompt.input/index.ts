@@ -7,17 +7,16 @@ import { IModuleInfo } from "sfx.module-manager";
 import { IPromptService } from "sfx.prompt";
 import { IInputPromptOptions } from "sfx.prompt.input";
 
-import resolve from "../../utilities/resolve";
-import { electron } from "../../utilities/electron-adapter";
+import * as appUtils from "../../utilities/appUtils";
 
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "prompt.input",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         components: [
             {
                 name: "prompt.input",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 descriptor:
                     (promptService: IPromptService,
                         parentWindowId: number,
@@ -25,7 +24,7 @@ export function getModuleMetadata(): IModuleInfo {
                         promptService.createAsync(
                             {
                                 parentWindowId: parentWindowId,
-                                pageUrl: resolve("input.html"),
+                                pageUrl: appUtils.resolve("input.html"),
                                 height: 225,
                                 data: options
                             }),
