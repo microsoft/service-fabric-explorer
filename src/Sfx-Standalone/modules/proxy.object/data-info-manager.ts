@@ -5,8 +5,6 @@
 
 import { IDictionary, IDisposable } from "sfx.common";
 
-import "../../utilities/utils";
-
 import { IDataInfo, DataType, dataTypeOf } from "./data-info";
 import { ReferenceNode } from "./reference-node";
 import { IDelegation } from "./delegate";
@@ -49,11 +47,10 @@ export class DataInfoManager implements IDisposable {
         if (!this.disposed) {
             const disposingRefRoot = this.refRoot;
 
-            this.refRoot = undefined;
-
             const promises = disposingRefRoot.getRefereeIds().map((refId) => this.releaseByIdAsync(refId));
             await Promise.all(promises);
 
+            this.refRoot = undefined;
             this.delegation = undefined;
         }
     }
@@ -151,7 +148,7 @@ export class DataInfoManager implements IDisposable {
         const currentObjDataInfo: IObjectDataInfo = {
             type: DataType.Object,
             id: this.refRoot.refer(target, parentId).id,
-            memberInfos: {}
+            memberInfos: Object.create(null)
         };
 
         const memberInfos: IDictionary<IDataInfo> = currentObjDataInfo.memberInfos;
@@ -192,7 +189,7 @@ export class DataInfoManager implements IDisposable {
             apply: async (target, thisArg, args): Promise<any> => {
                 const refId = this.refRoot.getRefId(target);
                 const thisArgDataInfo = this.toDataInfo(thisArg, refId);
-                const argsDataInfos = new Array<IDataInfo>();
+                const argsDataInfos: Array<IDataInfo> = [];
 
                 for (const arg of args) {
                     argsDataInfos.push(this.toDataInfo(arg, refId));
@@ -213,7 +210,7 @@ export class DataInfoManager implements IDisposable {
     }
 
     private realizeObjectDataInfo(dataInfo: IObjectDataInfo, parentId?: string): any {
-        const base = {};
+        const base = Object.create(null);
         const handlers: ProxyHandler<Function> = {
             get: (target, property, receiver): any | Promise<any> => {
                 const baseValue = target[property];

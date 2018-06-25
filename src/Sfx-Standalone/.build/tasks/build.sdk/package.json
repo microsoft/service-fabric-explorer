@@ -2,7 +2,7 @@
   "name": "sfx",
   "version": "1.0.0-private",
   "description": "Service Fabric Explorer SDK.",
-  "main": "",
+  "main": "main.js",
   "types": "sfx.d.ts",
   "homepage": "https://docs.microsoft.com/en-us/azure/service-fabric/",
   "repository": {
@@ -10,5 +10,9 @@
     "type": "git"
   },
   "author": "Microsoft Corporation <support@microsoft.com>",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "electron": "^2.0.2",
+    "typescript": "^2.9.1"
+  }
 }

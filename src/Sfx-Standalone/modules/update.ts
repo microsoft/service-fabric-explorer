@@ -19,7 +19,7 @@ import * as http from "http";
 
 import * as utils from "../utilities/utils";
 import { env, Architecture } from "../utilities/env";
-import { electron } from "../utilities/electron-adapter";
+import * as appUtils from "../utilities/appUtils";
 
 interface IUpdateSettings {
     baseUrl: string;
@@ -197,11 +197,11 @@ class UpdateService implements IUpdateService {
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "update",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         components: [
             {
                 name: "update",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 singleton: true,
                 descriptor: (log: ILog, settings: ISettings, httpsClient: IHttpClient) => new UpdateService(log, settings.get("update"), httpsClient),
                 deps: ["logging", "settings", "http.https-client"]

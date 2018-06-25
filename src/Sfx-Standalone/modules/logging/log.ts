@@ -87,6 +87,14 @@ class Log implements ILog {
 
     private readonly logCallerInfo: boolean;
 
+    private static stringifier(obj: any): string {
+        if (obj instanceof Error) {
+            obj = obj.toJSON();
+        }
+
+        return utils.defaultStringifier(obj);
+    }
+
     public get disposed(): boolean {
         return this.loggers === undefined;
     }
@@ -110,7 +118,7 @@ class Log implements ILog {
         }
 
         if (Array.isArray(params) && params.length > 0) {
-            messageOrFormat = utils.format(messageOrFormat, ...params);
+            messageOrFormat = utils.formatEx(Log.stringifier, messageOrFormat, ...params);
         }
         properties = this.generateProperties(properties);
         this.loggers.forEach((logger) => logger.write(properties, severity, messageOrFormat));
@@ -222,7 +230,7 @@ class Log implements ILog {
         }
 
         if (Object.isObject(properties)) {
-            finalProperties = finalProperties || {};
+            finalProperties = finalProperties || Object.create(null);
             finalProperties = Object.assign(finalProperties, properties);
         }
 
@@ -235,7 +243,7 @@ class Log implements ILog {
                 functionName = `<Anonymous>@{${callerInfo.lineNumber},${callerInfo.columnNumber}}`;
             }
 
-            finalProperties = finalProperties || {};
+            finalProperties = finalProperties || Object.create(null);
             finalProperties["Caller.FileName"] = callerInfo.fileName;
             finalProperties["Caller.Name"] = `${typeName}.${functionName}()`;
         }

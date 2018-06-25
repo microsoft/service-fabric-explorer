@@ -23,6 +23,7 @@ import * as fs from "fs";
 import * as tmp from "tmp";
 
 import { electron } from "../utilities/electron-adapter";
+import * as appUtils from "../utilities/appUtils";
 import * as utils from "../utilities/utils";
 import * as fileSystem from "../utilities/fileSystem";
 
@@ -170,7 +171,7 @@ function getHashAsync(hashName: string, filePath: string): Promise<string> {
 
 function ModuleInfoToPackageInfo(moduleInfo: NpmRegistry.IModuleInfo): IPackageInfo {
     const versionInfo = moduleInfo.versions[moduleInfo["dist-tags"].latest];
-    const keywords = new Array<string>();
+    const keywords: Array<string> = [];
 
     if (Array.isArray(moduleInfo.keywords)) {
         keywords.push(...moduleInfo.keywords);
@@ -382,6 +383,10 @@ class PackageManager implements IPackageManager {
 
     private repos: IDictionary<IPackageRepository>;
 
+    public get packagesDir(): string {
+        return this.config.packagesDir;
+    }
+
     constructor(settings: ISettings, httpClient: IHttpClient) {
         if (!Object.isObject(settings)) {
             throw new Error("settings must be provided.");
@@ -404,9 +409,9 @@ class PackageManager implements IPackageManager {
         }
 
         if (!String.isString(this.config.packagesDir)) {
-            this.config.packagesDir = path.join(electron.app.getPath("userData"), "packages");
+            this.config.packagesDir = path.resolve(electron.app.getPath("userData"), "packages");
         } else {
-            this.config.packagesDir = path.join(electron.app.getPath("userData"), this.config.packagesDir);
+            this.config.packagesDir = path.resolve(electron.app.getPath("userData"), this.config.packagesDir);
         }
 
         fileSystem.ensureDirExists(this.config.packagesDir);
@@ -512,7 +517,7 @@ class PackageManager implements IPackageManager {
     }
 
     private loadInstalledPackageInfos(removeUninstalled: boolean): Array<IPackageInfo> {
-        const packageInfos = new Array<IPackageInfo>();
+        const packageInfos: Array<IPackageInfo> = [];
         const knownPackageNames =
             new Set(
                 Object.keys(this.config.packages)
@@ -592,11 +597,11 @@ class ModuleLoadingPolicy implements IModuleLoadingPolicy {
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "package-manager",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         components: [
             {
                 name: "package-manager",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 singleton: true,
                 descriptor: (settings: ISettings, httpsClient: IHttpClient) => new PackageManager(settings, httpsClient),
                 deps: ["settings", "http.https-client"]

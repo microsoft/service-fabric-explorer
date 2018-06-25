@@ -7,6 +7,8 @@ import { IDisposable, IDictionary } from "sfx.common";
 import { ICommunicator, RequestHandler, IRoutePattern } from "sfx.remoting";
 import { IObjectRemotingProxy, Resolver } from "sfx.proxy.object";
 
+import * as uuidv4 from "uuid/v4";
+
 import * as utils from "../../utilities/utils";
 
 import { IDataInfo } from "./data-info";
@@ -79,7 +81,8 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
     public static create(
         pathPattern: IRoutePattern,
         communicator: ICommunicator,
-        ownCommunicator?: boolean)
+        ownCommunicator?: boolean,
+        proxyId?: string)
         : IObjectRemotingProxy {
         if (!Object.isObject(pathPattern)) {
             throw new Error("pathPattern must be provided.");
@@ -89,10 +92,10 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
             throw new Error("communicator must be provided.");
         }
 
-        return new ObjectRemotingProxy(pathPattern, communicator, ownCommunicator);
+        return new ObjectRemotingProxy(pathPattern, communicator, ownCommunicator, proxyId);
     }
 
-    public async requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: any[]): Promise<T> {
+    public async requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: Array<any>): Promise<T> {
         this.validateDisposal();
 
         const tempReferer = this.dataInfoManager.ReferAsDataInfo(() => undefined);
@@ -142,11 +145,10 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
     public async dispose(): Promise<void> {
         if (!this.disposed) {
             this.communicator.unmap(this.pathPattern);
-            this._communicator = undefined;
-
-            this.messageHandlers = undefined;
-
             this.dataInfoManager.dispose();
+
+            this._communicator = undefined;
+            this.messageHandlers = undefined;
             this.dataInfoManager = undefined;
         }
     }
@@ -164,7 +166,8 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
     private constructor(
         pathPattern: IRoutePattern,
         communicator: ICommunicator,
-        ownCommunicator?: boolean) {
+        ownCommunicator?: boolean,
+        proxyId?: string) {
         if (!Object.isObject(pathPattern)) {
             throw new Error("pathPattern must be provided.");
         }
@@ -173,10 +176,11 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
             throw new Error("communicator must be provided.");
         }
 
+        this.id = proxyId || uuidv4();
         this._communicator = communicator;
         this.ownCommunicator = ownCommunicator === true;
         this.pathPattern = pathPattern;
-        this.messageHandlers = {};
+        this.messageHandlers = Object.create(null);
         this.dataInfoManager = new DataInfoManager(new Delegation(this));
         this.initializeMessageHandlers();
 

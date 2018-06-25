@@ -5,16 +5,16 @@
 import { IModuleInfo } from "sfx.module-manager";
 
 import createBrowserWindowAsync from "./browser-window";
-import { electron } from "../../utilities/electron-adapter";
+import * as appUtils from "../../utilities/appUtils";
 
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "browser-window",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         components: [
             {
                 name: "browser-window",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 descriptor: createBrowserWindowAsync,
                 deps: ["module-manager"]
             }

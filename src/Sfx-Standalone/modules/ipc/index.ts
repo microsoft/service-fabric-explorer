@@ -8,17 +8,17 @@ import { IModuleInfo } from "sfx.module-manager";
 import { ILog } from "sfx.logging";
 
 import { Communicator } from "./communicator";
-import { electron } from "../../utilities/electron-adapter";
+import * as appUtils from "../../utilities/appUtils";
 
 export function getModuleMetadata(): IModuleInfo {
     return {
         name: "ipc",
-        version: electron.app.getVersion(),
+        version: appUtils.getAppVersion(),
         loadingMode: "Always",
         components: [
             {
                 name: "ipc.communicator",
-                version: electron.app.getVersion(),
+                version: appUtils.getAppVersion(),
                 deps: ["logging"],
                 descriptor: (log: ILog, channel: ChannelType, id?: string) => new Communicator(channel, id)
             }

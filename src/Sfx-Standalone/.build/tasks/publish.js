@@ -30,4 +30,7 @@ require("./publish.windows");
 require("./publish.linux");
 require("./publish.macos");
 
-gulp.task("publish", gulp.series("clean:publish", "publish:" + normalizePlatform(process.platform)));
+gulp.task("publish",
+    gulp.series(
+        "clean:publish",
+        `publish:${normalizePlatform(process.platform)}`));

@@ -10,7 +10,7 @@ import * as Url from "url";
     const promptContext = await sfxModuleManager.getComponentAsync("prompt.prompt-context");
 
     $("#input-cluster-url").keyup(($event) => {
-        let keyboardEvent = <KeyboardEvent>$event.originalEvent;
+        const keyboardEvent = <KeyboardEvent>$event.originalEvent;
 
         if (keyboardEvent.code === "Enter") {
             $("#btn-connect").click();
@@ -18,7 +18,7 @@ import * as Url from "url";
     });
 
     $("#input-connect-locally").change(($event) => {
-        let $sender = $($event.target);
+        const $sender = $($event.target);
         if ($sender.prop("checked")) {
             $("#input-cluster-url").val("http://localhost:19080");
         }
@@ -28,7 +28,7 @@ import * as Url from "url";
 
     $("#btn-connect").click(() => {
         try {
-            let url = Url.parse($("#input-cluster-url").val().toString());
+            const url = Url.parse($("#input-cluster-url").val().toString());
 
             if (url.protocol !== "http:" && url.protocol !== "https:") {
                 alert("The protocol of the cluster url is not supported. Only HTTP and HTTPS are supported.");

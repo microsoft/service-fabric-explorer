@@ -13,10 +13,10 @@ export const remote: realElectron.Remote = realElectron.remote;
 
 export const electron: realElectron.AllElectron = (() => {
     if (isRemote) {
-        const remoteElectron: any = {};
+        const remoteElectron: any = Object.create(null);
         const mergeProperties = (target: Object, propertyDescriptors) =>
             Object.keys(propertyDescriptors).forEach((propertyName) => {
-                if (!remoteElectron.hasOwnProperty(propertyName)) {
+                if (!Object.prototype.hasOwnProperty.call(remoteElectron, propertyName)) {
                     Object.defineProperty(target, propertyName, propertyDescriptors[propertyName]);
                 }
             });

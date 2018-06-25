@@ -3,11 +3,22 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import "../utilities/utils";
+
 import * as mmutils from "./utils";
+import * as appUtils from "../utilities/appUtils";
+import { Communicator } from "../modules/ipc/communicator";
+
+appUtils.logUnhandledRejection();
 
 (async () => {
-    const constructorOptions = JSON.parse(process.argv0);
-    const moduleManager = await mmutils.createModuleManagerAsync(constructorOptions);
+    const constructorOptionsArg = appUtils.getCmdArg(mmutils.ConstructorOptionsArgName);
 
-    global["sfxModuleManager"] = moduleManager;
+    if (!constructorOptionsArg) {
+        throw new Error(`Argument is missing: ${mmutils.ConstructorOptionsArgName}`);
+    }
+
+    const constructorOptions = JSON.parse(constructorOptionsArg);
+    const moduleManager = await mmutils.createModuleManagerAsync(constructorOptions, new Communicator(process));
+    appUtils.injectModuleManager(moduleManager);
 })();
