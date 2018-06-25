@@ -21,6 +21,7 @@
 /// <reference path="./modules/prompt.connect-cluster/prompt.connect-cluster.d.ts" />
 /// <reference path="./modules/proxy.object/proxy.object.d.ts" />
 /// <reference path="./modules/remoting/remoting.d.ts" />
+/// <reference path="./modules/main-window/main-window.d.ts" />
 
 declare module "sfx" {
     import { IModuleManager } from "sfx.module-manager";

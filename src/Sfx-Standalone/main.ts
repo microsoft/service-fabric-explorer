@@ -35,7 +35,10 @@ app.setName("Service Fabric Explorer");
 
         log.writeInfo("'ready': Starting up connect-cluster prompt.");
 
-        await sfxModuleManager.getComponentAsync("main-window");
+        const mainWindow = await sfxModuleManager.getComponentAsync("main-window");
+
+        mainWindow.loadComponents();
+
 
         // const prompt_connectCluster = await sfxModuleManager.getComponentAsync("prompt.connect-cluster");
         // const clusterUrl = await prompt_connectCluster.openAsync();
@@ -56,7 +59,7 @@ app.setName("Service Fabric Explorer");
         //     return;
         // }
 
-        setTimeout(async () => (await sfxModuleManager.getComponentAsync("update")).updateAsync(), 1000); // Check upgrade after 1 sec.
+        //setTimeout(async () => (await sfxModuleManager.getComponentAsync("update")).updateAsync(), 1000); // Check upgrade after 1 sec.
         startingUp = false;
         log.writeInfo("'ready': application startup finished.");
     });

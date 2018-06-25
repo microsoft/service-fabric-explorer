@@ -112,7 +112,8 @@ export default async function createBrowserWindowAsync(
         icon: appUtils.getIconPath(),
         webPreferences: {
             preload: local("./preload.js", false),
-            nodeIntegration: true
+            nodeIntegration: true,
+            devTools: true
         }
     };
 

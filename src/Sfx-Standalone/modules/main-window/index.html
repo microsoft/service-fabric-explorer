@@ -5,14 +5,89 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
 
-    <!-- CSS imports -->    
+    <!-- CSS imports -->
+    <link href="../../sfx/css/lib.min.css" rel="stylesheet" />
     <link href="../../sfx/css/dark.min.css" rel="stylesheet" />
+
+    <style>
+        .main {
+            width: 100%;
+            display: flex;
+        }
+
+        .leftnav {
+            width: 250px;
+        }
+
+        .container {
+            width: 100%;
+            height: 100%;
+        }
+
+        webview {
+            height: 100%;
+            width: 100%;
+        }
+
+        #cluster-list {
+            list-style: none;
+        }
+    </style>
 </head>
 
 <body>
-    <div>
-        
+    <div id="cluster-manager" class="main">
+        <div class="leftnav">            
+        </div>
+        <div class="container">
+        </div>
     </div>
-    <script></script>    
+
 </body>
+<script src="main-window.js"></script>
+<script>
+    // const Vue = require("vue/dist/vue");
+
+    // const clusterManager = new Vue({
+    //     el: "#cluster-manager",
+    //     data: {
+    //         clusterList: []
+    //     },
+    //     methods: {
+    //         connect: function () {
+    //             moduleManager.getComponent("prompt-connect-cluster", (error, clusterUrl) => {
+    //                 if (clusterUrl) {
+    //                     this.clusterList.push(clusterUrl);
+
+    //                     let wrapper = document.createElement("div");
+    //                     let webview = document.createElement("webview");
+    //                     let container = document.querySelector("div.container");
+
+    //                     webview.setAttribute("src", "sfx/index.html?TargetClusterUrl=" + encodeURIComponent(clusterUrl));
+    //                     wrapper.setAttribute("id", clusterUrl);
+    //                     wrapper.setAttribute("style", "display: none;");
+    //                     wrapper.appendChild(webview);
+    //                     container.appendChild(wrapper);
+    //                     this.display(clusterUrl);
+    //                 }
+    //             });
+
+    //         },
+    //         display: function (url) {
+    //             console.log(url);
+    //             let allViews = document.querySelectorAll("div.container > div");
+    //             for (let index = 0; index < allViews.length; index++) {
+    //                 allViews[index].setAttribute("style", "display: none;");
+    //             }
+
+    //             document.getElementById(url).setAttribute("style", "display: flex;");
+
+    //             return false;
+    //         }
+    //     }
+    // });
+
+
+</script>
+
 </html>
