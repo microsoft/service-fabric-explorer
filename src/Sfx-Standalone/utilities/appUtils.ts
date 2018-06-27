@@ -45,10 +45,10 @@ function getInspectArg(): string {
         } else {
             const args = inspectArg.split(":");
 
-            if (args.length == 1) {
-                Context.inspectPort = parseInt(args[0]);
+            if (args.length === 1) {
+                Context.inspectPort = parseInt(args[0], 10);
             } else if (args.length > 1) {
-                Context.inspectPort = parseInt(args[1]);
+                Context.inspectPort = parseInt(args[1], 10);
             } else {
                 throw new Error(`Unable to handle --inspect-brk=${inspectArg}`);
             }
