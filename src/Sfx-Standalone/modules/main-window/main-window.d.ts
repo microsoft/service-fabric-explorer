@@ -9,10 +9,15 @@ declare module "sfx.main-window" {
     export interface IMainWindow {
         register(navComponent: ISfxVueComponent): void;    
         loadComponents(): void;
+        renderComponents(container: JQuery): void;
     }
 
     export interface ISfxVueComponent {
         path: string;
+        title: string;
+        iconUrl: string;
+        viewPageUrl: string;
+        
         render(container: JQuery): void;        
     }
 

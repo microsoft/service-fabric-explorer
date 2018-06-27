@@ -36,58 +36,14 @@
 </head>
 
 <body>
-    <div id="cluster-manager" class="main">
-        <div class="leftnav">            
+    <div class="main">
+        <div class="leftnav" id="leftpanel">            
         </div>
-        <div class="container">
+        <div class="container" id="viewcontainer">            
         </div>
     </div>
 
 </body>
+<script type="text/javascript" src="../../node_modules/jquery/dist/jquery.min.js"></script>
 <script src="main-window.js"></script>
-<script>
-    // const Vue = require("vue/dist/vue");
-
-    // const clusterManager = new Vue({
-    //     el: "#cluster-manager",
-    //     data: {
-    //         clusterList: []
-    //     },
-    //     methods: {
-    //         connect: function () {
-    //             moduleManager.getComponent("prompt-connect-cluster", (error, clusterUrl) => {
-    //                 if (clusterUrl) {
-    //                     this.clusterList.push(clusterUrl);
-
-    //                     let wrapper = document.createElement("div");
-    //                     let webview = document.createElement("webview");
-    //                     let container = document.querySelector("div.container");
-
-    //                     webview.setAttribute("src", "sfx/index.html?TargetClusterUrl=" + encodeURIComponent(clusterUrl));
-    //                     wrapper.setAttribute("id", clusterUrl);
-    //                     wrapper.setAttribute("style", "display: none;");
-    //                     wrapper.appendChild(webview);
-    //                     container.appendChild(wrapper);
-    //                     this.display(clusterUrl);
-    //                 }
-    //             });
-
-    //         },
-    //         display: function (url) {
-    //             console.log(url);
-    //             let allViews = document.querySelectorAll("div.container > div");
-    //             for (let index = 0; index < allViews.length; index++) {
-    //                 allViews[index].setAttribute("style", "display: none;");
-    //             }
-
-    //             document.getElementById(url).setAttribute("style", "display: flex;");
-
-    //             return false;
-    //         }
-    //     }
-    // });
-
-
-</script>
-
 </html>

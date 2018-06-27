@@ -139,6 +139,7 @@ gulp.task("build",
 
 gulp.task("build:debug",
     gulp.parallel(
+        "build:node_modules",
         "build:sfx@debug",
         "build:ts@compile",
         "build:html",

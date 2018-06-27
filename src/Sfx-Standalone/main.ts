@@ -22,30 +22,13 @@ async function startup(): Promise<void> {
                 settings.get("defaultMenu/" + env.platform)));
     }
 
-    log.writeInfo("Starting up connect-cluster prompt.");
-    const prompt_connectCluster = await sfxModuleManager.getComponentAsync("prompt.connect-cluster");
-    const clusterUrl = await prompt_connectCluster.openAsync();
+    const mainWindow = await sfxModuleManager.getComponentAsync("main-window");
 
-    if (clusterUrl) {
-        // Start up the main window.
-        global["TargetClusterUrl"] = clusterUrl;
-        const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null, true, clusterUrl);
-
-        mainWindow.setMenuBarVisibility(false);
-
-        log.writeEvent("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
-        mainWindow.loadURL(resolve("sfx/index.html"));
-    } else {
-        log.writeInfo("No cluster url provided.");
-        log.writeInfo("app.quit().");
-
-        app.quit();
-        return;
-    }
+    mainWindow.loadComponents();
 
     // Trigger update activity.
-    (await sfxModuleManager.getComponentAsync("update")).updateAsync();
-    
+    //(await sfxModuleManager.getComponentAsync("update")).updateAsync();
+
     // Handle "window-all-closed" event.
     app.removeAllListeners("window-all-closed");
     app.once("window-all-closed", async () => {
