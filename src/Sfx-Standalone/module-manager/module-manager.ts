@@ -15,7 +15,7 @@ import {
     IModuleInfo
 } from "sfx.module-manager";
 
-import { ICommunicator, RequestHandler, IRoutePattern } from "sfx.remoting";
+import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting";
 import { IObjectRemotingProxy, Resolver } from "sfx.proxy.object";
 import { IDiDescriptor } from "../utilities/di";
 
@@ -490,7 +490,7 @@ export class ModuleManager implements IModuleManager {
             return await this.getComponentFromProxiesAsync(proxy, name, ...extraArgs);
         }
 
-    private onModuleManagerMessageAsync: RequestHandler =
+    private onModuleManagerMessageAsync: AsyncRequestHandler =
         async (communicator: ICommunicator, path: string, content: IModuleManagerMessage): Promise<any> => {
             switch (content.action) {
                 case ModuleManagerAction.loadModuleDirAsync:
