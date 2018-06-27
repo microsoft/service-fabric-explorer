@@ -3,7 +3,13 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 import { IModuleInfo } from "sfx.module-manager";
-import { IHttpClient, IRequestOptions } from "sfx.http";
+import {
+    IHttpClient,
+    IRequestOptions,
+    RequestAsyncProcessor,
+    ResponseAsyncHandler,
+    IHttpClientBuilder
+} from "sfx.http";
 
 import { ILog } from "sfx.logging";
 
@@ -14,6 +20,7 @@ import * as url from "url";
 import * as utils from "../utilities/utils";
 import { HandlerChainBuilder } from "../utilities/handlerChainBuilder";
 import * as appUtils from "../utilities/appUtils";
+import { IHandlerConstructor, IHandlerChainBuilder } from "sfx.common";
 
 enum HttpProtocols {
     any = "*",
@@ -32,14 +39,6 @@ enum HttpMethods {
 enum HttpContentTypes {
     json = "application/json",
     binary = "application/octet-stream"
-}
-
-interface RequestAsyncProcessor {
-    (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: http.ClientRequest): Promise<void>;
-}
-
-interface ResponseAsyncHandler {
-    (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: http.IncomingMessage): Promise<any>;
 }
 
 class HttpClient implements IHttpClient {
@@ -297,18 +296,49 @@ namespace RequestHandlers {
     }
 }
 
+class HttpClientBuilder implements IHttpClientBuilder {
+    private readonly log: ILog;
+    private readonly requestHandlerBuilder: IHandlerChainBuilder<RequestAsyncProcessor>;
+    private readonly responseHandlerBuilder: IHandlerChainBuilder<ResponseAsyncHandler>;
+
+    constructor(log: ILog) {
+        this.log = log;
+        this.requestHandlerBuilder = new HandlerChainBuilder<RequestAsyncProcessor>();
+        this.responseHandlerBuilder = new HandlerChainBuilder<ResponseAsyncHandler>();
+    }
+
+    public handleRequest(constructor: IHandlerConstructor<RequestAsyncProcessor>): IHttpClientBuilder {
+        this.requestHandlerBuilder.handle(constructor);
+
+        return this;
+    }
+
+    public handleResponse(constructor: IHandlerConstructor<ResponseAsyncHandler>): IHttpClientBuilder {
+        this.responseHandlerBuilder.handle(constructor);
+
+        return this;
+    }
+
+    public build(protocol: string): IHttpClient {
+        return new HttpClient(
+            this.log, protocol,
+            this.requestHandlerBuilder.build(),
+            this.responseHandlerBuilder.build());
+    }
+}
+
 function buildHttpClient(log: ILog, protocol: string): IHttpClient {
-    const requestHandlerBuilder = new HandlerChainBuilder<RequestAsyncProcessor>();
-    const responseHandlerBuilder = new HandlerChainBuilder<ResponseAsyncHandler>();
+    const clientBuilder = new HttpClientBuilder(log);
 
     // Request handlers
-    requestHandlerBuilder.handle(RequestHandlers.handleJson);
+    clientBuilder.handleRequest(RequestHandlers.handleJson);
 
     // Response handlers
-    responseHandlerBuilder.handle(ResponseHandlers.handleRedirection);
-    responseHandlerBuilder.handle(ResponseHandlers.handleJson);
+    clientBuilder
+        .handleResponse(ResponseHandlers.handleRedirection)
+        .handleResponse(ResponseHandlers.handleJson);
 
-    return new HttpClient(log, protocol, requestHandlerBuilder.build(), responseHandlerBuilder.build());
+    return clientBuilder.build(protocol);
 }
 
 export function getModuleMetadata(): IModuleInfo {
@@ -327,7 +357,32 @@ export function getModuleMetadata(): IModuleInfo {
                 version: appUtils.getAppVersion(),
                 descriptor: (log: ILog) => buildHttpClient(log, HttpProtocols.https),
                 deps: ["logging"]
-            }
+            },
+            {
+                name: "http.client-builder",
+                version: appUtils.getAppVersion(),
+                descriptor: (log: ILog) => new HttpClientBuilder(log),
+                deps: ["logging"]
+            },
+
+            // Request Handlers
+            {
+                name: "http.request-handlers.handle-json",
+                version: appUtils.getAppVersion(),
+                descriptor: () => RequestHandlers.handleJson
+            },
+
+            // Response Handlers
+            {
+                name: "http.response-handlers.handle-redirection",
+                version: appUtils.getAppVersion(),
+                descriptor: () => ResponseHandlers.handleRedirection
+            },
+            {
+                name: "http.response-handlers.handle-json",
+                version: appUtils.getAppVersion(),
+                descriptor: () => ResponseHandlers.handleJson
+            },
         ]
     };
 }

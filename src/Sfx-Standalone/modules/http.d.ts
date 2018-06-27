@@ -4,19 +4,47 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.module-manager" {
-    import { IHttpClient } from "sfx.http";
+    import {
+        IHttpClient,
+        IHttpClientBuilder,
+        RequestAsyncProcessor,
+        ResponseAsyncHandler
+    } from "sfx.http";
+    import { IHandlerConstructor } from "sfx.common";
 
     export interface IModuleManager {
         getComponentAsync(componentIdentity: "http.http-client"): Promise<IHttpClient>;
         getComponentAsync(componentIdentity: "http.https-client"): Promise<IHttpClient>;
+
+        getComponentAsync(componentIdentity: "http.client-builder"): Promise<IHttpClientBuilder>;
+
+        getComponentAsync(componentIdentity: "http.request-handlers.handle-json"): Promise<IHandlerConstructor<RequestAsyncProcessor>>;
+
+        getComponentAsync(componentIdentity: "http.response-handlers.handle-redirection"): Promise<IHandlerConstructor<ResponseAsyncHandler>>;
+        getComponentAsync(componentIdentity: "http.response-handlers.handle-json"): Promise<IHandlerConstructor<ResponseAsyncHandler>>;
     }
 }
 
 declare module "sfx.http" {
-    import { IDictionary } from "sfx.common";
-    import { IncomingMessage } from "http";
+    import { IDictionary, IHandlerConstructor } from "sfx.common";
+    import { IncomingMessage, ClientRequest } from "http";
+    import { ILog } from "sfx.logging";
 
     export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+    export interface IHttpClientBuilder {
+        handleRequest(constructor: IHandlerConstructor<RequestAsyncProcessor>): IHttpClientBuilder;
+        handleResponse(constructor: IHandlerConstructor<ResponseAsyncHandler>): IHttpClientBuilder;
+        build(protocol: string): IHttpClient;
+    }
+
+    export interface RequestAsyncProcessor {
+        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: ClientRequest): Promise<void>;
+    }
+
+    export interface ResponseAsyncHandler {
+        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IncomingMessage): Promise<any>;
+    }
 
     export interface IRequestOptions {
         method: HttpMethod;
