@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import { IDictionary, IDisposable } from "sfx.common";
-import { RequestHandler, ICommunicator, IRoutePattern } from "sfx.remoting";
+import { AsyncRequestHandler, ICommunicator, IRoutePattern } from "sfx.remoting";
 import { ChannelType } from "sfx.ipc";
 
 import { ChildProcess } from "child_process";
@@ -29,7 +29,7 @@ interface IPromiseResolver {
 
 interface IRoute {
     pattern: IRoutePattern;
-    handler: RequestHandler;
+    asyncHandler: AsyncRequestHandler;
 }
 
 interface ChannelProxyDataHandler {
@@ -285,26 +285,26 @@ export class Communicator implements ICommunicator {
         this.channelProxy = generateChannelProxy(channel, this.onMessageAsync);
     }
 
-    public map(pattern: IRoutePattern, handler: RequestHandler): void {
+    public map(pattern: IRoutePattern, asyncHandler: AsyncRequestHandler): void {
         this.validateDisposal();
 
         if (!pattern) {
             throw new Error("pattern must be provided.");
         }
 
-        if (!Function.isFunction(handler)) {
-            throw new Error("handler must be a function.");
+        if (!Function.isFunction(asyncHandler)) {
+            throw new Error("asyncHandler must be a function.");
         }
 
         const route: IRoute = {
             pattern: pattern,
-            handler: handler
+            asyncHandler: asyncHandler
         };
 
         this.routes.push(route);
     }
 
-    public unmap(pattern: IRoutePattern): RequestHandler {
+    public unmap(pattern: IRoutePattern): AsyncRequestHandler {
         this.validateDisposal();
 
         if (utils.isNullOrUndefined(pattern)) {
@@ -317,11 +317,11 @@ export class Communicator implements ICommunicator {
             return undefined;
         }
 
-        const handler = this.routes[routeIndex].handler;
+        const asyncHandler = this.routes[routeIndex].asyncHandler;
 
         this.routes.splice(routeIndex, 1);
 
-        return handler;
+        return asyncHandler;
     }
 
     public sendAsync<TRequest, TResponse>(path: string, content: TRequest): Promise<TResponse> {
@@ -393,7 +393,7 @@ export class Communicator implements ICommunicator {
                 let succeeded: boolean;
 
                 try {
-                    response = await route.handler(this, msg.path, msg.body);
+                    response = await route.asyncHandler(this, msg.path, msg.body);
                     succeeded = true;
                 } catch (exception) {
                     response = exception;
