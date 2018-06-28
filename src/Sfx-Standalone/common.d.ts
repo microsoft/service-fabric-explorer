@@ -35,4 +35,13 @@ declare module "sfx.common" {
         handle(constructor: IHandlerConstructor<THandler>): IHandlerChainBuilder<THandler>;
         build(): THandler;
     }
+
+    export interface ICertificate {
+        subjectName: string;
+        issuerName: string;
+        serialNumber: string;
+        validStart: Date;
+        validExpiry: Date;
+        thumbprint: string;
+    }
 }
