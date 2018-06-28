@@ -77,9 +77,5 @@ export function handleCert(nextHandler: ResponseAsyncHandler, selectCertAsyncHan
         }
 
         return Promise.resolve(response);
-    }
+    };
 }
-
-
-
-child_process.execSync("powershell ./Get-UsableCertificates.ps1", { encoding: "utf8" });

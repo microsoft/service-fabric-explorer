@@ -10,6 +10,6 @@ import { IncomingMessage } from "http";
 
 export function handleAad(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
     return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IncomingMessage): Promise<any> => {
-
-    }
+        return Promise.resolve();
+    };
 }

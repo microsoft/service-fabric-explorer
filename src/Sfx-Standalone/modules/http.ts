@@ -4,23 +4,37 @@
 //-----------------------------------------------------------------------------
 import { IModuleInfo } from "sfx.module-manager";
 import { ILog } from "sfx.logging";
-import { IHandlerConstructor, IHandlerChainBuilder } from "sfx.common";
+import { IHandlerConstructor, IHandlerChainBuilder, ICertificate, IDictionary } from "sfx.common";
 
 import {
     IHttpClient,
     IRequestOptions,
     RequestAsyncProcessor,
     ResponseAsyncHandler,
-    IHttpClientBuilder
+    IHttpClientBuilder,
+    IClientCertificate,
+    IPfxClientCertificate,
+    IPemClientCertificate
 } from "sfx.http";
 
 import * as http from "http";
 import * as https from "https";
 import * as url from "url";
+import * as fs from "fs";
+import { PeerCertificate } from "tls";
+import * as crypto from "crypto";
 
 import * as utils from "../utilities/utils";
 import { HandlerChainBuilder } from "../utilities/handlerChainBuilder";
 import * as appUtils from "../utilities/appUtils";
+
+enum SslProtocols {
+    tls = "TLS",
+    tls12 = "TLS1.2",
+    tls11 = "TLS1.1",
+    tls10 = "TLS1.0",
+    ssl30 = "SSL3.0"
+}
 
 enum HttpProtocols {
     any = "*",
@@ -41,6 +55,62 @@ enum HttpContentTypes {
     binary = "application/octet-stream"
 }
 
+function toJson(): any {
+    let obj = this;
+    const jsonObj = Object.create(null);
+    const objects: Array<any> = [];
+
+    do {
+        objects.push(obj);
+        obj = Object.getPrototypeOf(obj);
+    } while (obj);
+
+    while (obj = objects.pop()) {
+        for (const propertyName of Object.getOwnPropertyNames(obj)) {
+            jsonObj[propertyName] = obj[propertyName];
+        }
+    }
+
+    return jsonObj;
+}
+
+function isPfxClientCert(cert: IClientCertificate): cert is IPfxClientCertificate {
+    return cert.type === "pfx"
+        && (String.isString(cert["pfx"]) || cert["pfx"] instanceof Buffer);
+}
+
+function isPemClientCert(cert: IClientCertificate): cert is IPemClientCertificate {
+    return cert.type === "pem"
+        && (String.isString(cert["key"]) || cert["key"] instanceof Buffer)
+        && (String.isString(cert["cert"]) || cert["cert"] instanceof Buffer);
+}
+
+function objectToString(obj: any): string {
+    const propertyNames = Object.getOwnPropertyNames(obj);
+    let str = "";
+
+    for (const propertyName of propertyNames) {
+        str += `${propertyName}=${obj[propertyName]}, `;
+    }
+
+    return str.substr(0, str.length - 2);
+}
+
+function toCertificate(cert: PeerCertificate): ICertificate {
+    const sha1 = crypto.createHash("sha1");
+
+    sha1.update(cert.raw);
+
+    return {
+        subjectName: objectToString(cert.subject),
+        issuerName: objectToString(cert.issuer),
+        serialNumber: cert.serialNumber,
+        validStart: new Date(cert.valid_from),
+        validExpiry: new Date(cert.valid_to),
+        thumbprint: sha1.digest("hex")
+    };
+}
+
 class HttpClient implements IHttpClient {
     private readonly log: ILog;
 
@@ -49,6 +119,14 @@ class HttpClient implements IHttpClient {
     private readonly requestAsyncProcessor: RequestAsyncProcessor;
 
     private readonly responseAsyncHandler: ResponseAsyncHandler;
+
+    private requestOptions: IRequestOptions;
+
+    private httpRequestOptions: https.RequestOptions;
+
+    public get defaultRequestOptions(): IRequestOptions {
+        return this.requestOptions;
+    }
 
     constructor(
         log: ILog,
@@ -64,6 +142,8 @@ class HttpClient implements IHttpClient {
             protocol = undefined;
         }
 
+        this.requestOptions = Object.create(null);
+        this.httpRequestOptions = Object.create(null);
         this.log = log;
         this.protocol = utils.getValue(protocol, HttpProtocols.any);
 
@@ -87,6 +167,11 @@ class HttpClient implements IHttpClient {
         } else {
             this.responseAsyncHandler = responseAsyncHandler;
         }
+    }
+
+    public updateDefaultRequestOptions(options: IRequestOptions): void {
+        this.httpRequestOptions = options ? this.generateHttpRequestOptions(options) : Object.create(null);
+        this.requestOptions = options ? options : Object.create(null);
     }
 
     public deleteAsync(url: string): Promise<http.IncomingMessage | any> {
@@ -152,13 +237,18 @@ class HttpClient implements IHttpClient {
             throw new Error("For HTTP method, GET and DELETE, data cannot be supplied.");
         }
 
-        const options: http.RequestOptions = url.parse(requestOptions.url);
+        const httpRequestOptions = this.generateHttpRequestOptions(requestOptions);
+        const options: https.RequestOptions =
+            Object.assign(
+                Object.create(null),
+                this.httpRequestOptions,
+                httpRequestOptions);
 
-        options.method = requestOptions.method;
-
-        if (Object.isObject(requestOptions.headers)) {
-            options.headers = requestOptions.headers;
-        }
+        options.headers =
+            Object.assign(
+                Object.create(null),
+                this.httpRequestOptions.headers,
+                httpRequestOptions.headers);
 
         this.log.writeInfo("{}: {}", requestOptions.method, requestOptions.url);
         const request = this.makeRequest(options);
@@ -170,6 +260,59 @@ class HttpClient implements IHttpClient {
                 request.end();
             }))
             .then((response) => this.responseAsyncHandler(this, this.log, requestOptions, data, response));
+    }
+
+    private generateHttpRequestOptions(requestOptions: IRequestOptions): https.RequestOptions {
+        const options: https.RequestOptions = url.parse(requestOptions.url);
+
+        options.method = requestOptions.method;
+
+        if (Object.isObject(requestOptions.headers)) {
+            options.headers = Object.assign(Object.create(null), requestOptions.headers);
+        }
+
+        if (String.isString(requestOptions.sslProtocol)) {
+            if (!Object.values(SslProtocols).includes(requestOptions.sslProtocol)) {
+                throw new Error(`Unknown sslProtocol: ${requestOptions.sslProtocol}`);
+            }
+
+            options.secureProtocol = requestOptions.sslProtocol;
+        }
+
+        if (requestOptions.clientCert) {
+            if (isPfxClientCert(requestOptions.clientCert)) {
+                if (String.isString(requestOptions.clientCert.pfx)) {
+                    requestOptions.clientCert.pfx = fs.readFileSync(requestOptions.clientCert.pfx);
+                }
+
+                options.pfx = requestOptions.clientCert.pfx;
+                options.passphrase = requestOptions.clientCert.password;
+
+            } else if (isPemClientCert(requestOptions.clientCert)) {
+                if (String.isString(requestOptions.clientCert.cert)) {
+                    requestOptions.clientCert.cert = fs.readFileSync(requestOptions.clientCert.cert);
+                }
+
+                if (String.isString(requestOptions.clientCert.key)) {
+                    requestOptions.clientCert.key = fs.readFileSync(requestOptions.clientCert.key);
+                }
+
+                options.key = requestOptions.clientCert.key;
+                options.cert = requestOptions.clientCert.cert;
+                options.passphrase = requestOptions.clientCert.password;
+
+            } else {
+                throw new Error("Invalid clientCert: " + utils.defaultStringifier(requestOptions.clientCert));
+            }
+        }
+
+        if (Function.isFunction(requestOptions.serverCertValidator)) {
+            options.rejectUnauthorized = false;
+            options["checkServerIdentity"] =
+                (serverName, cert) => requestOptions.serverCertValidator(serverName, toCertificate(cert));
+        }
+
+        return options;
     }
 
     private makeRequest(options: http.RequestOptions): http.ClientRequest {

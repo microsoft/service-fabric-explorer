@@ -10,7 +10,7 @@ declare module "sfx.module-manager" {
         RequestAsyncProcessor,
         ResponseAsyncHandler
     } from "sfx.http";
-    import { IHandlerConstructor } from "sfx.common";
+    import { IHandlerConstructor, ICertificate } from "sfx.common";
 
     export interface IModuleManager {
         getComponentAsync(componentIdentity: "http.http-client"): Promise<IHttpClient>;
@@ -26,8 +26,8 @@ declare module "sfx.module-manager" {
 }
 
 declare module "sfx.http" {
-    import { IDictionary, IHandlerConstructor } from "sfx.common";
-    import { IncomingMessage, ClientRequest } from "http";
+    import { IDictionary, IHandlerConstructor, ICertificate } from "sfx.common";
+    import { IncomingMessage, ClientRequest, Server } from "http";
     import { ILog } from "sfx.logging";
 
     export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
@@ -46,13 +46,42 @@ declare module "sfx.http" {
         (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IncomingMessage): Promise<any>;
     }
 
+    export interface ServerCertValidator {
+        (serverName: string, cert: ICertificate): Error | void;
+    }
+
+    export interface IClientCertificate {
+        type: "pfx" | "pem";
+        password: string;
+    }
+
+    export interface IPfxClientCertificate extends IClientCertificate {
+        type: "pfx";
+        pfx: string | Buffer;
+    }
+
+    export interface IPemClientCertificate extends IClientCertificate {
+        type: "pem";
+        key: string | Buffer;
+        cert: string | Buffer;
+    }
+
+    export type SslProtocol = "TLS" | "TLS1.2" | "TLS1.1" | "TLS1.0" | "SSL3.0";
+
     export interface IRequestOptions {
         method: HttpMethod;
         url: string;
         headers?: IDictionary<string | Array<string>>;
+        serverCertValidator?: ServerCertValidator;
+        clientCert?: IClientCertificate;
+        sslProtocol?: SslProtocol;
     }
 
     export interface IHttpClient {
+        readonly defaultRequestOptions: IRequestOptions;
+
+        updateDefaultRequestOptions(options: IRequestOptions): void;
+
         deleteAsync(url: string): Promise<IncomingMessage | any>;
 
         getAsync(url: string): Promise<IncomingMessage | any>;
