@@ -8,6 +8,7 @@
 /// <reference path="./module-manager/module-manager.d.ts" />
 
 /// <reference path="./modules/http.d.ts" />
+/// <reference path="./modules/http.response-handlers.auth/auth.d.ts" />
 /// <reference path="./modules/package-manager.d.ts" />
 /// <reference path="./modules/settings.d.ts" />
 /// <reference path="./modules/update.d.ts" />

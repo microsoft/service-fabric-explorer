@@ -3,6 +3,9 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 import { IModuleInfo } from "sfx.module-manager";
+import { ILog } from "sfx.logging";
+import { IHandlerConstructor, IHandlerChainBuilder } from "sfx.common";
+
 import {
     IHttpClient,
     IRequestOptions,
@@ -11,8 +14,6 @@ import {
     IHttpClientBuilder
 } from "sfx.http";
 
-import { ILog } from "sfx.logging";
-
 import * as http from "http";
 import * as https from "https";
 import * as url from "url";
@@ -20,7 +21,6 @@ import * as url from "url";
 import * as utils from "../utilities/utils";
 import { HandlerChainBuilder } from "../utilities/handlerChainBuilder";
 import * as appUtils from "../utilities/appUtils";
-import { IHandlerConstructor, IHandlerChainBuilder } from "sfx.common";
 
 enum HttpProtocols {
     any = "*",
