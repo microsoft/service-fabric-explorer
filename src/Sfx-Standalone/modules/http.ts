@@ -4,17 +4,15 @@
 //-----------------------------------------------------------------------------
 import { IModuleInfo } from "sfx.module-manager";
 import { ILog } from "sfx.logging";
-import { IHandlerConstructor, IHandlerChainBuilder, ICertificate, IDictionary } from "sfx.common";
+import { IHandlerConstructor, IHandlerChainBuilder, IDictionary } from "sfx.common";
+import { ICertificate, IPemCertificate, IPfxCertificate, ICertificateInfo } from "sfx.cert";
 
 import {
     IHttpClient,
     IRequestOptions,
     RequestAsyncProcessor,
     ResponseAsyncHandler,
-    IHttpClientBuilder,
-    IClientCertificate,
-    IPfxClientCertificate,
-    IPemClientCertificate
+    IHttpClientBuilder
 } from "sfx.http";
 
 import * as http from "http";
@@ -74,12 +72,12 @@ function toJson(): any {
     return jsonObj;
 }
 
-function isPfxClientCert(cert: IClientCertificate): cert is IPfxClientCertificate {
+function isPfxClientCert(cert: ICertificate): cert is IPfxCertificate {
     return cert.type === "pfx"
         && (String.isString(cert["pfx"]) || cert["pfx"] instanceof Buffer);
 }
 
-function isPemClientCert(cert: IClientCertificate): cert is IPemClientCertificate {
+function isPemClientCert(cert: ICertificate): cert is IPemCertificate {
     return cert.type === "pem"
         && (String.isString(cert["key"]) || cert["key"] instanceof Buffer)
         && (String.isString(cert["cert"]) || cert["cert"] instanceof Buffer);
@@ -96,7 +94,7 @@ function objectToString(obj: any): string {
     return str.substr(0, str.length - 2);
 }
 
-function toCertificate(cert: PeerCertificate): ICertificate {
+function toCertificateInfo(cert: PeerCertificate): ICertificateInfo {
     const sha1 = crypto.createHash("sha1");
 
     sha1.update(cert.raw);
@@ -309,7 +307,7 @@ class HttpClient implements IHttpClient {
         if (Function.isFunction(requestOptions.serverCertValidator)) {
             options.rejectUnauthorized = false;
             options["checkServerIdentity"] =
-                (serverName, cert) => requestOptions.serverCertValidator(serverName, toCertificate(cert));
+                (serverName, cert) => requestOptions.serverCertValidator(serverName, toCertificateInfo(cert));
         }
 
         return options;

@@ -8,11 +8,12 @@
 /// <reference path="./module-manager/module-manager.d.ts" />
 
 /// <reference path="./modules/http.d.ts" />
-/// <reference path="./modules/http.response-handlers.auth/auth.d.ts" />
 /// <reference path="./modules/package-manager.d.ts" />
 /// <reference path="./modules/settings.d.ts" />
 /// <reference path="./modules/update.d.ts" />
 
+/// <reference path="./modules/http.response-handlers.auth/auth.d.ts" />
+/// <reference path="./modules/cert/cert.d.ts" />
 /// <reference path="./modules/browser-window/browser-window.d.ts" />
 /// <reference path="./modules/ipc/ipc.d.ts" />
 /// <reference path="./modules/logging/logging.d.ts" />

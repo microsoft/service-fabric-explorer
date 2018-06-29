@@ -10,8 +10,8 @@ declare module "sfx.module-manager" {
         RequestAsyncProcessor,
         ResponseAsyncHandler
     } from "sfx.http";
-    import { IHandlerConstructor, ICertificate } from "sfx.common";
-
+    import { IHandlerConstructor } from "sfx.common";
+    
     export interface IModuleManager {
         getComponentAsync(componentIdentity: "http.http-client"): Promise<IHttpClient>;
         getComponentAsync(componentIdentity: "http.https-client"): Promise<IHttpClient>;
@@ -26,9 +26,10 @@ declare module "sfx.module-manager" {
 }
 
 declare module "sfx.http" {
-    import { IDictionary, IHandlerConstructor, ICertificate } from "sfx.common";
+    import { IDictionary, IHandlerConstructor } from "sfx.common";
     import { IncomingMessage, ClientRequest, Server } from "http";
     import { ILog } from "sfx.logging";
+    import { ICertificateInfo, ICertificate } from "sfx.cert";
 
     export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
@@ -47,23 +48,7 @@ declare module "sfx.http" {
     }
 
     export interface ServerCertValidator {
-        (serverName: string, cert: ICertificate): Error | void;
-    }
-
-    export interface IClientCertificate {
-        type: "pfx" | "pem";
-        password: string;
-    }
-
-    export interface IPfxClientCertificate extends IClientCertificate {
-        type: "pfx";
-        pfx: string | Buffer;
-    }
-
-    export interface IPemClientCertificate extends IClientCertificate {
-        type: "pem";
-        key: string | Buffer;
-        cert: string | Buffer;
+        (serverName: string, cert: ICertificateInfo): Error | void;
     }
 
     export type SslProtocol = "TLS" | "TLS1.2" | "TLS1.1" | "TLS1.0" | "SSL3.0";
@@ -73,7 +58,7 @@ declare module "sfx.http" {
         url: string;
         headers?: IDictionary<string | Array<string>>;
         serverCertValidator?: ServerCertValidator;
-        clientCert?: IClientCertificate;
+        clientCert?: ICertificate;
         sslProtocol?: SslProtocol;
     }
 

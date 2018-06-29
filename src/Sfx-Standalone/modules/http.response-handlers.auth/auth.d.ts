@@ -3,7 +3,13 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-/// <reference path="./cert/cert.d.ts" />
+declare module "sfx.http.response-handlers.auth" {
+    import { ICertificateInfo, ICertificate } from "sfx.cert";
+
+    export interface SelectClientCertAsyncHandler {
+        (url: string, certs: Array<ICertificateInfo>): Promise<ICertificate>;
+    }
+}
 
 declare module "sfx.module-manager" {
     import { IHandlerConstructor } from "sfx.common";

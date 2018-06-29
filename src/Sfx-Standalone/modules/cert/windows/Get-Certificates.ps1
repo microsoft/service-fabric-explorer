@@ -3,6 +3,8 @@
 # Licensed under the MIT License. See License file under the project root for license information.
 #-----------------------------------------------------------------------------
 
+Param([string]$StoreName)
+
 Function ConvertTo-CertJson([System.Security.Cryptography.X509Certificates.X509Certificate2]$Certificate) {
     return @{
         "subjectName" = $Certificate.Subject;
@@ -14,7 +16,7 @@ Function ConvertTo-CertJson([System.Security.Cryptography.X509Certificates.X509C
     };
 }
 
-$certs = Get-ChildItem Cert:\CurrentUser\My | Where { $_.HasPrivateKey }
+$certs = Get-ChildItem "Cert:\CurrentUser\$StoreName"
 $certJsonObjects = @()
 
 foreach ($cert in $certs) {

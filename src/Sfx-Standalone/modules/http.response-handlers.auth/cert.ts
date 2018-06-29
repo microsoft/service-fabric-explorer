@@ -4,16 +4,15 @@
 //-----------------------------------------------------------------------------
 
 import { IHttpClient, ResponseAsyncHandler, IRequestOptions } from "sfx.http";
-import { SelectCertAsyncHandler } from "sfx.http.response-handlers.auth.cert";
+import { SelectClientCertAsyncHandler } from "sfx.http.response-handlers.auth";
 import { ILog } from "sfx.logging";
-import { ICertificate } from "sfx.common";
 
 import * as fs from "fs";
 import { exec } from "child_process";
 import { IncomingMessage } from "http";
 
-import { local } from "../../../utilities/appUtils";
-import { env, Platform } from "../../../utilities/env";
+import { local } from "../../utilities/appUtils";
+import { env, Platform } from "../../utilities/env";
 
 namespace Windows {
     const GetValidCertificatesPs1 = local("./Get-ValidCertificates.ps1");
@@ -47,7 +46,7 @@ namespace Windows {
     }
 }
 
-export function handleCert(nextHandler: ResponseAsyncHandler, selectCertAsyncHandler: SelectCertAsyncHandler): ResponseAsyncHandler {
+export function handleCert(nextHandler: ResponseAsyncHandler, selectClientCertAsyncHandler: SelectClientCertAsyncHandler): ResponseAsyncHandler {
     const HttpMsg_ClientCertRequired = "Client certificate required";
 
     return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IncomingMessage): Promise<any> => {
@@ -60,7 +59,7 @@ export function handleCert(nextHandler: ResponseAsyncHandler, selectCertAsyncHan
                 validCerts = await Windows.getValidCertsAsync();
             }
 
-            const selectedCert = await selectCertAsyncHandler(requestOptions.url, validCerts);
+            const selectedCert = await selectClientCertAsyncHandler(requestOptions.url, validCerts);
             let certData: Buffer;
 
             if (selectedCert instanceof Buffer) {
@@ -68,6 +67,16 @@ export function handleCert(nextHandler: ResponseAsyncHandler, selectCertAsyncHan
             } else {
                 certData = await Windows.getPfxCertDataByThumbprintAsync(selectedCert.thumbprint);
             }
+
+            const clientRequestOptions = client.defaultRequestOptions;
+
+            clientRequestOptions.clientCert = <IPfxClientCertificate>{
+                type: "pfx",
+                pfx: certData,
+                password: ""
+            };
+
+            client.updateDefaultRequestOptions(clientRequestOptions);
 
             return client.requestAsync(requestOptions, requestData);
         }
