@@ -5,6 +5,7 @@
 
 import { ILog } from "sfx.logging";
 import { IModuleInfo } from "sfx.module-manager";
+import { ICertificateLoader, IPkiCertificateService } from "sfx.cert";
 
 import * as appUtils from "../../utilities/appUtils";
 
@@ -19,7 +20,10 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "http.response-handlers.auth.handle-cert",
                 version: appUtils.getAppVersion(),
-                descriptor: (log: ILog) => handleCert
+                descriptor:
+                    (certLoader: ICertificateLoader, pkiCertSvc: IPkiCertificateService) =>
+                        handleCert.bind(null, certLoader, pkiCertSvc),
+                deps: ["cert.cert-loader", "cert.pki-service"]
             },
             {
                 name: "http.response-handlers.auth.handle-aad",

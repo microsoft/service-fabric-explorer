@@ -4,8 +4,15 @@
 //-----------------------------------------------------------------------------
 import { IModuleInfo } from "sfx.module-manager";
 import { ILog } from "sfx.logging";
-import { IHandlerConstructor, IHandlerChainBuilder, IDictionary } from "sfx.common";
-import { ICertificate, IPemCertificate, IPfxCertificate, ICertificateInfo } from "sfx.cert";
+import { IHandlerConstructor, IHandlerChainBuilder } from "sfx.common";
+
+import {
+    IPemCertificate,
+    IPfxCertificate,
+    ICertificateInfo,
+    ICertificateLoader,
+    IPkiCertificateService
+} from "sfx.cert";
 
 import {
     IHttpClient,
@@ -18,7 +25,6 @@ import {
 import * as http from "http";
 import * as https from "https";
 import * as url from "url";
-import * as fs from "fs";
 import { PeerCertificate } from "tls";
 import * as crypto from "crypto";
 
@@ -72,17 +78,6 @@ function toJson(): any {
     return jsonObj;
 }
 
-function isPfxClientCert(cert: ICertificate): cert is IPfxCertificate {
-    return cert.type === "pfx"
-        && (String.isString(cert["pfx"]) || cert["pfx"] instanceof Buffer);
-}
-
-function isPemClientCert(cert: ICertificate): cert is IPemCertificate {
-    return cert.type === "pem"
-        && (String.isString(cert["key"]) || cert["key"] instanceof Buffer)
-        && (String.isString(cert["cert"]) || cert["cert"] instanceof Buffer);
-}
-
 function objectToString(obj: any): string {
     const propertyNames = Object.getOwnPropertyNames(obj);
     let str = "";
@@ -112,6 +107,10 @@ function toCertificateInfo(cert: PeerCertificate): ICertificateInfo {
 class HttpClient implements IHttpClient {
     private readonly log: ILog;
 
+    private readonly certLoader: ICertificateLoader;
+
+    private readonly pkiCertSvc: IPkiCertificateService;
+
     private readonly protocol: string;
 
     private readonly requestAsyncProcessor: RequestAsyncProcessor;
@@ -128,12 +127,17 @@ class HttpClient implements IHttpClient {
 
     constructor(
         log: ILog,
+        certLoader: ICertificateLoader,
         protocol: string,
         requestAsyncProcessor: RequestAsyncProcessor,
         responseAsyncHandler: ResponseAsyncHandler) {
 
         if (!Object.isObject(log)) {
             throw new Error("log must be supplied.");
+        }
+
+        if (!Object.isObject(certLoader)) {
+            throw new Error("certLoader must be supplied.");
         }
 
         if (String.isString(protocol) && protocol.trim() === "") {
@@ -143,6 +147,7 @@ class HttpClient implements IHttpClient {
         this.requestOptions = Object.create(null);
         this.httpRequestOptions = Object.create(null);
         this.log = log;
+        this.certLoader = certLoader;
         this.protocol = utils.getValue(protocol, HttpProtocols.any);
 
         // request processor.
@@ -278,26 +283,16 @@ class HttpClient implements IHttpClient {
         }
 
         if (requestOptions.clientCert) {
-            if (isPfxClientCert(requestOptions.clientCert)) {
-                if (String.isString(requestOptions.clientCert.pfx)) {
-                    requestOptions.clientCert.pfx = fs.readFileSync(requestOptions.clientCert.pfx);
-                }
+            requestOptions.clientCert = this.certLoader.load(requestOptions.clientCert);
 
-                options.pfx = requestOptions.clientCert.pfx;
-                options.passphrase = requestOptions.clientCert.password;
+            if (requestOptions.clientCert.type === "pfx") {
+                options.pfx = (<IPfxCertificate>requestOptions.clientCert).pfx;
+                options.passphrase = (<IPfxCertificate>requestOptions.clientCert).password;
 
-            } else if (isPemClientCert(requestOptions.clientCert)) {
-                if (String.isString(requestOptions.clientCert.cert)) {
-                    requestOptions.clientCert.cert = fs.readFileSync(requestOptions.clientCert.cert);
-                }
-
-                if (String.isString(requestOptions.clientCert.key)) {
-                    requestOptions.clientCert.key = fs.readFileSync(requestOptions.clientCert.key);
-                }
-
-                options.key = requestOptions.clientCert.key;
-                options.cert = requestOptions.clientCert.cert;
-                options.passphrase = requestOptions.clientCert.password;
+            } else if (requestOptions.clientCert.type === "pem") {
+                options.key = (<IPemCertificate>requestOptions.clientCert).key;
+                options.cert = (<IPemCertificate>requestOptions.clientCert).cert;
+                options.passphrase = (<IPemCertificate>requestOptions.clientCert).password;
 
             } else {
                 throw new Error("Invalid clientCert: " + utils.defaultStringifier(requestOptions.clientCert));
@@ -439,11 +434,13 @@ namespace RequestHandlers {
 
 class HttpClientBuilder implements IHttpClientBuilder {
     private readonly log: ILog;
+    private readonly certLoader: ICertificateLoader;
     private readonly requestHandlerBuilder: IHandlerChainBuilder<RequestAsyncProcessor>;
     private readonly responseHandlerBuilder: IHandlerChainBuilder<ResponseAsyncHandler>;
 
-    constructor(log: ILog) {
+    constructor(log: ILog, certLoader: ICertificateLoader) {
         this.log = log;
+        this.certLoader = certLoader;
         this.requestHandlerBuilder = new HandlerChainBuilder<RequestAsyncProcessor>();
         this.responseHandlerBuilder = new HandlerChainBuilder<ResponseAsyncHandler>();
     }
@@ -462,14 +459,16 @@ class HttpClientBuilder implements IHttpClientBuilder {
 
     public build(protocol: string): IHttpClient {
         return new HttpClient(
-            this.log, protocol,
+            this.log,
+            this.certLoader,
+            protocol,
             this.requestHandlerBuilder.build(),
             this.responseHandlerBuilder.build());
     }
 }
 
-function buildHttpClient(log: ILog, protocol: string): IHttpClient {
-    const clientBuilder = new HttpClientBuilder(log);
+function buildHttpClient(log: ILog, certLoader: ICertificateLoader, protocol: string): IHttpClient {
+    const clientBuilder = new HttpClientBuilder(log, certLoader);
 
     // Request handlers
     clientBuilder.handleRequest(RequestHandlers.handleJson);
@@ -490,20 +489,20 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "http.http-client",
                 version: appUtils.getAppVersion(),
-                descriptor: (log: ILog) => buildHttpClient(log, HttpProtocols.any),
-                deps: ["logging"]
+                descriptor: (log: ILog, certLoader: ICertificateLoader) => buildHttpClient(log, certLoader, HttpProtocols.any),
+                deps: ["logging", "cert.cert-loader"]
             },
             {
                 name: "http.https-client",
                 version: appUtils.getAppVersion(),
-                descriptor: (log: ILog) => buildHttpClient(log, HttpProtocols.https),
-                deps: ["logging"]
+                descriptor: (log: ILog, certLoader: ICertificateLoader) => buildHttpClient(log, certLoader, HttpProtocols.https),
+                deps: ["logging", "cert.cert-loader"]
             },
             {
                 name: "http.client-builder",
                 version: appUtils.getAppVersion(),
-                descriptor: (log: ILog) => new HttpClientBuilder(log),
-                deps: ["logging"]
+                descriptor: (log: ILog, certLoader: ICertificateLoader) => new HttpClientBuilder(log, certLoader),
+                deps: ["logging", "cert.cert-loader"]
             },
 
             // Request Handlers

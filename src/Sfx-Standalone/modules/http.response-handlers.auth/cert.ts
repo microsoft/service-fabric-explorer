@@ -6,78 +6,45 @@
 import { IHttpClient, ResponseAsyncHandler, IRequestOptions } from "sfx.http";
 import { SelectClientCertAsyncHandler } from "sfx.http.response-handlers.auth";
 import { ILog } from "sfx.logging";
+import { IPkiCertificateService, ICertificateInfo, ICertificateLoader } from "sfx.cert";
 
-import * as fs from "fs";
-import { exec } from "child_process";
 import { IncomingMessage } from "http";
 
-import { local } from "../../utilities/appUtils";
-import { env, Platform } from "../../utilities/env";
-
-namespace Windows {
-    const GetValidCertificatesPs1 = local("./Get-ValidCertificates.ps1");
-    const GetPfxCertificateDataPs1 = local("./Get-PfxCertificateData.ps1");
-
-    export function getValidCertsAsync(): Promise<Array<ICertificate>> {
-        return new Promise<string>(
-            (resolve, reject) =>
-                exec(`powershell "${GetValidCertificatesPs1}"`,
-                    { encoding: "utf8" },
-                    (error, stdout) => error ? reject(error) : resolve(stdout)))
-            .then((jsonString) => {
-                const certs = JSON.parse(jsonString);
-
-                for (const cert of certs) {
-                    cert.validExpiry = new Date(cert.validExpiry);
-                    cert.validStart = new Date(cert.validStart);
-                }
-
-                return certs;
-            });
-    }
-
-    export function getPfxCertDataByThumbprintAsync(thumbprint: string): Promise<Buffer> {
-        return new Promise<string>(
-            (resolve, reject) =>
-                exec(`powershell "${GetPfxCertificateDataPs1}" -Thumbprint ${thumbprint}`,
-                    { encoding: "utf8" },
-                    (error, stdout) => error ? reject(error) : resolve(stdout)))
-            .then((jsonString) => Buffer.from(jsonString, "base64"));
-    }
+function isCertificateInfo(cert: any): cert is ICertificateInfo {
+    return cert && String.isString(cert.thumbprint);
 }
 
-export function handleCert(nextHandler: ResponseAsyncHandler, selectClientCertAsyncHandler: SelectClientCertAsyncHandler): ResponseAsyncHandler {
+export function handleCert(
+    certLoader: ICertificateLoader,
+    pkiCertSvc: IPkiCertificateService,
+    nextHandler: ResponseAsyncHandler,
+    selectClientCertAsyncHandler: SelectClientCertAsyncHandler): ResponseAsyncHandler {
     const HttpMsg_ClientCertRequired = "Client certificate required";
 
     return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IncomingMessage): Promise<any> => {
         if (response.statusCode === 403
             && 0 === HttpMsg_ClientCertRequired.localeCompare(response.statusMessage, undefined, { sensitivity: "accent" })) {
 
-            let validCerts: Array<ICertificate> = undefined;
+            log.writeInfo("Client certificate is required.");
 
-            if (env.platform === Platform.Windows) {
-                validCerts = await Windows.getValidCertsAsync();
-            }
+            const validCertInfos = pkiCertSvc.getCertificateInfos("My").filter((certInfo) => certInfo.hasPrivateKey);
+            let selectedCert = await selectClientCertAsyncHandler(requestOptions.url, validCertInfos);
 
-            const selectedCert = await selectClientCertAsyncHandler(requestOptions.url, validCerts);
-            let certData: Buffer;
-
-            if (selectedCert instanceof Buffer) {
-                certData = selectedCert;
+            if (isCertificateInfo(selectedCert)) {
+                log.writeInfo(`Client certificate (thumbprint:${selectedCert.thumbprint}) is selected.`);
+                selectedCert = pkiCertSvc.getCertificate(selectedCert);
             } else {
-                certData = await Windows.getPfxCertDataByThumbprintAsync(selectedCert.thumbprint);
+                log.writeInfo(`Custom client certificate (type: ${selectedCert.type}) is selected.`);
+                selectedCert = certLoader.load(selectedCert);
             }
 
             const clientRequestOptions = client.defaultRequestOptions;
 
-            clientRequestOptions.clientCert = <IPfxClientCertificate>{
-                type: "pfx",
-                pfx: certData,
-                password: ""
-            };
+            clientRequestOptions.clientCert = selectedCert;
 
             client.updateDefaultRequestOptions(clientRequestOptions);
 
+            log.writeInfo("Re-sending the HTTPS request ...");
             return client.requestAsync(requestOptions, requestData);
         }
 

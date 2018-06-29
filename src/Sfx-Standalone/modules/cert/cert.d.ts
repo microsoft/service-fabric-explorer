@@ -25,6 +25,7 @@ declare module "sfx.cert" {
         subjectName: string;
         issuerName: string;
         serialNumber: string;
+        hasPrivateKey?: boolean;
         validStart: Date;
         validExpiry: Date;
         thumbprint: string;
@@ -38,6 +39,7 @@ declare module "sfx.cert" {
     }
 
     export interface ICertificateLoader {
+        load(cert: ICertificate): ICertificate;
         loadPfx(path: string, password?: string): IPfxCertificate;
         loadPem(certPath: string, keyPath?: string, keyPassword?: string): IPemCertificate;
     }

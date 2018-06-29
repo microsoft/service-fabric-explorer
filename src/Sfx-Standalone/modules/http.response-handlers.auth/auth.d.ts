@@ -7,7 +7,7 @@ declare module "sfx.http.response-handlers.auth" {
     import { ICertificateInfo, ICertificate } from "sfx.cert";
 
     export interface SelectClientCertAsyncHandler {
-        (url: string, certs: Array<ICertificateInfo>): Promise<ICertificate>;
+        (url: string, certInfos: Array<ICertificateInfo>): Promise<ICertificate | ICertificateInfo>;
     }
 }
 

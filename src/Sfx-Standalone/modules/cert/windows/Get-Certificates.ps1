@@ -5,17 +5,6 @@
 
 Param([string]$StoreName)
 
-Function ConvertTo-CertJson([System.Security.Cryptography.X509Certificates.X509Certificate2]$Certificate) {
-    return @{
-        "subjectName" = $Certificate.Subject;
-        "issuerName" = $Certificate.Issuer;
-        "serialNumber" = $Certificate.SerialNumber;
-        "validStart" = $Certificate.NotBefore.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ss.fffZ");
-        "validExpiry" = $Certificate.NotAfter.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ss.fffZ");
-        "thumbprint" = $Certificate.Thumbprint;
-    };
-}
-
 $certs = Get-ChildItem "Cert:\CurrentUser\$StoreName"
 $certJsonObjects = @()
 
@@ -25,6 +14,7 @@ foreach ($cert in $certs) {
             "subjectName" = $cert.Subject;
             "issuerName" = $cert.Issuer;
             "serialNumber" = $cert.SerialNumber;
+            "hasPrivateKey" = $cert.HasPrivateKey;
             "validStart" = $cert.NotBefore.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ss.fffZ");
             "validExpiry" = $cert.NotAfter.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ss.fffZ");
             "thumbprint" = $cert.Thumbprint;
