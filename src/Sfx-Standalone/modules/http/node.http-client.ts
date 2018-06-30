@@ -2,81 +2,25 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
-import { IModuleInfo } from "sfx.module-manager";
-import { ILog } from "sfx.logging";
-import { IHandlerConstructor, IHandlerChainBuilder } from "sfx.common";
-
-import {
-    IPemCertificate,
-    IPfxCertificate,
-    ICertificateInfo,
-    ICertificateLoader,
-    IPkiCertificateService
-} from "sfx.cert";
 
 import {
     IHttpClient,
-    IRequestOptions,
     RequestAsyncProcessor,
     ResponseAsyncHandler,
-    IHttpClientBuilder
+    IRequestOptions
 } from "sfx.http";
 
-import * as http from "http";
+import { ILog } from "sfx.logging";
+import { ICertificateLoader, IPkiCertificateService, IPemCertificate, IPfxCertificate, ICertificateInfo } from "sfx.cert";
+
 import * as https from "https";
+import * as http from "http";
 import * as url from "url";
-import { PeerCertificate } from "tls";
 import * as crypto from "crypto";
 
-import * as utils from "../utilities/utils";
-import { HandlerChainBuilder } from "../utilities/handlerChainBuilder";
-import * as appUtils from "../utilities/appUtils";
-
-enum SslProtocols {
-    tls = "TLS",
-    tls12 = "TLS1.2",
-    tls11 = "TLS1.1",
-    tls10 = "TLS1.0",
-    ssl30 = "SSL3.0"
-}
-
-enum HttpProtocols {
-    any = "*",
-    http = "http:",
-    https = "https:"
-}
-
-enum HttpMethods {
-    get = "GET",
-    post = "POST",
-    put = "PUT",
-    patch = "PATCH",
-    delete = "DELETE"
-}
-
-enum HttpContentTypes {
-    json = "application/json",
-    binary = "application/octet-stream"
-}
-
-function toJson(): any {
-    let obj = this;
-    const jsonObj = Object.create(null);
-    const objects: Array<any> = [];
-
-    do {
-        objects.push(obj);
-        obj = Object.getPrototypeOf(obj);
-    } while (obj);
-
-    while (obj = objects.pop()) {
-        for (const propertyName of Object.getOwnPropertyNames(obj)) {
-            jsonObj[propertyName] = obj[propertyName];
-        }
-    }
-
-    return jsonObj;
-}
+import { HttpProtocols, HttpMethods, SslProtocols } from "./common";
+import * as utils from "../../utilities/utils";
+import { PeerCertificate } from "tls";
 
 function objectToString(obj: any): string {
     const propertyNames = Object.getOwnPropertyNames(obj);
@@ -104,7 +48,7 @@ function toCertificateInfo(cert: PeerCertificate): ICertificateInfo {
     };
 }
 
-class HttpClient implements IHttpClient {
+export class HttpClient implements IHttpClient {
     private readonly log: ILog;
 
     private readonly certLoader: ICertificateLoader;
@@ -330,199 +274,4 @@ class HttpClient implements IHttpClient {
             throw exception;
         }
     }
-}
-
-namespace ResponseHandlers {
-    export function handleRedirection(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
-        return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: http.IncomingMessage): Promise<any> => {
-            if (response.statusCode === 301
-                || response.statusCode === 302
-                || response.statusCode === 307
-                || response.statusCode === 308) {
-                const location = response.headers["location"];
-                const redirectionRequestOptions: IRequestOptions = JSON.parse(JSON.stringify(requestOptions));
-
-                redirectionRequestOptions.url = location;
-                log.writeInfo("HTTP{}: Redirecting to {}", response.statusCode, redirectionRequestOptions.url);
-
-                return client.requestAsync(redirectionRequestOptions, requestData);
-            }
-
-            if (Function.isFunction(nextHandler)) {
-                return nextHandler(client, log, requestOptions, requestData, response);
-            }
-
-            return Promise.resolve(response);
-        };
-    }
-
-    function isJsonResponse(log: ILog, response: http.IncomingMessage): boolean {
-        const regex_filename_json = /filename=.+\.json/i;
-
-        const contentType = response.headers["content-type"];
-        const contentDisposition = response.headers["content-disposition"];
-
-        if (!String.isString(contentType)) {
-            return false;
-        }
-
-        if (contentType.indexOf(HttpContentTypes.json) >= 0) {
-            return true;
-        }
-
-        if (contentType.indexOf(HttpContentTypes.binary) >= 0
-            && regex_filename_json.test(contentDisposition)) {
-
-            log.writeVerbose(`Treat Content-Type (${contentType}) as JSON since Content-Disposition header (${contentDisposition}) indicates JSON extension.`);
-            return true;
-        }
-
-        return false;
-    }
-
-    export function handleJson(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
-        const regex_filename_json = /filename=.+\.json/i;
-
-        return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: http.IncomingMessage): Promise<any> => {
-            if (response.statusCode >= 200 && response.statusCode < 300 && isJsonResponse(log, response)) {
-                response.setEncoding("utf8");
-
-                return new Promise((resolve, reject) => {
-                    let json: string = "";
-
-                    response.on("data", (chunk) => json += chunk);
-                    response.on("end", () => {
-                        try {
-                            resolve(JSON.parse(json));
-                        } catch (exception) {
-                            reject(exception);
-                        }
-                    });
-                });
-            }
-
-            if (Function.isFunction(nextHandler)) {
-                return nextHandler(client, log, requestOptions, requestData, response);
-            }
-
-            return Promise.resolve(response);
-        };
-    }
-}
-
-namespace RequestHandlers {
-    export function handleJson(nextHandler: RequestAsyncProcessor): RequestAsyncProcessor {
-        return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: http.ClientRequest) => {
-            const contentType = request.getHeader("Content-Type");
-
-            if (String.isString(contentType)
-                && contentType.indexOf(HttpContentTypes.json) >= 0) {
-                const jsonBody = JSON.stringify(requestData);
-
-                request.setHeader("Content-Length", Buffer.byteLength(jsonBody));
-                request.write(jsonBody);
-            } else if (!utils.isNullOrUndefined(requestData)) {
-                throw new Error("Header Content-Type is missing in the request but the data is supplied.");
-            }
-
-            if (Function.isFunction(nextHandler)) {
-                await nextHandler(client, log, requestOptions, requestData, request);
-            }
-        };
-    }
-}
-
-class HttpClientBuilder implements IHttpClientBuilder {
-    private readonly log: ILog;
-    private readonly certLoader: ICertificateLoader;
-    private readonly requestHandlerBuilder: IHandlerChainBuilder<RequestAsyncProcessor>;
-    private readonly responseHandlerBuilder: IHandlerChainBuilder<ResponseAsyncHandler>;
-
-    constructor(log: ILog, certLoader: ICertificateLoader) {
-        this.log = log;
-        this.certLoader = certLoader;
-        this.requestHandlerBuilder = new HandlerChainBuilder<RequestAsyncProcessor>();
-        this.responseHandlerBuilder = new HandlerChainBuilder<ResponseAsyncHandler>();
-    }
-
-    public handleRequest(constructor: IHandlerConstructor<RequestAsyncProcessor>): IHttpClientBuilder {
-        this.requestHandlerBuilder.handle(constructor);
-
-        return this;
-    }
-
-    public handleResponse(constructor: IHandlerConstructor<ResponseAsyncHandler>): IHttpClientBuilder {
-        this.responseHandlerBuilder.handle(constructor);
-
-        return this;
-    }
-
-    public build(protocol: string): IHttpClient {
-        return new HttpClient(
-            this.log,
-            this.certLoader,
-            protocol,
-            this.requestHandlerBuilder.build(),
-            this.responseHandlerBuilder.build());
-    }
-}
-
-function buildHttpClient(log: ILog, certLoader: ICertificateLoader, protocol: string): IHttpClient {
-    const clientBuilder = new HttpClientBuilder(log, certLoader);
-
-    // Request handlers
-    clientBuilder.handleRequest(RequestHandlers.handleJson);
-
-    // Response handlers
-    clientBuilder
-        .handleResponse(ResponseHandlers.handleRedirection)
-        .handleResponse(ResponseHandlers.handleJson);
-
-    return clientBuilder.build(protocol);
-}
-
-export function getModuleMetadata(): IModuleInfo {
-    return {
-        name: "http",
-        version: appUtils.getAppVersion(),
-        components: [
-            {
-                name: "http.http-client",
-                version: appUtils.getAppVersion(),
-                descriptor: (log: ILog, certLoader: ICertificateLoader) => buildHttpClient(log, certLoader, HttpProtocols.any),
-                deps: ["logging", "cert.cert-loader"]
-            },
-            {
-                name: "http.https-client",
-                version: appUtils.getAppVersion(),
-                descriptor: (log: ILog, certLoader: ICertificateLoader) => buildHttpClient(log, certLoader, HttpProtocols.https),
-                deps: ["logging", "cert.cert-loader"]
-            },
-            {
-                name: "http.client-builder",
-                version: appUtils.getAppVersion(),
-                descriptor: (log: ILog, certLoader: ICertificateLoader) => new HttpClientBuilder(log, certLoader),
-                deps: ["logging", "cert.cert-loader"]
-            },
-
-            // Request Handlers
-            {
-                name: "http.request-handlers.handle-json",
-                version: appUtils.getAppVersion(),
-                descriptor: () => RequestHandlers.handleJson
-            },
-
-            // Response Handlers
-            {
-                name: "http.response-handlers.handle-redirection",
-                version: appUtils.getAppVersion(),
-                descriptor: () => ResponseHandlers.handleRedirection
-            },
-            {
-                name: "http.response-handlers.handle-json",
-                version: appUtils.getAppVersion(),
-                descriptor: () => ResponseHandlers.handleJson
-            },
-        ]
-    };
 }
