@@ -6,6 +6,8 @@
 import { ResponseAsyncHandler, IRequestOptions, IHttpClient } from "sfx.http";
 import { ILog } from "sfx.logging";
 
+import * as http from "http";
+
 export default function handleRedirection(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
     return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: http.IncomingMessage): Promise<any> => {
         if (response.statusCode === 301

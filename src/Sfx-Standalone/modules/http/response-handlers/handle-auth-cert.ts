@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import { IHttpClient, ResponseAsyncHandler, IRequestOptions } from "sfx.http";
-import { SelectClientCertAsyncHandler } from "sfx.http.response-handlers.auth";
+import { SelectClientCertAsyncHandler } from "sfx.http.auth";
 import { ILog } from "sfx.logging";
 import { IPkiCertificateService, ICertificateInfo, ICertificateLoader } from "sfx.cert";
 
@@ -14,7 +14,7 @@ function isCertificateInfo(cert: any): cert is ICertificateInfo {
     return cert && String.isString(cert.thumbprint);
 }
 
-export function handleCert(
+export default function handleCert(
     certLoader: ICertificateLoader,
     pkiCertSvc: IPkiCertificateService,
     nextHandler: ResponseAsyncHandler,

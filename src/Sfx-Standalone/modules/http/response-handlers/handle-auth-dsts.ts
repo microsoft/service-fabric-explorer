@@ -8,7 +8,7 @@ import { ILog } from "sfx.logging";
 
 import { IncomingMessage } from "http";
 
-export function handleAad(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
+export default function handleDSts(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
     return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IncomingMessage): Promise<any> => {
         return Promise.resolve();
     };
