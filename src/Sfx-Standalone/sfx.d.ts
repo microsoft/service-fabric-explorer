@@ -12,7 +12,6 @@
 /// <reference path="./modules/update.d.ts" />
 
 /// <reference path="./modules/http/http.d.ts" />
-/// <reference path="./modules/http.response-handlers.auth/auth.d.ts" />
 /// <reference path="./modules/cert/cert.d.ts" />
 /// <reference path="./modules/browser-window/browser-window.d.ts" />
 /// <reference path="./modules/ipc/ipc.d.ts" />
