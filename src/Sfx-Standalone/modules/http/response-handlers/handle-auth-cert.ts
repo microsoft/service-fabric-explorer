@@ -21,8 +21,8 @@ function isCertificateInfo(cert: any): cert is ICertificateInfo {
 export default function handleCert(
     certLoader: ICertificateLoader,
     pkiCertSvc: IPkiCertificateService,
-    nextHandler: ResponseAsyncHandler,
-    selectClientCertAsyncHandler: SelectClientCertAsyncHandler): ResponseAsyncHandler {
+    selectClientCertAsyncHandler: SelectClientCertAsyncHandler,
+    nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
     const HttpMsg_ClientCertRequired = "Client certificate required";
 
     return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {

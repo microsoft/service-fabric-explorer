@@ -16,6 +16,7 @@ import * as path from "path";
 import * as url from "url";
 import * as fs from "fs";
 import * as http from "http";
+import * as stream from "stream";
 
 import * as utils from "../utilities/utils";
 import { env, Architecture } from "../utilities/env";
@@ -117,9 +118,9 @@ class UpdateService implements IUpdateService {
         const versionInfoUrl = `${this.settings.baseUrl}/${updateChannel}/${env.platform}`;
 
         this.log.writeInfo("Requesting version info json: {}", versionInfoUrl);
-        const response = await this.httpClient.getAsync(versionInfoUrl);
+        const response = await this.httpClient.getAsync<IVersionInfo>(versionInfoUrl);
 
-        if (response instanceof http.IncomingMessage) {
+        if (response instanceof stream.Readable) {
             throw new Error(`Failed to retrieve version info. Response: ${response}`);
         }
 

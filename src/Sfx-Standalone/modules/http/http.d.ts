@@ -10,7 +10,9 @@ declare module "sfx.module-manager" {
         RequestAsyncProcessor,
         ResponseAsyncHandler
     } from "sfx.http";
+
     import { IHandlerConstructor } from "sfx.common";
+    import { SelectClientCertAsyncHandler } from "sfx.http.auth";
 
     export interface IModuleManager {
         getComponentAsync(componentIdentity: "http.http-client"): Promise<IHttpClient>;
@@ -31,15 +33,15 @@ declare module "sfx.module-manager" {
         getComponentAsync(componentIdentity: "http.response-handlers.handle-redirection"): Promise<IHandlerConstructor<ResponseAsyncHandler>>;
         getComponentAsync(componentIdentity: "http.response-handlers.handle-json"): Promise<IHandlerConstructor<ResponseAsyncHandler>>;
 
-        getComponentAsync(componentIdentity: "http.response-handlers.handle-auth-cert"): Promise<IHandlerConstructor<ResponseAsyncHandler>>;
+        getComponentAsync(componentIdentity: "http.response-handlers.handle-auth-cert",
+            selectClientCertAsyncHandler: SelectClientCertAsyncHandler)
+            : Promise<IHandlerConstructor<ResponseAsyncHandler>>;
         getComponentAsync(componentIdentity: "http.response-handlers.handle-auth-aad"): Promise<IHandlerConstructor<ResponseAsyncHandler>>;
-        getComponentAsync(componentIdentity: "http.response-handlers.handle-auth-dsts"): Promise<IHandlerConstructor<ResponseAsyncHandler>>;
     }
 }
 
 declare module "sfx.http" {
     import { IDictionary, IHandlerConstructor } from "sfx.common";
-    import { IncomingMessage, ClientRequest, Server } from "http";
     import { ILog } from "sfx.logging";
     import { ICertificateInfo, ICertificate } from "sfx.cert";
     import { Readable, Writable } from "stream";
@@ -51,62 +53,62 @@ declare module "sfx.http" {
         statusCode: number;
         statusMessage: string;
         headers: IDictionary<string>;
-    
+
         addListener(event: string, listener: (...args: any[]) => void): this;
         addListener(event: "aborted", listener: () => void): this;
-    
+
         emit(event: string | symbol, ...args: any[]): boolean;
         emit(event: "aborted", listener: () => void): boolean;
-    
+
         on(event: string, listener: (...args: any[]) => void): this;
         on(event: "aborted", listener: () => void): this;
-    
+
         once(event: string, listener: (...args: any[]) => void): this;
         once(event: "aborted", listener: () => void): this;
-    
+
         prependListener(event: string, listener: (...args: any[]) => void): this;
         prependListener(event: "aborted", listener: () => void): this;
-    
+
         prependOnceListener(event: string, listener: (...args: any[]) => void): this;
         prependOnceListener(event: "aborted", listener: () => void): this;
-    
+
         removeListener(event: string, listener: (...args: any[]) => void): this;
         removeListener(event: "aborted", listener: () => void): this;
     }
-    
+
     export interface IHttpRequest extends Writable {
         getHeader(name: string): any;
         setHeader(name: string, value: any): void;
         abort(): void;
-    
+
         addListener(event: string, listener: (...args: any[]) => void): this;
         addListener(event: "response", listener: (response: IHttpResponse) => void): this;
         addListener(event: "abort", listener: () => void): this;
-    
+
         emit(event: string | symbol, ...args: any[]): boolean;
         emit(event: "response", listener: (response: IHttpResponse) => void): boolean;
         emit(event: "abort", listener: () => void): boolean;
-    
+
         on(event: string, listener: (...args: any[]) => void): this;
         on(event: "response", listener: (response: IHttpResponse) => void): this;
         on(event: "abort", listener: () => void): this;
-    
+
         once(event: string, listener: (...args: any[]) => void): this;
         once(event: "response", listener: (response: IHttpResponse) => void): this;
         once(event: "abort", listener: () => void): this;
-    
+
         prependListener(event: string, listener: (...args: any[]) => void): this;
         prependListener(event: "response", listener: (response: IHttpResponse) => void): this;
         prependListener(event: "abort", listener: () => void): this;
-    
+
         prependOnceListener(event: string, listener: (...args: any[]) => void): this;
         prependOnceListener(event: "response", listener: (response: IHttpResponse) => void): this;
         prependOnceListener(event: "abort", listener: () => void): this;
-    
+
         removeListener(event: string, listener: (...args: any[]) => void): this;
         removeListener(event: "response", listener: (response: IHttpResponse) => void): this;
         removeListener(event: "abort", listener: () => void): this;
-    }    
+    }
 
     export interface IHttpClientBuilder {
         handleRequest(constructor: IHandlerConstructor<RequestAsyncProcessor>): IHttpClientBuilder;
@@ -142,22 +144,28 @@ declare module "sfx.http" {
 
         updateDefaultRequestOptions(options: IRequestOptions): void;
 
-        deleteAsync(url: string): Promise<IncomingMessage | any>;
+        deleteAsync<T>(url: string): Promise<IHttpResponse | T>;
 
-        getAsync(url: string): Promise<IncomingMessage | any>;
+        getAsync<T>(url: string): Promise<IHttpResponse | T>;
 
-        patchAsync(url: string, data: any): Promise<IncomingMessage | any>;
+        patchAsync<T>(url: string, data: any): Promise<IHttpResponse | T>;
 
-        postAsync(url: string, data: any): Promise<IncomingMessage | any>;
+        postAsync<T>(url: string, data: any): Promise<IHttpResponse | T>;
 
-        putAsync(url: string, data: any): Promise<IncomingMessage | any>;
+        putAsync<T>(url: string, data: any): Promise<IHttpResponse | T>;
 
-        requestAsync(requestOptions: IRequestOptions, data: any): Promise<IncomingMessage | any>;
+        requestAsync<T>(requestOptions: IRequestOptions, data: any): Promise<IHttpResponse | T>;
     }
 }
 
 declare module "sfx.http.auth" {
     import { ICertificateInfo, ICertificate } from "sfx.cert";
+
+    export interface IAadMetadata {
+        authority: string;
+        clientId: string;
+        redirect: string;
+    }
 
     export interface SelectClientCertAsyncHandler {
         (url: string, certInfos: Array<ICertificateInfo>): Promise<ICertificate | ICertificateInfo>;

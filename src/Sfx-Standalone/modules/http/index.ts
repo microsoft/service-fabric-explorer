@@ -6,6 +6,7 @@ import { IModuleInfo } from "sfx.module-manager";
 import { ILog } from "sfx.logging";
 import { ICertificateLoader, IPkiCertificateService } from "sfx.cert";
 import { IHttpClient } from "sfx.http";
+import { SelectClientCertAsyncHandler } from "sfx.http.auth";
 
 import * as appUtils from "../../utilities/appUtils";
 
@@ -15,7 +16,6 @@ import handleJsonResponse from "./response-handlers/handle-json";
 import handleRedirectionResponse from "./response-handlers/handle-redirection";
 import handleAuthAadResponse from "./response-handlers/handle-auth-aad";
 import handleAuthCertResponse from "./response-handlers/handle-auth-cert";
-import handleAuthDStsResponse from "./response-handlers/handle-auth-dsts";
 import NodeHttpClientBuilder from "./node.http-client-builder";
 import ElectronHttpClientBuilder from "./electron.http-client-builder";
 
@@ -128,14 +128,9 @@ export function getModuleMetadata(): IModuleInfo {
                 name: "http.response-handlers.handle-auth-cert",
                 version: appUtils.getAppVersion(),
                 descriptor:
-                    (certLoader: ICertificateLoader, pkiCertSvc: IPkiCertificateService) =>
-                        handleAuthCertResponse.bind(null, certLoader, pkiCertSvc),
+                    (certLoader: ICertificateLoader, pkiCertSvc: IPkiCertificateService, selectClientCertAsyncHandler: SelectClientCertAsyncHandler) =>
+                        handleAuthCertResponse.bind(null, certLoader, pkiCertSvc, selectClientCertAsyncHandler),
                 deps: ["cert.cert-loader", "cert.pki-service"]
-            },
-            {
-                name: "http.response-handlers.handle-auth-dsts",
-                version: appUtils.getAppVersion(),
-                descriptor: () => handleAuthDStsResponse
             }
         ]
     };
