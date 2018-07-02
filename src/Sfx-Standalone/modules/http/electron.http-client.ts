@@ -3,46 +3,33 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IHttpClient, IRequestOptions } from "sfx.http";
+import { ILog } from "sfx.logging";
 
-import { ClientRequest } from "electron";
+import {
+    RequestAsyncProcessor,
+    ResponseAsyncHandler,
+    IRequestOptions,
+    IHttpRequest
+} from "sfx.http";
 
-export class HttpClient implements IHttpClient {
-    private requestOptions: IRequestOptions;
+import * as http from "http";
 
-    public get defaultRequestOptions(): IRequestOptions {
-        return this.requestOptions;
+import HttpClientBase from "./http-client-base";
+
+export class HttpClient extends HttpClientBase<http.RequestOptions> {
+    constructor(
+        log: ILog,
+        protocol: string,
+        requestAsyncProcessor: RequestAsyncProcessor,
+        responseAsyncHandler: ResponseAsyncHandler) {
+        super(log, protocol, requestAsyncProcessor, responseAsyncHandler);
     }
 
-    constructor() {
-
-    }
-
-    public updateDefaultRequestOptions(options: IRequestOptions): void {
+    protected generateHttpRequestOptions(requestOptions: IRequestOptions): http.RequestOptions {
         throw new Error("Method not implemented.");
     }
 
-    public deleteAsync(url: string): Promise<any> {
-        throw new Error("Method not implemented.");
-    }
-
-    public getAsync(url: string): Promise<any> {
-        throw new Error("Method not implemented.");
-    }
-
-    public patchAsync(url: string, data: any): Promise<any> {
-        throw new Error("Method not implemented.");
-    }
-
-    public postAsync(url: string, data: any): Promise<any> {
-        throw new Error("Method not implemented.");
-    }
-
-    public putAsync(url: string, data: any): Promise<any> {
-        throw new Error("Method not implemented.");
-    }
-
-    public requestAsync(requestOptions: import("sfx.http").IRequestOptions, data: any): Promise<any> {
+    protected makeRequest(options: http.RequestOptions): IHttpRequest {
         throw new Error("Method not implemented.");
     }
 }

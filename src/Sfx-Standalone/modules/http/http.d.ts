@@ -42,8 +42,71 @@ declare module "sfx.http" {
     import { IncomingMessage, ClientRequest, Server } from "http";
     import { ILog } from "sfx.logging";
     import { ICertificateInfo, ICertificate } from "sfx.cert";
+    import { Readable, Writable } from "stream";
 
     export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
+
+    export interface IHttpResponse extends Readable {
+        httpVersion: string;
+        statusCode: number;
+        statusMessage: string;
+        headers: IDictionary<string>;
+    
+        addListener(event: string, listener: (...args: any[]) => void): this;
+        addListener(event: "aborted", listener: () => void): this;
+    
+        emit(event: string | symbol, ...args: any[]): boolean;
+        emit(event: "aborted", listener: () => void): boolean;
+    
+        on(event: string, listener: (...args: any[]) => void): this;
+        on(event: "aborted", listener: () => void): this;
+    
+        once(event: string, listener: (...args: any[]) => void): this;
+        once(event: "aborted", listener: () => void): this;
+    
+        prependListener(event: string, listener: (...args: any[]) => void): this;
+        prependListener(event: "aborted", listener: () => void): this;
+    
+        prependOnceListener(event: string, listener: (...args: any[]) => void): this;
+        prependOnceListener(event: "aborted", listener: () => void): this;
+    
+        removeListener(event: string, listener: (...args: any[]) => void): this;
+        removeListener(event: "aborted", listener: () => void): this;
+    }
+    
+    export interface IHttpRequest extends Writable {
+        getHeader(name: string): any;
+        setHeader(name: string, value: any): void;
+        abort(): void;
+    
+        addListener(event: string, listener: (...args: any[]) => void): this;
+        addListener(event: "response", listener: (response: IHttpResponse) => void): this;
+        addListener(event: "abort", listener: () => void): this;
+    
+        emit(event: string | symbol, ...args: any[]): boolean;
+        emit(event: "response", listener: (response: IHttpResponse) => void): boolean;
+        emit(event: "abort", listener: () => void): boolean;
+    
+        on(event: string, listener: (...args: any[]) => void): this;
+        on(event: "response", listener: (response: IHttpResponse) => void): this;
+        on(event: "abort", listener: () => void): this;
+    
+        once(event: string, listener: (...args: any[]) => void): this;
+        once(event: "response", listener: (response: IHttpResponse) => void): this;
+        once(event: "abort", listener: () => void): this;
+    
+        prependListener(event: string, listener: (...args: any[]) => void): this;
+        prependListener(event: "response", listener: (response: IHttpResponse) => void): this;
+        prependListener(event: "abort", listener: () => void): this;
+    
+        prependOnceListener(event: string, listener: (...args: any[]) => void): this;
+        prependOnceListener(event: "response", listener: (response: IHttpResponse) => void): this;
+        prependOnceListener(event: "abort", listener: () => void): this;
+    
+        removeListener(event: string, listener: (...args: any[]) => void): this;
+        removeListener(event: "response", listener: (response: IHttpResponse) => void): this;
+        removeListener(event: "abort", listener: () => void): this;
+    }    
 
     export interface IHttpClientBuilder {
         handleRequest(constructor: IHandlerConstructor<RequestAsyncProcessor>): IHttpClientBuilder;
@@ -52,11 +115,11 @@ declare module "sfx.http" {
     }
 
     export interface RequestAsyncProcessor {
-        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: ClientRequest): Promise<void>;
+        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: IHttpRequest): Promise<void>;
     }
 
     export interface ResponseAsyncHandler {
-        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IncomingMessage): Promise<any>;
+        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any>;
     }
 
     export interface ServerCertValidator {

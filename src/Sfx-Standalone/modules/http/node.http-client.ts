@@ -21,6 +21,7 @@ import * as crypto from "crypto";
 import { HttpProtocols, HttpMethods, SslProtocols } from "./common";
 import * as utils from "../../utilities/utils";
 import { PeerCertificate } from "tls";
+import HttpClientBase from "./http-client-base";
 
 function objectToString(obj: any): string {
     const propertyNames = Object.getOwnPropertyNames(obj);
@@ -48,26 +49,8 @@ function toCertificateInfo(cert: PeerCertificate): ICertificateInfo {
     };
 }
 
-export class HttpClient implements IHttpClient {
-    private readonly log: ILog;
-
+export class HttpClient extends HttpClientBase<http.RequestOptions> {
     private readonly certLoader: ICertificateLoader;
-
-    private readonly pkiCertSvc: IPkiCertificateService;
-
-    private readonly protocol: string;
-
-    private readonly requestAsyncProcessor: RequestAsyncProcessor;
-
-    private readonly responseAsyncHandler: ResponseAsyncHandler;
-
-    private requestOptions: IRequestOptions;
-
-    private httpRequestOptions: https.RequestOptions;
-
-    public get defaultRequestOptions(): IRequestOptions {
-        return this.requestOptions;
-    }
 
     constructor(
         log: ILog,
@@ -75,141 +58,16 @@ export class HttpClient implements IHttpClient {
         protocol: string,
         requestAsyncProcessor: RequestAsyncProcessor,
         responseAsyncHandler: ResponseAsyncHandler) {
-
-        if (!Object.isObject(log)) {
-            throw new Error("log must be supplied.");
-        }
+        super(log, protocol, requestAsyncProcessor, responseAsyncHandler);
 
         if (!Object.isObject(certLoader)) {
             throw new Error("certLoader must be supplied.");
         }
 
-        if (String.isString(protocol) && protocol.trim() === "") {
-            protocol = undefined;
-        }
-
-        this.requestOptions = Object.create(null);
-        this.httpRequestOptions = Object.create(null);
-        this.log = log;
         this.certLoader = certLoader;
-        this.protocol = utils.getValue(protocol, HttpProtocols.any);
-
-        // request processor.
-        if (utils.isNullOrUndefined(requestAsyncProcessor) || Function.isFunction(requestAsyncProcessor)) {
-            this.requestAsyncProcessor = requestAsyncProcessor;
-        } else {
-            throw new Error("requestAsyncProcessor must be a function.");
-        }
-
-        // response processor.
-        if (utils.isNullOrUndefined(responseAsyncHandler)) {
-            this.responseAsyncHandler =
-                async (client: IHttpClient,
-                    log: ILog,
-                    requestOptions: IRequestOptions,
-                    requestData: any,
-                    response: http.IncomingMessage) => response;
-        } else if (!Function.isFunction(responseAsyncHandler)) {
-            throw new Error("responseAsyncHandler must be a function.");
-        } else {
-            this.responseAsyncHandler = responseAsyncHandler;
-        }
     }
 
-    public updateDefaultRequestOptions(options: IRequestOptions): void {
-        this.httpRequestOptions = options ? this.generateHttpRequestOptions(options) : Object.create(null);
-        this.requestOptions = options ? options : Object.create(null);
-    }
-
-    public deleteAsync(url: string): Promise<http.IncomingMessage | any> {
-        return this.requestAsync(
-            {
-                url: url,
-                method: HttpMethods.delete
-            },
-            null);
-    }
-
-    public getAsync(url: string): Promise<http.IncomingMessage | any> {
-        return this.requestAsync(
-            {
-                url: url,
-                method: HttpMethods.get
-            },
-            null);
-    }
-
-    public patchAsync(url: string, data: any): Promise<http.IncomingMessage | any> {
-        return this.requestAsync(
-            {
-                url: url,
-                method: HttpMethods.patch,
-            },
-            data);
-    }
-
-    public postAsync(url: string, data: any): Promise<http.IncomingMessage | any> {
-        return this.requestAsync(
-            {
-                url: url,
-                method: HttpMethods.post,
-            },
-            data);
-    }
-
-    public putAsync(url: string, data: any): Promise<http.IncomingMessage | any> {
-        return this.requestAsync(
-            {
-                url: url,
-                method: HttpMethods.put,
-            },
-            data);
-    }
-
-    public requestAsync(requestOptions: IRequestOptions, data: any): Promise<http.IncomingMessage | any> {
-        if (!Object.isObject(requestOptions)) {
-            throw new Error("requestOptions must be supplied.");
-        }
-
-        if (!String.isString(requestOptions.url)) {
-            throw new Error("requestOptions.url must be supplied.");
-        }
-
-        if (!String.isString(requestOptions.method) || requestOptions.method.trim() === "") {
-            throw new Error("requestOptions.method must be supplied.");
-        }
-
-        if (!utils.isNullOrUndefined(data)
-            && (requestOptions.method === HttpMethods.get || requestOptions.method === HttpMethods.delete)) {
-            throw new Error("For HTTP method, GET and DELETE, data cannot be supplied.");
-        }
-
-        const httpRequestOptions = this.generateHttpRequestOptions(requestOptions);
-        const options: https.RequestOptions =
-            Object.assign(
-                Object.create(null),
-                this.httpRequestOptions,
-                httpRequestOptions);
-
-        options.headers =
-            Object.assign(
-                Object.create(null),
-                this.httpRequestOptions.headers,
-                httpRequestOptions.headers);
-
-        this.log.writeInfo("{}: {}", requestOptions.method, requestOptions.url);
-        const request = this.makeRequest(options);
-
-        return this.requestAsyncProcessor(this, this.log, requestOptions, data, request)
-            .then(() => new Promise<http.IncomingMessage>((resolve, reject) => {
-                request.on("response", (response) => resolve(response));
-                request.on("error", (err: Error) => reject(err));
-                request.end();
-            }))
-            .then((response) => this.responseAsyncHandler(this, this.log, requestOptions, data, response));
-    }
-
-    private generateHttpRequestOptions(requestOptions: IRequestOptions): https.RequestOptions {
+    protected generateHttpRequestOptions(requestOptions: IRequestOptions): https.RequestOptions {
         const options: https.RequestOptions = url.parse(requestOptions.url);
 
         options.method = requestOptions.method;
@@ -252,7 +110,7 @@ export class HttpClient implements IHttpClient {
         return options;
     }
 
-    private makeRequest(options: http.RequestOptions): http.ClientRequest {
+    protected makeRequest(options: http.RequestOptions): http.ClientRequest {
         let protocol: string;
 
         if (this.protocol === HttpProtocols.any) {
