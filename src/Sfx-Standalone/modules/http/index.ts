@@ -6,7 +6,8 @@ import { IModuleInfo } from "sfx.module-manager";
 import { ILog } from "sfx.logging";
 import { ICertificateLoader, IPkiCertificateService } from "sfx.cert";
 import { IHttpClient } from "sfx.http";
-import { SelectClientCertAsyncHandler } from "sfx.http.auth";
+import { SelectClientCertAsyncHandler, IAadMetadata } from "sfx.http.auth";
+import { WebContents } from "electron";
 
 import * as appUtils from "../../utilities/appUtils";
 
@@ -122,7 +123,7 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "http.response-handlers.handle-auth-aad",
                 version: appUtils.getAppVersion(),
-                descriptor: () => handleAuthAadResponse
+                descriptor: (handlingHost: WebContents, aadMetadata: IAadMetadata) => handleAuthAadResponse.bind(null, handlingHost, aadMetadata)
             },
             {
                 name: "http.response-handlers.handle-auth-cert",

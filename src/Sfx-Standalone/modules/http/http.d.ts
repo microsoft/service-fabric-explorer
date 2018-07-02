@@ -11,8 +11,9 @@ declare module "sfx.module-manager" {
         ResponseAsyncHandler
     } from "sfx.http";
 
+    import { WebContents } from "electron";
     import { IHandlerConstructor } from "sfx.common";
-    import { SelectClientCertAsyncHandler } from "sfx.http.auth";
+    import { SelectClientCertAsyncHandler, IAadMetadata } from "sfx.http.auth";
 
     export interface IModuleManager {
         getComponentAsync(componentIdentity: "http.http-client"): Promise<IHttpClient>;
@@ -36,7 +37,11 @@ declare module "sfx.module-manager" {
         getComponentAsync(componentIdentity: "http.response-handlers.handle-auth-cert",
             selectClientCertAsyncHandler: SelectClientCertAsyncHandler)
             : Promise<IHandlerConstructor<ResponseAsyncHandler>>;
-        getComponentAsync(componentIdentity: "http.response-handlers.handle-auth-aad"): Promise<IHandlerConstructor<ResponseAsyncHandler>>;
+            
+        getComponentAsync(componentIdentity: "http.response-handlers.handle-auth-aad",
+            handlingHost: WebContents,
+            aadMetadata: IAadMetadata)
+            : Promise<IHandlerConstructor<ResponseAsyncHandler>>;
     }
 }
 
