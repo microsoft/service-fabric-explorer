@@ -12,12 +12,33 @@ import {
     IHttpRequest
 } from "sfx.http";
 
+import { IDictionary } from "sfx.common";
 import { ILog } from "sfx.logging";
 
 import * as uuidv4 from "uuid/v4";
 
 import { HttpProtocols, HttpMethods, SslProtocols } from "./common";
 import * as utils from "../../utilities/utils";
+
+function toJSON(): IDictionary<any> {
+    const jsonObject: IDictionary<any> = Object.create(null);
+    const inheritanceStack: Array<Object> = [];
+
+    let prototypeObj = this;
+
+    do {
+        inheritanceStack.push(prototypeObj);
+        prototypeObj = Object.getPrototypeOf(prototypeObj);
+    } while (prototypeObj);
+
+    while (prototypeObj = inheritanceStack.pop()) {
+        for (const property in prototypeObj) {
+            jsonObject[property] = this[property];
+        }
+    }
+
+    return jsonObject;
+}
 
 export default abstract class HttpClientBase<IHttpRequestOptions> implements IHttpClient {
     protected readonly log: ILog;
@@ -80,6 +101,18 @@ export default abstract class HttpClientBase<IHttpRequestOptions> implements IHt
     public updateDefaultRequestOptions(options: IRequestOptions): void {
         this.httpRequestOptions = options ? this.generateHttpRequestOptions(options) : Object.create(null);
         this.requestOptions = options ? options : Object.create(null);
+
+        if (this.httpRequestOptions) {
+            Object.defineProperty(
+                this.httpRequestOptions,
+                "toJSON",
+                {
+                    writable: true,
+                    configurable: false,
+                    enumerable: false,
+                    value: toJSON
+                });
+        }
     }
 
     public deleteAsync(url: string): Promise<IHttpResponse | any> {
@@ -164,7 +197,7 @@ export default abstract class HttpClientBase<IHttpRequestOptions> implements IHt
             }))
             .then(
                 (response) => {
-                    this.log.writeInfo(`[${requestId}] Received response: HTTP/${response.httpVersion} ${response.statusCode} ${response.statusMessage}`)
+                    this.log.writeInfo(`[${requestId}] Received response: HTTP/${response.httpVersion} ${response.statusCode} ${response.statusMessage}`);
 
                     this.log.writeInfo(`[${requestId}] Processing HTTP response ...`);
                     try {

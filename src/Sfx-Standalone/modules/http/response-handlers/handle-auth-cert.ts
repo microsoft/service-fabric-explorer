@@ -3,12 +3,16 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IHttpClient, ResponseAsyncHandler, IRequestOptions } from "sfx.http";
+import {
+    IHttpClient,
+    ResponseAsyncHandler,
+    IRequestOptions,
+    IHttpResponse
+} from "sfx.http";
+
 import { SelectClientCertAsyncHandler } from "sfx.http.auth";
 import { ILog } from "sfx.logging";
 import { IPkiCertificateService, ICertificateInfo, ICertificateLoader } from "sfx.cert";
-
-import { IncomingMessage } from "http";
 
 function isCertificateInfo(cert: any): cert is ICertificateInfo {
     return cert && String.isString(cert.thumbprint);
@@ -21,7 +25,7 @@ export default function handleCert(
     selectClientCertAsyncHandler: SelectClientCertAsyncHandler): ResponseAsyncHandler {
     const HttpMsg_ClientCertRequired = "Client certificate required";
 
-    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IncomingMessage): Promise<any> => {
+    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
         if (response.statusCode === 403
             && 0 === HttpMsg_ClientCertRequired.localeCompare(response.statusMessage, undefined, { sensitivity: "accent" })) {
 

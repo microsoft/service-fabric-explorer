@@ -3,13 +3,17 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ResponseAsyncHandler, IRequestOptions, IHttpClient } from "sfx.http";
+import {
+    ResponseAsyncHandler,
+    IRequestOptions,
+    IHttpClient,
+    IHttpResponse
+} from "sfx.http";
+
 import { ILog } from "sfx.logging";
 
-import * as http from "http";
-
 export default function handleRedirection(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
-    return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: http.IncomingMessage): Promise<any> => {
+    return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
         if (response.statusCode === 301
             || response.statusCode === 302
             || response.statusCode === 307

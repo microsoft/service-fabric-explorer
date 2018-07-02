@@ -4,13 +4,16 @@
 //-----------------------------------------------------------------------------
 
 import { ILog } from "sfx.logging";
-import { ResponseAsyncHandler, IHttpClient, IRequestOptions } from "sfx.http";
-
-import * as http from "http";
+import {
+    ResponseAsyncHandler,
+    IHttpClient,
+    IRequestOptions,
+    IHttpResponse
+} from "sfx.http";
 
 import { HttpContentTypes } from "../common";
 
-function isJsonResponse(log: ILog, response: http.IncomingMessage): boolean {
+function isJsonResponse(log: ILog, response: IHttpResponse): boolean {
     const regex_filename_json = /filename=.+\.json/i;
 
     const contentType = response.headers["content-type"];
@@ -37,7 +40,7 @@ function isJsonResponse(log: ILog, response: http.IncomingMessage): boolean {
 export default function handleJson(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
     const regex_filename_json = /filename=.+\.json/i;
 
-    return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: http.IncomingMessage): Promise<any> => {
+    return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
         if (response.statusCode >= 200 && response.statusCode < 300 && isJsonResponse(log, response)) {
             response.setEncoding("utf8");
 

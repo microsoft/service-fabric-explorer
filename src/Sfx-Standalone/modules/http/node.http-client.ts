@@ -4,23 +4,27 @@
 //-----------------------------------------------------------------------------
 
 import {
-    IHttpClient,
     RequestAsyncProcessor,
     ResponseAsyncHandler,
     IRequestOptions
 } from "sfx.http";
 
 import { ILog } from "sfx.logging";
-import { ICertificateLoader, IPkiCertificateService, IPemCertificate, IPfxCertificate, ICertificateInfo } from "sfx.cert";
+import {
+    ICertificateLoader,
+    IPemCertificate,
+    IPfxCertificate,
+    ICertificateInfo
+} from "sfx.cert";
 
 import * as https from "https";
 import * as http from "http";
 import * as url from "url";
 import * as crypto from "crypto";
-
-import { HttpProtocols, HttpMethods, SslProtocols } from "./common";
-import * as utils from "../../utilities/utils";
 import { PeerCertificate } from "tls";
+
+import { HttpProtocols, SslProtocols } from "./common";
+import * as utils from "../../utilities/utils";
 import HttpClientBase from "./http-client-base";
 
 function objectToString(obj: any): string {
@@ -68,12 +72,16 @@ export class HttpClient extends HttpClientBase<http.RequestOptions> {
     }
 
     protected generateHttpRequestOptions(requestOptions: IRequestOptions): https.RequestOptions {
-        const options: https.RequestOptions = url.parse(requestOptions.url);
+        const options: https.RequestOptions = Object.create(this.httpRequestOptions);
+
+        Object.assign(options, url.parse(requestOptions.url));
 
         options.method = requestOptions.method;
 
         if (Object.isObject(requestOptions.headers)) {
-            options.headers = Object.assign(Object.create(null), requestOptions.headers);
+            options.headers = Object.assign(Object.create(null), options.headers, requestOptions.headers);
+        } else if (!utils.isNullOrUndefined(requestOptions.headers)) {
+            throw new Error("requestOptions.headers must be an object or null/undefined.");
         }
 
         if (String.isString(requestOptions.sslProtocol)) {
