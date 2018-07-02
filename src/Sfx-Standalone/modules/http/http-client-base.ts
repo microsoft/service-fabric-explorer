@@ -40,7 +40,7 @@ function toJSON(): IDictionary<any> {
     return jsonObject;
 }
 
-export default abstract class HttpClientBase<IHttpRequestOptions> implements IHttpClient {
+export default abstract class HttpClientBase<THttpRequestOptions> implements IHttpClient {
     protected readonly log: ILog;
 
     protected readonly protocol: string;
@@ -51,7 +51,7 @@ export default abstract class HttpClientBase<IHttpRequestOptions> implements IHt
 
     protected requestOptions: IRequestOptions;
 
-    protected httpRequestOptions: IHttpRequestOptions;
+    protected httpRequestOptions: THttpRequestOptions;
 
     public get defaultRequestOptions(): IRequestOptions {
         return this.requestOptions;
@@ -212,7 +212,7 @@ export default abstract class HttpClientBase<IHttpRequestOptions> implements IHt
                 });
     }
 
-    protected abstract generateHttpRequestOptions(requestOptions: IRequestOptions): IHttpRequestOptions;
+    protected abstract generateHttpRequestOptions(requestOptions: IRequestOptions): THttpRequestOptions;
 
-    protected abstract makeRequest(options: IHttpRequestOptions): IHttpRequest;
+    protected abstract makeRequest(options: THttpRequestOptions): IHttpRequest;
 }

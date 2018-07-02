@@ -53,7 +53,7 @@ function toCertificateInfo(cert: PeerCertificate): ICertificateInfo {
     };
 }
 
-export class HttpClient extends HttpClientBase<http.RequestOptions> {
+export default class HttpClient extends HttpClientBase<http.RequestOptions> {
     private readonly certLoader: ICertificateLoader;
 
     constructor(

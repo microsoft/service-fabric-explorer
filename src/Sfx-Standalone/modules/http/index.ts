@@ -16,10 +16,11 @@ import handleRedirectionResponse from "./response-handlers/handle-redirection";
 import handleAuthAadResponse from "./response-handlers/handle-auth-aad";
 import handleAuthCertResponse from "./response-handlers/handle-auth-cert";
 import handleAuthDStsResponse from "./response-handlers/handle-auth-dsts";
-import { HttpClientBuilder } from "./node.http-client-builder";
+import NodeHttpClientBuilder from "./node.http-client-builder";
+import ElectronHttpClientBuilder from "./electron.http-client-builder";
 
 function buildNodeHttpClient(log: ILog, certLoader: ICertificateLoader, protocol: string): IHttpClient {
-    const clientBuilder = new HttpClientBuilder(log, certLoader);
+    const clientBuilder = new NodeHttpClientBuilder(log, certLoader);
 
     // Request handlers
     clientBuilder.handleRequest(handleJsonRequest);
@@ -32,8 +33,18 @@ function buildNodeHttpClient(log: ILog, certLoader: ICertificateLoader, protocol
     return clientBuilder.build(protocol);
 }
 
-function buildElectronHttpClient(log: ILog, certLoader: ICertificateLoader, protocol: string): IHttpClient {
-    throw new Error("Not implemented!");
+function buildElectronHttpClient(log: ILog, protocol: string): IHttpClient {
+    const clientBuilder = new ElectronHttpClientBuilder(log);
+
+    // Request handlers
+    clientBuilder.handleRequest(handleJsonRequest);
+
+    // Response handlers
+    clientBuilder
+        .handleResponse(handleRedirectionResponse)
+        .handleResponse(handleJsonResponse);
+
+    return clientBuilder.build(protocol);
 }
 
 export function getModuleMetadata(): IModuleInfo {
@@ -68,26 +79,26 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "http.electron-http-client",
                 version: appUtils.getAppVersion(),
-                descriptor: (log: ILog, certLoader: ICertificateLoader) => buildElectronHttpClient(log, certLoader, HttpProtocols.any),
-                deps: ["logging", "cert.cert-loader"]
+                descriptor: (log: ILog) => buildElectronHttpClient(log, HttpProtocols.any),
+                deps: ["logging"]
             },
             {
                 name: "http.electron-https-client",
                 version: appUtils.getAppVersion(),
-                descriptor: (log: ILog, certLoader: ICertificateLoader) => buildElectronHttpClient(log, certLoader, HttpProtocols.https),
-                deps: ["logging", "cert.cert-loader"]
-            },
-            {
-                name: "http.client-builder",
-                version: appUtils.getAppVersion(),
-                descriptor: (log: ILog, certLoader: ICertificateLoader) => new HttpClientBuilder(log, certLoader),
-                deps: ["logging", "cert.cert-loader"]
+                descriptor: (log: ILog) => buildElectronHttpClient(log, HttpProtocols.https),
+                deps: ["logging"]
             },
             {
                 name: "http.node-client-builder",
                 version: appUtils.getAppVersion(),
-                descriptor: (log: ILog, certLoader: ICertificateLoader) => new HttpClientBuilder(log, certLoader),
+                descriptor: (log: ILog, certLoader: ICertificateLoader) => new NodeHttpClientBuilder(log, certLoader),
                 deps: ["logging", "cert.cert-loader"]
+            },
+            {
+                name: "http.electron-client-builder",
+                version: appUtils.getAppVersion(),
+                descriptor: (log: ILog) => new ElectronHttpClientBuilder(log),
+                deps: ["logging"]
             },
 
             // Request Handlers
