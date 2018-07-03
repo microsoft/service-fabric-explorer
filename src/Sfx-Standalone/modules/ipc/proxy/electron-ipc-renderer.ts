@@ -13,6 +13,8 @@ import ChannelProxyBase from "./channel-proxy-base";
 export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase {
     private readonly channelName: string;
 
+    private readonly windowId: number;
+
     private channel: electron.IpcRenderer;
 
     public get disposed(): boolean {
@@ -21,13 +23,7 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase {
 
     public static isValidChannel(channel: any): channel is electron.IpcRenderer {
         return !utils.isNullOrUndefined(channel)
-            && !utils.isNullOrUndefined(electron.remote)
-            && Function.isFunction(channel.sendSync)
-            && Function.isFunction(channel.sendTo)
-            && Function.isFunction(channel.sendToHost)
-            && Function.isFunction(channel.send)
-            && Function.isFunction(channel.on)
-            && Function.isFunction(channel.removeListener);
+            && channel === electron.ipcRenderer;
     }
 
     public dispose(): void {
@@ -45,13 +41,26 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase {
             throw new Error("Channel proxy already disposed.");
         }
 
-        this.channel.send(this.channelName, msg);
+        if (utils.isNullOrUndefined(this.windowId)) {
+            this.channel.send(this.channelName, msg);
+        } else if (this.windowId === -1) {
+            this.channel.sendToHost(this.channelName, msg);
+        } else {
+            this.channel.sendTo(this.windowId, this.channelName, msg);
+        }
+
         return true;
     }
 
-    constructor(channel: electron.IpcRenderer) {
+    constructor(channel: electron.IpcRenderer, windowId?: number) {
         super();
 
+        if (!utils.isNullOrUndefined(windowId)
+            && !Number.isSafeInteger(windowId)) {
+            throw new Error("Given windowId must be a safe integer.");
+        }
+
+        this.windowId = windowId;
         this.channel = channel;
         this.channelName = uuidv5(electron.remote.getCurrentWebContents().id.toString(), UuidNamespace);
 

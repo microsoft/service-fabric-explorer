@@ -13,15 +13,15 @@ import ChannelProxyBase from "./channel-proxy-base";
 export default class ElectronWebContentsChannelProxy extends ChannelProxyBase {
     private readonly channelName: string;
 
-    private channel: electron.WebContents;
+    private channelClient: electron.WebContents;
+    private channelServer: electron.IpcMain | electron.IpcRenderer;
 
     public get disposed(): boolean {
-        return this.channel === undefined;
+        return this.channelClient === undefined;
     }
 
     public static isValidChannel(channel: any): channel is electron.WebContents {
         return !utils.isNullOrUndefined(channel)
-            && !utils.isNullOrUndefined(electron.ipcMain)
             && Function.isFunction(channel.executeJavaScript)
             && Function.isFunction(channel.setAudioMuted)
             && Function.isFunction(channel.setZoomFactor)
@@ -33,9 +33,10 @@ export default class ElectronWebContentsChannelProxy extends ChannelProxyBase {
         super.dispose();
 
         if (!this.disposed) {
-            electron.ipcMain.removeListener(this.channelName, this.onChannelData);
+            this.channelServer.removeListener(this.channelName, this.onChannelData);
 
-            this.channel = undefined;
+            this.channelServer = undefined;
+            this.channelClient = undefined;
         }
     }
 
@@ -44,17 +45,18 @@ export default class ElectronWebContentsChannelProxy extends ChannelProxyBase {
             throw new Error("Channel proxy already disposed.");
         }
 
-        this.channel.send(this.channelName, msg);
+        this.channelClient.send(this.channelName, msg);
         return true;
     }
 
     constructor(channel: electron.WebContents) {
         super();
 
-        this.channel = channel;
+        this.channelClient = channel;
+        this.channelServer = electron.ipcMain || electron.ipcRenderer;
         this.channelName = uuidv5(channel.id.toString(), UuidNamespace);
 
-        electron.ipcMain.on(this.channelName, this.onChannelData);
+        this.channelServer.on(this.channelName, this.onChannelData);
     }
 
     private onChannelData = (event: electron.Event, data: any): void => {
