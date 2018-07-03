@@ -22,7 +22,7 @@ process.once("loaded", async () => {
     const constructorOptions =
         electron.ipcRenderer.sendSync(utils.format(ChannelNameFormat, promptWindow.id, EventNames.RequestModuleManagerConstructorOptions));
 
-    appUtils.injectModuleManager(await mmutils.createModuleManagerAsync(constructorOptions, new Communicator(electron.ipcRenderer)));
+    appUtils.injectModuleManager(await mmutils.createModuleManagerAsync(constructorOptions, Communicator.fromChannel(electron.ipcRenderer)));
 
     sfxModuleManager.registerComponents([
         {

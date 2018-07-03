@@ -59,7 +59,7 @@ export class Communicator implements ICommunicator {
 
     public static fromChannel(
         channel: ChannelType,
-        options: ICommunicatorConstructorOptions)
+        options?: ICommunicatorConstructorOptions)
         : ICommunicator {
         return new Communicator(generateChannelProxy(channel), options);
     }
