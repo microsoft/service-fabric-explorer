@@ -15,11 +15,12 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "main-window",
                 version: electron.app.getVersion(),
+                singleton: true,
                 descriptor: async (moduleManager) => {
                     const browserWindow = await moduleManager.getComponentAsync("browser-window", null, false);
-                    const m = new MainWindow(browserWindow);
-                    m.register(new LocalSfxVueComponent(""));
-                    return m;
+                    const mainWindow = new MainWindow(moduleManager, browserWindow);
+                    mainWindow.register(new LocalSfxVueComponent());
+                    return mainWindow;
                 },
                 deps: ["module-manager"]
             }

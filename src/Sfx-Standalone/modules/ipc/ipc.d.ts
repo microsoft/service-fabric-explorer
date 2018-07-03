@@ -6,7 +6,7 @@ declare module "sfx.ipc" {
     import { ChildProcess } from "child_process";
     import { Socket } from "net";
 
-    export type ChannelType = NodeJS.Process | ChildProcess | Socket | Electron.IpcRenderer | Electron.WebContents;
+    export type ChannelType = NodeJS.Process | ChildProcess | Socket | Electron.IpcRenderer | Electron.WebContents | Electron.WebviewTag;
 }
 
 declare module "sfx.module-manager" {

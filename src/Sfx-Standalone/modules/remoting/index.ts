@@ -30,7 +30,7 @@ export function getModuleMetadata(): IModuleInfo {
                 descriptor: (pattern: string) => new StringPattern(pattern)
             },
             {
-                name: "remoting.pattern.string",
+                name: "remoting.pattern.regex",
                 version: appUtils.getAppVersion(),
                 singleton: false,
                 descriptor: (pattern: RegExp) => new RegexPattern(pattern)

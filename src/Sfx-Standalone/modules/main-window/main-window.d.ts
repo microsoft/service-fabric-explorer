@@ -4,30 +4,23 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.main-window" {
-    import "jquery";
-
+    
     export interface IMainWindow {
-        register(navComponent: ISfxVueComponent): void;    
-        loadComponents(): void;
-        renderComponents(container: JQuery): void;
+        components: ISfxComponent[];
+        register(navComponent: ISfxComponent): void;        
+        load(): void;                
     }
 
-    export interface ISfxVueComponent {
-        path: string;
+    export interface ISfxComponent {
+        id: string;
         title: string;
-        iconUrl: string;
-        viewPageUrl: string;
-        
-        render(container: JQuery): void;        
-    }
-
-    export interface ISfxVueComponentRedneringOption {
-        position: string;
-        order: number;
+        iconUrl?: string;
+        viewUrl?: string;
+        mainViewUrl?: string;
     }
 }
 
-declare module "sfx.module-manager" {    
+declare module "sfx.module-manager" {
     import { IMainWindow } from "sfx.main-window";
 
     export interface IModuleManager {
