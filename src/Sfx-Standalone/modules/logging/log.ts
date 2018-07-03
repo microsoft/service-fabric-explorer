@@ -245,7 +245,14 @@ class Log implements ILog {
 
             finalProperties = finalProperties || Object.create(null);
             finalProperties["Caller.FileName"] = callerInfo.fileName;
-            finalProperties["Caller.Name"] = `${typeName}.${functionName}()`;
+
+            if (!String.isEmptyOrWhitespace(typeName)) {
+                finalProperties["Caller.Name"] = `${typeName}.`;
+            } else {
+                finalProperties["Caller.Name"] = "";
+            }
+
+            finalProperties["Caller.Name"] += `${functionName}()`;
         }
 
         return finalProperties;

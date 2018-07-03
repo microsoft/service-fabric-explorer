@@ -11,7 +11,8 @@ export enum DataType {
     Number = "number",
     String = "string",
     Symbol = "symbol",
-    Function = "function"
+    Function = "function",
+    Buffer = "node-buffer"
 }
 
 const DataTypeValues: Array<string> = Object.values(DataType);
@@ -49,6 +50,8 @@ export function dataTypeOf(data: any): DataType {
         case DataType.Object:
             if (data === null) {
                 return DataType.Null;
+            } else if (data instanceof Buffer) {
+                return DataType.Buffer;
             }
 
             return DataType.Object;

@@ -95,6 +95,10 @@ export class DataInfoManager implements IDisposable {
             }
         }
 
+        if (dataInfo.type === DataType.Buffer) {
+            return Buffer.from(dataInfo.value.data);
+        }
+
         return dataInfo.value;
     }
 
