@@ -15,8 +15,12 @@ import * as child_process from "child_process";
 
 import { env, Platform } from "./env";
 
-let inspectPort: number = 17000;
+interface IContext {
+    cmdArgs?: IDictionary<string>;
+    inspectPort?: number;
+}
 
+const Context: IContext = Object.create(null);
 const CmdArgParseFormat = /^\s*\-\-([a-zA-Z0-9_\-+@]+)\=?(.*)$/g;
 
 export const appDir: string = getAppDir();
@@ -27,8 +31,33 @@ function getAppDir(): string {
     return argDict["appDir"] || argDict["app-path"] || path.dirname(require.main.filename);
 }
 
-function getInspectPort(): number {
-    return inspectPort++;
+function getInspectArg(): string {
+    const inspectArg = getCmdArg("inspect-brk");
+
+    if (utils.isNullOrUndefined(inspectArg)) {
+        return;
+    }
+
+    if (!Context.inspectPort) {
+        if (String.isEmptyOrWhitespace(inspectArg)) {
+            // NodeJS Default Port: https://nodejs.org/en/docs/guides/debugging-getting-started/
+            Context.inspectPort = 9229;
+        } else {
+            const args = inspectArg.split(":");
+
+            if (args.length === 1) {
+                Context.inspectPort = parseInt(args[0], 10);
+            } else if (args.length > 1) {
+                Context.inspectPort = parseInt(args[1], 10);
+            } else {
+                throw new Error(`Unable to handle --inspect-brk=${inspectArg}`);
+            }
+
+            Context.inspectPort += 100;
+        }
+    }
+
+    return `--inspect-brk=${Context.inspectPort++}`;
 }
 
 export function getIconPath(): string {
@@ -83,9 +112,11 @@ export function toArgDict(args: Array<string>): IDictionary<string> {
 }
 
 export function getCmdArg(argName: string): string {
-    const argDict = toArgDict(process.argv);
+    if (!Context.cmdArgs) {
+        Context.cmdArgs = toArgDict(process.argv);
+    }
 
-    return argDict[argName];
+    return Context.cmdArgs[argName];
 }
 
 export function formEssentialForkArgs(): Array<string> {
@@ -104,8 +135,10 @@ export function fork(modulePath: string, forkArgs: Array<string>): child_process
     const args: Array<string> = formEssentialForkArgs();
 
     if (Array.isArray(process.argv)) {
-        if (0 <= process.argv.findIndex((arg) => arg.startsWith("--inspect-brk"))) {
-            args.push("--inspect-brk=" + getInspectPort().toString());
+        let arg: string = getInspectArg();
+
+        if (arg) {
+            args.push(arg);
         }
     }
 

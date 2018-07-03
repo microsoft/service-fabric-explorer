@@ -21,6 +21,7 @@ import * as crypto from "crypto";
 import * as tar from "tar";
 import * as fs from "fs";
 import * as tmp from "tmp";
+import * as stream from "stream";
 
 import { electron } from "../utilities/electron-adapter";
 import * as appUtils from "../utilities/appUtils";
@@ -295,9 +296,9 @@ class PackageRepository implements IPackageRepository {
         searchUrl.searchParams.append("size", resultSize.toString());
         searchUrl.searchParams.append("from", offset.toString());
 
-        return this.httpClient.getAsync(searchUrl.href)
+        return this.httpClient.getAsync<NpmRegistry.ISearchResult>(searchUrl.href)
             .then((npmSearchResult) => {
-                if (npmSearchResult instanceof http.IncomingMessage) {
+                if (npmSearchResult instanceof stream.Readable) {
                     return Promise.reject(new Error(`Failed to search (${searchUrl}): HTTP${npmSearchResult.statusCode} => ${npmSearchResult.statusMessage}`));
                 }
 
@@ -336,9 +337,9 @@ class PackageRepository implements IPackageRepository {
 
         const packageConfigUrl = new URL(packageName, this.config.url);
 
-        return this.httpClient.getAsync(packageConfigUrl.href)
+        return this.httpClient.getAsync<NpmRegistry.IModuleInfo>(packageConfigUrl.href)
             .then((response) => {
-                if (response instanceof http.IncomingMessage) {
+                if (response instanceof stream.Readable) {
                     if (response.statusCode === 404) {
                         return undefined;
                     }
@@ -346,7 +347,7 @@ class PackageRepository implements IPackageRepository {
                     return Promise.reject(new Error(`Failed to request package config for package: ${packageConfigUrl}`));
                 }
 
-                return response;
+                return Promise.resolve(response);
             });
     }
 
