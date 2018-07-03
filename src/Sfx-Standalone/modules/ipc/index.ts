@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ChannelType } from "sfx.ipc";
+import { ChannelType, ICommunicatorConstructorOptions } from "sfx.ipc";
 import { IModuleInfo } from "sfx.module-manager";
 import { ILog } from "sfx.logging";
 
@@ -20,7 +20,7 @@ export function getModuleMetadata(): IModuleInfo {
                 name: "ipc.communicator",
                 version: appUtils.getAppVersion(),
                 deps: ["logging"],
-                descriptor: (log: ILog, channel: ChannelType, id?: string) => new Communicator(channel, id)
+                descriptor: (log: ILog, channel: ChannelType, options?: ICommunicatorConstructorOptions) => new Communicator(channel, options)
             }
         ]
     };

@@ -5,7 +5,7 @@
 
 import { IDictionary, IDisposable } from "sfx.common";
 import { AsyncRequestHandler, ICommunicator, IRoutePattern } from "sfx.remoting";
-import { ChannelType } from "sfx.ipc";
+import { ChannelType, ICommunicatorConstructorOptions } from "sfx.ipc";
 
 import { ChildProcess } from "child_process";
 import { Socket } from "net";
@@ -17,7 +17,7 @@ import * as utils from "../../utilities/utils";
 
 interface IMessage {
     id: string;
-    succeeded: boolean;
+    succeeded?: boolean;
     path?: string;
     body?: any;
 }
@@ -189,7 +189,7 @@ class ElectronIpcRendererChannelProxy implements IChannelProxy {
         this.channel = channel;
         this.dataHandler = dataHandler;
         this.channelName = uuidv5(electron.remote.getCurrentWebContents().id.toString(), UuidNamespace);
-        
+
         this.channel.on(this.channelName, this.onChannelData);
     }
 
@@ -270,6 +270,8 @@ function generateChannelProxy(channel: any, dataHandler: ChannelProxyDataHandler
 export class Communicator implements ICommunicator {
     public readonly id: string;
 
+    private readonly timeout: number;
+
     private ongoingPromiseDict: IDictionary<IPromiseResolver>;
 
     private routes: Array<IRoute>;
@@ -278,10 +280,24 @@ export class Communicator implements ICommunicator {
 
     constructor(
         channel: ChannelType,
-        id?: string) {
+        options?: ICommunicatorConstructorOptions) {
         this.routes = [];
         this.ongoingPromiseDict = Object.create(null);
-        this.id = String.isString(id) && !String.isEmptyOrWhitespace(id) ? id : uuidv4();
+
+        this.id = uuidv4();
+        this.timeout = 5 * 60 * 1000; // 5 min
+
+        if (options) {
+            if (String.isString(options.id)
+                && !String.isEmptyOrWhitespace(options.id)) {
+                this.id = options.id;
+            }
+
+            if (Number.isInteger(options.timeout)) {
+                this.timeout = options.timeout;
+            }
+        }
+
         this.channelProxy = generateChannelProxy(channel, this.onMessageAsync);
     }
 
@@ -335,7 +351,6 @@ export class Communicator implements ICommunicator {
             const msg: IMessage = {
                 id: uuidv4(),
                 path: path,
-                succeeded: true,
                 body: content
             };
 
@@ -344,10 +359,29 @@ export class Communicator implements ICommunicator {
                 return;
             }
 
+            const timer =
+                setTimeout(
+                    (reject) => {
+                        delete this.ongoingPromiseDict[msg.id];
+                        reject(new Error(`Response for the msg (Id:${msg.id}) is timed out.`));
+                    },
+                    this.timeout,
+                    reject);
+
             this.ongoingPromiseDict[msg.id] = {
-                resolve: resolve,
-                reject: reject
+                resolve:
+                    (result) => {
+                        clearTimeout(timer);
+                        resolve(result);
+                    },
+                reject:
+                    (error) => {
+                        clearTimeout(timer);
+                        reject(error);
+                    }
             };
+
+
         });
     }
 
@@ -377,15 +411,11 @@ export class Communicator implements ICommunicator {
     private onMessageAsync = async (msg: IMessage): Promise<void> => {
         const promise = this.ongoingPromiseDict[msg.id];
 
-        if (!utils.isNullOrUndefined(promise)) {
+        if (promise) {
             delete this.ongoingPromiseDict[msg.id];
+            msg.succeeded ? promise.resolve(msg.body) : promise.reject(msg.body);
 
-            if (msg.succeeded === true) {
-                promise.resolve(msg.body);
-            } else {
-                promise.reject(msg.body);
-            }
-        } else {
+        } else if (utils.isNullOrUndefined(msg.succeeded)) {
             const route = this.routes.find((route) => route.pattern.match(msg.path));
 
             if (route !== undefined) {
