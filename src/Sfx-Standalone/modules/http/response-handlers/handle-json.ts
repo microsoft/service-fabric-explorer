@@ -38,8 +38,6 @@ function isJsonResponse(log: ILog, response: IHttpResponse): boolean {
 }
 
 export default function handleJson(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
-    const regex_filename_json = /filename=.+\.json/i;
-
     return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
         if (response.statusCode >= 200 && response.statusCode < 300 && isJsonResponse(log, response)) {
             response.setEncoding("utf8");

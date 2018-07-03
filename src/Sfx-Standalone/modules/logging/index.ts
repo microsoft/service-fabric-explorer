@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleInfo, IModuleManager } from "sfx.module-manager";
+import { IModuleInfo } from "sfx.module-manager";
 import { ISettings } from "sfx.settings";
 import { ILoggerSettings } from "sfx.logging";
 

@@ -60,7 +60,11 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase {
             throw new Error("Given windowId must be a safe integer.");
         }
 
-        this.windowId = windowId;
+        if (windowId < -2) {
+            throw new Error("Given windowId must be greater than or equal to -2.");
+        } 
+
+        this.windowId = windowId === -2 ? electron.remote.getCurrentWindow().id : windowId;
         this.channel = channel;
         this.channelName = uuidv5(electron.remote.getCurrentWebContents().id.toString(), UuidNamespace);
 
