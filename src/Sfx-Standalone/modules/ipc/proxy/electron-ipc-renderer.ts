@@ -41,7 +41,7 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase {
             throw new Error("Channel proxy already disposed.");
         }
 
-        if (utils.isNullOrUndefined(this.windowId)) {
+        if (this.windowId === -2) {
             this.channel.send(this.channelName, msg);
         } else if (this.windowId === -1) {
             this.channel.sendToHost(this.channelName, msg);
@@ -60,9 +60,19 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase {
             throw new Error("Given windowId must be a safe integer.");
         }
 
+        if (utils.isNullOrUndefined(windowId)) {
+            const currentWindow = electron.remote.getCurrentWindow();
+            const currentWebContents = electron.remote.getCurrentWebContents();
+
+            // If the current WebContents is the same as the WebContents of the current window,
+            // Then the target windowId will be main process,
+            // Else the target windowId will be the current window (parent).
+            windowId = currentWindow.webContents.id === currentWebContents.id ? -2 : currentWindow.id;
+        }
+
         if (windowId < -2) {
             throw new Error("Given windowId must be greater than or equal to -2.");
-        } 
+        }
 
         this.windowId = windowId === -2 ? electron.remote.getCurrentWindow().id : windowId;
         this.channel = channel;
