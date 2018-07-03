@@ -5,7 +5,6 @@
 
 import { ChannelType, ICommunicatorConstructorOptions } from "sfx.ipc";
 import { IModuleInfo } from "sfx.module-manager";
-import { ILog } from "sfx.logging";
 
 import { Communicator } from "./communicator";
 import * as appUtils from "../../utilities/appUtils";
@@ -20,7 +19,8 @@ export function getModuleMetadata(): IModuleInfo {
                 name: "ipc.communicator",
                 version: appUtils.getAppVersion(),
                 deps: ["logging"],
-                descriptor: (log: ILog, channel: ChannelType, options?: ICommunicatorConstructorOptions) => new Communicator(channel, options)
+                descriptor: (channel: ChannelType, options?: ICommunicatorConstructorOptions) =>
+                    Communicator.fromChannel(channel, options)
             }
         ]
     };
