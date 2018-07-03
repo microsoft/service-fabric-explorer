@@ -12,10 +12,20 @@ import {
 
 import { SelectClientCertAsyncHandler } from "sfx.http.auth";
 import { ILog } from "sfx.logging";
-import { IPkiCertificateService, ICertificateInfo, ICertificateLoader } from "sfx.cert";
+
+import {
+    IPkiCertificateService,
+    ICertificateInfo,
+    ICertificateLoader,
+    ICertificate
+} from "sfx.cert";
 
 function isCertificateInfo(cert: any): cert is ICertificateInfo {
     return cert && String.isString(cert.thumbprint);
+}
+
+function isCertificate(cert: any): cert is ICertificate {
+    return cert && String.isString(cert.type);
 }
 
 export default function handleCert(
@@ -37,9 +47,11 @@ export default function handleCert(
             if (isCertificateInfo(selectedCert)) {
                 log.writeInfo(`Client certificate (thumbprint:${selectedCert.thumbprint}) is selected.`);
                 selectedCert = pkiCertSvc.getCertificate(selectedCert);
-            } else {
+            } else if (isCertificate(selectedCert)) {
                 log.writeInfo(`Custom client certificate (type: ${selectedCert.type}) is selected.`);
                 selectedCert = certLoader.load(selectedCert);
+            } else {
+                throw new Error(`Invalid client certificate: ${JSON.stringify(selectedCert, null, 4)}`);
             }
 
             const clientRequestOptions = client.defaultRequestOptions;

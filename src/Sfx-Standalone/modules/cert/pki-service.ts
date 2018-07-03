@@ -11,6 +11,8 @@ import {
 } from "sfx.cert";
 
 import { execSync } from "child_process";
+
+import { env, Platform } from "../../utilities/env";
 import { local } from "../../utilities/appUtils";
 
 enum StoreNames {
@@ -19,6 +21,10 @@ enum StoreNames {
 
 export class PkiService implements IPkiCertificateService {
     public getCertificateInfos(storeName: StoreName): Array<ICertificateInfo> {
+        if (env.platform !== Platform.Windows) {
+            return undefined;
+        }
+
         if (!Object.values(StoreNames).includes(storeName)) {
             throw new Error(`Invalid storeName: ${storeName}`);
         }
