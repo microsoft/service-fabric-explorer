@@ -1,5 +1,5 @@
 import * as $ from "jquery";
-import { ICommunicator, AsyncRequestHandler, IRoutePattern }  from "sfx.remoting";
+import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting";
 import { ipcRenderer, ipcMain, WebviewTag } from "electron";
 import { IMainWindow, IComponentConfiguration } from "sfx.main-window";
 import { SfxContainer } from "./sfx-container/sfx-container.script";
@@ -7,38 +7,34 @@ import { SfxContainer } from "./sfx-container/sfx-container.script";
 (async () => {
     try {
 
-        
-
-        const leftpanel = $("div#leftpanel");
-        const communicator = <ICommunicator>await sfxModuleManager.getComponentAsync("ipc.communicator", ipcRenderer);
+        const leftpanel = $("div#left-panel");
+        const communicator = await sfxModuleManager.getComponentAsync<ICommunicator>("ipc.communicator", ipcRenderer);
         const pattern = await sfxModuleManager.getComponentAsync("remoting.pattern.string", "//index-window");
 
-        const onConfigurationReceived = async (communicator: ICommunicator, path: string, msg: IComponentConfiguration[]): Promise<any> => {            
-            console.log(msg[0]);    
+        const onConfigurationReceived = async (communicator: ICommunicator, path: string, msg: IComponentConfiguration[]): Promise<any> => {
+            console.log(msg[0]);
 
-            msg.forEach(component => {
+            await Promise.all(msg.map(async component => {
                 const template = $(`<div><button>${component.title}</button></div>`);
-    
-                if (component.viewUrl) {
-                    $(`<webview src="${component.viewUrl}" nodeintegration preload="./cluster-list/preload.js"></webview>`).appendTo(template);
-                }
-    
                 leftpanel.append(template);
 
-                const webview = <WebviewTag>document.querySelector("webview");
+                if (component.viewUrl) {
+                    $(`<webview id="wv-${component.id}" src="${component.viewUrl}" nodeintegration preload="./cluster-list/preload.js"></webview>`).appendTo(template);
 
-                console.log(webview);
-                    
-                if (webview) {
+                    let webview = <WebviewTag>document.querySelector(`webview[id='wv-${component.id}']`);
+
+                    console.log(webview);
+
                     webview.addEventListener("dom-ready", () => {
                         webview.openDevTools();
                     });
-                }
-            });
 
-            return Promise.resolve();
+                    await sfxModuleManager.newHostAsync(`host-${component.id}`, await sfxModuleManager.getComponentAsync<ICommunicator>("ipc.communicator", webview.getWebContents()));
+                    console.log("index.script done");
+                }
+            }));
         };
-        
+
         communicator.map(pattern, onConfigurationReceived);
 
     } catch (error) {

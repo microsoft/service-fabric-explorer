@@ -71,7 +71,7 @@ export class Communicator implements ICommunicator {
         this.ongoingPromiseDict = Object.create(null);
 
         this.id = uuidv4();
-        this.timeout = 5 * 60 * 1000; // 5 min
+        this.timeout = 10 * 1000; // 10 secs for now
 
         if (options) {
             if (String.isString(options.id)

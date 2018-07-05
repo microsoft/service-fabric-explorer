@@ -12,14 +12,13 @@ import * as mmutils from "../../module-manager/utils";
 import { IModuleManager } from "sfx.module-manager";
 
 export class LocalSfxVueComponent implements IComponentConfiguration {
-    id: "cluster-list";
+    id: string = "cluster-list";
     title: string = "Clusters";
     iconUrl?: string;
     viewUrl: string = resolve("./cluster-list/cluster-list.html");
     mainViewUrl?: string;
 
     public handleButtonClick(): Promise<void> {
-
 
         return Promise.resolve();
     }

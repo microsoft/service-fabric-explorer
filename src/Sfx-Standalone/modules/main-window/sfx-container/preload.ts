@@ -14,7 +14,7 @@ appUtils.logUnhandledRejection();
 
 process.once("loaded", async () => {
     const constructorOptions = ipcRenderer.sendSync("request-module-manager-constructor-options-component");
-    const communicator = new Communicator(ipcRenderer);
+    const communicator = Communicator.fromChannel(ipcRenderer);
     appUtils.injectModuleManager(await mmutils.createModuleManagerAsync(constructorOptions, communicator));
 
     console.log(sfxModuleManager);

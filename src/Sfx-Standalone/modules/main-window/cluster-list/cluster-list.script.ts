@@ -6,6 +6,22 @@ import { SfxContainer } from "../sfx-container/sfx-container.script";
 import { electron } from "../../../utilities/electron-adapter";
 import { IComponentInfo } from "sfx.module-manager";
 
+export class ClusterList implements IComponent {
+    public static getComponentInfo(): IComponentInfo {
+        return {
+            name: "cluster-list",
+            version: electron.app.getVersion(),
+            singleton: true,
+            descriptor: () => new ClusterList(),
+            deps: []
+        };
+    }
+
+    handleButtonClickAsync(button: HTMLElement): Promise<void> {
+        throw new Error("Method not implemented.");
+    }
+}
+
 (async () => {
 
     sfxModuleManager.registerComponents([ ClusterList.getComponentInfo() ]);
@@ -13,8 +29,7 @@ import { IComponentInfo } from "sfx.module-manager";
     console.log("cluster-list loaded");
 
     try {
-        sfxModuleManager.getComponentAsync("ipc.communicator", ipcRenderer).then(c => console.log("comm", c));
-        //console.log("communicator", await sfxModuleManager.getComponentAsync("ipc.communicator", ipcRenderer));
+        sfxModuleManager.getComponentAsync("ipc.communicator", ipcRenderer).then(c => console.log("comm", c));        
     } catch (error) {
         console.log(error);
     }
@@ -27,29 +42,9 @@ import { IComponentInfo } from "sfx.module-manager";
         $button.click(() => {
             console.log("button clicked");
             // TODO: refresh sfxContainer here
-
-
-            //communicator.sendAsync("//index-window/components/cluster-list-button.click", { name: "cluster-list-button-click", endpoint: $button.data("endpoint") });
+            communicator.sendAsync("//index-window/components/cluster-list-button.click", { name: "cluster-list-button-click", endpoint: $button.data("endpoint") });
         });
     } catch (error) {
         console.log(error);
     }
 })();
-
-export class ClusterList implements IComponent {
-
-    public static getComponentInfo(): IComponentInfo {
-        return {
-            name: "cluster-list",
-            version: electron.app.getVersion(),
-            singleton: true,
-            descriptor: () => new ClusterList(),
-            deps: []
-
-        };
-    }
-
-    handleButtonClickAsync(button: HTMLElement): Promise<void> {
-        throw new Error("Method not implemented.");
-    }
-}
