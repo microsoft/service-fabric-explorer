@@ -17,7 +17,7 @@ import { ILog } from "sfx.logging";
 
 import * as uuidv4 from "uuid/v4";
 
-import { HttpProtocols, HttpMethods, SslProtocols } from "./common";
+import { HttpProtocols, HttpMethods } from "./common";
 import * as utils from "../../utilities/utils";
 
 function toJSON(): IDictionary<any> {
