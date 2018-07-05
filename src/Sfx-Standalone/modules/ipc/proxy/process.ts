@@ -9,13 +9,7 @@ import { ChildProcess } from "child_process";
 import * as utils from "../../../utilities/utils";
 import ChannelProxyBase from "./channel-proxy-base";
 
-export default class ProcessChannelProxy extends ChannelProxyBase {
-    private channel: ChildProcess;
-
-    public get disposed(): boolean {
-        return this.channel === undefined;
-    }
-
+export default class ProcessChannelProxy extends ChannelProxyBase<ChildProcess> {
     // Process and ChildProcess share the same functions but ChildProcess has more detailed type information.
     //
     // Process:
@@ -35,12 +29,11 @@ export default class ProcessChannelProxy extends ChannelProxyBase {
     }
 
     public dispose(): void {
-        super.dispose();
-
         if (!this.disposed) {
             this.channel.removeListener("message", this.onMessage);
-            this.channel = undefined;
         }
+
+        super.dispose();
     }
 
     public sendMessage(msg: IMessage): boolean {
@@ -52,13 +45,12 @@ export default class ProcessChannelProxy extends ChannelProxyBase {
     }
 
     constructor(channel: ChildProcess) {
-        super();
+        super(channel);
 
-        this.channel = channel;
         this.channel.on("message", this.onMessage);
     }
 
     private onMessage = (message) => {
-        this.triggerDataHandler(message);
+        this.triggerDataHandler(this.channel, message);
     }
 }

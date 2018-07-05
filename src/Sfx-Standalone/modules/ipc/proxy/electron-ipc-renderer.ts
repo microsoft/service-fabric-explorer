@@ -10,16 +10,10 @@ import * as uuidv5 from "uuid/v5";
 import * as utils from "../../../utilities/utils";
 import ChannelProxyBase from "./channel-proxy-base";
 
-export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase {
+export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase<electron.IpcRenderer> {
     private readonly channelName: string;
 
     private readonly windowId: number;
-
-    private channel: electron.IpcRenderer;
-
-    public get disposed(): boolean {
-        return this.channel === undefined;
-    }
 
     public static isValidChannel(channel: any): channel is electron.IpcRenderer {
         return !utils.isNullOrUndefined(channel)
@@ -27,13 +21,11 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase {
     }
 
     public dispose(): void {
-        super.dispose();
-
         if (!this.disposed) {
             this.channel.removeListener(this.channelName, this.onChannelData);
-
-            this.channel = undefined;
         }
+
+        super.dispose();
     }
 
     public sendMessage(msg: IMessage): boolean {
@@ -53,7 +45,7 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase {
     }
 
     constructor(channel: electron.IpcRenderer, windowId?: number) {
-        super();
+        super(channel);
 
         if (!utils.isNullOrUndefined(windowId)
             && !Number.isSafeInteger(windowId)) {
@@ -75,13 +67,12 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase {
         }
 
         this.windowId = windowId === -2 ? electron.remote.getCurrentWindow().id : windowId;
-        this.channel = channel;
         this.channelName = uuidv5(electron.remote.getCurrentWebContents().id.toString(), UuidNamespace);
 
         this.channel.on(this.channelName, this.onChannelData);
     }
 
     private onChannelData = (event: electron.Event, data: any) => {
-        this.triggerDataHandler(data);
+        this.triggerDataHandler(event.sender, data);
     }
 }

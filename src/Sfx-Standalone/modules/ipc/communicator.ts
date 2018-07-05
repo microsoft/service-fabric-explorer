@@ -196,7 +196,7 @@ export class Communicator implements ICommunicator {
         }
     }
 
-    private onMessageAsync = async (msg: IMessage): Promise<void> => {
+    private onMessageAsync = async (channel: ChannelType, msg: IMessage): Promise<void> => {
         const promise = this.ongoingPromiseDict[msg.id];
 
         if (promise) {

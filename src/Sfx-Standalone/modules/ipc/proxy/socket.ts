@@ -9,13 +9,7 @@ import { Socket } from "net";
 import * as utils from "../../../utilities/utils";
 import ChannelProxyBase from "./channel-proxy-base";
 
-export default class SocketChannelProxy extends ChannelProxyBase {
-    private channel: Socket;
-
-    public get disposed(): boolean {
-        return this.channel === undefined;
-    }
-
+export default class SocketChannelProxy extends ChannelProxyBase<Socket> {
     public static isValidChannel(channel: any): channel is Socket {
         return !utils.isNullOrUndefined(channel)
             && Function.isFunction(channel.write)
@@ -26,10 +20,9 @@ export default class SocketChannelProxy extends ChannelProxyBase {
     public dispose(): void {
         if (!this.disposed) {
             this.channel.removeListener("data", this.onChannelData);
-
-            this.channel = undefined;
-            this.dataHandler = undefined;
         }
+
+        super.dispose();
     }
 
     public sendMessage(msg: IMessage): boolean {
@@ -41,17 +34,15 @@ export default class SocketChannelProxy extends ChannelProxyBase {
     }
 
     constructor(channel: Socket) {
-        super();
+        super(channel);
 
-        this.channel = channel;
-        
         this.channel.on("data", this.onChannelData);
     }
 
     private onChannelData = (data: Buffer) => {
         if (String.isString(data)) {
             try {
-                this.triggerDataHandler(JSON.parse(data));
+                this.triggerDataHandler(this.channel, JSON.parse(data));
             } catch { }
         }
     }
