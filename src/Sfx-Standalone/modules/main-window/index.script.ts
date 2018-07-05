@@ -1,14 +1,19 @@
 import * as $ from "jquery";
 import { ICommunicator, AsyncRequestHandler, IRoutePattern }  from "sfx.remoting";
 import { ipcRenderer, ipcMain, WebviewTag } from "electron";
-import { IMainWindow, ISfxComponent } from "sfx.main-window";
+import { IMainWindow, IComponentConfiguration } from "sfx.main-window";
+import { SfxContainer } from "./sfx-container/sfx-container.script";
 
 (async () => {
     try {
+
+        
+
         const leftpanel = $("div#leftpanel");
         const communicator = <ICommunicator>await sfxModuleManager.getComponentAsync("ipc.communicator", ipcRenderer);
         const pattern = await sfxModuleManager.getComponentAsync("remoting.pattern.string", "//index-window");
-        const onConfigurationReceived = async (communicator: ICommunicator, path: string, msg: ISfxComponent[]): Promise<any> => {            
+
+        const onConfigurationReceived = async (communicator: ICommunicator, path: string, msg: IComponentConfiguration[]): Promise<any> => {            
             console.log(msg[0]);    
 
             msg.forEach(component => {
@@ -28,8 +33,6 @@ import { IMainWindow, ISfxComponent } from "sfx.main-window";
                     webview.addEventListener("dom-ready", () => {
                         webview.openDevTools();
                     });
-
-                    webview.addEventListener("ipc-message", event => {});
                 }
             });
 

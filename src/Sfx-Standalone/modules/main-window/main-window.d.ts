@@ -6,17 +6,21 @@
 declare module "sfx.main-window" {
     
     export interface IMainWindow {
-        components: ISfxComponent[];
-        register(navComponent: ISfxComponent): void;        
+        components: IComponentConfiguration[];
+        register(navComponent: IComponentConfiguration): void;        
         load(): void;                
     }
 
-    export interface ISfxComponent {
+    export interface IComponentConfiguration {
         id: string;
         title: string;
         iconUrl?: string;
         viewUrl?: string;
         mainViewUrl?: string;
+    }
+
+    export interface IComponent {
+        handleButtonClickAsync(button: HTMLElement): Promise<void>; 
     }
 }
 

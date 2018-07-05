@@ -15,7 +15,7 @@
             display: flex;
         }
 
-        .leftnav {
+        .left-nav {
             width: 250px;
         }
 
@@ -37,13 +37,15 @@
 
 <body>
     <div class="main">
-        <div class="leftnav" id="leftpanel">            
+        <div class="left-nav" id="left-panel">            
         </div>
-        <div class="container" id="viewcontainer">            
+        <div class="container">        
+            <webview id="sfx-container" preload="./sfx-container/preload.js"></webview>    
         </div>
     </div>
-
 </body>
 <script type="text/javascript" src="../../node_modules/jquery/dist/jquery.min.js"></script>
-<script src="index.script.js"></script>
+<script type="text/javascript" src="index.script.js"></script>
+<!-- <script type="text/javascript" src="./sfx-container/sfx-container.script.js"></script> -->
+
 </html>
