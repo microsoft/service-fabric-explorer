@@ -12,7 +12,6 @@ import { env, Platform } from "../../utilities/env";
 import * as utils from "../../utilities/utils";
 
 // JQuery & angular already referenced in select-certificate.html.
-declare const $: JQuery;
 declare const angular: angular.IAngularStatic;
 
 (async () => {

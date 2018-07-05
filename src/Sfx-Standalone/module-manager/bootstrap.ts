@@ -19,6 +19,6 @@ appUtils.logUnhandledRejection();
     }
 
     const constructorOptions = JSON.parse(constructorOptionsArg);
-    const moduleManager = await mmutils.createModuleManagerAsync(constructorOptions, new Communicator(process));
+    const moduleManager = await mmutils.createModuleManagerAsync(constructorOptions, Communicator.fromChannel(process));
     appUtils.injectModuleManager(moduleManager);
 })();

@@ -218,7 +218,7 @@ export class ModuleManager implements IModuleManager {
                     [appUtils.toCmdArg(
                         mmutils.ConstructorOptionsArgName,
                         JSON.stringify(constructorOptions))]);
-            hostCommunicator = new Communicator(childProcess, { id: hostName });
+            hostCommunicator = Communicator.fromChannel(childProcess, { id: hostName });
 
             proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, true, hostName);
         } else {

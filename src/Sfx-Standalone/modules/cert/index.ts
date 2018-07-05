@@ -3,24 +3,28 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ChannelType, ICommunicatorConstructorOptions } from "sfx.ipc";
 import { IModuleInfo } from "sfx.module-manager";
 
-import { Communicator } from "./communicator";
 import * as appUtils from "../../utilities/appUtils";
+import { PkiService } from "./pki-service";
+import { CertLoader } from "./cert-loader";
 
 export function getModuleMetadata(): IModuleInfo {
     return {
-        name: "ipc",
+        name: "cert",
         version: appUtils.getAppVersion(),
-        loadingMode: "Always",
         components: [
             {
-                name: "ipc.communicator",
+                name: "cert.pki-service",
                 version: appUtils.getAppVersion(),
-                deps: ["logging"],
-                descriptor: (channel: ChannelType, options?: ICommunicatorConstructorOptions) =>
-                    Communicator.fromChannel(channel, options)
+                singleton: true,
+                descriptor: () => new PkiService()
+            },
+            {
+                name: "cert.cert-loader",
+                version: appUtils.getAppVersion(),
+                singleton: true,
+                descriptor: () => new CertLoader()
             }
         ]
     };

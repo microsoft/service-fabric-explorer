@@ -64,8 +64,6 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         return this._communicator;
     }
 
-    private readonly symbol_refId: symbol = Symbol("refId");
-
     private readonly ownCommunicator: boolean;
 
     private pathPattern: IRoutePattern;
@@ -146,6 +144,10 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         if (!this.disposed) {
             this.communicator.unmap(this.pathPattern);
             this.dataInfoManager.dispose();
+
+            if (this.ownCommunicator) {
+                this._communicator.dispose();
+            }
 
             this._communicator = undefined;
             this.messageHandlers = undefined;
