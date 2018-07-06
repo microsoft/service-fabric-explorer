@@ -44,7 +44,7 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase<el
         return true;
     }
 
-    constructor(channel: electron.IpcRenderer, windowId?: number) {
+    constructor(channel: electron.IpcRenderer, channelName?: string, windowId?: number) {
         super(channel);
 
         if (!utils.isNullOrUndefined(windowId)
@@ -67,7 +67,7 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase<el
         }
 
         this.windowId = windowId === -2 ? electron.remote.getCurrentWindow().id : windowId;
-        this.channelName = uuidv5(electron.remote.getCurrentWebContents().id.toString(), UuidNamespace);
+        this.channelName = channelName || uuidv5(electron.remote.getCurrentWebContents().id.toString(), UuidNamespace);
 
         this.channel.on(this.channelName, this.onChannelData);
     }

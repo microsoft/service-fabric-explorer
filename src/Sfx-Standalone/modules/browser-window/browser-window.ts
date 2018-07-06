@@ -15,7 +15,6 @@ import * as authCert from "../../utilities/auth/cert";
 import * as authAad from "../../utilities/auth/aad";
 import * as appUtils from "../../utilities/appUtils";
 import * as utils from "../../utilities/utils";
-import * as mmutils from "../../module-manager/utils";
 
 const UuidNamespace = "614e2e95-a80d-4ee5-9fd5-fb970b4b01a3";
 
@@ -125,9 +124,6 @@ export default async function createBrowserWindowAsync(
 
     const window = new BrowserWindow(windowOptions);
     const hostName = uuidv5(window.id.toString(), UuidNamespace);
-
-    ipcMain.once("request-module-manager-constructor-options",
-        (event: Electron.Event) => event.returnValue = mmutils.generateModuleManagerConstructorOptions(moduleManager));
 
     window.on("page-title-updated", (event, title) => event.preventDefault());
     window.setTitle(`${window.getTitle()} - ${app.getVersion()}`);

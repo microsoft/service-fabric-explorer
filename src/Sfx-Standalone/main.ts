@@ -45,7 +45,7 @@ async function startup(): Promise<void> {
 
     // Trigger update activity.
     (await sfxModuleManager.getComponentAsync("update")).updateAsync();
-    
+
     // Handle "window-all-closed" event.
     app.removeAllListeners("window-all-closed");
     app.once("window-all-closed", async () => {
@@ -65,7 +65,7 @@ export default function (): Promise<void> {
         return startup();
     }
 
-    app.once("ready", () => startup);
+    app.once("ready", startup);
 
     return Promise.resolve();
 }

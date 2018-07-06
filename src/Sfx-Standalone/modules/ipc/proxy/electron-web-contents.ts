@@ -43,11 +43,11 @@ export default class ElectronWebContentsChannelProxy extends ChannelProxyBase<el
         return true;
     }
 
-    constructor(channel: electron.WebContents) {
+    constructor(channel: electron.WebContents, channelName?: string) {
         super(channel);
 
         this.channelListener = electron.ipcMain || electron.ipcRenderer;
-        this.channelName = uuidv5(channel.id.toString(), UuidNamespace);
+        this.channelName = channelName || uuidv5(channel.id.toString(), UuidNamespace);
 
         this.channelListener.on(this.channelName, this.onChannelData);
     }

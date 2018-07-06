@@ -12,7 +12,6 @@ import * as utils from "../../utilities/utils";
 import { electron } from "../../utilities/electron-adapter";
 import { env, Platform } from "../../utilities/env";
 import * as appUtils from "../../utilities/appUtils";
-import * as mmutils from "../../module-manager/utils";
 import { ChannelNameFormat, EventNames } from "./constants";
 
 class Prompt<TResult> implements IPrompt<TResult> {
@@ -61,7 +60,7 @@ class Prompt<TResult> implements IPrompt<TResult> {
                     }
                 });
 
-        this.promptOptions.showMenu = utils.getValue(this.promptOptions.showMenu, false);
+        this.promptOptions.showMenu = utils.getValue(this.promptOptions.showMenu, true);
         this.promptWindow.setMenuBarVisibility(this.promptOptions.showMenu);
 
         if (this.promptOptions.showMenu && Object.isObject(this.promptOptions.menuTemplate)) {
@@ -92,10 +91,6 @@ class Prompt<TResult> implements IPrompt<TResult> {
             this.cleanupIpcListeners();
             this.promise_resolve(this.promptResult);
         });
-
-        ipcMain.once(
-            utils.format(ChannelNameFormat, this.promptWindow.id, EventNames.RequestModuleManagerConstructorOptions),
-            (event: Electron.Event) => event.returnValue = mmutils.generateModuleManagerConstructorOptions(this.moduleManager));
 
         ipcMain.once(
             utils.format(ChannelNameFormat, this.promptWindow.id, EventNames.Finished),

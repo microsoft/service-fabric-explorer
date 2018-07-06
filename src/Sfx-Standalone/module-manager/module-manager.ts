@@ -30,12 +30,19 @@ import * as diExt from "../utilities/di.ext";
 import { Communicator } from "../modules/ipc/communicator";
 import { ObjectRemotingProxy } from "../modules/proxy.object/proxy.object";
 import StringPattern from "../modules/remoting/pattern/string";
-import * as mmutils from "./utils";
 import * as appUtils from "../utilities/appUtils";
+import { ipcMain, ipcRenderer } from "electron";
 
-enum ModuleManagerAction {
+export enum ModuleManagerAction {
     loadModuleAsync = "loadModuleAsync",
-    loadModuleDirAsync = "loadModuleDirAsync"
+    loadModuleDirAsync = "loadModuleDirAsync",
+
+    requestConstructorOptions = "requestConstructorOptions"
+}
+
+export interface IModuleManagerConstructorOptions {
+    hostVersion: string;
+    initialModules: Array<IModuleLoadingConfig>;
 }
 
 interface IHostRecord {
@@ -44,7 +51,7 @@ interface IHostRecord {
     communicator: ICommunicator;
 }
 
-interface IModuleManagerMessage {
+export interface IModuleManagerMessage {
     action: ModuleManagerAction;
     content: any;
 }
@@ -143,12 +150,13 @@ class DefaultModuleLoadingPolicy implements IModuleLoadingPolicy {
     }
 }
 
+export namespace Patterns {
+    export const ModuleManager: IRoutePattern = new StringPattern("/module-manager");
+    export const ObjectProxy: IRoutePattern = new StringPattern("/module-manager/object-proxy");
+}
+
 export class ModuleManager implements IModuleManager {
     private readonly _hostVersion: string;
-
-    private readonly pattern_moduleManager: IRoutePattern;
-
-    private readonly pattern_proxy: IRoutePattern;
 
     private hostVersionMismatchHandler: HostVersionMismatchEventHandler;
 
@@ -178,16 +186,14 @@ export class ModuleManager implements IModuleManager {
         }
 
         this._hostVersion = hostVersion;
-        this.pattern_moduleManager = new StringPattern("module-manager");
-        this.pattern_proxy = new StringPattern("module-manager/object-proxy");
         this.moduleLoadingInfos = [];
         this.moduleLoadingPolicy = new DefaultModuleLoadingPolicy();
         this.container = new di.DiContainer();
 
         if (parentCommunicator) {
-            this.parentProxy = ObjectRemotingProxy.create(this.pattern_proxy, parentCommunicator, true);
+            this.parentProxy = ObjectRemotingProxy.create(Patterns.ObjectProxy, parentCommunicator, true);
             this.parentProxy.setResolver(this.onProxyResolvingAsync);
-            parentCommunicator.map(this.pattern_moduleManager, this.onModuleManagerMessageAsync);
+            parentCommunicator.map(Patterns.ModuleManager, this.onModuleManagerMessageAsync);
         }
 
         this.container.set("module-manager", diExt.singleton(this));
@@ -210,21 +216,14 @@ export class ModuleManager implements IModuleManager {
         let childProcess: child_process.ChildProcess;
 
         if (!hostCommunicator) {
-            const constructorOptions = mmutils.generateModuleManagerConstructorOptions(this);
-
-            childProcess =
-                appUtils.fork(
-                    appUtils.local("./bootstrap.js"),
-                    [appUtils.toCmdArg(
-                        mmutils.ConstructorOptionsArgName,
-                        JSON.stringify(constructorOptions))]);
+            childProcess = appUtils.fork(appUtils.local("./bootstrap.js"));
             hostCommunicator = Communicator.fromChannel(childProcess, { id: hostName });
-
-            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, true, hostName);
+            proxy = await ObjectRemotingProxy.create(Patterns.ObjectProxy, hostCommunicator, true, hostName);
         } else {
-            proxy = await ObjectRemotingProxy.create(this.pattern_proxy, hostCommunicator, false, hostName);
+            proxy = await ObjectRemotingProxy.create(Patterns.ObjectProxy, hostCommunicator, false, hostName);
         }
 
+        hostCommunicator.map(Patterns.ModuleManager, this.onModuleManagerMessageAsync);
         proxy.setResolver(this.onProxyResolvingAsync);
 
         this.children.push({
@@ -279,7 +278,7 @@ export class ModuleManager implements IModuleManager {
             const child = await this.obtainChildAsync(hostName);
 
             await child.communicator.sendAsync<ILoadModuleDirAsyncMessage, void>(
-                this.pattern_moduleManager.getRaw(),
+                Patterns.ModuleManager.getRaw(),
                 {
                     action: ModuleManagerAction.loadModuleDirAsync,
                     content: dirName
@@ -333,7 +332,7 @@ export class ModuleManager implements IModuleManager {
             const child = await this.obtainChildAsync(hostName);
 
             await child.communicator.sendAsync<ILoadModuleAsyncMessage, void>(
-                this.pattern_moduleManager.getRaw(),
+                Patterns.ModuleManager.getRaw(),
                 {
                     action: ModuleManagerAction.loadModuleAsync,
                     content: path
@@ -502,6 +501,12 @@ export class ModuleManager implements IModuleManager {
                     const loadModuleMsg = <ILoadModuleAsyncMessage>content;
                     await this.loadModuleAsync(loadModuleMsg.content);
                     break;
+
+                case ModuleManagerAction.requestConstructorOptions:
+                    return {
+                        hostVersion: this.hostVersion,
+                        initialModules: this.loadedModules.filter((info) => info.loadingMode === "Always")
+                    };
 
                 default:
                     throw new Error(`Unknown ModuleManagerAction: ${content.action}`);

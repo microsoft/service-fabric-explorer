@@ -123,7 +123,7 @@ export function formEssentialForkArgs(): Array<string> {
     return [`--appDir=${appDir}`];
 }
 
-export function fork(modulePath: string, forkArgs: Array<string>): child_process.ChildProcess {
+export function fork(modulePath: string, forkArgs?: Array<string>): child_process.ChildProcess {
     if (!String.isString(modulePath) || String.isEmptyOrWhitespace(modulePath)) {
         throw new Error("modulePath must be provided.");
     }

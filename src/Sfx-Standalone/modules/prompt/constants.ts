@@ -4,7 +4,6 @@
 //-----------------------------------------------------------------------------
 
 export enum EventNames {
-    RequestModuleManagerConstructorOptions = "request-module-manager-constructor-options",
     RequestPromptOptions = "request-prompt-options",
     Finished = "finished"
 }
