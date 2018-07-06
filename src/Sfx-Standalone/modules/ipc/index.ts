@@ -18,8 +18,8 @@ export function getModuleMetadata(): IModuleInfo {
             {
                 name: "ipc.communicator",
                 version: appUtils.getAppVersion(),
-                deps: [],
-                descriptor: (channel: ChannelType, options?: ICommunicatorConstructorOptions) => Communicator.fromChannel(channel, options)
+                descriptor: (channel: ChannelType, options?: ICommunicatorConstructorOptions) =>
+                    Communicator.fromChannel(channel, options)
             }
         ]
     };
