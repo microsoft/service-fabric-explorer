@@ -60,7 +60,7 @@ class Prompt<TResult> implements IPrompt<TResult> {
                     }
                 });
 
-        this.promptOptions.showMenu = utils.getValue(this.promptOptions.showMenu, true);
+        this.promptOptions.showMenu = utils.getValue(this.promptOptions.showMenu, false);
         this.promptWindow.setMenuBarVisibility(this.promptOptions.showMenu);
 
         if (this.promptOptions.showMenu && Object.isObject(this.promptOptions.menuTemplate)) {

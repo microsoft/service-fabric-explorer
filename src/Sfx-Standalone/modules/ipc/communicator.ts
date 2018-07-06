@@ -71,7 +71,7 @@ export class Communicator implements ICommunicator {
         this.ongoingPromiseDict = Object.create(null);
 
         this.id = uuidv4();
-        this.timeout = 10; // 10 seconds.
+        this.timeout = 10 * 1000; // 10 seconds.
 
         if (options) {
             if (String.isString(options.id)
@@ -167,8 +167,6 @@ export class Communicator implements ICommunicator {
                         reject(error);
                     }
             };
-
-
         });
     }
 

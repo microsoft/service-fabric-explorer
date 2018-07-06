@@ -6,6 +6,7 @@
 import { IDisposable } from "sfx.common";
 import {
     IModule,
+    IModuleManagerConstructorOptions,
     IModuleManager,
     IComponentInfo,
     HostVersionMismatchEventHandler,
@@ -31,18 +32,12 @@ import { Communicator } from "../modules/ipc/communicator";
 import { ObjectRemotingProxy } from "../modules/proxy.object/proxy.object";
 import StringPattern from "../modules/remoting/pattern/string";
 import * as appUtils from "../utilities/appUtils";
-import { ipcMain, ipcRenderer } from "electron";
 
 export enum ModuleManagerAction {
     loadModuleAsync = "loadModuleAsync",
     loadModuleDirAsync = "loadModuleDirAsync",
 
     requestConstructorOptions = "requestConstructorOptions"
-}
-
-export interface IModuleManagerConstructorOptions {
-    hostVersion: string;
-    initialModules: Array<IModuleLoadingConfig>;
 }
 
 interface IHostRecord {
@@ -156,6 +151,8 @@ export namespace Patterns {
 }
 
 export class ModuleManager implements IModuleManager {
+    public static readonly ConstructorOptionsCmdArgName = "module-manager-constructor-options";
+
     private readonly _hostVersion: string;
 
     private hostVersionMismatchHandler: HostVersionMismatchEventHandler;
@@ -216,14 +213,16 @@ export class ModuleManager implements IModuleManager {
         let childProcess: child_process.ChildProcess;
 
         if (!hostCommunicator) {
-            childProcess = appUtils.fork(appUtils.local("./bootstrap.js"));
+            childProcess =
+                appUtils.fork(
+                    appUtils.local("./bootstrap.js"),
+                    [appUtils.toCmdArg(ModuleManager.ConstructorOptionsCmdArgName, JSON.stringify(this.generateConstructorOptions()))]);
             hostCommunicator = Communicator.fromChannel(childProcess, { id: hostName });
             proxy = await ObjectRemotingProxy.create(Patterns.ObjectProxy, hostCommunicator, true, hostName);
         } else {
             proxy = await ObjectRemotingProxy.create(Patterns.ObjectProxy, hostCommunicator, false, hostName);
         }
 
-        hostCommunicator.map(Patterns.ModuleManager, this.onModuleManagerMessageAsync);
         proxy.setResolver(this.onProxyResolvingAsync);
 
         this.children.push({
@@ -382,6 +381,13 @@ export class ModuleManager implements IModuleManager {
         }
     }
 
+    public generateConstructorOptions(): IModuleManagerConstructorOptions {
+        return {
+            hostVersion: this.hostVersion,
+            initialModules: this.loadedModules.filter((info) => info.loadingMode === "Always")
+        };
+    }
+
     private async obtainChildAsync(hostName: string): Promise<IHostRecord> {
         let childIndex = this.children ? this.children.findIndex((child) => child.proxy.id === hostName) : -1;
 
@@ -501,12 +507,6 @@ export class ModuleManager implements IModuleManager {
                     const loadModuleMsg = <ILoadModuleAsyncMessage>content;
                     await this.loadModuleAsync(loadModuleMsg.content);
                     break;
-
-                case ModuleManagerAction.requestConstructorOptions:
-                    return {
-                        hostVersion: this.hostVersion,
-                        initialModules: this.loadedModules.filter((info) => info.loadingMode === "Always")
-                    };
 
                 default:
                     throw new Error(`Unknown ModuleManagerAction: ${content.action}`);

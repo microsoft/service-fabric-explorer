@@ -6,7 +6,11 @@
 declare module "sfx.module-manager" {
     import { ICommunicator } from "sfx.remoting";
 
-    /* Module Manager */
+    export interface IModuleManagerConstructorOptions {
+        hostVersion: string;
+        initialModules: Array<IModuleLoadingConfig>;
+    }
+
     export interface IComponentDescriptor {
         (...deps: Array<any>): any;
     }
@@ -57,6 +61,8 @@ declare module "sfx.module-manager" {
     export interface IModuleManager {
         readonly hostVersion: string;
         readonly loadedModules: Array<IModuleLoadingConfig>;
+
+        generateConstructorOptions(): IModuleManagerConstructorOptions;
 
         newHostAsync(hostName: string, hostCommunicator?: ICommunicator): Promise<void>;
         destroyHostAsync(hostName: string): Promise<void>;
