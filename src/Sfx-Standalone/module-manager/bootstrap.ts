@@ -30,6 +30,24 @@ const brootstrapPromise: Promise<void> = ((): Promise<any> => {
 
     appUtils.injectModuleManager(moduleManager);
 
+    if (electron.remote
+        && electron.remote.getCurrentWindow().webContents.id === electron.remote.getCurrentWebContents().id) {
+        const constructorOptionsArg =
+            appUtils.toCmdArg(
+                ModuleManager.ConstructorOptionsCmdArgName,
+                JSON.stringify(constructorOptions));
+
+        electron.remote.getCurrentWindow()
+            .webContents.on("will-attach-webview",
+                (event, webPreferences, params) => {
+                    if (!Array.isArray(webPreferences.additionalArguments)) {
+                        webPreferences.additionalArguments = [];
+                    }
+
+                    webPreferences.additionalArguments.push(constructorOptionsArg);
+                });
+    }
+
     if (Array.isArray(constructorOptions.initialModules)) {
         return Promise.all(
             constructorOptions.initialModules.map<Promise<void>>(
