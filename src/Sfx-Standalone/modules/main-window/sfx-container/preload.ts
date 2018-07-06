@@ -16,9 +16,4 @@ process.once("loaded", async () => {
     const constructorOptions = ipcRenderer.sendSync("request-module-manager-constructor-options-component");
     const communicator = Communicator.fromChannel(ipcRenderer);
     appUtils.injectModuleManager(await mmutils.createModuleManagerAsync(constructorOptions, communicator));
-
-    console.log(sfxModuleManager);
-   
-    global["communicator"] = communicator;
-    console.log("done");
 });

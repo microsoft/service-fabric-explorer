@@ -52,22 +52,19 @@ export class MainWindow implements IMainWindow {
         this.browserWindow.loadURL(resolve("index.html"));
 
         this.browserWindow.once("ready-to-show", async () => {
-
             this.browserWindow.webContents.openDevTools();
             this.browserWindow.show();
 
             this.communicator = await sfxModuleManager.getComponentAsync("ipc.communicator", this.browserWindow.webContents);
             await this.communicator.sendAsync("//index-window", this.components);
+                        
+            // const pattern = await sfxModuleManager.getComponentAsync("remoting.pattern.string", "//index-window/components/cluster-list-button.click");
+            // const onClusterButtonClicked = async (communicator: ICommunicator, path: string, msg: any): Promise<any> => {
+            //     console.log(msg);
+            //     return Promise.resolve();
+            // };
 
-            let contents = webContents.getAllWebContents();
-            let c2 = await sfxModuleManager.getComponentAsync("ipc.communicator", webContents.fromId(3));
-            const pattern = await sfxModuleManager.getComponentAsync("remoting.pattern.string", "//index-window/components/cluster-list-button.click");
-            const onClusterButtonClicked = async (communicator: ICommunicator, path: string, msg: any): Promise<any> => {
-                console.log(msg);
-                return Promise.resolve();
-            };
-
-            c2.map(pattern, onClusterButtonClicked);
+            // this.communicator.map(pattern, onClusterButtonClicked);
         });
     }
 }

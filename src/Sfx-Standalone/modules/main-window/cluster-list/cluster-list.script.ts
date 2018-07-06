@@ -1,4 +1,6 @@
 import * as $ from "jquery";
+import { } from "bootstrap";
+
 // import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting";
 import { ipcRenderer, ipcMain } from "electron";
 import { IMainWindow, IComponent } from "sfx.main-window";
@@ -23,28 +25,27 @@ export class ClusterList implements IComponent {
 }
 
 (async () => {
-
     sfxModuleManager.registerComponents([ ClusterList.getComponentInfo() ]);
 
     console.log("cluster-list loaded");
 
     try {
-        sfxModuleManager.getComponentAsync("ipc.communicator", ipcRenderer).then(c => console.log("comm", c));        
-    } catch (error) {
-        console.log(error);
-    }
-
-    try {
-        const $button = $("button#c-cluster-list-button");
-        const communicator = global["communicator"];
+        const $button = $("button#c-button-cluster-list");
+        const communicator = await sfxModuleManager.getComponentAsync("ipc.communicator", ipcRenderer);
         console.log(communicator);
 
         $button.click(() => {
             console.log("button clicked");
             // TODO: refresh sfxContainer here
-            communicator.sendAsync("//index-window/components/cluster-list-button.click", { name: "cluster-list-button-click", endpoint: $button.data("endpoint") });
+            //communicator.sendAsync("//index-window/components/cluster-list-button.click", { name: "cluster-list-button-click", endpoint: $button.data("endpoint") });
         });
+
+        $("button.btn-cluster").click(() => {
+            
+        });
+
     } catch (error) {
         console.log(error);
     }
 })();
+

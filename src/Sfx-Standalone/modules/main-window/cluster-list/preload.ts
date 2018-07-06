@@ -15,10 +15,5 @@ appUtils.logUnhandledRejection();
 process.once("loaded", async () => {
     const constructorOptions = ipcRenderer.sendSync("request-module-manager-constructor-options-component");
     const communicator = Communicator.fromChannel(ipcRenderer);
-
-    console.log("before injection");
     appUtils.injectModuleManager(await mmutils.createModuleManagerAsync(constructorOptions, communicator));    
-   
-    global["communicator"] = communicator;
-    console.log("done");
 });

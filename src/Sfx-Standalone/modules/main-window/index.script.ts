@@ -15,7 +15,7 @@ import { SfxContainer } from "./sfx-container/sfx-container.script";
             console.log(msg[0]);
 
             await Promise.all(msg.map(async component => {
-                const template = $(`<div><button>${component.title}</button></div>`);
+                const template = $(`<div><button class="btn btn-primary" id="c-button-${component.id}">${component.title}</button></div>`);
                 leftpanel.append(template);
 
                 if (component.viewUrl) {

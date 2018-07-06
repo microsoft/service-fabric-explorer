@@ -7,7 +7,6 @@ import { electron } from "../../../utilities/electron-adapter";
 import { IComponentInfo } from "sfx.module-manager";
 
 export class SfxContainer {
-
     public static getComponentInfo(): IComponentInfo {
         return {
             name: "page-sfx-container",
@@ -29,4 +28,3 @@ export class SfxContainer {
         sfxWebView.loadURL("../../../sfx/index.html");
     }
 }
-
