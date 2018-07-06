@@ -27,7 +27,7 @@ async function startup(): Promise<void> {
     mainWindow.load();
 
     // Trigger update activity.
-    (await sfxModuleManager.getComponentAsync("update")).updateAsync();
+    //(await sfxModuleManager.getComponentAsync("update")).updateAsync();
 
     // Handle "window-all-closed" event.
     app.removeAllListeners("window-all-closed");

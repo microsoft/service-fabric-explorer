@@ -12,42 +12,18 @@
 
 <body>
     <div>
-        <div id="cluster-connect-dialog" class="modal" tabindex="-1" role="dialog">
-            <div class="modal-dialog" role="document">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Connect to a cluster</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                    </div>
-                    <div class="modal-body">
-                        <p>Cluster URL</p>
-                        <input id="input-cluster-url" type="text" class="input-flat" value="" />
-                        <div class="checkbox-container">
-                            <label for="input-connect-locally">
-                                <input id="input-connect-locally" type="checkbox" />
-                                <label>
-                                    <!-- this is left empty intentionally -->
-                                </label>Connect to localhost
-                            </label>
-                        </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                        <button type="button" class="btn btn-primary">Connect</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <button class="btn btn-primary" id="cluster-list-connect">Connect to a cluster</button>
     </div>
     <ul>
         <li>
-            <button class="btn btn-secondary btn-cluster" data-endpoint="my-cluster">switch to this cluster.</button>
+            <button class="btn btn-secondary btn-cluster" data-endpoint="my-cluster1">switch to this cluster.</button>
         </li>
-        <li>list 2</li>
-        <li>list 3</li>
-        <li>list 4</li>
+        <li>
+            <button class="btn btn-secondary btn-cluster" data-endpoint="my-cluster2">switch to this cluster.</button>
+        </li>
+        <li>
+            <button class="btn btn-secondary btn-cluster" data-endpoint="my-cluster3">switch to this cluster.</button>
+        </li>
     </ul>
 </body>
 <script type="text/javascript" src="../../../node_modules/jquery/dist/jquery.min.js"></script>

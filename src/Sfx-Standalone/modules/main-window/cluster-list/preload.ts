@@ -3,17 +3,20 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ipcRenderer } from "electron";
+import * as electron from "electron";
 import * as appUtils from "../../../utilities/appUtils";
-import * as mmutils from "../../../module-manager/utils";
-import { Communicator } from "../../ipc/communicator";
+import { Communicator } from "../../../modules/ipc/communicator";
+import { ModuleManager } from "../../../module-manager/module-manager";
 
 global["exports"] = exports;
 
-appUtils.logUnhandledRejection();
-
 process.once("loaded", async () => {
-    const constructorOptions = ipcRenderer.sendSync("request-module-manager-constructor-options-component");
-    const communicator = Communicator.fromChannel(ipcRenderer);
-    appUtils.injectModuleManager(await mmutils.createModuleManagerAsync(constructorOptions, communicator));    
+    if (electron.ipcMain) {
+        appUtils.injectModuleManager(new ModuleManager(appUtils.getAppVersion()));
+        return;
+    }
+    
+    const moduleManager = new ModuleManager("1.0.0", Communicator.fromChannel(electron.ipcRenderer || process));
+
+    appUtils.injectModuleManager(moduleManager);
 });

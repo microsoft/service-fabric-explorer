@@ -3,13 +3,16 @@ import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting"
 import { ipcRenderer, ipcMain, WebviewTag } from "electron";
 import { IMainWindow, IComponentConfiguration } from "sfx.main-window";
 import { SfxContainer } from "./sfx-container/sfx-container.script";
+import { DialogService } from "./index.page";
 
 (async () => {
     try {
 
+        sfxModuleManager.registerComponents([ DialogService.getComponentInfo() ]);
+
         const leftpanel = $("div#left-panel");
         const communicator = await sfxModuleManager.getComponentAsync<ICommunicator>("ipc.communicator", ipcRenderer);
-        const pattern = await sfxModuleManager.getComponentAsync("remoting.pattern.string", "//index-window");
+        const pattern = await sfxModuleManager.getComponentAsync("remoting.pattern.string", "//index-window/components");
 
         const onConfigurationReceived = async (communicator: ICommunicator, path: string, msg: IComponentConfiguration[]): Promise<any> => {
             console.log(msg[0]);
@@ -41,3 +44,4 @@ import { SfxContainer } from "./sfx-container/sfx-container.script";
         console.log(error);
     }
 })();
+

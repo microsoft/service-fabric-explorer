@@ -7,6 +7,7 @@ import { IMainWindow, IComponent } from "sfx.main-window";
 import { SfxContainer } from "../sfx-container/sfx-container.script";
 import { electron } from "../../../utilities/electron-adapter";
 import { IComponentInfo } from "sfx.module-manager";
+import { DialogService } from "../index.page";
 
 export class ClusterList implements IComponent {
     public static getComponentInfo(): IComponentInfo {
@@ -40,8 +41,8 @@ export class ClusterList implements IComponent {
             //communicator.sendAsync("//index-window/components/cluster-list-button.click", { name: "cluster-list-button-click", endpoint: $button.data("endpoint") });
         });
 
-        $("button.btn-cluster").click(() => {
-            
+        $("#cluster-list-connect").click(() => {
+            sfxModuleManager.getComponentAsync<DialogService>("dialog-service", ipcRenderer).then(s => s.ShowDialog("./cluster-list/connect-cluster.html"));
         });
 
     } catch (error) {
