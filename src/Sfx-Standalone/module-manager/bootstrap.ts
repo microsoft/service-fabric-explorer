@@ -25,6 +25,7 @@ const brootstrapPromise: Promise<void> = ((): Promise<any> => {
         return;
     }
 
+    console.log("args:", process.argv);
     const constructorOptions: IModuleManagerConstructorOptions = JSON.parse(appUtils.getCmdArg(ModuleManager.ConstructorOptionsCmdArgName));
     const moduleManager = new ModuleManager(constructorOptions.hostVersion, Communicator.fromChannel(electron.ipcRenderer || process));
 
@@ -40,11 +41,14 @@ const brootstrapPromise: Promise<void> = ((): Promise<any> => {
         electron.remote.getCurrentWindow()
             .webContents.on("will-attach-webview",
                 (event, webPreferences, params) => {
+                    console.log("will-attach-webview Hit");
                     if (!Array.isArray(webPreferences.additionalArguments)) {
                         webPreferences.additionalArguments = [];
                     }
 
+                    console.log("Add additional args");
                     webPreferences.additionalArguments.push(constructorOptionsArg);
+                    console.log(webPreferences);
                 });
     }
 
