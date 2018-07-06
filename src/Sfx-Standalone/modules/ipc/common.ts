@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import { IDisposable } from "sfx.common";
+import { ChannelType } from "sfx.ipc";
 
 export interface IMessage {
     id: string;
@@ -13,13 +14,15 @@ export interface IMessage {
 }
 
 export interface IChannelProxy extends IDisposable {
+    readonly channel: ChannelType;
+    
     dispose(): void;
     sendMessage(msg: IMessage): boolean;
     setDataHandler(handler: ChannelProxyDataHandler): void;
 }
 
 export interface ChannelProxyDataHandler {
-    (data: any): void | Promise<void>;
+    (channel: ChannelType, data: any): void | Promise<void>;
 }
 
 export const UuidNamespace = "65ef6f94-e6c9-4c95-8360-6d29de87b1dd";

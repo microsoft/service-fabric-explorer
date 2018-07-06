@@ -10,15 +10,10 @@ import * as uuidv5 from "uuid/v5";
 import * as utils from "../../../utilities/utils";
 import ChannelProxyBase from "./channel-proxy-base";
 
-export default class ElectronWebContentsChannelProxy extends ChannelProxyBase {
+export default class ElectronWebContentsChannelProxy extends ChannelProxyBase<electron.WebContents> {
     private readonly channelName: string;
 
-    private channelClient: electron.WebContents;
-    private channelServer: electron.IpcMain | electron.IpcRenderer;
-
-    public get disposed(): boolean {
-        return this.channelClient === undefined;
-    }
+    private channelListener: electron.IpcMain | electron.IpcRenderer;
 
     public static isValidChannel(channel: any): channel is electron.WebContents {
         return !utils.isNullOrUndefined(channel)
@@ -30,14 +25,13 @@ export default class ElectronWebContentsChannelProxy extends ChannelProxyBase {
     }
 
     public dispose(): void {
-        super.dispose();
-
         if (!this.disposed) {
-            this.channelServer.removeListener(this.channelName, this.onChannelData);
+            this.channelListener.removeListener(this.channelName, this.onChannelData);
 
-            this.channelServer = undefined;
-            this.channelClient = undefined;
+            this.channelListener = undefined;
         }
+
+        super.dispose();
     }
 
     public sendMessage(msg: IMessage): boolean {
@@ -45,21 +39,20 @@ export default class ElectronWebContentsChannelProxy extends ChannelProxyBase {
             throw new Error("Channel proxy already disposed.");
         }
 
-        this.channelClient.send(this.channelName, msg);
+        this.channel.send(this.channelName, msg);
         return true;
     }
 
-    constructor(channel: electron.WebContents) {
-        super();
+    constructor(channel: electron.WebContents, channelName?: string) {
+        super(channel);
 
-        this.channelClient = channel;
-        this.channelServer = electron.ipcMain || electron.ipcRenderer;
-        this.channelName = uuidv5(channel.id.toString(), UuidNamespace);
+        this.channelListener = electron.ipcMain || electron.ipcRenderer;
+        this.channelName = channelName || uuidv5(channel.id.toString(), UuidNamespace);
 
-        this.channelServer.on(this.channelName, this.onChannelData);
+        this.channelListener.on(this.channelName, this.onChannelData);
     }
 
     private onChannelData = (event: electron.Event, data: any): void => {
-        this.triggerDataHandler(data);
+        this.triggerDataHandler(event.sender, data);
     }
 }

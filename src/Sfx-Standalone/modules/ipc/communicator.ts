@@ -71,7 +71,7 @@ export class Communicator implements ICommunicator {
         this.ongoingPromiseDict = Object.create(null);
 
         this.id = uuidv4();
-        this.timeout = 5 * 60 * 1000; // 5 min
+        this.timeout = 10 * 1000; // 10 seconds.
 
         if (options) {
             if (String.isString(options.id)
@@ -167,8 +167,6 @@ export class Communicator implements ICommunicator {
                         reject(error);
                     }
             };
-
-
         });
     }
 
@@ -196,7 +194,7 @@ export class Communicator implements ICommunicator {
         }
     }
 
-    private onMessageAsync = async (msg: IMessage): Promise<void> => {
+    private onMessageAsync = async (channel: ChannelType, msg: IMessage): Promise<void> => {
         const promise = this.ongoingPromiseDict[msg.id];
 
         if (promise) {
