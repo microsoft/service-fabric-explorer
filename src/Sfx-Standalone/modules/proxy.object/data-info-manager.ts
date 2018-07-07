@@ -45,9 +45,9 @@ export class DataInfoManager implements IDisposable {
 
     public async dispose(): Promise<void> {
         if (!this.disposed) {
-            const disposingRefRoot = this.refRoot;
-
-            const promises = disposingRefRoot.getRefereeIds().map((refId) => this.releaseByIdAsync(refId));
+            const promises =
+                this.refRoot.getRefereeIds().map(
+                    (refId) => refId === this.refRoot.id ? Promise.resolve() : this.releaseByIdAsync(refId));
             await Promise.all(promises);
 
             this.refRoot = undefined;
@@ -157,14 +157,19 @@ export class DataInfoManager implements IDisposable {
 
         const memberInfos: IDictionary<IDataInfo> = currentObjDataInfo.memberInfos;
 
-        let currentObj = Object.getPrototypeOf(target);
+        let currentObj = target;
 
         while (currentObj && currentObj !== Object.prototype) {
-            for (const propertyName of Object.getOwnPropertyNames(currentObj)) {
-                if (!Object.prototype.hasOwnProperty.call(memberInfos, propertyName)
-                    && !Object.prototype.hasOwnProperty.call(target, propertyName)
-                    && dataTypeOf(currentObj[propertyName]) === DataType.Function) {
-                    memberInfos[propertyName] = this.toDataInfo(currentObj[propertyName], currentObjDataInfo.id, false);
+            const propertyDescriptors = Object.getOwnPropertyDescriptors(currentObj);
+
+            for (const propertyName in propertyDescriptors) {
+                const propertyDescriptor = propertyDescriptors[propertyName];
+
+                if (!propertyDescriptor.enumerable
+                    || !propertyDescriptor.writable
+                    && !propertyDescriptor.get
+                    && !propertyDescriptor.set) {
+                    memberInfos[propertyName] = this.toDataInfo(propertyDescriptor.value, currentObjDataInfo.id, false);
                 }
             }
 
@@ -259,7 +264,12 @@ export class DataInfoManager implements IDisposable {
 
         if (dataInfo.memberInfos) {
             for (const propertyName of Object.getOwnPropertyNames(dataInfo.memberInfos)) {
-                base[propertyName] = this.realizeDataInfo(dataInfo.memberInfos[propertyName], dataInfo.id);
+                Object.defineProperty(base, propertyName, {
+                    enumerable: false,
+                    configurable: false,
+                    writable: propertyName === "dispose",
+                    value: this.realizeDataInfo(dataInfo.memberInfos[propertyName], dataInfo.id)
+                });
             }
         }
 

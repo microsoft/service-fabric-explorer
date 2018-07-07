@@ -8,7 +8,7 @@ declare module "sfx.module-manager" {
 
     export interface IModuleManagerConstructorOptions {
         hostVersion: string;
-        initialModules: Array<IModuleLoadingConfig>;
+        initialModules?: Array<IModuleLoadingConfig>;
     }
 
     export interface IComponentDescriptor {
