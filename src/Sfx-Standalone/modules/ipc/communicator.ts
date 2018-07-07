@@ -150,7 +150,7 @@ export class Communicator implements ICommunicator {
                 setTimeout(
                     (reject) => {
                         delete this.ongoingPromiseDict[msg.id];
-                        reject(new Error(`Response for the msg (Id:${msg.id}) is timed out.`));
+                        reject(new Error(utils.format("Response for the ipc message timed out: {}", msg)));
                     },
                     this.timeout,
                     reject);
