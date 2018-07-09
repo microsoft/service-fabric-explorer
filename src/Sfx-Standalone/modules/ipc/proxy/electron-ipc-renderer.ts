@@ -34,11 +34,11 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase<el
         }
 
         if (this.windowId === -2) {
-            this.channel.send(this.channelName, msg);
+            this.channel.send(this.channelName, JSON.stringify(msg));
         } else if (this.windowId === -1) {
-            this.channel.sendToHost(this.channelName, msg);
+            this.channel.sendToHost(this.channelName, JSON.stringify(msg));
         } else {
-            this.channel.sendTo(this.windowId, this.channelName, msg);
+            this.channel.sendTo(this.windowId, this.channelName, JSON.stringify(msg));
         }
 
         return true;
@@ -68,11 +68,11 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase<el
 
         this.windowId = windowId;
         this.channelName = channelName || uuidv5(electron.remote.getCurrentWebContents().id.toString(), UuidNamespace);
-        
+
         this.channel.on(this.channelName, this.onChannelData);
     }
 
     private onChannelData = (event: electron.Event, data: any) => {
-        this.triggerDataHandler(event.sender, data);
+        this.triggerDataHandler(event.sender, JSON.parse(data));
     }
 }
