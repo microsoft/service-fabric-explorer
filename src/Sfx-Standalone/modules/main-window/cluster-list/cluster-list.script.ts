@@ -32,19 +32,19 @@ export class ClusterList implements IComponent {
 
     try {
         const $button = $("button#c-button-cluster-list");
-        //const communicator = await sfxModuleManager.getComponentAsync("ipc.communicator", ipcRenderer);
-        const mainWindow = await sfxModuleManager.getComponentAsync("main-window", ipcRenderer);
-
-        console.log(mainWindow);
 
         $button.click(() => {
             console.log("button clicked");
-            // TODO: refresh sfxContainer here
-            //communicator.sendAsync("//index-window/components/cluster-list-button.click", { name: "cluster-list-button-click", endpoint: $button.data("endpoint") });
+            // TODO: refresh sfxContainer here        
         });
 
         $("#cluster-list-connect").click(() => {
-            sfxModuleManager.getComponentAsync<DialogService>("dialog-service", ipcRenderer).then(s => s.ShowDialog("./cluster-list/connect-cluster.html"));
+            console.log("cluster-list-connect clicked");
+
+            sfxModuleManager.getComponentAsync<DialogService>("dialog-service", ipcRenderer).then(s => { 
+                console.log("dialog service", s);
+                s.ShowDialog("./cluster-list/connect-cluster.html");
+            });
         });
 
     } catch (error) {

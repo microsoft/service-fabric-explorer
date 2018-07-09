@@ -8,6 +8,7 @@ import { BrowserWindow, ipcMain, WebContents, webContents } from "electron";
 import { resolve } from "../../utilities/appUtils";
 import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting";
 import { IModuleManager } from "sfx.module-manager";
+import { DialogService } from "./index.page";
 
 export class LocalSfxVueComponent implements IComponentConfiguration {
     id: string = "cluster-list";
@@ -43,14 +44,10 @@ export class MainWindow implements IMainWindow {
 
     load(): void {
         this.browserWindow.loadURL(resolve("index.html"));
-
-        this.browserWindow.once("ready-to-show", async () => {
+        
+        this.browserWindow.once("ready-to-show", async () => {            
             this.browserWindow.webContents.openDevTools();
             this.browserWindow.show();
-
-            // Send the components configuration to page
-            const communicator = await sfxModuleManager.getComponentAsync("ipc.communicator", this.browserWindow.webContents);
-            await communicator.sendAsync("//index-window/components", this.components);
         });
     }
 }

@@ -8,8 +8,10 @@
  */
 
 import { IModuleManagerConstructorOptions } from "sfx.module-manager";
+import { ICommunicator } from "sfx.remoting";
 
 import "../utilities/utils";
+import * as simpleContext from "./simple-context";
 
 import * as electron from "electron";
 
@@ -17,40 +19,37 @@ import * as appUtils from "../utilities/appUtils";
 import { Communicator } from "../modules/ipc/communicator";
 import { ModuleManager } from "./module-manager";
 
-const brootstrapPromise: Promise<void> = ((): Promise<any> => {
+const bootstrapPromise: Promise<void> = ((): Promise<any> => {
     appUtils.logUnhandledRejection();
 
-    if (electron.ipcMain) {
-        appUtils.injectModuleManager(new ModuleManager(appUtils.getAppVersion()));
-        return;
+    let constructorOptions: IModuleManagerConstructorOptions;
+    let communicator: ICommunicator;
+
+    if (electron.ipcMain) { // Electron main process
+        communicator = undefined;
+        constructorOptions = {
+            hostVersion: appUtils.getAppVersion()
+        };
+
+    } else if (electron.ipcRenderer) { // Electron renderer
+        const contextId = `ModuleManagerConstructorOptions-${electron.remote.getCurrentWindow().id}`;
+        
+        communicator = Communicator.fromChannel(electron.ipcRenderer);
+
+        if (electron.remote.getCurrentWindow().webContents.id === electron.remote.getCurrentWebContents().id) {
+            constructorOptions = JSON.parse(appUtils.getCmdArg(ModuleManager.ConstructorOptionsCmdArgName));
+            simpleContext.writeContext(contextId, constructorOptions);
+        } else {
+            constructorOptions = simpleContext.readContext(contextId);
+        }
+    } else { // Node.js process
+        communicator = Communicator.fromChannel(process);
+        constructorOptions = JSON.parse(appUtils.getCmdArg(ModuleManager.ConstructorOptionsCmdArgName));
     }
 
-    console.log("args:", process.argv);
-    const constructorOptions: IModuleManagerConstructorOptions = JSON.parse(appUtils.getCmdArg(ModuleManager.ConstructorOptionsCmdArgName));
-    const moduleManager = new ModuleManager(constructorOptions.hostVersion, Communicator.fromChannel(electron.ipcRenderer || process));
+    const moduleManager = new ModuleManager(constructorOptions.hostVersion, communicator);
 
     appUtils.injectModuleManager(moduleManager);
-
-    if (electron.remote
-        && electron.remote.getCurrentWindow().webContents.id === electron.remote.getCurrentWebContents().id) {
-        const constructorOptionsArg =
-            appUtils.toCmdArg(
-                ModuleManager.ConstructorOptionsCmdArgName,
-                JSON.stringify(constructorOptions));
-
-        electron.remote.getCurrentWindow()
-            .webContents.on("will-attach-webview",
-                (event, webPreferences, params) => {
-                    console.log("will-attach-webview Hit");
-                    if (!Array.isArray(webPreferences.additionalArguments)) {
-                        webPreferences.additionalArguments = [];
-                    }
-
-                    console.log("Add additional args");
-                    webPreferences.additionalArguments.push(constructorOptionsArg);
-                    console.log(webPreferences);
-                });
-    }
 
     if (Array.isArray(constructorOptions.initialModules)) {
         return Promise.all(
@@ -61,4 +60,4 @@ const brootstrapPromise: Promise<void> = ((): Promise<any> => {
     return Promise.resolve();
 })();
 
-export default brootstrapPromise;
+export default bootstrapPromise;

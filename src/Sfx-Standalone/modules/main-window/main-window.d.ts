@@ -25,10 +25,10 @@ declare module "sfx.main-window" {
 }
 
 declare module "sfx.module-manager" {
-    import { IMainWindow } from "sfx.main-window";
+    import { IMainWindow } from "sfx.main-window";    
 
     export interface IModuleManager {
-        getComponentAsync(componentIdentity: "main-window"): Promise<IMainWindow>;
+        getComponentAsync(componentIdentity: "main-window"): Promise<IMainWindow>;        
     }
 }
 

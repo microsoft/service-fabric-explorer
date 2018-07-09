@@ -19,9 +19,7 @@ export function getModuleMetadata(): IModuleInfo {
                 singleton: true,
                 descriptor: async (moduleManager) => {
                     const browserWindow = await moduleManager.getComponentAsync("browser-window", null, false);
-                    const mainWindow = new MainWindow(moduleManager, browserWindow);
-                    mainWindow.register(new LocalSfxVueComponent());
-                    return mainWindow;
+                    return new MainWindow(moduleManager, browserWindow);
                 },
                 deps: ["module-manager"]
             },

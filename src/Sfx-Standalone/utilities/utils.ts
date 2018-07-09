@@ -112,7 +112,9 @@ Error.prototype.toJSON = function (): any {
     return error;
 };
 
-export function defaultStringifier(obj: any): string {
+export function defaultStringifier(obj: any, padding?: number): string {
+    padding = getValue(padding, 0);
+
     if (obj === null) {
         return "null";
     } else if (obj === undefined) {
@@ -126,13 +128,13 @@ export function defaultStringifier(obj: any): string {
                 && obj.toString !== Object.prototype.toString)) {
             return obj.toString();
         } else {
-            let str: string = "{\n";
+            let str: string = `\n${"".padStart(padding)}{\n`;
 
             for (const propertyName of Object.getOwnPropertyNames(obj)) {
-                str += `${propertyName}: ${defaultStringifier(obj[propertyName])}\n`;
+                str += `${"".padStart(padding + 4)}${propertyName}: ${defaultStringifier(obj[propertyName], padding + 4)}\n`;
             }
 
-            str += "}";
+            str += `${"".padStart(padding)}}`;
 
             return str;
         }
