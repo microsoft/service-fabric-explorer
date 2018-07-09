@@ -39,7 +39,7 @@ export default class ElectronWebContentsChannelProxy extends ChannelProxyBase<el
             throw new Error("Channel proxy already disposed.");
         }
 
-        this.channel.send(this.channelName, msg);
+        this.channel.send(this.channelName, JSON.stringify(msg));
         return true;
     }
 
@@ -53,6 +53,6 @@ export default class ElectronWebContentsChannelProxy extends ChannelProxyBase<el
     }
 
     private onChannelData = (event: electron.Event, data: any): void => {
-        this.triggerDataHandler(event.sender, data);
+        this.triggerDataHandler(event.sender, JSON.parse(data));
     }
 }
