@@ -10,21 +10,20 @@ import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting"
 import { IModuleManager } from "sfx.module-manager";
 import { DialogService } from "./index.page";
 
-export class LocalSfxVueComponent implements IComponentConfiguration {
+export class ClusterManagerComponentConfig implements IComponentConfiguration {
     id: string = "cluster-list";
     title: string = "Clusters";
     iconUrl?: string;
     viewUrl: string = resolve("./cluster-list/cluster-list.html");
     mainViewUrl?: string;
+}
 
-    public handleButtonClick(): Promise<void> {
-
-        return Promise.resolve();
-    }
-
-    constructor () {
-
-    }
+export class SettingsComponentConfig implements IComponentConfiguration {
+    id: string = "settings";
+    title: string = "Settings";
+    iconUrl?: string;
+    viewUrl: string = resolve("./settings/settings.html");
+    mainViewUrl?: string;
 }
 
 export class MainWindow implements IMainWindow {

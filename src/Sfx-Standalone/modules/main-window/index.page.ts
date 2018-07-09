@@ -24,7 +24,7 @@ export class DialogService {
                 </div>
             </div>`;
 
-        $(document).append($(template));
+        $(document.body).append($(template));
         $("#main-modal-dialog").modal();
     }
 

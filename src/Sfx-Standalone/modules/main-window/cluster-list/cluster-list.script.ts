@@ -41,7 +41,7 @@ export class ClusterList implements IComponent {
         $("#cluster-list-connect").click(() => {
             console.log("cluster-list-connect clicked");
 
-            sfxModuleManager.getComponentAsync<DialogService>("dialog-service", ipcRenderer).then(s => { 
+            sfxModuleManager.getComponentAsync<DialogService>("dialog-service").then(s => { 
                 console.log("dialog service", s);
                 s.ShowDialog("./cluster-list/connect-cluster.html");
             });

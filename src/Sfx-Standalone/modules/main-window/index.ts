@@ -5,7 +5,7 @@
 
 import { IModuleInfo } from "sfx.module-manager";
 import { electron } from "../../utilities/electron-adapter";
-import { LocalSfxVueComponent, MainWindow } from "./main-window";
+import { ClusterManagerComponentConfig, MainWindow } from "./main-window";
 import { SfxContainer } from "./sfx-container/sfx-container.script";
 
 export function getModuleMetadata(): IModuleInfo {
