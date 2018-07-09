@@ -32,8 +32,10 @@ export class ClusterList implements IComponent {
 
     try {
         const $button = $("button#c-button-cluster-list");
-        const communicator = await sfxModuleManager.getComponentAsync("ipc.communicator", ipcRenderer);
-        console.log(communicator);
+        //const communicator = await sfxModuleManager.getComponentAsync("ipc.communicator", ipcRenderer);
+        const mainWindow = await sfxModuleManager.getComponentAsync("main-window", ipcRenderer);
+
+        console.log(mainWindow);
 
         $button.click(() => {
             console.log("button clicked");
@@ -49,4 +51,3 @@ export class ClusterList implements IComponent {
         console.log(error);
     }
 })();
-
