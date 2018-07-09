@@ -97,28 +97,32 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         this.validateDisposal();
 
         const tempReferer = this.dataInfoManager.ReferAsDataInfo(() => undefined);
-        const extraArgsDataInfos = extraArgs.map((arg) => this.dataInfoManager.ReferAsDataInfo(arg, tempReferer.id));
+        
+        try {
+            const extraArgsDataInfos = extraArgs.map((arg) => this.dataInfoManager.ReferAsDataInfo(arg, tempReferer.id));
 
-        const targetDataInfo: IDataInfo =
-            await this.communicator.sendAsync<IRequestResourceProxyMessage, IDataInfo>(
-                this.pathPattern.getRaw(),
-                {
-                    action: ProxyActionType.RequestResource,
-                    resourceId: identifier,
-                    extraArgs: extraArgsDataInfos
+            const targetDataInfo: IDataInfo =
+                await this.communicator.sendAsync<IRequestResourceProxyMessage, IDataInfo>(
+                    this.pathPattern.getRaw(),
+                    {
+                        action: ProxyActionType.RequestResource,
+                        resourceId: identifier,
+                        extraArgs: extraArgsDataInfos
+                    });
+            const target = this.dataInfoManager.realizeDataInfo(targetDataInfo);
+
+            if (targetDataInfo.id) {
+                extraArgsDataInfos.forEach((argDataInfo) => {
+                    if (argDataInfo.id) {
+                        this.dataInfoManager.AddReferenceById(argDataInfo.id, targetDataInfo.id);
+                    }
                 });
+            }
 
-        if (targetDataInfo.id) {
-            extraArgsDataInfos.forEach((argDataInfo) => {
-                if (argDataInfo.id) {
-                    this.dataInfoManager.AddReferenceById(argDataInfo.id, targetDataInfo.id);
-                }
-            });
+            return target;
+        } finally {
+            await this.dataInfoManager.releaseByIdAsync(tempReferer.id);
         }
-
-        await this.dataInfoManager.releaseByIdAsync(tempReferer.id);
-
-        return this.dataInfoManager.realizeDataInfo(targetDataInfo);
     }
 
     public setResolver(resolver: Resolver): void {
@@ -279,7 +283,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
             throw new Error(`Target (${delegationMsg.refId}) is not a function which cannot be applied.`);
         }
 
-        const funcResult = 
+        const funcResult =
             target.call(
                 this.dataInfoManager.realizeDataInfo(delegationMsg.thisArg, delegationMsg.refId),
                 ...delegationMsg.args.map((item) => this.dataInfoManager.realizeDataInfo(item, delegationMsg.refId)));

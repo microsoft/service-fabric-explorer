@@ -41,7 +41,7 @@ export default class ProcessChannelProxy extends ChannelProxyBase<ChildProcess> 
             throw new Error("Channel proxy already disposed.");
         }
 
-        return this.channel.send(msg);
+        return this.channel.send(JSON.stringify(msg));
     }
 
     constructor(channel: ChildProcess) {
@@ -51,6 +51,6 @@ export default class ProcessChannelProxy extends ChannelProxyBase<ChildProcess> 
     }
 
     private onMessage = (message) => {
-        this.triggerDataHandler(this.channel, message);
+        this.triggerDataHandler(this.channel, JSON.parse(message));
     }
 }
