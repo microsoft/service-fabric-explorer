@@ -356,7 +356,7 @@ export class ModuleManager implements IModuleManager {
         }
     }
     
-    public async getComponentAsync<TComponent extends Component<TComponent>>(componentIdentity: string, ...extraArgs: Array<any>): Promise<TComponent & Partial<IDisposable>> {
+    public getComponentAsync<TComponent extends Component<TComponent>>(componentIdentity: string, ...extraArgs: Array<any>): Promise<TComponent & Partial<IDisposable>> {
         if (String.isEmptyOrWhitespace(componentIdentity)) {
             throw new Error("componentIdentity cannot be null/undefined/empty.");
         }
@@ -364,7 +364,7 @@ export class ModuleManager implements IModuleManager {
         const component = this.container.getDep<TComponent>(componentIdentity, ...extraArgs);
 
         if (component !== undefined) {
-            return component;
+            return Promise.resolve(component);
         }
 
         return this.getComponentFromProxiesAsync<TComponent & IDisposable>(null, componentIdentity, ...extraArgs);
