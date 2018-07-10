@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.module-manager" {
+    import { IDisposable } from "sfx.common";
     import { ICommunicator } from "sfx.remoting";
 
     export interface IModuleManagerConstructorOptions {
@@ -58,6 +59,14 @@ declare module "sfx.module-manager" {
         (moduleInfo: IModuleInfo, currentVersion: string, expectedVersion: string): boolean;
     }
 
+    type Func = (...args: Array<any>) => any;
+
+    type NonPromiseReturnType<TFunc extends Func> = TFunc extends (...args: any[]) => Promise<infer R> ? R : never;
+
+    export type Component<T> = {
+        [Property in keyof T]: T[Property] extends Func ? (...args: Array<any>) => Promise<NonPromiseReturnType<T[Property]>> : T[Property];
+    };
+
     export interface IModuleManager {
         readonly hostVersion: string;
         readonly loadedModules: Array<IModuleLoadingConfig>;
@@ -76,7 +85,7 @@ declare module "sfx.module-manager" {
 
         onHostVersionMismatch(callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler;
 
-        getComponentAsync<T>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T>;
+        getComponentAsync<TComponent extends Component<TComponent>>(componentIdentity: string, ...extraArgs: Array<any>): Promise<TComponent & Partial<IDisposable>>;
         getComponentAsync(componentIdentity: "module-manager"): Promise<IModuleManager>;
     }
 }

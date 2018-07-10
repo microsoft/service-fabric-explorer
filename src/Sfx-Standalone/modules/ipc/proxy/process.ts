@@ -28,12 +28,12 @@ export default class ProcessChannelProxy extends ChannelProxyBase<ChildProcess> 
             && Function.isFunction(channel.removeListener);
     }
 
-    public dispose(): void {
+    public disposeAsync(): Promise<void> {
         if (!this.disposed) {
             this.channel.removeListener("message", this.onMessage);
         }
 
-        super.dispose();
+        return super.disposeAsync();
     }
 
     public sendMessage(msg: IMessage): boolean {

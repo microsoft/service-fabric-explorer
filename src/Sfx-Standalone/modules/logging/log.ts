@@ -121,7 +121,7 @@ class Log implements ILog {
             messageOrFormat = utils.formatEx(Log.stringifier, messageOrFormat, ...params);
         }
         properties = this.generateProperties(properties);
-        this.loggers.forEach((logger) => logger.write(properties, severity, messageOrFormat));
+        this.loggers.forEach((logger) => logger.writeAsync(properties, severity, messageOrFormat));
     }
 
     public write(severity: Severity, messageOrFormat: string, ...params: Array<any>): void {
@@ -152,7 +152,7 @@ class Log implements ILog {
         this.validateDisposal();
 
         properties = this.generateProperties(properties);
-        this.loggers.forEach((logger) => logger.writeException(properties, exception));
+        this.loggers.forEach((logger) => logger.writeExceptionAsync(properties, exception));
     }
 
     public writeEvent(name: string, properties?: IDictionary<string>) {
@@ -163,7 +163,7 @@ class Log implements ILog {
         }
 
         properties = this.generateProperties(properties);
-        this.loggers.forEach((logger) => logger.write(properties, Severities.Event, name));
+        this.loggers.forEach((logger) => logger.writeAsync(properties, Severities.Event, name));
     }
 
     public writeMetric(name: string, value?: number, properties?: IDictionary<string>): void {
@@ -176,9 +176,9 @@ class Log implements ILog {
         if (!Number.isNumber(value)) {
             value = 1;
         }
-
+  
         properties = this.generateProperties(properties);
-        this.loggers.forEach((logger) => logger.writeMetric(properties, name, value));
+        this.loggers.forEach((logger) => logger.writeMetricAsync(properties, name, value));
     }
 
     public removeLogger(name: string): ILogger {
@@ -211,9 +211,11 @@ class Log implements ILog {
         this.loggers.push(logger);
     }
 
-    public dispose(): void {
+    public disposeAsync(): Promise<void> {
         this.defaultProperties = undefined;
         this.loggers = undefined;
+
+        return Promise.resolve();
     }
 
     private validateDisposal() {

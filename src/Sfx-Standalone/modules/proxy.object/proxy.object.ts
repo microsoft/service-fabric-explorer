@@ -93,7 +93,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         return new ObjectRemotingProxy(pathPattern, communicator, ownCommunicator, proxyId);
     }
 
-    public async requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: Array<any>): Promise<T> {
+    public async requestAsync<T>(identifier: string, ...extraArgs: Array<any>): Promise<T & IDisposable> {
         this.validateDisposal();
 
         const tempReferer = this.dataInfoManager.ReferAsDataInfo(() => undefined);
@@ -144,13 +144,13 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         return !this.messageHandlers || !this.dataInfoManager;
     }
 
-    public async dispose(): Promise<void> {
+    public async disposeAsync(): Promise<void> {
         if (!this.disposed) {
             this.communicator.unmap(this.pathPattern);
-            this.dataInfoManager.dispose();
+            await this.dataInfoManager.disposeAsync();
 
             if (this.ownCommunicator) {
-                this._communicator.dispose();
+                await this._communicator.disposeAsync();
             }
 
             this._communicator = undefined;
@@ -283,12 +283,10 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
             throw new Error(`Target (${delegationMsg.refId}) is not a function which cannot be applied.`);
         }
 
-        const funcResult =
-            target.call(
+        const result =
+            await target.call(
                 this.dataInfoManager.realizeDataInfo(delegationMsg.thisArg, delegationMsg.refId),
                 ...delegationMsg.args.map((item) => this.dataInfoManager.realizeDataInfo(item, delegationMsg.refId)));
-
-        const result = funcResult instanceof Promise ? await funcResult : funcResult;
 
         return this.dataInfoManager.ReferAsDataInfo(result, delegationMsg.refId);
     }

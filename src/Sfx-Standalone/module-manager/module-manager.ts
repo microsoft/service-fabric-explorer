@@ -13,7 +13,8 @@ import {
     IComponentDescriptor,
     IModuleLoadingConfig,
     IModuleLoadingPolicy,
-    IModuleInfo
+    IModuleInfo,
+    Component
 } from "sfx.module-manager";
 
 import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting";
@@ -249,7 +250,7 @@ export class ModuleManager implements IModuleManager {
 
         const child = this.children[childIndex];
 
-        await child.proxy.dispose();
+        await child.proxy.disposeAsync();
 
         if (child.process) {
             child.process.kill();
@@ -354,19 +355,19 @@ export class ModuleManager implements IModuleManager {
             }
         }
     }
-
-    public async getComponentAsync<T extends IDisposable>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T> {
+    
+    public async getComponentAsync<TComponent extends Component<TComponent>>(componentIdentity: string, ...extraArgs: Array<any>): Promise<TComponent & Partial<IDisposable>> {
         if (String.isEmptyOrWhitespace(componentIdentity)) {
             throw new Error("componentIdentity cannot be null/undefined/empty.");
         }
 
-        const component = this.container.getDep<T>(componentIdentity, ...extraArgs);
+        const component = this.container.getDep<TComponent>(componentIdentity, ...extraArgs);
 
         if (component !== undefined) {
             return component;
         }
 
-        return this.getComponentFromProxiesAsync<T>(null, componentIdentity, ...extraArgs);
+        return this.getComponentFromProxiesAsync<TComponent & IDisposable>(null, componentIdentity, ...extraArgs);
     }
 
     public onHostVersionMismatch(callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler {
@@ -456,11 +457,11 @@ export class ModuleManager implements IModuleManager {
         }
     }
 
-    private async getComponentFromProxiesAsync<T extends IDisposable>(
+    private async getComponentFromProxiesAsync<T>(
         fromProxy: IObjectRemotingProxy,
         componentIdentity: string,
         ...extraArgs: Array<any>)
-        : Promise<T> {
+        : Promise<T & IDisposable> {
         const fromProxyId = fromProxy ? fromProxy.id : null;
 
         if (this.children) {

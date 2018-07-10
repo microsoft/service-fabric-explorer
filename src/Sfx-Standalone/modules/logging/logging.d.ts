@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.logging" {
+    import { Component } from "sfx.module-manager";
     import { IDictionary, IDisposable } from "sfx.common";
 
     export type Severity = "event" | "verbose" | "info" | "warning" | "error" | "critical";
@@ -11,9 +12,9 @@ declare module "sfx.logging" {
     export interface ILogger extends IDisposable {
         readonly name: string;
 
-        write(properties: IDictionary<string>, severity: Severity, message: string): void;
-        writeException(properties: IDictionary<string>, error: Error): void;
-        writeMetric(properties: IDictionary<string>, name: string, value: number): void;
+        writeAsync(properties: IDictionary<string>, severity: Severity, message: string): Promise<void>;
+        writeExceptionAsync(properties: IDictionary<string>, error: Error): Promise<void>;
+        writeMetricAsync(properties: IDictionary<string>, name: string, value: number): Promise<void>;
     }
 
     export interface ILoggerSettings extends IDictionary<any> {

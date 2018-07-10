@@ -50,7 +50,7 @@ export default class AppInsightsLogger implements ILogger {
         this.client = new TelemetryClient(settings["instrumentationKey"]);
     }
 
-    public write(properties: IDictionary<string>, severity: Severity, message: string): void {
+    public writeAsync(properties: IDictionary<string>, severity: Severity, message: string): Promise<void> {
         this.validateDisposal();
 
         const telemetry: TraceTelemetry = {
@@ -63,9 +63,11 @@ export default class AppInsightsLogger implements ILogger {
         }
 
         this.client.trackTrace(telemetry);
+        
+        return Promise.resolve();
     }
 
-    public writeException(properties: IDictionary<string>, error: Error): void {
+    public writeExceptionAsync(properties: IDictionary<string>, error: Error): Promise<void> {
         this.validateDisposal();
 
         const telemetry: ExceptionTelemetry = {
@@ -77,9 +79,11 @@ export default class AppInsightsLogger implements ILogger {
         }
 
         this.client.trackException(telemetry);
+
+        return Promise.resolve();
     }
 
-    public writeMetric(properties: IDictionary<string>, name: string, value: number): void {
+    public writeMetricAsync(properties: IDictionary<string>, name: string, value: number): Promise<void> {
         this.validateDisposal();
         
         const telemetry: MetricTelemetry = {
@@ -92,10 +96,14 @@ export default class AppInsightsLogger implements ILogger {
         }
 
         this.client.trackMetric(telemetry);
+
+        return Promise.resolve();
     }
 
-    public dispose(): void {
+    public disposeAsync(): Promise<void> {
         this.client = undefined;
+
+        return Promise.resolve();
     }
 
     private validateDisposal(): void {
