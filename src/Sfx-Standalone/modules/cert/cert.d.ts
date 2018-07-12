@@ -34,14 +34,14 @@ declare module "sfx.cert" {
     export type StoreName = "My";
 
     export interface IPkiCertificateService {
-        getCertificateInfos(storeName: StoreName): Array<ICertificateInfo>;
-        getCertificate(certInfo: ICertificateInfo): IPfxCertificate;
+        getCertificateInfosAsync(storeName: StoreName): Promise<Array<ICertificateInfo>>;
+        getCertificateAsync(certInfo: ICertificateInfo): Promise<IPfxCertificate>;
     }
 
     export interface ICertificateLoader {
-        load(cert: ICertificate): ICertificate;
-        loadPfx(path: string, password?: string): IPfxCertificate;
-        loadPem(certPath: string, keyPath?: string, keyPassword?: string): IPemCertificate;
+        loadAsync(cert: ICertificate): Promise<ICertificate>;
+        loadPfxAsync(path: string, password?: string): Promise<IPfxCertificate>;
+        loadPemAsync(certPath: string, keyPath?: string, keyPassword?: string): Promise<IPemCertificate>;
     }
 }
 

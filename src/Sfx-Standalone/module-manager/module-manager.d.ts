@@ -12,21 +12,21 @@ declare module "sfx.module-manager" {
         initialModules?: Array<IModuleLoadingConfig>;
     }
 
-    export interface IComponentDescriptor {
-        (...deps: Array<any>): any;
+    export interface IComponentDescriptor<T> {
+        (...args: Array<any>): Promise<T>;
     }
 
-    export interface IComponentInfo {
+    export interface IComponentInfo<T> {
         name: string;
         version?: string;
-        descriptor: IComponentDescriptor;
+        descriptor: IComponentDescriptor<T>;
         singleton?: boolean;
         deps?: Array<string>;
     }
 
     export type LoadingMode = "RefFromParent" | "Always";
 
-    export interface IModuleBasicInfo {
+    export interface IModuleInfo {
         name: string;
         version: string;
         hostVersion?: string;
@@ -36,11 +36,7 @@ declare module "sfx.module-manager" {
         loadingMode?: LoadingMode;
     }
 
-    export interface IModuleInfo extends IModuleBasicInfo {
-        components?: Array<IComponentInfo>;
-    }
-
-    export interface IModuleLoadingConfig extends IModuleBasicInfo {
+    export interface IModuleLoadingConfig extends IModuleInfo {
         location: string;
         loadingMode: LoadingMode;
     }
@@ -51,7 +47,7 @@ declare module "sfx.module-manager" {
     }
 
     export interface IModule {
-        getModuleMetadata?(): IModuleInfo;
+        getModuleMetadata?(components: IComponentCollection): IModuleInfo;
         initializeAsync?(moduleManager: IModuleManager): Promise<void>;
     }
 
@@ -59,15 +55,28 @@ declare module "sfx.module-manager" {
         (moduleInfo: IModuleInfo, currentVersion: string, expectedVersion: string): boolean;
     }
 
-    type Func = (...args: Array<any>) => any;
+    type IgnorePromiseReturnType<TFunc extends Function> =
+        TFunc extends (...args: any[]) => Promise<infer IR> ? IR :
+        TFunc extends (...args: any[]) => infer TR ? TR : never;
 
-    type NonPromiseReturnType<TFunc extends Func> = TFunc extends (...args: any[]) => Promise<infer R> ? R : never;
+    export type Component<T> =
+        T extends Function ? FunctionComponent<T> :
+        T extends Object ? ObjectComponent<T> : never;
 
-    export type Component<T> = {
-        [Property in keyof T]: T[Property] extends Func ? (...args: Array<any>) => Promise<NonPromiseReturnType<T[Property]>> : T[Property];
+    export type FunctionComponent<T extends Function> = (...args: Array<any>) => Promise<Component<IgnorePromiseReturnType<T>>>;
+
+    export type ObjectComponent<T> = {
+        [Property in keyof T]:
+        T[Property] extends Function ? (...args: Array<any>) => Promise<Component<IgnorePromiseReturnType<T[Property]>>> :
+        T[Property] extends Promise<infer IR> ? Promise<Component<IR>> :
+        T[Property] extends Object ? Component<T[Property]> : Promise<T[Property]>;
     };
 
-    export interface IModuleManager {
+    export interface IComponentCollection {
+        register<T extends TComponent, TComponent = Component<T>>(componentInfo: IComponentInfo<T>): IComponentCollection;
+    }
+
+    export interface IModuleManager extends IComponentCollection {
         readonly hostVersion: string;
         readonly loadedModules: Array<IModuleLoadingConfig>;
 
@@ -81,11 +90,8 @@ declare module "sfx.module-manager" {
 
         setModuleLoadingPolicy(policy: IModuleLoadingPolicy): void;
 
-        registerComponents(componentInfos: Array<IComponentInfo>): void;
-
         onHostVersionMismatch(callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler;
 
-        getComponentAsync<TComponent extends Component<TComponent>>(componentIdentity: string, ...extraArgs: Array<any>): Promise<TComponent & Partial<IDisposable>>;
-        getComponentAsync(componentIdentity: "module-manager"): Promise<IModuleManager>;
+        getComponentAsync<T extends TComponent, TComponent = Component<T>>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T & Partial<IDisposable>>;
     }
 }

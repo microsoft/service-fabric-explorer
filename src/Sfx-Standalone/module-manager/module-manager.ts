@@ -14,7 +14,8 @@ import {
     IModuleLoadingConfig,
     IModuleLoadingPolicy,
     IModuleInfo,
-    Component
+    Component,
+    IComponentCollection
 } from "sfx.module-manager";
 
 import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting";
@@ -33,6 +34,11 @@ import { Communicator } from "../modules/ipc/communicator";
 import { ObjectRemotingProxy } from "../modules/proxy.object/proxy.object";
 import StringPattern from "../modules/remoting/pattern/string";
 import * as appUtils from "../utilities/appUtils";
+import DefaultModuleLoadingPolicy from "./default-module-loading-policy";
+import ComponentCollection from "./ComponentCollection";
+
+const t: Component<number> = 10;
+console.log(t);
 
 export enum ModuleManagerAction {
     loadModuleAsync = "loadModuleAsync",
@@ -47,7 +53,7 @@ interface IHostRecord {
     communicator: ICommunicator;
 }
 
-export interface IModuleManagerMessage {
+interface IModuleManagerMessage {
     action: ModuleManagerAction;
     content: any;
 }
@@ -64,7 +70,7 @@ interface ILoadModuleDirAsyncMessage extends IModuleManagerMessage {
 
 function createDedicationDiDescriptor(
     moduleManager: IModuleManager,
-    descriptor: IComponentDescriptor,
+    descriptor: IComponentDescriptor<any>,
     injects: Array<string>)
     : IDiDescriptor {
     if (!Function.isFunction(descriptor)) {
@@ -120,7 +126,7 @@ function createDedicationDiDescriptor(
 
 function createLazySingletonDiDescriptor(
     moduleManager: IModuleManager,
-    descriptor: IComponentDescriptor,
+    descriptor: IComponentDescriptor<any>,
     injects: Array<string>)
     : IDiDescriptor {
     const dedicationDescriptor = createDedicationDiDescriptor(moduleManager, descriptor, injects);
@@ -134,16 +140,6 @@ function createLazySingletonDiDescriptor(
 
         return singleton;
     };
-}
-
-class DefaultModuleLoadingPolicy implements IModuleLoadingPolicy {
-    public shouldLoad(moduleManager: IModuleManager, nameOrInfo: string | IModuleInfo): boolean {
-        if (!utils.isNullOrUndefined(nameOrInfo) && String.isString((<IModuleInfo>nameOrInfo).hostVersion)) {
-            return moduleManager.hostVersion === (<IModuleInfo>nameOrInfo).hostVersion;
-        }
-
-        return true;
-    }
 }
 
 export namespace Patterns {
@@ -338,36 +334,40 @@ export class ModuleManager implements IModuleManager {
                     content: path
                 });
         } else {
-            this.loadModule(path, respectLoadingMode);
+            const module = this.loadModule(path, respectLoadingMode);
+
+            await module.initializeAsync(this);
         }
     }
 
-    public registerComponents(componentInfos: Array<IComponentInfo>): void {
-        if (!Array.isArray(componentInfos)) {
-            throw new Error("componentInfos must be an array of IComponentInfo.");
+    public register<T extends TComponent, TComponent = Component<T>>(componentInfo: IComponentInfo<TComponent>): IComponentCollection {
+        if (!componentInfo || !Object.isObject(componentInfo)) {
+            throw new Error("componentInfo must be provided.");
         }
 
-        for (const componentInfo of componentInfos) {
-            if (componentInfo.singleton === true) {
-                this.container.set(componentInfo.name, createLazySingletonDiDescriptor(this, componentInfo.descriptor, componentInfo.deps));
-            } else {
-                this.container.set(componentInfo.name, createDedicationDiDescriptor(this, componentInfo.descriptor, componentInfo.deps));
-            }
+        if (!String.isString(componentInfo.name) || String.isEmptyOrWhitespace(componentInfo.name)) {
+            throw new Error("componentInfo.name must be provided. (non-empty/whitespaces)");
         }
+
+        if (!Function.isFunction(componentInfo.descriptor)) {
+            throw new Error("componentInfo.descriptor function must be provided.");
+        }
+
+        return this.registerComponents([componentInfo]);
     }
-    
-    public getComponentAsync<TComponent extends Component<TComponent>>(componentIdentity: string, ...extraArgs: Array<any>): Promise<TComponent & Partial<IDisposable>> {
+
+    public getComponentAsync<T extends TComponent, TComponent = Component<T>>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T & Partial<IDisposable>> {
         if (String.isEmptyOrWhitespace(componentIdentity)) {
             throw new Error("componentIdentity cannot be null/undefined/empty.");
         }
 
-        const component = this.container.getDep<TComponent>(componentIdentity, ...extraArgs);
+        const component = this.container.getDep<T>(componentIdentity, ...extraArgs);
 
         if (component !== undefined) {
             return Promise.resolve(component);
         }
 
-        return this.getComponentFromProxiesAsync<TComponent & IDisposable>(null, componentIdentity, ...extraArgs);
+        return this.getComponentFromProxiesAsync<T & IDisposable>(null, componentIdentity, ...extraArgs);
     }
 
     public onHostVersionMismatch(callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler {
@@ -387,6 +387,18 @@ export class ModuleManager implements IModuleManager {
             hostVersion: this.hostVersion,
             initialModules: this.loadedModules.filter((info) => info.loadingMode === "Always")
         };
+    }
+
+    private registerComponents(componentInfos: Array<IComponentInfo<any>>): IModuleManager {
+        for (const componentInfo of componentInfos) {
+            if (componentInfo.singleton === true) {
+                this.container.set(componentInfo.name, createLazySingletonDiDescriptor(this, componentInfo.descriptor, componentInfo.deps));
+            } else {
+                this.container.set(componentInfo.name, createDedicationDiDescriptor(this, componentInfo.descriptor, componentInfo.deps));
+            }
+        }
+
+        return this;
     }
 
     private async obtainChildAsync(hostName: string): Promise<IHostRecord> {
@@ -411,10 +423,11 @@ export class ModuleManager implements IModuleManager {
             throw new Error(`Invalid module "${modulePath}": missing getModuleMetadata().`);
         }
 
-        const moduleInfo = module.getModuleMetadata();
+        const componentCollection = new ComponentCollection();
+        const moduleInfo = module.getModuleMetadata(componentCollection);
 
         if (!this.moduleLoadingPolicy.shouldLoad(this, moduleInfo)) {
-            return;
+            return undefined;
         }
 
         this.moduleLoadingInfos.push({
@@ -426,7 +439,7 @@ export class ModuleManager implements IModuleManager {
         });
 
         if (respectLoadingMode === true && moduleInfo.loadingMode !== "Always") {
-            return;
+            return undefined;
         }
 
         if (!utils.isNullOrUndefined(moduleInfo.hostVersion)
@@ -439,14 +452,7 @@ export class ModuleManager implements IModuleManager {
             }
         }
 
-        if (moduleInfo.components) {
-            if (!Array.isArray(moduleInfo.components)) {
-                throw new Error(
-                    `Invalid module "${path}": ModuleMetadata.components must be an array of IComponentInfo.`);
-            }
-
-            this.registerComponents(moduleInfo.components);
-        }
+        this.registerComponents(componentCollection.getComponents());
 
         return module;
     }

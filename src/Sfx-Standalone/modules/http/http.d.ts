@@ -145,9 +145,9 @@ declare module "sfx.http" {
     }
 
     export interface IHttpClient {
-        readonly defaultRequestOptions: IRequestOptions;
+        readonly defaultRequestOptions: Promise<IRequestOptions>;
 
-        updateDefaultRequestOptions(options: IRequestOptions): void;
+        updateDefaultRequestOptionsAsync(options: IRequestOptions): Promise<void>;
 
         deleteAsync<T>(url: string): Promise<IHttpResponse | T>;
 
