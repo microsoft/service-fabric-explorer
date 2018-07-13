@@ -61,20 +61,24 @@ declare module "sfx.module-manager" {
 
     type FunctionComponent<T extends FunctionType> = (...args: Array<any>) => Promise<Component<NonPromiseReturnType<T>>>;
 
-    type SerializableType = String | Number | Boolean | Date | Buffer;
+    type PrimitiveType = void | String | Number | Boolean | Date | Buffer;
 
-    interface SerializableArray<TItem extends s<TItem>> extends Array<TItem> {
-
-    }
+    type SerializableArray<TItem> = {
+        [index: number]:
+            TItem extends PrimitiveType ? TItem :
+            TItem extends SerializableObject<TItem> ? TItem :
+            TItem extends Array<infer TSubItem> ? SerializableArray<TSubItem> :
+            never;
+    };
 
     type SerializableObject<T> = {
         [Property in keyof T]:
-        T[Property] extends s<T[Property]> ? T[Property] :
+        T[Property] extends SerializableType<T[Property]> ? T[Property] :
         never;
     };
 
-    type s<T> =
-        T extends SerializableType ? T :
+    type SerializableType<T> =
+        T extends PrimitiveType ? T :
         T extends SerializableArray<infer TItem> ? T :
         T extends SerializableObject<T> ? T : never;
 
@@ -96,7 +100,7 @@ declare module "sfx.module-manager" {
         T extends Date ? T :
         T extends Buffer ? T :
         T extends FunctionType ? FunctionComponent<T> :
-        T extends Array<infer TItem> ? (TItem extends SerializableType ? Array<TItem> : ArrayComponent<TItem>) :
+        T extends Array<infer TItem> ? (TItem extends SerializableType<TItem> ? Array<TItem> : ArrayComponent<TItem>) :
         T extends Object ? (T extends SerializableObject<T> ? T : ObjectComponent<T>) :
         never;
 

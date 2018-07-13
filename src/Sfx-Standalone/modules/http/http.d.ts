@@ -1,5 +1,3 @@
-import { SerializableObject, SerializableType } from "sfx.module-manager";
-
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -145,9 +143,6 @@ declare module "sfx.http" {
         clientCert?: ICertificate;
         sslProtocol?: SslProtocol;
     }
-
-    type C = IDictionary<string | Array<string>> extends SerializableObject<IDictionary<string | Array<string>>> ? number : string;
-    type A = IRequestOptions extends SerializableObject<IRequestOptions> ? Boolean : String;
 
     export interface IHttpClient {
         readonly defaultRequestOptions: Promise<IRequestOptions>;
