@@ -3,12 +3,13 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IMainWindow, IComponentConfiguration } from "sfx.main-window";
+import { IMainWindow } from "sfx.main-window";
 import { BrowserWindow, ipcMain, WebContents, webContents } from "electron";
 import { resolve } from "../../utilities/appUtils";
 import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting";
 import { IModuleManager } from "sfx.module-manager";
-import { DialogService } from "./index.page";
+import { DialogService } from "./dialog-service";
+import { IComponentConfiguration } from "sfx.common";
 
 export class ClusterManagerComponentConfig implements IComponentConfiguration {
     id: string = "cluster-list";

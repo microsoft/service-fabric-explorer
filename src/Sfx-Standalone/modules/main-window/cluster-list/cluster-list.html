@@ -8,22 +8,26 @@
     <!-- CSS imports -->
     <link href="../../../sfx/css/lib.min.css" rel="stylesheet" />
     <link href="../../../sfx/css/dark.min.css" rel="stylesheet" />
+
+    <style>
+        ul {
+            list-style: none;
+        }
+
+        ul > li {
+            margin: 4px;
+        }
+    </style>
 </head>
 
 <body>
     <div>
         <button class="btn btn-primary" id="cluster-list-connect">Connect to a cluster</button>
     </div>
-    <ul>
-        <li>
+    <ul id="cluster-list">
+        <!-- <li>
             <button class="btn btn-secondary btn-cluster" data-endpoint="my-cluster1">switch to this cluster.</button>
-        </li>
-        <li>
-            <button class="btn btn-secondary btn-cluster" data-endpoint="my-cluster2">switch to this cluster.</button>
-        </li>
-        <li>
-            <button class="btn btn-secondary btn-cluster" data-endpoint="my-cluster3">switch to this cluster.</button>
-        </li>
+        </li>        -->
     </ul>
 </body>
 <script type="text/javascript" src="../../../node_modules/jquery/dist/jquery.min.js"></script>

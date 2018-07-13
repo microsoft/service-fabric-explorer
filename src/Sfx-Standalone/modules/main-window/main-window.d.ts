@@ -3,24 +3,9 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-declare module "sfx.main-window" {
-    
-    export interface IMainWindow {
-        components: IComponentConfiguration[];
-        register(navComponent: IComponentConfiguration): void;        
+declare module "sfx.main-window" {    
+    export interface IMainWindow {        
         load(): void;                
-    }
-
-    export interface IComponentConfiguration {
-        id: string;
-        title: string;
-        iconUrl?: string;
-        viewUrl?: string;
-        mainViewUrl?: string;
-    }
-
-    export interface IComponent {
-        handleButtonClickAsync(button: HTMLElement): Promise<void>; 
     }
 }
 

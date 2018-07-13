@@ -14,10 +14,9 @@ module Sfx {
         }
 
         public static get clusterUrl(): string {
-
             if (this._clusterUrl == null) {
                 if (angular.isFunction(this.require)) {
-                    this._clusterUrl = this.require("electron").remote.getGlobal("TargetClusterUrl");
+                    this._clusterUrl = StandaloneIntegration.extractQueryItem(window.location.search, "targetcluster");
                 } else {
                     this._clusterUrl = "";
                 }
@@ -26,5 +25,19 @@ module Sfx {
             return StandaloneIntegration._clusterUrl;
         }
 
+        private static extractQueryItem(queryString: string, name: string): string {
+            if (queryString) {
+                let urlParameters = window.location.search.split("?")[1];
+                let queryParams = urlParameters.split("&");
+                for (let i = 0; i < queryParams.length; i++) {
+                    let queryParam = queryParams[i].split("=");
+                    if (queryParam[0] === name) {
+                        return queryParam[1];
+                    }
+                }
+            }
+
+            return null;
+        }
     }
 }

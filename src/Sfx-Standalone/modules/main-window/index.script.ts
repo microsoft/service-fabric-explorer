@@ -1,14 +1,14 @@
 import * as $ from "jquery";
-import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting";
-import { ipcRenderer, ipcMain, WebviewTag } from "electron";
-import { IMainWindow, IComponentConfiguration } from "sfx.main-window";
+import { ICommunicator } from "sfx.remoting";
+import { WebviewTag } from "electron";
+import { IComponentConfiguration } from "sfx.common";
 import { SfxContainer } from "./sfx-container/sfx-container.script";
-import { DialogService } from "./index.page";
+import { DialogService } from "./dialog-service";
 import { ClusterManagerComponentConfig, SettingsComponentConfig } from "./main-window";
 
 (async () => {
 
-    sfxModuleManager.registerComponents([DialogService.getComponentInfo()]);
+    sfxModuleManager.registerComponents([DialogService.getComponentInfo(), SfxContainer.getComponentInfo()]);
 
     const leftpanel = $("div#left-panel");
 
@@ -21,18 +21,14 @@ import { ClusterManagerComponentConfig, SettingsComponentConfig } from "./main-w
             leftpanel.append(template);
 
             if (component.viewUrl) {
-                $(`<div id="sub-${component.id}" class="sub-panel"><webview id="wv-${component.id}" src="${component.viewUrl}" nodeintegration preload="./cluster-list/preload.js"></webview></div>`).appendTo(template);
+                $(`<div id="sub-${component.id}" class="sub-panel"><webview id="wv-${component.id}" src="${component.viewUrl}" nodeintegration preload="./preload.js"></webview></div>`).appendTo(template);
 
                 let webview = <WebviewTag>document.querySelector(`webview[id='wv-${component.id}']`);
-
-                console.log(webview);
-
                 webview.addEventListener("dom-ready", async () => {
-                    webview.openDevTools();
                     await sfxModuleManager.newHostAsync(`host-${component.id}`, await sfxModuleManager.getComponentAsync<ICommunicator>("ipc.communicator", webview.getWebContents()));
-                });
 
-                console.log("index.script done");
+                    webview.openDevTools();
+                });
             }
         }));
 

@@ -35,4 +35,12 @@ declare module "sfx.common" {
         handle(constructor: IHandlerConstructor<THandler>): IHandlerChainBuilder<THandler>;
         build(): THandler;
     }
+
+    export interface IComponentConfiguration {
+        id: string;
+        title: string;
+        iconUrl?: string;
+        viewUrl?: string;
+        mainViewUrl?: string;
+    }
 }
