@@ -55,22 +55,50 @@ declare module "sfx.module-manager" {
         (moduleInfo: IModuleInfo, currentVersion: string, expectedVersion: string): boolean;
     }
 
-    type IgnorePromiseReturnType<TFunc extends Function> =
-        TFunc extends (...args: any[]) => Promise<infer IR> ? IR :
-        TFunc extends (...args: any[]) => infer TR ? TR : never;
+    type FunctionType = (...args: Array<any>) => any;
+
+    type NonPromiseReturnType<T extends FunctionType> = ReturnType<T> extends Promise<infer R> ? R : ReturnType<T>;
+
+    type FunctionComponent<T extends FunctionType> = (...args: Array<any>) => Promise<Component<NonPromiseReturnType<T>>>;
+
+    type SerializableType = String | Number | Boolean | Date | Buffer;
+
+    interface SerializableArray<TItem extends s<TItem>> extends Array<TItem> {
+
+    }
+
+    type SerializableObject<T> = {
+        [Property in keyof T]:
+        T[Property] extends s<T[Property]> ? T[Property] :
+        never;
+    };
+
+    type s<T> =
+        T extends SerializableType ? T :
+        T extends SerializableArray<infer TItem> ? T :
+        T extends SerializableObject<T> ? T : never;
+
+    interface ArrayComponent<TItem>
+        extends Array<Component<TItem>> {
+    }
+
+    type ObjectComponent<T> = {
+        [Property in keyof T]:
+        T[Property] extends FunctionType ? FunctionComponent<T[Property]> :
+        T[Property] extends Promise<infer R> ? Promise<Component<R>> :
+        Promise<Component<T[Property]>>;
+    };
 
     export type Component<T> =
-        T extends Function ? FunctionComponent<T> :
-        T extends Object ? ObjectComponent<T> : never;
-
-    export type FunctionComponent<T extends Function> = (...args: Array<any>) => Promise<Component<IgnorePromiseReturnType<T>>>;
-
-    export type ObjectComponent<T> = {
-        [Property in keyof T]:
-        T[Property] extends Function ? (...args: Array<any>) => Promise<Component<IgnorePromiseReturnType<T[Property]>>> :
-        T[Property] extends Promise<infer IR> ? Promise<Component<IR>> :
-        T[Property] extends Object ? Component<T[Property]> : Promise<T[Property]>;
-    };
+        T extends String ? T :
+        T extends Number ? T :
+        T extends Boolean ? T :
+        T extends Date ? T :
+        T extends Buffer ? T :
+        T extends FunctionType ? FunctionComponent<T> :
+        T extends Array<infer TItem> ? (TItem extends SerializableType ? Array<TItem> : ArrayComponent<TItem>) :
+        T extends Object ? (T extends SerializableObject<T> ? T : ObjectComponent<T>) :
+        never;
 
     export interface IComponentCollection {
         register<T extends TComponent, TComponent = Component<T>>(componentInfo: IComponentInfo<T>): IComponentCollection;

@@ -6,8 +6,7 @@
         "target": "ES2017",
         "sourceMap": true,
         "declaration": false,
-        "noImplicitReturns": true,
-        "noImplicitThis": true
+        "noImplicitReturns": true
     },
     "exclude": [
         "build/",

@@ -53,8 +53,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
 
     protected httpRequestOptions: THttpRequestOptions;
 
-    public get defaultRequestOptions(): IRequestOptions {
-        return this.requestOptions;
+    public get defaultRequestOptions(): Promise<IRequestOptions> {
+        return Promise.resolve(this.requestOptions);
     }
 
     constructor(
@@ -98,7 +98,7 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
         }
     }
 
-    public updateDefaultRequestOptions(options: IRequestOptions): void {
+    public async updateDefaultRequestOptionsAsync(options: IRequestOptions): Promise<void> {
         this.httpRequestOptions = options ? this.generateHttpRequestOptions(options) : Object.create(null);
         this.requestOptions = options ? options : Object.create(null);
 

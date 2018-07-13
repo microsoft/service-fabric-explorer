@@ -11,7 +11,8 @@ import {
     RequestAsyncProcessor,
     ResponseAsyncHandler,
     IRequestOptions,
-    IHttpRequest
+    IHttpRequest,
+    ServerCertValidator
 } from "sfx.http";
 
 import * as url from "url";
@@ -53,18 +54,23 @@ function toCertificateInfo(certificate: electron.Certificate): ICertificateInfo 
 }
 
 export default class HttpClient extends HttpClientBase<IHttpRequestOptions> {
+    private readonly serverCertValidator: ServerCertValidator;
+
     private httpSession: electron.Session;
 
     constructor(
         log: ILog,
         protocol: string,
+        serverCertValidator: ServerCertValidator,
         requestAsyncProcessor: RequestAsyncProcessor,
         responseAsyncHandler: ResponseAsyncHandler) {
         super(log, protocol, requestAsyncProcessor, responseAsyncHandler);
+
+        this.serverCertValidator = serverCertValidator;
     }
 
-    public updateDefaultRequestOptions(options: IRequestOptions): void {
-        super.updateDefaultRequestOptions(options);
+    public async updateDefaultRequestOptionsAsync(options: IRequestOptions): Promise<void> {
+        await super.updateDefaultRequestOptionsAsync(options);
 
         this.httpSession = this.makeSession(this.httpRequestOptions);
     }
@@ -90,9 +96,9 @@ export default class HttpClient extends HttpClientBase<IHttpRequestOptions> {
             throw new Error("clientCert is not supported.");
         }
 
-        if (Function.isFunction(requestOptions.serverCertValidator)) {
+        if (Function.isFunction(this.serverCertValidator)) {
             options.setCertificateVerifyProc = (requestObject, callback) => {
-                if (requestOptions.serverCertValidator(requestObject.hostname, toCertificateInfo(requestObject.certificate))) {
+                if (this.serverCertValidator(requestObject.hostname, toCertificateInfo(requestObject.certificate))) {
                     callback(-2);
                 } else {
                     callback(0);

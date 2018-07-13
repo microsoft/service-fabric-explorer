@@ -6,7 +6,8 @@
 import {
     RequestAsyncProcessor,
     ResponseAsyncHandler,
-    IRequestOptions
+    IRequestOptions,
+    ServerCertValidator
 } from "sfx.http";
 
 import { ILog } from "sfx.logging";
@@ -21,7 +22,7 @@ import * as https from "https";
 import * as http from "http";
 import * as url from "url";
 import * as crypto from "crypto";
-import { PeerCertificate } from "tls";
+import { PeerCertificate, Server } from "tls";
 
 import { HttpProtocols, SslProtocols } from "./common";
 import * as utils from "../../utilities/utils";
@@ -56,10 +57,13 @@ function toCertificateInfo(cert: PeerCertificate): ICertificateInfo {
 export default class HttpClient extends HttpClientBase<http.RequestOptions> {
     private readonly certLoader: ICertificateLoader;
 
+    private readonly serverCertValidator: ServerCertValidator;
+
     constructor(
         log: ILog,
         certLoader: ICertificateLoader,
         protocol: string,
+        serverCertValidator: ServerCertValidator,
         requestAsyncProcessor: RequestAsyncProcessor,
         responseAsyncHandler: ResponseAsyncHandler) {
         super(log, protocol, requestAsyncProcessor, responseAsyncHandler);
@@ -68,6 +72,7 @@ export default class HttpClient extends HttpClientBase<http.RequestOptions> {
             throw new Error("certLoader must be supplied.");
         }
 
+        this.serverCertValidator = serverCertValidator;
         this.certLoader = certLoader;
     }
 
@@ -109,10 +114,10 @@ export default class HttpClient extends HttpClientBase<http.RequestOptions> {
             }
         }
 
-        if (Function.isFunction(requestOptions.serverCertValidator)) {
+        if (Function.isFunction(this.serverCertValidator)) {
             options.rejectUnauthorized = false;
             options["checkServerIdentity"] =
-                (serverName, cert) => requestOptions.serverCertValidator(serverName, toCertificateInfo(cert));
+                (serverName, cert) => this.serverCertValidator(serverName, toCertificateInfo(cert));
         }
 
         return options;

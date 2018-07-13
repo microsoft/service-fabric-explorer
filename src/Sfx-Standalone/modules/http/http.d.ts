@@ -1,3 +1,5 @@
+import { SerializableObject, SerializableType } from "sfx.module-manager";
+
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -8,7 +10,8 @@ declare module "sfx.module-manager" {
         IHttpClient,
         IHttpClientBuilder,
         RequestAsyncProcessor,
-        ResponseAsyncHandler
+        ResponseAsyncHandler,
+        ServerCertValidator
     } from "sfx.http";
 
     import { WebContents } from "electron";
@@ -16,18 +19,18 @@ declare module "sfx.module-manager" {
     import { SelectClientCertAsyncHandler, IAadMetadata } from "sfx.http.auth";
 
     export interface IModuleManager {
-        getComponentAsync(componentIdentity: "http.http-client"): Promise<IHttpClient>;
-        getComponentAsync(componentIdentity: "http.https-client"): Promise<IHttpClient>;
+        getComponentAsync(componentIdentity: "http.http-client", serverCertValidator?: ServerCertValidator): Promise<IHttpClient>;
+        getComponentAsync(componentIdentity: "http.https-client", serverCertValidator?: ServerCertValidator): Promise<IHttpClient>;
 
-        getComponentAsync(componentIdentity: "http.node-http-client"): Promise<IHttpClient>;
-        getComponentAsync(componentIdentity: "http.node-https-client"): Promise<IHttpClient>;
+        getComponentAsync(componentIdentity: "http.node-http-client", serverCertValidator?: ServerCertValidator): Promise<IHttpClient>;
+        getComponentAsync(componentIdentity: "http.node-https-client", serverCertValidator?: ServerCertValidator): Promise<IHttpClient>;
 
-        getComponentAsync(componentIdentity: "http.electron-http-client"): Promise<IHttpClient>;
-        getComponentAsync(componentIdentity: "http.electron-https-client"): Promise<IHttpClient>;
+        getComponentAsync(componentIdentity: "http.electron-http-client", serverCertValidator?: ServerCertValidator): Promise<IHttpClient>;
+        getComponentAsync(componentIdentity: "http.electron-https-client", serverCertValidator?: ServerCertValidator): Promise<IHttpClient>;
 
-        getComponentAsync(componentIdentity: "http.client-builder"): Promise<IHttpClientBuilder>;
-        getComponentAsync(componentIdentity: "http.node-client-builder"): Promise<IHttpClientBuilder>;
-        getComponentAsync(componentIdentity: "http.electron-client-builder"): Promise<IHttpClientBuilder>;
+        getComponentAsync(componentIdentity: "http.client-builder", serverCertValidator?: ServerCertValidator): Promise<IHttpClientBuilder>;
+        getComponentAsync(componentIdentity: "http.node-client-builder", serverCertValidator?: ServerCertValidator): Promise<IHttpClientBuilder>;
+        getComponentAsync(componentIdentity: "http.electron-client-builder", serverCertValidator?: ServerCertValidator): Promise<IHttpClientBuilder>;
 
         getComponentAsync(componentIdentity: "http.request-handlers.handle-json"): Promise<IHandlerConstructor<RequestAsyncProcessor>>;
 
@@ -37,7 +40,7 @@ declare module "sfx.module-manager" {
         getComponentAsync(componentIdentity: "http.response-handlers.handle-auth-cert",
             selectClientCertAsyncHandler: SelectClientCertAsyncHandler)
             : Promise<IHandlerConstructor<ResponseAsyncHandler>>;
-            
+
         getComponentAsync(componentIdentity: "http.response-handlers.handle-auth-aad",
             handlingHost: WebContents,
             aadMetadata: IAadMetadata)
@@ -139,10 +142,12 @@ declare module "sfx.http" {
         method: HttpMethod;
         url: string;
         headers?: IDictionary<string | Array<string>>;
-        serverCertValidator?: ServerCertValidator;
         clientCert?: ICertificate;
         sslProtocol?: SslProtocol;
     }
+
+    type C = IDictionary<string | Array<string>> extends SerializableObject<IDictionary<string | Array<string>>> ? number : string;
+    type A = IRequestOptions extends SerializableObject<IRequestOptions> ? Boolean : String;
 
     export interface IHttpClient {
         readonly defaultRequestOptions: Promise<IRequestOptions>;

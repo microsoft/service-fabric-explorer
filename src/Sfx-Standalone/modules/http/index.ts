@@ -2,10 +2,10 @@
 // Copyright (c) Microsoft Corporation. All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
-import { IModuleInfo, IModule } from "sfx.module-manager";
+import { IModuleInfo, IModule, SerializableObject } from "sfx.module-manager";
 import { ILog } from "sfx.logging";
 import { ICertificateLoader, IPkiCertificateService } from "sfx.cert";
-import { IHttpClient, IHttpClientBuilder } from "sfx.http";
+import { IHttpClient, IHttpClientBuilder, ServerCertValidator } from "sfx.http";
 import { SelectClientCertAsyncHandler, IAadMetadata } from "sfx.http.auth";
 import { WebContents } from "electron";
 
@@ -19,9 +19,33 @@ import handleAuthAadResponse from "./response-handlers/handle-auth-aad";
 import handleAuthCertResponse from "./response-handlers/handle-auth-cert";
 import NodeHttpClientBuilder from "./node.http-client-builder";
 import ElectronHttpClientBuilder from "./electron.http-client-builder";
+import { IDictionary } from "sfx.common";
 
-function buildNodeHttpClient(log: ILog, certLoader: ICertificateLoader, protocol: string): IHttpClient {
-    const clientBuilder = new NodeHttpClientBuilder(log, certLoader);
+function buildNodeHttpClient(
+    log: ILog,
+    certLoader: ICertificateLoader,
+    protocol: string,
+    serverCertValidator?: ServerCertValidator)
+    : IHttpClient {
+    const clientBuilder = new NodeHttpClientBuilder(log, certLoader, serverCertValidator);
+
+    // Request handlers
+    clientBuilder.handleRequest(handleJsonRequest);
+
+    // Response handlers
+    clientBuilder
+        .handleResponse(handleRedirectionResponse)
+        .handleResponse(handleJsonResponse);
+
+    return clientBuilder.build(protocol);
+}
+
+function buildElectronHttpClient(
+    log: ILog,
+    protocol: string,
+    serverCertValidator?: ServerCertValidator)
+    : IHttpClient {
+    const clientBuilder = new ElectronHttpClientBuilder(log, serverCertValidator);
 
     // Request handlers
     clientBuilder.handleRequest(handleJsonRequest);
@@ -34,19 +58,7 @@ function buildNodeHttpClient(log: ILog, certLoader: ICertificateLoader, protocol
     return clientBuilder.build(protocol);
 }
 
-function buildElectronHttpClient(log: ILog, protocol: string): IHttpClient {
-    const clientBuilder = new ElectronHttpClientBuilder(log);
-
-    // Request handlers
-    clientBuilder.handleRequest(handleJsonRequest);
-
-    // Response handlers
-    clientBuilder
-        .handleResponse(handleRedirectionResponse)
-        .handleResponse(handleJsonResponse);
-
-    return clientBuilder.build(protocol);
-}
+const T: SerializableObject<IDictionary<string | Array<string>>> = <IDictionary<string | Array<string>>>{};
 
 exports = <IModule>{
     getModuleMetadata: (components): IModuleInfo => {
@@ -54,49 +66,57 @@ exports = <IModule>{
             .register<IHttpClient>({
                 name: "http.http-client",
                 version: appUtils.getAppVersion(),
-                descriptor: async (log: ILog, certLoader: ICertificateLoader) => buildNodeHttpClient(log, certLoader, HttpProtocols.any),
+                descriptor: async (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator) =>
+                    buildNodeHttpClient(log, certLoader, HttpProtocols.any, serverCertValidator),
                 deps: ["logging", "cert.cert-loader"]
             })
             .register<IHttpClient>({
                 name: "http.https-client",
                 version: appUtils.getAppVersion(),
-                descriptor: async (log: ILog, certLoader: ICertificateLoader) => buildNodeHttpClient(log, certLoader, HttpProtocols.https),
+                descriptor: async (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator) =>
+                    buildNodeHttpClient(log, certLoader, HttpProtocols.https, serverCertValidator),
                 deps: ["logging", "cert.cert-loader"]
             })
             .register<IHttpClient>({
                 name: "http.node-http-client",
                 version: appUtils.getAppVersion(),
-                descriptor: async (log: ILog, certLoader: ICertificateLoader) => buildNodeHttpClient(log, certLoader, HttpProtocols.any),
+                descriptor: async (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator) =>
+                    buildNodeHttpClient(log, certLoader, HttpProtocols.any, serverCertValidator),
                 deps: ["logging", "cert.cert-loader"]
             })
             .register<IHttpClient>({
                 name: "http.node-https-client",
                 version: appUtils.getAppVersion(),
-                descriptor: async (log: ILog, certLoader: ICertificateLoader) => buildNodeHttpClient(log, certLoader, HttpProtocols.https),
+                descriptor: async (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator) =>
+                    buildNodeHttpClient(log, certLoader, HttpProtocols.https, serverCertValidator),
                 deps: ["logging", "cert.cert-loader"]
             })
             .register<IHttpClient>({
                 name: "http.electron-http-client",
                 version: appUtils.getAppVersion(),
-                descriptor: async (log: ILog) => buildElectronHttpClient(log, HttpProtocols.any),
+                descriptor: async (log: ILog, serverCertValidator?: ServerCertValidator) =>
+                    buildElectronHttpClient(log, HttpProtocols.any, serverCertValidator),
                 deps: ["logging"]
             })
             .register<IHttpClient>({
                 name: "http.electron-https-client",
                 version: appUtils.getAppVersion(),
-                descriptor: async (log: ILog) => buildElectronHttpClient(log, HttpProtocols.https),
+                descriptor: async (log: ILog, serverCertValidator?: ServerCertValidator) =>
+                    buildElectronHttpClient(log, HttpProtocols.https, serverCertValidator),
                 deps: ["logging"]
             })
             .register<IHttpClientBuilder>({
                 name: "http.node-client-builder",
                 version: appUtils.getAppVersion(),
-                descriptor: async (log: ILog, certLoader: ICertificateLoader) => new NodeHttpClientBuilder(log, certLoader),
+                descriptor: async (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator) =>
+                    new NodeHttpClientBuilder(log, certLoader, serverCertValidator),
                 deps: ["logging", "cert.cert-loader"]
             })
             .register<IHttpClientBuilder>({
                 name: "http.electron-client-builder",
                 version: appUtils.getAppVersion(),
-                descriptor: async (log: ILog) => new ElectronHttpClientBuilder(log),
+                descriptor: async (log: ILog, serverCertValidator?: ServerCertValidator) =>
+                    new ElectronHttpClientBuilder(log, serverCertValidator),
                 deps: ["logging"]
             })
 
