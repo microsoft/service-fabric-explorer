@@ -75,7 +75,7 @@ export default class HttpClient extends HttpClientBase<IHttpRequestOptions> {
         this.httpSession = this.makeSession(this.httpRequestOptions);
     }
 
-    protected generateHttpRequestOptions(requestOptions: IRequestOptions): IHttpRequestOptions {
+    protected generateHttpRequestOptionsAsync(requestOptions: IRequestOptions): Promise<IHttpRequestOptions> {
         const options: IHttpRequestOptions = Object.create(this.httpRequestOptions);
 
         Object.assign(options, url.parse(requestOptions.url));
@@ -106,7 +106,7 @@ export default class HttpClient extends HttpClientBase<IHttpRequestOptions> {
             };
         }
 
-        return options;
+        return Promise.resolve(options);
     }
 
     protected makeRequest(options: IHttpRequestOptions): IHttpRequest {

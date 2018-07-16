@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.module-manager" {
-    import { IDisposable } from "sfx.common";
+    import { IDisposable, FunctionType } from "sfx.common";
     import { ICommunicator } from "sfx.remoting";
 
     export interface IModuleManagerConstructorOptions {
@@ -19,7 +19,7 @@ declare module "sfx.module-manager" {
     export interface IComponentInfo<T> {
         name: string;
         version?: string;
-        descriptor: IComponentDescriptor<T>;
+        descriptor: (...args: Array<any>) => Promise<Component<T>>;
         singleton?: boolean;
         deps?: Array<string>;
     }
@@ -55,8 +55,6 @@ declare module "sfx.module-manager" {
         (moduleInfo: IModuleInfo, currentVersion: string, expectedVersion: string): boolean;
     }
 
-    type FunctionType = (...args: Array<any>) => any;
-
     type NonPromiseReturnType<T extends FunctionType> = ReturnType<T> extends Promise<infer R> ? R : ReturnType<T>;
 
     type FunctionComponent<T extends FunctionType> = (...args: Array<any>) => Promise<Component<NonPromiseReturnType<T>>>;
@@ -65,10 +63,11 @@ declare module "sfx.module-manager" {
 
     type SerializableArray<TItem> = {
         [index: number]:
-            TItem extends PrimitiveType ? TItem :
-            TItem extends SerializableObject<TItem> ? TItem :
-            TItem extends Array<infer TSubItem> ? SerializableArray<TSubItem> :
-            never;
+        TItem extends PrimitiveType ? TItem :
+        TItem extends FunctionType ? never :
+        TItem extends SerializableObject<TItem> ? TItem :
+        TItem extends Array<infer TSubItem> ? SerializableArray<TSubItem> :
+        never;
     };
 
     type SerializableObject<T> = {
@@ -79,6 +78,7 @@ declare module "sfx.module-manager" {
 
     type SerializableType<T> =
         T extends PrimitiveType ? T :
+        T extends FunctionType ? never :
         T extends SerializableArray<infer TItem> ? T :
         T extends SerializableObject<T> ? T : never;
 
@@ -94,6 +94,7 @@ declare module "sfx.module-manager" {
     };
 
     export type Component<T> =
+        T extends void ? T :
         T extends String ? T :
         T extends Number ? T :
         T extends Boolean ? T :
@@ -101,11 +102,14 @@ declare module "sfx.module-manager" {
         T extends Buffer ? T :
         T extends FunctionType ? FunctionComponent<T> :
         T extends Array<infer TItem> ? (TItem extends SerializableType<TItem> ? Array<TItem> : ArrayComponent<TItem>) :
-        T extends Object ? (T extends SerializableObject<T> ? T : ObjectComponent<T>) :
-        never;
+        T extends Object ? (
+            keyof T extends never ? never :
+            T extends SerializableObject<T> ? T :
+            ObjectComponent<T>)
+        : never;
 
     export interface IComponentCollection {
-        register<T extends TComponent, TComponent = Component<T>>(componentInfo: IComponentInfo<T>): IComponentCollection;
+        register<T>(componentInfo: IComponentInfo<T>): IComponentCollection;
     }
 
     export interface IModuleManager extends IComponentCollection {

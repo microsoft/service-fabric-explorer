@@ -13,7 +13,7 @@ declare module "sfx.module-manager" {
     } from "sfx.http";
 
     import { WebContents } from "electron";
-    import { IHandlerConstructor } from "sfx.common";
+    import { IAsyncHandlerConstructor } from "sfx.common";
     import { SelectClientCertAsyncHandler, IAadMetadata } from "sfx.http.auth";
 
     export interface IModuleManager {
@@ -30,96 +30,34 @@ declare module "sfx.module-manager" {
         getComponentAsync(componentIdentity: "http.node-client-builder", serverCertValidator?: ServerCertValidator): Promise<IHttpClientBuilder>;
         getComponentAsync(componentIdentity: "http.electron-client-builder", serverCertValidator?: ServerCertValidator): Promise<IHttpClientBuilder>;
 
-        getComponentAsync(componentIdentity: "http.request-handlers.handle-json"): Promise<IHandlerConstructor<RequestAsyncProcessor>>;
+        getComponentAsync(componentIdentity: "http.request-handlers.handle-json"): Promise<IAsyncHandlerConstructor<RequestAsyncProcessor>>;
 
-        getComponentAsync(componentIdentity: "http.response-handlers.handle-redirection"): Promise<IHandlerConstructor<ResponseAsyncHandler>>;
-        getComponentAsync(componentIdentity: "http.response-handlers.handle-json"): Promise<IHandlerConstructor<ResponseAsyncHandler>>;
+        getComponentAsync(componentIdentity: "http.response-handlers.handle-redirection"): Promise<IAsyncHandlerConstructor<ResponseAsyncHandler>>;
+        getComponentAsync(componentIdentity: "http.response-handlers.handle-json"): Promise<IAsyncHandlerConstructor<ResponseAsyncHandler>>;
 
         getComponentAsync(componentIdentity: "http.response-handlers.handle-auth-cert",
             selectClientCertAsyncHandler: SelectClientCertAsyncHandler)
-            : Promise<IHandlerConstructor<ResponseAsyncHandler>>;
+            : Promise<IAsyncHandlerConstructor<ResponseAsyncHandler>>;
 
         getComponentAsync(componentIdentity: "http.response-handlers.handle-auth-aad",
             handlingHost: WebContents,
             aadMetadata: IAadMetadata)
-            : Promise<IHandlerConstructor<ResponseAsyncHandler>>;
+            : Promise<IAsyncHandlerConstructor<ResponseAsyncHandler>>;
     }
 }
 
 declare module "sfx.http" {
-    import { IDictionary, IHandlerConstructor } from "sfx.common";
+    import { IDictionary, IAsyncHandlerConstructor } from "sfx.common";
     import { ILog } from "sfx.logging";
     import { ICertificateInfo, ICertificate } from "sfx.cert";
     import { Readable, Writable } from "stream";
 
     export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
-
-    export interface IHttpResponse extends Readable {
-        httpVersion: string;
-        statusCode: number;
-        statusMessage: string;
-        headers: IDictionary<string>;
-
-        addListener(event: string, listener: (...args: any[]) => void): this;
-        addListener(event: "aborted", listener: () => void): this;
-
-        emit(event: string | symbol, ...args: any[]): boolean;
-        emit(event: "aborted", listener: () => void): boolean;
-
-        on(event: string, listener: (...args: any[]) => void): this;
-        on(event: "aborted", listener: () => void): this;
-
-        once(event: string, listener: (...args: any[]) => void): this;
-        once(event: "aborted", listener: () => void): this;
-
-        prependListener(event: string, listener: (...args: any[]) => void): this;
-        prependListener(event: "aborted", listener: () => void): this;
-
-        prependOnceListener(event: string, listener: (...args: any[]) => void): this;
-        prependOnceListener(event: "aborted", listener: () => void): this;
-
-        removeListener(event: string, listener: (...args: any[]) => void): this;
-        removeListener(event: "aborted", listener: () => void): this;
-    }
-
-    export interface IHttpRequest extends Writable {
-        getHeader(name: string): any;
-        setHeader(name: string, value: any): void;
-        abort(): void;
-
-        addListener(event: string, listener: (...args: any[]) => void): this;
-        addListener(event: "response", listener: (response: IHttpResponse) => void): this;
-        addListener(event: "abort", listener: () => void): this;
-
-        emit(event: string | symbol, ...args: any[]): boolean;
-        emit(event: "response", listener: (response: IHttpResponse) => void): boolean;
-        emit(event: "abort", listener: () => void): boolean;
-
-        on(event: string, listener: (...args: any[]) => void): this;
-        on(event: "response", listener: (response: IHttpResponse) => void): this;
-        on(event: "abort", listener: () => void): this;
-
-        once(event: string, listener: (...args: any[]) => void): this;
-        once(event: "response", listener: (response: IHttpResponse) => void): this;
-        once(event: "abort", listener: () => void): this;
-
-        prependListener(event: string, listener: (...args: any[]) => void): this;
-        prependListener(event: "response", listener: (response: IHttpResponse) => void): this;
-        prependListener(event: "abort", listener: () => void): this;
-
-        prependOnceListener(event: string, listener: (...args: any[]) => void): this;
-        prependOnceListener(event: "response", listener: (response: IHttpResponse) => void): this;
-        prependOnceListener(event: "abort", listener: () => void): this;
-
-        removeListener(event: string, listener: (...args: any[]) => void): this;
-        removeListener(event: "response", listener: (response: IHttpResponse) => void): this;
-        removeListener(event: "abort", listener: () => void): this;
-    }
-
+    
     export interface IHttpClientBuilder {
-        handleRequest(constructor: IHandlerConstructor<RequestAsyncProcessor>): IHttpClientBuilder;
-        handleResponse(constructor: IHandlerConstructor<ResponseAsyncHandler>): IHttpClientBuilder;
-        build(protocol: string): IHttpClient;
+        handleRequestAsync(constructor: IAsyncHandlerConstructor<RequestAsyncProcessor>): Promise<IHttpClientBuilder>;
+        handleResponseAsync(constructor: IAsyncHandlerConstructor<ResponseAsyncHandler>): Promise<IHttpClientBuilder>;
+        buildAsync(protocol: string): Promise<IHttpClient>;
     }
 
     export interface RequestAsyncProcessor {

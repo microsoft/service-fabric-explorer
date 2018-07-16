@@ -101,21 +101,22 @@ class AadTokenAcquirer {
     }
 }
 
-export default function handleAad(
+export default async function handleAadAsync(
     handlingHost: WebContents,
     aadMetadata: IAadMetadata,
-    nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
+    nextHandler: ResponseAsyncHandler)
+    : Promise<ResponseAsyncHandler> {
     return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
         if (response.statusCode === 403 || response.statusCode === 401) {
             const acquirer = new AadTokenAcquirer(client, handlingHost, aadMetadata);
 
             return acquirer.acquireTokenAsync()
                 .then(
-                    (token) => {
-                        const options = client.defaultRequestOptions;
+                    async (token) => {
+                        const options = await client.defaultRequestOptions;
 
                         options.headers["Authorization"] = `Bearer ${token}`;
-                        client.updateDefaultRequestOptions(options);
+                        await client.updateDefaultRequestOptionsAsync(options);
 
                         return client.requestAsync(requestOptions, requestData);
                     },

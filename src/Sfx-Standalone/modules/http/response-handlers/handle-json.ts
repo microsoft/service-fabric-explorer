@@ -37,7 +37,7 @@ function isJsonResponse(log: ILog, response: IHttpResponse): boolean {
     return false;
 }
 
-export default function handleJson(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
+export default async function handleJsonAsync(nextHandler: ResponseAsyncHandler): Promise<ResponseAsyncHandler> {
     return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
         if (response.statusCode >= 200 && response.statusCode < 300 && isJsonResponse(log, response)) {
             response.setEncoding("utf8");

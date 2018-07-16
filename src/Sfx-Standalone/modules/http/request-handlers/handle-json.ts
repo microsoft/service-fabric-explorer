@@ -11,8 +11,8 @@ import * as http from "http";
 import { HttpContentTypes } from "../common";
 import * as utils from "../../../utilities/utils";
 
-export default function handleJson(nextHandler: RequestAsyncProcessor): RequestAsyncProcessor {
-    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: http.ClientRequest) => {
+export default async function handleJsonAsync(nextHandler: RequestAsyncProcessor): Promise<RequestAsyncProcessor> {
+    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, request: http.ClientRequest): Promise<void> => {
         const contentType = request.getHeader("Content-Type");
 
         if (String.isString(contentType)

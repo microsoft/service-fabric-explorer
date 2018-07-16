@@ -22,7 +22,7 @@ import * as https from "https";
 import * as http from "http";
 import * as url from "url";
 import * as crypto from "crypto";
-import { PeerCertificate, Server } from "tls";
+import { PeerCertificate } from "tls";
 
 import { HttpProtocols, SslProtocols } from "./common";
 import * as utils from "../../utilities/utils";
@@ -76,7 +76,7 @@ export default class HttpClient extends HttpClientBase<http.RequestOptions> {
         this.certLoader = certLoader;
     }
 
-    protected generateHttpRequestOptions(requestOptions: IRequestOptions): https.RequestOptions {
+    protected async generateHttpRequestOptionsAsync(requestOptions: IRequestOptions): Promise<https.RequestOptions> {
         const options: https.RequestOptions = Object.create(this.httpRequestOptions);
 
         Object.assign(options, url.parse(requestOptions.url));
@@ -98,7 +98,7 @@ export default class HttpClient extends HttpClientBase<http.RequestOptions> {
         }
 
         if (requestOptions.clientCert) {
-            requestOptions.clientCert = this.certLoader.load(requestOptions.clientCert);
+            requestOptions.clientCert = await this.certLoader.loadAsync(requestOptions.clientCert);
 
             if (requestOptions.clientCert.type === "pfx") {
                 options.pfx = (<IPfxCertificate>requestOptions.clientCert).pfx;

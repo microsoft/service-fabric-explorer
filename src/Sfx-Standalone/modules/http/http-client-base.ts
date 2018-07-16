@@ -99,7 +99,7 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
     }
 
     public async updateDefaultRequestOptionsAsync(options: IRequestOptions): Promise<void> {
-        this.httpRequestOptions = options ? this.generateHttpRequestOptions(options) : Object.create(null);
+        this.httpRequestOptions = options ? await this.generateHttpRequestOptionsAsync(options) : Object.create(null);
         this.requestOptions = options ? options : Object.create(null);
 
         if (this.httpRequestOptions) {
@@ -160,7 +160,7 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
             data);
     }
 
-    public requestAsync<T>(requestOptions: IRequestOptions, data: any): Promise<IHttpResponse | T> {
+    public async requestAsync<T>(requestOptions: IRequestOptions, data: any): Promise<IHttpResponse | T> {
         if (!Object.isObject(requestOptions)) {
             throw new Error("requestOptions must be supplied.");
         }
@@ -181,7 +181,7 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
         const requestId = `HTTP:${uuidv4()}`;
 
         this.log.writeInfo(`[${requestId}] Generating http request options ...`);
-        const httpRequestOptions = this.generateHttpRequestOptions(requestOptions);
+        const httpRequestOptions = await this.generateHttpRequestOptionsAsync(requestOptions);
 
         this.log.writeInfo(`[${requestId}] Creating request: HTTP ${requestOptions.method} => ${requestOptions.url}`);
         const request = this.makeRequest(httpRequestOptions);
@@ -212,7 +212,7 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
                 });
     }
 
-    protected abstract generateHttpRequestOptions(requestOptions: IRequestOptions): THttpRequestOptions;
+    protected abstract generateHttpRequestOptionsAsync(requestOptions: IRequestOptions): Promise<THttpRequestOptions>;
 
     protected abstract makeRequest(options: THttpRequestOptions): IHttpRequest;
 }

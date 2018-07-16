@@ -3,39 +3,39 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleInfo } from "sfx.module-manager";
+import { IModuleInfo, IModule, Component } from "sfx.module-manager";
 import { ISettings } from "sfx.settings";
-import { ILoggerSettings } from "sfx.logging";
+import { ILoggerSettings, ILog, ILogger } from "sfx.logging";
 
 import * as logging from "./log";
 import ConsoleLogger from "./loggers/console";
 import AppInsightsLogger from "./loggers/app-insights";
 import * as appUtils from "../../utilities/appUtils";
 
-export function getModuleMetadata(): IModuleInfo {
-    return {
-        name: "logging",
-        version: appUtils.getAppVersion(),
-        components: [
-            {
+exports = <IModule>{
+    getModuleMetadata: (components): IModuleInfo => {
+        components
+            .register({
                 name: "logging",
                 version: appUtils.getAppVersion(),
-                descriptor: async (settings: ISettings) => await logging.createAsync(settings.get("logging")),
+                descriptor: (settings: ISettings): Promise<ILog> => logging.createAsync(settings.get("logging")),
                 singleton: true,
                 deps: ["settings"]
-            },
-            {
+            })
+            .register<ILogger>({
                 name: "logging.logger.console",
                 version: appUtils.getAppVersion(),
-                descriptor: (loggerSettings: ILoggerSettings, targetConsole: Console) => new ConsoleLogger(loggerSettings, targetConsole)
-            },
-            {
+                descriptor: async (loggerSettings: ILoggerSettings, targetConsole: Console) => new ConsoleLogger(loggerSettings, targetConsole)
+            })
+            .register<ILogger>({
                 name: "logging.logger.app-insights",
                 version: appUtils.getAppVersion(),
-                descriptor: (loggerSettings: ILoggerSettings) => new AppInsightsLogger(loggerSettings)
-            }
-        ]
-    };
-}
+                descriptor: async (loggerSettings: ILoggerSettings) => new AppInsightsLogger(loggerSettings)
+            });
 
-
+        return {
+            name: "logging",
+            version: appUtils.getAppVersion()
+        };
+    }
+};

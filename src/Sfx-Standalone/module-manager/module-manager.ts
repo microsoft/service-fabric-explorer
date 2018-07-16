@@ -13,7 +13,6 @@ import {
     IComponentDescriptor,
     IModuleLoadingConfig,
     IModuleLoadingPolicy,
-    IModuleInfo,
     Component,
     IComponentCollection
 } from "sfx.module-manager";
@@ -485,7 +484,7 @@ export class ModuleManager implements IModuleManager {
         }
 
         if (this.parentProxy && this.parentProxy.id !== fromProxyId) {
-            return await this.parentProxy.requestAsync<T>(componentIdentity, ...extraArgs);
+            return this.parentProxy.requestAsync<T>(componentIdentity, ...extraArgs);
         }
 
         return undefined;
@@ -499,7 +498,7 @@ export class ModuleManager implements IModuleManager {
                 return dep;
             }
 
-            return await this.getComponentFromProxiesAsync(proxy, name, ...extraArgs);
+            return this.getComponentFromProxiesAsync(proxy, name, ...extraArgs);
         }
 
     private onModuleManagerMessageAsync: AsyncRequestHandler =

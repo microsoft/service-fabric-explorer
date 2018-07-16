@@ -6,6 +6,7 @@
         "target": "ES2017",
         "sourceMap": true,
         "declaration": false,
+        "noUnusedLocals": true,
         "noImplicitReturns": true
     },
     "exclude": [

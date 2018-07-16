@@ -12,7 +12,7 @@ import {
 
 import { ILog } from "sfx.logging";
 
-export default function handleRedirection(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
+export default async function handleRedirectionAsync(nextHandler: ResponseAsyncHandler): Promise<ResponseAsyncHandler> {
     return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
         if (response.statusCode === 301
             || response.statusCode === 302

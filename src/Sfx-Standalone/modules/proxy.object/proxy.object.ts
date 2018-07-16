@@ -193,9 +193,9 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
         this.communicator.map(this.pathPattern, this.onMessage);
     }
 
-    private async resolveAsync(name: string, ...extraArgs: Array<any>): Promise<any> {
+    private resolveAsync(name: string, ...extraArgs: Array<any>): Promise<any> {
         if (this.resolver) {
-            return await this.resolver(this, name, ...extraArgs);
+            return this.resolver(this, name, ...extraArgs);
         }
 
         return undefined;

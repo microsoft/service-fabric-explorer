@@ -18,12 +18,12 @@ export default class HttpClientBuilder extends HttpClientBuilderBase {
         this.serverCertValidator = serverCertValidator;
     }
 
-    public build(protocol: string): IHttpClient {
+    public async buildAsync(protocol: string): Promise<IHttpClient> {
         return new HttpClient(
             this.log,
             protocol,
             this.serverCertValidator,
-            this.requestHandlerBuilder.build(),
-            this.responseHandlerBuilder.build());
+            await this.requestHandlerBuilder.buildAsync(),
+            await this.responseHandlerBuilder.buildAsync());
     }
 }
