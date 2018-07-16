@@ -7,6 +7,10 @@ declare module "sfx.main-window" {
     export interface IMainWindow {        
         load(): void;                
     }
+
+    export interface IDialogService {
+        showDialogAsync(pageUrl: string): Promise<void>;
+    }
 }
 
 declare module "sfx.module-manager" {
@@ -17,3 +21,14 @@ declare module "sfx.module-manager" {
     }
 }
 
+declare module "sfx.sfx-view-container" {
+    export interface ISfxContainer {
+        LoadSfxAsync(targetServiceEndpoint: string): Promise<void>;
+    }
+}
+
+declare module "sfx.cluster-list" {
+    export interface IClusterList {
+        newListItemAsync(endpoint: string, name?: string): Promise<void>;
+    }
+}

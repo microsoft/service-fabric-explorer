@@ -2,7 +2,7 @@ import * as $ from "jquery";
 import { ICommunicator } from "sfx.remoting";
 import { WebviewTag } from "electron";
 import { IComponentConfiguration } from "sfx.common";
-import { SfxContainer } from "./sfx-container/sfx-container.script";
+import { SfxContainer } from "./sfx-container/sfx-container";
 import { DialogService } from "./dialog-service";
 import { ClusterManagerComponentConfig, SettingsComponentConfig } from "./main-window";
 
@@ -17,7 +17,7 @@ import { ClusterManagerComponentConfig, SettingsComponentConfig } from "./main-w
 
     try {
         await Promise.all(components.map(async component => {
-            const template = $(`<div><button class="btn btn-primary btn-component" id="c-button-${component.id}" data-component="${component.id}">${component.title}</button></div>`);
+            const template = $(`<div><button class="btn btn-component-head" id="c-button-${component.id}" data-component="${component.id}">${component.title}</button></div>`);
             leftpanel.append(template);
 
             if (component.viewUrl) {
@@ -35,7 +35,7 @@ import { ClusterManagerComponentConfig, SettingsComponentConfig } from "./main-w
         $("div.sub-panel").hide();
         $("div.sub-panel:first").show();
 
-        $(".btn-component").click((e) => {
+        $(".btn-component-head").click((e) => {
             const $button = $(e.target);
             const $subPanel = $(`#sub-${$button.data("component")}`);
 

@@ -4,21 +4,51 @@
 //-----------------------------------------------------------------------------
 
 import * as $ from "jquery";
-import { SfxContainer } from "../sfx-container/sfx-container.script";
-import { ClusterList } from "./cluster-list.script";
+import * as Url from "url";
+import { ISfxContainer } from "sfx.sfx-view-container";
+import { IClusterList } from "sfx.cluster-list";
 
 (async () => {
     $("#btn-connect").click(async () => {
-        const sfx = await sfxModuleManager.getComponentAsync<SfxContainer>("page-sfx-container");
-        await sfx.LoadSfxAsync($("#input-cluster-url").val());
+        try {
+            const url = Url.parse($("#input-cluster-url").val().toString());
+            if (url.protocol !== "http:" && url.protocol !== "https:") {
+                alert("The protocol of the cluster url is not supported. Only HTTP and HTTPS are supported.");
+                return;
+            }
 
-        const list = await sfxModuleManager.getComponentAsync<ClusterList>("cluster-list");
-        await list.newListItemAsync($("#input-cluster-url").val());
+            const endpoint = url.protocol + "//" + url.host;
+            const sfx = await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container");
+            await sfx.LoadSfxAsync(endpoint);
 
-        window.close();        
+            const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
+            await list.newListItemAsync(endpoint, url.host);
+
+            window.close();
+
+        } catch (error) {
+            alert("The cluster url is not in a valid url format.");
+        }
     });
 
+    $("#input-cluster-url").keyup(($event) => {
+        const keyboardEvent = <KeyboardEvent>$event.originalEvent;
+
+        if (keyboardEvent.code === "Enter") {
+            $("#btn-connect").click();
+        }
+    });
+
+    $("#input-connect-locally").change(($event) => {
+        const $sender = $($event.target);
+        if ($sender.prop("checked")) {
+            $("#input-cluster-url").val("http://localhost:19080");
+        }
+
+        $("#input-cluster-url").prop("disabled", $sender.prop("checked"));
+    });
+    
     $("#btn-exit").click(() => {
-        window.close();        
+        window.close();
     });
 })();

@@ -8,8 +8,9 @@ import { IComponentInfo } from "sfx.module-manager";
 import { electron } from "../../utilities/electron-adapter";
 import { WebviewTag } from "electron";
 import { ICommunicator } from "sfx.remoting";
+import { IDialogService } from "sfx.main-window";
 
-export class DialogService {
+export class DialogService implements IDialogService {
     public static getComponentInfo(): IComponentInfo {
         return {
             name: "dialog-service",
@@ -19,12 +20,12 @@ export class DialogService {
         };
     }
 
-    ShowDialog(pageUrl: string): void {
+    async showDialogAsync(pageUrl: string): Promise<void> {
         const template = `
-            <div id="main-modal-dialog" class="modal" tabindex="-1" role="dialog">
+            <div id="main-modal-dialog" class="modal" tabindex="-1" role="dialog">                
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
-                        <webview src="${pageUrl}" preload="./preload.js" nodeintegration></webview>
+                        <webview src="${pageUrl}" preload="./preload.js" nodeintegration style="height: 240px; width=480px;"></webview>
                     </div>
                 </div>
             </div>`;
@@ -33,11 +34,11 @@ export class DialogService {
 
         let webview = <WebviewTag>document.querySelector(`#main-modal-dialog webview`);
         webview.addEventListener("dom-ready", async () => {
-            //webview.openDevTools();
+            webview.openDevTools();
             await sfxModuleManager.newHostAsync("host-dialog-service", await sfxModuleManager.getComponentAsync<ICommunicator>("ipc.communicator", webview.getWebContents()));
         });
 
-        webview.addEventListener("close", async () => {            
+        webview.addEventListener("close", async () => {
             await sfxModuleManager.destroyHostAsync("host-dialog-service");
             $("#main-modal-dialog").modal("hide").remove();
         });

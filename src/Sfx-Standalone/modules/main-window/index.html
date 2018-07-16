@@ -19,7 +19,7 @@
             width: 250px;
         }
 
-        .container {
+        .right-container, .view-container {
             width: 100%;
             height: 100%;
         }
@@ -36,6 +36,12 @@
         .sub-panel, .sub-panel webview {
             max-height: 450px;
         }
+
+        .btn-component-head {
+            width: 100%;
+            background-color: #191919;           
+            height: 40px;
+        }
     </style>
 </head>
 
@@ -43,8 +49,8 @@
     <div class="main">
         <div class="left-nav" id="left-panel">            
         </div>
-        <div class="container">        
-            <webview id="sfx-container" preload="./preload.js" nodeintegration></webview>    
+        <div class="right-container">        
+            <!-- <webview id="sfx-container" preload="./preload.js" nodeintegration></webview>     -->
         </div>
     </div>   
 </body>
