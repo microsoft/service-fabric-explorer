@@ -106,8 +106,10 @@ export default async function handleAadAsync(
     aadMetadata: IAadMetadata,
     nextHandler: ResponseAsyncHandler)
     : Promise<ResponseAsyncHandler> {
-    return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
-        if (response.statusCode === 403 || response.statusCode === 401) {
+    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
+        const statusCode = await response.statusCode;
+        
+        if (statusCode === 403 || statusCode === 401) {
             const acquirer = new AadTokenAcquirer(client, handlingHost, aadMetadata);
 
             return acquirer.acquireTokenAsync()

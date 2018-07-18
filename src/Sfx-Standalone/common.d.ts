@@ -12,7 +12,6 @@ declare module "sfx.common" {
     }
 
     export interface IDisposable {
-        readonly disposed: boolean;
         disposeAsync(): Promise<void>;
     }
 

@@ -105,7 +105,7 @@ class UpdateService implements IUpdateService {
         }
     }
 
-    public async requestVersionInfoAsync(): Promise<IVersionInfo> {
+    public requestVersionInfoAsync(): Promise<IVersionInfo> {
         const prereleases = semver.prerelease(app.getVersion());
         let updateChannel: string;
 
@@ -118,13 +118,8 @@ class UpdateService implements IUpdateService {
         const versionInfoUrl = `${this.settings.baseUrl}/${updateChannel}/${env.platform}`;
 
         this.log.writeInfo("Requesting version info json: {}", versionInfoUrl);
-        const response = await this.httpClient.getAsync<IVersionInfo>(versionInfoUrl);
 
-        if (response instanceof stream.Readable) {
-            throw new Error(`Failed to retrieve version info. Response: ${response}`);
-        }
-
-        return response;
+        return this.httpClient.getAsync<IVersionInfo>(versionInfoUrl);
     }
 
     private requestConfirmationAsync(versionInfo: IVersionInfo): Promise<boolean> {

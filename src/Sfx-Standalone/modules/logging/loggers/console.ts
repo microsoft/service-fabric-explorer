@@ -21,8 +21,8 @@ export default class ConsoleLogger implements ILogger {
 
     private console: Console;
 
-    public get name(): string {
-        return this.settings.name;
+    public get name(): Promise<string> {
+        return Promise.resolve(this.settings.name);
     }
 
     public get disposed(): boolean {

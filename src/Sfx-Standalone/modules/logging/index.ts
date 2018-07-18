@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleInfo, IModule, Component } from "sfx.module-manager";
+import { IModuleInfo, IModule } from "sfx.module-manager";
 import { ISettings } from "sfx.settings";
 import { ILoggerSettings, ILog, ILogger } from "sfx.logging";
 
@@ -15,7 +15,7 @@ import * as appUtils from "../../utilities/appUtils";
 exports = <IModule>{
     getModuleMetadata: (components): IModuleInfo => {
         components
-            .register({
+            .register<ILog>({
                 name: "logging",
                 version: appUtils.getAppVersion(),
                 descriptor: (settings: ISettings): Promise<ILog> => logging.createAsync(settings.get("logging")),

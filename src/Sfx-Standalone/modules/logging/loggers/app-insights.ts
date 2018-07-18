@@ -33,7 +33,11 @@ function toAppInsightsSeverity(severity: Severity): Contracts.SeverityLevel {
 }
 
 export default class AppInsightsLogger implements ILogger {
-    public readonly name: string;
+    private readonly _name: string;
+
+    public get name(): Promise<string> {
+        return Promise.resolve(this._name);
+    }
 
     private client: TelemetryClient;
 
@@ -46,7 +50,7 @@ export default class AppInsightsLogger implements ILogger {
             throw new Error("settings must be supplied.");
         }
 
-        this.name = settings.name;
+        this._name = settings.name;
         this.client = new TelemetryClient(settings["instrumentationKey"]);
     }
 

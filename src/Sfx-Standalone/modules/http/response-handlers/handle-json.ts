@@ -38,22 +38,19 @@ function isJsonResponse(log: ILog, response: IHttpResponse): boolean {
 }
 
 export default async function handleJsonAsync(nextHandler: ResponseAsyncHandler): Promise<ResponseAsyncHandler> {
-    return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
-        if (response.statusCode >= 200 && response.statusCode < 300 && isJsonResponse(log, response)) {
-            response.setEncoding("utf8");
+    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
+        const statusCode = await response.statusCode;
+        if (statusCode >= 200 && statusCode < 300 && isJsonResponse(log, response)) {
+            await response.setEncodingAsync("utf8");
 
-            return new Promise((resolve, reject) => {
-                let json: string = "";
+            let chunk: string;
+            let json: string = "";
 
-                response.on("data", (chunk) => json += chunk);
-                response.on("end", () => {
-                    try {
-                        resolve(JSON.parse(json));
-                    } catch (exception) {
-                        reject(exception);
-                    }
-                });
-            });
+            while (chunk = await <Promise<string>>response.readAsync()) {
+                json += chunk;
+            }
+
+            return JSON.parse(json);
         }
 
         if (Function.isFunction(nextHandler)) {

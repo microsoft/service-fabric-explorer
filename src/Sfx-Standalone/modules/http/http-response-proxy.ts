@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import { IDictionary } from "sfx.common";
+import { IHttpResponse } from "sfx.http";
 
 import { Readable } from "stream";
 
@@ -12,38 +13,44 @@ export interface IUnderlyingHttpResponse extends Readable {
     statusCode: number;
     statusMessage: string;
     headers: IDictionary<string>;
-
-    addListener(event: string, listener: (...args: any[]) => void): this;
-    addListener(event: "aborted", listener: () => void): this;
-
-    emit(event: string | symbol, ...args: any[]): boolean;
-    emit(event: "aborted", listener: () => void): boolean;
-
-    on(event: string, listener: (...args: any[]) => void): this;
-    on(event: "aborted", listener: () => void): this;
-
-    once(event: string, listener: (...args: any[]) => void): this;
-    once(event: "aborted", listener: () => void): this;
-
-    prependListener(event: string, listener: (...args: any[]) => void): this;
-    prependListener(event: "aborted", listener: () => void): this;
-
-    prependOnceListener(event: string, listener: (...args: any[]) => void): this;
-    prependOnceListener(event: "aborted", listener: () => void): this;
-
-    removeListener(event: string, listener: (...args: any[]) => void): this;
-    removeListener(event: "aborted", listener: () => void): this;
-}
-
-export interface IHttpResponse {
-    httpVersion: Promise<string>;
-    statusCode: Promise<number>;
-    statusMessage: Promise<string>;
-    headers: Promise<IDictionary<string>>;
-
-    
 }
 
 export class HttpResponseProxy implements IHttpResponse {
+    private readonly _httpResponse: IUnderlyingHttpResponse;
 
+    public get httpResponse(): IUnderlyingHttpResponse {
+        return this._httpResponse;
+    }
+
+    public get httpVersion(): Promise<string> {
+        return Promise.resolve(this.httpResponse.httpVersion);
+    }
+
+    public get statusCode(): Promise<number> {
+        return Promise.resolve(this.statusCode);
+    }
+
+    public get statusMessage(): Promise<string> {
+        return Promise.resolve(this.httpResponse.statusMessage);
+    }
+
+    public get headers(): Promise<IDictionary<string>> {
+        return Promise.resolve(this.httpResponse.headers);
+    }
+
+    constructor(underlyinghttpResponse: IUnderlyingHttpResponse) {
+        if (!underlyinghttpResponse) {
+            throw new Error("underlyinghttpResponse must be provided.");
+        }
+
+        this._httpResponse = underlyinghttpResponse;
+    }
+
+    public async setEncodingAsync(encoding: string): Promise<void> {
+        this.httpResponse.setEncoding(encoding);
+    }
+
+    public async readAsync(): Promise<string | Buffer> {
+        return this.httpResponse.read();
+    }
 }

@@ -10,7 +10,7 @@ declare module "sfx.logging" {
     export type Severity = "event" | "verbose" | "info" | "warning" | "error" | "critical";
 
     export interface ILogger extends IDisposable {
-        readonly name: string;
+        readonly name: Promise<string>;
 
         writeAsync(properties: IDictionary<string>, severity: Severity, message: string): Promise<void>;
         writeExceptionAsync(properties: IDictionary<string>, error: Error): Promise<void>;
@@ -29,19 +29,19 @@ declare module "sfx.logging" {
     }
 
     export interface ILog extends IDisposable {
-        writeMore(properties: IDictionary<string>, severity: Severity, messageOrFormat: string, ...params: Array<any>): void;
-        write(severity: Severity, messageOrFormat: string, ...params: Array<any>): void;
-        writeInfo(messageOrFormat: string, ...params: Array<any>): void;
-        writeVerbose(messageOrFormat: string, ...params: Array<any>): void;
-        writeWarning(messageOrFormat: string, ...params: Array<any>): void;
-        writeError(messageOrFormat: string, ...params: Array<any>): void;
-        writeCritical(messageOrFormat: string, ...params: Array<any>): void;
-        writeException(exception: Error, properties?: IDictionary<string>): void;
-        writeEvent(name: string, properties?: IDictionary<string>): void;
-        writeMetric(name: string, value?: number, properties?: IDictionary<string>): void;
+        writeMoreAsync(properties: IDictionary<string>, severity: Severity, messageOrFormat: string, ...params: Array<any>): Promise<void>;
+        writeAsync(severity: Severity, messageOrFormat: string, ...params: Array<any>): Promise<void>;
+        writeInfoAsync(messageOrFormat: string, ...params: Array<any>): Promise<void>;
+        writeVerboseAsync(messageOrFormat: string, ...params: Array<any>): Promise<void>;
+        writeWarningAsync(messageOrFormat: string, ...params: Array<any>): Promise<void>;
+        writeErrorAsync(messageOrFormat: string, ...params: Array<any>): Promise<void>;
+        writeCriticalAsync(messageOrFormat: string, ...params: Array<any>): Promise<void>;
+        writeExceptionAsync(exception: Error, properties?: IDictionary<string>): Promise<void>;
+        writeEventAsync(name: string, properties?: IDictionary<string>): Promise<void>;
+        writeMetricAsync(name: string, value?: number, properties?: IDictionary<string>): Promise<void>;
 
-        removeLogger(name: string): ILogger;
-        addLogger(logger: ILogger): void;
+        removeLoggerAsync(name: string): Promise<ILogger>;
+        addLoggerAsync(logger: ILogger): Promise<void>;
     }
 }
 

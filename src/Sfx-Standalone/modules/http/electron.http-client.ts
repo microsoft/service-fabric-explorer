@@ -12,6 +12,7 @@ import {
     ResponseAsyncHandler,
     IRequestOptions,
     IHttpRequest,
+    IHttpResponse,
     ServerCertValidator
 } from "sfx.http";
 
@@ -23,6 +24,8 @@ import * as crypto from "crypto";
 import HttpClientBase from "./http-client-base";
 import * as utils from "../../utilities/utils";
 import { HttpProtocols } from "./common";
+import { HttpRequestProxy } from "./http-request-proxy";
+import { HttpResponseProxy } from "./http-response-proxy";
 
 interface CertificateVerifyProc {
     (request: electron.CertificateVerifyProcRequest, callback: (verificationResult: number) => void): void;
@@ -148,6 +151,16 @@ export default class HttpClient extends HttpClientBase<IHttpRequestOptions> {
             this.log.writeException(exception);
             throw exception;
         }
+    }
+
+    protected sendRequestAsync(request: IHttpRequest): Promise<IHttpResponse> {
+        return new Promise<IHttpResponse>((resolve, reject) => {
+            const requestProxy = <HttpRequestProxy>request;
+
+            requestProxy.httpRequest.on("response", (response) => resolve(new HttpResponseProxy(response)));
+            requestProxy.httpRequest.on("error", (error) => reject(error));
+            requestProxy.httpRequest.end();
+        });
     }
 
     private makeSession(options: IDictionary<any>): electron.Session {

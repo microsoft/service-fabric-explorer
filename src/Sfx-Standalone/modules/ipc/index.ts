@@ -12,7 +12,7 @@ import * as appUtils from "../../utilities/appUtils";
 
 exports = <IModule>{
     getModuleMetadata: (components): IModuleInfo => {
-        components.register({
+        components.register<any>({
             name: "ipc.communicator",
             version: appUtils.getAppVersion(),
             descriptor: async (channel: ChannelType, options?: ICommunicatorConstructorOptions): Promise<ICommunicator> =>

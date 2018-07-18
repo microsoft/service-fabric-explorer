@@ -36,8 +36,10 @@ export default function handleCertAsync(
     const HttpMsg_ClientCertRequired = "Client certificate required";
 
     return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
-        if (response.statusCode === 403
-            && 0 === HttpMsg_ClientCertRequired.localeCompare(response.statusMessage, undefined, { sensitivity: "accent" })) {
+        const statusCode = await response.statusCode;
+
+        if (statusCode === 403
+            && 0 === HttpMsg_ClientCertRequired.localeCompare(await response.statusMessage, undefined, { sensitivity: "accent" })) {
 
             log.writeInfo("Client certificate is required.");
 
