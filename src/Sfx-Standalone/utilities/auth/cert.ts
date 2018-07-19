@@ -28,14 +28,13 @@ async function showCertSelectPromptAsync(
     : Promise<ICertSelectionPromptResults> {
 
     const certSelectionButtons: Array<string> = [];
-    let importCertsResponse = -1;
-
+    
     if (Array.isArray(certificateList)) {
         certificateList.forEach(certificate => certSelectionButtons.push(certificate.subjectName + "\r\nIssuer: " + certificate.issuerName + "\r\nThumbprint: " + certificate.fingerprint));
     }
 
     if (env.platform === Platform.Linux) {
-        importCertsResponse = certSelectionButtons.push("Import more certificates ...") - 1;
+        certSelectionButtons.push("Import more certificates ...");
     }
 
     const prompt =
