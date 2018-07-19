@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 import { IVersionInfo, IPackageInfo } from "sfx.common";
-import { IModuleInfo } from "sfx.module-manager";
+import { IModuleInfo, IModule } from "sfx.module-manager";
 import { ISettings } from "sfx.settings";
 import { ILog } from "sfx.logging";
 import { IHttpClient } from "sfx.http";
@@ -15,8 +15,7 @@ import * as tmp from "tmp";
 import * as path from "path";
 import * as url from "url";
 import * as fs from "fs";
-import * as http from "http";
-import * as stream from "stream";
+import * as util from "util";
 
 import * as utils from "../utilities/utils";
 import { env, Architecture } from "../utilities/env";
@@ -56,7 +55,7 @@ class UpdateService implements IUpdateService {
         const versionInfo = await this.requestVersionInfoAsync();
 
         if (semver.gte(app.getVersion(), versionInfo.version)) {
-            this.log.writeInfo("No update needed: version => current: {} remote: {}", app.getVersion(), versionInfo.version);
+            this.log.writeInfoAsync("No update needed: version => current: {} remote: {}", app.getVersion(), versionInfo.version);
             return;
         }
 
@@ -64,7 +63,7 @@ class UpdateService implements IUpdateService {
         let packageUrl: string;
 
         if (!packageInfo) {
-            this.log.writeError("No package info found for platform: {}.", env.platform);
+            this.log.writeErrorAsync("No package info found for platform: {}.", env.platform);
             return;
         }
 
@@ -77,7 +76,7 @@ class UpdateService implements IUpdateService {
                         return;
                     }
 
-                    this.log.writeVerbose("Applying the update package and quit the app: {}", path);
+                    this.log.writeVerboseAsync("Applying the update package and quit the app: {}", path);
                     env.start(url.parse(packageUrl).href);
                     app.quit();
                 });
@@ -91,13 +90,13 @@ class UpdateService implements IUpdateService {
                             if (!toUpdate) {
                                 if (fs.existsSync(packagePath)) {
                                     fs.unlinkSync(packagePath);
-                                    this.log.writeVerbose("Removed the local update package: {}", packagePath);
+                                    this.log.writeVerboseAsync("Removed the local update package: {}", packagePath);
                                 }
 
                                 return;
                             }
 
-                            this.log.writeVerbose("Applying the update package and quit the app: {}", packagePath);
+                            this.log.writeVerboseAsync("Applying the update package and quit the app: {}", packagePath);
                             env.start(packagePath);
                             app.quit();
                         });
@@ -117,16 +116,23 @@ class UpdateService implements IUpdateService {
 
         const versionInfoUrl = `${this.settings.baseUrl}/${updateChannel}/${env.platform}`;
 
-        this.log.writeInfo("Requesting version info json: {}", versionInfoUrl);
+        this.log.writeInfoAsync(`Requesting version info json: ${versionInfoUrl}`);
 
-        return this.httpClient.getAsync<IVersionInfo>(versionInfoUrl);
+        return this.httpClient.getAsync<IVersionInfo>(versionInfoUrl)
+            .then((response) => {
+                if (!response.data) {
+                    return Promise.reject(`Failed to retrieve the version info: HTTP${response.statusCode} ${response.statusMessage} => ${versionInfoUrl}`);
+                }
+
+                return response.data;
+            });
     }
 
     private requestConfirmationAsync(versionInfo: IVersionInfo): Promise<boolean> {
         return new Promise<boolean>((resolve) => {
             const buttons = ["Yes", "No"];
 
-            this.log.writeVerbose("Requesting update confirmation from the user ...");
+            this.log.writeVerboseAsync("Requesting update confirmation from the user ...");
             dialog.showMessageBox(
                 {
                     message: `A newer version, ${versionInfo.version}, is found. Would you like to update now?`,
@@ -135,7 +141,7 @@ class UpdateService implements IUpdateService {
                     defaultId: 1
                 },
                 (response) => {
-                    this.log.writeInfo("Update confirmation result: {} ({})", buttons[response], response);
+                    this.log.writeInfoAsync("Update confirmation result: {} ({})", buttons[response], response);
                     resolve(response === 0);
                 });
         });
@@ -147,11 +153,11 @@ class UpdateService implements IUpdateService {
         if (!packagePath) {
             // fall back to x86 if the current one doesn't exist.
             packagePath = packageInfo[Architecture.X86];
-            this.log.writeVerbose("Fall back to x86 for platform {} from arch {}.", env.platform, env.arch);
+            this.log.writeVerboseAsync("Fall back to x86 for platform {} from arch {}.", env.platform, env.arch);
         }
 
         if (!packagePath) {
-            this.log.writeError("Arch {1} is NOT found in {0} package info.", env.platform, env.arch);
+            this.log.writeErrorAsync("Arch {1} is NOT found in {0} package info.", env.platform, env.arch);
             return null;
         }
 
@@ -161,28 +167,25 @@ class UpdateService implements IUpdateService {
     private async requestPackageAsync(packagePath: string): Promise<string> {
         const tempFile: { name: string; fd: number } =
             tmp.fileSync({ keep: true, postfix: path.extname(packagePath) });
-        this.log.writeInfo("Created temp file for the update package: {}", tempFile.name);
+        this.log.writeInfoAsync("Created temp file for the update package: {}", tempFile.name);
 
-        this.log.writeInfo("Requesting the update package: {}", packagePath);
+        this.log.writeInfoAsync("Requesting the update package: {}", packagePath);
         return this.httpClient.getAsync(packagePath)
-            .then((response: http.IncomingMessage) => {
-                if (response.statusCode >= 200 && response.statusCode < 300) {
-                    this.log.writeVerbose("Writing update package to file: {}", tempFile.name);
-                    const fileStream = fs.createWriteStream(
-                        null,
-                        {
-                            fd: tempFile.fd,
-                            autoClose: true
-                        });
+            .then(async (response) => {
+                const statusCode = await response.statusCode;
 
-                    return new Promise<string>((resolve, reject) => {
-                        response.pipe(fileStream)
-                            .on("error", (error) => reject(error))
-                            .on("finish", () => {
-                                fileStream.end();
-                                resolve(tempFile.name);
-                            });
-                    });
+                if (statusCode >= 200 && statusCode < 300) {
+                    this.log.writeVerboseAsync("Writing update package to file: {}", tempFile.name);
+
+                    const fsWriteAsync = util.promisify(fs.write);
+
+                    let buffer: Buffer;
+
+                    while (buffer = await <Promise<Buffer>>response.readAsync()) {
+                        await fsWriteAsync(tempFile.fd, buffer);
+                    }
+
+                    return tempFile.name;
                 }
 
                 return Promise.reject(new Error(`Downloading update package failed. HTTP ${response.statusCode}: ${response.statusMessage}`));
@@ -190,18 +193,21 @@ class UpdateService implements IUpdateService {
     }
 }
 
-export function getModuleMetadata(): IModuleInfo {
-    return {
-        name: "update",
-        version: appUtils.getAppVersion(),
-        components: [
-            {
-                name: "update",
-                version: appUtils.getAppVersion(),
-                singleton: true,
-                descriptor: (log: ILog, settings: ISettings, httpsClient: IHttpClient) => new UpdateService(log, settings.get("update"), httpsClient),
-                deps: ["logging", "settings", "http.https-client"]
-            }
-        ]
-    };
-}
+exports = <IModule>{
+    getModuleMetadata: (components): IModuleInfo => {
+        components.register<IUpdateService>({
+            name: "update",
+            version: appUtils.getAppVersion(),
+            singleton: true,
+            descriptor:
+                async (log: ILog, settings: ISettings, httpsClient: IHttpClient) =>
+                    settings.getAsync<IUpdateSettings>("update").then((updateSettings) => new UpdateService(log, updateSettings, httpsClient)),
+            deps: ["logging", "settings", "http.https-client"]
+        });
+
+        return {
+            name: "update",
+            version: appUtils.getAppVersion()
+        };
+    }
+};

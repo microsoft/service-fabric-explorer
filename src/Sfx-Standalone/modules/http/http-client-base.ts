@@ -90,7 +90,7 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
                     log: ILog,
                     requestOptions: IRequestOptions,
                     requestData: any,
-                    response: IHttpResponse) => response;
+                    response: IHttpResponse<any>) => response;
         } else if (!Function.isFunction(responseAsyncHandler)) {
             throw new Error("responseAsyncHandler must be a function.");
         } else {
@@ -180,38 +180,50 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
 
         const requestId = `HTTP:${uuidv4()}`;
 
-        this.log.writeInfo(`[${requestId}] Generating http request options ...`);
+        this.log.writeInfoAsync(`[${requestId}] Generating http request options ...`);
         const httpRequestOptions = await this.generateHttpRequestOptionsAsync(requestOptions);
 
-        this.log.writeInfo(`[${requestId}] Creating request: HTTP ${requestOptions.method} => ${requestOptions.url}`);
+        this.log.writeInfoAsync(`[${requestId}] Creating request: HTTP ${requestOptions.method} => ${requestOptions.url}`);
         const request = this.makeRequest(httpRequestOptions);
 
-        this.log.writeInfo(`[${requestId}] Processing HTTP request ...`);
+        this.log.writeInfoAsync(`[${requestId}] Processing HTTP request ...`);
         return this.requestAsyncProcessor(this, this.log, requestOptions, data, request)
             .then(() => {
-                this.log.writeInfo(`[${requestId}] Sending HTTP request ...`);
-                return this.sendRequestAsync(request);
+                this.log.writeInfoAsync(`[${requestId}] Sending HTTP request ...`);
+                return this.sendRequestAsync<T>(request);
             })
             .then(
                 (response) => {
-                    this.log.writeInfo(`[${requestId}] Received response: HTTP/${response.httpVersion} ${response.statusCode} ${response.statusMessage}`);
+                    this.log.writeInfoAsync(`[${requestId}] Received response: HTTP/${response.httpVersion} ${response.statusCode} ${response.statusMessage}`);
+                    this.log.writeInfoAsync(`[${requestId}] Processing HTTP response ...`);
 
-                    this.log.writeInfo(`[${requestId}] Processing HTTP response ...`);
-                    try {
-                        return this.responseAsyncHandler(this, this.log, requestOptions, data, response);
-                    } finally {
-                        this.log.writeInfo(`[${requestId}] Processing HTTP response completed.`);
-                    }
+                    return this.responseAsyncHandler(this, this.log, requestOptions, data, response)
+                        .then(
+                            (result) => {
+                                this.log.writeInfoAsync(`[${requestId}] Processing HTTP response completed.`);
+
+                                if (result !== response) {
+                                    response.data = result;
+                                }
+
+                                return response;
+                            },
+                            (reason) => {
+                                this.log.writeErrorAsync(`[${requestId}] Failed to process HTTP response, error: ${reason}`);
+
+                                return reason;
+                            });
                 },
                 (reason) => {
-                    this.log.writeInfo(`[${requestId}] Failed sending HTTP request: ${reason}`);
+                    this.log.writeInfoAsync(`[${requestId}] Failed sending HTTP request: ${reason}`);
+                    
                     return reason;
                 });
     }
 
     protected abstract generateHttpRequestOptionsAsync(requestOptions: IRequestOptions): Promise<THttpRequestOptions>;
 
-    protected abstract sendRequestAsync(request: IHttpRequest): Promise<IHttpResponse>;
+    protected abstract sendRequestAsync<T>(request: IHttpRequest): Promise<IHttpResponse<T>>;
 
     protected abstract makeRequest(options: THttpRequestOptions): IHttpRequest;
 }

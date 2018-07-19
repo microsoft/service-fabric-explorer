@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 import { IDictionary } from "sfx.common";
-import { IModuleInfo } from "sfx.module-manager";
+import { IModuleInfo, IModule } from "sfx.module-manager";
 import { ISettings, ISettingsService } from "sfx.settings";
 
 import * as path from "path";
@@ -21,14 +21,7 @@ class Settings implements ISettings {
 
     private readonly parentSettings: ISettings;
 
-    private readonly symbol_settingsWrapper: symbol;
-
-    private readonly symbol_settingsPath: symbol;
-
     constructor(initialSettings?: IDictionary<any>, readonly?: boolean, parentSettings?: ISettings) {
-        this.symbol_settingsPath = Symbol("settings-path");
-        this.symbol_settingsWrapper = Symbol("settings-wrapper");
-
         this.parentSettings = utils.isNullOrUndefined(parentSettings) ? undefined : parentSettings;
         this.readonly = utils.isNullOrUndefined(readonly) ? false : readonly;
 
@@ -39,7 +32,7 @@ class Settings implements ISettings {
         }
     }
 
-    public get<T>(settingPath: string): T {
+    public getAsync<T>(settingPath: string): Promise<T> {
         if (!settingPath || !String.isString(settingPath)) {
             throw new Error(`Invalid setting path: ${settingPath}`);
         }
@@ -57,13 +50,13 @@ class Settings implements ISettings {
         }
 
         if (settingValue === undefined && this.parentSettings !== undefined) {
-            return this.parentSettings.get(settingPath);
+            return this.parentSettings.getAsync(settingPath);
         }
 
-        return this.wrapValue(settingPath, settingValue);
+        return Promise.resolve(settingValue);
     }
 
-    public set<T>(settingPath: string, value: T): void {
+    public async setAsync<T>(settingPath: string, value: T): Promise<void> {
         if (this.readonly) {
             throw new Error("Readonly settings cannot be modified.");
         }
@@ -86,7 +79,6 @@ class Settings implements ISettings {
                 if (value === undefined) {
                     delete settingValue[pathPart];
                 } else {
-                    this.removeWrapper(settingValue[pathPart]);
                     settingValue[pathPart] = value;
                 }
             } else if (settingValue[pathPart] === undefined) {
@@ -96,67 +88,9 @@ class Settings implements ISettings {
             settingValue = settingValue[pathPart];
         }
     }
-
-    private removeWrapper(value: any): void {
-        if (typeof value !== "object" || value === null) {
-            return;
-        }
-
-        delete value[this.symbol_settingsPath];
-        delete value[this.symbol_settingsWrapper];
-    }
-
-    private wrapValue(settingsPath: string, value: any): any {
-        if (typeof value !== "object" || value === null) {
-            return value;
-        }
-
-        if (!value[this.symbol_settingsWrapper]) {
-            value[this.symbol_settingsPath] = settingsPath;
-            value[this.symbol_settingsWrapper] =
-                new Proxy(value,
-                    {
-                        get: (target, property, receiver) => {
-                            const settingsPath = target[this.symbol_settingsPath];
-
-                            if (!settingsPath || typeof property === "symbol") {
-                                return target[property];
-                            }
-
-                            return this.wrapValue(settingsPath + "/" + property.toString(), target[property]);
-                        },
-                        set: (target, property, value, receiver) => {
-                            const settingsPath = target[this.symbol_settingsPath];
-
-                            if (!settingsPath || typeof property === "symbol") {
-                                target[property] = value;
-                                return true;
-                            }
-
-                            this.set(settingsPath + "/" + property.toString(), value);
-                            return true;
-                        },
-                        deleteProperty: (target, property) => {
-                            const settingsPath = target[this.symbol_settingsPath];
-
-                            if (!settingsPath || typeof property === "symbol") {
-                                delete target[property];
-                                return true;
-                            }
-
-                            this.set(settingsPath + "/" + property.toString(), undefined);
-                            return true;
-                        }
-                    });
-        }
-
-        return value[this.symbol_settingsWrapper];
-    }
 }
 
 class FileSettings extends Settings {
-    public readonly readOnly: boolean;
-
     private readonly settingsPath: string;
 
     constructor(settingsPath: string, readOnly?: boolean, parentSettings?: ISettings) {
@@ -195,32 +129,31 @@ class FileSettings extends Settings {
         this.settingsPath = settingsPath;
     }
 
-    get<T>(settingPath: string): T {
-        return super.get(settingPath);
+    public getAsync<T>(settingPath: string): Promise<T> {
+        return super.getAsync<T>(settingPath);
     }
 
-    set<T>(settingPath: string, value: T): void {
-        super.set(settingPath, value);
+    public async set<T>(settingPath: string, value: T): Promise<void> {
+        await super.setAsync<T>(settingPath, value);
+
         fs.writeFileSync(this.settingsPath, JSON.stringify(this.settings, null, 4), { encoding: "utf8" });
     }
 }
 
 class SettingsService implements ISettingsService {
 
-    private readonly defaultSettings: ISettings;
-
     private readonly userDataDir: string;
+
+    private defaultSettings: ISettings;
 
     constructor() {
         this.userDataDir = electron.app.getPath("userData");
 
         fileSystem.ensureDirExists(this.userDataDir);
-
-        this.defaultSettings = this.open("settings");
     }
 
-    public get default(): ISettings {
-        return this.defaultSettings;
+    public get default(): Promise<ISettings> {
+        return this.defaultSettings ? Promise.resolve(this.defaultSettings) : this.openAsync("settings").then((settings) => this.defaultSettings = settings);
     }
 
     /**
@@ -229,7 +162,7 @@ class SettingsService implements ISettingsService {
      * as the last settings object, which provides a writing capability.
      * @param names the names of settings to be open as a settings chain.
      */
-    public open(...names: Array<string>): ISettings {
+    public openAsync(...names: Array<string>): Promise<ISettings> {
         if (!Array.isArray(names)) {
             throw new Error("names must be an array of string.");
         }
@@ -238,13 +171,13 @@ class SettingsService implements ISettingsService {
 
         names.forEach(name => parentSettings = this.openSettings(parentSettings, name));
 
-        if (parentSettings.readonly) {
+        if ((<Settings>parentSettings).readonly) {
             // if the last settings doesn't allow writing,
             // create a writable settings file in appData folder to wrap the readonly settings.
             parentSettings = new FileSettings(path.join(this.userDataDir, names[names.length - 1] + ".json"), false, parentSettings);
         }
 
-        return parentSettings;
+        return Promise.resolve(parentSettings);
     }
 
     private openSettings(parentSettings: ISettings, name: string): ISettings {
@@ -262,24 +195,26 @@ class SettingsService implements ISettingsService {
     }
 }
 
-export function getModuleMetadata(): IModuleInfo {
-    return {
-        name: "settings",
-        version: appUtils.getAppVersion(),
-        components: [
-            {
+exports = <IModule>{
+    getModuleMetadata: (components): IModuleInfo => {
+        components
+            .register<ISettingsService>({
                 name: "settings.service",
                 version: appUtils.getAppVersion(),
                 singleton: true,
-                descriptor: () => new SettingsService()
-            },
-            {
+                descriptor: async () => new SettingsService()
+            })
+            .register<ISettings>({
                 name: "settings",
                 version: appUtils.getAppVersion(),
                 singleton: true,
-                descriptor: (settingsSvc: SettingsService) => settingsSvc.default,
+                descriptor: async (settingsSvc: SettingsService) => settingsSvc.default,
                 deps: ["settings.service"]
-            }
-        ]
-    };
-}
+            });
+
+        return {
+            name: "settings",
+            version: appUtils.getAppVersion()
+        };
+    }
+};

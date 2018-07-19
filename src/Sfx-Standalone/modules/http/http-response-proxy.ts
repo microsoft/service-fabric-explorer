@@ -15,7 +15,9 @@ export interface IUnderlyingHttpResponse extends Readable {
     headers: IDictionary<string>;
 }
 
-export class HttpResponseProxy implements IHttpResponse {
+export class HttpResponseProxy<T> implements IHttpResponse<T> {
+    public data: Promise<T>;
+    
     private readonly _httpResponse: IUnderlyingHttpResponse;
 
     public get httpResponse(): IUnderlyingHttpResponse {

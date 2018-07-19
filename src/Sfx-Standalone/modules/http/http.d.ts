@@ -54,12 +54,14 @@ declare module "sfx.http" {
 
     export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-    export interface IHttpResponse {
+    export interface IHttpResponse<T> {
         readonly httpVersion: Promise<string>;
         readonly statusCode: Promise<number>;
         readonly statusMessage: Promise<string>;
         readonly headers: Promise<IDictionary<string>>;
-    
+
+        data: Promise<T>;
+
         setEncodingAsync(encoding: string): Promise<void>;
         readAsync(): Promise<Buffer | string>;
     }
@@ -68,12 +70,12 @@ declare module "sfx.http" {
         getHeaderAsync(name: string): Promise<any>;
         setHeaderAsync(name: string, value: any): Promise<void>;
         removeHeaderAsync(name: string): Promise<void>;
-    
+
         writeAsync(data: string | Buffer): Promise<void>;
         abortAsync(): Promise<void>;
         endAsync(): Promise<void>;
     }
-    
+
     export interface IHttpClientBuilder {
         handleRequestAsync(constructor: IAsyncHandlerConstructor<RequestAsyncProcessor>): Promise<IHttpClientBuilder>;
         handleResponseAsync(constructor: IAsyncHandlerConstructor<ResponseAsyncHandler>): Promise<IHttpClientBuilder>;
@@ -85,7 +87,7 @@ declare module "sfx.http" {
     }
 
     export interface ResponseAsyncHandler {
-        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any>;
+        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse<any>): Promise<any>;
     }
 
     export interface ServerCertValidator {
@@ -107,17 +109,17 @@ declare module "sfx.http" {
 
         updateDefaultRequestOptionsAsync(options: IRequestOptions): Promise<void>;
 
-        deleteAsync<T>(url: string): Promise<T>;
+        deleteAsync<T>(url: string): Promise<IHttpResponse<T>>;
 
-        getAsync<T>(url: string): Promise<T>;
+        getAsync<T>(url: string): Promise<IHttpResponse<T>>;
 
-        patchAsync<T>(url: string, data: any): Promise<T>;
+        patchAsync<T>(url: string, data: any): Promise<IHttpResponse<T>>;
 
-        postAsync<T>(url: string, data: any): Promise<T>;
+        postAsync<T>(url: string, data: any): Promise<IHttpResponse<T>>;
 
-        putAsync<T>(url: string, data: any): Promise<T>;
+        putAsync<T>(url: string, data: any): Promise<IHttpResponse<T>>;
 
-        requestAsync<T>(requestOptions: IRequestOptions, data: any): Promise<IHttpResponse | T>;
+        requestAsync<T>(requestOptions: IRequestOptions, data: any): Promise<IHttpResponse<T>>;
     }
 }
 

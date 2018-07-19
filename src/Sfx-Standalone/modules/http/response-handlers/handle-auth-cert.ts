@@ -35,23 +35,25 @@ export default function handleCertAsync(
     nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
     const HttpMsg_ClientCertRequired = "Client certificate required";
 
-    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
+    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse<any>): Promise<any> => {
         const statusCode = await response.statusCode;
 
         if (statusCode === 403
             && 0 === HttpMsg_ClientCertRequired.localeCompare(await response.statusMessage, undefined, { sensitivity: "accent" })) {
 
-            log.writeInfo("Client certificate is required.");
+            log.writeInfoAsync("Client certificate is required.");
 
             const validCertInfos = (await pkiCertSvc.getCertificateInfosAsync("My")).filter((certInfo) => certInfo.hasPrivateKey);
             let selectedCert = await selectClientCertAsyncHandler(requestOptions.url, validCertInfos);
 
             if (isCertificateInfo(selectedCert)) {
-                log.writeInfo(`Client certificate (thumbprint:${selectedCert.thumbprint}) is selected.`);
+                log.writeInfoAsync(`Client certificate (thumbprint:${selectedCert.thumbprint}) is selected.`);
                 selectedCert = await pkiCertSvc.getCertificateAsync(selectedCert);
+
             } else if (isCertificate(selectedCert)) {
-                log.writeInfo(`Custom client certificate (type: ${selectedCert.type}) is selected.`);
+                log.writeInfoAsync(`Custom client certificate (type: ${selectedCert.type}) is selected.`);
                 selectedCert = await certLoader.loadAsync(selectedCert);
+
             } else {
                 throw new Error(`Invalid client certificate: ${JSON.stringify(selectedCert, null, 4)}`);
             }
@@ -62,7 +64,7 @@ export default function handleCertAsync(
 
             await client.updateDefaultRequestOptionsAsync(clientRequestOptions);
 
-            log.writeInfo("Re-sending the HTTPS request ...");
+            log.writeInfoAsync("Re-sending the HTTPS request ...");
             return client.requestAsync(requestOptions, requestData);
         }
 

@@ -215,14 +215,14 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
     private onMessage = (communicator, path, proxyMsg: IProxyMessage): Promise<any> => {
         if (!isProxyMessage(proxyMsg)) {
             // Log Error.
-            return;
+            return Promise.resolve();
         }
 
         const asyncRequestHandler = this.messageHandlers[proxyMsg.action];
 
         if (!asyncRequestHandler) {
             // Log Error.
-            return;
+            return Promise.resolve();
         }
 
         return asyncRequestHandler(communicator, path, proxyMsg);

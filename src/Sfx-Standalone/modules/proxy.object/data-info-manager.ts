@@ -251,6 +251,7 @@ export class DataInfoManager implements IDisposable {
                 const valueDataInfo = this.toDataInfo(value, refId);
 
                 this.delegation.setPropertyAsync(refId, property, valueDataInfo);
+                return true;
             },
 
             has: (target, prop): boolean => {

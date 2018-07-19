@@ -148,16 +148,16 @@ export default class HttpClient extends HttpClientBase<IHttpRequestOptions> {
                 throw new Error(`unsupported protocol: ${protocol}`);
             }
         } catch (exception) {
-            this.log.writeException(exception);
+            this.log.writeExceptionAsync(exception);
             throw exception;
         }
     }
 
-    protected sendRequestAsync(request: IHttpRequest): Promise<IHttpResponse> {
-        return new Promise<IHttpResponse>((resolve, reject) => {
+    protected sendRequestAsync<T>(request: IHttpRequest): Promise<IHttpResponse<T>> {
+        return new Promise<IHttpResponse<T>>((resolve, reject) => {
             const requestProxy = <HttpRequestProxy>request;
 
-            requestProxy.httpRequest.on("response", (response) => resolve(new HttpResponseProxy(response)));
+            requestProxy.httpRequest.on("response", (response) => resolve(new HttpResponseProxy<T>(response)));
             requestProxy.httpRequest.on("error", (error) => reject(error));
             requestProxy.httpRequest.end();
         });

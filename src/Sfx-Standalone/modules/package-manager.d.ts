@@ -44,7 +44,9 @@ declare module "sfx.package-manager" {
         status?: PackageStatus;
     }
 
-    export interface IPackageRepository extends IPackageRepositoryConfig {
+    export interface IPackageRepository {
+        readonly config: Promise<IPackageRepositoryConfig>;
+
         installPackageAsync(packageName: string): Promise<boolean>;
 
         getPackageMetadataAsync(packageName: string): Promise<IPackageInfo>;
@@ -54,24 +56,24 @@ declare module "sfx.package-manager" {
     }
 
     export interface IPackageManager {
-        readonly packagesDir: string;
+        readonly packagesDir: Promise<string>;
 
-        addRepo(repoConfig: IPackageRepositoryConfig): void;
-        removeRepo(repoName: string): void;
+        addRepoAsync(repoConfig: IPackageRepositoryConfig): Promise<void>;
+        removeRepoAsync(repoName: string): Promise<void>;
 
-        getRepo(repoName: string): IPackageRepository;
-        getRepoByUrl(repoUrl: string): IPackageRepository;
-        getRepoConfig(repoName: string): IPackageRepositoryConfig;
+        getRepoAsync(repoName: string): Promise<IPackageRepository>;
+        getRepoByUrlAsync(repoUrl: string): Promise<IPackageRepository>;
+        getRepoConfigAsync(repoName: string): Promise<IPackageRepositoryConfig>;
 
-        getRepos(): Array<IPackageRepository>;
-        getRepoConfigs(): Array<IPackageRepositoryConfig>;
+        getReposAsync(): Promise<Array<IPackageRepository>>;
+        getRepoConfigsAsync(): Promise<Array<IPackageRepositoryConfig>>;
 
-        getInstalledPackageInfos(): Array<IPackageInfo>;
+        getInstalledPackageInfosAsync(): Promise<Array<IPackageInfo>>;
 
-        enablePackage(packageName: string, enable?: boolean): void;
+        enablePackageAsync(packageName: string, enable?: boolean): Promise<void>;
 
-        uninstallPackage(packageName: string): void;
-        relaunch(): void;
+        uninstallPackageAsync(packageName: string): Promise<void>;
+        relaunchAsync(): Promise<void>;
     }
 }
 

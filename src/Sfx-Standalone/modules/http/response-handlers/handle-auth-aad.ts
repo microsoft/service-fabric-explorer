@@ -15,7 +15,6 @@ import { IAadMetadata } from "sfx.http.auth";
 
 import { WebContents } from "electron";
 import * as url from "url";
-import * as stream from "stream";
 import * as uuidv4 from "uuid/v4";
 
 interface IAadOAuthConfig {
@@ -82,23 +81,24 @@ class AadTokenAcquirer {
         const oauthConfigHref = new URL(".well-known/openid-configuration", this.aadMetadata.authority).href;
 
         return this.httpClient.getAsync<IAadOAuthConfig>(oauthConfigHref)
-            .then((aadOAuthConfig) => {
-                if (aadOAuthConfig instanceof stream.Readable) {
+            .then((response) => {
+                if (!response.data) {
                     return Promise.reject(new Error(`Failed to retrieve Aad OAuth config: ${oauthConfigHref}`));
                 }
 
-                return Promise.resolve(aadOAuthConfig);
+                return Promise.resolve(response.data);
             });
     }
 
-    private onRedirecting = (event, oldUrlString: string, newUrlString: string): void => {
-        if (newUrlString.toUpperCase().startsWith(this.aadMetadata.redirect.toUpperCase())) {
-            const token = this.extractToken(newUrlString);
+    private onRedirecting =
+        (event, oldUrlString: string, newUrlString: string): void => {
+            if (newUrlString.toUpperCase().startsWith(this.aadMetadata.redirect.toUpperCase())) {
+                const token = this.extractToken(newUrlString);
 
-            this.handlingHost.removeListener("did-get-redirect-request", this.onRedirecting);
-            token ? this.resolve(token) : this.reject(new Error("Toke is missing in the reply url."));
+                this.handlingHost.removeListener("did-get-redirect-request", this.onRedirecting);
+                token ? this.resolve(token) : this.reject(new Error("Toke is missing in the reply url."));
+            }
         }
-    }
 }
 
 export default async function handleAadAsync(
@@ -106,9 +106,10 @@ export default async function handleAadAsync(
     aadMetadata: IAadMetadata,
     nextHandler: ResponseAsyncHandler)
     : Promise<ResponseAsyncHandler> {
-    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
+
+    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse<any>): Promise<any> => {
         const statusCode = await response.statusCode;
-        
+
         if (statusCode === 403 || statusCode === 401) {
             const acquirer = new AadTokenAcquirer(client, handlingHost, aadMetadata);
 
@@ -123,7 +124,7 @@ export default async function handleAadAsync(
                         return client.requestAsync(requestOptions, requestData);
                     },
                     (reason) => {
-                        log.writeError("AAD Auth handler failed: {}", reason);
+                        log.writeErrorAsync("AAD Auth handler failed: {}", reason);
                         return Promise.reject(reason);
                     });
         }
