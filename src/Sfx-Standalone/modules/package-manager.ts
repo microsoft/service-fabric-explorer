@@ -376,6 +376,8 @@ class PackageRepository implements IPackageRepository {
 const PackageManagerSettingsName = "package-manager";
 
 class PackageManager implements IPackageManager {
+    private readonly settings: ISettings;
+
     private httpClient: IHttpClient;
 
     private config: Promise<IPackageManagerConfig>;
@@ -395,6 +397,7 @@ class PackageManager implements IPackageManager {
             throw new Error("httpClient must be provided.");
         }
 
+        this.settings = settings;
         this.repos = Object.create(null);
         this.httpClient = httpClient;
         this.config = settings.getAsync<IPackageManagerConfig>(PackageManagerSettingsName)
@@ -415,6 +418,8 @@ class PackageManager implements IPackageManager {
 
                 fileSystem.ensureDirExists(config.packagesDir);
 
+                settings.setAsync(PackageManagerSettingsName, config);
+
                 return config;
             });
 
@@ -426,11 +431,17 @@ class PackageManager implements IPackageManager {
             throw new Error("A valid repoConfig must be provided.");
         }
 
-        this.config.then((config) => config.repos[repoConfig.name] = repoConfig);
+        this.config.then((config) => {
+            config.repos[repoConfig.name] = repoConfig;
+            this.settings.setAsync(PackageManagerSettingsName, config);
+        });
     }
 
     public async removeRepoAsync(repoName: string): Promise<void> {
-        this.config.then(config => delete config.repos[repoName]);
+        this.config.then(config => {
+            delete config.repos[repoName];
+            this.settings.setAsync(PackageManagerSettingsName, config);
+        });
     }
 
     public async getRepoAsync(repoName: string): Promise<IPackageRepository> {
@@ -496,7 +507,10 @@ class PackageManager implements IPackageManager {
             throw new Error("packageName must be provided.");
         }
 
-        this.config.then(config => fileSystem.rmdir(path.join(config.packagesDir, packageName)));
+        this.config.then(config => {
+            fileSystem.rmdir(path.join(config.packagesDir, packageName));
+            this.settings.setAsync(PackageManagerSettingsName, config);
+        });
     }
 
     public async relaunchAsync(): Promise<void> {
@@ -522,6 +536,7 @@ class PackageManager implements IPackageManager {
         }
 
         packageConfig.enabled = utils.getValue(enable, true);
+        await this.settings.setAsync(PackageManagerSettingsName, config);
     }
 
     private async loadInstalledPackageInfosAsync(removeUninstalled: boolean): Promise<Array<IPackageInfo>> {
@@ -569,15 +584,20 @@ class PackageManager implements IPackageManager {
             packageInfos.push(packageInfo);
         }
 
+        await this.settings.setAsync(PackageManagerSettingsName, config);
+
         return packageInfos;
     }
 }
 
 class ModuleLoadingPolicy implements IModuleLoadingPolicy {
-    private config: IPackageManagerConfig;
+    private readonly settings: ISettings;
 
-    constructor(config: IPackageManagerConfig) {
+    private readonly config: IPackageManagerConfig;
+
+    constructor(settings: ISettings, config: IPackageManagerConfig) {
         this.config = config;
+        this.settings = settings;
     }
 
     public shouldLoad(moduleManager: IModuleManager, nameOrInfo: string | IModuleInfo): boolean {
@@ -591,6 +611,8 @@ class ModuleLoadingPolicy implements IModuleLoadingPolicy {
             this.config.packages[nameOrInfo] = {
                 enabled: true
             };
+
+            this.settings.setAsync(PackageManagerSettingsName, this.config);
 
             return true;
         }
@@ -619,8 +641,9 @@ exports = <IModule>{
             version: appUtils.getAppVersion()
         };
     },
+    
     initializeAsync: (moduleManager: IModuleManager): Promise<void> =>
         moduleManager.getComponentAsync("settings")
-            .then((settings) => settings.getAsync<IPackageManagerConfig>(PackageManagerSettingsName))
-            .then((config) => moduleManager.setModuleLoadingPolicy(new ModuleLoadingPolicy(config)))
+            .then(async (settings) => new ModuleLoadingPolicy(settings, await settings.getAsync<IPackageManagerConfig>(PackageManagerSettingsName)))
+            .then((policy) => moduleManager.setModuleLoadingPolicy(policy))
 };
