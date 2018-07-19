@@ -10,37 +10,35 @@ import { Certificate } from "electron";
 
 import * as appUtils from "../../utilities/appUtils";
 
-exports = <IModule>{
-    getModuleMetadata: (components) => {
-        components.register<IPrompt<ISelectCertificatePromptResults>>({
-            name: "prompt.select-certificate",
-            version: appUtils.getAppVersion(),
-            descriptor:
-                (promptService: IPromptService,
-                    parentWindowId: number,
-                    certificates: Array<Certificate>) => {
-                    if (!Object.isObject(promptService)) {
-                        throw new Error("promptService must be supplied.");
-                    }
+(<IModule>exports).getModuleMetadata = (components) => {
+    components.register<IPrompt<ISelectCertificatePromptResults>>({
+        name: "prompt.select-certificate",
+        version: appUtils.getAppVersion(),
+        descriptor:
+            (promptService: IPromptService,
+                parentWindowId: number,
+                certificates: Array<Certificate>) => {
+                if (!Object.isObject(promptService)) {
+                    throw new Error("promptService must be supplied.");
+                }
 
-                    if (!Array.isArray(certificates)) {
-                        throw new Error("certificates must be supplied.");
-                    }
+                if (!Array.isArray(certificates)) {
+                    throw new Error("certificates must be supplied.");
+                }
 
-                    return promptService.createAsync(
-                        {
-                            parentWindowId: parentWindowId,
-                            pageUrl: appUtils.resolve("select-certificate.html"),
-                            height: 640,
-                            data: certificates
-                        });
-                },
-            deps: ["prompt.prompt-service"]
-        });
+                return promptService.createAsync(
+                    {
+                        parentWindowId: parentWindowId,
+                        pageUrl: appUtils.resolve("select-certificate.html"),
+                        height: 640,
+                        data: certificates
+                    });
+            },
+        deps: ["prompt.prompt-service"]
+    });
 
-        return {
-            name: "prompt.select-certificate",
-            version: appUtils.getAppVersion()
-        };
-    }
+    return {
+        name: "prompt.select-certificate",
+        version: appUtils.getAppVersion()
+    };
 };

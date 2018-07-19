@@ -8,23 +8,21 @@ import { IPromptService, IPrompt } from "sfx.prompt";
 
 import * as appUtils from "../../utilities/appUtils";
 
-exports = <IModule>{
-    getModuleMetadata: (components) => {
-        components.register<IPrompt<string>>({
-            name: "prompt.connect-cluster",
-            version: appUtils.getAppVersion(),
-            descriptor: (promptService: IPromptService) =>
-                promptService.createAsync(
-                    {
-                        pageUrl: appUtils.resolve("connect-cluster.html"),
-                        height: 225
-                    }),
-            deps: ["prompt.prompt-service"]
-        });
+(<IModule>exports).getModuleMetadata = (components) => {
+    components.register<IPrompt<string>>({
+        name: "prompt.connect-cluster",
+        version: appUtils.getAppVersion(),
+        descriptor: (promptService: IPromptService) =>
+            promptService.createAsync(
+                {
+                    pageUrl: appUtils.resolve("connect-cluster.html"),
+                    height: 225
+                }),
+        deps: ["prompt.prompt-service"]
+    });
 
-        return {
-            name: "prompt.connect-cluster",
-            version: appUtils.getAppVersion()
-        };
-    }
+    return {
+        name: "prompt.connect-cluster",
+        version: appUtils.getAppVersion()
+    };
 };

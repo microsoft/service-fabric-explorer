@@ -10,19 +10,17 @@ import { ICommunicator } from "sfx.remoting";
 import { Communicator } from "./communicator";
 import * as appUtils from "../../utilities/appUtils";
 
-exports = <IModule>{
-    getModuleMetadata: (components): IModuleInfo => {
-        components.register<any>({
-            name: "ipc.communicator",
-            version: appUtils.getAppVersion(),
-            descriptor: async (channel: ChannelType, options?: ICommunicatorConstructorOptions): Promise<ICommunicator> =>
-                Communicator.fromChannel(channel, options)
-        });
+(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+    components.register<any>({
+        name: "ipc.communicator",
+        version: appUtils.getAppVersion(),
+        descriptor: async (channel: ChannelType, options?: ICommunicatorConstructorOptions): Promise<ICommunicator> =>
+            Communicator.fromChannel(channel, options)
+    });
 
-        return {
-            name: "ipc",
-            version: appUtils.getAppVersion(),
-            loadingMode: "Always"
-        };
-    }
+    return {
+        name: "ipc",
+        version: appUtils.getAppVersion(),
+        loadingMode: "Always"
+    };
 };

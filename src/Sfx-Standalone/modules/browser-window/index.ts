@@ -7,19 +7,17 @@ import { IModuleInfo, IModule } from "sfx.module-manager";
 import createBrowserWindowAsync from "./browser-window";
 import * as appUtils from "../../utilities/appUtils";
 
-exports = <IModule>{
-    getModuleMetadata: (components): IModuleInfo => {
-        components.register<any>({
-            name: "browser-window",
-            version: appUtils.getAppVersion(),
-            descriptor: createBrowserWindowAsync,
-            deps: ["module-manager"]
-        });
+(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+    components.register<any>({
+        name: "browser-window",
+        version: appUtils.getAppVersion(),
+        descriptor: createBrowserWindowAsync,
+        deps: ["module-manager"]
+    });
 
-        return {
-            name: "browser-window",
-            version: appUtils.getAppVersion(),
-            loadingMode: "Always"
-        };
-    }
+    return {
+        name: "browser-window",
+        version: appUtils.getAppVersion(),
+        loadingMode: "Always"
+    };
 };

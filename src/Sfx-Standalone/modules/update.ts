@@ -195,21 +195,19 @@ class UpdateService implements IUpdateService {
     }
 }
 
-exports = <IModule>{
-    getModuleMetadata: (components): IModuleInfo => {
-        components.register<IUpdateService>({
-            name: "update",
-            version: appUtils.getAppVersion(),
-            singleton: true,
-            descriptor:
-                async (log: ILog, settings: ISettings, httpsClient: IHttpClient) =>
-                    settings.getAsync<IUpdateSettings>("update").then((updateSettings) => new UpdateService(log, updateSettings, httpsClient)),
-            deps: ["logging", "settings", "http.https-client"]
-        });
+(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+    components.register<IUpdateService>({
+        name: "update",
+        version: appUtils.getAppVersion(),
+        singleton: true,
+        descriptor:
+            async (log: ILog, settings: ISettings, httpsClient: IHttpClient) =>
+                settings.getAsync<IUpdateSettings>("update").then((updateSettings) => new UpdateService(log, updateSettings, httpsClient)),
+        deps: ["logging", "settings", "http.https-client"]
+    });
 
-        return {
-            name: "update",
-            version: appUtils.getAppVersion()
-        };
-    }
+    return {
+        name: "update",
+        version: appUtils.getAppVersion()
+    };
 };

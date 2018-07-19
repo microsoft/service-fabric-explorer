@@ -10,25 +10,23 @@ import * as appUtils from "../../utilities/appUtils";
 import { PkiService } from "./pki-service";
 import { CertLoader } from "./cert-loader";
 
-exports = <IModule>{
-    getModuleMetadata: (components): IModuleInfo => {
-        components
-            .register<IPkiCertificateService>({
-                name: "cert.pki-service",
-                version: appUtils.getAppVersion(),
-                singleton: true,
-                descriptor: async () => new PkiService()
-            })
-            .register<ICertificateLoader>({
-                name: "cert.cert-loader",
-                version: appUtils.getAppVersion(),
-                singleton: true,
-                descriptor: async () => new CertLoader()
-            });
+(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+    components
+        .register<IPkiCertificateService>({
+            name: "cert.pki-service",
+            version: appUtils.getAppVersion(),
+            singleton: true,
+            descriptor: async () => new PkiService()
+        })
+        .register<ICertificateLoader>({
+            name: "cert.cert-loader",
+            version: appUtils.getAppVersion(),
+            singleton: true,
+            descriptor: async () => new CertLoader()
+        });
 
-        return {
-            name: "cert",
-            version: appUtils.getAppVersion()
-        };
-    }
+    return {
+        name: "cert",
+        version: appUtils.getAppVersion()
+    };
 };

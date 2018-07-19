@@ -625,25 +625,23 @@ class ModuleLoadingPolicy implements IModuleLoadingPolicy {
     }
 }
 
-exports = <IModule>{
-    getModuleMetadata: (components): IModuleInfo => {
-        components
-            .register<IPackageManager>({
-                name: "package-manager",
-                version: appUtils.getAppVersion(),
-                singleton: true,
-                descriptor: async (settings: ISettings, httpsClient: IHttpClient) => new PackageManager(settings, httpsClient),
-                deps: ["settings", "http.https-client"]
-            });
-
-        return {
+(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+    components
+        .register<IPackageManager>({
             name: "package-manager",
-            version: appUtils.getAppVersion()
-        };
-    },
-    
-    initializeAsync: (moduleManager: IModuleManager): Promise<void> =>
-        moduleManager.getComponentAsync("settings")
-            .then(async (settings) => new ModuleLoadingPolicy(settings, await settings.getAsync<IPackageManagerConfig>(PackageManagerSettingsName)))
-            .then((policy) => moduleManager.setModuleLoadingPolicy(policy))
+            version: appUtils.getAppVersion(),
+            singleton: true,
+            descriptor: async (settings: ISettings, httpsClient: IHttpClient) => new PackageManager(settings, httpsClient),
+            deps: ["settings", "http.https-client"]
+        });
+
+    return {
+        name: "package-manager",
+        version: appUtils.getAppVersion()
+    };
 };
+
+(<IModule>exports).initializeAsync = (moduleManager: IModuleManager): Promise<void> =>
+    moduleManager.getComponentAsync("settings")
+        .then(async (settings) => new ModuleLoadingPolicy(settings, await settings.getAsync<IPackageManagerConfig>(PackageManagerSettingsName)))
+        .then((policy) => moduleManager.setModuleLoadingPolicy(policy));

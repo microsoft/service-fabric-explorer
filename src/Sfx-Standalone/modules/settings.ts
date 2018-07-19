@@ -195,26 +195,24 @@ class SettingsService implements ISettingsService {
     }
 }
 
-exports = <IModule>{
-    getModuleMetadata: (components): IModuleInfo => {
-        components
-            .register<ISettingsService>({
-                name: "settings.service",
-                version: appUtils.getAppVersion(),
-                singleton: true,
-                descriptor: async () => new SettingsService()
-            })
-            .register<ISettings>({
-                name: "settings",
-                version: appUtils.getAppVersion(),
-                singleton: true,
-                descriptor: async (settingsSvc: SettingsService) => settingsSvc.default,
-                deps: ["settings.service"]
-            });
-
-        return {
+(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+    components
+        .register<ISettingsService>({
+            name: "settings.service",
+            version: appUtils.getAppVersion(),
+            singleton: true,
+            descriptor: async () => new SettingsService()
+        })
+        .register<ISettings>({
             name: "settings",
-            version: appUtils.getAppVersion()
-        };
-    }
+            version: appUtils.getAppVersion(),
+            singleton: true,
+            descriptor: async (settingsSvc: SettingsService) => settingsSvc.default,
+            deps: ["settings.service"]
+        });
+
+    return {
+        name: "settings",
+        version: appUtils.getAppVersion()
+    };
 };

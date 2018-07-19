@@ -9,28 +9,26 @@ import { IInputPromptOptions } from "sfx.prompt.input";
 
 import * as appUtils from "../../utilities/appUtils";
 
-exports = <IModule>{
-    getModuleMetadata: (components) => {
-        components.register<IPrompt<string>>({
-            name: "prompt.input",
-            version: appUtils.getAppVersion(),
-            descriptor:
-                (promptService: IPromptService,
-                    parentWindowId: number,
-                    options: IInputPromptOptions) =>
-                    promptService.createAsync(
-                        {
-                            parentWindowId: parentWindowId,
-                            pageUrl: appUtils.resolve("input.html"),
-                            height: 225,
-                            data: options
-                        }),
-            deps: ["prompt.prompt-service"]
-        });
+(<IModule>exports).getModuleMetadata = (components) => {
+    components.register<IPrompt<string>>({
+        name: "prompt.input",
+        version: appUtils.getAppVersion(),
+        descriptor:
+            (promptService: IPromptService,
+                parentWindowId: number,
+                options: IInputPromptOptions) =>
+                promptService.createAsync(
+                    {
+                        parentWindowId: parentWindowId,
+                        pageUrl: appUtils.resolve("input.html"),
+                        height: 225,
+                        data: options
+                    }),
+        deps: ["prompt.prompt-service"]
+    });
 
-        return {
-            name: "prompt.input",
-            version: appUtils.getAppVersion()
-        };
-    }
+    return {
+        name: "prompt.input",
+        version: appUtils.getAppVersion()
+    };
 };

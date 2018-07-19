@@ -11,32 +11,30 @@ import { Utils } from "./utils";
 import StringPattern from "./pattern/string";
 import RegexPattern from "./pattern/regex";
 
-exports = <IModule>{
-    getModuleMetadata: (components): IModuleInfo => {
-        components
-            .register<any>({
-                name: "remoting.utils",
-                version: appUtils.getAppVersion(),
-                singleton: true,
-                descriptor: async () => new Utils()
-            })
-            .register<any>({
-                name: "remoting.pattern.string",
-                version: appUtils.getAppVersion(),
-                singleton: false,
-                descriptor: async (pattern: string) => new StringPattern(pattern)
-            })
-            .register<any>({
-                name: "remoting.pattern.string",
-                version: appUtils.getAppVersion(),
-                singleton: false,
-                descriptor: async (pattern: RegExp) => new RegexPattern(pattern)
-            });
-
-        return {
-            name: "remoting",
+(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+    components
+        .register<any>({
+            name: "remoting.utils",
             version: appUtils.getAppVersion(),
-            loadingMode: "Always"
-        };
-    }
+            singleton: true,
+            descriptor: async () => new Utils()
+        })
+        .register<any>({
+            name: "remoting.pattern.string",
+            version: appUtils.getAppVersion(),
+            singleton: false,
+            descriptor: async (pattern: string) => new StringPattern(pattern)
+        })
+        .register<any>({
+            name: "remoting.pattern.regex",
+            version: appUtils.getAppVersion(),
+            singleton: false,
+            descriptor: async (pattern: RegExp) => new RegexPattern(pattern)
+        });
+
+    return {
+        name: "remoting",
+        version: appUtils.getAppVersion(),
+        loadingMode: "Always"
+    };
 };

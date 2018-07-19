@@ -12,32 +12,30 @@ import ConsoleLogger from "./loggers/console";
 import AppInsightsLogger from "./loggers/app-insights";
 import * as appUtils from "../../utilities/appUtils";
 
-exports = <IModule>{
-    getModuleMetadata: (components): IModuleInfo => {
-        components
-            .register<ILog>({
-                name: "logging",
-                version: appUtils.getAppVersion(),
-                descriptor:
-                    (settings: ISettings): Promise<ILog> =>
-                        settings.getAsync("logging").then((loggingSettings) => logging.createAsync(loggingSettings)),
-                singleton: true,
-                deps: ["settings"]
-            })
-            .register<ILogger>({
-                name: "logging.logger.console",
-                version: appUtils.getAppVersion(),
-                descriptor: async (loggerSettings: ILoggerSettings, targetConsole: Console) => new ConsoleLogger(loggerSettings, targetConsole)
-            })
-            .register<ILogger>({
-                name: "logging.logger.app-insights",
-                version: appUtils.getAppVersion(),
-                descriptor: async (loggerSettings: ILoggerSettings) => new AppInsightsLogger(loggerSettings)
-            });
-
-        return {
+(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+    components
+        .register<ILog>({
             name: "logging",
-            version: appUtils.getAppVersion()
-        };
-    }
+            version: appUtils.getAppVersion(),
+            descriptor:
+                (settings: ISettings): Promise<ILog> =>
+                    settings.getAsync("logging").then((loggingSettings) => logging.createAsync(loggingSettings)),
+            singleton: true,
+            deps: ["settings"]
+        })
+        .register<ILogger>({
+            name: "logging.logger.console",
+            version: appUtils.getAppVersion(),
+            descriptor: async (loggerSettings: ILoggerSettings, targetConsole: Console) => new ConsoleLogger(loggerSettings, targetConsole)
+        })
+        .register<ILogger>({
+            name: "logging.logger.app-insights",
+            version: appUtils.getAppVersion(),
+            descriptor: async (loggerSettings: ILoggerSettings) => new AppInsightsLogger(loggerSettings)
+        });
+
+    return {
+        name: "logging",
+        version: appUtils.getAppVersion()
+    };
 };

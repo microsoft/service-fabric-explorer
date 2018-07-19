@@ -52,101 +52,99 @@ function buildElectronHttpClientAsync(
         .then(builder => builder.buildAsync(protocol));
 }
 
-exports = <IModule>{
-    getModuleMetadata: (components): IModuleInfo => {
-        components
-            .register<IHttpClient>({
-                name: "http.http-client",
-                version: appUtils.getAppVersion(),
-                descriptor: (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator): Promise<IHttpClient> =>
-                    buildNodeHttpClientAsync(log, certLoader, HttpProtocols.any, serverCertValidator),
-                deps: ["logging", "cert.cert-loader"]
-            })
-            .register<IHttpClient>({
-                name: "http.https-client",
-                version: appUtils.getAppVersion(),
-                descriptor: (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator): Promise<IHttpClient> =>
-                    buildNodeHttpClientAsync(log, certLoader, HttpProtocols.https, serverCertValidator),
-                deps: ["logging", "cert.cert-loader"]
-            })
-            .register<IHttpClient>({
-                name: "http.node-http-client",
-                version: appUtils.getAppVersion(),
-                descriptor: (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator): Promise<IHttpClient> =>
-                    buildNodeHttpClientAsync(log, certLoader, HttpProtocols.any, serverCertValidator),
-                deps: ["logging", "cert.cert-loader"]
-            })
-            .register<IHttpClient>({
-                name: "http.node-https-client",
-                version: appUtils.getAppVersion(),
-                descriptor: async (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator): Promise<IHttpClient> =>
-                    buildNodeHttpClientAsync(log, certLoader, HttpProtocols.https, serverCertValidator),
-                deps: ["logging", "cert.cert-loader"]
-            })
-            .register<IHttpClient>({
-                name: "http.electron-http-client",
-                version: appUtils.getAppVersion(),
-                descriptor: (log: ILog, serverCertValidator?: ServerCertValidator): Promise<IHttpClient> =>
-                    buildElectronHttpClientAsync(log, HttpProtocols.any, serverCertValidator),
-                deps: ["logging"]
-            })
-            .register<IHttpClient>({
-                name: "http.electron-https-client",
-                version: appUtils.getAppVersion(),
-                descriptor: (log: ILog, serverCertValidator?: ServerCertValidator): Promise<IHttpClient> =>
-                    buildElectronHttpClientAsync(log, HttpProtocols.https, serverCertValidator),
-                deps: ["logging"]
-            })
-            .register<IHttpClientBuilder>({
-                name: "http.node-client-builder",
-                version: appUtils.getAppVersion(),
-                descriptor: async (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator) =>
-                    new NodeHttpClientBuilder(log, certLoader, serverCertValidator),
-                deps: ["logging", "cert.cert-loader"]
-            })
-            .register<IHttpClientBuilder>({
-                name: "http.electron-client-builder",
-                version: appUtils.getAppVersion(),
-                descriptor: async (log: ILog, serverCertValidator?: ServerCertValidator) =>
-                    new ElectronHttpClientBuilder(log, serverCertValidator),
-                deps: ["logging"]
-            })
+(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+    components
+        .register<IHttpClient>({
+            name: "http.http-client",
+            version: appUtils.getAppVersion(),
+            descriptor: (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator): Promise<IHttpClient> =>
+                buildNodeHttpClientAsync(log, certLoader, HttpProtocols.any, serverCertValidator),
+            deps: ["logging", "cert.cert-loader"]
+        })
+        .register<IHttpClient>({
+            name: "http.https-client",
+            version: appUtils.getAppVersion(),
+            descriptor: (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator): Promise<IHttpClient> =>
+                buildNodeHttpClientAsync(log, certLoader, HttpProtocols.https, serverCertValidator),
+            deps: ["logging", "cert.cert-loader"]
+        })
+        .register<IHttpClient>({
+            name: "http.node-http-client",
+            version: appUtils.getAppVersion(),
+            descriptor: (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator): Promise<IHttpClient> =>
+                buildNodeHttpClientAsync(log, certLoader, HttpProtocols.any, serverCertValidator),
+            deps: ["logging", "cert.cert-loader"]
+        })
+        .register<IHttpClient>({
+            name: "http.node-https-client",
+            version: appUtils.getAppVersion(),
+            descriptor: async (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator): Promise<IHttpClient> =>
+                buildNodeHttpClientAsync(log, certLoader, HttpProtocols.https, serverCertValidator),
+            deps: ["logging", "cert.cert-loader"]
+        })
+        .register<IHttpClient>({
+            name: "http.electron-http-client",
+            version: appUtils.getAppVersion(),
+            descriptor: (log: ILog, serverCertValidator?: ServerCertValidator): Promise<IHttpClient> =>
+                buildElectronHttpClientAsync(log, HttpProtocols.any, serverCertValidator),
+            deps: ["logging"]
+        })
+        .register<IHttpClient>({
+            name: "http.electron-https-client",
+            version: appUtils.getAppVersion(),
+            descriptor: (log: ILog, serverCertValidator?: ServerCertValidator): Promise<IHttpClient> =>
+                buildElectronHttpClientAsync(log, HttpProtocols.https, serverCertValidator),
+            deps: ["logging"]
+        })
+        .register<IHttpClientBuilder>({
+            name: "http.node-client-builder",
+            version: appUtils.getAppVersion(),
+            descriptor: async (log: ILog, certLoader: ICertificateLoader, serverCertValidator?: ServerCertValidator) =>
+                new NodeHttpClientBuilder(log, certLoader, serverCertValidator),
+            deps: ["logging", "cert.cert-loader"]
+        })
+        .register<IHttpClientBuilder>({
+            name: "http.electron-client-builder",
+            version: appUtils.getAppVersion(),
+            descriptor: async (log: ILog, serverCertValidator?: ServerCertValidator) =>
+                new ElectronHttpClientBuilder(log, serverCertValidator),
+            deps: ["logging"]
+        })
 
-            // Request Handlers
-            .register<IAsyncHandlerConstructor<RequestAsyncProcessor>>({
-                name: "http.request-handlers.handle-json",
-                version: appUtils.getAppVersion(),
-                descriptor: async () => handleJsonRequestAsync
-            })
+        // Request Handlers
+        .register<IAsyncHandlerConstructor<RequestAsyncProcessor>>({
+            name: "http.request-handlers.handle-json",
+            version: appUtils.getAppVersion(),
+            descriptor: async () => handleJsonRequestAsync
+        })
 
-            // Response Handlers
-            .register<IAsyncHandlerConstructor<ResponseAsyncHandler>>({
-                name: "http.response-handlers.handle-redirection",
-                version: appUtils.getAppVersion(),
-                descriptor: async () => handleRedirectionResponseAsync
-            })
-            .register<IAsyncHandlerConstructor<ResponseAsyncHandler>>({
-                name: "http.response-handlers.handle-json",
-                version: appUtils.getAppVersion(),
-                descriptor: async () => handleJsonResponseAsync
-            })
-            .register<IAsyncHandlerConstructor<ResponseAsyncHandler>>({
-                name: "http.response-handlers.handle-auth-aad",
-                version: appUtils.getAppVersion(),
-                descriptor: (handlingHost: WebContents, aadMetadata: IAadMetadata) => handleAuthAadResponseAsync.bind(null, handlingHost, aadMetadata)
-            })
-            .register<IAsyncHandlerConstructor<ResponseAsyncHandler>>({
-                name: "http.response-handlers.handle-auth-cert",
-                version: appUtils.getAppVersion(),
-                descriptor:
-                    (certLoader: ICertificateLoader, pkiCertSvc: IPkiCertificateService, selectClientCertAsyncHandler: SelectClientCertAsyncHandler) =>
-                        handleAuthCertResponseAsync.bind(null, certLoader, pkiCertSvc, selectClientCertAsyncHandler),
-                deps: ["cert.cert-loader", "cert.pki-service"]
-            });
+        // Response Handlers
+        .register<IAsyncHandlerConstructor<ResponseAsyncHandler>>({
+            name: "http.response-handlers.handle-redirection",
+            version: appUtils.getAppVersion(),
+            descriptor: async () => handleRedirectionResponseAsync
+        })
+        .register<IAsyncHandlerConstructor<ResponseAsyncHandler>>({
+            name: "http.response-handlers.handle-json",
+            version: appUtils.getAppVersion(),
+            descriptor: async () => handleJsonResponseAsync
+        })
+        .register<IAsyncHandlerConstructor<ResponseAsyncHandler>>({
+            name: "http.response-handlers.handle-auth-aad",
+            version: appUtils.getAppVersion(),
+            descriptor: (handlingHost: WebContents, aadMetadata: IAadMetadata) => handleAuthAadResponseAsync.bind(null, handlingHost, aadMetadata)
+        })
+        .register<IAsyncHandlerConstructor<ResponseAsyncHandler>>({
+            name: "http.response-handlers.handle-auth-cert",
+            version: appUtils.getAppVersion(),
+            descriptor:
+                (certLoader: ICertificateLoader, pkiCertSvc: IPkiCertificateService, selectClientCertAsyncHandler: SelectClientCertAsyncHandler) =>
+                    handleAuthCertResponseAsync.bind(null, certLoader, pkiCertSvc, selectClientCertAsyncHandler),
+            deps: ["cert.cert-loader", "cert.pki-service"]
+        });
 
-        return {
-            name: "http",
-            version: appUtils.getAppVersion()
-        };
-    }
+    return {
+        name: "http",
+        version: appUtils.getAppVersion()
+    };
 };

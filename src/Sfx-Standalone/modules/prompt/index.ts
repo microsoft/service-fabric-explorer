@@ -9,19 +9,17 @@ import { IPromptService } from "sfx.prompt";
 import { PromptService } from "./prompt";
 import * as appUtils from "../../utilities/appUtils";
 
-exports = <IModule>{
-    getModuleMetadata: (components) => {
-        components.register<IPromptService>({
-            name: "prompt.prompt-service",
-            version: appUtils.getAppVersion(),
-            singleton: true,
-            descriptor: async (moduleManager) => new PromptService(moduleManager),
-            deps: ["module-manager"]
-        });
+(<IModule>exports).getModuleMetadata = (components) => {
+    components.register<IPromptService>({
+        name: "prompt.prompt-service",
+        version: appUtils.getAppVersion(),
+        singleton: true,
+        descriptor: async (moduleManager) => new PromptService(moduleManager),
+        deps: ["module-manager"]
+    });
 
-        return {
-            name: "prompt",
-            version: appUtils.getAppVersion()
-        };
-    }
+    return {
+        name: "prompt",
+        version: appUtils.getAppVersion()
+    };
 };
