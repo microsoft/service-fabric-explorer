@@ -13,7 +13,7 @@ import {
 
 import { HttpContentTypes } from "../common";
 
-function isJsonResponse(log: ILog, response: IHttpResponse<any>): boolean {
+function isJsonResponse(log: ILog, response: IHttpResponse): boolean {
     const regex_filename_json = /filename=.+\.json/i;
 
     const contentType = response.headers["content-type"];
@@ -38,7 +38,7 @@ function isJsonResponse(log: ILog, response: IHttpResponse<any>): boolean {
 }
 
 export default async function handleJsonAsync(nextHandler: ResponseAsyncHandler): Promise<ResponseAsyncHandler> {
-    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse<any>): Promise<any> => {
+    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
         const statusCode = await response.statusCode;
         if (statusCode >= 200 && statusCode < 300 && isJsonResponse(log, response)) {
             await response.setEncodingAsync("utf8");

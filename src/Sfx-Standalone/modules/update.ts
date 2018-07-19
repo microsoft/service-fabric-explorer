@@ -118,7 +118,7 @@ class UpdateService implements IUpdateService {
 
         this.log.writeInfoAsync(`Requesting version info json: ${versionInfoUrl}`);
 
-        return this.httpClient.getAsync<IVersionInfo>(versionInfoUrl)
+        return this.httpClient.getAsync(versionInfoUrl)
             .then((response) => {
                 if (!response.data) {
                     return Promise.reject(`Failed to retrieve the version info: HTTP${response.statusCode} ${response.statusMessage} => ${versionInfoUrl}`);
@@ -184,6 +184,8 @@ class UpdateService implements IUpdateService {
                     while (buffer = await <Promise<Buffer>>response.readAsync()) {
                         await fsWriteAsync(tempFile.fd, buffer);
                     }
+
+                    fs.closeSync(tempFile.fd);
 
                     return tempFile.name;
                 }

@@ -150,8 +150,8 @@ export default class HttpClient extends HttpClientBase<http.RequestOptions> {
         }
     }
 
-    protected sendRequestAsync<T>(request: IHttpRequest): Promise<IHttpResponse<T>> {
-        return new Promise<IHttpResponse<T>>((resolve, reject) => {
+    protected sendRequestAsync(request: IHttpRequest): Promise<IHttpResponse> {
+        return new Promise<IHttpResponse>((resolve, reject) => {
             const requestProxy = <HttpRequestProxy>request;
 
             requestProxy.httpRequest.on("response", (response) => resolve(new HttpResponseProxy(response)));

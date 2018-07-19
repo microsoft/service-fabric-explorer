@@ -24,7 +24,7 @@ export default async function handleRedirectionAsync(nextHandler: ResponseAsyncH
             const redirectionRequestOptions: IRequestOptions = JSON.parse(JSON.stringify(requestOptions));
 
             redirectionRequestOptions.url = location;
-            log.writeInfo("HTTP{}: Redirecting to {}", response.statusCode, redirectionRequestOptions.url);
+            log.writeInfoAsync("HTTP{}: Redirecting to {}", response.statusCode, redirectionRequestOptions.url);
 
             return client.requestAsync(redirectionRequestOptions, requestData);
         }

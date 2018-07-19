@@ -18,7 +18,9 @@ exports = <IModule>{
             .register<ILog>({
                 name: "logging",
                 version: appUtils.getAppVersion(),
-                descriptor: (settings: ISettings): Promise<ILog> => logging.createAsync(settings.get("logging")),
+                descriptor:
+                    (settings: ISettings): Promise<ILog> =>
+                        settings.getAsync("logging").then((loggingSettings) => logging.createAsync(loggingSettings)),
                 singleton: true,
                 deps: ["settings"]
             })

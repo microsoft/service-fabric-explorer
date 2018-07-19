@@ -80,7 +80,7 @@ class AadTokenAcquirer {
     private acquireAadOAuthConfig(): Promise<IAadOAuthConfig> {
         const oauthConfigHref = new URL(".well-known/openid-configuration", this.aadMetadata.authority).href;
 
-        return this.httpClient.getAsync<IAadOAuthConfig>(oauthConfigHref)
+        return this.httpClient.getAsync(oauthConfigHref)
             .then((response) => {
                 if (!response.data) {
                     return Promise.reject(new Error(`Failed to retrieve Aad OAuth config: ${oauthConfigHref}`));
@@ -107,7 +107,7 @@ export default async function handleAadAsync(
     nextHandler: ResponseAsyncHandler)
     : Promise<ResponseAsyncHandler> {
 
-    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse<any>): Promise<any> => {
+    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
         const statusCode = await response.statusCode;
 
         if (statusCode === 403 || statusCode === 401) {

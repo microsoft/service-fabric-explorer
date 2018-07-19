@@ -255,7 +255,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
             throw new Error(`Target (${delegationMsg.refId}) doesn't exist.`);
         }
 
-        return this.dataInfoManager.ReferAsDataInfo(target[delegationMsg.property], delegationMsg.refId);
+        return this.dataInfoManager.ReferAsDataInfo(await target[delegationMsg.property], delegationMsg.refId);
     }
 
     private onSetPropertyAsync = async (communicator: ICommunicator, path: string, msg: IDelegationProxyMessage): Promise<any> => {

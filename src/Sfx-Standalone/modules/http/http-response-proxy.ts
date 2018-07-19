@@ -15,10 +15,14 @@ export interface IUnderlyingHttpResponse extends Readable {
     headers: IDictionary<string>;
 }
 
-export class HttpResponseProxy<T> implements IHttpResponse<T> {
-    public data: Promise<T>;
-    
+export class HttpResponseProxy implements IHttpResponse {
+    private _data: any;
+
     private readonly _httpResponse: IUnderlyingHttpResponse;
+
+    public get data(): Promise<any> {
+        return Promise.resolve(this._data);
+    }
 
     public get httpResponse(): IUnderlyingHttpResponse {
         return this._httpResponse;
@@ -54,5 +58,9 @@ export class HttpResponseProxy<T> implements IHttpResponse<T> {
 
     public async readAsync(): Promise<string | Buffer> {
         return this.httpResponse.read();
+    }
+
+    public async setDataAsync(data: any): Promise<void> {
+        this._data = data;
     }
 }

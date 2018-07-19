@@ -5,7 +5,7 @@
 
 import { IDictionary } from "sfx.common";
 import { ISettings } from "sfx.settings";
-import { IModuleManager, IModuleInfo, IModuleLoadingPolicy } from "sfx.module-manager";
+import { IModuleManager, IModuleInfo, IModuleLoadingPolicy, IModule } from "sfx.module-manager";
 import {
     IPackageManager,
     IPackageRepository,
@@ -16,18 +16,16 @@ import {
 import { IHttpClient } from "sfx.http";
 
 import * as path from "path";
-import * as http from "http";
 import * as crypto from "crypto";
 import * as tar from "tar";
 import * as fs from "fs";
 import * as tmp from "tmp";
-import * as stream from "stream";
+import * as util from "util";
 
 import { electron } from "../utilities/electron-adapter";
 import * as appUtils from "../utilities/appUtils";
 import * as utils from "../utilities/utils";
 import * as fileSystem from "../utilities/fileSystem";
-import { IHttpResponse } from "../node_modules/@types/angular";
 
 interface IPackageConfig {
     enabled: boolean;
@@ -268,7 +266,7 @@ class PackageRepository implements IPackageRepository {
         return ModuleInfoToPackageInfo(await this.getModuleInfoAsync(packageName));
     }
 
-    public searchAsync(text: string, resultSize: number, offset?: number): Promise<ISearchResult> {
+    public async searchAsync(text: string, resultSize: number, offset?: number): Promise<ISearchResult> {
         if (!String.isString(text) || String.isEmptyOrWhitespace(text)) {
             throw new Error("text must be provided.");
         }
@@ -285,20 +283,20 @@ class PackageRepository implements IPackageRepository {
 
         offset = offset && offset >= 0 ? offset : 0;
 
-        const searchUrl = new URL("/-/v1/search", this.config.url);
+        const searchUrl = new URL("/-/v1/search", (await this.config).url);
 
         searchUrl.searchParams.append("text", text);
         searchUrl.searchParams.append("size", resultSize.toString());
         searchUrl.searchParams.append("from", offset.toString());
 
-        return this.httpClient.getAsync<NpmRegistry.ISearchResult>(searchUrl.href)
-            .then(async (npmSearchResult) => {
-                if (npmSearchResult["statusCode"]) {
-                    const response = <IHttpResponse>npmSearchResult;
-                    const statusCode = await npmSearchResult.
-                    return Promise.reject(new Error(`Failed to search (${searchUrl}): HTTP${await npmSearchResult.statusCode} => ${await npmSearchResult.statusMessage}`));
+        return this.httpClient.getAsync(searchUrl.href)
+            .then(async (response) => {
+                if (!response.data) {
+                    return Promise.reject(new Error(`Failed to search (${searchUrl}): HTTP${await response.statusCode} => ${await response.statusMessage}`));
                 }
 
+                return response.data;
+            }).then((npmSearchResult: NpmRegistry.ISearchResult) => {
                 const searchResult = toSearchResult(npmSearchResult);
 
                 searchResult.continuationToken = JSON.stringify(<NpmRegistry.IContinuationToken>{
@@ -307,7 +305,7 @@ class PackageRepository implements IPackageRepository {
                     text: text
                 });
 
-                return Promise.resolve(searchResult);
+                return searchResult;
             });
     }
 
@@ -334,36 +332,39 @@ class PackageRepository implements IPackageRepository {
 
         const packageConfigUrl = new URL(packageName, (await this.config).name);
 
-        return this.httpClient.getAsync<NpmRegistry.IModuleInfo>(packageConfigUrl.href)
+        return this.httpClient.getAsync(packageConfigUrl.href)
             .then(async (response) => {
-                if (response instanceof stream.Readable) {
-                    if (response.statusCode === 404) {
+                if (!response.data) {
+                    if (await response.statusCode === 404) {
                         return undefined;
                     }
 
                     return Promise.reject(new Error(`Failed to request package config for package: ${packageConfigUrl}`));
                 }
 
-                return response;
+                return response.data;
             });
     }
 
     private downloadPackageAsync(packageUrl: string): Promise<string> {
         return this.httpClient.getAsync(packageUrl)
-            .then((response: http.IncomingMessage) => {
-                if (response.statusCode >= 200 && response.statusCode < 300) {
-                    return new Promise<string>((resolve, reject) => {
-                        const tempFile: { name: string; fd: number } =
-                            tmp.fileSync({ keep: true, postfix: path.extname(packageUrl) });
-                        const packageTempStream = fs.createWriteStream(null, { fd: tempFile.fd, autoClose: true });
+            .then(async (response) => {
+                const statusCode = await response.statusCode;
 
-                        response.pipe(packageTempStream)
-                            .on("error", (error) => reject(error))
-                            .on("finish", () => {
-                                packageTempStream.end();
-                                resolve(tempFile.name);
-                            });
-                    });
+                if (statusCode >= 200 && statusCode < 300) {
+                    const tempFile: { name: string; fd: number } =
+                        tmp.fileSync({ keep: true, postfix: path.extname(packageUrl) });
+
+                    const fsWriteAsync = util.promisify(fs.write);
+                    let chunk: Buffer;
+
+                    while (chunk = await <Promise<Buffer>>response.readAsync()) {
+                        await fsWriteAsync(tempFile.fd, chunk);
+                    }
+
+                    fs.closeSync(tempFile.fd);
+
+                    return tempFile.name;
                 }
 
                 return Promise.reject(
@@ -575,10 +576,8 @@ class PackageManager implements IPackageManager {
 class ModuleLoadingPolicy implements IModuleLoadingPolicy {
     private config: IPackageManagerConfig;
 
-    constructor(settings: ISettings) {
-        settings
-            .getAsync<IPackageManagerConfig>(PackageManagerSettingsName)
-            .then((settings) => this.config = settings);
+    constructor(config: IPackageManagerConfig) {
+        this.config = config;
     }
 
     public shouldLoad(moduleManager: IModuleManager, nameOrInfo: string | IModuleInfo): boolean {
@@ -604,22 +603,24 @@ class ModuleLoadingPolicy implements IModuleLoadingPolicy {
     }
 }
 
-export function getModuleMetadata(): IModuleInfo {
-    return {
-        name: "package-manager",
-        version: appUtils.getAppVersion(),
-        components: [
-            {
+exports = <IModule>{
+    getModuleMetadata: (components): IModuleInfo => {
+        components
+            .register<IPackageManager>({
                 name: "package-manager",
                 version: appUtils.getAppVersion(),
                 singleton: true,
-                descriptor: (settings: ISettings, httpsClient: IHttpClient) => new PackageManager(settings, httpsClient),
+                descriptor: async (settings: ISettings, httpsClient: IHttpClient) => new PackageManager(settings, httpsClient),
                 deps: ["settings", "http.https-client"]
-            }
-        ]
-    };
-}
+            });
 
-export async function initializeAsync(moduleManager: IModuleManager): Promise<void> {
-    moduleManager.setModuleLoadingPolicy(new ModuleLoadingPolicy(await moduleManager.getComponentAsync("settings")));
-}
+        return {
+            name: "package-manager",
+            version: appUtils.getAppVersion()
+        };
+    },
+    initializeAsync: (moduleManager: IModuleManager): Promise<void> =>
+        moduleManager.getComponentAsync("settings")
+            .then((settings) => settings.getAsync<IPackageManagerConfig>(PackageManagerSettingsName))
+            .then((config) => moduleManager.setModuleLoadingPolicy(new ModuleLoadingPolicy(config)))
+};

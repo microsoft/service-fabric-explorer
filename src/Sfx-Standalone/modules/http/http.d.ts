@@ -54,16 +54,16 @@ declare module "sfx.http" {
 
     export type HttpMethod = "GET" | "POST" | "PUT" | "PATCH" | "DELETE";
 
-    export interface IHttpResponse<T> {
+    export interface IHttpResponse {
         readonly httpVersion: Promise<string>;
         readonly statusCode: Promise<number>;
         readonly statusMessage: Promise<string>;
         readonly headers: Promise<IDictionary<string>>;
-
-        data: Promise<T>;
+        readonly data: Promise<any>;
 
         setEncodingAsync(encoding: string): Promise<void>;
         readAsync(): Promise<Buffer | string>;
+        setDataAsync(data: any): Promise<void>;
     }
 
     export interface IHttpRequest {
@@ -87,7 +87,7 @@ declare module "sfx.http" {
     }
 
     export interface ResponseAsyncHandler {
-        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse<any>): Promise<any>;
+        (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any>;
     }
 
     export interface ServerCertValidator {
@@ -109,17 +109,17 @@ declare module "sfx.http" {
 
         updateDefaultRequestOptionsAsync(options: IRequestOptions): Promise<void>;
 
-        deleteAsync<T>(url: string): Promise<IHttpResponse<T>>;
+        deleteAsync(url: string): Promise<IHttpResponse>;
 
-        getAsync<T>(url: string): Promise<IHttpResponse<T>>;
+        getAsync(url: string): Promise<IHttpResponse>;
 
-        patchAsync<T>(url: string, data: any): Promise<IHttpResponse<T>>;
+        patchAsync(url: string, data: any): Promise<IHttpResponse>;
 
-        postAsync<T>(url: string, data: any): Promise<IHttpResponse<T>>;
+        postAsync(url: string, data: any): Promise<IHttpResponse>;
 
-        putAsync<T>(url: string, data: any): Promise<IHttpResponse<T>>;
+        putAsync(url: string, data: any): Promise<IHttpResponse>;
 
-        requestAsync<T>(requestOptions: IRequestOptions, data: any): Promise<IHttpResponse<T>>;
+        requestAsync(requestOptions: IRequestOptions, data: any): Promise<IHttpResponse>;
     }
 }
 

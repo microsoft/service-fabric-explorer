@@ -90,7 +90,7 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
                     log: ILog,
                     requestOptions: IRequestOptions,
                     requestData: any,
-                    response: IHttpResponse<any>) => response;
+                    response: IHttpResponse) => response;
         } else if (!Function.isFunction(responseAsyncHandler)) {
             throw new Error("responseAsyncHandler must be a function.");
         } else {
@@ -115,8 +115,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
         }
     }
 
-    public deleteAsync<T>(url: string): Promise<T> {
-        return this.requestAsync<T>(
+    public deleteAsync(url: string): Promise<IHttpResponse> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.delete
@@ -124,8 +124,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
             null);
     }
 
-    public getAsync<T>(url: string): Promise<T> {
-        return this.requestAsync<T>(
+    public getAsync(url: string): Promise<IHttpResponse> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.get
@@ -133,8 +133,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
             null);
     }
 
-    public patchAsync<T>(url: string, data: any): Promise<T> {
-        return this.requestAsync<T>(
+    public patchAsync(url: string, data: any): Promise<IHttpResponse> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.patch,
@@ -142,8 +142,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
             data);
     }
 
-    public postAsync<T>(url: string, data: any): Promise<T> {
-        return this.requestAsync<T>(
+    public postAsync(url: string, data: any): Promise<IHttpResponse> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.post,
@@ -151,8 +151,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
             data);
     }
 
-    public putAsync<T>(url: string, data: any): Promise<T> {
-        return this.requestAsync<T>(
+    public putAsync(url: string, data: any): Promise<IHttpResponse> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.put,
@@ -160,7 +160,7 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
             data);
     }
 
-    public async requestAsync<T>(requestOptions: IRequestOptions, data: any): Promise<T> {
+    public async requestAsync(requestOptions: IRequestOptions, data: any): Promise<IHttpResponse> {
         if (!Object.isObject(requestOptions)) {
             throw new Error("requestOptions must be supplied.");
         }
@@ -190,7 +190,7 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
         return this.requestAsyncProcessor(this, this.log, requestOptions, data, request)
             .then(() => {
                 this.log.writeInfoAsync(`[${requestId}] Sending HTTP request ...`);
-                return this.sendRequestAsync<T>(request);
+                return this.sendRequestAsync(request);
             })
             .then(
                 (response) => {
@@ -199,11 +199,11 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
 
                     return this.responseAsyncHandler(this, this.log, requestOptions, data, response)
                         .then(
-                            (result) => {
+                            async (result) => {
                                 this.log.writeInfoAsync(`[${requestId}] Processing HTTP response completed.`);
 
                                 if (result !== response) {
-                                    response.data = result;
+                                    await response.setDataAsync(result);
                                 }
 
                                 return response;
@@ -223,7 +223,7 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
 
     protected abstract generateHttpRequestOptionsAsync(requestOptions: IRequestOptions): Promise<THttpRequestOptions>;
 
-    protected abstract sendRequestAsync<T>(request: IHttpRequest): Promise<IHttpResponse<T>>;
+    protected abstract sendRequestAsync(request: IHttpRequest): Promise<IHttpResponse>;
 
     protected abstract makeRequest(options: THttpRequestOptions): IHttpRequest;
 }
