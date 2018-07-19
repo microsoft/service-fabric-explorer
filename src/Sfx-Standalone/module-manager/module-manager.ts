@@ -335,7 +335,9 @@ export class ModuleManager implements IModuleManager {
         } else {
             const module = this.loadModule(path, respectLoadingMode);
 
-            await module.initializeAsync(this);
+            if (Function.isFunction(module.initializeAsync)) {
+                await module.initializeAsync(this);
+            }
         }
     }
 
