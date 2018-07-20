@@ -7,7 +7,6 @@ import { ChannelType, ICommunicatorConstructorOptions } from "sfx.ipc";
 import { IModuleInfo, IModule } from "sfx.module-manager";
 import { ICommunicator } from "sfx.remoting";
 
-import { Communicator } from "./communicator";
 import * as appUtils from "../../utilities/appUtils";
 
 (<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
@@ -15,7 +14,7 @@ import * as appUtils from "../../utilities/appUtils";
         name: "ipc.communicator",
         version: appUtils.getAppVersion(),
         descriptor: async (channel: ChannelType, options?: ICommunicatorConstructorOptions): Promise<ICommunicator> =>
-            Communicator.fromChannel(channel, options)
+            import("./communicator").then((module) => module.Communicator.fromChannel(channel, options))
     });
 
     return {

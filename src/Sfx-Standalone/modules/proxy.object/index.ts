@@ -7,9 +7,6 @@ import { IModuleInfo, IModuleManager, IModule } from "sfx.module-manager";
 import { ICommunicator, IRoutePattern } from "sfx.remoting";
 
 import * as appUtils from "../../utilities/appUtils";
-import { ObjectRemotingProxy } from "./proxy.object";
-import * as utils from "../../utilities/utils";
-import * as util from "util";
 
 (<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
     components.register<any>({
@@ -18,6 +15,8 @@ import * as util from "util";
         deps: ["module-manager"],
         descriptor:
             async (moduleManager: IModuleManager, pattern: string | RegExp, communicator: ICommunicator, ownCommunicator?: boolean) => {
+                const utils = await import("../../utilities/utils");
+                const util = await import("util");
                 let routePattern: IRoutePattern;
 
                 if (utils.isNullOrUndefined(pattern)) {
@@ -30,7 +29,7 @@ import * as util from "util";
                     throw new Error("The type of pattern is not suppored.");
                 }
 
-                return ObjectRemotingProxy.create(routePattern, communicator, ownCommunicator);
+                return import("./proxy.object").then((module) => module.ObjectRemotingProxy.create(routePattern, communicator, ownCommunicator));
             }
     });
 

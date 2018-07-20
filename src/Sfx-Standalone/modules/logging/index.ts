@@ -5,11 +5,14 @@
 
 import { IModuleInfo, IModule } from "sfx.module-manager";
 import { ISettings } from "sfx.settings";
-import { ILoggerSettings, ILog, ILogger } from "sfx.logging";
 
-import * as logging from "./log";
-import ConsoleLogger from "./loggers/console";
-import AppInsightsLogger from "./loggers/app-insights";
+import {
+    ILoggerSettings,
+    ILog,
+    ILogger,
+    ILoggingSettings
+} from "sfx.logging";
+
 import * as appUtils from "../../utilities/appUtils";
 
 (<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
@@ -19,19 +22,21 @@ import * as appUtils from "../../utilities/appUtils";
             version: appUtils.getAppVersion(),
             descriptor:
                 (settings: ISettings): Promise<ILog> =>
-                    settings.getAsync("logging").then((loggingSettings) => logging.createAsync(loggingSettings)),
+                    import("./log").then(async (logging) => logging.createAsync(await settings.getAsync<ILoggingSettings>("logging"))),
             singleton: true,
             deps: ["settings"]
         })
         .register<ILogger>({
             name: "logging.logger.console",
             version: appUtils.getAppVersion(),
-            descriptor: async (loggerSettings: ILoggerSettings, targetConsole: Console) => new ConsoleLogger(loggerSettings, targetConsole)
+            descriptor: (loggerSettings: ILoggerSettings, targetConsole: Console) =>
+                import("./loggers/console").then((module) => new module.default(loggerSettings, targetConsole))
         })
         .register<ILogger>({
             name: "logging.logger.app-insights",
             version: appUtils.getAppVersion(),
-            descriptor: async (loggerSettings: ILoggerSettings) => new AppInsightsLogger(loggerSettings)
+            descriptor: (loggerSettings: ILoggerSettings) =>
+                import("./loggers/app-insights").then((module) => new module.default(loggerSettings))
         });
 
     return {

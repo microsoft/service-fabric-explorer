@@ -6,7 +6,6 @@
 import { IModule } from "sfx.module-manager";
 import { IPromptService } from "sfx.prompt";
 
-import { PromptService } from "./prompt";
 import * as appUtils from "../../utilities/appUtils";
 
 (<IModule>exports).getModuleMetadata = (components) => {
@@ -14,7 +13,7 @@ import * as appUtils from "../../utilities/appUtils";
         name: "prompt.prompt-service",
         version: appUtils.getAppVersion(),
         singleton: true,
-        descriptor: async (moduleManager) => new PromptService(moduleManager),
+        descriptor: (moduleManager) => import("./prompt").then((module) => new module.PromptService(moduleManager)),
         deps: ["module-manager"]
     });
 

@@ -7,8 +7,6 @@ import { IModuleInfo, IModule } from "sfx.module-manager";
 import { IPkiCertificateService, ICertificateLoader } from "sfx.cert";
 
 import * as appUtils from "../../utilities/appUtils";
-import { PkiService } from "./pki-service";
-import { CertLoader } from "./cert-loader";
 
 (<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
     components
@@ -16,13 +14,13 @@ import { CertLoader } from "./cert-loader";
             name: "cert.pki-service",
             version: appUtils.getAppVersion(),
             singleton: true,
-            descriptor: async () => new PkiService()
+            descriptor: async () => import("./pki-service").then((module) => new module.PkiService())
         })
         .register<ICertificateLoader>({
             name: "cert.cert-loader",
             version: appUtils.getAppVersion(),
             singleton: true,
-            descriptor: async () => new CertLoader()
+            descriptor: async () => import("./cert-loader").then((module) => new module.CertLoader())
         });
 
     return {

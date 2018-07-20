@@ -6,10 +6,6 @@
 import { IModuleInfo, IModule } from "sfx.module-manager";
 
 import * as appUtils from "../../utilities/appUtils";
-import { Utils } from "./utils";
-
-import StringPattern from "./pattern/string";
-import RegexPattern from "./pattern/regex";
 
 (<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
     components
@@ -17,19 +13,19 @@ import RegexPattern from "./pattern/regex";
             name: "remoting.utils",
             version: appUtils.getAppVersion(),
             singleton: true,
-            descriptor: async () => new Utils()
+            descriptor: () => import("./utils").then((module) => new module.Utils())
         })
         .register<any>({
             name: "remoting.pattern.string",
             version: appUtils.getAppVersion(),
             singleton: false,
-            descriptor: async (pattern: string) => new StringPattern(pattern)
+            descriptor: (pattern: string) => import("./pattern/string").then((module) => new module.default(pattern))
         })
         .register<any>({
             name: "remoting.pattern.regex",
             version: appUtils.getAppVersion(),
             singleton: false,
-            descriptor: async (pattern: RegExp) => new RegexPattern(pattern)
+            descriptor: (pattern: RegExp) => import("./pattern/regex").then((module) => new module.default(pattern))
         });
 
     return {
