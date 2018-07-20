@@ -36,9 +36,6 @@ import * as appUtils from "../utilities/appUtils";
 import DefaultModuleLoadingPolicy from "./default-module-loading-policy";
 import ComponentCollection from "./ComponentCollection";
 
-const t: Component<number> = 10;
-console.log(t);
-
 export enum ModuleManagerAction {
     loadModuleAsync = "loadModuleAsync",
     loadModuleDirAsync = "loadModuleDirAsync",

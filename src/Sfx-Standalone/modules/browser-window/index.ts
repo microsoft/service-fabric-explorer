@@ -10,7 +10,7 @@ import * as appUtils from "../../utilities/appUtils";
     components.register<any>({
         name: "browser-window",
         version: appUtils.getAppVersion(),
-        descriptor: () => require("./browser-window").default,
+        descriptor: require("./browser-window").default,
         deps: ["module-manager"]
     });
 
