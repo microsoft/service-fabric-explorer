@@ -2,9 +2,8 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+
 import { IVersionInfo, IPackageInfo } from "sfx.common";
-import { IModuleInfo, IModule } from "sfx.module-manager";
-import { ISettings } from "sfx.settings";
 import { ILog } from "sfx.logging";
 import { IHttpClient } from "sfx.http";
 import { IUpdateService } from "sfx.update";
@@ -17,16 +16,15 @@ import * as url from "url";
 import * as fs from "fs";
 import * as util from "util";
 
-import * as utils from "../utilities/utils";
-import { env, Architecture } from "../utilities/env";
-import * as appUtils from "../utilities/appUtils";
+import * as utils from "../../utilities/utils";
+import { env, Architecture } from "../../utilities/env";
 
-interface IUpdateSettings {
+export interface IUpdateSettings {
     baseUrl: string;
     defaultChannel: string;
 }
 
-class UpdateService implements IUpdateService {
+export default class UpdateService implements IUpdateService {
     private readonly log: ILog;
 
     private readonly settings: IUpdateSettings;
@@ -194,20 +192,3 @@ class UpdateService implements IUpdateService {
             });
     }
 }
-
-(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
-    components.register<IUpdateService>({
-        name: "update",
-        version: appUtils.getAppVersion(),
-        singleton: true,
-        descriptor:
-            async (log: ILog, settings: ISettings, httpsClient: IHttpClient) =>
-                settings.getAsync<IUpdateSettings>("update").then((updateSettings) => new UpdateService(log, updateSettings, httpsClient)),
-        deps: ["logging", "settings", "http.https-client"]
-    });
-
-    return {
-        name: "update",
-        version: appUtils.getAppVersion()
-    };
-};

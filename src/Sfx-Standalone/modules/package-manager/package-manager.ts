@@ -5,7 +5,6 @@
 
 import { IDictionary } from "sfx.common";
 import { ISettings } from "sfx.settings";
-import { IModuleManager, IModuleInfo, IModuleLoadingPolicy, IModule } from "sfx.module-manager";
 import {
     IPackageManager,
     IPackageRepository,
@@ -22,20 +21,10 @@ import * as fs from "fs";
 import * as tmp from "tmp";
 import * as util from "util";
 
-import { electron } from "../utilities/electron-adapter";
-import * as appUtils from "../utilities/appUtils";
-import * as utils from "../utilities/utils";
-import * as fileSystem from "../utilities/fileSystem";
-
-interface IPackageConfig {
-    enabled: boolean;
-}
-
-interface IPackageManagerConfig {
-    packagesDir: string;
-    repos: IDictionary<IPackageRepositoryConfig>;
-    packages: IDictionary<IPackageConfig>;
-}
+import { electron } from "../../utilities/electron-adapter";
+import * as utils from "../../utilities/utils";
+import * as fileSystem from "../../utilities/fileSystem";
+import { IPackageManagerConfig, PackageManagerSettingsName } from "./common";
 
 namespace NpmRegistry {
     export interface IContinuationToken {
@@ -373,9 +362,7 @@ class PackageRepository implements IPackageRepository {
     }
 }
 
-const PackageManagerSettingsName = "package-manager";
-
-class PackageManager implements IPackageManager {
+export default class PackageManager implements IPackageManager {
     private readonly settings: ISettings;
 
     private httpClient: IHttpClient;
@@ -589,59 +576,3 @@ class PackageManager implements IPackageManager {
         return packageInfos;
     }
 }
-
-class ModuleLoadingPolicy implements IModuleLoadingPolicy {
-    private readonly settings: ISettings;
-
-    private readonly config: IPackageManagerConfig;
-
-    constructor(settings: ISettings, config: IPackageManagerConfig) {
-        this.config = config;
-        this.settings = settings;
-    }
-
-    public shouldLoad(moduleManager: IModuleManager, nameOrInfo: string | IModuleInfo): boolean {
-        if (!String.isString(nameOrInfo)) {
-            return true;
-        }
-
-        const packageConfig = this.config.packages[nameOrInfo];
-
-        if (!packageConfig) {
-            this.config.packages[nameOrInfo] = {
-                enabled: true
-            };
-
-            this.settings.setAsync(PackageManagerSettingsName, this.config);
-
-            return true;
-        }
-
-        if (packageConfig.enabled === false) {
-            return false;
-        }
-
-        return true;
-    }
-}
-
-(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
-    components
-        .register<IPackageManager>({
-            name: "package-manager",
-            version: appUtils.getAppVersion(),
-            singleton: true,
-            descriptor: async (settings: ISettings, httpsClient: IHttpClient) => new PackageManager(settings, httpsClient),
-            deps: ["settings", "http.https-client"]
-        });
-
-    return {
-        name: "package-manager",
-        version: appUtils.getAppVersion()
-    };
-};
-
-(<IModule>exports).initializeAsync = (moduleManager: IModuleManager): Promise<void> =>
-    moduleManager.getComponentAsync("settings")
-        .then(async (settings) => new ModuleLoadingPolicy(settings, await settings.getAsync<IPackageManagerConfig>(PackageManagerSettingsName)))
-        .then((policy) => moduleManager.setModuleLoadingPolicy(policy));

@@ -42,8 +42,8 @@ declare module "sfx.module-manager" {
     }
 
     export interface IModuleLoadingPolicy {
-        shouldLoad(moduleManager: IModuleManager, moduleName: string): boolean;
-        shouldLoad(moduleManager: IModuleManager, moduleInfo: IModuleInfo): boolean;
+        shouldLoadAsync(moduleManager: IModuleManager, moduleName: string): Promise<boolean>;
+        shouldLoadAsync(moduleManager: IModuleManager, moduleInfo: IModuleInfo): Promise<boolean>;
     }
 
     export interface IModule {

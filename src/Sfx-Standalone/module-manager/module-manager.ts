@@ -287,7 +287,7 @@ export class ModuleManager implements IModuleManager {
                     continue;
                 }
 
-                const loadedModule = this.loadModule(modulePath, respectLoadingMode);
+                const loadedModule = await this.internalLoadModuleAsync(modulePath, respectLoadingMode);
 
                 if (!loadedModule) {
                     continue;
@@ -305,10 +305,10 @@ export class ModuleManager implements IModuleManager {
 
     public setModuleLoadingPolicy(policy: IModuleLoadingPolicy): void {
         if (utils.isNullOrUndefined(policy)) {
-            this.moduleLoadingPolicy = new DefaultModuleLoadingPolicy();
+            policy = new DefaultModuleLoadingPolicy();
         }
 
-        if (!Function.isFunction(policy.shouldLoad)) {
+        if (!Function.isFunction(policy.shouldLoadAsync)) {
             throw new Error("policy must implement shouldLoad() function.");
         }
 
@@ -330,7 +330,7 @@ export class ModuleManager implements IModuleManager {
                     content: path
                 });
         } else {
-            const module = this.loadModule(path, respectLoadingMode);
+            const module = await this.internalLoadModuleAsync(path, respectLoadingMode);
 
             if (Function.isFunction(module.initializeAsync)) {
                 await module.initializeAsync(this);
@@ -410,8 +410,8 @@ export class ModuleManager implements IModuleManager {
         return this.children[childIndex];
     }
 
-    private loadModule(modulePath: string, respectLoadingMode?: boolean): IModule {
-        if (!this.moduleLoadingPolicy.shouldLoad(this, path.basename(modulePath))) {
+    private async internalLoadModuleAsync(modulePath: string, respectLoadingMode?: boolean): Promise<IModule> {
+        if (!(await this.moduleLoadingPolicy.shouldLoadAsync(this, path.basename(modulePath)))) {
             return undefined;
         }
 
@@ -424,7 +424,7 @@ export class ModuleManager implements IModuleManager {
         const componentCollection = new ComponentCollection();
         const moduleInfo = module.getModuleMetadata(componentCollection);
 
-        if (!this.moduleLoadingPolicy.shouldLoad(this, moduleInfo)) {
+        if (!(await this.moduleLoadingPolicy.shouldLoadAsync(this, moduleInfo))) {
             return undefined;
         }
 
