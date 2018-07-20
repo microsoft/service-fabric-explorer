@@ -40,7 +40,7 @@ module Sfx {
                 });
             }
         }
-Yogesh
+
         protected retrieveData(path: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
             return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then<IRawImageStoreContent>(raw => {
                 this.FolderDictionary[path].childrenFolders = _.map(raw.StoreFolders, f => {
