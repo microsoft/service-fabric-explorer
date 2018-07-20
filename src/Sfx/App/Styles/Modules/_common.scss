@@ -337,3 +337,140 @@ input[type=number]::-webkit-outer-spin-button {
         }
     }
 }
+
+.summaryTab{
+    width: 80%;
+    height: 100px;
+    background-color: gray;
+    left:10px;
+}
+.header {
+    background-color: #262626;
+    color:gray;
+    text-align: center;
+    font-size: 12px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+}
+.headerfirstcell{
+    flex-grow: 1;
+    text-align: left;
+    max-width: inherit - 1000px;
+    //background-color: aqua;
+}
+
+.completeList {
+    font-family: "Segoe UI",-apple-system,"Helvetica Neue","Lucida Grande",Trebuchet,Arial,sans-serif;
+    padding-left: 0px;
+    padding-right: 0px;
+}
+.linkasbtn {
+    color: lightgray;
+    text-align: left;
+    font-size: 12px;
+    padding-top: 4px;
+    padding-bottom: 4px;
+    padding-left: 0px;
+}
+
+.ulforimgstr{
+    list-style-type: none;
+    a:link, a:focus {
+        color:lightgray;
+    }
+    a:visited {
+        color:lightgray;
+    } 
+}
+
+.span{
+    display: inline-block;
+    width: 800px;
+}
+
+.parent{
+    display: flex;
+    flex-flow: column;
+    //background-color: greenyellow;
+    max-width:auto;
+}
+
+.child{
+    display: flex;
+    flex-flow:row;
+    flex-wrap:nowrap;
+    align-content: flex-start;
+    align-items: flex-start;
+    width: inherit;
+    max-width: auto; 
+    //background-color: purple;
+}
+.child:hover{
+    //background-color: #202020;
+}
+
+.fileIndentation{
+    width: 800px;
+    max-width: 800px;
+}
+.indentation0{
+    flex-grow:1;
+    max-width: inherit - 1000px;
+    //background-color: yellow;
+}
+.indentation1{
+    padding-left:0px;
+    flex-grow: 1;
+    //background-color: red;
+    text-align: left;
+    max-width: inherit - 1000px;
+}
+.indentation2{
+    //background-color:yellow;
+    flex-grow:1;
+    max-width: inherit - 1000px;
+    //max-width: 670px;
+    //width: 670px;
+}
+.indentation3{
+    //background-color: purple;
+    flex-grow:1;
+    max-width: inherit - 1000px;
+    // max-width: 630px;
+    // width: 630px;
+}
+.indentation4{
+    //background-color: blue;
+    flex-grow:1;
+    max-width: inherit - 1000px;
+    // max-width: 590px;
+    // width: 590px;
+}
+
+.indentation5{
+    //background-color: blue;
+    flex-grow:1;
+    max-width: inherit - 1000px;
+    // max-width: 550px;
+    // width: 550px;
+}
+
+.indentation6{
+    //background-color: lightblue;
+    flex-grow:1;
+    max-width: inherit - 1000px;
+    // max-width: 510px;
+    // width: 510px;
+}
+.columnItem{
+    text-align: center;
+    font-size: 12px;
+    width: 240px;
+    flex-shrink:1;
+}
+
+.ellipsis{
+    width: 40px;
+}
+
+

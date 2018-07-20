@@ -13,6 +13,7 @@ module Sfx {
         public appTypeGroups: ApplicationTypeGroupCollection;
         public apps: ApplicationCollection;
         public nodes: NodeCollection;
+        public imageStore: ImageStore;
 
         public restClient: RestClient;
 
@@ -35,6 +36,7 @@ module Sfx {
             this.appTypeGroups = new ApplicationTypeGroupCollection(this);
             this.apps = new ApplicationCollection(this);
             this.nodes = new NodeCollection(this);
+            this.imageStore = new ImageStore(this);
 
             this.restClient = new RestClient($http, message);
         }

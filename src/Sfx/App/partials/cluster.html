@@ -134,12 +134,23 @@
         </div>
     </script>
 
+    <script type="text/ng-template" id="tab_imagestore">
+        <div class="detail-pane">
+            <sfx-image-store-view imagestoreroot="imageStore"></sfx-image-store-view>
+        </div>
+    </script>
+
     <script type="text/ng-template" id="tab_manifest">
         <div class="detail-pane">
             <h4>
                 <span id="clusterManifestName">{{clusterManifest.clusterManifestName}}</span>
             </h4>
             <pre role="presentation" tabindex="0"><code aria-label="manifest of {{clusterManifest.clusterManifestName}}">{{clusterManifest.raw.Manifest}}</code></pre>
+        </div>
+    </script>
+
+    <script type="text/ng-template" id="tab_chaos">
+        <div class="detail-pane">
         </div>
     </script>
 </div>

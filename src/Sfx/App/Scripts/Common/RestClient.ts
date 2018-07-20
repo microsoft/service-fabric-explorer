@@ -509,6 +509,16 @@ module Sfx {
             return this.post(this.getApiUrl(url), "Replica deletion", null, messageHandler);
         }
 
+        public getImageStoreContent(path?: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawImageStoreContent> {
+            let url = path ? `ImageStore/${path}` : "ImageStore";
+            return this.get(this.getApiUrl(url, RestClient.apiVersion60), "Get Image Store Content", messageHandler);
+        }
+
+        public deleteImageStoreContent(path?: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = path ? `ImageStore/${path}` : "ImageStore";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion60), "Delete Image Store Content", messageHandler);
+        }
+
         /**
          * Appends apiVersion and a random token to aid in working with the brower's cache.
          * @param path The Input URI path.

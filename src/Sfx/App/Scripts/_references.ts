@@ -106,6 +106,7 @@
 /// <reference path="controllers/serviceviewcontroller.ts" />
 /// <reference path="controllers/appsviewcontroller.ts" />
 /// <reference path="controllers/systemappsviewcontroller.ts" />
+/// <reference path="controllers/imagestoreviewcontroller.ts" />
 
 // Bootstrap should be the last script to load to make sure all data structures are ready when bootstrap
 /// <reference path="common/authenticationbootstrap.ts" />

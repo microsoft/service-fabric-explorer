@@ -657,4 +657,25 @@ module Sfx {
         ComposeFileContent: string;
         RepositoryCredential?: IRawRepositoryCredential;
     }
+
+    export interface IRawImageStoreContent {
+        StoreFiles: IRawStoreFile[];
+        StoreFolders: IRawStoreFolder[];
+    }
+
+    export interface IRawStoreFile {
+        FileSize: string;
+        FileVersion: IRawFileVersion;
+        ModifiedDate: string;
+        StoreRelativePath: string;
+    }
+
+    export interface IRawFileVersion {
+        VersionNumber: string;
+    }
+
+    export interface IRawStoreFolder {
+        StoreRelativePath: string;
+        FileCount: string;
+    }
 }
