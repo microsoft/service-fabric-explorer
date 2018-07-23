@@ -17,12 +17,12 @@ export default class SocketChannelProxy extends ChannelProxyBase<Socket> {
             && Function.isFunction(channel.removeListener);
     }
 
-    public dispose(): void {
+    public disposeAsync(): Promise<void> {
         if (!this.disposed) {
             this.channel.removeListener("data", this.onChannelData);
         }
 
-        super.dispose();
+        return super.disposeAsync();
     }
 
     public sendMessage(msg: IMessage): boolean {

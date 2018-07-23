@@ -28,7 +28,7 @@ function isCertificate(cert: any): cert is ICertificate {
     return cert && String.isString(cert.type);
 }
 
-export default function handleCert(
+export default function handleCertAsync(
     certLoader: ICertificateLoader,
     pkiCertSvc: IPkiCertificateService,
     selectClientCertAsyncHandler: SelectClientCertAsyncHandler,
@@ -36,31 +36,35 @@ export default function handleCert(
     const HttpMsg_ClientCertRequired = "Client certificate required";
 
     return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
-        if (response.statusCode === 403
-            && 0 === HttpMsg_ClientCertRequired.localeCompare(response.statusMessage, undefined, { sensitivity: "accent" })) {
+        const statusCode = await response.statusCode;
 
-            log.writeInfo("Client certificate is required.");
+        if (statusCode === 403
+            && 0 === HttpMsg_ClientCertRequired.localeCompare(await response.statusMessage, undefined, { sensitivity: "accent" })) {
 
-            const validCertInfos = pkiCertSvc.getCertificateInfos("My").filter((certInfo) => certInfo.hasPrivateKey);
+            log.writeInfoAsync("Client certificate is required.");
+
+            const validCertInfos = (await pkiCertSvc.getCertificateInfosAsync("My")).filter((certInfo) => certInfo.hasPrivateKey);
             let selectedCert = await selectClientCertAsyncHandler(requestOptions.url, validCertInfos);
 
             if (isCertificateInfo(selectedCert)) {
-                log.writeInfo(`Client certificate (thumbprint:${selectedCert.thumbprint}) is selected.`);
-                selectedCert = pkiCertSvc.getCertificate(selectedCert);
+                log.writeInfoAsync(`Client certificate (thumbprint:${selectedCert.thumbprint}) is selected.`);
+                selectedCert = await pkiCertSvc.getCertificateAsync(selectedCert);
+
             } else if (isCertificate(selectedCert)) {
-                log.writeInfo(`Custom client certificate (type: ${selectedCert.type}) is selected.`);
-                selectedCert = certLoader.load(selectedCert);
+                log.writeInfoAsync(`Custom client certificate (type: ${selectedCert.type}) is selected.`);
+                selectedCert = await certLoader.loadAsync(selectedCert);
+
             } else {
                 throw new Error(`Invalid client certificate: ${JSON.stringify(selectedCert, null, 4)}`);
             }
 
-            const clientRequestOptions = client.defaultRequestOptions;
+            const clientRequestOptions = await client.defaultRequestOptions;
 
             clientRequestOptions.clientCert = selectedCert;
 
-            client.updateDefaultRequestOptions(clientRequestOptions);
+            await client.updateDefaultRequestOptionsAsync(clientRequestOptions);
 
-            log.writeInfo("Re-sending the HTTPS request ...");
+            log.writeInfoAsync("Re-sending the HTTPS request ...");
             return client.requestAsync(requestOptions, requestData);
         }
 
@@ -68,6 +72,6 @@ export default function handleCert(
             return nextHandler(client, log, requestOptions, requestData, response);
         }
 
-        return Promise.resolve(response);
+        return response;
     };
 }

@@ -10,17 +10,19 @@ import {
     IPfxCertificate
 } from "sfx.cert";
 
-import { execSync } from "child_process";
-
+import { exec } from "child_process";
+import { promisify } from "util";
 import { env, Platform } from "../../utilities/env";
 import { local } from "../../utilities/appUtils";
+
+const execAsync = promisify(exec);
 
 enum StoreNames {
     My = "My"
 }
 
 export class PkiService implements IPkiCertificateService {
-    public getCertificateInfos(storeName: StoreName): Array<ICertificateInfo> {
+    public async getCertificateInfosAsync(storeName: StoreName): Promise<Array<ICertificateInfo>> {
         if (env.platform !== Platform.Windows) {
             return undefined;
         }
@@ -29,8 +31,8 @@ export class PkiService implements IPkiCertificateService {
             throw new Error(`Invalid storeName: ${storeName}`);
         }
 
-        const certsJson = execSync(`powershell "${local("./windows/Get-Certificates.ps1")}" -StoreName "${storeName}"`, { encoding: "utf8" });
-        const certJsonObjects: Array<ICertificateInfo> = JSON.parse(certsJson);
+        const outputs = await execAsync(`powershell "${local("./windows/Get-Certificates.ps1")}" -StoreName "${storeName}"`, { encoding: "utf8" });
+        const certJsonObjects: Array<ICertificateInfo> = JSON.parse(outputs.stdout);
 
         for (const certJsonObject of certJsonObjects) {
             certJsonObject.validExpiry = new Date(certJsonObject.validExpiry);
@@ -40,14 +42,15 @@ export class PkiService implements IPkiCertificateService {
         return certJsonObjects;
     }
 
-    public getCertificate(certInfo: ICertificateInfo): IPfxCertificate {
+    public async getCertificateAsync(certInfo: ICertificateInfo): Promise<IPfxCertificate> {
         if (!certInfo
             || !certInfo.thumbprint
             || !String.isString(certInfo.thumbprint)) {
             throw new Error("Invalid certInfo: missing thumbprint.");
         }
 
-        const pfxBase64Data = execSync(`powershell "${local("./windows/Get-PfxCertificateData.ps1")}" -Thumbprint "${certInfo.thumbprint}"`, { encoding: "utf8" });
+        const cmdOutputs = await execAsync(`powershell "${local("./windows/Get-PfxCertificateData.ps1")}" -Thumbprint "${certInfo.thumbprint}"`, { encoding: "utf8" });
+        const pfxBase64Data = cmdOutputs.stdout;
 
         if (pfxBase64Data === "undefined") {
             return undefined;

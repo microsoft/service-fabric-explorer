@@ -24,14 +24,14 @@ export default class ElectronWebContentsChannelProxy extends ChannelProxyBase<el
             && Function.isFunction(channel.send);
     }
 
-    public dispose(): void {
+    public disposeAsync(): Promise<void> {
         if (!this.disposed) {
             this.channelListener.removeListener(this.channelName, this.onChannelData);
 
             this.channelListener = undefined;
         }
 
-        super.dispose();
+        return super.disposeAsync();
     }
 
     public sendMessage(msg: IMessage): boolean {

@@ -14,12 +14,10 @@ import * as appUtils from "../../utilities/appUtils";
 
     await bootstrapPromise;
 
-    sfxModuleManager.registerComponents([
-        {
-            name: "prompt.prompt-context",
-            version: appUtils.getAppVersion(),
-            singleton: true,
-            descriptor: () => new PromptContext()
-        }
-    ]);
+    sfxModuleManager.register<any>({
+        name: "prompt.prompt-context",
+        version: appUtils.getAppVersion(),
+        singleton: true,
+        descriptor: async () => new PromptContext()
+    });
 })();

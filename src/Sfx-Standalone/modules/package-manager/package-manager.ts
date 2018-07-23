@@ -5,7 +5,6 @@
 
 import { IDictionary } from "sfx.common";
 import { ISettings } from "sfx.settings";
-import { IModuleManager, IModuleInfo, IModuleLoadingPolicy } from "sfx.module-manager";
 import {
     IPackageManager,
     IPackageRepository,
@@ -16,27 +15,16 @@ import {
 import { IHttpClient } from "sfx.http";
 
 import * as path from "path";
-import * as http from "http";
 import * as crypto from "crypto";
 import * as tar from "tar";
 import * as fs from "fs";
 import * as tmp from "tmp";
-import * as stream from "stream";
+import * as util from "util";
 
-import { electron } from "../utilities/electron-adapter";
-import * as appUtils from "../utilities/appUtils";
-import * as utils from "../utilities/utils";
-import * as fileSystem from "../utilities/fileSystem";
-
-interface IPackageConfig {
-    enabled: boolean;
-}
-
-interface IPackageManagerConfig {
-    packagesDir: string;
-    repos: IDictionary<IPackageRepositoryConfig>;
-    packages: IDictionary<IPackageConfig>;
-}
+import { electron } from "../../utilities/electron-adapter";
+import * as utils from "../../utilities/utils";
+import * as fileSystem from "../../utilities/fileSystem";
+import { IPackageManagerConfig, PackageManagerSettingsName } from "./common";
 
 namespace NpmRegistry {
     export interface IContinuationToken {
@@ -230,17 +218,11 @@ function toSearchResult(npmSearchResult: NpmRegistry.ISearchResult): ISearchResu
 }
 
 class PackageRepository implements IPackageRepository {
+    public readonly config: Promise<IPackageRepositoryConfig>;
+
     private readonly packagesDir: string;
+
     private readonly httpClient: IHttpClient;
-    private readonly config: IPackageRepositoryConfig;
-
-    public get name() {
-        return this.config.name;
-    }
-
-    public get url() {
-        return this.config.url;
-    }
 
     public async installPackageAsync(packageName: string): Promise<boolean> {
         const moduleInfo = await this.getModuleInfoAsync(packageName);
@@ -273,7 +255,7 @@ class PackageRepository implements IPackageRepository {
         return ModuleInfoToPackageInfo(await this.getModuleInfoAsync(packageName));
     }
 
-    public searchAsync(text: string, resultSize: number, offset?: number): Promise<ISearchResult> {
+    public async searchAsync(text: string, resultSize: number, offset?: number): Promise<ISearchResult> {
         if (!String.isString(text) || String.isEmptyOrWhitespace(text)) {
             throw new Error("text must be provided.");
         }
@@ -290,18 +272,20 @@ class PackageRepository implements IPackageRepository {
 
         offset = offset && offset >= 0 ? offset : 0;
 
-        const searchUrl = new URL("/-/v1/search", this.config.url);
+        const searchUrl = new URL("/-/v1/search", (await this.config).url);
 
         searchUrl.searchParams.append("text", text);
         searchUrl.searchParams.append("size", resultSize.toString());
         searchUrl.searchParams.append("from", offset.toString());
 
-        return this.httpClient.getAsync<NpmRegistry.ISearchResult>(searchUrl.href)
-            .then((npmSearchResult) => {
-                if (npmSearchResult instanceof stream.Readable) {
-                    return Promise.reject(new Error(`Failed to search (${searchUrl}): HTTP${npmSearchResult.statusCode} => ${npmSearchResult.statusMessage}`));
+        return this.httpClient.getAsync(searchUrl.href)
+            .then(async (response) => {
+                if (!response.data) {
+                    return Promise.reject(new Error(`Failed to search (${searchUrl}): HTTP${await response.statusCode} => ${await response.statusMessage}`));
                 }
 
+                return response.data;
+            }).then((npmSearchResult: NpmRegistry.ISearchResult) => {
                 const searchResult = toSearchResult(npmSearchResult);
 
                 searchResult.continuationToken = JSON.stringify(<NpmRegistry.IContinuationToken>{
@@ -310,7 +294,7 @@ class PackageRepository implements IPackageRepository {
                     text: text
                 });
 
-                return Promise.resolve(searchResult);
+                return searchResult;
             });
     }
 
@@ -327,46 +311,49 @@ class PackageRepository implements IPackageRepository {
     constructor(packagesDir: string, httpClient: IHttpClient, repoConfig: IPackageRepositoryConfig) {
         this.packagesDir = packagesDir;
         this.httpClient = httpClient;
-        this.config = repoConfig;
+        this.config = Promise.resolve(repoConfig);
     }
 
-    private getModuleInfoAsync(packageName: string): Promise<NpmRegistry.IModuleInfo> {
+    private async getModuleInfoAsync(packageName: string): Promise<NpmRegistry.IModuleInfo> {
         if (!String.isString(packageName) || String.isEmptyOrWhitespace(packageName)) {
             throw new Error("packageName must be provided.");
         }
 
-        const packageConfigUrl = new URL(packageName, this.config.url);
+        const packageConfigUrl = new URL(packageName, (await this.config).name);
 
-        return this.httpClient.getAsync<NpmRegistry.IModuleInfo>(packageConfigUrl.href)
-            .then((response) => {
-                if (response instanceof stream.Readable) {
-                    if (response.statusCode === 404) {
+        return this.httpClient.getAsync(packageConfigUrl.href)
+            .then(async (response) => {
+                if (!response.data) {
+                    if (await response.statusCode === 404) {
                         return undefined;
                     }
 
                     return Promise.reject(new Error(`Failed to request package config for package: ${packageConfigUrl}`));
                 }
 
-                return Promise.resolve(response);
+                return response.data;
             });
     }
 
     private downloadPackageAsync(packageUrl: string): Promise<string> {
         return this.httpClient.getAsync(packageUrl)
-            .then((response: http.IncomingMessage) => {
-                if (response.statusCode >= 200 && response.statusCode < 300) {
-                    return new Promise<string>((resolve, reject) => {
-                        const tempFile: { name: string; fd: number } =
-                            tmp.fileSync({ keep: true, postfix: path.extname(packageUrl) });
-                        const packageTempStream = fs.createWriteStream(null, { fd: tempFile.fd, autoClose: true });
+            .then(async (response) => {
+                const statusCode = await response.statusCode;
 
-                        response.pipe(packageTempStream)
-                            .on("error", (error) => reject(error))
-                            .on("finish", () => {
-                                packageTempStream.end();
-                                resolve(tempFile.name);
-                            });
-                    });
+                if (statusCode >= 200 && statusCode < 300) {
+                    const tempFile: { name: string; fd: number } =
+                        tmp.fileSync({ keep: true, postfix: path.extname(packageUrl) });
+
+                    const fsWriteAsync = util.promisify(fs.write);
+                    let chunk: Buffer;
+
+                    while (chunk = await <Promise<Buffer>>response.readAsync()) {
+                        await fsWriteAsync(tempFile.fd, chunk);
+                    }
+
+                    fs.closeSync(tempFile.fd);
+
+                    return tempFile.name;
                 }
 
                 return Promise.reject(
@@ -375,17 +362,17 @@ class PackageRepository implements IPackageRepository {
     }
 }
 
-const PackageManagerSettingsName = "package-manager";
+export default class PackageManager implements IPackageManager {
+    private readonly settings: ISettings;
 
-class PackageManager implements IPackageManager {
     private httpClient: IHttpClient;
 
-    private config: IPackageManagerConfig;
+    private config: Promise<IPackageManagerConfig>;
 
     private repos: IDictionary<IPackageRepository>;
 
-    public get packagesDir(): string {
-        return this.config.packagesDir;
+    public get packagesDir(): Promise<string> {
+        return this.config.then(config => config.packagesDir);
     }
 
     constructor(settings: ISettings, httpClient: IHttpClient) {
@@ -397,135 +384,158 @@ class PackageManager implements IPackageManager {
             throw new Error("httpClient must be provided.");
         }
 
+        this.settings = settings;
         this.repos = Object.create(null);
         this.httpClient = httpClient;
-        this.config = settings.get(PackageManagerSettingsName);
+        this.config = settings.getAsync<IPackageManagerConfig>(PackageManagerSettingsName)
+            .then((config) => {
+                if (!Object.isObject(config.repos)) {
+                    config.repos = Object.create(null);
+                }
 
-        if (!Object.isObject(this.config.repos)) {
-            this.config.repos = Object.create(null);
-        }
+                if (!Object.isObject(config.packages)) {
+                    config.packages = Object.create(null);
+                }
 
-        if (!Object.isObject(this.config.packages)) {
-            this.config.packages = Object.create(null);
-        }
+                if (!String.isString(config.packagesDir)) {
+                    config.packagesDir = path.resolve(electron.app.getPath("userData"), "packages");
+                } else {
+                    config.packagesDir = path.resolve(electron.app.getPath("userData"), config.packagesDir);
+                }
 
-        if (!String.isString(this.config.packagesDir)) {
-            this.config.packagesDir = path.resolve(electron.app.getPath("userData"), "packages");
-        } else {
-            this.config.packagesDir = path.resolve(electron.app.getPath("userData"), this.config.packagesDir);
-        }
+                fileSystem.ensureDirExists(config.packagesDir);
 
-        fileSystem.ensureDirExists(this.config.packagesDir);
+                settings.setAsync(PackageManagerSettingsName, config);
 
-        this.loadInstalledPackageInfos(true);
+                return config;
+            });
+
+        this.loadInstalledPackageInfosAsync(true);
     }
 
-    public addRepo(repoConfig: IPackageRepositoryConfig): void {
+    public async addRepoAsync(repoConfig: IPackageRepositoryConfig): Promise<void> {
         if (!isPackageRepositoryConfig(repoConfig)) {
             throw new Error("A valid repoConfig must be provided.");
         }
 
-        this.config.repos[repoConfig.name] = repoConfig;
+        this.config.then((config) => {
+            config.repos[repoConfig.name] = repoConfig;
+            this.settings.setAsync(PackageManagerSettingsName, config);
+        });
     }
 
-    public removeRepo(repoName: string): void {
-        delete this.config.repos[repoName];
+    public async removeRepoAsync(repoName: string): Promise<void> {
+        this.config.then(config => {
+            delete config.repos[repoName];
+            this.settings.setAsync(PackageManagerSettingsName, config);
+        });
     }
 
-    public getRepo(repoName: string): IPackageRepository {
+    public async getRepoAsync(repoName: string): Promise<IPackageRepository> {
         if (!String.isString(repoName)) {
             throw new Error("A valid repoName must be provided.");
         }
 
-        const repoConfig = this.config.repos[repoName];
+        const config = await this.config;
+        const repoConfig = config.repos[repoName];
 
         if (!repoConfig) {
             return undefined;
         }
 
-        let repo = this.repos[repoConfig.url];
+        const repoUrl = await repoConfig.url;
+
+        let repo = this.repos[repoUrl];
 
         if (!repo) {
-            repo = new PackageRepository(this.config.packagesDir, this.httpClient, repoConfig);
-            this.repos[repoConfig.url] = repo;
+            repo = new PackageRepository(config.packagesDir, this.httpClient, repoConfig);
+            this.repos[repoUrl] = repo;
         }
 
         return repo;
     }
 
-    public getRepoByUrl(repoUrlString: string): IPackageRepository {
+    public async getRepoByUrlAsync(repoUrlString: string): Promise<IPackageRepository> {
+        const config = await this.config;
         const repoUrl = new URL(repoUrlString);
 
         let repo = this.repos[repoUrl.href];
 
         if (!repo) {
-            repo = new PackageRepository(this.config.packagesDir, this.httpClient, { url: repoUrl.href });
+            repo = new PackageRepository(config.packagesDir, this.httpClient, { url: repoUrl.href });
             this.repos[repoUrl.href] = repo;
         }
 
         return repo;
     }
 
-    public getRepoConfig(repoName: string): IPackageRepositoryConfig {
+    public getRepoConfigAsync(repoName: string): Promise<IPackageRepositoryConfig> {
         if (!String.isString(repoName) || String.isEmptyOrWhitespace(repoName)) {
             throw new Error("repoName must be provided.");
         }
 
-        return this.config.repos[repoName];
+        return this.config.then((config) => config.repos[repoName]);
     }
 
-    public getRepos(): Array<IPackageRepository> {
-        return Object.keys(this.config.repos).map((repoName) => this.getRepo(repoName));
+    public getReposAsync(): Promise<Array<IPackageRepository>> {
+        return this.config.then(config => Promise.all(Object.keys(config.repos).map((repoName) => this.getRepoAsync(repoName))));
     }
 
-    public getRepoConfigs(): Array<IPackageRepositoryConfig> {
-        return Object.values(this.config.repos);
+    public getRepoConfigsAsync(): Promise<Array<IPackageRepositoryConfig>> {
+        return this.config.then(config => Object.values(config.repos));
     }
 
-    public getInstalledPackageInfos(): Array<IPackageInfo> {
-        return this.loadInstalledPackageInfos(false);
+    public getInstalledPackageInfosAsync(): Promise<Array<IPackageInfo>> {
+        return this.loadInstalledPackageInfosAsync(false);
     }
 
-    public uninstallPackage(packageName: string): void {
+    public async uninstallPackageAsync(packageName: string): Promise<void> {
         if (!String.isString(packageName) || String.isEmptyOrWhitespace(packageName)) {
             throw new Error("packageName must be provided.");
         }
 
-        fileSystem.rmdir(path.join(this.config.packagesDir, packageName));
+        this.config.then(config => {
+            fileSystem.rmdir(path.join(config.packagesDir, packageName));
+            this.settings.setAsync(PackageManagerSettingsName, config);
+        });
     }
 
-    public relaunch(): void {
+    public async relaunchAsync(): Promise<void> {
         electron.app.relaunch();
         electron.app.quit();
     }
 
-    public enablePackage(packageName: string, enable?: boolean): void {
+    public async enablePackageAsync(packageName: string, enable?: boolean): Promise<void> {
         if (!String.isString(packageName) || String.isEmptyOrWhitespace(packageName)) {
             throw new Error("packageName must be provided.");
         }
 
-        let packageConfig = this.config.packages[packageName];
+        const config = await this.config;
+
+        let packageConfig = config.packages[packageName];
 
         if (!packageConfig) {
-            this.config.packages[packageName] = {
+            config.packages[packageName] = {
                 enabled: true
             };
 
-            packageConfig = this.config.packages[packageName];
+            packageConfig = config.packages[packageName];
         }
 
         packageConfig.enabled = utils.getValue(enable, true);
+        await this.settings.setAsync(PackageManagerSettingsName, config);
     }
 
-    private loadInstalledPackageInfos(removeUninstalled: boolean): Array<IPackageInfo> {
+    private async loadInstalledPackageInfosAsync(removeUninstalled: boolean): Promise<Array<IPackageInfo>> {
         const packageInfos: Array<IPackageInfo> = [];
+        const config = await this.config;
         const knownPackageNames =
             new Set(
-                Object.keys(this.config.packages)
-                    .concat(fs.readdirSync(this.config.packagesDir)));
+                Object.keys(config.packages)
+                    .concat(fs.readdirSync(config.packagesDir)));
 
         for (const packageName of knownPackageNames) {
-            const subDir = path.join(this.config.packagesDir, packageName);
+            const subDir = path.join(config.packagesDir, packageName);
 
             if (!fs.existsSync(subDir)) {
                 if (!removeUninstalled) {
@@ -537,7 +547,7 @@ class PackageManager implements IPackageManager {
                         status: "Uninstalled"
                     });
                 } else {
-                    delete this.config.packages[packageName];
+                    delete config.packages[packageName];
                 }
 
                 continue;
@@ -550,7 +560,7 @@ class PackageManager implements IPackageManager {
             }
 
             const packageInfo = NpmPackageToPackageInfo(JSON.parse(fs.readFileSync(path.join(subDir, "package.json"), { encoding: "utf8" })));
-            const packageConfig = this.config.packages[packageInfo.name];
+            const packageConfig = config.packages[packageInfo.name];
 
             packageInfo.status = "Installed";
 
@@ -561,56 +571,8 @@ class PackageManager implements IPackageManager {
             packageInfos.push(packageInfo);
         }
 
+        await this.settings.setAsync(PackageManagerSettingsName, config);
+
         return packageInfos;
     }
-}
-
-class ModuleLoadingPolicy implements IModuleLoadingPolicy {
-    private readonly config: IPackageManagerConfig;
-
-    constructor(settings: ISettings) {
-        this.config = settings.get(PackageManagerSettingsName);
-    }
-
-    public shouldLoad(moduleManager: IModuleManager, nameOrInfo: string | IModuleInfo): boolean {
-        if (!String.isString(nameOrInfo)) {
-            return true;
-        }
-
-        const packageConfig = this.config.packages[nameOrInfo];
-
-        if (!packageConfig) {
-            this.config.packages[nameOrInfo] = {
-                enabled: true
-            };
-
-            return true;
-        }
-
-        if (packageConfig.enabled === false) {
-            return false;
-        }
-
-        return true;
-    }
-}
-
-export function getModuleMetadata(): IModuleInfo {
-    return {
-        name: "package-manager",
-        version: appUtils.getAppVersion(),
-        components: [
-            {
-                name: "package-manager",
-                version: appUtils.getAppVersion(),
-                singleton: true,
-                descriptor: (settings: ISettings, httpsClient: IHttpClient) => new PackageManager(settings, httpsClient),
-                deps: ["settings", "http.https-client"]
-            }
-        ]
-    };
-}
-
-export async function initializeAsync(moduleManager: IModuleManager): Promise<void> {
-    moduleManager.setModuleLoadingPolicy(new ModuleLoadingPolicy(await moduleManager.getComponentAsync("settings")));
 }

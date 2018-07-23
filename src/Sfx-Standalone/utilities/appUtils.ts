@@ -35,7 +35,7 @@ function getInspectArg(): string {
     const inspectArg = getCmdArg("inspect-brk");
 
     if (utils.isNullOrUndefined(inspectArg)) {
-        return;
+        return undefined;
     }
 
     if (!Context.inspectPort) {
@@ -202,7 +202,7 @@ export function logUnhandledRejection(): void {
             sfxModuleManager.getComponentAsync("logging")
                 .then((log) => {
                     if (log) {
-                        log.writeError("Unhandled promise rejection: {}", reason);
+                        log.writeErrorAsync("Unhandled promise rejection: {}", reason);
                     } else {
                         console.error("Unhandled promise rejection: ", promise);
                     }
