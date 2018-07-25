@@ -4,7 +4,8 @@ $modal-dt-width: 160px;
 $modal-short-dt-width: 100px;
 
 .modal {
-    .input-flat:not([readonly]) {
+
+        .input-flat:not([readonly]) {
         background-color: $dialog-input-bg-color;
     }
 
@@ -13,10 +14,10 @@ $modal-short-dt-width: 100px;
     }
 
     .modal-header {
-        color: white !important;
-        background-color: $azure-blue !important;
+        color: $font-color;
+        background-color: $essen-pane-background-color;
         padding: 18px 15px 18px 15px;
-        border: none !important;
+        border-bottom: 1px solid $modal-content-border-color;
 
         .modal-title {
             font-weight: $font-weight-normal;
@@ -97,7 +98,8 @@ $modal-short-dt-width: 100px;
     .modal-footer {
         padding: 20px 15px 15px 15px;
         border: none !important;
-
+        background-color: $background-color;
+        
         #reset-dialog-link {
             float: left;
             margin-top: 5px;

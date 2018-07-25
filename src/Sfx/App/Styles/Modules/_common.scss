@@ -95,6 +95,7 @@ h1, h2, h3, h4, h5, h6 {
     overflow: hidden;
     padding: 10px 23px 20px 20px;
     background-color: $tree-background-color;
+    border: 1px solid  $table-section-divider-color;
 }
 
 #splitter {
@@ -116,7 +117,6 @@ h1, h2, h3, h4, h5, h6 {
     padding-left: 20px;
     overflow: hidden;
     min-width: $right-panel-min-width;
-    background-color: $right-panel-background-color;
 }
 
 .badge-container {
@@ -164,7 +164,7 @@ h1, h2, h3, h4, h5, h6 {
 .dropdown-menu {
     color: $font-color;
     margin: 0;
-    border: none;
+    border: 1px solid $table-section-divider-color;
     background-color: $font-color-invert;
     padding: 2px 0px;
     // The modal dialog z-index is 1050, this dropdown should display above the modal dialog

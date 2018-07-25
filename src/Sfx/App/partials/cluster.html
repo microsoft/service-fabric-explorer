@@ -1,4 +1,6 @@
-﻿<sfx-detail-view-navbar ctrl="clusterCtrl" type="Cluster" name="{{SFXClusterName}}"></sfx-detail-view-navbar>
+﻿<!-- Removed Cluster name for the portal, left cluster control - Adriana changed -->
+<!--<sfx-detail-view-navbar ctrl="clusterCtrl" type="Cluster" name="{{SFXClusterName}}"></sfx-detail-view-navbar>-->
+<sfx-detail-view-navbar ctrl="clusterCtrl"></sfx-detail-view-navbar>
 
 <div class="main-view">
     <div sfx-include src="'tab_' + clusterCtrl.activeTabId" ng-if="clusterCtrl.activeTabId" role="tabpanel" aria-label="{{clusterCtrl.activeTabId}}"></div>

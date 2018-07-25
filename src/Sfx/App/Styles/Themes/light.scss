@@ -1,32 +1,43 @@
 ﻿// common
-$font-color: black;
+$font-color: #161616;
 $font-color-invert: white;
-$input-border-color: #B3B3B3;
-$input-border-color-dark-bg: #727272;
+$input-border-color: #595959;
+$input-border-color-dark-bg: #595959;
 $dialog-input-bg-color: transparent;
 
+$background-color: #fff;
+
 // navbar
-$navbar-background-color: #151515;
+$navbar-background-color: $background-color;
+$navbar-color: $font-color;
+$slider-title-color: $font-color;
+$navbar-dropdown-toggle-hover-background-color: rgba(85,179,255,0.1);
+$navbar-dropdown-menu-background-color: $background-color;
 
 // tree
-$tree-background-color: #3d3d3d;
-$tree-node-hover-background-color: #555555;
+$tree-background-color: $background-color;
+$tree-node-hover-background-color: rgba(85,179,255,0.1);
+$tree-node-selected-background-color: rgba(85,179,255,0.2);
+$tree-color: $font-color;
 
 // detail view area
-$right-panel-background-color: #f1f1f8;
+$right-panel-background-color: $background-color;
 $details-pane-table-sub-title-color: #2D3239;
-$table-border-color: #CCCCCC;
-$table-vertical-group-left-border-color: #CCCCCC;
-$table-section-divider-color: #B3B3B3;
+$table-border-color: rgba(107, 132, 156, 0.25);
+$table-vertical-group-left-border-color: rgba(107, 132, 156, 0.25);
+$table-section-divider-color:  rgba(107, 132, 156, 0.35);
 $detail-tab-color: #6C7074;
 $detail-tab-active-color: #2D3239;
 $detail-pane-main-title-color: #2D3239;
-$detail-pane-sub-title-color: #6C7074;
-$detail-table-header-color: #6C7074;
+$detail-pane-sub-title-color: $font-color;
+$detail-table-header-color: #595959;
 $detail-table-cell-color: #2D3239;
-$essen-pane-background-color: #ffffff;
+$essen-pane-background-color: rgba(107, 132, 156, 0.06);
 $detail-pane-pre-color: #434343;
 $detail-pane-pre-background-color: $essen-pane-background-color;
+$action-hover-background-color: rgba(85,179,255,0.1);
+$action-hover-color: $font-color;
+
 
 // Candybar
 $candybar-background-color: #ffffff;
@@ -34,21 +45,21 @@ $candybar-inner-background-color: #ffffff;
 $candybar-border-color: #8e8e8e;
 
 // Dashboard
-$dashboard-color: #2D3239;
+$dashboard-color: rgb(57, 45, 45);
 
 // Charts
-$chart-text-color: #6C7074;
+$chart-text-color: $font-color;
 $tooltip-background: rgba(black, 0.8);
 
 //--------------------------------------------------------------
 // Bootstrap variables overrides
 //--------------------------------------------------------------
-$link-color: #0E70C0;
-$link-hover-color: #0E70C0;
+$link-color: #105cda;
+$link-hover-color: #105cda;
 $link-light-background-color: $link-color;
 $link-light-background-hover-color: $link-hover-color;
-$link-dark-background-color: #00BCF2;
-$link-dark-background-hover-color: #00BCF2;
+$link-dark-background-color: $link-color;
+$link-dark-background-hover-color: $link-color;
 
 // Input
 $input-color-disabled: lighten($font-color, 50%);
@@ -57,14 +68,24 @@ $input-invalid-border-color: red;
 
 // Modal dialogs
 $modal-content-bg: white;
+$modal-content-border-color:  rgba(107, 132, 156, 0.35);
 
 // Pagination
-$pagination-hover-bg: $table-border-color;
+$pagination-hover-bg: rgba(85,179,255,0.1);
+$pagination-hover-color: $font-color;
+$pagination-hover-border: rgba(85,179,255,0.1);
+$pagination-active-color: $font-color;
+$pagination-active-bg: rgba(85,179,255,0.2);
+$pagination-active-border: rgba(85,179,255,0.2);
+$pagination-color: $font-color;
 
 // Buttons
-$btn-default-color: #2D3239;
-$btn-default-bg: #EBEBEB;
-$btn-default-border: #EBEBEB;
+$btn-primary-color: $font-color-invert;
+$btn-primary-border: #015cda;
+$btn-primary-bg: #015cda;
+$btn-default-color: $font-color-invert;
+$btn-default-bg: #015cda;
+$btn-default-border: #015cda;
 
 @import "../Base/_config.scss";
 @import "../app";
