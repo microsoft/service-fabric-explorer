@@ -20,12 +20,12 @@ export default class ElectronIpcRendererChannelProxy extends ChannelProxyBase<el
             && channel === electron.ipcRenderer;
     }
 
-    public dispose(): void {
+    public disposeAsync(): Promise<void> {
         if (!this.disposed) {
             this.channel.removeListener(this.channelName, this.onChannelData);
         }
 
-        super.dispose();
+        return super.disposeAsync();
     }
 
     public sendMessage(msg: IMessage): boolean {

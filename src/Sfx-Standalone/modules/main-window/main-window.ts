@@ -4,11 +4,8 @@
 //-----------------------------------------------------------------------------
 
 import { IMainWindow } from "sfx.main-window";
-import { BrowserWindow, ipcMain, WebContents, webContents } from "electron";
+import { BrowserWindow } from "electron";
 import { resolve } from "../../utilities/appUtils";
-import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting";
-import { IModuleManager } from "sfx.module-manager";
-import { DialogService } from "./dialog-service";
 import { IComponentConfiguration } from "sfx.common";
 
 export class ClusterManagerComponentConfig implements IComponentConfiguration {
@@ -29,25 +26,27 @@ export class SettingsComponentConfig implements IComponentConfiguration {
 
 export class MainWindow implements IMainWindow {
 
-    public components: IComponentConfiguration[] = [];
-    public moduleManager: IModuleManager;
-    public browserWindow: BrowserWindow;    
+    private components: IComponentConfiguration[] = [];    
+    private browserWindow: BrowserWindow;    
 
-    constructor(moduleManager: IModuleManager, browserWindow: BrowserWindow) {
-        this.moduleManager = moduleManager;
+    constructor(browserWindow: BrowserWindow) {        
         this.browserWindow = browserWindow;
     }
 
-    register(navComponent: IComponentConfiguration): void {
+    async registerAsync(navComponent: IComponentConfiguration): Promise<void> {
         this.components.push(navComponent);
+
+        return Promise.resolve();
     }
 
-    load(): void {
+    async loadAsync(): Promise<void> {
         this.browserWindow.loadURL(resolve("index.html"));
         
         this.browserWindow.once("ready-to-show", async () => {            
             this.browserWindow.webContents.openDevTools();
             this.browserWindow.show();
         });
+
+        return Promise.resolve();
     }
 }

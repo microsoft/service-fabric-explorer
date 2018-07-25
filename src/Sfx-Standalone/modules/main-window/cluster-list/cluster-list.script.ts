@@ -12,9 +12,9 @@ import { IDialogService } from "sfx.main-window";
 
 export class ClusterList implements IClusterList {
 
-    endpoints: string[] = [];
+    private endpoints: string[] = [];
 
-    public static getComponentInfo(): IComponentInfo {
+    public static getComponentInfo(): IComponentInfo<ClusterList> {
         return {
             name: "cluster-list",
             version: electron.app.getVersion(),
@@ -66,8 +66,8 @@ export class ClusterList implements IClusterList {
 }
 
 (async () => {
-    sfxModuleManager.registerComponents([ClusterList.getComponentInfo()]);
-
+    sfxModuleManager.register(ClusterList.getComponentInfo());
+    
     const clusterListComponent = await sfxModuleManager.getComponentAsync<ClusterList>("cluster-list");
 
     await clusterListComponent.setupAsync();

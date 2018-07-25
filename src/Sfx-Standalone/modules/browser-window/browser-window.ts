@@ -6,7 +6,7 @@
 import { IDictionary } from "sfx.common";
 import { IModuleManager } from "sfx.module-manager";
 
-import { dialog, BrowserWindow, app, BrowserWindowConstructorOptions, ipcMain } from "electron";
+import { dialog, BrowserWindow, app, BrowserWindowConstructorOptions } from "electron";
 import * as url from "url";
 import * as uuidv5 from "uuid/v5";
 

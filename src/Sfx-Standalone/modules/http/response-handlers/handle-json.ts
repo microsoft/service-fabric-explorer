@@ -30,30 +30,27 @@ function isJsonResponse(log: ILog, response: IHttpResponse): boolean {
     if (contentType.indexOf(HttpContentTypes.binary) >= 0
         && regex_filename_json.test(contentDisposition)) {
 
-        log.writeVerbose(`Treat Content-Type (${contentType}) as JSON since Content-Disposition header (${contentDisposition}) indicates JSON extension.`);
+        log.writeVerboseAsync(`Treat Content-Type (${contentType}) as JSON since Content-Disposition header (${contentDisposition}) indicates JSON extension.`);
         return true;
     }
 
     return false;
 }
 
-export default function handleJson(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
-    return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
-        if (response.statusCode >= 200 && response.statusCode < 300 && isJsonResponse(log, response)) {
-            response.setEncoding("utf8");
+export default async function handleJsonAsync(nextHandler: ResponseAsyncHandler): Promise<ResponseAsyncHandler> {
+    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
+        const statusCode = await response.statusCode;
+        if (statusCode >= 200 && statusCode < 300 && isJsonResponse(log, response)) {
+            await response.setEncodingAsync("utf8");
 
-            return new Promise((resolve, reject) => {
-                let json: string = "";
+            let chunk: string;
+            let json: string = "";
 
-                response.on("data", (chunk) => json += chunk);
-                response.on("end", () => {
-                    try {
-                        resolve(JSON.parse(json));
-                    } catch (exception) {
-                        reject(exception);
-                    }
-                });
-            });
+            while (chunk = await <Promise<string>>response.readAsync()) {
+                json += chunk;
+            }
+
+            return JSON.parse(json);
         }
 
         if (Function.isFunction(nextHandler)) {

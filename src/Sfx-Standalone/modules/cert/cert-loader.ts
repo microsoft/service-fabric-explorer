@@ -5,8 +5,7 @@
 
 import { ICertificateLoader, IPfxCertificate, IPemCertificate, ICertificate } from "sfx.cert";
 
-import * as fs from "fs";
-
+import * as fileSytem from "../../utilities/fileSystem";
 import * as utils from "../../utilities/utils";
 
 export class CertLoader implements ICertificateLoader {
@@ -21,23 +20,23 @@ export class CertLoader implements ICertificateLoader {
             && (String.isString(cert["cert"]) || cert["cert"] instanceof Buffer);
     }
 
-    public load(cert: ICertificate): ICertificate {
+    public async loadAsync(cert: ICertificate): Promise<ICertificate> {
         if (utils.isNullOrUndefined(cert)) {
             throw new Error("cert must be provided.");
         }
 
         if (CertLoader.isPemClientCert(cert)) {
             if (String.isString(cert.cert)) {
-                cert.cert = fs.readFileSync(cert.cert);
+                cert.cert = await fileSytem.readFileAsync(cert.cert);
             }
 
             if (String.isString(cert.key)) {
-                cert.key = fs.readFileSync(cert.cert);
+                cert.key = await fileSytem.readFileAsync(cert.cert);
             }
 
         } else if (CertLoader.isPfxClientCert(cert)) {
             if (String.isString(cert.pfx)) {
-                cert.pfx = fs.readFileSync(cert.pfx);
+                cert.pfx = await fileSytem.readFileAsync(cert.pfx);
             }
 
         } else {
@@ -47,11 +46,11 @@ export class CertLoader implements ICertificateLoader {
         return cert;
     }
 
-    public loadPfx(path: string, password?: string): IPfxCertificate {
+    public async loadPfxAsync(path: string, password?: string): Promise<IPfxCertificate> {
         const cert: IPfxCertificate = Object.create(null);
 
         cert.type = "pfx";
-        cert.pfx = fs.readFileSync(path);
+        cert.pfx = await fileSytem.readFileAsync(path);
 
         if (password) {
             if (!String.isString(password)) {
@@ -64,11 +63,11 @@ export class CertLoader implements ICertificateLoader {
         return cert;
     }
 
-    public loadPem(certPath: string, keyPath?: string, keyPassword?: string): IPemCertificate {
+    public async loadPemAsync(certPath: string, keyPath?: string, keyPassword?: string): Promise<IPemCertificate> {
         const cert: IPemCertificate = Object.create(null);
 
         cert.type = "pem";
-        cert.cert = fs.readFileSync(certPath);
+        cert.cert = await fileSytem.readFileAsync(certPath);
 
         if (keyPassword) {
             if (!String.isString(keyPassword)) {
@@ -79,7 +78,7 @@ export class CertLoader implements ICertificateLoader {
         }
 
         if (keyPath) {
-            cert.key = fs.readFileSync(keyPath);
+            cert.key = await fileSytem.readFileAsync(keyPath);
         }
 
         return cert;

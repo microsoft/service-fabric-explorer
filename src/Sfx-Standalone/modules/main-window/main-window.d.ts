@@ -5,7 +5,7 @@
 
 declare module "sfx.main-window" {    
     export interface IMainWindow {        
-        load(): void;                
+        loadAsync(): void;                
     }
 
     export interface IDialogService {

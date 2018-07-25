@@ -53,8 +53,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
 
     protected httpRequestOptions: THttpRequestOptions;
 
-    public get defaultRequestOptions(): IRequestOptions {
-        return this.requestOptions;
+    public get defaultRequestOptions(): Promise<IRequestOptions> {
+        return Promise.resolve(this.requestOptions);
     }
 
     constructor(
@@ -98,8 +98,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
         }
     }
 
-    public updateDefaultRequestOptions(options: IRequestOptions): void {
-        this.httpRequestOptions = options ? this.generateHttpRequestOptions(options) : Object.create(null);
+    public async updateDefaultRequestOptionsAsync(options: IRequestOptions): Promise<void> {
+        this.httpRequestOptions = options ? await this.generateHttpRequestOptionsAsync(options) : Object.create(null);
         this.requestOptions = options ? options : Object.create(null);
 
         if (this.httpRequestOptions) {
@@ -115,8 +115,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
         }
     }
 
-    public deleteAsync<T>(url: string): Promise<IHttpResponse | T> {
-        return this.requestAsync<T>(
+    public deleteAsync(url: string): Promise<IHttpResponse> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.delete
@@ -124,8 +124,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
             null);
     }
 
-    public getAsync<T>(url: string): Promise<IHttpResponse | T> {
-        return this.requestAsync<T>(
+    public getAsync(url: string): Promise<IHttpResponse> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.get
@@ -133,8 +133,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
             null);
     }
 
-    public patchAsync<T>(url: string, data: any): Promise<IHttpResponse | T> {
-        return this.requestAsync<T>(
+    public patchAsync(url: string, data: any): Promise<IHttpResponse> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.patch,
@@ -142,8 +142,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
             data);
     }
 
-    public postAsync<T>(url: string, data: any): Promise<IHttpResponse | T> {
-        return this.requestAsync<T>(
+    public postAsync(url: string, data: any): Promise<IHttpResponse> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.post,
@@ -151,8 +151,8 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
             data);
     }
 
-    public putAsync<T>(url: string, data: any): Promise<IHttpResponse | T> {
-        return this.requestAsync<T>(
+    public putAsync(url: string, data: any): Promise<IHttpResponse> {
+        return this.requestAsync(
             {
                 url: url,
                 method: HttpMethods.put,
@@ -160,7 +160,7 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
             data);
     }
 
-    public requestAsync<T>(requestOptions: IRequestOptions, data: any): Promise<IHttpResponse | T> {
+    public async requestAsync(requestOptions: IRequestOptions, data: any): Promise<IHttpResponse> {
         if (!Object.isObject(requestOptions)) {
             throw new Error("requestOptions must be supplied.");
         }
@@ -180,39 +180,50 @@ export default abstract class HttpClientBase<THttpRequestOptions> implements IHt
 
         const requestId = `HTTP:${uuidv4()}`;
 
-        this.log.writeInfo(`[${requestId}] Generating http request options ...`);
-        const httpRequestOptions = this.generateHttpRequestOptions(requestOptions);
+        this.log.writeInfoAsync(`[${requestId}] Generating http request options ...`);
+        const httpRequestOptions = await this.generateHttpRequestOptionsAsync(requestOptions);
 
-        this.log.writeInfo(`[${requestId}] Creating request: HTTP ${requestOptions.method} => ${requestOptions.url}`);
+        this.log.writeInfoAsync(`[${requestId}] Creating request: HTTP ${requestOptions.method} => ${requestOptions.url}`);
         const request = this.makeRequest(httpRequestOptions);
 
-        this.log.writeInfo(`[${requestId}] Processing HTTP request ...`);
+        this.log.writeInfoAsync(`[${requestId}] Processing HTTP request ...`);
         return this.requestAsyncProcessor(this, this.log, requestOptions, data, request)
-            .then(() => new Promise<IHttpResponse>((resolve, reject) => {
-                request.on("response", (response) => resolve(response));
-                request.on("error", (err: Error) => reject(err));
-
-                this.log.writeInfo(`[${requestId}] Sending HTTP request ...`);
-                request.end();
-            }))
+            .then(() => {
+                this.log.writeInfoAsync(`[${requestId}] Sending HTTP request ...`);
+                return this.sendRequestAsync(request);
+            })
             .then(
                 (response) => {
-                    this.log.writeInfo(`[${requestId}] Received response: HTTP/${response.httpVersion} ${response.statusCode} ${response.statusMessage}`);
+                    this.log.writeInfoAsync(`[${requestId}] Received response: HTTP/${response.httpVersion} ${response.statusCode} ${response.statusMessage}`);
+                    this.log.writeInfoAsync(`[${requestId}] Processing HTTP response ...`);
 
-                    this.log.writeInfo(`[${requestId}] Processing HTTP response ...`);
-                    try {
-                        return this.responseAsyncHandler(this, this.log, requestOptions, data, response);
-                    } finally {
-                        this.log.writeInfo(`[${requestId}] Processing HTTP response completed.`);
-                    }
+                    return this.responseAsyncHandler(this, this.log, requestOptions, data, response)
+                        .then(
+                            async (result) => {
+                                this.log.writeInfoAsync(`[${requestId}] Processing HTTP response completed.`);
+
+                                if (result !== response) {
+                                    await response.setDataAsync(result);
+                                }
+
+                                return response;
+                            },
+                            (reason) => {
+                                this.log.writeErrorAsync(`[${requestId}] Failed to process HTTP response, error: ${reason}`);
+
+                                return reason;
+                            });
                 },
                 (reason) => {
-                    this.log.writeInfo(`[${requestId}] Failed sending HTTP request: ${reason}`);
+                    this.log.writeInfoAsync(`[${requestId}] Failed sending HTTP request: ${reason}`);
+                    
                     return reason;
                 });
     }
 
-    protected abstract generateHttpRequestOptions(requestOptions: IRequestOptions): THttpRequestOptions;
+    protected abstract generateHttpRequestOptionsAsync(requestOptions: IRequestOptions): Promise<THttpRequestOptions>;
+
+    protected abstract sendRequestAsync(request: IHttpRequest): Promise<IHttpResponse>;
 
     protected abstract makeRequest(options: THttpRequestOptions): IHttpRequest;
 }

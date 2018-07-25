@@ -6,7 +6,10 @@
 import {
     RequestAsyncProcessor,
     ResponseAsyncHandler,
-    IRequestOptions
+    IRequestOptions,
+    ServerCertValidator,
+    IHttpRequest,
+    IHttpResponse
 } from "sfx.http";
 
 import { ILog } from "sfx.logging";
@@ -26,6 +29,8 @@ import { PeerCertificate } from "tls";
 import { HttpProtocols, SslProtocols } from "./common";
 import * as utils from "../../utilities/utils";
 import HttpClientBase from "./http-client-base";
+import { HttpRequestProxy } from "./http-request-proxy";
+import { HttpResponseProxy } from "./http-response-proxy";
 
 function objectToString(obj: any): string {
     const propertyNames = Object.getOwnPropertyNames(obj);
@@ -56,10 +61,13 @@ function toCertificateInfo(cert: PeerCertificate): ICertificateInfo {
 export default class HttpClient extends HttpClientBase<http.RequestOptions> {
     private readonly certLoader: ICertificateLoader;
 
+    private readonly serverCertValidator: ServerCertValidator;
+
     constructor(
         log: ILog,
         certLoader: ICertificateLoader,
         protocol: string,
+        serverCertValidator: ServerCertValidator,
         requestAsyncProcessor: RequestAsyncProcessor,
         responseAsyncHandler: ResponseAsyncHandler) {
         super(log, protocol, requestAsyncProcessor, responseAsyncHandler);
@@ -68,10 +76,11 @@ export default class HttpClient extends HttpClientBase<http.RequestOptions> {
             throw new Error("certLoader must be supplied.");
         }
 
+        this.serverCertValidator = serverCertValidator;
         this.certLoader = certLoader;
     }
 
-    protected generateHttpRequestOptions(requestOptions: IRequestOptions): https.RequestOptions {
+    protected async generateHttpRequestOptionsAsync(requestOptions: IRequestOptions): Promise<https.RequestOptions> {
         const options: https.RequestOptions = Object.create(this.httpRequestOptions);
 
         Object.assign(options, url.parse(requestOptions.url));
@@ -93,7 +102,7 @@ export default class HttpClient extends HttpClientBase<http.RequestOptions> {
         }
 
         if (requestOptions.clientCert) {
-            requestOptions.clientCert = this.certLoader.load(requestOptions.clientCert);
+            requestOptions.clientCert = await this.certLoader.loadAsync(requestOptions.clientCert);
 
             if (requestOptions.clientCert.type === "pfx") {
                 options.pfx = (<IPfxCertificate>requestOptions.clientCert).pfx;
@@ -109,16 +118,16 @@ export default class HttpClient extends HttpClientBase<http.RequestOptions> {
             }
         }
 
-        if (Function.isFunction(requestOptions.serverCertValidator)) {
+        if (Function.isFunction(this.serverCertValidator)) {
             options.rejectUnauthorized = false;
             options["checkServerIdentity"] =
-                (serverName, cert) => requestOptions.serverCertValidator(serverName, toCertificateInfo(cert));
+                (serverName, cert) => this.serverCertValidator(serverName, toCertificateInfo(cert));
         }
 
         return options;
     }
 
-    protected makeRequest(options: http.RequestOptions): http.ClientRequest {
+    protected makeRequest(options: http.RequestOptions): IHttpRequest {
         let protocol: string;
 
         if (this.protocol === HttpProtocols.any) {
@@ -129,15 +138,25 @@ export default class HttpClient extends HttpClientBase<http.RequestOptions> {
 
         try {
             if (protocol === "http:" || protocol === "http") {
-                return http.request(options);
+                return new HttpRequestProxy(http.request(options));
             } else if (protocol === "https:" || protocol === "https") {
-                return https.request(options);
+                return new HttpRequestProxy(https.request(options));
             } else {
                 throw new Error(`unsupported protocol: ${protocol}`);
             }
         } catch (exception) {
-            this.log.writeException(exception);
+            this.log.writeExceptionAsync(exception);
             throw exception;
         }
+    }
+
+    protected sendRequestAsync(request: IHttpRequest): Promise<IHttpResponse> {
+        return new Promise<IHttpResponse>((resolve, reject) => {
+            const requestProxy = <HttpRequestProxy>request;
+
+            requestProxy.httpRequest.on("response", (response) => resolve(new HttpResponseProxy(response)));
+            requestProxy.httpRequest.on("error", (error) => reject(error));
+            requestProxy.httpRequest.end();
+        });
     }
 }

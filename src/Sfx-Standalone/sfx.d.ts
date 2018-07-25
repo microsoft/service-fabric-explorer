@@ -7,10 +7,8 @@
 
 /// <reference path="./module-manager/module-manager.d.ts" />
 
-/// <reference path="./modules/package-manager.d.ts" />
-/// <reference path="./modules/settings.d.ts" />
-/// <reference path="./modules/update.d.ts" />
-
+/// <reference path="./modules/settings/settings.d.ts" />
+/// <reference path="./modules/update/update.d.ts" />
 /// <reference path="./modules/http/http.d.ts" />
 /// <reference path="./modules/cert/cert.d.ts" />
 /// <reference path="./modules/browser-window/browser-window.d.ts" />
@@ -23,6 +21,7 @@
 /// <reference path="./modules/proxy.object/proxy.object.d.ts" />
 /// <reference path="./modules/remoting/remoting.d.ts" />
 /// <reference path="./modules/main-window/main-window.d.ts" />
+/// <reference path="./modules/package-manager/package-manager.d.ts" />
 
 declare module "sfx" {
     import { IModuleManager } from "sfx.module-manager";

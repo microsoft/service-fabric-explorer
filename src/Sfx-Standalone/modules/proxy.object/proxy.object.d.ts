@@ -16,7 +16,7 @@ declare module "sfx.proxy.object" {
         readonly routePattern: IRoutePattern;
         readonly communicator: ICommunicator;
 
-        requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: Array<any>): Promise<T>;
+        requestAsync<T>(identifier: string, ...extraArgs: Array<any>): Promise<T & IDisposable>;
 
         setResolver(resolver: Resolver): void;
         getResolver(): Resolver;

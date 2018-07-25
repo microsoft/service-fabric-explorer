@@ -174,12 +174,12 @@ export class Communicator implements ICommunicator {
         return this.channelProxy === undefined;
     }
 
-    public dispose(): void {
+    public async disposeAsync(): Promise<void> {
         if (this.disposed) {
             return;
         }
 
-        this.channelProxy.dispose();
+        await this.channelProxy.disposeAsync();
         Object.values(this.ongoingPromiseDict).forEach((resolver) => resolver.reject(new Error(`Communicator (${this.id}) is disposed.`)));
 
         this.channelProxy.setDataHandler(undefined);

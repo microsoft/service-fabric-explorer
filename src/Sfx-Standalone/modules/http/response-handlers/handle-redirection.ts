@@ -12,17 +12,19 @@ import {
 
 import { ILog } from "sfx.logging";
 
-export default function handleRedirection(nextHandler: ResponseAsyncHandler): ResponseAsyncHandler {
-    return (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
-        if (response.statusCode === 301
-            || response.statusCode === 302
-            || response.statusCode === 307
-            || response.statusCode === 308) {
+export default async function handleRedirectionAsync(nextHandler: ResponseAsyncHandler): Promise<ResponseAsyncHandler> {
+    return async (client: IHttpClient, log: ILog, requestOptions: IRequestOptions, requestData: any, response: IHttpResponse): Promise<any> => {
+        const statusCode = await response.statusCode;
+        
+        if (statusCode === 301
+            || statusCode === 302
+            || statusCode === 307
+            || statusCode === 308) {
             const location = response.headers["location"];
             const redirectionRequestOptions: IRequestOptions = JSON.parse(JSON.stringify(requestOptions));
 
             redirectionRequestOptions.url = location;
-            log.writeInfo("HTTP{}: Redirecting to {}", response.statusCode, redirectionRequestOptions.url);
+            log.writeInfoAsync("HTTP{}: Redirecting to {}", response.statusCode, redirectionRequestOptions.url);
 
             return client.requestAsync(redirectionRequestOptions, requestData);
         }
