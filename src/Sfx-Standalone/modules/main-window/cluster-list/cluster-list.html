@@ -27,18 +27,35 @@
         ul#cluster-list>li>button {
             width: 100%;
         }
+        button{
+            width: 100%;
+        }
     </style>
 </head>
 
 <body>
-    <div>
+     <div>
         <button class="btn btn-primary" id="cluster-list-connect">Connect to a cluster</button>
+        <button class="btn btn-primary" id="cluster-list-folder">Add Folder</button>
     </div>
     <ul id="cluster-list">
-    </ul>
+        
+      
+    </ul> 
+
+
+     
 </body>
 <script type="text/javascript" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
-<script type="text/javascript" src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<!-- <script type="text/javascript" src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script> -->
+<script type="text/javascript" src="../../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="../../../node_modules/angular/angular.min.js"></script>
 <script type="text/javascript" src="./cluster-list.script.js"></script>
+<script type="text/javascript" src="./Menu.js"></script>
+<script type="text/javascript" src="./Model.js"></script>
 
+<script>
+    var menu = new Menu();
+
+</script>
 </html>

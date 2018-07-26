@@ -11,13 +11,14 @@
 </head>
 
 <body style="overflow:hidden">
+
     <div class="modal modal-content" style="display: block">
         <div class="modal-header">
             <h4 class="modal-title">Connect to Service Fabric cluster</h4>
         </div>
         <div class="modal-body">
             <p>Cluster URL</p>
-            <input id="input-cluster-url" type="text" class="input-flat" value="" />
+            <input id="input-cluster-label" type="text" class = "input-flat" value=""/>
             <div class="checkbox-container">
                 <label for="input-connect-locally">
                     <input id="input-connect-locally" type="checkbox" />
@@ -25,7 +26,11 @@
                         <!-- this is left empty intentionally -->
                     </label>Connect to localhost
                 </label>
-            </div>
+            </div> <br>
+            <p>Friendly Name</p>
+            <input id="input-cluster-url" type="text" class="input-flat" value="" /><br>
+            <p>Choose Folder</p>
+            <select id="input-select-folder"></select>
         </div>
         <div class="modal-footer">
             <button id="btn-connect" type="submit" class="btn btn-primary">Connect</button>
@@ -36,5 +41,7 @@
 
 <script type="text/javascript" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript" src="./connect-cluster.script.js"></script>
+<script type="text/javascript" src="../../../node_modules/angular/angular.min.js"></script>
+<script type="text/javascript" src="./Menu.js"></script>
 
 </html>

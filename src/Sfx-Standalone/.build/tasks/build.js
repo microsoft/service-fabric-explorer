@@ -85,7 +85,8 @@ gulp.task("build:ts@compile",
     }));
 
 gulp.task("build:ts",
-    gulp.series("build:ts@lint", "build:ts@compile"));
+    // gulp.series("build:ts@lint", "build:ts@compile"));
+    gulp.series("build:ts@compile"));
 
 gulp.task("build:html",
     () =>

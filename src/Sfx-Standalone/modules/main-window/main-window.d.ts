@@ -30,5 +30,7 @@ declare module "sfx.sfx-view-container" {
 declare module "sfx.cluster-list" {
     export interface IClusterList {
         newListItemAsync(endpoint: string, name?: string): Promise<void>;
+        newFolderItemAsync(label: string): Promise<void>;
     }
 }
+

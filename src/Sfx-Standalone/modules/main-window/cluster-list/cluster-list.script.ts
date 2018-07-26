@@ -9,9 +9,11 @@ import { IComponentInfo } from "sfx.module-manager";
 import { IClusterList } from "sfx.cluster-list";
 import { ISfxContainer } from "sfx.sfx-view-container";
 import { IDialogService } from "sfx.main-window";
+import { Menu } from "./Model"
+
 
 export class ClusterList implements IClusterList {
-
+    menu: Menu = Menu.getInstance();
     endpoints: string[] = [];
 
     public static getComponentInfo(): IComponentInfo {
@@ -24,6 +26,14 @@ export class ClusterList implements IClusterList {
         };
     }
 
+    async newFolderItemAsync(label: string): Promise<void> {
+        const $item = $(`<li>${label} <ul class="folder ${label}"></ul></li>`);
+        $("#cluster-list").append($item);
+        this.menu.addFolder(label);
+
+        return Promise.resolve();
+    }
+
     async newListItemAsync(endpoint: string, name?: string): Promise<void> {
         $("#cluster-list .btn-success").removeClass("btn-success");
 
@@ -34,9 +44,10 @@ export class ClusterList implements IClusterList {
         if (!this.endpoints.find(e => e === endpoint)) {
             this.endpoints.push(endpoint);
                        
-            const $item = $(`<li><button class="btn btn-success btn-cluster" data-endpoint="${endpoint}">${name}</button></li>`);
+            const $item = $(`<li class="btn btn-success btn-cluster" data-endpoint="${endpoint}">${name}</li>`);
             $("#cluster-list").append($item);
         
+            //this method waits for the the button to be clicked so changes to the 
             $(".btn-cluster", $item).click(async (e) => {
                 const $button = $(e.target);
 
@@ -60,9 +71,13 @@ export class ClusterList implements IClusterList {
         $("#cluster-list-connect").click(async () => {
             (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/connect-cluster.html");
         });
+        $("#cluster-list-folder").click(async() => {
+            (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/folder.html");
+        });
 
         return Promise.resolve();
     }
+    
 }
 
 (async () => {
@@ -72,3 +87,7 @@ export class ClusterList implements IClusterList {
 
     await clusterListComponent.setupAsync();
 })();
+
+
+
+

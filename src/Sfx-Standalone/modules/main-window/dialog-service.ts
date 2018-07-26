@@ -25,7 +25,7 @@ export class DialogService implements IDialogService {
             <div id="main-modal-dialog" class="modal" tabindex="-1" role="dialog">                
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
-                        <webview src="${pageUrl}" preload="./preload.js" nodeintegration style="height: 240px; width=480px;"></webview>
+                        <webview src="${pageUrl}" preload="./preload.js" nodeintegration width=480px;"></webview>
                     </div>
                 </div>
             </div>`;
