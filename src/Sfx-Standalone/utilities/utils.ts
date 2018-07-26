@@ -29,6 +29,10 @@ Object.isEmpty = (value: Object | object) => {
     }
 
     for (const key in value) {
+        if (key) {
+            return false;
+        }
+        
         return false;
     }
 

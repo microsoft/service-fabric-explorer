@@ -23,9 +23,11 @@ export default abstract class ChannelProxyBase<TChannel extends ChannelType> imp
         this._channel = channel;
     }
 
-    public dispose(): void {
+    public disposeAsync(): Promise<void> {
         this.dataHandler = undefined;
         this._channel = undefined;
+
+        return Promise.resolve();
     }
 
     public abstract sendMessage(msg: IMessage): boolean;

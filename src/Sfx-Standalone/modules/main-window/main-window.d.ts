@@ -5,7 +5,7 @@
 
 declare module "sfx.main-window" {    
     export interface IMainWindow {        
-        load(): void;                
+        loadAsync(): void;                
     }
 
     export interface IDialogService {
@@ -33,4 +33,3 @@ declare module "sfx.cluster-list" {
         newFolderItemAsync(label: string): Promise<void>;
     }
 }
-

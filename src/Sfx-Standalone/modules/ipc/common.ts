@@ -16,7 +16,6 @@ export interface IMessage {
 export interface IChannelProxy extends IDisposable {
     readonly channel: ChannelType;
     
-    dispose(): void;
     sendMessage(msg: IMessage): boolean;
     setDataHandler(handler: ChannelProxyDataHandler): void;
 }

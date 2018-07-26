@@ -17,7 +17,7 @@ process.once("loaded", () => Promise.resolve()
 
     // Load extension modules.
     .then(() => sfxModuleManager.getComponentAsync("package-manager"))
-    .then((packageManager) => sfxModuleManager.loadModuleDirAsync(packageManager.packagesDir, "extensions"))
+    //.then((packageManager) => packageManager.packagesDir.then(dir => sfxModuleManager.loadModuleDirAsync(dir, "extensions")))
 
     // Load ad-hoc module
     .then(() => {

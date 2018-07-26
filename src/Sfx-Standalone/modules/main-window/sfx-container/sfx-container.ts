@@ -14,14 +14,14 @@ import { ISfxContainer } from "sfx.sfx-view-container";
 
 export class SfxContainer implements ISfxContainer {
     static UrlUuidNameSpace: string = "6ba7b811-9dad-11d1-80b4-00c04fd430c8";
-    endpoints: any[] = [];
+    private endpoints: any[] = [];
 
-    public static getComponentInfo(): IComponentInfo {
+    public static getComponentInfo(): IComponentInfo<SfxContainer> {
         return {
             name: "page-sfx-container",
             version: electron.app.getVersion(),
             singleton: true,
-            descriptor: () => new SfxContainer(),
+            descriptor: async () => new SfxContainer(),
             deps: []
         };
     }

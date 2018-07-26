@@ -3,25 +3,23 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleInfo } from "sfx.module-manager";
+import { IModule } from "sfx.module-manager";
 import { electron } from "../../utilities/electron-adapter";
 import { MainWindow } from "./main-window";
 
-export function getModuleMetadata(): IModuleInfo {
-    return {
+(<IModule>exports).getModuleMetadata = (components) => {
+    components.register<MainWindow>({
         name: "main-window",
-        version: electron.app.getVersion(),
-        components: [
-            {
-                name: "main-window",
                 version: electron.app.getVersion(),
                 singleton: true,
-                descriptor: async (moduleManager) => {
-                    const browserWindow = await moduleManager.getComponentAsync("browser-window", null, false);
-                    return new MainWindow(moduleManager, browserWindow);
+                descriptor: async (browserWindow) => {                    
+                    return new MainWindow(browserWindow);
                 },
-                deps: ["module-manager"]
-            }
-        ]
+                deps: ["browser-window"]
+    });
+
+    return {
+        name: "main-window",
+        version: electron.app.getVersion()
     };
-}
+};

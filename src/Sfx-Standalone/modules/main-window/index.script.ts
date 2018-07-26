@@ -1,5 +1,4 @@
 import * as $ from "jquery";
-import { ICommunicator } from "sfx.remoting";
 import { WebviewTag } from "electron";
 import { IComponentConfiguration } from "sfx.common";
 import { SfxContainer } from "./sfx-container/sfx-container";
@@ -8,7 +7,8 @@ import { ClusterManagerComponentConfig, SettingsComponentConfig } from "./main-w
 
 (async () => {
 
-    sfxModuleManager.registerComponents([DialogService.getComponentInfo(), SfxContainer.getComponentInfo()]);
+    sfxModuleManager.register(DialogService.getComponentInfo());
+    sfxModuleManager.register(SfxContainer.getComponentInfo());
 
     const leftpanel = $("div#left-panel");
 
@@ -25,7 +25,7 @@ import { ClusterManagerComponentConfig, SettingsComponentConfig } from "./main-w
 
                 let webview = <WebviewTag>document.querySelector(`webview[id='wv-${component.id}']`);
                 webview.addEventListener("dom-ready", async () => {
-                    await sfxModuleManager.newHostAsync(`host-${component.id}`, await sfxModuleManager.getComponentAsync<ICommunicator>("ipc.communicator", webview.getWebContents()));
+                    await sfxModuleManager.newHostAsync(`host-${component.id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));
 
                     webview.openDevTools();
                 });

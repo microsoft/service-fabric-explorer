@@ -11,7 +11,9 @@ import {
     RequestAsyncProcessor,
     ResponseAsyncHandler,
     IRequestOptions,
-    IHttpRequest
+    IHttpRequest,
+    IHttpResponse,
+    ServerCertValidator
 } from "sfx.http";
 
 import * as url from "url";
@@ -22,6 +24,8 @@ import * as crypto from "crypto";
 import HttpClientBase from "./http-client-base";
 import * as utils from "../../utilities/utils";
 import { HttpProtocols } from "./common";
+import { HttpRequestProxy } from "./http-request-proxy";
+import { HttpResponseProxy } from "./http-response-proxy";
 
 interface CertificateVerifyProc {
     (request: electron.CertificateVerifyProcRequest, callback: (verificationResult: number) => void): void;
@@ -53,23 +57,28 @@ function toCertificateInfo(certificate: electron.Certificate): ICertificateInfo 
 }
 
 export default class HttpClient extends HttpClientBase<IHttpRequestOptions> {
+    private readonly serverCertValidator: ServerCertValidator;
+
     private httpSession: electron.Session;
 
     constructor(
         log: ILog,
         protocol: string,
+        serverCertValidator: ServerCertValidator,
         requestAsyncProcessor: RequestAsyncProcessor,
         responseAsyncHandler: ResponseAsyncHandler) {
         super(log, protocol, requestAsyncProcessor, responseAsyncHandler);
+
+        this.serverCertValidator = serverCertValidator;
     }
 
-    public updateDefaultRequestOptions(options: IRequestOptions): void {
-        super.updateDefaultRequestOptions(options);
+    public async updateDefaultRequestOptionsAsync(options: IRequestOptions): Promise<void> {
+        await super.updateDefaultRequestOptionsAsync(options);
 
         this.httpSession = this.makeSession(this.httpRequestOptions);
     }
 
-    protected generateHttpRequestOptions(requestOptions: IRequestOptions): IHttpRequestOptions {
+    protected generateHttpRequestOptionsAsync(requestOptions: IRequestOptions): Promise<IHttpRequestOptions> {
         const options: IHttpRequestOptions = Object.create(this.httpRequestOptions);
 
         Object.assign(options, url.parse(requestOptions.url));
@@ -90,9 +99,9 @@ export default class HttpClient extends HttpClientBase<IHttpRequestOptions> {
             throw new Error("clientCert is not supported.");
         }
 
-        if (Function.isFunction(requestOptions.serverCertValidator)) {
+        if (Function.isFunction(this.serverCertValidator)) {
             options.setCertificateVerifyProc = (requestObject, callback) => {
-                if (requestOptions.serverCertValidator(requestObject.hostname, toCertificateInfo(requestObject.certificate))) {
+                if (this.serverCertValidator(requestObject.hostname, toCertificateInfo(requestObject.certificate))) {
                     callback(-2);
                 } else {
                     callback(0);
@@ -100,7 +109,7 @@ export default class HttpClient extends HttpClientBase<IHttpRequestOptions> {
             };
         }
 
-        return options;
+        return Promise.resolve(options);
     }
 
     protected makeRequest(options: IHttpRequestOptions): IHttpRequest {
@@ -139,9 +148,19 @@ export default class HttpClient extends HttpClientBase<IHttpRequestOptions> {
                 throw new Error(`unsupported protocol: ${protocol}`);
             }
         } catch (exception) {
-            this.log.writeException(exception);
+            this.log.writeExceptionAsync(exception);
             throw exception;
         }
+    }
+
+    protected sendRequestAsync(request: IHttpRequest): Promise<IHttpResponse> {
+        return new Promise<IHttpResponse>((resolve, reject) => {
+            const requestProxy = <HttpRequestProxy>request;
+
+            requestProxy.httpRequest.on("response", (response) => resolve(new HttpResponseProxy(response)));
+            requestProxy.httpRequest.on("error", (error) => reject(error));
+            requestProxy.httpRequest.end();
+        });
     }
 
     private makeSession(options: IDictionary<any>): electron.Session {

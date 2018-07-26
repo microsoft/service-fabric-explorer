@@ -13,10 +13,10 @@ import { Menu } from "./Model"
 
 
 export class ClusterList implements IClusterList {
-    menu: Menu = Menu.getInstance();
-    endpoints: string[] = [];
+    private menu: Menu = Menu.getInstance();
+    private endpoints: string[] = [];
 
-    public static getComponentInfo(): IComponentInfo {
+    public static getComponentInfo(): IComponentInfo<ClusterList> {
         return {
             name: "cluster-list",
             version: electron.app.getVersion(),
@@ -81,8 +81,8 @@ export class ClusterList implements IClusterList {
 }
 
 (async () => {
-    sfxModuleManager.registerComponents([ClusterList.getComponentInfo()]);
-
+    sfxModuleManager.register(ClusterList.getComponentInfo());
+    
     const clusterListComponent = await sfxModuleManager.getComponentAsync<ClusterList>("cluster-list");
 
     await clusterListComponent.setupAsync();

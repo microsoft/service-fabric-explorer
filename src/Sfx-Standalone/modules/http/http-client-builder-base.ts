@@ -11,7 +11,7 @@ import {
 } from "sfx.http";
 
 import { ILog } from "sfx.logging";
-import { IHandlerChainBuilder, IHandlerConstructor } from "sfx.common";
+import { IHandlerChainBuilder, IAsyncHandlerConstructor } from "sfx.common";
 
 import { HandlerChainBuilder } from "../../utilities/handlerChainBuilder";
 
@@ -26,17 +26,17 @@ export default abstract class HttpClientBuilderBase implements IHttpClientBuilde
         this.responseHandlerBuilder = new HandlerChainBuilder<ResponseAsyncHandler>();
     }
 
-    public handleRequest(constructor: IHandlerConstructor<RequestAsyncProcessor>): IHttpClientBuilder {
-        this.requestHandlerBuilder.handle(constructor);
+    public async handleRequestAsync(constructor: IAsyncHandlerConstructor<RequestAsyncProcessor>): Promise<IHttpClientBuilder> {
+        await this.requestHandlerBuilder.handleAsync(constructor);
 
         return this;
     }
 
-    public handleResponse(constructor: IHandlerConstructor<ResponseAsyncHandler>): IHttpClientBuilder {
-        this.responseHandlerBuilder.handle(constructor);
+    public async handleResponseAsync(constructor: IAsyncHandlerConstructor<ResponseAsyncHandler>): Promise<IHttpClientBuilder> {
+        await this.responseHandlerBuilder.handleAsync(constructor);
 
         return this;
     }
 
-    public abstract build(protocol: string): IHttpClient;
+    public abstract buildAsync(protocol: string): Promise<IHttpClient>;
 }

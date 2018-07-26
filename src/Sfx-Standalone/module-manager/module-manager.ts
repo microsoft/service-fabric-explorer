@@ -13,7 +13,8 @@ import {
     IComponentDescriptor,
     IModuleLoadingConfig,
     IModuleLoadingPolicy,
-    IModuleInfo
+    Component,
+    IComponentCollection
 } from "sfx.module-manager";
 
 import { ICommunicator, AsyncRequestHandler, IRoutePattern } from "sfx.remoting";
@@ -32,6 +33,8 @@ import { Communicator } from "../modules/ipc/communicator";
 import { ObjectRemotingProxy } from "../modules/proxy.object/proxy.object";
 import StringPattern from "../modules/remoting/pattern/string";
 import * as appUtils from "../utilities/appUtils";
+import DefaultModuleLoadingPolicy from "./default-module-loading-policy";
+import ComponentCollection from "./ComponentCollection";
 
 export enum ModuleManagerAction {
     loadModuleAsync = "loadModuleAsync",
@@ -46,7 +49,7 @@ interface IHostRecord {
     communicator: ICommunicator;
 }
 
-export interface IModuleManagerMessage {
+interface IModuleManagerMessage {
     action: ModuleManagerAction;
     content: any;
 }
@@ -63,7 +66,7 @@ interface ILoadModuleDirAsyncMessage extends IModuleManagerMessage {
 
 function createDedicationDiDescriptor(
     moduleManager: IModuleManager,
-    descriptor: IComponentDescriptor,
+    descriptor: IComponentDescriptor<any>,
     injects: Array<string>)
     : IDiDescriptor {
     if (!Function.isFunction(descriptor)) {
@@ -119,7 +122,7 @@ function createDedicationDiDescriptor(
 
 function createLazySingletonDiDescriptor(
     moduleManager: IModuleManager,
-    descriptor: IComponentDescriptor,
+    descriptor: IComponentDescriptor<any>,
     injects: Array<string>)
     : IDiDescriptor {
     const dedicationDescriptor = createDedicationDiDescriptor(moduleManager, descriptor, injects);
@@ -133,16 +136,6 @@ function createLazySingletonDiDescriptor(
 
         return singleton;
     };
-}
-
-class DefaultModuleLoadingPolicy implements IModuleLoadingPolicy {
-    public shouldLoad(moduleManager: IModuleManager, nameOrInfo: string | IModuleInfo): boolean {
-        if (!utils.isNullOrUndefined(nameOrInfo) && String.isString((<IModuleInfo>nameOrInfo).hostVersion)) {
-            return moduleManager.hostVersion === (<IModuleInfo>nameOrInfo).hostVersion;
-        }
-
-        return true;
-    }
 }
 
 export namespace Patterns {
@@ -249,7 +242,7 @@ export class ModuleManager implements IModuleManager {
 
         const child = this.children[childIndex];
 
-        await child.proxy.dispose();
+        await child.proxy.disposeAsync();
 
         if (child.process) {
             child.process.kill();
@@ -294,7 +287,7 @@ export class ModuleManager implements IModuleManager {
                     continue;
                 }
 
-                const loadedModule = this.loadModule(modulePath, respectLoadingMode);
+                const loadedModule = await this.internalLoadModuleAsync(modulePath, respectLoadingMode);
 
                 if (!loadedModule) {
                     continue;
@@ -312,10 +305,10 @@ export class ModuleManager implements IModuleManager {
 
     public setModuleLoadingPolicy(policy: IModuleLoadingPolicy): void {
         if (utils.isNullOrUndefined(policy)) {
-            this.moduleLoadingPolicy = new DefaultModuleLoadingPolicy();
+            policy = new DefaultModuleLoadingPolicy();
         }
 
-        if (!Function.isFunction(policy.shouldLoad)) {
+        if (!Function.isFunction(policy.shouldLoadAsync)) {
             throw new Error("policy must implement shouldLoad() function.");
         }
 
@@ -337,25 +330,31 @@ export class ModuleManager implements IModuleManager {
                     content: path
                 });
         } else {
-            this.loadModule(path, respectLoadingMode);
-        }
-    }
+            const module = await this.internalLoadModuleAsync(path, respectLoadingMode);
 
-    public registerComponents(componentInfos: Array<IComponentInfo>): void {
-        if (!Array.isArray(componentInfos)) {
-            throw new Error("componentInfos must be an array of IComponentInfo.");
-        }
-
-        for (const componentInfo of componentInfos) {
-            if (componentInfo.singleton === true) {
-                this.container.set(componentInfo.name, createLazySingletonDiDescriptor(this, componentInfo.descriptor, componentInfo.deps));
-            } else {
-                this.container.set(componentInfo.name, createDedicationDiDescriptor(this, componentInfo.descriptor, componentInfo.deps));
+            if (Function.isFunction(module.initializeAsync)) {
+                await module.initializeAsync(this);
             }
         }
     }
 
-    public async getComponentAsync<T extends IDisposable>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T> {
+    public register<T extends TComponent, TComponent = Component<T>>(componentInfo: IComponentInfo<TComponent>): IComponentCollection {
+        if (!componentInfo || !Object.isObject(componentInfo)) {
+            throw new Error("componentInfo must be provided.");
+        }
+
+        if (!String.isString(componentInfo.name) || String.isEmptyOrWhitespace(componentInfo.name)) {
+            throw new Error("componentInfo.name must be provided. (non-empty/whitespaces)");
+        }
+
+        if (!Function.isFunction(componentInfo.descriptor)) {
+            throw new Error("componentInfo.descriptor function must be provided.");
+        }
+
+        return this.registerComponents([componentInfo]);
+    }
+
+    public getComponentAsync<T extends TComponent, TComponent = Component<T>>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T & Partial<IDisposable>> {
         if (String.isEmptyOrWhitespace(componentIdentity)) {
             throw new Error("componentIdentity cannot be null/undefined/empty.");
         }
@@ -363,10 +362,10 @@ export class ModuleManager implements IModuleManager {
         const component = this.container.getDep<T>(componentIdentity, ...extraArgs);
 
         if (component !== undefined) {
-            return component;
+            return Promise.resolve(component);
         }
 
-        return this.getComponentFromProxiesAsync<T>(null, componentIdentity, ...extraArgs);
+        return this.getComponentFromProxiesAsync<T & IDisposable>(null, componentIdentity, ...extraArgs);
     }
 
     public onHostVersionMismatch(callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler {
@@ -388,6 +387,18 @@ export class ModuleManager implements IModuleManager {
         };
     }
 
+    private registerComponents(componentInfos: Array<IComponentInfo<any>>): IModuleManager {
+        for (const componentInfo of componentInfos) {
+            if (componentInfo.singleton === true) {
+                this.container.set(componentInfo.name, createLazySingletonDiDescriptor(this, componentInfo.descriptor, componentInfo.deps));
+            } else {
+                this.container.set(componentInfo.name, createDedicationDiDescriptor(this, componentInfo.descriptor, componentInfo.deps));
+            }
+        }
+
+        return this;
+    }
+
     private async obtainChildAsync(hostName: string): Promise<IHostRecord> {
         let childIndex = this.children ? this.children.findIndex((child) => child.proxy.id === hostName) : -1;
 
@@ -399,8 +410,8 @@ export class ModuleManager implements IModuleManager {
         return this.children[childIndex];
     }
 
-    private loadModule(modulePath: string, respectLoadingMode?: boolean): IModule {
-        if (!this.moduleLoadingPolicy.shouldLoad(this, path.basename(modulePath))) {
+    private async internalLoadModuleAsync(modulePath: string, respectLoadingMode?: boolean): Promise<IModule> {
+        if (!(await this.moduleLoadingPolicy.shouldLoadAsync(this, path.basename(modulePath)))) {
             return undefined;
         }
 
@@ -410,10 +421,11 @@ export class ModuleManager implements IModuleManager {
             throw new Error(`Invalid module "${modulePath}": missing getModuleMetadata().`);
         }
 
-        const moduleInfo = module.getModuleMetadata();
+        const componentCollection = new ComponentCollection();
+        const moduleInfo = module.getModuleMetadata(componentCollection);
 
-        if (!this.moduleLoadingPolicy.shouldLoad(this, moduleInfo)) {
-            return;
+        if (!(await this.moduleLoadingPolicy.shouldLoadAsync(this, moduleInfo))) {
+            return undefined;
         }
 
         this.moduleLoadingInfos.push({
@@ -425,7 +437,7 @@ export class ModuleManager implements IModuleManager {
         });
 
         if (respectLoadingMode === true && moduleInfo.loadingMode !== "Always") {
-            return;
+            return undefined;
         }
 
         if (!utils.isNullOrUndefined(moduleInfo.hostVersion)
@@ -438,14 +450,7 @@ export class ModuleManager implements IModuleManager {
             }
         }
 
-        if (moduleInfo.components) {
-            if (!Array.isArray(moduleInfo.components)) {
-                throw new Error(
-                    `Invalid module "${path}": ModuleMetadata.components must be an array of IComponentInfo.`);
-            }
-
-            this.registerComponents(moduleInfo.components);
-        }
+        this.registerComponents(componentCollection.getComponents());
 
         return module;
     }
@@ -456,11 +461,11 @@ export class ModuleManager implements IModuleManager {
         }
     }
 
-    private async getComponentFromProxiesAsync<T extends IDisposable>(
+    private async getComponentFromProxiesAsync<T>(
         fromProxy: IObjectRemotingProxy,
         componentIdentity: string,
         ...extraArgs: Array<any>)
-        : Promise<T> {
+        : Promise<T & IDisposable> {
         const fromProxyId = fromProxy ? fromProxy.id : null;
 
         if (this.children) {
@@ -478,7 +483,7 @@ export class ModuleManager implements IModuleManager {
         }
 
         if (this.parentProxy && this.parentProxy.id !== fromProxyId) {
-            return await this.parentProxy.requestAsync<T>(componentIdentity, ...extraArgs);
+            return this.parentProxy.requestAsync<T>(componentIdentity, ...extraArgs);
         }
 
         return undefined;
@@ -492,7 +497,7 @@ export class ModuleManager implements IModuleManager {
                 return dep;
             }
 
-            return await this.getComponentFromProxiesAsync(proxy, name, ...extraArgs);
+            return this.getComponentFromProxiesAsync(proxy, name, ...extraArgs);
         }
 
     private onModuleManagerMessageAsync: AsyncRequestHandler =
