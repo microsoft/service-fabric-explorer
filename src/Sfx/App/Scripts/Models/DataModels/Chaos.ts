@@ -20,9 +20,9 @@ module Sfx {
             return this.chaosHistoryEvents;
         }
 
-        public start(): angular.IHttpPromise<any> {
+        public start(timeToRunInSeconds: number): angular.IHttpPromise<any> {
             this.raw.Status = "Started";
-            return this.data.restClient.startChaos();
+            return this.data.restClient.startChaos(timeToRunInSeconds);
         }
 
         public stop(): angular.IHttpPromise<any> {

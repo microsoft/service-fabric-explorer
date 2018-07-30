@@ -18,6 +18,29 @@
         <p>Click Stop Chaos to immediately end your Chaos experiment.</p>
     </div>
     <div class="dashboard-container-small">
+        <div class="checkbox-container-default">
+            <label><input type="radio" aria-label="seconds" name="runscale" value="s" />Seconds</label>
+            <label><input type="radio" aria-label="minutes" name="runscale" value="m" />Minutes</label> 
+            <label><input type="radio" aria-label="hours" name="runscale" value="h" />Hours</label>
+        </div>
+
+        <!--Added adriana -->
+        <div class="input-box">
+            <!--<form action="/chaos-view.html">Time to Run <input type="number" name="timeInput" value=""><br>-->
+            <div class="time-to-run-form">
+                <label>Time to Run: <input class="input-style" ng-model="time" id="run-for" type="number" aria-label="Input time to run" placeholder="0"/></label>
+             </div>
+        <!--<div class="slider-control" ng-controller="RefreshSliderController as refreshCtrl">
+            <span class="slider-title" id="refresh-rate-title">Time to Run</span>
+            <span class="slider-label" id="refresh-rate-label" ng-if="refreshCtrl.refreshRate > 0">{{refreshCtrl.refreshRate}}s</span>
+            <a href="" class="slider-label" id="slider-min-label" role="button" aria-label="Turn off refresh">0</a>
+            <sfx-slider min-label-id="slider-min-label" max-label-id="slider-max-label" class="slider" title="Change the amount of time Chaos runs by clicking or using arrow keys"
+                  aria-label="Change how often content is updated" role="slider" min="5" max="300" id="run-for"></sfx-slider>
+            <a href="" class="slider-label" id="slider-max-label" role="button" aria-label="Set the refresh rate to the fastest">300</a>
+            <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-navigate-refresh" ng-class="{'disabled rotate': navbarCtrl.isRefreshing}"
+                   ng-click="navbarCtrl.refreshAll()" role="button" aria-label="refresh"></a>-->
+        </div>
+
         <button ng-click="ctrl.handleClick($event)" class="chaos-btn start-chaos-btn">START CHAOS</button>
     </div>
     <div>
@@ -28,3 +51,4 @@
         </p>
     </div>
 </div>
+
