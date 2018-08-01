@@ -658,8 +658,16 @@ module Sfx {
         RepositoryCredential?: IRawRepositoryCredential;
     }
 
+    export interface IRawChaosParameters {
+        MaxConcurrentFaults: number;
+        EnableMoveReplicaFaults: boolean;
+        MaxClusterStabilizationTimeoutInSeconds: number;
+        // Add more properties as needed
+    }
+
     export interface IRawChaos {
         Status: string;
+        ChaosParameters: IRawChaosParameters;
     }
 
     export interface IRawChaosEvent {
