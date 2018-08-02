@@ -46,11 +46,16 @@ module Sfx {
         }
 
         public get description(): string {
+            let description = "";
             if (this.raw.UnhealthyEvent) {
-                return (this.raw.Description + "\n" + this.raw.UnhealthyEvent.Description).trim();
+                description =  (this.raw.Description + "\n" + this.raw.UnhealthyEvent.Description).trim();
             } else {
-                return this.raw.Description.trim();
+                description = this.raw.Description.trim();
             }
+
+            // Temp solution for rendering a link instead of plain text
+            // Long term solution would be an independent service which provides troubleshooting tips based on health report
+            return description.replace("http://aka.ms/sfhealth", "<a href='https://aka.ms/sfhealth' target='_blank'>https://aka.ms/sfhealth</a>");
         }
     }
 

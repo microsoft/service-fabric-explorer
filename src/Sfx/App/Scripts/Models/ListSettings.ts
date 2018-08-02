@@ -7,11 +7,23 @@ module Sfx {
 
     export class ListSettings {
         public search: string;
-        public count: number = 0;
         public sortPropertyPaths: string[] = [];
         public sortReverse: boolean = false;
 
         private _currentPage: number = 1;
+        private _itemCount: number = 0;
+
+        public get count(): number {
+            return this._itemCount;
+        }
+
+        public set count(itemCount: number) {
+            this._itemCount = itemCount;
+
+            if (this.currentPage > this.pageCount) {
+                this.currentPage = this.pageCount;
+            }
+        }
 
         public get currentPage(): number {
             return this._currentPage;
