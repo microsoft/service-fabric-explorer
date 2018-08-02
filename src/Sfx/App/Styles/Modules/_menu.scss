@@ -1,57 +1,21 @@
 
-.menu{
-    hr{
-        margin-left: 20px;
-    }
-    .hoverable-link:hover{
-        background-color: $tree-node-hover-background-color;
-        width: 100%;
-    }
-    li{
-       
-        .actions-menu{
-            float: right;
-        }
-
-    }
-
-    
-
-}
 
 .add-buttons{
 
-    width: inherit;
+    width: 100%;
     bottom: 0;
     position: absolute;
 
-    form{
-        width: 90%;
-        margin: auto;
-        margin-bottom: 10px;
-    }
-    select{
-        width: 100%;
-    }
-
-    submit{
-        // width: 100%;
-        float: right;
-        margin: 5px;
-        
-    }
     button{
         background-color: $azure-blue;
         color: $btn-default-color;
-        width: inherit;
+        width: inherit ;
         border: none;
         margin-top: 2.5%;
-        margin-bottom: 2.5%;
-        font-size: 30px;
+     
+       
     }
-    option{
-        background-color: $btn-default-border;
-    }
+  
 }
 
 #iframes{
@@ -62,6 +26,7 @@
     }
    
 }
+
 
 
 

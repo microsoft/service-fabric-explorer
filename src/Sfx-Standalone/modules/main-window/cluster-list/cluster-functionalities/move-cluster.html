@@ -6,23 +6,24 @@
     <title></title>
 
     <!-- CSS imports -->
-    <link href="../../../sfx/css/lib.min.css" rel="stylesheet" />
-    <link href="../../../sfx/css/dark.min.css" rel="stylesheet" />
+    <link href="../../../../sfx/css/lib.min.css" rel="stylesheet" />
+    <link href="../../../../sfx/css/dark.min.css" rel="stylesheet" />
 </head>
 
 <body style="overflow:hidden">
 
     <div class="modal modal-content" style="display: block">
         <div class="modal-header">
-            <h4 class="modal-title">Add a New Folder</h4>
+            <h4 class="modal-title">Move Cluster</h4>
         </div>
         <div class="modal-body">
-            <p>Folder Name</p>
-            <input id="input-folder-label" type="text" class = "input-flat" value=""/>
+            <p>Choose Folder (Optional)</p>
+            <select id="input-select-folder" class="input-flat"></select> <br>
+            <div id="new_folder" style="visibility: hidden;">Enter Folder Name: <input id="new-folder-label" type="text" class=" input-flat" value=""/> </div>
         
         </div>
         <div class="modal-footer">
-            <button id="btn-new-folder" type="submit" class="btn btn-primary">Add Folder</button>
+            <button id="btn-move-cluster" type="submit" class="btn btn-primary">Move</button>
             <button id="btn-exit" type="button" class="btn btn-default">Exit</button>
         </div>
     </div>    
@@ -31,6 +32,6 @@
 <script type="text/javascript" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript" src="../../../node_modules/angular/angular.min.js"></script>
 <script type="text/javascript" src="./Menu.js"></script>
-<script type="text/javascript" src="./folder.script.js"></script>
+<script type="text/javascript" src="./move-cluster.script.js"></script>
 
 </html>

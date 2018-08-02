@@ -6,9 +6,11 @@
     <title></title>
 
     <!-- CSS imports -->
-    <link href="../../../sfx/css/lib.min.css" rel="stylesheet" />
-    <link href="../../../sfx/css/dark.min.css" rel="stylesheet" />
+    <link href="../../../../sfx/css/lib.min.css" rel="stylesheet" />
+    <link href="../../../../sfx/css/dark.min.css" rel="stylesheet" />
+    
 </head>
+
 
 <body style="overflow:hidden">
 
@@ -18,7 +20,7 @@
         </div>
         <div class="modal-body">
             <p>Cluster URL</p>
-            <input id="input-cluster-label" type="text" class = "input-flat" value=""/>
+            <input id="input-cluster-url" type="text" class = "input-flat" value=""/>
             <div class="checkbox-container">
                 <label for="input-connect-locally">
                     <input id="input-connect-locally" type="checkbox" />
@@ -27,10 +29,11 @@
                     </label>Connect to localhost
                 </label>
             </div> <br>
-            <p>Friendly Name</p>
-            <input id="input-cluster-url" type="text" class="input-flat" value="" /><br>
-            <p>Choose Folder</p>
-            <select id="input-select-folder"></select>
+            <p>Friendly Name (Optional)</p>
+            <input id="input-cluster-label" type="text" class="input-flat" value="" /><br><br>
+            <p>Choose Folder (Optional)</p>
+            <select id="input-select-folder" class="input-flat"></select> <br>
+            <div id="new_folder" style="visibility: hidden;">Enter Folder Name: <input id="new-folder-label" type="text" class=" input-flat" value=""/> </div>
         </div>
         <div class="modal-footer">
             <button id="btn-connect" type="submit" class="btn btn-primary">Connect</button>
@@ -43,5 +46,6 @@
 <script type="text/javascript" src="./connect-cluster.script.js"></script>
 <script type="text/javascript" src="../../../node_modules/angular/angular.min.js"></script>
 <script type="text/javascript" src="./Menu.js"></script>
+<script type="text/javascript" src="./cluster-list.script.js"></script>
 
 </html>

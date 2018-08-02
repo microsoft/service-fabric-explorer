@@ -12,7 +12,7 @@ import { MainWindow } from "./main-window";
         name: "main-window",
                 version: electron.app.getVersion(),
                 singleton: true,
-                descriptor: async (browserWindow) => {                    
+                descriptor: async (browserWindow) => {        
                     return new MainWindow(browserWindow);
                 },
                 deps: ["browser-window"]

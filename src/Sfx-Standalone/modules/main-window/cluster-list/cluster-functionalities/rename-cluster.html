@@ -1,0 +1,36 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+
+    <!-- CSS imports -->
+    <link href="../../../../sfx/css/lib.min.css" rel="stylesheet" />
+    <link href="../../../../sfx/css/dark.min.css" rel="stylesheet" />
+</head>
+
+<body style="overflow:hidden">
+
+    <div class="modal modal-content" style="display: block">
+        <div class="modal-header">
+            <h4 class="modal-title">Rename Cluster</h4>
+        </div>
+        <div class="modal-body">
+            <p>New Friendly Name</p>
+            <input id="input-cluster-label" type="text" class = "input-flat" value=""/>
+        
+        </div>
+        <div class="modal-footer">
+            <button id="btn-new-label" type="submit" class="btn btn-primary">Rename</button>
+            <button id="btn-exit" type="button" class="btn btn-default">Exit</button>
+        </div>
+    </div>    
+</body>
+
+<script type="text/javascript" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
+<script type="text/javascript" src="../../../node_modules/angular/angular.min.js"></script>
+<script type="text/javascript" src="./Menu.js"></script>
+<script type="text/javascript" src="./rename-cluster.script.js"></script>
+
+</html>

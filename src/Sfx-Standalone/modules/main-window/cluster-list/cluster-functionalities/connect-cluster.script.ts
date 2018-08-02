@@ -7,28 +7,43 @@ import * as $ from "jquery";
 import * as Url from "url";
 import { ISfxContainer } from "sfx.sfx-view-container";
 import { IClusterList } from "sfx.cluster-list";
-import { Menu } from "./Model"
-import { AsyncResource } from "async_hooks";
+// import { Folder } from "./Model"
+
+// import { AsyncResource } from "async_hooks";
+
+$(document).ready(() => {
+    let folders = JSON.parse(localStorage.getItem("folders"));
+    localStorage.removeItem("folders");
+    console.log(folders);
+    let select = $("#input-select-folder");
+    for(let folder of folders){
+        let $item = $(`<option value="${folder.label}">${folder.label}</option>`);
+        select.append($item);
+    }
+    let $item = $(`<option value="new_folder">Create New Folder</option>`);
+    select.append($item);
+});
+
 
 (async () => {
-    let menu: Menu = Menu.getInstance();
-
-    // $("#input-select-folder").load(() => {
-    //     let blah: string = "Hello";
-    //     return blah;
-    // });
-    $(document).ready(() =>{
-        let select = $("#input-select-folder");
-        for(let folder of menu.getFolders()) {
-            
+    $("#input-select-folder").change(async () => {
+        let folder: string = $("#input-select-folder").val().toString();
+        if(folder === "new_folder"){
+            $("#new_folder").css("visibility", "visible");
+        }
+        else{
+            $("#new_folder").css("visibility", "hidden");
         }
     });
+
    
     $("#btn-connect").click(async () => {
         try {
             
             const url = Url.parse($("#input-cluster-url").val().toString());
             let name: string = $("#input-cluster-label").val().toString();
+            let folder: string = $("#input-select-folder").val().toString();
+            let new_folder:string = $("#new-folder-label").val().toString();
             if (url.protocol !== "http:" && url.protocol !== "https:") {
                 alert("The protocol of the cluster url is not supported. Only HTTP and HTTPS are supported.");
                 return;
@@ -44,9 +59,21 @@ import { AsyncResource } from "async_hooks";
 
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
             console.log(endpoint + " " + name);
-            await list.newListItemAsync(endpoint, name);
-            
 
+            if(folder != "----No Folder----"){
+                if(new_folder){
+                    await list.newFolderItemAsync(new_folder);
+                    await list.newListItemAsync(endpoint, name, new_folder);
+                }
+                else{
+                    await list.newListItemAsync(endpoint, name, folder);
+                }
+            }
+            else{
+                await list.newListItemAsync(endpoint, name, folder);
+            }
+            
+            
             window.close();
 
         } catch (error) {
