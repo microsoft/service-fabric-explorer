@@ -5,7 +5,7 @@ $metric-chart-height: 630px;
 $metric-chart-body-width: 760px;
 $metric-chart-left-width: 80px;
 $metric-chart-right-width: 100px;
-$metric-column-width: 250px;
+$metric-column-max-width: 450px;
 $metric-column-height: 428px;
 $metric-container-margin: 12px;
 $metric-container-padding: 8px;
@@ -156,7 +156,7 @@ $metrics-view-expander-hover-color: lighten($essen-pane-background-color, 10%);
         .metrics-column {
             height: $metric-column-height;
             overflow-x: hidden;
-            width: $metric-column-width;
+            max-width: $metric-column-max-width;
             padding-right: $metric-container-margin;
 
             .metric-container {

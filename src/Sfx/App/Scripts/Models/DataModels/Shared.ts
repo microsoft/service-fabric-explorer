@@ -99,7 +99,7 @@ module Sfx {
         }
 
         public get loadCapacityRatio(): number {
-            return this.hasCapacity ? this.raw.ClusterLoad / this.raw.ClusterCapacity : 0;
+            return this.hasCapacity ? this.raw.CurrentClusterLoad / this.raw.ClusterCapacity : 0;
         }
 
         public get loadCapacityRatioString(): string {
