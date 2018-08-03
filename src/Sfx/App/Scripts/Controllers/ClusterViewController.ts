@@ -146,7 +146,20 @@ module Sfx {
         }
 
         private refreshImageStore(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            return this.$scope.imageStore.refresh(messageHandler);
+            let openFolders = this.$scope.imageStore.getOpenFolders();
+            // if (this.$scope.imageStore.Folders === undefined) {
+            //     let oldTree;
+            // } else {
+            // let oldTree = this.$scope.imageStore.getCurrentTreeStructure(this.$scope.imageStore.Folders, this.$scope.imageStore.Files).sort();
+            // }
+            this.$scope.imageStore.refreshTree(openFolders).then(() => {
+                this.$scope.imageStore.currentTreeStructure = [];
+                //let newTree = this.$scope.imageStore.getCurrentTreeStructure(this.$scope.imageStore.refreshFolders, this.$scope.imageStore.refreshFiles).sort();
+                //console.log("oldTree : ", oldTree);
+                //console.log("newTree : ", newTree);
+                //oldTree = newTree;
+            });
+            return;
         }
     }
 

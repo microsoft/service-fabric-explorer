@@ -13,7 +13,6 @@ module Sfx {
 
         public cancel() {
             this.$scope.showDeleteConfirmation = false;
-            console.log(this.$scope.showDeleteConfirmation);
         }
 
         public ok() {
@@ -22,12 +21,14 @@ module Sfx {
 
         public expandFolder(relativePath: string): void {
             // call service to load sub folders/files
+            // this.$scope.imagestoreroot.getCompleteDataSet().then((r: ImageStoreFolder) => {
+            //     console.log(this.$scope.imagestoreroot.getFolder("DownloadManagerApp\\DownloadManagerServicePkg\\Code"));
+            // });
             this.$scope.imagestoreroot.getNoOfApplicationPackages().then((array) => this.$scope.noOfApplicationPackages = array.length);
             this.$scope.imagestoreroot.getNoOfApplicationTypes().then((array) => this.$scope.noOfApplicationTypes = array.length);
-            console.log(this.$scope.noOfApplicationTypes);
-            console.log(this.$scope.noOfApplicationTypes.length);
             this.$scope.imagestoreroot.getClickedInfo(relativePath);
             this.$scope.imagestoreroot.retrieveData(relativePath);
+            this.$scope.imagestoreroot.getOpenFolders();
         }
 
         public display(fileCount) {
