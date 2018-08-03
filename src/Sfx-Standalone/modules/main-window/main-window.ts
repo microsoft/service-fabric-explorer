@@ -45,19 +45,12 @@ export class MainWindow implements IMainWindow {
         this.browserWindow.once("ready-to-show", async () => {            
             this.browserWindow.webContents.openDevTools();
             this.browserWindow.show();
+            
         });
-        console.log("WADDDAPP");
         return Promise.resolve();
     }
 
-    async unloadAsync(): Promise<void>{
-        this.browserWindow.on("close", (e) => {
-            e.preventDefault();
-            alert("HELLOOOO");
-            this.browserWindow.close();
-
-        });
-    }
+    
 
    
 }

@@ -11,10 +11,8 @@ import { ISfxContainer } from "sfx.sfx-view-container";
 import { IDialogService } from "sfx.main-window";
 import { Menu } from "./Model";
 import { ISettings } from "sfx.settings"
+import Settings from "../../settings/settings";
 
-// import { ISettings } from "sfx.settings";
-
-// import { local } from "../../../utilities/appUtils";
 
 
 
@@ -23,20 +21,29 @@ export class ClusterList implements IClusterList {
     
     private endpoints: string[] = [];
 
-
+    private settings: ISettings;
 
     public static getComponentInfo(): IComponentInfo<ClusterList> {
         return {
             name: "cluster-list",
             version: electron.app.getVersion(),
             singleton: true,
-            descriptor: async (settings: ISettings) => new ClusterList(settings),
-            deps: ["settings"]
+            descriptor: async () => new ClusterList(),
+            deps: []
         };
     }
 
-    constructor(settings: ISettings){
-        
+    constructor(){
+        this.settings = new Settings(null, false);
+        // this.settings.setAsync("hello", "hai");
+        console.log(this.settings.getAsync<string>("hello"));
+        console.log("hello");
+        // if (!Object.isObject(settings)) {
+        //     throw new Error("settings must be provided.");
+        // }
+        // this.settings.setAsync("title", "hello");
+        // let hello = this.settings.getAsync<string>("title");
+        // console.log(hello);
         
     }   
 
@@ -109,29 +116,48 @@ export class ClusterList implements IClusterList {
         if (!name) {
             name = endpoint;
         }
+        if(this.menu.getCluster(name, "label")) {
+            if(this.menu.getCluster(name, "label") === this.menu.getCluster(endpoint, "endpoint")) {
+                $(`#cluster-list li[data-endpoint='${endpoint}']`).addClass("btn-success");
+            }
+            else{
+                throw new Error("Clusters must have unique labels. Please enter a new name");
+            }
+        }
         if(this.menu.getCluster(endpoint, "endpoint")) {
             if(this.menu.getCluster(endpoint, "endpoint").label != name) {
                 let new_name = confirm("Do you want to replace friendly name with " + name + " ?");
                 if(new_name === true) {
                     this.renameCluster(this.menu.getCluster(endpoint, "endpoint").label, name);
                 }
+                else{
+                    name = this.menu.getCluster(endpoint, "endpoint").label;
+                }
             }
             if(this.menu.getCluster(endpoint, "endpoint").folder != folder) {
                 let new_folder = confirm("Do you want to place into new folder " + folder + " ?");
                 if(new_folder === true) {
+                    if(!this.menu.getFolder(folder)) {
+                        this.newFolderItemAsync(folder);
+                    }
                     this.moveCluster(this.menu.getCluster(endpoint, "endpoint").label, folder);
                 }
+                else{
+                    folder = this.menu.getCluster(endpoint, "endpoint").folder;
+                }
             }
-
-            return;
+            $(`#cluster-list li[data-endpoint='${endpoint}']`).addClass("btn-success");
         }
-        if(this.menu.getCluster(name, "label")) {
+       
 
-        }
-
+        
         if (!this.endpoints.find(e => e === endpoint)) {
             
+
             this.endpoints.push(endpoint);
+            if(!this.menu.getFolder(folder)) {
+                this.newFolderItemAsync(folder);
+            }
             let folder_label: string = "#folder-" + folder;
             if(folder === "----No Folder----") {
                 folder_label = "#cluster-list";
@@ -217,6 +243,13 @@ export class ClusterList implements IClusterList {
                
             });
 
+            if($("#cluster-list li").length > 1) {
+                $("#cluster-list").find("hr").css("visibility", "visable");
+            } else {
+    
+                $("#cluster-list").find("hr").css("visibility", "hidden");
+            }
+
         } else {            
             $(`#cluster-list li[data-endpoint='${endpoint}']`).addClass("btn-success");
         }
@@ -285,6 +318,8 @@ export class ClusterList implements IClusterList {
             (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/folder-functionalities/folder.html");
 
         });
+
+       
 
         return Promise.resolve();
     }

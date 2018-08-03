@@ -5,6 +5,7 @@ import { SfxContainer } from "./sfx-container/sfx-container";
 import { DialogService } from "./dialog-service";
 import { ClusterManagerComponentConfig, SettingsComponentConfig } from "./main-window";
 
+
 (async () => {
 
     sfxModuleManager.register(DialogService.getComponentInfo());
@@ -42,6 +43,7 @@ import { ClusterManagerComponentConfig, SettingsComponentConfig } from "./main-w
             $("div.sub-panel").hide();
             $subPanel.show();
         });
+        
 
     } catch (error) {
         console.log(error);

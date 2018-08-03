@@ -30,6 +30,7 @@ $(document).ready(() => {
         let folder: string = $("#input-select-folder").val().toString();
         if(folder === "new_folder"){
             $("#new_folder").css("visibility", "visible");
+
         }
         else{
             $("#new_folder").css("visibility", "hidden");
@@ -44,10 +45,11 @@ $(document).ready(() => {
             let name: string = $("#input-cluster-label").val().toString();
             let folder: string = $("#input-select-folder").val().toString();
             let new_folder:string = $("#new-folder-label").val().toString();
+           
             if (url.protocol !== "http:" && url.protocol !== "https:") {
-                alert("The protocol of the cluster url is not supported. Only HTTP and HTTPS are supported.");
-                return;
+                throw new Error("The protocol of the cluster url is not supported. Only HTTP and HTTPS are supported.");
             }
+           
             const endpoint = url.protocol + "//" + url.host;
             console.log(endpoint + " " + name);
             if(!name) {
@@ -61,8 +63,10 @@ $(document).ready(() => {
             console.log(endpoint + " " + name);
 
             if(folder != "----No Folder----"){
-                if(new_folder){
-                    await list.newFolderItemAsync(new_folder);
+                if(folder === "new_folder"){
+                    if(!new_folder) {
+                        throw new Error("Folder must have name!");
+                    }
                     await list.newListItemAsync(endpoint, name, new_folder);
                 }
                 else{
@@ -77,7 +81,7 @@ $(document).ready(() => {
             window.close();
 
         } catch (error) {
-            alert("The cluster url is not in a valid url format.");
+            alert((<Error>error).message);
         }
     });
 
