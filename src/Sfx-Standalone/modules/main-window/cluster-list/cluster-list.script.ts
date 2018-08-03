@@ -11,14 +11,10 @@ import { ISfxContainer } from "sfx.sfx-view-container";
 import { IDialogService } from "sfx.main-window";
 import { Menu } from "./Model";
 import { ISettings } from "sfx.settings"
-import Settings from "../../settings/settings";
-
-
 
 
 export class ClusterList implements IClusterList {
-    private menu = new Menu();
-    
+    private menu: Menu;
     private endpoints: string[] = [];
 
     private settings: ISettings;
@@ -28,30 +24,30 @@ export class ClusterList implements IClusterList {
             name: "cluster-list",
             version: electron.app.getVersion(),
             singleton: true,
-            descriptor: async () => new ClusterList(),
-            deps: []
+            descriptor: async (settings: ISettings) => new ClusterList(settings),
+            deps: ["settings"]
         };
     }
 
-    constructor(){
-        this.settings = new Settings(null, false);
-        // this.settings.setAsync("hello", "hai");
-        console.log(this.settings.getAsync<string>("hello"));
-        console.log("hello");
-        // if (!Object.isObject(settings)) {
-        //     throw new Error("settings must be provided.");
-        // }
-        // this.settings.setAsync("title", "hello");
-        // let hello = this.settings.getAsync<string>("title");
-        // console.log(hello);
-        
-    }   
+    constructor(settings: ISettings) {
+        this.settings = settings;
+
+        if(this.settings.getAsync<Menu>("cluster-list-folders")) {
+           this.settings.getAsync<Menu>("cluster-list-folders").then( res => {
+                this.menu = res;
+            });
+        } else {
+            this.menu = new Menu(); 
+        }
+        console.log(this.menu);
+       
+    }
+   
 
     async newFolderItemAsync(label: string): Promise<void> {
-        if(this.menu.getFolder(label)) {
+        if (this.menu.getFolder(label)) {
             throw new Error("This folder already exists!");
-        }
-        else if(!label) {
+        } else if (!label) {
             throw new Error("Please enter a folder name!");
         }
         const $item = $(`<li role="folder-${label}"><span>${label}</span></li>`);
@@ -71,46 +67,45 @@ export class ClusterList implements IClusterList {
         $item.append(`<ul id="folder-${label}""></ul>`);
         $("#cluster-list-organized").append($item);
         this.menu.addFolder(label);
+        this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
 
         $($item).click(async (e) => {
             let $button = $(e.target);
-            if($button.parent().parent().attr("id") === "cluster-list-organized"){
-                if($button.attr("class") === "bowtie-icon bowtie-ellipsis") {
+            if ($button.parent().parent().attr("id") === "cluster-list-organized") {
+                if ($button.attr("class") === "bowtie-icon bowtie-ellipsis") {
                     console.log("clicked");
-                    if($(e.target).next().hasClass("dropdown-menu-show")){
+                    if ($(e.target).next().hasClass("dropdown-menu-show")) {
                         $(e.target).next().removeClass("dropdown-menu-show");
-                    }
-                    else{
+                    } else {
                         $(".dropdown-menu-show").removeClass("dropdown-menu-show");
                         $(e.target).next().addClass("dropdown-menu-show");
                     }
-    
+
                     $(document).mouseup((e) => {
                         let container = $(".dropdown-menu-show");
-                        if(!container.is(e.target) && container.has(e.target).length === 0 ) {
+                        if (!container.is(e.target) && container.has(e.target).length === 0) {
                             $(".dropdown-menu-show").removeClass("dropdown-menu-show");
                         }
                     });
-                   return;
+                    return;
                 }
-            }
-            else if($button.parent().parent().parent().parent().attr("id") === "cluster-list-organized") {
+            } else if ($button.parent().parent().parent().parent().attr("id") === "cluster-list-organized") {
                 localStorage.setItem("folder", label);
-                if($button.attr("role") === "menuitem") {
-                    if($button.html().toString().trim() === "Remove Folder" ){
+                if ($button.attr("role") === "menuitem") {
+                    if ($button.html().toString().trim() === "Remove Folder") {
                         (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/folder-functionalities/delete-folder.html");
                         console.log("Remove Cluster clicked");
                     }
-                    
+
                 }
             }
- 
+
         });
 
         return Promise.resolve();
     }
 
-    
+
     async newListItemAsync(endpoint: string, name?: string, folder?: string): Promise<void> {
         $("#cluster-list .btn-success").removeClass("btn-success");
         if (!name) {
@@ -119,38 +114,34 @@ export class ClusterList implements IClusterList {
         if(this.menu.getCluster(name, "label")) {
             if(this.menu.getCluster(name, "label") === this.menu.getCluster(endpoint, "endpoint")) {
                 $(`#cluster-list li[data-endpoint='${endpoint}']`).addClass("btn-success");
-            }
-            else{
+            } else{
                 throw new Error("Clusters must have unique labels. Please enter a new name");
             }
         }
         if(this.menu.getCluster(endpoint, "endpoint")) {
             if(this.menu.getCluster(endpoint, "endpoint").label != name) {
                 let new_name = confirm("Do you want to replace friendly name with " + name + " ?");
-                if(new_name === true) {
+                if (new_name === true) {
                     this.renameCluster(this.menu.getCluster(endpoint, "endpoint").label, name);
-                }
-                else{
+                } else{
                     name = this.menu.getCluster(endpoint, "endpoint").label;
                 }
             }
-            if(this.menu.getCluster(endpoint, "endpoint").folder != folder) {
+            if (this.menu.getCluster(endpoint, "endpoint").folder !== folder) {
                 let new_folder = confirm("Do you want to place into new folder " + folder + " ?");
                 if(new_folder === true) {
                     if(!this.menu.getFolder(folder)) {
                         this.newFolderItemAsync(folder);
                     }
                     this.moveCluster(this.menu.getCluster(endpoint, "endpoint").label, folder);
-                }
-                else{
+                } else{
                     folder = this.menu.getCluster(endpoint, "endpoint").folder;
                 }
             }
             $(`#cluster-list li[data-endpoint='${endpoint}']`).addClass("btn-success");
+            this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
         }
        
-
-        
         if (!this.endpoints.find(e => e === endpoint)) {
             
 
@@ -159,12 +150,12 @@ export class ClusterList implements IClusterList {
                 this.newFolderItemAsync(folder);
             }
             let folder_label: string = "#folder-" + folder;
-            if(folder === "----No Folder----") {
+            if (folder === "----No Folder----") {
                 folder_label = "#cluster-list";
             }
             const $item = $(`<li class="btn-success" data-endpoint="${endpoint}"><span>${name}</span></li>`);
             $(folder_label).append($item);
-            
+
             $(`#cluster-list li[data-endpoint='${endpoint}']`).append(`<a role="button" class="bowtie-icon bowtie-ellipsis"></a>`);
             $(`#cluster-list li[data-endpoint='${endpoint}']`).append(`<ul role="menu" class="dropdown-menu" uib-dropdown-menu style="list-style: none">
                 <li role="menuitem">
@@ -185,62 +176,56 @@ export class ClusterList implements IClusterList {
             </ul>`);
 
             this.menu.addCluster(name, endpoint, folder);
-          
+            this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
+
             $($item).click(async (e) => {
                 const $button = $(e.target);
-                if($button.attr("class") === "bowtie-icon bowtie-ellipsis") {
+                if ($button.attr("class") === "bowtie-icon bowtie-ellipsis") {
                     console.log("clicked");
-                    if($(e.target).next().hasClass("dropdown-menu-show")){
+                    if ($(e.target).next().hasClass("dropdown-menu-show")) {
                         $(e.target).next().removeClass("dropdown-menu-show");
-                    }
-                    else{
+                    } else {
                         $(".dropdown-menu-show").removeClass("dropdown-menu-show");
                         $(e.target).next().addClass("dropdown-menu-show");
                     }
 
                     $(document).mouseup((e) => {
                         let container = $(".dropdown-menu-show");
-                        if(!container.is(e.target) && container.has(e.target).length === 0 ) {
+                        if (!container.is(e.target) && container.has(e.target).length === 0) {
                             $(".dropdown-menu-show").removeClass("dropdown-menu-show");
                         }
                     });
-                   return;
-                }
-
-                else if($button.attr("role") === "menuitem") {
+                    return;
+                } else if ($button.attr("role") === "menuitem") {
                     $(".dropdown-menu-show").removeClass("dropdown-menu-show");
-                    if(this.menu.getCluster(endpoint, "endpoint").label != name){
+                    if (this.menu.getCluster(endpoint, "endpoint").label !== name) {
                         name = this.menu.getCluster(endpoint, "endpoint").label;
                     }
                     localStorage.setItem("cluster", name);
-                    if($button.html().toString().trim() === "Remove Cluster" ){
+                    if ($button.html().toString().trim() === "Remove Cluster") {
                         (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/cluster-functionalities/delete-cluster.html");
                         console.log("Remove Cluster clicked");
-                    }
-                    else if($button.html().toString().trim() === "Rename Cluster") {
+                    } else if ($button.html().toString().trim() === "Rename Cluster") {
                         (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/cluster-functionalities/rename-cluster.html");
                         console.log("Rename Cluster clicked");
-                    }
-                    else {
+                    } else {
                         localStorage.setItem("folders", JSON.stringify(this.menu.getFolders()));
                         (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/cluster-functionalities/move-cluster.html");
                         console.log("Move Cluster clicked");
-                    } 
+                    }
                     return;
-                }
-
-                else{
+                } else {
                     if ($button.hasClass("btn-success")) {
                         return;
                     }
-                    
+
                     await (await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container")).LoadSfxAsync($button.data("endpoint"));
-    
+
                     $(".btn-success").removeClass("btn-success");
                     $button.addClass("btn-success");
 
                 }
-               
+
             });
 
             if($("#cluster-list li").length > 1) {
@@ -259,16 +244,17 @@ export class ClusterList implements IClusterList {
 
     async removeCluster(cluster_label: string): Promise<void> {
         let endpoint = this.menu.getCluster(cluster_label, "label");
-        
+
         let $button = $('#cluster-list li[data-endpoint="' + endpoint.url + '"]');
-        if($button.hasClass("btn-success")){
+        if ($button.hasClass("btn-success")) {
             await (await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container")).LoadSfxAsync("#");
             $button.removeClass("btn-success");
         }
         $button.remove();
         this.endpoints.splice(this.endpoints.indexOf(endpoint.url), 1);
         this.menu.removeCluster(cluster_label, endpoint.folder);
-        
+        this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
+
     }
 
     async renameCluster(cluster_label: string, new_cluster: string): Promise<any> {
@@ -276,34 +262,38 @@ export class ClusterList implements IClusterList {
         let $button = $('#cluster-list li[data-endpoint="' + endpoint.url + '"]');
         $button.find("span")[0].innerHTML = new_cluster;
         this.menu.renameCluster(cluster_label, new_cluster);
+        this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
         return new_cluster;
     }
 
     async moveCluster(cluster_label: string, new_folder_label: string): Promise<void> {
         let endpoint = this.menu.getCluster(cluster_label, "label");
         let $button = $('#cluster-list li[data-endpoint="' + endpoint.url + '"]');
-        
+
         let folder_label: string = "#folder-" + new_folder_label;
-        if(new_folder_label === "----No Folder----") {
+        if (new_folder_label === "----No Folder----") {
             folder_label = "#cluster-list";
         }
-        
+
         $(folder_label).append($button.clone(true, true));
         $button.remove();
+        this.menu.moveCluster(cluster_label, new_folder_label);
+        this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
     }
 
     async removeFolder(label: string): Promise<void> {
         let $button = $('#cluster-list li[role="folder-' + label + '"]');
-        if($button.find(".btn-success").length != 0) {
+        if ($button.find(".btn-success").length !== 0) {
             await (await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container")).LoadSfxAsync("#");
             $(".btn-success").removeClass("btn-success");
         }
         $button.remove();
         let clusters = this.menu.getFolder(label).clusters;
-        for(let cluster of clusters) {
+        for (let cluster of clusters) {
             this.endpoints.splice(this.endpoints.indexOf(cluster.url), 1);
         }
         this.menu.removeFolder(label);
+        this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
 
     }
 
@@ -313,8 +303,8 @@ export class ClusterList implements IClusterList {
             localStorage.setItem("folders", JSON.stringify(this.menu.getFolders()));
             (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/cluster-functionalities/connect-cluster.html");
         });
-        $("#cluster-list-folder").click(async() => {
-            
+        $("#cluster-list-folder").click(async () => {
+
             (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/folder-functionalities/folder.html");
 
         });
@@ -323,23 +313,12 @@ export class ClusterList implements IClusterList {
 
         return Promise.resolve();
     }
-    
-    
-
 }
 
-(async () => {
-    sfxModuleManager.register(ClusterList.getComponentInfo());
-    
-    const clusterListComponent = await sfxModuleManager.getComponentAsync<ClusterList>("cluster-list");
-
-    await clusterListComponent.setupAsync();
-
-    
-
-
-})();
-
-
-
-
+$(document).ready(() => {
+    (async () => {    
+        sfxModuleManager.register(ClusterList.getComponentInfo());
+        const clusterListComponent = await sfxModuleManager.getComponentAsync<ClusterList>("cluster-list");
+        await clusterListComponent.setupAsync();
+    })();
+});
