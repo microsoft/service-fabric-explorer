@@ -177,7 +177,7 @@ export class ReferenceNode {
             throw new Error("target cannot be null/undefined or types other than Object or Function.");
         }
 
-        return target[this.symbol_dataInfo];
+        return target[this.symbol_dataInfo] = dataInfo;
     }
 
     public getRefDataInfo(target: Object | Function): IDataInfo {
