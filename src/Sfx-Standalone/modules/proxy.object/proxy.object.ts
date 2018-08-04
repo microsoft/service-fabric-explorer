@@ -96,10 +96,10 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
     public async requestAsync<T>(identifier: string, ...extraArgs: Array<any>): Promise<T & IDisposable> {
         this.validateDisposal();
 
-        const tempReferer = this.dataInfoManager.ReferAsDataInfo(() => undefined);
+        const tempReferer = this.dataInfoManager.referAsDataInfo(() => undefined);
         
         try {
-            const extraArgsDataInfos = extraArgs.map((arg) => this.dataInfoManager.ReferAsDataInfo(arg, tempReferer.id));
+            const extraArgsDataInfos = extraArgs.map((arg) => this.dataInfoManager.referAsDataInfo(arg, tempReferer.id));
 
             const targetDataInfo: IDataInfo =
                 await this.communicator.sendAsync<IRequestResourceProxyMessage, IDataInfo>(
@@ -114,7 +114,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
             if (targetDataInfo.id) {
                 extraArgsDataInfos.forEach((argDataInfo) => {
                     if (argDataInfo.id) {
-                        this.dataInfoManager.AddReferenceById(argDataInfo.id, targetDataInfo.id);
+                        this.dataInfoManager.addReferenceById(argDataInfo.id, targetDataInfo.id);
                     }
                 });
             }
@@ -255,7 +255,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
             throw new Error(`Target (${delegationMsg.refId}) doesn't exist.`);
         }
 
-        return this.dataInfoManager.ReferAsDataInfo(await target[delegationMsg.property], delegationMsg.refId);
+        return this.dataInfoManager.referAsDataInfo(await target[delegationMsg.property], delegationMsg.refId);
     }
 
     private onSetPropertyAsync = async (communicator: ICommunicator, path: string, msg: IDelegationProxyMessage): Promise<any> => {
@@ -288,7 +288,7 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
                 this.dataInfoManager.realizeDataInfo(delegationMsg.thisArg, delegationMsg.refId),
                 ...delegationMsg.args.map((item) => this.dataInfoManager.realizeDataInfo(item, delegationMsg.refId)));
 
-        return this.dataInfoManager.ReferAsDataInfo(result, delegationMsg.refId);
+        return this.dataInfoManager.referAsDataInfo(result, delegationMsg.refId);
     }
 
     private onDisposeAsync = (communicator: ICommunicator, path: string, msg: IDelegationProxyMessage): Promise<void> => {
@@ -298,16 +298,16 @@ export class ObjectRemotingProxy implements IObjectRemotingProxy, IDelegator {
     }
 
     private onRequestResourceAsync = async (communicator: ICommunicator, path: string, msg: IRequestResourceProxyMessage): Promise<IDataInfo> => {
-        const tempReferer = this.dataInfoManager.ReferAsDataInfo(() => undefined);
+        const tempReferer = this.dataInfoManager.referAsDataInfo(() => undefined);
         const extraArgs = msg.extraArgs.map((argDataInfo) => this.dataInfoManager.realizeDataInfo(argDataInfo, tempReferer.id));
 
         const target = await this.resolveAsync(msg.resourceId, ...extraArgs);
-        const targetDataInfo = this.dataInfoManager.ReferAsDataInfo(target);
+        const targetDataInfo = this.dataInfoManager.referAsDataInfo(target);
 
         if (targetDataInfo.id) {
             msg.extraArgs.forEach((argDataInfo) => {
                 if (argDataInfo.id) {
-                    this.dataInfoManager.AddReferenceById(argDataInfo.id, targetDataInfo.id);
+                    this.dataInfoManager.addReferenceById(argDataInfo.id, targetDataInfo.id);
                 }
             });
         }

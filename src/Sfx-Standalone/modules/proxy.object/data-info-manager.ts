@@ -57,7 +57,7 @@ export class DataInfoManager implements IDisposable {
         }
     }
 
-    public AddReferenceById(refereeId: string, parentId?: string): void {
+    public addReferenceById(refereeId: string, parentId?: string): void {
         this.validateDisposal();
 
         const referee = this.refRoot.referById(refereeId);
@@ -70,7 +70,7 @@ export class DataInfoManager implements IDisposable {
         referee.addRefererById(parentId);
     }
 
-    public ReferAsDataInfo(target: any, parentId?: string): IDataInfo {
+    public referAsDataInfo(target: any, parentId?: string): IDataInfo {
         this.validateDisposal();
 
         return this.toDataInfo(target, parentId);
@@ -126,7 +126,7 @@ export class DataInfoManager implements IDisposable {
     }
 
     private toDataInfo(target: any, parentId?: string, recursive?: boolean): IDataInfo {
-        const dataInfo: IDataInfo = {
+        let dataInfo: IDataInfo = {
             type: dataTypeOf(target)
         };
         const existingRefId = this.refRoot.getRefId(target);
@@ -136,6 +136,7 @@ export class DataInfoManager implements IDisposable {
 
         if (existingRefId) {
             dataInfo.id = existingRefId;
+            dataInfo = this.refRoot.getRefDataInfo(target) || dataInfo;
             this.refRoot.referById(existingRefId, parentId);
         } else if (Object.isSerializable(target)) {
             dataInfo.value = target;
@@ -151,13 +152,21 @@ export class DataInfoManager implements IDisposable {
     }
 
     private toObjectDataInfo(target: Object, parentId?: string): IDataInfo {
-        const currentObjDataInfo: IObjectDataInfo = {
+        const ref = this.refRoot.refer(target, parentId);
+        
+        let dataInfo: IObjectDataInfo = <IObjectDataInfo>ref.getRefDataInfo(target);
+
+        if (dataInfo) {
+            return dataInfo;
+        }
+
+        dataInfo = {
             type: DataType.Object,
-            id: this.refRoot.refer(target, parentId).id,
+            id: ref.id,
             memberInfos: Object.create(null)
         };
 
-        const memberInfos: IDictionary<IDataInfo> = currentObjDataInfo.memberInfos;
+        const memberInfos: IDictionary<IDataInfo> = dataInfo.memberInfos;
 
         let currentObj = target;
 
@@ -171,14 +180,14 @@ export class DataInfoManager implements IDisposable {
                     || !propertyDescriptor.writable
                     && !propertyDescriptor.get
                     && !propertyDescriptor.set) {
-                    memberInfos[propertyName] = this.toDataInfo(propertyDescriptor.value, currentObjDataInfo.id, false);
+                    memberInfos[propertyName] = this.toDataInfo(propertyDescriptor.value, dataInfo.id, false);
                 }
             }
 
             currentObj = Object.getPrototypeOf(currentObj);
         }
 
-        return currentObjDataInfo;
+        return ref.setRefDataInfo(target, dataInfo);
     }
 
     private generateDisposeFunc(refId: string, parentId?: string, superDisposeFunc?: () => Promise<void>): () => Promise<void> {
