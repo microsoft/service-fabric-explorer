@@ -1,6 +1,7 @@
 module Sfx {
     export class ImageStore extends DataModelBase<IRawImageStoreContent> {
 
+        public rootFolder: ImageStoreFolder = new ImageStoreFolder();
         public Folders: ImageStoreFolder[];
         public Files: ImageStoreFile[];
         public refreshFolders: ImageStoreFolder[];
@@ -14,74 +15,79 @@ module Sfx {
         public FolderDictionary: { [path: string]: ImageStoreFolder } = {};
         public FolderDictionaryR: { [path: string]: ImageStoreFolder } = {};
         public FileDictionary: { [path: string]: ImageStoreFile } = {};
-        private currentPath: string = null;
 
 
-        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
-            if (this.currentPath === null) {
-                return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent()).then<IRawImageStoreContent>(raw => {
-                    this.Folders = _.map(raw.StoreFolders, f => {
-                        let folder = new ImageStoreFolder();
-                        folder.name = f.StoreRelativePath;
-                        folder.indentationLevel = 0;
-                        folder.fileCount = f.FileCount;
-                        folder.version = "-";
-                        folder.modifiedDate = "-";
-                        folder.fileSize = "-";
-                        folder.displayName = folder.name;
-                        folder.show = true;
-                        this.FolderDictionary[folder.name] = folder;
-                        return folder;
-                    });
+        // protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
+        //     return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent()).then<IRawImageStoreContent>(raw => {
+        //         this.Folders = _.map(raw.StoreFolders, f => {
+        //             let folder = new ImageStoreFolder();
+        //             folder.name = f.StoreRelativePath;
+        //             folder.indentationLevel = 0;
+        //             folder.fileCount = f.FileCount;
+        //             folder.version = "-";
+        //             folder.modifiedDate = "-";
+        //             folder.fileSize = "-";
+        //             folder.displayName = folder.name;
+        //             folder.show = true;
+        //             this.FolderDictionary[folder.name] = folder;
+        //             return folder;
+        //         });
 
-                    this.Files = _.map(raw.StoreFiles, f => {
-                        let file = new ImageStoreFile();
-                        file.name = f.StoreRelativePath;
-                        file.fileCount = "-";
-                        file.show = true;
-                        file.modifiedDate = f.ModifiedDate;
-                        file.version = f.FileVersion.VersionNumber;
-                        file.fileSize = f.FileSize;
-                        file.displayFileSize = this.getDisplayFileSize(Number(file.fileSize));
-                        return file;
-                    });
-                    return raw;
-                });
-            }
+        //         this.Files = _.map(raw.StoreFiles, f => {
+        //             let file = new ImageStoreFile();
+        //             file.name = f.StoreRelativePath;
+        //             file.fileCount = "-";
+        //             file.show = true;
+        //             file.modifiedDate = f.ModifiedDate;
+        //             file.version = f.FileVersion.VersionNumber;
+        //             file.fileSize = f.FileSize;
+        //             file.displayFileSize = this.getDisplayFileSize(Number(file.fileSize));
+        //             return file;
+        //         });
+        //         return raw;
+        //     });
+        // }
+
+        constructor (public data: DataService) {
+            super(data);
+
+            this.rootFolder.displayName = "ImageStoreRoot";
+            this.rootFolder.indentationLevel = 0;
         }
 
-        protected retrieveNewDataR(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
-            if (this.currentPath === null) {
-                return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent()).then<IRawImageStoreContent>(raw => {
-                    this.refreshFolders = _.map(raw.StoreFolders, f => {
-                        let folder = new ImageStoreFolder();
-                        folder.name = f.StoreRelativePath;
-                        folder.indentationLevel = 0;
-                        folder.fileCount = f.FileCount;
-                        folder.version = "-";
-                        folder.modifiedDate = "-";
-                        folder.fileSize = "-";
-                        folder.displayName = folder.name;
-                        folder.show = true;
-                        this.FolderDictionary[folder.name] = folder;
-                        return folder;
-                    });
+        protected retrieveNewDataForRoot(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
 
-                    this.refreshFiles = _.map(raw.StoreFiles, f => {
-                        let file = new ImageStoreFile();
-                        file.name = f.StoreRelativePath;
-                        file.fileCount = "-";
-                        file.show = true;
-                        file.modifiedDate = f.ModifiedDate;
-                        file.version = f.FileVersion.VersionNumber;
-                        file.fileSize = f.FileSize;
-                        file.displayFileSize = this.getDisplayFileSize(Number(file.fileSize));
-                        return file;
-                    });
-                    return raw;
+            return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent()).then<IRawImageStoreContent>(raw => {
+                this.rootFolder.childrenFolders = _.map(raw.StoreFolders, f => {
+                    let folder = new ImageStoreFolder();
+                    folder.name = f.StoreRelativePath;
+                    folder.indentationLevel = 0;
+                    folder.fileCount = f.FileCount;
+                    folder.version = "-";
+                    folder.modifiedDate = "-";
+                    folder.fileSize = "-";
+                    folder.displayName = folder.name;
+                    folder.show = true;
+                    this.FolderDictionary[folder.name] = folder;
+                    return folder;
                 });
-            }
+
+                this.rootFolder.childrenFiles = _.map(raw.StoreFiles, f => {
+                    let file = new ImageStoreFile();
+                    file.name = f.StoreRelativePath;
+                    file.fileCount = "-";
+                    file.show = true;
+                    file.modifiedDate = f.ModifiedDate;
+                    file.version = f.FileVersion.VersionNumber;
+                    file.fileSize = f.FileSize;
+                    file.displayFileSize = this.getDisplayFileSize(Number(file.fileSize));
+                    return file;
+                });
+
+                return raw;
+            });
         }
+
         protected retrieveData(path: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
             return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then<IRawImageStoreContent>(raw => {
                 this.FolderDictionary[path].childrenFolders = _.map(raw.StoreFolders, f => {
@@ -188,7 +194,7 @@ module Sfx {
                     return folder;
                 });
 
-                this.FolderDictionary[path].childrenFiles = _.map(raw.StoreFiles, f => {
+                this.FolderDictionaryR[path].childrenFiles = _.map(raw.StoreFiles, f => {
                     let file = new ImageStoreFile();
                     file.name = f.StoreRelativePath;
                     file.version = f.FileVersion.VersionNumber;
@@ -212,9 +218,9 @@ module Sfx {
                             file.indentationLevel += 1;
                         }
                     }
-                    if ((this.FolderDictionary[path].Clicked % 2) === 0) {
+                    if ((this.FolderDictionaryR[path].Clicked % 2) === 0) {
                         file.show = false;
-                    } else if ((this.FolderDictionary[path].Clicked % 2) !== 0) {
+                    } else if ((this.FolderDictionaryR[path].Clicked % 2) !== 0) {
                         file.show = true;
                     }
                     return file;
@@ -300,22 +306,26 @@ module Sfx {
             });
         }
 
-        public getCurrentTreeStructure(folders: ImageStoreFolder[], files: ImageStoreFile[]) {
+        public getPaths(folders: ImageStoreFolder[], files: ImageStoreFile[]) {
+            let treeNodePaths: string[];
+
             for (let i = 0; i < folders.length; i++) {
-                if (folders[i].show === true && this.currentTreeStructure.indexOf(folders[i].name) === -1) {
-                this.currentTreeStructure.push(folders[i].name);
+                if (folders[i].show === true && treeNodePaths.indexOf(folders[i].name) === -1) {
+                    treeNodePaths.push(folders[i].name);
                 }
                 if (folders[i].isExpanded === true) {
-                    this.getCurrentTreeStructure(folders[i].childrenFolders, folders[i].childrenFiles);
+                    treeNodePaths.concat(this.getPaths(folders[i].childrenFolders, folders[i].childrenFiles));
                 }
             }
             for (let j = 0; j < files.length; j++) {
-                if (files[j].show === true && this.currentTreeStructure.indexOf(files[j].name) === -1) {
-                    this.currentTreeStructure.push(files[j].name);
+                if (files[j].show === true && treeNodePaths.indexOf(files[j].name) === -1) {
+                    treeNodePaths.push(files[j].name);
                 }
             }
-            return this.currentTreeStructure;
+
+            return treeNodePaths;
         }
+
         protected getFolder(path: string, currentFolder?: ImageStoreFolder) {
             if (currentFolder === undefined) {
                 currentFolder = this.parentRootFolder;
@@ -332,27 +342,31 @@ module Sfx {
             }
             return null;
         }
-        public refreshTree(openFolders: string[]) {
-            return this.retrieveNewData().then((raw) => {
-                for (let j = 0; j < this.Files.length; j++) {
-                        this.Files[j].show = true;
-                }
 
+        public retrieveDataForGivenFolders(openFolders: string[]) {
+
+            // Load data for all the open folders, save it to a local var
+
+            let refreshedData = this.retrieveNewDataForRoot().then((raw) => {
                 const tasks: Array<angular.IPromise<any>> = [];
 
-                for (let i = 0; i < this.Folders.length; i++) {
-                    this.Folders[i].show = true;
-                    tasks.push(this.retrieveData(this.Folders[i].name).then(() => {
-                        for (let j = 0; j < this.openFolders.length; j++) {
-                            if (this.Folders[i].name === this.openFolders[j]) {
-                                this.Folders[i].Clicked++;
-                                this.Folders[i].isExpanded = true;
-                                return this.refreshTreeForChildren(openFolders, this.Folders[i].childrenFolders, this.Folders[i].childrenFiles);
+                for (let i = 0; i < openFolders.length; i++) {
+                    tasks.push(this.retrieveDataR(this.refreshFolders[i].name).then(() => {
+                        for (let j = 0; j < openFolders.length; j++) {
+                            if (this.refreshFolders[i].name === this.openFolders[j]) {
+                                this.refreshFolders[i].Clicked++;
+                                this.refreshFolders[i].isExpanded = true;
+                                return this.refreshTreeForChildren(openFolders, this.refreshFolders[i].childrenFolders, this.refreshFolders[i].childrenFiles);
                             }
                         }
                     }));
                 }
-                return this.data.$q.all(tasks);
+
+                this.data.$q.all(tasks).then(() => {
+                    // Here we have all data from service for the open folders
+                    // The local var should be just a string[] which has path to folders/files
+                    // return that local var here
+                });
             });
         }
         public getOpenFolders() {
@@ -362,14 +376,14 @@ module Sfx {
         private refreshTreeForChildren(openFolders: string[], folders: ImageStoreFolder[], files: ImageStoreFile[]) {
             // let tasks: angular.IPromise<IRawImageStoreContent>[] = [];
             for (let j = 0; j < files.length; j++) {
-                    files[j].show = true;
+                files[j].show = true;
             }
             const tasks: Array<angular.IPromise<any>> = [];
 
             for (let i = 0; i < folders.length; i++) {
-                    tasks.push(this.retrieveData(folders[i].name).then((raw) => {
-                        folders[i].show = true;
-                        for (let j = 0; j < this.openFolders.length; j++) {
+                tasks.push(this.retrieveData(folders[i].name).then((raw) => {
+                    folders[i].show = true;
+                    for (let j = 0; j < this.openFolders.length; j++) {
                         if (folders[i].name === this.openFolders[j]) {
                             folders[i].isExpanded = true;
                             folders[i].Clicked++;

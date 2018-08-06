@@ -24,9 +24,8 @@
                 </div>
         </div>
         <div class="explorer-search">
-        <sfx-search-bar class="list-search-bar" placeholder="Search" model="listSettings.search"
-        reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar>
-                <label id="sr-only-search-summary" aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
+                <sfx-search-bar class="list-search-bar" placeholder="Search" model="listSettings.search" reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar>
+                <label id="sr-only-search-summary" aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result </label>
         </div>
         <div id="tableHeader" class="child header">
                 <strong class="headerfirstcell">Name</strong>
@@ -36,8 +35,8 @@
                 <strong class="columnItem" text-align="left">No Of Files</strong>
                 <span class="bowtie-icon ellipsis"></span>
         </div>
-        <ul class="completeList">
-                <li ng-repeat="folder in imagestoreroot.Folders" ng-include="'folderTemplate'" class="ulforimgstr">
+        <!-- <ul class="completeList">
+                <li ng-repeat="folder in imagestoreroot.rootFolder" ng-include="'folderTemplate'" class="ulforimgstr">
                 </li>
                 <li ng-repeat="file in imagestoreroot.Files" class="child ulforimgstr">
                         <span class="indentation0 linkasbtn" padding-left="10px">
@@ -60,6 +59,12 @@
                 </li>
 
 
+        </ul> -->
+
+        <ul class="completeList">
+                <li folder="imagestoreroot.rootFolder" ng-include="'folderTemplate'" class="ulforimgstr">
+                </li>
+                
         </ul>
 
         <script type="text/ng-template" id="ellipsisFileTemplate">
@@ -88,7 +93,8 @@
 
 
         <script type="text/ng-template" id="folderTemplate">
-        <div ng-if="folder.indentationLevel === 0" class="child">
+                <div>indentationLevel -  {{folder.indentationLevel}}</div>
+        <div  class="child">
         <a href="" role="button" ng-click="ctrl.expandFolder(folder.name)" class="indentation0 linkasbtn bowtie-icon " ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded}">
                 <img ng-src="../images/{{folder.folderImage}}" height="18px">
                 <span class="completeList">

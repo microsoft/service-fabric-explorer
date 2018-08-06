@@ -147,18 +147,20 @@ module Sfx {
 
         private refreshImageStore(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             let openFolders = this.$scope.imageStore.getOpenFolders();
+            // let currentPaths = [];
             // if (this.$scope.imageStore.Folders === undefined) {
-            //     let oldTree;
             // } else {
-            // let oldTree = this.$scope.imageStore.getCurrentTreeStructure(this.$scope.imageStore.Folders, this.$scope.imageStore.Files).sort();
+            //     currentPaths = this.$scope.imageStore.getPaths(this.$scope.imageStore.Folders, this.$scope.imageStore.Files);
             // }
-            this.$scope.imageStore.refreshTree(openFolders).then(() => {
-                this.$scope.imageStore.currentTreeStructure = [];
-                //let newTree = this.$scope.imageStore.getCurrentTreeStructure(this.$scope.imageStore.refreshFolders, this.$scope.imageStore.refreshFiles).sort();
-                //console.log("oldTree : ", oldTree);
-                //console.log("newTree : ", newTree);
-                //oldTree = newTree;
-            });
+
+            // this.$scope.imageStore.retrieveDataForGivenFolders(openFolders).then((folders: ImageStoreFolder[]) => {
+            //     // Here we have data for the opened folder from service
+            //     // Compare... currentPaths and paths
+            //     const paths = this.$scope.getPaths(folders, null);
+            //     // if there are differences, refresh UI tree
+            // });
+            this.$scope.imageStore.retrieveDataForGivenFolders(openFolders);
+            console.log(this.$scope.imageStore);
             return;
         }
     }
