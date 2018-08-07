@@ -98,7 +98,7 @@
                                     Node Types
                                     <span class="caret"></span>
                                 </button>
-                                <ul ng-repeat="nodeType in clusterManifest.nodeTypes" id="dropdown-menu" role="menu" class="dropdown-menu-container" uib-dropdown-menu>
+                                <ul ng-repeat="nodeType in chaos.runScope.nodeTypes" id="dropdown-menu" role="menu" class="dropdown-menu-container" uib-dropdown-menu>
                                     <li class="option">
                                         <span>
                                             <input type="checkbox" value="{{nodeType}}" id="{{nodeType}}" />

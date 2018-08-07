@@ -6,10 +6,11 @@
 module Sfx {
     export class Chaos extends DataModelBase<IRawChaos> {
         private chaosHistoryEvents: ChaosEvent[];
+        private runScope: ChaosRunScope = new ChaosRunScope();
+        private clusterManifest: ClusterManifest = new ClusterManifest(this.data);
 
         public constructor(data: DataService, raw: IRawChaos) {
             super(data, raw);
-
         }
 
         public get status(): string {
@@ -20,6 +21,7 @@ module Sfx {
             return this.chaosHistoryEvents;
         }
 
+        // Here we can pass an instance of IRawChaosParameters so that we don't have to use all these parameters
         public start(timeToRunInSeconds: number, WaitTimeBetweenIterationsInSeconds: number, MaxClusterStabilizationTimeoutInSeconds: number, MaxConcurrentFaults: number): angular.IHttpPromise<any> {
             this.raw.Status = "Started";
             return this.data.restClient.startChaos(timeToRunInSeconds, WaitTimeBetweenIterationsInSeconds, MaxClusterStabilizationTimeoutInSeconds, MaxConcurrentFaults);
@@ -40,6 +42,7 @@ module Sfx {
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
+            this.clusterManifest.refresh().then(m => this.runScope.nodeTypes = m.nodeTypes);
         }
     }
 
@@ -59,5 +62,10 @@ module Sfx {
                 this.Reason = reason;
             }
         }
+    }
+
+    export class ChaosRunScope {
+        public nodeTypes: string[];
+        // TODO: Application types?
     }
 }
