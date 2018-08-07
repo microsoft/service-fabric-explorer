@@ -2,7 +2,6 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
-import "../../utilities/utils";
 
 export enum DataType {
     Undefined = "undefined",
@@ -12,7 +11,8 @@ export enum DataType {
     Number = "number",
     String = "string",
     Symbol = "symbol",
-    Function = "function"
+    Function = "function",
+    Buffer = "node-buffer"
 }
 
 const DataTypeValues: Array<string> = Object.values(DataType);
@@ -50,6 +50,8 @@ export function dataTypeOf(data: any): DataType {
         case DataType.Object:
             if (data === null) {
                 return DataType.Null;
+            } else if (data instanceof Buffer) {
+                return DataType.Buffer;
             }
 
             return DataType.Object;

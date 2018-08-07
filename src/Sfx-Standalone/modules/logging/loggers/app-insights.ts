@@ -33,7 +33,11 @@ function toAppInsightsSeverity(severity: Severity): Contracts.SeverityLevel {
 }
 
 export default class AppInsightsLogger implements ILogger {
-    public readonly name: string;
+    private readonly _name: string;
+
+    public get name(): Promise<string> {
+        return Promise.resolve(this._name);
+    }
 
     private client: TelemetryClient;
 
@@ -46,14 +50,14 @@ export default class AppInsightsLogger implements ILogger {
             throw new Error("settings must be supplied.");
         }
 
-        this.name = settings.name;
+        this._name = settings.name;
         this.client = new TelemetryClient(settings["instrumentationKey"]);
     }
 
-    public write(properties: IDictionary<string>, severity: Severity, message: string): void {
+    public writeAsync(properties: IDictionary<string>, severity: Severity, message: string): Promise<void> {
         this.validateDisposal();
 
-        let telemetry: TraceTelemetry = {
+        const telemetry: TraceTelemetry = {
             severity: toAppInsightsSeverity(severity),
             message: message
         };
@@ -63,12 +67,14 @@ export default class AppInsightsLogger implements ILogger {
         }
 
         this.client.trackTrace(telemetry);
+        
+        return Promise.resolve();
     }
 
-    public writeException(properties: IDictionary<string>, error: Error): void {
+    public writeExceptionAsync(properties: IDictionary<string>, error: Error): Promise<void> {
         this.validateDisposal();
 
-        let telemetry: ExceptionTelemetry = {
+        const telemetry: ExceptionTelemetry = {
             exception: error
         };
 
@@ -77,12 +83,14 @@ export default class AppInsightsLogger implements ILogger {
         }
 
         this.client.trackException(telemetry);
+
+        return Promise.resolve();
     }
 
-    public writeMetric(properties: IDictionary<string>, name: string, value: number): void {
+    public writeMetricAsync(properties: IDictionary<string>, name: string, value: number): Promise<void> {
         this.validateDisposal();
         
-        let telemetry: MetricTelemetry = {
+        const telemetry: MetricTelemetry = {
             name: name,
             value: value
         };
@@ -92,10 +100,14 @@ export default class AppInsightsLogger implements ILogger {
         }
 
         this.client.trackMetric(telemetry);
+
+        return Promise.resolve();
     }
 
-    public dispose(): void {
+    public disposeAsync(): Promise<void> {
         this.client = undefined;
+
+        return Promise.resolve();
     }
 
     private validateDisposal(): void {

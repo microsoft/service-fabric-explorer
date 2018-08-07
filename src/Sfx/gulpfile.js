@@ -171,8 +171,7 @@ gulp.task("build:tslint", function () {
         }));
 });
 
-// Compile TypeScript, concat/uglify into app.min.js, create sourcemap to help TS debugging
-gulp.task("build:js", gulp.series(gulp.parallel("build:templates", "build:versionInfo", "build:tslint"), function () {
+gulp.task("build:ts", function () {
     console.log("isProductionEnvironment = " + isProductionEnv);
 
     let tsProject = plugins.typescript.createProject("App/Scripts/tsconfig.json", {
@@ -190,7 +189,13 @@ gulp.task("build:js", gulp.series(gulp.parallel("build:templates", "build:versio
             .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.write(".", { includeContent: true })))
             .pipe(gulp.dest(paths.scripts.dest)),
         result.dts.pipe(gulp.dest(paths.scripts.dest))]);
-}));
+});
+
+// Compile TypeScript, concat/uglify into app.min.js, create sourcemap to help TS debugging
+gulp.task("build:js",
+    gulp.series(
+        gulp.parallel("build:templates", "build:versionInfo", "build:tslint"),
+        "build:ts"));
 
 // Compile SASS, concat/minify into app.min.css, create sourcemap to help debugging
 gulp.task("build:css", function () {

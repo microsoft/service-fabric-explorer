@@ -3,25 +3,23 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ChannelType } from "sfx.ipc";
-import { IModuleInfo } from "sfx.module-manager";
-import { ILog } from "sfx.logging";
+import { ChannelType, ICommunicatorConstructorOptions } from "sfx.ipc";
+import { IModuleInfo, IModule } from "sfx.module-manager";
+import { ICommunicator } from "sfx.remoting";
 
-import { Communicator } from "./communicator";
-import { electron } from "../../utilities/electron-adapter";
+import * as appUtils from "../../utilities/appUtils";
 
-export function getModuleMetadata(): IModuleInfo {
+(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+    components.register<any>({
+        name: "ipc.communicator",
+        version: appUtils.getAppVersion(),
+        descriptor: async (channel: ChannelType, options?: ICommunicatorConstructorOptions): Promise<ICommunicator> =>
+            import("./communicator").then((module) => module.Communicator.fromChannel(channel, options))
+    });
+
     return {
         name: "ipc",
-        version: electron.app.getVersion(),
-        loadingMode: "Always",
-        components: [
-            {
-                name: "ipc.communicator",
-                version: electron.app.getVersion(),
-                deps: ["logging"],
-                descriptor: (log: ILog, channel: ChannelType, id?: string) => new Communicator(channel, id)
-            }
-        ]
+        version: appUtils.getAppVersion(),
+        loadingMode: "Always"
     };
-}
+};

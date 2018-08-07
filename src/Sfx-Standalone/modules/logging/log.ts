@@ -74,7 +74,7 @@ export async function createAsync(loggingSettings?: ILoggingSettings): Promise<I
             throw new Error(`failed to load logger, ${loggerSettings.component}, named '${loggerSettings.name}'.`);
         }
 
-        log.addLogger(logger);
+        await log.addLoggerAsync(logger);
     }
 
     return log;
@@ -86,6 +86,14 @@ class Log implements ILog {
     private defaultProperties: IDictionary<any>;
 
     private readonly logCallerInfo: boolean;
+
+    private static stringifier(obj: any): string {
+        if (obj instanceof Error) {
+            obj = obj.toJSON();
+        }
+
+        return utils.defaultStringifier(obj);
+    }
 
     public get disposed(): boolean {
         return this.loggers === undefined;
@@ -102,7 +110,7 @@ class Log implements ILog {
         this.logCallerInfo = includeCallerInfo === true;
     }
 
-    public writeMore(properties: IDictionary<string>, severity: Severity, messageOrFormat: string, ...params: Array<any>): void {
+    public async writeMoreAsync(properties: IDictionary<string>, severity: Severity, messageOrFormat: string, ...params: Array<any>): Promise<void> {
         this.validateDisposal();
 
         if (!String.isString(messageOrFormat)) {
@@ -110,44 +118,47 @@ class Log implements ILog {
         }
 
         if (Array.isArray(params) && params.length > 0) {
-            messageOrFormat = utils.format(messageOrFormat, ...params);
+            messageOrFormat = utils.formatEx(Log.stringifier, messageOrFormat, ...params);
         }
+
         properties = this.generateProperties(properties);
-        this.loggers.forEach((logger) => logger.write(properties, severity, messageOrFormat));
+
+        await Promise.all(this.loggers.map((logger) => logger.writeAsync(properties, severity, messageOrFormat)));
     }
 
-    public write(severity: Severity, messageOrFormat: string, ...params: Array<any>): void {
-        this.writeMore(null, severity, messageOrFormat, ...params);
+    public writeAsync(severity: Severity, messageOrFormat: string, ...params: Array<any>): Promise<void> {
+        return this.writeMoreAsync(null, severity, messageOrFormat, ...params);
     }
 
-    public writeInfo(messageOrFormat: string, ...params: Array<any>) {
-        this.write(Severities.Information, messageOrFormat, ...params);
+    public writeInfoAsync(messageOrFormat: string, ...params: Array<any>): Promise<void> {
+        return this.writeAsync(Severities.Information, messageOrFormat, ...params);
     }
 
-    public writeVerbose(messageOrFormat: string, ...params: Array<any>) {
-        this.write(Severities.Verbose, messageOrFormat, ...params);
+    public writeVerboseAsync(messageOrFormat: string, ...params: Array<any>): Promise<void> {
+        return this.writeAsync(Severities.Verbose, messageOrFormat, ...params);
     }
 
-    public writeWarning(messageOrFormat: string, ...params: Array<any>) {
-        this.write(Severities.Warning, messageOrFormat, ...params);
+    public writeWarningAsync(messageOrFormat: string, ...params: Array<any>): Promise<void> {
+        return this.writeAsync(Severities.Warning, messageOrFormat, ...params);
     }
 
-    public writeError(messageOrFormat: string, ...params: Array<any>) {
-        this.write(Severities.Error, messageOrFormat, ...params);
+    public writeErrorAsync(messageOrFormat: string, ...params: Array<any>): Promise<void> {
+        return this.writeAsync(Severities.Error, messageOrFormat, ...params);
     }
 
-    public writeCritical(messageOrFormat: string, ...params: Array<any>) {
-        this.write(Severities.Critical, messageOrFormat, ...params);
+    public writeCriticalAsync(messageOrFormat: string, ...params: Array<any>): Promise<void> {
+        return this.writeAsync(Severities.Critical, messageOrFormat, ...params);
     }
 
-    public writeException(exception: Error, properties?: IDictionary<string>): void {
+    public async writeExceptionAsync(exception: Error, properties?: IDictionary<string>): Promise<void> {
         this.validateDisposal();
 
         properties = this.generateProperties(properties);
-        this.loggers.forEach((logger) => logger.writeException(properties, exception));
+
+        await Promise.all(this.loggers.map((logger) => logger.writeExceptionAsync(properties, exception)));
     }
 
-    public writeEvent(name: string, properties?: IDictionary<string>) {
+    public async writeEventAsync(name: string, properties?: IDictionary<string>): Promise<void> {
         this.validateDisposal();
 
         if (!String.isString(name)) {
@@ -155,10 +166,11 @@ class Log implements ILog {
         }
 
         properties = this.generateProperties(properties);
-        this.loggers.forEach((logger) => logger.write(properties, Severities.Event, name));
+
+        await Promise.all(this.loggers.map((logger) => logger.writeAsync(properties, Severities.Event, name)));
     }
 
-    public writeMetric(name: string, value?: number, properties?: IDictionary<string>): void {
+    public async writeMetricAsync(name: string, value?: number, properties?: IDictionary<string>): Promise<void> {
         this.validateDisposal();
 
         if (!String.isString(name)) {
@@ -170,26 +182,29 @@ class Log implements ILog {
         }
 
         properties = this.generateProperties(properties);
-        this.loggers.forEach((logger) => logger.writeMetric(properties, name, value));
+
+        await Promise.all(this.loggers.map((logger) => logger.writeMetricAsync(properties, name, value)));
     }
 
-    public removeLogger(name: string): ILogger {
+    public async removeLoggerAsync(name: string): Promise<ILogger> {
         this.validateDisposal();
 
         if (!String.isString(name)) {
             throw new Error("name must be supplied.");
         }
 
-        const loggerIndex = this.loggers.findIndex((logger) => logger.name === name);
+        for (let loggerIndex = 0; loggerIndex < this.loggers.length; loggerIndex++) {
+            const logger = this.loggers[loggerIndex];
 
-        if (loggerIndex >= 0) {
-            return this.loggers.splice(loggerIndex, 1)[0];
+            if (name === await logger.name) {
+                return this.loggers.splice(loggerIndex, 1)[0];
+            }
         }
 
         return undefined;
     }
 
-    public addLogger(logger: ILogger): void {
+    public async addLoggerAsync(logger: ILogger): Promise<void> {
         this.validateDisposal();
 
         if (!logger) {
@@ -203,7 +218,7 @@ class Log implements ILog {
         this.loggers.push(logger);
     }
 
-    public dispose(): void {
+    public async disposeAsync(): Promise<void> {
         this.defaultProperties = undefined;
         this.loggers = undefined;
     }
@@ -222,7 +237,7 @@ class Log implements ILog {
         }
 
         if (Object.isObject(properties)) {
-            finalProperties = finalProperties || {};
+            finalProperties = finalProperties || Object.create(null);
             finalProperties = Object.assign(finalProperties, properties);
         }
 
@@ -235,9 +250,16 @@ class Log implements ILog {
                 functionName = `<Anonymous>@{${callerInfo.lineNumber},${callerInfo.columnNumber}}`;
             }
 
-            finalProperties = finalProperties || {};
+            finalProperties = finalProperties || Object.create(null);
             finalProperties["Caller.FileName"] = callerInfo.fileName;
-            finalProperties["Caller.Name"] = `${typeName}.${functionName}()`;
+
+            if (!String.isEmptyOrWhitespace(typeName)) {
+                finalProperties["Caller.Name"] = `${typeName}.`;
+            } else {
+                finalProperties["Caller.Name"] = "";
+            }
+
+            finalProperties["Caller.Name"] += `${functionName}()`;
         }
 
         return finalProperties;

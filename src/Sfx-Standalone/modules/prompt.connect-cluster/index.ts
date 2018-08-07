@@ -3,28 +3,26 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleInfo } from "sfx.module-manager";
-import { IPromptService } from "sfx.prompt";
+import { IModule } from "sfx.module-manager";
+import { IPromptService, IPrompt } from "sfx.prompt";
 
-import resolve from "../../utilities/resolve";
-import { electron } from "../../utilities/electron-adapter";
+import * as appUtils from "../../utilities/appUtils";
 
-export function getModuleMetadata(): IModuleInfo {
+(<IModule>exports).getModuleMetadata = (components) => {
+    components.register<IPrompt<string>>({
+        name: "prompt.connect-cluster",
+        version: appUtils.getAppVersion(),
+        descriptor: (promptService: IPromptService) =>
+            promptService.createAsync(
+                {
+                    pageUrl: appUtils.resolve("connect-cluster.html"),
+                    height: 225
+                }),
+        deps: ["prompt.prompt-service"]
+    });
+
     return {
         name: "prompt.connect-cluster",
-        version: electron.app.getVersion(),
-        components: [
-            {
-                name: "prompt.connect-cluster",
-                version: electron.app.getVersion(),
-                descriptor: (promptService: IPromptService) =>
-                    promptService.createAsync(
-                        {
-                            pageUrl: resolve("connect-cluster.html"),
-                            height: 225
-                        }),
-                deps: ["prompt.prompt-service"]
-            }
-        ]
+        version: appUtils.getAppVersion()
     };
-}
+};

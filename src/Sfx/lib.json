@@ -1,6 +1,7 @@
 {
     "js": [
         "./node_modules/angular/angular.js",
+        "./node_modules/adal-angular/lib/adal.js",
         "./node_modules/adal-angular/lib/adal-angular.js",
         "./node_modules/angular-animate/angular-animate.js",
         "./node_modules/angular-aria/angular-aria.js",

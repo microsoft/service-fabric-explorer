@@ -12,8 +12,7 @@ import { env, Platform } from "../../utilities/env";
 import * as utils from "../../utilities/utils";
 
 // JQuery & angular already referenced in select-certificate.html.
-declare let $: JQuery;
-declare let angular: angular.IAngularStatic;
+declare const angular: angular.IAngularStatic;
 
 (async () => {
     const promptContext = await sfxModuleManager.getComponentAsync("prompt.prompt-context");
@@ -64,7 +63,7 @@ declare let angular: angular.IAngularStatic;
         }
     };
 
-    let selectCertificateModule = angular.module("select-certificate", []);
+    const selectCertificateModule = angular.module("select-certificate", []);
 
     class SelectCertController {
         constructor($scope: ISelectCertScope) {
@@ -73,7 +72,7 @@ declare let angular: angular.IAngularStatic;
             $scope.getDateString = (dateInSecs) => new Date(dateInSecs * 1000).toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
 
             $scope.isCertValid = (startDateInSecs, expiryDateInSecs) => {
-                let now = Date.now();
+                const now = Date.now();
 
                 return now >= startDateInSecs * 1000 && now < expiryDateInSecs * 1000;
             };

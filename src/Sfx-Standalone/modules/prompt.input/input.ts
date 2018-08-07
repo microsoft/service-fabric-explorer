@@ -20,7 +20,7 @@ import * as $ from "jquery";
     }
     
     $input.keyup(($event) => {
-        let keyboardEvent = <KeyboardEvent>$event.originalEvent;
+        const keyboardEvent = <KeyboardEvent>$event.originalEvent;
     
         if (keyboardEvent.code === "Enter") {
             $("#btn-ok").click();
