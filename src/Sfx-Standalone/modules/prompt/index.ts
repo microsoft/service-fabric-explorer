@@ -3,23 +3,22 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleInfo } from "sfx.module-manager";
+import { IModule } from "sfx.module-manager";
+import { IPromptService } from "sfx.prompt";
 
-import { PromptService } from "./prompt";
-import { electron } from "../../utilities/electron-adapter";
+import * as appUtils from "../../utilities/appUtils";
 
-export function getModuleMetadata(): IModuleInfo {
+(<IModule>exports).getModuleMetadata = (components) => {
+    components.register<IPromptService>({
+        name: "prompt.prompt-service",
+        version: appUtils.getAppVersion(),
+        singleton: true,
+        descriptor: (moduleManager) => import("./prompt").then((module) => new module.PromptService(moduleManager)),
+        deps: ["module-manager"]
+    });
+
     return {
         name: "prompt",
-        version: electron.app.getVersion(),
-        components: [
-            {
-                name: "prompt.prompt-service",
-                version: electron.app.getVersion(),
-                singleton: true,
-                descriptor: (moduleManager) => new PromptService(moduleManager),
-                deps: ["module-manager"]
-            }
-        ]
+        version: appUtils.getAppVersion()
     };
-}
+};

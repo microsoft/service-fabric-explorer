@@ -28,29 +28,37 @@ function getZipName(arch) {
     return utils.format("{}-{}-{}.zip", buildInfos.targetExecutableName, buildInfos.buildNumber, arch);
 }
 
-gulp.task("publish:versioninfo-macos",
-    (done) => { versioning.generateVersionInfo(Platform.MacOs, (baseUrl, arch) => utils.format("{}/{}", baseUrl, getZipName(arch))); done(); });
+gulp.task("publish:versioninfo@macos",
+    () => Promise.resolve(
+        versioning.generateVersionInfo(
+            Platform.MacOs,
+            (baseUrl, arch) => utils.format("{}/{}", baseUrl, getZipName(arch)))));
 
-gulp.task("publish:zip-macos-x64", gulp.series("publish:prepare",
-    (callback) => {
+gulp.task("publish:zip@macos-x64",
+    () => {
         if (buildInfos.targets[Platform.MacOs].archs.indexOf(Architecture.X64) < 0) {
             log.info("Skipping", "zip-macos-64:", "No x64 architecture specified in buildinfos.");
-            callback();
-            return;
+            return Promise.resolve();
         }
 
-        const macZipper = require('electron-installer-zip');
-        const packDirName = utils.format("{}-{}-{}", buildInfos.productName, pack.toPackagerPlatform(Platform.MacOs), pack.toPackagerArch(Architecture.X64));
-        const appDirName = utils.format("{}.app", buildInfos.productName);
+        return new Promise((resolve, reject) => {
+            const macZipper = require('electron-installer-zip');
+            const packDirName = utils.format("{}-{}-{}", buildInfos.productName, pack.toPackagerPlatform(Platform.MacOs), pack.toPackagerArch(Architecture.X64));
+            const appDirName = utils.format("{}.app", buildInfos.productName);
 
-        macZipper(
-            {
-                dir: path.resolve(path.join(buildInfos.paths.buildDir, packDirName, appDirName)),
-                out: path.resolve(path.join(buildInfos.paths.publishDir, Platform.MacOs, getZipName(pack.toPackagerArch(Architecture.X64))))
-            },
-            (err, res) => callback(err));
+            macZipper(
+                {
+                    dir: path.resolve(path.join(buildInfos.paths.buildDir, packDirName, appDirName)),
+                    out: path.resolve(path.join(buildInfos.paths.publishDir, Platform.MacOs, getZipName(pack.toPackagerArch(Architecture.X64))))
+                },
+                (err, res) => err ? reject(err) : resolve(res));
+        });
+    });
 
-        callback();
-    }));
+gulp.task("publish:zip",
+    gulp.series("publish:prepare", "publish:zip@macos-x64"));
 
-gulp.task("publish:macos", gulp.series("pack:macos", gulp.parallel("publish:versioninfo-macos", "publish:zip-macos-x64")));
+gulp.task("publish:macos",
+    gulp.series(
+        "pack:macos",
+        gulp.parallel("publish:versioninfo@macos", "publish:zip")));

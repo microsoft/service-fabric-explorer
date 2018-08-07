@@ -3,34 +3,32 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleInfo } from "sfx.module-manager";
-import { IPromptService } from "sfx.prompt";
+import { IModule } from "sfx.module-manager";
+import { IPromptService, IPrompt } from "sfx.prompt";
 import { IInputPromptOptions } from "sfx.prompt.input";
 
-import resolve from "../../utilities/resolve";
-import { electron } from "../../utilities/electron-adapter";
+import * as appUtils from "../../utilities/appUtils";
 
-export function getModuleMetadata(): IModuleInfo {
+(<IModule>exports).getModuleMetadata = (components) => {
+    components.register<IPrompt<string>>({
+        name: "prompt.input",
+        version: appUtils.getAppVersion(),
+        descriptor:
+            (promptService: IPromptService,
+                parentWindowId: number,
+                options: IInputPromptOptions) =>
+                promptService.createAsync(
+                    {
+                        parentWindowId: parentWindowId,
+                        pageUrl: appUtils.resolve("input.html"),
+                        height: 225,
+                        data: options
+                    }),
+        deps: ["prompt.prompt-service"]
+    });
+
     return {
         name: "prompt.input",
-        version: electron.app.getVersion(),
-        components: [
-            {
-                name: "prompt.input",
-                version: electron.app.getVersion(),
-                descriptor:
-                    (promptService: IPromptService,
-                        parentWindowId: number,
-                        options: IInputPromptOptions) =>
-                        promptService.createAsync(
-                            {
-                                parentWindowId: parentWindowId,
-                                pageUrl: resolve("input.html"),
-                                height: 225,
-                                data: options
-                            }),
-                deps: ["prompt.prompt-service"]
-            }
-        ]
+        version: appUtils.getAppVersion()
     };
-}
+};

@@ -11,7 +11,7 @@ declare module "sfx.prompt" {
         pageUrl: string;
         frame?: boolean;
         showMenu?: boolean;
-        menuTemplate?: MenuItemConstructorOptions[];
+        menuTemplate?: Array<MenuItemConstructorOptions>;
         data?: any;
         width?: number;
         height?: number;

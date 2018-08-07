@@ -2,7 +2,9 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+
 import { IDictionary } from "sfx.common";
+import { IDataInfo } from "./data-info";
 
 import * as uuidv4 from "uuid/v4";
 
@@ -10,6 +12,8 @@ import * as utils from "../../utilities/utils";
 
 export class ReferenceNode {
     private readonly symbol_refId: symbol;
+
+    private readonly symbol_dataInfo: symbol;
 
     private readonly _root: ReferenceNode;
 
@@ -168,6 +172,22 @@ export class ReferenceNode {
         return target[this.symbol_refId];
     }
 
+    public setRefDataInfo(target: Object | Function, dataInfo: IDataInfo): IDataInfo {
+        if (!Object.isObject(target) && !Function.isFunction(target)) {
+            throw new Error("target cannot be null/undefined or types other than Object or Function.");
+        }
+
+        return target[this.symbol_dataInfo] = dataInfo;
+    }
+
+    public getRefDataInfo(target: Object | Function): IDataInfo {
+        if (!Object.isObject(target) && !Function.isFunction(target)) {
+            return undefined;
+        }
+        
+        return target[this.symbol_dataInfo];
+    }
+
     private constructor(root: ReferenceNode, target: Object | Function, refId?: string) {
         if (utils.isNullOrUndefined(root) !== utils.isNullOrUndefined(target)) {
             throw new Error("root and target must be provided togehter or none are provided.");
@@ -178,17 +198,19 @@ export class ReferenceNode {
         this._root = root;
         this._id = refId;
         this._target = target;
-        this.referees = {};
+        this.referees = Object.create(null);
 
         if (!utils.isNullOrUndefined(root)) {
             this.symbol_refId = this.internalRoot.symbol_refId;
-            this.referers = {};
+            this.symbol_dataInfo = this.internalRoot.symbol_dataInfo;
+            this.referers = Object.create(null);
 
             this.internalRoot.internallyAddReferee(this);
             this.target[this.symbol_refId] = this._id;
         } else {
             // When this is a root node.
             this.symbol_refId = Symbol("refId");
+            this.symbol_dataInfo = Symbol("dataInfo");
             this.referers = undefined;
             this.referees[this._id] = this;
         }
@@ -233,6 +255,7 @@ export class ReferenceNode {
 
         if (this._target) {
             delete this._target[this.symbol_refId];
+            delete this._target[this.symbol_dataInfo];
             this._target = undefined;
         }
 

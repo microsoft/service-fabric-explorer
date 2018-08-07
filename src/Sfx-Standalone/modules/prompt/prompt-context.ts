@@ -14,8 +14,6 @@ import { EventNames, ChannelNameFormat } from "./constants";
 import { ipcRenderer } from "electron";
 
 export class PromptContext implements IPromptContext {
-    private static promptContext: PromptContext;
-
     private readonly options: IPromptOptions;
 
     private readonly promptWindow: Electron.BrowserWindow;

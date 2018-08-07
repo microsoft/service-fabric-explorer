@@ -49,6 +49,7 @@ module Sfx {
 
     export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         public clusterManifestName: string;
+        public nodeTypes: string[];
 
         public constructor(data: DataService) {
             super(data);
@@ -62,13 +63,14 @@ module Sfx {
             let $xml = $($.parseXML(this.raw.Manifest));
             let $manifest = $xml.find("ClusterManifest")[0];
             this.clusterManifestName = $manifest.getAttribute("Name");
+            this.nodeTypes = _.map($manifest.getElementsByTagName("NodeType"), nodeType => nodeType.getAttribute("Name"));
         }
     }
 
     export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProgress> {
         public decorators: IDecorators = {
             hideList: [
-                // Unhealthy evaluations are displayed in seperate section in app detail page
+                // Unhealthy evaluations are displayed in separate section in app detail page
                 "UnhealthyEvaluations"
             ],
             decorators: {
