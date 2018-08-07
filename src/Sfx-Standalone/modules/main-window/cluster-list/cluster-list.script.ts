@@ -59,8 +59,8 @@ export class ClusterList implements IClusterList {
         } else if (!label) {
             throw new Error("Please enter a folder name!");
         }
-        const $item = $(`<li role="folder-${label}"><img src="../../../icons/Closedfolder.svg" style="width: 16px; height: 16px;"><span>${label}</span></li>`);
-        $item.append(`<a role="button" class="bowtie-icon bowtie-ellipsis"></a>`);
+        const $item = $(`<li class="hoverable-link" role="folder-${label}"><img src="../../../icons/Closedfolder.svg" style="width: 16px; height: 16px;"><span>${label}</span></li>`);
+        $item.append(`<a role="button" class="bowtie-icon bowtie-ellipsis" style="visibility: hidden"></a>`);
         $item.append(`<ul role="menu" class="dropdown-menu" uib-dropdown-menu style="list-style: none">
             <li role="menuitem">
                 <a role="menuitem" tabindex="-1" href="#">
@@ -73,6 +73,25 @@ export class ClusterList implements IClusterList {
         this.menu.addFolder(label);
         await this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
 
+       
+        $($item).hover(async (e) => {
+            if(!$item.is("#folder-"+label.replace(/\s+/, ""))) {
+                $item.css("background-color", "grey");
+                let ellipsis = $(e.target).find(".bowtie-ellipsis").first();
+                ellipsis.css("visibility", "visible");
+            } else {
+                $item.css("background-color", "transparent");
+                let ellipsis = $(e.target).find(".bowtie-ellipsis").first();
+                ellipsis.css("visibility", "hidden");
+            }
+                
+        }, async (e) => {
+            
+            $item.css("background-color", "transparent");
+            let ellipsis = $(e.target).find(".bowtie-ellipsis").first();
+            ellipsis.css("visibility", "hidden");
+            
+        });
         $($item).click(async (e) => {
             let $button = $(e.target);
             if ($button.parent().parent().attr("id") === "cluster-list-organized") {
@@ -160,7 +179,7 @@ export class ClusterList implements IClusterList {
             const $item = $(`<li class="btn-success" data-endpoint="${endpoint}"><img src="../../../icons/icon16x16.png"><span>${name}</span></li>`);
             $(folder_label).append($item);
 
-            $(`#cluster-list li[data-endpoint='${endpoint}']`).append(`<a role="button" class="bowtie-icon bowtie-ellipsis"></a>`);
+            $(`#cluster-list li[data-endpoint='${endpoint}']`).append(`<a role="button" class="bowtie-icon bowtie-ellipsis visibility="hidden"></a>`);
             $(`#cluster-list li[data-endpoint='${endpoint}']`).append(`<ul role="menu" class="dropdown-menu" uib-dropdown-menu style="list-style: none">
                 <li role="menuitem">
                     <a role="menuitem" tabindex="-1" href="#">
@@ -182,7 +201,7 @@ export class ClusterList implements IClusterList {
             this.menu.addCluster(name, endpoint, folder);
             await this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
 
-            // $($item).hover(async )
+           
             $($item).click(async (e) => {
                 const $button = $(e.target);
                 if ($button.attr("class") === "bowtie-icon bowtie-ellipsis") {

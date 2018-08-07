@@ -6,7 +6,7 @@ import { IClusterList } from "sfx.cluster-list";
     let folder = localStorage.getItem("folder");
     localStorage.removeItem("folder");
     $(document).ready(() => {
-        $("modal-title").html("Remove Folder " + folder);
+        $(".modal-title").html("Remove Folder " + folder);
     });
     $("#btn-delete-folder").click(async () => {
         
