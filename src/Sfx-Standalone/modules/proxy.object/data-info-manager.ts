@@ -167,6 +167,10 @@ export class DataInfoManager implements IDisposable {
             for (const propertyName in propertyDescriptors) {
                 const propertyDescriptor = propertyDescriptors[propertyName];
 
+                if (propertyName in memberInfos) {
+                    continue;
+                }
+ 
                 if (!propertyDescriptor.enumerable
                     || !propertyDescriptor.writable
                     && !propertyDescriptor.get

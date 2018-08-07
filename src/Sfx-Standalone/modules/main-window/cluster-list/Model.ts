@@ -1,25 +1,26 @@
 import { IMenu } from "sfx.menu";
 
 
-export class Menu implements IMenu{
+export class Menu implements IMenu {
     private static _instance: Menu;
 
     private folders: Array<Folder> = new Array<Folder>();
 
     constructor() {
-        this.addFolder("----No Folder----")
+        this.addFolder("----No Folder----");
     }
+    
     public addFolder(label: string) {
         this.folders.push(new Folder(label));
         console.log(label + " folder added");
     }
-    public addCluster(label:string, url: string, folder: string) {
+    public addCluster(label: string, url: string, folder: string) {
         console.log(label + " " + url + " " + folder);
         this.getFolder(folder).clusters.push(new Cluster(label, url, folder));
-    
+
     }
-    public removeFolder(label: string){
-        for(let cluster of this.getFolder(label).clusters) {
+    public removeFolder(label: string) {
+        for (let cluster of this.getFolder(label).clusters) {
             this.removeCluster(cluster.label, label);
         }
         this.folders.splice(this.folders.indexOf(this.getFolder(label)), 1);
@@ -44,11 +45,10 @@ export class Menu implements IMenu{
         let old_folder: Folder = this.getFolder(cluster.folder);
         let new_folder: Folder = this.getFolder(new_folder_label);
 
-        if(new_folder) {
+        if (new_folder) {
             this.addCluster(cluster.label, cluster.url, new_folder.label);
             this.removeCluster(cluster.label, old_folder.label);
-        }
-        else {
+        } else {
             this.addFolder(new_folder_label);
             new_folder = this.getFolder(new_folder_label);
             this.addCluster(cluster.label, cluster.url, new_folder.label);
@@ -59,7 +59,7 @@ export class Menu implements IMenu{
     public folderExists(label: string): boolean {
         return (this.getFolder(label) != null);
     }
-    public clusterExists(label: string) : boolean {
+    public clusterExists(label: string): boolean {
         return (this.getCluster(label, "label") != null);
     }
 
@@ -67,9 +67,9 @@ export class Menu implements IMenu{
         return this.folders;
     }
 
-  
+
     public static getInstance(): Menu {
-        if(this._instance === null || this._instance === undefined) {
+        if (this._instance === null || this._instance === undefined) {
             this._instance = new Menu();
         }
         return this._instance;
@@ -77,24 +77,24 @@ export class Menu implements IMenu{
 
 
 
-    public getCluster(label: string, type: string){
-        for(let folder of this.folders){
-            for(let cluster of folder.clusters){
-                if(cluster.label === label && type === "label") {
+    public getCluster(label: string, type: string) {
+        for (let folder of this.folders) {
+            for (let cluster of folder.clusters) {
+                if (cluster.label === label && type === "label") {
                     return cluster;
                 }
-                if(cluster.url === label && type === "endpoint") {
+                if (cluster.url === label && type === "endpoint") {
                     return cluster;
                 }
             }
         }
-        
+
         return null;
     }
 
-    public getFolder(label: string){
-        for(let folder of this.folders){
-            if(folder.label === label){
+    public getFolder(label: string) {
+        for (let folder of this.folders) {
+            if (folder.label === label) {
                 console.log("Found Folder");
                 return folder;
             }
@@ -125,8 +125,8 @@ class Cluster {
     label: string;
     url: string;
     folder: string = null;
-   
-    constructor(label: string, url: string, folder:string) {
+
+    constructor(label: string, url: string, folder: string) {
         this.label = label;
         this.url = url;
         this.folder = folder;
