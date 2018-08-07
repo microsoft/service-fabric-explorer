@@ -18,30 +18,119 @@
         <p>Click Stop Chaos to immediately end your Chaos experiment.</p>
     </div>
     <div class="dashboard-container-small">
-        <div class="checkbox-container-default">
-            <label><input type="radio" aria-label="seconds" name="runscale" value="s" />Seconds</label>
-            <label><input type="radio" aria-label="minutes" name="runscale" value="m" />Minutes</label> 
-            <label><input type="radio" aria-label="hours" name="runscale" value="h" />Hours</label>
+        <div class="config-container">
+            <div class="time-config-container">
+                <div class="config-title">
+                    <h4>Time Settings:</h4>
+                </div>
+
+                <div class="time-to-run-span">
+                    <div class="days-textbox">Time to run:
+                        <input class="input-flat" id="time-run-d" type="number" value="0" min="0" max="100"> d</div>
+                    <div class="hours-textbox">
+                        <input class="input-flat" id="time-run-h" type="number" value="0" min="0" max="24"> h</div>
+                    <div class="minutes-textbox">
+                        <input class="input-flat" id="time-run-m" type="number" value="1" min="0" max="60"> m</div>
+                </div>
+
+                <div class="max-stabilization-timeout-span">
+                    <div class="hours-textbox">Max stabilization timeout:
+                        <input class="input-flat" id="max-stabilization-h" type="number" value="0" min="0" max="24"> h</div>
+                    <div class="minutes-textbox">
+                        <input class="input-flat" id="max-stabilization-m" type="number" value="1" min="0" max="60"> m</div>
+                </div>
+
+                <div class="time-btwn-iterations-span">
+                    <div class="hours-textbox">Time between iterations:
+                        <input class="input-flat" id="time-iterations-h" type="number" value="0" min="0" max="24"> h</div>
+                    <div class="minutes-textbox">
+                        <input class="input-flat" id="time-iterations-m" type="number" value="1" min="0" max="60"> m</div>
+                </div>
+
+
+                <!-- <div class="time-config-components-container">
+                        <div class="radio-container-default">
+                            <label><input class="radio-button" type="radio" aria-label="seconds" name="runscale" value="s" checked="checked"/><span class="radio-button-text">Seconds</span></label>
+                            <label><input class="radio-button" type="radio" aria-label="minutes" name="runscale" value="m" /><span class="radio-button-text">Minutes</span></label> 
+                            <label><input class="radio-button" type="radio" aria-label="hours" name="runscale" value="h" /><span class="radio-button-text">Hours</span></label>
+                        </div>
+                                    
+                        Added adriana
+                        <div class="time-options-container">
+                            <div class="time-to-run-form">
+                                <div class="input-title">Time to Run: <input class="input-style" id="time" type="number" aria-label="Time to run" value="0"/></div>
+                                <div class="input-title">Max Stabilization Timeout: <input class="input-style" id="stabilization-timeout" type="number" aria-label="Max cluster stabilization timeout" value="60"/></div>
+                                <div class="input-title">Time between Iterations: <input class="input-style" id="time-btwn-iterations" type="number" aria-label="Wait time between iterations" value="30"/></div>
+                            </div>
+                                    <!--<div class="slider-control" ng-controller="RefreshSliderController as refreshCtrl">
+                                        <span class="slider-title" id="refresh-rate-title">Time to Run</span>
+                                        <span class="slider-label" id="refresh-rate-label" ng-if="refreshCtrl.refreshRate > 0">{{refreshCtrl.refreshRate}}s</span>
+                                        <a href="" class="slider-label" id="slider-min-label" role="button" aria-label="Turn off refresh">0</a>
+                                        <sfx-slider min-label-id="slider-min-label" max-label-id="slider-max-label" class="slider" title="Change the amount of time Chaos runs by clicking or using arrow keys"
+                                                 aria-label="Change how often content is updated" role="slider" min="5" max="300" id="run-for"></sfx-slider>
+                                        <a href="" class="slider-label" id="slider-max-label" role="button" aria-label="Set the refresh rate to the fastest">300</a>
+                                        <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-navigate-refresh" ng-class="{'disabled rotate': navbarCtrl.isRefreshing}"
+                                                ng-click="navbarCtrl.refreshAll()" role="button" aria-label="refresh"></a>
+                        </div>
+                </div> -->
+            </div>
+
+            <div class="fault-config-container">
+                <div class="config-title">
+                    <h4>Fault Settings:</h4>
+                </div>
+
+                <div class="fault-config-components-container">
+                    <div class="fault-options-container">
+                        <div class="concurrent-faults-form">
+                            <div class="input-title">Max Concurrent Faults:
+                                <input class="input-flat" id="concurrent-faults" type="number" aria-label="Max concurrent faults"
+                                    value="1" min="0" max="1000" />
+                            </div>
+                        </div>
+
+                        <div class="target-filter">
+                            <div>Target Filter:
+                                <i>Select Node Types to enable node specific faults</i>.</div>
+
+                            <div uib-dropdown dropdown-append-to-body>
+                                <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select Node Types to include">
+                                    Node Types
+                                    <span class="caret"></span>
+                                </button>
+                                <ul id="dropdown-menu" role="menu" class="dropdown-menu-container" uib-dropdown-menu>
+                                    <li class="option">
+                                        <span>
+                                            <input type="checkbox" value="NodeType1" id="cbNodeType1" />
+                                            <label for="cbNodeType1" style="font-weight: normal;"> NodeType1</label>
+                                        </span>
+                                    </li>
+                                    <!-- <li>
+                                        <span>
+                                            <input type="checkbox" value="NodeType2" id="cbNodeType2" />
+                                            <label class="checkbox-text" for="cbNodeType2" id=""> NodeType2</label>
+                                        </span>
+                                    </li>
+                                    <li>
+                                        <span>
+                                            <input type="checkbox" value="NodeType3" id="cbNodeType3" />
+                                            <label class="checkbox-text" for="cbNodeType3" id=""> NodeType3</label>
+                                        </span>
+                                    </li> -->
+                                </ul>
+                            </div>
+
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!--Added adriana -->
-        <div class="input-box">
-            <!--<form action="/chaos-view.html">Time to Run <input type="number" name="timeInput" value=""><br>-->
-            <div class="time-to-run-form">
-                <label>Time to Run: <input class="input-style" ng-model="time" id="run-for" type="number" aria-label="Input time to run" placeholder="0"/></label>
-             </div>
-        <!--<div class="slider-control" ng-controller="RefreshSliderController as refreshCtrl">
-            <span class="slider-title" id="refresh-rate-title">Time to Run</span>
-            <span class="slider-label" id="refresh-rate-label" ng-if="refreshCtrl.refreshRate > 0">{{refreshCtrl.refreshRate}}s</span>
-            <a href="" class="slider-label" id="slider-min-label" role="button" aria-label="Turn off refresh">0</a>
-            <sfx-slider min-label-id="slider-min-label" max-label-id="slider-max-label" class="slider" title="Change the amount of time Chaos runs by clicking or using arrow keys"
-                  aria-label="Change how often content is updated" role="slider" min="5" max="300" id="run-for"></sfx-slider>
-            <a href="" class="slider-label" id="slider-max-label" role="button" aria-label="Set the refresh rate to the fastest">300</a>
-            <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-navigate-refresh" ng-class="{'disabled rotate': navbarCtrl.isRefreshing}"
-                   ng-click="navbarCtrl.refreshAll()" role="button" aria-label="refresh"></a>-->
-        </div>
 
-        <button ng-click="ctrl.handleClick($event)" class="chaos-btn start-chaos-btn">START CHAOS</button>
+
+        <div class="button-container">
+            <button ng-click="ctrl.handleClick($event)" class="chaos-btn start-chaos-btn">START CHAOS</button>
+        </div>
     </div>
     <div>
         <p>
@@ -51,4 +140,3 @@
         </p>
     </div>
 </div>
-

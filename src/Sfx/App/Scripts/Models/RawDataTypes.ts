@@ -659,8 +659,8 @@ module Sfx {
     }
 
     export interface IRawChaosParameters {
-        MaxConcurrentFaults: number;
-        EnableMoveReplicaFaults: boolean;
+        TimeToRunInSeconds: number;
+        WaitTimeBetweenIterationsInSeconds: number;
         MaxClusterStabilizationTimeoutInSeconds: number;
         // Add more properties as needed
     }

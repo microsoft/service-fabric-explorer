@@ -1,6 +1,7 @@
 ﻿@import "../Base/_config.scss";
 
 $chaos-view-expander-hover-color: lighten($essen-pane-background-color, 10%);
+$input-box-font-color: black;
 
 .chaos-view {    
 
@@ -8,41 +9,142 @@ $chaos-view-expander-hover-color: lighten($essen-pane-background-color, 10%);
         margin-top: 12px;
         margin-bottom: 12px;
     }
-    .input-box {
-        display: inline-flex;
-        padding-left: 10px;
-        padding-right: 10px;
-        color: $font-color;
-        font-size: 10pt;
-
-        .time-to-run-form {
-            margin-top: auto;
-            margin-bottom: auto;
-            padding-left: 5px;
-            font-size: $font-size-small;
-            background-color: transparent;
-            width: 100%;
-            
-            .input-style {
-                color: $font-color-invert;
-            }
-        }
-    }
     
-
     //for the radio buttons (sec, mins, hours)
     .dashboard-container-small {
-        //display: inline;
-        display: inline-flex; //adriana changed
+        font-size: 10pt;
+        display: block;
+        
+        // input {
+        //     color: $input-box-font-color;
+        // }
 
-            .checkbox-container-default { //added
-                display: inline-block;
-                margin-bottom: $metric-container-margin;
+        .config-container {
+            display: inline-flex;
+
+            .time-config-container {
+                display: inline-grid;
+                //display: block;
+
+
+                .time-to-run-span, .max-stabilization-timeout-span, .time-btwn-iterations-span {
+                    display: inline-flex;
+                    
+                    .days-checkbox {
+                        padding-right: 10px;
+                        padding-left: 10px;
+        
+                        .time-checkbox {
+                            height: 30px;
+                            width: 30px;
+                            padding-left: 100px;
+                        }
+                        
+                    }
+
+                    .hours-textbox {
+                        padding-left: 10px;
+                    }
+
+                    .minutes-textbox {
+                        padding-left: 10px;
+                    }
+            
+                    input[type="number"]{
+                        height: 30px;
+                        width: 30px;
+                        
+                    }
+                }
+
+                // .time-config-components-container {
+                //     display: inline-flex;
+
+                //     .radio-container-default {
+                //         align-items: center;
+            
+                //         input[type="radio"] {    
+                //             float: left;
+                //         }
+            
+                //         label {
+                //             display: block;
+                //             align-items: center;
+                //         }
+            
+                //         .radio-button-text {
+                //             padding-left: 5px;
+                //             font-size: 10pt;
+                //             font-weight: $font-weight-normal;
+                //         }
+                //     }
+            
+                //     .time-options-container {
+                //         display: block;
+                //         padding-left: 10px;
+                //         padding-right: 10px;
+                //         color: $font-color;
+                //         margin-top: auto;
+                    
+                //         .time-to-run-form {
+                //             margin-top: auto;
+                //             margin-bottom: auto;
+                //             padding-left: 5px;
+                //             font-size: 10pt;
+                //             background-color: transparent;
+                //             width: 100%;
+                    
+                //             .input-title {
+                //                 font-weight: $font-weight-normal;
+                //             }
+                //         }
+                //     }
     
-                label { //added
+                // }
+            }
+
+            .fault-config-container {
+                float: right;
+                display: block;
+                padding-left: 50px;
+
+                .fault-config-components-container {
                     display: block;
+                    margin-top: 35px;
+
+                    .fault-options-container {
+                        display: block;
+                        padding-right: 10px;
+                        color: $font-color;
+                        margin-top: auto;
+
+                        .concurrent-faults-form {
+                            margin-top: auto;
+                            margin-bottom: auto;
+                            font-size: 10pt;
+                            background-color: transparent;
+                            width: 100%;
+
+                            // .input-title {
+                            //     font-weight: $font-weight-normal;
+                            // }
+
+                            input[type="number"]{
+                                height: 30px;
+                                width: 100px;
+                                
+                            }
+                        }
+                        .target-filter {
+                            padding-top: 5px;
+                            
+                        }
+                    }
                 }
             }
+            
+        }
+
     }
 
     .chaos-btn {
@@ -50,9 +152,7 @@ $chaos-view-expander-hover-color: lighten($essen-pane-background-color, 10%);
         height: 64px;  
         border: none;
         font-size: 30px;
-        margin-top: 12px; 
-        margin-bottom: 12px;
-        margin-left: 12px; //adriana added
+        margin-left: 250px;
     }
 
     .start-chaos-btn {

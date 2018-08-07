@@ -37,30 +37,65 @@ module Sfx {
                 this.measurement = $(e.target).val();
                 //console.log(this.measurement);
             });
+
+            // test the clicking of the dropdown to not remove whole dropdown
+            $(".dropdown-menu-container span").click(function (e) {
+                console.log("Clicked on dropdown menu");
+                e.stopPropagation();
+            });
         }
     }
 
     export class ChaosViewController {
         public static $inject = ["$scope", "$timeout"];
-        
-        //public timeMeasurement = "s"; //added adriana
 
         public constructor(private $scope: any, private $timeout: any) {
         }
 
+
         public handleClick(event: any): void {
             let $button = $(event.target);
+
+            // window.onclick = function(event) {
+            //     if (!event.target.matches('.dropbtn')) {
+
+            //       var dropdowns = document.getElementsByClassName("dropdown-content");
+            //       var i;
+            //       for (i = 0; i < dropdowns.length; i++) {
+            //         var openDropdown = dropdowns[i];
+            //         if (openDropdown.classList.contains('show')) {
+            //           openDropdown.classList.remove('show');
+            //         }
+            //       }
+            //     }
+            //   }
+
 
             $button.prop("disabled", true);
             if (this.$scope.chaos.status === "Stopped") {
 
                 //start chaos with parameters
                 //let timeToRun = $("run-for").val();
-                let timeToRun = $("input:number"); //get the time from the form input
 
-                //do conversions
-                //console.log(timeToRun);
-                this.$scope.chaos.start(timeToRun);
+                //get values from html
+                // let measurementVal = $("input[name='runscale']:checked").val();
+                // let timeToRun = $("#time").val(); //get the time from the form input
+                // let stabilTimeout = $("#stabilization-timeout").val();
+                // let waitIter = $("#time-btwn-iterations").val();
+                console.log("starting");
+                let timeToRun = this.getTimeTotal($("#time-run-d").val(), $("#time-run-h").val(), $("#time-run-m").val());
+                let stabilTimeout = this.getTimeTotal($("#max-stabilization-d").val(), $("#max-stabilization-h").val(), $("#max-stabilization-m").val());
+                let waitIter = this.getTimeTotal($("#time-iterations-d").val(), $("#time-iterations-h").val(), $("#time-iterations-m").val());
+                let maxConFaults = $("#concurrent-faults").val();
+
+
+                console.log("time to run: " + timeToRun);
+                console.log("stabilization timeout: " + stabilTimeout);
+                console.log("time btwn iterations: " + waitIter);
+                console.log("max concurrent faults: " + maxConFaults);
+
+                this.$scope.chaos.start(timeToRun, waitIter, stabilTimeout, maxConFaults);
+
                 $button.text("Starting chaos...");
             }
 
@@ -79,6 +114,23 @@ module Sfx {
             } else if (chaos.status === "Running") {
                 button.text("Stop chaos").removeClass("start-chaos-btn").addClass("stop-chaos-btn");
             }
+        }
+
+        // Finds the sum in seconds from the selected days, hours, and minutes
+        public getTimeTotal(days: number, hours: number, minutes: number) {
+            return (this.convertTime(days, "d") + this.convertTime(hours, "h") + this.convertTime(minutes, "m")).toString();
+        }
+
+        // Converts days, hours, or minutes to seconds
+        public convertTime(time: number, measurement: string): number {
+            if (measurement === "d") {
+                time = time * 24 * 3600;
+            } else if (measurement === "h") {
+                time = time * 3600;
+            } else if (measurement === "m") { //conversion for min
+                time = time * 60;
+            }
+            return time;
         }
     }
 }
