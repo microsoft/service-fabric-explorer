@@ -98,11 +98,11 @@
                                     Node Types
                                     <span class="caret"></span>
                                 </button>
-                                <ul id="dropdown-menu" role="menu" class="dropdown-menu-container" uib-dropdown-menu>
+                                <ul ng-repeat="nodeType in clusterManifest.nodeTypes" id="dropdown-menu" role="menu" class="dropdown-menu-container" uib-dropdown-menu>
                                     <li class="option">
                                         <span>
-                                            <input type="checkbox" value="NodeType1" id="cbNodeType1" />
-                                            <label for="cbNodeType1" style="font-weight: normal;"> NodeType1</label>
+                                            <input type="checkbox" value="{{nodeType}}" id="{{nodeType}}" />
+                                            <label for="{{nodeType}}" style="font-weight: normal;">{{nodeType}}</label>
                                         </span>
                                     </li>
                                     <!-- <li>
