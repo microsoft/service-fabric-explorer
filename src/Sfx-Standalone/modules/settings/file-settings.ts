@@ -53,7 +53,8 @@ export default class FileSettings extends Settings {
         return super.getAsync<T>(settingPath);
     }
 
-    public async set<T>(settingPath: string, value: T): Promise<void> {
+    public async setAsync<T>(settingPath: string, value: T): Promise<void> {
+    
         await super.setAsync<T>(settingPath, value);
 
         fs.writeFileSync(this.settingsPath, JSON.stringify(this.settings, null, 4), { encoding: "utf8" });
