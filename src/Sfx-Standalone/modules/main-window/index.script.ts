@@ -3,7 +3,7 @@ import { WebviewTag } from "electron";
 import { IComponentConfiguration } from "sfx.common";
 import { SfxContainer } from "./sfx-container/sfx-container";
 import { DialogService } from "./dialog-service";
-import { ClusterManagerComponentConfig, SettingsComponentConfig } from "./main-window";
+import { ClusterManagerComponentConfig } from "./main-window";
 
 
 (async () => {
@@ -14,7 +14,7 @@ import { ClusterManagerComponentConfig, SettingsComponentConfig } from "./main-w
     const leftpanel = $("div#left-panel");
 
     // TODO: load component list from setting service
-    const components: IComponentConfiguration[] = [new ClusterManagerComponentConfig(), new SettingsComponentConfig()];
+    const components: IComponentConfiguration[] = [new ClusterManagerComponentConfig()];
 
     try {
         await Promise.all(components.map(async component => {
@@ -37,11 +37,15 @@ import { ClusterManagerComponentConfig, SettingsComponentConfig } from "./main-w
         $("div.sub-panel:first").show();
 
         $(".btn-component-head").click((e) => {
+            
             const $button = $(e.target);
             const $subPanel = $(`#sub-${$button.data("component")}`);
+            if($subPanel.css("display") !== "none") {
+                return;
+            }
 
-            $("div.sub-panel").hide();
-            $subPanel.show();
+            $("div.sub-panel").hide("slow");
+            $subPanel.show("slow")
         });
         
 

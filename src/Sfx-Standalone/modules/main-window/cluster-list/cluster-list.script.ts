@@ -28,29 +28,38 @@ export class ClusterList implements IClusterList {
             deps: ["settings"]
         };
     }
+    
 
     constructor(settings: ISettings) {
         this.settings = settings;
-
-        if(this.settings.getAsync<Menu>("cluster-list-folders")) {
-           this.settings.getAsync<Menu>("cluster-list-folders").then( res => {
-                this.menu = res;
-            });
-        } else {
-            this.menu = new Menu(); 
-        }
-        console.log(this.menu);
+        this.parseSettings();
        
+    }
+
+    async parseSettings() {
+        await this.settings.getAsync<Menu>("cluster-list-folders").then(async res => {
+            if(res === undefined || res === null) {
+                this.menu = new Menu();
+                await this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
+               
+            } else {
+              
+                this.menu = res;
+            } 
+        });
+    
+      
     }
    
 
     async newFolderItemAsync(label: string): Promise<void> {
+       
         if (this.menu.getFolder(label)) {
             throw new Error("This folder already exists!");
         } else if (!label) {
             throw new Error("Please enter a folder name!");
         }
-        const $item = $(`<li role="folder-${label}"><span>${label}</span></li>`);
+        const $item = $(`<li role="folder-${label}"><img src="../../../icons/Closedfolder.svg" style="width: 16px; height: 16px;"><span>${label}</span></li>`);
         $item.append(`<a role="button" class="bowtie-icon bowtie-ellipsis"></a>`);
         $item.append(`<ul role="menu" class="dropdown-menu" uib-dropdown-menu style="list-style: none">
             <li role="menuitem">
@@ -58,22 +67,17 @@ export class ClusterList implements IClusterList {
                     Remove Folder
                 </a>
             </li>
-            <li role="menuitem">
-                <a role="menuitem" tabindex="-1" href="#">
-                    Remove Folder
-                </a>
-            </li>
         </ul>`);
-        $item.append(`<ul id="folder-${label}""></ul>`);
+        $item.append(`<ul id="folder-${label.replace(/\s+/, "")}""></ul>`);
         $("#cluster-list-organized").append($item);
         this.menu.addFolder(label);
-        this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
+        await this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
 
         $($item).click(async (e) => {
             let $button = $(e.target);
             if ($button.parent().parent().attr("id") === "cluster-list-organized") {
                 if ($button.attr("class") === "bowtie-icon bowtie-ellipsis") {
-                    console.log("clicked");
+                   
                     if ($(e.target).next().hasClass("dropdown-menu-show")) {
                         $(e.target).next().removeClass("dropdown-menu-show");
                     } else {
@@ -94,7 +98,7 @@ export class ClusterList implements IClusterList {
                 if ($button.attr("role") === "menuitem") {
                     if ($button.html().toString().trim() === "Remove Folder") {
                         (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/folder-functionalities/delete-folder.html");
-                        console.log("Remove Cluster clicked");
+                        
                     }
 
                 }
@@ -139,7 +143,7 @@ export class ClusterList implements IClusterList {
                 }
             }
             $(`#cluster-list li[data-endpoint='${endpoint}']`).addClass("btn-success");
-            this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
+            await this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
         }
        
         if (!this.endpoints.find(e => e === endpoint)) {
@@ -149,11 +153,11 @@ export class ClusterList implements IClusterList {
             if(!this.menu.getFolder(folder)) {
                 this.newFolderItemAsync(folder);
             }
-            let folder_label: string = "#folder-" + folder;
+            let folder_label: string = "#folder-" + folder.replace(/\s+/, "");
             if (folder === "----No Folder----") {
                 folder_label = "#cluster-list";
             }
-            const $item = $(`<li class="btn-success" data-endpoint="${endpoint}"><span>${name}</span></li>`);
+            const $item = $(`<li class="btn-success" data-endpoint="${endpoint}"><img src="../../../icons/icon16x16.png"><span>${name}</span></li>`);
             $(folder_label).append($item);
 
             $(`#cluster-list li[data-endpoint='${endpoint}']`).append(`<a role="button" class="bowtie-icon bowtie-ellipsis"></a>`);
@@ -176,12 +180,13 @@ export class ClusterList implements IClusterList {
             </ul>`);
 
             this.menu.addCluster(name, endpoint, folder);
-            this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
+            await this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
 
+            // $($item).hover(async )
             $($item).click(async (e) => {
                 const $button = $(e.target);
                 if ($button.attr("class") === "bowtie-icon bowtie-ellipsis") {
-                    console.log("clicked");
+                    
                     if ($(e.target).next().hasClass("dropdown-menu-show")) {
                         $(e.target).next().removeClass("dropdown-menu-show");
                     } else {
@@ -253,16 +258,21 @@ export class ClusterList implements IClusterList {
         $button.remove();
         this.endpoints.splice(this.endpoints.indexOf(endpoint.url), 1);
         this.menu.removeCluster(cluster_label, endpoint.folder);
-        this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
+        await this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
 
     }
 
     async renameCluster(cluster_label: string, new_cluster: string): Promise<any> {
+        if(cluster_label === new_cluster) {
+            return;
+        } else if (this.menu.getCluster(new_cluster, "label")) {
+            throw new Error("Clusters must have uni")
+        }
         let endpoint = this.menu.getCluster(cluster_label, "label");
         let $button = $('#cluster-list li[data-endpoint="' + endpoint.url + '"]');
         $button.find("span")[0].innerHTML = new_cluster;
         this.menu.renameCluster(cluster_label, new_cluster);
-        this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
+        await this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
         return new_cluster;
     }
 
@@ -270,7 +280,7 @@ export class ClusterList implements IClusterList {
         let endpoint = this.menu.getCluster(cluster_label, "label");
         let $button = $('#cluster-list li[data-endpoint="' + endpoint.url + '"]');
 
-        let folder_label: string = "#folder-" + new_folder_label;
+        let folder_label: string = "#folder-" + new_folder_label.replace(/\s+/, "");
         if (new_folder_label === "----No Folder----") {
             folder_label = "#cluster-list";
         }
@@ -278,7 +288,7 @@ export class ClusterList implements IClusterList {
         $(folder_label).append($button.clone(true, true));
         $button.remove();
         this.menu.moveCluster(cluster_label, new_folder_label);
-        this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
+        await this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
     }
 
     async removeFolder(label: string): Promise<void> {
@@ -293,8 +303,7 @@ export class ClusterList implements IClusterList {
             this.endpoints.splice(this.endpoints.indexOf(cluster.url), 1);
         }
         this.menu.removeFolder(label);
-        this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
-
+        await this.settings.setAsync<Menu>("cluster-list-folders", this.menu);
     }
 
 
@@ -304,12 +313,8 @@ export class ClusterList implements IClusterList {
             (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/cluster-functionalities/connect-cluster.html");
         });
         $("#cluster-list-folder").click(async () => {
-
             (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/folder-functionalities/folder.html");
-
         });
-
-       
 
         return Promise.resolve();
     }

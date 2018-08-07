@@ -3,9 +3,13 @@ import * as $ from "jquery";
 import { IClusterList } from "sfx.cluster-list";
 
 (async() => {
+    let folder = localStorage.getItem("folder");
+    localStorage.removeItem("folder");
+    $(document).ready(() => {
+        $("modal-title").html("Remove Folder " + folder);
+    });
     $("#btn-delete-folder").click(async () => {
-        let folder = localStorage.getItem("folder");
-        localStorage.removeItem("folder");
+        
         try{
             console.log("deleting " + folder);
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");

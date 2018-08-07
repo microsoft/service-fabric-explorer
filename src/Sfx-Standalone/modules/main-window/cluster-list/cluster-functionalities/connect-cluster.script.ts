@@ -55,9 +55,7 @@ $(document).ready(() => {
             if(!name) {
                 name = url.host;
             }
-            console.log(endpoint + " " + name);
-            const sfx = await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container");
-            await sfx.LoadSfxAsync(endpoint);
+            
 
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
             console.log(endpoint + " " + name);
@@ -76,9 +74,15 @@ $(document).ready(() => {
             else{
                 await list.newListItemAsync(endpoint, name, folder);
             }
+
+            console.log(endpoint + " " + name);
+            const sfx = await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container");
+            await sfx.LoadSfxAsync(endpoint).then(() => {
+                window.close();
+            });
             
             
-            window.close();
+           
 
         } catch (error) {
             alert((<Error>error).message);

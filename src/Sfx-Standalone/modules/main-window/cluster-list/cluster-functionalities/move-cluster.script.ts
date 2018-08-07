@@ -3,21 +3,25 @@ import * as $ from "jquery";
 import { IClusterList } from "sfx.cluster-list";
 
 
-$(document).ready(() => {
-    let folders = JSON.parse(localStorage.getItem("folders"));
-    localStorage.removeItem("folders");
-    console.log(folders);
-    let select = $("#input-select-folder");
-    for(let folder of folders){
-        let $item = $(`<option value="${folder.label}">${folder.label}</option>`);
-        select.append($item);
-    }
-    let $item = $(`<option value="new_folder">Create New Folder</option>`);
-    select.append($item);
-});
+
 
 
 (async() => {
+    let cluster = localStorage.getItem("cluster");
+    localStorage.removeItem("cluster");
+
+    $(document).ready(() => {
+        $(".modal-title").html("Move Cluster " + cluster);
+        let folders = JSON.parse(localStorage.getItem("folders"));
+        localStorage.removeItem("folders");
+        let select = $("#input-select-folder");
+        for(let folder of folders){
+            let $item = $(`<option value="${folder.label}">${folder.label}</option>`);
+            select.append($item);
+        }
+        let $item = $(`<option value="new_folder">Create New Folder</option>`);
+        select.append($item);
+    });
 
     $("#input-select-folder").change(async () => {
         let folder: string = $("#input-select-folder").val().toString();
@@ -32,10 +36,8 @@ $(document).ready(() => {
     $("#btn-move-cluster").click(async () => {
         
         try{
-            let cluster = localStorage.getItem("cluster");
-            //let url = localStorage.getItem("url");
-            localStorage.removeItem("cluster");
-            //localStorage.removeItem("url");
+            
+            
             let folder: string = $("#input-select-folder").val().toString();
             let new_folder:string = $("#new-folder-label").val().toString();
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");

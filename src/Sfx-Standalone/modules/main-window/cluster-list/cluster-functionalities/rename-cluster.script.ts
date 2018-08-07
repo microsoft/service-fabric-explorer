@@ -4,10 +4,15 @@ import { IClusterList } from "sfx.cluster-list";
 
 
 (async() => {
+    let old_cluster = localStorage.getItem("cluster");
+    localStorage.removeItem("cluster");
+
+    $(document).ready(() => {
+        $(".modal-title").html("Rename Cluster " + old_cluster);
+    });
     $("#btn-new-label").click(async () => {
         try{
-            let old_cluster = localStorage.getItem("cluster");
-            localStorage.removeItem("cluster");
+            
             let label: string = $("#input-cluster-label").val().toString();
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
             await list.renameCluster(old_cluster, label);
