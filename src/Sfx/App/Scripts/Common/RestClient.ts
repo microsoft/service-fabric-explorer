@@ -314,16 +314,11 @@ module Sfx {
                     RestClient.apiVersion62), "Get chaos events");
         }
 
-        public startChaos(timeToRunInSeconds: number, WaitTimeBetweenIterationsInSeconds: number, MaxClusterStabilizationTimeoutInSeconds: number, MaxConcurrentFaults: number, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+        public startChaos(parameter: IRawChaosParameters, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Tools/Chaos/$/Start";
             return this.post(this.getApiUrl(url, RestClient.apiVersion60),
                 "Start chaos",
-                {
-                    "TimeToRunInSeconds": timeToRunInSeconds,
-                    "MaxConcurrentFaults": MaxConcurrentFaults,
-                    "WaitTimeBetweenIterationsInSeconds": WaitTimeBetweenIterationsInSeconds,
-                    "MaxClusterStabilizationTimeoutInSeconds": MaxClusterStabilizationTimeoutInSeconds
-                },
+                parameter,
                 messageHandler);
         }
 
