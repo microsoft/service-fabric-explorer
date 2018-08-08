@@ -129,8 +129,7 @@ module Sfx {
             nodeName: string, applicationId: string,
             eventsHealthStateFilter: number = HealthStateFilterFlags.Default,
             deployedServicePackagesHealthStateFilter: number = HealthStateFilterFlags.Default,
-            messageHandler?: IResponseMessageHandler
-        ): angular.IHttpPromise<IRawApplicationHealth> {
+            messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawApplicationHealth> {
 
             let url = `Nodes/${encodeURIComponent(nodeName)}/$/GetApplications/${encodeURIComponent(applicationId)}/$/GetHealth`
                 + `?EventsHealthStateFilter=${eventsHealthStateFilter}&DeployedServicePackagesHealthStateFilter=${deployedServicePackagesHealthStateFilter}`;
@@ -254,7 +253,7 @@ module Sfx {
         }
 
         // PartitionID along with the other params us enough to identify the Replica. Replica/InstanceId is Not unique nor an identifier.
-        // TODO: Potential refactor: have this return the singular [by transforming the data we get back] as we expact only a single item in the returned array.
+        // TODO: Potential refactor: have this return the singular [by transforming the data we get back] as we expect only a single item in the returned array.
         public getDeployedReplica(nodeName: string, applicationId: string, servicePackageName: string, partitionId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawDeployedReplica[]> {
             let url = "Nodes/" + encodeURIComponent(nodeName)
                 + "/$/GetApplications/" + encodeURIComponent(applicationId)
@@ -510,7 +509,7 @@ module Sfx {
         }
 
         /**
-         * Appends apiVersion and a random token to aid in working with the brower's cache.
+         * Appends apiVersion and a random token to aid in working with the browser's cache.
          * @param path The Input URI path.
          * @param apiVersion An optional parameter to specify the API Version.  If no API Version specified, defaults to "1.0"  This is due to the platform having independent versions for each type of call.
          */
@@ -532,7 +531,7 @@ module Sfx {
         }
 
         private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
-            let result = this.wrapInCallbacks(() => this.$http.get<any>(url));
+            let result = this.wrapInCallbacks<T>(() => this.$http.get<T>(url));
             if (!messageHandler) {
                 messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
             }
@@ -543,7 +542,7 @@ module Sfx {
         }
 
         private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
-            let result = this.wrapInCallbacks(() => this.$http.post(url, data));
+            let result = this.wrapInCallbacks<T>(() => this.$http.post(url, data));
             if (!messageHandler) {
                 messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
             }
@@ -554,7 +553,7 @@ module Sfx {
         }
 
         private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
-            let result = this.wrapInCallbacks(() => this.$http.put(url, data));
+            let result = this.wrapInCallbacks<T>(() => this.$http.put(url, data));
             if (!messageHandler) {
                 messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
             }
@@ -578,7 +577,7 @@ module Sfx {
             });
         }
 
-        private wrapInCallbacks(operation: () => angular.IHttpPromise<{}>): angular.IHttpPromise<{}> {
+        private wrapInCallbacks<T>(operation: () => angular.IHttpPromise<T>): angular.IHttpPromise<T> {
             this.requestCount++;
             $.each(this.requestStarted, (_, cb) => cb(this.requestCount));
 

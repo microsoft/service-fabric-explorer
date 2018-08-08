@@ -42,7 +42,7 @@ module Sfx {
                     offset = -50;
                 }
 
-                if (e.keyCode === 39) { // ArrorRight
+                if (e.keyCode === 39) { // ArrowRight
                     offset = 50;
                 }
 

@@ -31,11 +31,11 @@ module Sfx {
 
                 authBootstrap.constant("authenticationData", new AadMetadata(data));
 
-                // Provide the config for the Authenticaiton Bootstrap moduled, to ensure initialization of the $httpProvider.
+                // Provide the config for the Authentication Bootstrap module, to ensure initialization of the $httpProvider.
                 authBootstrap.config(["$httpProvider", "adalAuthenticationServiceProvider", "authenticationData",
                     function ($httpProvider: ng.IHttpProvider, adalAuthenticationServiceProvider: any, authenticationData: AadMetadata) {
 
-                        // We check for the empty string upon tenant here due to a potential bug in the cluster.  We expect that an empty object is returned if there is no authenticaiton, but that is not currently the case.
+                        // We check for the empty string upon tenant here due to a potential bug in the cluster.  We expect that an empty object is returned if there is no authentication, but that is not currently the case.
                         if (authenticationData.metadata && authenticationData.isAadAuthType && authenticationData.metadata.tenant !== "") {
                             let adalData = authenticationData.metadata;
 

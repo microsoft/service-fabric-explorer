@@ -56,7 +56,7 @@ module Sfx {
             return !!this.refreshingPromise;
         }
 
-        protected get indexPropery(): string {
+        protected get indexProperty(): string {
             // index the collection by "uniqueId" by default
             return "uniqueId";
         }
@@ -82,7 +82,7 @@ module Sfx {
         protected update(collection: T[]): angular.IPromise<any> {
             this.isInitialized = true;
             CollectionUtils.updateDataModelCollection(this.collection, collection);
-            this.hash = _.keyBy(this.collection, this.indexPropery);
+            this.hash = _.keyBy(this.collection, this.indexProperty);
             return this.data.$q.when(this.updateInternal());
         }
 
@@ -118,7 +118,7 @@ module Sfx {
             healthChunkList: IHealthStateChunkList<P>,
             newIdSelector: (item: P) => string): angular.IPromise<any> {
 
-            if (!CollectionUtils.compareCollectionsByKeys(this.collection, healthChunkList.Items, item => item[this.indexPropery], newIdSelector)) {
+            if (!CollectionUtils.compareCollectionsByKeys(this.collection, healthChunkList.Items, item => item[this.indexProperty], newIdSelector)) {
                 if (!this.isRefreshing) {
                     // If the health chunk data has different set of keys, refresh the entire collection
                     // to get full information of the new items.
@@ -133,7 +133,7 @@ module Sfx {
             CollectionUtils.updateCollection<T, P>(
                 this.collection,
                 healthChunkList.Items,
-                item => item[this.indexPropery],
+                item => item[this.indexProperty],
                 newIdSelector,
                 null, // no need to create object because a full refresh will be scheduled when new object is returned by health chunk API,
                       // which is needed because the information returned by the health chunk api is not enough for us to create a full data object.
@@ -165,7 +165,7 @@ module Sfx {
             });
         }
 
-        protected get indexPropery(): string {
+        protected get indexProperty(): string {
             // node should be indexed by name
             return "name";
         }

@@ -44,7 +44,7 @@ module Sfx {
                     this.appInsights.trackPageView(
                         null/* use page title as name */,
                         pageView.url,
-                        pageView.properites);
+                        pageView.properties);
                 }
             });
         }
@@ -156,20 +156,20 @@ module Sfx {
 
     export class PageViewRecord {
         public url: string;
-        public properites: PageViewProperties;
+        public properties: PageViewProperties;
 
         constructor(location: ng.ILocationService, currentRoute: any) {
             if (!currentRoute || !location) {
                 return;
             }
 
-            this.properites = new PageViewProperties();
+            this.properties = new PageViewProperties();
 
             this.url = currentRoute.loadedTemplateUrl;
-            this.properites.IsSecure = location.protocol() && location.protocol().toLowerCase() === "https";
-            this.properites.IsLocal = location.host() && location.host().toLowerCase() === "localhost";
+            this.properties.IsSecure = location.protocol() && location.protocol().toLowerCase() === "https";
+            this.properties.IsLocal = location.host() && location.host().toLowerCase() === "localhost";
             if (currentRoute.params && currentRoute.params.tabId) {
-                this.properites.TabName = currentRoute.params.tabId;
+                this.properties.TabName = currentRoute.params.tabId;
             }
         }
     }

@@ -658,4 +658,12 @@ module Sfx {
         ComposeFileContent: string;
         RepositoryCredential?: IRawRepositoryCredential;
     }
+
+    export class ChaosParameter {
+        public ChaosTargetFilter: ChaosTargetFilter;
+    }
+
+    export class ChaosTargetFilter {
+        public NodeTypeInclusionList: string[];
+    }
 }

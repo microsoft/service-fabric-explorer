@@ -150,6 +150,15 @@
                 </div>
             </div>
             <sfx-search-bar class="tree-search-bar" custom-class="dark-bg" placeholder="Search Cluster" model="treeCtrl.tree.searchTerm"></sfx-search-bar>
+            <div class="search-bar dark-bg">
+                <input type="search" class="input-flat"
+                       autocomplete="off"
+                       placeholder="Search Cluster"                       
+                       ng-model="treeCtrl.tree.searchTerm" />
+                <span class="bowtie-icon bowtie-search" ng-click="treeCtrl.search()"></span>
+                <span class="bowtie-icon bowtie-edit-delete" ng-click="model = ''"></span>
+                <a class="reset-link" ng-if="reset" href="" ng-click="treeCtrl.resetSearch()" role="button">Reset All</a>
+            </div>
         </div>
 
         <div class="tree-body">
@@ -158,6 +167,19 @@
 
             <div ng-show="!treeCtrl.tree.isLoading && treeCtrl.tree.isEmpty" class="informative content">
                 <p>Nothing to display</p>
+            </div>
+
+            <div ng-show="!treeCtrl.tree.isLoading && !treeCtrl.tree.isEmpty"
+                 ng-keydown="treeCtrl.tree.onKeyDown($event)" class="tree-view" tabindex="0">
+                <div sfx-tree-node node="treeCtrl.tree.childGroupViewModel"></div>
+            </div>
+        </div>
+        <div class="search-body">
+            <div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate" ng-show="treeCtrl.tree.isLoading">
+            </div>
+
+            <div ng-show="!treeCtrl.tree.isLoading && treeCtrl.tree.isEmpty" class="informative content">
+                <p>No results found</p>
             </div>
 
             <div ng-show="!treeCtrl.tree.isLoading && !treeCtrl.tree.isEmpty"

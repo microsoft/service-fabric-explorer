@@ -21,8 +21,7 @@ module Sfx {
 
     (function () {
 
-        let module = angular.module("themeController", ["themeService"]);
-        module.controller("ThemeController", ["$injector", "theme", ThemeController]);
+        angular.module("themeController", ["themeService"]).controller("ThemeController", ["$injector", "theme", ThemeController]);
 
     })();
 }
