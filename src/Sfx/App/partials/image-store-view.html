@@ -39,7 +39,7 @@
         <li ng-repeat="folder in imagestoreroot.root.childrenFolders" ng-include="'folderTemplate'" class="ulforimgstr">
         </li>
         <li ng-repeat="file in imagestoreroot.root.childrenFiles" class="child ulforimgstr">
-            <span class="indentation0 linkasbtn" padding-left="10px">
+            <span class="indentation linkasbtn" padding-left="10px">
                 <img src="../images/FileGray.svg" height="18px">{{file.name}}
             </span>
             <div class="columnItem">
@@ -62,7 +62,7 @@
 
     <ul class="completeList" ng-show="searchView">
         <li ng-repeat="folder in imagestoreroot.relevantFolders" class="child ulforimgstr">
-            <span class="indentation0 linkasbtn" padding-left="10px">
+            <span class="indentation linkasbtn" padding-left="10px">
                 <img src="../images/{{folder.folderImage}}" height="18px">{{folder.name}}
             </span>
             <div class="columnItem">
@@ -81,7 +81,7 @@
             </div>
         </li>
         <li ng-repeat="file in imagestoreroot.relevantFiles" class="child ulforimgstr">
-            <span class="indentation0 linkasbtn" padding-left="10px">
+            <span class="indentation linkasbtn" padding-left="10px">
                 <img src="../images/FileGray.svg" height="18px">{{file.name}}
             </span>
             <div class="columnItem">
@@ -131,8 +131,8 @@
 
     <script type="text/ng-template" id="folderTemplate">
         <div class="child">
-            <a href="" role="button" ng-click="ctrl.onFolderClick(folder.name, !folder.isExpanded)" data-open="" class="linkasbtn bowtie-icon "
-               ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded, 'indentation0': folder.indentationLevel === 0, 'indentation1': folder.indentationLevel === 1, 'indentation2': folder.indentationLevel === 2, 'indentation3': folder.indentationLevel === 3, 'indentation4': folder.indentationLevel === 4}">
+            <a href="" role="button" ng-click="ctrl.onFolderClick(folder.name, !folder.isExpanded)" data-open="" class="linkasbtn bowtie-icon indentation"
+               ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded }">
                 <img ng-src="../images/{{folder.folderImage}}" height="18px">
                 <span class="completeList">
                     {{folder.displayName}}
@@ -164,7 +164,7 @@
 
     <script type="text/ng-template" id="fileTemplate">
         <div class="child">
-            <span class="indentation1 linkasbtn" ng-class="{'indentation1': file.indentationLevel === 1, 'indentation2': file.indentationLevel === 2, 'indentation3': file.indentationLevel === 3, 'indentation4': file.indentationLevel === 4, 'indentation5': file.indentationLevel === 5, 'indentation6': file.indentationLevel === 6}"><img src="../images/FileGray.svg" height="18px" padding-left="5px">{{file.displayName}}</span>
+            <span class="indentation linkasbtn"><img src="../images/FileGray.svg" height="18px" padding-left="5px">{{file.displayName}}</span>
             <div class="columnItem">
                 {{file.version}}
             </div>

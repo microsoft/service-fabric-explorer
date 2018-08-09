@@ -12,7 +12,6 @@ module Sfx {
         public currentOpenFolders: string[] = [];
         public noOfApplications: number;
         public UIFolderDictionary: { [path: string]: ImageStoreFolder } = {};
-        public UIFileDictionary: { [path: string]: ImageStoreFile } = {};
 
         public DataFolderDictionary: { [path: string]: IRawImageStoreContent } = {};
 
@@ -80,20 +79,20 @@ module Sfx {
                 return;
             }
 
-            folder.isExpanded = true;
-            folder.folderImage = "OpenFolderGray.svg";
-            folder.Clicked = folder.Clicked + 1;
-            if (folder.childrenFiles) {
-                folder.childrenFiles.forEach(f => f.show = true);
-            }
+            this.copyFolderContentToUI(path).then(() => {
+                folder.isExpanded = true;
+                folder.folderImage = "OpenFolderGray.svg";
 
-            if (folder.childrenFolders) {
-                folder.childrenFolders.forEach(f => f.show = true);
-            }
+                if (folder.childrenFiles) {
+                    folder.childrenFiles.forEach(f => f.show = true);
+                }
 
-            this.currentOpenFolders.push(path);
+                if (folder.childrenFolders) {
+                    folder.childrenFolders.forEach(f => f.show = true);
+                }
 
-            this.copyFolderContentToUI(path);
+                this.currentOpenFolders.push(path);
+            });
         }
 
         protected closeFolder(path: string) {
@@ -104,7 +103,6 @@ module Sfx {
 
             folder.isExpanded = false;
             folder.folderImage = "ClosedFolder.svg";
-            folder.Clicked = folder.Clicked + 1;
             if (folder.childrenFiles) {
                 folder.childrenFiles.forEach(f => f.show = false);
             }
@@ -150,9 +148,9 @@ module Sfx {
             });
         }
 
-        private copyFolderContentToUI(path: string): void {
+        private copyFolderContentToUI(path: string): angular.IPromise<void> {
             const parent = this.UIFolderDictionary[path];
-            this.getFolderContentFromLocalDataSource(path).then(raw => {
+            return this.getFolderContentFromLocalDataSource(path).then(raw => {
                 parent.childrenFolders = _.map(raw.StoreFolders, f => {
                     let folder = new ImageStoreFolder();
                     folder.name = f.StoreRelativePath;
@@ -162,7 +160,6 @@ module Sfx {
                     folder.version = "-";
                     folder.modifiedDate = "-";
                     folder.fileSize = "-";
-                    folder.show = true;
 
                     this.UIFolderDictionary[folder.name] = folder;
 
@@ -174,13 +171,10 @@ module Sfx {
                     file.name = f.StoreRelativePath;
                     file.displayName = this.getDisplayName(f.StoreRelativePath);
                     file.fileCount = "-";
-                    file.show = true;
                     file.modifiedDate = f.ModifiedDate;
                     file.version = f.FileVersion.VersionNumber;
                     file.fileSize = f.FileSize;
                     file.displayFileSize = this.getDisplayFileSize(Number(file.fileSize));
-
-                    this.UIFileDictionary[file.name] = file;
 
                     return file;
                 });
@@ -341,10 +335,9 @@ module Sfx {
         public fileCount: string;
         public modifiedDate: string;
         public fileSize: string;
-        public Clicked: number = 0;
         public isExpanded: boolean = false;
         public show: boolean = false;
-        public indentationLevel: number;
+        public indentationLevel: number = 0;
         public folderImage: string = "Closedfolder.svg";
         public childrenFolders: ImageStoreFolder[];
         public childrenFiles: ImageStoreFile[];
@@ -363,7 +356,7 @@ module Sfx {
         public displayName: string;
         public displayFileSize: string;
         public fileCount: string;
-        public indentationLevel: number;
+        public indentationLevel: number = 0;
         public show: boolean;
         public name: string;
         public version: string;
