@@ -2,10 +2,6 @@ module Sfx {
     export class ImageStore extends DataModelBase<IRawImageStoreContent> {
         public root: ImageStoreFolder = new ImageStoreFolder();
         public treeNodePaths: string[] = [];
-        public Folders: ImageStoreFolder[];
-        public Files: ImageStoreFile[];
-        public refreshFolders: ImageStoreFolder[];
-        public refreshFiles: ImageStoreFile[];
         public parentRootFolder: ImageStoreFolder;
         public parentFolder: ImageStoreFolder;
         public currentOpenFolders: string[] = [];
@@ -19,8 +15,12 @@ module Sfx {
         constructor(public data: DataService) {
             super(data);
 
+            this.root.displayName = "root";
+            this.root.isExpanded = true;
+
             // Push an empty string for root
-            //this.currentOpenFolders.push("");
+            this.currentOpenFolders.push("");
+            this.UIFolderDictionary[""] = this.root;
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
@@ -40,13 +40,27 @@ module Sfx {
 
         protected updateInternal(): angular.IPromise<any> | void {
             // Compare and update UI
+            if (!this.root.childrenFolders || this.root.childrenFolders.length !== this.DataFolderDictionary[""].StoreFolders.length) {
+                this.copyFolderContentToUI("");
+            }
         }
 
         protected expandFolder(path: string) {
             const folder = this.UIFolderDictionary[path];
+            if (!folder) {
+                return;
+            }
+
             folder.isExpanded = true;
             folder.folderImage = "OpenFolderGray.svg";
             folder.Clicked = folder.Clicked + 1;
+            if (folder.childrenFiles) {
+                folder.childrenFiles.forEach(f => f.show = true);
+            }
+
+            if (folder.childrenFolders) {
+                folder.childrenFolders.forEach(f => f.show = true);
+            }
 
             this.currentOpenFolders.push(path);
 
@@ -55,9 +69,20 @@ module Sfx {
 
         protected closeFolder(path: string) {
             const folder = this.UIFolderDictionary[path];
+            if (!folder) {
+                return;
+            }
+
             folder.isExpanded = false;
             folder.folderImage = "ClosedFolder.svg";
             folder.Clicked = folder.Clicked + 1;
+            if (folder.childrenFiles) {
+                folder.childrenFiles.forEach(f => f.show = false);
+            }
+
+            if (folder.childrenFolders) {
+                folder.childrenFolders.forEach(f => { this.closeFolder(f.name); f.show = false; });
+            }
 
             this.currentOpenFolders.splice(this.currentOpenFolders.indexOf(path), 1);
             // Remove folder from data source???
@@ -109,6 +134,9 @@ module Sfx {
                     folder.modifiedDate = "-";
                     folder.fileSize = "-";
                     folder.show = true;
+
+                    this.UIFolderDictionary[folder.name] = folder;
+
                     return folder;
                 });
 
@@ -122,6 +150,9 @@ module Sfx {
                     file.version = f.FileVersion.VersionNumber;
                     file.fileSize = f.FileSize;
                     file.displayFileSize = this.getDisplayFileSize(Number(file.fileSize));
+
+                    this.UIFileDictionary[file.name] = file;
+
                     return file;
                 });
             });
@@ -269,11 +300,6 @@ module Sfx {
             }
 
             return folderSize;
-        }
-
-        private refreshData() {
-            this.Folders = this.refreshFolders;
-            this.Files = this.refreshFiles;
         }
     }
 

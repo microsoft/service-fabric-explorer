@@ -36,9 +36,9 @@
         <span class="bowtie-icon ellipsis"></span>
     </div>
     <ul class="completeList" ng-show="!searchView">
-        <li ng-repeat="folder in imagestoreroot.Folders" ng-include="'folderTemplate'" class="ulforimgstr">
+        <li ng-repeat="folder in imagestoreroot.root.childrenFolders" ng-include="'folderTemplate'" class="ulforimgstr">
         </li>
-        <li ng-repeat="file in imagestoreroot.Files" class="child ulforimgstr">
+        <li ng-repeat="file in imagestoreroot.root.childrenFiles" class="child ulforimgstr">
             <span class="indentation0 linkasbtn" padding-left="10px">
                 <img src="../images/FileGray.svg" height="18px">{{file.name}}
             </span>
