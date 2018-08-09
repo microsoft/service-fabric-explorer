@@ -66,12 +66,12 @@
                             <div>Target Filter:
                                 <i>Select Node Types to enable node specific faults</i>.</div>
 
-                            <div uib-dropdown dropdown-append-to-body>
+                            <div uib-dropdown>
                                 <button class="btn btn-primary dropdown-toggle" type="button" uib-dropdown-toggle aria-label="Select Node Types to include">
                                     Node Types
                                     <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu-container" id="dropdown-menu" role="menu" style="padding-left: 5px; background-color: transparent; position: fixed;" uib-dropdown-menu>
+                                <ul class="dropdown-menu-container" id="dropdown-menu" role="menu" style="padding-left: 5px; background-color: transparent;" uib-dropdown-menu>
                                     <li class="option" ng-repeat="nodeType in chaos.runScope.nodeTypes">
                                         <span>
                                             <input type="checkbox" value="{{nodeType}}" id="{{nodeType}}" checked/>
@@ -86,8 +86,6 @@
                 </div>
             </div>
         </div>
-
-
 
         <div class="button-container">
             <button ng-click="ctrl.handleClick($event)" class="chaos-btn start-chaos-btn">START CHAOS</button>
