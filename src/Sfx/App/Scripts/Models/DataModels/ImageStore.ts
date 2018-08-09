@@ -1,7 +1,8 @@
 module Sfx {
     export class ImageStore extends DataModelBase<IRawImageStoreContent> {
 
-        public rootFolder: ImageStoreFolder = new ImageStoreFolder();
+        public treeNodePaths: string[] = [];
+        public rootFolderR: ImageStoreFolder = new ImageStoreFolder();
         public Folders: ImageStoreFolder[];
         public Files: ImageStoreFile[];
         public refreshFolders: ImageStoreFolder[];
@@ -17,48 +18,9 @@ module Sfx {
         public FileDictionary: { [path: string]: ImageStoreFile } = {};
 
 
-        // protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
-        //     return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent()).then<IRawImageStoreContent>(raw => {
-        //         this.Folders = _.map(raw.StoreFolders, f => {
-        //             let folder = new ImageStoreFolder();
-        //             folder.name = f.StoreRelativePath;
-        //             folder.indentationLevel = 0;
-        //             folder.fileCount = f.FileCount;
-        //             folder.version = "-";
-        //             folder.modifiedDate = "-";
-        //             folder.fileSize = "-";
-        //             folder.displayName = folder.name;
-        //             folder.show = true;
-        //             this.FolderDictionary[folder.name] = folder;
-        //             return folder;
-        //         });
-
-        //         this.Files = _.map(raw.StoreFiles, f => {
-        //             let file = new ImageStoreFile();
-        //             file.name = f.StoreRelativePath;
-        //             file.fileCount = "-";
-        //             file.show = true;
-        //             file.modifiedDate = f.ModifiedDate;
-        //             file.version = f.FileVersion.VersionNumber;
-        //             file.fileSize = f.FileSize;
-        //             file.displayFileSize = this.getDisplayFileSize(Number(file.fileSize));
-        //             return file;
-        //         });
-        //         return raw;
-        //     });
-        // }
-
-        constructor (public data: DataService) {
-            super(data);
-
-            this.rootFolder.displayName = "ImageStoreRoot";
-            this.rootFolder.indentationLevel = 0;
-        }
-
-        protected retrieveNewDataForRoot(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
-
+        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
             return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent()).then<IRawImageStoreContent>(raw => {
-                this.rootFolder.childrenFolders = _.map(raw.StoreFolders, f => {
+                this.Folders = _.map(raw.StoreFolders, f => {
                     let folder = new ImageStoreFolder();
                     folder.name = f.StoreRelativePath;
                     folder.indentationLevel = 0;
@@ -72,7 +34,7 @@ module Sfx {
                     return folder;
                 });
 
-                this.rootFolder.childrenFiles = _.map(raw.StoreFiles, f => {
+                this.Files = _.map(raw.StoreFiles, f => {
                     let file = new ImageStoreFile();
                     file.name = f.StoreRelativePath;
                     file.fileCount = "-";
@@ -83,12 +45,44 @@ module Sfx {
                     file.displayFileSize = this.getDisplayFileSize(Number(file.fileSize));
                     return file;
                 });
+                return raw;
+            });
+        }
 
+        protected retrieveNewDataR(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
+            return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent()).then<IRawImageStoreContent>(raw => {
+                this.refreshFolders = _.map(raw.StoreFolders, f => {
+                    let folder = new ImageStoreFolder();
+                    folder.name = f.StoreRelativePath;
+                    folder.indentationLevel = 0;
+                    folder.fileCount = f.FileCount;
+                    folder.version = "-";
+                    folder.modifiedDate = "-";
+                    folder.fileSize = "-";
+                    folder.displayName = folder.name;
+                    folder.show = true;
+                    this.FolderDictionary[folder.name] = folder;
+                    return folder;
+                });
+
+                this.refreshFiles = _.map(raw.StoreFiles, f => {
+                    let file = new ImageStoreFile();
+                    file.name = f.StoreRelativePath;
+                    file.fileCount = "-";
+                    file.show = true;
+                    file.modifiedDate = f.ModifiedDate;
+                    file.version = f.FileVersion.VersionNumber;
+                    file.fileSize = f.FileSize;
+                    file.displayFileSize = this.getDisplayFileSize(Number(file.fileSize));
+                    return file;
+                });
                 return raw;
             });
         }
 
         protected retrieveData(path: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
+            console.log(path);
+            console.log(this.FolderDictionary[path]);
             return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then<IRawImageStoreContent>(raw => {
                 this.FolderDictionary[path].childrenFolders = _.map(raw.StoreFolders, f => {
                     let folder = new ImageStoreFolder();
@@ -154,14 +148,15 @@ module Sfx {
                     }
                     return file;
                 });
-
                 return raw;
             });
         }
 
         protected retrieveDataR(path: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
+            console.log("Retrieve Data R CLicked");
+            console.log(path);
             return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then<IRawImageStoreContent>(raw => {
-                this.FolderDictionaryR[path].childrenFolders = _.map(raw.StoreFolders, f => {
+                this.FolderDictionary[path].childrenFolders = _.map(raw.StoreFolders, f => {
                     let folder = new ImageStoreFolder();
                     folder.name = f.StoreRelativePath;
                     folder.version = "-";
@@ -177,7 +172,7 @@ module Sfx {
                         displayNameArray += childNameArray[parentLength + i];
                     }
                     folder.displayName = displayNameArray;
-                    this.FolderDictionaryR[folder.name] = folder;
+                    this.FolderDictionary[folder.name] = folder;
                     //To find out level of indentation
                     let j = 0;
                     folder.indentationLevel = 0;
@@ -186,15 +181,15 @@ module Sfx {
                             folder.indentationLevel += 1;
                         }
                     }
-                    if ((this.FolderDictionaryR[path].Clicked % 2) === 0) {
+                    if ((this.FolderDictionary[path].Clicked % 2) === 0) {
                         folder.show = false;
-                    } else if ((this.FolderDictionaryR[path].Clicked % 2) !== 0) {
+                    } else if ((this.FolderDictionary[path].Clicked % 2) !== 0) {
                         folder.show = true;
                     }
                     return folder;
                 });
 
-                this.FolderDictionaryR[path].childrenFiles = _.map(raw.StoreFiles, f => {
+                this.FolderDictionary[path].childrenFiles = _.map(raw.StoreFiles, f => {
                     let file = new ImageStoreFile();
                     file.name = f.StoreRelativePath;
                     file.version = f.FileVersion.VersionNumber;
@@ -218,14 +213,14 @@ module Sfx {
                             file.indentationLevel += 1;
                         }
                     }
-                    if ((this.FolderDictionaryR[path].Clicked % 2) === 0) {
+                    if ((this.FolderDictionary[path].Clicked % 2) === 0) {
                         file.show = false;
-                    } else if ((this.FolderDictionaryR[path].Clicked % 2) !== 0) {
+                    } else if ((this.FolderDictionary[path].Clicked % 2) !== 0) {
                         file.show = true;
                     }
                     return file;
                 });
-
+                console.log(this.FolderDictionary[path]);
                 return raw;
             });
         }
@@ -245,18 +240,19 @@ module Sfx {
         }
 
         protected getClickedInfo(path: string) {
-            this.FolderDictionary[path].isExpanded = !this.FolderDictionary[path].isExpanded;
-            if (this.FolderDictionary[path].isExpanded) {
-                this.FolderDictionary[path].folderImage = "OpenFolderGray.svg";
+            const folder = this.FolderDictionary[path];
+            folder.isExpanded = !folder.isExpanded;
+            if (folder.isExpanded) {
+                folder.folderImage = "OpenFolderGray.svg";
                 this.openFoldersPush(path);
             } else {
-                this.FolderDictionary[path].folderImage = "ClosedFolder.svg";
+                folder.folderImage = "ClosedFolder.svg";
                 this.openFoldersPop(path);
             }
-            this.FolderDictionary[path].Clicked = this.FolderDictionary[path].Clicked + 1;
+            folder.Clicked = folder.Clicked + 1;
         }
 
-        protected getDisplayFileSize(fileSizeinBytes: number) {
+        public getDisplayFileSize(fileSizeinBytes: number) {
             let displayFileSize: string;
             let byte = 1;
             let kiloByte = 1024 * byte;
@@ -276,14 +272,14 @@ module Sfx {
             }
             return displayFileSize;
         }
-        protected getNoOfApplicationTypes() {
+        protected getApplicationTypes() {
             return Utils.getHttpResponseData(this.data.restClient.getApplicationTypes()).then<IRawApplicationType[]>(raw => {
                 this.noOfApplicationTypes = raw.length;
                 return raw;
             });
         }
 
-        protected getNoOfApplicationPackages() {
+        protected getApplicationPackages() {
             return this.data.restClient.getApplications().then<IRawApplication[]>(raw => {
                 return raw;
             });
@@ -307,30 +303,27 @@ module Sfx {
         }
 
         public getPaths(folders: ImageStoreFolder[], files: ImageStoreFile[]) {
-            let treeNodePaths: string[];
-
             for (let i = 0; i < folders.length; i++) {
-                if (folders[i].show === true && treeNodePaths.indexOf(folders[i].name) === -1) {
-                    treeNodePaths.push(folders[i].name);
+                if (folders[i].show === true && this.treeNodePaths.indexOf(folders[i].name) === -1) {
+                    this.treeNodePaths.push(folders[i].name);
                 }
                 if (folders[i].isExpanded === true) {
-                    treeNodePaths.concat(this.getPaths(folders[i].childrenFolders, folders[i].childrenFiles));
+                    this.getPaths(folders[i].childrenFolders, folders[i].childrenFiles);
                 }
             }
             for (let j = 0; j < files.length; j++) {
-                if (files[j].show === true && treeNodePaths.indexOf(files[j].name) === -1) {
-                    treeNodePaths.push(files[j].name);
+                if (files[j].show === true && this.treeNodePaths.indexOf(files[j].name) === -1) {
+                    this.treeNodePaths.push(files[j].name);
                 }
             }
-
-            return treeNodePaths;
+            return this.treeNodePaths;
         }
 
         protected getFolder(path: string, currentFolder?: ImageStoreFolder) {
             if (currentFolder === undefined) {
                 currentFolder = this.parentRootFolder;
             }
-            if (path === currentFolder.name) {
+            if (currentFolder.name.indexOf(path) !== -1) {
                 return currentFolder;
             } else if (currentFolder.childrenFolders) {
                 for (let i = 0; i < currentFolder.childrenFolders.length; i++) {
@@ -343,26 +336,91 @@ module Sfx {
             return null;
         }
 
+        protected getFolders(searchTerm: string, currentFolder?: ImageStoreFolder) {
+            let listOfRelevantFolders: ImageStoreFolder[] = [];
+            if (currentFolder === undefined) {
+                currentFolder = this.parentRootFolder;
+            }
+            if (currentFolder.name.indexOf(searchTerm) !== -1) {
+                listOfRelevantFolders.push(currentFolder);
+            }
+            if (currentFolder.childrenFolders.length !== 0) {
+                for (let i = 0; i < currentFolder.childrenFolders.length; i++) {
+                    let temp = this.getFolders(searchTerm, currentFolder.childrenFolders[i]);
+                    if ((temp.length) !== 0) {
+                        listOfRelevantFolders = listOfRelevantFolders.concat(temp);
+                    }
+                }
+            }
+            return listOfRelevantFolders;
+        }
+
+        protected getFiles(searchTerm: string, currentFolder?: ImageStoreFolder) {
+            let listOfRelevantFiles: ImageStoreFile[] = [];
+            if (currentFolder === undefined) {
+                currentFolder = this.parentRootFolder;
+            }
+            if (currentFolder.childrenFiles.length !== 0) {
+                for (let i = 0; i < currentFolder.childrenFiles.length; i++) {
+                    if (currentFolder.childrenFiles[i].name.indexOf(searchTerm) !== -1) {
+                        listOfRelevantFiles.push(currentFolder.childrenFiles[i]);
+                    }
+                }
+            }
+            if (currentFolder.childrenFolders.length !== 0) {
+                for (let i = 0; i < currentFolder.childrenFolders.length; i++) {
+                    let temp = this.getFiles(searchTerm, currentFolder.childrenFolders[i]);
+                    if ((temp.length) !== 0) {
+                        listOfRelevantFiles = listOfRelevantFiles.concat(temp);
+                    }
+                }
+            }
+            return listOfRelevantFiles;
+        }
+
+        protected getFolderSize(folder: ImageStoreFolder): number {
+            let folderSize: number = 0;
+            if (folder.childrenFiles.length !== 0 ) {
+                for (let i = 0; i < folder.childrenFiles.length; i++) {
+                    folderSize = folderSize + Number(folder.childrenFiles[i].fileSize);
+                }
+            }
+
+            if (folder.childrenFolders.length !== 0) {
+                for (let i = 0; i < folder.childrenFolders.length; i++) {
+                    folderSize = folderSize + this.getFolderSize(folder.childrenFolders[i]);
+                }
+            }
+
+            return folderSize;
+        }
+        public refreshData() {
+            this.Folders = this.refreshFolders;
+            this.Files = this.refreshFiles;
+        }
+
         public retrieveDataForGivenFolders(openFolders: string[]) {
-
             // Load data for all the open folders, save it to a local var
-
-            let refreshedData = this.retrieveNewDataForRoot().then((raw) => {
+            console.log(openFolders);
+            return this.retrieveNewDataR().then((raw) => {
                 const tasks: Array<angular.IPromise<any>> = [];
 
                 for (let i = 0; i < openFolders.length; i++) {
+                    console.log(this.refreshFolders[i].name);
                     tasks.push(this.retrieveDataR(this.refreshFolders[i].name).then(() => {
                         for (let j = 0; j < openFolders.length; j++) {
                             if (this.refreshFolders[i].name === this.openFolders[j]) {
                                 this.refreshFolders[i].Clicked++;
                                 this.refreshFolders[i].isExpanded = true;
-                                return this.refreshTreeForChildren(openFolders, this.refreshFolders[i].childrenFolders, this.refreshFolders[i].childrenFiles);
+                                this.refreshTreeForChildren(openFolders, this.refreshFolders[i].childrenFolders, this.refreshFolders[i].childrenFiles);
                             }
                         }
                     }));
                 }
 
-                this.data.$q.all(tasks).then(() => {
+                return this.data.$q.all(tasks).then((raw) => {
+                    let newPaths = this.getPaths(this.refreshFolders, this.refreshFiles).sort();
+                    return newPaths;
                     // Here we have all data from service for the open folders
                     // The local var should be just a string[] which has path to folders/files
                     // return that local var here
@@ -381,7 +439,7 @@ module Sfx {
             const tasks: Array<angular.IPromise<any>> = [];
 
             for (let i = 0; i < folders.length; i++) {
-                tasks.push(this.retrieveData(folders[i].name).then((raw) => {
+                tasks.push(this.retrieveDataR(folders[i].name).then((raw) => {
                     folders[i].show = true;
                     for (let j = 0; j < this.openFolders.length; j++) {
                         if (folders[i].name === this.openFolders[j]) {
@@ -394,6 +452,7 @@ module Sfx {
             }
             return this.data.$q.all(tasks);
         }
+
 
         private openFoldersPush(path: string) {
             this.openFolders.push(path);

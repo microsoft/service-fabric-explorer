@@ -127,18 +127,18 @@ module Sfx {
             return this.$q.all([
                 this.$scope.nodes.refresh(messageHandler),
                 this.$scope.clusterLoadInformation.refresh(messageHandler)]).then(
-                () => {
-                    if (!this.$scope.metricsViewModel) {
-                        this.$scope.metricsViewModel =
-                            this.settings.getNewOrExistingMetricsViewModel(this.$scope.clusterLoadInformation, _.map(this.$scope.nodes.collection, node => node.loadInformation));
-                    }
+                    () => {
+                        if (!this.$scope.metricsViewModel) {
+                            this.$scope.metricsViewModel =
+                                this.settings.getNewOrExistingMetricsViewModel(this.$scope.clusterLoadInformation, _.map(this.$scope.nodes.collection, node => node.loadInformation));
+                        }
 
-                    let promises = _.map(this.$scope.nodes.collection, node => node.loadInformation.refresh(messageHandler));
+                        let promises = _.map(this.$scope.nodes.collection, node => node.loadInformation.refresh(messageHandler));
 
-                    return this.$q.all(promises).finally(() => {
-                        this.$scope.metricsViewModel.refresh();
+                        return this.$q.all(promises).finally(() => {
+                            this.$scope.metricsViewModel.refresh();
+                        });
                     });
-                });
         }
 
         private refreshManifest(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
@@ -146,25 +146,28 @@ module Sfx {
         }
 
         private refreshImageStore(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            console.log("refresh Clicked");
             let openFolders = this.$scope.imageStore.getOpenFolders();
-            // let currentPaths = [];
-            // if (this.$scope.imageStore.Folders === undefined) {
-            // } else {
-            //     currentPaths = this.$scope.imageStore.getPaths(this.$scope.imageStore.Folders, this.$scope.imageStore.Files);
-            // }
-
-            // this.$scope.imageStore.retrieveDataForGivenFolders(openFolders).then((folders: ImageStoreFolder[]) => {
-            //     // Here we have data for the opened folder from service
-            //     // Compare... currentPaths and paths
-            //     const paths = this.$scope.getPaths(folders, null);
-            //     // if there are differences, refresh UI tree
-            // });
-            this.$scope.imageStore.retrieveDataForGivenFolders(openFolders);
-            console.log(this.$scope.imageStore);
+            let currentPaths: string[] = [];
+            console.log(this.$scope.imageStore.Folders);
+            console.log(this.$scope.imageStore.refreshFolders);
+             if (this.$scope.imageStore.Folders === undefined) {
+                 currentPaths = [];
+            } else {
+                currentPaths = this.$scope.imageStore.getPaths( this.$scope.imageStore.Folders, this.$scope.imageStore.Files).sort();
+            }
+            this.$scope.imageStore.retrieveDataForGivenFolders(openFolders).then(newPaths => {
+                console.log("currentPaths: ", currentPaths);
+                console.log("newPaths: ", newPaths);
+                if (currentPaths.length !== newPaths.length) {
+                    this.$scope.imageStore.refreshData();
+                } else {
+                }
+            });
+            console.log(this.$scope.imageStore.Folders);
             return;
         }
     }
-
     (function () {
 
         let module = angular.module("clusterViewController", ["dataService", "filters"]);
