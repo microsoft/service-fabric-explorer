@@ -67,15 +67,15 @@
                                 <i>Select Node Types to enable node specific faults</i>.</div>
 
                             <div uib-dropdown dropdown-append-to-body>
-                                <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select Node Types to include">
+                                <button class="btn btn-primary dropdown-toggle" type="button" uib-dropdown-toggle aria-label="Select Node Types to include">
                                     Node Types
                                     <span class="caret"></span>
                                 </button>
-                                <ul class="dropdown-menu-container" id="dropdown-menu" role="menu"uib-dropdown-menu>
-                                    <li class="option" ng-repeat="nodeType in chaos.runScope.nodeTypes" style="padding-left: 10px;">
+                                <ul class="dropdown-menu-container" id="dropdown-menu" role="menu" style="padding-left: 5px; background-color: transparent; position: fixed;" uib-dropdown-menu>
+                                    <li class="option" ng-repeat="nodeType in chaos.runScope.nodeTypes">
                                         <span>
                                             <input type="checkbox" value="{{nodeType}}" id="{{nodeType}}" checked/>
-                                            <label for="{{nodeType}}" style="font-weight: normal;">{{nodeType}}</label>
+                                            <label for="{{nodeType}}" style="font-weight: normal">{{nodeType}}</label>
                                         </span>
                                     </li>
                                 </ul>

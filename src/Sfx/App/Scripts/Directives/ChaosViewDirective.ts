@@ -14,9 +14,6 @@ module Sfx {
             chaos: "="
         };
 
-        //adriana added
-        public measurement = "s";
-
         public link($scope: any, element: JQuery, attributes: any, ctrl: ChaosViewController) {
             $scope.$watch("chaos", () => {
                 if ($scope.chaos && !angular.isDefined($scope.chaos.isRefreshing)) {
@@ -31,18 +28,14 @@ module Sfx {
                 }
             });
 
-            //gets everything that has the name 'runscale' from the 'element' view, radio buttons
-            $("input[name='runscale']", element).change((e) => {
-                //console.log($(e.target).val());
-                this.measurement = $(e.target).val();
-                //console.log(this.measurement);
-            });
-
-            // test the clicking of the dropdown to not remove whole dropdown
             $(".dropdown-menu-container").click(function (e) {
-                //console.log("Clicked on dropdown menu");
                 e.stopPropagation();
             });
+
+            // $("div").scroll(function () {
+            //     console.log ("scrolling");
+            //     $("ul").hide();
+            // });
         }
     }
 
@@ -58,35 +51,23 @@ module Sfx {
 
             $button.prop("disabled", true);
             if (this.$scope.chaos.status === "Stopped") {
-
-                //start chaos with parameters
-                //let timeToRun = $("run-for").val();
-
-                //get values from html
-                // let measurementVal = $("input[name='runscale']:checked").val();
-                // let timeToRun = $("#time").val(); //get the time from the form input
-                // let stabilTimeout = $("#stabilization-timeout").val();
-                // let waitIter = $("#time-btwn-iterations").val();
-                console.log("starting");
-                let timeToRun = this.getTimeTotal($("#time-run-d").val(), $("#time-run-h").val(), $("#time-run-m").val());
-                let stabilTimeout = this.getTimeTotal(0, $("#max-stabilization-h").val(), $("#max-stabilization-m").val());
-                let waitIter = this.getTimeTotal(0, $("#time-iterations-h").val(), $("#time-iterations-m").val());
+                let timeToRun = this.getTimeSum($("#time-run-d").val(), $("#time-run-h").val(), $("#time-run-m").val());
+                let stabilTimeout = this.getTimeSum(0, $("#max-stabilization-h").val(), $("#max-stabilization-m").val());
+                let waitIter = this.getTimeSum(0, $("#time-iterations-h").val(), $("#time-iterations-m").val());
                 let maxConFaults = $("#concurrent-faults").val();
 
-                // gets the checked nodeTypes onto a list
                 let nodeTypeList = [];
                 $.each($("input[type='checkbox']:checked"), function(){
                     nodeTypeList.push($(this).val());
                 });
-                console.log("The inclusion list is: " + nodeTypeList);
 
+                console.log("The inclusion list is: " + nodeTypeList);
                 console.log("time to run: " + timeToRun);
                 console.log("stabilization timeout: " + stabilTimeout);
                 console.log("time btwn iterations: " + waitIter);
                 console.log("max concurrent faults: " + maxConFaults);
 
                 this.$scope.chaos.start(timeToRun, waitIter, stabilTimeout, maxConFaults, nodeTypeList);
-
                 $button.text("Starting chaos...");
             }
 
@@ -107,12 +88,10 @@ module Sfx {
             }
         }
 
-        // Finds the sum in seconds from the selected days, hours, and minutes
-        public getTimeTotal(days: number, hours: number, minutes: number) {
+        public getTimeSum(days: number, hours: number, minutes: number) {
             return (this.convertTime(days, "d") + this.convertTime(hours, "h") + this.convertTime(minutes, "m")).toString();
         }
 
-        // Converts days, hours, or minutes to seconds
         public convertTime(time: number, measurement: string): number {
 
             switch (measurement) {
