@@ -1,208 +1,206 @@
 <div class="parent">
-        <div class="essen-pane ng-scope">
-                <div class="table-responsive">
-                        <table class="essen-table" role="presentation">
-                                <tbody>
-                                        <tr>
-                                                <th>Size of Total Applications Packages</th>
-                                                <th>No of Application Packages</th>
-                                        </tr>
-                                        <tr>
-                                                <td>{{sizeOfAppPackages}}</td>
-                                                <td>{{noOfApplicationPackages}}</td>
-                                        </tr>
-                                        <tr>
-                                                <th>Size of Total Application Types</th>
-                                                <th>No of Application Types</th>
-                                        </tr>
-                                        <tr>
-                                                <td>{{sizeOfAppTypes}}</td>
-                                                <td>{{noOfApplicationTypes}}</td>
-                                        </tr>
-                                </tbody>
-                        </table>
-                </div>
+    <div class="essen-pane ng-scope">
+        <div class="table-responsive">
+            <table class="essen-table" role="presentation">
+                <tbody>
+                    <tr>
+                        <th>Size of Total Applications Packages</th>
+                        <th>No of Application Packages</th>
+                    </tr>
+                    <tr>
+                        <td>{{sizeOfAppPackages}}</td>
+                        <td>{{noOfApplicationPackages}}</td>
+                    </tr>
+                    <tr>
+                        <th>Size of Total Application Types</th>
+                        <th>No of Application Types</th>
+                    </tr>
+                    <tr>
+                        <td>{{sizeOfAppTypes}}</td>
+                        <td>{{noOfApplicationTypes}}</td>
+                    </tr>
+                </tbody>
+            </table>
         </div>
-        <div class="explorer-search">
-                <sfx-search-bar class="list-search-bar" placeholder="Search" model="imageStoreTreeSearchTerm" ng-keydown="$event.keyCode === 13 && ctrl.search()" reset="ctrl.reset()"></sfx-search-bar>
-                <label id="sr-only-search-summary" aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result </label>
-        </div>
-        <div id="tableHeader" class="child header">
-                <strong class="headerfirstcell">Name</strong>
-                <strong class="columnItem" text-align="left">File Version</strong>
-                <strong class="columnItem" text-align="left">Date Modified</strong>
-                <strong class="columnItem" text-align="left">Size</strong>
-                <strong class="columnItem" text-align="left">No Of Files</strong>
-                <span class="bowtie-icon ellipsis"></span>
-        </div>
-        <ul class="completeList" ng-show="!searchView">
-                <li ng-repeat="folder in imagestoreroot.Folders" ng-include="'folderTemplate'" class="ulforimgstr">
-                </li>
-                <li ng-repeat="file in imagestoreroot.Files" class="child ulforimgstr">
-                        <span class="indentation0 linkasbtn" padding-left="10px">
-                                <img src="../images/FileGray.svg" height="18px">{{file.name}}
-                        </span>
-                        <div class="columnItem">
-                                {{file.version}}
-                        </div>
-                        <div class="columnItem">
-                                {{file.modifiedDate}}
-                        </div>
-                        <div class="columnItem">
-                                {{file.displayFileSize}}
-                        </div>
-                        <div class="columnItem">
-                                {{file.fileCount}}
-                        </div>
-                        <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'">
-                        </div>
-                </li>
-
-        </ul>
-
-        <ul class="completeList" ng-show="searchView">
-                <li ng-repeat="folder in imagestoreroot.relevantFolders" class="child ulforimgstr">
-                        <span class="indentation0 linkasbtn" padding-left="10px">
-                                <img src="../images/{{folder.folderImage}}" height="18px">{{folder.name}}
-                        </span>
-                        <div class="columnItem">
-                                {{folder.version}}
-                        </div>
-                        <div class="columnItem">
-                                {{folder.modifiedDate}}
-                        </div>
-                        <div class="columnItem">
-                                {{folder.displayFileSize}}
-                        </div>
-                        <div class="columnItem">
-                                {{folder.fileCount}}
-                        </div>
-                        <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'">
-                        </div>
-                </li>
-                <li ng-repeat="file in imagestoreroot.relevantFiles" class="child ulforimgstr">
-                        <span class="indentation0 linkasbtn" padding-left="10px">
-                                <img src="../images/FileGray.svg" height="18px">{{file.name}}
-                        </span>
-                        <div class="columnItem">
-                                {{file.version}}
-                        </div>
-                        <div class="columnItem">
-                                {{file.modifiedDate}}
-                        </div>
-                        <div class="columnItem">
-                                {{file.displayFileSize}}
-                        </div>
-                        <div class="columnItem">
-                                {{file.fileCount}}
-                        </div>
-                        <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'">
-                        </div>  
-                </li>
-                <li ng-show="showEmptySearchMessage" text-align="center">
-                        There are no folders or files to display.
-                </li>
-        </ul> 
-
-        <script type="text/ng-template" id="ellipsisFileTemplate">
-                <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown" ng-click="$event.stopPropagation()">
-                        </a>
-                        <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu style="list-style: none">
-                                <li role="menuitem">
-                                        <a href="" role="button" ng-click="ctrl.click(file.name)">
-                                                Delete
-                                        </a>
-                                </li>
-                        </ul>
-        </script>
-
-        <script type="text/ng-template" id="ellipsisFolderTemplate">
-                <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown" ng-click="$event.stopPropagation()">
-                        </a>
-                        <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu style="list-style: none">
-                                <li role="menuitem">
-                                        <a href="" role="button" ng-click="ctrl.click(folder.name)">
-                                                Delete
-                                        </a>
-                                </li>
-                        </ul>
-        </script>
-
-
-        <script type="text/ng-template" id="folderTemplate">
-        <div  class="child">
-        <a href="" role="button" ng-click="ctrl.expandFolder(folder.name)" class="linkasbtn bowtie-icon "
-         ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded, 'indentation0': folder.indentationLevel === 0,
-          'indentation1': folder.indentationLevel === 1, 'indentation2': folder.indentationLevel === 2, 'indentation3': folder.indentationLevel === 3, 'indentation4': folder.indentationLevel === 4}">
-                <img ng-src="../images/{{folder.folderImage}}" height="18px">
-                <span class="completeList">
-                {{folder.displayName}}
-                </span>
-           </a>
-           
-        <div class="columnItem">
-                {{folder.version}}
-                </div>
-        <div class="columnItem">
-                {{folder.modifiedDate}}
-        </div>
-        <div class="columnItem">
-                {{folder.fileSize}}
-        </div>
-        <div class="columnItem">
-                {{folder.fileCount}}
-        </div>
-        <div uib-dropdown class="dropdown" ng-include="'ellipsisFolderTemplate'"></div>
     </div>
+    <div class="explorer-search">
+        <sfx-search-bar class="list-search-bar" placeholder="Search" model="imageStoreTreeSearchTerm" ng-keydown="$event.keyCode === 13 && ctrl.search()" reset="ctrl.reset()"></sfx-search-bar>
+        <label id="sr-only-search-summary" aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result </label>
+    </div>
+    <div id="tableHeader" class="child header">
+        <strong class="headerfirstcell">Name</strong>
+        <strong class="columnItem" text-align="left">File Version</strong>
+        <strong class="columnItem" text-align="left">Date Modified</strong>
+        <strong class="columnItem" text-align="left">Size</strong>
+        <strong class="columnItem" text-align="left">No Of Files</strong>
+        <span class="bowtie-icon ellipsis"></span>
+    </div>
+    <ul class="completeList" ng-show="!searchView">
+        <li ng-repeat="folder in imagestoreroot.Folders" ng-include="'folderTemplate'" class="ulforimgstr">
+        </li>
+        <li ng-repeat="file in imagestoreroot.Files" class="child ulforimgstr">
+            <span class="indentation0 linkasbtn" padding-left="10px">
+                <img src="../images/FileGray.svg" height="18px">{{file.name}}
+            </span>
+            <div class="columnItem">
+                {{file.version}}
+            </div>
+            <div class="columnItem">
+                {{file.modifiedDate}}
+            </div>
+            <div class="columnItem">
+                {{file.displayFileSize}}
+            </div>
+            <div class="columnItem">
+                {{file.fileCount}}
+            </div>
+            <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'">
+            </div>
+        </li>
 
-        <ul class="ulforimgstr">
-            <li ng-repeat="file in folder.childrenFiles" ng-include="'fileTemplate'" ng-show="file.show">
-            </li> 
-            <li ng-repeat="folder in folder.childrenFolders" ng-include="'folderTemplate'" ng-show="folder.show">                        
+    </ul>
+
+    <ul class="completeList" ng-show="searchView">
+        <li ng-repeat="folder in imagestoreroot.relevantFolders" class="child ulforimgstr">
+            <span class="indentation0 linkasbtn" padding-left="10px">
+                <img src="../images/{{folder.folderImage}}" height="18px">{{folder.name}}
+            </span>
+            <div class="columnItem">
+                {{folder.version}}
+            </div>
+            <div class="columnItem">
+                {{folder.modifiedDate}}
+            </div>
+            <div class="columnItem">
+                {{folder.displayFileSize}}
+            </div>
+            <div class="columnItem">
+                {{folder.fileCount}}
+            </div>
+            <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'">
+            </div>
+        </li>
+        <li ng-repeat="file in imagestoreroot.relevantFiles" class="child ulforimgstr">
+            <span class="indentation0 linkasbtn" padding-left="10px">
+                <img src="../images/FileGray.svg" height="18px">{{file.name}}
+            </span>
+            <div class="columnItem">
+                {{file.version}}
+            </div>
+            <div class="columnItem">
+                {{file.modifiedDate}}
+            </div>
+            <div class="columnItem">
+                {{file.displayFileSize}}
+            </div>
+            <div class="columnItem">
+                {{file.fileCount}}
+            </div>
+            <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'">
+            </div>
+        </li>
+        <li ng-show="showEmptySearchMessage" text-align="center">
+            There are no folders or files to display.
+        </li>
+    </ul>
+
+    <script type="text/ng-template" id="ellipsisFileTemplate">
+        <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown" ng-click="$event.stopPropagation()">
+        </a>
+        <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu style="list-style: none">
+            <li role="menuitem">
+                <a href="" role="button" ng-click="ctrl.click(file.name)">
+                    Delete
+                </a>
             </li>
         </ul>
     </script>
 
-        <script type="text/ng-template" id="fileTemplate">
-        <div class="child">
-                <span class="indentation1 linkasbtn" ng-class="{'indentation1': file.indentationLevel === 1, 'indentation2': file.indentationLevel === 2, 'indentation3': file.indentationLevel === 3,
-                 'indentation4': file.indentationLevel === 4, 'indentation5': file.indentationLevel === 5, 'indentation6': file.indentationLevel === 6}"><img src="../images/FileGray.svg" height="18px" padding-left="5px" >{{file.displayName}}</span>
-                <div class="columnItem">
-                        {{file.version}}
-                </div>
-                <div class="columnItem">
-                       {{file.modifiedDate}}
-               </div>
-               <div class="columnItem">
-                       {{file.displayFileSize}}
-               </div>
-               <div class="columnItem">
-                       {{file.fileCount}}
-               </div> 
-               <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'"></div> 
-    </div>
-    
-</div>
+    <script type="text/ng-template" id="ellipsisFolderTemplate">
+        <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown" ng-click="$event.stopPropagation()">
+        </a>
+        <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu style="list-style: none">
+            <li role="menuitem">
+                <a href="" role="button" ng-click="ctrl.click(folder.name)">
+                    Delete
+                </a>
+            </li>
+        </ul>
     </script>
-        <div uib-modal-window="modal-window" ng-show="showDeleteConfirmation" class="modal fade ng-scope ng-isolate-scope in" role="dialog">
-                <div class="modal-dialog ">
-                        <div class="modal-content">
-                                <form class="ng-pristine ng-valid ng-scope">
-                                        <div class="modal-header">
-                                                <h4 class="modal-title ng-binding">Confirm Deletion</h4>
-                                        </div>
-                                        <div class="modal-body">
-                                                <p class="ng-binding">Delete {{itemName}} from cluster localhost?</p>
-                                                <input class="input-flat ng-pristine ng-untouched ng-valid ng-empty" type="text" placeholder="Type in '{{itemName}}' to continue"
-                                                        autocomplete="off" ng-model="usertypedkeyword" aria-hidden="false" aria-invalid="false">
-                                        </div>
-                                        <div class="modal-footer">
-                                                <button type="submit" class="btn btn-primary ng-binding" data-dismiss="modal" ng-disabled="confirmationKeyword !== usertypedkeyword"
-                                                        ng-click="ctrl.ok()" disabled="disabled">Delete Application</button>
-                                                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="usertypedkeyword = null; ctrl.cancel()">Cancel</button>
-                                        </div>
-                                </form>
-                        </div>
-                </div>
+
+
+    <script type="text/ng-template" id="folderTemplate">
+        <div class="child">
+            <a href="" role="button" ng-click="ctrl.onFolderClick(folder.name, !folder.isExpanded)" data-open="" class="linkasbtn bowtie-icon "
+               ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded, 'indentation0': folder.indentationLevel === 0, 'indentation1': folder.indentationLevel === 1, 'indentation2': folder.indentationLevel === 2, 'indentation3': folder.indentationLevel === 3, 'indentation4': folder.indentationLevel === 4}">
+                <img ng-src="../images/{{folder.folderImage}}" height="18px">
+                <span class="completeList">
+                    {{folder.displayName}}
+                </span>
+            </a>
+
+            <div class="columnItem">
+                {{folder.version}}
+            </div>
+            <div class="columnItem">
+                {{folder.modifiedDate}}
+            </div>
+            <div class="columnItem">
+                {{folder.fileSize}}
+            </div>
+            <div class="columnItem">
+                {{folder.fileCount}}
+            </div>
+            <div uib-dropdown class="dropdown" ng-include="'ellipsisFolderTemplate'"></div>
         </div>
+
+        <ul class="ulforimgstr">
+            <li ng-repeat="file in folder.childrenFiles" ng-include="'fileTemplate'" ng-show="file.show">
+            </li>
+            <li ng-repeat="folder in folder.childrenFolders" ng-include="'folderTemplate'" ng-show="folder.show">
+            </li>
+        </ul>
+    </script>
+
+    <script type="text/ng-template" id="fileTemplate">
+        <div class="child">
+            <span class="indentation1 linkasbtn" ng-class="{'indentation1': file.indentationLevel === 1, 'indentation2': file.indentationLevel === 2, 'indentation3': file.indentationLevel === 3, 'indentation4': file.indentationLevel === 4, 'indentation5': file.indentationLevel === 5, 'indentation6': file.indentationLevel === 6}"><img src="../images/FileGray.svg" height="18px" padding-left="5px">{{file.displayName}}</span>
+            <div class="columnItem">
+                {{file.version}}
+            </div>
+            <div class="columnItem">
+                {{file.modifiedDate}}
+            </div>
+            <div class="columnItem">
+                {{file.displayFileSize}}
+            </div>
+            <div class="columnItem">
+                {{file.fileCount}}
+            </div>
+            <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'"></div>
+        </div>
+    </script>
+    <div uib-modal-window="modal-window" ng-show="showDeleteConfirmation" class="modal fade ng-scope ng-isolate-scope in" role="dialog">
+        <div class="modal-dialog ">
+            <div class="modal-content">
+                <form class="ng-pristine ng-valid ng-scope">
+                    <div class="modal-header">
+                        <h4 class="modal-title ng-binding">Confirm Deletion</h4>
+                    </div>
+                    <div class="modal-body">
+                        <p class="ng-binding">Delete {{itemName}} from cluster localhost?</p>
+                        <input class="input-flat ng-pristine ng-untouched ng-valid ng-empty" type="text" placeholder="Type in '{{itemName}}' to continue"
+                               autocomplete="off" ng-model="usertypedkeyword" aria-hidden="false" aria-invalid="false">
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary ng-binding" data-dismiss="modal" ng-disabled="confirmationKeyword !== usertypedkeyword"
+                                ng-click="ctrl.ok()" disabled="disabled">
+                            Delete Application
+                        </button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="usertypedkeyword = null; ctrl.cancel()">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 </div>
