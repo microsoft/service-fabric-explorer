@@ -130,8 +130,10 @@
 
 
         <script type="text/ng-template" id="folderTemplate">
-        <div ng-if="folder.indentationLevel === 0" class="child">
-        <a href="" role="button" ng-click="ctrl.expandFolder(folder.name)" class="indentation0 linkasbtn bowtie-icon " ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded}">
+        <div  class="child">
+        <a href="" role="button" ng-click="ctrl.expandFolder(folder.name)" class="linkasbtn bowtie-icon "
+         ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded, 'indentation0': folder.indentationLevel === 0,
+          'indentation1': folder.indentationLevel === 1, 'indentation2': folder.indentationLevel === 2, 'indentation3': folder.indentationLevel === 3, 'indentation4': folder.indentationLevel === 4}">
                 <img ng-src="../images/{{folder.folderImage}}" height="18px">
                 <span class="completeList">
                 {{folder.displayName}}
@@ -153,102 +155,18 @@
         <div uib-dropdown class="dropdown" ng-include="'ellipsisFolderTemplate'"></div>
     </div>
 
-    
-    <div ng-if="folder.indentationLevel === 1" class="child"> 
-        <a href="" role="button" ng-click="ctrl.expandFolder(folder.name)" ng-mousemove="ctrl.display(folder.fileCount)" class="indentation1 linkasbtn bowtie-icon" ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded}">
-                <img ng-src="../images/{{folder.folderImage}}" height="18px">
-                <span class="completeList">
-                        {{folder.displayName}}
-                </span>
-        </a>
-        <div class="columnItem">
-                {{folder.version}}
-        </div>
-        <div class="columnItem">
-                {{folder.modifiedDate}}
-        </div>
-        <div class="columnItem">
-                {{folder.fileSize}}
-        </div>
-        <div class="columnItem">
-                {{folder.fileCount}}
-        </div>
-        <div uib-dropdown class="dropdown" ng-include="'ellipsisFolderTemplate'"></div>
-    </div> 
-    <div ng-if="folder.indentationLevel === 2" class="child"> 
-        <a href="" role="button" ng-click="ctrl.expandFolder(folder.name)" ng-mousemove="ctrl.display(folder.fileCount)" class="indentation2 linkasbtn bowtie-icon" ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded}">
-            <img ng-src="../images/{{folder.folderImage}}" height="18px">
-            <span class="completeList">
-                    {{folder.displayName}}
-            </span>
-        </a>
-        <div class="columnItem">
-                {{folder.version}}
-        </div>
-        <div class="columnItem">
-                {{folder.modifiedDate}}
-        </div>
-        <div class="columnItem">
-                {{folder.fileSize}}
-        </div>
-        <div class="columnItem">
-                {{folder.fileCount}}
-        </div>
-        <div uib-dropdown class="dropdown" ng-include="'ellipsisFolderTemplate'"></div>
-    </div> 
-    <div ng-if="folder.indentationLevel === 3" class="child"> 
-        <a href="" role="button" ng-click="ctrl.expandFolder(folder.name)" ng-mousemove="ctrl.display(folder.fileCount)" class="indentation3 linkasbtn bowtie-icon" ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded}">
-            <img ng-src="../images/{{folder.folderImage}}" height="18px">
-            <span class="completeList">
-                    {{folder.displayName}}
-            </span>
-        </a>
-        <div class="columnItem">
-                {{folder.version}}
-        </div>
-        <div class="columnItem">
-                {{folder.modifiedDate}}
-        </div>
-        <div class="columnItem">
-                {{folder.fileSize}}
-        </div>
-        <div class="columnItem">
-                {{folder.fileCount}}
-        </div>
-        <div uib-dropdown class="dropdown" ng-include="'ellipsisFolderTemplate'"></div>
-    </div> 
-    <div ng-if="folder.indentationLevel === 4" class="child"> 
-        <a href="" role="button" ng-click="ctrl.expandFolder(folder.name)" ng-mousemove="ctrl.display(folder.fileCount)" class="indentation4 linkasbtn bowtie-icon" ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded}">
-            <img ng-src="../images/{{folder.folderImage}}" height="18px">
-            <span class="completeList">
-                    {{folder.displayName}}
-            </span>
-        </a>
-        <div class="columnItem">
-                {{folder.version}}
-        </div>
-        <div class="columnItem">
-                {{folder.modifiedDate}}
-        </div>
-        <div class="columnItem">
-                {{folder.fileSize}}
-        </div>
-        <div class="columnItem">
-                {{folder.fileCount}}
-        </div>
-        <div uib-dropdown class="dropdown" ng-include="'ellipsisFolderTemplate'"></div>
-    </div> 
         <ul class="ulforimgstr">
             <li ng-repeat="file in folder.childrenFiles" ng-include="'fileTemplate'" ng-show="file.show">
             </li> 
-            <li ng-repeat="childFolder in folder.childrenFolders" ng-include="'folderTemplate'" ng-show="childFolder.show">                        
+            <li ng-repeat="folder in folder.childrenFolders" ng-include="'folderTemplate'" ng-show="folder.show">                        
             </li>
         </ul>
     </script>
 
         <script type="text/ng-template" id="fileTemplate">
-        <div class="child" ng-if="file.indentationLevel === 1">
-                <span class="indentation1 linkasbtn"><img src="../images/FileGray.svg" height="18px" padding-left="5px" >{{file.displayName}}</span>
+        <div class="child">
+                <span class="indentation1 linkasbtn" ng-class="{'indentation1': file.indentationLevel === 1, 'indentation2': file.indentationLevel === 2, 'indentation3': file.indentationLevel === 3,
+                 'indentation4': file.indentationLevel === 4, 'indentation5': file.indentationLevel === 5, 'indentation6': file.indentationLevel === 6}"><img src="../images/FileGray.svg" height="18px" padding-left="5px" >{{file.displayName}}</span>
                 <div class="columnItem">
                         {{file.version}}
                 </div>
@@ -263,90 +181,7 @@
                </div> 
                <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'"></div> 
     </div>
-
-    <div class="child " ng-if="file.indentationLevel === 2">
-                <span class="indentation2 linkasbtn"><img src="../images/FileGray.svg" height="18px" >{{file.displayName}}</span>
-                <div class="columnItem">
-                        {{file.version}}
-                </div>
-                <div class="columnItem">
-                   {{file.modifiedDate}}s
-                </div>
-                <div class="columnItem">
-                   {{file.displayFileSize}}
-                </div>
-                <div class="columnItem">
-                   {{file.fileCount}}
-                </div>
-                <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'"></div>  
-</div>
-
-<div class="child" ng-if="file.indentationLevel === 3">
-        <span class="indentation3 linkasbtn"><img src="../images/FileGray.svg" height="18px" >{{file.displayName}}</span>
-        <div class="columnItem">
-               {{file.version}}
-        </div>
-        <div class="columnItem">
-               {{file.modifiedDate}}
-       </div>
-       <div class="columnItem">
-               {{file.displayFileSize}}
-       </div>
-       <div class="columnItem">
-               {{file.fileCount}}
-       </div>
-       <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'"></div>  
-</div>
-
-<div class="child" ng-if="file.indentationLevel === 4">
-        <span class="indentation4 linkasbtn"><img src="../images/FileGray.svg" height="18px" >{{file.displayName}}</span>
-        <div class="columnItem">
-                {{file.version}}
-        </div>
-        <div class="columnItem">
-               {{file.modifiedDate}}
-       </div>
-       <div class="columnItem">
-               {{file.displayFileSize}}
-       </div>
-       <div class="columnItem">
-               {{file.fileCount}}
-       </div>
-       <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'"></div>  
-</div>
-
-<div class="child" ng-if="file.indentationLevel === 5">
-        <span class="indentation5 linkasbtn"><img src="../images/FileGray.svg" height="18px" >{{file.displayName}}</span>
-        <div class="columnItem">
-                {{file.version}}
-        </div>
-        <div class="columnItem">
-               {{file.modifiedDate}}
-       </div>
-       <div class="columnItem">
-               {{file.displayFileSize}}
-       </div>
-       <div class="columnItem">
-               {{file.fileCount}}
-       </div>
-       <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'"></div>  
-</div>
-
-<div class="child" ng-if="file.indentationLevel === 6">
-        <span class="indentation6 linkasbtn"><img src="../images/FileGray.svg" height="18px" >{{file.displayName}}</span>
-        <div class="columnItem">
-                {{file.version}}
-        </div>
-        <div class="columnItem">
-               {{file.modifiedDate}}
-       </div>
-       <div class="columnItem">
-               {{file.displayFileSize}}
-       </div>
-       <div class="columnItem">
-               {{file.fileCount}}
-       </div>
-       <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'"></div>  
+    
 </div>
     </script>
         <div uib-modal-window="modal-window" ng-show="showDeleteConfirmation" class="modal fade ng-scope ng-isolate-scope in" role="dialog">
