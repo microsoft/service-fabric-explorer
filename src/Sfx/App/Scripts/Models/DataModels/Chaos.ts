@@ -22,12 +22,15 @@ module Sfx {
         }
 
         // Here we can pass an instance of IRawChaosParameters so that we don't have to use all these parameters
-        public start(timeToRunInSeconds: number, WaitTimeBetweenIterationsInSeconds: number, maxClusterStabilizationTimeoutInSeconds: number, MaxConcurrentFaults: number): angular.IHttpPromise<any> {
+        public start(timeToRunInSeconds: number, waitTimeBetweenIterationsInSeconds: number, maxClusterStabilizationTimeoutInSeconds: number, maxConcurrentFaults: number, nodeTypeInclusionList: string[]): angular.IHttpPromise<any> {
             this.raw.Status = "Started";
             let parameter = <IRawChaosParameters>{};
-            parameter.ChaosTargetFilter = <IRawChaosTargetFilter>{};
+            parameter.TimeToRunInSeconds = timeToRunInSeconds;
+            parameter.WaitTimeBetweenIterationsInSeconds = waitTimeBetweenIterationsInSeconds;
+            parameter.MaxConcurrentFaults = maxConcurrentFaults;
             parameter.MaxClusterStabilizationTimeoutInSeconds = maxClusterStabilizationTimeoutInSeconds;
-            parameter.ChaosTargetFilter.NodeTypeInclusionList = [""];
+            parameter.ChaosTargetFilter = <IRawChaosTargetFilter>{};
+            parameter.ChaosTargetFilter.NodeTypeInclusionList = nodeTypeInclusionList;
 
             return this.data.restClient.startChaos(parameter);
         }

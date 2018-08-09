@@ -663,10 +663,11 @@ module Sfx {
         TimeToRunInSeconds: number;
         WaitTimeBetweenIterationsInSeconds: number;
         MaxClusterStabilizationTimeoutInSeconds: number;
+        MaxConcurrentFaults: number;
         ChaosTargetFilter: IRawChaosTargetFilter;
         // Add more properties as needed
     }
-    
+
     export interface IRawChaosTargetFilter {
         NodeTypeInclusionList: string[];
     }

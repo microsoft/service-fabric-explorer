@@ -39,8 +39,8 @@ module Sfx {
             });
 
             // test the clicking of the dropdown to not remove whole dropdown
-            $(".dropdown-menu-container span").click(function (e) {
-                console.log("Clicked on dropdown menu");
+            $(".dropdown-menu-container").click(function (e) {
+                //console.log("Clicked on dropdown menu");
                 e.stopPropagation();
             });
         }
@@ -56,21 +56,6 @@ module Sfx {
         public handleClick(event: any): void {
             let $button = $(event.target);
 
-            // window.onclick = function(event) {
-            //     if (!event.target.matches('.dropbtn')) {
-
-            //       var dropdowns = document.getElementsByClassName("dropdown-content");
-            //       var i;
-            //       for (i = 0; i < dropdowns.length; i++) {
-            //         var openDropdown = dropdowns[i];
-            //         if (openDropdown.classList.contains('show')) {
-            //           openDropdown.classList.remove('show');
-            //         }
-            //       }
-            //     }
-            //   }
-
-
             $button.prop("disabled", true);
             if (this.$scope.chaos.status === "Stopped") {
 
@@ -84,17 +69,23 @@ module Sfx {
                 // let waitIter = $("#time-btwn-iterations").val();
                 console.log("starting");
                 let timeToRun = this.getTimeTotal($("#time-run-d").val(), $("#time-run-h").val(), $("#time-run-m").val());
-                let stabilTimeout = this.getTimeTotal($("#max-stabilization-d").val(), $("#max-stabilization-h").val(), $("#max-stabilization-m").val());
-                let waitIter = this.getTimeTotal($("#time-iterations-d").val(), $("#time-iterations-h").val(), $("#time-iterations-m").val());
+                let stabilTimeout = this.getTimeTotal(0, $("#max-stabilization-h").val(), $("#max-stabilization-m").val());
+                let waitIter = this.getTimeTotal(0, $("#time-iterations-h").val(), $("#time-iterations-m").val());
                 let maxConFaults = $("#concurrent-faults").val();
 
+                // gets the checked nodeTypes onto a list
+                let nodeTypeList = [];
+                $.each($("input[type='checkbox']:checked"), function(){
+                    nodeTypeList.push($(this).val());
+                });
+                console.log("The inclusion list is: " + nodeTypeList);
 
                 console.log("time to run: " + timeToRun);
                 console.log("stabilization timeout: " + stabilTimeout);
                 console.log("time btwn iterations: " + waitIter);
                 console.log("max concurrent faults: " + maxConFaults);
 
-                this.$scope.chaos.start(timeToRun, waitIter, stabilTimeout, maxConFaults);
+                this.$scope.chaos.start(timeToRun, waitIter, stabilTimeout, maxConFaults, nodeTypeList);
 
                 $button.text("Starting chaos...");
             }
@@ -123,12 +114,17 @@ module Sfx {
 
         // Converts days, hours, or minutes to seconds
         public convertTime(time: number, measurement: string): number {
-            if (measurement === "d") {
-                time = time * 24 * 3600;
-            } else if (measurement === "h") {
-                time = time * 3600;
-            } else if (measurement === "m") { //conversion for min
-                time = time * 60;
+
+            switch (measurement) {
+                case "d":
+                    time = time * 24 * 3600;
+                    break;
+                case "h":
+                    time = time * 3600;
+                    break;
+                case "m":
+                    time = time * 60;
+                    break;
             }
             return time;
         }

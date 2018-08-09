@@ -46,33 +46,6 @@
                     <div class="minutes-textbox">
                         <input class="input-flat" id="time-iterations-m" type="number" value="1" min="0" max="60"> m</div>
                 </div>
-
-
-                <!-- <div class="time-config-components-container">
-                        <div class="radio-container-default">
-                            <label><input class="radio-button" type="radio" aria-label="seconds" name="runscale" value="s" checked="checked"/><span class="radio-button-text">Seconds</span></label>
-                            <label><input class="radio-button" type="radio" aria-label="minutes" name="runscale" value="m" /><span class="radio-button-text">Minutes</span></label> 
-                            <label><input class="radio-button" type="radio" aria-label="hours" name="runscale" value="h" /><span class="radio-button-text">Hours</span></label>
-                        </div>
-                                    
-                        Added adriana
-                        <div class="time-options-container">
-                            <div class="time-to-run-form">
-                                <div class="input-title">Time to Run: <input class="input-style" id="time" type="number" aria-label="Time to run" value="0"/></div>
-                                <div class="input-title">Max Stabilization Timeout: <input class="input-style" id="stabilization-timeout" type="number" aria-label="Max cluster stabilization timeout" value="60"/></div>
-                                <div class="input-title">Time between Iterations: <input class="input-style" id="time-btwn-iterations" type="number" aria-label="Wait time between iterations" value="30"/></div>
-                            </div>
-                                    <!--<div class="slider-control" ng-controller="RefreshSliderController as refreshCtrl">
-                                        <span class="slider-title" id="refresh-rate-title">Time to Run</span>
-                                        <span class="slider-label" id="refresh-rate-label" ng-if="refreshCtrl.refreshRate > 0">{{refreshCtrl.refreshRate}}s</span>
-                                        <a href="" class="slider-label" id="slider-min-label" role="button" aria-label="Turn off refresh">0</a>
-                                        <sfx-slider min-label-id="slider-min-label" max-label-id="slider-max-label" class="slider" title="Change the amount of time Chaos runs by clicking or using arrow keys"
-                                                 aria-label="Change how often content is updated" role="slider" min="5" max="300" id="run-for"></sfx-slider>
-                                        <a href="" class="slider-label" id="slider-max-label" role="button" aria-label="Set the refresh rate to the fastest">300</a>
-                                        <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-navigate-refresh" ng-class="{'disabled rotate': navbarCtrl.isRefreshing}"
-                                                ng-click="navbarCtrl.refreshAll()" role="button" aria-label="refresh"></a>
-                        </div>
-                </div> -->
             </div>
 
             <div class="fault-config-container">
@@ -98,25 +71,13 @@
                                     Node Types
                                     <span class="caret"></span>
                                 </button>
-                                <ul ng-repeat="nodeType in chaos.runScope.nodeTypes" id="dropdown-menu" role="menu" class="dropdown-menu-container" uib-dropdown-menu>
-                                    <li class="option">
+                                <ul class="dropdown-menu-container" id="dropdown-menu" role="menu"uib-dropdown-menu>
+                                    <li class="option" ng-repeat="nodeType in chaos.runScope.nodeTypes" style="padding-left: 10px;">
                                         <span>
-                                            <input type="checkbox" value="{{nodeType}}" id="{{nodeType}}" />
+                                            <input type="checkbox" value="{{nodeType}}" id="{{nodeType}}" checked/>
                                             <label for="{{nodeType}}" style="font-weight: normal;">{{nodeType}}</label>
                                         </span>
                                     </li>
-                                    <!-- <li>
-                                        <span>
-                                            <input type="checkbox" value="NodeType2" id="cbNodeType2" />
-                                            <label class="checkbox-text" for="cbNodeType2" id=""> NodeType2</label>
-                                        </span>
-                                    </li>
-                                    <li>
-                                        <span>
-                                            <input type="checkbox" value="NodeType3" id="cbNodeType3" />
-                                            <label class="checkbox-text" for="cbNodeType3" id=""> NodeType3</label>
-                                        </span>
-                                    </li> -->
                                 </ul>
                             </div>
 
