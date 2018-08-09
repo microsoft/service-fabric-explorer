@@ -56,23 +56,26 @@ gulp.task("publish:msi@build-msi",
         const packDirPath = path.resolve(path.join(buildInfos.paths.buildDir, packDirName));
         const publishDir = path.join(buildInfos.paths.publishDir, Platform.Windows);
         const filesWixPath = path.resolve(path.join(buildInfos.paths.buildDir, "files.msi.wxs"));
+        const filesWixXsltPath = path.resolve("./.build/files.msi.wxs.xslt");
         const wxsobjDir = path.resolve(path.join(buildInfos.paths.buildDir, "wxsobj"));
         const heatPath = path.resolve("./.vendor/wix/heat.exe");
         const candlePath = path.resolve("./.vendor/wix/candle.exe");
         const lightPath = path.resolve("./.vendor/wix/light.exe");
-        const heatCmd = utils.format("\"{}\" dir \"{}\" -ag -srd -cg MainComponentsGroup -dr INSTALLFOLDER -o \"{}\"", heatPath, packDirPath, filesWixPath);
+        const heatCmd = utils.format("\"{}\" dir \"{}\" -ag -srd -cg MainComponentsGroup -dr INSTALLFOLDER -o \"{}\" -t \"{}\"", heatPath, packDirPath, filesWixPath, filesWixXsltPath);
+        const updateGuidCmd = utils.format("powershell \"{}\" -XmlPath \"{}\"", path.resolve("./.build/tasks/publish.windows.update-guid.ps1"), filesWixPath);
         const candleCmd = utils.format("\"{}\" -arch x86 -out \"{}\\\\\" \"{}\" \"{}\"", candlePath, wxsobjDir, path.resolve(path.join(buildInfos.paths.buildDir, "msi.wxs")), filesWixPath);
         const lightCmd =
             utils.format(
-                "\"{}\" -b \"{}\" -spdb -out \"{}\" \"{}\" \"{}\"",
+                "\"{}\" -b \"{}\" -spdb -out \"{}\" \"{}\" \"{}\" -sice:ICE60 -sice:ICE91",
                 lightPath,
                 packDirPath,
                 path.resolve(path.join(publishDir, buildInfos.buildNumber ? utils.format("setup-{}.x86.msi", buildInfos.buildNumber) : "setup.x86.msi")),
                 path.join(wxsobjDir, "msi.wixobj"), path.join(wxsobjDir, "files.msi.wixobj"));
 
         return utilities.appdirExec(heatCmd)
-            .then(() => utilities.appdirExec(candleCmd)
-                .then(() => utilities.appdirExec(lightCmd)));
+            .then(() => utilities.appdirExec(updateGuidCmd))
+            .then(() => utilities.appdirExec(candleCmd))
+            .then(() => utilities.appdirExec(lightCmd));
     });
 
 gulp.task("publish:msi",

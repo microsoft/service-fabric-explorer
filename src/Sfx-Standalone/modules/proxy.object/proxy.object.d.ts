@@ -8,7 +8,7 @@ declare module "sfx.proxy.object" {
     import { IRoutePattern, ICommunicator } from "sfx.remoting";
 
     export interface Resolver {
-        (proxy: IObjectRemotingProxy, name: string, ...extraArgs: Array<any>): IDisposable | Promise<IDisposable>;
+        (proxy: IObjectRemotingProxy, name: string, ...extraArgs: Array<any>): Promise<IDisposable>;
     }
 
     export interface IObjectRemotingProxy extends IDisposable {
@@ -16,7 +16,7 @@ declare module "sfx.proxy.object" {
         readonly routePattern: IRoutePattern;
         readonly communicator: ICommunicator;
 
-        requestAsync<T extends IDisposable>(identifier: string, ...extraArgs: Array<any>): T | Promise<T>;
+        requestAsync<T>(identifier: string, ...extraArgs: Array<any>): Promise<T & IDisposable>;
 
         setResolver(resolver: Resolver): void;
         getResolver(): Resolver;

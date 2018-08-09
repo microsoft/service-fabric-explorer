@@ -21,8 +21,8 @@ export default class ConsoleLogger implements ILogger {
 
     private console: Console;
 
-    public get name(): string {
-        return this.settings.name;
+    public get name(): Promise<string> {
+        return Promise.resolve(this.settings.name);
     }
 
     public get disposed(): boolean {
@@ -48,7 +48,7 @@ export default class ConsoleLogger implements ILogger {
         }
     }
 
-    public write(properties: IDictionary<string>, severity: Severity, message: string): void {
+    public writeAsync(properties: IDictionary<string>, severity: Severity, message: string): Promise<void> {
         this.validateDisposal();
         const consoleMsg: string = this.formatConsoleMsg(properties, message);
 
@@ -76,9 +76,11 @@ export default class ConsoleLogger implements ILogger {
                 this.console.log(consoleMsg);
                 break;
         }
+
+        return Promise.resolve();
     }
 
-    public writeException(properties: IDictionary<string>, error: Error): void {
+    public writeExceptionAsync(properties: IDictionary<string>, error: Error): Promise<void> {
         this.validateDisposal();
         let exceptionMsg: string = "";
 
@@ -87,15 +89,21 @@ export default class ConsoleLogger implements ILogger {
         exceptionMsg += error.stack;
 
         this.console.error(this.formatConsoleMsg(properties, exceptionMsg));
+
+        return Promise.resolve();
     }
 
-    public writeMetric(properties: IDictionary<string>, name: string, value: number): void {
+    public writeMetricAsync(properties: IDictionary<string>, name: string, value: number): Promise<void> {
         this.validateDisposal();
         this.console.info(this.formatConsoleMsg(properties, name + ": " + value.toString()));
+
+        return Promise.resolve();
     }
 
-    public dispose(): void {
+    public disposeAsync(): Promise<void> {
         this.console = undefined;
+
+        return Promise.resolve();
     }
 
     private validateDisposal(): void {

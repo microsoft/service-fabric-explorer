@@ -6,7 +6,7 @@
 import { IDictionary } from "sfx.common";
 import { IModuleManager } from "sfx.module-manager";
 
-import { dialog, BrowserWindow, app, BrowserWindowConstructorOptions, ipcMain } from "electron";
+import { dialog, BrowserWindow, app, BrowserWindowConstructorOptions } from "electron";
 import * as url from "url";
 import * as uuidv5 from "uuid/v5";
 
@@ -15,7 +15,7 @@ import * as authCert from "../../utilities/auth/cert";
 import * as authAad from "../../utilities/auth/aad";
 import * as appUtils from "../../utilities/appUtils";
 import * as utils from "../../utilities/utils";
-import * as mmutils from "../../module-manager/utils";
+import { ModuleManager } from "../../module-manager/module-manager";
 
 const UuidNamespace = "614e2e95-a80d-4ee5-9fd5-fb970b4b01a3";
 
@@ -91,6 +91,20 @@ function handleZoom(window: BrowserWindow) {
         });
 }
 
+function addModuleManagerConstructorOptions(
+    windowOptions: BrowserWindowConstructorOptions,
+    moduleManager: IModuleManager)
+    : void {
+    if (!windowOptions.webPreferences) {
+        windowOptions.webPreferences = Object.create(null);
+    }
+
+    windowOptions.webPreferences["additionalArguments"] = [
+        appUtils.toCmdArg(
+            ModuleManager.ConstructorOptionsCmdArgName,
+            JSON.stringify(moduleManager.generateConstructorOptions()))];
+}
+
 export default async function createBrowserWindowAsync(
     moduleManager: IModuleManager,
     options?: BrowserWindowConstructorOptions,
@@ -123,11 +137,12 @@ export default async function createBrowserWindowAsync(
         windowOptions.webPreferences = webPreferences;
     }
 
+    addModuleManagerConstructorOptions(windowOptions, moduleManager);
+    
     const window = new BrowserWindow(windowOptions);
     const hostName = uuidv5(window.id.toString(), UuidNamespace);
 
-    ipcMain.once("request-module-manager-constructor-options",
-        (event: Electron.Event) => event.returnValue = mmutils.generateModuleManagerConstructorOptions(moduleManager));
+    await moduleManager.newHostAsync(hostName, await moduleManager.getComponentAsync("ipc.communicator", window.webContents));
 
     window.on("page-title-updated", (event, title) => event.preventDefault());
     window.setTitle(`${window.getTitle()} - ${app.getVersion()}`);
@@ -144,8 +159,6 @@ export default async function createBrowserWindowAsync(
         authAad.handle(window, aadTargetHostName);
     }
 
-    await moduleManager.newHostAsync(hostName, await moduleManager.getComponentAsync("ipc.communicator", window.webContents));
-    
     window.once("closed", async () => await moduleManager.destroyHostAsync(hostName));
     window.once("ready-to-show", () => window.show());
 

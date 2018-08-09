@@ -2,19 +2,18 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+
 declare module "sfx.settings" {
     export interface ISettings {
-        readonly readonly: boolean;
+        getAsync<T>(settingPath: string): Promise<T>;
 
-        get<T>(settingPath: string): T;
-
-        set<T>(settingPath: string, value: T): void;
+        setAsync<T>(settingPath: string, value: T): Promise<void>;
     }
 
     export interface ISettingsService {
-        readonly default: ISettings;
+        readonly default: Promise<ISettings>;
 
-        open(...names: Array<string>): ISettings;
+        openAsync(...names: Array<string>): Promise<ISettings>;
     }
 }
 

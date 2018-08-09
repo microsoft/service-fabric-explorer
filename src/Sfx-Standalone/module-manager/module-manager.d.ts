@@ -4,24 +4,29 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.module-manager" {
+    import { IDisposable, FunctionType } from "sfx.common";
     import { ICommunicator } from "sfx.remoting";
 
-    /* Module Manager */
-    export interface IComponentDescriptor {
-        (...deps: Array<any>): any;
+    export interface IModuleManagerConstructorOptions {
+        hostVersion: string;
+        initialModules?: Array<IModuleLoadingConfig>;
     }
 
-    export interface IComponentInfo {
+    export interface IComponentDescriptor<T> {
+        (...args: Array<any>): Promise<T>;
+    }
+
+    export interface IComponentInfo<T> {
         name: string;
         version?: string;
-        descriptor: IComponentDescriptor;
+        descriptor: (...args: Array<any>) => Promise<Component<T>>;
         singleton?: boolean;
         deps?: Array<string>;
     }
 
     export type LoadingMode = "RefFromParent" | "Always";
 
-    export interface IModuleBasicInfo {
+    export interface IModuleInfo {
         name: string;
         version: string;
         hostVersion?: string;
@@ -31,22 +36,18 @@ declare module "sfx.module-manager" {
         loadingMode?: LoadingMode;
     }
 
-    export interface IModuleInfo extends IModuleBasicInfo {
-        components?: Array<IComponentInfo>;
-    }
-
-    export interface IModuleLoadingConfig extends IModuleBasicInfo {
+    export interface IModuleLoadingConfig extends IModuleInfo {
         location: string;
         loadingMode: LoadingMode;
     }
 
     export interface IModuleLoadingPolicy {
-        shouldLoad(moduleManager: IModuleManager, moduleName: string): boolean;
-        shouldLoad(moduleManager: IModuleManager, moduleInfo: IModuleInfo): boolean;
+        shouldLoadAsync(moduleManager: IModuleManager, moduleName: string): Promise<boolean>;
+        shouldLoadAsync(moduleManager: IModuleManager, moduleInfo: IModuleInfo): Promise<boolean>;
     }
 
     export interface IModule {
-        getModuleMetadata?(): IModuleInfo;
+        getModuleMetadata?(components: IComponentCollection): IModuleInfo;
         initializeAsync?(moduleManager: IModuleManager): Promise<void>;
     }
 
@@ -54,9 +55,68 @@ declare module "sfx.module-manager" {
         (moduleInfo: IModuleInfo, currentVersion: string, expectedVersion: string): boolean;
     }
 
-    export interface IModuleManager {
+    type NonPromiseReturnType<T extends FunctionType> = ReturnType<T> extends Promise<infer R> ? R : ReturnType<T>;
+
+    type FunctionComponent<T extends FunctionType> = (...args: Array<any>) => Promise<Component<NonPromiseReturnType<T>>>;
+
+    type PrimitiveType = void | String | Number | Boolean | Date | Buffer;
+
+    type SerializableArray<TItem> = {
+        [index: number]:
+        TItem extends PrimitiveType ? TItem :
+        TItem extends FunctionType ? never :
+        TItem extends SerializableObject<TItem> ? TItem :
+        TItem extends Array<infer TSubItem> ? SerializableArray<TSubItem> :
+        never;
+    };
+
+    type SerializableObject<T> = {
+        [Property in keyof T]:
+        T[Property] extends SerializableType<T[Property]> ? T[Property] :
+        never;
+    };
+
+    type SerializableType<T> =
+        T extends PrimitiveType ? T :
+        T extends FunctionType ? never :
+        T extends SerializableArray<infer TItem> ? T :
+        T extends SerializableObject<T> ? T : never;
+
+    interface ArrayComponent<TItem>
+        extends Array<Component<TItem>> {
+    }
+
+    type ObjectComponent<T> = {
+        [Property in keyof T]:
+        T[Property] extends FunctionType ? FunctionComponent<T[Property]> :
+        T[Property] extends Promise<infer R> ? Promise<Component<R>> :
+        Promise<Component<T[Property]>>;
+    };
+
+    export type Component<T> =
+        T extends void ? T :
+        T extends String ? T :
+        T extends Number ? T :
+        T extends Boolean ? T :
+        T extends Date ? T :
+        T extends Buffer ? T :
+        T extends FunctionType ? FunctionComponent<T> :
+        T extends Array<infer TItem> ? (TItem extends SerializableType<TItem> ? Array<TItem> : ArrayComponent<TItem>) :
+        T extends Object ? (
+            keyof T extends never ? never :
+            T extends SerializableObject<T> ? T :
+            ObjectComponent<T>)
+        : never;
+
+    export interface IComponentCollection {
+        register<T>(componentInfo: IComponentInfo<T>): IComponentCollection;
+    }
+
+    export interface IModuleManager extends IComponentCollection {
         readonly hostVersion: string;
         readonly loadedModules: Array<IModuleLoadingConfig>;
+
+        generateConstructorOptions(): IModuleManagerConstructorOptions;
 
         newHostAsync(hostName: string, hostCommunicator?: ICommunicator): Promise<void>;
         destroyHostAsync(hostName: string): Promise<void>;
@@ -66,11 +126,8 @@ declare module "sfx.module-manager" {
 
         setModuleLoadingPolicy(policy: IModuleLoadingPolicy): void;
 
-        registerComponents(componentInfos: Array<IComponentInfo>): void;
-
         onHostVersionMismatch(callback?: HostVersionMismatchEventHandler): void | HostVersionMismatchEventHandler;
 
-        getComponentAsync<T>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T>;
-        getComponentAsync(componentIdentity: "module-manager"): Promise<IModuleManager>;
+        getComponentAsync<T extends TComponent, TComponent = Component<T>>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T & Partial<IDisposable>>;
     }
 }

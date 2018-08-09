@@ -3,6 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+import * as util from "util";
 import * as path from "path";
 import * as fs from "fs";
 
@@ -83,3 +84,5 @@ export function copyfiles(srcDir: string, destDir: string): void {
         }
     }
 }
+
+export const readFileAsync = util.promisify(fs.readFile);
