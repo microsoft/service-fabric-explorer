@@ -1,6 +1,10 @@
 module Sfx {
     export class ImageStore extends DataModelBase<IRawImageStoreContent> {
 
+        public noOfApplicationPackages: number = 0;
+        public noOfApplicationTypes: number = 0;
+        public sizeOfAppPackages: string = "";
+        public sizeOfAppTypes: string = "";
         public treeNodePaths: string[] = [];
         public rootFolderR: ImageStoreFolder = new ImageStoreFolder();
         public Folders: ImageStoreFolder[];
@@ -11,7 +15,6 @@ module Sfx {
         public parentFolder: ImageStoreFolder;
         public currentTreeStructure: string[] = [];
         public openFolders: string[] = [];
-        public noOfApplicationTypes: number;
         public noOfApplications: number;
         public FolderDictionary: { [path: string]: ImageStoreFolder } = {};
         public FolderDictionaryR: { [path: string]: ImageStoreFolder } = {};
@@ -82,7 +85,7 @@ module Sfx {
 
         protected retrieveData(path: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
             console.log(path);
-            console.log(this.FolderDictionary[path]);
+            console.log("Dictionary", this.FolderDictionary);
             return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then<IRawImageStoreContent>(raw => {
                 this.FolderDictionary[path].childrenFolders = _.map(raw.StoreFolders, f => {
                     let folder = new ImageStoreFolder();
@@ -148,6 +151,8 @@ module Sfx {
                     }
                     return file;
                 });
+                console.log("Dictionary", this.FolderDictionary);
+                console.log(this.Folders);
                 return raw;
             });
         }
@@ -220,7 +225,7 @@ module Sfx {
                     }
                     return file;
                 });
-                console.log(this.FolderDictionary[path]);
+                console.log(this.FolderDictionary);
                 return raw;
             });
         }
@@ -402,6 +407,7 @@ module Sfx {
         public retrieveDataForGivenFolders(openFolders: string[]) {
             // Load data for all the open folders, save it to a local var
             console.log(openFolders);
+            console.log(this.FolderDictionary);
             return this.retrieveNewDataR().then((raw) => {
                 const tasks: Array<angular.IPromise<any>> = [];
 
@@ -429,6 +435,31 @@ module Sfx {
         }
         public getOpenFolders() {
             return this.openFolders;
+        }
+
+        public summaryTabBackground() {
+            this.getCompleteDataSet().then((r: ImageStoreFolder) => {
+                this.getApplicationPackages().then((array) => {
+                    this.noOfApplicationPackages = array.length;
+                    let tempArray: string[] = [];
+                    let tempSize = 0;
+                    for ( let i = 0; i < array.length; i++) {
+                        tempArray[i] = array[i].Name.replace("fabric:/", "");
+                        tempSize = tempSize + this.getFolderSize(this.getFolder(tempArray[i]));
+                    }
+                    this.sizeOfAppPackages = this.getDisplayFileSize(tempSize);
+                    console.log(array);
+                });
+                this.getApplicationTypes().then((array) => {
+                    this.noOfApplicationTypes = array.length;
+                    let tempSize = 0;
+                    console.log(array);
+                    for (let j = 0; j < array.length; j++) {
+                        tempSize = tempSize + this.getFolderSize(this.getFolder("Store\\" + array[j].Name));
+                        this.sizeOfAppTypes = this.getDisplayFileSize(tempSize);
+                    }
+                });
+            });
         }
 
         private refreshTreeForChildren(openFolders: string[], folders: ImageStoreFolder[], files: ImageStoreFile[]) {

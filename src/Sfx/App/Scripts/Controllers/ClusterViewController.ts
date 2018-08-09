@@ -146,25 +146,21 @@ module Sfx {
         }
 
         private refreshImageStore(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            console.log("refresh Clicked");
+            this.$scope.imageStore.summaryTabBackground();
+            console.log(this.$scope.imageStore.Folders);
             let openFolders = this.$scope.imageStore.getOpenFolders();
             let currentPaths: string[] = [];
-            console.log(this.$scope.imageStore.Folders);
-            console.log(this.$scope.imageStore.refreshFolders);
              if (this.$scope.imageStore.Folders === undefined) {
                  currentPaths = [];
             } else {
                 currentPaths = this.$scope.imageStore.getPaths( this.$scope.imageStore.Folders, this.$scope.imageStore.Files).sort();
             }
             this.$scope.imageStore.retrieveDataForGivenFolders(openFolders).then(newPaths => {
-                console.log("currentPaths: ", currentPaths);
-                console.log("newPaths: ", newPaths);
                 if (currentPaths.length !== newPaths.length) {
                     this.$scope.imageStore.refreshData();
                 } else {
                 }
             });
-            console.log(this.$scope.imageStore.Folders);
             return;
         }
     }

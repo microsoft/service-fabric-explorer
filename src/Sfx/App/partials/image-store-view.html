@@ -8,16 +8,16 @@
                                                 <th>No of Application Packages</th>
                                         </tr>
                                         <tr>
-                                                <td>{{sizeOfAppPackages}}</td>
-                                                <td>{{noOfApplicationPackages}}</td>
+                                                <td>{{imagestoreroot.sizeOfAppPackages}}</td>
+                                                <td>{{imagestoreroot.noOfApplicationPackages}}</td>
                                         </tr>
                                         <tr>
                                                 <th>Size of Total Application Types</th>
                                                 <th>No of Application Types</th>
                                         </tr>
                                         <tr>
-                                                <td>{{sizeOfAppTypes}}</td>
-                                                <td>{{noOfApplicationTypes}}</td>
+                                                <td>{{imagestoreroot.sizeOfAppTypes}}</td>
+                                                <td>{{imagestoreroot.noOfApplicationTypes}}</td>
                                         </tr>
                                 </tbody>
                         </table>
@@ -184,9 +184,10 @@
     
 </div>
     </script>
-        <div uib-modal-window="modal-window" ng-show="showDeleteConfirmation" class="modal fade ng-scope ng-isolate-scope in" role="dialog">
-                <div class="modal-dialog ">
-                        <div class="modal-content">
+        <div uib-modal-window="modal-window" ng-show="showDeleteConfirmation" class="modal fade ng-scope ng-isolate-scope in" role="dialog" index="0" animate="animate" 
+        ng-style="{'z-index': 1050 + $$topModalIndex*10, display: 'block'}">
+                <div class="modal-dialog">
+                        <div>
                                 <form class="ng-pristine ng-valid ng-scope">
                                         <div class="modal-header">
                                                 <h4 class="modal-title ng-binding">Confirm Deletion</h4>
