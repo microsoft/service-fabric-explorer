@@ -3,58 +3,6 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-declare global {
-    interface StringConstructor {
-        possibleString(value: any): value is string;
-        isString(value: any): value is string;
-        isEmpty(value: string): boolean;
-        isEmptyOrWhitespace(value: string): boolean;
-    }
-
-    interface ArrayConstructor {
-        isNullUndefinedOrEmpty(value: any): boolean;
-    }
-
-    interface FunctionConstructor {
-        isFunction(value: any): value is Function;
-    }
-
-    interface Function {
-        isObject(value: any): value is object | Object;
-
-        /**
-         * Check if an object is empty or not. It also checks if the prototype chains are empty (pure empty).
-         * @param {object | Object} value The target object to be checked. Error will be thrown if the value is null or undefined.
-         * @returns {boolean} True if the object is empty include the prototype chains are also empty. 
-         * Otherwise, false.
-         */
-        isEmpty(value: object | Object): boolean;
-
-        /**
-         * Check if the value is serializable. 
-         * @param {any} value The value to be checked.
-         * @param {boolean} [checkDeep=false] Check recursively.
-         * @return {boolean} True if the value is serializable for sure. Otherwise, false, 
-         * which indicates the value cannot be serialized or cannot be determined whether it can be serialized or not.
-         */
-        isSerializable(value: any): boolean;
-
-        markSerializable(value: any, serializable?: boolean): any;
-    }
-
-    interface NumberConstructor {
-        isNumber(value: any): value is number | Number;
-    }
-
-    interface SymbolConstructor {
-        isSymbol(value: any): value is symbol;
-    }
-
-    interface Error {
-        toJSON?(): any;
-    }
-}
-
 namespace Symbols {
     export const Serializable = Symbol("serializable");
 }
@@ -81,6 +29,10 @@ Object.isEmpty = (value: Object | object) => {
     }
 
     for (const key in value) {
+        if (key) {
+            return false;
+        }
+        
         return false;
     }
 
@@ -164,7 +116,9 @@ Error.prototype.toJSON = function (): any {
     return error;
 };
 
-export function defaultStringifier(obj: any): string {
+export function defaultStringifier(obj: any, padding?: number): string {
+    padding = getValue(padding, 0);
+
     if (obj === null) {
         return "null";
     } else if (obj === undefined) {
@@ -178,13 +132,13 @@ export function defaultStringifier(obj: any): string {
                 && obj.toString !== Object.prototype.toString)) {
             return obj.toString();
         } else {
-            let str: string = "{\n";
+            let str: string = `\n${"".padStart(padding)}{\n`;
 
             for (const propertyName of Object.getOwnPropertyNames(obj)) {
-                str += `${propertyName}: ${defaultStringifier(obj[propertyName])}\n`;
+                str += `${"".padStart(padding + 4)}${propertyName}: ${defaultStringifier(obj[propertyName], padding + 4)}\n`;
             }
 
-            str += "}";
+            str += `${"".padStart(padding)}}`;
 
             return str;
         }

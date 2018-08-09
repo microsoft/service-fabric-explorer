@@ -4,13 +4,15 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.common" {
+
+    export type FunctionType = (...args: Array<any>) => any;
+
     export interface IDictionary<TValue> {
         [key: string]: TValue;
     }
 
     export interface IDisposable {
-        readonly disposed: boolean;
-        dispose(): void | Promise<void>;
+        disposeAsync(): Promise<void>;
     }
 
     export interface IPackageInfo {
@@ -27,12 +29,12 @@ declare module "sfx.common" {
         macos?: IPackageInfo | string;
     }
 
-    export interface IHandlerConstructor<THandler> {
-        (nextHandler: THandler): THandler;
+    export interface IAsyncHandlerConstructor<THandler extends FunctionType> {
+        (nextHandler: THandler): Promise<THandler>;
     }
 
-    export interface IHandlerChainBuilder<THandler extends Function> {
-        handle(constructor: IHandlerConstructor<THandler>): IHandlerChainBuilder<THandler>;
-        build(): THandler;
+    export interface IHandlerChainBuilder<THandler extends FunctionType> {
+        handleAsync(constructor: IAsyncHandlerConstructor<THandler>): Promise<IHandlerChainBuilder<THandler>>;
+        buildAsync(): Promise<THandler>;
     }
 }

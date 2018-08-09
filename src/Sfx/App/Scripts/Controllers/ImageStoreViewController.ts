@@ -51,29 +51,26 @@ module Sfx {
             if (this.$scope.imageStoreTreeSearchTerm === "") {
                 this.$scope.showEmptySearchMessage = true;
             } else {
-            this.$scope.imagestoreroot.getCompleteDataSet().then(() => {
-                this.$scope.imagestoreroot.relevantFolders = this.$scope.imagestoreroot.getFolders(this.$scope.imageStoreTreeSearchTerm);
-                this.$scope.imagestoreroot.relevantFiles = this.$scope.imagestoreroot.getFiles(this.$scope.imageStoreTreeSearchTerm);
-                if (this.$scope.imagestoreroot.relevantFolders.length === 0 && this.$scope.imagestoreroot.relevantFiles.length === 0) {
-                    this.$scope.showEmptySearchMessage = true;
-                }else {
-                    this.$scope.showEmptySearchMessage = false;
-                }
-            });
+                this.$scope.imagestoreroot.getCompleteDataSet().then(() => {
+                    this.$scope.imagestoreroot.relevantFolders = this.$scope.imagestoreroot.getFolders(this.$scope.imageStoreTreeSearchTerm);
+                    this.$scope.imagestoreroot.relevantFiles = this.$scope.imagestoreroot.getFiles(this.$scope.imageStoreTreeSearchTerm);
+                    if (this.$scope.imagestoreroot.relevantFolders.length === 0 && this.$scope.imagestoreroot.relevantFiles.length === 0) {
+                        this.$scope.showEmptySearchMessage = true;
+                    } else {
+                        this.$scope.showEmptySearchMessage = false;
+                    }
+                });
+            }
         }
-        }
+
         public reset() {
             this.$scope.searchView = false;
             this.$scope.imagestoreroot.relevantFolders = [];
             this.$scope.imagestoreroot.relevantFiles = [];
         }
-        public expandFolder(relativePath: string): void {
-            // call service to load sub folders/files
-            console.log(relativePath);
-            this.$scope.imagestoreroot.getClickedInfo(relativePath);
-            this.$scope.imagestoreroot.retrieveDataR(relativePath);
-            this.$scope.imagestoreroot.getOpenFolders();
-            console.log(this.$scope.imagestoreroot.Folders);
+
+        public onFolderClick(relativePath: string, isExpendingFolder: boolean): void {
+            isExpendingFolder ? this.$scope.imagestoreroot.expandFolder(relativePath) : this.$scope.imagestoreroot.closeFolder(relativePath);
         }
 
         public display(fileCount) {

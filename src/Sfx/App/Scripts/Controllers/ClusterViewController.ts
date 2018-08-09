@@ -108,6 +108,8 @@ module Sfx {
             // For system application health state
             promises.push(this.$scope.systemApp.refresh(messageHandler));
 
+            promises.push(this.$scope.clusterUpgradeProgress.refresh(messageHandler));
+
             return this.$q.all(promises);
         }
 
@@ -146,22 +148,9 @@ module Sfx {
         }
 
         private refreshImageStore(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            console.log("refresh Clicked");
             this.$scope.imageStore.summaryTabBackground();
-            console.log(this.$scope.imageStore.Folders);
-            let openFolders = this.$scope.imageStore.getOpenFolders();
-            let currentPaths: string[] = [];
-             if (this.$scope.imageStore.Folders === undefined) {
-                 currentPaths = [];
-            } else {
-                currentPaths = this.$scope.imageStore.getPaths( this.$scope.imageStore.Folders, this.$scope.imageStore.Files).sort();
-            }
-            this.$scope.imageStore.retrieveDataForGivenFolders(openFolders).then(newPaths => {
-                if (currentPaths.length !== newPaths.length) {
-                    this.$scope.imageStore.refreshData();
-                } else {
-                }
-            });
-            return;
+            return this.$scope.imageStore.refresh(messageHandler);
         }
     }
     (function () {

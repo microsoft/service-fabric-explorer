@@ -68,7 +68,7 @@ module Sfx {
     export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProgress> {
         public decorators: IDecorators = {
             hideList: [
-                // Unhealthy evaluations are displayed in seperate section in app detail page
+                // Unhealthy evaluations are displayed in separate section in app detail page
                 "UnhealthyEvaluations"
             ],
             decorators: {

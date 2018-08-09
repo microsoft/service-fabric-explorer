@@ -11,8 +11,8 @@ declare module "sfx.remoting" {
         isRoutePattern(pattern: IRoutePattern): pattern is IRoutePattern;
     }
 
-    export interface RequestHandler {
-        (communicator: ICommunicator, path: string, content: any): any | Promise<any>;
+    export interface AsyncRequestHandler {
+        (communicator: ICommunicator, path: string, content: any): Promise<any>;
     }
 
     export interface IRoutePattern {
@@ -24,8 +24,8 @@ declare module "sfx.remoting" {
     export interface ICommunicator extends IDisposable {
         readonly id: string;
 
-        map(pattern: IRoutePattern, handler: RequestHandler): void;
-        unmap(pattern: IRoutePattern): RequestHandler;
+        map(pattern: IRoutePattern, asyncHandler: AsyncRequestHandler): void;
+        unmap(pattern: IRoutePattern): AsyncRequestHandler;
 
         sendAsync<TRequest, TResponse>(path: string, content: TRequest): Promise<TResponse>;
     }
