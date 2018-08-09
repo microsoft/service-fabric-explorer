@@ -69,8 +69,8 @@ module Sfx {
             this.$scope.imagestoreroot.relevantFiles = [];
         }
 
-        public onFolderClick(relativePath: string, isExpendingFolder: boolean): void {
-            isExpendingFolder ? this.$scope.imagestoreroot.expandFolder(relativePath) : this.$scope.imagestoreroot.closeFolder(relativePath);
+        public onFolderClick(relativePath: string, isExpandingFolder: boolean): void {
+            isExpandingFolder ? this.$scope.imagestoreroot.expandFolder(relativePath) : this.$scope.imagestoreroot.closeFolder(relativePath);
         }
 
         public display(fileCount) {
