@@ -61,7 +61,8 @@
     </ul>
 
     <ul class="completeList" ng-show="searchView">
-        <li ng-repeat="folder in imagestoreroot.relevantFolders" class="child ulforimgstr">
+    <div class= "loader" ng-show="loader && searchView"></div>
+        <li ng-repeat="folder in imagestoreroot.relevantFolders" ng-show="!loader" class="child ulforimgstr">
             <span class="indentation linkasbtn" padding-left="10px">
                 <img src="../images/{{folder.folderImage}}" height="18px">{{folder.name}}
             </span>
@@ -80,7 +81,7 @@
             <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'">
             </div>
         </li>
-        <li ng-repeat="file in imagestoreroot.relevantFiles" class="child ulforimgstr">
+        <li ng-repeat="file in imagestoreroot.relevantFiles" ng-show="!loader" class="child ulforimgstr">
             <span class="indentation linkasbtn" padding-left="10px">
                 <img src="../images/FileGray.svg" height="18px">{{file.name}}
             </span>
@@ -99,16 +100,16 @@
             <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'">
             </div>
         </li>
-        <li ng-show="showEmptySearchMessage" text-align="center">
+        <li ng-show="showEmptySearchMessage && !loader" text-align="center">
             There are no folders or files to display.
         </li>
     </ul>
 
     <script type="text/ng-template" id="ellipsisFileTemplate">
-        <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown" ng-click="$event.stopPropagation()">
+        <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown" ng-click="ctrl.checkIfReserved(file.name)">
         </a>
-        <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu style="list-style: none">
-            <li role="menuitem">
+        <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu style="list-style: none" ng-show="notReserved">
+            <li role="menuitem" ng-show="notReserved">
                 <a href="" role="button" ng-click="ctrl.click(file.name)">
                     Delete
                 </a>
@@ -117,9 +118,9 @@
     </script>
 
     <script type="text/ng-template" id="ellipsisFolderTemplate">
-        <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown" ng-click="$event.stopPropagation()">
+        <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown" ng-click="ctrl.checkIfReserved(folder.name)">
         </a>
-        <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu style="list-style: none">
+        <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu style="list-style: none" ng-show="notReserved">
             <li role="menuitem">
                 <a href="" role="button" ng-click="ctrl.click(folder.name)">
                     Delete
@@ -180,9 +181,10 @@
             <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'"></div>
         </div>
     </script>
-    <div uib-modal-window="modal-window" ng-show="showDeleteConfirmation" class="modal fade ng-scope ng-isolate-scope in" role="dialog">
+    <div uib-modal-window="modal-window" ng-show="showDeleteConfirmation" class="modal fade ng-scope ng-isolate-scope in" role="dialog" index="0" animate="animate"
+     ng-style="{'z-index': 1050 + $$topModalIndex*10, display: 'block'}">
         <div class="modal-dialog ">
-            <div class="modal-content">
+           <div>
                 <form class="ng-pristine ng-valid ng-scope">
                     <div class="modal-header">
                         <h4 class="modal-title ng-binding">Confirm Deletion</h4>

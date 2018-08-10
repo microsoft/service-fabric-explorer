@@ -148,8 +148,7 @@ module Sfx {
         }
 
         private refreshImageStore(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            console.log("refresh Clicked");
-            this.$scope.imageStore.summaryTabBackground();
+            this.$scope.imageStore.getSummaryTabInfo();
             return this.$scope.imageStore.refresh(messageHandler);
         }
     }

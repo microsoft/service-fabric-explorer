@@ -48,7 +48,7 @@ module Sfx {
             }
         }
 
-        public summaryTabBackground() {
+        public getSummaryTabInfo() {
             this.getCompleteDataSet().then((r: ImageStoreFolder) => {
                 this.getApplicationPackages().then((array) => {
                     this.noOfApplicationPackages = array.length;
