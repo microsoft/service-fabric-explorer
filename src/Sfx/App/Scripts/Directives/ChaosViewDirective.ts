@@ -31,11 +31,6 @@ module Sfx {
             $(".dropdown-menu-container").click(function (e) {
                 e.stopPropagation();
             });
-
-            // $("div").scroll(function () {
-            //     console.log ("scrolling");
-            //     $("ul").hide();
-            // });
         }
     }
 
@@ -60,12 +55,6 @@ module Sfx {
                 $.each($("input[type='checkbox']:checked"), function(){
                     nodeTypeList.push($(this).val());
                 });
-
-                console.log("The inclusion list is: " + nodeTypeList);
-                console.log("time to run: " + timeToRun);
-                console.log("stabilization timeout: " + stabilTimeout);
-                console.log("time btwn iterations: " + waitIter);
-                console.log("max concurrent faults: " + maxConFaults);
 
                 this.$scope.chaos.start(timeToRun, waitIter, stabilTimeout, maxConFaults, nodeTypeList);
                 $button.text("Starting chaos...");
@@ -93,7 +82,6 @@ module Sfx {
         }
 
         public convertTime(time: number, measurement: string): number {
-
             switch (measurement) {
                 case "d":
                     time = time * 24 * 3600;
