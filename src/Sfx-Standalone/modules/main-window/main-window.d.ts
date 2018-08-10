@@ -25,17 +25,18 @@ declare module "sfx.module-manager" {
 declare module "sfx.sfx-view-container" {
     export interface ISfxContainer {
         LoadSfxAsync(targetServiceEndpoint: string): Promise<void>;
+        UnloadSfxAsync(targetServiceEndpoint: string): Promise<void>;
     }
 }
 
 declare module "sfx.cluster-list" {
     export interface IClusterList {
-        newListItemAsync(endpoint: string, name?: string, folder?: string): Promise<void>;
+        newClusterListItemAsync(endpoint: string, name?: string, folder?: string): Promise<void>;
         newFolderItemAsync(label: string): Promise<void>;
-        removeCluster(label:string): Promise<void>;
-        renameCluster(old_cluster: string, new_cluster: string): Promise<void>;
-        moveCluster(cluster: string, new_folder_label: string): Promise<void>;
-        removeFolder(label: string): Promise<void>;
+        removeClusterListItem(label:string): Promise<void>;
+        renameClusterListItem(old_cluster: string, new_cluster: string): Promise<void>;
+        moveClusterListItem(cluster: string, new_folder_label: string): Promise<void>;
+        removeFolderItem(label: string): Promise<void>;
     }
 }
 

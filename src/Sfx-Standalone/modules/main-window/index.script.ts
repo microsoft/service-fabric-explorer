@@ -19,6 +19,7 @@ import { ClusterManagerComponentConfig } from "./main-window";
     try {
         await Promise.all(components.map(async component => {
             const template = $(`<div><button class="btn btn-component-head" id="c-button-${component.id}" data-component="${component.id}">${component.title}</button></div>`);
+            //const template = $(`<div></div>`);
             leftpanel.append(template);
 
             if (component.viewUrl) {

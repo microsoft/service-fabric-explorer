@@ -31,6 +31,7 @@ export class MainWindow implements IMainWindow {
 
     constructor(browserWindow: BrowserWindow) {        
         this.browserWindow = browserWindow;
+        browserWindow.setSize(1500, 1200);
     }
 
     async registerAsync(navComponent: IComponentConfiguration): Promise<void> {

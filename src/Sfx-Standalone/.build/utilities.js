@@ -36,6 +36,7 @@ exports.formGlobs =
             "!**/tsconfig.json",
             "!**/jsconfig.json",
             "!**/tslint.json",
+            "!**/settings.json",
             "!./.build/buildInfos.json",
             "!**/*.md"
         ];

@@ -10,59 +10,100 @@
     <link href="../../../sfx/css/dark.min.css" rel="stylesheet" />
     <link href="./cluster-list.css" rel="stylesheet"/>
     <style>
-        body {
-            margin-top: 8px;
-            margin-bottom: 8px;
+
+        html {
+            background-color: #191919;
+            padding: 0;
+            margin: 0;
+
         }
-        #menu {
-            margin-top: 20px;
+        body {
+            
+            padding: -26px -26px;
+            background-color: #262626;
+            margin: 0;
+            height: 100%;
+            margin-right: 20px;
+
+        }
+        .menu {
+            padding-top: 20px;
         }
 
         ul#cluster-list {
             list-style: none;
             padding: 0px;
+            margin-top: 20px;
+
+            
         }
 
         ul#cluster-list>li>ul {
             list-style: none;
+            
             padding: 0;
+    
         }
-        ul#cluster-list>li>ul>li>ul[role="menu"]{
-            list-style: none;
-            padding-right: 10px;
+        #cluster-list span{
+            max-width: 80%;
+            vertical-align: middle;
+            display: inline-block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            width: 100%;
         }
+        
         ul#cluster-list>li>ul>li>ul{
             list-style: none;
+        }
+        .folder {
+            padding-left: 8px;
         }
 
 
         ul#cluster-list>li {
             margin-top: 4px;
-            padding-left: 8px;
         }
 
-        .bowtie-icon{
+        #cluster-list .bowtie-icon{
             float: right;
             line-height: 28px;
             margin-right: 2%;
+            z-index: 5;
+            visibility: hidden;
+           
         }
 
         ul#cluster-list>li>button {
             width: 100%;
             margin: 0;
         }
-        button{
+        .menu .btn-primary{
             width: 100%;
-            font-size: 25px;
+            font-size: 16px;
             margin-top: 5px;
+
+        }
+        .menu .menu-btn {
+            margin: 0px 26px 20px 20px;
         }
 
-        img {
+        #cluster-list img {
             margin: 7px;
         }
 
+        #cluster-list .cluster {
+            padding-left: 8px;
+        }
+        #cluster-list ul{
+            padding: 0;
+            margin: 0;
+        }
+        #cluster-list ul .cluster {
+            padding-left: 50px;
+        }
 
-        .dropdown-menu{
+        #cluster-list .dropdown-menu{
             color: #fff;
             margin: 0;
             border: none;
@@ -70,20 +111,19 @@
             padding: 2px 0px;
             z-index: 1100;
             top: auto;
-            right: 0;
+            right: 20px;
             left: auto;
         }
-        .menu-buttons{
-            margin-bottom: 10%;
-        }
 
-        .dropdown-menu-show{
+
+    
+
+        #cluster-list .dropdown-menu-show{
             display: block;
         }
-        .btn-success{
+        #cluster-list .btn-success{
             background-color: #0075c9; 
             display: block;
-            border-radius: 5px;
 
         }
     </style>
@@ -92,7 +132,7 @@
 <body>
     
     <div class="menu">
-        <div>
+        <div class="menu-btn">
             <button class="btn btn-primary" id="cluster-list-connect">Connect to a cluster</button>
             <button class="btn btn-primary" id="cluster-list-folder">Add Folder</button>
         </div>
@@ -101,7 +141,6 @@
             <li>
                 <ul id="cluster-list-organized"></ul>
             </li>
-            <hr style="visibility: hidden">
         </ul> 
 
         

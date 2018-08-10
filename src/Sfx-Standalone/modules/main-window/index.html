@@ -12,46 +12,82 @@
     <style>
         .main {
             width: 100%;
+            height: 100%;
             display: flex;
         }
 
         .left-nav {
             width: 20%;
-            min-width: 250px;
+            height: 100%;
+            min-width: 350px;
         }
-
+      
         .right-container, .view-container {
             width: 100%;
             height: 100%;
         }
 
         webview {
+            /* position:absolute; */
             height: 100%;
             width: 100%;
+        }
+        .left-nav webview {
+            height: calc(100% - 50px);
         }
 
         #cluster-list {
             list-style: none;
         }
 
-        .sub-panel, .sub-panel webview {
-        
-            height: 90%;
-        }
 
         .btn-component-head {
             width: 100%;
-            background-color: #191919;           
-            height: 40px;
+            background-color: #101010;           
+            height: 50px;
+            font-size: 23px;
+            
         }
+
+        .navbar-header a{
+            color: #fff;
+            font-size: 14pt;
+            position: relative;
+            font-weight: lighter;
+            padding: 14px;
+            float: left;
+            background: #191919;
+        }
+
+         .navbar-brand-icon {
+            display: inline-block;
+            
+            margin-left: 14px;
+            margin-right: 14px;
+        }
+
+       
+        .right-container {
+            position: relative;
+        }
+        .right-container #treeview-loading-glyph {
+            position: absolute;
+            top:50%;
+            left: 50%;
+            zoom: 500%;
+        }
+
+        
     </style>
 </head>
 
 <body>
     <div class="main">
-        <div class="left-nav" id="left-panel">            
+
+        <div class="left-nav" id="left-panel">    
         </div>
-        <div class="right-container">                    
+        <div class="right-container">   
+                          
         </div>
     </div>   
 </body>

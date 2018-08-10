@@ -1,10 +1,10 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+//-----------------------------------------------------------------------------
+
 import * as $ from "jquery";
-// import * as Url from "url";
 import { IClusterList } from "sfx.cluster-list";
-
-
-
-
 
 (async() => {
     let cluster = localStorage.getItem("cluster");
@@ -43,20 +43,17 @@ import { IClusterList } from "sfx.cluster-list";
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
             if(new_folder){
                 await list.newFolderItemAsync(new_folder);
-                await list.moveCluster(cluster, new_folder);
+                await list.moveClusterListItem(cluster, new_folder);
             }
             else{
-                await list.moveCluster(cluster, folder);
-            }
-            console.log("moving " + cluster);
-            
+                await list.moveClusterListItem(cluster, folder);
+            }        
             window.close();
 
         }catch(error){
             alert("Error Occured");
 
         }
-        return false;
     });
 
     $("#btn-exit").click(() => {

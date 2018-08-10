@@ -1,5 +1,9 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+//-----------------------------------------------------------------------------
+
 import * as $ from "jquery";
-// import * as Url from "url";
 import { IClusterList } from "sfx.cluster-list";
 
 (async() => {
@@ -11,18 +15,14 @@ import { IClusterList } from "sfx.cluster-list";
     $("#btn-delete-folder").click(async () => {
         
         try{
-            console.log("deleting " + folder);
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
-            console.log("deleting " + folder);
-            await list.removeFolder(folder);
-            console.log("deleting " + folder);
+            await list.removeFolderItem(folder);
             window.close();
 
         }catch(error){
             alert("Error Occured");
 
         }
-        return false;
     });
 
     $("#btn-exit").click(() => {

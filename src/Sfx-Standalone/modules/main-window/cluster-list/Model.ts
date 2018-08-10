@@ -1,3 +1,8 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+//-----------------------------------------------------------------------------
+
 import { IMenu } from "sfx.menu";
 
 
@@ -7,17 +12,14 @@ export class Menu implements IMenu {
     private folders: Array<Folder> = new Array<Folder>();
 
     constructor() {
-        this.addFolder("----No Folder----");
+       
     }
     
     public addFolder(label: string) {
         this.folders.push(new Folder(label));
-        console.log(label + " folder added");
     }
     public addCluster(label: string, url: string, folder: string) {
-        console.log(label + " " + url + " " + folder);
         this.getFolder(folder).clusters.push(new Cluster(label, url, folder));
-
     }
     public removeFolder(label: string) {
         for (let cluster of this.getFolder(label).clusters) {
@@ -27,17 +29,14 @@ export class Menu implements IMenu {
 
     }
     public removeCluster(cluster_label: string, folder_label: string) {
-        console.log(cluster_label + " " + folder_label);
         let folder: Folder = this.getFolder(folder_label);
         let cluster_index = folder.indexOf(this.getCluster(cluster_label, "label"));
-        console.log(folder.label, cluster_index);
         folder.clusters.splice(cluster_index, 1);
     }
     public renameFolder(old_name: string, new_name: string) {
         this.getFolder(old_name).label = new_name;
     }
     public renameCluster(old_name: string, new_name: string) {
-        console.log("renaming" + old_name + new_name);
         this.getCluster(old_name, "label").label = new_name;
     }
     public moveCluster(label: string, new_folder_label: string) {
@@ -80,10 +79,10 @@ export class Menu implements IMenu {
     public getCluster(label: string, type: string) {
         for (let folder of this.folders) {
             for (let cluster of folder.clusters) {
-                if (cluster.label === label && type === "label") {
+                if (cluster.label.toLowerCase() === label.toLowerCase() && type === "label") {
                     return cluster;
                 }
-                if (cluster.url === label && type === "endpoint") {
+                if (cluster.url.toLowerCase() === label.toLowerCase() && type === "endpoint") {
                     return cluster;
                 }
             }
@@ -94,8 +93,7 @@ export class Menu implements IMenu {
 
     public getFolder(label: string) {
         for (let folder of this.folders) {
-            if (folder.label === label) {
-                console.log("Found Folder");
+            if (folder.label.toLowerCase() === label.toLowerCase()) {
                 return folder;
             }
         }
@@ -132,27 +130,3 @@ class Cluster {
         this.folder = folder;
     }
 }
-
-// class StringMap<T> {
-//     private items: { [key: string]: T };
-
-//     constructor() {
-//         this.items = {};
-//     }
-
-//     add(key: string, value: T): void {
-//         this.items[key] = value;
-//     }
-
-//     has(key: string): boolean {
-//         return key in this.items;
-//     }
-
-//     get(key: string): T {
-//         return this.items[key];
-//     }
-
-//     remove(key: string): void {
-//        delete this.items[key];
-//     }
-// }

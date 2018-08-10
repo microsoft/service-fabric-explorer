@@ -7,14 +7,11 @@ import * as $ from "jquery";
 import * as Url from "url";
 import { ISfxContainer } from "sfx.sfx-view-container";
 import { IClusterList } from "sfx.cluster-list";
-// import { Folder } from "./Model"
 
-// import { AsyncResource } from "async_hooks";
 
 $(document).ready(() => {
     let folders = JSON.parse(localStorage.getItem("folders"));
     localStorage.removeItem("folders");
-    console.log(folders);
     let select = $("#input-select-folder");
     for(let folder of folders){
         let $item = $(`<option value="${folder.label}">${folder.label}</option>`);
@@ -65,14 +62,14 @@ $(document).ready(() => {
                     if(!new_folder) {
                         throw new Error("Folder must have name!");
                     }
-                    await list.newListItemAsync(endpoint, name, new_folder);
+                    await list.newClusterListItemAsync(endpoint, name, new_folder);
                 }
                 else{
-                    await list.newListItemAsync(endpoint, name, folder);
+                    await list.newClusterListItemAsync(endpoint, name, folder);
                 }
             }
             else{
-                await list.newListItemAsync(endpoint, name, folder);
+                await list.newClusterListItemAsync(endpoint, name, folder);
             }
 
             console.log(endpoint + " " + name);
@@ -80,9 +77,6 @@ $(document).ready(() => {
             await sfx.LoadSfxAsync(endpoint).then(() => {
                 window.close();
             });
-            
-            
-           
 
         } catch (error) {
             alert((<Error>error).message);

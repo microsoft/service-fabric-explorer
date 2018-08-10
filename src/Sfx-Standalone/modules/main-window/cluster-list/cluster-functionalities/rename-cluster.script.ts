@@ -1,5 +1,9 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+//-----------------------------------------------------------------------------
+
 import * as $ from "jquery";
-// import * as Url from "url";
 import { IClusterList } from "sfx.cluster-list";
 
 
@@ -15,12 +19,11 @@ import { IClusterList } from "sfx.cluster-list";
             
             let label: string = $("#input-cluster-label").val().toString();
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
-            await list.renameCluster(old_cluster, label);
+            await list.renameClusterListItem(old_cluster, label);
         
             window.close();
 
         }catch(error){
-            //alert("Folder name is not valid");
             alert(error.message);
         }
     });
