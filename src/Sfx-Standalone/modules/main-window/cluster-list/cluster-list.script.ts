@@ -250,7 +250,6 @@ export class ClusterList implements IClusterList {
 
     private async handleClusterListItemClick($item, endpoint: string, name: string) {
         $($item).click(async (e) => {
-            console.log("clicked cluster");
             const $button = $(e.target);
             if ($button.attr("class") === "bowtie-icon bowtie-ellipsis") {
                 if ($(e.target).next().hasClass("dropdown-menu-show")) {

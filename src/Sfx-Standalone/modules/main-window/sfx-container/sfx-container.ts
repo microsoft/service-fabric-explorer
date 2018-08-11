@@ -55,7 +55,7 @@ export class SfxContainer implements ISfxContainer {
         sfxWebView.addEventListener("dom-ready", async () => {
             container.children("#treeview-loading-glyph").remove();
             if (!sfxWebView.isDevToolsOpened()) {
-                sfxWebView.openDevTools();
+               sfxWebView.openDevTools();
             }  
         });
 
@@ -68,12 +68,7 @@ export class SfxContainer implements ISfxContainer {
 
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
         
-            // this.endpoints.push({ endpoint: targetServiceEndpoint, id: id});
-            console.log(this.endpoints.indexOf(e => e.endpoint === targetServiceEndpoint));
             this.endpoints.splice(this.endpoints.indexOf(e => e.endpoint === targetServiceEndpoint), 1);
-
-            //const sfxUrl = appUtils.resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint});
-            //$(`<div id="view-container-${id}" class="view-container"><webview id="view-${id}" src="${sfxUrl}" nodeintegration preload="./preload.js"></webview></div>`).remove(container);
             container.children("#view-container-" + id).remove();
         
 

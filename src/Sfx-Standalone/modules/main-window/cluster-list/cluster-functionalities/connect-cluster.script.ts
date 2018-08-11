@@ -48,14 +48,12 @@ $(document).ready(() => {
             }
            
             const endpoint = url.protocol + "//" + url.host;
-            console.log(endpoint + " " + name);
             if(!name) {
                 name = url.host;
             }
             
 
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
-            console.log(endpoint + " " + name);
 
             if(folder != "----No Folder----"){
                 if(folder === "new_folder"){
@@ -72,7 +70,6 @@ $(document).ready(() => {
                 await list.newClusterListItemAsync(endpoint, name, folder);
             }
 
-            console.log(endpoint + " " + name);
             const sfx = await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container");
             await sfx.LoadSfxAsync(endpoint).then(() => {
                 window.close();

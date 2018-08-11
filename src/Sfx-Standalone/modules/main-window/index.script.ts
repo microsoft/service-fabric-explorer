@@ -21,10 +21,10 @@ import { ClusterManagerComponentConfig } from "./main-window";
             const template = $(`<div><button class="btn btn-component-head" id="c-button-${component.id}" data-component="${component.id}">${component.title}</button></div>`);
             //const template = $(`<div></div>`);
             leftpanel.append(template);
+           
 
             if (component.viewUrl) {
                 $(`<div id="sub-${component.id}" class="sub-panel"><webview id="wv-${component.id}" src="${component.viewUrl}" nodeintegration preload="./preload.js"></webview></div>`).appendTo(template);
-
                 let webview = <WebviewTag>document.querySelector(`webview[id='wv-${component.id}']`);
                 webview.addEventListener("dom-ready", async () => {
                     await sfxModuleManager.newHostAsync(`host-${component.id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));

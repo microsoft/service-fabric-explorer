@@ -28,16 +28,19 @@ export class DialogService implements IDialogService {
                     </div>
                 </div>
             </div>`;
-
+        
         $(document.body).append($(template));
+     
 
         let webview = <WebviewTag>document.querySelector(`#main-modal-dialog webview`);
         webview.addEventListener("dom-ready", async () => {
+            
             webview.openDevTools();
             await sfxModuleManager.newHostAsync("host-dialog-service", await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));
         });
 
         webview.addEventListener("close", async () => {
+        
             await sfxModuleManager.destroyHostAsync("host-dialog-service");
             $("#main-modal-dialog").modal("hide").remove();
         });
