@@ -17,7 +17,10 @@ module Sfx {
         }
 
         public ok() {
-            this.$scope.showDeleteConfirmation = false;
+            console.log(this.$scope.confirmationKeyword);
+            this.$scope.imagestoreroot.deleteFolder(this.$scope.confirmationKeyword);
+                console.log(this.$scope.imagestoreroot);
+                this.$scope.showDeleteConfirmation = false;
         }
 
 

@@ -516,7 +516,7 @@ module Sfx {
 
         public deleteImageStoreContent(path?: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = path ? `ImageStore/${path}` : "ImageStore";
-            return this.post(this.getApiUrl(url, RestClient.apiVersion60), "Delete Image Store Content", messageHandler);
+            return this.delete(this.getApiUrl(url, RestClient.apiVersion60), "Delete Image Store Content", messageHandler);
         }
 
         /**
@@ -563,7 +563,15 @@ module Sfx {
             return result;
         }
 
-        private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
+        private delete<T> (url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
+            let result = this.wrapInCallbacks(() => this.$http.delete(url));
+            if (!messageHandler) {
+                messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
+            }
+            this.handleResponse(apiDesc, result, messageHandler);
+            return result;
+        }
+        private put<T> (url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
             let result = this.wrapInCallbacks(() => this.$http.put(url, data));
             if (!messageHandler) {
                 messageHandler = ResponseMessageHandlers.putResponseMessageHandler;

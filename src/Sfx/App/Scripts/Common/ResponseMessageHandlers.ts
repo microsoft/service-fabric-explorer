@@ -58,6 +58,7 @@ module Sfx {
         public static getResponseMessageHandler: IResponseMessageHandler = new GetResponseMessageHandler();
         public static postResponseMessageHandler: IResponseMessageHandler = new PostResponseMessageHandler();
         public static putResponseMessageHandler: IResponseMessageHandler = new PostResponseMessageHandler();
+        public static deleteResponseMessageHandler: IResponseMessageHandler = new PostResponseMessageHandler();
         public static silentResponseMessageHandler: IResponseMessageHandler = new SilentResponseMessageHandler();
     }
 }

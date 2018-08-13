@@ -148,6 +148,14 @@ module Sfx {
             });
         }
 
+        protected deleteFolder(path: string) {
+            this.UIFolderDictionary[path].show = false;
+            delete this.UIFolderDictionary[path];
+            delete this.DataFolderDictionary[path];
+            return Utils.getHttpResponseData(this.data.restClient.deleteImageStoreContent(path)).then(() => {
+            });
+        }
+
         private copyFolderContentToUI(path: string): angular.IPromise<void> {
             const parent = this.UIFolderDictionary[path];
             return this.getFolderContentFromLocalDataSource(path).then(raw => {
