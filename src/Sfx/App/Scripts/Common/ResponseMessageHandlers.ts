@@ -77,6 +77,10 @@ module Sfx {
             if (response.status === 400) {
                 return "EventsStore is not available on current cluster.";
             }
+            // Non-OneBox environment with no azure tables storage configured.
+            if (response.status === 404) {
+                return "EventsStore storage is not configured for current cluster.";
+            }
 
             let handler = this.innerHandler ? this.innerHandler : ResponseMessageHandlers.getResponseMessageHandler;
             return handler.getErrorMessage(apiDesc, response);

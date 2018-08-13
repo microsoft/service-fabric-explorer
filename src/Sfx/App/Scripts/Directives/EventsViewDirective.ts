@@ -32,6 +32,7 @@ module Sfx {
         public endDateMax: Date;
         public startDateInit: Date;
         public endDateInit: Date;
+        public isResetEnabled: boolean = false;
 
         private eventsList: EventListBase<any>;
         private isStartSelected: boolean;
@@ -79,6 +80,7 @@ module Sfx {
         }
 
         public reset(): void {
+            this.isResetEnabled = false;
             if (this.eventsList.resetDateWindow()) {
                 this.resetSelectionProperties();
                 this.eventsList.reload();
@@ -99,6 +101,7 @@ module Sfx {
         private setNewDateWindow(): void {
             if (this.eventsList.setDateWindow(this._startDate, this._endDate)) {
                 this.resetSelectionProperties();
+                this.isResetEnabled = true;
                 this.eventsList.reload();
             } else {
                 this.resetSelectionProperties();

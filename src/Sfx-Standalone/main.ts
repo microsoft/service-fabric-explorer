@@ -61,7 +61,7 @@ app.on("ready", () => {
 
                 const mainWindow: BrowserWindow = moduleManager.getComponent("browser-window", null, true, clusterUrl);
 
-                mainWindow.setMenuBarVisibility(false);
+                mainWindow.setMenuBarVisibility(true);
 
                 log.writeEvent("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
                 mainWindow.loadURL(resolve("sfx/index.html"));

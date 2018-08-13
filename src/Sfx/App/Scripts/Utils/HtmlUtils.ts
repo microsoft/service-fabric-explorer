@@ -49,7 +49,7 @@ module Sfx {
 
         public static getEventNameHtml(event: FabricEventBase): string {
             // A temp solution till we have level information as part of events.
-            if (_.endsWith(event.kind, "HealthReportCreated")) {
+            if (_.endsWith(event.kind, "HealthReportCreated") || _.endsWith(event.kind, "NewHealthReport")) {
                 let color = "";
                 if (event.eventProperties.HealthState === "Ok") {
                     color = "#3AA655";

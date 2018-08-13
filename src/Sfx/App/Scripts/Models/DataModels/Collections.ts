@@ -671,14 +671,20 @@ module Sfx {
                 this.pageSize,
                 ["raw.timeStamp"],
                 [ new ListColumnSetting(
-                    "#Type",
+                    "raw.kind",
                     "Type",
                     ["raw.kind"],
                     true,
                     (item) => HtmlUtils.getEventNameHtml(item.raw)),
-                new ListColumnSetting("raw.timeStampString", "Timestamp"), ],
+                  new ListColumnSetting(
+                    "raw.category",
+                    "Event Category",
+                    ["raw.category"],
+                    true,
+                    (item) => (!item.raw.category ? "Operational" : item.raw.category)),
+                  new ListColumnSetting("raw.timeStampString", "Timestamp"), ],
                 [ new ListColumnSetting(
-                    "#Details",
+                    "raw.eventInstanceId",
                     "",
                     [],
                     null,
@@ -687,8 +693,10 @@ module Sfx {
                 true,
                 (item) => (Object.keys(item.raw.eventProperties).length > 0),
                 true);
-            listSettings.sortReverse = true;
+
             listSettings.columnSettings[0].fixedWidthPx = 300;
+            listSettings.columnSettings[1].fixedWidthPx = 200;
+            listSettings.sortReverse = true;
 
             return listSettings;
         }

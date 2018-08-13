@@ -18,12 +18,14 @@ module Sfx {
 
     export abstract class FabricEventBase implements IFabricEventMetadata, IEventPropertiesCollection {
         private _kind: string;
+        private _category?: string;
         private _eventInstanceId: string;
         private _timeStamp: Date;
         private _hasCorrelatedEvents?: boolean;
         private _eventProperties: { [key: string]: any; } = {};
 
         public get kind() { return this._kind; }
+        public get category() { return this._category; }
         public get eventInstanceId() { return this._eventInstanceId; }
         public get timeStamp() { return this._timeStamp; }
         public get timeStampString() { return TimeUtils.datetimeToString(this._timeStamp); }
@@ -42,6 +44,9 @@ module Sfx {
             switch (name) {
                 case "Kind":
                     this._kind = value;
+                    return true;
+                case "Category":
+                    this._category = value;
                     return true;
                 case "EventInstanceId":
                     this._eventInstanceId = value;
