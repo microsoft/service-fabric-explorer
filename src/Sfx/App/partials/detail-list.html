@@ -61,11 +61,11 @@
                         </div>
                     </td>
                 </tr>
-            <tr ng-if="list && list.isRefreshing !== undefined && !list.isInitialized">
-                <td colspan="100">Loading...</td>
-            </tr>
-            <tr ng-if="sortedFilteredList.length === 0 && (!list || list.isRefreshing === undefined || list.isInitialized)">
-                <td colspan="100">No items to display.</td>
+                <tr ng-if="list && list.isRefreshing !== undefined && !list.isInitialized">
+                    <td colspan="100">Loading...</td>
+                </tr>
+                <tr ng-if="sortedFilteredList.length === 0 && (!list || list.isRefreshing === undefined || list.isInitialized)">
+                    <td colspan="100">No items to display.</td>
                 </tr>
             </tbody>
         </table>

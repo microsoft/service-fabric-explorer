@@ -1,23 +1,24 @@
 /// <binding BeforeBuild="build" Clean="clean" ProjectOpened="watch" />
 
-var gulp = require("gulp");
-var merge = require("merge2");
-var plugins = require("gulp-load-plugins")({
+let gulp = require("gulp");
+let merge = require("merge2");
+let plugins = require("gulp-load-plugins")({
     pattern: ["*", "!bower", "!typescript", "!tslint"],
     camelize: true,
     lazy: true
 });
+let libConfiguration = require("./lib.json");
 
 // To get production bits, right click project, choose publish.
 // This env variable will be set through prepublish command defined in project.json
-var isProductionEnv = plugins.yargs.argv.production === undefined ? false : true;
+let isProductionEnv = plugins.yargs.argv.production === undefined ? false : true;
 
 //-----------------------------------------------------------------------------
 // Paths
 //-----------------------------------------------------------------------------
 
 // Base paths
-var paths = {
+let paths = {
     webroot: "wwwroot/"
 };
 
@@ -83,8 +84,9 @@ paths.libs_styles = {
 // Clean tasks
 //-----------------------------------------------------------------------------
 
-gulp.task("clean", function () {
-    return plugins.del.sync([paths.webroot + "/*", "!" + paths.webroot + "/bin"]);
+gulp.task("clean", function (done) {
+    plugins.del.sync([paths.webroot + "/*", "!" + paths.webroot + "/bin"]);
+    done();
 });
 
 //-----------------------------------------------------------------------------
@@ -110,8 +112,9 @@ gulp.task("build:templates", function () {
 });
 
 // Inject commit id and build number into VersionInfo.ts
-gulp.task("build:versionInfo", function () {
+gulp.task("build:versionInfo", function (done) {
     if (!process.env.BUILD_BUILDNUMBER || !process.env.BUILD_SOURCEVERSION) {
+        done();
         return;
     }
 
@@ -121,11 +124,11 @@ gulp.task("build:versionInfo", function () {
 });
 
 gulp.task("build:lib-js", function () {
-    console.log("Bower ordered javascripts:");
-    console.log(plugins.wiredep().js);
+    console.log("Lib ordered javascripts:");
+    console.log(libConfiguration.js);
 
     // Create lib.min.js
-    return gulp.src(plugins.wiredep().js, { base: "bower_components" })
+    return gulp.src(libConfiguration.js)
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(plugins.concat(paths.libs_scripts.target))
         .pipe(plugins.if(isProductionEnv, plugins.uglify({ preserveComments: "license" })))
@@ -134,11 +137,11 @@ gulp.task("build:lib-js", function () {
 });
 
 gulp.task("build:lib-css", function () {
-    console.log("Bower styles:");
-    console.log(plugins.wiredep().css);
+    console.log("Lib styles:");
+    console.log(libConfiguration.css);
 
     // Create lib.min.css
-    return gulp.src(plugins.wiredep().css)
+    return gulp.src(libConfiguration.css)
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(plugins.concat(paths.libs_styles.target))
         .pipe(plugins.cleanCss())
@@ -148,7 +151,7 @@ gulp.task("build:lib-css", function () {
 
 // Concat and minify third party libaries
 // Uses wiredep to analyse dependencies, custom ordering is done in bower.json via overrides.
-gulp.task("build:lib", ["build:lib-js", "build:lib-css"]);
+gulp.task("build:lib", gulp.parallel("build:lib-js", "build:lib-css"));
 
 gulp.task("build:tslint", function () {
     // Run tslint for .ts files under App/Scripts folder
@@ -167,16 +170,15 @@ gulp.task("build:tslint", function () {
         }));
 });
 
-// Compile TypeScript, concat/uglify into app.min.js, create sourcemap to help TS debugging
-gulp.task("build:js", ["build:templates", "build:versionInfo", "build:tslint"], function () {
+gulp.task("build:ts", function () {
     console.log("isProductionEnvironment = " + isProductionEnv);
 
-    var tsProject = plugins.typescript.createProject("App/Scripts/tsconfig.json", {
+    let tsProject = plugins.typescript.createProject("App/Scripts/tsconfig.json", {
         outFile: paths.scripts.target
     });
 
     // tsProject.src() retrieves all .ts files in the folder which contains tsconfig.json
-    var result = tsProject.src()
+    let result = tsProject.src()
         .pipe(plugins.if(!isProductionEnv, plugins.sourcemaps.init()))
         .pipe(tsProject());
 
@@ -188,9 +190,15 @@ gulp.task("build:js", ["build:templates", "build:versionInfo", "build:tslint"], 
         result.dts.pipe(gulp.dest(paths.scripts.dest))]);
 });
 
+// Compile TypeScript, concat/uglify into app.min.js, create sourcemap to help TS debugging
+gulp.task("build:js",
+    gulp.series(
+        gulp.parallel("build:templates", "build:versionInfo", "build:tslint"),
+        "build:ts"));
+
 // Compile SASS, concat/minify into app.min.css, create sourcemap to help debugging
 gulp.task("build:css", function () {
-    var compileTheme = function (theme) {
+    let compileTheme = function (theme) {
         return gulp.src(theme.src)
             .pipe(plugins.plumber({
                 errorHandler: function (err) {
@@ -216,20 +224,22 @@ gulp.task("build:css", function () {
 });
 
 // Build
-gulp.task("build", ["build:lib", "build:static", "build:js", "build:css"]);
+gulp.task("build", gulp.parallel(["build:lib", "build:static", "build:js", "build:css"]));
 
 // Clean build
-gulp.task("clean-build", function (callback) {
-    plugins.runSequence("clean", "build", callback);
-});
+gulp.task("clean-build", gulp.series("clean", "build"));
 
 //-----------------------------------------------------------------------------
 // Watch tasks
 //-----------------------------------------------------------------------------
 
 // Watch task which monitor all TS and SCSS file changes
-gulp.task("watch", ["build"], function () {
-    gulp.watch(paths.statics.src, ["build:static"]);
-    gulp.watch(paths.styles.src, ["build:css"]);
-    gulp.watch([paths.scripts.src, paths.templates.src], ["build:js"]);
-});
+gulp.task("watch", gulp.series(["build"], function (done) {
+    gulp.watch(paths.statics.src, gulp.series("build:static"));
+    gulp.watch(paths.styles.src, gulp.series("build:css"));
+    gulp.watch([paths.scripts.src, paths.templates.src], gulp.series("build:js"));
+
+    // To signal completion
+    done();
+}));
+

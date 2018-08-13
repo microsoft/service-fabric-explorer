@@ -3,15 +3,16 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import "./utils";
-import error from "./errorUtil";
+import { IHandlerChainBuilder, IAsyncHandlerConstructor, FunctionType } from "sfx.common";
 
-export class HandlerChainBuilder<THandler> implements IHandlerChainBuilder<THandler> {
-    private readonly chain: Array<IHandlerConstructor<THandler>> = new Array<IHandlerConstructor<THandler>>();
+import * as utils from "./utils";
 
-    public handle(constructor: IHandlerConstructor<THandler>): IHandlerChainBuilder<THandler> {
+export class HandlerChainBuilder<THandler extends FunctionType> implements IHandlerChainBuilder<THandler> {
+    private readonly chain: Array<IAsyncHandlerConstructor<THandler>> = [];
+
+    public async handleAsync(constructor: IAsyncHandlerConstructor<THandler>): Promise<IHandlerChainBuilder<THandler>> {
         if (!Function.isFunction(constructor)) {
-            throw error("constructor should be a function.");
+            throw new Error("constructor should be a function.");
         }
 
         this.chain.push(constructor);
@@ -19,12 +20,16 @@ export class HandlerChainBuilder<THandler> implements IHandlerChainBuilder<THand
         return this;
     }
 
-    public build(): THandler {
-        let constructor: IHandlerConstructor<THandler>;
-        let nextHandler: THandler = null;
+    public async buildAsync(): Promise<THandler> {
+        let constructor: IAsyncHandlerConstructor<THandler>;
+        let nextHandler: THandler = undefined;
 
         while (constructor = this.chain.pop()) {
-            nextHandler = constructor(nextHandler);
+            nextHandler = await constructor(nextHandler);
+
+            if (!utils.isNullOrUndefined(nextHandler) && !Function.isFunction(nextHandler)) {
+                throw new Error("Contructed handler must be a function.");
+            }
         }
 
         return nextHandler;

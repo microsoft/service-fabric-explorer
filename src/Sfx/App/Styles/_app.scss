@@ -1,7 +1,7 @@
 ﻿// Product css chainer, include new modules here
 
 // Import bootstrap style first so we can override the default styles later
-@import "../../../bower_components/bootstrap-sass/assets/stylesheets/bootstrap";
+@import "../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap";
 
 @import "Modules/icons";
 @import "Modules/media";

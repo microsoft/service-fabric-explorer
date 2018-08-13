@@ -8,6 +8,14 @@
             <div class="table-responsive">      
                 <table class="essen-table" role="presentation">
                     <tr>
+                        <th>Code Version</th>
+                        <th>Upgrade State</th>
+                    </tr>
+                    <tr>
+                        <td>{{clusterUpgradeProgress.raw.CodeVersion}}</td>
+                        <td>{{clusterUpgradeProgress.raw.UpgradeState}}</td>
+                    </tr>
+                    <tr>
                         <th>Cluster Health State</th>
                         <th>Upgrade Domains</th>
                     </tr>
@@ -24,11 +32,11 @@
                         <td>{{nodes.faultDomains.length}}</td>
                     </tr>
                     <tr>
-                        <th>Healthy Seed Nodes</th>
+                        <th>Healthy Seed Nodes</th>                        
                     </tr>
                     <tr>
-                        <td>{{nodes.healthySeedNodes}}</td>
-                    </tr>
+                        <td>{{nodes.healthySeedNodes}}</td>                        
+                    </tr>                    
                 </table>
             </div>
         </div>
@@ -57,8 +65,8 @@
                                 <div class="dashboard-tile">
                                     <div class="dashboard-tile-inner">
                                         <div class="dashboard-tile-leftbar {{upgradeAppsCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'}}"></div>
-                                        <div class="dashboard-tile-title" ng-if="upgradeAppsCount > 1">UPGRADES IN PROGRESS</div>
-                                        <div class="dashboard-tile-title" ng-if="upgradeAppsCount <= 1">UPGRADE IN PROGRESS</div>
+                                        <div class="dashboard-tile-title" ng-if="upgradeAppsCount > 1">APPLICATION UPGRADES IN PROGRESS</div>
+                                        <div class="dashboard-tile-title" ng-if="upgradeAppsCount <= 1">APPLICATION UPGRADE IN PROGRESS</div>
                                         <div class="dashboard-tile-number">{{upgradeAppsCount}}</div>
                                     </div>
                                 </div>

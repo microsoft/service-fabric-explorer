@@ -40,8 +40,6 @@ gulp.task("build-ut", function () {
     return buildSpec(paths.specs.ut);
 });
 
-gulp.task("clean-build", ["clean", "build-ut"]);
-
 function buildSpec(path) {
     var tsProject = plugins.typescript.createProject(path.tsConfig, { outFile: path.target });
 
@@ -55,16 +53,20 @@ function buildSpec(path) {
 //-----------------------------------------------------------------------------
 // Clean tasks
 //-----------------------------------------------------------------------------
-gulp.task("clean", function () {
-    return plugins.del.sync([paths.webroot, "results"]);
+gulp.task("clean", function (done) {
+    plugins.del.sync([paths.webroot, "results"]);
+    done();
 });
+
+gulp.task("clean-build", gulp.parallel("clean", "build-ut"));
 
 //-----------------------------------------------------------------------------
 // Watch tasks
 //-----------------------------------------------------------------------------
-gulp.task("watch-test", ["clean-build"], function () {
+gulp.task("watch-test", gulp.series("clean-build", function (done) {
     gulp.watch(paths.specs.ut.src, ["build-ut"]);
-});
+    done();
+}));
 
 //-----------------------------------------------------------------------------
 // Tests
@@ -76,13 +78,13 @@ gulp.task("karma", function (done) {
 });
 
 // Run unit tests
-gulp.task("ut", ["build-ut"], function (done) {
-    launchKarma(true, done, ["Chrome", "IE"], ["spec", "html"]);
-});
+gulp.task("ut", gulp.series("build-ut", function (done) {
+    launchKarma(true, done, ["Chrome", "IE"], ["spec", "html"]);    
+}));
 
-gulp.task("automation:unittests", ["build-ut"], function (done){
+gulp.task("automation:unittests", gulp.series("build-ut", function (done){
     launchKarma(true, done, ["Chrome_without_security"], ["spec", "junit"]);
-});
+}));
 
 function launchKarma(singleRun, done, browsers, reporters) {
     new plugins.karma.Server({
@@ -94,4 +96,6 @@ function launchKarma(singleRun, done, browsers, reporters) {
         done();
         process.exit(err ? 1 : 0);
     }).start();
+
+    done();
 }

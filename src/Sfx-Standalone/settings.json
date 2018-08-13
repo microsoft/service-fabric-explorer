@@ -5,17 +5,19 @@
     },
     "logging": {
         "logCallerInfo": true,
-        "loggers": {
-            "app-insights": {
-                "type": "app-insights",
+        "loggers": [
+            {
+                "name": "app-insights",
+                "component": "logging.logger.app-insights",
                 "instrumentationKey": "84c71119-d044-4bc2-86b3-d65a8968c241"
             },
-            "console": {
-                "type": "console",
+            {
+                "name": "console",
+                "component": "logging.logger.console",
                 "logAllProperties": false,
                 "logCallerInfo": true
             }
-        }
+        ]
     },
     "defaultMenu": {
         "macos": [
@@ -64,5 +66,14 @@
                 ]
             }
         ]
+    },
+    "package-manager": {
+        "packagesDir": "packages",
+        "repos": {
+            "public": {
+                "name": "public",
+                "url": "https://www.myget.org/F/sfx/npm/"
+            }
+        }
     }
 }

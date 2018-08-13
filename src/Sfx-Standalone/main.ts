@@ -1,74 +1,71 @@
-// //-----------------------------------------------------------------------------
-// // Copyright (c) Microsoft Corporation.  All rights reserved.
-// // Licensed under the MIT License. See License file under the project root for license information.
-// //-----------------------------------------------------------------------------
-import { app, dialog, Menu, BrowserWindow } from "electron";
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Licensed under the MIT License. See License file under the project root for license information.
+//-----------------------------------------------------------------------------
+
+import { app, Menu, MenuItemConstructorOptions } from "electron";
 import * as uuidv5 from "uuid/v5";
 
-import { ILog } from "./@types/log";
-import { ISettings } from "./@types/settings";
 import { env, Platform } from "./utilities/env";
-import resolve, { local } from "./utilities/resolve";
-import { ModuleManager } from "./module-manager/module-manager";
-import { ModuleManagerHostAgent } from "./module-manager/module-manager-host";
-import { DiDescriptorConstructor } from "./utilities/di.ext";
+import { resolve } from "./utilities/appUtils";
 
-const moduleManager: IModuleManager = new ModuleManager(app.getVersion());
-
-(function loadBuiltInModules(): void {
-    const errors = moduleManager.loadModules(local("modules"));
-
-    if (Object.isObject(errors)) {
-        console.error("Failed to load built-in modules. Errors:");
-
-        for (const topic in errors) {
-            if (errors.hasOwnProperty(topic)) {
-                console.error(topic);
-                errors[topic].forEach((error) => console.error(error));
-            }
-        }
-
-        app.exit(1);
-    } else {
-        const hostAgent = new ModuleManagerHostAgent(moduleManager);
-
-        moduleManager.registerComponents([{
-            name: "module-manager-host-agent",
-            version: app.getVersion(),
-            singleton: true,
-            descriptor: DiDescriptorConstructor.singleton(hostAgent)
-        }]);
-    }
-})();
-
-app.setName("Service Fabric Explorer");
-
-app.on("ready", () => {
-    const log: ILog = moduleManager.getComponent("log");
+async function startup(): Promise<void> {
+    const log = await sfxModuleManager.getComponentAsync("logging");
+    log.writeInfoAsync("Application starting up ...");
 
     if (env.platform === Platform.MacOs) {
-        const settings: ISettings = moduleManager.getComponent("settings");
+        const settings = await sfxModuleManager.getComponentAsync("settings");
 
+        log.writeInfoAsync("Initialize application menu for macOS.");
         Menu.setApplicationMenu(
             Menu.buildFromTemplate(
-                settings.get("defaultMenu/" + env.platform)));
+                await settings.getAsync<Array<MenuItemConstructorOptions>>("defaultMenu/" + env.platform)));
     }
 
-    moduleManager.getComponent("prompt-connect-cluster",
-        (error, clusterUrl) => {
-            if (clusterUrl) {
-                global["TargetClusterUrl"] = clusterUrl;
+    log.writeInfoAsync("Starting up connect-cluster prompt.");
+    const prompt_connectCluster = await sfxModuleManager.getComponentAsync("prompt.connect-cluster");
+    const clusterUrl = await prompt_connectCluster.openAsync();
 
-                const mainWindow: BrowserWindow = moduleManager.getComponent("browser-window", null, true, clusterUrl);
+    if (clusterUrl) {
+        // Start up the main window.
+        global["TargetClusterUrl"] = clusterUrl;
+        const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null, true, clusterUrl);
 
-                mainWindow.setMenuBarVisibility(true);
+        mainWindow.setMenuBarVisibility(false);
 
-                log.writeEvent("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
-                mainWindow.loadURL(resolve("sfx/index.html"));
-            }
-        });
+        log.writeEventAsync("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
+        mainWindow.loadURL(resolve("sfx/index.html"));
+    } else {
+        log.writeInfoAsync("No cluster url provided.");
+        log.writeInfoAsync("app.quit().");
 
-    setTimeout(() => moduleManager.getComponent("update-service").update(), 1000); // Check upgrade after 1 sec.
-});
+        app.quit();
+        return;
+    }
 
-app.on("window-all-closed", () => app.quit());
+    // Trigger update activity.
+    (await sfxModuleManager.getComponentAsync("update")).updateAsync();
+
+    // Handle "window-all-closed" event.
+    app.removeAllListeners("window-all-closed");
+    app.once("window-all-closed", async () => {
+        const log = await sfxModuleManager.getComponentAsync("logging");
+
+        log.writeInfoAsync("'window-all-closed': app.quit().");
+        app.quit();
+    });
+
+    log.writeInfoAsync("application startup finished.");
+}
+
+export default function (): Promise<void> {
+    app.on("window-all-closed", (event) => undefined);
+
+    if (app.isReady()) {
+        return startup();
+    }
+
+    app.once("ready", startup);
+
+    return Promise.resolve();
+}

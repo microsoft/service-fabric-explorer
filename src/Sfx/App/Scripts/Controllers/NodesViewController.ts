@@ -26,9 +26,10 @@ module Sfx {
             this.$scope.listSettings = this.settings.getNewOrExistingListSettings("nodes", ["name"], [
                 new ListColumnSettingForLink("name", "Name", item => item.viewPath),
                 new ListColumnSetting("raw.IpAddressOrFQDN", "Address"),
-                new ListColumnSetting("raw.Type", "Node Type"),
-                new ListColumnSetting("raw.UpgradeDomain", "Upgrade Domain"),
-                new ListColumnSetting("raw.FaultDomain", "Fault Domain"),
+                new ListColumnSettingWithFilter("raw.Type", "Node Type"),
+                new ListColumnSettingWithFilter("raw.UpgradeDomain", "Upgrade Domain"),
+                new ListColumnSettingWithFilter("raw.FaultDomain", "Fault Domain"),
+                new ListColumnSettingWithFilter("raw.IsSeedNode", "Is Seed Node"),
                 new ListColumnSettingForBadge("healthState", "Health State"),
                 new ListColumnSettingWithFilter("nodeStatus", "Status"),
             ]);

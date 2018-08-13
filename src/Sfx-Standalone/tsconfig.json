@@ -3,9 +3,11 @@
     "compilerOptions": {
         "module": "commonjs",
         "moduleResolution": "node",
-        "target": "es2017",
+        "target": "ES2017",
         "sourceMap": true,
-        "declaration": false
+        "declaration": false,
+        "noUnusedLocals": true,
+        "noImplicitReturns": true
     },
     "exclude": [
         "build/",

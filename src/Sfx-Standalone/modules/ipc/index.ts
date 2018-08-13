@@ -3,28 +3,23 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ILog } from "../../@types/log";
-import { ICommunicator } from "../../@types/ipc";
-import ElectronCommunicator from "./communicator-electron";
-import ElectronProxy from "./proxy-electron";
+import { ChannelType, ICommunicatorConstructorOptions } from "sfx.ipc";
+import { IModuleInfo, IModule } from "sfx.module-manager";
+import { ICommunicator } from "sfx.remoting";
 
-export function getModuleMetadata(): IModuleInfo {
+import * as appUtils from "../../utilities/appUtils";
+
+(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+    components.register<any>({
+        name: "ipc.communicator",
+        version: appUtils.getAppVersion(),
+        descriptor: async (channel: ChannelType, options?: ICommunicatorConstructorOptions): Promise<ICommunicator> =>
+            import("./communicator").then((module) => module.Communicator.fromChannel(channel, options))
+    });
+
     return {
         name: "ipc",
-        version: "1.0.0",
-        components: [
-            {
-                name: "ipc-communicator-electron",
-                version: "1.0.0",
-                descriptor: (log: ILog, webContentId: number, subchannelName: string) => new ElectronCommunicator(log, webContentId, subchannelName),
-                deps: ["log"]
-            },
-            {
-                name: "ipc-proxy-electron",
-                version: "1.0.0",
-                descriptor: (log: ILog, communicator: ICommunicator, autoDipsoseCommunicator: boolean) => new ElectronProxy(log, communicator, autoDipsoseCommunicator),
-                deps: ["log"]
-            }
-        ]
+        version: appUtils.getAppVersion(),
+        loadingMode: "Always"
     };
-}
+};

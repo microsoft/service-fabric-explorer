@@ -7,39 +7,48 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Debug",
+            "name": "Debug: Main",
             "cwd": "${workspaceRoot}",
             "sourceMaps": true,
+            "autoAttachChildProcesses": true,
+            "protocol": "inspector",
+            "trace": true,
+            "outputCapture": "std",
             "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
             "windows": {
                 "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
             },
             "args": [
+                "--remote-debugging-port=9223",
                 "./build/app/."
             ],
-            "preLaunchTask": "gulp: Build"
+            "preLaunchTask": "gulp: build:debug"
+        },
+        {
+            "name": "Debug: Renderer",
+            "type": "chrome",
+            "request": "attach",
+            "port": 9223,
+            "webRoot": "${workspaceFolder}",
+            "timeout": 30000,
+            "sourceMaps": true
         },
         {
             "type": "node",
             "request": "launch",
-            "name": "Debug without build",
-            "cwd": "${workspaceRoot}",
-            "sourceMaps": true,
-            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
-            "windows": {
-                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
-            },
-            "args": [
-                "./build/app/."
-            ]
-        },
-        {
-            "type": "node",
-            "request": "launch",
-            "name": "Debug gulp Clean-Build",
+            "name": "Debug gulp clean-build:all",
             "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
             "args": [
-                "Clean-Build"
+                "clean-build:all"
+            ]
+        }
+    ],
+    "compounds": [
+        {
+            "name": "Debug: All",
+            "configurations": [
+                "Debug: Main",
+                "Debug: Renderer"
             ]
         }
     ]

@@ -33,7 +33,7 @@ To develop Service Fabric Explorer, the following components are required.
 
 * Git: https://git-scm.com/
 * Python 2: https://www.python.org/
-* Node.js (LTS is preferred): https://nodejs.org/
+* Node.js (Current is preferred): https://nodejs.org/
 * C++ Compiler
    * Windows: Visual C++ https://www.visualstudio.com/
    * Ubuntu: `sudo apt-get install -y build-essential`
@@ -51,8 +51,7 @@ Here's a list of common IDE used.
 2. Install project dependencies: *This can be done inside VSCode or use a console window.*
    1. [SFX] Navigate to `src/Sfx` and run the following scripts.
    ```Shell
-   npm install
-   npm run bower-install
+   npm install   
    ```
    2. [SFX Standalone] Navigate to `src/Sfx-Standalone` and run the following scripts.
    ```Shell
@@ -60,15 +59,14 @@ Here's a list of common IDE used.
    ```
    3. [SFX Tests] Navigate to `test/SfxTests` and run the following scripts.
    ```Shell
-   npm install
-   npm run bower-install
+   npm install   
    ```
 3. Build projects
    * VSCode
       1. Open `src/Sfx`, `src/Sfx-Standalone` and `test/SfxTests` in VSCode with multiple-root workspce.
       2. Run following tasks orderly.
          * `clean-build` for Sfx
-         * `Clean-Build` for Sfx-Standalone
+         * `clean-build` for Sfx-Standalone
          * `clean-build` for SfxTests
    * Console
       1. Install Gulp globally on the machine.
@@ -81,7 +79,7 @@ Here's a list of common IDE used.
       ```
       3. [SFX Standalone] Navigate to `src/Sfx-Standalone` and run the following scripts.
       ```Shell
-      gulp Clean-Build
+      gulp clean-build
       ```
       4. [SFX Tests] Navigate to `test/SfxTests` and run the following scripts.
       ```Shell

@@ -173,6 +173,7 @@ module Sfx {
         ActivityThreshold: string;
         ClusterCapacity: number;
         ClusterLoad: number;
+        CurrentClusterLoad: number;
         RemainingUnbufferedCapacity: number;
         NodeBufferPercentage: number;
         BufferedCapacity: number;

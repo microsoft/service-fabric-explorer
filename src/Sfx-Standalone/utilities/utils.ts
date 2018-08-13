@@ -3,30 +3,13 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-declare global {
-    interface StringConstructor {
-        isString(value: any): value is string | String;
-        format(format: string, ...args: Array<any>): string;
-        isNullUndefinedOrEmpty(value: any): boolean;
-        isNullUndefinedOrWhitespace(value: any): boolean;
-    }
-
-    interface ArrayConstructor {
-        isNullUndefinedOrEmpty(value: any): boolean;
-    }
-
-    interface FunctionConstructor {
-        isFunction(value: any): value is Function;
-    }
-
-    interface Function {
-        isObject(value: any): value is object | Object;
-    }
-
-    interface NumberConstructor {
-        isNumber(value: any): value is number | Number;
-    }
+namespace Symbols {
+    export const Serializable = Symbol("serializable");
 }
+
+Symbol.isSymbol = (value: any): value is symbol => {
+    return typeof value === "symbol";
+};
 
 Number.isNumber = (value: any): value is number | Number => {
     return typeof value === "number" || value instanceof Number;
@@ -40,23 +23,133 @@ Object.isObject = (value: any): value is object | Object => {
     return value !== null && typeof value === "object";
 };
 
+Object.isEmpty = (value: Object | object) => {
+    if (isNullOrUndefined(value)) {
+        throw new Error("value cannot be null/undefined.");
+    }
+
+    for (const key in value) {
+        if (key) {
+            return false;
+        }
+        
+        return false;
+    }
+
+    return true;
+};
+
+Object.markSerializable = (value: any, serializable: boolean = true) => {
+    if (!isNullOrUndefined(value)) {
+        if (Function.isFunction(value)) {
+            throw new Error("Cannot mark function objects as serializable.");
+        }
+
+        if (Symbol.isSymbol(value)) {
+            throw new Error("Cannot mark symbol objects as serializable.");
+        }
+
+        serializable = serializable === true;
+
+        value[Symbols.Serializable] = serializable;
+    }
+
+    return value;
+};
+
+Object.isSerializable = (value: any) => {
+    const valueType = typeof value;
+
+    switch (valueType) {
+        case "object":
+            if (value === null) {
+                return true;
+            }
+
+            if (Object.prototype.hasOwnProperty.call(value, Symbols.Serializable)) {
+                return value[Symbols.Serializable] === true;
+            }
+
+            return Function.isFunction(value["toJSON"])
+                || (Object.getPrototypeOf(value) === Object.prototype
+                    && Object.values(value).every((propertyValue) => Object.isSerializable(propertyValue)));
+
+        case "undefined":
+        case "number":
+        case "boolean":
+        case "string":
+            return true;
+
+        case "symbol":
+        case "function":
+        default:
+            return false;
+    }
+};
+
 Array.isNullUndefinedOrEmpty = (value: any): boolean => {
     return value === undefined || value === null || (Array.isArray(value) && value.length <= 0);
 };
 
-String.isString = (value: any): value is string | String => {
+String.possibleString = (value: any): value is string => {
+    return isNullOrUndefined(value) || String.isString(value);
+};
+
+String.isString = (value: any): value is string => {
     return typeof value === "string" || value instanceof String;
 };
 
-String.isNullUndefinedOrEmpty = (value: any): boolean => {
-    return value === undefined || value === null || (String.isString(value) && value === "");
+String.isEmpty = (value: string): boolean => {
+    return value === "";
 };
 
-String.isNullUndefinedOrWhitespace = (value: any): boolean => {
-    return value === undefined || value === null || (String.isString(value) && value.trim() === "");
+String.isEmptyOrWhitespace = (value: string): boolean => {
+    return value.trim() === "";
 };
 
-String.format = (format, ...args) => {
+Error.prototype.toJSON = function (): any {
+    const error = Object.create(null);
+
+    error.message = `Error: ${this.message}`;
+    error.stack = this.stack;
+
+    return error;
+};
+
+export function defaultStringifier(obj: any, padding?: number): string {
+    padding = getValue(padding, 0);
+
+    if (obj === null) {
+        return "null";
+    } else if (obj === undefined) {
+        return "undefined";
+    } else {
+        const objType = typeof obj;
+
+        if ((objType !== "object")
+            || (objType === "object"
+                && Function.isFunction(obj.toString)
+                && obj.toString !== Object.prototype.toString)) {
+            return obj.toString();
+        } else {
+            let str: string = `\n${"".padStart(padding)}{\n`;
+
+            for (const propertyName of Object.getOwnPropertyNames(obj)) {
+                str += `${"".padStart(padding + 4)}${propertyName}: ${defaultStringifier(obj[propertyName], padding + 4)}\n`;
+            }
+
+            str += `${"".padStart(padding)}}`;
+
+            return str;
+        }
+    }
+}
+
+export function formatEx(stringifier: (obj: any) => string, format: string, ...args: Array<any>): string {
+    if (!Function.isFunction(stringifier)) {
+        throw new Error("stringifier must be a function.");
+    }
+
     if (!String.isString(format)) {
         throw new Error("format must be a string");
     }
@@ -78,21 +171,23 @@ String.format = (format, ...args) => {
             return argIdentifier;
         }
 
-        let argIndex = argIndexStr.length === 0 ? matchIndex : parseInt(argIndexStr, 10);
+        const argIndex = argIndexStr.length === 0 ? matchIndex : parseInt(argIndexStr, 10);
 
         if (isNaN(argIndex) || argIndex < 0 || argIndex >= args.length) {
-            throw new Error(String.format("Referenced arg index, '{}',is out of range of the args.", argIndexStr));
+            throw new Error(`Referenced arg index, '${argIndexStr}',is out of range of the args.`);
         }
 
-        return args[argIndex];
+        return stringifier(args[argIndex]);
     });
-};
+}
+
+export const format: (format: string, ...args: Array<any>) => string = formatEx.bind(null, defaultStringifier);
 
 export function isNullOrUndefined(value: any): value is undefined | null {
     return value === undefined || value === null;
 }
 
-export function getEither<T>(arg: T, defaultValue: T): T {
+export function getValue<T>(arg: T, defaultValue: T): T {
     return (arg === undefined || arg === null) ? defaultValue : arg;
 }
 
@@ -100,6 +195,8 @@ export interface ICallerInfo {
     fileName: string;
     functionName: string;
     typeName: string;
+    lineNumber: number;
+    columnNumber: number;
 }
 
 function prepareStackTraceOverride(error: Error, structuredStackTrace: Array<NodeJS.CallSite>): any {
@@ -124,14 +221,18 @@ export function getCallerInfo(): ICallerInfo {
                     directCallerInfo = {
                         fileName: stackFileName,
                         functionName: stack.getFunctionName(),
-                        typeName: stack.getTypeName()
+                        typeName: stack.getTypeName(),
+                        lineNumber: stack.getLineNumber(),
+                        columnNumber: stack.getColumnNumber()
                     };
                 }
             } else if (stackFileName !== directCallerInfo.fileName) {
                 return {
                     fileName: stackFileName,
                     functionName: stack.getFunctionName(),
-                    typeName: stack.getTypeName()
+                    typeName: stack.getTypeName(),
+                    lineNumber: stack.getLineNumber(),
+                    columnNumber: stack.getColumnNumber()
                 };
             }
         }

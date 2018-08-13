@@ -3,7 +3,9 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ModuleManagerAgent } from "../../module-manager/module-manager-host";
+import "../../module-manager/bootstrap";
 
-global["exports"] = exports;
-global["moduleManager"] = new ModuleManagerAgent();
+process.once("loaded", async () => {
+    // TODO: Remove global.exports when the node v10 is integrated with electron.
+    global["exports"] = exports;
+});

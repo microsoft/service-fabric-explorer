@@ -3,37 +3,44 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ISettings } from "../../@types/settings";
-import { ILoggerSettings } from "../../@types/log";
-import { Log } from "./log";
-import ConsoleLogger from "./console";
-import AppInsightsLogger from "./app-insights";
+import { IModuleInfo, IModule } from "sfx.module-manager";
+import { ISettings } from "sfx.settings";
 
-export function getModuleMetadata(): IModuleInfo {
+import {
+    ILoggerSettings,
+    ILog,
+    ILogger,
+    ILoggingSettings
+} from "sfx.logging";
+
+import * as appUtils from "../../utilities/appUtils";
+
+(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+    components
+        .register<ILog>({
+            name: "logging",
+            version: appUtils.getAppVersion(),
+            descriptor:
+                (settings: ISettings): Promise<ILog> =>
+                    import("./log").then(async (logging) => logging.createAsync(await settings.getAsync<ILoggingSettings>("logging"))),
+            singleton: true,
+            deps: ["settings"]
+        })
+        .register<ILogger>({
+            name: "logging.logger.console",
+            version: appUtils.getAppVersion(),
+            descriptor: (loggerSettings: ILoggerSettings, targetConsole: Console) =>
+                import("./loggers/console").then((module) => new module.default(loggerSettings, targetConsole))
+        })
+        .register<ILogger>({
+            name: "logging.logger.app-insights",
+            version: appUtils.getAppVersion(),
+            descriptor: (loggerSettings: ILoggerSettings) =>
+                import("./loggers/app-insights").then((module) => new module.default(loggerSettings))
+        });
+
     return {
-        name: "log",
-        version: "1.0.0",
-        components: [
-            {
-                name: "log",
-                version: "1.0.0",
-                descriptor: (moduleManager: IModuleManager, settings: ISettings) => new Log(moduleManager, settings.get("logging")),
-                singleton: true,
-                deps: ["module-manager", "settings"]
-            },
-            {
-                name: "loggers.console",
-                version: "1.0.0",
-                descriptor: (loggerSettings: ILoggerSettings, targetConsole: Console) => new ConsoleLogger(loggerSettings, targetConsole)
-            },
-            ,
-            {
-                name: "loggers.app-insights",
-                version: "1.0.0",
-                descriptor: (loggerSettings: ILoggerSettings) => new AppInsightsLogger(loggerSettings)
-            }
-        ]
+        name: "logging",
+        version: appUtils.getAppVersion()
     };
-}
-
-
+};

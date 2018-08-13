@@ -27,7 +27,7 @@ module.exports = function (config) {
             "../../src/Sfx/wwwroot/js/app.min.js",
 
             // Unit test libraries
-            "bower_components/angular-mocks/angular-mocks.js",
+            "node_modules/angular-mocks/angular-mocks.js",
 
             // Application code and specs
             "wwwroot/ut.specs.js"
