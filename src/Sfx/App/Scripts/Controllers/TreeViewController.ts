@@ -6,12 +6,36 @@
 module Sfx {
 
     export class TreeViewController extends ControllerWithResolver {
+        private searchResults: SearchResult[] = [];
         private get tree(): TreeViewModel {
             return this.treeService.tree;
         }
 
+        private get searchTree(): SearchTreeViewModel {
+            return this.treeService.searchTree;
+        }
+
+        private isSearching: boolean = false;
+
         constructor($injector: angular.auto.IInjectorService, private treeService: ClusterTreeService, private searchService: SearchService) {
             super($injector);
+        }
+
+        private onSearchBoxKeyDown(event) {
+            if (event.key === "Enter") {
+                this.search();
+            }
+        }
+
+        private search() {
+            if (this.searchTree.searchTerm) {
+                this.isSearching = true;
+                this.searchTree.search();
+            }
+        }
+
+        private resetSearch(): void {
+            this.isSearching = false;
         }
     }
 

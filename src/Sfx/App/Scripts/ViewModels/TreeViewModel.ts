@@ -8,12 +8,9 @@ module Sfx {
     export class TreeViewModel {
         public childGroupViewModel: TreeNodeGroupViewModel;
         public selectedNode: TreeNodeViewModel;
-
         public showOkItems: boolean = true;
         public showWarningItems: boolean = true;
         public showErrorItems: boolean = true;
-
-        public searchTerm: string = "";
 
         public get isLoading(): boolean {
             return !this.childGroupViewModel ||
@@ -97,6 +94,10 @@ module Sfx {
 
         public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): angular.IPromise<any> {
             return this.childGroupViewModel.updateDataModelFromHealthChunkRecursively(clusterHealthChunk);
+        }
+
+        public getNodeDisplayHtml(nodeDisplayName: string): string {
+            return nodeDisplayName;
         }
 
         private selectTreeNodeInternal(path: string[], currIndex: number, group: TreeNodeGroupViewModel, opId: number, skipSelectAction?: boolean): angular.IPromise<void> {

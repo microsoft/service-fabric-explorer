@@ -148,20 +148,23 @@
                 <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showErrorItems}" ng-click="treeCtrl.tree.showErrorItems = !treeCtrl.tree.showErrorItems">
                     <sfx-badge badge-class="'badge-error'" text="'Error'"></sfx-badge>
                 </div>
-            </div>
-            <sfx-search-bar class="tree-search-bar" custom-class="dark-bg" placeholder="Search Cluster" model="treeCtrl.tree.searchTerm"></sfx-search-bar>
+            </div>            
             <div class="search-bar dark-bg">
                 <input type="search" class="input-flat"
                        autocomplete="off"
                        placeholder="Search Cluster"                       
-                       ng-model="treeCtrl.tree.searchTerm" />
-                <span class="bowtie-icon bowtie-search" ng-click="treeCtrl.search()"></span>
-                <span class="bowtie-icon bowtie-edit-delete" ng-click="model = ''"></span>
-                <a class="reset-link" ng-if="reset" href="" ng-click="treeCtrl.resetSearch()" role="button">Reset All</a>
+                       ng-model="treeCtrl.searchTree.searchTerm" 
+                       ng-keydown="treeCtrl.onSearchBoxKeyDown($event)" />
+                       <div class="search-bar-icons">
+                           <span class="bowtie-icon bowtie-search" ng-click="treeCtrl.search()" aria-label="search"></span>
+                           <span class="bowtie-icon bowtie-edit-delete" ng-show="treeCtrl.isSearching" ng-click="treeCtrl.resetSearch()" aria-label="reset search"></span>                
+                       </div>
             </div>
         </div>
 
-        <div class="tree-body">
+        <sfx-tree-body tree="treeCtrl.tree" emptyprompt="Nothing to display" ng-show="!treeCtrl.isSearching"></sfx-tree-body>
+        <sfx-tree-body tree="treeCtrl.searchTree" emptyprompt="Not found" ng-show="treeCtrl.isSearching"></sfx-tree-body>
+        <!-- <div class="tree-body" ng-show="!treeCtrl.isSearching">
             <div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate" ng-show="treeCtrl.tree.isLoading">
             </div>
 
@@ -172,21 +175,22 @@
             <div ng-show="!treeCtrl.tree.isLoading && !treeCtrl.tree.isEmpty"
                  ng-keydown="treeCtrl.tree.onKeyDown($event)" class="tree-view" tabindex="0">
                 <div sfx-tree-node node="treeCtrl.tree.childGroupViewModel"></div>
-            </div>
-        </div>
-        <div class="search-body">
-            <div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate" ng-show="treeCtrl.tree.isLoading">
-            </div>
-
-            <div ng-show="!treeCtrl.tree.isLoading && treeCtrl.tree.isEmpty" class="informative content">
-                <p>No results found</p>
+            </div>            
+        </div>                
+        
+        <div class="tree-body" ng-show="treeCtrl.isSearching">
+            <div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate" ng-show="treeCtrl.searchTree.isLoading">
             </div>
 
-            <div ng-show="!treeCtrl.tree.isLoading && !treeCtrl.tree.isEmpty"
-                 ng-keydown="treeCtrl.tree.onKeyDown($event)" class="tree-view" tabindex="0">
-                <div sfx-tree-node node="treeCtrl.tree.childGroupViewModel"></div>
+            <div ng-show="!treeCtrl.searchTree.isLoading && treeCtrl.searchTree.isEmpty" class="informative content">
+                <p>Not found</p>
             </div>
-        </div>
+
+            <div ng-show="!treeCtrl.searchTree.isLoading && !treeCtrl.searchTree.isEmpty"
+                 ng-keydown="treeCtrl.searchTree.onKeyDown($event)" class="tree-view" tabindex="0">
+                <div sfx-tree-node node="treeCtrl.searchTree.childGroupViewModel"></div>
+            </div>            
+        </div>                 -->
     </script>
 
     <!-- Nodejs integration for standalone SFX -->

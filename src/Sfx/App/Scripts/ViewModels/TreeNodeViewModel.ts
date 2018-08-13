@@ -79,17 +79,7 @@ module Sfx {
         }
 
         public get displayHtml(): string {
-            let name = this.displayName();
-            if (this._tree && this._tree.searchTerm && this._tree.searchTerm.trim()) {
-                let searchTerm = this._tree.searchTerm;
-                let matchIndex = name.toLowerCase().indexOf(searchTerm.toLowerCase());
-
-                if (matchIndex !== -1) {
-                    return name.substring(0, matchIndex) + "<span class='search-match'>" + name.substr(matchIndex, searchTerm.length) + "</span>" + name.substring(matchIndex + searchTerm.length);
-                }
-            }
-
-            return name;
+            return this._tree.getNodeDisplayHtml(this.displayName());
         }
 
         private _tree: TreeViewModel;

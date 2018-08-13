@@ -202,6 +202,53 @@ module Sfx {
             });
         }
 
+        public searchThroughChildrenRecursively(serachTerm: string): angular.IPromise<any> {
+
+            if (!this.childrenQuery) {
+                return this._tree.$q.when(true);
+            }
+
+
+            this.loadingChildren = true;
+            return this.childrenQuery().then((response) => {
+                let childrenViewModels: TreeNodeViewModel[] = [];
+                for (let i = 0; i < response.length; i++) {
+                    let node = response[i];
+                    node.startExpanded = true;
+
+                    // Leaf node
+                    if (!node.childrenQuery && node.displayName().indexOf(serachTerm) < 0) {
+                        continue;
+                    }
+
+                    childrenViewModels.push(new TreeNodeViewModel(this._tree, node, this.owningNode));
+                }
+
+                // Sort the children
+                this.children = _.sortBy(childrenViewModels, (item) => item.sortBy());
+
+                this.childrenLoaded = true;
+
+                // Recursively refresh children
+                let promises: angular.IPromise<void>[] = [];
+                childrenViewModels.forEach(child => {
+                    promises.push(child.childGroupViewModel.searchThroughChildrenRecursively(serachTerm));
+                });
+
+                return this._tree.$q.all(promises).then(() => {
+                    this.children = _.filter(
+                        this.children,
+                        child => child.displayName().indexOf(serachTerm) >= 0 || (child.childGroupViewModel && child.childGroupViewModel.children && child.childGroupViewModel.children.length > 0));
+                });
+            }).finally(() => {
+                if (this.owningNode && this.owningNode.listSettings) {
+                    this.owningNode.listSettings.count = this.children.length;
+                }
+
+                this.loadingChildren = false;
+            });
+        }
+
         private getChildren(): angular.IPromise<any> {
 
             if (!this.childrenQuery || this.childrenLoaded) {

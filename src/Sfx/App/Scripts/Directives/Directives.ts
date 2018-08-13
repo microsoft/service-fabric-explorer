@@ -284,6 +284,18 @@ module Sfx {
             };
         });
 
+        module.directive("sfxTreeBody", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                replace: true,
+                scope: {
+                    tree: "=",
+                    emptyprompt: "@"
+                },
+                templateUrl: "partials/tree-body.html"
+            };
+        });
+
         module.directive("sfxTextFileInput", () => new TextFileInputDirective());
     })();
 }

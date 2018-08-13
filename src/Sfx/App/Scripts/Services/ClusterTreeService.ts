@@ -7,6 +7,7 @@ module Sfx {
 
     export class ClusterTreeService {
         public tree: TreeViewModel;
+        public searchTree: SearchTreeViewModel;
         private clusterHealth: ClusterHealth;
 
         constructor(
@@ -20,6 +21,7 @@ module Sfx {
         public init() {
             this.clusterHealth = new ClusterHealth(this.data, HealthStateFilterFlags.None, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
             this.tree = new TreeViewModel(this.$q, () => this.getRootNode());
+            this.searchTree = new SearchTreeViewModel(this.$q, () => this.getRootNode());
         }
 
         public selectTreeNode(path: string[], skipSelectAction?: boolean): ng.IPromise<any> {

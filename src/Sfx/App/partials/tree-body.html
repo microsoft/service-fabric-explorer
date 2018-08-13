@@ -1,0 +1,12 @@
+<div class="tree-body">
+    <div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate" ng-show="tree.isLoading">
+    </div>
+
+    <div ng-show="!tree.isLoading && tree.isEmpty" class="informative content">
+        <p>{{emptyprompt}}</p>
+    </div>
+
+    <div ng-show="!tree.isLoading && !tree.isEmpty" ng-keydown="tree.onKeyDown($event)" class="tree-view" tabindex="0">
+        <div sfx-tree-node node="tree.childGroupViewModel"></div>
+    </div>            
+</div>         
