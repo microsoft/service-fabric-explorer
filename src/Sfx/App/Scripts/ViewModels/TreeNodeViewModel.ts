@@ -119,7 +119,7 @@ module Sfx {
             if (this.childGroupViewModel) {
                 this.childGroupViewModel.childrenQuery = this._node.childrenQuery;
             } else {
-                this.childGroupViewModel = new TreeNodeGroupViewModel(this._tree, this, this._node.childrenQuery);
+                this.childGroupViewModel = new TreeNodeGroupViewModel(this._tree, this, this._node.childrenQuery, this._node.isChildrenSupportSearch);
             }
         }
 

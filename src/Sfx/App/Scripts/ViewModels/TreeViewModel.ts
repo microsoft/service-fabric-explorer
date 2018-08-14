@@ -31,7 +31,7 @@ module Sfx {
         }
 
         public refreshChildren() {
-            this.childGroupViewModel = new TreeNodeGroupViewModel(this, null, this._childrenQuery);
+            this.childGroupViewModel = new TreeNodeGroupViewModel(this, null, this._childrenQuery, true);
             if (this.childGroupViewModel.isCollapsed) {
                 this.childGroupViewModel.toggle();
             }

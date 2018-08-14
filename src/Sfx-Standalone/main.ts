@@ -35,6 +35,7 @@ async function startup(): Promise<void> {
 
         log.writeEventAsync("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
         mainWindow.loadURL(resolve("sfx/index.html"));
+        mainWindow.webContents.openDevTools();
     } else {
         log.writeInfoAsync("No cluster url provided.");
         log.writeInfoAsync("app.quit().");

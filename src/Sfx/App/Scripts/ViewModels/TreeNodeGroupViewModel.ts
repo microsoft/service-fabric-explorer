@@ -10,6 +10,7 @@ module Sfx {
         public children: TreeNodeViewModel[] = [];
         public loadingChildren: boolean = false;
         public childrenLoaded: boolean = false;
+        public isChildrenSupportSearch?: boolean = false;
         public owningNode: TreeNodeViewModel;
         public childrenQuery: () => angular.IPromise<ITreeNode[]>;
 
@@ -45,10 +46,11 @@ module Sfx {
         private _isExpanded: boolean = false;
         private _currentGetChildrenPromise: angular.IPromise<any>;
 
-        constructor(tree: TreeViewModel, owningNode: TreeNodeViewModel, childrenQuery: () => angular.IPromise<ITreeNode[]>) {
+        constructor(tree: TreeViewModel, owningNode: TreeNodeViewModel, childrenQuery: () => angular.IPromise<ITreeNode[]>, isChildrenSupportSearch?: boolean) {
             this._tree = tree;
             this.owningNode = owningNode;
             this.childrenQuery = childrenQuery;
+            this.isChildrenSupportSearch = isChildrenSupportSearch;
         }
 
         public toggle(): angular.IPromise<any> {
@@ -203,21 +205,19 @@ module Sfx {
         }
 
         public searchThroughChildrenRecursively(serachTerm: string): angular.IPromise<any> {
-
-            if (!this.childrenQuery) {
+            if (!this.childrenQuery || !this.isChildrenSupportSearch) {
                 return this._tree.$q.when(true);
             }
-
 
             this.loadingChildren = true;
             return this.childrenQuery().then((response) => {
                 let childrenViewModels: TreeNodeViewModel[] = [];
                 for (let i = 0; i < response.length; i++) {
                     let node = response[i];
-                    node.startExpanded = true;
+                    node.startExpanded = node.isChildrenSupportSearch;
 
-                    // Leaf node
-                    if (!node.childrenQuery && node.displayName().indexOf(serachTerm) < 0) {
+                    // Node does not support search
+                    if (!node.isChildrenSupportSearch && node.displayName().indexOf(serachTerm) < 0) {
                         continue;
                     }
 

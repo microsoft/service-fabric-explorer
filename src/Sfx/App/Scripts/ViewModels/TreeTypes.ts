@@ -9,6 +9,7 @@ module Sfx {
         displayName: () => string;
         nodeId?: string;
         childrenQuery?: () => angular.IPromise<ITreeNode[]>;
+        isChildrenSupportSearch?: boolean;
         selectAction?: () => void;
         badge?: () => ITextAndBadge;
         alwaysVisible?: boolean;

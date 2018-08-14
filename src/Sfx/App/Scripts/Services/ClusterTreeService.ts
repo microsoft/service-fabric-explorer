@@ -212,6 +212,7 @@ module Sfx {
                         displayName: () => deployedServicePackage.uniqueId,
                         selectAction: () => this.routes.navigate(() => deployedServicePackage.viewPath),
                         childrenQuery: () => this.getDeployedServiceChildrenGroupNodes(nodeName, applicationId, deployedServicePackage.name, deployedServicePackage.servicePackageActivationId),
+                        isChildrenSupportSearch: false,
                         badge: () => deployedServicePackage.health.healthState,
                         sortBy: () => [deployedServicePackage.uniqueId]
                     };
@@ -227,6 +228,7 @@ module Sfx {
                     nodeId: IdGenerator.deployedCodePackageGroup(),
                     displayName: () => "Code Packages",
                     childrenQuery: () => this.getDeployedCodePackages(codePkgs, nodeName, applicationId, servicePackageName, servicePackageActivationId),
+                    isChildrenSupportSearch: false,
                     selectAction: () => this.routes.navigate(() => codePkgs.viewPath)
                 };
             });
@@ -238,6 +240,7 @@ module Sfx {
                     nodeId: IdGenerator.deployedReplicaGroup(),
                     displayName: () => replicas.isStatelessService ? "Instances" : "Replicas",
                     childrenQuery: () => this.getDeployedReplicas(replicas, nodeName, applicationId, servicePackageName, servicePackageActivationId),
+                    isChildrenSupportSearch: false,
                     selectAction: () => this.routes.navigate(() => replicas.viewPath),
                     listSettings: this.settings.getNewOrExistingTreeNodeListSettings(replicas.viewPath)
                 };
@@ -306,6 +309,7 @@ module Sfx {
                         displayName: () => service.name,
                         selectAction: () => this.routes.navigate(() => service.viewPath),
                         childrenQuery: () => this.getPartitions(appId, service.id),
+                        isChildrenSupportSearch: false,
                         badge: () => service.healthState,
                         sortBy: () => [service.name],
                         actions: service.actions,
@@ -329,6 +333,7 @@ module Sfx {
                         displayName: () => partition.id,
                         selectAction: () => this.routes.navigate(() => partition.viewPath),
                         childrenQuery: () => this.getReplicas(appId, serviceId, partition.id),
+                        isChildrenSupportSearch: false,
                         badge: () => partition.healthState,
                         sortBy: () => [partition.name],
                         listSettings: this.settings.getNewOrExistingTreeNodeListSettings(partition.viewPath)
