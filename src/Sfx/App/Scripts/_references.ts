@@ -14,7 +14,6 @@
 //   c) remove the need to add any references directives in other .ts files
 
 /// <reference path="app.ts" />
-/// <reference path="menu.ts"/>
 
 /// <reference path="versioninfo.ts" />
 /// <reference path="common/constants.ts" />

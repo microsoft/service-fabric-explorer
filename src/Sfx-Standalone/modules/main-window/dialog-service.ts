@@ -40,7 +40,6 @@ export class DialogService implements IDialogService {
         });
 
         webview.addEventListener("close", async () => {
-
             await sfxModuleManager.destroyHostAsync("host-dialog-service");
             $("#main-modal-dialog").modal("hide").remove();
         });
