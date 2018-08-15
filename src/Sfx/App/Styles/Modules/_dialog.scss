@@ -4,8 +4,7 @@ $modal-dt-width: 160px;
 $modal-short-dt-width: 100px;
 
 .modal {
-
-        .input-flat:not([readonly]) {
+    .input-flat:not([readonly]) {
         background-color: $dialog-input-bg-color;
     }
 
@@ -78,7 +77,7 @@ $modal-short-dt-width: 100px;
                     padding-bottom: 1px;
                     border-bottom-width: 3px;
                 }
-                
+
                 .table-responsive {
                     margin-top: -4px;
                 }
@@ -99,7 +98,7 @@ $modal-short-dt-width: 100px;
         padding: 20px 15px 15px 15px;
         border: none !important;
         background-color: $background-color;
-        
+
         #reset-dialog-link {
             float: left;
             margin-top: 5px;
