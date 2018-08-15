@@ -26,10 +26,10 @@ export class SettingsComponentConfig implements IComponentConfiguration {
 
 export class MainWindow implements IMainWindow {
 
-    private components: IComponentConfiguration[] = [];    
-    private browserWindow: BrowserWindow;    
+    private components: IComponentConfiguration[] = [];
+    private browserWindow: BrowserWindow;
 
-    constructor(browserWindow: BrowserWindow) {        
+    constructor(browserWindow: BrowserWindow) {
         this.browserWindow = browserWindow;
         browserWindow.setSize(1500, 1200);
     }
@@ -42,16 +42,12 @@ export class MainWindow implements IMainWindow {
 
     async loadAsync(): Promise<void> {
         this.browserWindow.loadURL(resolve("index.html"));
-        
-        this.browserWindow.once("ready-to-show", async () => {            
-            this.browserWindow.webContents.openDevTools();
+
+        this.browserWindow.once("ready-to-show", async () => {
+            //this.browserWindow.webContents.openDevTools(); /*uncomment to use development tools */
             this.browserWindow.show();
-            
+
         });
         return Promise.resolve();
     }
-
-    
-
-   
 }

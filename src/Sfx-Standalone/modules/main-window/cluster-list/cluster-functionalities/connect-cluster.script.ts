@@ -10,10 +10,12 @@ import { IClusterList } from "sfx.cluster-list";
 
 
 $(document).ready(() => {
+    $(".modal").slideDown(150);
+
     let folders = JSON.parse(localStorage.getItem("folders"));
     localStorage.removeItem("folders");
     let select = $("#input-select-folder");
-    for(let folder of folders){
+    for(let folder of folders) {
         let $item = $(`<option value="${folder.label}">${folder.label}</option>`);
         select.append($item);
     }
@@ -25,48 +27,44 @@ $(document).ready(() => {
 (async () => {
     $("#input-select-folder").change(async () => {
         let folder: string = $("#input-select-folder").val().toString();
-        if(folder === "new_folder"){
+        if(folder === "new_folder") {
             $("#new_folder").css("visibility", "visible");
 
-        }
-        else{
+        } else {
             $("#new_folder").css("visibility", "hidden");
         }
     });
 
-   
+
     $("#btn-connect").click(async () => {
         try {
-            
+
             const url = Url.parse($("#input-cluster-url").val().toString());
             let name: string = $("#input-cluster-label").val().toString();
             let folder: string = $("#input-select-folder").val().toString();
             let new_folder:string = $("#new-folder-label").val().toString();
-           
+
             if (url.protocol !== "http:" && url.protocol !== "https:") {
                 throw new Error("The protocol of the cluster url is not supported. Only HTTP and HTTPS are supported.");
             }
-           
+
             const endpoint = url.protocol + "//" + url.host;
             if(!name) {
                 name = url.host;
             }
-            
 
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
 
-            if(folder != "----No Folder----"){
-                if(folder === "new_folder"){
+            if(folder !== "----No Folder----") {
+                if(folder === "new_folder") {
                     if(!new_folder) {
                         throw new Error("Folder must have name!");
                     }
                     await list.newClusterListItemAsync(endpoint, name, new_folder);
-                }
-                else{
+                } else {
                     await list.newClusterListItemAsync(endpoint, name, folder);
                 }
-            }
-            else{
+            } else {
                 await list.newClusterListItemAsync(endpoint, name, folder);
             }
 
@@ -96,7 +94,7 @@ $(document).ready(() => {
 
         $("#input-cluster-url").prop("disabled", $sender.prop("checked"));
     });
-    
+
     $("#btn-exit").click(() => {
         window.close();
     });

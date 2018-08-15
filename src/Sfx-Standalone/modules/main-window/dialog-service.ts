@@ -21,26 +21,26 @@ export class DialogService implements IDialogService {
 
     async showDialogAsync(pageUrl: string): Promise<void> {
         const template = `
-            <div id="main-modal-dialog" class="modal" tabindex="-1" role="dialog">                
+            <div id="main-modal-dialog" class="modal" tabindex="-1" role="dialog">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
                         <webview src="${pageUrl}" preload="./preload.js" nodeintegration width=480px;"></webview>
                     </div>
                 </div>
             </div>`;
-        
+
         $(document.body).append($(template));
-     
+
 
         let webview = <WebviewTag>document.querySelector(`#main-modal-dialog webview`);
         webview.addEventListener("dom-ready", async () => {
-            
-            webview.openDevTools();
+
+            //webview.openDevTools(); /*uncomment to use development tools*/
             await sfxModuleManager.newHostAsync("host-dialog-service", await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));
         });
 
         webview.addEventListener("close", async () => {
-        
+
             await sfxModuleManager.destroyHostAsync("host-dialog-service");
             $("#main-modal-dialog").modal("hide").remove();
         });

@@ -7,14 +7,13 @@ import { IMenu } from "sfx.menu";
 
 
 export class Menu implements IMenu {
-    private static _instance: Menu;
 
     private folders: Array<Folder> = new Array<Folder>();
 
     constructor() {
-       
+
     }
-    
+
     public addFolder(label: string) {
         this.folders.push(new Folder(label));
     }
@@ -65,15 +64,6 @@ export class Menu implements IMenu {
     public getFolders(): Array<Folder> {
         return this.folders;
     }
-
-
-    public static getInstance(): Menu {
-        if (this._instance === null || this._instance === undefined) {
-            this._instance = new Menu();
-        }
-        return this._instance;
-    }
-
 
 
     public getCluster(label: string, type: string) {

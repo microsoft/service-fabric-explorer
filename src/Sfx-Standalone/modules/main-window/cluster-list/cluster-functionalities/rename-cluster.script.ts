@@ -13,17 +13,19 @@ import { IClusterList } from "sfx.cluster-list";
 
     $(document).ready(() => {
         $(".modal-title").html("Rename Cluster " + old_cluster);
+        $(".modal").slideDown(150);
     });
+
     $("#btn-new-label").click(async () => {
-        try{
-            
+        try {
+
             let label: string = $("#input-cluster-label").val().toString();
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
             await list.renameClusterListItem(old_cluster, label);
-        
+
             window.close();
 
-        }catch(error){
+        } catch(error) {
             alert(error.message);
         }
     });

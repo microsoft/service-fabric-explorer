@@ -12,16 +12,17 @@ import { IClusterList } from "sfx.cluster-list";
 
     $(document).ready(() => {
         $(".modal-title").html("Delete Cluster " + cluster);
+        $(".modal").slideDown(150);
     });
 
     $("#btn-delete-cluster").click(async () => {
-        
-        try{
+
+        try {
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
             await list.removeClusterListItem(cluster);
             window.close();
 
-        }catch(error){
+        } catch(error) {
             alert("Error Occured");
 
         }

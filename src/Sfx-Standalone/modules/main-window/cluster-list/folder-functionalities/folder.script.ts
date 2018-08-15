@@ -8,15 +8,19 @@ import { IClusterList } from "sfx.cluster-list";
 
 
 (async() => {
+    $(document).ready(() => {
+        $(".modal").slideDown(150);
+    });
+
     $("#btn-new-folder").click(async () => {
-        try{
+        try {
             let label: string = $("#input-folder-label").val().toString();
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
             await list.newFolderItemAsync(label);
             localStorage.setItem("folder_label", label);
             window.close();
 
-        }catch(error){
+        } catch(error) {
             alert((<Error>error).message);
         }
     });

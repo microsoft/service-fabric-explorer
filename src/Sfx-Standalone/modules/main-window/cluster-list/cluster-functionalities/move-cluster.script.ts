@@ -12,10 +12,11 @@ import { IClusterList } from "sfx.cluster-list";
 
     $(document).ready(() => {
         $(".modal-title").html("Move Cluster " + cluster);
+        $(".modal").slideDown(150);
         let folders = JSON.parse(localStorage.getItem("folders"));
         localStorage.removeItem("folders");
         let select = $("#input-select-folder");
-        for(let folder of folders){
+        for(let folder of folders) {
             let $item = $(`<option value="${folder.label}">${folder.label}</option>`);
             select.append($item);
         }
@@ -25,32 +26,30 @@ import { IClusterList } from "sfx.cluster-list";
 
     $("#input-select-folder").change(async () => {
         let folder: string = $("#input-select-folder").val().toString();
-        if(folder === "new_folder"){
+        if(folder === "new_folder") {
             $("#new_folder").css("visibility", "visible");
-        }
-        else{
+        } else {
             $("#new_folder").css("visibility", "hidden");
         }
     });
 
     $("#btn-move-cluster").click(async () => {
-        
-        try{
-            
-            
+
+        try {
+
+
             let folder: string = $("#input-select-folder").val().toString();
             let new_folder:string = $("#new-folder-label").val().toString();
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
-            if(new_folder){
+            if(new_folder) {
                 await list.newFolderItemAsync(new_folder);
                 await list.moveClusterListItem(cluster, new_folder);
-            }
-            else{
+            } else {
                 await list.moveClusterListItem(cluster, folder);
-            }        
+            }
             window.close();
 
-        }catch(error){
+        } catch(error) {
             alert("Error Occured");
 
         }
