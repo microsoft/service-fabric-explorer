@@ -6,21 +6,20 @@ module Sfx {
         }
 
 
-        public click(itemName: string) {
+        public deleteSelected(itemName: string) {
             this.$scope.showDeleteConfirmation = true;
             this.$scope.itemName = itemName;
             this.$scope.confirmationKeyword = itemName;
         }
 
-        public cancel() {
+        public deleteCanceled() {
             this.$scope.showDeleteConfirmation = false;
+            this.$scope.imageStoreTreeSearchTerm = "";
         }
 
-        public ok() {
-            console.log(this.$scope.confirmationKeyword);
+        public deleteConfirmed() {
             this.$scope.imagestoreroot.deleteFolder(this.$scope.confirmationKeyword);
-                console.log(this.$scope.imagestoreroot);
-                this.$scope.showDeleteConfirmation = false;
+            this.$scope.showDeleteConfirmation = false;
         }
 
 
@@ -60,10 +59,6 @@ module Sfx {
 
         public onFolderClick(relativePath: string, isExpandingFolder: boolean): void {
             isExpandingFolder ? this.$scope.imagestoreroot.expandFolder(relativePath) : this.$scope.imagestoreroot.closeFolder(relativePath);
-        }
-
-        public display(fileCount) {
-            this.$scope.displayFileCount = fileCount;
         }
     }
 }

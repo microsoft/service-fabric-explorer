@@ -8,9 +8,7 @@ module Sfx {
         public root: ImageStoreFolder = new ImageStoreFolder();
         public treeNodePaths: string[] = [];
         public parentRootFolder: ImageStoreFolder;
-        public parentFolder: ImageStoreFolder;
         public currentOpenFolders: string[] = [];
-        public noOfApplications: number;
         public UIFolderDictionary: { [path: string]: ImageStoreFolder } = {};
 
         public DataFolderDictionary: { [path: string]: IRawImageStoreContent } = {};
@@ -112,8 +110,6 @@ module Sfx {
             }
 
             this.currentOpenFolders.splice(this.currentOpenFolders.indexOf(path), 1);
-            // Remove folder from data source???
-            // this.DataFolderDictionary[path] = null;
         }
 
         protected getCompleteDataSet(): angular.IPromise<ImageStoreFolder> {
@@ -124,7 +120,7 @@ module Sfx {
                 rootFolder.childrenFiles = _.map(raw.StoreFiles, (f) => { return new ImageStoreFile(f); });
                 rootFolder.childrenFolders = _.map(raw.StoreFolders, f => { return new ImageStoreFolder(f); });
                 for (let i = 0; i < rootFolder.childrenFolders.length; i++) {
-                    tasks.push(this.retrieveDataV2(rootFolder.childrenFolders[i], rootFolder.childrenFolders[i].name));
+                    tasks.push(this.getChildren(rootFolder.childrenFolders[i], rootFolder.childrenFolders[i].name));
                 }
 
                 return this.data.$q.all(tasks).then(t => {
@@ -134,14 +130,14 @@ module Sfx {
             });
         }
 
-        protected retrieveDataV2(currentFolder: ImageStoreFolder, path: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
+        protected getChildren(currentFolder: ImageStoreFolder, path: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
             return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then<IRawImageStoreContent>(raw => {
                 currentFolder.childrenFiles = _.map(raw.StoreFiles, f => { return new ImageStoreFile(f); });
                 currentFolder.childrenFolders = _.map(raw.StoreFolders, f => { return new ImageStoreFolder(f); });
 
                 let tasks: angular.IPromise<IRawImageStoreContent>[] = [];
                 for (let i = 0; i < currentFolder.childrenFolders.length; i++) {
-                    tasks.push(this.retrieveDataV2(currentFolder.childrenFolders[i], currentFolder.childrenFolders[i].name));
+                    tasks.push(this.getChildren(currentFolder.childrenFolders[i], currentFolder.childrenFolders[i].name));
                 }
 
                 return this.data.$q.all(tasks).then(() => raw);
@@ -349,6 +345,7 @@ module Sfx {
         public folderImage: string = "Closedfolder.svg";
         public childrenFolders: ImageStoreFolder[];
         public childrenFiles: ImageStoreFile[];
+
         constructor(raw?: IRawStoreFolder) {
             if (!raw) {
                 return;
@@ -375,12 +372,6 @@ module Sfx {
             if (!raw) {
                 return;
             }
-            this.name = raw.StoreRelativePath;
-            this.fileSize = raw.FileSize;
-            this.modifiedDate = raw.ModifiedDate;
-            this.version = raw.FileVersion.VersionNumber;
-        }
-        populateFileData(raw: IRawStoreFile) {
             this.name = raw.StoreRelativePath;
             this.fileSize = raw.FileSize;
             this.modifiedDate = raw.ModifiedDate;
