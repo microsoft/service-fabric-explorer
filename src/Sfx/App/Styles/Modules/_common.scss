@@ -436,15 +436,10 @@ input[type=number]::-webkit-outer-spin-button {
 }
 
 .loader {
-    border: 5px solid #191919; 
-    border-top: 5px solid #70DAF8; 
-    border-radius: 50%;
     position: fixed;
     right: 45%;
     top: 45%;
-    width: 100px;
-    height: 100px;
-    animation: spin 5s linear infinite;
+    animation: spin 5s;
 }
 
 @keyframes spin {

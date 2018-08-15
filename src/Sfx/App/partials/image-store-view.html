@@ -62,7 +62,7 @@
     </ul>
 
     <ul class="completeList" ng-show="searchView">
-    <div class= "loader" ng-show="loader && searchView"></div>
+    <div class= "bowtie-icon bowtie-spinner loader rotate" ng-show="loader && searchView"></div>
         <li ng-repeat="folder in imagestoreroot.relevantFolders" ng-show="!loader" class="child ulforimgstr">
             <span class="indentation linkasbtn" padding-left="10px">
                 <img src="../images/{{folder.folderImage}}" height="18px">
@@ -111,9 +111,9 @@
     <script type="text/ng-template" id="ellipsisFileTemplate">
         <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown" ng-click="ctrl.checkIfReserved(file.name)">
         </a>
-        <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu style="list-style: none" ng-show="notReserved">
+        <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu style="list-style: none">
             <li role="menuitem" ng-show="notReserved">
-                <a href="" role="button" ng-click="ctrl.deleteSelected(file.name)">
+                <a href="" role="button" ng-click="ctrl.deleteSelected(file.name)" ng-disabled="Reserved">
                     Delete
                 </a>
             </li>
@@ -123,9 +123,9 @@
     <script type="text/ng-template" id="ellipsisFolderTemplate">
         <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown" ng-click="ctrl.checkIfReserved(folder.name)">
         </a>
-        <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu style="list-style: none" ng-show="notReserved">
+        <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu style="list-style: none">
             <li role="menuitem">
-                <a href="" role="button" ng-click="ctrl.deleteSelected(folder.name)">
+                <a href="" role="button" ng-click="ctrl.deleteSelected(folder.name)" ng-disabled="Reserved">
                     Delete
                 </a>
             </li>
@@ -204,7 +204,7 @@
                                 ng-click="ctrl.deleteConfirmed()" disabled="disabled">
                             Delete Application
                         </button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="usertypedkeyword = null; ctrl.deletedCanceled()">Cancel</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="usertypedkeyword = null; ctrl.deleteCanceled()">Cancel</button>
                     </div>
                 </form>
             </div>

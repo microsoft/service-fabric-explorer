@@ -25,9 +25,9 @@ module Sfx {
 
         public checkIfReserved (name: string) {
             if (name.indexOf("Store") !== -1 || name.indexOf("WindowsFabricStore") !== -1) {
-                this.$scope.notReserved = false;
+                this.$scope.Reserved = true;
             } else {
-                this.$scope.notReserved = true;
+                this.$scope.Reserved = false;
             }
         }
 
