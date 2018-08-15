@@ -127,13 +127,23 @@ module Sfx {
                     return {
                         nodeId: IdGenerator.node(node.name),
                         displayName: () => {
+                            let suffix: string = "";
                             if (node.raw.NodeStatus !== NodeStatusConstants.Up) {
                                 if (node.raw.IsStopped) {
-                                    return node.name + " (Down (Stopped))";
+                                    suffix = "Down (Stopped)";
                                 } else {
-                                    return node.name + " (" + node.raw.NodeStatus + ")";
+                                    suffix = node.raw.NodeStatus;
                                 }
                             }
+
+                            if (node.raw.IsSeedNode) {
+                                suffix = "Seed Node" + (suffix === "" ? "" : " - " + suffix);
+                            }
+
+                            if (suffix !== "") {
+                                return `${node.name} (${suffix})`;
+                            }
+
                             return node.name;
                         },
                         selectAction: () => this.routes.navigate(() => node.viewPath),

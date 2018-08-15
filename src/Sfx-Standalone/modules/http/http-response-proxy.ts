@@ -33,7 +33,7 @@ export class HttpResponseProxy implements IHttpResponse {
     }
 
     public get statusCode(): Promise<number> {
-        return Promise.resolve(this.statusCode);
+        return Promise.resolve(this.httpResponse.statusCode);
     }
 
     public get statusMessage(): Promise<string> {
