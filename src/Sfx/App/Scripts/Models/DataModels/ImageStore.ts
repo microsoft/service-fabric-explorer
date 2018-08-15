@@ -57,12 +57,10 @@ module Sfx {
                         tempSize = tempSize + this.getFolderSize(this.getFolder(tempArray[i]));
                     }
                     this.sizeOfAppPackages = this.getDisplayFileSize(tempSize);
-                    console.log(array);
                 });
                 this.getApplicationTypes().then((array) => {
                     this.noOfApplicationTypes = array.length;
                     let tempSize = 0;
-                    console.log(array);
                     for (let j = 0; j < array.length; j++) {
                         tempSize = tempSize + this.getFolderSize(this.getFolder("Store\\" + array[j].Name));
                         this.sizeOfAppTypes = this.getDisplayFileSize(tempSize);
