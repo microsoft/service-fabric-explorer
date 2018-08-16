@@ -37,8 +37,7 @@ module Sfx {
                 "clustermap": { name: "Cluster Map" },
                 "metrics": { name: "Metrics" },
                 "manifest": { name: "Manifest" },
-                "imagestore": { name: "Image Store" },
-                "chaos": { name: "Chaos" }
+                "imagestore": { name: "Image Store" }
             });
 
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
