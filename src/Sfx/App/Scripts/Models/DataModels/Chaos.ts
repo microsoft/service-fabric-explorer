@@ -43,14 +43,14 @@ module Sfx {
             Utils.getHttpResponseData(this.data.restClient.getChaosEvents()).then(events => {
                 this.chaosHistoryEvents = _.orderBy(_.map(events.History, e => {
                     return new ChaosEvent(e.ChaosEvent.Kind, e.ChaosEvent.TimeStampUtc, e.ChaosEvent.Reason, e.ChaosEvent.Faults);
-                }), [ "TimeStampUtc" ], [ "desc" ]);
+                }), ["TimeStampUtc"], ["desc"]);
             });
 
             return Utils.getHttpResponseData(this.data.restClient.getChaos());
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
-            this.clusterManifest.refresh().then(m => this.runScope.nodeTypes = m.nodeTypes);
+            this.clusterManifest.refresh().then(m => this.runScope.nodeTypes = _.map((<ClusterManifest>m).nodeTypes, t => new ChaosTargetFilter(t)));
         }
     }
 
@@ -73,7 +73,16 @@ module Sfx {
     }
 
     export class ChaosRunScope {
-        public nodeTypes: string[];
+        public nodeTypes: ChaosTargetFilter[];
         // TODO: Application types?
+    }
+
+    export class ChaosTargetFilter {
+        public name: string;
+        public isIncluded: boolean = true;
+
+        constructor(name: string) {
+            this.name = name;
+        }
     }
 }

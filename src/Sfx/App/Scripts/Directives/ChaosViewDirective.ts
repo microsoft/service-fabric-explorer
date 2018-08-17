@@ -51,11 +51,7 @@ module Sfx {
                 let waitIter = this.getTimeSum(0, $("#time-iterations-h").val(), $("#time-iterations-m").val());
                 let maxConFaults = $("#concurrent-faults").val();
 
-                let nodeTypeList = [];
-                $.each($("input[type='checkbox']:checked"), function(){
-                    nodeTypeList.push($(this).val());
-                });
-
+                let nodeTypeList = _.map(_.filter(<ChaosTargetFilter[]>this.$scope.chaos.runScope.nodeTypes, t => t.isIncluded), t => t.name);
                 this.$scope.chaos.start(timeToRun, waitIter, stabilTimeout, maxConFaults, nodeTypeList);
                 $button.text("Starting chaos...");
             }

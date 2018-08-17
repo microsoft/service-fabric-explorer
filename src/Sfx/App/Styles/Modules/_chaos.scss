@@ -3,103 +3,67 @@
 $chaos-view-expander-hover-color: lighten($essen-pane-background-color, 10%);
 
 .chaos-view {
-
-    div {
-        margin-top: 12px;
-        margin-bottom: 12px;
+    div {        
+        padding-bottom: 24px;
     }
 
-    .dashboard-container-small {
-        font-size: 10pt;
-        display: block;
+    .config-container {                
+        .setting-item {                
+            padding-bottom: 12px;
 
-        .config-container {
-            display: inline-flex;
+            .days-checkbox {
+                padding-right: 10px;
+                padding-left: 10px;
 
-            .time-config-container {
-                display: inline-grid;
-
-                .time-to-run-span, .max-stabilization-timeout-span, .time-btwn-iterations-span {
-                    display: inline-flex;
-
-                    .days-checkbox {
-                        padding-right: 10px;
-                        padding-left: 10px;
-
-                        .time-checkbox {
-                            height: 30px;
-                            width: 30px;
-                            padding-left: 100px;
-                        }
-                    }
-
-                    .hours-textbox {
-                        padding-left: 10px;
-                    }
-
-                    .minutes-textbox {
-                        padding-left: 10px;
-                    }
-
-                    input[type="number"]{
-                        height: 30px;
-                        width: 30px;
-
-                    }
-                }
-
-            }
-
-            .fault-config-container {
-                float: right;
-                display: block;
-                padding-left: 50px;
-
-                .fault-config-components-container {
-                    display: block;
-                    margin-top: 35px;
-
-                    .fault-options-container {
-                        display: block;
-                        padding-right: 10px;
-                        color: $font-color;
-                        margin-top: auto;
-
-                        .concurrent-faults-form {
-                            margin-top: auto;
-                            margin-bottom: auto;
-                            font-size: 10pt;
-                            background-color: transparent;
-                            width: 100%;
-
-                            input[type="number"]{
-                                height: 30px;
-                                width: 100px;
-
-                            }
-                        }
-
-                        .target-filter {
-                            padding-top: 5px;
-
-                            span {
-                                text-align: center;
-                            }
-                        }
-                    }
+                .time-checkbox {
+                    height: 30px;
+                    width: 30px;
+                    padding-left: 100px;
                 }
             }
 
+            .input-flat {
+                height: 30px;
+                width: 30px;
+            }
+
+            > span {
+                display: inline-block;
+                width: 50%;
+                max-width: 200px;
+                vertical-align: top;
+            }
+
+            div {
+                display: inline-block;                    
+                padding: 0;
+            }
+
+            .option {
+                padding-left: 10px;
+
+                label {
+                    font-weight: normal;
+                }
+            }
+
+            .badge {
+                border-radius: 4px;
+            }
         }
-
     }
 
+    .button-container {
+        i {
+            display: block;
+            padding-bottom: 6px;
+        }
+    }
     .chaos-btn {
         width: 300px;
         height: 64px;
         border: none;
-        font-size: 30px;
-        margin-left: 250px;
+        font-size: 30px;        
         color: white;
     }
 
@@ -110,4 +74,14 @@ $chaos-view-expander-hover-color: lighten($essen-pane-background-color, 10%);
     .stop-chaos-btn {
         background-color: #ff8c00;
     }
+}
+
+.parameter-tooltip {
+    .tooltip-inner {
+        padding-left: 12px!important; 
+        padding-right: 12px!important; 
+        background-color: white;
+        white-space: normal;
+        text-align: left;
+    }    
 }

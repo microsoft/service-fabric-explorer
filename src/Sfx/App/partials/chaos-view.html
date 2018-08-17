@@ -5,89 +5,75 @@
             What's this?
         </h5>
         <p>
-            Large-scale distributed systems like cloud infrastructures are inherently unreliable. Azure Service Fabric enables you to
-            write reliable distributed services on top of an unreliable infrastructure. To write verifiably robust distributed
-            services on top of an unreliable infrastructure, you need to be able to test the stability of your services while
-            the underlying unreliable infrastructure is going through complicated state transitions due to faults. This is
-            where Chaos comes in: Service Fabric Chaos provides a very simple way to induce targeted, simulated, realistic
-            faults that can help identify bugs that show up only in hard-to-predict, long, and complicated sequences of state
-            transitions.
+            Large-scale distributed systems like cloud infrastructures are inherently unreliable. Azure Service Fabric enables you to write reliable distributed services on
+            top of an unreliable infrastructure. To write verifiably robust distributed services on top of an unreliable infrastructure, you need to be able to test
+            the stability of your services while the underlying unreliable infrastructure is going through complicated state transitions due to faults. This is where
+            Chaos comes in: Service Fabric Chaos provides a very simple way to induce targeted, simulated, realistic faults that can help identify bugs that show
+            up only in hard-to-predict, long, and complicated sequences of state transitions.
         </p>
     </div>
     <div>
-        <p>Click Stop Chaos to immediately end your Chaos experiment.</p>
-    </div>
-    <div class="dashboard-container-small">
+        <h5>Settings</h5>
         <div class="config-container">
-            <div class="time-config-container">
-                <div class="config-title">
-                    <h4>Time Settings:</h4>
+            <div class="setting-item">
+                <span>Time to run <span class="badge badge-info" uib-tooltip="Total time for which Chaos will run before automatically stopping." tooltip-placement="right"
+                        tooltip-class="parameter-tooltip">info</span></span>
+                <div>
+                    <input class="input-flat" id="time-run-d" type="number" value="0" min="0" max="100"> d
+                    <input class="input-flat" id="time-run-h" type="number" value="0" min="0" max="24"> h
+                    <input class="input-flat" id="time-run-m" type="number" value="10" min="0" max="60"> m
                 </div>
-
-                <div class="time-to-run-span">
-                    <div class="days-textbox">Time to Run:
-                        <input class="input-flat" id="time-run-d" type="number" value="0" min="0" max="100"> d</div>
-                    <div class="hours-textbox">
-                        <input class="input-flat" id="time-run-h" type="number" value="0" min="0" max="24"> h</div>
-                    <div class="minutes-textbox">
-                        <input class="input-flat" id="time-run-m" type="number" value="1" min="0" max="60"> m</div>
+            </div>
+            <div class="setting-item">
+                <span>Max stabilization timeout <span class="badge badge-info" uib-tooltip="The maximum amount of time to wait for all cluster entities
+                    to become stable and healthy. Chaos executes in iterations and at the start of each iteration it validates the health of cluster entities. During
+                    validation if a cluster entity is not stable and healthy within max stabilization timeout, Chaos generates a validation failed
+                    event." tooltip-placement="right" tooltip-class="parameter-tooltip">info</span></span>
+                <div>
+                    <input class="input-flat" id="max-stabilization-h" type="number" value="0" min="0" max="24"> h
+                    <input class="input-flat" id="max-stabilization-m" type="number" value="1" min="0" max="60"> m
                 </div>
-
-                <div class="max-stabilization-timeout-span">
-                    <div class="hours-textbox">Max Stabilization Timeout:
-                        <input class="input-flat" id="max-stabilization-h" type="number" value="0" min="0" max="24"> h</div>
-                    <div class="minutes-textbox">
-                        <input class="input-flat" id="max-stabilization-m" type="number" value="1" min="0" max="60"> m</div>
-                </div>
-
-                <div class="time-btwn-iterations-span">
-                    <div class="hours-textbox">Time between Iterations:
-                        <input class="input-flat" id="time-iterations-h" type="number" value="0" min="0" max="24"> h</div>
-                    <div class="minutes-textbox">
-                        <input class="input-flat" id="time-iterations-m" type="number" value="1" min="0" max="60"> m</div>
+            </div>
+            <div class="setting-item">
+                <span>Time between iterations <span class="badge badge-info" uib-tooltip="Time-separation between two consecutive iterations of Chaos. The larger the value, the lower the fault injection rate."
+                        tooltip-placement="right" tooltip-class="parameter-tooltip">info</span></span>
+                <div>
+                    <input class="input-flat" id="time-iterations-h" type="number" value="0" min="0" max="24"> h
+                    <input class="input-flat" id="time-iterations-m" type="number" value="1" min="0" max="60"> m
                 </div>
             </div>
 
-            <div class="fault-config-container">
-                <div class="config-title">
-                    <h4>Fault Settings:</h4>
+            <div class="setting-item">
+                <span>Max concurrent faults <span class="badge badge-info" uib-tooltip="Maximum number of concurrent faults induced per iteration. Chaos executes in iterations and two consecutive iterations
+                    are separated by a validation phase. The higher the concurrency, the more aggressive the injection of faults, leading to inducing more complex
+                    series of states to uncover bugs. The recommendation is to start with a value of 2 or 3 and to exercise caution while moving up." tooltip-placement="right"
+                        tooltip-class="parameter-tooltip">info</span></span>
+                <div>
+                    <input class="input-flat" id="concurrent-faults" type="number" aria-label="Max concurrent faults" value="1" min="1" max="1000">
                 </div>
-
-                <div class="fault-config-components-container">
-                    <div class="fault-options-container">
-                        <div class="concurrent-faults-form">
-                            <div class="input-title">Max Concurrent Faults:
-                                <input class="input-flat" id="concurrent-faults" type="number" aria-label="Max concurrent faults"
-                                    value="1" min="0" max="1000" />
-                            </div>
-                        </div>
-
-                        <div class="target-filter">
-                            <div>Target Filter:
-                                <i>Select Node Types to enable node specific faults</i>.</div>
-
-                            <div uib-dropdown>
-                                <button class="btn btn-primary dropdown-toggle" type="button" uib-dropdown-toggle aria-label="Select Node Types to include">
-                                    Node Types
-                                    <span class="caret"></span>
-                                </button>
-                                <ul class="dropdown-menu-container" id="dropdown-menu" role="menu" style="padding-left: 5px; background-color: transparent;" uib-dropdown-menu>
-                                    <li class="option" ng-repeat="nodeType in chaos.runScope.nodeTypes">
-                                        <span>
-                                            <input type="checkbox" value="{{nodeType}}" id="{{nodeType}}" checked/>
-                                            <label for="{{nodeType}}" style="font-weight: normal">{{nodeType}}</label>
-                                        </span>
-                                    </li>
-                                </ul>
-                            </div>
-
-                        </div>
+            </div>
+            <div class="setting-item">
+                <span>Target node type filter <span class="badge badge-info" uib-tooltip="List of node types to target for Chaos faults. Chaos faults only the nodes of which type is selected."
+                        tooltip-placement="right" tooltip-class="parameter-tooltip">info</span></span>
+                <div>
+                    <p><i>Chaos faults only the node types that get checked</i></p>
+                    <div uib-dropdown>
+                        <button class="btn btn-primary dropdown-toggle" type="button" uib-dropdown-toggle aria-label="Select Node Types to include">
+                            Node Types
+                            <span class="caret"></span>
+                        </button>
+                        <ul class="dropdown-menu-container" id="dropdown-menu" role="menu" uib-dropdown-menu>
+                            <li class="option" ng-repeat="nodeType in chaos.runScope.nodeTypes">
+                                <input type="checkbox" value="{{nodeType.name}}" id="{{nodeType.name}}" ng-model="nodeType.isIncluded" />
+                                <label for="{{nodeType.name}}">{{nodeType.name}}</label>
+                            </li>
+                        </ul>
                     </div>
                 </div>
             </div>
         </div>
-
         <div class="button-container">
+            <i>Click Stop Chaos to immediately end your Chaos experiment.</i>
             <button ng-click="ctrl.handleClick($event)" class="chaos-btn start-chaos-btn">START CHAOS</button>
         </div>
     </div>
