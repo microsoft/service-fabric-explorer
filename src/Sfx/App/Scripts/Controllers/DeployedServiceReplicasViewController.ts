@@ -48,7 +48,7 @@ module Sfx {
                             new ListColumnSettingForLink("id", "Id", item => item.viewPath),
                             new ListColumnSetting("raw.PartitionId", "Partition Id"),
                             new ListColumnSettingWithFilter("raw.ServiceKind", "Service Kind"),
-                            new ListColumnSettingWithFilter("raw.ReplicaRole", "Replica Role", defaultSortProperties),
+                            new ListColumnSettingWithFilter("role", "Replica Role", defaultSortProperties),
                             new ListColumnSettingWithFilter("raw.ReplicaStatus", "Status")
                         ];
 
