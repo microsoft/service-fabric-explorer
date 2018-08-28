@@ -28,7 +28,7 @@
                         <th ng-if="replica.servicePackageActivationId">Service Package Activation Id</th>
                     </tr>
                     <tr>
-                        <td ng-if="replica.isStatefulService">{{replica.raw.ReplicaRole}}</td>
+                        <td ng-if="replica.isStatefulService">{{replica.role}}</td>
                         <td ng-if="replica.servicePackageActivationId">{{replica.servicePackageActivationId}}</td>
                     </tr>
                 </table>
