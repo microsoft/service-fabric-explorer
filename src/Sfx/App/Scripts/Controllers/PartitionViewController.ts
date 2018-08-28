@@ -65,7 +65,7 @@ module Sfx {
                         let columnSettings = [
                             new ListColumnSettingForLink("id", "Id", item => item.viewPath),
                             new ListColumnSetting("raw.NodeName", "Node Name"),
-                            new ListColumnSettingWithFilter("raw.ReplicaRole", "Replica Role", defaultSortProperties),
+                            new ListColumnSettingWithFilter("role", "Replica Role", defaultSortProperties),
                             new ListColumnSettingForBadge("healthState", "Health State"),
                             new ListColumnSettingWithFilter("raw.ReplicaStatus", "Status")
                         ];
