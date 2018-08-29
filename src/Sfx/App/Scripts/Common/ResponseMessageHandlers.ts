@@ -60,4 +60,31 @@ module Sfx {
         public static putResponseMessageHandler: IResponseMessageHandler = new PostResponseMessageHandler();
         public static silentResponseMessageHandler: IResponseMessageHandler = new SilentResponseMessageHandler();
     }
+
+    export class EventsStoreResponseMessageHandler implements IResponseMessageHandler {
+        private innerHandler?: IResponseMessageHandler;
+        public constructor(innerHandler?: IResponseMessageHandler) {
+            this.innerHandler = innerHandler;
+        }
+
+        public getSuccessMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+            let handler = this.innerHandler ? this.innerHandler : ResponseMessageHandlers.getResponseMessageHandler;
+            return handler.getSuccessMessage(apiDesc, response);
+        }
+
+        public getErrorMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+            // API is not available on this cluster.
+            if (response.status === 400) {
+                return "EventsStore is not available on current cluster.";
+            }
+            // Non-OneBox environment with no azure tables storage configured.
+            // We used to return 404 through invoked process, and the service now returns 503.
+            if (response.status === 404 || response.status === 503) {
+                return "EventsStore storage is not configured for current cluster.";
+            }
+
+            let handler = this.innerHandler ? this.innerHandler : ResponseMessageHandlers.getResponseMessageHandler;
+            return handler.getErrorMessage(apiDesc, response);
+        }
+    }
 }

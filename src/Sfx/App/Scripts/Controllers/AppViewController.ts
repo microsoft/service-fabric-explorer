@@ -15,6 +15,7 @@ module Sfx {
         deployedApplicationsHealthStatesListSettings: ListSettings;
         serviceTypesListSettings: ListSettings;
         deployedApplicationsHealthStates: DeployedApplicationHealthState[];
+        appEvents: ApplicationEventList;
     }
 
     export class AppViewController extends MainViewController {
@@ -26,10 +27,12 @@ module Sfx {
                 "essentials": { name: "Essentials" },
                 "details": { name: "Details" },
                 "deployments": { name: "Deployments", superscriptClass: "tab-superscript-badge-container" },
-                "manifest": { name: "Manifest" }
+                "manifest": { name: "Manifest" },
+                "events": { name: "Events" }
             });
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
             this.tabs["manifest"].refresh = (messageHandler) => this.refreshManifest(messageHandler);
+            this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
 
             this.appId = IdUtils.getAppId(this.routeParams);
             this.appTypeName = IdUtils.getAppTypeName(this.routeParams);
@@ -65,6 +68,7 @@ module Sfx {
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings("upgradeProgressUnhealthyEvaluations");
+            this.$scope.appEvents = this.data.createApplicationEventList(this.appId);
 
             this.refresh();
         }
@@ -100,6 +104,10 @@ module Sfx {
 
         private refreshManifest(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.$scope.app.manifest.refresh(messageHandler);
+        }
+
+        private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.appEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler));
         }
     }
 
