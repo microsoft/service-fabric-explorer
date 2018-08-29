@@ -5,7 +5,110 @@
 
 module Sfx {
 
+    export class EventTypesUtil {
+        private WarningEventTypes = _.keyBy( [
+            "*HealthReportCreated-HealthState:Warning",     //Old:6.2
+            "*NewHealthReport-HealthState:Warning",
+            "*UpgradeRollbackStart",                        //Old:6.2
+            "*UpgradeRollbackComplete",                     //Old:6.2
+            "*UpgradeRollbackStarted",
+            "*UpgradeRollbackCompleted" ],
+            item => item.split("-")[0].replace("*", "") );
+        private ErrorEventTypes = _.keyBy( [
+            "*HealthReportCreated-HealthState:Error",
+            "*NewHealthReport-HealthState:Error",
+            "NodeDown",
+            "NodeOpenFailed",
+            "NodeAborted" ],
+            item => item.split("-")[0].replace("*", "") );
+        private ResolvedEventTypes = _.keyBy( [
+            "*HealthReportCreated-HealthState:Ok",
+            "*NewHealthReport-HealthState:Ok" ],
+            item => item.split("-")[0].replace("*", "") );
+
+        private warningEventsRegExp = EventTypesUtil.constructRegExp(
+            Object.keys(this.WarningEventTypes).map(e => this.WarningEventTypes[e]));
+        private errorEventsRegExp = EventTypesUtil.constructRegExp(
+            Object.keys(this.ErrorEventTypes).map(e => this.ErrorEventTypes[e]));
+        private resolvedEventsRegExp = EventTypesUtil.constructRegExp(
+            Object.keys(this.ResolvedEventTypes).map(e => this.ResolvedEventTypes[e]));
+
+        private static constructRegExp(typesList: string[]): string {
+            let regString = "^";
+            typesList.forEach(eventType => {
+                let lookupName = eventType.split("-")[0];
+                if (regString !== "^") {
+                    regString += "|";
+                }
+                regString += "(?:";
+                if (_.startsWith(lookupName, "*")) {
+                    regString += "[a-zA-Z]+";
+                    lookupName = lookupName.substr(1);
+                }
+                regString += "(" + lookupName + ")";
+                regString += ")";
+            });
+            regString += "$";
+            return regString;
+        }
+
+        private static isEventMatching(event: FabricEventBase, regString: string): string {
+            let result = null;
+            let regExp = new RegExp(regString);
+            let match = regExp.exec(event.kind);
+            if (match) {
+                return match.filter(i => i)[1];
+            }
+            return result;
+        }
+
+        private static isPropertyMatching(event: FabricEventBase, lookupString: string): boolean {
+            let splittedValue = lookupString.split("-");
+            if (splittedValue.length > 1) {
+                let propertyToVerify = splittedValue[1].split(":");
+                if ((event.eventProperties[propertyToVerify[0]] + "") !== propertyToVerify[1]) {
+                    return false;
+                }
+            }
+
+            return true;
+        }
+
+        public constructor() {
+        }
+
+        public isWarning(event: FabricEventBase): boolean {
+            let foundKey = EventTypesUtil.isEventMatching(event, this.warningEventsRegExp);
+            if (!foundKey) {
+                return false;
+            }
+
+            return EventTypesUtil.isPropertyMatching(event, this.WarningEventTypes[foundKey]);
+        }
+
+        public isError(event: FabricEventBase): boolean {
+            let foundKey = EventTypesUtil.isEventMatching(event, this.errorEventsRegExp);
+            if (!foundKey) {
+                return false;
+            }
+
+            return EventTypesUtil.isPropertyMatching(event, this.ErrorEventTypes[foundKey]);
+        }
+
+        public isResolved(event: FabricEventBase): boolean {
+            let foundKey = EventTypesUtil.isEventMatching(event, this.resolvedEventsRegExp);
+            if (!foundKey) {
+                return false;
+            }
+
+            return EventTypesUtil.isPropertyMatching(event, this.ResolvedEventTypes[foundKey]);
+        }
+    }
+
     export class HtmlUtils {
+
+        // Utility to mark warning/error/resolved events in the detail list
+        private static eventTypesUtil = new EventTypesUtil();
 
         // Reposition the filter context menu if they are out of current view port
         public static repositionContextMenu(): void {
@@ -48,16 +151,16 @@ module Sfx {
         }
 
         public static getEventNameHtml(event: FabricEventBase): string {
-            // A temp solution till we have level information as part of events.
-            if (_.endsWith(event.kind, "HealthReportCreated") || _.endsWith(event.kind, "NewHealthReport")) {
-                let color = "";
-                if (event.eventProperties.HealthState === "Ok") {
-                    color = "#3AA655";
-                } else if (event.eventProperties.HealthState === "Warning") {
-                    color = "#F2C649";
-                } else if (event.eventProperties.HealthState === "Error") {
-                    color = "#FF5349";
-                }
+            let color = null;
+            if (HtmlUtils.eventTypesUtil.isResolved(event)) {
+                color = "#3AA655";
+            } else if (HtmlUtils.eventTypesUtil.isWarning(event)) {
+                color = "#F2C649";
+            } else if (HtmlUtils.eventTypesUtil.isError(event)) {
+                color = "#FF5349";
+            }
+
+            if (color) {
                 return `<span style="color:${color}">${event.kind}</span>`;
             }
             return event.kind;

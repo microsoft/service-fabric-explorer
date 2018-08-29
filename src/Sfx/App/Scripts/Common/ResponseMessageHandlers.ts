@@ -78,7 +78,8 @@ module Sfx {
                 return "EventsStore is not available on current cluster.";
             }
             // Non-OneBox environment with no azure tables storage configured.
-            if (response.status === 404) {
+            // We used to return 404 through invoked process, and the service now returns 503.
+            if (response.status === 404 || response.status === 503) {
                 return "EventsStore storage is not configured for current cluster.";
             }
 

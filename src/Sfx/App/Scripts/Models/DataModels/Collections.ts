@@ -576,7 +576,7 @@ module Sfx {
         // requests take ~3 secs, and so we shouldn't be delaying every global refresh.
         public readonly minimumRefreshTimeInSecs: number = 10;
         public readonly pageSize: number = 15;
-        public readonly defaultDateWindowInDays: number = 3;
+        public readonly defaultDateWindowInDays: number = 2;
         public readonly latestRefreshPeriodInSecs: number = 60 * 60;
 
         protected readonly optionalColsStartIndex: number = 2;
@@ -694,7 +694,7 @@ module Sfx {
                 (item) => (Object.keys(item.raw.eventProperties).length > 0),
                 true);
 
-            listSettings.columnSettings[0].fixedWidthPx = 300;
+            listSettings.columnSettings[0].fixedWidthPx = 320;
             listSettings.columnSettings[1].fixedWidthPx = 200;
             listSettings.sortReverse = true;
 
