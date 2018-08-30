@@ -75,12 +75,16 @@ module Sfx {
         public getErrorMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
             // API is not available on this cluster.
             if (response.status === 400) {
-                return "EventsStore is not available on current cluster.";
+                return "Events API is not available on current cluster.";
+            }
+            // EventStoreService system service is not added (>=6.4).
+            if (response.status === 404 && response.statusText === "FABRIC_E_SERVICE_DOES_NOT_EXIST") {
+                return "EventStore system service is not found, please enable it.";
             }
             // Non-OneBox environment with no azure tables storage configured.
             // We used to return 404 through invoked process, and the service now returns 503.
             if (response.status === 404 || response.status === 503) {
-                return "EventsStore storage is not configured for current cluster.";
+                return "Events storage is not configured for current cluster.";
             }
 
             let handler = this.innerHandler ? this.innerHandler : ResponseMessageHandlers.getResponseMessageHandler;
