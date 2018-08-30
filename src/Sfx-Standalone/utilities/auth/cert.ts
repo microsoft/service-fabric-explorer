@@ -5,7 +5,7 @@
 import { IDictionary } from "sfx.common";
 import { IModuleManager } from "sfx.module-manager";
 
-import { BrowserWindow, Certificate } from "electron";
+import { WebviewTag, Certificate } from "electron";
 import * as url from "url";
 import * as fs from "fs";
 import * as tmp from "tmp";
@@ -21,14 +21,10 @@ interface ICertSelectionPromptResults {
     certsImported: boolean;
 }
 
-async function showCertSelectPromptAsync(
-    moduleManager: IModuleManager,
-    window: BrowserWindow,
-    certificateList: Array<Certificate>)
-    : Promise<ICertSelectionPromptResults> {
+async function showCertSelectPromptAsync(moduleManager: IModuleManager, webView: WebviewTag, certificateList: Array<Certificate>): Promise<ICertSelectionPromptResults> {
 
     const certSelectionButtons: Array<string> = [];
-    
+
     if (Array.isArray(certificateList)) {
         certificateList.forEach(certificate => certSelectionButtons.push(certificate.subjectName + "\r\nIssuer: " + certificate.issuerName + "\r\nThumbprint: " + certificate.fingerprint));
     }
@@ -37,12 +33,7 @@ async function showCertSelectPromptAsync(
         certSelectionButtons.push("Import more certificates ...");
     }
 
-    const prompt =
-        await moduleManager.getComponentAsync(
-            "prompt.select-certificate",
-            window.id,
-            certificateList);
-
+    const prompt = await moduleManager.getComponentAsync("prompt.select-certificate", null, certificateList);
     const promptResults = await prompt.openAsync();
     const results: ICertSelectionPromptResults = {
         selectedCert: null,
@@ -65,10 +56,10 @@ interface ICertHandlingRecord {
     callbacks: Array<(cert: Certificate) => void>;
 }
 
-function handleGenerally(moduleManager: IModuleManager, window: BrowserWindow): void {
+function handleGenerally(moduleManager: IModuleManager, webView: WebviewTag): void {
     const clientCertManager: IDictionary<ICertHandlingRecord> = Object.create(null);
 
-    window.webContents.on("select-client-certificate",
+    webView.getWebContents().on("select-client-certificate",
         async (event, urlString, certificateList, selectCertificate) => {
             event.preventDefault();
 
@@ -94,7 +85,7 @@ function handleGenerally(moduleManager: IModuleManager, window: BrowserWindow): 
 
                 const results = await showCertSelectPromptAsync(
                     moduleManager,
-                    window,
+                    webView,
                     certificateList);
 
                 if (results.selectedCert) {
@@ -102,7 +93,7 @@ function handleGenerally(moduleManager: IModuleManager, window: BrowserWindow): 
                     delete clientCertManager[certIdentifier];
                 } else if (results.certsImported) {
                     certHandlingRecord.handling = false;
-                    window.reload();
+                    webView.reload();
                 } else {
                     electron.app.exit();
                 }
@@ -126,10 +117,10 @@ function handleLinux(): void {
         (result) => dummayCertFile.removeCallback());
 }
 
-export function handle(moduleManager: IModuleManager, window: BrowserWindow): void {
+export function handle(moduleManager: IModuleManager, webView: WebviewTag): void {
     if (env.platform === Platform.Linux) {
         handleLinux();
     }
 
-    handleGenerally(moduleManager, window);
+    handleGenerally(moduleManager, webView);
 }

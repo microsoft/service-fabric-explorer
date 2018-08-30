@@ -4,7 +4,9 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.main-window" {    
-    export interface IMainWindow {        
+    import { BrowserWindow } from "electron";
+
+    export interface IMainWindow {
         loadAsync(): void;    
                    
     }

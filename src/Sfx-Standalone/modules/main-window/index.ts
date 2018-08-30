@@ -10,12 +10,12 @@ import { MainWindow } from "./main-window";
 (<IModule>exports).getModuleMetadata = (components) => {
     components.register<MainWindow>({
         name: "main-window",
-                version: electron.app.getVersion(),
-                singleton: true,
-                descriptor: async (browserWindow) => {        
-                    return new MainWindow(browserWindow);
-                },
-                deps: ["browser-window"]
+        version: electron.app.getVersion(),
+        singleton: true,
+        descriptor: async (browserWindow) => {
+            return new MainWindow(browserWindow);
+        },
+        deps: ["browser-window"]
     });
 
     return {

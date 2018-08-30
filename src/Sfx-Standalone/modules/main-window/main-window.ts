@@ -25,10 +25,9 @@ export class SettingsComponentConfig implements IComponentConfiguration {
 }
 
 export class MainWindow implements IMainWindow {
-
-    private components: IComponentConfiguration[] = [];
     private browserWindow: BrowserWindow;
-
+    private components: IComponentConfiguration[] = [];
+    
     constructor(browserWindow: BrowserWindow) {
         this.browserWindow = browserWindow;
         browserWindow.setSize(1500, 1200);
@@ -48,6 +47,11 @@ export class MainWindow implements IMainWindow {
             this.browserWindow.show();
 
         });
+
         return Promise.resolve();
     }
+
+    // getHostingBrowserWindowAsync(): Promise<BrowserWindow> {
+    //     return Promise.resolve(this.browserWindow);
+    // }
 }

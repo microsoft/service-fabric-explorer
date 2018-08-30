@@ -3,25 +3,26 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { BrowserWindow } from "electron";
+import { WebviewTag } from "electron";
 import * as querystring from "querystring";
 import * as Url from "url";
 
 import { resolve } from "../appUtils";
 
-export function handle(window: BrowserWindow, targetHostName: string) {
-    if (String.isEmptyOrWhitespace(targetHostName)) {
-        throw new Error("targetHostName must be supplied.");
+export function handle(webView: WebviewTag, targetServiceEndpoint: string) {
+    if (String.isEmptyOrWhitespace(targetServiceEndpoint)) {
+        throw new Error("targetServiceEndpoint must be supplied.");
     }
 
-    targetHostName = Url.parse(targetHostName).hostname;
+    const webContents = webView.getWebContents();
+    const targetHostName = Url.parse(targetServiceEndpoint).hostname;
 
-    window.webContents.on("did-get-redirect-request", (event, oldUrlString, newUrlString, isMainFrame, httpResponseCode, requestMethod, referrer, headers) => {
+    webContents.on("did-get-redirect-request", (event, oldUrlString, newUrlString, isMainFrame, httpResponseCode, requestMethod, referrer, headers) => {
         let newUrl = Url.parse(newUrlString);
 
         if (newUrl.hostname.toUpperCase() === targetHostName.toUpperCase()) {
             if (isMainFrame) {
-                window.loadURL(resolve({ path: "sfx/index.html", hash: newUrl.hash }, true));
+                webView.loadURL(resolve({ path: "sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint, hash: newUrl.hash }, true));
             } else {
                 /* This is for handling token renew in adal.js and needs to tested everytime adal.js is updated/changed.
                 
@@ -32,8 +33,8 @@ export function handle(window: BrowserWindow, targetHostName: string) {
                    to make adal.js treat renew as login.
                 */
                 let querystrings = querystring.parse(newUrl.hash);
-                window.webContents.executeJavaScript("window.localStorage.setItem('adal.state.login', '" + querystrings["state"] + "')")
-                    .then(() => window.loadURL(resolve({ path: "sfx/index.html", hash: newUrl.hash }, true)));
+                webContents.executeJavaScript("window.localStorage.setItem('adal.state.login', '" + querystrings["state"] + "')")
+                    .then(() => webView.loadURL(resolve({ path: "sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint, hash: newUrl.hash }, true)));
             }
         }
     });

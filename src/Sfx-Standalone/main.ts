@@ -14,9 +14,7 @@ async function startup(): Promise<void> {
         const settings = await sfxModuleManager.getComponentAsync("settings");
 
         log.writeInfoAsync("Initialize application menu for macOS.");
-        Menu.setApplicationMenu(
-            Menu.buildFromTemplate(
-                await settings.getAsync<Array<MenuItemConstructorOptions>>("defaultMenu/" + env.platform)));
+        Menu.setApplicationMenu(Menu.buildFromTemplate(await settings.getAsync<Array<MenuItemConstructorOptions>>("defaultMenu/" + env.platform)));
     }
 
     log.writeInfoAsync("Starting up connect-cluster prompt.");
@@ -24,7 +22,7 @@ async function startup(): Promise<void> {
     await mainWindow.loadAsync();
 
     // Trigger update activity.
-    //(await sfxModuleManager.getComponentAsync("update")).updateAsync();
+    (await sfxModuleManager.getComponentAsync("update")).updateAsync();
 
     // Handle "window-all-closed" event.
     app.removeAllListeners("window-all-closed");
@@ -34,6 +32,11 @@ async function startup(): Promise<void> {
         log.writeInfoAsync("'window-all-closed': app.quit().");
         app.quit();
     });
+
+    // app.on("certificate-error", (event, webContents, url, error, certificate, callback) => {
+    //     event.preventDefault();
+    //     callback(true);
+    // });
 
     log.writeInfoAsync("application startup finished.");
 }

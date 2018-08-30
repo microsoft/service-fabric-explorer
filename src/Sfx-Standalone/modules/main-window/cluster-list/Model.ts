@@ -9,35 +9,37 @@ import { IMenu } from "sfx.menu";
 export class Menu implements IMenu {
 
     private folders: Array<Folder> = new Array<Folder>();
-
-    constructor() {
-
-    }
-
+    
     public addFolder(label: string) {
         this.folders.push(new Folder(label));
     }
+
     public addCluster(label: string, url: string, folder: string) {
         this.getFolder(folder).clusters.push(new Cluster(label, url, folder));
     }
+
     public removeFolder(label: string) {
         for (let cluster of this.getFolder(label).clusters) {
             this.removeCluster(cluster.label, label);
         }
-        this.folders.splice(this.folders.indexOf(this.getFolder(label)), 1);
 
+        this.folders.splice(this.folders.indexOf(this.getFolder(label)), 1);
     }
+
     public removeCluster(cluster_label: string, folder_label: string) {
         let folder: Folder = this.getFolder(folder_label);
         let cluster_index = folder.indexOf(this.getCluster(cluster_label, "label"));
         folder.clusters.splice(cluster_index, 1);
     }
+
     public renameFolder(old_name: string, new_name: string) {
         this.getFolder(old_name).label = new_name;
     }
+
     public renameCluster(old_name: string, new_name: string) {
         this.getCluster(old_name, "label").label = new_name;
     }
+
     public moveCluster(label: string, new_folder_label: string) {
         let cluster: Cluster = this.getCluster(label, "label");
         let old_folder: Folder = this.getFolder(cluster.folder);
@@ -57,6 +59,7 @@ export class Menu implements IMenu {
     public folderExists(label: string): boolean {
         return (this.getFolder(label) != null);
     }
+
     public clusterExists(label: string): boolean {
         return (this.getCluster(label, "label") != null);
     }
@@ -64,7 +67,6 @@ export class Menu implements IMenu {
     public getFolders(): Array<Folder> {
         return this.folders;
     }
-
 
     public getCluster(label: string, type: string) {
         for (let folder of this.folders) {
