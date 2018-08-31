@@ -9,6 +9,7 @@ module Sfx {
         replica: ReplicaOnPartition;
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
+        replicaEvents: ReplicaEventList;
     }
 
     export class ReplicaViewController extends MainViewController {
@@ -21,9 +22,11 @@ module Sfx {
         constructor($injector: angular.auto.IInjectorService, private $scope: IReplicaViewScope) {
             super($injector, {
                 "essentials": { name: "Essentials" },
-                "details": { name: "Details" }
+                "details": { name: "Details" },
+                "events": { name: "Events" }
             });
             this.tabs["details"].refresh = (messageHandler) => this.refreshDetails(messageHandler);
+            this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
 
             let params = this.routeParams;
             this.appId = IdUtils.getAppId(params);
@@ -54,6 +57,7 @@ module Sfx {
 
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
+            this.$scope.replicaEvents = this.data.createReplicaEventList(this.partitionId, this.replicaId);
 
             this.refresh();
         }
@@ -69,6 +73,10 @@ module Sfx {
 
         private refreshDetails(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.$scope.replica.detail.refresh(messageHandler);
+        }
+
+        private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.replicaEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler));
         }
     }
 

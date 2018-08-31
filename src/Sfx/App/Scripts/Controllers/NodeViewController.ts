@@ -20,6 +20,7 @@ module Sfx {
         listSettings: ListSettings;
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
+        nodeEvents: NodeEventList;
     }
 
     export class NodeViewController extends MainViewController {
@@ -28,10 +29,12 @@ module Sfx {
         constructor($injector: angular.auto.IInjectorService, public $scope: INodeViewScope) {
             super($injector, {
                 "essentials": { name: "Essentials" },
-                "details": { name: "Details" }
+                "details": { name: "Details" },
+                "events": { name: "Events" }
             });
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
             this.tabs["details"].refresh = (messageHandler) => this.refreshDetails(messageHandler);
+            this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
 
             this.nodeName = IdUtils.getNodeName(this.routeParams);
 
@@ -49,6 +52,7 @@ module Sfx {
             ]);
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
+            this.$scope.nodeEvents = this.data.createNodeEventList(this.nodeName);
 
             this.refresh();
         }
@@ -70,6 +74,10 @@ module Sfx {
             return this.$scope.node.deployedApps.refresh(messageHandler).then(deployedApps => {
                 this.$scope.deployedApps = deployedApps;
             });
+        }
+
+        private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.nodeEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler));
         }
     }
 

@@ -16,6 +16,7 @@ module Sfx {
         module.directive("sfxSlider", () => new SliderDirective());
         module.directive("sfxDetailViewPart", () => new DetailViewPartDirective());
         module.directive("sfxDetailList", () => new DetailListDirective());
+        module.directive("sfxDetailListDetailsView", () => new DetailListDetailsViewDirective());
         module.directive("sfxMetricsBarChart", MetricsBarChartDirective.factory());
         module.directive("sfxDashboard", DashboardChartDirective.factory());
 
@@ -284,6 +285,10 @@ module Sfx {
             };
         });
 
+        module.directive("sfxEventsView", () => new EventsViewDirective());
+
         module.directive("sfxTextFileInput", () => new TextFileInputDirective());
+
+        module.directive("sfxDatePicker", () => new DatePickerDirective());
     })();
 }

@@ -10,6 +10,9 @@ module Sfx {
         Items: T[];
     }
 
+    export interface IRawList<T> extends Array<T> {
+    }
+
     export interface IRawApplication {
         Id: string;
         Name: string;

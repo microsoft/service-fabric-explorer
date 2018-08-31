@@ -34,14 +34,68 @@ module Sfx {
         mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): angular.IPromise<any>;
     }
 
+    export class CancelablePromise<T> {
+        private defer: angular.IDeferred<T> = null;
+
+        public constructor(private $q: angular.IQService) {
+        }
+
+        public load(loadHandler: () => angular.IPromise<T>): angular.IPromise<T> {
+            if (this.hasPromise()) {
+                this.cancel();
+            }
+
+            this.defer = this.$q.defer<T>();
+            this.executeInternal(loadHandler);
+            return this.getPromise();
+        }
+
+        public hasPromise(): boolean {
+            return this.defer !== null;
+        }
+
+        public getPromise(): angular.IPromise<T> {
+            if (!this.hasPromise()) {
+                return null;
+            }
+            return this.defer.promise;
+        }
+
+        public cancel(): void {
+            if (this.hasPromise()) {
+                this.defer.reject({ isCanceled: true });
+                this.defer = null;
+            }
+        }
+
+        private executeInternal(loadHandler: () => angular.IPromise<T>): void {
+            let capturedDefer = this.defer;
+            loadHandler().then(result => {
+                if (this.defer === capturedDefer) {
+                    this.defer.resolve(result);
+                }
+            }).catch((rejected) => {
+                if (this.defer === capturedDefer) {
+                    this.defer.reject(rejected);
+                }
+            }).finally(() => {
+                if (this.defer === capturedDefer) {
+                    this.defer = null;
+                }
+            });
+        }
+    }
+
     export class DataModelCollectionBase<T extends IDataModel<any>> implements IDataModelCollection<T> {
-        public isInitialized: boolean;
+        public isInitialized: boolean = false;
         public parent: any;
         public collection: T[] = [];
 
         protected valueResolver: ValueResolver = new ValueResolver();
 
+        private appendOnly: boolean;
         private hash: _.Dictionary<T>;
+        private refreshingLoadPromise: CancelablePromise<T[]>;
         private refreshingPromise: angular.IPromise<any>;
 
         public get viewPath(): string {
@@ -61,27 +115,54 @@ module Sfx {
             return "uniqueId";
         }
 
-        public constructor(public data: DataService, parent?: any) {
+        public constructor(public data: DataService, parent?: any, appendOnly: boolean = false) {
             this.parent = parent;
+            this.appendOnly = appendOnly;
+            this.refreshingLoadPromise = new CancelablePromise(this.data.$q);
         }
 
         // Base refresh logic, do not override
         public refresh(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             if (!this.refreshingPromise) {
-                this.refreshingPromise = this.retrieveNewCollection(messageHandler).then(collection => {
-                    return this.update(collection);
-                }).then(() => {
-                    return this;
-                }).finally(() => {
-                    this.refreshingPromise = null;
-                });
+                this.refreshingPromise =
+                    this.refreshingLoadPromise.load(() => {
+                        return this.retrieveNewCollection(messageHandler);
+                    }).catch((error) => {
+                        if (error && error.isCanceled !== true) {
+                            throw error;
+                        }
+                        // Else skipping as load got canceled.
+                        return this.data.$q.when(null);
+                    }).then(collection => {
+                        if (collection) {
+                            return this.update(collection);
+                        }
+                    }).then(() => {
+                        return this;
+                    }).finally(() => {
+                        this.refreshingPromise = null;
+                    });
             }
             return this.refreshingPromise;
         }
 
+        public clear(): angular.IPromise<any> {
+            this.cancelLoad();
+            return this.data.$q.when(this.refreshingPromise ? this.refreshingPromise : true).then(() => {
+                this.collection = [];
+                this.isInitialized = false;
+            });
+        }
+
+        protected cancelLoad(): void {
+            if (this.refreshingLoadPromise.hasPromise()) {
+                this.refreshingLoadPromise.cancel();
+            }
+        }
+
         protected update(collection: T[]): angular.IPromise<any> {
             this.isInitialized = true;
-            CollectionUtils.updateDataModelCollection(this.collection, collection);
+            CollectionUtils.updateDataModelCollection(this.collection, collection, this.appendOnly);
             this.hash = _.keyBy(this.collection, this.indexPropery);
             return this.data.$q.when(this.updateInternal());
         }
@@ -142,6 +223,11 @@ module Sfx {
                 });
 
             return this.data.$q.all(updatePromises);
+        }
+
+        // Derived class should implement this if it is going to use details-view directive as child and call showDetails(itemId).
+        protected getDetailsList(item: any): IDataModelCollection<any> {
+            return null;
         }
     }
 
@@ -482,5 +568,325 @@ module Sfx {
                 });
         }
     }
-}
 
+    export abstract class EventListBase<T extends FabricEventBase> extends DataModelCollectionBase<FabricEventInstanceModel<T>> {
+        public readonly settings: ListSettings;
+        public readonly detailsSettings: ListSettings;
+        // This will skip refreshing if period is set to be too quick by user, as currently events
+        // requests take ~3 secs, and so we shouldn't be delaying every global refresh.
+        public readonly minimumRefreshTimeInSecs: number = 10;
+        public readonly pageSize: number = 15;
+        public readonly defaultDateWindowInDays: number = 2;
+        public readonly latestRefreshPeriodInSecs: number = 60 * 60;
+
+        protected readonly optionalColsStartIndex: number = 2;
+
+        private lastRefreshTime?: Date;
+        private _startDate: Date;
+        private _endDate: Date;
+
+        public get startDate() {
+            return new Date(this._startDate.valueOf());
+        }
+        public get endDate() {
+            let endDate = new Date(this._endDate.valueOf());
+            let timeNow = new Date();
+            if (endDate > timeNow) {
+                endDate = timeNow;
+            }
+
+            return endDate;
+        }
+
+        public get queryStartDate() {
+            if (this.isInitialized) {
+                // Only retrieving the latest, including a period that allows refreshing
+                // previously retrieved events with new correlation information if any.
+                if ((this.endDate.getTime() - this.startDate.getTime()) / 1000 > this.latestRefreshPeriodInSecs) {
+                    return TimeUtils.AddSeconds(this.endDate, (-1 * this.latestRefreshPeriodInSecs));
+                }
+            }
+
+            return this.startDate;
+        }
+        public get queryEndDate() { return this.endDate; }
+
+        public constructor(data: DataService, startDate?: Date, endDate?: Date) {
+            // Using appendOnly, because we refresh by retrieving latest,
+            // and collection gets cleared when dates window changes.
+            super(data, null, true);
+            this.settings = this.createListSettings();
+            this.detailsSettings = this.createListSettings();
+
+            // Add correlated event col.
+            let correlatedEventsCol = new ListColumnSetting(
+                "#CorrelatedEvents",
+                "",
+                [],
+                null,
+                (item) => HtmlUtils.getEventDetailsViewLinkHtml(item.raw));
+            correlatedEventsCol.fixedWidthPx = 40;
+            this.settings.columnSettings.splice(1, 0, correlatedEventsCol);
+
+            this.setNewDateWindowInternal(startDate, endDate);
+        }
+
+        public setDateWindow(startDate?: Date, endDate?: Date): boolean {
+            return this.setNewDateWindowInternal(startDate, endDate);
+        }
+
+        public resetDateWindow(): boolean {
+            return this.setDateWindow(null, null);
+        }
+
+        public reload(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            this.lastRefreshTime = null;
+            return this.clear().then(() => {
+                return this.refresh(messageHandler);
+            });
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            // Use existing collection if a refresh is called in less than minimumRefreshTimeInSecs.
+            if (this.lastRefreshTime &&
+                (new Date().getTime() - this.lastRefreshTime.getTime()) < (this.minimumRefreshTimeInSecs * 1000)) {
+                return this.data.$q.when(this.collection);
+            }
+
+            this.lastRefreshTime = new Date();
+            return this.retrieveEvents(messageHandler);
+        }
+
+        protected getDetailsList(item: any): IDataModelCollection<any> {
+            return this.data.createCorrelatedEventList(item.raw.eventInstanceId);
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<T>[]> {
+            // Should be overriden to retrieve actual events.
+            return this.data.$q.when([]);
+        }
+
+        private createListSettings(): ListSettings {
+            let listSettings = new ListSettings(
+                this.pageSize,
+                ["raw.timeStamp"],
+                [ new ListColumnSetting(
+                    "raw.kind",
+                    "Type",
+                    ["raw.kind"],
+                    true,
+                    (item) => HtmlUtils.getEventNameHtml(item.raw)),
+                  new ListColumnSetting(
+                    "raw.category",
+                    "Event Category",
+                    ["raw.category"],
+                    true,
+                    (item) => (!item.raw.category ? "Operational" : item.raw.category)),
+                  new ListColumnSetting("raw.timeStampString", "Timestamp"), ],
+                [ new ListColumnSetting(
+                    "raw.eventInstanceId",
+                    "",
+                    [],
+                    null,
+                    (item) => HtmlUtils.getEventSecondRowHtml(item.raw),
+                    -1), ],
+                true,
+                (item) => (Object.keys(item.raw.eventProperties).length > 0),
+                true);
+
+            listSettings.columnSettings[0].fixedWidthPx = 320;
+            listSettings.columnSettings[1].fixedWidthPx = 200;
+            listSettings.sortReverse = true;
+
+            return listSettings;
+        }
+
+        private setNewDateWindowInternal(startDate?: Date, endDate?: Date): boolean {
+            if (!startDate) {
+                startDate = TimeUtils.AddDays(
+                    endDate ? endDate : new Date(),
+                    (-1 * this.defaultDateWindowInDays));
+            }
+
+            if (!endDate) {
+                endDate = TimeUtils.AddDays(
+                    startDate,
+                    this.defaultDateWindowInDays);
+            }
+
+            let bodStartDate = new Date(startDate.valueOf());
+            let eodEndDate = new Date(endDate.valueOf());
+            bodStartDate.setHours(0, 0, 0, 0);
+            eodEndDate.setHours(23, 59, 59, 999);
+            if (!this._startDate || this._startDate.getTime() !== bodStartDate.getTime() ||
+                !this._endDate || this._endDate.getTime() !== eodEndDate.getTime()) {
+                this._startDate = bodStartDate;
+                this._endDate = eodEndDate;
+                return true;
+            }
+
+            return false;
+        }
+    }
+
+    export class ClusterEventList extends EventListBase<ClusterEvent> {
+        public constructor(data: DataService, partitionId?: string) {
+            super(data);
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<ClusterEvent>[]> {
+            return this.data.restClient.getClusterEvents(this.queryStartDate, this.queryEndDate, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<ClusterEvent>(this.data, event));
+                });
+        }
+    }
+
+    export class NodeEventList extends EventListBase<NodeEvent> {
+        private nodeName?: string;
+
+        public constructor(data: DataService, nodeName?: string) {
+            super(data);
+            this.nodeName = nodeName;
+            if (!this.nodeName) {
+                // Show NodeName as the second column.
+                this.settings.columnSettings.splice(
+                    this.optionalColsStartIndex,
+                    0,
+                    new ListColumnSettingWithFilter(
+                        "raw.nodeName",
+                        "Node Name"));
+            }
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<NodeEvent>[]> {
+            return this.data.restClient.getNodeEvents(this.queryStartDate, this.queryEndDate, this.nodeName, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<NodeEvent>(this.data, event));
+                });
+        }
+    }
+
+    export class ApplicationEventList extends EventListBase<ApplicationEvent> {
+        private applicationId?: string;
+
+        public constructor(data: DataService, applicationId?: string) {
+            super(data);
+            if (applicationId) {
+                this.applicationId = applicationId.replace(new RegExp("/", "g"), "~");
+            }
+
+            if (!this.applicationId) {
+                // Show ApplicationId as the first column.
+                this.settings.columnSettings.splice(
+                    this.optionalColsStartIndex,
+                    0,
+                    new ListColumnSettingWithFilter(
+                        "raw.applicationId",
+                        "Application Id"));
+            }
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<ApplicationEvent>[]> {
+            return this.data.restClient.getApplicationEvents(this.queryStartDate, this.queryEndDate, this.applicationId, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<ApplicationEvent>(this.data, event));
+                });
+        }
+    }
+
+    export class ServiceEventList extends EventListBase<ServiceEvent> {
+        private serviceId?: string;
+
+        public constructor(data: DataService, serviceId?: string) {
+            super(data);
+            if (serviceId) {
+                this.serviceId = serviceId.replace(new RegExp("/", "g"), "~");
+            }
+            if (!this.serviceId) {
+                // Show ServiceId as the first column.
+                this.settings.columnSettings.splice(
+                    this.optionalColsStartIndex,
+                    0,
+                    new ListColumnSettingWithFilter(
+                        "raw.serviceId",
+                        "Service Id"));
+            }
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<ServiceEvent>[]> {
+            return this.data.restClient.getServiceEvents(this.queryStartDate, this.queryEndDate, this.serviceId, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<ServiceEvent>(this.data, event));
+                });
+        }
+    }
+
+    export class PartitionEventList extends EventListBase<PartitionEvent> {
+        private partitionId?: string;
+
+        public constructor(data: DataService, partitionId?: string) {
+            super(data);
+            this.partitionId = partitionId;
+            if (!this.partitionId) {
+                // Show PartitionId as the first column.
+                this.settings.columnSettings.splice(
+                    this.optionalColsStartIndex,
+                    0,
+                    new ListColumnSettingWithFilter(
+                        "raw.partitionId",
+                        "Partition Id"));
+            }
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<PartitionEvent>[]> {
+            return this.data.restClient.getPartitionEvents(this.queryStartDate, this.queryEndDate, this.partitionId, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<PartitionEvent>(this.data, event));
+                });
+        }
+    }
+
+    export class ReplicaEventList extends EventListBase<ReplicaEvent> {
+        private partitionId: string;
+        private replicaId?: string;
+
+        public constructor(data: DataService, partitionId: string, replicaId?: string) {
+            super(data);
+            this.partitionId = partitionId;
+            this.replicaId = replicaId;
+            if (!this.replicaId) {
+                // Show ReplicaId as the first column.
+                this.settings.columnSettings.splice(
+                    this.optionalColsStartIndex,
+                    0,
+                    new ListColumnSettingWithFilter(
+                        "raw.replicaId",
+                        "Replica Id"));
+            }
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<ReplicaEvent>[]> {
+            return this.data.restClient.getReplicaEvents(this.queryStartDate, this.queryEndDate, this.partitionId, this.replicaId, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<ReplicaEvent>(this.data, event));
+                });
+        }
+    }
+
+    export class CorrelatedEventList extends EventListBase<FabricEvent> {
+        private eventInstanceId: string;
+
+        public constructor(data: DataService, eventInstanceId: string) {
+            super(data);
+            this.eventInstanceId = eventInstanceId;
+        }
+
+        protected retrieveEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEventInstanceModel<FabricEvent>[]> {
+            return this.data.restClient.getCorrelatedEvents(this.eventInstanceId, messageHandler)
+                .then(result => {
+                    return result.map(event => new FabricEventInstanceModel<FabricEvent>(this.data, event));
+                });
+        }
+    }
+}

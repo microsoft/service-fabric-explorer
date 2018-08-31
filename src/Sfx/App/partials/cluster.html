@@ -1,7 +1,7 @@
 ﻿<sfx-detail-view-navbar ctrl="clusterCtrl" type="Cluster" name="{{SFXClusterName}}"></sfx-detail-view-navbar>
 
 <div class="main-view">
-    <div sfx-include src="'tab_' + clusterCtrl.activeTabId" ng-if="clusterCtrl.activeTabId" role="tabpanel" aria-label="{{clusterCtrl.activeTabId}}"></div>
+    <div sfx-include src="'tab_' + clusterCtrl.activeTabId" ng-if="clusterCtrl.activeTabId" role="tabpanel" aria-label="{{clusterCtrl.activeTabId}}" class="flex-child"></div>
 
     <script type="text/ng-template" id="tab_essentials">
         <div class="detail-pane essen-pane">
@@ -149,5 +149,9 @@
             </h4>
             <pre role="presentation" tabindex="0"><code aria-label="manifest of {{clusterManifest.clusterManifestName}}">{{clusterManifest.raw.Manifest}}</code></pre>
         </div>
+    </script>
+
+    <script type="text/ng-template" id="tab_events">
+        <sfx-events-view events-list="clusterEvents" class="flex-child"></sfx-events-view>
     </script>
 </div>
