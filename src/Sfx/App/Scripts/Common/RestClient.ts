@@ -442,6 +442,12 @@ module Sfx {
             return this.get(this.getApiUrl(url), "Get partition", messageHandler);
         }
 
+        public getPartitionById(partitionId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawPartition> {
+            let url = "Partitions/" + encodeURIComponent(partitionId);
+
+            return this.get(this.getApiUrl(url, RestClient.apiVersion60), "Get partition by id", messageHandler);
+        }
+
         public getPartitionHealth(applicationId: string, serviceId: string, partitionId: string,
             eventsHealthStateFilter: number = HealthStateFilterFlags.Default,
             replicasHealthStateFilter: number = HealthStateFilterFlags.Default,
