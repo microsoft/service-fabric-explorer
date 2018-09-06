@@ -14,18 +14,11 @@ module Sfx {
             minDate: "=?",
             maxDate: "=?",
             initDate: "=?",
-            dateOptions: "=?",
             readOnly: "=?",
             placeHolderText: "=?"
         };
 
         public link($scope: any, element: JQuery, attributes: any) {
-            $scope.dateOptions = $scope.dateOptions || {
-                formatYear: "yy",
-                startingDay: 1,
-                showWeeks: false
-            };
-
             $scope.initDate = $scope.initDate || new Date();
             $scope.readOnly = $scope.readOnly || true;
             $scope.placeHolderText = $scope.placeHolderText || "";
