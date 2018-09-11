@@ -40,14 +40,14 @@ export class SfxContainer implements ISfxContainer {
             this.endpoints.push({ endpoint: targetServiceEndpoint, id: id });
 
             container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
-            $(`<div id="view-container-${id}" class="view-container"><webview id="view-${id}" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
+            $(`<div id="view-container-${id}" class="view-container"><webview tabindex="0" id="view-${id}" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
         } else {
             $(`#view-container-${id}`, container).show();
+            return;
         }
 
         const log = await sfxModuleManager.getComponentAsync("logging");
         const sfxUrl = appUtils.resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint });
-
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
 
         sfxWebView.addEventListener("dom-ready", async () => {
@@ -82,42 +82,11 @@ export class SfxContainer implements ISfxContainer {
         //const trustedCertManager: IDictionary<boolean> = Object.create(null);
         //const hostingWindow = await sfxModuleManager.getComponentAsync("browser-window");
         //const log = await sfxModuleManager.getComponentAsync("logging");
-
-        webview.getWebContents().on("certificate-error", (event, url, error, certificate, callback) => {
+        const webContents = webview.getWebContents();
+        webContents.on("certificate-error", (event, url, error, certificate, callback) => {
+            console.log("certificate-error", url, error, callback);
             event.preventDefault();
-
-            //log.writeInfoAsync(`certificate-error --- for ${url}, error ${error}`);
-
-            callback(true);
-            // const certIdentifier = url.parse(urlString).hostname + certificate.subjectName;
-
-            // if (certIdentifier in trustedCertManager) {
-            //     trustCertificate(trustedCertManager[certIdentifier]);
-            // } else {
-            //     trustedCertManager[certIdentifier] = false;
-
-            //     dialog.showMessageBox(
-            //         hostingWindow,
-            //         {
-            //             type: "warning",
-            //             buttons: ["Yes", "Exit"],
-            //             title: "Untrusted certificate",
-            //             message: "Do you want to trust this certificate?",
-            //             detail: "Subject: " + certificate.subjectName + "\r\nIssuer: " + certificate.issuerName + "\r\nThumbprint: " + certificate.fingerprint,
-            //             cancelId: 1,
-            //             defaultId: 0,
-            //             noLink: true,
-            //         },
-            //         (response, checkboxChecked) => {
-            //             if (response !== 0) {
-            //                 // TODO
-            //                 return;
-            //             }
-
-            //             trustedCertManager[certIdentifier] = true;
-            //             trustCertificate(true);
-            //         });
-            // }
+            callback(true);           
         });
     }
 }

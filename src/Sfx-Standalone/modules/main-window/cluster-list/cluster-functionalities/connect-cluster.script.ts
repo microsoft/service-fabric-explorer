@@ -8,10 +8,7 @@ import * as Url from "url";
 import { ISfxContainer } from "sfx.sfx-view-container";
 import { IClusterList } from "sfx.cluster-list";
 
-
-$(document).ready(() => {
-    $(".modal").slideDown(150);
-
+(async () => {
     let folders = JSON.parse(localStorage.getItem("folders"));
     localStorage.removeItem("folders");
     let select = $("#input-select-folder");
@@ -21,10 +18,7 @@ $(document).ready(() => {
     }
     let $item = $(`<option value="new_folder">Create New Folder</option>`);
     select.append($item);
-});
 
-
-(async () => {
     $("#input-select-folder").change(async () => {
         let folder: string = $("#input-select-folder").val().toString();
         if(folder === "new_folder") {
@@ -38,7 +32,6 @@ $(document).ready(() => {
 
     $("#btn-connect").click(async () => {
         try {
-
             const url = Url.parse($("#input-cluster-url").val().toString());
             let name: string = $("#input-cluster-label").val().toString();
             let folder: string = $("#input-select-folder").val().toString();

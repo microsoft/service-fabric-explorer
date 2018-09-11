@@ -3,13 +3,12 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IMenu } from "sfx.menu";
+import { IClusterListDataModel } from "sfx.cluster-list";
 
-
-export class Menu implements IMenu {
+export class ClusterListDataModel implements IClusterListDataModel {
 
     private folders: Array<Folder> = new Array<Folder>();
-    
+
     public addFolder(label: string) {
         this.folders.push(new Folder(label));
     }
@@ -93,20 +92,21 @@ export class Menu implements IMenu {
     }
 }
 
-
-
 export class Folder {
     label: string = "folder";
     clusters: Cluster[] = new Array<Cluster>();
+    
     constructor(label: string) {
         this.label = label;
     }
+
     indexOf(cluster: Cluster) {
         for (let i = 0; i < this.clusters.length; i++) {
             if (this.clusters[i] === cluster) {
                 return i;
             }
         }
+        
         return -1;
     }
 }

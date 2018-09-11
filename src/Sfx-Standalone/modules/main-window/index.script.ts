@@ -2,12 +2,11 @@ import * as $ from "jquery";
 import { WebviewTag } from "electron";
 import { IComponentConfiguration } from "sfx.common";
 import { SfxContainer } from "./sfx-container/sfx-container";
-import { DialogService } from "./dialog-service";
+import { DialogService } from "./dialog-service/dialog-service";
 import { ClusterManagerComponentConfig } from "./main-window";
 
 
 (async () => {
-
     sfxModuleManager.register(DialogService.getComponentInfo());
     sfxModuleManager.register(SfxContainer.getComponentInfo());
 
@@ -22,12 +21,11 @@ import { ClusterManagerComponentConfig } from "./main-window";
             leftpanel.append(template);
 
             if (component.viewUrl) {
-                $(`<div id="sub-${component.id}" class="sub-panel"><webview id="wv-${component.id}" src="${component.viewUrl}" nodeintegration preload="./preload.js"></webview></div>`).appendTo(template);
+                $(`<div id="sub-${component.id}" class="sub-panel"><webview tabindex="0" id="wv-${component.id}" src="${component.viewUrl}" nodeintegration preload="./preload.js"></webview></div>`).appendTo(template);
                 let webview = <WebviewTag>document.querySelector(`webview[id='wv-${component.id}']`);
                 webview.addEventListener("dom-ready", async () => {
                     await sfxModuleManager.newHostAsync(`host-${component.id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));
-
-                    //webview.openDevTools(); /*uncomment to use development tools */
+                    webview.openDevTools(); /*uncomment to use development tools */
                 });
             }
         }));
@@ -46,8 +44,6 @@ import { ClusterManagerComponentConfig } from "./main-window";
             $("div.sub-panel").hide("slow");
             $subPanel.show("slow");
         });
-
-
     } catch (error) {
         console.log(error);
     }

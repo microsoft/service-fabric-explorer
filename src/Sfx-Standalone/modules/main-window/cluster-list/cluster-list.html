@@ -8,24 +8,22 @@
     <!-- CSS imports -->
     <link href="../../../sfx/css/lib.min.css" rel="stylesheet" />
     <link href="../../../sfx/css/dark.min.css" rel="stylesheet" />
-    <link href="./cluster-list.css" rel="stylesheet"/>
     <style>
-
         html {
             background-color: #191919;
             padding: 0;
             margin: 0;
 
         }
-        body {
-            
+
+        body {            
             padding: -26px -26px;
             background-color: #262626;
             margin: 0;
             height: 100%;
             margin-right: 20px;
-
         }
+
         .menu {
             padding-top: 20px;
         }
@@ -34,17 +32,35 @@
             list-style: none;
             padding: 0px;
             margin-top: 20px;
-
-            
         }
 
         ul#cluster-list>li>ul {
-            list-style: none;
-            
-            padding: 0;
-    
+            list-style: none;            
+            padding: 0;    
         }
-        #cluster-list span{
+
+        li.list-item {
+            cursor: hand;
+        }
+
+        li.list-item:focus, li.list-item:hover {
+            background-color: #3C3C3C;
+        }
+
+        li.list-item .bowtie-icon{
+            float: right;
+            line-height: 28px;
+            margin-right: 2%;
+            z-index: 5;
+            color: transparent;           
+        }
+
+        li.list-item:focus .bowtie-icon, li.list-item:hover .bowtie-icon,
+        li.list-item .bowtie-icon:focus, li.list-item .bowtie-icon:hover {
+            color: #fff;
+        }
+
+        li.list-item span {
             max-width: 80%;
             vertical-align: middle;
             display: inline-block;
@@ -56,34 +72,27 @@
         ul#cluster-list>li>ul>li>ul{
             list-style: none;
         }
+
         .folder {
             padding-left: 8px;
         }
 
-
         ul#cluster-list>li {
             margin-top: 4px;
-        }
-
-        #cluster-list .bowtie-icon{
-            float: right;
-            line-height: 28px;
-            margin-right: 2%;
-            z-index: 5;
-            visibility: hidden;
-           
-        }
+        }      
 
         ul#cluster-list>li>button {
             width: 100%;
             margin: 0;
         }
+
         .menu .btn-primary{
             width: 100%;
             font-size: 16px;
             margin-top: 5px;
 
         }
+
         .menu .menu-btn {
             margin: 0px 26px 20px 20px;
         }
@@ -95,7 +104,8 @@
         #cluster-list .cluster {
             padding-left: 8px;
         }
-        #cluster-list ul{
+        
+        #cluster-list ul {
             padding: 0;
             margin: 0;
         }
@@ -103,7 +113,7 @@
             padding-left: 50px;
         }
 
-        #cluster-list .dropdown-menu{
+        #cluster-list .dropdown-menu {
             color: #fff;
             margin: 0;
             border: none;
@@ -115,46 +125,33 @@
             left: auto;
         }
 
-
-    
-
-        #cluster-list .dropdown-menu-show{
+        #cluster-list .dropdown-menu-show {
             display: block;
         }
-        #cluster-list .btn-success{
-            background-color: #0075c9; 
-            display: block;
 
+        li.list-item.current, li.list-item.current:focus, li.list-item.current:hover {
+            background-color: #0075c9; 
         }
     </style>
 </head>
 
 <body>
-    
     <div class="menu">
         <div class="menu-btn">
             <button class="btn btn-primary" id="cluster-list-connect">Connect to a cluster</button>
             <button class="btn btn-primary" id="cluster-list-folder">Add Folder</button>
         </div>
-     
         <ul id="cluster-list">
             <li>
                 <ul id="cluster-list-organized"></ul>
             </li>
-        </ul> 
-
-        
+        </ul>
     </div>
-     
 </body>
 <script type="text/javascript" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
 <script type="text/javascript" src="../../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="../../../node_modules/angular/angular.min.js"></script>
 <script type="text/javascript" src="./cluster-list.script.js"></script>
-<script type="text/javascript" src="./Model.js"></script>
-
-<script>
-
-</script>
+<script type="text/javascript" src="./model.js"></script>
 
 </html>
