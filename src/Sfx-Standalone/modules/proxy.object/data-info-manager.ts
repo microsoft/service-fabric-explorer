@@ -177,10 +177,12 @@ export class DataInfoManager implements IDisposable {
             for (const propertyName in propertyDescriptors) {
                 const propertyDescriptor = propertyDescriptors[propertyName];
 
+                // if the member is pure-constant value.
                 if ((!propertyDescriptor.writable
                     && !propertyDescriptor.configurable
                     && !propertyDescriptor.get
                     && !propertyDescriptor.set)
+                    // if the member is a non-enumerable function in the class.
                     || (isClass 
                         && !propertyDescriptor.enumerable
                         && Function.isFunction(propertyDescriptor.value))) {
