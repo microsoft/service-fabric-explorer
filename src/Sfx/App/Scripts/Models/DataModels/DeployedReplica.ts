@@ -17,6 +17,7 @@ module Sfx {
 
         public address: any;
         public detail: DeployedReplicaDetail;
+        public partition: IRawPartition;
 
         public constructor(data: DataService, raw: IRawDeployedReplica, public parent: DeployedServicePackage) {
             super(data, raw, parent);
@@ -53,6 +54,14 @@ module Sfx {
             return this.id;
         }
 
+        public get role(): string {
+            if (this.partition && this.partition.PartitionStatus === "Reconfiguring") {
+                return `Reconfiguring - Target Role: ${this.raw.ReplicaRole}`;
+            }
+
+            return this.raw.ReplicaRole;
+        }
+
         public get viewPath(): string {
             return this.data.routes.getDeployedReplicaViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId, this.raw.PartitionId, this.id);
         }
@@ -66,11 +75,12 @@ module Sfx {
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawDeployedReplica> {
-            return this.data.restClient.getDeployedReplica(
-                this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.raw.PartitionId, messageHandler)
-                .then(response => {
-                    return _.first(response.data);
-                });
+            const promises: angular.IPromise<any>[] = [
+                this.data.restClient.getPartitionById(this.raw.PartitionId, ResponseMessageHandlers.silentResponseMessageHandler).then(response => this.partition = response.data),
+                this.data.restClient.getDeployedReplica(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.raw.PartitionId, messageHandler).then(response => { return _.first(response.data); })
+            ];
+
+            return this.data.$q.all(promises).then((values) => values[1]);
         }
 
         protected updateInternal(): angular.IPromise<any> | void {

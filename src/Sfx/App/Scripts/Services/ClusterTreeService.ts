@@ -264,7 +264,7 @@ module Sfx {
                     nodeId: IdGenerator.deployedReplica(replica.raw.PartitionId),
                     displayName: () => replica.isStatelessService
                         ? replica.id
-                        : replica.id + " (" + replica.raw.ReplicaRole + ")",
+                        : replica.id + " (" + replica.role + ")",
                     selectAction: () => this.routes.navigate(() => replica.viewPath),
                     sortBy: () => replica.isStatelessService
                         ? [replica.id]
