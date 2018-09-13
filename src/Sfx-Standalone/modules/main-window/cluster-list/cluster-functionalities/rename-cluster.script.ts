@@ -7,25 +7,17 @@ import * as $ from "jquery";
 import { IClusterList } from "sfx.cluster-list";
 
 
-(async() => {
-    let old_cluster = localStorage.getItem("cluster");
-    localStorage.removeItem("cluster");
-
-    $(document).ready(() => {
-        $(".modal-title").html("Rename Cluster " + old_cluster);
-        $(".modal").slideDown(150);
-    });
-
-    $("#btn-new-label").click(async () => {
+(async () => {
+    $("#btn-new-label").click(async (e) => {
         try {
+            let label: string = $("#input-cluster-label").val();
+            if (label !== "") {
+                const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
+                await list.renameClusterListItem($("#btn-new-label").data("target"), label);
 
-            let label: string = $("#input-cluster-label").val().toString();
-            const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
-            await list.renameClusterListItem(old_cluster, label);
-
-            window.close();
-
-        } catch(error) {
+                window.close();
+            }
+        } catch (error) {
             alert(error.message);
         }
     });

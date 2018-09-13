@@ -6,25 +6,15 @@
 import * as $ from "jquery";
 import { IClusterList } from "sfx.cluster-list";
 
-(async() => {
-    let folder = localStorage.getItem("folder");
-    localStorage.removeItem("folder");
-
-    $(document).ready(() => {
-        $(".modal-title").html("Remove Folder " + folder);
-        $(".modal").slideDown(150);
-    });
-
+(async() => {    
+    const folderName = $("#btn-delete-folder").data("target");
     $("#btn-delete-folder").click(async () => {
-
         try {
             const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
-            await list.removeFolderItem(folder);
+            await list.removeFolder(folderName);
             window.close();
-
         } catch(error) {
             alert("Error Occured");
-
         }
     });
 

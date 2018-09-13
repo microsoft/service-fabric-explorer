@@ -6,20 +6,30 @@
 import { IClusterListDataModel } from "sfx.cluster-list";
 
 export class ClusterListDataModel implements IClusterListDataModel {
-
     private folders: Array<Folder> = new Array<Folder>();
 
+    constructor() {
+        // Root
+        this.folders.push(new Folder(""));
+    }
+    
     public addFolder(label: string) {
         this.folders.push(new Folder(label));
     }
 
-    public addCluster(label: string, url: string, folder: string) {
-        this.getFolder(folder).clusters.push(new Cluster(label, url, folder));
+    public addCluster(displayName: string, endpoint: string, folderName?: string) {
+        if (!folderName) {
+            // Put cluster to root            
+            folderName = "";
+        }
+
+        const cluster = new Cluster(displayName, endpoint, folderName, true);
+        this.getFolder(folderName).clusters.push(cluster);        
     }
 
     public removeFolder(label: string) {
         for (let cluster of this.getFolder(label).clusters) {
-            this.removeCluster(cluster.label, label);
+            this.removeCluster(cluster.displayName, label);
         }
 
         this.folders.splice(this.folders.indexOf(this.getFolder(label)), 1);
@@ -32,11 +42,11 @@ export class ClusterListDataModel implements IClusterListDataModel {
     }
 
     public renameFolder(old_name: string, new_name: string) {
-        this.getFolder(old_name).label = new_name;
+        this.getFolder(old_name).name = new_name;
     }
 
     public renameCluster(old_name: string, new_name: string) {
-        this.getCluster(old_name, "label").label = new_name;
+        this.getCluster(old_name, "label").displayName = new_name;
     }
 
     public moveCluster(label: string, new_folder_label: string) {
@@ -45,35 +55,27 @@ export class ClusterListDataModel implements IClusterListDataModel {
         let new_folder: Folder = this.getFolder(new_folder_label);
 
         if (new_folder) {
-            this.addCluster(cluster.label, cluster.url, new_folder.label);
-            this.removeCluster(cluster.label, old_folder.label);
+            this.addCluster(cluster.displayName, cluster.endpoint, new_folder.name);
+            this.removeCluster(cluster.displayName, old_folder.name);
         } else {
             this.addFolder(new_folder_label);
             new_folder = this.getFolder(new_folder_label);
-            this.addCluster(cluster.label, cluster.url, new_folder.label);
-            this.removeCluster(cluster.label, old_folder.label);
+            this.addCluster(cluster.displayName, cluster.endpoint, new_folder.name);
+            this.removeCluster(cluster.displayName, old_folder.name);
         }
     }
 
-    public folderExists(label: string): boolean {
-        return (this.getFolder(label) != null);
-    }
-
-    public clusterExists(label: string): boolean {
-        return (this.getCluster(label, "label") != null);
-    }
-
-    public getFolders(): Array<Folder> {
+    public getFolders(): Array<IFolder> {
         return this.folders;
     }
 
     public getCluster(label: string, type: string) {
         for (let folder of this.folders) {
             for (let cluster of folder.clusters) {
-                if (cluster.label.toLowerCase() === label.toLowerCase() && type === "label") {
+                if (cluster.displayName.toLowerCase() === label.toLowerCase() && type === "label") {
                     return cluster;
                 }
-                if (cluster.url.toLowerCase() === label.toLowerCase() && type === "endpoint") {
+                if (cluster.endpoint.toLowerCase() === label.toLowerCase() && type === "endpoint") {
                     return cluster;
                 }
             }
@@ -82,22 +84,26 @@ export class ClusterListDataModel implements IClusterListDataModel {
         return null;
     }
 
-    public getFolder(label: string) {
+    public getFolder(name: string) {
         for (let folder of this.folders) {
-            if (folder.label.toLowerCase() === label.toLowerCase()) {
+            if (folder.name.toLowerCase() === name.toLowerCase()) {
                 return folder;
             }
         }
+
         return null;
     }
 }
 
-export class Folder {
-    label: string = "folder";
+export interface IFolder {
+    name: string;
+    clusters: Array<ICluster>;
+}
+
+ class Folder implements IFolder {
     clusters: Cluster[] = new Array<Cluster>();
-    
-    constructor(label: string) {
-        this.label = label;
+
+    constructor(public name: string) {
     }
 
     indexOf(cluster: Cluster) {
@@ -106,19 +112,19 @@ export class Folder {
                 return i;
             }
         }
-        
+
         return -1;
     }
 }
 
-class Cluster {
-    label: string;
-    url: string;
-    folder: string = null;
+export interface ICluster {
+    displayName: string;
+    endpoint: string;
+    folder?: string;
+    currentInView: boolean;    
+}
 
-    constructor(label: string, url: string, folder: string) {
-        this.label = label;
-        this.url = url;
-        this.folder = folder;
+class Cluster implements ICluster {
+    constructor(public displayName: string, public endpoint: string, public folder?: string, public currentInView: boolean = false) {
     }
 }

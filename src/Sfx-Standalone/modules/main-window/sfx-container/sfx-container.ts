@@ -30,8 +30,9 @@ export class SfxContainer implements ISfxContainer {
         };
     }
 
-    public async LoadSfxAsync(targetServiceEndpoint: string): Promise<void> {
+    public async loadSfxAsync(targetServiceEndpoint: string): Promise<void> {
         const container = $("div.right-container");
+        $("#instructions", container).hide();
         $(".view-container", container).hide();
 
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
@@ -69,13 +70,17 @@ export class SfxContainer implements ISfxContainer {
         return Promise.resolve();
     }
 
-    public async UnloadSfxAsync(targetServiceEndpoint: string): Promise<void> {
+    public async unloadSfxAsync(targetServiceEndpoint: string): Promise<void> {
         const container = $("div.right-container");
-        $(".view-container", container).hide();
+        //$(".view-container", container).hide();
 
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
         this.endpoints.splice(this.endpoints.indexOf(e => e.endpoint === targetServiceEndpoint), 1);
         container.children("#view-container-" + id).remove();
+
+        if (this.endpoints.length === 0) {
+            $("#instructions", container).show();
+        }
     }
 
     private handleSslCert(webview: WebviewTag): void {

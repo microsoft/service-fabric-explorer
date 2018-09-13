@@ -6,52 +6,35 @@
 import * as $ from "jquery";
 import { IClusterList } from "sfx.cluster-list";
 
-(async() => {
-    let cluster = localStorage.getItem("cluster");
-    localStorage.removeItem("cluster");
+(async () => {
+    const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
+    const folders = await (await list.getDataModel()).getFolders();
+    const select = $("#input-select-folder");
+    const cluster = $("#btn-move-cluster").data("cluster");
+    
+    for (let i = 0; i < await folders.length; i++) {
+        let folderName = await (await folders[i]).name;        
+        select.append($(`<option value="${folderName}">${folderName === "" ? "--- No folder ---" : folderName}</option>`));
+    }
 
-    $(document).ready(() => {
-        $(".modal-title").html("Move Cluster " + cluster);
-        $(".modal").slideDown(150);
-        let folders = JSON.parse(localStorage.getItem("folders"));
-        localStorage.removeItem("folders");
-        let select = $("#input-select-folder");
-        for(let folder of folders) {
-            let $item = $(`<option value="${folder.label}">${folder.label}</option>`);
-            select.append($item);
-        }
-        let $item = $(`<option value="new_folder">Create New Folder</option>`);
-        select.append($item);
-    });
+    select.append($(`<option data-action="new">Create a new folder</option>`));
 
-    $("#input-select-folder").change(async () => {
-        let folder: string = $("#input-select-folder").val().toString();
-        if(folder === "new_folder") {
-            $("#new_folder").css("visibility", "visible");
-        } else {
-            $("#new_folder").css("visibility", "hidden");
-        }
-    });
+    $("#input-select-folder").change(() => $("#new_folder").css("visibility", $("#input-select-folder option:selected").data("action") === "new" ? "visible" : "hidden"));
 
     $("#btn-move-cluster").click(async () => {
-
         try {
-
-
             let folder: string = $("#input-select-folder").val().toString();
-            let new_folder:string = $("#new-folder-label").val().toString();
-            const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
-            if(new_folder) {
+            let new_folder: string = $("#new-folder-label").val().toString();
+
+            if (new_folder) {
                 await list.newFolderItemAsync(new_folder);
                 await list.moveClusterListItem(cluster, new_folder);
             } else {
                 await list.moveClusterListItem(cluster, folder);
             }
             window.close();
-
-        } catch(error) {
+        } catch (error) {
             alert("Error Occured");
-
         }
     });
 

@@ -9,29 +9,21 @@
     <link href="../../../sfx/css/lib.min.css" rel="stylesheet" />
     <link href="../../../sfx/css/dark.min.css" rel="stylesheet" />
     <style>
-        html {
-            background-color: #191919;
+        html {            
             padding: 0;
             margin: 0;
-
         }
 
         body {            
-            padding: -26px -26px;
-            background-color: #262626;
+            padding: -26px -26px;            
             margin: 0;
-            height: 100%;
-            margin-right: 20px;
-        }
-
-        .menu {
-            padding-top: 20px;
+            height: 100%;            
         }
 
         ul#cluster-list {
             list-style: none;
-            padding: 0px;
-            margin-top: 20px;
+            padding: 0px;            
+            border-top: 1px solid gray;
         }
 
         ul#cluster-list>li>ul {
@@ -39,34 +31,37 @@
             padding: 0;    
         }
 
-        li.list-item {
+        .cluster.list-item {
             cursor: hand;
+            margin-top: 2px;
+            margin-bottom: 2px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            text-overflow: ellipsis;
         }
 
-        li.list-item:focus, li.list-item:hover {
+        .list-item:focus, .list-item:hover, #cluster-list-connect {
             background-color: #3C3C3C;
         }
 
-        li.list-item .bowtie-icon{
+        .list-item .bowtie-icon{
             float: right;
-            line-height: 28px;
-            margin-right: 2%;
+            line-height: 28px;            
             z-index: 5;
             color: transparent;           
         }
 
-        li.list-item:focus .bowtie-icon, li.list-item:hover .bowtie-icon,
-        li.list-item .bowtie-icon:focus, li.list-item .bowtie-icon:hover {
+        .list-item:focus .bowtie-icon, .list-item:hover .bowtie-icon,
+        .list-item .bowtie-icon:focus, .list-item .bowtie-icon:hover {
             color: #fff;
         }
 
-        li.list-item span {
-            max-width: 80%;
+        .list-item span {            
             vertical-align: middle;
             display: inline-block;
             text-overflow: ellipsis;
             overflow: hidden;
-            width: 100%;
+            width: calc(100% - 64px);
         }
         
         ul#cluster-list>li>ul>li>ul{
@@ -80,12 +75,7 @@
         ul#cluster-list>li {
             margin-top: 4px;
         }      
-
-        ul#cluster-list>li>button {
-            width: 100%;
-            margin: 0;
-        }
-
+        
         .menu .btn-primary{
             width: 100%;
             font-size: 16px;
@@ -93,8 +83,19 @@
 
         }
 
-        .menu .menu-btn {
-            margin: 0px 26px 20px 20px;
+        button.bowtie-icon {
+            border: none;
+            background-color: transparent;
+        }
+
+        button#cluster-list-connect {
+            border: none;
+            background: transparent;
+            padding-left: 12px;
+            padding-right: 12px;
+            width: 100%;
+            height: 32px;
+            text-align: left;
         }
 
         #cluster-list img {
@@ -109,8 +110,9 @@
             padding: 0;
             margin: 0;
         }
+
         #cluster-list ul .cluster {
-            padding-left: 50px;
+            padding-left: 32px;
         }
 
         #cluster-list .dropdown-menu {
@@ -138,8 +140,8 @@
 <body>
     <div class="menu">
         <div class="menu-btn">
-            <button class="btn btn-primary" id="cluster-list-connect">Connect to a cluster</button>
-            <button class="btn btn-primary" id="cluster-list-folder">Add Folder</button>
+            <button id="cluster-list-connect"><span class="bowtie-icon bowtie-math-plus-heavy"></span> Connect to a cluster</button>
+            <!-- <button class="btn btn-primary" id="cluster-list-folder">Add Folder</button> -->
         </div>
         <ul id="cluster-list">
             <li>
