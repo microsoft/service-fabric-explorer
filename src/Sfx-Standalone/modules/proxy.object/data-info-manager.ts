@@ -172,7 +172,7 @@ export class DataInfoManager implements IDisposable {
 
         while (currentObj && currentObj !== Object.prototype) {
             const propertyDescriptors = Object.getOwnPropertyDescriptors(currentObj);
-            const isClass = Function.isFunction(propertyDescriptors["constructor"]);
+            const isClass = Function.isFunction(propertyDescriptors["constructor"].value);
 
             for (const propertyName in propertyDescriptors) {
                 const propertyDescriptor = propertyDescriptors[propertyName];
