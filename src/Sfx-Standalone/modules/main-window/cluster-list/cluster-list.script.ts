@@ -68,38 +68,11 @@ export class ClusterList implements IClusterList {
             displayName = endpoint;
         }
 
-        if (this.clusterListDataModel.getCluster(endpoint, "endpoint")) {
-            // if (this.clusterListDataModel.getCluster(displayName, "label") === this.clusterListDataModel.getCluster(endpoint, "endpoint")) {
-            //     $(`#cluster-list li[data-endpoint='${endpoint}']`).addClass("current");
-            // } else {
-            //     throw new Error("Clusters must have unique labels. Please enter a new name");
-            // }
-
+        if (this.clusterListDataModel.getCluster(endpoint, "endpoint") !== null) {            
             return;
         }
 
         if (this.endpoints.find(e => e === endpoint)) {
-            // if (this.clusterListDataModel.getCluster(endpoint, "endpoint").displayName !== displayName) {
-            //     let new_name = confirm("Do you want to replace friendly name with " + displayName + " ?");
-            //     if (new_name === true) {
-            //         this.renameClusterListItem(this.clusterListDataModel.getCluster(endpoint, "endpoint").displayName, displayName);
-            //     } else {
-            //         displayName = this.clusterListDataModel.getCluster(endpoint, "endpoint").displayName;
-            //     }
-            // }
-
-            // if (this.clusterListDataModel.getCluster(endpoint, "endpoint").folder !== folder) {
-            //     let new_folder = confirm("Do you want to place into new folder " + folder + " ?");
-            //     if (new_folder === true) {
-            //         if (!this.clusterListDataModel.getFolder(folder)) {
-            //             this.newFolderItemAsync(folder);
-            //         }
-            //         this.moveClusterListItem(this.clusterListDataModel.getCluster(endpoint, "endpoint").displayName, folder);
-            //     } else {
-            //         folder = this.clusterListDataModel.getCluster(endpoint, "endpoint").folder;
-            //     }
-            // }
-
             $(`#cluster-list li[data-endpoint='${endpoint}']`).addClass("current");
         } else {
             this.endpoints.push(endpoint);
@@ -107,9 +80,9 @@ export class ClusterList implements IClusterList {
                 this.newFolderItemAsync(folder);
             }
 
-            let folder_label: string = "#folder-" + folder.replace(/\s+/g, "");
+            let folderElementId: string = "#folder-" + folder.replace(/\s+/g, "");
             if (folder === "") {
-                folder_label = "#cluster-list";
+                folderElementId = "#cluster-list";
             }
 
             const $item = $(`
@@ -123,7 +96,7 @@ export class ClusterList implements IClusterList {
                     </ul>
                 </li>`);
 
-            $(folder_label).append($item);
+            $(folderElementId).append($item);
 
             if (isCurrentInView) {
                 $item.addClass("current");
@@ -166,26 +139,24 @@ export class ClusterList implements IClusterList {
         return new_cluster;
     }
 
-    async moveClusterListItem(cluster_label: string, new_folder_label: string): Promise<void> {
-        let endpoint = this.clusterListDataModel.getCluster(cluster_label, "label");
-        let $button = $('#cluster-list li[data-endpoint="' + endpoint.endpoint + '"]');
+    async moveClusterListItem(clusterName: string, targetFolderName: string): Promise<void> {
+        let endpoint = this.clusterListDataModel.getCluster(clusterName, "label");
+        let $clusterListItem = $('#cluster-list li[data-endpoint="' + endpoint.endpoint + '"]');
 
-        let folder_label: string = "#folder-" + new_folder_label.replace(/\s+/g, "");
-        if (new_folder_label === "----No Folder----") {
-            folder_label = "#cluster-list";
+        let folderElementId: string = "#folder-" + targetFolderName.replace(/\s+/g, "");
+        if (targetFolderName === "") {
+            folderElementId = "#cluster-list";
         }
 
-        $(folder_label).append($button.clone(true, true));
-        $button.remove();
-        this.clusterListDataModel.moveCluster(cluster_label, new_folder_label);
+        $(folderElementId).append($clusterListItem.clone(true, true));
+        $clusterListItem.remove();
+        this.clusterListDataModel.moveCluster(clusterName, targetFolderName);
         await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
-
     }
 
     async removeFolder(name: string): Promise<void> {
         const $item = $(`#cluster-list li[data-name="${name}"]`);
-        if ($item.find(".current").length !== 0) {
-            //await (await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container")).LoadSfxAsync("#");
+        if ($item.find(".current").length !== 0) {            
             $(".current").removeClass("current");
         }
 
@@ -238,8 +209,7 @@ export class ClusterList implements IClusterList {
             if (res === undefined || res === null) {
                 await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
             } else {
-                let json = JSON.parse(res);
-                //let endpoint: string = "";
+                let json = JSON.parse(res);                
                 for (let folder of json.folders) {
                     if (folder.name !== "") {
                         await this.newFolderItemAsync(folder.name);
@@ -249,27 +219,23 @@ export class ClusterList implements IClusterList {
                         await this.newClusterListItemAsync(cluster.endpoint, cluster.displayName, cluster.folder);
                     }
                 }
-
-                // if (endpoint !== "") {
-                //     await (await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container")).loadSfxAsync(endpoint);
-                // }
             }
         });
     }
 
     private async setupFolderItemHandler($item, name: string) {
         $($item).click(async (e) => {
-            let $button = $(e.target);
+            let $eventTarget = $(e.target);
 
             //This handles if the ellipses is clicked
-            if ($button.parent().hasClass("folder")) {
-                if ($button.attr("class") === "bowtie-icon bowtie-ellipsis") {
+            if ($eventTarget.parent().hasClass("folder")) {
+                if ($eventTarget.attr("class") === "bowtie-icon bowtie-ellipsis") {
 
-                    if ($button.parent().next().hasClass("dropdown-menu-show")) {
-                        $button.parent().next().removeClass("dropdown-menu-show");
+                    if ($eventTarget.parent().next().hasClass("dropdown-menu-show")) {
+                        $eventTarget.parent().next().removeClass("dropdown-menu-show");
                     } else {
                         $(".dropdown-menu-show").removeClass("dropdown-menu-show");
-                        $button.parent().next().addClass("dropdown-menu-show");
+                        $eventTarget.parent().next().addClass("dropdown-menu-show");
                     }
 
                     $(document).mouseup((e) => {
@@ -278,20 +244,22 @@ export class ClusterList implements IClusterList {
                             $(".dropdown-menu-show").removeClass("dropdown-menu-show");
                         }
                     });
+
                     return;
                 }
-            } else if ($button.parent().parent().hasClass("dropdown-menu")) {
+            } else if ($eventTarget.parent().parent().hasClass("dropdown-menu")) {
                 //This handles if a menu-item in the dropdown-menu is clicked
                 localStorage.setItem("folder", name);
-                if ($button.attr("role") === "menuitem") {
-                    if ($button.html().toString().trim() === "Remove Folder") {
+                if ($eventTarget.attr("role") === "menuitem") {
+                    if ($eventTarget.html().toString().trim() === "Remove Folder") {
                         (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showInlineDialogAsync(
-                            `Rename folder`,
+                            `Remove folder`,
                             `<p>Are you sure you want to remove folder ${name} and all cluster connections under it?</p>`,
                             `<button id="btn-delete-folder" type="submit" class="btn btn-primary" data-target="${name}">Remove</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
                             "../cluster-list/folder-functionalities/delete-folder.script.js");
                     }
                 }
+                
                 return;
             }
         });

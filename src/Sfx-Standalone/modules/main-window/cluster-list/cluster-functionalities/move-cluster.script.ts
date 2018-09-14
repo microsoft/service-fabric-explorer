@@ -30,8 +30,11 @@ import { IClusterList } from "sfx.cluster-list";
                 await list.newFolderItemAsync(new_folder);
                 await list.moveClusterListItem(cluster, new_folder);
             } else {
-                await list.moveClusterListItem(cluster, folder);
+                
             }
+
+            await list.moveClusterListItem(cluster, folder);
+            
             window.close();
         } catch (error) {
             alert("Error Occured");
