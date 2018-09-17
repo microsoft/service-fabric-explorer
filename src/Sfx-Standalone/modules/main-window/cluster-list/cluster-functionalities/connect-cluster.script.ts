@@ -43,7 +43,7 @@ import { IClusterList } from "sfx.cluster-list";
                 name = url.host;
             }
            
-            await (await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list")).newClusterListItemAsync(endpoint, name, folder);            
+            await (await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list")).newClusterListItemAsync(endpoint, name, folder, true);            
             await (await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container")).loadSfxAsync(endpoint).then(() => {
                 window.close();
             });

@@ -36,7 +36,7 @@ declare module "sfx.sfx-view-container" {
 
 declare module "sfx.cluster-list" {
     export interface IClusterList {
-        newClusterListItemAsync(endpoint: string, name?: string, folder?: string): Promise<void>;
+        newClusterListItemAsync(endpoint: string, name?: string, folder?: string, isCurrentInView?: boolean): Promise<void>;
         newFolderItemAsync(label: string): Promise<void>;
         removeClusterListItem(label: string): Promise<void>;
         renameClusterListItem(old_cluster: string, new_cluster: string): Promise<void>;

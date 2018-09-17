@@ -45,14 +45,14 @@ export class ClusterList implements IClusterList {
         const $item = $(
             `<li data-name="${name}">
                 <div class="folder list-item"><img src="../../../icons/Closedfolder.svg" style="width: 16px; height: 16px;"><span>${name}</span>
-                    <a role="button" class="bowtie-icon bowtie-ellipsis"></a>
+                    <button tabindex="0" class="bowtie-icon bowtie-ellipsis"></button>
                 </div>
                 <ul role="menu" class="dropdown-menu" uib-dropdown-menu style="list-style: none">
                     <li role="menuitem">
                         <a role="menuitem" href="#">Remove Folder</a>
                     </li>
                 </ul>
-                <ul id="folder-${name.replace(/\s+/g, "")}""></ul>
+                <ul id="folder-${name.replace(/\s+/g, "")}"></ul>
             </li>`);
 
         $("#cluster-list-organized").append($item);
@@ -62,7 +62,7 @@ export class ClusterList implements IClusterList {
         return Promise.resolve();
     }
 
-    async newClusterListItemAsync(endpoint: string, displayName?: string, folder?: string, isCurrentInView: boolean = false): Promise<void> {
+    async newClusterListItemAsync(endpoint: string, displayName?: string, folder?: string, isCurrentInView?: boolean): Promise<void> {
         $("#cluster-list .current").removeClass("current");
         if (!displayName) {
             displayName = endpoint;
@@ -259,7 +259,7 @@ export class ClusterList implements IClusterList {
                             "../cluster-list/folder-functionalities/delete-folder.script.js");
                     }
                 }
-                
+
                 return;
             }
         });
