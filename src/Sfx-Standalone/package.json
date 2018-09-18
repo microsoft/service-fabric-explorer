@@ -33,7 +33,7 @@
     "asar": "0.13.1",
     "async": "^2.6.0",
     "del": "3.0.0",
-    "electron": "^2.0.4",
+    "electron": "^2.0.9",
     "electron-packager": "^12.1.0",
     "fancy-log": "^1.3.2",
     "globby": "^7.1.1",
