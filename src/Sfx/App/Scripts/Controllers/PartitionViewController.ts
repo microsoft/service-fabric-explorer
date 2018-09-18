@@ -10,6 +10,7 @@ module Sfx {
         listSettings: ListSettings;
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
+        partitionEvents: PartitionEventList;
     }
 
     export class PartitionViewController extends MainViewController {
@@ -21,10 +22,12 @@ module Sfx {
         constructor($injector: angular.auto.IInjectorService, private $scope: IPartitionViewScope) {
             super($injector, {
                 "essentials": { name: "Essentials" },
-                "details": { name: "Details" }
+                "details": { name: "Details" },
+                "events": { name: "Events" }
             });
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
             this.tabs["details"].refresh = (messageHandler) => this.refreshDetails(messageHandler);
+            this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
 
             this.appId = IdUtils.getAppId(this.routeParams);
             this.serviceId = IdUtils.getServiceId(this.routeParams);
@@ -51,6 +54,7 @@ module Sfx {
 
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
+            this.$scope.partitionEvents = this.data.createPartitionEventList(this.partitionId);
 
             this.refresh();
         }
@@ -65,7 +69,7 @@ module Sfx {
                         let columnSettings = [
                             new ListColumnSettingForLink("id", "Id", item => item.viewPath),
                             new ListColumnSetting("raw.NodeName", "Node Name"),
-                            new ListColumnSettingWithFilter("raw.ReplicaRole", "Replica Role", defaultSortProperties),
+                            new ListColumnSettingWithFilter("role", "Replica Role", defaultSortProperties),
                             new ListColumnSettingForBadge("healthState", "Health State"),
                             new ListColumnSettingWithFilter("raw.ReplicaStatus", "Status")
                         ];
@@ -89,6 +93,10 @@ module Sfx {
 
         private refreshEssentials(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.$scope.partition.replicas.refresh(messageHandler);
+        }
+
+        private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.partitionEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler));
         }
     }
 

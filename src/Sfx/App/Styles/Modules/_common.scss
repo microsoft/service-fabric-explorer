@@ -277,8 +277,10 @@ h1, h2, h3, h4, h5, h6 {
     width: 100%;
 
     &[readonly], &[disabled], &.disabled {
-        color: $input-color-disabled;
-        background-color: $input-background-color-disabled;
+        &:not(.clear-disabled) {
+            color: $input-color-disabled;
+            background-color: $input-background-color-disabled;
+        }
     }
 
     &.ng-invalid {

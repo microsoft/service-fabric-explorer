@@ -25,6 +25,7 @@ module Sfx {
         metricsViewModel: IMetricsViewModel;
         upgradeAppsCount: number;
         appsUpgradeTabViewPath: string;
+        clusterEvents: ClusterEventList;
     }
 
     export class ClusterViewController extends MainViewController {
@@ -37,6 +38,7 @@ module Sfx {
                 "metrics": { name: "Metrics" },
                 "manifest": { name: "Manifest" },
                 "chaos": { name: "Chaos" },
+                "events": { name: "Events" }
             });
 
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
@@ -45,6 +47,7 @@ module Sfx {
             this.tabs["metrics"].refresh = (messageHandler) => this.refreshMetrics(messageHandler);
             this.tabs["manifest"].refresh = (messageHandler) => this.refreshManifest(messageHandler);
             this.tabs["chaos"].refresh = (messageHandler) => this.refreshChaos(messageHandler);
+            this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
 
             $scope.clusterAddress = this.$location.protocol() + "://" + this.$location.host();
 
@@ -65,6 +68,7 @@ module Sfx {
             this.$scope.appsUpgradeTabViewPath = this.routes.getTabViewPath(this.routes.getAppsViewPath(), "upgrades");
             this.$scope.chaos = this.data.chaos;
             this.$scope.chaosEventListSettings = this.settings.getNewOrExistingChaosEventListSettings();
+            this.$scope.clusterEvents = this.data.createClusterEventList();
 
             this.refresh();
         }
@@ -148,6 +152,10 @@ module Sfx {
 
         private refreshChaos(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.$scope.chaos.refresh(messageHandler);
+        }
+
+        private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.clusterEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler));
         }
     }
 
