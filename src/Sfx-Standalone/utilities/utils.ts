@@ -70,13 +70,15 @@ Object.isSerializable = (value: any) => {
                 return value[Symbols.Serializable] === true;
             }
 
-            if (Array.isArray(value)) {
-                return Function.isFunction(value["toJSON"])
-                    || value.every((itemValue) => Object.isSerializable(itemValue));
+            if (Function.isFunction(value["toJSON"])) {
+                return true;
             }
 
-            return Function.isFunction(value["toJSON"])
-                || Object.values(value).every((propertyValue) => Object.isSerializable(propertyValue));
+            if (Array.isArray(value)) {
+                return value.every((itemValue) => Object.isSerializable(itemValue));
+            }
+
+            return Object.values(value).every((propertyValue) => Object.isSerializable(propertyValue));
 
         case "undefined":
         case "number":
