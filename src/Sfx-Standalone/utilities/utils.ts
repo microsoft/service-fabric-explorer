@@ -78,7 +78,7 @@ Object.isSerializable = (value: any) => {
                 return value.every((itemValue) => Object.isSerializable(itemValue));
             }
 
-            return Object.values(value).every((propertyValue) => Object.isSerializable(propertyValue));
+            return Object.getPrototypeOf(value) === Object.prototype && Object.values(value).every((propertyValue) => Object.isSerializable(propertyValue));
 
         case "undefined":
         case "number":
