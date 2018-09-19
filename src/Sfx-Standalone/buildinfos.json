@@ -1,0 +1,48 @@
+{
+    "productName": "Service Fabric Explorer",
+    "targetExecutableName": "sfxstandalone",
+    "copyright": "Copyright (c) 2018 Microsoft Corporation.",
+    "appId": "com.microsoft.servicefabric.explorer",
+    "appCategory": "Utilities",
+    "tasks": {
+        "build": {
+            "sources": ["**/*.ts"],
+            "processors": [
+                "tslint",
+                "typescript"
+            ]
+        },
+        "publish": {}
+    },
+    "targets": [
+        {
+            "platform": "win32",
+            "archs": [
+                "x32"
+            ]
+        },
+        {
+            "platform": "linux",
+            "archs": [
+                "x32",
+                "x64"
+            ]
+        },
+        {
+            "platform": "darwin",
+            "archs": [
+                "x64"
+            ]
+        }
+    ],
+    "paths": {
+        "buildDir": "./build/out",
+        "intermediateDir": "./build/temp",
+        "publishDir": "./publish"
+    },
+    "ignores": [
+        "./.build",
+        "./.vscode",
+        "./node_modules"
+    ]
+}
