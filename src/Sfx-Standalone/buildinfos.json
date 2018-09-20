@@ -4,14 +4,79 @@
     "copyright": "Copyright (c) 2018 Microsoft Corporation.",
     "appId": "com.microsoft.servicefabric.explorer",
     "appCategory": "Utilities",
+    "configs": {
+        "tasks": {
+            "clean": {
+                "globs": [
+                    "./build"
+                ]
+            }
+        }
+    },
     "tasks": {
-        "build": {
-            "sources": ["**/*.ts"],
-            "dest": "./build/out",
+        "compile@typescript": {
+            "sources": [
+                "**/*.ts"
+            ],
+            "ignore-target": true,
             "processors": [
+                "tslint",
                 "typescript"
             ]
-        }
+        },
+        "compile@license": {
+            "sources": [
+                "**/package.json",
+                "../Sfx/package.json"
+            ],
+            "ignore-target": true,
+            "processors": [
+                "licensing"
+            ]
+        },
+        "copy@resource-files": {
+            "sources": [
+                "**/*.json",
+                "icons/**/*",
+                "modules/**/*",
+                "!modules/**/*.ts",
+                "./LICENSE",
+                "!package-lock.json",
+                "!buildinfos.json"
+            ],
+            "ignore-target": true,
+            "processors": []
+        },
+        "copy@sfx": {
+            "sources": [
+                "../Sfx/wwwroot/**/*"
+            ],
+            "dest": "<sfxDir>",
+            "ignore-target": true,
+            "processors": [
+                {
+                    "name": "pass",
+                    "baseDir": "../Sfx/wwwroot"
+                }
+            ]
+        },
+        "build": [
+            "init",
+            {
+                "executionModel": "parallel",
+                "tasks": [
+                    "compile@typescript",
+                    "compile@license",
+                    "copy@sfx",
+                    "copy@resource-files"
+                ]
+            },
+            "build:node_modules"
+        ],
+        "clean-build": [
+            "clean",
+            "build"
+        ]
     },
     "targets": [
         {
@@ -35,7 +100,8 @@
         }
     ],
     "paths": {
-        "buildDir": "./build/out",
+        "sfxDir": "./build/app/sfx",
+        "buildDir": "./build/app",
         "intermediateDir": "./build/temp",
         "publishDir": "./publish"
     },

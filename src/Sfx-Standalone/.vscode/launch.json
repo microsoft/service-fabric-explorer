@@ -22,7 +22,7 @@
                 "--remote-debugging-port=9223",
                 "./build/app/."
             ],
-            "preLaunchTask": "gulp: build:debug"
+            "preLaunchTask": "gulp: build"
         },
         {
             "name": "Debug: Renderer",
@@ -39,7 +39,7 @@
             "name": "Debug gulp clean-build",
             "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
             "args": [
-                "build"
+                "clean-build"
             ]
         }
     ],
