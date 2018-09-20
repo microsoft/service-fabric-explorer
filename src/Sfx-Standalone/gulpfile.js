@@ -5,4 +5,4 @@
 
 const gulp = require("gulp");
 
-require("./.build")(gulp.registry());
+require("./.build");
