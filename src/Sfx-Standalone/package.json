@@ -3,20 +3,16 @@
   "version": "1.0.0-private",
   "description": "Service Fabric Explorer desktop version.",
   "main": "bootstrap.js",
-  "scripts": {
-    "start": "electron ./build/app/."
-  },
   "homepage": "https://docs.microsoft.com/en-us/azure/service-fabric/",
   "repository": {
     "url": "https://github.com/Azure/service-fabric-explorer.git",
     "type": "git"
   },
-  "author": "Microsoft Corporation <support@microsoft.com>",
+  "author": "Microsoft Corporation",
   "license": "MIT",
   "dependencies": {
     "angular": "^1.6.8",
     "applicationinsights": "^1.0.1",
-    "cookie.gulp": "file:.build",
     "jquery": "^3.2.1",
     "semver": "^5.5.0",
     "tar": "^4.4.4",
@@ -25,24 +21,12 @@
   },
   "devDependencies": {
     "@types/angular": "^1.6.39",
-    "@types/jquery": "^3.2.15",
+    "@types/jquery": "^3.3.9",
     "@types/node": "^10.9.2",
     "@types/semver": "^5.4.0",
     "@types/tar": "^4.0.0",
+    "cookie.gulp": "file:.build",
+    "electron": "^3.0.0",
     "gulp": "^4.0.0"
-  },
-  "publishDependencies": {
-    "electron-installer-linux": {
-      "dependencyTypes": [
-        "dev"
-      ],
-      "platform": "linux"
-    },
-    "electron-installer-zip": {
-      "dependencyTypes": [
-        "dev"
-      ],
-      "platform": "darwin"
-    }
   }
 }

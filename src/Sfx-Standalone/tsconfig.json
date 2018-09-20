@@ -11,8 +11,7 @@
     },
     "exclude": [
         "build/",
-        "node_modules/",
-        "gulp.ts"
+        "node_modules/"
     ],
     "include": [
         "**/*.ts"

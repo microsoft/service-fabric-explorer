@@ -16,7 +16,7 @@ export function handle(window: BrowserWindow, targetHostName: string) {
 
     targetHostName = Url.parse(targetHostName).hostname;
 
-    window.webContents.on("did-get-redirect-request", (event, oldUrlString, newUrlString, isMainFrame, httpResponseCode, requestMethod, referrer, headers) => {
+    window.webContents.on("did-frame-navigate", (event, newUrlString: string, httpResponseCode: number, httpStatusText: string, isMainFrame: boolean, frameProcessId: number, frameRoutingId: number) => {
         let newUrl = Url.parse(newUrlString);
 
         if (newUrl.hostname.toUpperCase() === targetHostName.toUpperCase()) {

@@ -55,7 +55,7 @@ class AadTokenAcquirer {
                 authorizeUrl.searchParams.append("response_mode", "query");
                 authorizeUrl.searchParams.append("nonce", uuidv4());
 
-                this.handlingHost.on("did-get-redirect-request", this.onRedirecting);
+                this.handlingHost.on("did-navigate", this.onRedirecting);
 
                 this.handlingHost.loadURL(authorizeUrl.href);
 
@@ -91,11 +91,11 @@ class AadTokenAcquirer {
     }
 
     private onRedirecting =
-        (event, oldUrlString: string, newUrlString: string): void => {
+        (event, newUrlString: string, httpResponseCode: number, httpStatusText: string): void => {
             if (newUrlString.toUpperCase().startsWith(this.aadMetadata.redirect.toUpperCase())) {
                 const token = this.extractToken(newUrlString);
 
-                this.handlingHost.removeListener("did-get-redirect-request", this.onRedirecting);
+                this.handlingHost.removeListener("did-navigate", this.onRedirecting);
                 token ? this.resolve(token) : this.reject(new Error("Toke is missing in the reply url."));
             }
         }

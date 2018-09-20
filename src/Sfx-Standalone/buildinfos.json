@@ -40,6 +40,8 @@
         "publishDir": "./publish"
     },
     "ignores": [
+        "./build",
+        "./publish",
         "./.build",
         "./.vscode",
         "./node_modules"

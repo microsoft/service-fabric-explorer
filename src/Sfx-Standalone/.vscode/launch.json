@@ -36,7 +36,7 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Debug gulp clean-build:all",
+            "name": "Debug gulp clean-build",
             "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
             "args": [
                 "build"
