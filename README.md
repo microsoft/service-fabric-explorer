@@ -71,7 +71,7 @@ Here's a list of common IDE used.
    * Console
       1. Install Gulp globally on the machine.
       ```Shell
-      npm install gulp -g
+      npm install gulp-cli -g
       ```
       2. [SFX] Navigate to `src/Sfx` and run the following scripts.
       ```Shell
