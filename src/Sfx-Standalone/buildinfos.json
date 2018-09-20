@@ -7,12 +7,12 @@
     "tasks": {
         "build": {
             "sources": ["**/*.ts"],
+            "dest": "./build/out",
             "processors": [
                 "tslint",
                 "typescript"
             ]
-        },
-        "publish": {}
+        }
     },
     "targets": [
         {
