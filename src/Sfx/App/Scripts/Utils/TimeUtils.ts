@@ -11,9 +11,15 @@ module Sfx {
     declare var moment: any;
 
     export class TimeUtils {
+        public static fileTimeBaseTicks: number = -11644473600000; //Date.UTC(1601, 0, 1);
+
         // Per email thread, this is:
         //     int64.max / 10000000 = 922337203685477.5807;
         public static MaxDurationInMilliseconds: number = 922337203685477.5807;
+
+        public static toFileTimeUtcTicks(ticks: number): string {
+            return (ticks - TimeUtils.fileTimeBaseTicks).toString() + "0000";
+        }
 
         public static AddSeconds(toDate: Date, seconds: number): Date {
             let date = new Date(toDate.valueOf());

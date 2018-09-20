@@ -691,5 +691,6 @@ module Sfx {
 
     export interface IRawChaosEvents {
         History: IRawChaosEvent[];
+        ContinuationToken: string;
     }
 }

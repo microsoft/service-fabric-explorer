@@ -40,8 +40,8 @@ module Sfx {
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawChaos> {
-            Utils.getHttpResponseData(this.data.restClient.getChaosEvents()).then(events => {
-                this.chaosHistoryEvents = _.orderBy(_.map(events.History, e => {
+            this.data.restClient.getChaosEvents().then(events => {
+                this.chaosHistoryEvents = _.orderBy(_.map(events, e => {
                     return new ChaosEvent(e.ChaosEvent.Kind, e.ChaosEvent.TimeStampUtc, e.ChaosEvent.Reason, e.ChaosEvent.Faults);
                 }), ["TimeStampUtc"], ["desc"]);
             });

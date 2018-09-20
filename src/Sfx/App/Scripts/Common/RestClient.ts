@@ -308,11 +308,21 @@ module Sfx {
             return this.get(this.getApiUrl("Tools/Chaos", RestClient.apiVersion62), "Get chaos");
         }
 
-        public getChaosEvents(messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawChaosEvents> {
-            return this.get(
-                this.getApiUrl(
-                    `Tools/Chaos/Events?MaxResults=100&StartTimeUtc=${Date.now() - 1000 * 60 * 60}&EndTimeUtc=${Date.now()}`,
-                    RestClient.apiVersion62), "Get chaos events");
+        public getChaosEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawChaosEvent[]> {
+            return this.getAllChaosEvents(`Tools/Chaos/Events?StartTimeUtc=${TimeUtils.toFileTimeUtcTicks(Date.now() - 1000 * 60 * 60)}`, "Get chaos events", messageHandler);
+        }
+
+        public getAllChaosEvents(path: string, apiDesc: string, messageHandler?: IResponseMessageHandler, continuationToken?: string): angular.IPromise<IRawChaosEvent[]> {
+            let appUrl = this.getApiUrl(path, RestClient.apiVersion62, continuationToken);
+            return this.get<IRawChaosEvents>(appUrl, apiDesc, messageHandler).then(response => {
+                if (response.data.ContinuationToken) {
+                    return this.getAllChaosEvents(path, apiDesc, messageHandler, response.data.ContinuationToken).then(events => {
+                        return _.union(response.data.History, events);
+                    });
+                }
+
+                return response.data.History;
+            });
         }
 
         public startChaos(parameter: IRawChaosParameters, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
