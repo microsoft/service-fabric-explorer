@@ -6,7 +6,7 @@
 const gulp = require("gulp");
 const { execSync } = require("child_process");
 
-const configs = require("./.build/configs");
+const configs = require("cookie.gulp/configs");
 
 gulp.task("pack@node-modules",
     () => {
@@ -16,4 +16,4 @@ gulp.task("pack@node-modules",
         return Promise.resolve();
     });
 
-require("./.build");
+require("cookie.gulp");
