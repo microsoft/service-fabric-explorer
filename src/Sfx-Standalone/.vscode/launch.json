@@ -41,6 +41,24 @@
             "args": [
                 "clean-build"
             ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug gulp pack",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": [
+                "pack"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug gulp publish",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": [
+                "publish"
+            ]
         }
     ],
     "compounds": [
