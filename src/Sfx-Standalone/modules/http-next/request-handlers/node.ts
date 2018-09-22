@@ -20,8 +20,6 @@ import * as https from "https";
 import * as crypto from "crypto";
 import { PeerCertificate } from "tls";
 
-export const Symbol_UseNode = Symbol("UseNode");
-
 type HttpsServerCertValidator = (serverName: string, cert: any) => Error | undefined;
 
 function applyHeaders(requestHeaders: http.OutgoingHttpHeaders, headers: Array<IHttpHeader>): void {
@@ -74,10 +72,6 @@ function generateBody(httpResponse: http.IncomingMessage): Buffer {
 }
 
 function handleRequestAsync(validateServerCert: HttpsServerCertValidator, pipeline: IHttpPipeline, request: IHttpRequest): Promise<IHttpResponse> {
-    if (pipeline.requestTemplate[Symbol_UseNode] === false) {
-        return Promise.resolve(undefined);
-    }
-
     return new Promise((resolve, reject) => {
         const options: http.RequestOptions = Object.assign(Object.create(null), url.parse(request.url));
         let httpRequest: http.ClientRequest;
@@ -206,7 +200,7 @@ function toCertificateInfo(cert: PeerCertificate): ICertificateInfo {
     };
 }
 
-export function createRequestHandler(serverCertValidator?: ServerCertValidator): HttpRequestHandler {
+export default function createRequestHandler(serverCertValidator?: ServerCertValidator): HttpRequestHandler {
     if (serverCertValidator) {
         return handleRequestAsync.bind(undefined, (serverName, cert) => {
             if (serverCertValidator(serverName, toCertificateInfo(cert))) {

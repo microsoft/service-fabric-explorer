@@ -52,7 +52,6 @@ export default function handleCertAsync(
 
             } else if (isCertificate(selectedCert)) {
                 log.writeInfoAsync(`Custom client certificate (type: ${selectedCert.type}) is selected.`);
-                selectedCert = await certLoader.loadAsync(selectedCert);
 
             } else {
                 throw new Error(`Invalid client certificate: ${JSON.stringify(selectedCert, null, 4)}`);

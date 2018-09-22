@@ -17,8 +17,6 @@ import * as uuidv4 from "uuid/v4";
 import * as electron from "electron";
 import { ICertificateInfo } from "sfx.cert";
 
-export const Symbol_UseElectron = Symbol("UseElectron");
-
 function applyHeaders(requestHeaders: electron.ClientRequest, headers: Array<IHttpHeader>): void {
     for (const header of headers) {
         requestHeaders.setHeader(header.name, header.value);
@@ -61,13 +59,6 @@ function handleRequestAsync(
     serverCertValidator: ServerCertValidator,
     pipeline: IHttpPipeline,
     request: IHttpRequest): Promise<IHttpResponse> {
-
-    if (pipeline.requestTemplate[Symbol_UseElectron] === false
-        || (pipeline.requestTemplate[Symbol_UseElectron] !== true
-            && request.clientCert)) {
-        return Promise.resolve(undefined);
-    }
-
     return new Promise((resolve, reject) => {
         const session = electron.Session.fromPartition(uuidv4(), {
             cache: false
@@ -201,7 +192,7 @@ function toCertificateInfo(cert: electron.Certificate): ICertificateInfo {
     };
 }
 
-export function createRequestHandler(serverCertValidator?: ServerCertValidator): HttpRequestHandler {
+export default function createRequestHandler(serverCertValidator?: ServerCertValidator): HttpRequestHandler {
     if (serverCertValidator) {
         return handleRequestAsync.bind(undefined, serverCertValidator);
     }

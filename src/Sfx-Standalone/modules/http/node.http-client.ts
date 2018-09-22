@@ -59,8 +59,6 @@ function toCertificateInfo(cert: PeerCertificate): ICertificateInfo {
 }
 
 export default class HttpClient extends HttpClientBase<http.RequestOptions> {
-    private readonly certLoader: ICertificateLoader;
-
     private readonly serverCertValidator: ServerCertValidator;
 
     constructor(
@@ -77,7 +75,6 @@ export default class HttpClient extends HttpClientBase<http.RequestOptions> {
         }
 
         this.serverCertValidator = serverCertValidator;
-        this.certLoader = certLoader;
     }
 
     protected async generateHttpRequestOptionsAsync(requestOptions: IRequestOptions): Promise<https.RequestOptions> {
@@ -102,8 +99,6 @@ export default class HttpClient extends HttpClientBase<http.RequestOptions> {
         }
 
         if (requestOptions.clientCert) {
-            requestOptions.clientCert = await this.certLoader.loadAsync(requestOptions.clientCert);
-
             if (requestOptions.clientCert.type === "pfx") {
                 options.pfx = (<IPfxCertificate>requestOptions.clientCert).pfx;
                 options.passphrase = (<IPfxCertificate>requestOptions.clientCert).password;
