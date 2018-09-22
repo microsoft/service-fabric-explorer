@@ -5,6 +5,10 @@
 
 declare module "sfx.http-next" {
     import { IDictionary } from "sfx.common";
+    import { ICertificate, ICertificateInfo } from "sfx.cert";
+
+    export type SslVersion =
+        "TLS" | "TLS1.2" | "TLS1.1" | "TLS1.0" | "SSL3.0";
 
     export type HttpMethod =
         "GET" | "POST" | "PUT" | "PATCH" | "DELETE" |
@@ -15,22 +19,52 @@ declare module "sfx.http-next" {
         value: string;
     }
 
-    export interface IHttpResponse<T> {
+    export interface IHttpResponse {
+        httpVersion: string;
         statusCode: number;
         statusMessage: string;
 
-        result: T;
+        result: any;
 
         headers: Array<IHttpHeader>;
         body: Buffer;
     }
 
     export interface IHttpRequest {
+        sslVersion?: SslVersion;
+        clientCert?: ICertificate;
+
         method: HttpMethod;
         url: string;
         headers?: Array<IHttpHeader>;
         body?: any;
     }
 
-    export type HttpRequestHandler = () => void;
+    export interface IHttpPipeline {
+        requestTemplate: IHttpRequest;
+
+        readonly requestHandlers: Array<HttpRequestHandler>;
+
+        readonly responseHandlers: Array<HttpResponseHandler>;
+
+        requestAsync(request: IHttpRequest): Promise<IHttpResponse>;
+    }
+
+    export interface IHttpClient extends IHttpPipeline {
+        deleteAsync(url: string): Promise<IHttpResponse>;
+
+        getAsync(url: string): Promise<IHttpResponse>;
+
+        patchAsync(url: string, data: any): Promise<IHttpResponse>;
+
+        postAsync(url: string, data: any): Promise<IHttpResponse>;
+
+        putAsync(url: string, data: any): Promise<IHttpResponse>;
+    }
+
+    export type HttpRequestHandler = (pipleline: IHttpPipeline, request: IHttpRequest) => Promise<IHttpResponse>;
+
+    export type HttpResponseHandler = (pipleline: IHttpPipeline, request: IHttpRequest, response: IHttpResponse) => Promise<IHttpResponse>;
+
+    export type ServerCertValidator = (serverName: string, cert: ICertificateInfo) => Promise<boolean>;
 }
