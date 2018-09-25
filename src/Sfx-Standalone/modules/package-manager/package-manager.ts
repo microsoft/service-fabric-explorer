@@ -389,6 +389,13 @@ export default class PackageManager implements IPackageManager {
         this.httpClient = httpClient;
         this.config = settings.getAsync<IPackageManagerConfig>(PackageManagerSettingsName)
             .then((config) => {
+                if (!config) {
+                    config = {
+                        packagesDir: null,
+                        repos: Object.create(null),
+                        packages: Object.create(null)
+                    };
+                }
                 if (!Object.isObject(config.repos)) {
                     config.repos = Object.create(null);
                 }

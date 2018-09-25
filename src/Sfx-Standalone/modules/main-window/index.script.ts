@@ -25,7 +25,7 @@ import { ClusterManagerComponentConfig } from "./main-window";
                 let webview = <WebviewTag>document.querySelector(`webview[id='wv-${component.id}']`);
                 webview.addEventListener("dom-ready", async () => {
                     await sfxModuleManager.newHostAsync(`host-${component.id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));
-                    webview.openDevTools(); /*uncomment to use development tools */
+                    //webview.openDevTools(); /*uncomment to use development tools */
                 });
             }
         }));
@@ -34,7 +34,6 @@ import { ClusterManagerComponentConfig } from "./main-window";
         $("div.sub-panel:first").show();
 
         $(".btn-component-head").click((e) => {
-
             const $button = $(e.target);
             const $subPanel = $(`#sub-${$button.data("component")}`);
             if($subPanel.css("display") !== "none") {

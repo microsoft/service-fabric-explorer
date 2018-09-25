@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 import * as $ from "jquery";
-import * as authCert from "../../../utilities/auth/cert";
+
 import * as authAad from "../../../utilities/auth/aad";
 import * as appUtils from "../../../utilities/appUtils";
 import * as uuidv5 from "uuid/v5";
@@ -28,6 +28,21 @@ export class SfxContainer implements ISfxContainer {
             descriptor: async () => new SfxContainer(),
             deps: []
         };
+    }
+
+    public async reloadSfxAsync(targetServiceEndpoint: string): Promise<void> {
+        const container = $("div.right-container");
+        $("#instructions", container).hide();
+        $(".view-container", container).hide();
+
+        const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
+        const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
+        if (sfxWebView) {
+            sfxWebView.reload();
+            $(`#view-container-${id}`, container).show();
+        }
+
+        return Promise.resolve();
     }
 
     public async loadSfxAsync(targetServiceEndpoint: string): Promise<void> {
@@ -57,14 +72,11 @@ export class SfxContainer implements ISfxContainer {
             container.children("#treeview-loading-glyph").remove();
 
             if (!sfxWebView.isDevToolsOpened()) {
-                sfxWebView.openDevTools(); /*uncomment to use development tools */
+                //sfxWebView.openDevTools(); /*uncomment to use development tools */
             }
         });
 
-        this.handleSslCert(sfxWebView);
         authAad.handle(sfxWebView, targetServiceEndpoint);
-        authCert.handle(sfxModuleManager, sfxWebView);
-
         sfxWebView.loadURL(sfxUrl);
 
         return Promise.resolve();
@@ -81,17 +93,5 @@ export class SfxContainer implements ISfxContainer {
         if (this.endpoints.length === 0) {
             $("#instructions", container).show();
         }
-    }
-
-    private handleSslCert(webview: WebviewTag): void {
-        //const trustedCertManager: IDictionary<boolean> = Object.create(null);
-        //const hostingWindow = await sfxModuleManager.getComponentAsync("browser-window");
-        //const log = await sfxModuleManager.getComponentAsync("logging");
-        const webContents = webview.getWebContents();
-        webContents.on("certificate-error", (event, url, error, certificate, callback) => {
-            console.log("certificate-error", url, error, callback);
-            event.preventDefault();
-            callback(true);           
-        });
     }
 }

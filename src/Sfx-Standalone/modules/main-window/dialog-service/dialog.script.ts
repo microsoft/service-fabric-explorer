@@ -4,8 +4,6 @@
 //-----------------------------------------------------------------------------
 
 import * as $ from "jquery";
-// import * as Url from "url";
-// import { ISfxContainer } from "sfx.sfx-view-container";
 
 $(document).ready(() => {
     $(".modal").slideDown(100);

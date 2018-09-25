@@ -24,18 +24,17 @@ export class SettingsComponentConfig implements IComponentConfiguration {
     mainViewUrl?: string;
 }
 
-export class MainWindow implements IMainWindow {
+export class MainWindow implements IMainWindow {    
     private browserWindow: BrowserWindow;
     private components: IComponentConfiguration[] = [];
-    
+        
     constructor(browserWindow: BrowserWindow) {
         this.browserWindow = browserWindow;
-        browserWindow.setSize(1500, 1200);
+        browserWindow.setSize(1500, 1200);        
     }
 
     async registerAsync(navComponent: IComponentConfiguration): Promise<void> {
         this.components.push(navComponent);
-
         return Promise.resolve();
     }
 
@@ -45,13 +44,8 @@ export class MainWindow implements IMainWindow {
         this.browserWindow.once("ready-to-show", async () => {
             //this.browserWindow.webContents.openDevTools(); /*uncomment to use development tools */
             this.browserWindow.show();
-
         });
-
+        
         return Promise.resolve();
     }
-
-    // getHostingBrowserWindowAsync(): Promise<BrowserWindow> {
-    //     return Promise.resolve(this.browserWindow);
-    // }
 }

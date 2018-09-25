@@ -5,8 +5,9 @@
 
 declare module "sfx.main-window" {
     import { BrowserWindow } from "electron";
+    import { IDictionary } from "sfx.common";
 
-    export interface IMainWindow {
+    export interface IMainWindow {        
         loadAsync(): void;
     }
 
@@ -14,8 +15,17 @@ declare module "sfx.main-window" {
         onClose: () => Promise<void>;
         onPost: (data: any) => Promise<void>;
         showDialogAsync(pageUrl: string): Promise<void>;
-        showInlineDialogAsync(title: string, bodyHtml: string, footerHtml: string, scriptPath: string): Promise<void>;
+        showInlineDialogAsync(options: IDialogRenderingOption): Promise<void>;
         closeInlineDialogAsync(): Promise<void>;
+    }
+
+    export interface IDialogRenderingOption {
+        title: string;
+        bodyHtml: string;
+        footerHtml: string;
+        scriptPath: string;
+        height?: number;
+        width?: number;
     }
 }
 
@@ -31,6 +41,7 @@ declare module "sfx.sfx-view-container" {
     export interface ISfxContainer {
         loadSfxAsync(targetServiceEndpoint: string): Promise<void>;
         unloadSfxAsync(targetServiceEndpoint: string): Promise<void>;
+        reloadSfxAsync(targetServiceEndpoint: string): Promise<void>;
     }
 }
 

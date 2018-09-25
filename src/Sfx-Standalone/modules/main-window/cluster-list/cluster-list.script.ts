@@ -68,7 +68,7 @@ export class ClusterList implements IClusterList {
             displayName = endpoint;
         }
 
-        if (this.clusterListDataModel.getCluster(endpoint, "endpoint") !== null) {            
+        if (this.clusterListDataModel.getCluster(endpoint, "endpoint") !== null) {
             return;
         }
 
@@ -90,6 +90,7 @@ export class ClusterList implements IClusterList {
                     <img src="../../../icons/icon16x16.png"><span>${displayName}</span>
                     <button tabindex="0" class="bowtie-icon bowtie-ellipsis"></button>
                     <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
+                        <li role="menuitem"><a class="cluster-action" role="menuitem" href="#" data-action="connect">Re-connect</a></li>
                         <li role="menuitem"><a class="cluster-action" role="menuitem" href="#" data-action="remove">Remove Cluster</a></li>
                         <li role="menuitem"><a class="cluster-action" role="menuitem" href="#" data-action="rename">Rename Cluster</a></li>
                         <li role="menuitem"><a class="cluster-action" role="menuitem" href="#" data-action="move">Move Cluster</a></li>
@@ -101,7 +102,7 @@ export class ClusterList implements IClusterList {
             if (isCurrentInView) {
                 $item.addClass("current");
             }
-            
+
             this.clusterListDataModel.addCluster(displayName, endpoint, folder);
             await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
             this.setupClusterListItemHandler($item, endpoint, displayName);
@@ -156,7 +157,7 @@ export class ClusterList implements IClusterList {
 
     async removeFolder(name: string): Promise<void> {
         const $item = $(`#cluster-list li[data-name="${name}"]`);
-        if ($item.find(".current").length !== 0) {            
+        if ($item.find(".current").length !== 0) {
             $(".current").removeClass("current");
         }
 
@@ -176,23 +177,24 @@ export class ClusterList implements IClusterList {
         $("#cluster-list-connect").click(async () => {
             localStorage.setItem("folders", JSON.stringify(this.clusterListDataModel.getFolders()));
             const dialogService = (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service"));
-            dialogService.showInlineDialogAsync(
-                "Connect to a cluster",
-                `<p>Cluster URL</p>
-                <input id="input-cluster-url" type="text" class = "input-flat" value=""/>
-                <div class="checkbox-container">
-                    <label for="input-connect-locally">
-                        <input id="input-connect-locally" type="checkbox" /><label></label>Connect to localhost
-                    </label>
-                </div> <br>
-                <p>Friendly Name (Optional)</p>
-                <input id="input-cluster-label" type="text" class="input-flat" value="" /><br><br>
-                <p>Choose a folder (optional)</p>
-                <select id="input-select-folder" class="input-flat"></select> <br>
-                <div id="new_folder" style="visibility: hidden;">Enter Folder Name: <input id="new-folder-label" type="text" class="input-flat" value=""/> </div>`,
-                `<button id="btn-connect" type="submit" class="btn btn-primary">Connect</button>
-                <button type="button" class="btn btn-default" id="btn-exit">Cancel</button>`,
-                "../cluster-list/cluster-functionalities/connect-cluster.script.js");
+            dialogService.showInlineDialogAsync({
+                title: "Connect to a cluster",
+                bodyHtml: `<p>Cluster URL</p>
+                    <input id="input-cluster-url" type="text" class = "input-flat" value=""/>
+                    <div class="checkbox-container">
+                        <label for="input-connect-locally">
+                            <input id="input-connect-locally" type="checkbox" /><label></label>Connect to localhost
+                        </label>
+                    </div> <br>
+                    <p>Friendly name (Optional)</p>
+                    <input id="input-cluster-label" type="text" class="input-flat" value="" /><br><br>
+                    <p>Choose a folder (optional)</p>
+                    <select id="input-select-folder" class="input-flat"></select> 
+                    <div id="new_folder" style="visibility: hidden;" class="div-container">Folder name <input id="new-folder-label" type="text" class="input-flat" value=""/> </div>`,
+                footerHtml: `<button id="btn-connect" type="submit" class="btn btn-primary">Connect</button><button type="button" class="btn btn-default" id="btn-exit">Cancel</button>`,
+                scriptPath: "../cluster-list/cluster-functionalities/connect-cluster.script.js",
+                height: 440
+            });
 
         });
 
@@ -209,13 +211,13 @@ export class ClusterList implements IClusterList {
             if (res === undefined || res === null) {
                 await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
             } else {
-                let json = JSON.parse(res);                
+                let json = JSON.parse(res);
                 for (let folder of json.folders) {
                     if (folder.name !== "") {
                         await this.newFolderItemAsync(folder.name);
                     }
 
-                    for (let cluster of folder.clusters) {                        
+                    for (let cluster of folder.clusters) {
                         await this.newClusterListItemAsync(cluster.endpoint, cluster.displayName, cluster.folder);
                     }
                 }
@@ -252,11 +254,12 @@ export class ClusterList implements IClusterList {
                 localStorage.setItem("folder", name);
                 if ($eventTarget.attr("role") === "menuitem") {
                     if ($eventTarget.html().toString().trim() === "Remove Folder") {
-                        (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showInlineDialogAsync(
-                            `Remove folder`,
-                            `<p>Are you sure you want to remove folder ${name} and all cluster connections under it?</p>`,
-                            `<button id="btn-delete-folder" type="submit" class="btn btn-primary" data-target="${name}">Remove</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
-                            "../cluster-list/folder-functionalities/delete-folder.script.js");
+                        (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showInlineDialogAsync({
+                            title: `Remove folder`,
+                            bodyHtml: `<p>Are you sure you want to remove folder ${name} and all cluster connections under it?</p>`,
+                            footerHtml: `<button id="btn-delete-folder" type="submit" class="btn btn-primary" data-target="${name}">Remove</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
+                            scriptPath: "../cluster-list/folder-functionalities/delete-folder.script.js"
+                        });
                     }
                 }
 
@@ -293,36 +296,50 @@ export class ClusterList implements IClusterList {
             }
 
             const action = $(e.target).data("action");
+            const dialogService = await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service");
             switch (action) {
+                case "connect":                    
+                    const sfxContainer = await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container");
+                    await sfxContainer.reloadSfxAsync(endpoint);
+                    await sfxContainer.disposeAsync();
+                    break;
                 case "remove":
-                    (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showInlineDialogAsync(
-                        `Remove cluster`,
-                        `<p>Are you sure you want to remove ${name}?</p>`,
-                        `<button id="btn-delete-cluster" data-target="${name}" type="submit" class="btn btn-primary">Remove</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
-                        "../cluster-list/cluster-functionalities/delete-cluster.script.js");
+                    dialogService.showInlineDialogAsync({
+                        title: `Remove cluster`,
+                        bodyHtml: `<p>Are you sure you want to remove ${name}?</p>`,
+                        footerHtml: `<button id="btn-delete-cluster" data-target="${name}" type="submit" class="btn btn-primary">Remove</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
+                        scriptPath: "../cluster-list/cluster-functionalities/delete-cluster.script.js",
+                        height: 200
+                    });
                     break;
 
                 case "rename":
-                    (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showInlineDialogAsync(
-                        `Rename cluster`,
-                        `<p>New friendly name for cluster ${name}</p><input id="input-cluster-label" type="text" class = "input-flat" value="${name}"/>`,
-                        `<button id="btn-new-label" type="submit" class="btn btn-primary" data-target="${name}">Rename</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
-                        "../cluster-list/cluster-functionalities/rename-cluster.script.js");
+                    dialogService.showInlineDialogAsync({
+                        title: `Rename cluster`,
+                        bodyHtml: `<p>New friendly name for cluster ${name}</p><input id="input-cluster-label" type="text" class = "input-flat" value="${name}"/>`,
+                        footerHtml: `<button id="btn-new-label" type="submit" class="btn btn-primary" data-target="${name}">Rename</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
+                        scriptPath: "../cluster-list/cluster-functionalities/rename-cluster.script.js",
+                        height: 200
+                    });
                     break;
 
                 case "move":
-                    (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showInlineDialogAsync(
-                        `Move cluster`,
-                        `<p>Choose a folder for cluster ${name} or move it out of a folder.</p>
+                    dialogService.showInlineDialogAsync({
+                        title: `Move cluster`,
+                        bodyHtml: `<p>Choose a folder for cluster ${name} or move it out of a folder.</p>
                             <select id="input-select-folder" class="input-flat"></select> <br>
-                            <div id="new_folder" style="visibility: hidden;">Enter Folder Name: <input id="new-folder-label" type="text" class=" input-flat" value=""/> </div>`,
-                        `<button id="btn-move-cluster" type="submit" class="btn btn-primary" data-cluster="${name}">Move</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
-                        "../cluster-list/cluster-functionalities/move-cluster.script.js");
+                            <div id="new_folder" style="visibility: hidden;" class="div-container">Folder name<input id="new-folder-label" type="text" class=" input-flat" value=""/> </div>`,
+                        footerHtml: `<button id="btn-move-cluster" type="submit" class="btn btn-primary" data-cluster="${name}">Move</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
+                        scriptPath: "../cluster-list/cluster-functionalities/move-cluster.script.js",
+                        height: 260
+                    });
                     break;
 
                 default:
                     break;
             }
+
+            await dialogService.disposeAsync();
         });
 
         $($item).click(async (e) => {
@@ -339,10 +356,13 @@ export class ClusterList implements IClusterList {
             }
 
             $(".current").removeClass("current");
-            await (await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container")).loadSfxAsync(endpoint);
+            const sfxContainer = await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container");
+            await sfxContainer.loadSfxAsync(endpoint);
             cluster.currentInView = true;
             await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
             $target.addClass("current");
+
+            await sfxContainer.disposeAsync();
         });
     }
 }

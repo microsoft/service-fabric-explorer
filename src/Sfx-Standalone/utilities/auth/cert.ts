@@ -5,7 +5,7 @@
 import { IDictionary } from "sfx.common";
 import { IModuleManager } from "sfx.module-manager";
 
-import { WebviewTag, Certificate } from "electron";
+import { app, Certificate } from "electron";
 import * as url from "url";
 import * as fs from "fs";
 import * as tmp from "tmp";
@@ -21,7 +21,7 @@ interface ICertSelectionPromptResults {
     certsImported: boolean;
 }
 
-async function showCertSelectPromptAsync(moduleManager: IModuleManager, webView: WebviewTag, certificateList: Array<Certificate>): Promise<ICertSelectionPromptResults> {
+async function showCertSelectPromptAsync(moduleManager: IModuleManager, certificateList: Array<Certificate>): Promise<ICertSelectionPromptResults> {
 
     const certSelectionButtons: Array<string> = [];
 
@@ -56,11 +56,11 @@ interface ICertHandlingRecord {
     callbacks: Array<(cert: Certificate) => void>;
 }
 
-function handleGenerally(moduleManager: IModuleManager, webView: WebviewTag): void {
+function handleGenerally(moduleManager: IModuleManager): void {
     const clientCertManager: IDictionary<ICertHandlingRecord> = Object.create(null);
 
-    webView.getWebContents().on("select-client-certificate",
-        async (event, urlString, certificateList, selectCertificate) => {
+    app.on("select-client-certificate",
+        async (event, webContents, urlString, certificateList, selectCertificate) => {
             event.preventDefault();
 
             const certIdentifier: string = url.parse(urlString).hostname;
@@ -83,19 +83,15 @@ function handleGenerally(moduleManager: IModuleManager, webView: WebviewTag): vo
 
                 certHandlingRecord.callbacks.push(selectCertificate);
 
-                const results = await showCertSelectPromptAsync(
-                    moduleManager,
-                    webView,
-                    certificateList);
+                const results = await showCertSelectPromptAsync(moduleManager, certificateList);
 
                 if (results.selectedCert) {
                     certHandlingRecord.callbacks.forEach((selectCertificateFunc) => selectCertificateFunc(results.selectedCert));
                     delete clientCertManager[certIdentifier];
                 } else if (results.certsImported) {
-                    certHandlingRecord.handling = false;
-                    webView.reload();
+                    certHandlingRecord.handling = false;                    
                 } else {
-                    electron.app.exit();
+                    // TODO: User closes dialog without selecting a certificate. Need to provide a way to re-connect the cluster.
                 }
             }
         });
@@ -117,10 +113,10 @@ function handleLinux(): void {
         (result) => dummayCertFile.removeCallback());
 }
 
-export function handle(moduleManager: IModuleManager, webView: WebviewTag): void {
+export function handleAuth(moduleManager: IModuleManager): void {
     if (env.platform === Platform.Linux) {
         handleLinux();
     }
 
-    handleGenerally(moduleManager, webView);
+    handleGenerally(moduleManager);
 }
