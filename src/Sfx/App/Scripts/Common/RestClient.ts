@@ -22,7 +22,15 @@ module Sfx {
         private requestEnded: { (param: number): void; }[] = [];
         private allRequestsComplete: { (): void; }[] = [];
 
-        constructor(private $http: angular.IHttpService, private message: MessageService) {
+        private _$http: angular.IHttpService;
+
+        private get $http(): angular.IHttpService {
+            return StandaloneIntegration.httpClient || this._$http;
+        }
+
+        constructor($http: angular.IHttpService, private message: MessageService) {
+            this._$http = $http;
+
             this.registerRequestEndedCallback(requestCount => {
                 if (requestCount === 0) {
                     $.each(this.allRequestsComplete, (_, cb) => cb());

@@ -4,7 +4,13 @@
 //-----------------------------------------------------------------------------
 
 module Sfx {
+    declare const sfxModuleManager: {
+        getComponentAsync<T>(componentIdentity: string, ...extraArgs: Array<any>): angular.IPromise<T>;
+    };
+
     export class StandaloneIntegration {
+        public static httpClient: angular.IHttpService;
+
         private static require: (moduleName: string) => any = window["nodeRequire"];
 
         private static _clusterUrl: string = null;
@@ -25,6 +31,11 @@ module Sfx {
 
             return StandaloneIntegration._clusterUrl;
         }
-
     }
+
+    (() => {
+        sfxModuleManager
+            .getComponentAsync("http.http-client.service-fabric", null, null)
+            .then((httpClient) => StandaloneIntegration.httpClient = <any>new HttpClientProxy(httpClient));
+    })();
 }
