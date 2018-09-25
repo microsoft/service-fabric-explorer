@@ -12,6 +12,7 @@ import createNodeRequestHandler from "./request-handlers/node";
 
 import createRedirectionResponseHandler from "./response-handlers/redirection";
 import createJsonResponseHandler from "./response-handlers/json";
+import createJsonFileResponseHandler from "./response-handlers/json-file";
 import createAuthCertResponseHandler from "./response-handlers/auth.cert";
 import createAuthAadResponseHandler from "./response-handlers/auth.aad.sf";
 import createAuthWindowsResponseHandler from "./response-handlers/auth.windows";
@@ -27,6 +28,7 @@ export default class ServiceFabricHttpClient extends HttpClient {
             createAuthCertResponseHandler(pkiSvc, clientCertSelector),
             createAuthWindowsResponseHandler(),
             createRedirectionResponseHandler(),
-            createJsonResponseHandler());
+            createJsonResponseHandler(),
+            createJsonFileResponseHandler());
     }
 }

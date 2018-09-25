@@ -10,6 +10,7 @@ import createNodeRequestHandler from "./request-handlers/node";
 
 import createRedirectionResponseHandler from "./response-handlers/redirection";
 import createJsonResponseHandler from "./response-handlers/json";
+import createJsonFileResponseHandler from "./response-handlers/json-file";
 
 export default class HttpClient extends HttpPipeline implements IHttpClient {
     private static createHttpError(response: IHttpResponse): Error {
@@ -23,7 +24,7 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
     constructor(requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>) {
         super(
             requestHandlers ? requestHandlers : [createNodeRequestHandler()],
-            responseHandlers ? responseHandlers : [createRedirectionResponseHandler(), createJsonResponseHandler()]);
+            responseHandlers ? responseHandlers : [createRedirectionResponseHandler(), createJsonResponseHandler(), createJsonFileResponseHandler()]);
     }
 
     public getAsync<T>(url: string): Promise<T> {

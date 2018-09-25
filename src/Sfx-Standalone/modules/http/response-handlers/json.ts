@@ -18,10 +18,10 @@ function getJsonHeader(response: IHttpResponse): string {
     return jsonHeader ? jsonHeader.value : undefined;
 }
 
-const Regex_Charset = /charset\=([a-zA-Z\-_0-9]+)/ig;
+const Regex_Charset = /charset\=([a-zA-Z\-_0-9]+)/i;
 
 function getEncoding(jsonHeader: string): string {
-    const matches = jsonHeader.match(Regex_Charset);
+    const matches = Regex_Charset.exec(jsonHeader);
 
     if (!matches) {
         return "utf8";

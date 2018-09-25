@@ -21,7 +21,8 @@
             "args": [
                 "--remote-debugging-port=9223",
                 "./build/app/."
-            ]
+            ],
+            "preLaunchTask": "npm: build"
         },
         {
             "name": "Debug: Renderer",

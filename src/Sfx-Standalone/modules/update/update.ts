@@ -161,19 +161,39 @@ export default class UpdateService implements IUpdateService {
 
         return new Promise<string>((resolve, reject) => {
             const saveResponseToFile = (response: http.IncomingMessage) => {
+                if ([301, 302, 303, 307, 308].includes(response.statusCode)) {
+                    packagePath = response.headers.location;
+
+                    if (url.parse(packagePath).protocol === "https:") {
+                        https.get(packagePath, saveResponseToFile);
+                    } else {
+                        http.get(packagePath, saveResponseToFile);
+                    }
+
+                    return;
+                }
+
                 if (response.statusCode >= 300) {
                     reject(new Error(`Downloading update package failed. HTTP ${response.statusCode}: ${response.statusMessage}`));
+                    return;
+                }
+
+                const fileNameMatches = /filename\=([^\\/\:\*\?\"\<\>\|]+)\;?/i.exec(response.headers["content-disposition"]);
+                let fileName: string = url.parse(packagePath).pathname;
+
+                if (fileNameMatches) {
+                    fileName = fileNameMatches[1];
                 }
 
                 const tempFile: { name: string; fd: number } =
-                    tmp.fileSync({ keep: true, postfix: path.extname(packagePath) });
+                    tmp.fileSync({ keep: true, postfix: path.extname(fileName) });
                 this.log.writeInfoAsync("Created temp file for the update package: {}", tempFile.name);
 
                 response.pipe(fs.createWriteStream(null, { fd: tempFile.fd }));
                 response.on("end", () => resolve(tempFile.name));
             };
 
-            if (url.parse(packagePath).protocol === "https") {
+            if (url.parse(packagePath).protocol === "https:") {
                 https.get(packagePath, saveResponseToFile);
             } else {
                 http.get(packagePath, saveResponseToFile);

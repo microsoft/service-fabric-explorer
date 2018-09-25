@@ -27,7 +27,7 @@ function handleResponseAsync(pipeline: IHttpPipeline, request: IHttpRequest, res
 
     const location = getLocationHeader(response);
 
-    if (!location) {
+    if (location) {
         return pipeline.requestAsync(Object.assign(Object.create(null), request, { url: location }));
     }
 

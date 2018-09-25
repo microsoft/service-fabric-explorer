@@ -8,6 +8,10 @@
     "url": "https://github.com/Azure/service-fabric-explorer.git",
     "type": "git"
   },
+  "scripts": {
+    "clean-build": "gulp clean-build",
+    "build": "gulp build"
+  },
   "author": "Microsoft Corporation",
   "license": "MIT",
   "dependencies": {

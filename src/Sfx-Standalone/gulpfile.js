@@ -16,4 +16,4 @@ gulp.task("pack@node-modules",
         return Promise.resolve();
     });
 
-require("cookie.gulp");
+require("cookie.gulp")();

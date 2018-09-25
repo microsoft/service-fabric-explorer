@@ -56,19 +56,22 @@ function generateHeaders(headers: Array<string>): Array<IHttpHeader> {
     return generatedHeaders;
 }
 
-function generateBody(httpResponse: http.IncomingMessage): Buffer {
+function generateBodyAsync(httpResponse: http.IncomingMessage): Promise<Buffer> {
     if (!httpResponse.readable) {
-        return new Buffer(0);
+        return Promise.resolve(new Buffer(0));
     }
 
-    const bodyData: Array<number> = [];
-    let buffer: Buffer;
+    return new Promise<Buffer>((resolve, reject) => {
+        const bodyData: Array<number> = [];
 
-    while (buffer = httpResponse.read()) {
-        bodyData.push(...buffer);
-    }
+        httpResponse.on("data", (chunk: Buffer) => {
+            bodyData.push(...chunk);
+        });
 
-    return new Buffer(bodyData);
+        httpResponse.on("end", () => resolve(new Buffer(bodyData)));
+
+        httpResponse.on("error", (err) => reject(err));
+    });
 }
 
 function handleRequestAsync(validateServerCert: HttpsServerCertValidator, pipeline: IHttpPipeline, request: IHttpRequest): Promise<IHttpResponse> {
@@ -82,6 +85,10 @@ function handleRequestAsync(validateServerCert: HttpsServerCertValidator, pipeli
 
         } else {
             body = JSON.stringify(request.body);
+
+            if (!request.headers) {
+                request.headers = [];
+            }
 
             const headerIndex = request.headers.findIndex((value) => value.name === "Content-Type");
             const contentTypeHeader: IHttpHeader = headerIndex < 0 ? Object.create(null) : request.headers[headerIndex];
@@ -152,14 +159,14 @@ function handleRequestAsync(validateServerCert: HttpsServerCertValidator, pipeli
             return undefined;
         }
 
-        httpRequest.on("response", (response: http.IncomingMessage) => {
+        httpRequest.on("response", async (response: http.IncomingMessage) => {
             const httpResponse: IHttpResponse = Object.create(null);
 
             httpResponse.httpVersion = response.httpVersion;
             httpResponse.statusCode = response.statusCode;
             httpResponse.statusMessage = response.statusMessage;
             httpResponse.headers = generateHeaders(response.rawHeaders);
-            httpResponse.body = generateBody(response);
+            httpResponse.body = await generateBodyAsync(response);
 
             resolve(httpResponse);
         });
