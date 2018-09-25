@@ -21,8 +21,7 @@
             "args": [
                 "--remote-debugging-port=9223",
                 "./build/app/."
-            ],
-            "preLaunchTask": "gulp: build"
+            ]
         },
         {
             "name": "Debug: Renderer",

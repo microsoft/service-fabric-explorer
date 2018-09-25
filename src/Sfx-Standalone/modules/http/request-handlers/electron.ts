@@ -10,7 +10,7 @@ import {
     IHttpHeader,
     ServerCertValidator,
     HttpRequestHandler
-} from "sfx.http-next";
+} from "sfx.http";
 
 import * as crypto from "crypto";
 import * as uuidv4 from "uuid/v4";

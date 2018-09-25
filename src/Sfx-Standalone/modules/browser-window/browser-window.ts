@@ -11,10 +11,7 @@ import * as url from "url";
 import * as uuidv5 from "uuid/v5";
 
 import { env, Platform } from "../../utilities/env";
-import * as authCert from "../../utilities/auth/cert";
-import * as authAad from "../../utilities/auth/aad";
 import * as appUtils from "../../utilities/appUtils";
-import * as utils from "../../utilities/utils";
 import { ModuleManager } from "../../module-manager/module-manager";
 
 const UuidNamespace = "614e2e95-a80d-4ee5-9fd5-fb970b4b01a3";
@@ -107,16 +104,8 @@ function addModuleManagerConstructorOptions(
 
 export default async function createBrowserWindowAsync(
     moduleManager: IModuleManager,
-    options?: BrowserWindowConstructorOptions,
-    handleAuth?: boolean,
-    aadTargetHostName?: string)
+    options?: BrowserWindowConstructorOptions)
     : Promise<BrowserWindow> {
-
-    handleAuth = utils.getValue(handleAuth, false);
-
-    if (handleAuth && String.isEmptyOrWhitespace(aadTargetHostName)) {
-        throw new Error("if auth handling is required, aadTargetHostName must be supplied.");
-    }
 
     const windowOptions: BrowserWindowConstructorOptions = {
         height: 768,
@@ -152,11 +141,6 @@ export default async function createBrowserWindowAsync(
 
     if (env.platform !== Platform.MacOs) {
         handleZoom(window);
-    }
-
-    if (handleAuth) {
-        authCert.handle(moduleManager, window);
-        authAad.handle(window, aadTargetHostName);
     }
 
     window.once("closed", async () => await moduleManager.destroyHostAsync(hostName));

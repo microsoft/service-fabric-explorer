@@ -9,9 +9,9 @@ import {
     IHttpResponse,
     HttpRequestHandler,
     HttpResponseHandler
-} from "sfx.http-next";
+} from "sfx.http";
 
-export class HttpPipeline implements IHttpPipeline {
+export default class HttpPipeline implements IHttpPipeline {
     public requestTemplate: IHttpRequest;
 
     private readonly _requestHandlers: Array<HttpRequestHandler>;

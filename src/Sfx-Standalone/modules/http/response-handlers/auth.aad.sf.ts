@@ -2,12 +2,13 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
+
 import {
     IHttpPipeline,
     IHttpRequest,
     IHttpResponse,
     HttpResponseHandler
-} from "sfx.http-next";
+} from "sfx.http";
 
 import { handleResponseAsync as handleAadAsync } from "./auth.aad";
 
@@ -44,7 +45,7 @@ async function handleResponseAsync(pipeline: IHttpPipeline, request: IHttpReques
         return undefined;
     }
 
-    await handleAadAsync(
+    return await handleAadAsync(
         {
             authority: aadMetadata.authority,
             redirectUri: url.resolve(request.url, "/Explorer/index.html"),

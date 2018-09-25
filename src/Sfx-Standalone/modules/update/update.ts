@@ -14,7 +14,8 @@ import * as tmp from "tmp";
 import * as path from "path";
 import * as url from "url";
 import * as fs from "fs";
-import * as util from "util";
+import * as http from "http";
+import * as https from "https";
 
 import * as utils from "../../utilities/utils";
 import { env, Architecture } from "../../utilities/env";
@@ -116,14 +117,7 @@ export default class UpdateService implements IUpdateService {
 
         this.log.writeInfoAsync(`Requesting version info json: ${versionInfoUrl}`);
 
-        return this.httpClient.getAsync(versionInfoUrl)
-            .then((response) => {
-                if (!response.data) {
-                    return Promise.reject(`Failed to retrieve the version info: HTTP${response.statusCode} ${response.statusMessage} => ${versionInfoUrl}`);
-                }
-
-                return response.data;
-            });
+        return this.httpClient.getAsync(versionInfoUrl);
     }
 
     private requestConfirmationAsync(versionInfo: IVersionInfo): Promise<boolean> {
@@ -163,32 +157,27 @@ export default class UpdateService implements IUpdateService {
     }
 
     private async requestPackageAsync(packagePath: string): Promise<string> {
-        const tempFile: { name: string; fd: number } =
-            tmp.fileSync({ keep: true, postfix: path.extname(packagePath) });
-        this.log.writeInfoAsync("Created temp file for the update package: {}", tempFile.name);
-
         this.log.writeInfoAsync("Requesting the update package: {}", packagePath);
-        return this.httpClient.getAsync(packagePath)
-            .then(async (response) => {
-                const statusCode = await response.statusCode;
 
-                if (statusCode >= 200 && statusCode < 300) {
-                    this.log.writeVerboseAsync("Writing update package to file: {}", tempFile.name);
-
-                    const fsWriteAsync = util.promisify(fs.write);
-
-                    let buffer: Buffer;
-
-                    while (buffer = await <Promise<Buffer>>response.readAsync()) {
-                        await fsWriteAsync(tempFile.fd, buffer);
-                    }
-
-                    fs.closeSync(tempFile.fd);
-
-                    return tempFile.name;
+        return new Promise<string>((resolve, reject) => {
+            const saveResponseToFile = (response: http.IncomingMessage) => {
+                if (response.statusCode >= 300) {
+                    reject(new Error(`Downloading update package failed. HTTP ${response.statusCode}: ${response.statusMessage}`));
                 }
 
-                return Promise.reject(new Error(`Downloading update package failed. HTTP ${response.statusCode}: ${response.statusMessage}`));
-            });
+                const tempFile: { name: string; fd: number } =
+                    tmp.fileSync({ keep: true, postfix: path.extname(packagePath) });
+                this.log.writeInfoAsync("Created temp file for the update package: {}", tempFile.name);
+
+                response.pipe(fs.createWriteStream(null, { fd: tempFile.fd }));
+                response.on("end", () => resolve(tempFile.name));
+            };
+
+            if (url.parse(packagePath).protocol === "https") {
+                https.get(packagePath, saveResponseToFile);
+            } else {
+                http.get(packagePath, saveResponseToFile);
+            }
+        });
     }
 }

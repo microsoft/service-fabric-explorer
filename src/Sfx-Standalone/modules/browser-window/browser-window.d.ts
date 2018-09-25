@@ -8,8 +8,6 @@ declare module "sfx.module-manager" {
 
     export interface IModuleManager {
         getComponentAsync(componentIdentity: "browser-window",
-            options?: BrowserWindowConstructorOptions,
-            handleAuth?: boolean,
-            aadTargetHostName?: string): Promise<BrowserWindow>;
+            options?: BrowserWindowConstructorOptions): Promise<BrowserWindow>;
     }
 }

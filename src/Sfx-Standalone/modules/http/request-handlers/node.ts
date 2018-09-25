@@ -10,7 +10,7 @@ import {
     IHttpHeader,
     ServerCertValidator,
     HttpRequestHandler
-} from "sfx.http-next";
+} from "sfx.http";
 
 import { IPemCertificate, IPfxCertificate, ICertificateInfo } from "sfx.cert";
 

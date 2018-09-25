@@ -21,7 +21,7 @@ import * as appUtils from "../../utilities/appUtils";
             async (log: ILog, settings: ISettings, httpsClient: IHttpClient) =>
                 settings.getAsync<IUpdateSettings>("update")
                     .then((updateSettings) => import("./update").then((module) => new module.default(log, updateSettings, httpsClient))),
-        deps: ["logging", "settings", "http.https-client"]
+        deps: ["logging", "settings", "http.http-client"]
     });
 
     return {

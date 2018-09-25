@@ -39,13 +39,13 @@
             <p>Please select a client certificate below to connect to the server.</p>
         </div>
         <div class="modal-body" style="height: 474px">
-            <div class="card" ng-repeat="cert in certificates">
+            <div class="card" ng-repeat="certInfo in certInfos">
                 <div class="card-body">
-                    <h4 class="card-title">{{cert.subjectName}}</h4>
+                    <h4 class="card-title">{{certInfo.subjectName}}</h4>
                     <div class="card-text">
-                        <div>Issuer: {{cert.issuerName}}</div>
-                        <div>Serial: {{cert.serialNumber}}</div>
-                        <div>Fingerprint: {{cert.fingerprint}}</div>
+                        <div>Issuer: {{certInfo.issuerName}}</div>
+                        <div>Serial: {{certInfo.serialNumber}}</div>
+                        <div>Hash: {{certInfo.thumbprint}}</div>
                         <div ng-style="{ 'color': isCertValid(cert.validStart, cert.validExpiry) ? 'greenyellow' : null}">Valid from {{getDateString(cert.validStart)}} to {{getDateString(cert.validExpiry)}}.</div>
                     </div>
                     <button class="btn btn-primary" ng-click="selectCert(cert)">Select</button>

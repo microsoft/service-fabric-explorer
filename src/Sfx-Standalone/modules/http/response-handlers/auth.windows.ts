@@ -9,7 +9,7 @@ import {
     IHttpResponse,
     HttpResponseHandler,
     HttpRequestHandler
-} from "sfx.http-next";
+} from "sfx.http";
 
 import createRequestHandler from "../request-handlers/electron";
 

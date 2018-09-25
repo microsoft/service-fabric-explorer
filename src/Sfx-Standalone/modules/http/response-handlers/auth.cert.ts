@@ -8,13 +8,14 @@ import {
     IHttpRequest,
     IHttpResponse,
     HttpResponseHandler,
-    ClientCertSelector,
-    HttpRequestHandler
-} from "sfx.http-next";
+    ClientCertSelector
+} from "sfx.http";
 
-import { ICertificate, ICertificateInfo } from "sfx.cert";
-
-import createRequestHandler from "../request-handlers/node";
+import {
+    ICertificate,
+    ICertificateInfo,
+    IPkiCertificateService
+} from "sfx.cert";
 
 const StatusMsg_ClientCertRequired = "Client certificate required";
 
@@ -26,13 +27,12 @@ function isCertificate(cert: any): cert is ICertificate {
     return cert && String.isString(cert.type);
 }
 
-async function handleResponseAsync(handleRequestAsync: HttpRequestHandler, selectClientCert: ClientCertSelector, pipeline: IHttpPipeline, request: IHttpRequest, response: IHttpResponse): Promise<IHttpResponse> {
+async function handleResponseAsync(pkiSvc: IPkiCertificateService, selectClientCert: ClientCertSelector, pipeline: IHttpPipeline, request: IHttpRequest, response: IHttpResponse): Promise<IHttpResponse> {
     if (response.statusCode !== 403
         || response.statusMessage !== StatusMsg_ClientCertRequired) {
         return undefined;
     }
 
-    const pkiSvc = await sfxModuleManager.getComponentAsync("cert.pki-service");
     const certInfos = await pkiSvc.getCertificateInfosAsync("My");
 
     const selectedCertInfo = await selectClientCert(request.url, certInfos);
@@ -52,13 +52,13 @@ async function handleResponseAsync(handleRequestAsync: HttpRequestHandler, selec
 
     pipeline.requestTemplate.clientCert = selectedCert;
 
-    return handleRequestAsync(pipeline, request);
+    return pipeline.requestAsync(request);
 }
 
-export default function createResponseHandler(clientCertSelector: ClientCertSelector): HttpResponseHandler {
+export default function createResponseHandler(pkiSvc: IPkiCertificateService, clientCertSelector: ClientCertSelector): HttpResponseHandler {
     if (!Function.isFunction(clientCertSelector)) {
         throw new Error("A valid clientCertSelector function must be supplied.");
     }
 
-    return handleResponseAsync.bind(undefined, createRequestHandler(() => Promise.resolve(true)), clientCertSelector);
+    return handleResponseAsync.bind(undefined, pkiSvc, clientCertSelector);
 }

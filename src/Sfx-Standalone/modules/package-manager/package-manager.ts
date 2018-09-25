@@ -19,7 +19,9 @@ import * as crypto from "crypto";
 import * as tar from "tar";
 import * as fs from "fs";
 import * as tmp from "tmp";
-import * as util from "util";
+import * as http from "http";
+import * as https from "https";
+import * as url from "url";
 
 import { electron } from "../../utilities/electron-adapter";
 import * as utils from "../../utilities/utils";
@@ -279,13 +281,7 @@ class PackageRepository implements IPackageRepository {
         searchUrl.searchParams.append("from", offset.toString());
 
         return this.httpClient.getAsync(searchUrl.href)
-            .then(async (response) => {
-                if (!response.data) {
-                    return Promise.reject(new Error(`Failed to search (${searchUrl}): HTTP${await response.statusCode} => ${await response.statusMessage}`));
-                }
-
-                return response.data;
-            }).then((npmSearchResult: NpmRegistry.ISearchResult) => {
+            .then((npmSearchResult: NpmRegistry.ISearchResult) => {
                 const searchResult = toSearchResult(npmSearchResult);
 
                 searchResult.continuationToken = JSON.stringify(<NpmRegistry.IContinuationToken>{
@@ -321,44 +317,30 @@ class PackageRepository implements IPackageRepository {
 
         const packageConfigUrl = new URL(packageName, (await this.config).name);
 
-        return this.httpClient.getAsync(packageConfigUrl.href)
-            .then(async (response) => {
-                if (!response.data) {
-                    if (await response.statusCode === 404) {
-                        return undefined;
-                    }
-
-                    return Promise.reject(new Error(`Failed to request package config for package: ${packageConfigUrl}`));
-                }
-
-                return response.data;
-            });
+        return this.httpClient.getAsync<NpmRegistry.IModuleInfo>(packageConfigUrl.href);
     }
 
     private downloadPackageAsync(packageUrl: string): Promise<string> {
-        return this.httpClient.getAsync(packageUrl)
-            .then(async (response) => {
-                const statusCode = await response.statusCode;
 
-                if (statusCode >= 200 && statusCode < 300) {
-                    const tempFile: { name: string; fd: number } =
-                        tmp.fileSync({ keep: true, postfix: path.extname(packageUrl) });
-
-                    const fsWriteAsync = util.promisify(fs.write);
-                    let chunk: Buffer;
-
-                    while (chunk = await <Promise<Buffer>>response.readAsync()) {
-                        await fsWriteAsync(tempFile.fd, chunk);
-                    }
-
-                    fs.closeSync(tempFile.fd);
-
-                    return tempFile.name;
+        return new Promise((resolve, reject) => {
+            const responseHandler = (response: http.IncomingMessage) => {
+                if (response.statusCode >= 300) {
+                    reject(new Error(`Failed to download package (${packageUrl}): HTTP ${response.statusCode} => ${response.statusMessage}`));
                 }
 
-                return Promise.reject(
-                    new Error(`Failed to download package (${packageUrl}): HTTP ${response.statusCode} => ${response.statusMessage}`));
-            });
+                const tempFile: { name: string; fd: number } =
+                    tmp.fileSync({ keep: true, postfix: path.extname(packageUrl) });
+
+                response.pipe(fs.createWriteStream(null, { fd: tempFile.fd }));
+                response.on("end", () => resolve(tempFile.name));
+            };
+
+            if (url.parse(packageUrl).protocol === "https:") {
+                https.get(packageUrl, responseHandler);
+            } else {
+                http.get(packageUrl, responseHandler);
+            }
+        });
     }
 }
 

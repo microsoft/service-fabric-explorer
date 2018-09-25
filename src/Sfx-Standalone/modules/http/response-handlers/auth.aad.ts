@@ -7,7 +7,7 @@ import {
     IHttpPipeline,
     IHttpRequest,
     IHttpResponse
-} from "sfx.http-next";
+} from "sfx.http";
 
 import * as uuidv4 from "uuid/v4";
 import * as url from "url";
