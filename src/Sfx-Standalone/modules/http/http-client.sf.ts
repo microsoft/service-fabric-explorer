@@ -7,6 +7,7 @@ import { IDictionary } from "sfx.common";
 import { IPkiCertificateService, ICertificateInfo, ICertificate } from "sfx.cert";
 
 import { dialog } from "electron";
+import * as url from "url";
 
 import HttpClient from "./http-client";
 
@@ -16,18 +17,24 @@ import createRedirectionResponseHandler from "./response-handlers/redirection";
 import createJsonResponseHandler from "./response-handlers/json";
 import createJsonFileResponseHandler from "./response-handlers/json-file";
 import createAuthCertResponseHandler from "./response-handlers/auth.cert";
-import createAuthAadResponseHandler from "./response-handlers/auth.aad.sf";
+//import createAuthAadResponseHandler from "./response-handlers/auth.aad.sf";
 import createAuthWindowsResponseHandler from "./response-handlers/auth.windows";
 
-const trustedCerts: IDictionary<boolean> = Object.create(null);
+const trustedCerts: IDictionary<boolean | Promise<boolean>> = Object.create(null);
 
 function CheckServerCertAsync(serverName: string, cert: ICertificateInfo): Promise<boolean> {
-    return new Promise((resolve, reject) => {
-        if (trustedCerts[cert.thumbprint] === true) {
+    const checkingPromise = new Promise<boolean>((resolve, reject) => {
+        const record = trustedCerts[cert.thumbprint];
+
+        if (record === true) {
             resolve(true);
-        } else if (trustedCerts[cert.thumbprint] === false) {
+        } else if (record === false) {
             resolve(false);
+        } else if (record instanceof Promise) {
+            resolve(record);
         }
+
+        trustedCerts[cert.thumbprint] = checkingPromise;
 
         dialog.showMessageBox(
             {
@@ -58,18 +65,36 @@ function CheckServerCertAsync(serverName: string, cert: ICertificateInfo): Promi
                 }
             });
     });
+
+    return checkingPromise;
 }
 
-async function SelectClientCertAsync(url: string, certInfos: Array<ICertificateInfo>): Promise<ICertificate | ICertificateInfo> {
-    const prompt = await sfxModuleManager.getComponentAsync("prompt.select-certificate", certInfos);
-    
-    try {
-        return await prompt.openAsync();
-    } finally {
-        if (prompt) {
-            await prompt.disposeAsync();
+const clientCertMap: IDictionary<ICertificate | ICertificateInfo | Promise<ICertificate | ICertificateInfo>> = Object.create(null);
+
+function SelectClientCertAsync(urlString: string, certInfos: Array<ICertificateInfo>): Promise<ICertificate | ICertificateInfo> {
+    const promise = new Promise<ICertificate | ICertificateInfo>((resolve, reject) => {
+        const siteId = url.parse(urlString).host;
+        const record = clientCertMap[siteId];
+
+        if (record) {
+            resolve(record);
+            return;
         }
-    }
+
+        const promptPromise = sfxModuleManager.getComponentAsync("prompt.select-certificate", certInfos);
+
+        const recordPromise = promptPromise
+            .then((prompt) => prompt.openAsync())
+            .then((selectedCert) => resolve(selectedCert), (err) => reject(err));
+
+        record[siteId] = recordPromise;
+
+        recordPromise
+            .then(() => promptPromise)
+            .then((prompt) => prompt.disposeAsync());
+    });
+
+    return promise;
 }
 
 export default class ServiceFabricHttpClient extends HttpClient {
@@ -79,7 +104,7 @@ export default class ServiceFabricHttpClient extends HttpClient {
         this.requestHandlers.push(createNodeRequestHandler(CheckServerCertAsync));
 
         this.responseHandlers.push(
-            createAuthAadResponseHandler(),
+            //createAuthAadResponseHandler(),
             createAuthCertResponseHandler(pkiSvc, SelectClientCertAsync),
             createAuthWindowsResponseHandler(),
             createRedirectionResponseHandler(),

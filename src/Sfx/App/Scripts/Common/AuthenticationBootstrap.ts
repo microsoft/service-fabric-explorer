@@ -7,6 +7,10 @@ module Sfx {
 
     (function () {
 
+        if (StandaloneIntegration.isStandalone()) {
+            return;
+        }
+
         // When AAD login failed with error, it will post back by setting error and error_description parameters as segments. e.g.
         //   https://[cluster]:19080/Explorer/Index.html#error=access_denied&error_description=Foo
         // When this happens, we do not want to bootstrap angular at all because that will trigger another login redirect and user
