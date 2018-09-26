@@ -74,7 +74,8 @@
                     "copy@sfx",
                     "copy@resource-files"
                 ]
-            }
+            },
+            "build@node-modules"
         ],
         "clean-build": [
             "clean",
@@ -97,7 +98,6 @@
             ]
         },
         "pack": [
-            "pack@node-modules",
             "pack@electron"
         ],
         "publish@deb": {
@@ -105,7 +105,9 @@
                 "<packDir>/**/*"
             ],
             "dest": "<publishDir>",
-            "targets": ["linux"],
+            "targets": [
+                "linux"
+            ],
             "processors": [
                 {
                     "name": "electron/deb",
@@ -123,7 +125,9 @@
                 "<packDir>/**/*"
             ],
             "dest": "<publishDir>",
-            "targets": ["linux"],
+            "targets": [
+                "linux"
+            ],
             "processors": [
                 {
                     "name": "electron/rpm",
@@ -140,7 +144,9 @@
             "sources": [
                 "<packDir>/**/*"
             ],
-            "targets": ["darwin"],
+            "targets": [
+                "darwin"
+            ],
             "dest": "<publishDir>",
             "processors": [
                 "electron/zip"
@@ -151,7 +157,9 @@
                 "<packDir>/**/*"
             ],
             "dest": "<publishDir>",
-            "targets": ["win32"],
+            "targets": [
+                "win32"
+            ],
             "processors": [
                 {
                     "name": "msi",
@@ -172,10 +180,10 @@
         ]
     },
     "targets": [
-      "win32@x32",
-      "linux@x32",
-      "linux@x64",
-      "darwin@x64"
+        "win32@x32",
+        "linux@x32",
+        "linux@x64",
+        "darwin@x64"
     ],
     "paths": {
         "buildRootDir": "./build",
