@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import { IModuleInfo, IModule } from "sfx.module-manager";
-import { IHttpClient, HttpRequestHandler, HttpResponseHandler, ServerCertValidator, ClientCertSelector } from "sfx.http";
+import { IHttpClient, HttpRequestHandler, HttpResponseHandler } from "sfx.http";
 import { IPkiCertificateService } from "sfx.cert";
 
 (<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
@@ -21,8 +21,8 @@ import { IPkiCertificateService } from "sfx.cert";
         .register<IHttpClient>({
             name: "http.http-client.service-fabric",
             version: appUtils.getAppVersion(),
-            descriptor: (pkiSvc: IPkiCertificateService, serverCertValidator: ServerCertValidator, clientCertSelector: ClientCertSelector): Promise<IHttpClient> =>
-                Promise.resolve(new (require("./http-client.sf").default)(serverCertValidator, pkiSvc, clientCertSelector)),
+            descriptor: (pkiSvc: IPkiCertificateService): Promise<IHttpClient> =>
+                Promise.resolve(new (require("./http-client.sf").default)(pkiSvc)),
             deps: ["cert.pki-service"]
         });
 

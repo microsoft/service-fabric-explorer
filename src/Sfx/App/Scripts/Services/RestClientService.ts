@@ -22,15 +22,7 @@ module Sfx {
         private requestEnded: { (param: number): void; }[] = [];
         private allRequestsComplete: { (): void; }[] = [];
 
-        private _$http: angular.IHttpService;
-
-        private get $http(): angular.IHttpService {
-            return StandaloneIntegration.httpClient || this._$http;
-        }
-
-        constructor($http: angular.IHttpService, private message: MessageService) {
-            this._$http = $http;
-
+        constructor(private httpClient: HttpClient, private message: MessageService) {
             this.registerRequestEndedCallback(requestCount => {
                 if (requestCount === 0) {
                     $.each(this.allRequestsComplete, (_, cb) => cb());
@@ -618,7 +610,7 @@ module Sfx {
         }
 
         private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
-            let result = this.wrapInCallbacks(() => this.$http.get<any>(url));
+            let result = this.wrapInCallbacks<T>(() => this.httpClient.getAsync(url));
             if (!messageHandler) {
                 messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
             }
@@ -629,7 +621,7 @@ module Sfx {
         }
 
         private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
-            let result = this.wrapInCallbacks(() => this.$http.post(url, data));
+            let result = this.wrapInCallbacks<T>(() => this.httpClient.postAsync(url, data));
             if (!messageHandler) {
                 messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
             }
@@ -640,7 +632,7 @@ module Sfx {
         }
 
         private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
-            let result = this.wrapInCallbacks(() => this.$http.put(url, data));
+            let result = this.wrapInCallbacks<T>(() => this.httpClient.putAsync(url, data));
             if (!messageHandler) {
                 messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
             }
@@ -664,7 +656,7 @@ module Sfx {
             });
         }
 
-        private wrapInCallbacks(operation: () => angular.IHttpPromise<{}>): angular.IHttpPromise<{}> {
+        private wrapInCallbacks<T>(operation: () => angular.IHttpPromise<T>): angular.IHttpPromise<T> {
             this.requestCount++;
             $.each(this.requestStarted, (_, cb) => cb(this.requestCount));
 
@@ -678,4 +670,10 @@ module Sfx {
             return promise;
         }
     }
+
+    (function () {
+        const module = angular.module("restClientService", ["messages", "httpService"]);
+
+        module.factory("restClient", ["httpClient", "message", (httpClient, message) => new RestClient(httpClient, message)]);
+    })();
 }

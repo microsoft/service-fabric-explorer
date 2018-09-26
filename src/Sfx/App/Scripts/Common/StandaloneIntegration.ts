@@ -15,8 +15,8 @@ module Sfx {
 
         private static _clusterUrl: string = null;
 
-        public static get isStandalone(): boolean {
-            return this.clusterUrl !== "";
+        public static isStandalone(): boolean {
+            return sfxModuleManager !== null && sfxModuleManager !== undefined;
         }
 
         public static get clusterUrl(): string {
@@ -31,11 +31,13 @@ module Sfx {
 
             return StandaloneIntegration._clusterUrl;
         }
-    }
 
-    (() => {
-        sfxModuleManager
-            .getComponentAsync("http.http-client.service-fabric", null, null)
-            .then((httpClient) => StandaloneIntegration.httpClient = <any>new HttpClientProxy(httpClient));
-    })();
+        public static getHttpClient(): angular.IPromise<any> {
+            if (this.isStandalone()) {
+                return sfxModuleManager.getComponentAsync("http.http-client.service-fabric");
+            }
+
+            return undefined;
+        }
+    }
 }

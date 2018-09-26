@@ -14,7 +14,7 @@ foreach ($cert in $certs) {
             "subjectName" = $cert.Subject;
             "issuerName" = $cert.Issuer;
             "serialNumber" = $cert.SerialNumber;
-            "hasPrivateKey" = $cert.HasPrivateKey;
+            "hasPrivateKey" = $cert.HasPrivateKey -and ($cert.PrivateKey -ne $null);
             "validStart" = $cert.NotBefore.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ss.fffZ");
             "validExpiry" = $cert.NotAfter.ToUniversalTime().ToString("yyyy-MM-ddThh:mm:ss.fffZ");
             "thumbprint" = $cert.Thumbprint;

@@ -51,6 +51,10 @@ declare module "sfx.http" {
     }
 
     export interface IHttpClient {
+        getRequestTemplateAsync(): Promise<IHttpRequest>;
+
+        setRequestTemplateAsync(template: IHttpRequest): Promise<void>;
+        
         getAsync<T>(url: string): Promise<T>;
 
         postAsync<T>(url: string, data: any): Promise<T>;
@@ -90,6 +94,6 @@ declare module "sfx.module-manager" {
 
     export interface IModuleManager {
         getComponentAsync(componentIdentity: "http.http-client", requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>): Promise<IHttpClient>;
-        getComponentAsync(componentIdentity: "http.http-client.service-fabric", serverCertValidator: ServerCertValidator, clientCertSelector: ClientCertSelector): Promise<IHttpClient>;
+        getComponentAsync(componentIdentity: "http.http-client.service-fabric"): Promise<IHttpClient>;
     }
 }

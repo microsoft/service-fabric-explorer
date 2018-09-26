@@ -19,7 +19,6 @@
 /// <reference path="common/constants.ts" />
 /// <reference path="common/observable.ts" />
 /// <reference path="common/responsemessagehandlers.ts" />
-/// <reference path="common/restclient.ts" />
 /// <reference path="common/standaloneintegration.ts" />
 
 /// <reference path="utils/idgenerator.ts" />
@@ -64,6 +63,8 @@
 /// <reference path="services/responseheadersservice.ts" />
 /// <reference path="services/authenticationservice.ts" />
 /// <reference path="services/refreshservice.ts" />
+/// <reference path="services/HttpService.ts" />
+/// <reference path="services/RestClientService.ts" />
 /// <reference path="services/dataservice.ts" />
 /// <reference path="services/messageservice.ts" />
 /// <reference path="services/storageservice.ts" />

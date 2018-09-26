@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IHttpClient, IHttpResponse, HttpRequestHandler, HttpResponseHandler } from "sfx.http";
+import { IHttpClient, IHttpResponse, HttpRequestHandler, HttpResponseHandler, IHttpRequest } from "sfx.http";
 import HttpPipeline from "./http-pipeline";
 
 import createNodeRequestHandler from "./request-handlers/node";
@@ -25,6 +25,14 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
         super(
             requestHandlers ? requestHandlers : [createNodeRequestHandler()],
             responseHandlers ? responseHandlers : [createRedirectionResponseHandler(), createJsonResponseHandler(), createJsonFileResponseHandler()]);
+    }
+
+    public async getRequestTemplateAsync(): Promise<IHttpRequest> {
+        return this.requestTemplate;
+    }
+
+    public async setRequestTemplateAsync(template: IHttpRequest): Promise<void> {
+        this.requestTemplate = template;
     }
 
     public getAsync<T>(url: string): Promise<T> {

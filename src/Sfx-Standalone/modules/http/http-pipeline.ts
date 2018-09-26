@@ -41,8 +41,16 @@ export default class HttpPipeline implements IHttpPipeline {
 
     public async requestAsync(request: IHttpRequest): Promise<IHttpResponse> {
         if (this.requestTemplate) {
-            const headers = Object.assign(Object.create(null), this.requestTemplate.headers, request.headers);
+            const headers = [];
+            
+            if (this.requestTemplate.headers) {
+                headers.push(...this.requestTemplate.headers);
+            }
 
+            if (request.headers) {
+                headers.push(...headers);
+            }
+            
             request = Object.assign(Object.create(null), this.requestTemplate, request);
             request.headers = headers;
         }
