@@ -28,11 +28,8 @@ Object.isEmpty = (value: Object | object) => {
         throw new Error("value cannot be null/undefined.");
     }
 
+    // @ts-ignore
     for (const key in value) {
-        if (key) {
-            return false;
-        }
-
         return false;
     }
 

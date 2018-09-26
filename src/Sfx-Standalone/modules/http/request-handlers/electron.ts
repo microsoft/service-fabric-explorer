@@ -66,10 +66,12 @@ function handleRequestAsync(
 
         if (serverCertValidator) {
             session.setCertificateVerifyProc((request, callback) => {
-                serverCertValidator(request.hostname, toCertificateInfo(request.certificate))
-                    .then(
-                        (value) => value ? callback(0) : callback(-2),
-                        (reason) => callback(-2));
+                if (serverCertValidator(request.hostname, toCertificateInfo(request.certificate))) {
+                    callback(0);
+                    return;
+                }
+
+                callback(-2);
             });
         }
 
@@ -80,7 +82,7 @@ function handleRequestAsync(
                     httpVersion: "1.1",
                     statusCode: 403,
                     statusMessage: "Client certificate required",
-                    result: undefined,
+                    data: undefined,
                     headers: [],
                     body: undefined
                 });

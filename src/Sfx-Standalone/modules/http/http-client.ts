@@ -41,7 +41,7 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
                 method: "GET",
                 url: url
             })
-            .then((response) => response.result);
+            .then((response) => response.data);
     }
 
     public postAsync<T>(url: string, data: any): Promise<T> {
@@ -51,7 +51,7 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
                 url: url,
                 body: data
             })
-            .then((response) => response.result);
+            .then((response) => response.data);
     }
 
     public putAsync<T>(url: string, data: any): Promise<T> {
@@ -61,7 +61,7 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
                 url: url,
                 body: data
             })
-            .then((response) => response.result);
+            .then((response) => response.data);
     }
 
     public patchAsync<T>(url: string, data: any): Promise<T> {
@@ -71,7 +71,7 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
                 url: url,
                 body: data
             })
-            .then((response) => response.result);
+            .then((response) => response.data);
     }
 
     public deleteAsync<T>(url: string): Promise<T> {
@@ -80,7 +80,7 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
                 method: "DELETE",
                 url: url
             })
-            .then((response) => response.result);
+            .then((response) => response.data);
     }
 
     public headAsync<T>(url: string): Promise<T> {
@@ -89,7 +89,7 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
                 method: "HEAD",
                 url: url
             })
-            .then((response) => response.result);
+            .then((response) => response.data);
     }
 
     public optionsAsync<T>(url: string, data: any): Promise<T> {
@@ -99,7 +99,7 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
                 url: url,
                 body: data
             })
-            .then((response) => response.result);
+            .then((response) => response.data);
     }
 
     public traceAsync<T>(url: string, data: any): Promise<T> {
@@ -112,6 +112,6 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
             .then((response) =>
                 response.statusCode >= 300
                     ? Promise.reject(HttpClient.createHttpError(response))
-                    : Promise.resolve(response.result));
+                    : Promise.resolve(response.data));
     }
 }

@@ -5,10 +5,17 @@
 
 module Sfx {
 
+    function bootstrap() {
+        // Wait for document to finish loading before starting the bootstrap process.
+        angular.element(document).ready(() => {
+            angular.bootstrap(document, [Constants.sfxAppName], { strictDi: true });
+        });
+    }
+
     (function () {
 
         if (StandaloneIntegration.isStandalone()) {
-            return;
+            return bootstrap();
         }
 
         // When AAD login failed with error, it will post back by setting error and error_description parameters as segments. e.g.
@@ -80,12 +87,6 @@ module Sfx {
                 let authBootstrap = angular.module("authenticationBootstrap", ["AdalAngular"]);
                 authBootstrap.constant("authenticationData", new AadMetadata(null));
 
-            }).finally(() => {
-
-                // Wait for document to finish loading before starting the bootstrap process.
-                angular.element(document).ready(() => {
-                    angular.bootstrap(document, [Constants.sfxAppName], { strictDi: true });
-                });
-            });
+            }).finally(() => bootstrap());
     })();
 }

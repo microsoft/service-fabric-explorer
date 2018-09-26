@@ -35,7 +35,7 @@ async function handleResponseAsync(pipeline: IHttpPipeline, request: IHttpReques
         return undefined;
     }
 
-    response.result = JSON.parse(response.body.toString("utf8"));
+    response.data = JSON.parse(response.body.toString("utf8"));
 
     return undefined;
 }

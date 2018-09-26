@@ -39,7 +39,7 @@ async function handleResponseAsync(pipeline: IHttpPipeline, request: IHttpReques
         return undefined;
     }
 
-    const aadMetadata: ISfAadMetadata = aadMetadataResponse.result;
+    const aadMetadata: ISfAadMetadata = aadMetadataResponse.data;
 
     if (aadMetadata.type !== "aad") {
         return undefined;

@@ -27,12 +27,12 @@ declare const angular: angular.IAngularStatic;
         constructor($scope: ISelectCertScope) {
             $scope.certInfos = promptContext.promptOptions.data;
 
-            $scope.getDateString = (dateInSecs) => new Date(dateInSecs * 1000).toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
+            $scope.getDateString = (date) => new Date(date).toLocaleDateString("en-US", { year: "numeric", month: "2-digit", day: "2-digit" });
 
-            $scope.isCertValid = (startDateInSecs, expiryDateInSecs) => {
+            $scope.isCertValid = (startDate, expiryDate) => {
                 const now = Date.now();
 
-                return now >= startDateInSecs * 1000 && now < expiryDateInSecs * 1000;
+                return now >= startDate && now < expiryDate;
             };
 
             $scope.cancel = () => promptContext.finish(null);

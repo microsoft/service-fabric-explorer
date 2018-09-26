@@ -29,23 +29,28 @@ module Sfx {
         }
 
         public getAsync<T>(url: string): angular.IPromise<T> {
-            return this.httpClient ? this.httpClient.then((client) => client.getAsync(url)) : this.$http.get(url);
+            return this.httpClient ? this.requestAsync({ method: "GET", url: url }) : this.$http.get(url);
         }
 
         public postAsync<T>(url: string, data: any): angular.IPromise<T> {
-            return this.httpClient ? this.httpClient.then((client) => client.postAsync(url, data)) : this.$http.post(url, data);
+            return this.httpClient ? this.requestAsync({ method: "POST", url: url, body: data }) : this.$http.post(url, data);
         }
 
         public putAsync<T>(url: string, data: any): angular.IPromise<T> {
-            return this.httpClient ? this.httpClient.then((client) => client.putAsync(url, data)) : this.$http.put(url, data);
+            return this.httpClient ? this.requestAsync({ method: "PUT", url: url, body: data }) : this.$http.put(url, data);
         }
 
         public patchAsync<T>(url: string, data: any): angular.IPromise<T> {
-            return this.httpClient ? this.httpClient.then((client) => client.patchAsync(url, data)) : this.$http.patch(url, data);
+            return this.httpClient ? this.requestAsync({ method: "PATCH", url: url, body: data }) : this.$http.patch(url, data);
         }
 
         public deleteAsync<T>(url: string): angular.IPromise<T> {
-            return this.httpClient ? this.httpClient.then((client) => client.deleteAsync(url)) : this.$http.delete(url);
+            return this.httpClient ? this.requestAsync({ method: "DELETE", url: url }) : this.$http.delete(url);
+        }
+
+        public requestAsync<T>(request: { method: string, url: string, body?: any }): angular.IHttpPromise<T> {
+            return this.httpClient
+                .then((client) => client.requestAsync(request));
         }
     }
 

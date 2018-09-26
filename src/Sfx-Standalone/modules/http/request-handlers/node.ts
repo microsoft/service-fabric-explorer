@@ -18,9 +18,7 @@ import * as url from "url";
 import * as http from "http";
 import * as https from "https";
 import * as crypto from "crypto";
-import { PeerCertificate } from "tls";
-
-type HttpsServerCertValidator = (serverName: string, cert: any) => Error | undefined;
+import * as tls from "tls";
 
 function applyHeaders(requestHeaders: http.OutgoingHttpHeaders, headers: Array<IHttpHeader>): void {
     for (const header of headers) {
@@ -74,7 +72,7 @@ function generateBodyAsync(httpResponse: http.IncomingMessage): Promise<Buffer> 
     });
 }
 
-function handleRequestAsync(validateServerCert: HttpsServerCertValidator, pipeline: IHttpPipeline, request: IHttpRequest): Promise<IHttpResponse> {
+function handleRequestAsync(validateServerCert: ServerCertValidator, pipeline: IHttpPipeline, request: IHttpRequest): Promise<IHttpResponse> {
     return new Promise((resolve, reject) => {
         const options: http.RequestOptions = Object.assign(Object.create(null), url.parse(request.url));
         let httpRequest: http.ClientRequest;
@@ -121,7 +119,6 @@ function handleRequestAsync(validateServerCert: HttpsServerCertValidator, pipeli
 
             if (validateServerCert) {
                 options["rejectUnauthorized"] = false;
-                options["checkServerIdentity"] = validateServerCert;
             }
 
             if (request.clientCert) {
@@ -171,6 +168,26 @@ function handleRequestAsync(validateServerCert: HttpsServerCertValidator, pipeli
             resolve(httpResponse);
         });
 
+        if (options.protocol === "https:" && validateServerCert) {
+            httpRequest.on("socket", (socket: tls.TLSSocket) => {
+                socket.once("secureConnect", () => {
+                    if (!socket.authorized) {
+                        const peerCert = socket.getPeerCertificate();
+
+                        if (Object.isEmpty(peerCert)) {
+                            return;
+                        }
+
+                        const host = url.parse(request.url).host;
+
+                        if (!validateServerCert(host, toCertificateInfo(peerCert))) {
+                            socket.destroy(socket.authorizationError);
+                        }
+                    }
+                });
+            });
+        }
+
         httpRequest.on("error", (error) => reject(error));
 
         if (body) {
@@ -192,7 +209,7 @@ function objectToString(obj: any): string {
     return str.substr(0, str.length - 2);
 }
 
-function toCertificateInfo(cert: PeerCertificate): ICertificateInfo {
+function toCertificateInfo(cert: tls.PeerCertificate): ICertificateInfo {
     const sha1 = crypto.createHash("sha1");
 
     sha1.update(cert.raw);
@@ -209,13 +226,7 @@ function toCertificateInfo(cert: PeerCertificate): ICertificateInfo {
 
 export default function createRequestHandler(serverCertValidator?: ServerCertValidator): HttpRequestHandler {
     if (serverCertValidator) {
-        return handleRequestAsync.bind(undefined, (serverName, cert) => {
-            if (serverCertValidator(serverName, toCertificateInfo(cert))) {
-                return undefined;
-            }
-
-            return new Error("Invalid server cert.");
-        });
+        return handleRequestAsync.bind(undefined, serverCertValidator);
     }
 
     return handleRequestAsync.bind(undefined, undefined);

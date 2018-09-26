@@ -46,9 +46,9 @@
                         <div>Issuer: {{certInfo.issuerName}}</div>
                         <div>Serial: {{certInfo.serialNumber}}</div>
                         <div>Hash: {{certInfo.thumbprint}}</div>
-                        <div ng-style="{ 'color': isCertValid(cert.validStart, cert.validExpiry) ? 'greenyellow' : null}">Valid from {{getDateString(cert.validStart)}} to {{getDateString(cert.validExpiry)}}.</div>
+                        <div ng-style="{ 'color': isCertValid(cert.validStart, cert.validExpiry) ? 'greenyellow' : null}">Valid from {{getDateString(certInfo.validStart)}} to {{getDateString(certInfo.validExpiry)}}.</div>
                     </div>
-                    <button class="btn btn-primary" ng-click="selectCert(cert)">Select</button>
+                    <button class="btn btn-primary" ng-click="selectCert(certInfo)">Select</button>
                 </div>
             </div>
         </div>
