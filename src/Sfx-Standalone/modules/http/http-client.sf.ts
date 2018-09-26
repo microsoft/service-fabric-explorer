@@ -5,6 +5,7 @@
 
 import { IDictionary } from "sfx.common";
 import { IPkiCertificateService, ICertificateInfo, ICertificate } from "sfx.cert";
+import { ILog } from "sfx.logging";
 
 import { dialog } from "electron";
 import * as url from "url";
@@ -17,7 +18,7 @@ import createRedirectionResponseHandler from "./response-handlers/redirection";
 import createJsonResponseHandler from "./response-handlers/json";
 import createJsonFileResponseHandler from "./response-handlers/json-file";
 import createAuthCertResponseHandler from "./response-handlers/auth.cert";
-//import createAuthAadResponseHandler from "./response-handlers/auth.aad.sf";
+import createAuthAadResponseHandler from "./response-handlers/auth.aad.sf";
 import createAuthWindowsResponseHandler from "./response-handlers/auth.windows";
 
 const trustedCerts: IDictionary<boolean | Promise<boolean>> = Object.create(null);
@@ -74,13 +75,13 @@ function SelectClientCertAsync(urlString: string, certInfos: Array<ICertificateI
 }
 
 export default class ServiceFabricHttpClient extends HttpClient {
-    constructor(pkiSvc: IPkiCertificateService) {
-        super([], []);
+    constructor(log: ILog, pkiSvc: IPkiCertificateService) {
+        super(log, [], []);
 
         this.requestHandlers.push(createNodeRequestHandler(CheckServerCert));
 
         this.responseHandlers.push(
-            //createAuthAadResponseHandler(),
+            createAuthAadResponseHandler(),
             createAuthCertResponseHandler(pkiSvc, SelectClientCertAsync),
             createAuthWindowsResponseHandler(),
             createRedirectionResponseHandler(),

@@ -58,6 +58,11 @@ async function handleResponseAsync(pipeline: IHttpPipeline, request: IHttpReques
         return undefined;
     }
 
+    if (response.body.length <= 0) {
+        response.data = undefined;
+        return undefined;
+    }
+
     const encoding = getEncoding(jsonHeader);
 
     if (!encoding) {

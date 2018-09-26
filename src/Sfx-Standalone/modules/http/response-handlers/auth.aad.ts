@@ -64,10 +64,13 @@ export async function handleResponseAsync(aadMetadata: IAadMetadata, pipeline: I
         return undefined;
     }
 
+    const openidConfigEndPoint: string =
+        aadMetadata.authority.endsWith("/") ? aadMetadata.authority + ".well-known/openid-configuration" : aadMetadata.authority + "/.well-known/openid-configuration";
+
     const adhocResponse =
         await pipeline.requestAsync({
             method: "GET",
-            url: new URL(".well-known/openid-configuration", aadMetadata.authority).href
+            url: openidConfigEndPoint
         });
 
     const authzEndpoint = JSON.parse(adhocResponse.body.toString("utf8"))["authorization_endpoint"];

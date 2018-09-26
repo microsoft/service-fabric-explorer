@@ -11,14 +11,19 @@ import {
     HttpResponseHandler
 } from "sfx.http";
 
+import { ILog } from "sfx.logging";
+
 export default class HttpPipeline implements IHttpPipeline {
     public requestTemplate: IHttpRequest;
+
+    protected readonly log: ILog;
 
     private readonly _requestHandlers: Array<HttpRequestHandler>;
 
     private readonly _responseHandlers: Array<HttpResponseHandler>;
 
-    constructor(requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>) {
+    constructor(log: ILog, requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>) {
+        this.log = log;
         this._requestHandlers = [];
         this._responseHandlers = [];
 
@@ -42,7 +47,7 @@ export default class HttpPipeline implements IHttpPipeline {
     public async requestAsync(request: IHttpRequest): Promise<IHttpResponse> {
         if (this.requestTemplate) {
             const headers = [];
-            
+
             if (this.requestTemplate.headers) {
                 headers.push(...this.requestTemplate.headers);
             }
@@ -50,10 +55,12 @@ export default class HttpPipeline implements IHttpPipeline {
             if (request.headers) {
                 headers.push(...headers);
             }
-            
+
             request = Object.assign(Object.create(null), this.requestTemplate, request);
             request.headers = headers;
         }
+
+        this.log.writeInfoAsync(`HTTP ${request.method} => ${request.url}`);
 
         let response: IHttpResponse;
 
@@ -68,6 +75,8 @@ export default class HttpPipeline implements IHttpPipeline {
         if (!response) {
             throw new Error("No request handler handled request.");
         }
+
+        this.log.writeInfoAsync(`HTTP ${response.statusCode} ${response.statusMessage} of HTTP ${request.method} => ${request.url}`);
 
         for (const handleResponseAsync of this._responseHandlers) {
             response = await handleResponseAsync(this, request, response) || response;

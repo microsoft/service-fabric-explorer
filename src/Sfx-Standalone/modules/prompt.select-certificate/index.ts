@@ -24,8 +24,7 @@ import * as appUtils from "../../utilities/appUtils";
                     {
                         pageUrl: appUtils.resolve("select-certificate.html"),
                         height: 640,
-                        data: certInfos,
-                        showMenu: true
+                        data: certInfos
                     });
             },
         deps: ["prompt.prompt-service"]

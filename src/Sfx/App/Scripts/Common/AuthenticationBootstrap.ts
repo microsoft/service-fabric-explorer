@@ -15,6 +15,8 @@ module Sfx {
     (function () {
 
         if (StandaloneIntegration.isStandalone()) {
+            angular.module("authenticationBootstrap", ["AdalAngular"])
+                .constant("authenticationData", new AadMetadata(null));
             return bootstrap();
         }
 
@@ -36,8 +38,12 @@ module Sfx {
         let $http: angular.IHttpService = initInjector.get("$http");
 
         $http.get(StandaloneIntegration.clusterUrl + AuthenticationBootstrapConstants.GetAadMetadataUriPart)
-            .success((data: IRawAadMetadata) => {
+            .then((response) => {
+                if (response.status >= 300) {
+                    return initInjector.get("$q").reject();
+                }
 
+                const data: IRawAadMetadata = <IRawAadMetadata>response.data;
                 let authBootstrap = angular.module("authenticationBootstrap", ["AdalAngular"]);
 
                 authBootstrap.constant("authenticationData", new AadMetadata(data));
@@ -81,12 +87,13 @@ module Sfx {
                             );
                         }
                     }]);
-
-            }).error(() => {
+            })
+            .catch(() => {
 
                 let authBootstrap = angular.module("authenticationBootstrap", ["AdalAngular"]);
                 authBootstrap.constant("authenticationData", new AadMetadata(null));
 
-            }).finally(() => bootstrap());
+            })
+            .finally(() => bootstrap());
     })();
 }
