@@ -48,18 +48,6 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Debug gulp pack",
-            "autoAttachChildProcesses": true,
-            "trace": true,
-            "outputCapture": "std",
-            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
-            "args": [
-                "pack"
-            ]
-        },
-        {
-            "type": "node",
-            "request": "launch",
             "name": "Debug gulp publish",
             "autoAttachChildProcesses": true,
             "trace": true,
