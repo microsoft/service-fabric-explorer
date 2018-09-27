@@ -195,7 +195,6 @@
     "paths": {
         "buildRootDir": "./build",
         "buildDir": "./build/app",
-        "packDir": "./build/pack",
         "intermediateDir": "./build/temp",
         "sfxDir": "./build/app/sfx",
         "publishDir": "./publish"
