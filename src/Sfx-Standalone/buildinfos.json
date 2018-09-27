@@ -159,6 +159,7 @@
             "sources": [
                 "<packDir>/**/*"
             ],
+            "base": "<packDir>",
             "dest": "<publishDir>",
             "targets": [
                 "win32"
