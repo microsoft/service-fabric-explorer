@@ -83,35 +83,20 @@
             "clean",
             "build"
         ],
-        "pack@electron": {
+        "publish@deb": {
             "sources": [
                 "<buildDir>/**/*"
             ],
             "base": "<buildDir>",
-            "dest": "<packDir>",
-            "processors": [
-                {
-                    "name": "electron/pack",
-                    "icon": "icons/icon",
-                    "macOS": {
-                        "appBundleId": "com.microsoft.servicefabric.explorer",
-                        "appCategoryType": "Utilities"
-                    }
-                }
-            ]
-        },
-        "pack": [
-            "pack@electron"
-        ],
-        "publish@deb": {
-            "sources": [
-                "<packDir>"
-            ],
             "dest": "<publishDir>",
             "targets": [
                 "linux"
             ],
             "processors": [
+                {
+                    "name": "electron/pack",
+                    "icon": "icons/icon"
+                },
                 {
                     "name": "electron/deb",
                     "section": "utils",
@@ -125,13 +110,18 @@
         },
         "publish@rpm": {
             "sources": [
-                "<packDir>/**/*"
+                "<buildDir>/**/*"
             ],
+            "base": "<buildDir>",
             "dest": "<publishDir>",
             "targets": [
                 "linux"
             ],
             "processors": [
+                {
+                    "name": "electron/pack",
+                    "icon": "icons/icon"
+                },
                 {
                     "name": "electron/rpm",
                     "section": "utils",
@@ -145,26 +135,40 @@
         },
         "publish@macOS": {
             "sources": [
-                "<packDir>/**/*"
+                "<buildDir>/**/*"
             ],
+            "base": "<buildDir>",
+            "dest": "<publishDir>",
             "targets": [
                 "darwin"
             ],
-            "dest": "<publishDir>",
             "processors": [
+                {
+                    "name": "electron/pack",
+                    "icon": "icons/icon",
+                    "macOS": {
+                        "appBundleId": "com.microsoft.servicefabric.explorer",
+                        "appCategoryType": "Utilities"
+                    }
+                },
                 "electron/zip"
             ]
         },
         "publish@msi": {
             "sources": [
-                "<packDir>/**/*"
+                "<buildDir>/**/*"
             ],
-            "base": "<packDir>",
+            "base": "<buildDir>",
             "dest": "<publishDir>",
             "targets": [
                 "win32"
             ],
             "processors": [
+                {
+                    "name": "electron/pack",
+                    "icon": "icons/icon",
+                    "output": "files"
+                },
                 {
                     "name": "msi",
                     "autoGenerateComponentGuids": true,
@@ -176,7 +180,6 @@
         },
         "publish": [
             "clean-build",
-            "pack",
             "publish@msi",
             "publish@deb",
             "publish@rpm",

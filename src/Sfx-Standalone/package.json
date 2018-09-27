@@ -31,7 +31,6 @@
     "@types/tar": "^4.0.0",
     "cookie.gulp": "file:.build",
     "electron": "^3.0.0",
-    "electron-installer-debian": "^0.8.1",
     "gulp": "^4.0.0"
   }
 }
