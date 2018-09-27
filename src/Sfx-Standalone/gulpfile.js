@@ -30,4 +30,4 @@ gulp.task("build@node-modules",
         resolve();
     }));
 
-require("cookie.gulp")();
+require("cookie.gulp")(gulp.registry());

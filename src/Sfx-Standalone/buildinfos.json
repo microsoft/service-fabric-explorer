@@ -46,6 +46,8 @@
                 "!<buildRootDir>/**/*",
                 "!<publishDir>/**/*",
                 "!package-lock.json",
+                "!tsconfig.json",
+                "!tslint.json",
                 "!buildinfos.json"
             ],
             "ignore-target": true,
@@ -85,6 +87,7 @@
             "sources": [
                 "<buildDir>/**/*"
             ],
+            "base": "<buildDir>",
             "dest": "<packDir>",
             "processors": [
                 {
