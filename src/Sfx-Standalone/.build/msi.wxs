@@ -2,7 +2,7 @@
 <Wix 
   xmlns="http://schemas.microsoft.com/wix/2006/wi">
   <Product Id="*" Name="Service Fabric Explorer" Language="1033" Version="$MSIVERSION$" Manufacturer="Microsoft Corporation" UpgradeCode="62a331a2-9975-4b3d-af44-b2cea0164629">
-    <Package InstallerVersion="200" Compressed="yes" InstallScope="perUser" />
+    <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <Icon Id="icon.ico" SourceFile=".\resources\app\icons\icon.ico"/>
     <Property Id="ARPPRODUCTICON" Value="icon.ico" />
     <Media Id="1" Cabinet="myapp.cab" EmbedCab="yes" />
@@ -14,7 +14,7 @@
   </Product>
   <Fragment>
     <Directory Id="TARGETDIR" Name="SourceDir">
-      <Directory Id="LocalAppDataFolder">
+      <Directory Id="ProgramFilesFolder">
         <Directory Id="CompanyFolder" Name="Microsoft">
           <Directory Id="INSTALLFOLDER" Name="ServiceFabricExplorer"></Directory>
         </Directory>
