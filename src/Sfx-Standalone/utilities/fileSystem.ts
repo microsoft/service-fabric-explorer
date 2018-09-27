@@ -41,7 +41,7 @@ export function rmdir(dirname: string): void {
 
     for (const subName of fs.readdirSync(dirname)) {
         const subFullName = path.join(dirname, subName);
-        const stat = fs.statSync(subFullName);
+        const stat = fs.lstatSync(subFullName);
 
         if (stat.isDirectory()) {
             rmdir(subFullName);
