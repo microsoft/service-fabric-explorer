@@ -24,35 +24,32 @@ function applyHeaders(requestHeaders: electron.ClientRequest, headers: Array<IHt
 }
 
 function generateHeaders(headers: any): Array<IHttpHeader> {
-    let header: IHttpHeader;
     const generatedHeaders: Array<IHttpHeader> = [];
+    const Regex_HeaderName = /\b([a-z])/g;
 
-    for (let valueIndex = 0; valueIndex < headers.length; valueIndex++) {
-        if (valueIndex % 2 === 0) {
-            header = Object.create(null);
-            header.name = headers[valueIndex];
-        } else {
-            header.value = headers[valueIndex];
-            generatedHeaders.push(header);
+    for (const headerName in headers) {
+        const httpHeaderName = headerName.replace(Regex_HeaderName, (match, char: string) => char.toUpperCase());
+
+        for (const headerValue of headers[headerName]) {
+            const httpHeader: IHttpHeader = Object.create(null);
+
+            httpHeader.name = httpHeaderName;
+            httpHeader.value = headerValue;
+
+            generatedHeaders.push(httpHeader);
         }
     }
 
     return generatedHeaders;
 }
 
-function generateBody(httpResponse: electron.IncomingMessage & NodeJS.ReadableStream): Buffer {
-    if (!httpResponse.readable) {
-        return new Buffer(0);
-    }
+function generateBodyAsync(httpResponse: electron.IncomingMessage & NodeJS.ReadableStream): Promise<Buffer> {
+    return new Promise<Buffer>((resolve, reject) => {
+        const bodyData: Array<number> = [];
 
-    const bodyData: Array<number> = [];
-    let buffer: Buffer;
-
-    while (buffer = <Buffer>httpResponse.read()) {
-        bodyData.push(...buffer);
-    }
-
-    return new Buffer(bodyData);
+        httpResponse.on("data", (chunk) => bodyData.push(...chunk));
+        httpResponse.on("end", () => resolve(Buffer.from(bodyData)));
+    });
 }
 
 function handleRequestAsync(
@@ -60,91 +57,97 @@ function handleRequestAsync(
     pipeline: IHttpPipeline,
     request: IHttpRequest): Promise<IHttpResponse> {
     return new Promise((resolve, reject) => {
-        const session = electron.Session.fromPartition(uuidv4(), {
-            cache: false
-        });
+        try {
+            const session = electron.session.fromPartition(uuidv4(), {
+                cache: false
+            });
 
-        if (serverCertValidator) {
-            session.setCertificateVerifyProc((request, callback) => {
-                if (serverCertValidator(request.hostname, toCertificateInfo(request.certificate))) {
-                    callback(0);
+            if (serverCertValidator) {
+                session.setCertificateVerifyProc((request, callback) => {
+                    if (request.errorCode === 0) {
+                        callback(request.errorCode);
+
+                    } else if (serverCertValidator(request.hostname, toCertificateInfo(request.certificate))) {
+                        callback(0);
+                        
+                    } else {
+                        callback(-2);
+                    }
+                });
+            }
+
+            session.allowNTLMCredentialsForDomains("*");
+            session.webRequest.onErrorOccurred((details) => {
+                if (details.error === "net::ERR_SSL_CLIENT_AUTH_CERT_NEEDED") {
+                    resolve({
+                        httpVersion: "1.1",
+                        statusCode: 403,
+                        statusMessage: "Client certificate required",
+                        data: undefined,
+                        headers: [],
+                        body: undefined
+                    });
                     return;
                 }
 
-                callback(-2);
+                reject(new Error(details.error));
             });
-        }
 
-        session.allowNTLMCredentialsForDomains("*");
-        session.webRequest.onErrorOccurred((details) => {
-            if (details.error === "net::ERR_SSL_CLIENT_AUTH_CERT_NEEDED") {
-                resolve({
-                    httpVersion: "1.1",
-                    statusCode: 403,
-                    statusMessage: "Client certificate required",
-                    data: undefined,
-                    headers: [],
-                    body: undefined
-                });
-                return;
-            }
+            const options: any = Object.assign(Object.create(null));
+            let body: string | Buffer;
 
-            reject(new Error(details.error));
-        });
+            if (Buffer.isBuffer(request.body) || typeof request.body === "string") {
+                body = request.body;
 
-        const options: any = Object.assign(Object.create(null), new URL(request.url));
-        let httpRequest: electron.ClientRequest;
-        let body: string | Buffer;
-
-        if (Buffer.isBuffer(request.body) || typeof request.body === "string") {
-            body = request.body;
-
-        } else {
-            body = JSON.stringify(request.body);
-
-            const headerIndex = request.headers.findIndex((value) => value.name === "Content-Type");
-            const contentTypeHeader: IHttpHeader = headerIndex < 0 ? Object.create(null) : request.headers[headerIndex];
-
-            contentTypeHeader.name = "Content-Type";
-            contentTypeHeader.value = "application/json; charset=utf-8";
-
-            if (headerIndex >= 0) {
-                request.headers[headerIndex] = contentTypeHeader;
             } else {
-                request.headers.push(contentTypeHeader);
+                body = JSON.stringify(request.body);
+
+                const headerIndex = request.headers.findIndex((value) => value.name === "Content-Type");
+                const contentTypeHeader: IHttpHeader = headerIndex < 0 ? Object.create(null) : request.headers[headerIndex];
+
+                contentTypeHeader.name = "Content-Type";
+                contentTypeHeader.value = "application/json; charset=utf-8";
+
+                if (headerIndex >= 0) {
+                    request.headers[headerIndex] = contentTypeHeader;
+                } else {
+                    request.headers.push(contentTypeHeader);
+                }
             }
+
+            options.url = request.url;
+            options.method = request.method;
+            options.session = session;
+            options.redirect = "manual";
+
+            const httpRequest = electron.net.request(options);
+
+            if (request.headers) {
+                applyHeaders(httpRequest, request.headers);
+            }
+
+            httpRequest.on("response", async (response: electron.IncomingMessage & NodeJS.ReadableStream) => {
+                const httpResponse: IHttpResponse = Object.create(null);
+
+                httpResponse.httpVersion = response.httpVersion;
+                httpResponse.statusCode = response.statusCode;
+                httpResponse.statusMessage = response.statusMessage;
+                httpResponse.headers = generateHeaders(response.headers);
+                httpResponse.body = await generateBodyAsync(response);
+
+                resolve(httpResponse);
+            });
+
+            httpRequest.on("error", (error) => reject(error));
+
+            if (body) {
+                httpRequest.write(body);
+            }
+
+            httpRequest.end();
+        } catch (err) {
+            reject(err);
         }
-
-        options.method = request.method;
-        options.session = session;
-        options.redirect = "manual";
-
-        if (request.headers) {
-            options.headers = Object.create(null);
-            applyHeaders(options.headers, request.headers);
-        }
-
-        httpRequest = electron.net.request(options);
-
-        httpRequest.on("response", (response: electron.IncomingMessage & NodeJS.ReadableStream) => {
-            const httpResponse: IHttpResponse = Object.create(null);
-
-            httpResponse.httpVersion = response.httpVersion;
-            httpResponse.statusCode = response.statusCode;
-            httpResponse.statusMessage = response.statusMessage;
-            httpResponse.headers = generateHeaders(response.headers);
-            httpResponse.body = generateBody(response);
-
-            resolve(httpResponse);
-        });
-
-        httpRequest.on("error", (error) => reject(error));
-
-        if (body) {
-            httpRequest.write(body);
-        }
-
-        httpRequest.end();
     });
 }
 

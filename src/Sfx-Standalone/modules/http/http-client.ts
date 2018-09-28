@@ -7,7 +7,7 @@ import { IHttpClient, IHttpResponse, HttpRequestHandler, HttpResponseHandler, IH
 import HttpPipeline from "./http-pipeline";
 import { ILog } from "sfx.logging";
 
-import createNodeRequestHandler from "./request-handlers/node";
+import createRouterRequestHandler from "./request-handlers/router";
 
 import createRedirectionResponseHandler from "./response-handlers/redirection";
 import createJsonResponseHandler from "./response-handlers/json";
@@ -25,7 +25,7 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
     constructor(log: ILog, requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>) {
         super(
             log,
-            requestHandlers ? requestHandlers : [createNodeRequestHandler()],
+            requestHandlers ? requestHandlers : [createRouterRequestHandler()],
             responseHandlers ? responseHandlers : [createRedirectionResponseHandler(), createJsonResponseHandler(), createJsonFileResponseHandler()]);
     }
 
