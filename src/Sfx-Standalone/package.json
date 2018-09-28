@@ -30,7 +30,7 @@
     "@types/semver": "^5.4.0",
     "@types/tar": "^4.0.0",
     "cookie.gulp": "file:.build",
-    "electron": "^3.0.0",
+    "electron": "^3.0.2",
     "gulp": "^4.0.0"
   }
 }
