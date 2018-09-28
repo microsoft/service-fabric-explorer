@@ -82,7 +82,7 @@ module Sfx {
                 [
                     new ListColumnSetting("Kind", "Kind"),
                     new ListColumnSetting("TimeStampUtc", "Time Stamp (Utc)"),
-                    new ListColumnSetting("Reason", "Description")
+                    new ListColumnSetting("Reason", "Description", null, false, (item) => HtmlUtils.getSpanWithCustomClass("preserve-whitespace-wrap", item.Reason))
                 ]);
         }
 

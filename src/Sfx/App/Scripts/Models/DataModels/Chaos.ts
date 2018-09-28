@@ -40,8 +40,9 @@ module Sfx {
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawChaos> {
-            this.data.restClient.getChaosEvents().then(events => {
-                this.chaosHistoryEvents = _.orderBy(_.map(events, e => {
+            this.data.restClient.getChaosEvents(new Date(Date.now() - 1000 * 3600 * 24), new Date(Date.now())).then(events => {
+                let filteredEvents = _.filter<IRawChaosEvent>(events, ev => ev.ChaosEvent.Kind !== "Waiting");
+                this.chaosHistoryEvents = _.orderBy(_.map(filteredEvents, e => {
                     return new ChaosEvent(e.ChaosEvent.Kind, e.ChaosEvent.TimeStampUtc, e.ChaosEvent.Reason, e.ChaosEvent.Faults);
                 }), ["TimeStampUtc"], ["desc"]);
             });
@@ -65,9 +66,9 @@ module Sfx {
             this.TimeStampUtc = timestampUtc;
             this.Faults = faults;
             if (faults && faults.length > 0) {
-                this.Reason = faults[0];
+                this.Reason = faults.join("\r\n");
             } else {
-                this.Reason = reason;
+                this.Reason = reason ? reason : "";
             }
         }
     }

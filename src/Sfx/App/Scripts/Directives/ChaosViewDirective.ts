@@ -53,12 +53,12 @@ module Sfx {
 
                 let nodeTypeList = _.map(_.filter(<ChaosTargetFilter[]>this.$scope.chaos.runScope.nodeTypes, t => t.isIncluded), t => t.name);
                 this.$scope.chaos.start(timeToRun, waitIter, stabilTimeout, maxConFaults, nodeTypeList);
-                $button.text("Starting chaos...");
+                $button.text("Starting Chaos...");
             }
 
             if (this.$scope.chaos.status === "Running") {
                 this.$scope.chaos.stop();
-                $button.text("Stopping chaos...");
+                $button.text("Stopping Chaos...");
             }
 
             this.$timeout(() => { this.$scope.chaos.refresh(); }, 5000);
@@ -67,9 +67,9 @@ module Sfx {
         public updateButton(chaos: any, button: JQuery): void {
             button.prop("disabled", false);
             if (chaos.status === "Stopped") {
-                button.text("Start chaos").removeClass("stop-chaos-btn").addClass("start-chaos-btn");
+                button.text("Start Chaos").removeClass("stop-chaos-btn").addClass("start-chaos-btn");
             } else if (chaos.status === "Running") {
-                button.text("Stop chaos").removeClass("start-chaos-btn").addClass("stop-chaos-btn");
+                button.text("Stop Chaos").removeClass("start-chaos-btn").addClass("stop-chaos-btn");
             }
         }
 

@@ -308,8 +308,8 @@ module Sfx {
             return this.get(this.getApiUrl("Tools/Chaos", RestClient.apiVersion62), "Get chaos");
         }
 
-        public getChaosEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawChaosEvent[]> {
-            return this.getAllChaosEvents(`Tools/Chaos/Events?StartTimeUtc=${TimeUtils.toFileTimeUtcTicks(Date.now() - 1000 * 60 * 60)}`, "Get chaos events", messageHandler);
+        public getChaosEvents(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawChaosEvent[]> {
+            return this.getAllChaosEvents(`Tools/Chaos/Events?StartTimeUtc=${TimeUtils.toFileTimeUtcTicks(startTime.valueOf())}&EndTimeUtc=${TimeUtils.toFileTimeUtcTicks(endTime.valueOf())}`, "Get chaos events", messageHandler);
         }
 
         public getAllChaosEvents(path: string, apiDesc: string, messageHandler?: IResponseMessageHandler, continuationToken?: string): angular.IPromise<IRawChaosEvent[]> {
