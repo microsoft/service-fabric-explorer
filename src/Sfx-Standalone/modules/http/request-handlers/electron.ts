@@ -12,10 +12,11 @@ import {
     HttpRequestHandler
 } from "sfx.http";
 
+import { ICertificateInfo } from "sfx.cert";
+
 import * as crypto from "crypto";
 import * as uuidv4 from "uuid/v4";
 import * as electron from "electron";
-import { ICertificateInfo } from "sfx.cert";
 
 function applyHeaders(requestHeaders: electron.ClientRequest, headers: Array<IHttpHeader>): void {
     for (const header of headers) {
@@ -69,7 +70,7 @@ function handleRequestAsync(
 
                     } else if (serverCertValidator(request.hostname, toCertificateInfo(request.certificate))) {
                         callback(0);
-                        
+
                     } else {
                         callback(-2);
                     }
