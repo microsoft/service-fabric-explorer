@@ -55,7 +55,7 @@ async function acquireTokenAsync(pipeline: IHttpPipeline, request: IHttpRequest,
         response);
 }
 
-const siteMap: IDictionary<Promise<IHttpResponse>> = Object.create(null);
+const siteMap: IDictionary<Promise<IHttpResponse> | "Retry" | "NotSupported"> = Object.create(null);
 
 function handleResponseAsync(pipeline: IHttpPipeline, request: IHttpRequest, response: IHttpResponse): Promise<IHttpResponse> {
     if (response.statusCode !== 401 && response.statusCode !== 403) {
@@ -69,14 +69,18 @@ function handleResponseAsync(pipeline: IHttpPipeline, request: IHttpRequest, res
 
         if (record instanceof Promise) {
             return record.then(() => pipeline.requestAsync(request));
-        } else if (record === null) {
+
+        } else if (record === "Retry") {
             return pipeline.requestAsync(request);
+            
+        } else if (record === "NotSupported") {
+            return undefined;
         }
     }
 
     const tokenPromise = siteMap[siteId] = acquireTokenAsync(pipeline, request, response);
 
-    tokenPromise.then(() => siteMap[siteId] = null);
+    tokenPromise.then((response) => siteMap[siteId] = response ? "Retry" : "NotSupported");
 
     return tokenPromise;
 }

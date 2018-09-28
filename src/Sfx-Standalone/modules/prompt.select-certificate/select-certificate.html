@@ -11,23 +11,22 @@
     <link href="../../sfx/css/dark.min.css" rel="stylesheet" />
 
     <style>
-        .card {
-            border: 1px solid #3A3A3A;
-            border-radius: .25rem;
-            margin-top: 20px;
+        .list-group-item {
+            border: none;
+            background-color: #373737;
+            color: #fff;
         }
 
-        .card-body {
-            padding: 20px;
+        a.list-group-item {
+            color: #fff;
         }
 
-        .card-text {
-            margin-bottom: 10px;
+        input.form-control {
+            height: 23.7pt;
         }
 
-        .card-title {
-            word-break: break-all;
-            white-space: normal;
+        .hide {
+            display: none !important;
         }
     </style>
 </head>
@@ -35,26 +34,51 @@
 <body style="overflow:hidden" ng-app="select-certificate" ng-controller="selectCertController">
     <div class="modal modal-content" style="display: block">
         <div class="modal-header">
-            <h4 id="title" class="modal-title">Which client certificate to connect with?</h4>
-            <p>Please select a client certificate below to connect to the server.</p>
+            <h5 id="Title" class="modal-title">Which client certificate to connect with?</h5>
+            <p>Please select a client certificate below to connect to the cluster.</p>
         </div>
-        <div class="modal-body" style="height: 474px">
-            <div class="card" ng-repeat="certInfo in certInfos">
-                <div class="card-body">
-                    <h4 class="card-title">{{certInfo.subjectName}}</h4>
-                    <div class="card-text">
-                        <div>Issuer: {{certInfo.issuerName}}</div>
-                        <div>Serial: {{certInfo.serialNumber}}</div>
-                        <div>Hash: {{certInfo.thumbprint}}</div>
-                        <div ng-style="{ 'color': isCertValid(cert.validStart, cert.validExpiry) ? 'greenyellow' : null}">Valid from {{getDateString(certInfo.validStart)}} to {{getDateString(certInfo.validExpiry)}}.</div>
-                    </div>
-                    <button class="btn btn-primary" ng-click="selectCert(certInfo)">Select</button>
-                </div>
+        <div class="modal-body" style="height: 474px; overflow-y: auto;">
+            <div class="list-group">
+                <a ng-repeat="certInfo in certInfos" href="#" class="list-group-item list-group-item-action flex-column align-items-start"
+                    ng-click="updateSelectedCert(certInfo)" ng-class="{ active: selectedCertInfo && selectedCertInfo.thumbprint === certInfo.thumbprint }">
+                    <h6>{{certInfo.subjectName}}</h6>
+                    <p class="code-font">
+                        <span class="width-75 code-label">Issuer:</span> <span>{{certInfo.issuerName}}</span><br />
+                        <span class="width-75 code-label">Serial:</span> <span>{{certInfo.serialNumber}}</span><br />
+                        <span class="width-75 code-label" ng-style="{ 'color': isCertValid(cert.validStart, cert.validExpiry) ? 'greenyellow' : null}">Starts:</span>
+                        <span>{{getDateString(certInfo.validStart)}}</span><br />
+                        <span class="width-75 code-label" ng-style="{ 'color': isCertValid(cert.validStart, cert.validExpiry) ? 'greenyellow' : null}">Until:</span>
+                        <span>{{getDateString(certInfo.validExpiry)}}</span><br />
+                        <span class="width-75 code-label">Hash:</span> <span>{{certInfo.thumbprint}}</span><br />
+                    </p>
+                </a>
+                <a href="#" class="list-group-item list-group-item-action flex-column align-items-start" ng-click="updateSelectedCert(null)"
+                    ng-class="{ active: selectedCertInfo === null }">
+                    <h6>Client Certificate File</h6>
+                    <p class="input-group">
+                        <input type="text" class="form-control" required ng-model="certFilePath" readonly placeholder="Path of the client certificate"
+                            aria-label="Path of the client certificate" aria-describedby="OpenCertFile" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-info" type="button" id="OpenCertFile" ng-click="browseCertFiles()">Browse...</button>
+                        </span>
+                    </p>
+                    <p class="input-group" ng-class="{ 'hide': !keyFileRequired() }">
+                        <input type="text" class="form-control" required ng-model="keyFilePath" readonly placeholder="Path of the key file for the client certificate"
+                            aria-label="Path of the key file for the client certificate" aria-describedby="OpenKeyFile" />
+                        <span class="input-group-btn">
+                            <button class="btn btn-info" type="button" id="-OpenKeyFile" ng-click="browseKeyFiles()">Browse...</button>
+                        </span>
+                    </p>
+                    <p>
+                        <input type="password" class="form-control" ng-model="password" placeholder="Password (optional if there is no password for the pfx cert or key file for the pem cert)"
+                            aria-label="Password" aria-describedby="inputPassword" />
+                    </p>
+                </a>
             </div>
         </div>
         <div class="modal-footer">
-            <button class="btn btn-primary" ng-show="supportImportCerts()" ng-click="importCerts()">Import ...</button>
-            <button class="btn btn-default" ng-click="cancel()">Exit</button>
+            <button type="button" class="btn btn-default" ng-click="cancel()">Close</button>
+            <button type="button" class="btn btn-primary" ng-click="selectCert()" ng-disabled="!certSelected()">Done</button>
         </div>
     </div>
 

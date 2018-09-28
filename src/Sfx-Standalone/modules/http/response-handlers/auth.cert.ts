@@ -40,8 +40,10 @@ async function handleResponseAsync(pkiSvc: IPkiCertificateService, selectClientC
 
     if (isCertificateInfo(selectedCertInfo)) {
         selectedCert = await pkiSvc.getCertificateAsync(selectedCertInfo);
+
     } else if (isCertificate(selectedCertInfo)) {
         selectedCert = selectedCertInfo;
+        
     } else {
         return undefined;
     }
@@ -50,6 +52,7 @@ async function handleResponseAsync(pkiSvc: IPkiCertificateService, selectClientC
         pipeline.requestTemplate = Object.create(null);
     }
 
+    request.clientCert = selectedCert;
     pipeline.requestTemplate.clientCert = selectedCert;
 
     return pipeline.requestAsync(request);

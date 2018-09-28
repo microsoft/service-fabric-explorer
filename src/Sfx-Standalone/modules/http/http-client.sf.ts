@@ -7,7 +7,7 @@ import { IDictionary } from "sfx.common";
 import { IPkiCertificateService, ICertificateInfo, ICertificate } from "sfx.cert";
 import { ILog } from "sfx.logging";
 
-import { dialog } from "electron";
+import { dialog, BrowserWindow } from "electron";
 import * as url from "url";
 
 import HttpClient from "./http-client";
@@ -21,7 +21,7 @@ import createAuthCertResponseHandler from "./response-handlers/auth.cert";
 import createAuthAadResponseHandler from "./response-handlers/auth.aad.sf";
 import createAuthWindowsResponseHandler from "./response-handlers/auth.windows";
 
-const trustedCerts: IDictionary<boolean | Promise<boolean>> = Object.create(null);
+const trustedCerts: IDictionary<boolean> = Object.create(null);
 
 function CheckServerCert(serverName: string, cert: ICertificateInfo): boolean {
     const record = trustedCerts[cert.thumbprint];
@@ -30,28 +30,30 @@ function CheckServerCert(serverName: string, cert: ICertificateInfo): boolean {
         return record;
     }
 
-    const response = dialog.showMessageBox({
-        type: "warning",
-        buttons: ["Yes", "Exit"],
-        title: "Untrusted certificate",
-        message: "Do you want to trust this certificate?",
-        detail:
-            `Site: ${serverName} \r\n` +
-            `Subject: ${cert.subjectName}\r\n` +
-            `Issuer: ${cert.issuerName}\r\n` +
-            `Serial: ${cert.serialNumber}\r\n` +
-            `Starts: ${cert.validStart.toLocaleString()}\r\n` +
-            `Util: ${cert.validExpiry.toLocaleString()}\r\n` +
-            `Thumbprint: ${cert.thumbprint}`,
-        cancelId: 1,
-        defaultId: 0,
-        noLink: true,
-    });
+    const response = dialog.showMessageBox(
+        BrowserWindow.getFocusedWindow(),
+        {
+            type: "warning",
+            buttons: ["Yes", "No"],
+            title: "Untrusted certificate",
+            message: "Do you want to trust this certificate?",
+            detail:
+                `Site: ${serverName} \r\n` +
+                `Subject: ${cert.subjectName}\r\n` +
+                `Issuer: ${cert.issuerName}\r\n` +
+                `Serial: ${cert.serialNumber}\r\n` +
+                `Starts: ${cert.validStart.toLocaleString()}\r\n` +
+                `Util: ${cert.validExpiry.toLocaleString()}\r\n` +
+                `Thumbprint: ${cert.thumbprint}`,
+            cancelId: 1,
+            defaultId: 0,
+            noLink: true,
+        });
 
     return trustedCerts[cert.thumbprint] = response === 0;
 }
 
-const clientCertMap: IDictionary<ICertificate | ICertificateInfo | Promise<ICertificate | ICertificateInfo>> = Object.create(null);
+const clientCertMap: IDictionary<Promise<ICertificate | ICertificateInfo>> = Object.create(null);
 
 function SelectClientCertAsync(urlString: string, certInfos: Array<ICertificateInfo>): Promise<ICertificate | ICertificateInfo> {
     const siteId = url.parse(urlString).host;
@@ -59,19 +61,21 @@ function SelectClientCertAsync(urlString: string, certInfos: Array<ICertificateI
 
     if (record instanceof Promise) {
         return record;
-    } else if (record) {
-        return Promise.resolve(record);
     }
 
-    return clientCertMap[siteId] = new Promise<ICertificate | ICertificateInfo>((resolve, reject) => {
+    clientCertMap[siteId] = new Promise<ICertificate | ICertificateInfo>((resolve, reject) => {
         const promptPromise = sfxModuleManager.getComponentAsync("prompt.select-certificate", certInfos);
 
         promptPromise
             .then((prompt) => prompt.openAsync())
-            .then((selectedCert) => resolve(clientCertMap[siteId] = selectedCert), (err) => reject(err))
+            .then((selectedCert) => resolve(selectedCert || undefined), (err) => reject(err))
             .then(() => promptPromise)
             .then((prompt) => prompt.disposeAsync());
     });
+
+    clientCertMap[siteId].then(() => delete clientCertMap[siteId]);
+
+    return clientCertMap[siteId];
 }
 
 export default class ServiceFabricHttpClient extends HttpClient {

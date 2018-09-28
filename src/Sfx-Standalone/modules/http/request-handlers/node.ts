@@ -150,7 +150,22 @@ function handleRequestAsync(validateServerCert: ServerCertValidator, pipeline: I
                 }
             }
 
-            httpRequest = https.request(options);
+            try {
+                httpRequest = https.request(options);
+            } catch (err) {
+                if (err && err.message === "mac verify failure") {
+                    delete options["key"];
+                    delete options["cert"];
+                    delete options["passphrase"];
+                    delete options["pfx"];
+
+                    httpRequest = https.request(options);
+
+                } else {
+                    reject(err);
+                    return undefined;
+                }
+            }
 
         } else {
             return undefined;

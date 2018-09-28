@@ -90,18 +90,48 @@ export class DataInfoManager implements IDisposable {
 
             if (dataInfo.type === DataType.Object) {
                 return this.realizeObjectDataInfo(<IObjectDataInfo>dataInfo, parentId);
+
             } else if (dataInfo.type === DataType.Function) {
                 return this.realizeFunctionDataInfo(dataInfo, parentId);
+
             } else {
                 // Log Error [BUG].
             }
         }
 
         if (dataInfo.type === DataType.Buffer) {
-            return Buffer.from(dataInfo.value.data);
+            return Buffer.from(dataInfo.value.data, "base64");
         }
 
-        return dataInfo.value;
+        if (!dataInfo.value) {
+            return dataInfo.value;
+        }
+
+        return JSON.parse(dataInfo.value,
+            (key, value) => {
+                if (key === "" || typeof value !== "string") {
+                    return value;
+                }
+
+                const separatorIndex = value.indexOf(":");
+
+                if (separatorIndex <= 0) {
+                    return value;
+                }
+
+                const dataType = value.substring(0, separatorIndex);
+
+                switch (dataType) {
+                    case DataType.String:
+                        return value.substring(separatorIndex + 1);
+
+                    case DataType.Buffer:
+                        return Buffer.from(value.substring(separatorIndex + 1), "base64");
+
+                    default:
+                        return value;
+                }
+            });
     }
 
     public async releaseByIdAsync(refId: string, parentId?: string, locally?: boolean): Promise<void> {
@@ -138,10 +168,31 @@ export class DataInfoManager implements IDisposable {
             dataInfo.id = existingRefId;
             dataInfo = this.refRoot.getRefDataInfo(target) || dataInfo;
             this.refRoot.referById(existingRefId, parentId);
+
+        } else if (dataInfo.type === DataType.Buffer) {
+            dataInfo.value = (<Buffer>target).toString("base64");
+
         } else if (Object.isSerializable(target)) {
-            dataInfo.value = target;
+            dataInfo.value = JSON.stringify(target,
+                (key, value) => {
+                    if (key === "") {
+                        return value;
+                    }
+
+                    if (typeof value === "string") {
+                        return `${DataType.String}:${value}`;
+                    }
+
+                    if (value && value.type === "Buffer" && Array.isArray(value.data)) {
+                        return `${DataType.Buffer}:${Buffer.from(value.data).toString("base64")}`;
+                    }
+
+                    return value;
+                });
+
         } else if (recursive && dataInfo.type === DataType.Object) {
             return this.toObjectDataInfo(target, parentId);
+
         } else {
             const ref = this.refRoot.refer(target, parentId);
 
@@ -188,7 +239,7 @@ export class DataInfoManager implements IDisposable {
                     && !propertyDescriptor.get
                     && !propertyDescriptor.set)
                     // if the member is a non-enumerable function in the class.
-                    || (isClass 
+                    || (isClass
                         && !propertyDescriptor.enumerable
                         && Function.isFunction(propertyDescriptor.value))) {
                     memberInfos[propertyName] = this.toDataInfo(propertyDescriptor.value, dataInfo.id, false);
