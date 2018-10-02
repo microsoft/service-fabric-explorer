@@ -4,6 +4,9 @@
 			"path": "src\\Sfx"
 		},
 		{
+			"path": "src\\Sfx-Standalone"
+		},
+		{
 			"path": "test\\SfxTests"
 		}
 	],
