@@ -13,6 +13,7 @@ module Sfx {
         private static defaultApiVersion: string = "3.0";
         private static apiVersion40: string = "4.0";
         private static apiVersion60: string = "6.0";
+        private static apiVersion62Preview: string = "6.2-preview";
 
         private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -441,6 +442,12 @@ module Sfx {
             return this.get(this.getApiUrl(url), "Get partition", messageHandler);
         }
 
+        public getPartitionById(partitionId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawPartition> {
+            let url = "Partitions/" + encodeURIComponent(partitionId);
+
+            return this.get(this.getApiUrl(url, RestClient.apiVersion60), "Get partition by id", messageHandler);
+        }
+
         public getPartitionHealth(applicationId: string, serviceId: string, partitionId: string,
             eventsHealthStateFilter: number = HealthStateFilterFlags.Default,
             replicasHealthStateFilter: number = HealthStateFilterFlags.Default,
@@ -519,14 +526,85 @@ module Sfx {
             return this.delete(this.getApiUrl(url, RestClient.apiVersion60), "Delete Image Store Content", messageHandler);
         }
 
+        public getClusterEvents(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<ClusterEvent[]> {
+            let url = "EventsStore/"
+                + "Cluster/Events";
+            return this.getEvents(ClusterEvent, url, startTime, endTime, messageHandler);
+        }
+
+        public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<NodeEvent[]> {
+            let url = "EventsStore/"
+                + "Nodes/"
+                + (nodeName ? (encodeURIComponent(nodeName) + "/$/") : "")
+                + "Events";
+            return this.getEvents(NodeEvent, url, startTime, endTime, messageHandler);
+        }
+
+        public getApplicationEvents(startTime: Date, endTime: Date, applicationId?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<ApplicationEvent[]> {
+            let url = "EventsStore/"
+                + "Applications/"
+                + (applicationId ? (encodeURIComponent(applicationId) + "/$/") : "")
+                + "Events";
+            return this.getEvents(ApplicationEvent, url, startTime, endTime, messageHandler);
+        }
+
+        public getServiceEvents(startTime: Date, endTime: Date, serviceId?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<ServiceEvent[]> {
+            let url = "EventsStore/"
+                + "Services/"
+                + (serviceId ? (encodeURIComponent(serviceId) + "/$/") : "")
+                + "Events";
+            return this.getEvents(ServiceEvent, url, startTime, endTime, messageHandler);
+        }
+
+        public getPartitionEvents(startTime: Date, endTime: Date, partitionId?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<PartitionEvent[]> {
+            let url = "EventsStore/"
+                + "Partitions/"
+                + (partitionId ? (encodeURIComponent(partitionId) + "/$/") : "")
+                + "Events";
+            return this.getEvents(PartitionEvent, url, startTime, endTime, messageHandler);
+        }
+
+        public getReplicaEvents(startTime: Date, endTime: Date, partitionId: string, replicaId?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<ReplicaEvent[]> {
+            let url = "EventsStore/"
+                + "Partitions/"
+                + encodeURIComponent(partitionId) + "/$/" + "Replicas/"
+                + (replicaId ? (encodeURIComponent(replicaId) + "/$/") : "")
+                + "Events";
+            return this.getEvents(ReplicaEvent, url, startTime, endTime, messageHandler);
+        }
+
+        public getCorrelatedEvents(eventInstanceId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<FabricEvent[]> {
+            let url = "EventsStore/"
+                + "CorrelatedEvents/"
+                + encodeURIComponent(eventInstanceId) + "/$/"
+                + "Events";
+            return this.getEvents(FabricEvent, url, null, null, messageHandler);
+        }
+
+        private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<T[]> {
+            let apiUrl = url;
+            if (startTime && endTime) {
+                apiUrl = apiUrl
+                    + "?starttimeutc=" + startTime.toISOString().substr(0, 19) + "Z"
+                    + "&endtimeutc=" + endTime.toISOString().substr(0, 19) + "Z";
+            }
+
+            let fullUrl = this.getApiUrl(apiUrl, RestClient.apiVersion62Preview, null, true);
+            return this.get<IRawList<{}>>(fullUrl, null, messageHandler)
+                .then(response => {
+                    return new EventsResponseAdapter(eventType).getEvents(response.data);
+                });
+        }
+
         /**
          * Appends apiVersion and a random token to aid in working with the brower's cache.
          * @param path The Input URI path.
          * @param apiVersion An optional parameter to specify the API Version.  If no API Version specified, defaults to "1.0"  This is due to the platform having independent versions for each type of call.
          */
-        private getApiUrl(path: string, apiVersion = RestClient.defaultApiVersion, continuationToken?: string): string {
+        private getApiUrl(path: string, apiVersion = RestClient.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean): string {
             // token to allow for invalidation of browser api call cache
-            return StandaloneIntegration.clusterUrl + `/${path}${path.indexOf("?") === -1 ? "?" : "&"}api-version=${apiVersion ? apiVersion : RestClient.defaultApiVersion}&_cacheToken=${this.cacheAllowanceToken}${continuationToken ? `&ContinuationToken=${continuationToken}` : ""}`;
+            return StandaloneIntegration.clusterUrl +
+                `/${path}${path.indexOf("?") === -1 ? "?" : "&"}api-version=${apiVersion ? apiVersion : RestClient.defaultApiVersion}${skipCacheToken === true ? "" : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ""}`;
         }
 
         private getFullCollection<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler, continuationToken?: string): angular.IPromise<T[]> {
@@ -563,7 +641,7 @@ module Sfx {
             return result;
         }
 
-        private delete<T> (url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
+        private delete<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
             let result = this.wrapInCallbacks(() => this.$http.delete(url));
             if (!messageHandler) {
                 messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
@@ -571,7 +649,7 @@ module Sfx {
             this.handleResponse(apiDesc, result, messageHandler);
             return result;
         }
-        private put<T> (url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
+        private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
             let result = this.wrapInCallbacks(() => this.$http.put(url, data));
             if (!messageHandler) {
                 messageHandler = ResponseMessageHandlers.putResponseMessageHandler;

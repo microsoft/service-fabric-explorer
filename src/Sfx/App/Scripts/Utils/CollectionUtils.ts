@@ -22,14 +22,18 @@ module Sfx {
         public static updateCollection<T, P>(collection: T[], newCollection: P[],
             keySelector: (item: T) => any, newKeySelector: (item: P) => any,
             create: (item: T, newItem: P) => T,
-            update: (item: T, newItem: P) => void) {
+            update: (item: T, newItem: P) => void,
+            appendOnly: boolean = false) {
 
-            // create dictionary id => element
+            // create dictionary for old id => element
             let oldCollectionMap = _.keyBy(collection, keySelector);
-            let newCollectionMap = _.keyBy(newCollection, newKeySelector);
 
             // remove deleted items first
-            _.remove(collection, (item) => !newCollectionMap[keySelector(item)]);
+            if (!appendOnly) {
+                // create dictionary for new id => element
+                let newCollectionMap = _.keyBy(newCollection, newKeySelector);
+                _.remove(collection, (item) => !newCollectionMap[keySelector(item)]);
+            }
 
             _.forEach(newCollection, (newItem: P) => {
                 let id = newKeySelector(newItem);
@@ -71,8 +75,8 @@ module Sfx {
          * @param collection
          * @param newCollection
          */
-        public static updateDataModelCollection<T>(collection: IDataModel<T>[], newCollection: IDataModel<T>[]) {
-            CollectionUtils.updateCollection(collection, newCollection, item => item.uniqueId, item => item.uniqueId, (item, newItem) => newItem, (item, newItem) => item.update(newItem.raw));
+        public static updateDataModelCollection<T>(collection: IDataModel<T>[], newCollection: IDataModel<T>[], appendOnly: boolean = false) {
+            CollectionUtils.updateCollection(collection, newCollection, item => item.uniqueId, item => item.uniqueId, (item, newItem) => newItem, (item, newItem) => item.update(newItem.raw), appendOnly);
         }
     }
 

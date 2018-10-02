@@ -18,7 +18,7 @@
     url('../fonts/bowtie.svg#bowtie') format('svg');
 }
 
-.bowtie-icon {
+.bowtie-icon, .glyphicon {
   font-family: 'bowtie';
   font-size: $font-size-base;
   speak: none;
@@ -2112,4 +2112,12 @@
 
 .bowtie-azure-key-vault:before {
     content: "\EAFE";
+}
+
+.glyphicon-chevron-left:before {
+    content: "\E901";
+}
+
+.glyphicon-chevron-right:before {
+    content: "\E903";
 }

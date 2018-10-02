@@ -32,7 +32,7 @@ Object.isEmpty = (value: Object | object) => {
         if (key) {
             return false;
         }
-        
+
         return false;
     }
 
@@ -70,9 +70,15 @@ Object.isSerializable = (value: any) => {
                 return value[Symbols.Serializable] === true;
             }
 
-            return Function.isFunction(value["toJSON"])
-                || (Object.getPrototypeOf(value) === Object.prototype
-                    && Object.values(value).every((propertyValue) => Object.isSerializable(propertyValue)));
+            if (Function.isFunction(value["toJSON"])) {
+                return true;
+            }
+
+            if (Array.isArray(value)) {
+                return value.every((itemValue) => Object.isSerializable(itemValue));
+            }
+
+            return Object.values(value).every((propertyValue) => Object.isSerializable(propertyValue));
 
         case "undefined":
         case "number":

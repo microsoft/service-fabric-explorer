@@ -8,11 +8,16 @@ module Sfx {
     export interface INodesViewScope extends angular.IScope {
         nodes: NodeCollection;
         listSettings: ListSettings;
+        nodeEvents: NodeEventList;
     }
 
     export class NodesViewController extends MainViewController {
         constructor($injector: angular.auto.IInjectorService, public $scope: INodesViewScope) {
-            super($injector);
+            super($injector, {
+                "nodes": { name: "All Nodes" },
+                "events": { name: "Events" }
+            });
+            this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
 
             this.selectTreeNode([
                 IdGenerator.cluster(),
@@ -28,6 +33,7 @@ module Sfx {
                 new ListColumnSettingForBadge("healthState", "Health State"),
                 new ListColumnSettingWithFilter("nodeStatus", "Status"),
             ]);
+            this.$scope.nodeEvents = this.data.createNodeEventList(null);
             this.refresh();
         }
 
@@ -36,6 +42,10 @@ module Sfx {
                 .then(nodes => {
                     this.$scope.nodes = nodes;
                 });
+        }
+
+        private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.nodeEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler));
         }
     };
 

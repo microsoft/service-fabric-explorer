@@ -26,6 +26,7 @@ module Sfx {
         metricsViewModel: IMetricsViewModel;
         upgradeAppsCount: number;
         appsUpgradeTabViewPath: string;
+        clusterEvents: ClusterEventList;
     }
 
     export class ClusterViewController extends MainViewController {
@@ -37,7 +38,8 @@ module Sfx {
                 "clustermap": { name: "Cluster Map" },
                 "metrics": { name: "Metrics" },
                 "manifest": { name: "Manifest" },
-                "imagestore": { name: "Image Store" }
+                "imagestore": { name: "Image Store" },
+                "events": { name: "Events" }
             });
 
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
@@ -46,6 +48,7 @@ module Sfx {
             this.tabs["metrics"].refresh = (messageHandler) => this.refreshMetrics(messageHandler);
             this.tabs["manifest"].refresh = (messageHandler) => this.refreshManifest(messageHandler);
             this.tabs["imagestore"].refresh = (messageHandler) => this.refreshImageStore(messageHandler);
+            this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
 
             $scope.clusterAddress = this.$location.protocol() + "://" + this.$location.host();
 
@@ -65,6 +68,7 @@ module Sfx {
             this.$scope.nodes = this.data.nodes;
             this.$scope.appsUpgradeTabViewPath = this.routes.getTabViewPath(this.routes.getAppsViewPath(), "upgrades");
             this.$scope.imageStore = this.data.imageStore;
+            this.$scope.clusterEvents = this.data.createClusterEventList();
 
             this.refresh();
         }
@@ -144,6 +148,10 @@ module Sfx {
 
         private refreshManifest(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.$scope.clusterManifest.refresh(messageHandler);
+        }
+
+        private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.clusterEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler));
         }
 
         private refreshImageStore(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {

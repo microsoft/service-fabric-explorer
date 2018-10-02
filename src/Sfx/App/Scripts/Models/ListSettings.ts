@@ -126,6 +126,8 @@ module Sfx {
         // This will be populated by DetailListDirective when the list changes.
         public filterValues: FilterValue[] = [];
 
+        public fixedWidthPx?: number;
+
         public get hasFilters(): boolean {
             return this.enableFilter && this.filterValues.length > 0;
         }
@@ -161,6 +163,10 @@ module Sfx {
         }
 
         public getProperty(item: any): any {
+            if (this.propertyPath && _.startsWith(this.propertyPath, "#")) {
+                return this.propertyPath.substr(1);
+            }
+
             return Utils.result(item, this.propertyPath);
         }
 
