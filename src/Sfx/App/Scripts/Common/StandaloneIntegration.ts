@@ -68,7 +68,7 @@ module Sfx {
         private static _clusterUrl: string = null;
 
         public static isStandalone(): boolean {
-            return sfxModuleManager !== null && sfxModuleManager !== undefined;
+            return typeof sfxModuleManager !== "undefined" && sfxModuleManager !== null;
         }
 
         public static get clusterUrl(): string {
