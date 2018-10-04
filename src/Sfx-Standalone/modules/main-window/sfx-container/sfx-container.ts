@@ -5,8 +5,6 @@
 //-----------------------------------------------------------------------------
 
 import * as $ from "jquery";
-
-import * as authAad from "../../../utilities/auth/aad";
 import * as appUtils from "../../../utilities/appUtils";
 import * as uuidv5 from "uuid/v5";
 //import * as url from "url";
@@ -51,33 +49,34 @@ export class SfxContainer implements ISfxContainer {
         $(".view-container", container).hide();
 
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
+        const log = await sfxModuleManager.getComponentAsync("logging");
+        const sfxUrl = appUtils.resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint });
 
         if (!this.endpoints.find(e => e.endpoint === targetServiceEndpoint)) {
             this.endpoints.push({ endpoint: targetServiceEndpoint, id: id });
 
             container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
-            $(`<div id="view-container-${id}" class="view-container"><webview tabindex="0" id="view-${id}" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
+            $(`<div id="view-container-${id}" class="view-container"><webview tabindex="0" src="${sfxUrl}" id="view-${id}" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
         } else {
             $(`#view-container-${id}`, container).show();
             return;
         }
 
-        const log = await sfxModuleManager.getComponentAsync("logging");
-        const sfxUrl = appUtils.resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint });
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
-
         sfxWebView.addEventListener("dom-ready", async () => {
+            await sfxModuleManager.newHostAsync(`host-sfx-${id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", sfxWebView.getWebContents()));            
             log.writeInfoAsync("dom-ready --- ");
+            sfxWebView.reload();
+            
+            if (!sfxWebView.isDevToolsOpened()) {
+                sfxWebView.openDevTools(); /*uncomment to use development tools */
+            }
 
             container.children("#treeview-loading-glyph").remove();
-
-            if (!sfxWebView.isDevToolsOpened()) {
-                //sfxWebView.openDevTools(); /*uncomment to use development tools */
-            }
         });
 
-        authAad.handle(sfxWebView, targetServiceEndpoint);
-        sfxWebView.loadURL(sfxUrl);
+        //authAad.handle(sfxWebView, targetServiceEndpoint);
+
 
         return Promise.resolve();
     }

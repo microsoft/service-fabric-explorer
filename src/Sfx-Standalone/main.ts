@@ -7,7 +7,6 @@ import { app, Menu, MenuItemConstructorOptions } from "electron";
 import { env, Platform } from "./utilities/env";
 import * as url from "url";
 import { IDictionary } from "sfx.common";
-import * as authCert from "./utilities/auth/cert";
 
 async function startup(): Promise<void> {
     const log = await sfxModuleManager.getComponentAsync("logging");
@@ -68,7 +67,7 @@ async function startup(): Promise<void> {
         }
     });
 
-    authCert.handleAuth(sfxModuleManager);
+    //authCert.handleAuth(sfxModuleManager);
 
     // Trigger update activity.
     try {

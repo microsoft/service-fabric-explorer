@@ -1,0 +1,207 @@
+{
+    "productName": "Service Fabric Explorer",
+    "targetExecutableName": "sfxstandalone",
+    "copyright": "Copyright (c) 2018 Microsoft Corporation.",
+    "configs": {
+        "tasks": {
+            "clean": {
+                "globs": [
+                    "./build"
+                ]
+            }
+        }
+    },
+    "tasks": {
+        "compile@typescript": {
+            "sources": [
+                "**/*.ts",
+                "!<buildRootDir>/**/*",
+                "!<publishDir>/**/*"
+            ],
+            "ignore-target": true,
+            "processors": [
+                "tslint",
+                "typescript"
+            ]
+        },
+        "compile@license": {
+            "sources": [
+                "**/package.json",
+                "../Sfx/package.json",
+                "!<buildRootDir>/**/*",
+                "!<publishDir>/**/*"
+            ],
+            "ignore-target": true,
+            "processors": [
+                "licensing"
+            ]
+        },
+        "copy@resource-files": {
+            "sources": [
+                "**/*.json",
+                "icons/**/*",
+                "modules/**/*",
+                "!modules/**/*.ts",
+                "./LICENSE",
+                "!<buildRootDir>/**/*",
+                "!<publishDir>/**/*",
+                "!package-lock.json",
+                "!tsconfig.json",
+                "!tslint.json",
+                "!buildinfos.json"
+            ],
+            "ignore-target": true,
+            "processors": []
+        },
+        "copy@sfx": {
+            "sources": [
+                "../Sfx/wwwroot/**/*"
+            ],
+            "dest": "<sfxDir>",
+            "ignore-target": true,
+            "processors": [
+                {
+                    "name": "pass",
+                    "baseDir": "../Sfx/wwwroot"
+                }
+            ]
+        },
+        "build": [
+            "init",
+            {
+                "executionModel": "parallel",
+                "tasks": [
+                    "compile@typescript",
+                    "compile@license",
+                    "copy@sfx",
+                    "copy@resource-files"
+                ]
+            },
+            "build@node-modules"
+        ],
+        "clean-build": [
+            "clean",
+            "build"
+        ],
+        "publish@deb": {
+            "sources": [
+                "<buildDir>/**/*"
+            ],
+            "base": "<buildDir>",
+            "dest": "<publishDir>",
+            "targets": [
+                "linux"
+            ],
+            "processors": [
+                {
+                    "name": "electron/pack",
+                    "icon": "icons/icon"
+                },
+                {
+                    "name": "electron/deb",
+                    "section": "utils",
+                    "icons": "icons/",
+                    "categories": [
+                        "Utility",
+                        "Development"
+                    ]
+                }
+            ]
+        },
+        "publish@rpm": {
+            "sources": [
+                "<buildDir>/**/*"
+            ],
+            "base": "<buildDir>",
+            "dest": "<publishDir>",
+            "targets": [
+                "linux"
+            ],
+            "processors": [
+                {
+                    "name": "electron/pack",
+                    "icon": "icons/icon"
+                },
+                {
+                    "name": "electron/rpm",
+                    "section": "utils",
+                    "icons": "icons/",
+                    "categories": [
+                        "Utility",
+                        "Development"
+                    ]
+                }
+            ]
+        },
+        "publish@macOS": {
+            "sources": [
+                "<buildDir>/**/*"
+            ],
+            "base": "<buildDir>",
+            "dest": "<publishDir>",
+            "targets": [
+                "darwin"
+            ],
+            "processors": [
+                {
+                    "name": "electron/pack",
+                    "icon": "icons/icon",
+                    "macOS": {
+                        "appBundleId": "com.microsoft.servicefabric.explorer",
+                        "appCategoryType": "Utilities"
+                    }
+                },
+                "electron/zip"
+            ]
+        },
+        "publish@msi": {
+            "sources": [
+                "<buildDir>/**/*"
+            ],
+            "base": "<buildDir>",
+            "dest": "<publishDir>",
+            "targets": [
+                "win32"
+            ],
+            "processors": [
+                {
+                    "name": "electron/pack",
+                    "icon": "icons/icon",
+                    "output": "files"
+                },
+                {
+                    "name": "msi",
+                    "autoGenerateComponentGuids": true,
+                    "generateGuidsNow": true,
+                    "componentGroupName": "MainComponentsGroup",
+                    "spdb": true
+                }
+            ]
+        },
+        "publish": [
+            "clean-build",
+            "publish@msi",
+            "publish@deb",
+            "publish@rpm",
+            "publish@macOS"
+        ]
+    },
+    "targets": [
+        "win32@x32",
+        "linux@x32",
+        "linux@x64",
+        "darwin@x64"
+    ],
+    "paths": {
+        "buildRootDir": "./build",
+        "buildDir": "./build/app",
+        "intermediateDir": "./build/temp",
+        "sfxDir": "./build/app/sfx",
+        "publishDir": "./publish"
+    },
+    "ignores": [
+        "./.build",
+        "./.vscode",
+        "./node_modules"
+    ]
+}

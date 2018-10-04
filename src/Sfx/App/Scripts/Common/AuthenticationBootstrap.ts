@@ -5,7 +5,20 @@
 
 module Sfx {
 
+    function bootstrap() {
+        // Wait for document to finish loading before starting the bootstrap process.
+        angular.element(document).ready(() => {
+            angular.bootstrap(document, [Constants.sfxAppName], { strictDi: true });
+        });
+    }
+
     (function () {
+
+        if (StandaloneIntegration.isStandalone()) {
+            angular.module("authenticationBootstrap", ["AdalAngular"])
+                .constant("authenticationData", new AadMetadata(null));
+            return bootstrap();
+        }
 
         // When AAD login failed with error, it will post back by setting error and error_description parameters as segments. e.g.
         //   https://[cluster]:19080/Explorer/Index.html#error=access_denied&error_description=Foo
@@ -25,8 +38,12 @@ module Sfx {
         let $http: angular.IHttpService = initInjector.get("$http");
 
         $http.get(StandaloneIntegration.clusterUrl + AuthenticationBootstrapConstants.GetAadMetadataUriPart)
-            .success((data: IRawAadMetadata) => {
+            .then((response) => {
+                if (response.status >= 300) {
+                    return initInjector.get("$q").reject();
+                }
 
+                const data: IRawAadMetadata = <IRawAadMetadata>response.data;
                 let authBootstrap = angular.module("authenticationBootstrap", ["AdalAngular"]);
 
                 authBootstrap.constant("authenticationData", new AadMetadata(data));
@@ -70,18 +87,13 @@ module Sfx {
                             );
                         }
                     }]);
-
-            }).error(() => {
+            })
+            .catch(() => {
 
                 let authBootstrap = angular.module("authenticationBootstrap", ["AdalAngular"]);
                 authBootstrap.constant("authenticationData", new AadMetadata(null));
 
-            }).finally(() => {
-
-                // Wait for document to finish loading before starting the bootstrap process.
-                angular.element(document).ready(() => {
-                    angular.bootstrap(document, [Constants.sfxAppName], { strictDi: true });
-                });
-            });
+            })
+            .finally(() => bootstrap());
     })();
 }

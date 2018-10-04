@@ -10,6 +10,7 @@
 /// <reference path="./modules/settings/settings.d.ts" />
 /// <reference path="./modules/update/update.d.ts" />
 /// <reference path="./modules/http/http.d.ts" />
+/// <reference path="./modules/http/http.d.ts" />
 /// <reference path="./modules/cert/cert.d.ts" />
 /// <reference path="./modules/browser-window/browser-window.d.ts" />
 /// <reference path="./modules/ipc/ipc.d.ts" />

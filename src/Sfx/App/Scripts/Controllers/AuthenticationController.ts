@@ -23,7 +23,7 @@ module Sfx {
         }
 
         public get isStandalone(): boolean {
-            return StandaloneIntegration.isStandalone;
+            return StandaloneIntegration.isStandalone();
         }
 
         public get userName(): string {

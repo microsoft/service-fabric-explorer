@@ -53,7 +53,7 @@ class Prompt<TResult> implements IPrompt<TResult> {
                     fullscreenable: false,
                     useContentSize: true,
                     resizable: utils.getValue(this.promptOptions.resizable, false),
-                    parent: this.promptOptions.parentWindowId ? electron.BrowserWindow.fromId(this.promptOptions.parentWindowId) : null,
+                    parent: this.promptOptions.parentWindowId ? electron.BrowserWindow.fromId(this.promptOptions.parentWindowId) : electron.BrowserWindow.getFocusedWindow(),
                     icon: utils.getValue(this.promptOptions.icon, appUtils.getIconPath()),
                     webPreferences: {
                         preload: appUtils.local("./preload.js")

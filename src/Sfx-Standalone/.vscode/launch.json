@@ -7,6 +7,25 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "just run",
+            "cwd": "${workspaceRoot}",
+            "sourceMaps": true,
+            "autoAttachChildProcesses": true,
+            "protocol": "inspector",
+            "trace": true,
+            "outputCapture": "std",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "windows": {
+                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+            },
+            "args": [
+                "--remote-debugging-port=9223",
+                "./build/app/."
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Debug: Main",
             "cwd": "${workspaceRoot}",
             "sourceMaps": true,
@@ -22,7 +41,7 @@
                 "--remote-debugging-port=9223",
                 "./build/app/."
             ],
-            "preLaunchTask": "gulp: build:debug"
+            "preLaunchTask": "npm: build"
         },
         {
             "name": "Debug: Renderer",
@@ -36,10 +55,25 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Debug gulp clean-build:all",
+            "name": "Debug gulp clean-build",
+            "autoAttachChildProcesses": true,
+            "trace": true,
+            "outputCapture": "std",
             "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
             "args": [
-                "clean-build:all"
+                "clean-build"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug gulp publish",
+            "autoAttachChildProcesses": true,
+            "trace": true,
+            "outputCapture": "std",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": [
+                "publish"
             ]
         }
     ],

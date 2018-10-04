@@ -42,7 +42,7 @@ export class MainWindow implements IMainWindow {
         this.browserWindow.loadURL(resolve("index.html"));
 
         this.browserWindow.once("ready-to-show", async () => {
-            //this.browserWindow.webContents.openDevTools(); /*uncomment to use development tools */
+            this.browserWindow.webContents.openDevTools(); /*uncomment to use development tools */
             this.browserWindow.show();
         });
         

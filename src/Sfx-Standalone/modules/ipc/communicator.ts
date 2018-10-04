@@ -49,8 +49,6 @@ function generateChannelProxy(channel: any): IChannelProxy {
 export class Communicator implements ICommunicator {
     public readonly id: string;
 
-    private readonly timeout: number;
-
     private ongoingPromiseDict: IDictionary<IPromiseResolver>;
 
     private routes: Array<IRoute>;
@@ -71,16 +69,11 @@ export class Communicator implements ICommunicator {
         this.ongoingPromiseDict = Object.create(null);
 
         this.id = uuidv4();
-        this.timeout = 60 * 60 * 1000; // 1 hour.
-
+        
         if (options) {
             if (String.isString(options.id)
                 && !String.isEmptyOrWhitespace(options.id)) {
                 this.id = options.id;
-            }
-
-            if (Number.isInteger(options.timeout)) {
-                this.timeout = options.timeout;
             }
         }
 
@@ -146,26 +139,9 @@ export class Communicator implements ICommunicator {
                 return;
             }
 
-            const timer =
-                setTimeout(
-                    (reject) => {
-                        delete this.ongoingPromiseDict[msg.id];
-                        reject(new Error(utils.format("Response for the ipc message timed out: {}", msg)));
-                    },
-                    this.timeout,
-                    reject);
-
             this.ongoingPromiseDict[msg.id] = {
-                resolve:
-                    (result) => {
-                        clearTimeout(timer);
-                        resolve(result);
-                    },
-                reject:
-                    (error) => {
-                        clearTimeout(timer);
-                        reject(error);
-                    }
+                resolve: (result) => resolve(result),
+                reject: (error) => reject(error)
             };
         });
     }

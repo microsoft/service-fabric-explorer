@@ -7,12 +7,13 @@
         "sourceMap": true,
         "declaration": false,
         "noUnusedLocals": true,
-        "noImplicitReturns": true
+        "noImplicitReturns": true,
+        "removeComments": true,
+        "sourceRoot": "."
     },
     "exclude": [
         "build/",
-        "node_modules/",
-        "gulp.ts"
+        "node_modules/"
     ],
     "include": [
         "**/*.ts"
