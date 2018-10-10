@@ -21,6 +21,8 @@ module Sfx {
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
         nodeEvents: NodeEventList;
+        networks: NetworkOnNodeCollection;
+        networkListSettings: ListSettings;
     }
 
     export class NodeViewController extends MainViewController {
@@ -54,6 +56,13 @@ module Sfx {
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.nodeEvents = this.data.createNodeEventList(this.nodeName);
 
+            this.$scope.networkListSettings = this.settings.getNewOrExistingListSettings("networks", ["networkDetail.name"], [
+                new ListColumnSettingForLink("networkDetail.name", "Network Name", item => item.viewPath),
+                new ListColumnSetting("networkDetail.type", "Network Type"),
+                new ListColumnSetting("networkDetail.addressPrefix", "Network Address Prefix"),
+                new ListColumnSetting("networkDetail.status", "Network Status"),
+            ]);
+            this.$scope.networks = new NetworkOnNodeCollection(this.data, this.nodeName);
             this.refresh();
         }
 
@@ -71,9 +80,11 @@ module Sfx {
         }
 
         private refreshEssentials(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            return this.$scope.node.deployedApps.refresh(messageHandler).then(deployedApps => {
-                this.$scope.deployedApps = deployedApps;
-            });
+            return this.$q.all([
+                this.$scope.node.deployedApps.refresh(messageHandler).then(deployedApps => {
+                    this.$scope.deployedApps = deployedApps;
+                }),
+            this.$scope.networks.refresh(messageHandler)]);
         }
 
         private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {

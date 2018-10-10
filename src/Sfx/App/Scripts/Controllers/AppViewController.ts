@@ -16,6 +16,8 @@ module Sfx {
         serviceTypesListSettings: ListSettings;
         deployedApplicationsHealthStates: DeployedApplicationHealthState[];
         appEvents: ApplicationEventList;
+        networks: NetworkOnAppCollection;
+        networkListSettings: ListSettings;
     }
 
     export class AppViewController extends MainViewController {
@@ -70,6 +72,13 @@ module Sfx {
             this.$scope.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings("upgradeProgressUnhealthyEvaluations");
             this.$scope.appEvents = this.data.createApplicationEventList(this.appId);
 
+            this.$scope.networkListSettings = this.settings.getNewOrExistingListSettings("networks", ["networkDetail.name"], [
+                new ListColumnSettingForLink("networkDetail.name", "Network Name", item => item.viewPath),
+                new ListColumnSetting("networkDetail.type", "Network Type"),
+                new ListColumnSetting("networkDetail.addressPrefix", "Network Address Prefix"),
+                new ListColumnSetting("networkDetail.status", "Network Status"),
+            ]);
+            this.$scope.networks = new  NetworkOnAppCollection(this.data, this.appId);
             this.refresh();
         }
 
@@ -99,7 +108,8 @@ module Sfx {
                     })
                     : this.$q.when(true),
                 this.$scope.app.serviceTypes.refresh(messageHandler),
-                this.$scope.app.services.refresh(messageHandler)]);
+                this.$scope.app.services.refresh(messageHandler),
+                this.$scope.networks.refresh(messageHandler)]);
         }
 
         private refreshManifest(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {

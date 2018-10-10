@@ -95,6 +95,17 @@ module Sfx {
                 };
             });
 
+            let networkNode;
+            let getNetworkPromise = this.data.getNetworks(true).then(net => {
+                networkNode = {
+                    nodeId: IdGenerator.networkGroup(),
+                    displayName: () => "Networks",
+                    childrenQuery: () => this.getNetworks(),
+                    selectAction: () => this.routes.navigate(() => net.viewPath),
+                    alwaysVisible: true
+                };
+            });
+
             let systemAppNode;
             let systemNodePromise = this.data.getSystemApp().then(systemApp => {
                 systemAppNode = {
@@ -114,8 +125,8 @@ module Sfx {
                 };
             });
 
-            return this.$q.all([getAppsPromise, getNodesPromise, systemNodePromise]).then(() => {
-                return [appsNode, nodesNode, systemAppNode];
+            return this.$q.all([getAppsPromise, getNodesPromise, getNetworkPromise, systemNodePromise]).then(() => {
+                return [appsNode, nodesNode, networkNode, systemAppNode];
             });
         }
 
@@ -157,6 +168,22 @@ module Sfx {
                         mergeClusterHealthStateChunk: (clusterHealthChunk: IClusterHealthChunk) => {
                             return node.deployedApps.mergeClusterHealthStateChunk(clusterHealthChunk);
                         }
+                    };
+                });
+            });
+        }
+
+        private getNetworks(): angular.IPromise<ITreeNode[]> {
+            // App type groups cannot be inferred from health chunk data, because we need all app types
+            // even there are currently no application instances for them.
+            return this.data.getNetworks(true).then(networks => {
+                return _.map(networks.collection, network => {
+                    return {
+
+                        nodeId: IdGenerator.network(network.name),
+                        displayName: () => network.name,
+                        selectAction: () => this.routes.navigate(() => network.viewPath),
+                        sortBy: () => [network.name]
                     };
                 });
             });

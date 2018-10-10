@@ -284,6 +284,120 @@ module Sfx {
         }
     }
 
+    export class NetworkCollection extends DataModelCollectionBase<Network> {
+        public constructor(data: DataService) {
+            super(data);
+        }
+
+        public get viewPath(): string {
+            return this.data.routes.getNetworksViewPath();
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getNetworks(messageHandler).then(items => {
+                return _.map(items, raw => new Network(this.data, raw));
+            });
+        }
+    }
+
+    export class NetworkOnAppCollection extends DataModelCollectionBase<NetworkOnApp> {
+        appId: string;
+        public constructor(data: DataService, appId: string) {
+            super(data);
+            this.appId = appId;
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getNetworksOnApp(this.appId, messageHandler).then(items => {
+                return _.map(items, raw => {
+                    let network =  new NetworkOnApp(this.data, raw);
+                    network.refresh();
+                    return network;
+                });
+            });
+        }
+    }
+
+    export class NetworkOnNodeCollection extends DataModelCollectionBase<NetworkOnNode> {
+        nodeName: string;
+        public constructor(data: DataService, nodeName: string) {
+            super(data);
+            this.nodeName = nodeName;
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getNetworksOnNode(this.nodeName, messageHandler).then(items => {
+                let filtered = _.filter(items, item => { return item.NetworkName !== "servicefabric_network"; });
+                return _.map(filtered, raw => {
+                    let network = new NetworkOnNode(this.data, raw);
+                    network.refresh();
+                    return network;
+                });
+            });
+        }
+    }
+    export class AppOnNetworkCollection extends DataModelCollectionBase<AppOnNetwork> {
+        networkName: string;
+        public constructor(data: DataService, networkName: string) {
+            super(data);
+            this.networkName = networkName;
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getAppsOnNetwork(this.networkName, messageHandler).then(items => {
+                return _.map(items, raw => {
+                    let application = new AppOnNetwork(this.data, raw);
+                    application.refresh();
+                    return application;
+                });
+            });
+        }
+    }
+
+    export class NodeOnNetworkCollection extends DataModelCollectionBase<NodeOnNetwork> {
+        networkName: string;
+        public constructor(data: DataService, networkName: string) {
+            super(data);
+            this.networkName = networkName;
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getNodesOnNetwork(this.networkName, messageHandler).then(items => {
+                return _.map(items, raw => {
+                    let node = new NodeOnNetwork(this.data, raw);
+                    node.refresh();
+                    return node;
+                });
+            });
+        }
+    }
+
+    export class DeployedContainerOnNetworkCollection extends DataModelCollectionBase<DeployedContainerOnNetwork> {
+        networkName: string;
+        public constructor(data: DataService, networkName: string) {
+            super(data);
+            this.networkName = networkName;
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getNodesOnNetwork(this.networkName, messageHandler).then(items => {
+                let result: DeployedContainerOnNetwork[] = new Array();
+                let promises = [];
+                _.each(items, raw => {
+                    promises.push(this.data.restClient.getDeployedContainersOnNetwork(this.networkName, raw.nodeName, messageHandler).then(values => {
+                        _.each(values, value => {
+                            result.push(new DeployedContainerOnNetwork(this.data, raw.nodeName, value));
+                        });
+                    }));
+                });
+                return this.data.$q.all(promises).then(values => {
+                    return result;
+                });
+
+            });
+        }
+    }
+
     export class ApplicationCollection extends DataModelCollectionBase<Application> {
         public upgradingAppCount: number = 0;
         public healthState: ITextAndBadge;

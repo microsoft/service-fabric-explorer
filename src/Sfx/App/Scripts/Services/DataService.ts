@@ -13,6 +13,7 @@ module Sfx {
         public appTypeGroups: ApplicationTypeGroupCollection;
         public apps: ApplicationCollection;
         public nodes: NodeCollection;
+        public networks: NetworkCollection;
 
         public restClient: RestClient;
 
@@ -36,6 +37,7 @@ module Sfx {
             this.appTypeGroups = new ApplicationTypeGroupCollection(this);
             this.apps = new ApplicationCollection(this);
             this.nodes = new NodeCollection(this);
+            this.networks = new NetworkCollection(this);
 
             this.restClient = new RestClient($http, message);
         }
@@ -118,6 +120,16 @@ module Sfx {
             return this.getNodes(false, messageHandler).then(collection => {
                 return this.tryGetValidItem(collection, name, forceRefresh, messageHandler);
             });
+        }
+
+        public getNetwork(networkName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<Network> {
+            return this.getNetworks(false, messageHandler).then(collection => {
+                return this.tryGetValidItem(collection, networkName, forceRefresh, messageHandler);
+            });
+        }
+
+        public getNetworks(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<NetworkCollection> {
+            return this.networks.ensureInitialized(forceRefresh, messageHandler);
         }
 
         public getAppTypeGroups(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<ApplicationTypeGroupCollection> {
