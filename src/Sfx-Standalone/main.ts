@@ -29,7 +29,7 @@ async function startup(): Promise<void> {
     if (clusterUrl) {
         // Start up the main window.
         global["TargetClusterUrl"] = clusterUrl;
-        const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null, true, clusterUrl);
+        const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null);
 
         mainWindow.setMenuBarVisibility(false);
 

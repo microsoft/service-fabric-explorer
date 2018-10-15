@@ -3,59 +3,16 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IDictionary } from "sfx.common";
 import { IModuleManager } from "sfx.module-manager";
 
-import { dialog, BrowserWindow, app, BrowserWindowConstructorOptions } from "electron";
-import * as url from "url";
+import { BrowserWindow, app, BrowserWindowConstructorOptions } from "electron";
 import * as uuidv5 from "uuid/v5";
 
 import { env, Platform } from "../../utilities/env";
-import * as authCert from "../../utilities/auth/cert";
-import * as authAad from "../../utilities/auth/aad";
 import * as appUtils from "../../utilities/appUtils";
-import * as utils from "../../utilities/utils";
 import { ModuleManager } from "../../module-manager/module-manager";
 
 const UuidNamespace = "614e2e95-a80d-4ee5-9fd5-fb970b4b01a3";
-
-function handleSslCert(window: BrowserWindow): void {
-    const trustedCertManager: IDictionary<boolean> = Object.create(null);
-
-    window.webContents.on("certificate-error", (event, urlString, error, certificate, trustCertificate) => {
-        event.preventDefault();
-
-        const certIdentifier = url.parse(urlString).hostname + certificate.subjectName;
-
-        if (certIdentifier in trustedCertManager) {
-            trustCertificate(trustedCertManager[certIdentifier]);
-        } else {
-            trustedCertManager[certIdentifier] = false;
-
-            dialog.showMessageBox(
-                window,
-                {
-                    type: "warning",
-                    buttons: ["Yes", "Exit"],
-                    title: "Untrusted certificate",
-                    message: "Do you want to trust this certificate?",
-                    detail: "Subject: " + certificate.subjectName + "\r\nIssuer: " + certificate.issuerName + "\r\nThumbprint: " + certificate.fingerprint,
-                    cancelId: 1,
-                    defaultId: 0,
-                    noLink: true,
-                },
-                (response, checkboxChecked) => {
-                    if (response !== 0) {
-                        app.quit();
-                        return;
-                    }
-
-                    trustedCertManager[certIdentifier] = true;
-                    trustCertificate(true);
-                });
-        }
-    });
-}
 
 function handleNewWindow(window: BrowserWindow) {
     window.webContents.on("new-window",
@@ -107,16 +64,8 @@ function addModuleManagerConstructorOptions(
 
 export default async function createBrowserWindowAsync(
     moduleManager: IModuleManager,
-    options?: BrowserWindowConstructorOptions,
-    handleAuth?: boolean,
-    aadTargetHostName?: string)
+    options?: BrowserWindowConstructorOptions)
     : Promise<BrowserWindow> {
-
-    handleAuth = utils.getValue(handleAuth, false);
-
-    if (handleAuth && String.isEmptyOrWhitespace(aadTargetHostName)) {
-        throw new Error("if auth handling is required, aadTargetHostName must be supplied.");
-    }
 
     const windowOptions: BrowserWindowConstructorOptions = {
         height: 768,
@@ -147,16 +96,10 @@ export default async function createBrowserWindowAsync(
     window.on("page-title-updated", (event, title) => event.preventDefault());
     window.setTitle(`${window.getTitle()} - ${app.getVersion()}`);
 
-    handleSslCert(window);
     handleNewWindow(window);
 
     if (env.platform !== Platform.MacOs) {
         handleZoom(window);
-    }
-
-    if (handleAuth) {
-        authCert.handle(moduleManager, window);
-        authAad.handle(window, aadTargetHostName);
     }
 
     window.once("closed", async () => await moduleManager.destroyHostAsync(hostName));

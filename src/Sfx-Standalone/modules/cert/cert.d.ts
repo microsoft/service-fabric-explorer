@@ -11,14 +11,14 @@ declare module "sfx.cert" {
     export interface IPfxCertificate extends ICertificate {
         type: "pfx";
         password?: string;
-        pfx: string | Buffer;
+        pfx: Buffer;
     }
 
     export interface IPemCertificate extends ICertificate {
         type: "pem";
         password?: string;
-        key?: string | Buffer;
-        cert: string | Buffer;
+        key?: Buffer;
+        cert: Buffer;
     }
 
     export interface ICertificateInfo {
@@ -39,7 +39,6 @@ declare module "sfx.cert" {
     }
 
     export interface ICertificateLoader {
-        loadAsync(cert: ICertificate): Promise<ICertificate>;
         loadPfxAsync(path: string, password?: string): Promise<IPfxCertificate>;
         loadPemAsync(certPath: string, keyPath?: string, keyPassword?: string): Promise<IPemCertificate>;
     }

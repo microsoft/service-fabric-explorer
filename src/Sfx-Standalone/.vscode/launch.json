@@ -22,7 +22,7 @@
                 "--remote-debugging-port=9223",
                 "./build/app/."
             ],
-            "preLaunchTask": "gulp: build:debug"
+            "preLaunchTask": "npm: build"
         },
         {
             "name": "Debug: Renderer",
@@ -36,10 +36,25 @@
         {
             "type": "node",
             "request": "launch",
-            "name": "Debug gulp clean-build:all",
+            "name": "Debug gulp clean-build",
+            "autoAttachChildProcesses": true,
+            "trace": true,
+            "outputCapture": "std",
             "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
             "args": [
-                "clean-build:all"
+                "clean-build"
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
+            "name": "Debug gulp publish",
+            "autoAttachChildProcesses": true,
+            "trace": true,
+            "outputCapture": "std",
+            "program": "${workspaceFolder}/node_modules/gulp/bin/gulp.js",
+            "args": [
+                "publish"
             ]
         }
     ],
