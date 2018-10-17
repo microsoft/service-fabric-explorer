@@ -47,7 +47,7 @@ Here's a list of common IDE used.
 ### Set up the development environment
 
 1. Clone the master branch.
-`git clone --recurse-submodules https://github.com/Azure/service-fabric-explorer.git <path to the local folder>`
+`git clone --recurse-submodules https://github.com/Microsoft/service-fabric-explorer.git <path to the local folder>`
 2. Install project dependencies: *This can be done inside VSCode or use a console window.*
    1. [SFX] Navigate to `src/Sfx` and run the following scripts.
    ```Shell
