@@ -62,27 +62,24 @@ export default function createResponseHandler(): HttpResponseHandler {
         if (response.statusCode !== 401 && response.statusCode !== 403) {
             return undefined;
         }
-    
+
         const siteId = url.parse(request.url).host;
-    
-        if (!request.headers.find((header) => header.name === "Authorization")) {
-            const record = siteMap[siteId];
-    
-            if (record instanceof Promise) {
-                return record.then(() => pipeline.requestAsync(request));
-    
-            } else if (record === "Retry") {
-                return pipeline.requestAsync(request);
-                
-            } else if (record === "NotSupported") {
-                return undefined;
-            }
+        const record = siteMap[siteId];
+
+        if (record instanceof Promise) {
+            return record.then(() => pipeline.requestAsync(request));
+
+        } else if (record === "Retry") {
+            return pipeline.requestAsync(request);
+
+        } else if (record === "NotSupported") {
+            return undefined;
         }
-    
+
         const tokenPromise = siteMap[siteId] = acquireTokenAsync(pipeline, request, response);
-    
+
         tokenPromise.then((response) => siteMap[siteId] = response ? "Retry" : "NotSupported");
-    
+
         return tokenPromise;
     };
 }
