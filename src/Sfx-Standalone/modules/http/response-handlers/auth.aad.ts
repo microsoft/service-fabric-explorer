@@ -6,7 +6,8 @@
 import {
     IHttpPipeline,
     IHttpRequest,
-    IHttpResponse
+    IHttpResponse,
+    IHttpHeader
 } from "sfx.http";
 
 import * as uuidv4 from "uuid/v4";
@@ -19,15 +20,21 @@ export interface IAadMetadata {
     redirectUri: string;
 }
 
+function generateAuthzUrl(aadMetadata: IAadMetadata, authzEndpoint: string): string {
+    const authzUrl = new URL(authzEndpoint);
+
+    authzUrl.searchParams.set("client_id", aadMetadata.clientId);
+    authzUrl.searchParams.set("response_type", "id_token");
+    authzUrl.searchParams.set("redirect_uri", aadMetadata.redirectUri);
+    authzUrl.searchParams.set("response_mode", "query");
+    authzUrl.searchParams.set("nonce", uuidv4());
+
+    return authzUrl.href;
+}
+
 function acquireAuthzToken(aadMetadata: IAadMetadata, authzEndpoint: string): Promise<string> {
     return new Promise((resolve, reject) => {
-        const authzUrl = new URL(authzEndpoint);
-
-        authzUrl.searchParams.append("client_id", aadMetadata.clientId);
-        authzUrl.searchParams.append("response_type", "id_token");
-        authzUrl.searchParams.append("redirect_uri", aadMetadata.redirectUri);
-        authzUrl.searchParams.append("response_mode", "query");
-        authzUrl.searchParams.append("nonce", uuidv4());
+        const authzUrl = generateAuthzUrl(aadMetadata, authzEndpoint);
 
         const authzWnd = new BrowserWindow({
             title: `Azure Active Directory Authentication: ${url.parse(aadMetadata.redirectUri).host}`,
@@ -54,7 +61,7 @@ function acquireAuthzToken(aadMetadata: IAadMetadata, authzEndpoint: string): Pr
             }
         });
 
-        authzWnd.loadURL(authzUrl.href);
+        authzWnd.loadURL(authzUrl);
         authzWnd.show();
     });
 }
@@ -89,7 +96,13 @@ export async function handleResponseAsync(aadMetadata: IAadMetadata, pipeline: I
         pipeline.requestTemplate.headers = [];
     }
 
-    pipeline.requestTemplate.headers.push({ name: "Authorization", value: `Bearer ${token}` });
+    let authzHeader: IHttpHeader;
+
+    if (authzHeader = pipeline.requestTemplate.headers.find((header) => header.name === "Authorization")) {
+        authzHeader.value = `Bearer ${token}`;
+    } else {
+        pipeline.requestTemplate.headers.push(authzHeader = { name: "Authorization", value: `Bearer ${token}` });
+    }
 
     return await pipeline.requestAsync(request);
 }
