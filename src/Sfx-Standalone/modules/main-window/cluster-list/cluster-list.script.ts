@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import * as $ from "jquery";
+import * as Url from "url";
 import { electron } from "../../../utilities/electron-adapter";
 import { IComponentInfo } from "sfx.module-manager";
 import { IClusterList, IClusterListDataModel } from "sfx.cluster-list";
@@ -87,7 +88,7 @@ export class ClusterList implements IClusterList {
 
             const $item = $(`
                 <li tabindex="0" class="cluster list-item" data-endpoint="${endpoint}">
-                    <img src="../../../icons/icon16x16.png"><span>${displayName}</span>
+                    <img src="../../icons/icon16x16.png"><span>${displayName}</span>
                     <button tabindex="0" class="bowtie-icon bowtie-ellipsis"></button>
                     <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
                         <li role="menuitem"><a class="cluster-action" role="menuitem" href="#" data-action="connect">Re-connect</a></li>
@@ -175,9 +176,8 @@ export class ClusterList implements IClusterList {
 
     async setupAsync(): Promise<void> {
         $("#cluster-list-connect").click(async () => {
-            localStorage.setItem("folders", JSON.stringify(this.clusterListDataModel.getFolders()));
             const dialogService = (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service"));
-            dialogService.showInlineDialogAsync({
+            await dialogService.showInlineDialogAsync({
                 title: "Connect to a cluster",
                 bodyHtml: `<p>Cluster URL</p>
                     <input id="input-cluster-url" type="text" class = "input-flat" value=""/>
@@ -196,10 +196,70 @@ export class ClusterList implements IClusterList {
                 height: 440
             });
 
-        });
+            const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
+            const folders = await (await list.getDataModel()).getFolders();
+            let select = $("#input-select-folder");
 
-        $("#cluster-list-folder").click(async () => {
-            (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showDialogAsync("./cluster-list/folder-functionalities/folder.html");
+            for (let i = 0; i < await folders.length; i++) {
+                let folderName = await (await folders[i]).name;
+                select.append($(`<option value="${folderName}">${folderName === "" ? "--- No folder ---" : folderName}</option>`));
+            }
+
+            select.append($(`<option data-action="new">Create a new folder</option>`));
+
+            $("#input-select-folder").change(() => $("#new_folder").css("visibility", $("#input-select-folder option:selected").data("action") === "new" ? "visible" : "hidden"));
+
+            $("#btn-connect").click(async () => {
+                try {
+                    const url = Url.parse($("#input-cluster-url").val());
+                    const isCreatingNewFolder = $("#input-select-folder option:selected").data("action") === "new";
+                    let name: string = $("#input-cluster-label").val();
+                    let folder: string = isCreatingNewFolder ? $("#new-folder-label").val() : $("#input-select-folder").val();
+
+                    if (folder === "" && isCreatingNewFolder) {
+                        throw new Error("Folder must have name!");
+                    }
+
+                    if (url.protocol !== "http:" && url.protocol !== "https:") {
+                        throw new Error("The protocol of the cluster url is not supported. Only HTTP and HTTPS are supported.");
+                    }
+
+                    const endpoint = url.protocol + "//" + url.host;
+                    if (!name) {
+                        name = url.host;
+                    }
+
+                    console.log("connecting...");
+                    await (await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list")).newClusterListItemAsync(endpoint, name, folder, true);
+                    await (await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container")).loadSfxAsync(endpoint).then(() => {
+                        $("#main-modal-dialog").modal("hide");
+                    });
+                } catch (error) {
+                    alert((<Error>error).message);
+                }
+            });
+
+            $("#input-cluster-url").keyup(($event) => {
+                const keyboardEvent = <KeyboardEvent>$event.originalEvent;
+
+                if (keyboardEvent.code === "Enter") {
+                    $("#btn-connect").click();
+                }
+            });
+
+            $("#input-connect-locally").change(($event) => {
+                const $sender = $($event.target);
+                if ($sender.prop("checked")) {
+                    $("#input-cluster-url").val("https://localhost:19080");
+                }
+
+                $("#input-cluster-url").prop("disabled", $sender.prop("checked"));
+            });
+
+            $("#btn-exit").click(() => {
+                $("#main-modal-dialog").modal("hide");
+            });
+
         });
 
         return Promise.resolve();
@@ -250,15 +310,24 @@ export class ClusterList implements IClusterList {
                     return;
                 }
             } else if ($eventTarget.parent().parent().hasClass("dropdown-menu")) {
-                //This handles if a menu-item in the dropdown-menu is clicked
-                localStorage.setItem("folder", name);
+                //This handles if a menu-item in the dropdown-menu is clicked                
                 if ($eventTarget.attr("role") === "menuitem") {
                     if ($eventTarget.html().toString().trim() === "Remove Folder") {
-                        (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showInlineDialogAsync({
+                        await (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service")).showInlineDialogAsync({
                             title: `Remove folder`,
                             bodyHtml: `<p>Are you sure you want to remove folder ${name} and all cluster connections under it?</p>`,
                             footerHtml: `<button id="btn-delete-folder" type="submit" class="btn btn-primary" data-target="${name}">Remove</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
                             scriptPath: "../cluster-list/folder-functionalities/delete-folder.script.js"
+                        });
+
+                        $("#btn-delete-folder").click(async () => {
+                            try {
+                                const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
+                                await list.removeFolder($("#btn-delete-folder").data("target"));
+                                $("#main-modal-dialog").modal("hide");
+                            } catch (error) {
+                                alert("Error Occured");
+                            }
                         });
                     }
                 }
@@ -298,33 +367,67 @@ export class ClusterList implements IClusterList {
             const action = $(e.target).data("action");
             const dialogService = await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service");
             switch (action) {
-                case "connect":                    
+                case "connect":
                     const sfxContainer = await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container");
-                    await sfxContainer.reloadSfxAsync(endpoint);
-                    await sfxContainer.disposeAsync();
+                    await sfxContainer.reloadSfxAsync(endpoint);                    
                     break;
                 case "remove":
-                    dialogService.showInlineDialogAsync({
+                    await dialogService.showInlineDialogAsync({
                         title: `Remove cluster`,
                         bodyHtml: `<p>Are you sure you want to remove ${name}?</p>`,
                         footerHtml: `<button id="btn-delete-cluster" data-target="${name}" type="submit" class="btn btn-primary">Remove</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
                         scriptPath: "../cluster-list/cluster-functionalities/delete-cluster.script.js",
                         height: 200
                     });
+
+                    const targetCluster = $("#btn-delete-cluster").data("target");
+                    $("#btn-delete-cluster").click(async () => {
+                        try {
+                            const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
+                            await list.removeClusterListItem(targetCluster);
+                            $("#main-modal-dialog").modal("hide");
+                        } catch (error) {
+                            alert("Error Occured");
+                        }
+                    });
+            
+                    $("#btn-exit").click(() => {
+                        $("#main-modal-dialog").modal("hide");
+                    });
+
                     break;
 
                 case "rename":
-                    dialogService.showInlineDialogAsync({
+                    await dialogService.showInlineDialogAsync({
                         title: `Rename cluster`,
                         bodyHtml: `<p>New friendly name for cluster ${name}</p><input id="input-cluster-label" type="text" class = "input-flat" value="${name}"/>`,
                         footerHtml: `<button id="btn-new-label" type="submit" class="btn btn-primary" data-target="${name}">Rename</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
                         scriptPath: "../cluster-list/cluster-functionalities/rename-cluster.script.js",
                         height: 200
                     });
+                    
+                    $("#btn-new-label").click(async (e) => {
+                        try {
+                            let label: string = $("#input-cluster-label").val();
+                            if (label !== "") {
+                                const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
+                                await list.renameClusterListItem($("#btn-new-label").data("target"), label);
+            
+                                $("#main-modal-dialog").modal("hide");
+                            }
+                        } catch (error) {
+                            alert(error.message);
+                        }
+                    });
+            
+                    $("#btn-exit").click(() => {
+                        $("#main-modal-dialog").modal("hide");
+                    });
+
                     break;
 
                 case "move":
-                    dialogService.showInlineDialogAsync({
+                    await dialogService.showInlineDialogAsync({
                         title: `Move cluster`,
                         bodyHtml: `<p>Choose a folder for cluster ${name} or move it out of a folder.</p>
                             <select id="input-select-folder" class="input-flat"></select> <br>
@@ -333,13 +436,50 @@ export class ClusterList implements IClusterList {
                         scriptPath: "../cluster-list/cluster-functionalities/move-cluster.script.js",
                         height: 260
                     });
+
+                    const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
+                    const folders = await (await list.getDataModel()).getFolders();
+                    const select = $("#input-select-folder");
+                    const cluster = $("#btn-move-cluster").data("cluster");
+            
+                    for (let i = 0; i < await folders.length; i++) {
+                        let folderName = await (await folders[i]).name;
+                        select.append($(`<option value="${folderName}">${folderName === "" ? "--- No folder ---" : folderName}</option>`));
+                    }
+            
+                    select.append($(`<option data-action="new">Create a new folder</option>`));
+            
+                    $("#input-select-folder").change(() => $("#new_folder").css("visibility", $("#input-select-folder option:selected").data("action") === "new" ? "visible" : "hidden"));
+            
+                    $("#btn-move-cluster").click(async () => {
+                        try {
+                            let folder: string = $("#input-select-folder").val().toString();
+                            let new_folder: string = $("#new-folder-label").val().toString();
+            
+                            if (new_folder) {
+                                await list.newFolderItemAsync(new_folder);
+                                await list.moveClusterListItem(cluster, new_folder);
+                            } else {
+            
+                            }
+            
+                            await list.moveClusterListItem(cluster, folder);
+            
+                            $("#main-modal-dialog").modal("hide");
+                        } catch (error) {
+                            alert("Error Occured");
+                        }
+                    });
+            
+                    $("#btn-exit").click(() => {
+                        $("#main-modal-dialog").modal("hide");
+                    });
+            
                     break;
 
                 default:
                     break;
             }
-
-            await dialogService.disposeAsync();
         });
 
         $($item).click(async (e) => {
@@ -361,8 +501,6 @@ export class ClusterList implements IClusterList {
             cluster.currentInView = true;
             await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
             $target.addClass("current");
-
-            await sfxContainer.disposeAsync();
         });
     }
 }

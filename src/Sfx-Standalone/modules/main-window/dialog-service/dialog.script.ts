@@ -9,9 +9,12 @@ $(document).ready(() => {
     $(".modal").slideDown(100);
 });
 
-
 (async () => {
     $("button[dialog-role='close']").click(() => {
         window.close();
     });
 })();
+
+export function appendDialogContent(content: string) {
+    $(".modal-content").html(content);
+}

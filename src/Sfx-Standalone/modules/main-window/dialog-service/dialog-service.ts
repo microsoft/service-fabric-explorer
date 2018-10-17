@@ -51,30 +51,15 @@ export class DialogService implements IDialogService {
 
     async showInlineDialogAsync(options: IDialogRenderingOption): Promise<void> {
         if (!options.width) {
-            options.width = 600;            
+            options.width = 600;
         }
 
         if (!options.height) {
-            options.height = 600;            
+            options.height = 600;
         }
 
-        const containerTemplate = `
-            <div id="main-modal-dialog" class="modal" role="dialog">
-                <div class="modal-dialog" role="document" style="width: ${options.width}px; height: ${options.height}px;">
-                    <div class="modal-content">
-                        <webview src="./dialog-service/dialog.html" preload="./preload.js" nodeintegration></webview>
-                    </div>
-                </div>
-            </div>`;
-
-        $(document.body).append($(containerTemplate));
-
-        let webview = <WebviewTag>document.querySelector(`#main-modal-dialog webview`);
-        webview.addEventListener("dom-ready", async () => {
-            //webview.openDevTools(); /*uncomment to use development tools*/
-            await sfxModuleManager.newHostAsync("host-dialog-service", await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));
-
-            const template = `                       
+        console.log("appending to doc", Date.now());
+        const template = `                       
                 <div class="modal-header">
                     <h4 class="modal-title">${options.title}</h4>
                 </div>
@@ -85,16 +70,10 @@ export class DialogService implements IDialogService {
                     ${options.footerHtml}
                 </div>`.replace(/(?:\r\n|\r|\n)/g, "");
 
-            webview.executeJavaScript(`$(".modal-content").append($('${template}'));`);
-            webview.executeJavaScript(`require("${options.scriptPath}");`);
-        });
-
-        webview.addEventListener("close", async () => {
-            await sfxModuleManager.destroyHostAsync("host-dialog-service");
-            $("#main-modal-dialog").modal("hide").remove();
-        });
-
+        $(".modal-content").html(template);
         $("#main-modal-dialog").modal();
+
+        return Promise.resolve();
     }
 
     async closeInlineDialogAsync(): Promise<void> {

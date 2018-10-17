@@ -14,10 +14,12 @@ module Sfx {
 
     (function () {
 
+        console.log("StandaloneIntegration.isStandalone:", StandaloneIntegration.isStandalone(), Date.now());
+
         if (StandaloneIntegration.isStandalone()) {
-            angular.module("authenticationBootstrap", ["AdalAngular"])
-                .constant("authenticationData", new AadMetadata(null));
-            return bootstrap();
+            angular.module("authenticationBootstrap", ["AdalAngular"]).constant("authenticationData", new AadMetadata(null));
+            //return bootstrap();
+            return;
         }
 
         // When AAD login failed with error, it will post back by setting error and error_description parameters as segments. e.g.

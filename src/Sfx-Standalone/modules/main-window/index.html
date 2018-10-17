@@ -102,8 +102,7 @@
         }
 
         .modal-content {
-            box-shadow: none;
-            background-color: transparent;
+            box-shadow: none;            
         }
 
         .modal-backdrop {
@@ -115,6 +114,121 @@
             text-align: center;
             margin-top: 20%;
         }
+
+        ul#cluster-list {
+            list-style: none;
+            padding: 0px;            
+            border-top: 1px solid gray;
+        }
+
+        ul#cluster-list>li>ul {
+            list-style: none;            
+            padding: 0;    
+        }
+
+        .cluster.list-item {
+            cursor: hand;
+            margin-top: 2px;
+            margin-bottom: 2px;
+            padding-top: 4px;
+            padding-bottom: 4px;
+            text-overflow: ellipsis;
+        }
+
+        .list-item:focus, .list-item:hover, #cluster-list-connect:hover, #cluster-list-connect:focus {
+            background-color: #3C3C3C;
+        }
+
+        .list-item .bowtie-icon{
+            float: right;
+            line-height: 28px;            
+            z-index: 5;
+            color: transparent;           
+        }
+
+        .list-item:focus .bowtie-icon, .list-item:hover .bowtie-icon,
+        .list-item .bowtie-icon:focus, .list-item .bowtie-icon:hover {
+            color: #fff;
+        }
+
+        .list-item span {            
+            vertical-align: middle;
+            display: inline-block;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            width: calc(100% - 64px);
+        }
+        
+        ul#cluster-list>li>ul>li>ul{
+            list-style: none;
+        }
+
+        .folder {
+            padding-left: 8px;
+        }
+
+        ul#cluster-list>li {
+            margin-top: 4px;
+        }      
+        
+        .menu .btn-primary{
+            width: 100%;
+            font-size: 16px;
+            margin-top: 5px;
+
+        }
+
+        button.bowtie-icon {
+            border: none;
+            background-color: transparent;
+        }
+
+        button#cluster-list-connect {
+            border: none;
+            background: transparent;
+            padding-left: 12px;
+            padding-right: 12px;
+            width: 100%;
+            height: 32px;
+            text-align: left;
+        }
+
+        #cluster-list img {
+            margin: 7px;
+        }
+
+        #cluster-list .cluster {
+            padding-left: 8px;
+        }
+        
+        #cluster-list ul {
+            padding: 0;
+            margin: 0;
+        }
+
+        #cluster-list ul .cluster {
+            padding-left: 32px;
+        }
+
+        #cluster-list .dropdown-menu {
+            color: #fff;
+            margin: 0;
+            border: none;
+            background-color: #3C3C3C;;
+            padding: 2px 0px;
+            z-index: 1100;
+            top: auto;
+            right: 0;
+            left: auto;
+        }
+
+        #cluster-list .dropdown-menu-show {
+            display: block;
+        }
+
+        li.list-item.current, li.list-item.current:focus, li.list-item.current:hover {
+            background-color: #0075c9; 
+        }
     </style>
 </head>
 
@@ -122,6 +236,17 @@
     <div class="main">
         <div class="left-nav" id="left-panel" aria-expanded="true">
             <div><button class="bowtie-icon bowtie-chevron-left-all" id="sidebar-collapse-button"></button></div>
+            <div class="menu">
+                <div class="menu-btn">
+                    <button id="cluster-list-connect"><span class="bowtie-icon bowtie-math-plus-heavy"></span> Connect to a cluster</button>
+                    <!-- <button class="btn btn-primary" id="cluster-list-folder">Add Folder</button> -->
+                </div>
+                <ul id="cluster-list">
+                    <li>
+                        <ul id="cluster-list-organized"></ul>
+                    </li>
+                </ul>
+            </div>
         </div>
         <div class="right-container">
             <div id="instructions">
@@ -130,9 +255,18 @@
             </div>
         </div>
     </div>
+
+    <div id="main-modal-dialog" class="modal" role="dialog">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                
+            </div>
+        </div>
+    </div>
 </body>
-<script type="text/javascript" src="../../node_modules/jquery/dist/jquery.min.js"></script>
+<!-- <script type="text/javascript" src="../../node_modules/jquery/dist/jquery.min.js"></script> -->
 <script type="text/javascript" src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
 <script type="text/javascript" src="index.script.js"></script>
-
+<!-- <script type="text/javascript" src="./cluster-list/model.js"></script>
+<script type="text/javascript" src="./cluster-list/cluster-list.script.js"></script> -->
 </html>

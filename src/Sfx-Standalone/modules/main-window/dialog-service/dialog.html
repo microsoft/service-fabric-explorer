@@ -21,12 +21,19 @@
 
 <body style="overflow:hidden">
     <div class="modal" role="document">
-        <div class="modal modal-content">            
+        <div class="modal modal-content">
+            <div id="main-modal-dialog" class="modal" role="dialog">
+                <div class="modal-dialog" role="document" style="width: 800px; height: 600px;">
+                    <div class="modal-content">
+                        <webview src="./dialog-service/dialog.html" preload="./preload.js" nodeintegration></webview>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
 
-<script type="text/javascript" src="../../../node_modules/jquery/dist/jquery.min.js"></script>
+<!-- <script type="text/javascript" src="../../../node_modules/jquery/dist/jquery.min.js"></script> -->
 <script type="text/javascript" src="./dialog.script.js"></script>
 
 </html>

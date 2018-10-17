@@ -85,7 +85,14 @@ module Sfx {
 
         public static getHttpClient(): Promise<Standalone.http.IHttpClient> {
             if (this.isStandalone()) {
-                return sfxModuleManager.getComponentAsync("http.http-client.service-fabric");
+                let client = sfxModuleManager.getComponentAsync<Standalone.http.IHttpClient>("http.http-client.service-fabric");
+                console.log("What the hell .getHttpClient:", client, Date.now());
+                // tslint:disable-next-line:no-debugger
+                debugger;
+                return client.then(c => {
+                    console.log("HttpClient from the promise:", c, Date.now());
+                    return c;
+                });
             }
 
             return undefined;

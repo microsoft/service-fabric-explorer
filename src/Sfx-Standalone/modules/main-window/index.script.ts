@@ -3,17 +3,18 @@ import { WebviewTag } from "electron";
 import { IComponentConfiguration } from "sfx.common";
 import { SfxContainer } from "./sfx-container/sfx-container";
 import { DialogService } from "./dialog-service/dialog-service";
-import { ClusterManagerComponentConfig } from "./main-window";
-
 
 (async () => {
     sfxModuleManager.register(DialogService.getComponentInfo());
     sfxModuleManager.register(SfxContainer.getComponentInfo());
 
+    require("./cluster-list/cluster-list.script.js");
+    require("./cluster-list/model.js");
+
     const leftpanel = $("div#left-panel");
 
     // TODO: load component list from setting service
-    const components: IComponentConfiguration[] = [new ClusterManagerComponentConfig()];
+    const components: IComponentConfiguration[] = [];
 
     try {
         await Promise.all(components.map(async component => {

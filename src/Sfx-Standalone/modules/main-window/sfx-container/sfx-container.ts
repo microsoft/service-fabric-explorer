@@ -66,17 +66,17 @@ export class SfxContainer implements ISfxContainer {
         sfxWebView.addEventListener("dom-ready", async () => {
             await sfxModuleManager.newHostAsync(`host-sfx-${id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", sfxWebView.getWebContents()));            
             log.writeInfoAsync("dom-ready --- ");
-            sfxWebView.reload();
-            
+                        
             if (!sfxWebView.isDevToolsOpened()) {
                 sfxWebView.openDevTools(); /*uncomment to use development tools */
             }
 
             container.children("#treeview-loading-glyph").remove();
+
+            sfxWebView.executeJavaScript(" angular.bootstrap(document, [Sfx.Constants.sfxAppName], { strictDi: true });");
         });
 
         //authAad.handle(sfxWebView, targetServiceEndpoint);
-
 
         return Promise.resolve();
     }
