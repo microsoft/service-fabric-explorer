@@ -77,7 +77,8 @@
                     "copy@resource-files"
                 ]
             },
-            "build@node-modules"
+            "npm@version",
+            "npm@install"
         ],
         "clean-build": [
             "clean",
