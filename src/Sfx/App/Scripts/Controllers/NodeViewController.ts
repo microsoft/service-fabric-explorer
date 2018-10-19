@@ -89,7 +89,7 @@ module Sfx {
                     this.$scope.deployedApps = deployedApps;
                 }),
                 //this.$scope.clusterManifest.ensureInitialized(false).then(() => {
-                    this.$scope.clusterManifest.isNetworkInventoryManagerEnabled() ? this.$scope.networks.refresh(messageHandler) : this.$q.when(true),
+                    this.$scope.clusterManifest.isNetworkInventoryManagerEnabled ? this.$scope.networks.refresh(messageHandler) : this.$q.when(true),
                 //})
             ]);
 

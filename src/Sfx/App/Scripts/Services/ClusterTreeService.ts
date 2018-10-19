@@ -121,7 +121,7 @@ module Sfx {
 
             return cmPromise.then( () => {
                 //check to see if network inventory manager is enabled and if SFX should display Network information
-                if (cm.isNetworkInventoryManagerEnabled()) {
+                if (cm.isNetworkInventoryManagerEnabled) {
                     let networkNode;
                     let getNetworkPromise = this.data.getNetworks(true).then(net => {
                         networkNode = {

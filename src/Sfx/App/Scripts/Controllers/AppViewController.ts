@@ -114,7 +114,7 @@ module Sfx {
                     : this.$q.when(true),
                 this.$scope.app.serviceTypes.refresh(messageHandler),
                 this.$scope.app.services.refresh(messageHandler),
-                this.$scope.clusterManifest.isNetworkInventoryManagerEnabled() ? this.$scope.networks.refresh(messageHandler) : this.$q.when(true)
+                this.$scope.clusterManifest.isNetworkInventoryManagerEnabled ? this.$scope.networks.refresh(messageHandler) : this.$q.when(true)
                 ]);
         }
 
