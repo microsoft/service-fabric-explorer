@@ -25,7 +25,7 @@ For more information about the application and how to use it: https://docs.micro
 
 ## Developer Help and Documentation
 
-Service Fabric Explorer consists of two main components, an Angular based application (Sfx) and an Electron part to host the Angular application (Sfx-Stanalone).
+Service Fabric Explorer consists of two main components, an AngularJS based application (Sfx) and an Electron part to host the AngularJS application (Sfx-Standalone).
 
 ### Preparing the development machine
 
