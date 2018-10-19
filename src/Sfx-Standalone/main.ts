@@ -31,7 +31,7 @@ async function startup(): Promise<void> {
         global["TargetClusterUrl"] = clusterUrl;
         const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null, true, clusterUrl);
 
-        mainWindow.setMenuBarVisibility(false);
+        mainWindow.setMenuBarVisibility(true);
 
         log.writeEventAsync("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
         mainWindow.loadURL(resolve("sfx/index.html"));

@@ -14,6 +14,7 @@ module Sfx {
         private static apiVersion40: string = "4.0";
         private static apiVersion60: string = "6.0";
         private static apiVersion62Preview: string = "6.2-preview";
+        private static apiVersion64: string = "6.4";
 
         private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -84,21 +85,21 @@ module Sfx {
         public createNetwork(networkName: string, networkAddressPrefix: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Resources/Networks/" + encodeURIComponent(networkName);
             let body: any = { "name": networkName, "properties" : { "kind": "Local", "networkAddressPrefix": networkAddressPrefix } };
-            return this.put(this.getApiUrl(url, RestClient.apiVersion60), "Isolated Network creation", body, messageHandler);
+            return this.put(this.getApiUrl(url, RestClient.apiVersion64), "Isolated Network creation", body, messageHandler);
         }
 
         public getNetwork(networkName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawNetwork> {
             let url = "Resources/Networks/" + encodeURIComponent(networkName) + "/";
-            return this.get(this.getApiUrl(url), "Get network", messageHandler);
+            return this.get(this.getApiUrl(url, RestClient.apiVersion64), "Get network", messageHandler);
         }
 
         public getNetworks(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNetwork[]> {
-            return this.getFullCollection<IRawNetwork>("Resources/Networks/", "Get networks", RestClient.apiVersion60);
+            return this.getFullCollection<IRawNetwork>("Resources/Networks/", "Get networks", RestClient.apiVersion64);
         }
 
         public deleteNetwork(networkName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Resources/Networks/" + encodeURIComponent(networkName);
-            return this.delete(this.getApiUrl(url), "Network Deletion", messageHandler);
+            return this.delete(this.getApiUrl(url, RestClient.apiVersion64), "Network Deletion", messageHandler);
         }
 
         public getNetworksOnApp(appId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNetworkOnApp[]> {
@@ -113,12 +114,12 @@ module Sfx {
 
         public getAppsOnNetwork(networkName: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawAppOnNetwork[]> {
             let url = "Resources/Networks/" + encodeURIComponent(networkName) + "/ApplicationRefs";
-            return this.getFullCollection<IRawAppOnNetwork>(url, "Get applications using current network", RestClient.apiVersion60);
+            return this.getFullCollection<IRawAppOnNetwork>(url, "Get applications using current network", RestClient.apiVersion64);
         }
 
         public getNodesOnNetwork(networkName: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNodeOnNetwork[]> {
             let url = "Resources/Networks/" + encodeURIComponent(networkName) + "/DeployedNodes";
-            return this.getFullCollection<IRawNodeOnNetwork>(url, "Get nodes, current network is deployed on", RestClient.apiVersion60);
+            return this.getFullCollection<IRawNodeOnNetwork>(url, "Get nodes, current network is deployed on", RestClient.apiVersion64);
         }
 
         public getDeployedContainersOnNetwork(networkName: string, nodeName: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawDeployedContainerOnNetwork[]> {

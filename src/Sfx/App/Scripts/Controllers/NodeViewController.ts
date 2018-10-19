@@ -23,6 +23,7 @@ module Sfx {
         nodeEvents: NodeEventList;
         networks: NetworkOnNodeCollection;
         networkListSettings: ListSettings;
+        clusterManifest: ClusterManifest;
     }
 
     export class NodeViewController extends MainViewController {
@@ -63,16 +64,19 @@ module Sfx {
                 new ListColumnSetting("networkDetail.status", "Network Status"),
             ]);
             this.$scope.networks = new NetworkOnNodeCollection(this.data, this.nodeName);
+            this.$scope.clusterManifest = new ClusterManifest(this.data);
             this.refresh();
         }
 
         protected refreshCommon(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            return this.data.getNode(this.nodeName, true, messageHandler)
+            return this.$q.all([
+                this.data.getNode(this.nodeName, true, messageHandler)
                 .then(node => {
                     this.$scope.node = node;
-
                     return this.$scope.node.health.refresh(messageHandler);
-                });
+                }),
+                this.$scope.clusterManifest.ensureInitialized(false)
+            ]);
         }
 
         private refreshDetails(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
@@ -84,7 +88,11 @@ module Sfx {
                 this.$scope.node.deployedApps.refresh(messageHandler).then(deployedApps => {
                     this.$scope.deployedApps = deployedApps;
                 }),
-            this.$scope.networks.refresh(messageHandler)]);
+                //this.$scope.clusterManifest.ensureInitialized(false).then(() => {
+                    this.$scope.clusterManifest.isNetworkInventoryManagerEnabled() ? this.$scope.networks.refresh(messageHandler) : this.$q.when(true),
+                //})
+            ]);
+
         }
 
         private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {

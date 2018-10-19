@@ -63,6 +63,15 @@ module Sfx {
             let $manifest = $xml.find("ClusterManifest")[0];
             this.clusterManifestName = $manifest.getAttribute("Name");
         }
+
+        public isNetworkInventoryManagerEnabled(): boolean {
+            let $xml = $($.parseXML(this.raw.Manifest));
+            let $nim = $xml.find("Section[Name=NetworkInventoryManager]");
+            if ($nim.length !== 0) {
+            return $nim.find("Parameter").attr("Value") === "true";
+            }
+            return false;
+        }
     }
 
     export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProgress> {

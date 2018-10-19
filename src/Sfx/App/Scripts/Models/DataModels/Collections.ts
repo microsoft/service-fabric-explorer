@@ -217,7 +217,7 @@ module Sfx {
                 item => item[this.indexPropery],
                 newIdSelector,
                 null, // no need to create object because a full refresh will be scheduled when new object is returned by health chunk API,
-                      // which is needed because the information returned by the health chunk api is not enough for us to create a full data object.
+                // which is needed because the information returned by the health chunk api is not enough for us to create a full data object.
                 (item: T, newItem: P) => {
                     updatePromises.push(item.mergeHealthStateChunk(newItem));
                 });
@@ -308,12 +308,13 @@ module Sfx {
         }
 
         protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let collection = [];
             return this.data.restClient.getNetworksOnApp(this.appId, messageHandler).then(items => {
-                return _.map(items, raw => {
-                    let network =  new NetworkOnApp(this.data, raw);
-                    network.refresh();
-                    return network;
+                let tasks = _.map(items, raw => {
+                    let network = new NetworkOnApp(this.data, raw);
+                    return network.refresh().then(() => collection.push(network));
                 });
+                return this.data.$q.all(tasks).then(() => collection);
             });
         }
     }
@@ -326,13 +327,14 @@ module Sfx {
         }
 
         protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let collection = [];
             return this.data.restClient.getNetworksOnNode(this.nodeName, messageHandler).then(items => {
                 let filtered = _.filter(items, item => { return item.NetworkName !== "servicefabric_network"; });
-                return _.map(filtered, raw => {
+                let tasks = _.map(filtered, raw => {
                     let network = new NetworkOnNode(this.data, raw);
-                    network.refresh();
-                    return network;
+                    return network.refresh().then(() => collection.push(network));
                 });
+                return this.data.$q.all(tasks).then(() => collection);
             });
         }
     }
@@ -344,12 +346,15 @@ module Sfx {
         }
 
         protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let collection = [];
             return this.data.restClient.getAppsOnNetwork(this.networkName, messageHandler).then(items => {
-                return _.map(items, raw => {
+                console.log("AppOnNetworkCollection retreive new collwction");
+                let tasks = _.map(items, raw => {
                     let application = new AppOnNetwork(this.data, raw);
-                    application.refresh();
-                    return application;
+                    return application.refresh().then(() => collection.push(application));
                 });
+
+                return this.data.$q.all(tasks).then(() => collection);
             });
         }
     }
@@ -362,12 +367,16 @@ module Sfx {
         }
 
         protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let collection = [];
             return this.data.restClient.getNodesOnNetwork(this.networkName, messageHandler).then(items => {
-                return _.map(items, raw => {
+                let tasks = _.map(items, raw => {
                     let node = new NodeOnNetwork(this.data, raw);
-                    node.refresh();
-                    return node;
+                    return node.refresh().then(() => {
+                        collection.push(node);
+                    });
+
                 });
+                return this.data.$q.all(tasks).then(() => collection);
             });
         }
     }
@@ -784,20 +793,20 @@ module Sfx {
             let listSettings = new ListSettings(
                 this.pageSize,
                 ["raw.timeStamp"],
-                [ new ListColumnSetting(
+                [new ListColumnSetting(
                     "raw.kind",
                     "Type",
                     ["raw.kind"],
                     true,
                     (item) => HtmlUtils.getEventNameHtml(item.raw)),
-                  new ListColumnSetting(
+                new ListColumnSetting(
                     "raw.category",
                     "Event Category",
                     ["raw.category"],
                     true,
                     (item) => (!item.raw.category ? "Operational" : item.raw.category)),
-                  new ListColumnSetting("raw.timeStampString", "Timestamp"), ],
-                [ new ListColumnSetting(
+                new ListColumnSetting("raw.timeStampString", "Timestamp"), ],
+                [new ListColumnSetting(
                     "raw.eventInstanceId",
                     "",
                     [],

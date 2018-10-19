@@ -70,6 +70,9 @@ module Sfx {
         }
 
         private getGroupNodes(): angular.IPromise<ITreeNode[]> {
+            let cm: ClusterManifest = new ClusterManifest(this.data);
+            let cmPromise = cm.ensureInitialized(false);
+
             let appsNode;
             let getAppsPromise = this.data.getApps().then(apps => {
                 appsNode = {
@@ -95,17 +98,6 @@ module Sfx {
                 };
             });
 
-            let networkNode;
-            let getNetworkPromise = this.data.getNetworks(true).then(net => {
-                networkNode = {
-                    nodeId: IdGenerator.networkGroup(),
-                    displayName: () => "Networks",
-                    childrenQuery: () => this.getNetworks(),
-                    selectAction: () => this.routes.navigate(() => net.viewPath),
-                    alwaysVisible: true
-                };
-            });
-
             let systemAppNode;
             let systemNodePromise = this.data.getSystemApp().then(systemApp => {
                 systemAppNode = {
@@ -125,8 +117,28 @@ module Sfx {
                 };
             });
 
-            return this.$q.all([getAppsPromise, getNodesPromise, getNetworkPromise, systemNodePromise]).then(() => {
-                return [appsNode, nodesNode, networkNode, systemAppNode];
+
+
+            return cmPromise.then( () => {
+                //check to see if network inventory manager is enabled and if SFX should display Network information
+                if (cm.isNetworkInventoryManagerEnabled()) {
+                    let networkNode;
+                    let getNetworkPromise = this.data.getNetworks(true).then(net => {
+                        networkNode = {
+                            nodeId: IdGenerator.networkGroup(),
+                            displayName: () => "Networks",
+                            childrenQuery: () => this.getNetworks(),
+                            selectAction: () => this.routes.navigate(() => net.viewPath),
+                            alwaysVisible: true
+                        };
+                    });
+                    return this.$q.all([getAppsPromise, getNodesPromise, getNetworkPromise, systemNodePromise]).then(() => {
+                        return [appsNode, nodesNode, networkNode, systemAppNode];
+                    });
+                }
+                return this.$q.all([getAppsPromise, getNodesPromise, systemNodePromise]).then(() => {
+                    return [appsNode, nodesNode, systemAppNode];
+                });
             });
         }
 
