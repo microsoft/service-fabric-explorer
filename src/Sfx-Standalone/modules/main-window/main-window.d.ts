@@ -7,7 +7,7 @@ declare module "sfx.main-window" {
     import { BrowserWindow } from "electron";
     import { IDictionary } from "sfx.common";
 
-    export interface IMainWindow {        
+    export interface IMainWindow {
         loadAsync(): void;
     }
 
@@ -48,11 +48,8 @@ declare module "sfx.sfx-view-container" {
 declare module "sfx.cluster-list" {
     export interface IClusterList {
         newClusterListItemAsync(endpoint: string, name?: string, folder?: string, isCurrentInView?: boolean): Promise<void>;
-        newFolderItemAsync(label: string): Promise<void>;
         removeClusterListItem(label: string): Promise<void>;
         renameClusterListItem(old_cluster: string, new_cluster: string): Promise<void>;
-        moveClusterListItem(cluster: string, new_folder_label: string): Promise<void>;
-        removeFolder(label: string): Promise<void>;
         getDataModel(): Promise<IClusterListDataModel>;
     }
 
@@ -63,7 +60,7 @@ declare module "sfx.cluster-list" {
         removeCluster(cluster_label: string, folder_label: string);
         renameFolder(old_name: string, new_name: string);
         renameCluster(old_name: string, new_name: string);
-        moveCluster(label: string, new_folder_label: string);        
+        moveCluster(label: string, new_folder_label: string);
         getFolders();
         getCluster(label: string, type: string);
         getFolder(label: string);

@@ -36,6 +36,7 @@ export class SfxContainer implements ISfxContainer {
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
         if (sfxWebView) {
+            await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
             sfxWebView.reload();
             $(`#view-container-${id}`, container).show();
         }
@@ -46,51 +47,54 @@ export class SfxContainer implements ISfxContainer {
     public async loadSfxAsync(targetServiceEndpoint: string): Promise<void> {
         const container = $("div.right-container");
         $("#instructions", container).hide();
-        $(".view-container", container).hide();
+        $(".view-container", container).css({ top: `${0 - container.height()}px` });
 
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
+
+        if (this.endpoints.find(e => e.endpoint === targetServiceEndpoint)) {
+            $(`#view-container-${id}`, container).css({ top: 0 }).addClass("current");
+            return Promise.resolve();
+        }
+
         const log = await sfxModuleManager.getComponentAsync("logging");
         const sfxUrl = appUtils.resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint });
-
-        if (!this.endpoints.find(e => e.endpoint === targetServiceEndpoint)) {
-            this.endpoints.push({ endpoint: targetServiceEndpoint, id: id });
-
-            container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
-            $(`<div id="view-container-${id}" class="view-container"><webview tabindex="0" src="${sfxUrl}" id="view-${id}" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
-        } else {
-            $(`#view-container-${id}`, container).show();
-            return;
-        }
+        this.endpoints.push({ endpoint: targetServiceEndpoint, id: id });
+        container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
+        $(`<div id="view-container-${id}" class="view-container"><webview tabindex="0" src="${sfxUrl}" id="view-${id}" autosize="on" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
 
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
         sfxWebView.addEventListener("dom-ready", async () => {
-            await sfxModuleManager.newHostAsync(`host-sfx-${id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", sfxWebView.getWebContents()));            
+            await sfxModuleManager.newHostAsync(`host-sfx-${id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", sfxWebView.getWebContents()));
             log.writeInfoAsync("dom-ready --- ");
-                        
+
             if (!sfxWebView.isDevToolsOpened()) {
-                sfxWebView.openDevTools(); /*uncomment to use development tools */
+                //sfxWebView.openDevTools(); /*uncomment to use development tools */
             }
 
             container.children("#treeview-loading-glyph").remove();
-
             sfxWebView.executeJavaScript(" angular.bootstrap(document, [Sfx.Constants.sfxAppName], { strictDi: true });");
         });
-
-        //authAad.handle(sfxWebView, targetServiceEndpoint);
 
         return Promise.resolve();
     }
 
     public async unloadSfxAsync(targetServiceEndpoint: string): Promise<void> {
         const container = $("div.right-container");
-        //$(".view-container", container).hide();
-
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
         this.endpoints.splice(this.endpoints.indexOf(e => e.endpoint === targetServiceEndpoint), 1);
         container.children("#view-container-" + id).remove();
-
+        
         if (this.endpoints.length === 0) {
             $("#instructions", container).show();
         }
+
+        //await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
     }
 }
+
+$(window).on("resize", () => {
+    // Bug from Electron: when <webview> is hidden, its webcontents won't auto resize to fill the whole view when window is resizing
+    // Instead of hiding the <webview> tags which are not current, pushing it out of view so it always fills the whole view
+    const container = $("div.right-container");    
+    $(".view-container:not(.current)", container).css({ top: `${0 - container.height()}px` });    
+});

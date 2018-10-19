@@ -26,7 +26,7 @@ import { DialogService } from "./dialog-service/dialog-service";
                 let webview = <WebviewTag>document.querySelector(`webview[id='wv-${component.id}']`);
                 webview.addEventListener("dom-ready", async () => {
                     await sfxModuleManager.newHostAsync(`host-${component.id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));
-                    webview.openDevTools(); /*uncomment to use development tools */
+                    //webview.openDevTools(); /*uncomment to use development tools */
                 });
             }
         }));

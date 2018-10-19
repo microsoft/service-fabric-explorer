@@ -21,7 +21,7 @@ export interface IAadMetadata {
 }
 
 function generateAuthzUrl(aadMetadata: IAadMetadata, authzEndpoint: string): string {
-    const authzUrl = new URL(authzEndpoint);
+    const authzUrl = new url.URL(authzEndpoint);
 
     authzUrl.searchParams.set("client_id", aadMetadata.clientId);
     authzUrl.searchParams.set("response_type", "id_token");
