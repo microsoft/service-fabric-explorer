@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
 <Wix 
   xmlns="http://schemas.microsoft.com/wix/2006/wi">
-  <Product Id="*" Name="Service Fabric Explorer" Language="1033" Version="$MSIVERSION$" Manufacturer="Microsoft Corporation" UpgradeCode="62a331a2-9975-4b3d-af44-b2cea0164629">
+  <Product Id="*" Name="Service Fabric Explorer" Language="1033" Version="$(var.MSIVERSION)" Manufacturer="Microsoft Corporation" UpgradeCode="62a331a2-9975-4b3d-af44-b2cea0164629">
     <Package InstallerVersion="200" Compressed="yes" InstallScope="perMachine" />
     <Icon Id="icon.ico" SourceFile=".\resources\app\icons\icon.ico"/>
     <Property Id="ARPPRODUCTICON" Value="icon.ico" />

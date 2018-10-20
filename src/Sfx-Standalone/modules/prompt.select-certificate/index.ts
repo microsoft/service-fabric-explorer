@@ -5,33 +5,26 @@
 
 import { IModule } from "sfx.module-manager";
 import { IPromptService, IPrompt } from "sfx.prompt";
-import { ISelectCertificatePromptResults } from "sfx.prompt.select-certificate";
-import { Certificate } from "electron";
+import { ICertificateInfo } from "sfx.cert";
 
 import * as appUtils from "../../utilities/appUtils";
 
 (<IModule>exports).getModuleMetadata = (components) => {
-    components.register<IPrompt<ISelectCertificatePromptResults>>({
+    components.register<IPrompt<ICertificateInfo>>({
         name: "prompt.select-certificate",
         version: appUtils.getAppVersion(),
         descriptor:
             (promptService: IPromptService,
-                parentWindowId: number,
-                certificates: Array<Certificate>) => {
+                certInfos: Array<ICertificateInfo>) => {
                 if (!Object.isObject(promptService)) {
                     throw new Error("promptService must be supplied.");
                 }
 
-                if (!Array.isArray(certificates)) {
-                    throw new Error("certificates must be supplied.");
-                }
-
                 return promptService.createAsync(
                     {
-                        parentWindowId: parentWindowId,
                         pageUrl: appUtils.resolve("select-certificate.html"),
                         height: 640,
-                        data: certificates
+                        data: certInfos
                     });
             },
         deps: ["prompt.prompt-service"]

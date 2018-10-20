@@ -18,7 +18,7 @@ import * as appUtils from "../../utilities/appUtils";
             singleton: true,
             descriptor: (settings: ISettings, httpsClient: IHttpClient) =>
                 import("./package-manager").then((module) => new module.default(settings, httpsClient)),
-            deps: ["settings", "http.https-client"]
+            deps: ["settings", "http.http-client"]
         });
 
     return {

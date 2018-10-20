@@ -15,14 +15,12 @@ module Sfx {
         public nodes: NodeCollection;
         public imageStore: ImageStore;
 
-        public restClient: RestClient;
-
         public constructor(
             public routes: RoutesService,
             public message: MessageService,
             public telemetry: TelemetryService,
             public $location: angular.ILocationService,
-            public $http: angular.IHttpService,
+            public restClient: RestClient,
             public $q: angular.IQService,
             public $timeout: angular.ITimeoutService,
             public $uibModal: angular.ui.bootstrap.IModalService,
@@ -318,15 +316,10 @@ module Sfx {
 
     (function () {
 
-        let module = angular.module("dataService", ["routes", "messages", "ui.bootstrap", "ngSanitize"]);
-        module.factory("data", ["routes", "message", "telemetry", "$location", "$http", "$q", "$timeout", "$uibModal", "$route", "$sanitize", "$rootScope",
-            (routes, message, telemetry, $location, $http, $q, $timeout, $uibModal, $route, $sanitize, $rootScope) =>
-                new DataService(routes, message, telemetry, $location, $http, $q, $timeout, $uibModal, $route, $sanitize, $rootScope)]);
-
-        module.run(["$http", function ($http: angular.IHttpService) {
-            $http.defaults.headers.common[Constants.SfxVersionMetadataName] = VersionInfo.Version;
-            $http.defaults.headers.common[Constants.SfxBuildMetadataName] = VersionInfo.Build;
-        }]);
+        let module = angular.module("dataService", ["routes", "messages", "ui.bootstrap", "ngSanitize", "restClientService"]);
+        module.factory("data", ["routes", "message", "telemetry", "$location", "restClient", "$q", "$timeout", "$uibModal", "$route", "$sanitize", "$rootScope",
+            (routes, message, telemetry, $location, restClient, $q, $timeout, $uibModal, $route, $sanitize, $rootScope) =>
+                new DataService(routes, message, telemetry, $location, restClient, $q, $timeout, $uibModal, $route, $sanitize, $rootScope)]);
 
         // Upon the route change [ie, user navigation], let us know that the cache is no longer valid.
         module.run(["$rootScope", "data", function ($rootScope: angular.IRootScopeService, data: DataService) {

@@ -100,7 +100,7 @@ module Sfx {
 
                     let replicaQueries = _.map(nodes.collection, (node) =>
                         this.data.restClient.getReplicasOnNode(node.name, this.id)
-                            .success((deployedReplicas) => _.forEach(deployedReplicas, (replica) => {
+                            .then((response) => _.forEach(response.data, (replica) => {
                                 replicas.push({
                                     Replica: replica,
                                     NodeName: node.name

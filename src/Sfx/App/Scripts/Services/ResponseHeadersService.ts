@@ -9,7 +9,7 @@ module Sfx {
 
         constructor(private $rootScope: angular.IRootScopeService, private $location: angular.ILocationService) {
             if (this.$rootScope[Constants.SfxClusterNameMetadataName] === undefined) {
-                if (StandaloneIntegration.isStandalone) {
+                if (StandaloneIntegration.isStandalone()) {
                     let url = new URL(StandaloneIntegration.clusterUrl);
 
                     this.$rootScope[Constants.SfxClusterNameMetadataName] = url.protocol + "//" + url.hostname;
