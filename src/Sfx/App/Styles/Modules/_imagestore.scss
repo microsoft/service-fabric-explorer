@@ -1,122 +1,129 @@
 @import "../Base/_config.scss";
 
-.summaryTab {
-    width: 80%;
-    height: 100px;
-    background-color: gray;
-    left: 10px;
-}
-
-.header {
-    background-color: #262626;
-    color: gray;
-    text-align: center;
-    font-size: 12px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    display: flex;
-    width: 100%;
-    padding-right: 40px;
-}
-    
-.complete-list {
-    min-width: 1000px;
-}
-.complete-list, .complete-list ul, .complete-list li {    
-    padding-left: 0px;
-    padding-right: 0px;
-}
-
-.linkasbtn {
-    color: lightgray;
-    text-align: left;
-    font-size: 12px;
-    padding-top: 4px;
-    padding-bottom: 4px;
-    padding-left: 0px;
-}
-
-.ulforimgstr {
-    list-style-type: none;
-
-    a:link, a:focus {
-        color: lightgray;
-    }
-
-    a:visited {
-        color: lightgray;
-    }
-}
-
-.span {
-    display: inline-block;
-    width: 800px;
-}
-
 .image-store-view {
-    display: flex;
-    flex-flow: column;
-    max-width: auto;
-}
+    .summaryTab {
+        width: 80%;
+        height: 100px;
+        background-color: gray;
+        left: 10px;
+    }
 
-.child {
-    display: flex;
-    flex-flow: row;
-    flex-wrap: nowrap;
-    align-content: flex-start;
-    align-items: flex-start;
-    width: 100%;  
-}
+    .header {
+        background-color: #262626;
+        color: gray;
+        text-align: center;
+        font-size: 12px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        display: flex;
+        width: 100%;
+        padding-right: 40px;
+    }
+        
+    .complete-list {
+        min-width: 1000px;
+    }
 
-.headerfirstcell, .indentation {    
-    min-width: 320px;
-    width: 100%;    
-    overflow: hidden;
-    text-overflow: ellipsis;
-}
+    .complete-list .bowtie-spinner {
+        font-size: 20pt;
+    }
 
-.column-item {
-    text-align: center;
-    font-size: 12px;
-    width: 200px;
-    min-width: 180px;
-}
+    .complete-list, .complete-list ul, .complete-list li {    
+        padding-left: 0px;
+        padding-right: 0px;
+    }
 
-.folder-name-text, .file-name-text {
-    padding-left: 4px;
-    display: inline-block;
-}
+    .linkasbtn {
+        color: lightgray;
+        text-align: left;
+        font-size: 12px;
+        padding-top: 4px;
+        padding-bottom: 4px;
+        padding-left: 0px;
+    }
 
-.folder-name-text {
-    width: calc(100% - 40px);
-}
+    .ulforimgstr {
+        list-style-type: none;
 
-.file-name-text {    
-    width: calc(100% - 20px);
-}
+        a:link, a:focus {
+            color: lightgray;
+        }
 
-.ellipsis {
-    width: 40px;
-}
+        a:visited {
+            color: lightgray;
+        }
+    }
 
-.explorer-search {
-    width: 25%;
-    margin-top: 12px;
-    margin-bottom: 6px;
-}
+    .span {
+        display: inline-block;
+        width: 800px;
+    }
 
-.loader {
-    position: fixed;
-    right: 45%;
-    top: 45%;
-    animation: spin 5s;
-}
+    .image-store-view {
+        display: flex;
+        flex-flow: column;
+        max-width: auto;
+    }
 
-.dropdown-menu-right {
-    list-style: none;
-}
+    .child {
+        display: flex;
+        flex-flow: row;
+        flex-wrap: nowrap;
+        align-content: flex-start;
+        align-items: flex-start;
+        width: 100%;  
+    }
 
-@keyframes spin {
-    0% { transform: rotate(0deg); }
-    100% { transform: rotate(360deg); }
+    .headerfirstcell, .indentation {    
+        min-width: 320px;
+        width: 100%;    
+        overflow: hidden;
+        text-overflow: ellipsis;
+    }
+
+    .column-item {
+        text-align: center;
+        font-size: 12px;
+        width: 200px;
+        min-width: 180px;
+    }
+
+    .folder-name-text, .file-name-text {
+        padding-left: 4px;
+        display: inline-block;
+    }
+
+    .folder-name-text {
+        width: calc(100% - 40px);
+    }
+
+    .file-name-text {    
+        width: calc(100% - 20px);
+    }
+
+    .ellipsis {
+        width: 40px;
+    }
+
+    .explorer-search {
+        width: 25%;
+        margin-top: 12px;
+        margin-bottom: 6px;
+    }
+
+    .loader {
+        position: fixed;
+        right: 45%;
+        top: 45%;
+        animation: spin 5s;
+    }
+
+    .dropdown-menu-right {
+        list-style: none;
+    }
+
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
 }

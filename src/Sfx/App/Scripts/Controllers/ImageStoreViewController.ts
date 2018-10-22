@@ -1,10 +1,8 @@
-
 module Sfx {
     export class ImageStoreViewController {
         public static $inject = ["$scope", "$timeout"];
         public constructor(private $scope: any, private $timeout: any) {
         }
-
 
         public deleteSelected(itemName: string) {
             this.$scope.showDeleteConfirmation = true;
@@ -23,20 +21,20 @@ module Sfx {
         }
 
         public search() {
+            if (!this.$scope.imageStoreTreeSearchTerm) {
+                return false;
+            }
+
             this.$scope.searchView = true;
             this.$scope.loader = true;
-            if (this.$scope.imageStoreTreeSearchTerm === "") {
-                this.$scope.showEmptySearchMessage = true;
-            } else {
-                this.$scope.imagestoreroot.search(this.$scope.imageStoreTreeSearchTerm).then(() => {
-                    this.$scope.loader = false;
-                    if (this.$scope.imagestoreroot.relevantFolders.length === 0 && this.$scope.imagestoreroot.relevantFiles.length === 0) {
-                        this.$scope.showEmptySearchMessage = true;
-                    } else {
-                        this.$scope.showEmptySearchMessage = false;
-                    }
-                });
-            }
+            this.$scope.imagestoreroot.search(this.$scope.imageStoreTreeSearchTerm).then(() => {
+                this.$scope.loader = false;
+                if (this.$scope.imagestoreroot.relevantFolders.length === 0 && this.$scope.imagestoreroot.relevantFiles.length === 0) {
+                    this.$scope.showEmptySearchMessage = true;
+                } else {
+                    this.$scope.showEmptySearchMessage = false;
+                }
+            });
         }
 
         public reset() {

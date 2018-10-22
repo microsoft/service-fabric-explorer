@@ -35,11 +35,11 @@ module Sfx {
             super($injector, {
                 "essentials": { name: "Essentials" },
                 "details": { name: "Details" },
-                "clustermap": { name: "Cluster Map" },
                 "metrics": { name: "Metrics" },
-                "manifest": { name: "Manifest" },
+                "clustermap": { name: "Cluster Map" },
+                "events": { name: "Events" },
                 "imagestore": { name: "Image Store" },
-                "events": { name: "Events" }
+                "manifest": { name: "Manifest" }
             });
 
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
@@ -155,7 +155,6 @@ module Sfx {
         }
 
         private refreshImageStore(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            this.$scope.imageStore.getSummaryTabInfo();
             return this.$scope.imageStore.refresh(messageHandler);
         }
     }

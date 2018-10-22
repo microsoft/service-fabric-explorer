@@ -36,7 +36,7 @@
         <strong class="column-item">Count of files</strong>
     </div>
     <ul class="complete-list" ng-show="!searchView">
-        <li ng-repeat="folder in imagestoreroot.root.childrenFolders" ng-include="'folderTemplate'" class="ulforimgstr"></li>
+        <li ng-repeat="folder in imagestoreroot.root.childrenFolders" class="ulforimgstr" ng-include="'folderTemplate'"></li>
         <li ng-repeat="file in imagestoreroot.root.childrenFiles" class="child ulforimgstr" ng-include="'fileTemplate'"></li>
     </ul>
 
@@ -65,7 +65,7 @@
         <li ng-repeat="file in imagestoreroot.relevantFiles" ng-show="!loader" class="child ulforimgstr">
             <span class="indentation linkasbtn" padding-left="{{file.indentationLevel * 16}}px">
                 <span class="bowtie-icon bowtie-file"></span>
-                <span class="file-name-text">{{file.displayName}}</span>
+                <span class="file-name-text">{{file.name}}</span>
             </span>
             <div class="column-item">
                 {{file.version}}
@@ -134,10 +134,8 @@
         </div>
 
         <ul class="ulforimgstr">
-            <li ng-repeat="file in folder.childrenFiles" ng-include="'fileTemplate'" ng-show="file.show">
-            </li>
-            <li ng-repeat="folder in folder.childrenFolders" ng-include="'folderTemplate'" ng-show="folder.show">
-            </li>
+            <li ng-repeat="folder in folder.childrenFolders" ng-include="'folderTemplate'" ng-show="folder.show"></li>        
+            <li ng-repeat="file in folder.childrenFiles" ng-include="'fileTemplate'" ng-show="file.show"></li>
         </ul>
     </script>
 

@@ -23,7 +23,6 @@ module Sfx {
             return segments[segments.length - 1];
         }
 
-
         constructor(public data: DataService) {
             super(data);
 
@@ -34,6 +33,8 @@ module Sfx {
             // Push an empty string for root
             this.currentOpenFolders.push("");
             this.uiFolderDictionary[""] = this.root;
+
+            this.refreshSummaryInfo();
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
@@ -58,36 +59,35 @@ module Sfx {
             }
         }
 
-        public getSummaryTabInfo() {
-            this.getCompleteDataSet().then((r: ImageStoreFolder) => {
-                this.getApplicationPackages().then((array) => {
-                    this.noOfApplicationPackages = array.length;
-                    let tempArray: string[] = [];
-                    let tempSize = 0;
-                    for (let i = 0; i < array.length; i++) {
-                        tempArray[i] = array[i].Name.replace("fabric:/", "");
-                        tempSize = tempSize + this.getFolderSize(this.getFolderByPath(tempArray[i]));
-                    }
-                    this.sizeOfAppPackages = Utils.getFriendlyFileSize(tempSize);
-                });
-                this.getApplicationTypes().then((array) => {
-                    this.noOfApplicationTypes = array.length;
-                    let tempSize = 0;
-                    for (let j = 0; j < array.length; j++) {
-                        tempSize = tempSize + this.getFolderSize(this.getFolderByPath("Store\\" + array[j].Name));
-                        this.sizeOfAppTypes = Utils.getFriendlyFileSize(tempSize);
-                    }
-                });
+        public refreshSummaryInfo(): angular.IPromise<any> {
+            return this.getCompleteDataSet().then((r: ImageStoreFolder) => {
+                return this.data.$q.all([
+                    this.getApplicationPackages().then((packages) => {
+                        this.noOfApplicationPackages = packages.length;
+                        let spaceSize = 0;
+                        for (let i = 0; i < packages.length; i++) {
+                            spaceSize = spaceSize + this.getFolderSize(this.getFolderByPath(packages[i].Name.replace("fabric:/", "")));
+                        }
+                        this.sizeOfAppPackages = Utils.getFriendlyFileSize(spaceSize);
+                    }),
+                    this.getApplicationTypes().then((appTypes) => {
+                        this.noOfApplicationTypes = appTypes.length;
+                        let tempSize = 0;
+                        for (let j = 0; j < appTypes.length; j++) {
+                            tempSize = tempSize + this.getFolderSize(this.getFolderByPath("Store\\" + appTypes[j].Name));
+                            this.sizeOfAppTypes = Utils.getFriendlyFileSize(tempSize);
+                        }
+                    })]);
             });
         }
 
-        protected expandFolder(path: string) {
+        protected expandFolder(path: string): angular.IPromise<void> {
             const folder = this.uiFolderDictionary[path];
             if (!folder) {
-                return;
+                return this.data.$q.resolve();
             }
 
-            this.copyFolderContentToUI(path).then(() => {
+            return this.copyFolderContentToUI(path).then(() => {
                 folder.isExpanded = true;
 
                 if (folder.childrenFiles) {
@@ -161,6 +161,10 @@ module Sfx {
         }
 
         protected search(searchTerm: string): angular.IPromise<void> {
+            if (!searchTerm) {
+                return this.data.$q.resolve();
+            }
+
             return this.getCompleteDataSet().then(() => {
                 this.relevantFolders = this.searchFolders(searchTerm);
                 this.relevantFiles = this.searchFiles(searchTerm);
@@ -237,12 +241,13 @@ module Sfx {
         }
 
         private searchFolders(searchTerm: string, currentFolder?: ImageStoreFolder) {
+            searchTerm = searchTerm.toLowerCase();
             let listOfRelevantFolders: ImageStoreFolder[] = [];
             if (currentFolder === undefined) {
                 currentFolder = this.parentRootFolder;
             }
 
-            if (currentFolder.name.indexOf(searchTerm) !== -1) {
+            if (currentFolder.name.toLowerCase().indexOf(searchTerm) !== -1) {
                 listOfRelevantFolders.push(currentFolder);
             }
 
@@ -259,6 +264,7 @@ module Sfx {
         }
 
         private searchFiles(searchTerm: string, currentFolder?: ImageStoreFolder) {
+            searchTerm = searchTerm.toLowerCase();
             let listOfRelevantFiles: ImageStoreFile[] = [];
             if (currentFolder === undefined) {
                 currentFolder = this.parentRootFolder;
@@ -266,7 +272,7 @@ module Sfx {
 
             if (currentFolder.childrenFiles.length !== 0) {
                 for (let i = 0; i < currentFolder.childrenFiles.length; i++) {
-                    if (currentFolder.childrenFiles[i].name.indexOf(searchTerm) !== -1) {
+                    if (currentFolder.childrenFiles[i].name.toLowerCase().indexOf(searchTerm) !== -1) {
                         listOfRelevantFiles.push(currentFolder.childrenFiles[i]);
                     }
                 }
@@ -285,14 +291,18 @@ module Sfx {
         }
 
         private getFolderSize(folder: ImageStoreFolder): number {
+            if (!folder) {
+                return 0;
+            }
+
             let folderSize: number = 0;
-            if (folder.childrenFiles.length !== 0) {
+            if (folder.childrenFiles && folder.childrenFiles.length !== 0) {
                 for (let i = 0; i < folder.childrenFiles.length; i++) {
                     folderSize = folderSize + Number(folder.childrenFiles[i].fileSize);
                 }
             }
 
-            if (folder.childrenFolders.length !== 0) {
+            if (folder.childrenFolders && folder.childrenFolders.length !== 0) {
                 for (let i = 0; i < folder.childrenFolders.length; i++) {
                     folderSize = folderSize + this.getFolderSize(folder.childrenFolders[i]);
                 }

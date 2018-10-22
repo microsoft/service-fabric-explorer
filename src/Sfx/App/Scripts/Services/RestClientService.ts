@@ -642,7 +642,7 @@ module Sfx {
         }
 
         private delete<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
-            let result = this.wrapInCallbacks(() => this.$http.delete(url));
+            let result = this.wrapInCallbacks<T>(() => this.httpClient.deleteAsync(url));
             if (!messageHandler) {
                 messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
             }

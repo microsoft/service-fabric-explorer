@@ -36,8 +36,6 @@ module Sfx {
             this.apps = new ApplicationCollection(this);
             this.nodes = new NodeCollection(this);
             this.imageStore = new ImageStore(this);
-
-            this.restClient = new RestClient($http, message);
         }
 
         public actionsEnabled(): boolean {
