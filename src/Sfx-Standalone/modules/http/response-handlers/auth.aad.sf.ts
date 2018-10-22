@@ -69,7 +69,7 @@ export default function createResponseHandler(): HttpResponseHandler {
         if (record instanceof Promise) {
             return record.then(() => pipeline.requestAsync(request));
 
-        } else if (record === "Retry") {
+        } else if (record === "Retry" && !request.headers.find((header) => header.name === "Authorization")) {
             return pipeline.requestAsync(request);
 
         } else if (record === "NotSupported") {
