@@ -32,7 +32,6 @@ module Sfx {
                 IdGenerator.networkGroup(),
                 IdGenerator.network(this.networkName)
             ]);
-            console.log("where am i");
             this.$scope.appListSettings = this.settings.getNewOrExistingListSettings("apps", ["appDetail.raw.Name"], [
                 new ListColumnSettingForLink("appDetail.raw.Name", "Application Name", item => item.viewPath),
                 new ListColumnSetting("appDetail.raw.TypeName", "Application Type"),
@@ -40,7 +39,6 @@ module Sfx {
                 new ListColumnSetting("appDetail.raw.Status", "Status"),
             ]);
             this.$scope.apps = new AppOnNetworkCollection(this.data, this.networkName);
-            console.log("where am i 2");
             this.$scope.nodeListSettings = this.settings.getNewOrExistingListSettings("nodes", ["nodeDetails.name"], [
                 new ListColumnSettingForLink("nodeDetails.name", "Name", item => item.viewPath),
                 new ListColumnSetting("nodeDetails.raw.IpAddressOrFQDN", "Address"),
@@ -66,14 +64,12 @@ module Sfx {
             ]);
             this.$scope.containers = new DeployedContainerOnNetworkCollection(this.data, this.networkName);
             this.refresh();
-            console.log("constructor ends");
         }
 
         protected refreshCommon(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.data.getNetwork(this.networkName, true, messageHandler)
                 .then(network => {
                     this.$scope.network = network;
-                    console.log("NetworkViewController refresh common");
                 });
         }
 

@@ -348,7 +348,6 @@ module Sfx {
         protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             let collection = [];
             return this.data.restClient.getAppsOnNetwork(this.networkName, messageHandler).then(items => {
-                console.log("AppOnNetworkCollection retreive new collwction");
                 let tasks = _.map(items, raw => {
                     let application = new AppOnNetwork(this.data, raw);
                     return application.refresh().then(() => collection.push(application));

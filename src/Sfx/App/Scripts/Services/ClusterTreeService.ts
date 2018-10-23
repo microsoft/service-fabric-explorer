@@ -8,6 +8,7 @@ module Sfx {
     export class ClusterTreeService {
         public tree: TreeViewModel;
         private clusterHealth: ClusterHealth;
+        private cm: ClusterManifest;
 
         constructor(
             private $q: angular.IQService,
@@ -20,6 +21,7 @@ module Sfx {
         public init() {
             this.clusterHealth = new ClusterHealth(this.data, HealthStateFilterFlags.None, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
             this.tree = new TreeViewModel(this.$q, () => this.getRootNode());
+            this.cm = new ClusterManifest(this.data);
         }
 
         public selectTreeNode(path: string[], skipSelectAction?: boolean): ng.IPromise<any> {
@@ -70,8 +72,8 @@ module Sfx {
         }
 
         private getGroupNodes(): angular.IPromise<ITreeNode[]> {
-            let cm: ClusterManifest = new ClusterManifest(this.data);
-            let cmPromise = cm.ensureInitialized(false);
+            //let cm: ClusterManifest = new ClusterManifest(this.data);
+            let cmPromise = this.cm.ensureInitialized(false);
 
             let appsNode;
             let getAppsPromise = this.data.getApps().then(apps => {
@@ -121,7 +123,7 @@ module Sfx {
 
             return cmPromise.then( () => {
                 //check to see if network inventory manager is enabled and if SFX should display Network information
-                if (cm.isNetworkInventoryManagerEnabled) {
+                if (this.cm.isNetworkInventoryManagerEnabled) {
                     let networkNode;
                     let getNetworkPromise = this.data.getNetworks(true).then(net => {
                         networkNode = {
