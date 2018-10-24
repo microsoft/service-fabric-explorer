@@ -37,29 +37,8 @@ module Sfx {
             }
         }
 
-        private setUpActions(): void {
-            if (this.raw.ReplicaRole !== "Primary") {
-                return;
-            }
-            
-            let serviceName = this.parent.parent.raw.Name;
-
-            this.actions.add(new ActionWithConfirmationDialog(
-                this.data.$uibModal,
-                this.data.$q,
-                "movePrimaryReplica",
-                "Move Primary Replica",
-                "Moving",
-                () => this.movePrimaryReplica(),
-                () => true,
-                "Confirm Primary Replica Move",
-                `Move Primary Replica for ${serviceName} from Node ${this.raw.NodeName}?`,
-                'confirm'
-            ));
-        }
-
         public movePrimaryReplica(): angular.IPromise<any> {
-            return this.data.restClient.movePrimaryReplicaNode(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.ReplicaId); 
+            return this.data.restClient.movePrimaryReplicaNode(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.ReplicaId);
         }
 
         public get isStatefulService(): boolean {
@@ -110,6 +89,27 @@ module Sfx {
 
         protected updateInternal(): angular.IPromise<any> | void {
             this.address = Utils.parseReplicaAddress(this.raw.Address);
+        }
+
+        private setUpActions(): void {
+            if (["Primary", "ActiveSecondary"].indexOf(this.raw.ReplicaRole) === -1) {
+                return;
+            }
+
+            let serviceName = this.parent.parent.raw.Name;
+
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                `move${this.raw.ReplicaRole}Replica`,
+                `Move ${this.raw.ReplicaRole} Replica`,
+                "Moving",
+                () => this.movePrimaryReplica(),
+                () => true,
+                `Confirm ${this.raw.ReplicaRole} Replica Move`,
+                `Move ${this.raw.ReplicaRole} Replica for ${serviceName} from Node ${this.raw.NodeName}?`,
+                "confirm"
+            ));
         }
     }
 

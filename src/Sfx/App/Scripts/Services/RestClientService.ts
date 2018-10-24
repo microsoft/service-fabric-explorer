@@ -572,8 +572,8 @@ module Sfx {
         }
 
         public movePrimaryReplicaNode(nodeName: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<{}> {
-            let url = "Nodes/" 
-                + nodeName + "/$/" 
+            let url = "Nodes/"
+                + nodeName + "/$/"
                 + "GetPartitions/"
                 + partitionId + "/$/"
                 + "GetReplicas/"
