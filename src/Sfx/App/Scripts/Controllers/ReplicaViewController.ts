@@ -66,7 +66,6 @@ module Sfx {
             return this.data.getReplicaOnPartition(this.appId, this.serviceId, this.partitionId, this.replicaId, true, messageHandler)
                 .then(replica => {
                     this.$scope.replica = replica;
-                    console.log(this.$scope.replica);
                     return this.$scope.replica.health.refresh(messageHandler);
                 });
         }

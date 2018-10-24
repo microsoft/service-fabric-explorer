@@ -16,7 +16,7 @@ module Sfx {
                     displayValueInHtml: (value) => HtmlUtils.getLinkHtml(value, this.nodeViewPath)
                 },
                 "ReplicaRole": {
-                    displayValueInHtml: (value) => this.role + "test "
+                    displayValueInHtml: (value) => this.role
                 }
             }
         };
@@ -41,7 +41,6 @@ module Sfx {
         }
 
         private setUpActions(): void {
-            console.log(this.raw.ReplicaRole);
             if (this.raw.ReplicaRole !== "Primary") {
                 return;
             }
@@ -60,16 +59,10 @@ module Sfx {
                 `Move Primary Replica for ${serviceName} from Node ${this.raw.NodeName}?`,
                 'confirm'
             ));
-            console.log("added actions")
         }
 
         public movePrimaryReplica(): angular.IPromise<any> {
-            console.log(this.parent);
-            console.log(this.raw);
-            let nodeName = this.raw.NodeName;
-            let replicaId = this.raw.ReplicaId;
-            let partitionId = this.parent.raw.PartitionInformation.Id;
-            return this.data.restClient.movePrimaryReplicaNode(nodeName, partitionId, replicaId); 
+            return this.data.restClient.movePrimaryReplicaNode(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.ReplicaId); 
         }
 
         public get isStatefulService(): boolean {

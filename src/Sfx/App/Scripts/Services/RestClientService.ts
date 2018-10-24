@@ -580,7 +580,6 @@ module Sfx {
                 + replicaId + "/$/"
                 + "Delete";
             return this.post(this.getApiUrl(url), "Primary Replica Node Move", null, messageHandler);
-
         }
 
         private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<T[]> {
