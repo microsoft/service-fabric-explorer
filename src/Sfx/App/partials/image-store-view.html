@@ -29,21 +29,21 @@
             result </label>
     </div>
     <div class="header">
-        <strong class="headerfirstcell">Name</strong>
+        <strong class="header-first-item">Name</strong>
         <strong class="column-item">File version</strong>
         <strong class="column-item">Date modified</strong>
         <strong class="column-item">Size</strong>
         <strong class="column-item">Count of files</strong>
     </div>
     <ul class="complete-list" ng-show="!searchView">
-        <li ng-repeat="folder in imagestoreroot.root.childrenFolders" class="ulforimgstr" ng-include="'folderTemplate'"></li>
-        <li ng-repeat="file in imagestoreroot.root.childrenFiles" class="child ulforimgstr" ng-include="'fileTemplate'"></li>
+        <li ng-repeat="folder in imagestoreroot.root.childrenFolders" class="list-item" ng-include="'folderTemplate'"></li>
+        <li ng-repeat="file in imagestoreroot.root.childrenFiles" class="child list-item" ng-include="'fileTemplate'"></li>
     </ul>
 
     <ul class="complete-list" ng-show="searchView">
         <div class="bowtie-icon bowtie-spinner loader rotate" ng-show="loader && searchView"></div>
-        <li ng-repeat="folder in imagestoreroot.relevantFolders" ng-show="!loader" class="child ulforimgstr">
-            <span class="indentation linkasbtn" padding-left="{{folder.indentationLevel * 16}}px">
+        <li ng-repeat="folder in imagestoreroot.relevantFolders" ng-show="!loader" class="child list-item">
+            <span class="indentation list-item-name" padding-left="{{folder.indentationLevel * 16}}px">
                 <span class="bowtie-icon bowtie-folder"></span>
                 <span class="folder-name-text">{{folder.name}}</span>
             </span>
@@ -62,8 +62,8 @@
             <div uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'">
             </div>
         </li>
-        <li ng-repeat="file in imagestoreroot.relevantFiles" ng-show="!loader" class="child ulforimgstr">
-            <span class="indentation linkasbtn" padding-left="{{file.indentationLevel * 16}}px">
+        <li ng-repeat="file in imagestoreroot.relevantFiles" ng-show="!loader" class="child list-item">
+            <span class="indentation list-item-name" padding-left="{{file.indentationLevel * 16}}px">
                 <span class="bowtie-icon bowtie-file"></span>
                 <span class="file-name-text">{{file.name}}</span>
             </span>
@@ -113,7 +113,7 @@
 
     <script type="text/ng-template" id="folderTemplate">
         <div class="child">
-            <a href="" role="button" ng-click="ctrl.onFolderClick(folder.name, !folder.isExpanded)" data-open="" class="linkasbtn indentation" style="padding-left:{{folder.indentationLevel * 16}}px">                
+            <a href="" role="button" ng-click="ctrl.onFolderClick(folder.name, !folder.isExpanded)" data-open="" class="list-item-name indentation" style="padding-left:{{folder.indentationLevel * 16}}px">                
                 <span class="bowtie-icon" ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded }"></span>
                 <span class="bowtie-icon bowtie-folder"></span>                
                 <span class="folder-name-text">{{folder.name}}</span>                
@@ -133,7 +133,7 @@
             <div uib-dropdown class="dropdown" ng-include="'ellipsisFolderTemplate'"></div>
         </div>
 
-        <ul class="ulforimgstr">
+        <ul class="list-item">
             <li ng-repeat="folder in folder.childrenFolders" ng-include="'folderTemplate'" ng-show="folder.show"></li>        
             <li ng-repeat="file in folder.childrenFiles" ng-include="'fileTemplate'" ng-show="file.show"></li>
         </ul>
@@ -141,7 +141,7 @@
 
     <script type="text/ng-template" id="fileTemplate">
         <div class="child">
-            <span class="indentation linkasbtn" style="padding-left:{{file.indentationLevel * 16}}px">
+            <span class="indentation list-item-name" style="padding-left:{{file.indentationLevel * 16}}px">
                 <span class="bowtie-icon bowtie-file"></span>                    
                 <span class="file-name-text">{{file.displayName}}</span>
             </span>
@@ -164,17 +164,17 @@
         ng-style="{'z-index': 1050 + $$topModalIndex*10, display: 'block'}">
         <form class="ng-pristine ng-valid ng-scope">
             <div class="modal-header">
-                <h4 class="modal-title ng-binding">Confirm Deletion</h4>
+                <h4 class="modal-title ng-binding">Confirm deletion</h4>
             </div>
             <div class="modal-body">
-                <p class="ng-binding">Delete {{itemName}} from cluster localhost?</p>
-                <input class="input-flat ng-pristine ng-untouched ng-valid ng-empty" type="text" placeholder="Type in '{{itemName}}' to continue" autocomplete="off"
+                <p class="ng-binding">Delete {{confirmationKeyword}}? This action cannot be undone.</p>
+                <input class="input-flat ng-pristine ng-untouched ng-valid ng-empty" type="text" placeholder="Type in '{{confirmationKeyword}}' to continue" autocomplete="off"
                     ng-model="usertypedkeyword" aria-hidden="false" aria-invalid="false">
             </div>
             <div class="modal-footer">
                 <button type="submit" class="btn btn-primary ng-binding" data-dismiss="modal" ng-disabled="confirmationKeyword !== usertypedkeyword" ng-click="ctrl.deleteConfirmed()"
                     disabled="disabled">
-                    Delete Application
+                    Delete Image Store content
                 </button>
                 <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="usertypedkeyword = null; ctrl.deleteCanceled()">Cancel</button>
             </div>

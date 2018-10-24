@@ -518,18 +518,15 @@ module Sfx {
 
         public getImageStoreContent(path?: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawImageStoreContent> {
             let url = path ? `ImageStore/${path}` : "ImageStore";
-            return this.get(this.getApiUrl(url, RestClient.apiVersion60), "Get Image Store Content", messageHandler);
+            return this.get(this.getApiUrl(url, RestClient.apiVersion60), "Get Image Store content", messageHandler);
         }
 
-        public deleteImageStoreContent(path?: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
-            let url = path ? `ImageStore/${path}` : "ImageStore";
-            return this.delete(this.getApiUrl(url, RestClient.apiVersion60), "Delete Image Store Content", messageHandler);
+        public deleteImageStoreContent(path: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            return this.delete(this.getApiUrl(`ImageStore/${path}`, RestClient.apiVersion60), "Delete Image Store content", messageHandler);
         }
 
         public getClusterEvents(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<ClusterEvent[]> {
-            let url = "EventsStore/"
-                + "Cluster/Events";
-            return this.getEvents(ClusterEvent, url, startTime, endTime, messageHandler);
+            return this.getEvents(ClusterEvent, "EventsStore/Cluster/Events", startTime, endTime, messageHandler);
         }
 
         public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<NodeEvent[]> {
