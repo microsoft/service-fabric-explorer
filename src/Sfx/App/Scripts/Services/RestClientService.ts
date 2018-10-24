@@ -571,6 +571,18 @@ module Sfx {
             return this.getEvents(FabricEvent, url, null, null, messageHandler);
         }
 
+        public movePrimaryReplicaNode(nodeName: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<{}> {
+            let url = "Nodes/" 
+                + nodeName + "/$/" 
+                + "GetPartitions/"
+                + partitionId + "/$/"
+                + "GetReplicas/"
+                + replicaId + "/$/"
+                + "Delete";
+            return this.post(this.getApiUrl(url), "Primary Replica Node Move", null, messageHandler);
+
+        }
+
         private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<T[]> {
             let apiUrl = url;
             if (startTime && endTime) {

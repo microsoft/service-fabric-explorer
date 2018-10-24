@@ -16,7 +16,7 @@ module Sfx {
                     displayValueInHtml: (value) => HtmlUtils.getLinkHtml(value, this.nodeViewPath)
                 },
                 "ReplicaRole": {
-                    displayValueInHtml: (value) => this.role
+                    displayValueInHtml: (value) => this.role + "test "
                 }
             }
         };
@@ -31,6 +31,45 @@ module Sfx {
             this.health = new ReplicaHealth(this.data, this, HealthStateFilterFlags.Default);
             this.detail = new DeployedReplicaDetail(this.data, this);
             this.updateInternal();
+
+            if (this.data.actionsEnabled()) {
+                console.log("setting up action items")
+                this.setUpActions();
+            }
+            console.log(this.actions)
+
+        }
+
+        private setUpActions(): void {
+            console.log(this.raw.ReplicaRole);
+            if (this.raw.ReplicaRole !== "Primary") {
+                return;
+            }
+            
+            let serviceName = this.parent.parent.raw.Name;
+
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "movePrimaryReplica",
+                "Move Primary Replica",
+                "Moving",
+                () => this.movePrimaryReplica(),
+                () => true,
+                "Confirm Primary Replica Move",
+                `Move Primary Replica for ${serviceName} from Node ${this.raw.NodeName}?`,
+                'confirm'
+            ));
+            console.log("added actions")
+        }
+
+        public movePrimaryReplica(): angular.IPromise<any> {
+            console.log(this.parent);
+            console.log(this.raw);
+            let nodeName = this.raw.NodeName;
+            let replicaId = this.raw.ReplicaId;
+            let partitionId = this.parent.raw.PartitionInformation.Id;
+            return this.data.restClient.movePrimaryReplicaNode(nodeName, partitionId, replicaId); 
         }
 
         public get isStatefulService(): boolean {

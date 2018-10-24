@@ -350,7 +350,9 @@ module Sfx {
                         badge: () => replica.healthState,
                         sortBy: () => replica.isStatelessService
                             ? [replica.raw.NodeName]
-                            : [replica.replicaRoleSortPriority, replica.raw.NodeName]
+                            : [replica.replicaRoleSortPriority, replica.raw.NodeName],
+                        actions: replica.actions,
+
                     };
                 });
             });
