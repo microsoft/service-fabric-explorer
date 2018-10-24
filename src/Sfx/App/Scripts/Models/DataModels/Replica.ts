@@ -33,11 +33,8 @@ module Sfx {
             this.updateInternal();
 
             if (this.data.actionsEnabled()) {
-                console.log("setting up action items")
                 this.setUpActions();
             }
-            console.log(this.actions)
-
         }
 
         private setUpActions(): void {
