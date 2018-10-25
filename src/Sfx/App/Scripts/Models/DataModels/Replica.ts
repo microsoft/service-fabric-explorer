@@ -37,8 +37,8 @@ module Sfx {
             }
         }
 
-        public movePrimaryReplica(): angular.IPromise<any> {
-            return this.data.restClient.movePrimaryReplicaNode(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.ReplicaId);
+        public restartReplica(): angular.IPromise<any> {
+            return this.data.restClient.restartReplica(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.ReplicaId);
         }
 
         public get isStatefulService(): boolean {
@@ -92,22 +92,18 @@ module Sfx {
         }
 
         private setUpActions(): void {
-            if (["Primary", "ActiveSecondary"].indexOf(this.raw.ReplicaRole) === -1) {
-                return;
-            }
-
             let serviceName = this.parent.parent.raw.Name;
 
             this.actions.add(new ActionWithConfirmationDialog(
                 this.data.$uibModal,
                 this.data.$q,
-                `move${this.raw.ReplicaRole}Replica`,
-                `Move ${this.raw.ReplicaRole} Replica`,
-                "Moving",
-                () => this.movePrimaryReplica(),
+                "Restart",
+                "Restart",
+                "Restarting",
+                () => this.restartReplica(),
                 () => true,
-                `Confirm ${this.raw.ReplicaRole} Replica Move`,
-                `Move ${this.raw.ReplicaRole} Replica for ${serviceName} from Node ${this.raw.NodeName}?`,
+                `Confirm Replica Restart`,
+                `Restart Replica for ${serviceName}`,
                 "confirm"
             ));
         }
