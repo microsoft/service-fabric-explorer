@@ -45,7 +45,7 @@
         <li ng-repeat="folder in imagestoreroot.relevantFolders" ng-show="!loader" class="child list-item">
             <span class="indentation list-item-name" padding-left="{{folder.indentationLevel * 16}}px">
                 <span class="bowtie-icon bowtie-folder"></span>
-                <span class="folder-name-text">{{folder.name}}</span>
+                <span class="folder-name-text">{{folder.path}}</span>
             </span>
             <div class="column-item">
                 -
@@ -65,7 +65,7 @@
         <li ng-repeat="file in imagestoreroot.relevantFiles" ng-show="!loader" class="child list-item">
             <span class="indentation list-item-name" padding-left="{{file.indentationLevel * 16}}px">
                 <span class="bowtie-icon bowtie-file"></span>
-                <span class="file-name-text">{{file.name}}</span>
+                <span class="file-name-text">{{file.path}}</span>
             </span>
             <div class="column-item">
                 {{file.version}}
@@ -92,7 +92,7 @@
         </a>
         <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu>
             <li role="menuitem">
-                <a href="" role="button" ng-click="ctrl.deleteSelected(file.name)" ng-disabled="file.isReserved" title="System reserved file cannont be deleted.">
+                <a href="" role="button" ng-click="ctrl.deleteSelected(file.path)" ng-disabled="file.isReserved" title="System reserved file cannont be deleted.">
                     Delete
                 </a>
             </li>
@@ -104,7 +104,7 @@
         </a>
         <ul role="menu" class="dropdown-menu-right" uib-dropdown-menu>
             <li role="menuitem">
-                <a href="" role="button" ng-click="ctrl.deleteSelected(folder.name)" ng-disabled="folder.isReserved" title="System reserved folder cannont be deleted.">
+                <a href="" role="button" ng-click="ctrl.deleteSelected(folder.path)" ng-disabled="folder.isReserved" title="System reserved folder cannont be deleted.">
                     Delete
                 </a>
             </li>
@@ -113,10 +113,10 @@
 
     <script type="text/ng-template" id="folderTemplate">
         <div class="child">
-            <a href="" role="button" ng-click="ctrl.onFolderClick(folder.name, !folder.isExpanded)" data-open="" class="list-item-name indentation" style="padding-left:{{folder.indentationLevel * 16}}px">                
+            <a href="" role="button" ng-click="ctrl.onFolderClick(folder.path, !folder.isExpanded)" data-open="" class="list-item-name indentation" style="padding-left:{{folder.indentationLevel * 16}}px">                
                 <span class="bowtie-icon" ng-class="{ 'bowtie-chevron-down-light': folder.isExpanded, 'bowtie-chevron-right-light': !folder.isExpanded }"></span>
                 <span class="bowtie-icon bowtie-folder"></span>                
-                <span class="folder-name-text">{{folder.name}}</span>                
+                <span class="folder-name-text">{{folder.displayName}}</span>                
             </a>
             <div class="column-item">
                 -
@@ -125,7 +125,7 @@
                 -
             </div>
             <div class="column-item">
-                -
+                {{folder.displayedSize}}
             </div>
             <div class="column-item">
                 {{folder.fileCount}}
@@ -152,7 +152,7 @@
                 {{file.modifiedDate}}
             </div>
             <div class="column-item">
-                {{file.displayFileSize}}
+                {{file.displayedSize}}
             </div>
             <div class="column-item">
                 -

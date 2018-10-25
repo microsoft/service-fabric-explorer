@@ -6,11 +6,10 @@ module Sfx {
         public sizeOfAppPackages: string = "";
         public sizeOfAppTypes: string = "";
         public root: ImageStoreFolder = new ImageStoreFolder();
-        public treeNodePaths: string[] = [];
-        public parentRootFolder: ImageStoreFolder;
-        public currentOpenFolders: string[] = [];
         public uiFolderDictionary: { [path: string]: ImageStoreFolder } = {};
         public dataFolderDictionary: { [path: string]: IRawImageStoreContent } = {};
+
+        public openedFolderPathes: string[] = [];
         public relevantFolders: ImageStoreFolder[] = [];
         public relevantFiles: ImageStoreFile[] = [];
 
@@ -26,15 +25,14 @@ module Sfx {
         constructor(public data: DataService) {
             super(data);
 
+            this.root.path = "";
             this.root.displayName = "root";
-            this.root.isExpanded = true;
             this.root.indentationLevel = -1;
 
-            // Push an empty string for root
-            this.currentOpenFolders.push("");
-            this.uiFolderDictionary[""] = this.root;
+            this.uiFolderDictionary[this.root.path] = this.root;
 
             this.refreshSummaryInfo();
+            this.expandFolder(this.root.path);
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
@@ -43,8 +41,8 @@ module Sfx {
                 this.dataFolderDictionary[""] = raw;
 
                 let tasks: angular.IPromise<IRawImageStoreContent>[] = [];
-                for (let i = 0; i < this.currentOpenFolders.length; i++) {
-                    const path = this.currentOpenFolders[i];
+                for (let i = 0; i < this.openedFolderPathes.length; i++) {
+                    const path = this.openedFolderPathes[i];
                     tasks.push(Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then(rawStoreContent => this.dataFolderDictionary[path] = rawStoreContent));
                 }
 
@@ -54,9 +52,10 @@ module Sfx {
 
         protected updateInternal(): angular.IPromise<any> | void {
             // Compare and update UI
-            if (!this.root.childrenFolders || this.root.childrenFolders.length !== this.dataFolderDictionary[""].StoreFolders.length) {
-                this.copyFolderContentToUI("");
-            }
+            // const root = this.uiFolderDictionary[""];
+            // if (!root.childrenFolders || root.childrenFolders.length !== this.dataFolderDictionary[""].StoreFolders.length) {
+            //     this.copyFolderContentToUI("");
+            // }
         }
 
         public refreshSummaryInfo(): angular.IPromise<any> {
@@ -66,7 +65,10 @@ module Sfx {
                         this.noOfApplicationPackages = packages.length;
                         let spaceSize = 0;
                         for (let i = 0; i < packages.length; i++) {
-                            spaceSize = spaceSize + this.getFolderSize(this.getFolderByPath(packages[i].Name.replace("fabric:/", "")));
+                            let folder = this.getFolderByPath(packages[i].Name.replace("fabric:/", ""));
+                            if (folder) {
+                                spaceSize = spaceSize + folder.size;
+                            }
                         }
 
                         this.sizeOfAppPackages = Utils.getFriendlyFileSize(spaceSize);
@@ -75,7 +77,10 @@ module Sfx {
                         this.noOfApplicationTypes = appTypes.length;
                         let spaceSize = 0;
                         for (let j = 0; j < appTypes.length; j++) {
-                            spaceSize = spaceSize + this.getFolderSize(this.getFolderByPath("Store\\" + appTypes[j].Name));
+                            let folder = this.getFolderByPath("Store\\" + appTypes[j].Name);
+                            if (folder) {
+                                spaceSize = spaceSize + folder.size;
+                            }
                         }
 
                         this.sizeOfAppTypes = Utils.getFriendlyFileSize(spaceSize);
@@ -100,7 +105,7 @@ module Sfx {
                     folder.childrenFolders.forEach(f => f.show = true);
                 }
 
-                this.currentOpenFolders.push(path);
+                this.openedFolderPathes.push(path);
             });
         }
 
@@ -116,25 +121,41 @@ module Sfx {
             }
 
             if (folder.childrenFolders) {
-                folder.childrenFolders.forEach(f => { this.closeFolder(f.name); f.show = false; });
+                folder.childrenFolders.forEach(f => { this.closeFolder(f.path); f.show = false; });
             }
 
-            this.currentOpenFolders.splice(this.currentOpenFolders.indexOf(path), 1);
+            this.openedFolderPathes.splice(this.openedFolderPathes.indexOf(path), 1);
         }
 
         protected getCompleteDataSet(): angular.IPromise<ImageStoreFolder> {
-            return this.retrieveNewData().then((raw) => {
+            return this.retrieveNewData().then(raw => {
                 let tasks: angular.IPromise<IRawImageStoreContent>[] = [];
-                let rootFolder = new ImageStoreFolder();
-                rootFolder.name = "";
-                rootFolder.childrenFiles = _.map(raw.StoreFiles, (f) => { return new ImageStoreFile(f); });
-                rootFolder.childrenFolders = _.map(raw.StoreFolders, f => { return new ImageStoreFolder(f); });
+
+                let rootFolder = this.uiFolderDictionary[""];
+                if (!rootFolder.childrenFiles || !rootFolder.childrenFolders) {
+                    rootFolder.childrenFiles = _.map(raw.StoreFiles, f => { return new ImageStoreFile(f); });
+                    rootFolder.childrenFolders = _.map(raw.StoreFolders, f => { return new ImageStoreFolder(f); });
+                }
+
                 for (let i = 0; i < rootFolder.childrenFolders.length; i++) {
-                    tasks.push(this.getChildren(rootFolder.childrenFolders[i], rootFolder.childrenFolders[i].name));
+                    tasks.push(this.getChildren(rootFolder.childrenFolders[i], rootFolder.childrenFolders[i].path));
                 }
 
                 return this.data.$q.all(tasks).then(t => {
-                    this.parentRootFolder = rootFolder;
+
+                    let size: number = 0;
+                    _.each(rootFolder.childrenFiles, file => size = size + file.size);
+                    _.each(rootFolder.childrenFolders, folder => size = size + folder.size);
+
+                    rootFolder.size = size;
+
+                    _.each(this.openedFolderPathes, folderPath => {
+                        const folder = this.uiFolderDictionary[folderPath];
+                        folder.displayedSize = Utils.getFriendlyFileSize(folder.size);
+                        _.each(folder.childrenFolders, childFolder => childFolder.displayedSize = Utils.getFriendlyFileSize(childFolder.size));
+                    });
+
+
                     return rootFolder;
                 });
             });
@@ -147,10 +168,23 @@ module Sfx {
 
                 let tasks: angular.IPromise<IRawImageStoreContent>[] = [];
                 for (let i = 0; i < currentFolder.childrenFolders.length; i++) {
-                    tasks.push(this.getChildren(currentFolder.childrenFolders[i], currentFolder.childrenFolders[i].name));
+                    tasks.push(this.getChildren(currentFolder.childrenFolders[i], currentFolder.childrenFolders[i].path));
                 }
 
-                return this.data.$q.all(tasks).then(() => raw);
+                return this.data.$q.all(tasks).then(() => {
+                    let size: number = 0;
+                    _.each(currentFolder.childrenFiles, file => size = size + file.size);
+                    _.each(currentFolder.childrenFolders, folder => size = size + folder.size);
+
+                    currentFolder.size = size;
+                    if (_.find(this.openedFolderPathes, currentFolder.path)) {
+                        currentFolder.isExpanded = true;
+                    }
+
+                    this.uiFolderDictionary[currentFolder.path] = currentFolder;
+                    console.log(currentFolder.path, size);
+                    return raw;
+                });
             });
         }
 
@@ -165,7 +199,7 @@ module Sfx {
                 delete this.dataFolderDictionary[path];
             } else {
                 let folder = this.uiFolderDictionary[path.substring(0, path.lastIndexOf("\\"))];
-                let index = _.findIndex(folder.childrenFiles, f => f.name === path);
+                let index = _.findIndex(folder.childrenFiles, f => f.path === path);
                 if (index >= 0) {
                     folder.childrenFiles.splice(index, 1);
                 }
@@ -194,10 +228,15 @@ module Sfx {
 
         private copyFolderContentToUI(path: string): angular.IPromise<void> {
             const folder = this.uiFolderDictionary[path];
+
+            if (folder) {
+                return this.data.$q.resolve();
+            }
+
             return this.getFolderContentFromLocalDataSource(path).then(raw => {
                 folder.childrenFolders = _.map(raw.StoreFolders, f => {
                     let childFolder = new ImageStoreFolder(f, folder.indentationLevel + 1);
-                    this.uiFolderDictionary[childFolder.name] = childFolder;
+                    this.uiFolderDictionary[childFolder.path] = childFolder;
 
                     return childFolder;
                 });
@@ -224,9 +263,9 @@ module Sfx {
 
         private getFolderByPath(path: string, currentFolder?: ImageStoreFolder) {
             if (currentFolder === undefined) {
-                currentFolder = this.parentRootFolder;
+                currentFolder = this.uiFolderDictionary[""];
             }
-            if (currentFolder.name.indexOf(path) !== -1) {
+            if (currentFolder.path.indexOf(path) !== -1) {
                 return currentFolder;
             } else if (currentFolder.childrenFolders) {
                 for (let i = 0; i < currentFolder.childrenFolders.length; i++) {
@@ -243,10 +282,10 @@ module Sfx {
             searchTerm = searchTerm.toLowerCase();
             let listOfRelevantFolders: ImageStoreFolder[] = [];
             if (currentFolder === undefined) {
-                currentFolder = this.parentRootFolder;
+                currentFolder = this.uiFolderDictionary[""];
             }
 
-            if (currentFolder.name.toLowerCase().indexOf(searchTerm) !== -1) {
+            if (currentFolder.path.toLowerCase().indexOf(searchTerm) !== -1) {
                 listOfRelevantFolders.push(currentFolder);
             }
 
@@ -266,12 +305,12 @@ module Sfx {
             searchTerm = searchTerm.toLowerCase();
             let listOfRelevantFiles: ImageStoreFile[] = [];
             if (currentFolder === undefined) {
-                currentFolder = this.parentRootFolder;
+                currentFolder = this.uiFolderDictionary[""];
             }
 
             if (currentFolder.childrenFiles.length !== 0) {
                 for (let i = 0; i < currentFolder.childrenFiles.length; i++) {
-                    if (currentFolder.childrenFiles[i].name.toLowerCase().indexOf(searchTerm) !== -1) {
+                    if (currentFolder.childrenFiles[i].path.toLowerCase().indexOf(searchTerm) !== -1) {
                         listOfRelevantFiles.push(currentFolder.childrenFiles[i]);
                     }
                 }
@@ -288,35 +327,27 @@ module Sfx {
 
             return listOfRelevantFiles;
         }
-
-        private getFolderSize(folder: ImageStoreFolder): number {
-            if (!folder) {
-                return 0;
-            }
-
-            let folderSize: number = 0;
-            if (folder.childrenFiles && folder.childrenFiles.length !== 0) {
-                for (let i = 0; i < folder.childrenFiles.length; i++) {
-                    folderSize = folderSize + Number(folder.childrenFiles[i].fileSize);
-                }
-            }
-
-            if (folder.childrenFolders && folder.childrenFolders.length !== 0) {
-                for (let i = 0; i < folder.childrenFolders.length; i++) {
-                    folderSize = folderSize + this.getFolderSize(folder.childrenFolders[i]);
-                }
-            }
-
-            return folderSize;
-        }
     }
 
     export class ImageStoreItem {
-        public name: string;
+        public path: string;
         public displayName: string;
+        public show: boolean = false;
         public indentationLevel: number = 0;
+        public displayedSize: string;
+        private _size: number = 0;
+
+        public set size(size) {
+            this._size = size;
+            this.displayedSize = Utils.getFriendlyFileSize(size);
+        }
+
+        public get size(): number {
+            return this._size;
+        }
+
         public get isReserved(): boolean {
-            const root = this.name.split("\\")[0];
+            const root = this.path.split("\\")[0];
             return root === "Store" || root === "WindowsFabricStore";
         }
     }
@@ -324,7 +355,6 @@ module Sfx {
     export class ImageStoreFolder extends ImageStoreItem {
         public fileCount: string;
         public isExpanded: boolean = false;
-        public show: boolean = false;
         public childrenFolders: ImageStoreFolder[];
         public childrenFiles: ImageStoreFile[];
 
@@ -335,7 +365,7 @@ module Sfx {
                 return;
             }
 
-            this.name = raw.StoreRelativePath;
+            this.path = raw.StoreRelativePath;
             this.displayName = ImageStore.getDisplayName(raw.StoreRelativePath);
             this.fileCount = raw.FileCount;
             this.indentationLevel = indentationLevel;
@@ -343,10 +373,7 @@ module Sfx {
     }
 
     export class ImageStoreFile extends ImageStoreItem {
-        public displayFileSize: string;
-        public show: boolean;
         public version: string;
-        public fileSize: string;
         public modifiedDate: string;
 
         constructor(raw?: IRawStoreFile, indentationLevel: number = 0) {
@@ -356,10 +383,9 @@ module Sfx {
                 return;
             }
 
-            this.name = raw.StoreRelativePath;
+            this.path = raw.StoreRelativePath;
             this.displayName = ImageStore.getDisplayName(raw.StoreRelativePath);
-            this.fileSize = raw.FileSize;
-            this.displayFileSize = Utils.getFriendlyFileSize(Number(raw.FileSize));
+            this.size = Number(raw.FileSize);
             this.modifiedDate = raw.ModifiedDate;
             this.version = raw.FileVersion.VersionNumber;
             this.indentationLevel = indentationLevel;
