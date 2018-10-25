@@ -49,6 +49,7 @@ module Sfx {
 
     export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         public clusterManifestName: string;
+        private _isNetworkInventoryManagerEnabled: boolean = false;
 
         public constructor(data: DataService) {
             super(data);
@@ -62,6 +63,14 @@ module Sfx {
             let $xml = $($.parseXML(this.raw.Manifest));
             let $manifest = $xml.find("ClusterManifest")[0];
             this.clusterManifestName = $manifest.getAttribute("Name");
+            let $nim = $xml.find("Section[Name=NetworkInventoryManager]");
+            if ($nim.length !== 0) {
+                this._isNetworkInventoryManagerEnabled = $nim.find("Parameter").attr("Value") === "true";
+            }
+        }
+
+        public get isNetworkInventoryManagerEnabled(): boolean {
+            return this._isNetworkInventoryManagerEnabled;
         }
     }
 

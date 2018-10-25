@@ -217,7 +217,7 @@ module Sfx {
                 item => item[this.indexPropery],
                 newIdSelector,
                 null, // no need to create object because a full refresh will be scheduled when new object is returned by health chunk API,
-                      // which is needed because the information returned by the health chunk api is not enough for us to create a full data object.
+                // which is needed because the information returned by the health chunk api is not enough for us to create a full data object.
                 (item: T, newItem: P) => {
                     updatePromises.push(item.mergeHealthStateChunk(newItem));
                 });
@@ -281,6 +281,128 @@ module Sfx {
         private updateNodesHealthState(): void {
             // calculates the nodes health state which is the max state value of all nodes
             this.healthState = this.valueResolver.resolveHealthStatus(_.max(_.map(this.collection, node => HealthStateConstants.Values[node.healthState.text])));
+        }
+    }
+
+    export class NetworkCollection extends DataModelCollectionBase<Network> {
+        public constructor(data: DataService) {
+            super(data);
+        }
+
+        public get viewPath(): string {
+            return this.data.routes.getNetworksViewPath();
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getNetworks(messageHandler).then(items => {
+                return _.map(items, raw => new Network(this.data, raw));
+            });
+        }
+    }
+
+    export class NetworkOnAppCollection extends DataModelCollectionBase<NetworkOnApp> {
+        appId: string;
+        public constructor(data: DataService, appId: string) {
+            super(data);
+            this.appId = appId;
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let collection = [];
+            return this.data.restClient.getNetworksOnApp(this.appId, messageHandler).then(items => {
+                let tasks = _.map(items, raw => {
+                    let network = new NetworkOnApp(this.data, raw);
+                    return network.refresh().then(() => collection.push(network));
+                });
+                return this.data.$q.all(tasks).then(() => collection);
+            });
+        }
+    }
+
+    export class NetworkOnNodeCollection extends DataModelCollectionBase<NetworkOnNode> {
+        nodeName: string;
+        public constructor(data: DataService, nodeName: string) {
+            super(data);
+            this.nodeName = nodeName;
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let collection = [];
+            return this.data.restClient.getNetworksOnNode(this.nodeName, messageHandler).then(items => {
+                let filtered = _.filter(items, item => { return item.NetworkName !== "servicefabric_network"; });
+                let tasks = _.map(filtered, raw => {
+                    let network = new NetworkOnNode(this.data, raw);
+                    return network.refresh().then(() => collection.push(network));
+                });
+                return this.data.$q.all(tasks).then(() => collection);
+            });
+        }
+    }
+    export class AppOnNetworkCollection extends DataModelCollectionBase<AppOnNetwork> {
+        networkName: string;
+        public constructor(data: DataService, networkName: string) {
+            super(data);
+            this.networkName = networkName;
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let collection = [];
+            return this.data.restClient.getAppsOnNetwork(this.networkName, messageHandler).then(items => {
+                let tasks = _.map(items, raw => {
+                    let application = new AppOnNetwork(this.data, raw);
+                    return application.refresh().then(() => collection.push(application));
+                });
+
+                return this.data.$q.all(tasks).then(() => collection);
+            });
+        }
+    }
+
+    export class NodeOnNetworkCollection extends DataModelCollectionBase<NodeOnNetwork> {
+        networkName: string;
+        public constructor(data: DataService, networkName: string) {
+            super(data);
+            this.networkName = networkName;
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            let collection = [];
+            return this.data.restClient.getNodesOnNetwork(this.networkName, messageHandler).then(items => {
+                let tasks = _.map(items, raw => {
+                    let node = new NodeOnNetwork(this.data, raw);
+                    return node.refresh().then(() => {
+                        collection.push(node);
+                    });
+
+                });
+                return this.data.$q.all(tasks).then(() => collection);
+            });
+        }
+    }
+
+    export class DeployedContainerOnNetworkCollection extends DataModelCollectionBase<DeployedContainerOnNetwork> {
+        networkName: string;
+        public constructor(data: DataService, networkName: string) {
+            super(data);
+            this.networkName = networkName;
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getNodesOnNetwork(this.networkName, messageHandler).then(items => {
+                let result: DeployedContainerOnNetwork[] = new Array();
+                let promises = [];
+                _.each(items, raw => {
+                    promises.push(this.data.restClient.getDeployedContainersOnNetwork(this.networkName, raw.nodeName, messageHandler).then(values => {
+                        _.each(values, value => {
+                            result.push(new DeployedContainerOnNetwork(this.data, raw.nodeName, value));
+                        });
+                    }));
+                });
+                return this.data.$q.all(promises).then(values => {
+                    return result;
+                });
+
+            });
         }
     }
 
@@ -670,20 +792,20 @@ module Sfx {
             let listSettings = new ListSettings(
                 this.pageSize,
                 ["raw.timeStamp"],
-                [ new ListColumnSetting(
+                [new ListColumnSetting(
                     "raw.kind",
                     "Type",
                     ["raw.kind"],
                     true,
                     (item) => HtmlUtils.getEventNameHtml(item.raw)),
-                  new ListColumnSetting(
+                new ListColumnSetting(
                     "raw.category",
                     "Event Category",
                     ["raw.category"],
                     true,
                     (item) => (!item.raw.category ? "Operational" : item.raw.category)),
-                  new ListColumnSetting("raw.timeStampString", "Timestamp"), ],
-                [ new ListColumnSetting(
+                new ListColumnSetting("raw.timeStampString", "Timestamp"), ],
+                [new ListColumnSetting(
                     "raw.eventInstanceId",
                     "",
                     [],
