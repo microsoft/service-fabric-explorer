@@ -22,7 +22,7 @@ module Sfx {
         }
 
         public search() {
-            if (!this.$scope.imageStoreTreeSearchTerm) {
+            if (!this.$scope.imageStoreTreeSearchTerm || this.$scope.loader === true) {
                 return false;
             }
 
@@ -40,6 +40,7 @@ module Sfx {
 
         public reset() {
             this.$scope.searchView = false;
+            this.$scope.loader = false;
             this.$scope.imageStoreTreeSearchTerm = "";
             this.$scope.imagestoreroot.relevantFolders = [];
             this.$scope.imagestoreroot.relevantFiles = [];

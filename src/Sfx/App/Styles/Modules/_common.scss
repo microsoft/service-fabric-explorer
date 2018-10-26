@@ -214,8 +214,7 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0;
     position: relative;
     white-space: nowrap;
-
-    .reset-link {
+    .search-link, .reset-link {
         display: inline;
         margin-left: 5px;
     }

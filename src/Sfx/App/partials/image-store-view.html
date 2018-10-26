@@ -23,10 +23,16 @@
             </table>
         </div>
     </div>
-    <div class="explorer-search">
-        <sfx-search-bar class="list-search-bar" placeholder="Search" model="imageStoreTreeSearchTerm" ng-keydown="$event.keyCode === 13 && ctrl.search()" reset="ctrl.reset()"></sfx-search-bar>
-        <label id="sr-only-search-summary" aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search
-            result </label>
+    <div class="explorer-search">        
+        <div class="search-bar list-search-bar">
+            <input type="search" class="input-flat"
+                   autocomplete="off"
+                   placeholder="Type folder or file name"
+                   ng-model="imageStoreTreeSearchTerm" 
+                   ng-keydown="$event.keyCode === 13 && ctrl.search() "/>            
+            <a class="search-link" href="" ng-click="ctrl.search()" role="button">Search</a>
+            <a class="reset-link" href="" ng-click="ctrl.reset()" role="button">Reset</a>
+        </div>        
     </div>
     <div class="header">
         <strong class="header-first-item">Name</strong>
@@ -54,7 +60,7 @@
                 -
             </div>
             <div class="column-item">
-                -
+                {{folder.displayedSize}}
             </div>
             <div class="column-item">
                 {{folder.fileCount}}
@@ -74,7 +80,7 @@
                 {{file.modifiedDate}}
             </div>
             <div class="column-item">
-                {{file.displayFileSize}}
+                {{file.displayedSize}}
             </div>
             <div class="column-item">
                 -
