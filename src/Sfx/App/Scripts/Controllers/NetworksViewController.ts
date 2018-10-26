@@ -44,9 +44,7 @@ module Sfx {
         }
     };
     export class ActionCreateIsolatedNetwork extends ActionWithDialog {
-
         public networkName: string;
-
         public networkAddressPrefix: string;
 
         constructor(data: DataService) {
@@ -75,7 +73,6 @@ module Sfx {
             this.networkName = "";
             this.networkAddressPrefix = "";
         }
-
     };
 
     (function () {

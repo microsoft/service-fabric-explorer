@@ -36,7 +36,6 @@ module Sfx {
             this.apps = new ApplicationCollection(this);
             this.nodes = new NodeCollection(this);
             this.networks = new NetworkCollection(this);
-
         }
 
         public actionsEnabled(): boolean {

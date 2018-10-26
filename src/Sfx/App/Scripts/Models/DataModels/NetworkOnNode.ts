@@ -1,7 +1,6 @@
 module Sfx {
 
     export class NetworkOnNode extends DataModelBase<IRawNetworkOnNode> {
-
         public networkDetail: Network;
 
         public constructor(data: DataService, raw?: IRawNetworkOnNode) {

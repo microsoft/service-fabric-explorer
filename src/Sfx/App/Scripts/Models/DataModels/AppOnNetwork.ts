@@ -5,7 +5,6 @@
 module Sfx {
 
     export class AppOnNetwork extends DataModelBase<IRawAppOnNetwork> {
-
         public appDetail: Application;
 
         public constructor(data: DataService, raw?: IRawAppOnNetwork) {

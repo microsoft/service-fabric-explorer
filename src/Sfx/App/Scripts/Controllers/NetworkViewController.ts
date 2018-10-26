@@ -74,7 +74,6 @@ module Sfx {
         }
 
         private refreshEssentials(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-
             return this.$q.all([
                 this.$scope.apps.refresh(messageHandler),
                 this.$scope.nodes.refresh(messageHandler),
