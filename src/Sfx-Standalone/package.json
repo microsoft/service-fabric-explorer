@@ -29,8 +29,13 @@
     "@types/node": "^10.9.2",
     "@types/semver": "^5.4.0",
     "@types/tar": "^4.0.0",
-    "cookie.gulp": "file:.build",
+    "cookie.gulp": "file:.build/core",
+    "cookie.gulp-electron-installer": "file:.build/electron-installer",
+    "cookie.gulp-tsc": "file:.build/tsc",
+    "cookie.gulp-tslint": "file:.build/tslint",
+    "cookie.gulp-wix": "file:.build/wix",
     "electron": "^3.0.2",
-    "gulp": "^4.0.0"
+    "gulp": "^4.0.0",
+    "typescript": "^3.1.3"
   }
 }

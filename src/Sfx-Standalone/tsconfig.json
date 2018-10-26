@@ -9,7 +9,8 @@
         "noUnusedLocals": true,
         "noImplicitReturns": true,
         "removeComments": true,
-        "sourceRoot": "."
+        "sourceRoot": ".",
+        "skipLibCheck": true
     },
     "exclude": [
         "build/",
