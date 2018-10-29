@@ -47,7 +47,7 @@ export class SfxContainer implements ISfxContainer {
     public async loadSfxAsync(targetServiceEndpoint: string): Promise<void> {
         const container = $("div.right-container");
         $("#instructions", container).hide();
-        $(".view-container", container).css({ top: `${0 - container.height()}px` });
+        $(".view-container", container).css({ top: `${0 - container.height()}px` }).removeClass("current");
 
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
 
@@ -60,7 +60,7 @@ export class SfxContainer implements ISfxContainer {
         const sfxUrl = appUtils.resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint });
         this.endpoints.push({ endpoint: targetServiceEndpoint, id: id });
         container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
-        $(`<div id="view-container-${id}" class="view-container"><webview tabindex="0" src="${sfxUrl}" id="view-${id}" autosize="on" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
+        $(`<div id="view-container-${id}" class="view-container current"><webview tabindex="0" src="${sfxUrl}" id="view-${id}" autosize="on" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
 
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
         sfxWebView.addEventListener("dom-ready", async () => {
@@ -68,7 +68,7 @@ export class SfxContainer implements ISfxContainer {
             log.writeInfoAsync("dom-ready --- ");
 
             if (!sfxWebView.isDevToolsOpened()) {
-                //sfxWebView.openDevTools(); /*uncomment to use development tools */
+                sfxWebView.openDevTools(); /*uncomment to use development tools */
             }
 
             container.children("#treeview-loading-glyph").remove();
@@ -81,14 +81,18 @@ export class SfxContainer implements ISfxContainer {
     public async unloadSfxAsync(targetServiceEndpoint: string): Promise<void> {
         const container = $("div.right-container");
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
-        this.endpoints.splice(this.endpoints.indexOf(e => e.endpoint === targetServiceEndpoint), 1);
+        const index = this.endpoints.findIndex(e => e.endpoint === targetServiceEndpoint);
+        if (index >= 0) {
+            this.endpoints.splice(index, 1);
+        }
+                
         container.children("#view-container-" + id).remove();
         
         if (this.endpoints.length === 0) {
             $("#instructions", container).show();
         }
 
-        //await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
+        await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
     }
 }
 
