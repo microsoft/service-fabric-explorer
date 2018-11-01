@@ -17,8 +17,7 @@
         font-size: 20pt;
     }
     
-    .list-item-name {
-        color: lightgray;
+    .list-item-name {        
         text-align: left;
         font-size: 12px;
         padding-top: 4px;
@@ -35,14 +34,6 @@
 
     .list-item {
         list-style-type: none;
-
-        a:link, a:focus {
-            color: lightgray;
-        }
-
-        a:visited {
-            color: lightgray;
-        }
     }
 
     .header-first-item {    
