@@ -1,38 +1,22 @@
 @import "../Base/_config.scss";
 
 .image-store-view {
-    .summaryTab {
-        width: 80%;
-        height: 100px;
-        background-color: gray;
-        left: 10px;
+    display: flex;
+    flex-direction: column;
+    
+    .image-store-breadcrumb {
+        margin-bottom: 12px;
     }
 
-    .header {
-        background-color: #262626;
-        color: gray;
-        text-align: center;
-        font-size: 12px;
-        padding-top: 4px;
-        padding-bottom: 4px;
+    .store-content-pane {
         display: flex;
-        width: 100%;
-        padding-right: 40px;
+        flex-direction: column;        
     }
-        
-    .complete-list {
-        min-width: 1000px;
-    }
-
-    .complete-list .bowtie-spinner {
+    
+    .bowtie-spinner {
         font-size: 20pt;
     }
-
-    .complete-list, .complete-list ul, .complete-list li {    
-        padding-left: 0px;
-        padding-right: 0px;
-    }
-
+    
     .list-item-name {
         color: lightgray;
         text-align: left;
@@ -40,6 +24,13 @@
         padding-top: 4px;
         padding-bottom: 4px;
         padding-left: 0px;
+    }
+    
+    .image-store-item-name {        
+        .list-item-name {
+            display: inline-block;
+            width: calc(100% - 60px);
+        }
     }
 
     .list-item {
@@ -54,38 +45,14 @@
         }
     }
 
-    .span {
-        display: inline-block;
-        width: 800px;
+    .header-first-item {    
+        min-width: 220px;
+        font-weight: normal;
     }
 
-    .image-store-view {
-        display: flex;
-        flex-flow: column;
-        max-width: auto;
-    }
-
-    .child {
-        display: flex;
-        flex-flow: row;
-        flex-wrap: nowrap;
-        align-content: flex-start;
-        align-items: flex-start;
-        width: 100%;  
-    }
-
-    .header-first-item, .indentation {    
-        min-width: 320px;
-        width: 100%;    
-        overflow: hidden;
-        text-overflow: ellipsis;
-    }
-
-    .column-item {
-        text-align: center;
-        font-size: 12px;
-        width: 200px;
-        min-width: 180px;
+    .column-item {                    
+        min-width: 120px;
+        font-weight: normal;
     }
 
     .folder-name-text, .file-name-text {
@@ -101,7 +68,7 @@
         width: calc(100% - 20px);
     }
 
-    .ellipsis {
+    .ellipsis, .bowtie-security-lock {
         width: 40px;
     }
 

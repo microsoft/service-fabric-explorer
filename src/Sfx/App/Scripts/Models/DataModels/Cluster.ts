@@ -49,6 +49,7 @@ module Sfx {
 
     export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         public clusterManifestName: string;
+        public imageStoreConnectionString: string;
 
         public constructor(data: DataService) {
             super(data);
@@ -62,6 +63,10 @@ module Sfx {
             let $xml = $($.parseXML(this.raw.Manifest));
             let $manifest = $xml.find("ClusterManifest")[0];
             this.clusterManifestName = $manifest.getAttribute("Name");
+            let $imageStoreConnectionStringParameter = $("Section[Name='Management'] > Parameter[Name='ImageStoreConnectionString']", $manifest);
+            if ($imageStoreConnectionStringParameter !== null) {
+                this.imageStoreConnectionString = $imageStoreConnectionStringParameter.attr("Value");
+            }
         }
     }
 
