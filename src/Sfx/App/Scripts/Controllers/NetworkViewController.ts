@@ -20,11 +20,9 @@ module Sfx {
 
         constructor($injector: angular.auto.IInjectorService, public $scope: INetworkViewScope) {
             super($injector, {
-                "essentials": { name: "Essentials" },
-                "details": { name: "Details" }
+                "essentials": { name: "Essentials" }
             });
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
-            this.tabs["details"].refresh = (messageHandler) => this.refreshCommon(messageHandler);
             this.networkName = IdUtils.getNetworkName(this.routeParams);
 
             this.selectTreeNode([

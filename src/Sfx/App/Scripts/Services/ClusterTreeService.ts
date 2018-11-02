@@ -197,7 +197,8 @@ module Sfx {
                         nodeId: IdGenerator.network(network.name),
                         displayName: () => network.name,
                         selectAction: () => this.routes.navigate(() => network.viewPath),
-                        sortBy: () => [network.name]
+                        sortBy: () => [network.name],
+                        actions: network.actions
                     };
                 });
             });

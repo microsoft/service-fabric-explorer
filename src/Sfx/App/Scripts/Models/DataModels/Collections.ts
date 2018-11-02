@@ -338,7 +338,7 @@ module Sfx {
             });
         }
     }
-    
+
     export class AppOnNetworkCollection extends DataModelCollectionBase<AppOnNetwork> {
         networkName: string;
         public constructor(data: DataService, networkName: string) {

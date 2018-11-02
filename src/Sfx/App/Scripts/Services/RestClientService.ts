@@ -85,7 +85,7 @@ module Sfx {
         public createNetwork(networkName: string, networkAddressPrefix: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Resources/Networks/" + encodeURIComponent(networkName);
             let body: any = { "name": networkName, "properties" : { "kind": "Local", "networkAddressPrefix": networkAddressPrefix } };
-            return this.put(this.getApiUrl(url, RestClient.apiVersion64), "Isolated Network creation", body, messageHandler);
+            return this.put(this.getApiUrl(url, RestClient.apiVersion64), "Creating isolated network \"" + networkName + "\" succeeded", body, messageHandler);
         }
 
         public getNetwork(networkName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawNetwork> {
@@ -99,7 +99,7 @@ module Sfx {
 
         public deleteNetwork(networkName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Resources/Networks/" + encodeURIComponent(networkName);
-            return this.delete(this.getApiUrl(url, RestClient.apiVersion64), "Network Deletion", messageHandler);
+            return this.delete(this.getApiUrl(url, RestClient.apiVersion64), "Network \""  + networkName + "\" deleted", messageHandler);
         }
 
         public getNetworksOnApp(appId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNetworkOnApp[]> {
@@ -691,7 +691,7 @@ module Sfx {
         private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
             let result = this.wrapInCallbacks<T>(() => this.httpClient.deleteAsync(url));
             if (!messageHandler) {
-                messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
+                messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
             }
             this.handleResponse(apiDesc, result, messageHandler);
 
