@@ -28,8 +28,8 @@ module Sfx {
     }
 
     export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
-        public constructor(raw: IRawHealthEvaluation, public level: number = 0) {
-            super(null, raw);
+        public constructor(raw: IRawHealthEvaluation, public level: number = 0, parent: HealthEvaluation = null) {
+            super(null, raw, parent);
         }
 
         public get kind(): string {

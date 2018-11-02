@@ -50,20 +50,22 @@ module Sfx {
             return item && item.hasOwnProperty("text") && item.hasOwnProperty("badgeId");
         }
 
-        public static getParsedHealthEvaluations(rawUnhealthyEvals: IRawUnhealthyEvaluation[], level: number = 0): HealthEvaluation[] {
+        public static getParsedHealthEvaluations(rawUnhealthyEvals: IRawUnhealthyEvaluation[], level: number = 0, parent: HealthEvaluation = null, base = []) : HealthEvaluation[] {
             let healthEvals: HealthEvaluation[] = new Array(0);
 
             if (rawUnhealthyEvals) {
                 rawUnhealthyEvals.forEach(item => {
                     let healthEval: IRawHealthEvaluation = item.HealthEvaluation;
-
+                    base.push(healthEval.Kind);
                     if (healthEval) {
-                        healthEvals.push(new HealthEvaluation(healthEval, level));
-                        healthEvals = healthEvals.concat(Utils.getParsedHealthEvaluations(healthEval.UnhealthyEvaluations, level + 1));
+                        let health = new HealthEvaluation(healthEval, level, parent);
+                        healthEvals.push(health);
+                        console.log(JSON.stringify(base));
+                        healthEvals = healthEvals.concat(Utils.getParsedHealthEvaluations(healthEval.UnhealthyEvaluations, level + 1, health, base));
                     }
                 });
             }
-
+            console.log(healthEvals);
             return healthEvals;
         }
 

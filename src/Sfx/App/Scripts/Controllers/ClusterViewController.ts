@@ -66,6 +66,7 @@ module Sfx {
             this.$scope.appsUpgradeTabViewPath = this.routes.getTabViewPath(this.routes.getAppsViewPath(), "upgrades");
             this.$scope.clusterEvents = this.data.createClusterEventList();
 
+            console.log(this.$scope.clusterHealth.unhealthyEvaluations);
             this.refresh();
         }
 
@@ -79,6 +80,7 @@ module Sfx {
             // For unhealthy evaluations and dashboards
             promises.push(this.$scope.clusterHealth.refresh(messageHandler)
                 .then((clusterHealth: ClusterHealth) => {
+                    console.log(this.$scope.clusterHealth.unhealthyEvaluations)
                     let nodesHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Node);
                     this.$scope.nodesDashboard = DashboardViewModel.fromHealthStateCount("Nodes", "Node", true, nodesHealthStateCount, this.data.routes, this.routes.getNodesViewPath());
 
