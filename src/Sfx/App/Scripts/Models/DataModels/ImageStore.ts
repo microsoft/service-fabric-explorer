@@ -3,7 +3,6 @@ module Sfx {
         public connectionString: string;
 
         public root: ImageStoreFolder = new ImageStoreFolder();
-        public dataTreeRoot: FolderDataModel = new FolderDataModel(<IRawStoreFolder>{ StoreRelativePath: "" });
         public uiFolderDictionary: { [path: string]: ImageStoreFolder } = {};
 
         public currentFolder: ImageStoreFolder;
@@ -78,66 +77,16 @@ module Sfx {
                 return this.data.$q.resolve();
             }
 
-            return this.getFolderContentFromDataSource(path).then(folderDataModel => {
-                folder.childrenFolders = _.map(folderDataModel.folders, f => {
+            return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then(raw => {
+                folder.childrenFolders = _.map(raw.StoreFolders, f => {
                     let childFolder = new ImageStoreFolder(f);
                     this.uiFolderDictionary[childFolder.path] = childFolder;
 
                     return childFolder;
                 });
 
-                folder.childrenFiles = _.map(folderDataModel.files, f => new ImageStoreFile(f));
+                folder.childrenFiles = _.map(raw.StoreFiles, f => new ImageStoreFile(f));
             });
-        }
-
-        private getFolderContentFromDataSource(path: string): angular.IPromise<FolderDataModel> {
-            return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then(rawStoreContent => {
-                let folder = new FolderDataModel();
-                folder.folders = _.map(rawStoreContent.StoreFolders, f => new FolderDataModel(f));
-                folder.files = _.map(rawStoreContent.StoreFiles, f => new FileDataModel(f));
-
-                return folder;
-            });
-        }
-    }
-
-    class StoreItemDataModel {
-        public path: string;
-        public size: number = 0;
-    }
-
-    class FolderDataModel extends StoreItemDataModel {
-        public fileCount: string;
-        public files: FileDataModel[];
-        public folders: FolderDataModel[];
-
-        constructor(raw?: IRawStoreFolder) {
-            super();
-
-            if (!raw) {
-                return;
-            }
-
-            this.path = raw.StoreRelativePath;
-            this.fileCount = raw.FileCount;
-        }
-    }
-
-    class FileDataModel extends StoreItemDataModel {
-        public version: string;
-        public modifiedDate: string;
-
-        constructor(raw?: IRawStoreFile) {
-            super();
-
-            if (!raw) {
-                return;
-            }
-
-            this.path = raw.StoreRelativePath;
-            this.size = Number(raw.FileSize);
-            this.version = raw.FileVersion ? raw.FileVersion.VersionNumber : "";
-            this.modifiedDate = raw.ModifiedDate;
         }
     }
 
@@ -162,33 +111,35 @@ module Sfx {
         public childrenFolders: ImageStoreFolder[];
         public childrenFiles: ImageStoreFile[];
 
-        constructor(dataModel?: FolderDataModel) {
-            super(dataModel ? dataModel.path : "");
+        constructor(raw?: IRawStoreFolder) {
+            super(raw ? raw.StoreRelativePath : "");
 
-            if (!dataModel) {
+            if (!raw) {
                 return;
             }
 
-            this.path = dataModel.path;
-            this.fileCount = dataModel.fileCount;
-            this.displayedSize = Utils.getFriendlyFileSize(dataModel.size);
+            this.path = raw.StoreRelativePath;
+            this.fileCount = raw.FileCount;
         }
     }
 
     export class ImageStoreFile extends ImageStoreItem {
         public version: string;
         public modifiedDate: string;
+        public size: number = 0;
 
-        constructor(dataModel?: FileDataModel) {
-            super(dataModel ? dataModel.path : "");
+        constructor(raw?: IRawStoreFile) {
+            super(raw ? raw.StoreRelativePath : "");
 
-            if (!dataModel) {
+            if (!raw) {
                 return;
             }
 
-            this.displayedSize = Utils.getFriendlyFileSize(dataModel.size);
-            this.modifiedDate = dataModel.modifiedDate;
-            this.version = dataModel.version;
+            this.path = raw.StoreRelativePath;
+            this.size = Number(raw.FileSize);
+            this.displayedSize = Utils.getFriendlyFileSize(this.size);
+            this.version = raw.FileVersion ? raw.FileVersion.VersionNumber : "";
+            this.modifiedDate = raw.ModifiedDate;
         }
     }
 
