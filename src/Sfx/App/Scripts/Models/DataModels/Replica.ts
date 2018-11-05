@@ -97,8 +97,8 @@ module Sfx {
             this.actions.add(new ActionWithConfirmationDialog(
                 this.data.$uibModal,
                 this.data.$q,
-                "Restart",
-                "Restart",
+                "Restart Replica",
+                "Restart Replica",
                 "Restarting",
                 () => this.restartReplica(),
                 () => true,
