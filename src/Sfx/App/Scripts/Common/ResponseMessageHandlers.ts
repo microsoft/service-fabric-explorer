@@ -44,6 +44,26 @@ module Sfx {
         }
     }
 
+    export class PutResponseMessageHandler extends GetResponseMessageHandler {
+        public getSuccessMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+            return `${apiDesc}`;
+        }
+
+        public getErrorMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+            return this.getErrorMessageInternal(apiDesc, response);
+        }
+    }
+
+    export class DeleteResponseMessageHandler extends GetResponseMessageHandler {
+        public getSuccessMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+            return `${apiDesc}`;
+        }
+
+        public getErrorMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+            return this.getErrorMessageInternal(apiDesc, response);
+        }
+    }
+
     export class SilentResponseMessageHandler implements IResponseMessageHandler {
         public getSuccessMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
             return null;
@@ -59,6 +79,7 @@ module Sfx {
         public static postResponseMessageHandler: IResponseMessageHandler = new PostResponseMessageHandler();
         public static putResponseMessageHandler: IResponseMessageHandler = new PostResponseMessageHandler();
         public static silentResponseMessageHandler: IResponseMessageHandler = new SilentResponseMessageHandler();
+        public static deleteResponseMessageHandler: IResponseMessageHandler = new DeleteResponseMessageHandler();
     }
 
     export class EventsStoreResponseMessageHandler implements IResponseMessageHandler {

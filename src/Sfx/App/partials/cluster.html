@@ -43,7 +43,8 @@
 
         <div class="detail-pane alert alert-dismissible alert-danger" role="alert" ng-if="$root.ShowPreviewWarning">
             <strong>Warning:</strong>
-            <span>This cluster is running an unsupported preview version of Service Fabric. Upgrades and downgrades to other versions of Service Fabric is not supported. See <a class="light-background-link" target="_blank" href="http://aka.ms/servicefabricpreview">http://aka.ms/servicefabricpreview</a> for more details.</span>
+            <span>This cluster is running an unsupported preview version of Service Fabric. Upgrades and downgrades to other versions of Service Fabric is not supported. See 
+                <a class="light-background-link" target="_blank" href="https://aka.ms/servicefabricpreview">https://aka.ms/servicefabricpreview</a> for more details.</span>
         </div>
 
         <div class="detail-pane" ng-if="appsDashboard && nodesDashboard">
@@ -140,6 +141,10 @@
         <div class="detail-pane">
             <div sfx-metrics-view metrics="metricsViewModel"></div>
         </div>
+    </script>
+
+    <script type="text/ng-template" id="tab_imagestore">
+        <sfx-image-store-view imagestoreroot="imageStore"></sfx-image-store-view>        
     </script>
 
     <script type="text/ng-template" id="tab_manifest">
