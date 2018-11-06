@@ -17,6 +17,9 @@
   "dependencies": {
     "angular": "^1.6.8",
     "applicationinsights": "^1.0.1",
+    "donuts.node": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.0-private/donuts.node-1.0.0-private.tgz",
+    "donuts.node-modularity": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.0-private/donuts.node-modularity-1.0.0-private.tgz",
+    "donuts.node-settings": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.0-private/donuts.node-settings-1.0.0-private.tgz",
     "jquery": "^3.2.1",
     "semver": "^5.5.0",
     "tar": "^4.4.4",
