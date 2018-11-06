@@ -14,6 +14,7 @@ module Sfx {
         public apps: ApplicationCollection;
         public nodes: NodeCollection;
         public imageStore: ImageStore;
+        public networks: NetworkCollection;
 
         public constructor(
             public routes: RoutesService,
@@ -36,6 +37,7 @@ module Sfx {
             this.apps = new ApplicationCollection(this);
             this.nodes = new NodeCollection(this);
             this.imageStore = new ImageStore(this);
+            this.networks = new NetworkCollection(this);
         }
 
         public actionsEnabled(): boolean {
@@ -116,6 +118,16 @@ module Sfx {
             return this.getNodes(false, messageHandler).then(collection => {
                 return this.tryGetValidItem(collection, name, forceRefresh, messageHandler);
             });
+        }
+
+        public getNetwork(networkName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<Network> {
+            return this.getNetworks(false, messageHandler).then(collection => {
+                return this.tryGetValidItem(collection, networkName, forceRefresh, messageHandler);
+            });
+        }
+
+        public getNetworks(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<NetworkCollection> {
+            return this.networks.ensureInitialized(forceRefresh, messageHandler);
         }
 
         public getAppTypeGroups(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<ApplicationTypeGroupCollection> {

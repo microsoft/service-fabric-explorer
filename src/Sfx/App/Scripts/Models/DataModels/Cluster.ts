@@ -50,6 +50,7 @@ module Sfx {
     export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         public clusterManifestName: string;
         public imageStoreConnectionString: string;
+        private _isNetworkInventoryManagerEnabled: boolean = false;
 
         public constructor(data: DataService) {
             super(data);
@@ -67,6 +68,15 @@ module Sfx {
             if ($imageStoreConnectionStringParameter !== null) {
                 this.imageStoreConnectionString = $imageStoreConnectionStringParameter.attr("Value");
             }
+
+            let $nim = $xml.find("Section[Name=NetworkInventoryManager]");
+            if ($nim.length !== 0) {
+                this._isNetworkInventoryManagerEnabled = $nim.find("Parameter").attr("Value") === "true";
+            }
+        }
+
+        public get isNetworkInventoryManagerEnabled(): boolean {
+            return this._isNetworkInventoryManagerEnabled;
         }
     }
 
