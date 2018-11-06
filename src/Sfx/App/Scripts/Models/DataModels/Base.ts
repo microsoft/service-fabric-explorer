@@ -118,7 +118,7 @@ module Sfx {
             this.isInitialized = !_.isEmpty(raw);
         }
 
-        // Base refresh logic, do not override, override refreshInternal to do custom logic
+        // Base refresh logic, do not override, override retrieveNewData/updateInternal to do custom logic
         public refresh(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             if (!this.refreshingPromise) {
                 this.refreshingPromise = this.retrieveNewData(messageHandler).then((raw: T) => {

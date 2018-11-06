@@ -19,6 +19,7 @@ module Sfx {
         module.directive("sfxDetailListDetailsView", () => new DetailListDetailsViewDirective());
         module.directive("sfxMetricsBarChart", MetricsBarChartDirective.factory());
         module.directive("sfxDashboard", DashboardChartDirective.factory());
+        module.directive("sfxImageStoreView", () => new ImageStoreViewDirective());
 
         module.directive("sfxThemeImport", ["theme", (themeService: ThemeService): angular.IDirective => {
             return {

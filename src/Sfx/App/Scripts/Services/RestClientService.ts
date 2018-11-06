@@ -84,7 +84,7 @@ module Sfx {
 
         public createNetwork(networkName: string, networkAddressPrefix: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Resources/Networks/" + encodeURIComponent(networkName);
-            let body: any = { "name": networkName, "properties" : { "kind": "Local", "networkAddressPrefix": networkAddressPrefix } };
+            let body: any = { "name": networkName, "properties": { "kind": "Local", "networkAddressPrefix": networkAddressPrefix } };
             return this.put(this.getApiUrl(url, RestClient.apiVersion64), "Creating isolated network \"" + networkName + "\" succeeded", body, messageHandler);
         }
 
@@ -99,7 +99,7 @@ module Sfx {
 
         public deleteNetwork(networkName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Resources/Networks/" + encodeURIComponent(networkName);
-            return this.delete(this.getApiUrl(url, RestClient.apiVersion64), "Network \""  + networkName + "\" deleted", messageHandler);
+            return this.delete(this.getApiUrl(url, RestClient.apiVersion64), "Network \"" + networkName + "\" deleted", messageHandler);
         }
 
         public getNetworksOnApp(appId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNetworkOnApp[]> {
@@ -562,10 +562,17 @@ module Sfx {
             return this.post(this.getApiUrl(url), "Replica deletion", null, messageHandler);
         }
 
+        public getImageStoreContent(path?: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawImageStoreContent> {
+            let url = path ? `ImageStore/${path}` : "ImageStore";
+            return this.get(this.getApiUrl(url, RestClient.apiVersion60), "Get Image Store content", messageHandler);
+        }
+
+        public deleteImageStoreContent(path: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            return this.delete(this.getApiUrl(`ImageStore/${path}`, RestClient.apiVersion60), "Delete Image Store content", messageHandler);
+        }
+
         public getClusterEvents(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<ClusterEvent[]> {
-            let url = "EventsStore/"
-                + "Cluster/Events";
-            return this.getEvents(ClusterEvent, url, startTime, endTime, messageHandler);
+            return this.getEvents(ClusterEvent, "EventsStore/Cluster/Events", startTime, endTime, messageHandler);
         }
 
         public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<NodeEvent[]> {
