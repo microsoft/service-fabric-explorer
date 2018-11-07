@@ -3,22 +3,18 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleInfo, IModule } from "sfx.module-manager";
-import { IUpdateService } from "sfx.update";
-import { ISettings } from "sfx.settings";
-import { ILog } from "sfx.logging";
 import { IHttpClient } from "sfx.http";
 import { IUpdateSettings } from "./update";
+import { IUpdateService } from "sfx.update";
+import * as shell from "donuts.node/shell";
 
-import * as appUtils from "../../utilities/appUtils";
-
-(<IModule>exports).getModuleMetadata = (components): IModuleInfo => {
+(<Donuts.Modularity.IModule>exports).getModuleMetadata = (components): Donuts.Modularity.IModuleInfo => {
     components.register<IUpdateService>({
         name: "update",
-        version: appUtils.getAppVersion(),
+        version: shell.getAppVersion(),
         singleton: true,
         descriptor:
-            async (log: ILog, settings: ISettings, httpsClient: IHttpClient) =>
+            async (log: Donuts.Logging.ILog, settings: Donuts.Settings.ISettings, httpsClient: IHttpClient) =>
                 settings.getAsync<IUpdateSettings>("update")
                     .then((updateSettings) => import("./update").then((module) => new module.default(log, updateSettings, httpsClient))),
         deps: ["logging", "settings", "http.http-client"]
@@ -26,6 +22,6 @@ import * as appUtils from "../../utilities/appUtils";
 
     return {
         name: "update",
-        version: appUtils.getAppVersion()
+        version: shell.getAppVersion()
     };
 };

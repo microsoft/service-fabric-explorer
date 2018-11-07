@@ -4,7 +4,6 @@
 //-----------------------------------------------------------------------------
 
 import { IVersionInfo, IPackageInfo } from "sfx.common";
-import { ILog } from "sfx.logging";
 import { IHttpClient } from "sfx.http";
 import { IUpdateService } from "sfx.update";
 
@@ -17,31 +16,43 @@ import * as fs from "fs";
 import * as http from "http";
 import * as https from "https";
 
-import * as utils from "../../utilities/utils";
-import { env, Architecture } from "../../utilities/env";
+import * as utils from "donuts.node/utils";
+import * as shell from "donuts.node/shell";
 
 export interface IUpdateSettings {
     baseUrl: string;
     defaultChannel: string;
 }
 
+const Platform: Donuts.IDictionary<NodeJS.Platform, string> = {
+    "win32": "windows",
+    "darwin": "macos",
+    "linux": "linux"
+};
+
+const Architecture: Donuts.IDictionary<string, string> = {
+    "ia32": "x86",
+    "x64": "x64",
+    "arm": "arm"
+};
+
 export default class UpdateService implements IUpdateService {
-    private readonly log: ILog;
+    private readonly log: Donuts.Logging.ILog;
 
     private readonly settings: IUpdateSettings;
 
     private readonly httpClient: IHttpClient;
 
-    constructor(log: ILog, updateSettings: IUpdateSettings, httpClient: IHttpClient) {
-        if (!Object.isObject(log)) {
+    constructor(log: Donuts.Logging.ILog, updateSettings: IUpdateSettings, httpClient: IHttpClient) {
+        if (!utils.isObject(log)) {
             throw new Error("log must be supplied.");
         }
 
-        if (!Object.isObject(updateSettings)) {
+        if (!utils.isObject(updateSettings)) {
             throw new Error("updateSettings must be supplied.");
         }
 
-        if (!Object.isObject(httpClient)) {
+        if (!utils.isObject(httpClient)) {
             throw new Error("httpClient must be supplied.");
         }
 
@@ -58,15 +69,15 @@ export default class UpdateService implements IUpdateService {
             return;
         }
 
-        const packageInfo: IPackageInfo | string = versionInfo[env.platform];
+        const packageInfo: IPackageInfo | string = versionInfo[Platform[process.platform]];
         let packageUrl: string;
 
         if (!packageInfo) {
-            this.log.writeErrorAsync("No package info found for platform: {}.", env.platform);
+            this.log.writeErrorAsync("No package info found for platform: {}.", Platform[process.platform]);
             return;
         }
 
-        if (String.isString(packageInfo)) {
+        if (utils.isString(packageInfo)) {
             packageUrl = packageInfo;
 
             await this.requestConfirmationAsync(versionInfo)
@@ -76,7 +87,7 @@ export default class UpdateService implements IUpdateService {
                     }
 
                     this.log.writeVerboseAsync("Applying the update package and quit the app: {}", path);
-                    env.start(url.parse(packageUrl).href);
+                    shell.start(url.parse(packageUrl).href);
                     app.quit();
                 });
         } else {
@@ -96,7 +107,7 @@ export default class UpdateService implements IUpdateService {
                             }
 
                             this.log.writeVerboseAsync("Applying the update package and quit the app: {}", packagePath);
-                            env.start(packagePath);
+                            shell.start(packagePath);
                             app.quit();
                         });
                 });
@@ -113,7 +124,7 @@ export default class UpdateService implements IUpdateService {
             updateChannel = this.settings.defaultChannel || "stable";
         }
 
-        const versionInfoUrl = `${this.settings.baseUrl}/${updateChannel}/${env.platform}`;
+        const versionInfoUrl = `${this.settings.baseUrl}/${updateChannel}/${Platform[process.platform]}`;
 
         this.log.writeInfoAsync(`Requesting version info json: ${versionInfoUrl}`);
 
@@ -140,16 +151,16 @@ export default class UpdateService implements IUpdateService {
     }
 
     private getPackagePath(packageInfo: IPackageInfo): string {
-        let packagePath = packageInfo[env.arch];
+        let packagePath = packageInfo[Architecture[process.arch]];
 
         if (!packagePath) {
             // fall back to x86 if the current one doesn't exist.
-            packagePath = packageInfo[Architecture.X86];
-            this.log.writeVerboseAsync("Fall back to x86 for platform {} from arch {}.", env.platform, env.arch);
+            packagePath = packageInfo[Architecture["x86"]];
+            this.log.writeVerboseAsync("Fall back to x86 for platform {} from arch {}.", Platform[process.platform], Architecture[process.arch]);
         }
 
         if (!packagePath) {
-            this.log.writeErrorAsync("Arch {1} is NOT found in {0} package info.", env.platform, env.arch);
+            this.log.writeErrorAsync("Arch {1} is NOT found in {0} package info.", Platform[process.platform], Architecture[process.arch]);
             return null;
         }
 

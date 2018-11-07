@@ -3,25 +3,17 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IDictionary } from "sfx.common";
-import { IModuleManager } from "sfx.module-manager";
-
-import * as path from "path";
-import * as fs from "fs";
-import * as url from "url";
-import * as child_process from "child_process";
-
-import { env, Platform } from "./env";
+import { local } from "donuts.node/path";
 
 export function getIconPath(): string {
-    switch (env.platform) {
-        case Platform.Windows:
+    switch (process.platform) {
+        case "win32":
             return local("./icons/icon.ico", true);
 
-        case Platform.MacOs:
+        case "darwin":
             return local("./icons/icon.icns", true);
 
-        case Platform.Linux:
+        case "linux":
         default:
             return local("./icons/icon128x128.png", true);
     }
@@ -30,7 +22,7 @@ export function getIconPath(): string {
 export function logUnhandledRejection(): void {
     process.on("unhandledRejection", (reason, promise) => {
         if (sfxModuleManager) {
-            sfxModuleManager.getComponentAsync("logging")
+            sfxModuleManager.getComponentAsync<Donuts.Logging.ILog>("logging")
                 .then((log) => {
                     if (log) {
                         log.writeErrorAsync("Unhandled promise rejection: {}", reason);
@@ -44,7 +36,7 @@ export function logUnhandledRejection(): void {
     });
 }
 
-export function injectModuleManager(moduleManager: IModuleManager): void {
+export function injectModuleManager(moduleManager: Donuts.Modularity.IModuleManager): void {
     Object.defineProperty(global, "sfxModuleManager", {
         writable: false,
         configurable: false,

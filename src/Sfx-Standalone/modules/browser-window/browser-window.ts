@@ -3,14 +3,16 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleManager } from "sfx.module-manager";
+import { ISfxModuleManager } from "sfx.module-manager";
 
 import { BrowserWindow, app, BrowserWindowConstructorOptions } from "electron";
 import * as uuidv5 from "uuid/v5";
 
-import { env, Platform } from "../../utilities/env";
+import { local } from "donuts.node/path";
+import * as utils from "donuts.node/utils";
+import * as shell from "donuts.node/shell";
 import * as appUtils from "../../utilities/appUtils";
-import { ModuleManager } from "../../module-manager/module-manager";
+import * as modularity from "donuts.node-modularity";
 
 const UuidNamespace = "614e2e95-a80d-4ee5-9fd5-fb970b4b01a3";
 
@@ -18,7 +20,7 @@ function handleNewWindow(window: BrowserWindow) {
     window.webContents.on("new-window",
         (event, urlString, frameName, disposition, options, additionalFeatures) => {
             event.preventDefault();
-            env.start(urlString);
+            shell.start(urlString);
         });
 }
 
@@ -50,20 +52,20 @@ function handleZoom(window: BrowserWindow) {
 
 function addModuleManagerConstructorOptions(
     windowOptions: BrowserWindowConstructorOptions,
-    moduleManager: IModuleManager)
+    moduleManager: ISfxModuleManager)
     : void {
     if (!windowOptions.webPreferences) {
         windowOptions.webPreferences = Object.create(null);
     }
 
     windowOptions.webPreferences["additionalArguments"] = [
-        appUtils.toCmdArg(
-            ModuleManager.ConstructorOptionsCmdArgName,
-            JSON.stringify(moduleManager.generateConstructorOptions()))];
+        shell.toCmdArg(
+            modularity.CmdArgs.ConnectionInfo,
+            JSON.stringify(moduleManager.))];
 }
 
 export default async function createBrowserWindowAsync(
-    moduleManager: IModuleManager,
+    moduleManager: ISfxModuleManager,
     options?: BrowserWindowConstructorOptions)
     : Promise<BrowserWindow> {
 
@@ -73,12 +75,12 @@ export default async function createBrowserWindowAsync(
         show: false,
         icon: appUtils.getIconPath(),
         webPreferences: {
-            preload: appUtils.local("./preload.js"),
+            preload: local("./preload.js"),
             nodeIntegration: true
         }
     };
 
-    if (Object.isObject(options)) {
+    if (utils.isObject(options)) {
         const webPreferences = windowOptions.webPreferences;
 
         Object.assign(webPreferences, options.webPreferences);
@@ -87,7 +89,7 @@ export default async function createBrowserWindowAsync(
     }
 
     addModuleManagerConstructorOptions(windowOptions, moduleManager);
-    
+
     const window = new BrowserWindow(windowOptions);
     const hostName = uuidv5(window.id.toString(), UuidNamespace);
 
@@ -98,7 +100,7 @@ export default async function createBrowserWindowAsync(
 
     handleNewWindow(window);
 
-    if (env.platform !== Platform.MacOs) {
+    if (process.platform !== "darwin") {
         handleZoom(window);
     }
 
