@@ -100,7 +100,7 @@ module Sfx {
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
-            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations);
+            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
             CollectionUtils.updateDataModelCollection(this.upgradeDomains, _.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud)));
 
             if (this.raw.UpgradeDescription) {

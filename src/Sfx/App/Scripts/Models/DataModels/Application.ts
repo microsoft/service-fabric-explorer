@@ -249,7 +249,7 @@ module Sfx {
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
-            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, [this.parent.raw.TypeName, this.raw.TypeName]);
+            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);
             this.upgradeDomains = _.map(_.sortBy(this.raw.UpgradeDomains, "Name"), ud => new UpgradeDomain(this.data, ud));
 
             if (this.raw.UpgradeDescription) {

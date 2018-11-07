@@ -204,7 +204,8 @@ module Sfx {
             CollectionUtils.updateDataModelCollection(this.healthEvents, healthEvents);
 
             // There is no unique ID to identify the unhealthy evaluations collection, update the collection directly.
-            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations);
+            console.log(this.data);
+            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
         }
     }
 

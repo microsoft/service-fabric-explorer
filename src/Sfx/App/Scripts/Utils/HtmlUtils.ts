@@ -130,12 +130,12 @@ module Sfx {
             return `<span class="${className}">${text}</span>`;
         }
 
-        public static getSpanWithLink(className: string, data: any): string {
-            let text = data.kind;
-            console.log(data);
-            let url = "";
-            return `<a class="${className}" title="Correlated Events" ng-href="{{${url}}}" ">${text}</a>`
-            // return `<span class="${className}">${text}</span>`;
+        public static getSpanWithLink(className: string, text: string, url: string): string {
+            if(url){
+                return `<a class="${className}" title="${text}" ng-href="${url}" ">${text}</a>`;
+            }else{
+                return HtmlUtils.getSpanWithCustomClass(className, text);
+            }
         }
 
         public static getSpanWithTitleHtml(text: string): string {

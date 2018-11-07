@@ -28,8 +28,15 @@ module Sfx {
     }
 
     export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
-        public constructor(raw: IRawHealthEvaluation, public level: number = 0, parent: HealthEvaluation = null) {
+        public viewPathUrl: string = "";
+
+        public constructor(raw: IRawHealthEvaluation, public level: number = 0, parent: HealthEvaluation = null, viewPathUrl: string = "") {
             super(null, raw, parent);
+            this.viewPathUrl = viewPathUrl;
+        }
+
+        public get viewPath(): string {
+            return this.viewPathUrl;
         }
 
         public get kind(): string {
