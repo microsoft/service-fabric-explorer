@@ -10,7 +10,7 @@ import * as shell from "donuts.node/shell";
 
 (<Donuts.Modularity.IModule>exports).getModuleMetadata = (components): Donuts.Modularity.IModuleInfo => {
     components.register<IUpdateService>({
-        name: "update",
+        name: "service",
         version: shell.getAppVersion(),
         singleton: true,
         descriptor:

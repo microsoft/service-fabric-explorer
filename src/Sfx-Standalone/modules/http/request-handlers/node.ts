@@ -19,6 +19,7 @@ import * as http from "http";
 import * as https from "https";
 import * as crypto from "crypto";
 import * as tls from "tls";
+import * as utils from "donuts.node/utils";
 
 const DummyClientPfx: Buffer =
     Buffer.from(
@@ -203,7 +204,7 @@ function handleRequestAsync(validateServerCert: ServerCertValidator, pipeline: I
                     if (!socket.authorized) {
                         const peerCert = socket.getPeerCertificate();
 
-                        if (Object.isEmpty(peerCert)) {
+                        if (utils.object.isEmpty(peerCert)) {
                             return;
                         }
 

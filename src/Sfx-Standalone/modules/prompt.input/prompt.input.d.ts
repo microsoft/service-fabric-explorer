@@ -15,7 +15,7 @@ declare module "sfx.module-manager" {
     import { IPrompt } from "sfx.prompt";
     import { IInputPromptOptions } from "sfx.prompt.input";
 
-    export interface ISfxModuleManager extends Donuts.Modularity.IModuleManager {
+    export interface ISfxModuleManager {
         getComponentAsync(
             componentIdentity: "prompt.input",
             parentWindowId: number,

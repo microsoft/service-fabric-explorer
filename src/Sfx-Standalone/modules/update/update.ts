@@ -24,13 +24,13 @@ export interface IUpdateSettings {
     defaultChannel: string;
 }
 
-const Platform: Donuts.IDictionary<NodeJS.Platform, string> = {
+const Platform: Donuts.IStringKeyDictionary<string> = {
     "win32": "windows",
     "darwin": "macos",
     "linux": "linux"
 };
 
-const Architecture: Donuts.IDictionary<string, string> = {
+const Architecture: Donuts.IStringKeyDictionary<string> = {
     "ia32": "x86",
     "x64": "x64",
     "arm": "arm"

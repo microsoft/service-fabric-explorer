@@ -3,20 +3,17 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-declare module "sfx.update" {
-    import { IVersionInfo } from "sfx.common";
-
-    export interface IUpdateService {
-        updateAsync(): Promise<void>;
-
-        requestVersionInfoAsync(): Promise<IVersionInfo>;
+declare module "sfx.settings" {
+    export interface ISettingsService {
+        openAsync(...names: Array<string>): Promise<Donuts.Settings.ISettings>;
     }
 }
 
 declare module "sfx.module-manager" {
-    import { IUpdateService } from "sfx.update";
+    import { ISettingsService } from "sfx.settings";
 
     export interface ISfxModuleManager {
-        getComponentAsync(componentIdentity: "update.service"): Promise<IUpdateService>;
+        getComponentAsync(componentIdentity: "settings.service"): Promise<ISettingsService>;
+        getComponentAsync(componentIdentity: "settings.default"): Promise<Donuts.Settings.ISettings>;
     }
 }

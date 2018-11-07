@@ -6,15 +6,12 @@
 import { ISfxModuleManager } from "sfx.module-manager";
 
 import { BrowserWindow, app, BrowserWindowConstructorOptions } from "electron";
-import * as uuidv5 from "uuid/v5";
 
 import { local } from "donuts.node/path";
 import * as utils from "donuts.node/utils";
 import * as shell from "donuts.node/shell";
 import * as appUtils from "../../utilities/appUtils";
 import * as modularity from "donuts.node-modularity";
-
-const UuidNamespace = "614e2e95-a80d-4ee5-9fd5-fb970b4b01a3";
 
 function handleNewWindow(window: BrowserWindow) {
     window.webContents.on("new-window",
@@ -61,7 +58,7 @@ function addModuleManagerConstructorOptions(
     windowOptions.webPreferences["additionalArguments"] = [
         shell.toCmdArg(
             modularity.CmdArgs.ConnectionInfo,
-            JSON.stringify(moduleManager.))];
+            JSON.stringify(modularity.getConnectionInfo(moduleManager)))];
 }
 
 export default async function createBrowserWindowAsync(
@@ -91,10 +88,7 @@ export default async function createBrowserWindowAsync(
     addModuleManagerConstructorOptions(windowOptions, moduleManager);
 
     const window = new BrowserWindow(windowOptions);
-    const hostName = uuidv5(window.id.toString(), UuidNamespace);
-
-    await moduleManager.newHostAsync(hostName, await moduleManager.getComponentAsync("ipc.communicator", window.webContents));
-
+    
     window.on("page-title-updated", (event, title) => event.preventDefault());
     window.setTitle(`${window.getTitle()} - ${app.getVersion()}`);
 
@@ -104,7 +98,6 @@ export default async function createBrowserWindowAsync(
         handleZoom(window);
     }
 
-    window.once("closed", async () => await moduleManager.destroyHostAsync(hostName));
     window.once("ready-to-show", () => window.show());
 
     return window;

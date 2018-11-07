@@ -3,9 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-require("donuts.node-modularity/bootstrap");
-
-process.once("loaded", async () => {
-    // TODO: Remove global.exports when the node v10 is integrated with electron.
-    global["exports"] = exports;
-});
+declare module "sfx.module-manager" {
+    export interface ISfxModuleManager extends Donuts.Modularity.IModuleManager {
+        getComponentAsync<T>(componentIdentity: string, ...extraArgs: Array<any>): Promise<Donuts.Modularity.Component<T>>;
+    }
+}

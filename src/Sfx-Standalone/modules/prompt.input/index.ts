@@ -11,7 +11,7 @@ import { resolve } from "donuts.node/path";
 
 (<Donuts.Modularity.IModule>exports).getModuleMetadata = (components) => {
     components.register<IPrompt<string>>({
-        name: "prompt.input",
+        name: "input",
         version: shell.getAppVersion(),
         descriptor:
             (promptService: IPromptService,
@@ -29,6 +29,7 @@ import { resolve } from "donuts.node/path";
 
     return {
         name: "prompt.input",
+        namespace: "prompt",
         version: shell.getAppVersion()
     };
 };

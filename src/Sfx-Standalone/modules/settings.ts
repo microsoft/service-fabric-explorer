@@ -3,27 +3,34 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IPkiCertificateService, ICertificateLoader } from "sfx.cert";
-
+import { ISettingsService } from "sfx.settings";
 import * as shell from "donuts.node/shell";
+import * as settings from "donuts.node-settings";
+
+class SettingsService implements ISettingsService {
+    async openAsync(...names: string[]): Promise<Donuts.Settings.ISettings> {
+        return settings.openSettingsAsChain(...names);
+    }
+}
 
 (<Donuts.Modularity.IModule>exports).getModuleMetadata = (components): Donuts.Modularity.IModuleInfo => {
     components
-        .register<IPkiCertificateService>({
-            name: "pki-service",
+        .register<Donuts.Settings.ISettings>({
+            name: "default",
             version: shell.getAppVersion(),
+            descriptor: async () => settings.defaultSettings,
             singleton: true,
-            descriptor: async () => import("./pki-service").then((module) => new module.PkiService())
+            deps: ["module-manager"]
         })
-        .register<ICertificateLoader>({
-            name: "cert-loader",
+        .register<ISettingsService>({
+            name: "service",
             version: shell.getAppVersion(),
-            singleton: true,
-            descriptor: async () => import("./cert-loader").then((module) => new module.CertLoader())
+            descriptor: async () => new SettingsService(),
+            singleton: true
         });
 
     return {
-        name: "cert",
+        name: "settings",
         version: shell.getAppVersion()
     };
 };

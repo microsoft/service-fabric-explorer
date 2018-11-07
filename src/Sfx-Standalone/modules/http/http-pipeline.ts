@@ -11,18 +11,16 @@ import {
     HttpResponseHandler
 } from "sfx.http";
 
-import { ILog } from "sfx.logging";
-
 export default class HttpPipeline implements IHttpPipeline {
     public requestTemplate: IHttpRequest;
 
-    protected readonly log: ILog;
+    protected readonly log: Donuts.Logging.ILog;
 
     private readonly _requestHandlers: Array<HttpRequestHandler>;
 
     private readonly _responseHandlers: Array<HttpResponseHandler>;
 
-    constructor(log: ILog, requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>) {
+    constructor(log: Donuts.Logging.ILog, requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>) {
         this.log = log;
         this._requestHandlers = [];
         this._responseHandlers = [];

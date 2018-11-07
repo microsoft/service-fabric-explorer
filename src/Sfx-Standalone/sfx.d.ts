@@ -9,7 +9,10 @@
 /// <reference path="./node_modules/donuts.node-modularity/index.d.ts" />
 
 /// <reference path="./common.d.ts" />
+/// <reference path="./sfx.module-manager.d.ts" />
 
+/// <reference path="./modules/settings.d.ts" />
+/// <reference path="./modules/logging.d.ts" />
 /// <reference path="./modules/update/update.d.ts" />
 /// <reference path="./modules/http/http.d.ts" />
 /// <reference path="./modules/http/http.d.ts" />

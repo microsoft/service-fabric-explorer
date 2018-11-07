@@ -6,20 +6,19 @@
 import { app, Menu, MenuItemConstructorOptions } from "electron";
 import * as uuidv5 from "uuid/v5";
 
-import { env, Platform } from "./utilities/env";
-import { resolve } from "./utilities/appUtils";
+import { resolve } from "donuts.node/path";
 
 async function startup(): Promise<void> {
-    const log = await sfxModuleManager.getComponentAsync("logging");
+    const log = await sfxModuleManager.getComponentAsync("logging.default");
     log.writeInfoAsync("Application starting up ...");
 
-    if (env.platform === Platform.MacOs) {
-        const settings = await sfxModuleManager.getComponentAsync("settings");
+    if (process.platform === "darwin") {
+        const settings = await sfxModuleManager.getComponentAsync("settings.default");
 
         log.writeInfoAsync("Initialize application menu for macOS.");
         Menu.setApplicationMenu(
             Menu.buildFromTemplate(
-                await settings.getAsync<Array<MenuItemConstructorOptions>>("defaultMenu/" + env.platform)));
+                await settings.getAsync<Array<MenuItemConstructorOptions>>("defaultMenu/" + process.platform)));
     }
 
     log.writeInfoAsync("Starting up connect-cluster prompt.");
@@ -44,12 +43,12 @@ async function startup(): Promise<void> {
     }
 
     // Trigger update activity.
-    (await sfxModuleManager.getComponentAsync("update")).updateAsync();
+    (await sfxModuleManager.getComponentAsync("update.service")).updateAsync();
 
     // Handle "window-all-closed" event.
     app.removeAllListeners("window-all-closed");
     app.once("window-all-closed", async () => {
-        const log = await sfxModuleManager.getComponentAsync("logging");
+        const log = await sfxModuleManager.getComponentAsync("logging.default");
 
         log.writeInfoAsync("'window-all-closed': app.quit().");
         app.quit();

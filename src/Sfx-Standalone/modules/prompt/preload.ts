@@ -3,21 +3,21 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import bootstrapPromise from "../../module-manager/bootstrap";
+require("donuts.node-modularity/bootstrap");
 
 import { PromptContext } from "./prompt-context";
-import * as appUtils from "../../utilities/appUtils";
+import * as shell from "donuts.node/shell";
 
 (async () => {
     // TODO: Remove global.exports when the node v10 is integrated with electron.
     global["exports"] = exports;
 
-    await bootstrapPromise;
-
-    sfxModuleManager.register<any>({
-        name: "prompt.prompt-context",
-        version: appUtils.getAppVersion(),
-        singleton: true,
-        descriptor: async () => new PromptContext()
-    });
+    sfxModuleManager.registerComponentsAsync("prompt",
+        [{
+            name: "prompt-context",
+            version: shell.getAppVersion(),
+            singleton: true,
+            descriptor: async () => new PromptContext(),
+            type: "local"
+        }]);
 })();
