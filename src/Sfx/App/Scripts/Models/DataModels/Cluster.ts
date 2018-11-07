@@ -65,13 +65,13 @@ module Sfx {
             let $manifest = $xml.find("ClusterManifest")[0];
             this.clusterManifestName = $manifest.getAttribute("Name");
             let $imageStoreConnectionStringParameter = $("Section[Name='Management'] > Parameter[Name='ImageStoreConnectionString']", $manifest);
-            if ($imageStoreConnectionStringParameter !== null) {
+            if ($imageStoreConnectionStringParameter.length > 0) {
                 this._imageStoreConnectionString = $imageStoreConnectionStringParameter.attr("Value");
             }
 
-            let $nim = $xml.find("Section[Name=NetworkInventoryManager]");
-            if ($nim.length !== 0) {
-                this._isNetworkInventoryManagerEnabled = $nim.find("Parameter").attr("Value") === "true";
+            let $nimEnabledParameter = $("Section[Name=NetworkInventoryManager] > Parameter[Name='IsEnabled']", $manifest);
+            if ($nimEnabledParameter.length > 0) {
+                this._isNetworkInventoryManagerEnabled = $nimEnabledParameter.attr("Value").toLowerCase() === "true";
             }
         }
 

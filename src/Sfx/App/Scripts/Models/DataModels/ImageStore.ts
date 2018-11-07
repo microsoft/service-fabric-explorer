@@ -1,7 +1,7 @@
 module Sfx {
     export class ImageStore extends DataModelBase<IRawImageStoreContent> {
+        public isNative: boolean = true;
         public connectionString: string;
-
         public root: ImageStoreFolder = new ImageStoreFolder();
         public uiFolderDictionary: { [path: string]: ImageStoreFolder } = {};
 
@@ -24,23 +24,28 @@ module Sfx {
 
             this.uiFolderDictionary[this.root.path] = this.root;
             this.currentFolder = this.root;
-            this.expandFolder(this.root.path);
-
             let manifest = new ClusterManifest(data);
-            manifest.refresh().then(() => this.connectionString = manifest.imageStoreConnectionString);
+            manifest.refresh().then(() => {
+                this.connectionString = manifest.imageStoreConnectionString;
+                this.isNative = this.connectionString.toLowerCase() === "fabric:imagestore";
+            });
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
-            return this.copyFolderContentToUI(this.currentFolder.path).then(() => this.data.$q.resolve(null));
-        }
-
-        protected expandFolder(path: string): angular.IPromise<void> {
-            const folder = this.uiFolderDictionary[path];
-            if (!folder) {
-                return this.data.$q.resolve();
+            if (!this.isNative) {
+                return this.data.$q.resolve(null);
             }
 
-            return this.copyFolderContentToUI(path).then(() => {
+            return this.expandFolder(this.currentFolder.path);
+        }
+
+        protected expandFolder(path: string): angular.IPromise<IRawImageStoreContent> {
+            const folder = this.uiFolderDictionary[path];
+            if (!folder) {
+                return this.data.$q.resolve(null);
+            }
+
+            return this.copyFolderContentToUI(path).then((raw) => {
                 folder.isExpanded = true;
                 this.currentFolder = folder;
 
@@ -50,6 +55,8 @@ module Sfx {
                 } else {
                     this.pathBreadcrumbItems.push(<IStorePathBreadcrumbItem>{ path: folder.path, name: folder.displayName });
                 }
+
+                return raw;
             });
         }
 
@@ -70,11 +77,11 @@ module Sfx {
             return Utils.getHttpResponseData(this.data.restClient.deleteImageStoreContent(path)).then(() => this.refresh());
         }
 
-        private copyFolderContentToUI(path: string): angular.IPromise<void> {
+        private copyFolderContentToUI(path: string): angular.IPromise<IRawImageStoreContent> {
             let folder: ImageStoreFolder = this.uiFolderDictionary[path];
 
             if (!folder) {
-                return this.data.$q.resolve();
+                return this.data.$q.resolve(null);
             }
 
             return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then(raw => {
@@ -86,6 +93,8 @@ module Sfx {
                 });
 
                 folder.childrenFiles = _.map(raw.StoreFiles, f => new ImageStoreFile(f));
+
+                return raw;
             });
         }
     }

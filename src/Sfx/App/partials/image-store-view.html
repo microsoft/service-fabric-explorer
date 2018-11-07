@@ -1,4 +1,4 @@
-<div class="detail-pane image-store-view">    
+<div class="detail-pane image-store-view">
     <div class="detail-pane">
         <h4>Configuration</h4>
         <div class="table-responsive">
@@ -12,7 +12,10 @@
             </table>
         </div>
     </div>
-    <div class="detail-pane store-content-pane">
+    <div class="alert alert-warning" ng-if="!imagestoreroot.isNative">
+        <strong>Viewing image store content is only supported for the native Image Store (fabric:ImageStore).</strong>
+    </div>
+    <div class="detail-pane store-content-pane" ng-if="imagestoreroot.isNative">
         <h4>Store Content</h4>
         <div class="image-store-breadcrumb essen-pane">
             <span><a href="" ng-click="ctrl.openFolder(imagestoreroot.pathBreadcrumbItems[0].path)" ng-disabled="imagestoreroot.currentFolder.path === imagestoreroot.pathBreadcrumbItems[0].path"
