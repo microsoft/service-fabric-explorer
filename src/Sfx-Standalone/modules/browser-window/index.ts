@@ -15,7 +15,7 @@ import * as shell from "donuts.node/shell";
     });
 
     return {
-        name: "browser-window",
+        name: "electron",
         version: shell.getAppVersion()
     };
 };

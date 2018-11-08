@@ -3,24 +3,23 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ISettingsService } from "sfx.settings";
+import { ISettingsService, ISettings } from "sfx.settings";
 import * as shell from "donuts.node/shell";
 import * as settings from "donuts.node-settings";
 
 class SettingsService implements ISettingsService {
-    async openAsync(...names: string[]): Promise<Donuts.Settings.ISettings> {
+    async openAsync(...names: string[]): Promise<ISettings> {
         return settings.openSettingsAsChain(...names);
     }
 }
 
 (<Donuts.Modularity.IModule>exports).getModuleMetadata = (components): Donuts.Modularity.IModuleInfo => {
     components
-        .register<Donuts.Settings.ISettings>({
+        .register<ISettings>({
             name: "default",
             version: shell.getAppVersion(),
             descriptor: async () => settings.defaultSettings,
-            singleton: true,
-            deps: ["module-manager"]
+            singleton: true
         })
         .register<ISettingsService>({
             name: "service",

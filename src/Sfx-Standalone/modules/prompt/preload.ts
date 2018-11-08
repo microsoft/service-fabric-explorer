@@ -7,10 +7,15 @@ require("donuts.node-modularity/bootstrap");
 
 import { PromptContext } from "./prompt-context";
 import * as shell from "donuts.node/shell";
+import * as appUtils from "../../utilities/appUtils";
+import * as modularity from "donuts.node-modularity";
 
 (async () => {
     // TODO: Remove global.exports when the node v10 is integrated with electron.
     global["exports"] = exports;
+
+    appUtils.logUnhandledRejection();
+    appUtils.injectModuleManager(modularity.getModuleManager());
 
     sfxModuleManager.registerComponentsAsync("prompt",
         [{

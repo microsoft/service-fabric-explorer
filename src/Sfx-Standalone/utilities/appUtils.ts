@@ -4,6 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import { local } from "donuts.node/path";
+import { ISfxModuleManager } from "sfx.module-manager";
 
 export function getIconPath(): string {
     switch (process.platform) {
@@ -21,8 +22,8 @@ export function getIconPath(): string {
 
 export function logUnhandledRejection(): void {
     process.on("unhandledRejection", (reason, promise) => {
-        if (sfxModuleManager) {
-            sfxModuleManager.getComponentAsync<Donuts.Logging.ILog>("logging")
+        if (typeof sfxModuleManager !== "undefined") {
+            sfxModuleManager.getComponentAsync<Donuts.Logging.ILog>("logging.default")
                 .then((log) => {
                     if (log) {
                         log.writeErrorAsync("Unhandled promise rejection: {}", reason);
@@ -36,11 +37,13 @@ export function logUnhandledRejection(): void {
     });
 }
 
-export function injectModuleManager(moduleManager: Donuts.Modularity.IModuleManager): void {
+export function injectModuleManager(moduleManager: Donuts.Modularity.IModuleManager): ISfxModuleManager {
     Object.defineProperty(global, "sfxModuleManager", {
         writable: false,
         configurable: false,
         enumerable: false,
         value: moduleManager
     });
+
+    return moduleManager;
 }

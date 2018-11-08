@@ -17,7 +17,7 @@ import * as shell from "donuts.node/shell";
             async (log: Donuts.Logging.ILog, settings: Donuts.Settings.ISettings, httpsClient: IHttpClient) =>
                 settings.getAsync<IUpdateSettings>("update")
                     .then((updateSettings) => import("./update").then((module) => new module.default(log, updateSettings, httpsClient))),
-        deps: ["logging", "settings", "http.http-client"]
+        deps: ["logging.default", "settings.default", "http.http-client"]
     });
 
     return {

@@ -119,7 +119,10 @@ class AppInsightsLogger implements Donuts.Logging.ILogger {
 
     return {
         name: "logging",
-        version: shell.getAppVersion()
+        version: shell.getAppVersion(),
+        dependencies: {
+            "settings": shell.getAppVersion()
+        }
     };
 };
 

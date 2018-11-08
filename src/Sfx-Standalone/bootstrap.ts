@@ -11,6 +11,7 @@ import * as path from "path";
 import * as fs from "fs";
 import { local } from "donuts.node/path";
 import * as shell from "donuts.node/shell";
+import * as appUtils from "./utilities/appUtils";
 
 // TODO: Remove startupMainWindow once the main frame is ready.
 import startupMainWindow from "./main";
@@ -28,15 +29,29 @@ function readModuleDir(dirName: string): Array<string> {
     const entries: Array<string> = [];
 
     for (const entry of fs.readdirSync(dirPath, { encoding: "utf8" })) {
-        entries.push(path.join(dirPath, entry));
+        const entryPath = path.join(dirPath, entry);
+
+        if (!entry.endsWith(".js")) {
+            const stat = fs.statSync(entryPath);
+
+            if (!stat.isDirectory()) {
+                continue;
+            }
+        }
+
+        entries.push(entryPath);
     }
 
     return entries;
 }
 
+appUtils.logUnhandledRejection();
+
 process.once("loaded", () => Promise.resolve(createModuleManager())
     // Load built-in modules.
     .then((moduleManager) => moduleManager.loadModulesAsync(readModuleDir("modules")))
+
+    .then((moduleManager) => appUtils.injectModuleManager(moduleManager))
 
     // Load ad-hoc module
     .then((moduleManager) => {

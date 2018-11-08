@@ -42,7 +42,7 @@ class Prompt<TResult> implements IPrompt<TResult> {
 
         this.promptWindow =
             await this.moduleManager.getComponentAsync(
-                "browser-window",
+                "electron.browser-window",
                 <BrowserWindowConstructorOptions>{
                     frame: utils.pick(this.promptOptions.frame, true),
                     maximizable: false,
