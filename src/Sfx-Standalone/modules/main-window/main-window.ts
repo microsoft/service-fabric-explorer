@@ -8,22 +8,6 @@ import { BrowserWindow } from "electron";
 import { resolve } from "../../utilities/appUtils";
 import { IComponentConfiguration } from "sfx.common";
 
-export class ClusterManagerComponentConfig implements IComponentConfiguration {
-    id: string = "cluster-list";
-    title: string = "Clusters";
-    iconUrl?: string;
-    viewUrl: string = resolve("./cluster-list/cluster-list.html");
-    mainViewUrl?: string;
-}
-
-export class SettingsComponentConfig implements IComponentConfiguration {
-    id: string = "settings";
-    title: string = "Settings";
-    iconUrl?: string;
-    viewUrl: string = resolve("./settings/settings.html");
-    mainViewUrl?: string;
-}
-
 export class MainWindow implements IMainWindow {
     private browserWindow: BrowserWindow;
     private components: IComponentConfiguration[] = [];

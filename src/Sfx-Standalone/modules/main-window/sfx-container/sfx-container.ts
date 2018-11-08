@@ -36,7 +36,7 @@ export class SfxContainer implements ISfxContainer {
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
         if (sfxWebView) {
-            await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
+            //await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
             sfxWebView.reload();
             $(`#view-container-${id}`, container).show();
         }
@@ -64,7 +64,7 @@ export class SfxContainer implements ISfxContainer {
 
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
         sfxWebView.addEventListener("dom-ready", async () => {
-            await sfxModuleManager.newHostAsync(`host-sfx-${id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", sfxWebView.getWebContents()));
+            //await sfxModuleManager.newHostAsync(`host-sfx-${id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", sfxWebView.getWebContents()));
             log.writeInfoAsync("dom-ready --- ");
 
             if (!sfxWebView.isDevToolsOpened()) {
@@ -92,7 +92,7 @@ export class SfxContainer implements ISfxContainer {
             $("#instructions", container).show();
         }
 
-        await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
+        //await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
     }
 }
 

@@ -16,11 +16,11 @@ module Sfx {
 
         console.log("StandaloneIntegration.isStandalone:", StandaloneIntegration.isStandalone(), Date.now());
 
-        if (StandaloneIntegration.isStandalone()) {
-            angular.module("authenticationBootstrap", ["AdalAngular"]).constant("authenticationData", new AadMetadata(null));
-            //return bootstrap();
-            return;
-        }
+        // if (StandaloneIntegration.isStandalone()) {
+        //     angular.module("authenticationBootstrap", ["AdalAngular"]).constant("authenticationData", new AadMetadata(null));
+        //     //return bootstrap();
+        //     return;
+        // }
 
         // When AAD login failed with error, it will post back by setting error and error_description parameters as segments. e.g.
         //   https://[cluster]:19080/Explorer/Index.html#error=access_denied&error_description=Foo
@@ -41,9 +41,9 @@ module Sfx {
 
         $http.get(StandaloneIntegration.clusterUrl + AuthenticationBootstrapConstants.GetAadMetadataUriPart)
             .then((response) => {
-                if (response.status >= 300) {
-                    return initInjector.get("$q").reject();
-                }
+                // if (response.status >= 300) {
+                //     return initInjector.get("$q").reject();
+                // }
 
                 const data: IRawAadMetadata = <IRawAadMetadata>response.data;
                 let authBootstrap = angular.module("authenticationBootstrap", ["AdalAngular"]);

@@ -8,23 +8,23 @@ module Sfx {
         private httpClient: Promise<Standalone.http.IHttpClient>;
 
         constructor(private $q: angular.IQService, private $http: angular.IHttpService) {
-            if (StandaloneIntegration.isStandalone()) {
-                this.httpClient = StandaloneIntegration.getHttpClient();
-                this.httpClient.then((client) => client.setRequestTemplateAsync({
-                    method: undefined,
-                    url: undefined,
-                    headers: [
-                        {
-                            name: Constants.SfxVersionMetadataName,
-                            value: VersionInfo.Version
-                        },
-                        {
-                            name: Constants.SfxBuildMetadataName,
-                            value: VersionInfo.Build
-                        }
-                    ]
-                }));
-            }
+            // if (StandaloneIntegration.isStandalone()) {
+            //     this.httpClient = StandaloneIntegration.getHttpClient();
+            //     this.httpClient.then((client) => client.setRequestTemplateAsync({
+            //         method: undefined,
+            //         url: undefined,
+            //         headers: [
+            //             {
+            //                 name: Constants.SfxVersionMetadataName,
+            //                 value: VersionInfo.Version
+            //             },
+            //             {
+            //                 name: Constants.SfxBuildMetadataName,
+            //                 value: VersionInfo.Build
+            //             }
+            //         ]
+            //     }));
+            // }
 
             this.$http.defaults.headers.common[Constants.SfxVersionMetadataName] = VersionInfo.Version;
             this.$http.defaults.headers.common[Constants.SfxBuildMetadataName] = VersionInfo.Build;
