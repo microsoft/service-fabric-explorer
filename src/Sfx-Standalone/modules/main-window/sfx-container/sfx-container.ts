@@ -5,20 +5,19 @@
 //-----------------------------------------------------------------------------
 
 import * as $ from "jquery";
-import * as appUtils from "../../../utilities/appUtils";
 import * as uuidv5 from "uuid/v5";
 //import * as url from "url";
 import { WebviewTag } from "electron";
 import { electron } from "../../../utilities/electron-adapter";
-import { IComponentInfo } from "sfx.module-manager";
 import { ISfxContainer } from "sfx.sfx-view-container";
 //import { IDictionary } from "sfx.common";
+import { resolve } from "donuts.node/path";
 
 export class SfxContainer implements ISfxContainer {
     static UrlUuidNameSpace: string = "6ba7b811-9dad-11d1-80b4-00c04fd430c8";
     private endpoints: any[] = [];
 
-    public static getComponentInfo(): IComponentInfo<SfxContainer> {
+    public static getComponentInfo(): Donuts.Modularity.IComponentInfo<SfxContainer> {
         return {
             name: "page-sfx-container",
             version: electron.app.getVersion(),
@@ -36,7 +35,7 @@ export class SfxContainer implements ISfxContainer {
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
         if (sfxWebView) {
-            await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
+            //await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
             sfxWebView.reload();
             $(`#view-container-${id}`, container).show();
         }
@@ -56,15 +55,15 @@ export class SfxContainer implements ISfxContainer {
             return Promise.resolve();
         }
 
-        const log = await sfxModuleManager.getComponentAsync("logging");
-        const sfxUrl = appUtils.resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint });
+        const log = await sfxModuleManager.getComponentAsync("logging.default");
+        const sfxUrl = resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint });
         this.endpoints.push({ endpoint: targetServiceEndpoint, id: id });
         container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
         $(`<div id="view-container-${id}" class="view-container current"><webview tabindex="0" src="${sfxUrl}" id="view-${id}" autosize="on" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
 
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
         sfxWebView.addEventListener("dom-ready", async () => {
-            await sfxModuleManager.newHostAsync(`host-sfx-${id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", sfxWebView.getWebContents()));
+            //await sfxModuleManager.newHostAsync(`host-sfx-${id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", sfxWebView.getWebContents()));
             log.writeInfoAsync("dom-ready --- ");
 
             if (!sfxWebView.isDevToolsOpened()) {
@@ -92,7 +91,7 @@ export class SfxContainer implements ISfxContainer {
             $("#instructions", container).show();
         }
 
-        await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
+        //await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
     }
 }
 

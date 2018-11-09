@@ -5,8 +5,8 @@ import { SfxContainer } from "./sfx-container/sfx-container";
 import { DialogService } from "./dialog-service/dialog-service";
 
 (async () => {
-    sfxModuleManager.register(DialogService.getComponentInfo());
-    sfxModuleManager.register(SfxContainer.getComponentInfo());
+    sfxModuleManager.registerComponentsAsync("sfx", [DialogService.getComponentInfo()]);
+    sfxModuleManager.registerComponentsAsync("sfx", [SfxContainer.getComponentInfo()]);
 
     require("./cluster-list/cluster-list.script.js");
     require("./cluster-list/model.js");
@@ -25,7 +25,7 @@ import { DialogService } from "./dialog-service/dialog-service";
                 $(`<div id="sub-${component.id}" class="sub-panel"><webview tabindex="0" id="wv-${component.id}" src="${component.viewUrl}" nodeintegration preload="./preload.js"></webview></div>`).appendTo(leftpanel);
                 let webview = <WebviewTag>document.querySelector(`webview[id='wv-${component.id}']`);
                 webview.addEventListener("dom-ready", async () => {
-                    await sfxModuleManager.newHostAsync(`host-${component.id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));
+                    //await sfxModuleManager.newHostAsync(`host-${component.id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));
                     //webview.openDevTools(); /*uncomment to use development tools */
                 });
             }

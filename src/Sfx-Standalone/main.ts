@@ -4,10 +4,10 @@
 //-----------------------------------------------------------------------------
 
 import { app, Menu, MenuItemConstructorOptions } from "electron";
-import * as uuidv5 from "uuid/v5";
+// import * as uuidv5 from "uuid/v5";
 
-import { resolve } from "donuts.node/path";
-import { env, Platform } from "./utilities/env";
+//import { resolve } from "donuts.node/path";
+// import { env, Platform } from "./utilities/env";
 import * as url from "url";
 import { IDictionary } from "sfx.common";
 
@@ -25,14 +25,12 @@ async function startup(): Promise<void> {
     }
 
     log.writeInfoAsync("Starting up connect-cluster prompt.");
-    const mainWindow = await sfxModuleManager.getComponentAsync("main-window");
+    const mainWindow = await sfxModuleManager.getComponentAsync("sfx.main-window");
     await mainWindow.loadAsync();
 
     // Handle "window-all-closed" event.
     app.removeAllListeners("window-all-closed");
     app.once("window-all-closed", async () => {
-        const log = await sfxModuleManager.getComponentAsync("logging");
-
         log.writeInfoAsync("'window-all-closed': app.quit().");
         app.quit();
     });
@@ -76,7 +74,7 @@ async function startup(): Promise<void> {
 
     // Trigger update activity.
     try {
-        (await sfxModuleManager.getComponentAsync("update")).updateAsync();    
+        (await sfxModuleManager.getComponentAsync("update.service")).updateAsync();    
     } catch (error) {
         log.writeErrorAsync("error happens while updating the application", error);
     }

@@ -6,7 +6,6 @@
 import * as $ from "jquery";
 import * as Url from "url";
 import { electron } from "../../../utilities/electron-adapter";
-import { IComponentInfo } from "sfx.module-manager";
 import { IClusterList, IClusterListDataModel } from "sfx.cluster-list";
 import { ISfxContainer } from "sfx.sfx-view-container";
 import { IDialogService } from "sfx.main-window";
@@ -18,13 +17,13 @@ export class ClusterList implements IClusterList {
     private endpoints: string[] = [];
     private settings: ISettings;
 
-    public static getComponentInfo(): IComponentInfo<ClusterList> {
+    public static getComponentInfo(): Donuts.Modularity.IComponentInfo<ClusterList> {
         return {
             name: "cluster-list",
             version: electron.app.getVersion(),
             singleton: true,
             descriptor: async (settings: ISettings) => new ClusterList(settings),
-            deps: ["settings"]
+            deps: ["sfx.settings"]
         };
     }
 
@@ -81,7 +80,7 @@ export class ClusterList implements IClusterList {
 
         let $button = $('#cluster-list li[data-endpoint="' + endpoint.endpoint + '"]');
         if ($button.hasClass("current")) {
-            await (await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container")).unloadSfxAsync(endpoint.endpoint);
+            await (await sfxModuleManager.getComponentAsync<ISfxContainer>("sfx.page-sfx-container")).unloadSfxAsync(endpoint.endpoint);
             $button.removeClass("current");
         }
 
@@ -110,7 +109,7 @@ export class ClusterList implements IClusterList {
 
     async setupAsync(): Promise<void> {
         $("#cluster-list-connect").click(async () => {
-            const dialogService = (await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service"));
+            const dialogService = (await sfxModuleManager.getComponentAsync<IDialogService>("sfx.dialog-service"));
             await dialogService.showInlineDialogAsync({
                 title: "Connect to a cluster",
                 bodyHtml: `
@@ -144,8 +143,8 @@ export class ClusterList implements IClusterList {
                         name = url.host;
                     }
 
-                    await (await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list")).newClusterListItemAsync(endpoint, name, "", true);
-                    await (await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container")).loadSfxAsync(endpoint).then(() => {
+                    await (await sfxModuleManager.getComponentAsync<IClusterList>("sfx.cluster-list")).newClusterListItemAsync(endpoint, name, "", true);
+                    await (await sfxModuleManager.getComponentAsync<ISfxContainer>("sfx.page-sfx-container")).loadSfxAsync(endpoint).then(() => {
                         $("#main-modal-dialog").modal("hide");
                     });
                 } catch (error) {
@@ -214,10 +213,10 @@ export class ClusterList implements IClusterList {
             }
 
             const action = $(e.target).data("action");
-            const dialogService = await sfxModuleManager.getComponentAsync<IDialogService>("dialog-service");
+            const dialogService = await sfxModuleManager.getComponentAsync<IDialogService>("sfx.dialog-service");
             switch (action) {
                 case "connect":
-                    const sfxContainer = await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container");
+                    const sfxContainer = await sfxModuleManager.getComponentAsync<ISfxContainer>("sfx.page-sfx-container");
                     await sfxContainer.reloadSfxAsync(endpoint);                   
                     break;
                 case "remove":
@@ -232,7 +231,7 @@ export class ClusterList implements IClusterList {
                     const targetCluster = $("#btn-delete-cluster").data("target");
                     $("#btn-delete-cluster").click(async () => {
                         try {
-                            const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
+                            const list = await sfxModuleManager.getComponentAsync<IClusterList>("sfx.cluster-list");
                             await list.removeClusterListItem(targetCluster);
                             $("#main-modal-dialog").modal("hide");
                         } catch (error) {
@@ -259,7 +258,7 @@ export class ClusterList implements IClusterList {
                         try {
                             let label: string = $("#input-cluster-label").val();
                             if (label !== "") {
-                                const list = await sfxModuleManager.getComponentAsync<IClusterList>("cluster-list");
+                                const list = await sfxModuleManager.getComponentAsync<IClusterList>("sfx.cluster-list");
                                 await list.renameClusterListItem($("#btn-new-label").data("target"), label);
 
                                 $("#main-modal-dialog").modal("hide");
@@ -294,7 +293,7 @@ export class ClusterList implements IClusterList {
             }
 
             $(".current").removeClass("current");
-            const sfxContainer = await sfxModuleManager.getComponentAsync<ISfxContainer>("page-sfx-container");
+            const sfxContainer = await sfxModuleManager.getComponentAsync<ISfxContainer>("sfx.page-sfx-container");
             await sfxContainer.loadSfxAsync(endpoint);
             cluster.currentInView = true;
             await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
@@ -305,8 +304,8 @@ export class ClusterList implements IClusterList {
 
 $(document).ready(() => {
     (async () => {
-        sfxModuleManager.register(ClusterList.getComponentInfo());
-        const clusterListComponent = await sfxModuleManager.getComponentAsync<ClusterList>("cluster-list");
+        sfxModuleManager.registerComponentsAsync("main-window", [ClusterList.getComponentInfo()]);
+        const clusterListComponent = await sfxModuleManager.getComponentAsync<ClusterList>("sfx.cluster-list");
         await clusterListComponent.setupAsync();
     })();
 });

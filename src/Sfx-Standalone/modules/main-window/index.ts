@@ -3,23 +3,22 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModule } from "sfx.module-manager";
-import { electron } from "../../utilities/electron-adapter";
 import { MainWindow } from "./main-window";
+import * as shell from "donuts.node/shell";
 
-(<IModule>exports).getModuleMetadata = (components) => {
+(<Donuts.Modularity.IModule>exports).getModuleMetadata = (components) => {
     components.register<MainWindow>({
         name: "main-window",
-        version: electron.app.getVersion(),
+        version: shell.getAppVersion(),
         singleton: true,
         descriptor: async (browserWindow) => {
             return new MainWindow(browserWindow);
         },
-        deps: ["browser-window"]
+        deps: ["electron.browser-window"]
     });
 
     return {
-        name: "main-window",
-        version: electron.app.getVersion()
+        name: "sfx",
+        version: shell.getAppVersion(),
     };
 };

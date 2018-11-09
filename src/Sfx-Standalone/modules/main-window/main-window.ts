@@ -5,7 +5,7 @@
 
 import { IMainWindow } from "sfx.main-window";
 import { BrowserWindow } from "electron";
-import { resolve } from "../../utilities/appUtils";
+import { resolve } from "donuts.node/path";
 import { IComponentConfiguration } from "sfx.common";
 
 export class ClusterManagerComponentConfig implements IComponentConfiguration {
@@ -43,7 +43,7 @@ export class MainWindow implements IMainWindow {
         this.browserWindow.loadURL(resolve("index.html"));
 
         this.browserWindow.once("ready-to-show", async () => {
-            //this.browserWindow.webContents.openDevTools(); /*uncomment to use development tools */
+            this.browserWindow.webContents.openDevTools(); /*uncomment to use development tools */
             this.browserWindow.show();
         });
 

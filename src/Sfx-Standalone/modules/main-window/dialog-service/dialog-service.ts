@@ -4,7 +4,6 @@
 //-----------------------------------------------------------------------------
 
 import * as $ from "jquery";
-import { IComponentInfo } from "sfx.module-manager";
 import { electron } from "../../../utilities/electron-adapter";
 import { WebviewTag } from "electron";
 import { IDialogService, IDialogRenderingOption } from "sfx.main-window";
@@ -14,7 +13,7 @@ export class DialogService implements IDialogService {
     public onClose: () => Promise<void>;
     public onPost: (data: any) => Promise<void>;
 
-    public static getComponentInfo(): IComponentInfo<DialogService> {
+    public static getComponentInfo(): Donuts.Modularity.IComponentInfo<DialogService> {
         return {
             name: "dialog-service",
             version: electron.app.getVersion(),
@@ -38,11 +37,11 @@ export class DialogService implements IDialogService {
         let webview = <WebviewTag>document.querySelector(`#main-modal-dialog webview`);
         webview.addEventListener("dom-ready", async () => {
             //webview.openDevTools(); /*uncomment to use development tools*/
-            await sfxModuleManager.newHostAsync("host-dialog-service", await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));
+            //await sfxModuleManager.newHostAsync("host-dialog-service", await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));
         });
 
         webview.addEventListener("close", async () => {
-            await sfxModuleManager.destroyHostAsync("host-dialog-service");
+            //await sfxModuleManager.destroyHostAsync("host-dialog-service");
             $("#main-modal-dialog").modal("hide").remove();
         });
 

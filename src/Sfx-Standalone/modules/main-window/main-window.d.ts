@@ -5,7 +5,6 @@
 
 declare module "sfx.main-window" {
     import { BrowserWindow } from "electron";
-    import { IDictionary } from "sfx.common";
 
     export interface IMainWindow {
         loadAsync(): void;
@@ -32,8 +31,8 @@ declare module "sfx.main-window" {
 declare module "sfx.module-manager" {
     import { IMainWindow } from "sfx.main-window";
 
-    export interface IModuleManager {
-        getComponentAsync(componentIdentity: "main-window"): Promise<IMainWindow>;
+    export interface ISfxModuleManager {
+        getComponentAsync(componentIdentity: "sfx.main-window"): Promise<IMainWindow>;
     }
 }
 

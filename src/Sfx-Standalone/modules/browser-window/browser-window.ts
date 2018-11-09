@@ -10,8 +10,8 @@ import { BrowserWindow, app, BrowserWindowConstructorOptions } from "electron";
 import { local } from "donuts.node/path";
 import * as utils from "donuts.node/utils";
 import * as shell from "donuts.node/shell";
-import * as uuidv5 from "uuid/v5";
-import { env, Platform } from "../../utilities/env";
+// import * as uuidv5 from "uuid/v5";
+// import { env, Platform } from "../../utilities/env";
 import * as appUtils from "../../utilities/appUtils";
 import * as modularity from "donuts.node-modularity";
 
