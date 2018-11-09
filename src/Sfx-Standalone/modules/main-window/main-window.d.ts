@@ -9,6 +9,7 @@ declare module "sfx.main-window" {
 
     export interface IMainWindow {
         loadAsync(): void;
+        getWindowAsync(): Promise<BrowserWindow>;
     }
 
     export interface IDialogService {

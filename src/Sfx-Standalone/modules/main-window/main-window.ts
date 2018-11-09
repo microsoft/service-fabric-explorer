@@ -33,4 +33,8 @@ export class MainWindow implements IMainWindow {
 
         return Promise.resolve();
     }
+
+    async getWindowAsync(): Promise<BrowserWindow> {
+        return this.browserWindow;
+    }
 }
