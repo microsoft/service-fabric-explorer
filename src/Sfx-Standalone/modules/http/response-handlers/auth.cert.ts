@@ -17,14 +17,16 @@ import {
     IPkiCertificateService
 } from "sfx.cert";
 
+import * as utils from "donuts.node/utils";
+
 const StatusMsg_ClientCertRequired = "Client certificate required";
 
 function isCertificateInfo(cert: any): cert is ICertificateInfo {
-    return cert && String.isString(cert.thumbprint);
+    return cert && utils.isString(cert.thumbprint);
 }
 
 function isCertificate(cert: any): cert is ICertificate {
-    return cert && String.isString(cert.type);
+    return cert && utils.isString(cert.type);
 }
 
 async function handleResponseAsync(pkiSvc: IPkiCertificateService, selectClientCert: ClientCertSelector, pipeline: IHttpPipeline, request: IHttpRequest, response: IHttpResponse): Promise<IHttpResponse> {
@@ -59,7 +61,7 @@ async function handleResponseAsync(pkiSvc: IPkiCertificateService, selectClientC
 }
 
 export default function createResponseHandler(pkiSvc: IPkiCertificateService, clientCertSelector: ClientCertSelector): HttpResponseHandler {
-    if (!Function.isFunction(clientCertSelector)) {
+    if (!utils.isFunction(clientCertSelector)) {
         throw new Error("A valid clientCertSelector function must be supplied.");
     }
 

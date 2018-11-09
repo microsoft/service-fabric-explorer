@@ -4,19 +4,24 @@
 //-----------------------------------------------------------------------------
 
 import { app, Menu, MenuItemConstructorOptions } from "electron";
+import * as uuidv5 from "uuid/v5";
+
+import { resolve } from "donuts.node/path";
 import { env, Platform } from "./utilities/env";
 import * as url from "url";
 import { IDictionary } from "sfx.common";
 
 async function startup(): Promise<void> {
-    const log = await sfxModuleManager.getComponentAsync("logging");
+    const log = await sfxModuleManager.getComponentAsync("logging.default");
     log.writeInfoAsync("Application starting up ...");
 
-    if (env.platform === Platform.MacOs) {
-        const settings = await sfxModuleManager.getComponentAsync("settings");
+    if (process.platform === "darwin") {
+        const settings = await sfxModuleManager.getComponentAsync("settings.default");
 
         log.writeInfoAsync("Initialize application menu for macOS.");
-        Menu.setApplicationMenu(Menu.buildFromTemplate(await settings.getAsync<Array<MenuItemConstructorOptions>>("defaultMenu/" + env.platform)));
+        Menu.setApplicationMenu(
+            Menu.buildFromTemplate(
+                await settings.getAsync<Array<MenuItemConstructorOptions>>("defaultMenu/" + process.platform)));
     }
 
     log.writeInfoAsync("Starting up connect-cluster prompt.");

@@ -5,7 +5,6 @@
 
 import { IDictionary } from "sfx.common";
 import { IPkiCertificateService, ICertificateInfo, ICertificate } from "sfx.cert";
-import { ILog } from "sfx.logging";
 
 import { dialog, BrowserWindow } from "electron";
 import * as url from "url";
@@ -26,7 +25,7 @@ export default class ServiceFabricHttpClient extends HttpClient {
     private readonly trustedCerts: IDictionary<boolean>;
     private readonly clientCertMap: IDictionary<Promise<ICertificate | ICertificateInfo>>;
 
-    constructor(log: ILog, pkiSvc: IPkiCertificateService) {
+    constructor(log: Donuts.Logging.ILog, pkiSvc: IPkiCertificateService) {
         super(log, [], []);
 
         this.clientCertMap = Object.create(null);

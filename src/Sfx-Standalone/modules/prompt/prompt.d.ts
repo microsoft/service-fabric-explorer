@@ -43,7 +43,7 @@ declare module "sfx.module-manager" {
         IPromptContext,
     } from "sfx.prompt";
 
-    export interface IModuleManager {
+    export interface ISfxModuleManager {
         getComponentAsync(componentIdentity: "prompt.prompt-service"): Promise<IPromptService>;
 
         getComponentAsync(componentIdentity: "prompt.prompt-context"):  Promise<IPromptContext>;

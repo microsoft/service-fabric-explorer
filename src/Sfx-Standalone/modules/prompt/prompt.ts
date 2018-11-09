@@ -3,14 +3,14 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModuleManager } from "sfx.module-manager";
+import { ISfxModuleManager } from "sfx.module-manager";
 import { IPrompt, IPromptService, IPromptOptions } from "sfx.prompt";
 
 import { Menu, BrowserWindow, ipcMain, BrowserWindowConstructorOptions } from "electron";
 
-import * as utils from "../../utilities/utils";
+import { local } from "donuts.node/path";
+import * as utils from "donuts.node/utils";
 import { electron } from "../../utilities/electron-adapter";
-import { env, Platform } from "../../utilities/env";
 import * as appUtils from "../../utilities/appUtils";
 import { ChannelNameFormat, EventNames } from "./constants";
 
@@ -19,7 +19,7 @@ class Prompt<TResult> implements IPrompt<TResult> {
         return this.promise === undefined;
     }
 
-    private readonly moduleManager: IModuleManager;
+    private readonly moduleManager: ISfxModuleManager;
     private readonly promptOptions: IPromptOptions;
 
     private promise: Promise<TResult>;
@@ -28,7 +28,7 @@ class Prompt<TResult> implements IPrompt<TResult> {
     private promptWindow: BrowserWindow;
     private promptResult: TResult;
 
-    constructor(moduleManager: IModuleManager, promptOptions: IPromptOptions) {
+    constructor(moduleManager: ISfxModuleManager, promptOptions: IPromptOptions) {
         this.moduleManager = moduleManager;
         this.promptOptions = promptOptions;
         this.promise = new Promise((resolve, reject) => {
@@ -42,37 +42,38 @@ class Prompt<TResult> implements IPrompt<TResult> {
 
         this.promptWindow =
             await this.moduleManager.getComponentAsync(
-                "browser-window",
+                "electron.browser-window",
                 <BrowserWindowConstructorOptions>{
-                    frame: utils.getValue(this.promptOptions.frame, true),
+                    frame: utils.pick(this.promptOptions.frame, true),
                     maximizable: false,
-                    minimizable: utils.getValue(this.promptOptions.minimizable, false),
-                    closable: utils.getValue(this.promptOptions.closable, true),
+                    minimizable: utils.pick(this.promptOptions.minimizable, false),
+                    closable: utils.pick(this.promptOptions.closable, true),
                     show: false,
                     modal: true,
                     fullscreenable: false,
                     useContentSize: true,
-                    resizable: utils.getValue(this.promptOptions.resizable, false),
+                    resizable: utils.pick(this.promptOptions.resizable, false),
                     parent: this.promptOptions.parentWindowId ? electron.BrowserWindow.fromId(this.promptOptions.parentWindowId) : electron.BrowserWindow.getFocusedWindow(),
-                    icon: utils.getValue(this.promptOptions.icon, appUtils.getIconPath()),
+                    icon: utils.pick(this.promptOptions.icon, appUtils.getIconPath()),
                     webPreferences: {
-                        preload: appUtils.local("./preload.js")
+                        preload: local("./preload.js")
                     }
                 });
 
-        this.promptOptions.showMenu = utils.getValue(this.promptOptions.showMenu, false);
+        this.promptOptions.showMenu = utils.pick(this.promptOptions.showMenu, false);
         this.promptWindow.setMenuBarVisibility(this.promptOptions.showMenu);
 
-        if (this.promptOptions.showMenu && Object.isObject(this.promptOptions.menuTemplate)) {
-            if (env.platform !== Platform.MacOs) {
+        if (this.promptOptions.showMenu && utils.isObject(this.promptOptions.menuTemplate)) {
+            if (process.platform !== "darwin") {
                 this.promptWindow.setMenu(Menu.buildFromTemplate(this.promptOptions.menuTemplate));
+
             } else {
                 Menu.setApplicationMenu(Menu.buildFromTemplate(this.promptOptions.menuTemplate));
             }
         }
 
         // Size has to be set after menu settings applied, otherwise the size will be inaccurate.
-        this.promptWindow.setContentSize(utils.getValue(this.promptOptions.width, 640), utils.getValue(this.promptOptions.height, 480));
+        this.promptWindow.setContentSize(utils.pick(this.promptOptions.width, 640), utils.pick(this.promptOptions.height, 480));
 
         this.promptWindow.once("ready-to-show", () => {
             this.promptWindow.show();
@@ -93,11 +94,11 @@ class Prompt<TResult> implements IPrompt<TResult> {
         });
 
         ipcMain.once(
-            utils.format(ChannelNameFormat, this.promptWindow.id, EventNames.Finished),
+            utils.string.format(ChannelNameFormat, this.promptWindow.id, EventNames.Finished),
             (event: Electron.Event, result: any) => this.promptResult = result);
 
         ipcMain.once(
-            utils.format(ChannelNameFormat, this.promptWindow.id, EventNames.RequestPromptOptions),
+            utils.string.format(ChannelNameFormat, this.promptWindow.id, EventNames.RequestPromptOptions),
             (event: Electron.Event) => event.returnValue = this.promptOptions);
     }
 
@@ -124,7 +125,7 @@ class Prompt<TResult> implements IPrompt<TResult> {
 
     private cleanupIpcListeners() {
         for (const eventName in EventNames) {
-            ipcMain.removeAllListeners(utils.format(ChannelNameFormat, this.promptWindow.id, eventName));
+            ipcMain.removeAllListeners(utils.string.format(ChannelNameFormat, this.promptWindow.id, eventName));
         }
     }
 
@@ -136,10 +137,10 @@ class Prompt<TResult> implements IPrompt<TResult> {
 }
 
 export class PromptService implements IPromptService {
-    private readonly moduleManager: IModuleManager;
+    private readonly moduleManager: ISfxModuleManager;
 
-    constructor(moduleManager: IModuleManager) {
-        if (!Object.isObject(moduleManager)) {
+    constructor(moduleManager: ISfxModuleManager) {
+        if (!utils.isObject(moduleManager)) {
             throw new Error("valid moduleManager must be supplied.");
         }
 

@@ -92,7 +92,7 @@ declare module "sfx.module-manager" {
         ClientCertSelector
     } from "sfx.http";
 
-    export interface IModuleManager {
+    export interface ISfxModuleManager {
         getComponentAsync(componentIdentity: "http.http-client", requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>): Promise<IHttpClient>;
         getComponentAsync(componentIdentity: "http.http-client.service-fabric"): Promise<IHttpClient>;
     }

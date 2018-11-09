@@ -15,10 +15,13 @@
   "author": "Microsoft Corporation",
   "license": "MIT",
   "dependencies": {
-    "@types/bootstrap": "^4.1.1",
-    "angular": "^1.7.2",
+    "angular": "^1.6.8",
     "applicationinsights": "^1.0.1",
-    "bootstrap": "^4.1.1",
+    "donuts.node": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.0-private/donuts.node-1.0.0-private.tgz",
+    "donuts.node-ipc": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.0-private/donuts.node-ipc-1.0.0-private.tgz",
+    "donuts.node-modularity": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.0-private/donuts.node-modularity-1.0.0-private.tgz",
+    "donuts.node-remote": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.0-private/donuts.node-remote-1.0.0-private.tgz",
+    "donuts.node-settings": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.0-private/donuts.node-settings-1.0.0-private.tgz",
     "jquery": "^3.2.1",
     "semver": "^5.5.0",
     "tar": "^4.4.4",
@@ -31,8 +34,13 @@
     "@types/node": "^10.9.2",
     "@types/semver": "^5.4.0",
     "@types/tar": "^4.0.0",
-    "cookie.gulp": "file:.build",
-    "electron": "^2.0.9",
-    "gulp": "^4.0.0"
+    "cookie.gulp": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.0-private/cookie.gulp-1.0.0-private.tgz",
+    "cookie.gulp-electron-installer": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.0-private/cookie.gulp-electron-installer-1.0.0-private.tgz",
+    "cookie.gulp-tsc": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.0-private/cookie.gulp-tsc-1.0.0-private.tgz",
+    "cookie.gulp-tslint": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.0-private/cookie.gulp-tslint-1.0.0-private.tgz",
+    "cookie.gulp-wix": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.0-private/cookie.gulp-wix-1.0.0-private.tgz",
+    "electron": "^3.0.8",
+    "gulp": "^4.0.0",
+    "typescript": "^3.1.3"
   }
 }

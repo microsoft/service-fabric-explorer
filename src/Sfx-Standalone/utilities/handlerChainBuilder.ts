@@ -5,13 +5,13 @@
 
 import { IHandlerChainBuilder, IAsyncHandlerConstructor, FunctionType } from "sfx.common";
 
-import * as utils from "./utils";
+import * as utils from "donuts.node/utils";
 
 export class HandlerChainBuilder<THandler extends FunctionType> implements IHandlerChainBuilder<THandler> {
     private readonly chain: Array<IAsyncHandlerConstructor<THandler>> = [];
 
     public async handleAsync(constructor: IAsyncHandlerConstructor<THandler>): Promise<IHandlerChainBuilder<THandler>> {
-        if (!Function.isFunction(constructor)) {
+        if (!utils.isFunction(constructor)) {
             throw new Error("constructor should be a function.");
         }
 
@@ -27,7 +27,7 @@ export class HandlerChainBuilder<THandler extends FunctionType> implements IHand
         while (constructor = this.chain.pop()) {
             nextHandler = await constructor(nextHandler);
 
-            if (!utils.isNullOrUndefined(nextHandler) && !Function.isFunction(nextHandler)) {
+            if (!utils.isNullOrUndefined(nextHandler) && !utils.isFunction(nextHandler)) {
                 throw new Error("Contructed handler must be a function.");
             }
         }
