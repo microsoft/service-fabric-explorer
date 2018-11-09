@@ -11,6 +11,20 @@ import {
     HttpResponseHandler
 } from "sfx.http";
 
+import * as uuidv4 from "uuid/v4";
+import { performance } from "perf_hooks";
+
+const RequestIdBuffer: Buffer = Buffer.alloc(16);
+
+/**
+ * Length in bytes.
+ */
+const RequestIdLength: number = 4;
+
+function generateRequestId(): string {
+    return uuidv4(null, RequestIdBuffer).toString("hex", 0, RequestIdLength);
+}
+
 export default class HttpPipeline implements IHttpPipeline {
     public requestTemplate: IHttpRequest;
 
@@ -43,6 +57,8 @@ export default class HttpPipeline implements IHttpPipeline {
     }
 
     public async requestAsync(request: IHttpRequest): Promise<IHttpResponse> {
+        const requestId = generateRequestId();
+
         if (this.requestTemplate) {
             const headers = [];
 
@@ -58,9 +74,10 @@ export default class HttpPipeline implements IHttpPipeline {
             request.headers = headers;
         }
 
-        this.log.writeInfoAsync(`HTTP ${request.method} => ${request.url}`);
+        this.log.writeInfoAsync(`HTTP => [${requestId}] ${request.method} ${request.url}`);
 
         let response: IHttpResponse;
+        const rawStartTime = performance.now();
 
         for (const handleRequestAsync of this._requestHandlers) {
             response = await handleRequestAsync(this, request);
@@ -74,11 +91,14 @@ export default class HttpPipeline implements IHttpPipeline {
             throw new Error("No request handler handled request.");
         }
 
-        this.log.writeInfoAsync(`HTTP ${response.statusCode} ${response.statusMessage} of HTTP ${request.method} => ${request.url}`);
+        const rawDuration = (performance.now() - rawStartTime).toFixed(0);
 
         for (const handleResponseAsync of this._responseHandlers) {
             response = await handleResponseAsync(this, request, response) || response;
         }
+
+        const processDuration = (performance.now() - rawStartTime).toFixed(0);
+        this.log.writeInfoAsync(`HTTP ${response.statusCode} ${response.statusMessage} ~${rawDuration.toString().padStart(4, " ")}ms/${processDuration.toString().padStart(4, " ")}ms => [${requestId}] ${request.method} ${request.url}`);
 
         return response;
     }
