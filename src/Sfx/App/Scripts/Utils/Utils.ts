@@ -72,6 +72,7 @@ module Sfx {
 
         public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService): string{
             let viewPathUrl = "";
+            healthEval['name'] = "";
             switch(healthEval.Kind){
                 case "Nodes" : {
                     viewPathUrl = data.routes.getNodesViewPath();
@@ -80,8 +81,8 @@ module Sfx {
                 case "Node" : {
                     let nodeName = healthEval['NodeName'];
                     viewPathUrl = data.routes.getNodeViewPath(nodeName);
-                    healthEval.Description = healthEval.Description.replace(nodeName, `<a title=${nodeName} ng-href="${viewPathUrl}" ">${nodeName}</a>`);
-
+                    healthEval.Description = Utils.injectLink(healthEval.Description, nodeName, viewPathUrl, nodeName);
+                    healthEval['name'] = nodeName;
                     break;
                 }
                 case "Applications" : {
@@ -92,8 +93,8 @@ module Sfx {
                     let applicationName = healthEval['ApplicationName'];
                     let appName = applicationName.split('/')[1];
                     viewPathUrl = data.apps.find(appName).viewPath;
-                    healthEval.Description = healthEval.Description.replace(appName, `<a title=${appName} ng-href="${viewPathUrl}" ">${appName}</a>`);
-
+                    healthEval.Description = Utils.injectLink(healthEval.Description, appName, viewPathUrl, appName);
+                    healthEval['name'] = appName;
                     break;
                 }
                 case "Service" : {
@@ -103,7 +104,7 @@ module Sfx {
 
                     let appId = deconstructedServiceName[1];
                     let appTypeName;
-                    let serviceName = appId + '/' + deconstructedServiceName[2];
+                    let serviceName = `${appId}/${deconstructedServiceName[2]}`;
                     // if we have a parent we are at least further up than app otherwise at app level
                     if(!parent){
                         let params = data.$route.current.params;
@@ -117,7 +118,8 @@ module Sfx {
                     }
 
                     viewPathUrl = data.routes.getServiceViewPath(appTypeName, appId, serviceName);
-                    healthEval.Description = healthEval.Description.replace(exactServiceName, `<a title=${serviceName} ng-href="${viewPathUrl}" ">${serviceName}</a>`);
+                    healthEval.Description = Utils.injectLink(healthEval.Description, exactServiceName, viewPathUrl, exactServiceName);
+                    healthEval['name'] = exactServiceName;
                     break;
                 }
                 case "Replica" : {
@@ -141,7 +143,8 @@ module Sfx {
                     }
 
                     viewPathUrl = data.routes.getReplicaViewPath(appTypeName, appId, serviceId, partitionId, replicaId);
-                    healthEval.Description = healthEval.Description.replace(replicaId, `<a title=${replicaId} ng-href="${viewPathUrl}" ">${replicaId}</a>`);
+                    healthEval.Description = Utils.injectLink(healthEval.Description, replicaId, viewPathUrl, replicaId);
+                    healthEval['name'] = replicaId;
 
                     break;
                 }
@@ -150,6 +153,10 @@ module Sfx {
                 }
             }
             return viewPathUrl;
+        }
+
+        public static injectLink(textToReplace: string, replaceText: string, url: string, title: string): string {
+            return textToReplace.replace(replaceText, `<a title=${title} ng-href="${url}" ">${replaceText}</a>`)
         }
 
         public static parseReplicaAddress(address: string): any {
