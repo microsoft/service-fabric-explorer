@@ -42,6 +42,10 @@ module Sfx {
             return decodeURIComponent(routeParams.nodeName);
         }
 
+        public static getNetworkName(routeParams: any): string {
+            return decodeURIComponent(routeParams.networkName);
+        }
+
         public static idToName(id: string): string {
             return Constants.FabricPrefix + id;
         }

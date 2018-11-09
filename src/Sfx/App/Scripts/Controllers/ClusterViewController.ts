@@ -17,6 +17,7 @@ module Sfx {
         systemApp: SystemApplication;
         clusterHealth: ClusterHealth;
         clusterManifest: ClusterManifest;
+        imageStore: ImageStore;
         clusterUpgradeProgress: ClusterUpgradeProgress;
         clusterLoadInformation: ClusterLoadInformation;
         healthEventsListSettings: ListSettings;
@@ -34,8 +35,9 @@ module Sfx {
             super($injector, {
                 "essentials": { name: "Essentials" },
                 "details": { name: "Details" },
-                "clustermap": { name: "Cluster Map" },
                 "metrics": { name: "Metrics" },
+                "clustermap": { name: "Cluster Map" },
+                "imagestore": { name: "Image Store" },
                 "manifest": { name: "Manifest" },
                 "events": { name: "Events" }
             });
@@ -45,6 +47,7 @@ module Sfx {
             this.tabs["clustermap"].refresh = (messageHandler) => this.refreshClusterMap(messageHandler);
             this.tabs["metrics"].refresh = (messageHandler) => this.refreshMetrics(messageHandler);
             this.tabs["manifest"].refresh = (messageHandler) => this.refreshManifest(messageHandler);
+            this.tabs["imagestore"].refresh = (messageHandler) => this.refreshImageStore(messageHandler);
             this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
 
             $scope.clusterAddress = this.$location.protocol() + "://" + this.$location.host();
@@ -64,6 +67,7 @@ module Sfx {
             this.$scope.systemApp = this.data.systemApp;
             this.$scope.nodes = this.data.nodes;
             this.$scope.appsUpgradeTabViewPath = this.routes.getTabViewPath(this.routes.getAppsViewPath(), "upgrades");
+            this.$scope.imageStore = this.data.imageStore;
             this.$scope.clusterEvents = this.data.createClusterEventList();
 
             this.refresh();
@@ -128,18 +132,18 @@ module Sfx {
             return this.$q.all([
                 this.$scope.nodes.refresh(messageHandler),
                 this.$scope.clusterLoadInformation.refresh(messageHandler)]).then(
-                () => {
-                    if (!this.$scope.metricsViewModel) {
-                        this.$scope.metricsViewModel =
-                            this.settings.getNewOrExistingMetricsViewModel(this.$scope.clusterLoadInformation, _.map(this.$scope.nodes.collection, node => node.loadInformation));
-                    }
+                    () => {
+                        if (!this.$scope.metricsViewModel) {
+                            this.$scope.metricsViewModel =
+                                this.settings.getNewOrExistingMetricsViewModel(this.$scope.clusterLoadInformation, _.map(this.$scope.nodes.collection, node => node.loadInformation));
+                        }
 
-                    let promises = _.map(this.$scope.nodes.collection, node => node.loadInformation.refresh(messageHandler));
+                        let promises = _.map(this.$scope.nodes.collection, node => node.loadInformation.refresh(messageHandler));
 
-                    return this.$q.all(promises).finally(() => {
-                        this.$scope.metricsViewModel.refresh();
+                        return this.$q.all(promises).finally(() => {
+                            this.$scope.metricsViewModel.refresh();
+                        });
                     });
-                });
         }
 
         private refreshManifest(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
@@ -149,8 +153,11 @@ module Sfx {
         private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.$scope.clusterEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler));
         }
-    }
 
+        private refreshImageStore(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.imageStore.refresh(messageHandler);
+        }
+    }
     (function () {
 
         let module = angular.module("clusterViewController", ["dataService", "filters"]);

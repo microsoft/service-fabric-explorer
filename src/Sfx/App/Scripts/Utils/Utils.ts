@@ -106,6 +106,28 @@ module Sfx {
             }
             return hex.join("") + (bytes.length > maxLength ? "..." : "");
         }
+
+        public static getFriendlyFileSize(fileSizeinBytes: number) {
+            let displayFileSize: string;
+            let byte = 1;
+            let kiloByte = 1024 * byte;
+            let megaByte = 1024 * kiloByte;
+            let gigaByte = 1024 * megaByte;
+            let teraByte = 1024 * gigaByte;
+            if (fileSizeinBytes <= kiloByte) {
+                displayFileSize = fileSizeinBytes + " Bytes";
+            } else if (fileSizeinBytes < megaByte) {
+                displayFileSize = (fileSizeinBytes / kiloByte).toFixed(2) + " KB";
+            } else if (fileSizeinBytes < gigaByte) {
+                displayFileSize = (fileSizeinBytes / megaByte).toFixed(2) + " MB";
+            } else if (fileSizeinBytes < teraByte) {
+                displayFileSize = (fileSizeinBytes / gigaByte).toFixed(2) + " GB";
+            } else {
+                displayFileSize = (fileSizeinBytes / teraByte).toFixed(2) + " TB";
+            }
+
+            return displayFileSize;
+        }
     }
 
 }
