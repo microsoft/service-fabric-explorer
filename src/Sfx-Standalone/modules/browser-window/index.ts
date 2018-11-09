@@ -10,8 +10,7 @@ import * as shell from "donuts.node/shell";
         name: "browser-window",
         version: shell.getAppVersion(),
         descriptor: require("./browser-window").default,
-        deps: ["module-manager"],
-        type: "local"
+        deps: ["module-manager"]
     });
 
     return {
