@@ -72,7 +72,8 @@ module Sfx {
 
         public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService): string{
             let viewPathUrl = "";
-            healthEval['name'] = "";
+            let replaceText = "";
+
             switch(healthEval.Kind){
                 case "Nodes" : {
                     viewPathUrl = data.routes.getNodesViewPath();
@@ -81,8 +82,7 @@ module Sfx {
                 case "Node" : {
                     let nodeName = healthEval['NodeName'];
                     viewPathUrl = data.routes.getNodeViewPath(nodeName);
-                    healthEval.Description = Utils.injectLink(healthEval.Description, nodeName, viewPathUrl, nodeName);
-                    healthEval['name'] = nodeName;
+                    replaceText = nodeName;
                     break;
                 }
                 case "Applications" : {
@@ -91,10 +91,9 @@ module Sfx {
                 }
                 case "Application" : {
                     let applicationName = healthEval['ApplicationName'];
-                    let appName = applicationName.split('/')[1];
+                    let appName = applicationName.split('/')[1]; //remove fabric:/
                     viewPathUrl = data.apps.find(appName).viewPath;
-                    healthEval.Description = Utils.injectLink(healthEval.Description, appName, viewPathUrl, appName);
-                    healthEval['name'] = appName;
+                    replaceText = appName;
                     break;
                 }
                 case "Service" : {
@@ -103,55 +102,30 @@ module Sfx {
                     let deconstructedServiceName = exactServiceName.split('/');
 
                     let appId = deconstructedServiceName[1];
-                    let appTypeName;
+                    let app = data.apps.find(appId);
+                    let appTypeName = app.raw.TypeName;
                     let serviceName = `${appId}/${deconstructedServiceName[2]}`;
-                    // if we have a parent we are at least further up than app otherwise at app level
-                    if(!parent){
-                        let params = data.$route.current.params;
-                        appId = params['appId'];
-                        appTypeName = params['appTypeName'];
-                    }else{
-                        appId = deconstructedServiceName[1];
-
-                        let app = data.apps.find(appId);
-                        appTypeName = app.raw.TypeName;
-                    }
 
                     viewPathUrl = data.routes.getServiceViewPath(appTypeName, appId, serviceName);
-                    healthEval.Description = Utils.injectLink(healthEval.Description, exactServiceName, viewPathUrl, exactServiceName);
-                    healthEval['name'] = exactServiceName;
+                    replaceText = exactServiceName;
                     break;
                 }
                 case "Replica" : {
                     let partitionId = healthEval['PartitionId']
                     let replicaId = healthEval['ReplicaOrInstanceId']
-                    let appId;
-                    let appTypeName;
-                    let serviceId;
+                    
+                    let params = data.$route.current['pathParams'];
+                    let appId = params['appId'];
+                    let appTypeName = params['appTypeName'];
+                    let serviceId = params['serviceId'];
 
-                    if(true){
-                    // if(!parent){
-                        let params = data.$route.current['pathParams'];
-                        appId = params['appId'];
-                        appTypeName = params['appTypeName'];
-                        serviceId = params['serviceId'];
-                    }else{
-                        // appId = deconstructedServiceName[1];
-
-                        // let app = data.apps.find(appId);
-                        // appTypeName = app.raw.TypeName;
-                    }
 
                     viewPathUrl = data.routes.getReplicaViewPath(appTypeName, appId, serviceId, partitionId, replicaId);
-                    healthEval.Description = Utils.injectLink(healthEval.Description, replicaId, viewPathUrl, replicaId);
-                    healthEval['name'] = replicaId;
-
-                    break;
-                }
-                case "Services" : {
+                    replaceText = serviceId;
                     break;
                 }
             }
+            healthEval.Description = Utils.injectLink(healthEval.Description, replaceText, viewPathUrl, replaceText);
             return viewPathUrl;
         }
 
