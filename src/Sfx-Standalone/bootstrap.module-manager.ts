@@ -16,7 +16,7 @@ import { ISfxModuleManager } from "sfx.module-manager";
 
 function createModuleManager(): Donuts.Modularity.IModuleManager {
     const segmentSeparator = process.platform === "win32" ? "\\" : "/";
-    const ipcSegments = path.join(process.execPath, process.pid.toString(), "module-manager").split(segmentSeparator);
+    const ipcSegments = path.join(shell.getDir("Temp"), `${path.basename(process.execPath)}-${process.pid}`, "module-manager").split(segmentSeparator);
     const ipcHost = ipc.host(...ipcSegments);
 
     return modularity.createModuleManager(new CommunicationHost(new SocketHostProxy(ipcHost)));
