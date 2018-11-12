@@ -70,7 +70,7 @@ async function startup(): Promise<void> {
         }
     });
 
-    //authCert.handleAuth(sfxModuleManager);
+    //authCert.handle(sfxModuleManager, await mainWindow.getWindowAsync());
 
     // Trigger update activity.
     try {

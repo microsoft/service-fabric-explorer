@@ -3,8 +3,9 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import "../../module-manager/bootstrap";
+//import { bootstrap } from "../../bootstrap.module-manager";
 
 process.once("loaded", async () => {
-    global["exports"] = exports;    
+    global["exports"] = exports;
+    //global["sfx"] = await bootstrap();
 });

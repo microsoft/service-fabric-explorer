@@ -3,17 +3,15 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { MainWindow } from "./main-window";
 import * as shell from "donuts.node/shell";
+import { IMainWindow } from "sfx.main-window";
 
 (<Donuts.Modularity.IModule>exports).getModuleMetadata = (components) => {
-    components.register<MainWindow>({
+    components.register<IMainWindow>({
         name: "main-window",
         version: shell.getAppVersion(),
         singleton: true,
-        descriptor: async (browserWindow) => {
-            return new MainWindow(browserWindow);
-        },
+        descriptor: (browserWindow) => import("./main-window").then((module) => new module.MainWindow(browserWindow)),
         deps: ["electron.browser-window"]
     });
 
