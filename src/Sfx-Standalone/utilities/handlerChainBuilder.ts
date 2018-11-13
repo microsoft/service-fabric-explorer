@@ -3,11 +3,11 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IHandlerChainBuilder, IAsyncHandlerConstructor, FunctionType } from "sfx.common";
+import { IHandlerChainBuilder, IAsyncHandlerConstructor } from "sfx.common";
 
 import * as utils from "donuts.node/utils";
 
-export class HandlerChainBuilder<THandler extends FunctionType> implements IHandlerChainBuilder<THandler> {
+export class HandlerChainBuilder<THandler extends Donuts.FunctionType> implements IHandlerChainBuilder<THandler> {
     private readonly chain: Array<IAsyncHandlerConstructor<THandler>> = [];
 
     public async handleAsync(constructor: IAsyncHandlerConstructor<THandler>): Promise<IHandlerChainBuilder<THandler>> {

@@ -50,6 +50,10 @@ declare module "sfx.http" {
         requestAsync(request: IHttpRequest): Promise<IHttpResponse>;
     }
 
+    export interface IHttpProcessor {
+        hook(pipeline: IHttpPipeline): this;
+    }
+
     export interface IHttpClient {
         getRequestTemplateAsync(): Promise<IHttpRequest>;
 

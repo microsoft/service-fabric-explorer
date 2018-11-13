@@ -28,7 +28,7 @@ declare module "sfx.prompt" {
         finish<TPromptResults>(results: TPromptResults): void;
     }
 
-    export interface IPrompt<TResult> extends IDisposable {
+    export interface IPrompt<TResult> {
         openAsync(): Promise<TResult>;
     }
 
