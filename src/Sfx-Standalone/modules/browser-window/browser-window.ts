@@ -10,8 +10,6 @@ import { BrowserWindow, app, BrowserWindowConstructorOptions } from "electron";
 import { local } from "donuts.node/path";
 import * as utils from "donuts.node/utils";
 import * as shell from "donuts.node/shell";
-// import * as uuidv5 from "uuid/v5";
-// import { env, Platform } from "../../utilities/env";
 import * as appUtils from "../../utilities/appUtils";
 import * as modularity from "donuts.node-modularity";
 
@@ -76,7 +74,8 @@ export default async function createBrowserWindowAsync(
         webPreferences: {
             preload: local("./preload.js"),
             nodeIntegration: true
-        }
+        },
+        title: "Service Fabric Explorer"
     };
 
     if (utils.isObject(options)) {
@@ -94,7 +93,6 @@ export default async function createBrowserWindowAsync(
     window.on("page-title-updated", (event, title) => event.preventDefault());
     window.setTitle(`${window.getTitle()} - ${app.getVersion()}`);
 
-    //handleSslCert(window);
     handleNewWindow(window);
 
     if (process.platform !== "darwin") {

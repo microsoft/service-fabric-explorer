@@ -14,10 +14,9 @@ module Sfx {
 
     (function () {
 
-        console.log("StandaloneIntegration.isStandalone:", StandaloneIntegration.isStandalone(), Date.now());
-
         if (StandaloneIntegration.isStandalone()) {
-            angular.module("authenticationBootstrap", ["AdalAngular"]).constant("authenticationData", new AadMetadata(null));
+            angular.module("authenticationBootstrap", ["AdalAngular"])
+                .constant("authenticationData", new AadMetadata(null));
             return bootstrap();
         }
 

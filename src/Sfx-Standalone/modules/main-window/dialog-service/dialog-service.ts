@@ -35,13 +35,8 @@ export class DialogService implements IDialogService {
         $(document.body).append($(template));
 
         let webview = <WebviewTag>document.querySelector(`#main-modal-dialog webview`);
-        webview.addEventListener("dom-ready", async () => {
-            //webview.openDevTools(); /*uncomment to use development tools*/
-            //await sfxModuleManager.newHostAsync("host-dialog-service", await sfxModuleManager.getComponentAsync("ipc.communicator", webview.getWebContents()));
-        });
 
         webview.addEventListener("close", async () => {
-            //await sfxModuleManager.destroyHostAsync("host-dialog-service");
             $("#main-modal-dialog").modal("hide").remove();
         });
 
@@ -56,8 +51,7 @@ export class DialogService implements IDialogService {
         if (!options.height) {
             options.height = 600;
         }
-
-        console.log("appending to doc", Date.now());
+        
         const template = `                       
                 <div class="modal-header">
                     <h4 class="modal-title">${options.title}</h4>

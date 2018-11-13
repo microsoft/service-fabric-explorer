@@ -3,12 +3,6 @@ import { ClusterList } from "./cluster-list/cluster-list.script";
 import { ISettings } from "sfx.settings";
 
 (async () => {
-    //sfxModuleManager.registerComponentsAsync("sfx", [DialogService.getComponentInfo()]);
-    //sfxModuleManager.registerComponentsAsync("sfx", [SfxContainer.getComponentInfo()]);
-
-    // require("./cluster-list/cluster-list.script.js");
-    // require("./cluster-list/model.js");
-
     const leftpanel = $("div#left-panel");
 
     try {       

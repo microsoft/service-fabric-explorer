@@ -7,6 +7,8 @@ import { IMainWindow } from "sfx.main-window";
 import { BrowserWindow } from "electron";
 import { resolve } from "donuts.node/path";
 import { IComponentConfiguration } from "sfx.common";
+import * as shell from "donuts.node/shell";
+import * as modularity from "donuts.node-modularity";
 
 export class MainWindow implements IMainWindow {
     private browserWindow: BrowserWindow;
@@ -28,6 +30,10 @@ export class MainWindow implements IMainWindow {
 
         this.browserWindow.once("ready-to-show", async () => {
             this.browserWindow.webContents.openDevTools(); /*uncomment to use development tools */
+            this.browserWindow["rendered.process.args"] = shell.toCmdArg(
+                modularity.CmdArgs.ConnectionInfo, 
+                JSON.stringify(modularity.getConnectionInfo(sfxModuleManager)));
+
             this.browserWindow.show();
         });
 

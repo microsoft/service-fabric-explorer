@@ -54,16 +54,15 @@ function readModuleDir(dirs: Array<string>): Array<string> {
 export async function bootstrap(): Promise<ISfxModuleManager> {
     const modulePaths: Array<string> = ["./modules.local"];
 
-    if (shell.getCmdArg(modularity.CmdArgs.ConnectionInfo)) {
+    if (shell.getCmdArg(modularity.CmdArgs.ConnectionInfo)) {        
         require("donuts.node-modularity/bootstrap");
 
-    } else {
+    } else {        
         modularity.setModuleManager(createModuleManager());
         modulePaths.push("./modules");
     }
 
-    const moduleManager = modularity.getModuleManager();
-
+    const moduleManager = modularity.getModuleManager();    
     await moduleManager.loadModulesAsync(readModuleDir(modulePaths));
 
     return appUtils.injectModuleManager(moduleManager);

@@ -78,6 +78,7 @@ export default class ServiceFabricHttpClient extends HttpClient {
             const record = this.clientCertMap[siteId];
 
             if (record instanceof Promise) {
+                console.log("return existing promise");
                 return record;
             }
 
@@ -92,6 +93,8 @@ export default class ServiceFabricHttpClient extends HttpClient {
             });
 
             this.clientCertMap[siteId].then(() => delete this.clientCertMap[siteId]);
+
+            console.log("return new promise for ", siteId, "cert map count:", this.clientCertMap);
 
             return this.clientCertMap[siteId];
         }

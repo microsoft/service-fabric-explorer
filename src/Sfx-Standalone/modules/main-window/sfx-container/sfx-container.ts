@@ -6,11 +6,9 @@
 
 import * as $ from "jquery";
 import * as uuidv5 from "uuid/v5";
-//import * as url from "url";
 import { WebviewTag } from "electron";
 import { electron } from "../../../utilities/electron-adapter";
 import { ISfxContainer } from "sfx.sfx-view-container";
-//import { IDictionary } from "sfx.common";
 import { resolve } from "donuts.node/path";
 
 export class SfxContainer implements ISfxContainer {
@@ -35,7 +33,6 @@ export class SfxContainer implements ISfxContainer {
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
         if (sfxWebView) {
-            //await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
             sfxWebView.reload();
             $(`#view-container-${id}`, container).show();
         }
@@ -54,9 +51,10 @@ export class SfxContainer implements ISfxContainer {
             $(`#view-container-${id}`, container).css({ top: 0 }).addClass("current");
             return Promise.resolve();
         }
-
+        
         const log = await sfxModuleManager.getComponentAsync("logging.default");
         const sfxUrl = resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint });
+
         this.endpoints.push({ endpoint: targetServiceEndpoint, id: id });
         container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
         $(`<div id="view-container-${id}" class="view-container current"><webview tabindex="0" src="${sfxUrl}" id="view-${id}" autosize="on" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
@@ -71,7 +69,7 @@ export class SfxContainer implements ISfxContainer {
             }
 
             container.children("#treeview-loading-glyph").remove();
-            sfxWebView.executeJavaScript(" angular.bootstrap(document, [Sfx.Constants.sfxAppName], { strictDi: true });");
+            //sfxWebView.executeJavaScript(" angular.bootstrap(document, [Sfx.Constants.sfxAppName], { strictDi: true });");
         });
 
         return Promise.resolve();
@@ -84,9 +82,9 @@ export class SfxContainer implements ISfxContainer {
         if (index >= 0) {
             this.endpoints.splice(index, 1);
         }
-                
+
         container.children("#view-container-" + id).remove();
-        
+
         if (this.endpoints.length === 0) {
             $("#instructions", container).show();
         }
@@ -98,6 +96,6 @@ export class SfxContainer implements ISfxContainer {
 $(window).on("resize", () => {
     // Bug from Electron: when <webview> is hidden, its webcontents won't auto resize to fill the whole view when window is resizing
     // Instead of hiding the <webview> tags which are not current, pushing it out of view so it always fills the whole view
-    const container = $("div.right-container");    
-    $(".view-container:not(.current)", container).css({ top: `${0 - container.height()}px` });    
+    const container = $("div.right-container");
+    $(".view-container:not(.current)", container).css({ top: `${0 - container.height()}px` });
 });

@@ -4,12 +4,6 @@
 //-----------------------------------------------------------------------------
 
 import { app, Menu, MenuItemConstructorOptions } from "electron";
-// import * as uuidv5 from "uuid/v5";
-
-//import { resolve } from "donuts.node/path";
-// import { env, Platform } from "./utilities/env";
-import * as url from "url";
-import { IDictionary } from "sfx.common";
 
 async function startup(): Promise<void> {
     const log = await sfxModuleManager.getComponentAsync("logging.default");
@@ -34,43 +28,6 @@ async function startup(): Promise<void> {
         log.writeInfoAsync("'window-all-closed': app.quit().");
         app.quit();
     });
-
-    const trustedCertManager: IDictionary<boolean> = Object.create(null);
-    app.on("certificate-error", (event, webContents, urlString, error, certificate, trustCertificate) => {
-        const { dialog, BrowserWindow } = require("electron");
-        const hostname = url.parse(urlString).hostname;
-
-        event.preventDefault();
-
-        if (hostname in trustedCertManager) {            
-            trustCertificate(trustedCertManager[hostname]);
-        } else {
-            trustedCertManager[hostname] = false;
-
-            dialog.showMessageBox(
-                BrowserWindow.fromId(1),
-                {
-                    type: "warning",
-                    buttons: ["Yes", "Exit"],
-                    title: "Untrusted certificate",
-                    message: "Do you want to trust this certificate?",
-                    detail: "Subject: " + certificate.subjectName + "\r\nIssuer: " + certificate.issuerName + "\r\nThumbprint: " + certificate.fingerprint,
-                    cancelId: 1,
-                    defaultId: 0,
-                    noLink: true,
-                },
-                (response, checkboxChecked) => {
-                    if (response !== 0) {                        
-                        return;
-                    }
-
-                    trustedCertManager[hostname] = true;
-                    trustCertificate(true);
-                });
-        }
-    });
-
-    //authCert.handle(sfxModuleManager, await mainWindow.getWindowAsync());
 
     // Trigger update activity.
     try {

@@ -168,6 +168,14 @@ function handleRequestAsync(this: IHttpContext, validateServerCert: ServerCertVa
                     reject(new Error(`Invalid clientCert.type: ${request.clientCert.type}`));
                     return;
                 }
+
+            } else {
+                /**
+                 * Set a default client cert if no cert is provided.
+                 * Because node tls socket may result in ECONNREST if no client cert is supplied.
+                 */
+                options["pfx"] = DummyClientPfx;
+                options["passphrase"] = DummyClientPfxPassphrase;
             }
 
             try {
