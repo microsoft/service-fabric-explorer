@@ -113,16 +113,6 @@ class Prompt<TResult> implements IPrompt<TResult> {
         return this.promise;
     }
 
-    public disposeAsync(): Promise<void> {
-        this.promise = undefined;
-        this.promise_reject = undefined;
-        this.promise_resolve = undefined;
-        this.promptWindow = undefined;
-        this.promptResult = undefined;
-
-        return Promise.resolve();
-    }
-
     private cleanupIpcListeners() {
         for (const eventName in EventNames) {
             ipcMain.removeAllListeners(utils.string.format(ChannelNameFormat, this.promptWindow.id, eventName));

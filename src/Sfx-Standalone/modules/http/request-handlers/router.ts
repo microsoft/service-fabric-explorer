@@ -3,8 +3,6 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IDictionary } from "sfx.common";
-
 import {
     IHttpPipeline,
     IHttpRequest,
@@ -28,7 +26,7 @@ function shouldTryOther(response: IHttpResponse): boolean {
 }
 
 export default function createRequestHandler(serverCertValidator?: ServerCertValidator): HttpRequestHandler {
-    const requestMap: IDictionary<HttpRequestHandler> = Object.create(null);
+    const requestMap: Donuts.IStringKeyDictionary<HttpRequestHandler> = Object.create(null);
     const requestHandlers: Array<HttpRequestHandler> = [];
 
     requestHandlers.push(createNodeRequestHandler(serverCertValidator));

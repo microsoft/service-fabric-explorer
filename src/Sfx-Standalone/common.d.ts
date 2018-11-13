@@ -5,12 +5,6 @@
 
 declare module "sfx.common" {
 
-    export type FunctionType = (...args: Array<any>) => any;
-
-    export interface IDictionary<TValue> {
-        [key: string]: TValue;
-    }
-
     export interface IDisposable {
         disposeAsync(): Promise<void>;
     }

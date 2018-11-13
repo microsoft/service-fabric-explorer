@@ -13,7 +13,6 @@ import {
 import { handleResponseAsync as handleAadAsync } from "./auth.aad";
 
 import * as url from "url";
-import { IDictionary } from "sfx.common";
 
 interface ISfAadMetadata {
     type: string;
@@ -56,7 +55,7 @@ async function acquireTokenAsync(pipeline: IHttpPipeline, request: IHttpRequest,
 }
 
 export default function createResponseHandler(): HttpResponseHandler {
-    const siteMap: IDictionary<Promise<IHttpResponse> | "Retry" | "NotSupported"> = Object.create(null);
+    const siteMap: Donuts.IStringKeyDictionary<Promise<IHttpResponse> | "Retry" | "NotSupported"> = Object.create(null);
 
     return (pipeline: IHttpPipeline, request: IHttpRequest, response: IHttpResponse): Promise<IHttpResponse> => {
         if (response.statusCode !== 401 && response.statusCode !== 403) {
