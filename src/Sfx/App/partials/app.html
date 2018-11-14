@@ -43,19 +43,23 @@
                         <tr>
                             <th>Current Version</th>
                             <th>Target Version</th>
-                            <th>Progress by Upgrade Domain</th>
+                            <th>Upgrade Mode</th>
                             <th>Upgrade State</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
                             <td>{{upgradeProgress.parent.raw.TypeVersion}}</td>
-                            <td>{{upgradeProgress.raw.TargetApplicationTypeVersion}}</td>
-                            <td><sfx-upgrade-progress upgrade-domains="upgradeProgress.upgradeDomains"></sfx-upgrade-progress></td>
+                            <td>{{upgradeProgress.raw.TargetApplicationTypeVersion}}</td>                            
+                            <td>{{upgradeProgress.raw.RollingUpgradeMode}}</td>
                             <td>{{upgradeProgress.raw.UpgradeState}}</td>
                         </tr>
                     </tbody>
                 </table>
+            </div>
+            <div>
+                <h5>Progress by Upgrade Domain</h5>
+                <sfx-upgrade-progress upgrade-domains="upgradeProgress.upgradeDomains"></sfx-upgrade-progress>
             </div>
             <a href="" data-toggle="collapse" data-target="#upgradeDetailsSection" aria-expanded="false"
                ng-click="upgradeDetailsSectionExpanded = !upgradeDetailsSectionExpanded">
@@ -66,10 +70,10 @@
         <div id="upgradeDetailsSection" class="collapse" ng-if="app.isUpgrading && upgradeProgress && upgradeProgress.isInitialized">
             <div class="detail-pane">
                 <h4>Upgrade Details</h4>
-                <sfx-detail-view-part data="upgradeProgress"></sfx-detail-view-part>
+                <sfx-detail-view-part data="upgradeProgress.upgradeDescription"></sfx-detail-view-part>
             </div>
 
-            <div class="detail-pane">
+            <div class="detail-pane" ng-if="upgradeProgress.unhealthyEvaluations.length > 0">
                 <h4>Unhealthy Evaluations (Upgrade)</h4>
                 <sfx-detail-list list="upgradeProgress.unhealthyEvaluations" list-settings="upgradeProgressUnhealthyEvaluationsListSettings"></sfx-detail-list>
             </div>
