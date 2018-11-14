@@ -4,10 +4,9 @@
 //-----------------------------------------------------------------------------
 
 import * as realElectron from "electron";
+import * as utils from "donuts.node/utils";
 
-import "./utils";
-
-export const isRemote = Object.isObject(realElectron.remote);
+export const isRemote = utils.isObject(realElectron.remote);
 
 export const remote: realElectron.Remote = realElectron.remote;
 

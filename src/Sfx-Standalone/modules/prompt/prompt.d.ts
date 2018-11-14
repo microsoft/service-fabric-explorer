@@ -28,7 +28,7 @@ declare module "sfx.prompt" {
         finish<TPromptResults>(results: TPromptResults): void;
     }
 
-    export interface IPrompt<TResult> extends IDisposable {
+    export interface IPrompt<TResult> {
         openAsync(): Promise<TResult>;
     }
 
@@ -43,7 +43,7 @@ declare module "sfx.module-manager" {
         IPromptContext,
     } from "sfx.prompt";
 
-    export interface IModuleManager {
+    export interface ISfxModuleManager {
         getComponentAsync(componentIdentity: "prompt.prompt-service"): Promise<IPromptService>;
 
         getComponentAsync(componentIdentity: "prompt.prompt-context"):  Promise<IPromptContext>;

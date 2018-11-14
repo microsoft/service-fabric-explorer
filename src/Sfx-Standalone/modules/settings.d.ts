@@ -4,24 +4,22 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.settings" {
+    export interface ISettingsService {
+        openAsync(...names: Array<string>): Promise<ISettings>;
+    }
+
     export interface ISettings {
         getAsync<T>(settingPath: string): Promise<T>;
 
         setAsync<T>(settingPath: string, value: T): Promise<void>;
-    }
-
-    export interface ISettingsService {
-        readonly default: Promise<ISettings>;
-
-        openAsync(...names: Array<string>): Promise<ISettings>;
     }
 }
 
 declare module "sfx.module-manager" {
     import { ISettingsService, ISettings } from "sfx.settings";
 
-    export interface IModuleManager {
+    export interface ISfxModuleManager {
         getComponentAsync(componentIdentity: "settings.service"): Promise<ISettingsService>;
-        getComponentAsync(componentIdentity: "settings"): Promise<ISettings>;
+        getComponentAsync(componentIdentity: "settings.default"): Promise<ISettings>;
     }
 }

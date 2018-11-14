@@ -1,4 +1,0 @@
-[submodule "src/Sfx-Standalone/.build"]
-	path = src/Sfx-Standalone/.build
-	url = https://github.com/Microsoft/cookie.gulp.git
-	branch = master

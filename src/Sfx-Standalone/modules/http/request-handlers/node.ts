@@ -19,6 +19,12 @@ import * as http from "http";
 import * as https from "https";
 import * as crypto from "crypto";
 import * as tls from "tls";
+import * as utils from "donuts.node/utils";
+
+interface IHttpContext {
+    httpsAgent: https.Agent;
+    httpAgent: http.Agent;
+}
 
 const DummyClientPfx: Buffer =
     Buffer.from(
@@ -78,7 +84,7 @@ function generateBodyAsync(httpResponse: http.IncomingMessage): Promise<Buffer> 
     });
 }
 
-function handleRequestAsync(validateServerCert: ServerCertValidator, pipeline: IHttpPipeline, request: IHttpRequest): Promise<IHttpResponse> {
+function handleRequestAsync(this: IHttpContext, validateServerCert: ServerCertValidator, pipeline: IHttpPipeline, request: IHttpRequest): Promise<IHttpResponse> {
     return new Promise((resolve, reject) => {
         const options: http.RequestOptions = Object.assign(Object.create(null), url.parse(request.url));
         let httpRequest: http.ClientRequest;
@@ -115,9 +121,17 @@ function handleRequestAsync(validateServerCert: ServerCertValidator, pipeline: I
         }
 
         if (options.protocol === "http:") {
+            if (this && this.httpAgent) {
+                options.agent = this.httpAgent;
+            }
+
             httpRequest = http.request(options);
 
         } else if (options.protocol === "https:") {
+
+            if (this && this.httpsAgent) {
+                options.agent = this.httpsAgent;
+            }
 
             if (request.sslVersion) {
                 options["secureProtocol"] = request.sslVersion;
@@ -203,7 +217,7 @@ function handleRequestAsync(validateServerCert: ServerCertValidator, pipeline: I
                     if (!socket.authorized) {
                         const peerCert = socket.getPeerCertificate();
 
-                        if (Object.isEmpty(peerCert)) {
+                        if (utils.object.isEmpty(peerCert)) {
                             return;
                         }
 
@@ -254,9 +268,14 @@ function toCertificateInfo(cert: tls.PeerCertificate): ICertificateInfo {
 }
 
 export default function createRequestHandler(serverCertValidator?: ServerCertValidator): HttpRequestHandler {
+    const context: IHttpContext = {
+        httpAgent: new http.Agent({ keepAlive: true }),
+        httpsAgent: new https.Agent({ keepAlive: true })
+    };
+
     if (serverCertValidator) {
-        return handleRequestAsync.bind(undefined, serverCertValidator);
+        return handleRequestAsync.bind(context, serverCertValidator);
     }
 
-    return handleRequestAsync.bind(undefined, undefined);
+    return handleRequestAsync.bind(context, undefined);
 }

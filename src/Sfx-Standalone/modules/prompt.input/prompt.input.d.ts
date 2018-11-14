@@ -15,7 +15,7 @@ declare module "sfx.module-manager" {
     import { IPrompt } from "sfx.prompt";
     import { IInputPromptOptions } from "sfx.prompt.input";
 
-    export interface IModuleManager {
+    export interface ISfxModuleManager {
         getComponentAsync(
             componentIdentity: "prompt.input",
             parentWindowId: number,

@@ -4,7 +4,6 @@
         "defaultChannel": "stable"
     },
     "logging": {
-        "logCallerInfo": true,
         "loggers": [
             {
                 "name": "app-insights",
@@ -20,7 +19,7 @@
         ]
     },
     "defaultMenu": {
-        "macos": [
+        "darwin": [
             {
                 "submenu": [
                     {

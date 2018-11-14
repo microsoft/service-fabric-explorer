@@ -5,7 +5,6 @@
 
 import { IHttpClient, IHttpResponse, HttpRequestHandler, HttpResponseHandler, IHttpRequest } from "sfx.http";
 import HttpPipeline from "./http-pipeline";
-import { ILog } from "sfx.logging";
 
 import createRouterRequestHandler from "./request-handlers/router";
 
@@ -22,7 +21,7 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
         return err;
     }
 
-    constructor(log: ILog, requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>) {
+    constructor(log: Donuts.Logging.ILog, requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>) {
         super(
             log,
             requestHandlers ? requestHandlers : [createRouterRequestHandler()],

@@ -3,16 +3,16 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModule } from "sfx.module-manager";
 import { IPromptService, IPrompt } from "sfx.prompt";
 import { IInputPromptOptions } from "sfx.prompt.input";
 
-import * as appUtils from "../../utilities/appUtils";
+import * as shell from "donuts.node/shell";
+import { resolve } from "donuts.node/path";
 
-(<IModule>exports).getModuleMetadata = (components) => {
+(<Donuts.Modularity.IModule>exports).getModuleMetadata = (components) => {
     components.register<IPrompt<string>>({
-        name: "prompt.input",
-        version: appUtils.getAppVersion(),
+        name: "input",
+        version: shell.getAppVersion(),
         descriptor:
             (promptService: IPromptService,
                 parentWindowId: number,
@@ -20,7 +20,7 @@ import * as appUtils from "../../utilities/appUtils";
                 promptService.createAsync(
                     {
                         parentWindowId: parentWindowId,
-                        pageUrl: appUtils.resolve("input.html"),
+                        pageUrl: resolve("input.html"),
                         height: 225,
                         data: options
                     }),
@@ -29,6 +29,7 @@ import * as appUtils from "../../utilities/appUtils";
 
     return {
         name: "prompt.input",
-        version: appUtils.getAppVersion()
+        namespace: "prompt",
+        version: shell.getAppVersion()
     };
 };

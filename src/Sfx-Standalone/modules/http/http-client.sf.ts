@@ -3,12 +3,9 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IDictionary } from "sfx.common";
 import { IPkiCertificateService, ICertificateInfo, ICertificate } from "sfx.cert";
-import { ILog } from "sfx.logging";
 
 import { dialog, BrowserWindow } from "electron";
-import * as url from "url";
 
 import HttpClient from "./http-client";
 
@@ -23,20 +20,22 @@ import createAuthWindowsResponseHandler from "./response-handlers/auth.windows";
 
 export default class ServiceFabricHttpClient extends HttpClient {
 
-    private readonly trustedCerts: IDictionary<boolean>;
-    private readonly clientCertMap: IDictionary<Promise<ICertificate | ICertificateInfo>>;
+    private readonly trustedCerts: Donuts.IStringKeyDictionary<boolean>;
 
-    constructor(log: ILog, pkiSvc: IPkiCertificateService) {
+    constructor(log: Donuts.Logging.ILog, pkiSvc: IPkiCertificateService) {
         super(log, [], []);
 
-        this.clientCertMap = Object.create(null);
         this.trustedCerts = Object.create(null);
 
-        this.requestHandlers.push(createRouterRequestHandler(this.checkServerCert));
+        const certResponseHandler = createAuthCertResponseHandler(pkiSvc, this.selectClientCertAsync);
+
+        this.requestHandlers.push(
+            certResponseHandler.httpRequestHandler,
+            createRouterRequestHandler(this.checkServerCert));
 
         this.responseHandlers.push(
             createAuthAadResponseHandler(),
-            createAuthCertResponseHandler(pkiSvc, this.selectClientCertAsync),
+            certResponseHandler,
             createAuthWindowsResponseHandler(),
             createRedirectionResponseHandler(),
             createJsonResponseHandler(),
@@ -74,26 +73,9 @@ export default class ServiceFabricHttpClient extends HttpClient {
     }
 
     private selectClientCertAsync =
-        (urlString: string, certInfos: Array<ICertificateInfo>): Promise<ICertificate | ICertificateInfo> => {
-            const siteId = url.parse(urlString).host;
-            const record = this.clientCertMap[siteId];
-
-            if (record instanceof Promise) {
-                return record;
-            }
-
-            this.clientCertMap[siteId] = new Promise<ICertificate | ICertificateInfo>((resolve, reject) => {
-                const promptPromise = sfxModuleManager.getComponentAsync("prompt.select-certificate", certInfos);
-
-                promptPromise
-                    .then((prompt) => prompt.openAsync())
-                    .then((selectedCert) => resolve(selectedCert || undefined), (err) => reject(err))
-                    .then(() => promptPromise)
-                    .then((prompt) => prompt.disposeAsync());
-            });
-
-            this.clientCertMap[siteId].then(() => delete this.clientCertMap[siteId]);
-
-            return this.clientCertMap[siteId];
+        async (urlString: string, certInfos: Array<ICertificateInfo>): Promise<ICertificate | ICertificateInfo> => {
+            const prompt = await sfxModuleManager.getComponentAsync("prompt.select-certificate", certInfos);
+            
+            return await prompt.openAsync();
         }
 }

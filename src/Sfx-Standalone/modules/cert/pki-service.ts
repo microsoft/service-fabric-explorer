@@ -12,8 +12,8 @@ import {
 
 import { exec } from "child_process";
 import { promisify } from "util";
-import { env, Platform } from "../../utilities/env";
-import { local } from "../../utilities/appUtils";
+import { local } from "donuts.node/path";
+import * as utils from "donuts.node/utils";
 
 const execAsync = promisify(exec);
 
@@ -23,7 +23,7 @@ enum StoreNames {
 
 export class PkiService implements IPkiCertificateService {
     public async getCertificateInfosAsync(storeName: StoreName): Promise<Array<ICertificateInfo>> {
-        if (env.platform !== Platform.Windows) {
+        if (process.platform !== "win32") {
             return undefined;
         }
 
@@ -45,7 +45,7 @@ export class PkiService implements IPkiCertificateService {
     public async getCertificateAsync(certInfo: ICertificateInfo): Promise<IPfxCertificate> {
         if (!certInfo
             || !certInfo.thumbprint
-            || !String.isString(certInfo.thumbprint)) {
+            || !utils.isString(certInfo.thumbprint)) {
             throw new Error("Invalid certInfo: missing thumbprint.");
         }
 
