@@ -109,7 +109,7 @@ export default class HttpPipeline implements IHttpPipeline {
         }
 
         const processDuration = (performance.now() - rawStartTime).toFixed(0);
-        this.log.writeInfoAsync(`HTTP(${this.id}) ${response.statusCode} ${response.statusMessage} ~${rawDuration.toString().padStart(4, " ")}ms/${processDuration.toString().padStart(4, " ")}ms => [${requestId}] ${request.method} ${request.url}`);
+        this.log.writeInfoAsync(`HTTP(${this.id}) ${response.statusCode} ${response.statusMessage} ~${rawDuration.toString().padStart(4, " ")}ms/${processDuration.toString().padStart(4, " ")}ms => [${requestId}] ${request.method.padStart(4, " ")} ${request.url}`);
 
         return response;
     }
