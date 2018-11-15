@@ -6,6 +6,8 @@
 import { IPkiCertificateService, ICertificateInfo, ICertificate } from "sfx.cert";
 
 import { dialog, BrowserWindow } from "electron";
+import { Agent as HttpAgent } from "http";
+import { Agent as HttpsAgent } from "https";
 
 import HttpClient from "./http-client";
 
@@ -31,7 +33,14 @@ export default class ServiceFabricHttpClient extends HttpClient {
 
         this.requestHandlers.push(
             certResponseHandler.httpRequestHandler,
-            createRouterRequestHandler(this.checkServerCert));
+            createRouterRequestHandler(
+                this.checkServerCert,
+                {
+                    agents: {
+                        http: new HttpAgent({ keepAlive: true }),
+                        https: new HttpsAgent({ keepAlive: true })
+                    }
+                }));
 
         this.responseHandlers.push(
             createAuthAadResponseHandler(),
@@ -75,7 +84,7 @@ export default class ServiceFabricHttpClient extends HttpClient {
     private selectClientCertAsync =
         async (urlString: string, certInfos: Array<ICertificateInfo>): Promise<ICertificate | ICertificateInfo> => {
             const prompt = await sfxModuleManager.getComponentAsync("prompt.select-certificate", certInfos);
-            
+
             return await prompt.openAsync();
         }
 }
