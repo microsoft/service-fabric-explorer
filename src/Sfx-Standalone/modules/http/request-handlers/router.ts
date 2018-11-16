@@ -13,7 +13,7 @@ import {
 
 import * as url from "url";
 
-import createNodeRequestHandler from "./node";
+import createNodeRequestHandler, { IHttpContext } from "./node";
 import createElectronRequestHandler from "./electron";
 
 function shouldTryOther(response: IHttpResponse): boolean {
@@ -25,11 +25,11 @@ function shouldTryOther(response: IHttpResponse): boolean {
     return false;
 }
 
-export default function createRequestHandler(serverCertValidator?: ServerCertValidator): HttpRequestHandler {
+export default function createRequestHandler(serverCertValidator?: ServerCertValidator, nodeHttpContext?: IHttpContext): HttpRequestHandler {
     const requestMap: Donuts.IStringKeyDictionary<HttpRequestHandler> = Object.create(null);
     const requestHandlers: Array<HttpRequestHandler> = [];
 
-    requestHandlers.push(createNodeRequestHandler(serverCertValidator));
+    requestHandlers.push(createNodeRequestHandler(serverCertValidator, nodeHttpContext));
     requestHandlers.push(createElectronRequestHandler(serverCertValidator));
 
     return async (pipeline: IHttpPipeline, request: IHttpRequest): Promise<IHttpResponse> => {

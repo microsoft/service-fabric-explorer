@@ -21,9 +21,13 @@ import * as crypto from "crypto";
 import * as tls from "tls";
 import * as utils from "donuts.node/utils";
 
-interface IHttpContext {
-    httpsAgent: https.Agent;
-    httpAgent: http.Agent;
+export interface IHttpAgentCollection extends Donuts.IStringKeyDictionary<http.Agent> {
+    https?: http.Agent;
+    http?: http.Agent;
+}
+
+export interface IHttpContext {
+    agents?: IHttpAgentCollection;
 }
 
 const DummyClientPfx: Buffer =
@@ -121,16 +125,16 @@ function handleRequestAsync(this: IHttpContext, validateServerCert: ServerCertVa
         }
 
         if (options.protocol === "http:") {
-            if (this && this.httpAgent) {
-                options.agent = this.httpAgent;
+            if (this && this.agents && this.agents.http) {
+                options.agent = this.agents.http;
             }
 
             httpRequest = http.request(options);
 
         } else if (options.protocol === "https:") {
 
-            if (this && this.httpsAgent) {
-                options.agent = this.httpsAgent;
+            if (this && this.agents && this.agents.https) {
+                options.agent = this.agents.https;
             }
 
             if (request.sslVersion) {
@@ -267,15 +271,10 @@ function toCertificateInfo(cert: tls.PeerCertificate): ICertificateInfo {
     };
 }
 
-export default function createRequestHandler(serverCertValidator?: ServerCertValidator): HttpRequestHandler {
-    const context: IHttpContext = {
-        httpAgent: new http.Agent({ keepAlive: true }),
-        httpsAgent: new https.Agent({ keepAlive: true })
-    };
-
+export default function createRequestHandler(serverCertValidator?: ServerCertValidator, httpContext?: IHttpContext): HttpRequestHandler {
     if (serverCertValidator) {
-        return handleRequestAsync.bind(context, serverCertValidator);
+        return handleRequestAsync.bind(httpContext, serverCertValidator);
     }
 
-    return handleRequestAsync.bind(context, undefined);
+    return handleRequestAsync.bind(httpContext, undefined);
 }
