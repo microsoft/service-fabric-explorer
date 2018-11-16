@@ -38,7 +38,7 @@ declare module "sfx.module-manager" {
 
 declare module "sfx.sfx-view-container" {
     export interface ISfxContainer {
-        loadSfxAsync(targetServiceEndpoint: string): Promise<void>;
+        loadSfxAsync(targetServiceEndpoint: string, clusterDisplayName: string): Promise<void>;
         unloadSfxAsync(targetServiceEndpoint: string): Promise<void>;
         reloadSfxAsync(targetServiceEndpoint: string): Promise<void>;
     }

@@ -36,8 +36,8 @@
                 <a class="navbar-brand navbar-brand-azure" href="https://aka.ms/portalsfx" target="_blank">Microsoft Azure</a>
                 <!-- Use inline style to limit the icon size to prevent a huge icon show up in browser before css is downloaded -->
                 <a class="navbar-brand navbar-brand-title" href="#" ng-click="navbarCtrl.navigateToCluster()">
-                    <img style="width: 24px" src="images/favicon.svg" title="Service Fabric Explorer" class="navbar-brand-icon"
-                    />Service Fabric Explorer</a>
+                    <img style="width: 24px" src="images/favicon.svg" title="{{authCtrl.brandTitle}}" class="navbar-brand-icon"
+                    />{{authCtrl.brandTitle}}</a>
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-right-control">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>

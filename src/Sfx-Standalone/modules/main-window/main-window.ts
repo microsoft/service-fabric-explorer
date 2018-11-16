@@ -29,7 +29,6 @@ export class MainWindow implements IMainWindow {
         this.browserWindow.loadURL(resolve("index.html"));
 
         this.browserWindow.once("ready-to-show", async () => {
-            this.browserWindow.webContents.openDevTools(); /*uncomment to use development tools */
             this.browserWindow["rendered.process.args"] = shell.toCmdArg(
                 modularity.CmdArgs.ConnectionInfo, 
                 JSON.stringify(modularity.getConnectionInfo(sfxModuleManager)));

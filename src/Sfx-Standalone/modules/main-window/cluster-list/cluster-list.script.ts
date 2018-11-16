@@ -30,6 +30,10 @@ export class ClusterList implements IClusterList {
         };
     }
 
+    private static encodeHtml(str) {
+        return str.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
+    }
+
     constructor(settings: ISettings) {
         this.settings = settings;
         this.parseSettings();
@@ -57,8 +61,8 @@ export class ClusterList implements IClusterList {
         } else {
             this.endpoints.push(endpoint);
             const $item = $(`
-                <li tabindex="0" class="cluster list-item" data-endpoint="${endpoint}" title="${displayName}">
-                    <img src="../../icons/icon16x16.png" class="collapsed-show" /><span>${displayName}</span>
+                <li tabindex="0" class="cluster list-item" data-endpoint="${endpoint}" title="${ClusterList.encodeHtml(displayName)}">
+                    <img src="../../icons/icon16x16.png" class="collapsed-show" /><span>${ClusterList.encodeHtml(displayName)}</span>
                     <button tabindex="0" class="bowtie-icon bowtie-ellipsis collapsed-hidden"></button>
                     <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
                         <li role="menuitem"><a class="cluster-action" role="menuitem" href="#" data-action="connect">Re-connect</a></li>
@@ -114,13 +118,13 @@ export class ClusterList implements IClusterList {
     }
 
     async setupAsync(): Promise<void> {
-        $("#cluster-list-connect").click(async () => {            
+        $("#cluster-list-connect").click(async () => {
             await this.dialogService.showInlineDialogAsync({
                 title: "Connect to a cluster",
                 bodyHtml: `
                     <div class="mb-12px">
                         <label for="input-cluster-url">Cluster URL</label>                
-                        <input id="input-cluster-url" type="text" class="input-flat" placeholder="https://localhost:19080"/>                    
+                        <input id="input-cluster-url" type="text" class="input-flat" placeholder="http://localhost:19080"/>                    
                     </div>
                     <div class="mb-12px">                        
                         <label for="input-cluster-label">Friendly name (Optional)</label>                
@@ -134,7 +138,7 @@ export class ClusterList implements IClusterList {
             $("#btn-connect").click(async () => {
                 try {
                     if ($("#input-cluster-url").val() === "") {
-                        $("#input-cluster-url").val("https://localhost:19080");
+                        $("#input-cluster-url").val("http://localhost:19080");
                     }
 
                     const url = Url.parse($("#input-cluster-url").val());
@@ -149,7 +153,7 @@ export class ClusterList implements IClusterList {
                     }
 
                     await this.newClusterListItemAsync(endpoint, name, "", true);
-                    await this.sfxContainer.loadSfxAsync(endpoint).then(() => {
+                    await this.sfxContainer.loadSfxAsync(endpoint, name).then(() => {
                         $("#main-modal-dialog").modal("hide");
                     });
                 } catch (error) {
@@ -164,7 +168,7 @@ export class ClusterList implements IClusterList {
                     $("#btn-connect").click();
                 }
             });
-            
+
             $("#btn-exit").click(() => {
                 $("#main-modal-dialog").modal("hide");
             });
@@ -219,8 +223,8 @@ export class ClusterList implements IClusterList {
 
             const action = $(e.target).data("action");
             switch (action) {
-                case "connect":                    
-                    await this.sfxContainer.reloadSfxAsync(endpoint);                   
+                case "connect":
+                    await this.sfxContainer.reloadSfxAsync(endpoint);
                     break;
                 case "remove":
                     await this.dialogService.showInlineDialogAsync({
@@ -280,6 +284,14 @@ export class ClusterList implements IClusterList {
             }
         });
 
+        $($item).keyup(($event) => {
+            const keyboardEvent = <KeyboardEvent>$event.originalEvent;
+
+            if (keyboardEvent.code === "Enter" || keyboardEvent.code === "Space") {
+                $($item).click();
+            }
+        });
+
         $($item).click(async (e) => {
             let $target = $(e.target);
             if ($target.is("span") || $target.is("img")) {
@@ -294,7 +306,7 @@ export class ClusterList implements IClusterList {
             }
 
             $(".current").removeClass("current");
-            await this.sfxContainer.loadSfxAsync(endpoint);
+            await this.sfxContainer.loadSfxAsync(endpoint, cluster.displayName);
             cluster.currentInView = true;
             await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
             $target.addClass("current");

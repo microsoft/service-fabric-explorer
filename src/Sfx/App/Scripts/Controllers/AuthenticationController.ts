@@ -37,6 +37,10 @@ module Sfx {
             return "";
         }
 
+        public get brandTitle(): string {
+            return "Service Fabric Explorer" + (this.isStandalone ? " - " + StandaloneIntegration.clusterDisplayName : "");
+        }
+
         public logOut(): void {
             this.authSvc.logOut();
         }

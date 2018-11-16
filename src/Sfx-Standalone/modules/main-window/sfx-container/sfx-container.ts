@@ -28,46 +28,43 @@ export class SfxContainer implements ISfxContainer {
     public async reloadSfxAsync(targetServiceEndpoint: string): Promise<void> {
         const container = $("div.right-container");
         $("#instructions", container).hide();
-        $(".view-container", container).hide();
+        $(".view-container", container).css({ top: `${0 - container.height()}px` }).removeClass("current");
+        $("webview", container).attr("tabindex", "-1");
 
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
         if (sfxWebView) {
-            sfxWebView.reload();
-            $(`#view-container-${id}`, container).show();
+            sfxWebView.reload();            
+            $(`#view-container-${id}`, container).css({ top: 0 }).addClass("current");
+            $("webview", $(`#view-container-${id}`, container)).attr("tabindex", "1");
         }
 
         return Promise.resolve();
     }
 
-    public async loadSfxAsync(targetServiceEndpoint: string): Promise<void> {
+    public async loadSfxAsync(targetServiceEndpoint: string, clusterDisplayName: string): Promise<void> {
         const container = $("div.right-container");
         $("#instructions", container).hide();
         $(".view-container", container).css({ top: `${0 - container.height()}px` }).removeClass("current");
+        $("webview", container).attr("tabindex", "-1");
 
         const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
 
         if (this.endpoints.find(e => e.endpoint === targetServiceEndpoint)) {
             $(`#view-container-${id}`, container).css({ top: 0 }).addClass("current");
+            $("webview", $(`#view-container-${id}`, container)).attr("tabindex", "1");
+            
             return Promise.resolve();
         }
-        
-        const log = await sfxModuleManager.getComponentAsync("logging.default");
-        const sfxUrl = resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint });
+                
+        const sfxUrl = resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint + "&clustername=" + encodeURIComponent(clusterDisplayName) });
 
         this.endpoints.push({ endpoint: targetServiceEndpoint, id: id });
         container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
-        $(`<div id="view-container-${id}" class="view-container current"><webview tabindex="0" src="${sfxUrl}" id="view-${id}" autosize="on" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
+        $(`<div id="view-container-${id}" class="view-container current"><webview tabindex="1" src="${sfxUrl}" id="view-${id}" autosize="on" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
 
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
         sfxWebView.addEventListener("dom-ready", async () => {
-            //await sfxModuleManager.newHostAsync(`host-sfx-${id}`, await sfxModuleManager.getComponentAsync("ipc.communicator", sfxWebView.getWebContents()));
-            log.writeInfoAsync("dom-ready --- ");
-
-            if (!sfxWebView.isDevToolsOpened()) {
-                sfxWebView.openDevTools(); /*uncomment to use development tools */
-            }
-
             container.children("#treeview-loading-glyph").remove();
             //sfxWebView.executeJavaScript(" angular.bootstrap(document, [Sfx.Constants.sfxAppName], { strictDi: true });");
         });
@@ -88,8 +85,6 @@ export class SfxContainer implements ISfxContainer {
         if (this.endpoints.length === 0) {
             $("#instructions", container).show();
         }
-
-        //await sfxModuleManager.destroyHostAsync(`host-sfx-${id}`);
     }
 }
 

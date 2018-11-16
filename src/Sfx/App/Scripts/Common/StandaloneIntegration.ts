@@ -63,24 +63,35 @@ module Sfx {
     };
 
     export class StandaloneIntegration {
-        private static require: (moduleName: string) => any = window["nodeRequire"];
-
         private static _clusterUrl: string = null;
+        private static _clusterDisplayName: string = null;
 
         public static isStandalone(): boolean {
             return typeof sfxModuleManager !== "undefined" && sfxModuleManager !== null;
         }
 
         public static get clusterUrl(): string {
-            if (this._clusterUrl == null) {
-                if (angular.isFunction(this.require)) {
-                    this._clusterUrl = StandaloneIntegration.extractQueryItem(window.location.search, "targetcluster");
+            if (StandaloneIntegration._clusterUrl == null) {
+                if (StandaloneIntegration.isStandalone()) {
+                    StandaloneIntegration._clusterUrl = StandaloneIntegration.extractQueryItem(window.location.search, "targetcluster");
                 } else {
-                    this._clusterUrl = "";
+                    StandaloneIntegration._clusterUrl = "";
                 }
             }
 
             return StandaloneIntegration._clusterUrl;
+        }
+
+        public static get clusterDisplayName(): string {
+            if (StandaloneIntegration._clusterDisplayName == null) {
+                if (StandaloneIntegration.isStandalone()) {
+                    StandaloneIntegration._clusterDisplayName = StandaloneIntegration.extractQueryItem(window.location.search, "clustername");
+                } else {
+                    StandaloneIntegration._clusterDisplayName = "";
+                }
+            }
+
+            return StandaloneIntegration._clusterDisplayName;
         }
 
         public static getHttpClient(): Promise<Standalone.http.IHttpClient> {
@@ -98,7 +109,7 @@ module Sfx {
                 for (let i = 0; i < queryParams.length; i++) {
                     let queryParam = queryParams[i].split("=");
                     if (queryParam[0] === name) {
-                        return queryParam[1];
+                        return decodeURIComponent(queryParam[1]);
                     }
                 }
             }
