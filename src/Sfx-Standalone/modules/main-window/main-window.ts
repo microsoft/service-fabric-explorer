@@ -18,6 +18,7 @@ export class MainWindow implements IMainWindow {
         this.browserWindow = browserWindow;
         browserWindow.setPosition(100, 100);
         browserWindow.setSize(1500, 1200);
+        browserWindow.setMenuBarVisibility(false);
     }
 
     async registerAsync(navComponent: IComponentConfiguration): Promise<void> {
@@ -27,7 +28,7 @@ export class MainWindow implements IMainWindow {
 
     async loadAsync(): Promise<void> {
         this.browserWindow.loadURL(resolve("index.html"));
-
+        
         this.browserWindow.once("ready-to-show", async () => {
             this.browserWindow["rendered.process.args"] = shell.toCmdArg(
                 modularity.CmdArgs.ConnectionInfo, 

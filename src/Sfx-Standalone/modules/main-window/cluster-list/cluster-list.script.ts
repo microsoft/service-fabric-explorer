@@ -8,7 +8,7 @@ import * as Url from "url";
 import { electron } from "../../../utilities/electron-adapter";
 import { IClusterList, IClusterListDataModel } from "sfx.cluster-list";
 import { IDialogService } from "sfx.main-window";
-import { ClusterListDataModel } from "./model";
+import { ClusterListDataModel } from "./data-model";
 import { ISettings } from "sfx.settings";
 import { DialogService } from "../dialog-service/dialog-service";
 import { SfxContainer } from "./../sfx-container/sfx-container";
