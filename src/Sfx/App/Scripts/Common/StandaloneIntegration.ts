@@ -64,7 +64,6 @@ module Sfx {
 
     export class StandaloneIntegration {
         private static _clusterUrl: string = null;
-        private static _clusterDisplayName: string = null;
 
         public static isStandalone(): boolean {
             return typeof sfxModuleManager !== "undefined" && sfxModuleManager !== null;
@@ -80,18 +79,6 @@ module Sfx {
             }
 
             return StandaloneIntegration._clusterUrl;
-        }
-
-        public static get clusterDisplayName(): string {
-            if (StandaloneIntegration._clusterDisplayName == null) {
-                if (StandaloneIntegration.isStandalone()) {
-                    StandaloneIntegration._clusterDisplayName = StandaloneIntegration.extractQueryItem(window.location.search, "clustername");
-                } else {
-                    StandaloneIntegration._clusterDisplayName = "";
-                }
-            }
-
-            return StandaloneIntegration._clusterDisplayName;
         }
 
         public static getHttpClient(): Promise<Standalone.http.IHttpClient> {

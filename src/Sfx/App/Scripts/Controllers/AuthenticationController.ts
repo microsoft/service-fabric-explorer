@@ -38,7 +38,13 @@ module Sfx {
         }
 
         public get brandTitle(): string {
-            return "Service Fabric Explorer" + (this.isStandalone ? " - " + StandaloneIntegration.clusterDisplayName : "");
+            let title = "Service Fabric Explorer";
+            if (this.isStandalone) {
+                let url = new URL(StandaloneIntegration.clusterUrl);
+                title = title + " - " + url.hostname;
+            }
+
+            return title;
         }
 
         public logOut(): void {

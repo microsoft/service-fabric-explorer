@@ -153,7 +153,7 @@ export class ClusterList implements IClusterList {
                     }
 
                     await this.newClusterListItemAsync(endpoint, name, "", true);
-                    await this.sfxContainer.loadSfxAsync(endpoint, name).then(() => {
+                    await this.sfxContainer.loadSfxAsync(endpoint).then(() => {
                         $("#main-modal-dialog").modal("hide");
                     });
                 } catch (error) {
@@ -306,7 +306,7 @@ export class ClusterList implements IClusterList {
             }
 
             $(".current").removeClass("current");
-            await this.sfxContainer.loadSfxAsync(endpoint, cluster.displayName);
+            await this.sfxContainer.loadSfxAsync(endpoint);
             cluster.currentInView = true;
             await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
             $target.addClass("current");

@@ -42,7 +42,7 @@ export class SfxContainer implements ISfxContainer {
         return Promise.resolve();
     }
 
-    public async loadSfxAsync(targetServiceEndpoint: string, clusterDisplayName: string): Promise<void> {
+    public async loadSfxAsync(targetServiceEndpoint: string): Promise<void> {
         const container = $("div.right-container");
         $("#instructions", container).hide();
         $(".view-container", container).css({ top: `${0 - container.height()}px` }).removeClass("current");
@@ -57,7 +57,7 @@ export class SfxContainer implements ISfxContainer {
             return Promise.resolve();
         }
                 
-        const sfxUrl = resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint + "&clustername=" + encodeURIComponent(clusterDisplayName) });
+        const sfxUrl = resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint });
 
         this.endpoints.push({ endpoint: targetServiceEndpoint, id: id });
         container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
