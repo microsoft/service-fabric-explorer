@@ -454,6 +454,8 @@ table.detail-list {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            line-height: 32px;
+            font-size: 9pt;
 
             &.badge-unknown {
                 background-color: $badge-unknown-color;
@@ -463,10 +465,14 @@ table.detail-list {
                 background-color: $badge-ok-color;
             }
 
-            &.badge-warning {
+            &.badge-error {
                 animation-name: upgrade-domain-bar-active;
-                animation-duration: 3s;
+                animation-duration: 2s;
                 animation-iteration-count: infinite;
+            }
+
+            &.badge-warning {
+                background-color: $badge-warning-color;
             }
         }
     }
