@@ -6,8 +6,8 @@
 declare module "sfx.module-manager" {
     import { BrowserWindow, BrowserWindowConstructorOptions } from "electron";
 
-    export interface IModuleManager {
-        getComponentAsync(componentIdentity: "browser-window",
+    export interface ISfxModuleManager {
+        getComponentAsync(componentIdentity: "electron.browser-window",
             options?: BrowserWindowConstructorOptions): Promise<BrowserWindow>;
     }
 }

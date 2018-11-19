@@ -3,19 +3,19 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModule } from "sfx.module-manager";
 import { IPromptService, IPrompt } from "sfx.prompt";
 
-import * as appUtils from "../../utilities/appUtils";
+import * as shell from "donuts.node/shell";
+import { resolve } from "donuts.node/path";
 
-(<IModule>exports).getModuleMetadata = (components) => {
+(<Donuts.Modularity.IModule>exports).getModuleMetadata = (components) => {
     components.register<IPrompt<string>>({
-        name: "prompt.connect-cluster",
-        version: appUtils.getAppVersion(),
+        name: "connect-cluster",
+        version: shell.getAppVersion(),
         descriptor: (promptService: IPromptService) =>
             promptService.createAsync(
                 {
-                    pageUrl: appUtils.resolve("connect-cluster.html"),
+                    pageUrl: resolve("connect-cluster.html"),
                     height: 225
                 }),
         deps: ["prompt.prompt-service"]
@@ -23,6 +23,7 @@ import * as appUtils from "../../utilities/appUtils";
 
     return {
         name: "prompt.connect-cluster",
-        version: appUtils.getAppVersion()
+        namespace: "prompt",
+        version: shell.getAppVersion()
     };
 };

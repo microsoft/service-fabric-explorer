@@ -47,7 +47,7 @@ declare module "sfx.cert" {
 declare module "sfx.module-manager" {
     import { IPkiCertificateService, ICertificateLoader } from "sfx.cert";
 
-    export interface IModuleManager {
+    export interface ISfxModuleManager {
         getComponentAsync(componentIdentity: "cert.pki-service"): Promise<IPkiCertificateService>;
         getComponentAsync(componentIdentity: "cert.cert-loader"): Promise<ICertificateLoader>;
     }

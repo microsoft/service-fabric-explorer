@@ -19,6 +19,16 @@ import * as http from "http";
 import * as https from "https";
 import * as crypto from "crypto";
 import * as tls from "tls";
+import * as utils from "donuts.node/utils";
+
+export interface IHttpAgentCollection extends Donuts.IStringKeyDictionary<http.Agent> {
+    https?: http.Agent;
+    http?: http.Agent;
+}
+
+export interface IHttpContext {
+    agents?: IHttpAgentCollection;
+}
 
 const DummyClientPfx: Buffer =
     Buffer.from(
@@ -78,7 +88,7 @@ function generateBodyAsync(httpResponse: http.IncomingMessage): Promise<Buffer> 
     });
 }
 
-function handleRequestAsync(validateServerCert: ServerCertValidator, pipeline: IHttpPipeline, request: IHttpRequest): Promise<IHttpResponse> {
+function handleRequestAsync(this: IHttpContext, validateServerCert: ServerCertValidator, pipeline: IHttpPipeline, request: IHttpRequest): Promise<IHttpResponse> {
     return new Promise((resolve, reject) => {
         const options: http.RequestOptions = Object.assign(Object.create(null), url.parse(request.url));
         let httpRequest: http.ClientRequest;
@@ -115,9 +125,17 @@ function handleRequestAsync(validateServerCert: ServerCertValidator, pipeline: I
         }
 
         if (options.protocol === "http:") {
+            if (this && this.agents && this.agents.http) {
+                options.agent = this.agents.http;
+            }
+
             httpRequest = http.request(options);
 
         } else if (options.protocol === "https:") {
+
+            if (this && this.agents && this.agents.https) {
+                options.agent = this.agents.https;
+            }
 
             if (request.sslVersion) {
                 options["secureProtocol"] = request.sslVersion;
@@ -203,7 +221,7 @@ function handleRequestAsync(validateServerCert: ServerCertValidator, pipeline: I
                     if (!socket.authorized) {
                         const peerCert = socket.getPeerCertificate();
 
-                        if (Object.isEmpty(peerCert)) {
+                        if (utils.object.isEmpty(peerCert)) {
                             return;
                         }
 
@@ -253,10 +271,10 @@ function toCertificateInfo(cert: tls.PeerCertificate): ICertificateInfo {
     };
 }
 
-export default function createRequestHandler(serverCertValidator?: ServerCertValidator): HttpRequestHandler {
+export default function createRequestHandler(serverCertValidator?: ServerCertValidator, httpContext?: IHttpContext): HttpRequestHandler {
     if (serverCertValidator) {
-        return handleRequestAsync.bind(undefined, serverCertValidator);
+        return handleRequestAsync.bind(httpContext, serverCertValidator);
     }
 
-    return handleRequestAsync.bind(undefined, undefined);
+    return handleRequestAsync.bind(httpContext, undefined);
 }

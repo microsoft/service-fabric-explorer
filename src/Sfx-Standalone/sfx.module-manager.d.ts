@@ -4,9 +4,7 @@
 //-----------------------------------------------------------------------------
 
 declare module "sfx.module-manager" {
-    import { IPrompt } from "sfx.prompt";
-
-    export interface ISfxModuleManager {
-        getComponentAsync(componentIdentity: "prompt.connect-cluster"): Promise<IPrompt<string>>;
+    export interface ISfxModuleManager extends Donuts.Modularity.IModuleManager {
+        getComponentAsync<T>(componentIdentity: string, ...extraArgs: Array<any>): Promise<Donuts.Modularity.Component<T>>;
     }
 }

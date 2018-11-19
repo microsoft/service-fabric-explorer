@@ -339,3 +339,18 @@ input[type=number]::-webkit-outer-spin-button {
         }
     }
 }
+
+.alert-info {
+    border: none;
+    border-left: #4BA0B5 solid 8px;
+}
+
+.alert-warning {
+    border: none;
+    border-left: #FFC646 solid 8px;
+}
+
+.alert-danger {
+    border: none;
+    border-left: #CB444A solid 8px;
+}

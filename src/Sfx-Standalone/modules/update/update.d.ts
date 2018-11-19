@@ -16,7 +16,7 @@ declare module "sfx.update" {
 declare module "sfx.module-manager" {
     import { IUpdateService } from "sfx.update";
 
-    export interface IModuleManager {
-        getComponentAsync(componentIdentity: "update"): Promise<IUpdateService>;
+    export interface ISfxModuleManager {
+        getComponentAsync(componentIdentity: "update.service"): Promise<IUpdateService>;
     }
 }

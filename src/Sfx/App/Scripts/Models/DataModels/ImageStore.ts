@@ -8,6 +8,8 @@ module Sfx {
         public currentFolder: ImageStoreFolder;
         public pathBreadcrumbItems: IStorePathBreadcrumbItem[] = [];
 
+        private isLoadingFolderContent: boolean = false;
+
         public static chopPath(path: string): string[] {
             if (path.indexOf("\\") > -1) {
                 return path.split("\\");
@@ -29,23 +31,26 @@ module Sfx {
                 this.connectionString = manifest.imageStoreConnectionString;
                 this.isNative = this.connectionString.toLowerCase() === "fabric:imagestore";
             });
+
+            this.expandFolder(this.currentFolder.path);
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
-            if (!this.isNative) {
+            if (!this.isNative || this.isLoadingFolderContent) {
                 return this.data.$q.resolve(null);
             }
 
-            return this.expandFolder(this.currentFolder.path);
+            return this.loadFolderContent(this.currentFolder.path);
         }
 
         protected expandFolder(path: string): angular.IPromise<IRawImageStoreContent> {
             const folder = this.uiFolderDictionary[path];
-            if (!folder) {
+            if (!folder || this.isLoadingFolderContent) {
                 return this.data.$q.resolve(null);
             }
 
-            return this.copyFolderContentToUI(path).then((raw) => {
+            this.isLoadingFolderContent = true;
+            return this.loadFolderContent(path).then((raw) => {
                 folder.isExpanded = true;
                 this.currentFolder = folder;
 
@@ -56,6 +61,7 @@ module Sfx {
                     this.pathBreadcrumbItems.push(<IStorePathBreadcrumbItem>{ path: folder.path, name: folder.displayName });
                 }
 
+                this.isLoadingFolderContent = false;
                 return raw;
             });
         }
@@ -77,7 +83,7 @@ module Sfx {
             return Utils.getHttpResponseData(this.data.restClient.deleteImageStoreContent(path)).then(() => this.refresh());
         }
 
-        private copyFolderContentToUI(path: string): angular.IPromise<IRawImageStoreContent> {
+        private loadFolderContent(path: string): angular.IPromise<IRawImageStoreContent> {
             let folder: ImageStoreFolder = this.uiFolderDictionary[path];
 
             if (!folder) {

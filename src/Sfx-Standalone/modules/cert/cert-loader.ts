@@ -4,18 +4,21 @@
 //-----------------------------------------------------------------------------
 
 import { ICertificateLoader, IPfxCertificate, IPemCertificate } from "sfx.cert";
+import * as utils from "donuts.node/utils";
+import { promisify } from "util";
+import { readFile } from "fs";
 
-import * as fileSytem from "../../utilities/fileSystem";
+const readFileAsync = promisify(readFile);
 
 export class CertLoader implements ICertificateLoader {
     public async loadPfxAsync(path: string, password?: string): Promise<IPfxCertificate> {
         const cert: IPfxCertificate = Object.create(null);
 
         cert.type = "pfx";
-        cert.pfx = await fileSytem.readFileAsync(path);
+        cert.pfx = await readFileAsync(path);
 
         if (password) {
-            if (!String.isString(password)) {
+            if (!utils.isString(password)) {
                 throw new Error("password must be a string.");
             }
 
@@ -29,10 +32,10 @@ export class CertLoader implements ICertificateLoader {
         const cert: IPemCertificate = Object.create(null);
 
         cert.type = "pem";
-        cert.cert = await fileSytem.readFileAsync(certPath);
+        cert.cert = await readFileAsync(certPath);
 
         if (keyPassword) {
-            if (!String.isString(keyPassword)) {
+            if (!utils.isString(keyPassword)) {
                 throw new Error("keyPassword must be a string.");
             }
 
@@ -40,7 +43,7 @@ export class CertLoader implements ICertificateLoader {
         }
 
         if (keyPath) {
-            cert.key = await fileSytem.readFileAsync(keyPath);
+            cert.key = await readFileAsync(keyPath);
         }
 
         return cert;

@@ -11,18 +11,41 @@ import {
     HttpResponseHandler
 } from "sfx.http";
 
-import { ILog } from "sfx.logging";
+import * as uuidv4 from "uuid/v4";
+import { performance } from "perf_hooks";
+
+const RequestIdBuffer: Buffer = Buffer.alloc(16);
+
+/**
+ * Length in bytes.
+ */
+const RequestIdLength: number = 4;
+
+function generateRequestId(): string {
+    return uuidv4(null, RequestIdBuffer).toString("hex", 0, RequestIdLength);
+}
+
+let pipelineId: number = -1;
+
+function generateNewPipelineId(): string {
+    pipelineId += 1;
+
+    return pipelineId.toString();
+}
 
 export default class HttpPipeline implements IHttpPipeline {
     public requestTemplate: IHttpRequest;
 
-    protected readonly log: ILog;
+    protected readonly id: string;
+
+    protected readonly log: Donuts.Logging.ILog;
 
     private readonly _requestHandlers: Array<HttpRequestHandler>;
 
     private readonly _responseHandlers: Array<HttpResponseHandler>;
 
-    constructor(log: ILog, requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>) {
+    constructor(log: Donuts.Logging.ILog, requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>) {
+        this.id = generateNewPipelineId();
         this.log = log;
         this._requestHandlers = [];
         this._responseHandlers = [];
@@ -45,6 +68,8 @@ export default class HttpPipeline implements IHttpPipeline {
     }
 
     public async requestAsync(request: IHttpRequest): Promise<IHttpResponse> {
+        const requestId = generateRequestId();
+
         if (this.requestTemplate) {
             const headers = [];
 
@@ -60,9 +85,10 @@ export default class HttpPipeline implements IHttpPipeline {
             request.headers = headers;
         }
 
-        this.log.writeInfoAsync(`HTTP ${request.method} => ${request.url}`);
+        this.log.writeInfoAsync(`HTTP(${this.id}) [${requestId}] ${request.method.padStart(4, " ")} => ${request.url}`);
 
         let response: IHttpResponse;
+        const rawStartTime = performance.now();
 
         for (const handleRequestAsync of this._requestHandlers) {
             response = await handleRequestAsync(this, request);
@@ -73,14 +99,17 @@ export default class HttpPipeline implements IHttpPipeline {
         }
 
         if (!response) {
-            throw new Error("No request handler handled request.");
+            throw new Error(`HTTP(${this.id}): No request handler handled request.`);
         }
 
-        this.log.writeInfoAsync(`HTTP ${response.statusCode} ${response.statusMessage} of HTTP ${request.method} => ${request.url}`);
+        const rawDuration = (performance.now() - rawStartTime).toFixed(0);
 
         for (const handleResponseAsync of this._responseHandlers) {
             response = await handleResponseAsync(this, request, response) || response;
         }
+
+        const processDuration = (performance.now() - rawStartTime).toFixed(0);
+        this.log.writeInfoAsync(`HTTP(${this.id}) [${requestId}] ${request.method.padStart(4, " ")} ${response.statusCode} ${response.statusMessage} ~${rawDuration.toString().padStart(4, " ")}ms/${processDuration.toString().padStart(4, " ")}ms => ${request.url}`);
 
         return response;
     }
