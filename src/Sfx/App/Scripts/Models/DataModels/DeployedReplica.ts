@@ -24,6 +24,10 @@ module Sfx {
 
             this.detail = new DeployedReplicaDetail(this.data, this);
             this.updateInternal();
+
+            if (this.data.actionsEnabled()) {
+                this.setUpActions();
+            }
         }
 
         public get servicePackageActivationId(): string {
@@ -74,6 +78,10 @@ module Sfx {
             return SortPriorities.ReplicaRolesToSortPriorities[this.raw.ReplicaRole] || 0;
         }
 
+        public restartReplica(): angular.IPromise<any> {
+            return this.data.restClient.restartReplica(this.parent.parent.parent.raw.Name, this.raw.PartitionId, this.raw.ReplicaId);
+        }
+
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawDeployedReplica> {
             const promises: angular.IPromise<any>[] = [
                 this.data.restClient.getPartitionById(this.raw.PartitionId, ResponseMessageHandlers.silentResponseMessageHandler).then(response => this.partition = response.data),
@@ -85,6 +93,23 @@ module Sfx {
 
         protected updateInternal(): angular.IPromise<any> | void {
             this.address = Utils.parseReplicaAddress(this.raw.Address);
+        }
+                
+        private setUpActions(): void {
+            let serviceName = this.parent.parent.raw.Name;
+
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "Restart Replica",
+                "Restart Replica",
+                "Restarting",
+                () => this.restartReplica(),
+                () => true,
+                `Confirm Replica Restart`,
+                `Restart Replica for ${serviceName}`,
+                "confirm"
+            ));
         }
     }
 

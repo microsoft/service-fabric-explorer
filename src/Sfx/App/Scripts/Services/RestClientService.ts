@@ -624,6 +624,12 @@ module Sfx {
             return this.getEvents(FabricEvent, url, null, null, messageHandler);
         }
 
+        public restartReplica(nodeName: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<{}> {
+            let url = `Nodes/${nodeName}/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/Restart`;
+
+            return this.post(this.getApiUrl(url, RestClient.apiVersion60), "Restart replica", null, messageHandler);
+        }
+
         private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<T[]> {
             let apiUrl = url;
             if (startTime && endTime) {
