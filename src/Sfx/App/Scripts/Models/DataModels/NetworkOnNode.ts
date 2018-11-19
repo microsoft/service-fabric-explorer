@@ -1,3 +1,7 @@
+//-----------------------------------------------------------------------------
+// Copyright (c) Microsoft Corporation.  All rights reserved.
+//-----------------------------------------------------------------------------
+
 module Sfx {
 
     export class NetworkOnNode extends DataModelBase<IRawNetworkOnNode> {
