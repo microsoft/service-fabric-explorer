@@ -52,6 +52,7 @@ module Sfx {
 
         public static getParsedHealthEvaluations(rawUnhealthyEvals: IRawUnhealthyEvaluation[], level: number = 0, parent: HealthEvaluation = null, data: DataService) : HealthEvaluation[] {
             let healthEvals: HealthEvaluation[] = new Array(0);
+            let children: HealthEvaluation[] = new Array(0);
 
             if (rawUnhealthyEvals) {
                 rawUnhealthyEvals.forEach(item => {
@@ -59,18 +60,22 @@ module Sfx {
                     let health = new HealthEvaluation(healthEval, level, parent);
                     if (healthEval) {
                         console.log(healthEval)
-                        health.viewPathUrl = Utils.getViewPathUrl(healthEval, data);
+                        health.viewPathUrl = Utils.getViewPathUrl(healthEval, data, parent);
                         healthEvals.push(health);
-
                         healthEvals = healthEvals.concat(Utils.getParsedHealthEvaluations(healthEval.UnhealthyEvaluations, level + 1, health, data));
+                        
+                        children.push(health);
                     }
                 });
             }
             console.log(healthEvals);
+            if(parent){
+                parent.children = children;
+            }
             return healthEvals;
         }
 
-        public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService): string{
+        public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parent): string{
             let viewPathUrl = "";
             let replaceText = "";
 
@@ -97,7 +102,7 @@ module Sfx {
                     break;
                 }
                 case "Service" : {
-                    //add check for system services
+                    //add check for system services?
                     let exactServiceName = healthEval['ServiceName'];
                     let deconstructedServiceName = exactServiceName.split('/');
 
@@ -121,7 +126,13 @@ module Sfx {
 
 
                     viewPathUrl = data.routes.getReplicaViewPath(appTypeName, appId, serviceId, partitionId, replicaId);
-                    replaceText = serviceId;
+                    replaceText = replicaId;
+                    break;
+                }
+                case "Event" : {
+                    if(parent){
+                        viewPathUrl = parent.viewPathUrl;
+                    }
                     break;
                 }
             }

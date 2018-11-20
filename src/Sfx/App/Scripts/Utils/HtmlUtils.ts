@@ -158,6 +158,10 @@ module Sfx {
             return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="images/${badge.badgeClass}.svg"></img><span> ${badge.text}</span></div>`;
         }
 
+        public static getBadgeOnlyHtml(badge: ITextAndBadge): string {
+            return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="images/${badge.badgeClass}.svg"></img></div>`;
+        }
+
         public static getEventNameHtml(event: FabricEventBase): string {
             let color = null;
             if (HtmlUtils.eventTypesUtil.isResolved(event)) {

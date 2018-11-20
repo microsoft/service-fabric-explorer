@@ -120,6 +120,7 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 .badge-container {
+    display: inline;
     white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
