@@ -31,6 +31,14 @@ module Sfx {
             this.health = new ReplicaHealth(this.data, this, HealthStateFilterFlags.Default);
             this.detail = new DeployedReplicaDetail(this.data, this);
             this.updateInternal();
+
+            if (this.data.actionsEnabled()) {
+                this.setUpActions();
+            }
+        }
+
+        public restartReplica(): angular.IPromise<any> {
+            return this.data.restClient.restartReplica(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.ReplicaId);
         }
 
         public get isStatefulService(): boolean {
@@ -81,6 +89,23 @@ module Sfx {
 
         protected updateInternal(): angular.IPromise<any> | void {
             this.address = Utils.parseReplicaAddress(this.raw.Address);
+        }
+
+        private setUpActions(): void {
+            let serviceName = this.parent.parent.raw.Name;
+
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "Restart Replica",
+                "Restart Replica",
+                "Restarting",
+                () => this.restartReplica(),
+                () => true,
+                `Confirm Replica Restart`,
+                `Restart Replica for ${serviceName}`,
+                "confirm"
+            ));
         }
     }
 

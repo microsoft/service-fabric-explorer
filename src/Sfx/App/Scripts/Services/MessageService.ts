@@ -33,7 +33,7 @@ module Sfx {
                 }
             }
 
-            let duration: number = durationMs | 8000;
+            let duration: number = durationMs | 10000;
             this.messages.push({
                 message: message,
                 severity: severity,

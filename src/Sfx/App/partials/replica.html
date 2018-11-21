@@ -1,4 +1,4 @@
-﻿<sfx-detail-view-navbar ctrl="replicaCtrl" type="{{replica.isStatelessService ? 'Instance' : 'Replica'}}" name="{{replica.name}}"></sfx-detail-view-navbar>
+﻿<sfx-detail-view-navbar ctrl="replicaCtrl" type="{{replica.isStatelessService ? 'Instance' : 'Replica'}}" name="{{replica.name}}" actions="replica.actions"></sfx-detail-view-navbar>
 
 <div class="main-view">
     <div sfx-include src="'tab_' + replicaCtrl.activeTabId" ng-if="replicaCtrl.activeTabId" class="flex-child"></div>
