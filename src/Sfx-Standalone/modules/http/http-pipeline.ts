@@ -25,12 +25,8 @@ function generateRequestId(): string {
     return uuidv4(null, RequestIdBuffer).toString("hex", 0, RequestIdLength);
 }
 
-let pipelineId: number = -1;
-
 function generateNewPipelineId(): string {
-    pipelineId += 1;
-
-    return pipelineId.toString();
+    return generateRequestId().substr(0, 6);
 }
 
 export default class HttpPipeline implements IHttpPipeline {
@@ -85,7 +81,7 @@ export default class HttpPipeline implements IHttpPipeline {
             request.headers = headers;
         }
 
-        this.log.writeInfoAsync(`HTTP(${this.id}) [${requestId}] ${request.method.padStart(4, " ")} => ${request.url}`);
+        this.log.writeInfoAsync(`${this.id} HTTP ${request.method.padStart(4, " ")} ${requestId} => ${request.url}`);
 
         let response: IHttpResponse;
         const rawStartTime = performance.now();
@@ -109,7 +105,7 @@ export default class HttpPipeline implements IHttpPipeline {
         }
 
         const processDuration = (performance.now() - rawStartTime).toFixed(0);
-        this.log.writeInfoAsync(`HTTP(${this.id}) [${requestId}] ${request.method.padStart(4, " ")} ${response.statusCode} ${response.statusMessage} ~${rawDuration.toString().padStart(4, " ")}ms/${processDuration.toString().padStart(4, " ")}ms => ${request.url}`);
+        this.log.writeInfoAsync(`${this.id} HTTP ${request.method.padStart(4, " ")} ${requestId} ${response.statusCode} ${response.statusMessage} ~${rawDuration.toString().padStart(4, " ")}ms/${processDuration.toString().padStart(4, " ")}ms <= ${request.url}`);
 
         return response;
     }
