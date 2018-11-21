@@ -11,23 +11,8 @@ import {
     HttpResponseHandler
 } from "sfx.http";
 
-import * as uuidv4 from "uuid/v4";
 import { performance } from "perf_hooks";
-
-const RequestIdBuffer: Buffer = Buffer.alloc(16);
-
-/**
- * Length in bytes.
- */
-const RequestIdLength: number = 4;
-
-function generateRequestId(): string {
-    return uuidv4(null, RequestIdBuffer).toString("hex", 0, RequestIdLength);
-}
-
-function generateNewPipelineId(): string {
-    return generateRequestId().substr(0, 6);
-}
+import * as random from "donuts.node/random";
 
 export default class HttpPipeline implements IHttpPipeline {
     public requestTemplate: IHttpRequest;
@@ -41,7 +26,7 @@ export default class HttpPipeline implements IHttpPipeline {
     private readonly _responseHandlers: Array<HttpResponseHandler>;
 
     constructor(log: Donuts.Logging.ILog, requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>) {
-        this.id = generateNewPipelineId();
+        this.id = random.generateUid(6);
         this.log = log;
         this._requestHandlers = [];
         this._responseHandlers = [];
@@ -64,7 +49,7 @@ export default class HttpPipeline implements IHttpPipeline {
     }
 
     public async requestAsync(request: IHttpRequest): Promise<IHttpResponse> {
-        const requestId = generateRequestId();
+        const requestId = random.generateUid(8);
 
         if (this.requestTemplate) {
             const headers = [];

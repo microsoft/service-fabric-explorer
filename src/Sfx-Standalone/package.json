@@ -25,8 +25,7 @@
     "jquery": "^3.2.1",
     "semver": "^5.5.0",
     "tar": "^4.4.4",
-    "tmp": "0.0.33",
-    "uuid": "^3.1.0"
+    "tmp": "0.0.33"
   },
   "devDependencies": {
     "@types/angular": "^1.6.39",
