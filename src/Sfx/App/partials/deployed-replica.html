@@ -1,4 +1,4 @@
-<sfx-detail-view-navbar ctrl="deployedReplicaCtrl" type="{{replica.isStatelessService ? 'Deployed Instance' : 'Deployed Replica'}}" name="{{replica.id}}"></sfx-detail-view-navbar>
+<sfx-detail-view-navbar ctrl="deployedReplicaCtrl" type="{{replica.isStatelessService ? 'Deployed Instance' : 'Deployed Replica'}}" name="{{replica.id}}" actions="replica.actions"></sfx-detail-view-navbar>
 
 <div class="main-view">
     <div sfx-include src="'tab_' + deployedReplicaCtrl.activeTabId" ng-if="deployedReplicaCtrl.activeTabId"></div>

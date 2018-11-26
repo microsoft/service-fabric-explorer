@@ -11,27 +11,8 @@ import {
     HttpResponseHandler
 } from "sfx.http";
 
-import * as uuidv4 from "uuid/v4";
 import { performance } from "perf_hooks";
-
-const RequestIdBuffer: Buffer = Buffer.alloc(16);
-
-/**
- * Length in bytes.
- */
-const RequestIdLength: number = 4;
-
-function generateRequestId(): string {
-    return uuidv4(null, RequestIdBuffer).toString("hex", 0, RequestIdLength);
-}
-
-let pipelineId: number = -1;
-
-function generateNewPipelineId(): string {
-    pipelineId += 1;
-
-    return pipelineId.toString();
-}
+import * as random from "donuts.node/random";
 
 export default class HttpPipeline implements IHttpPipeline {
     public requestTemplate: IHttpRequest;
@@ -45,7 +26,7 @@ export default class HttpPipeline implements IHttpPipeline {
     private readonly _responseHandlers: Array<HttpResponseHandler>;
 
     constructor(log: Donuts.Logging.ILog, requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>) {
-        this.id = generateNewPipelineId();
+        this.id = random.generateUid(6);
         this.log = log;
         this._requestHandlers = [];
         this._responseHandlers = [];
@@ -68,7 +49,7 @@ export default class HttpPipeline implements IHttpPipeline {
     }
 
     public async requestAsync(request: IHttpRequest): Promise<IHttpResponse> {
-        const requestId = generateRequestId();
+        const requestId = random.generateUid(8);
 
         if (this.requestTemplate) {
             const headers = [];
@@ -85,7 +66,7 @@ export default class HttpPipeline implements IHttpPipeline {
             request.headers = headers;
         }
 
-        this.log.writeInfoAsync(`HTTP(${this.id}) => [${requestId}] ${request.method} ${request.url}`);
+        this.log.writeInfoAsync(`${this.id} HTTP ${request.method.padStart(4, " ")} ${requestId} => ${request.url}`);
 
         let response: IHttpResponse;
         const rawStartTime = performance.now();
@@ -109,7 +90,7 @@ export default class HttpPipeline implements IHttpPipeline {
         }
 
         const processDuration = (performance.now() - rawStartTime).toFixed(0);
-        this.log.writeInfoAsync(`HTTP(${this.id}) ${response.statusCode} ${response.statusMessage} ~${rawDuration.toString().padStart(4, " ")}ms/${processDuration.toString().padStart(4, " ")}ms => [${requestId}] ${request.method.padStart(4, " ")} ${request.url}`);
+        this.log.writeInfoAsync(`${this.id} HTTP ${request.method.padStart(4, " ")} ${requestId} ${response.statusCode} ${response.statusMessage} ~${rawDuration.toString().padStart(4, " ")}ms/${processDuration.toString().padStart(4, " ")}ms <= ${request.url}`);
 
         return response;
     }

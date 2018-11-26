@@ -310,7 +310,8 @@ module Sfx {
                     selectAction: () => this.routes.navigate(() => replica.viewPath),
                     sortBy: () => replica.isStatelessService
                         ? [replica.id]
-                        : [replica.replicaRoleSortPriority, replica.id]
+                        : [replica.replicaRoleSortPriority, replica.id],
+                    actions: replica.actions
                 };
             }));
         }
@@ -392,7 +393,8 @@ module Sfx {
                         badge: () => replica.healthState,
                         sortBy: () => replica.isStatelessService
                             ? [replica.raw.NodeName]
-                            : [replica.replicaRoleSortPriority, replica.raw.NodeName]
+                            : [replica.replicaRoleSortPriority, replica.raw.NodeName],
+                        actions: replica.actions
                     };
                 });
             });
