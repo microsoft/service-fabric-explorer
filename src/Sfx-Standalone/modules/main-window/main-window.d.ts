@@ -5,6 +5,7 @@
 
 declare module "sfx.main-window" {
     import { BrowserWindow } from "electron";
+    import { IDictionary } from "sfx.common";
 
     export interface IMainWindow {
         loadAsync(): void;
@@ -18,11 +19,20 @@ declare module "sfx.main-window" {
         closeInlineDialogAsync(): Promise<void>;
     }
 
+    export interface IDialogFooterButtonOption {
+        text: string;
+        type: string;
+        id?: string;
+        cssClass?: string;
+        attributes?: { [name: string]: string };        
+    }
+
     export interface IDialogRenderingOption {
         title: string;
         bodyHtml: string;
-        footerHtml: string;
-        scriptPath: string;
+        footerHtml?: string;
+        footerButtons?: IDialogFooterButtonOption[];
+        scriptPath?: string;
         height?: number;
         width?: number;
     }

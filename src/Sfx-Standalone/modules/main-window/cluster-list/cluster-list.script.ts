@@ -7,7 +7,7 @@ import * as $ from "jquery";
 import * as Url from "url";
 import { electron } from "../../../utilities/electron-adapter";
 import { IClusterList, IClusterListDataModel } from "sfx.cluster-list";
-import { IDialogService } from "sfx.main-window";
+import { IDialogService, IDialogFooterButtonOption } from "sfx.main-window";
 import { ClusterListDataModel } from "./data-model";
 import { ISettings } from "sfx.settings";
 import { DialogService } from "../dialog-service/dialog-service";
@@ -102,19 +102,20 @@ export class ClusterList implements IClusterList {
         return Promise.resolve();
     }
 
-    async renameClusterListItem(cluster_label: string, new_cluster: string): Promise<any> {
-        if (cluster_label === new_cluster) {
+    async renameClusterListItem(clusterName: string, newClusterName: string): Promise<any> {
+        if (clusterName === newClusterName) {
             return;
-        } else if (this.clusterListDataModel.getCluster(new_cluster, "label")) {
+        } else if (this.clusterListDataModel.getCluster(newClusterName, "label")) {
             throw new Error("Clusters must have unique labels. Please enter a new name");
         }
-        let endpoint = this.clusterListDataModel.getCluster(cluster_label, "label");
+
+        let endpoint = this.clusterListDataModel.getCluster(clusterName, "label");
         let $button = $('#cluster-list li[data-endpoint="' + endpoint.endpoint + '"]');
-        $button.find("span")[0].innerHTML = new_cluster;
-        this.clusterListDataModel.renameCluster(cluster_label, new_cluster);
+        $button.find("span")[0].innerHTML = newClusterName;
+        this.clusterListDataModel.renameCluster(clusterName, newClusterName);
         await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
 
-        return new_cluster;
+        return newClusterName;
     }
 
     async setupAsync(): Promise<void> {
@@ -129,9 +130,11 @@ export class ClusterList implements IClusterList {
                     <div class="mb-12px">                        
                         <label for="input-cluster-label">Friendly name (Optional)</label>                
                         <input id="input-cluster-label" type="text" class="input-flat" value="" />
-                    </div>`,
-                footerHtml: `<button id="btn-connect" type="submit" class="btn btn-primary">Connect</button><button type="button" class="btn btn-default" id="btn-exit">Cancel</button>`,
-                scriptPath: "../cluster-list/cluster-functionalities/connect-cluster.script.js",
+                    </div>`,                
+                footerButtons: <IDialogFooterButtonOption[]>[
+                    <IDialogFooterButtonOption>{ text: "Connect", type: "submit", cssClass: "btn btn-primary", id: "btn-connect" },
+                    <IDialogFooterButtonOption>{ text: "Cancel", type: "button", cssClass: "btn btn-default" }
+                ],
                 height: 440
             });
 
@@ -160,19 +163,6 @@ export class ClusterList implements IClusterList {
                     alert((<Error>error).message);
                 }
             });
-
-            $("#input-cluster-url").keyup(($event) => {
-                const keyboardEvent = <KeyboardEvent>$event.originalEvent;
-
-                if (keyboardEvent.code === "Enter") {
-                    $("#btn-connect").click();
-                }
-            });
-
-            $("#btn-exit").click(() => {
-                $("#main-modal-dialog").modal("hide");
-            });
-
         });
 
         return Promise.resolve();
@@ -224,14 +214,22 @@ export class ClusterList implements IClusterList {
             const action = $(e.target).data("action");
             switch (action) {
                 case "connect":
+                    let $button = $('#cluster-list li[data-endpoint="' + endpoint + '"]');
+                    if (!$button.hasClass("current")) {
+                        $("#cluster-list li").removeClass("current");
+                        $button.addClass("current");
+                    }
+
                     await this.sfxContainer.reloadSfxAsync(endpoint);
                     break;
                 case "remove":
                     await this.dialogService.showInlineDialogAsync({
                         title: `Remove cluster`,
-                        bodyHtml: `<p>Are you sure you want to remove ${name}?</p>`,
-                        footerHtml: `<button id="btn-delete-cluster" data-target="${name}" type="submit" class="btn btn-primary">Remove</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
-                        scriptPath: "../cluster-list/cluster-functionalities/delete-cluster.script.js",
+                        bodyHtml: `<p>Are you sure you want to remove ${name}?</p>`,                        
+                        footerButtons: <IDialogFooterButtonOption[]>[
+                            <IDialogFooterButtonOption>{ text: "Remove", type: "submit", cssClass: "btn btn-primary", id: "btn-delete-cluster", attributes: { "data-target": `${name}` } },
+                            <IDialogFooterButtonOption>{ text: "Cancel", type: "button", cssClass: "btn btn-default" }
+                        ],
                         height: 200
                     });
 
@@ -245,40 +243,34 @@ export class ClusterList implements IClusterList {
                         }
                     });
 
-                    $("#btn-exit").click(() => {
-                        $("#main-modal-dialog").modal("hide");
-                    });
-
                     break;
-
                 case "rename":
+                    const url = Url.parse(endpoint);
                     await this.dialogService.showInlineDialogAsync({
                         title: `Rename cluster`,
-                        bodyHtml: `<p>New friendly name for cluster ${name}</p><input id="input-cluster-label" type="text" class = "input-flat" value="${name}"/>`,
-                        footerHtml: `<button id="btn-new-label" type="submit" class="btn btn-primary" data-target="${name}">Rename</button><button id="btn-exit" type="button" class="btn btn-default">Cancel</button>`,
-                        scriptPath: "../cluster-list/cluster-functionalities/rename-cluster.script.js",
+                        bodyHtml: `<p>New friendly name for cluster ${name}</p><p><i>Leave it blank to use the default name.</i></p><input id="input-cluster-label" type="text" class = "input-flat" placeholder="${url.host}" value="${name}"/>`,
+                        footerButtons: <IDialogFooterButtonOption[]>[
+                            <IDialogFooterButtonOption>{ text: "Rename", type: "submit", cssClass: "btn btn-primary", id: "btn-new-label", attributes: { "data-target": `${name}` } },
+                            <IDialogFooterButtonOption>{ text: "Cancel", type: "button", cssClass: "btn btn-default" }
+                        ],
                         height: 200
                     });
 
                     $("#btn-new-label").click(async (e) => {
                         try {
                             let label: string = $("#input-cluster-label").val();
-                            if (label !== "") {
-                                await this.renameClusterListItem($("#btn-new-label").data("target"), label);
-
-                                $("#main-modal-dialog").modal("hide");
+                            if (label === "") {
+                                label = $("#input-cluster-label").attr("placeholder");
                             }
+
+                            await this.renameClusterListItem($("#btn-new-label").data("target"), label);
+                            $("#main-modal-dialog").modal("hide");
                         } catch (error) {
                             alert(error.message);
                         }
                     });
 
-                    $("#btn-exit").click(() => {
-                        $("#main-modal-dialog").modal("hide");
-                    });
-
                     break;
-
                 default:
                     break;
             }

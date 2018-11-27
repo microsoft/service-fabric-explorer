@@ -52,6 +52,26 @@ export class DialogService implements IDialogService {
             options.height = 600;
         }
         
+        if (!options.footerHtml && options.footerButtons) {
+            let $footerButtons: JQLite = $("<div></div>");
+            options.footerButtons.forEach(option => {
+                let $button = $(`<button type="${option.type}" class="${option.cssClass}">${option.text}</button>`);
+                if (option.id) {
+                    $button.attr("id", option.id);
+                }
+
+                if (option.attributes) {
+                    for (let key in option.attributes) {
+                        $button.attr(key, option.attributes[key]);
+                    }
+                }
+
+                $footerButtons.append($button);
+            });
+
+            options.footerHtml = $footerButtons.html();
+        }
+
         const template = `                       
                 <div class="modal-header">
                     <h4 class="modal-title">${options.title}</h4>
@@ -66,6 +86,18 @@ export class DialogService implements IDialogService {
         $(".modal-content").html(template);
         $("#main-modal-dialog").modal();
 
+        $(".modal-body input[type='text']").keyup(($event) => {
+            const keyboardEvent = <KeyboardEvent>$event.originalEvent;
+
+            if (keyboardEvent.code === "Enter") {
+                $("button[type='submit']", $($event.target).parents(".modal-dialog")).first().click();
+            }
+        });
+
+        $(".modal-footer button[type='button']").last().click(() => {
+            $("#main-modal-dialog").modal("hide");
+        });
+        
         return Promise.resolve();
     }
 
