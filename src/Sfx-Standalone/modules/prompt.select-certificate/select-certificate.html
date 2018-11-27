@@ -11,14 +11,22 @@
     <link href="../../sfx/css/dark.min.css" rel="stylesheet" />
 
     <style>
-        .list-group-item {
+        a.list-group-item {
             border: none;
             background-color: #373737;
             color: #fff;
+            margin-top: 4px;
+            margin-bottom: 4px;
         }
 
-        a.list-group-item {
+        a.list-group-item:hover {
             color: #fff;
+            background-color: #515151;
+        }
+
+        a.list-group-item:focus { 
+            color: #fff;
+            background-color: #373737;
         }
 
         input.form-control {
