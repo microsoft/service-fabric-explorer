@@ -119,7 +119,7 @@ module Sfx {
         }
 
         // Double encode may be necessary because the browser automatically decodes the token before we have access to it
-        private doubleEncode(str: string): string {
+        public doubleEncode(str: string): string {
             return this._forceSingleEncode ? encodeURIComponent(str) : encodeURIComponent(encodeURIComponent(str));
         }
 

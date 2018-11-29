@@ -8,7 +8,7 @@ module Sfx {
     export class UnhealthyEvaluationDirective implements ng.IDirective {
         public restrict = "E";
         public replace = false;
-        public controller = unhealthyEvaluationController;
+        public controller = UnhealthyEvaluationController;
         public controllerAs = "ctrl";
         public templateUrl = "partials/unhealthyEvaluation.html";
         public scope = {
@@ -61,182 +61,68 @@ module Sfx {
     }
 
 
-    export class unhealthyEvaluationNodeController {
+    // export class unhealthyEvaluationNodeController {
+    //     public static $inject = ["$filter", "$scope"];
+
+    //     public constructor(private $filter: angular.IFilterService, public $scope: any) {
+    //     }
+
+    //     public displayChildren(child): void {
+    //     }
+
+    // }
+
+    export class UnhealthyEvaluationController {
         public static $inject = ["$filter", "$scope"];
+        
+        onlySource: boolean = true;
 
         public constructor(private $filter: angular.IFilterService, public $scope: any) {
-        }
-
-        public displayChildren(child): void{
-        }
-
-    }
-
-    export class unhealthyEvaluationController {
-        public static $inject = ["$filter", "$scope"];
-
-        public constructor(private $filter: angular.IFilterService, public $scope: any) {
 
         }
 
-        public getParents(item): any[]{
+        public getParents(item): any[] {
             let items = new Array(0);
-            while(item.parent){
+            while (item.parent) {
                 items.push(item.parent);
-                item = item.parent
+                item = item.parent;
             }
             return items;
         }
 
         public updateList() {
             if (this.$scope.list) {
-                this.$scope.list[0].display = true;
-
                 this.$scope.events = this.getEvents(this.$scope.list);
+                this.$scope.listSettings.count = this.$scope.events.length;
+                this.$scope.listSettings.limit = 1;
             }
         }
 
-        public toggleChildren(item){
-            item.open = !item.open;
-            console.log(item);
-            item.children.forEach(child => {
-                if(child.display){
-                    this.setChildren(child, false);
-                    child.display = false;
-                }else{
-                    child.display = true;
-                }
-                console.log(child)
-            })
+        public getBadge(item: HealthEvaluation) {
+            return HtmlUtils.getBadgeOnlyHtml(item.healthState);
         }
 
-        public setChildren(item, state: boolean){
-            item.children.forEach(child => {
-                child.display = state;
-                this.setChildren(child, state);
-                console.log(child)
-            })
-        }
-
-        
-        public getBadge(item: HealthEvaluation){
-            return HtmlUtils.getBadgeOnlyHtml(item.healthState)
+        public getLinkHtml(item: HealthEvaluation) {
+            return HtmlUtils.getSpanWithLink("", item.displayName, item.viewPathUrl);
         }
 
         public getEvents(items: HealthEvaluation[]) {
             let events = [];
             items.forEach(element => {
-                if(element.raw.Kind === 'Event'){
+                if (element.raw.Kind === "Event") {
+                    const parents = this.getParents(element);
                     events.push({
                         event: element,
-                        parents: this.getParents(element)
-                    })
+                        parents: parents
+                    });
+                    if (parents.length > 0) {
+                        this.onlySource = false;
+                    }
                 }
             });
 
             return events;
         }
 
-        // public handleClickRow(item: any, event: any): void {
-        //     if (event && event.target !== event.currentTarget) { return; }
-        //     if (this.$scope.listSettings.secondRowCollapsible && this.$scope.listSettings.showSecondRow(item)) {
-        //         item.isSecondRowCollapsed = !item.isSecondRowCollapsed;
-        //     }
-        // }
-
-        // private getSortedFilteredList(): any[] {
-        //     let list = this.$scope.list.collection || this.$scope.list;
-        //     if (_.isEmpty(list)) {
-        //         return list;
-        //     }
-
-        //     if (this.$scope.listSettings.hasEnabledFilters || this.$scope.listSettings.search) {
-
-        //         // Retrieve text values of all columns for searching and filtering
-        //         let pluckedList = _.map(list, item => {
-        //             let pluckedObj = this.$scope.listSettings.getPluckedObject(item);
-        //             // Preserve the original object, property start with $ will be ignored by anguler filter
-        //             pluckedObj["$originalItem"] = item;
-        //             return pluckedObj;
-        //         });
-
-        //         // Filter on columns and update filters based on new list
-        //         pluckedList = this.filterOnColumns(pluckedList, this.$scope.listSettings);
-
-        //         // Search
-        //         if (this.$scope.listSettings.search) {
-        //             let keywords = this.$scope.listSettings.search.trim().split(/\s+/);
-
-        //             _.forEach(keywords, keyword => {
-        //                 pluckedList = this.$filter("filter")(pluckedList, keyword);
-        //             });
-        //         }
-
-        //         // Retrieve the original objects from filtered plucked object list
-        //         list = _.map(pluckedList, pluckedObj => pluckedObj["$originalItem"]);
-        //     }
-
-        //     // Sort
-        //     if (!_.isEmpty(this.$scope.listSettings.sortPropertyPaths)) {
-        //         list = this.$filter("orderBy")(
-        //             list,
-        //             this.$scope.listSettings.sortPropertyPaths,
-        //             this.$scope.listSettings.sortReverse);
-        //     }
-
-        //     return list;
-        // }
-
-        // private filterOnColumns(pluckedList: any, listSettings: ListSettings): any {
-
-        //     // Initialize the filter array, false indicate filtered, true indicate not filtered
-        //     let filterMark: boolean[] = new Array(pluckedList.length);
-        //     _.fill(filterMark, true);
-
-        //     // Update each column filter values by scanning through the list and found out all unique values exist in current column
-        //     _.forEach(listSettings.columnSettings, (columnSetting: ListColumnSetting) => {
-        //         if (!columnSetting.enableFilter) {
-        //             return;
-        //         }
-
-        //         // If any filter value is unchecked, we need to filter on this column
-        //         let hasEffectiveFilters = _.some(columnSetting.filterValues, filterValue => !filterValue.isChecked);
-        //         let checkedValues = _.map(_.filter(columnSetting.filterValues, filterValue => filterValue.isChecked), "value");
-
-        //         // Update filter values in each column and filter the list at the same time
-        //         columnSetting.filterValues =
-        //             _.sortBy( // Sort alphabetically
-        //                 _.union( // Union with original filters, user may already set filter on them, should not overwrite
-        //                     _.map( // Create new filters
-        //                         _.filter( // Get rid of those values already in the filters
-        //                             _.uniq( // Get all unique property values in current column
-        //                                 _.filter( // Get rid of empty values
-        //                                     _.map( // Get all property values in current column
-        //                                         pluckedList,
-        //                                         (item, index) => {
-        //                                             let targetPropertyTextValue = item[columnSetting.propertyPath];
-        //                                             filterMark[index] = filterMark[index] // Not already filtered
-        //                                                 && (!hasEffectiveFilters // No effective filters
-        //                                                     || !targetPropertyTextValue // Target value is empty, no filters apply
-        //                                                     || _.includes(checkedValues, targetPropertyTextValue)); // The checked values include the target value
-        //                                             return targetPropertyTextValue;
-        //                                         }
-        //                                     ),
-        //                                     value => !_.isEmpty(value)
-        //                                 )
-        //                             ),
-        //                             value => _.every(columnSetting.filterValues, filterValue => filterValue.value !== value)
-        //                         ),
-        //                         value => new FilterValue(value)
-        //                     ),
-        //                     columnSetting.filterValues
-        //                 ),
-        //                 "value"
-        //             );
-        //     });
-
-        //     pluckedList = _.filter(pluckedList, (item, index) => filterMark[index]);
-        //     return pluckedList;
-        // }
     }
 }

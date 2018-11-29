@@ -50,7 +50,7 @@ module Sfx {
             return item && item.hasOwnProperty("text") && item.hasOwnProperty("badgeId");
         }
 
-        public static getParsedHealthEvaluations(rawUnhealthyEvals: IRawUnhealthyEvaluation[], level: number = 0, parent: HealthEvaluation = null, data: DataService) : HealthEvaluation[] {
+        public static getParsedHealthEvaluations(rawUnhealthyEvals: IRawUnhealthyEvaluation[], level: number = 0, parent: HealthEvaluation = null, data: DataService): HealthEvaluation[] {
             let healthEvals: HealthEvaluation[] = new Array(0);
             let children: HealthEvaluation[] = new Array(0);
 
@@ -59,33 +59,42 @@ module Sfx {
                     let healthEval: IRawHealthEvaluation = item.HealthEvaluation;
                     let health = new HealthEvaluation(healthEval, level, parent);
                     if (healthEval) {
-                        console.log(healthEval)
-                        health.viewPathUrl = Utils.getViewPathUrl(healthEval, data, parent);
+                        let parentUrl = "";
+                        if (parent) {
+                            parentUrl = parent.viewPathUrl;
+                        }else {
+                            parentUrl = `#${data.$location.url()}`;
+                        }
+                        const pathData = Utils.getViewPathUrl(healthEval, data, parentUrl);
+                        health.viewPathUrl = pathData["viewPathUrl"];
+                        health.displayName =  pathData["displayName"];
                         healthEvals.push(health);
                         healthEvals = healthEvals.concat(Utils.getParsedHealthEvaluations(healthEval.UnhealthyEvaluations, level + 1, health, data));
-                        
                         children.push(health);
                     }
                 });
             }
-            console.log(healthEvals);
-            if(parent){
+            if (parent) {
                 parent.children = children;
             }
             return healthEvals;
         }
 
-        public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parent): string{
+        //create promise
+
+
+
+        public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): any {
             let viewPathUrl = "";
             let replaceText = "";
 
-            switch(healthEval.Kind){
+            switch (healthEval.Kind) {
                 case "Nodes" : {
                     viewPathUrl = data.routes.getNodesViewPath();
                     break;
                 }
                 case "Node" : {
-                    let nodeName = healthEval['NodeName'];
+                    let nodeName = healthEval["NodeName"];
                     viewPathUrl = data.routes.getNodeViewPath(nodeName);
                     replaceText = nodeName;
                     break;
@@ -95,53 +104,60 @@ module Sfx {
                     break;
                 }
                 case "Application" : {
-                    let applicationName = healthEval['ApplicationName'];
-                    let appName = applicationName.split('/')[1]; //remove fabric:/
-                    viewPathUrl = data.apps.find(appName).viewPath;
+                    let applicationName = healthEval["ApplicationName"];
+                    let appName = applicationName.replace("fabric:/", ""); //remove fabric:/
+
+                    let appType = data.apps.find(appName).raw.TypeName;
+                    viewPathUrl += `/#/apptype/${data.routes.doubleEncode(appType)}/app/${data.routes.doubleEncode(appName)}`;
                     replaceText = appName;
                     break;
                 }
                 case "Service" : {
-                    //add check for system services?
-                    let exactServiceName = healthEval['ServiceName'];
-                    let deconstructedServiceName = exactServiceName.split('/');
-
-                    let appId = deconstructedServiceName[1];
-                    let app = data.apps.find(appId);
-                    let appTypeName = app.raw.TypeName;
-                    let serviceName = `${appId}/${deconstructedServiceName[2]}`;
-
-                    viewPathUrl = data.routes.getServiceViewPath(appTypeName, appId, serviceName);
+                    let exactServiceName = healthEval["ServiceName"].replace("fabric:/", "");
+                    //Handle system services slightly different by setting their exact path
+                    if (healthEval["ServiceName"].startsWith("fabric:/System")) {
+                        viewPathUrl = `/#/apptype/System/app/System/service/${data.routes.doubleEncode(exactServiceName)}`;
+                    }else {
+                        parentUrl += `/service/${data.routes.doubleEncode(exactServiceName)}`;
+                        viewPathUrl = parentUrl;
+                    }
                     replaceText = exactServiceName;
                     break;
                 }
+                case "Partition" : {
+                    let partitionId = healthEval["PartitionId"];
+                    parentUrl += `/partition/${data.routes.doubleEncode(partitionId)}`;
+                    replaceText = partitionId;
+                    viewPathUrl = parentUrl;
+                    break;
+                }
                 case "Replica" : {
-                    let partitionId = healthEval['PartitionId']
-                    let replicaId = healthEval['ReplicaOrInstanceId']
-                    
-                    let params = data.$route.current['pathParams'];
-                    let appId = params['appId'];
-                    let appTypeName = params['appTypeName'];
-                    let serviceId = params['serviceId'];
-
-
-                    viewPathUrl = data.routes.getReplicaViewPath(appTypeName, appId, serviceId, partitionId, replicaId);
+                    let replicaId = healthEval["ReplicaOrInstanceId"];
+                    parentUrl += `/replica/${data.routes.doubleEncode(replicaId)}`;
                     replaceText = replicaId;
+                    viewPathUrl = parentUrl;
                     break;
                 }
                 case "Event" : {
-                    if(parent){
-                        viewPathUrl = parent.viewPathUrl;
+                    if (parentUrl) {
+                        viewPathUrl = parentUrl;
                     }
+                    break;
+                }
+                // case: "Applications"
+                // case: "Partitions"
+                // case: "Replicas"
+                default: {
+                    viewPathUrl = parentUrl;
                     break;
                 }
             }
             healthEval.Description = Utils.injectLink(healthEval.Description, replaceText, viewPathUrl, replaceText);
-            return viewPathUrl;
+            return {viewPathUrl: viewPathUrl, displayName: replaceText };
         }
 
         public static injectLink(textToReplace: string, replaceText: string, url: string, title: string): string {
-            return textToReplace.replace(replaceText, `<a title=${title} ng-href="${url}" ">${replaceText}</a>`)
+            return textToReplace.replace(replaceText, `<a title=${title} ng-href="${url}" ">${replaceText}</a>`);
         }
 
         public static parseReplicaAddress(address: string): any {

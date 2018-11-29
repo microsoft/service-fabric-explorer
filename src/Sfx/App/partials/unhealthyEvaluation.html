@@ -1,71 +1,44 @@
-
-<br><br><br><br><br>
-<div class="table-responsive">
+<div class="detail-list-container flex-child">
     <table class="table detail-list" role="presentation">
+        <thead>
+            <tr>
+                <th>
+                    Event ({{events.length}})
+                </th>
+                <th  ng-if="!ctrl.onlySource">
+                    Source
+                </th>
+            </tr>
+        </thead>
         <tbody>
-            <thead>
-                <tr>
-                    <th>
-                        Description
-                    </th>
-                </tr>
-            </thead>
-            <tr ng-repeat="item in list" ng-if="item.display">
+            <tr ng-repeat="item in events | limitTo: listSettings.limit: listSettings.begin" style="border: 3px solid #4c4c4c;">
                 <td>
-                    <span ng-style="::{paddingLeft: (item.level * 10) +  'px'}"></span>
-                    <span style="padding-left: 15px;" ng-if="item.children.length === 0"></span>
-                    <span class="expander icon bowtie-icon" aria-hidden="true" ng-click="ctrl.toggleChildren(item)" ng-if="item.children.length > 0"
-                    ng-class="{ 'bowtie-chevron-right-light': item.display, 'bowtie-chevron-down-light': item.display }"
-                    ng-style="::{ 'left': (child.paddingLeft - 18) + 'px' }"></span>
-                        
-                    <span sfx-bind-html-compile="ctrl.getBadge(item)"></span>
-
-                    <span sfx-bind-html-compile="item.description"></span>
-
-                    <span class="bowtie-icon bowtie-math-plus " ng-click="ctrl.setChildren(item, true)" ng-if="item.children.length > 0"></span>
+                    <div ng-click="item.display = !item.display">
+                            <span sfx-bind-html-compile="ctrl.getBadge(item.event)"></span>
+                            <span sfx-bind-html-compile="item.event.description"></span>
+                    </div>
+                    <div ng-if="item.display" style="padding-left: 15px;">
+                            <table class="table detail-list" role="presentation" style="border-bottom: 0px; border-left: 2px;">
+                                <tbody>
+                                    <tr ng-repeat="parent in item.parents" style="border: 0px solid #4c4c4c;" >
+                                        <td style="border: 0px;">
+                                        <!-- <td style="border-top: 0px;"> -->
+                                            <span ng-style="::{paddingLeft: ( ($index + 0) * 16) + 'px'}"></span>
+                                            <span sfx-bind-html-compile="ctrl.getBadge(parent)"></span>
+                                            <span sfx-bind-html-compile="parent.description"></span>
+                                        </td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                    </div>
+                </td>
+                <td ng-if="item.parents.length > 0">
+                    {{item.parents[0].raw.Kind}} : 
+                    <span sfx-bind-html-compile="ctrl.getLinkHtml(item.parents[0])"></span>
                 </td>
             </tr>
         </tbody>
     </table>
-</div>
 
-<br><br><br><br><br>
-<div>
-    Events : {{events.length}}
+    <sfx-pager list="events" list-settings="listSettings"></sfx-pager>
 </div>
-<div class="table-responsive">
-        <table class="table detail-list" role="presentation">
-            <tbody>
-                <thead>
-                    <tr>
-                        <th>
-                            Events
-                        </th>
-                    </tr>
-                </thead>
-                <tr ng-repeat="item in events">
-                    <td ng-click="item.display = !item.display">
-                        <span>
-                                <span sfx-bind-html-compile="ctrl.getBadge(item.event)"></span>
-                                <span sfx-bind-html-compile="item.event.description"></span>
-                        </span>
-                        <div ng-if="item.display">
-                            <div class="table-responsive">
-                                    <table class="table detail-list" role="presentation">
-                                        <tbody>
-                                            <tr ng-repeat="parent in item.parents" style="border: 0px solid #808080;" >
-                                                <td>
-                                                    <span ng-style="::{paddingLeft: ( ($index + 1) * 16) + 'px'}"></span>
-                                                    <span sfx-bind-html-compile="ctrl.getBadge(parent)"></span>
-                                                    <span sfx-bind-html-compile="parent.description"></span>
-                                                </td>
-                                            </tr>
-                                        </tbody>
-                                    </table>
-                                </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
-    </div>

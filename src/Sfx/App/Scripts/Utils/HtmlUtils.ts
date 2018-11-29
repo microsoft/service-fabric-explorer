@@ -131,9 +131,9 @@ module Sfx {
         }
 
         public static getSpanWithLink(className: string, text: string, url: string): string {
-            if(url){
+            if (url) {
                 return `<a class="${className}" title="${text}" ng-href="${url}" ">${text}</a>`;
-            }else{
+            }else {
                 return HtmlUtils.getSpanWithCustomClass(className, text);
             }
         }

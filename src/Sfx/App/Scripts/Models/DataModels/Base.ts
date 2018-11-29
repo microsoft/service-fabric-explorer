@@ -199,13 +199,18 @@ module Sfx {
             this.parseCommonHealthProperties();
         }
 
-        protected parseCommonHealthProperties() {
-            let healthEvents = _.map(this.raw.HealthEvents, rawHealthEvent => new HealthEvent(this.data, <IRawHealthEvent>rawHealthEvent));
-            CollectionUtils.updateDataModelCollection(this.healthEvents, healthEvents);
-
-            // There is no unique ID to identify the unhealthy evaluations collection, update the collection directly.
-            console.log(this.data);
-            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
+        protected parseCommonHealthProperties(): angular.IPromise<object> {
+            return this.data.$q( (resolve, reject) => {
+                let healthEvents = _.map(this.raw.HealthEvents, rawHealthEvent => new HealthEvent(this.data, <IRawHealthEvent>rawHealthEvent));
+                CollectionUtils.updateDataModelCollection(this.healthEvents, healthEvents);
+                // There is no unique ID to identify the unhealthy evaluations collection, update the collection directly.
+                console.log(this.data);
+                this.data.apps.ensureInitialized().then( () => {
+                    this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
+                    console.log(this.unhealthyEvaluations);
+                    resolve();
+                });
+            });
         }
     }
 
