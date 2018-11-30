@@ -15,7 +15,8 @@
   "author": "Microsoft Corporation",
   "license": "MIT",
   "dependencies": {
-    "angular": "^1.6.8",
+    "@types/bootstrap": "^4.1.1",
+    "angular": "^1.7.2",
     "applicationinsights": "^1.0.1",
     "donuts.node": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.1/donuts.node-1.0.1.tgz",
     "donuts.node-ipc": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.1/donuts.node-ipc-1.0.1.tgz",
@@ -23,6 +24,7 @@
     "donuts.node-remote": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.1/donuts.node-remote-1.0.1.tgz",
     "donuts.node-settings": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.1/donuts.node-settings-1.0.1.tgz",
     "jquery": "^3.2.1",
+    "bootstrap": "^4.1.1",
     "semver": "^5.5.0",
     "tar": "^4.4.4",
     "tmp": "0.0.33"

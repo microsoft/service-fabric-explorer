@@ -63,8 +63,6 @@ module Sfx {
     };
 
     export class StandaloneIntegration {
-        private static require: (moduleName: string) => any = window["nodeRequire"];
-
         private static _clusterUrl: string = null;
 
         public static isStandalone(): boolean {
@@ -72,12 +70,11 @@ module Sfx {
         }
 
         public static get clusterUrl(): string {
-
-            if (this._clusterUrl == null) {
-                if (typeof this.require === "function") {
-                    this._clusterUrl = this.require("electron").remote.getGlobal("TargetClusterUrl");
+            if (StandaloneIntegration._clusterUrl == null) {
+                if (StandaloneIntegration.isStandalone()) {
+                    StandaloneIntegration._clusterUrl = StandaloneIntegration.extractQueryItem(window.location.search, "targetcluster");
                 } else {
-                    this._clusterUrl = "";
+                    StandaloneIntegration._clusterUrl = "";
                 }
             }
 
@@ -86,10 +83,25 @@ module Sfx {
 
         public static getHttpClient(): Promise<Standalone.http.IHttpClient> {
             if (this.isStandalone()) {
-                return sfxModuleManager.getComponentAsync("http.http-client.service-fabric");
+                return sfxModuleManager.getComponentAsync<Standalone.http.IHttpClient>("http.http-client.service-fabric");
             }
 
             return undefined;
+        }
+
+        private static extractQueryItem(queryString: string, name: string): string {
+            if (queryString) {
+                let urlParameters = window.location.search.split("?")[1];
+                let queryParams = urlParameters.split("&");
+                for (let i = 0; i < queryParams.length; i++) {
+                    let queryParam = queryParams[i].split("=");
+                    if (queryParam[0] === name) {
+                        return decodeURIComponent(queryParam[1]);
+                    }
+                }
+            }
+
+            return null;
         }
     }
 }

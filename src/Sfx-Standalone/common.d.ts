@@ -31,4 +31,12 @@ declare module "sfx.common" {
         handleAsync(constructor: IAsyncHandlerConstructor<THandler>): Promise<IHandlerChainBuilder<THandler>>;
         buildAsync(): Promise<THandler>;
     }
+
+    export interface IComponentConfiguration {
+        id: string;
+        title: string;
+        iconUrl?: string;
+        viewUrl?: string;
+        mainViewUrl?: string;
+    }
 }

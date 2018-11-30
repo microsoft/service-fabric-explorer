@@ -7,6 +7,25 @@
         {
             "type": "node",
             "request": "launch",
+            "name": "just run",
+            "cwd": "${workspaceRoot}",
+            "sourceMaps": true,
+            "autoAttachChildProcesses": true,
+            "protocol": "inspector",
+            "trace": true,
+            "outputCapture": "std",
+            "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron",
+            "windows": {
+                "runtimeExecutable": "${workspaceRoot}/node_modules/.bin/electron.cmd"
+            },
+            "args": [
+                "--remote-debugging-port=9223",
+                "./build/app/."
+            ]
+        },
+        {
+            "type": "node",
+            "request": "launch",
             "name": "Debug: Main",
             "cwd": "${workspaceRoot}",
             "sourceMaps": true,

@@ -87,9 +87,9 @@
                 "variable-declaration": "nospace"
             }
         ],
-        "variable-name": false,
+        "variable-name": false, 
         "whitespace": [
-            true,
+            false,
             "check-branch",
             "check-decl",
             "check-operator",
