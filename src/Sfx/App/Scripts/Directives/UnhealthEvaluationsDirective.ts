@@ -60,18 +60,6 @@ module Sfx {
         }
     }
 
-
-    // export class unhealthyEvaluationNodeController {
-    //     public static $inject = ["$filter", "$scope"];
-
-    //     public constructor(private $filter: angular.IFilterService, public $scope: any) {
-    //     }
-
-    //     public displayChildren(child): void {
-    //     }
-
-    // }
-
     export class UnhealthyEvaluationController {
         public static $inject = ["$filter", "$scope"];
         
@@ -94,7 +82,7 @@ module Sfx {
             if (this.$scope.list) {
                 this.$scope.events = this.getEvents(this.$scope.list);
                 this.$scope.listSettings.count = this.$scope.events.length;
-                this.$scope.listSettings.limit = 1;
+                this.$scope.listSettings.limit = 2;
             }
         }
 
@@ -111,13 +99,18 @@ module Sfx {
             items.forEach(element => {
                 if (element.raw.Kind === "Event") {
                     const parents = this.getParents(element);
-                    events.push({
+                    
+                    let eventData = {
                         event: element,
-                        parents: parents
-                    });
+                        parents: parents.reverse(),
+                        parent: null
+                    }
+                    
                     if (parents.length > 0) {
                         this.onlySource = false;
+                        eventData.parent = parents[parents.length - 1];
                     }
+                    events.push(eventData);
                 }
             });
 
