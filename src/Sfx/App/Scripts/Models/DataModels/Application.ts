@@ -260,10 +260,10 @@ module Sfx {
             this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations);
 
             let domains = _.sortBy(_.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud)), "name");
-            let groupedDomains = _.each(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Completed), ud => ud.badgeClass = BadgeConstants.BadgeOK)
-                .concat(_.each(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.InProgress), ud => ud.badgeClass = BadgeConstants.BadgeError))
-                .concat(_.each(_.filter(domains, ud => ud.name === this.raw.NextUpgradeDomain), ud => ud.badgeClass = BadgeConstants.BadgeWarning))
-                .concat(_.each(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain), ud => ud.badgeClass = BadgeConstants.BadgeUnknown));
+            let groupedDomains = _.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Completed)
+                .concat(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.InProgress))
+                .concat(_.filter(domains, ud => ud.name === this.raw.NextUpgradeDomain))
+                .concat(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain));
 
             this.upgradeDomains = groupedDomains;
 

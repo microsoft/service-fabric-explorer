@@ -117,7 +117,7 @@ module Sfx {
 
     export class UpgradeDescription extends DataModelBase<IRawUpgradeDescription> {
         public decorators: IDecorators = {
-            hideList: ["Name", "TargetApplicationTypeVersion", "UpgradeKind", "RollingUpgradeMode", "MonitoringPolicy"]
+            hideList: ["Name", "TargetApplicationTypeVersion", "UpgradeKind", "RollingUpgradeMode"]
         };
 
         public monitoringPolicy: MonitoringPolicy;
@@ -161,8 +161,6 @@ module Sfx {
     }
 
     export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain> {
-        public badgeClass: string = BadgeConstants.BadgeUnknown;
-
         public constructor(data: DataService, raw: IRawUpgradeDomain) {
             super(data, raw);
         }
@@ -177,14 +175,14 @@ module Sfx {
             return UpgradeDomainStateNames.Pending;
         }
 
-        // public get badgeClass(): string {
-        //     if (UpgradeDomainStateRegexes.Completed.test(this.raw.State)) {
-        //         return BadgeConstants.BadgeOK;
-        //     } else if (UpgradeDomainStateRegexes.InProgress.test(this.raw.State)) {
-        //         return BadgeConstants.BadgeWarning;
-        //     }
-        //     return BadgeConstants.BadgeUnknown;
-        // }
+        public get badgeClass(): string {
+            if (UpgradeDomainStateRegexes.Completed.test(this.raw.State)) {
+                return BadgeConstants.BadgeOK;
+            } else if (UpgradeDomainStateRegexes.InProgress.test(this.raw.State)) {
+                return BadgeConstants.BadgeWarning;
+            }
+            return BadgeConstants.BadgeUnknown;
+        }
     }
 }
 

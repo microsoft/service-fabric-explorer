@@ -94,7 +94,7 @@ module Sfx {
         protected updateInternal(): angular.IPromise<any> | void {
             this.address = Utils.parseReplicaAddress(this.raw.Address);
         }
-                
+
         private setUpActions(): void {
             let serviceName = this.parent.parent.raw.Name;
 

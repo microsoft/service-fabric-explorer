@@ -465,13 +465,13 @@ table.detail-list {
                 background-color: $badge-ok-color;
             }
 
-            &.badge-error {
+            &.badge-warning {
                 animation-name: upgrade-domain-bar-active;
                 animation-duration: 2s;
                 animation-iteration-count: infinite;
             }
 
-            &.badge-warning {
+            &.badge-error {
                 background-color: $badge-warning-color;
             }
         }

@@ -35,87 +35,71 @@
             </div>
         </div>
 
-        <div class="detail-pane" ng-if="app.isUpgrading && upgradeProgress">
-            <h4>Upgrade In Progress</h4>
+        <div class="detail-pane" ng-if="upgradeProgress">
+            <h4 ng-if="app.isUpgrading">Upgrade In Progress</h4>
+            <h4 ng-if="!app.isUpgrading">Latest Upgrade State</h4>
             <div class="table-responsive">
                 <table class="table detail-list">
                     <thead>
                         <tr>
-                            <th>Current Version</th>
-                            <th>Target Version</th>
+                            <th>Target Version</th>                                    
+                            <th>Start Timestamp Utc</th>                                    
+                            <th title="Upgrade Duration">Upgrade Duration</th>                                    
+                            <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>                                    
                             <th>Upgrade Mode</th>
                             <th>Upgrade State</th>
                         </tr>
                     </thead>
                     <tbody>
                         <tr>
-                            <td>{{upgradeProgress.parent.raw.TypeVersion}}</td>
-                            <td>{{upgradeProgress.raw.TargetApplicationTypeVersion}}</td>                            
+                            <td title="{{upgradeProgress.raw.TargetApplicationTypeVersion}}">{{upgradeProgress.raw.TargetApplicationTypeVersion}}</td>
+                            <td>{{upgradeProgress.startTimestampUtc}}</td>
+                            <td>{{upgradeProgress.upgradeDuration}}</td>                            
+                            <td>{{upgradeProgress.upgradeDomainDuration}}</td>                            
                             <td>{{upgradeProgress.raw.RollingUpgradeMode}}</td>
-                            <td>{{upgradeProgress.raw.UpgradeState}}</td>
+                            <td>{{upgradeProgress.raw.UpgradeState}}</td>                            
                         </tr>
                     </tbody>
                 </table>
             </div>
             <div>
-                <h5>Progress by Upgrade Domain</h5>
-                <!-- <sfx-upgrade-progress upgrade-domains="upgradeProgress.upgradeDomains"></sfx-upgrade-progress> -->
+                <h5>Progress by Upgrade Domain</h5>                
                 <div class="upgrade-progress">
                     <div class="upgrade-domain-bar" ng-repeat="ud in upgradeProgress.upgradeDomains track by ud.name" title="{{::ud.name}} - {{::ud.raw.State}}">
-                        <div class="upgrade-domain-title {{ud.badgeClass}}">{{::ud.name}}</div>
+                        <div class="upgrade-domain-title {{ud.badgeClass}}">{{::ud.name}}</div>                        
                     </div>                    
-                </div>
+                </div>               
             </div>
-            <!-- <a href="" data-toggle="collapse" data-target="#upgradeDetailsSection" aria-expanded="false"
-               ng-click="upgradeDetailsSectionExpanded = !upgradeDetailsSectionExpanded">
-                {{upgradeDetailsSectionExpanded ? 'Hide upgrade details' : 'Show upgrade details'}}
-            </a> -->
         </div>       
 
-        <div id="upgradeDetailsSection" ng-if="upgradeProgress && upgradeProgress.isInitialized">
-            <div class="detail-pane">
-                <h4><img class="badge-icon" src="images/badge-error.svg" ng-if="upgradeProgress.raw.FailureReason !== 'None'"><span> Upgrade Failure</span></h4>
-
-                <table class="table detail-table" ng-class="table-layout-fixed" role="presentation">
-                    <tbody> 
-                            <tr ng-if="upgradeProgress.raw.FailureReason !== 'None'">                           
-                                    <th title="Failure Reason"><img class="badge-icon" src="images/badge-error.svg"><span> Failure Reason</span></th>                                    
-                                    <td title="{{upgradeProgress.raw.FailureReason}}">{{upgradeProgress.raw.FailureReason}}</td>
-                                </tr>                               
-                            <tr ng-if="upgradeProgress.raw.FailureReason !== 'None'">                           
-                                    <th title="Failure Reason"><img class="badge-icon" src="images/badge-error.svg"><span> Upgrade State</span></th>                                    
-                                    <td title="{{upgradeProgress.raw.FailureReason}}">RollingBackCompleted</td>
-                                </tr>                              
-                        <tr ng-if="upgradeProgress.raw.FailureReason !== 'None'">                           
-                            <th title="Failure Timestamp Utc">Failure Timestamp Utc</th>                                    
-                            <td title="{{upgradeProgress.raw.FailureTimestampUtc}}">{{upgradeProgress.failureTimestampUtc}}</td>
-                        </tr>
-                        
-                        <tr>                           
-                            <th title="Start Timestamp Utc">Start Timestamp Utc</th>                                    
-                            <td title="{{upgradeProgress.raw.StartTimestampUtc}}">{{upgradeProgress.startTimestampUtc}}</td>
-                        </tr>        
-                        <tr>                           
-                            <th title="Upgrade Duration">Upgrade Duration</th>                                    
-                            <td title="{{upgradeProgress.upgradeDuration}}">{{upgradeProgress.upgradeDuration}}</td>
-                        </tr>
-                        <tr>                           
-                            <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>                                    
-                            <td title="{{upgradeProgress.upgradeDomainDuration}}">{{upgradeProgress.upgradeDomainDuration}}</td>
-                        </tr>                        
-                    </tbody>
-                </table>
-                <sfx-detail-view-part data="upgradeProgress.upgradeDescription"></sfx-detail-view-part>
+        <div id="upgradeDetailsSection" ng-if="upgradeProgress && upgradeProgress.isInitialized">            
+                <div class="detail-pane" ng-if="upgradeProgress.raw.FailureReason !== 'None'">                
+                <h4>Upgrade Failure</h4>                
+                <div class="table-responsive">
+                    <table class="table detail-table">
+                            <tbody>
+                            <tr>
+                                <th>Failure Reason</th>
+                                <td>{{upgradeProgress.failureTimestampUtc}}</td>                                
+                            </tr>                        
+                            <tr>
+                                <th>Failure Timestamp Utc</th>
+                                <td><img class="badge-icon" src="images/badge-error.svg"><span> {{upgradeProgress.raw.FailureReason}}</span></td>                                                            
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>               
+                <h5>Upgrade Domain Progress At Failure</h5>
+                <sfx-detail-view-part data="upgradeProgress.raw.UpgradeDomainProgressAtFailure"></sfx-detail-view-part>
+            </div>
+            <div class="detail-pane" ng-if="upgradeProgress.unhealthyEvaluations.length > 0">
+                <h4>Unhealthy Evaluations (Upgrade)</h4>
+                <sfx-detail-list list="upgradeProgress.unhealthyEvaluations" list-settings="upgradeProgressUnhealthyEvaluationsListSettings"></sfx-detail-list>
             </div>
 
             <div class="detail-pane">
                 <h4>Upgrade Parameters</h4>
-                <sfx-detail-view-part data="upgradeProgress.upgradeDescription.monitoringPolicy"></sfx-detail-view-part>
-            </div>
-
-            <div class="detail-pane" ng-if="upgradeProgress.unhealthyEvaluations.length > 0">
-                <h4>Unhealthy Evaluations (Upgrade)</h4>
-                <sfx-detail-list list="upgradeProgress.unhealthyEvaluations" list-settings="upgradeProgressUnhealthyEvaluationsListSettings"></sfx-detail-list>
+                <sfx-detail-view-part data="upgradeProgress.upgradeDescription"></sfx-detail-view-part>
             </div>
         </div>
 
@@ -167,6 +151,10 @@
     </script>
 
     <script type="text/ng-template" id="tab_events">
+        <sfx-events-view events-list="appEvents" class="flex-child"></sfx-events-view>
+    </script>
+
+    <script type="text/ng-template" id="expandable-detail-view">
         <sfx-events-view events-list="appEvents" class="flex-child"></sfx-events-view>
     </script>
 </div>
