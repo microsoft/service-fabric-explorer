@@ -25,7 +25,7 @@ async function startup(): Promise<void> {
     // Handle "window-all-closed" event.
     app.removeAllListeners("window-all-closed");
     app.once("window-all-closed", async () => {
-        log.writeInfoAsync("'window-all-closed': app.quit().");
+        (await sfxModuleManager.getComponentAsync("logging.default")).writeInfoAsync("'window-all-closed': app.quit().");
         app.quit();
     });
 
