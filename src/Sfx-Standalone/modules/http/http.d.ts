@@ -50,6 +50,10 @@ declare module "sfx.http" {
         requestAsync(request: IHttpRequest): Promise<IHttpResponse>;
     }
 
+    export interface IHttpProcessor {
+        hook(pipeline: IHttpPipeline): this;
+    }
+
     export interface IHttpClient {
         getRequestTemplateAsync(): Promise<IHttpRequest>;
 
@@ -92,7 +96,7 @@ declare module "sfx.module-manager" {
         ClientCertSelector
     } from "sfx.http";
 
-    export interface IModuleManager {
+    export interface ISfxModuleManager {
         getComponentAsync(componentIdentity: "http.http-client", requestHandlers?: Array<HttpRequestHandler>, responseHandlers?: Array<HttpResponseHandler>): Promise<IHttpClient>;
         getComponentAsync(componentIdentity: "http.http-client.service-fabric"): Promise<IHttpClient>;
     }

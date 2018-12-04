@@ -6,7 +6,7 @@
 declare module "sfx.module-manager" {
     import { IPrompt } from "sfx.prompt";
 
-    export interface IModuleManager {
+    export interface ISfxModuleManager {
         getComponentAsync(componentIdentity: "prompt.connect-cluster"): Promise<IPrompt<string>>;
     }
 }

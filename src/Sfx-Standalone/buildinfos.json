@@ -1,4 +1,5 @@
 {
+    "$schema": "./node_modules/cookie.gulp/schemas/2018-10/buildinfos.json",
     "productName": "Service Fabric Explorer",
     "targetExecutableName": "sfxstandalone",
     "copyright": "Copyright (c) 2018 Microsoft Corporation.",

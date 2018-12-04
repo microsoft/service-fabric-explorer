@@ -56,6 +56,14 @@ module Sfx {
             return "#/node/" + this.doubleEncode(nodeName);
         }
 
+        public getNetworksViewPath(): string {
+            return "#/networks";
+        }
+
+        public getNetworkViewPath(networkName: string): string {
+            return "#/network/" + this.doubleEncode(networkName);
+        }
+
         public getDeployedAppViewPath(nodeName: string, appId: string): string {
             return "#/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId);
         }
@@ -188,6 +196,16 @@ module Sfx {
                 templateUrl: "partials/deployed-app.html",
                 controller: "DeployedAppViewController",
                 controllerAs: "deployedAppCtrl"
+            });
+            whenWithTabs($routeProvider, "/networks", {
+                templateUrl: "partials/networks.html",
+                controller: "NetworksViewController",
+                controllerAs: "networksCtrl"
+            });
+            whenWithTabs($routeProvider, "/network/:networkName", {
+                templateUrl: "partials/network.html",
+                controller: "NetworkViewController",
+                controllerAs: "networkCtrl"
             });
             whenWithTabs($routeProvider,
                 [

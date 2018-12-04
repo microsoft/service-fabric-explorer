@@ -215,8 +215,7 @@ h1, h2, h3, h4, h5, h6 {
     padding: 0;
     position: relative;
     white-space: nowrap;
-
-    .reset-link {
+    .search-link, .reset-link {
         display: inline;
         margin-left: 5px;
     }
@@ -252,6 +251,7 @@ h1, h2, h3, h4, h5, h6 {
         color: $input-border-color-dark-bg;
     }
 }
+
 .dark-bg .input-flat, .dark-bg.input-flat {
     border-color: $input-border-color-dark-bg;
 
@@ -339,4 +339,19 @@ input[type=number]::-webkit-outer-spin-button {
             color: $badge-error-color;
         }
     }
+}
+
+.alert-info {
+    border: none;
+    border-left: #4BA0B5 solid 8px;
+}
+
+.alert-warning {
+    border: none;
+    border-left: #FFC646 solid 8px;
+}
+
+.alert-danger {
+    border: none;
+    border-left: #CB444A solid 8px;
 }

@@ -14,6 +14,7 @@ module Sfx {
         private static apiVersion40: string = "4.0";
         private static apiVersion60: string = "6.0";
         private static apiVersion62Preview: string = "6.2-preview";
+        private static apiVersion64: string = "6.4";
 
         private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -79,6 +80,51 @@ module Sfx {
 
         public getClusterHealthChunk(healthDescriptor: IClusterHealthChunkQueryDescription, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             return this.post(this.getApiUrl("$/GetClusterHealthChunk"), "Get cluster health chunk", healthDescriptor, messageHandler);
+        }
+
+        public createNetwork(networkName: string, networkAddressPrefix: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Resources/Networks/" + encodeURIComponent(networkName);
+            let body: any = { "name": networkName, "properties": { "kind": "Local", "networkAddressPrefix": networkAddressPrefix } };
+            return this.put(this.getApiUrl(url, RestClient.apiVersion64), "Creating isolated network \"" + networkName + "\" succeeded", body, messageHandler);
+        }
+
+        public getNetwork(networkName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawNetwork> {
+            let url = "Resources/Networks/" + encodeURIComponent(networkName) + "/";
+            return this.get(this.getApiUrl(url, RestClient.apiVersion64), "Get network", messageHandler);
+        }
+
+        public getNetworks(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNetwork[]> {
+            return this.getFullCollection<IRawNetwork>("Resources/Networks/", "Get networks", RestClient.apiVersion64);
+        }
+
+        public deleteNetwork(networkName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Resources/Networks/" + encodeURIComponent(networkName);
+            return this.delete(this.getApiUrl(url, RestClient.apiVersion64), "Network \"" + networkName + "\" deleted", messageHandler);
+        }
+
+        public getNetworksOnApp(appId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNetworkOnApp[]> {
+            let url = "Applications/" + encodeURIComponent(appId) + "/$/GetNetworks";
+            return this.getFullCollection<IRawNetworkOnApp>(url, "Get networks attached to a application", RestClient.apiVersion60);
+        }
+
+        public getNetworksOnNode(nodeName: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNetworkOnNode[]> {
+            let url = "Nodes/" + encodeURIComponent(nodeName) + "/$/GetNetworks";
+            return this.getFullCollection<IRawNetworkOnNode>(url, "Get networks deployed on a node", RestClient.apiVersion60);
+        }
+
+        public getAppsOnNetwork(networkName: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawAppOnNetwork[]> {
+            let url = "Resources/Networks/" + encodeURIComponent(networkName) + "/ApplicationRefs";
+            return this.getFullCollection<IRawAppOnNetwork>(url, "Get applications using current network", RestClient.apiVersion64);
+        }
+
+        public getNodesOnNetwork(networkName: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNodeOnNetwork[]> {
+            let url = "Resources/Networks/" + encodeURIComponent(networkName) + "/DeployedNodes";
+            return this.getFullCollection<IRawNodeOnNetwork>(url, "Get nodes, current network is deployed on", RestClient.apiVersion64);
+        }
+
+        public getDeployedContainersOnNetwork(networkName: string, nodeName: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawDeployedContainerOnNetwork[]> {
+            let url = "Nodes/" + encodeURIComponent(nodeName) + "/$/GetNetworks/" + encodeURIComponent(networkName) + "/$/GetCodePackages";
+            return this.getFullCollection<IRawDeployedContainerOnNetwork>(url, "Get containers on network", RestClient.apiVersion60);
         }
 
         public getNodes(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNode[]> {
@@ -319,12 +365,12 @@ module Sfx {
         }
 
         public getApplications(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawApplication[]> {
-            return this.getFullCollection<IRawApplication>("Applications/", "Get applications", messageHandler);
+            return this.getFullCollection<IRawApplication>("Applications/", "Get applications", null, messageHandler);
         }
 
         public getServices(applicationId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawService[]> {
             let url = "Applications/" + encodeURIComponent(applicationId) + "/$/GetServices";
-            return this.getFullCollection<IRawService>(url, "Get services", messageHandler);
+            return this.getFullCollection<IRawService>(url, "Get services", null, messageHandler);
         }
 
         public getService(applicationId: string, serviceId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawService> {
@@ -431,7 +477,7 @@ module Sfx {
                 + "/$/GetServices/" + encodeURIComponent(serviceId)
                 + "/$/GetPartitions";
 
-            return this.getFullCollection<IRawPartition>(url, "Get partitions", messageHandler);
+            return this.getFullCollection<IRawPartition>(url, "Get partitions", null, messageHandler);
         }
 
         public getPartition(applicationId: string, serviceId: string, partitionId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawPartition> {
@@ -474,7 +520,7 @@ module Sfx {
                 + "/$/GetPartitions/" + encodeURIComponent(partitionId)
                 + "/$/GetReplicas";
 
-            return this.getFullCollection<IRawReplicaOnPartition>(url, "Get replicas on partition", messageHandler);
+            return this.getFullCollection<IRawReplicaOnPartition>(url, "Get replicas on partition", null, messageHandler);
         }
 
         public getReplicaOnPartition(applicationId: string, serviceId: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawReplicaOnPartition> {
@@ -516,10 +562,17 @@ module Sfx {
             return this.post(this.getApiUrl(url), "Replica deletion", null, messageHandler);
         }
 
+        public getImageStoreContent(path?: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawImageStoreContent> {
+            let url = path ? `ImageStore/${path}` : "ImageStore";
+            return this.get(this.getApiUrl(url, RestClient.apiVersion60), "Get Image Store content", messageHandler);
+        }
+
+        public deleteImageStoreContent(path: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            return this.delete(this.getApiUrl(`ImageStore/${path}`, RestClient.apiVersion60), "Delete Image Store content", messageHandler);
+        }
+
         public getClusterEvents(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<ClusterEvent[]> {
-            let url = "EventsStore/"
-                + "Cluster/Events";
-            return this.getEvents(ClusterEvent, url, startTime, endTime, messageHandler);
+            return this.getEvents(ClusterEvent, "EventsStore/Cluster/Events", startTime, endTime, messageHandler);
         }
 
         public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, messageHandler?: IResponseMessageHandler): angular.IPromise<NodeEvent[]> {
@@ -571,6 +624,12 @@ module Sfx {
             return this.getEvents(FabricEvent, url, null, null, messageHandler);
         }
 
+        public restartReplica(nodeName: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<{}> {
+            let url = `Nodes/${nodeName}/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/Restart`;
+
+            return this.post(this.getApiUrl(url, RestClient.apiVersion60), "Restart replica", null, messageHandler);
+        }
+
         private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<T[]> {
             let apiUrl = url;
             if (startTime && endTime) {
@@ -597,11 +656,11 @@ module Sfx {
                 `/${path}${path.indexOf("?") === -1 ? "?" : "&"}api-version=${apiVersion ? apiVersion : RestClient.defaultApiVersion}${skipCacheToken === true ? "" : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ""}`;
         }
 
-        private getFullCollection<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler, continuationToken?: string): angular.IPromise<T[]> {
-            let appUrl = this.getApiUrl(url, null, continuationToken);
+        private getFullCollection<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string): angular.IPromise<T[]> {
+            let appUrl = this.getApiUrl(url, apiVersion, continuationToken);
             return this.get<IRawCollection<T>>(appUrl, apiDesc, messageHandler).then(response => {
                 if (response.data.ContinuationToken) {
-                    return this.getFullCollection<T>(url, apiDesc, messageHandler, response.data.ContinuationToken).then(items => {
+                    return this.getFullCollection<T>(url, apiDesc, apiVersion, messageHandler, response.data.ContinuationToken).then(items => {
                         return _.union(response.data.Items, items);
                     });
                 }
@@ -639,6 +698,16 @@ module Sfx {
             this.handleResponse(apiDesc, result, messageHandler);
 
             // Return original response object
+            return result;
+        }
+
+        private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
+            let result = this.wrapInCallbacks<T>(() => this.httpClient.deleteAsync(url));
+            if (!messageHandler) {
+                messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
+            }
+            this.handleResponse(apiDesc, result, messageHandler);
+
             return result;
         }
 

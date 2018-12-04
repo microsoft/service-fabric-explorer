@@ -5,9 +5,6 @@
 		},
 		{
 			"path": "src\\Sfx-Standalone"
-		},
-		{
-			"path": "test\\SfxTests"
 		}
 	],
 	"settings": {}

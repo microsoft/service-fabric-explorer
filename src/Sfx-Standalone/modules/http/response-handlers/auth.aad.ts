@@ -21,7 +21,7 @@ export interface IAadMetadata {
 }
 
 function generateAuthzUrl(aadMetadata: IAadMetadata, authzEndpoint: string): string {
-    const authzUrl = new URL(authzEndpoint);
+    const authzUrl = new url.URL(authzEndpoint);
 
     authzUrl.searchParams.set("client_id", aadMetadata.clientId);
     authzUrl.searchParams.set("response_type", "id_token");
@@ -46,11 +46,11 @@ function acquireAuthzToken(aadMetadata: IAadMetadata, authzEndpoint: string): Pr
 
         authzWnd.setMenuBarVisibility(false);
 
-        authzWnd.webContents.on("did-navigate", (event, url) => {
-            if (url.startsWith(aadMetadata.redirectUri)) {
+        authzWnd.webContents.on("did-navigate", (event, targetUrl) => {
+            if (targetUrl.startsWith(aadMetadata.redirectUri)) {
                 authzWnd.hide();
 
-                const token = new URL(url).searchParams.get("id_token");
+                const token = new url.URL(targetUrl).searchParams.get("id_token");
 
                 if (!token) {
                     reject(new Error("Invalid token recevied."));

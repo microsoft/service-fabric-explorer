@@ -11,7 +11,7 @@ declare module "sfx.module-manager" {
     import { IPrompt } from "sfx.prompt";
     import { ICertificateInfo, ICertificate } from "sfx.cert";
 
-    export interface IModuleManager {
+    export interface ISfxModuleManager {
         getComponentAsync(
             componentIdentity: "prompt.select-certificate",
             certInfos: Array<ICertificateInfo>): Promise<IPrompt<ICertificateInfo | ICertificate>>;

@@ -4,56 +4,37 @@
 //-----------------------------------------------------------------------------
 
 import { app, Menu, MenuItemConstructorOptions } from "electron";
-import * as uuidv5 from "uuid/v5";
-
-import { env, Platform } from "./utilities/env";
-import { resolve } from "./utilities/appUtils";
 
 async function startup(): Promise<void> {
-    const log = await sfxModuleManager.getComponentAsync("logging");
+    const log = await sfxModuleManager.getComponentAsync("logging.default");
     log.writeInfoAsync("Application starting up ...");
 
-    if (env.platform === Platform.MacOs) {
-        const settings = await sfxModuleManager.getComponentAsync("settings");
+    if (process.platform === "darwin") {
+        const settings = await sfxModuleManager.getComponentAsync("settings.default");
 
         log.writeInfoAsync("Initialize application menu for macOS.");
         Menu.setApplicationMenu(
             Menu.buildFromTemplate(
-                await settings.getAsync<Array<MenuItemConstructorOptions>>("defaultMenu/" + env.platform)));
+                await settings.getAsync<Array<MenuItemConstructorOptions>>("defaultMenu/" + process.platform)));
     }
 
     log.writeInfoAsync("Starting up connect-cluster prompt.");
-    const prompt_connectCluster = await sfxModuleManager.getComponentAsync("prompt.connect-cluster");
-    const clusterUrl = await prompt_connectCluster.openAsync();
-
-    if (clusterUrl) {
-        // Start up the main window.
-        global["TargetClusterUrl"] = clusterUrl;
-        const mainWindow = await sfxModuleManager.getComponentAsync("browser-window", null);
-
-        mainWindow.setMenuBarVisibility(false);
-
-        log.writeEventAsync("connect-cluster", { "clusterId": uuidv5(clusterUrl, uuidv5.URL) });
-        mainWindow.loadURL(resolve("sfx/index.html"));
-    } else {
-        log.writeInfoAsync("No cluster url provided.");
-        log.writeInfoAsync("app.quit().");
-
-        app.quit();
-        return;
-    }
-
-    // Trigger update activity.
-    (await sfxModuleManager.getComponentAsync("update")).updateAsync();
+    const mainWindow = await sfxModuleManager.getComponentAsync("sfx.main-window");
+    await mainWindow.loadAsync();
 
     // Handle "window-all-closed" event.
     app.removeAllListeners("window-all-closed");
     app.once("window-all-closed", async () => {
-        const log = await sfxModuleManager.getComponentAsync("logging");
-
-        log.writeInfoAsync("'window-all-closed': app.quit().");
+        (await sfxModuleManager.getComponentAsync("logging.default")).writeInfoAsync("'window-all-closed': app.quit().");
         app.quit();
     });
+
+    // Trigger update activity.
+    try {
+        (await sfxModuleManager.getComponentAsync("update.service")).updateAsync();    
+    } catch (error) {
+        log.writeErrorAsync("error happens while updating the application", error);
+    }
 
     log.writeInfoAsync("application startup finished.");
 }

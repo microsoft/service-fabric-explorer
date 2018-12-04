@@ -3,8 +3,6 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IDictionary } from "sfx.common";
-
 import {
     IHttpPipeline,
     IHttpRequest,
@@ -15,7 +13,7 @@ import {
 
 import * as url from "url";
 
-import createNodeRequestHandler from "./node";
+import createNodeRequestHandler, { IHttpContext } from "./node";
 import createElectronRequestHandler from "./electron";
 
 function shouldTryOther(response: IHttpResponse): boolean {
@@ -27,11 +25,11 @@ function shouldTryOther(response: IHttpResponse): boolean {
     return false;
 }
 
-export default function createRequestHandler(serverCertValidator?: ServerCertValidator): HttpRequestHandler {
-    const requestMap: IDictionary<HttpRequestHandler> = Object.create(null);
+export default function createRequestHandler(serverCertValidator?: ServerCertValidator, nodeHttpContext?: IHttpContext): HttpRequestHandler {
+    const requestMap: Donuts.IStringKeyDictionary<HttpRequestHandler> = Object.create(null);
     const requestHandlers: Array<HttpRequestHandler> = [];
 
-    requestHandlers.push(createNodeRequestHandler(serverCertValidator));
+    requestHandlers.push(createNodeRequestHandler(serverCertValidator, nodeHttpContext));
     requestHandlers.push(createElectronRequestHandler(serverCertValidator));
 
     return async (pipeline: IHttpPipeline, request: IHttpRequest): Promise<IHttpResponse> => {
