@@ -41,7 +41,6 @@ module Sfx {
             let title = "Service Fabric Explorer";
             if (this.isStandalone) {
                 let url = new URL(StandaloneIntegration.clusterUrl);
-                // title + " - " + 
                 title = url.hostname;
             }
 
