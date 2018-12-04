@@ -5,6 +5,12 @@
 
 module Sfx {
 
+    export interface IUnhealthyEvaluationListItem {
+        event: HealthEvaluation;
+        parents: HealthEvaluation[];
+        parent: HealthEvaluation;
+    }
+
     export class UnhealthyEvaluationDirective implements ng.IDirective {
         public restrict = "E";
         public replace = false;
@@ -62,14 +68,25 @@ module Sfx {
 
     export class UnhealthyEvaluationController {
         public static $inject = ["$filter", "$scope"];
-        
         onlySource: boolean = true;
 
         public constructor(private $filter: angular.IFilterService, public $scope: any) {
-
+            this.$scope.visible = {};
         }
 
-        public getParents(item): any[] {
+        public setParentsVisibility(event): void {
+            const id = event.viewPathUrl;
+            console.log(id);
+
+            if (id in this.$scope.visible) {
+                this.$scope.visible[id] = ! this.$scope.visible[id];
+            }else {
+                this.$scope.visible[id] = true;
+            }
+            console.log(this.$scope.visible);
+        }
+
+        public getParents(item): HealthEvaluation[] {
             let items = new Array(0);
             while (item.parent) {
                 items.push(item.parent);
@@ -82,30 +99,30 @@ module Sfx {
             if (this.$scope.list) {
                 this.$scope.events = this.getEvents(this.$scope.list);
                 this.$scope.listSettings.count = this.$scope.events.length;
-                this.$scope.listSettings.limit = 2;
+                this.$scope.listSettings.limit = 5;
             }
         }
 
-        public getBadge(item: HealthEvaluation) {
+        public getBadge(item: HealthEvaluation): string {
             return HtmlUtils.getBadgeOnlyHtml(item.healthState);
         }
 
-        public getLinkHtml(item: HealthEvaluation) {
+        public getLinkHtml(item: HealthEvaluation): string {
             return HtmlUtils.getSpanWithLink("", item.displayName, item.viewPathUrl);
         }
 
-        public getEvents(items: HealthEvaluation[]) {
+        public getEvents(items: HealthEvaluation[]): IUnhealthyEvaluationListItem[] {
             let events = [];
-            items.forEach(element => {
-                if (element.raw.Kind === "Event") {
-                    const parents = this.getParents(element);
-                    
-                    let eventData = {
-                        event: element,
+            items.forEach(item => {
+                if (item.raw.Kind === "Event") {
+                    const parents = this.getParents(item);
+
+                    let eventData: IUnhealthyEvaluationListItem = {
+                        event: item,
                         parents: parents.reverse(),
                         parent: null
-                    }
-                    
+                    };
+
                     if (parents.length > 0) {
                         this.onlySource = false;
                         eventData.parent = parents[parents.length - 1];
@@ -113,7 +130,6 @@ module Sfx {
                     events.push(eventData);
                 }
             });
-
             return events;
         }
 

@@ -59,6 +59,8 @@ module Sfx {
                     let healthEval: IRawHealthEvaluation = item.HealthEvaluation;
                     let health = new HealthEvaluation(healthEval, level, parent);
                     if (healthEval) {
+
+                        //the parent Url is either the parent healthEvaluation or the current locationUrl if its the first parent.
                         let parentUrl = "";
                         if (parent) {
                             parentUrl = parent.viewPathUrl;
@@ -80,10 +82,12 @@ module Sfx {
             return healthEvals;
         }
 
-        //create promise
-
-
-
+        /**
+         * Generates the url for a healthEvaluation to be able to route to the proper page. Urls are built up by taking the parentUrl and adding the minimum needed to route to this event.
+         * @param healthEval
+         * @param data
+         * @param parentUrl
+         */
         public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): any {
             let viewPathUrl = "";
             let replaceText = "";

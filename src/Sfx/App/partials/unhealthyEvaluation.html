@@ -1,44 +1,48 @@
 <div class="detail-list-container flex-child">
-    <table class="table detail-list" role="presentation">
-        <thead>
-            <tr>
-                <th>
-                    Event ({{events.length}})
-                </th>
-                <th  ng-if="!ctrl.onlySource">
-                    Source
-                </th>
-            </tr>
-        </thead>
-        <tbody>
-            <tr ng-repeat="item in events | limitTo: listSettings.limit: listSettings.begin" style="border: 3px solid #4c4c4c;">
-                <td>
-                    <div style="padding-left: 5px;" ng-click="item.display = !item.display">
-                            <span sfx-bind-html-compile="ctrl.getBadge(item.event)"></span>
-                            <span sfx-bind-html-compile="item.event.description"></span>
-                    </div>
-                    <div ng-if="item.display" style="padding-left: 15px;">
+        <table class="table detail-list" role="presentation">
+            <thead>
+                <tr>
+                    <th>
+                        Event ({{events.length}})
+                    </th>
+                    <th  ng-if="!ctrl.onlySource">
+                        Source
+                    </th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr ng-repeat-start="item in events | limitTo: listSettings.limit: listSettings.begin" style="border-width: 3px 3px 0px 3px; border-style: solid; border-color:  #4c4c4c;">
+                    <td>
+                        <div style="padding-left: 5px;" ng-click="ctrl.setParentsVisibility(item.event)">
+                                <span sfx-bind-html-compile="ctrl.getBadge(item.event)"></span>
+                                <span sfx-bind-html-compile="item.event.description"></span>
+                        </div>
+                    </td>
+                    <td ng-if="item.parents.length > 0">
+                        {{item.parent.raw.Kind}} : 
+                        <span sfx-bind-html-compile="ctrl.getLinkHtml(item.parent)"></span>
+                    </td>
+                </tr>
+                <tr ng-repeat-end ng-if="visible[item.event.viewPathUrl]" style="border-width: 0px 3px 3px 3px; border-style: solid; border-color:  #4c4c4c;">
+                    <td colspan="2">
+                        <div style="padding-left: 15px;">
                             <table class="table detail-list" role="presentation" style="border-bottom: 0px; border-left: 2px;">
                                 <tbody>
                                     <tr ng-repeat="parent in item.parents" style="border: 0px solid #4c4c4c;" >
                                         <td style="border: 0px;">
-                                        <!-- <td style="border-top: 0px;"> -->
-                                            <span ng-style="::{paddingLeft: ( ($index + 0) * 16) + 'px'}"></span>
-                                            <span sfx-bind-html-compile="ctrl.getBadge(parent)"></span>
-                                            <span sfx-bind-html-compile="parent.description"></span>
+                                            <div  ng-style="::{paddingLeft: ( ($index + 0) * 16) + 'px'}">
+                                                <span sfx-bind-html-compile="ctrl.getBadge(parent)"></span>
+                                                <span sfx-bind-html-compile="parent.description"></span>
+                                            </div>
                                         </td>
-                                    </tr>
+                                    </tr>   
                                 </tbody>
                             </table>
-                    </div>
-                </td>
-                <td ng-if="item.parents.length > 0">
-                    {{item.parent.raw.Kind}} : 
-                    <span sfx-bind-html-compile="ctrl.getLinkHtml(item.parent)"></span>
-                </td>
-            </tr>
-        </tbody>
-    </table>
-
-    <sfx-pager list="events" list-settings="listSettings"></sfx-pager>
-</div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    
+        <sfx-pager list="events" list-settings="listSettings"></sfx-pager>
+    </div>
