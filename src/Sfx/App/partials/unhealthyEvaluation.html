@@ -23,7 +23,7 @@
                         <span sfx-bind-html-compile="ctrl.getLinkHtml(item.parent)"></span>
                     </td>
                 </tr>
-                <tr ng-repeat-end ng-if="visible[item.event.viewPathUrl]" style="border-width: 0px 3px 3px 3px; border-style: solid; border-color:  #4c4c4c;">
+                <tr ng-repeat-end ng-if="visible[item.event.viewPathUrl] && item.parents.length > 0" style="border-width: 0px 3px 3px 3px; border-style: solid; border-color:  #4c4c4c;">
                     <td colspan="2">
                         <div style="padding-left: 15px;">
                             <table class="table detail-list" role="presentation" style="border-bottom: 0px; border-left: 2px;">

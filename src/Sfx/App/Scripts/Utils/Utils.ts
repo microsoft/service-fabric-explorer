@@ -53,7 +53,6 @@ module Sfx {
         public static getParsedHealthEvaluations(rawUnhealthyEvals: IRawUnhealthyEvaluation[], level: number = 0, parent: HealthEvaluation = null, data: DataService): HealthEvaluation[] {
             let healthEvals: HealthEvaluation[] = new Array(0);
             let children: HealthEvaluation[] = new Array(0);
-
             if (rawUnhealthyEvals) {
                 rawUnhealthyEvals.forEach(item => {
                     let healthEval: IRawHealthEvaluation = item.HealthEvaluation;
@@ -125,7 +124,7 @@ module Sfx {
                         parentUrl += `/service/${data.routes.doubleEncode(exactServiceName)}`;
                         viewPathUrl = parentUrl;
                     }
-                    replaceText = exactServiceName;
+                    replaceText = "fabric:/" + exactServiceName;
                     break;
                 }
                 case "Partition" : {
@@ -148,6 +147,17 @@ module Sfx {
                     }
                     break;
                 }
+
+                case "DeployedServicePackage" : {
+                    const serviceManifestName = healthEval['ServiceManifestName'];
+                    const activationId = healthEval['ServicePackageActivationId'];
+                    const activationIdUrlInfo =  activationId ? "activationid/" + data.routes.doubleEncode(activationId) : "";
+                    viewPathUrl = parentUrl + `/deployedservice/${activationIdUrlInfo}${serviceManifestName}`;
+                    console.log(viewPathUrl);
+                    replaceText = serviceManifestName;
+                    break;
+                }
+
                 // case: "Applications"
                 // case: "Partitions"
                 // case: "Replicas"
@@ -156,7 +166,9 @@ module Sfx {
                     break;
                 }
             }
-            healthEval.Description = Utils.injectLink(healthEval.Description, replaceText, viewPathUrl, replaceText);
+            if(replaceText.length > 0){
+                healthEval.Description = Utils.injectLink(healthEval.Description, replaceText, viewPathUrl, replaceText);
+            }
             return {viewPathUrl: viewPathUrl, displayName: replaceText };
         }
 
