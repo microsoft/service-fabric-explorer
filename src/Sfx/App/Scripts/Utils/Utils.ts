@@ -83,6 +83,7 @@ module Sfx {
 
         /**
          * Generates the url for a healthEvaluation to be able to route to the proper page. Urls are built up by taking the parentUrl and adding the minimum needed to route to this event.
+         * Make sure that the application collection is initialized before calling this because for application kinds they make calls to the collection on the dataservice to get apptype.
          * @param healthEval
          * @param data
          * @param parentUrl
@@ -111,15 +112,15 @@ module Sfx {
                     let appName = applicationName.replace("fabric:/", ""); //remove fabric:/
 
                     let appType = data.apps.find(appName).raw.TypeName;
-                    viewPathUrl += `/#/apptype/${data.routes.doubleEncode(appType)}/app/${data.routes.doubleEncode(appName)}`;
-                    replaceText = appName;
+                    viewPathUrl += `#/apptype/${data.routes.doubleEncode(appType)}/app/${data.routes.doubleEncode(appName)}`;
+                    replaceText = applicationName;
                     break;
                 }
                 case "Service" : {
                     let exactServiceName = healthEval["ServiceName"].replace("fabric:/", "");
                     //Handle system services slightly different by setting their exact path
                     if (healthEval["ServiceName"].startsWith("fabric:/System")) {
-                        viewPathUrl = `/#/apptype/System/app/System/service/${data.routes.doubleEncode(exactServiceName)}`;
+                        viewPathUrl = `#/apptype/System/app/System/service/${data.routes.doubleEncode(exactServiceName)}`;
                     }else {
                         parentUrl += `/service/${data.routes.doubleEncode(exactServiceName)}`;
                         viewPathUrl = parentUrl;
@@ -148,17 +149,28 @@ module Sfx {
                     break;
                 }
 
+                case "DeployedApplication" : {
+                    const nodeName = healthEval["NodeName"];
+                    const applicationName = healthEval["Name"];
+                    const appName = applicationName.replace("fabric:/", "");
+
+                    viewPathUrl += `#/node/${data.routes.doubleEncode(nodeName)}/deployedapp/${data.routes.doubleEncode(appName)}`;
+                    replaceText = applicationName;
+                    break;
+                }
+
+                
                 case "DeployedServicePackage" : {
                     const serviceManifestName = healthEval['ServiceManifestName'];
                     const activationId = healthEval['ServicePackageActivationId'];
                     const activationIdUrlInfo =  activationId ? "activationid/" + data.routes.doubleEncode(activationId) : "";
                     viewPathUrl = parentUrl + `/deployedservice/${activationIdUrlInfo}${serviceManifestName}`;
-                    console.log(viewPathUrl);
                     replaceText = serviceManifestName;
                     break;
                 }
 
-                // case: "Applications"
+                // case: "DeployedServicePackages"
+                // case: "Services"
                 // case: "Partitions"
                 // case: "Replicas"
                 default: {
