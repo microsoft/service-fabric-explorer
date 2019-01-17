@@ -20,7 +20,7 @@
                     </td>
                     <td ng-if="item.parents.length > 0">
                         {{item.parent.raw.Kind}} : 
-                        <span sfx-bind-html-compile="ctrl.getLinkHtml(item.parent)"></span>
+                        <span style="white-space: nowrap;" sfx-bind-html-compile="ctrl.getLinkHtml(item.parent)"></span>
                     </td>
                 </tr>
                 <tr ng-repeat-end ng-if="visible[item.event.viewPathUrl] && item.parents.length > 0" style="border-width: 0px 3px 3px 3px; border-style: solid; border-color:  #4c4c4c;">
@@ -28,7 +28,7 @@
                         <div style="padding-left: 15px;">
                             <table class="table detail-list" role="presentation" style="border-bottom: 0px; border-left: 2px;">
                                 <tbody>
-                                    <tr ng-repeat="parent in item.parents" style="border: 0px solid #4c4c4c;" >
+                                    <tr ng-repeat="parent in item.parents"  ng-style="{'border-bottom' : $last ? '' : '1px solid #4c4c4c'}" >
                                         <td style="border: 0px;">
                                             <div  ng-style="::{paddingLeft: ( ($index + 0) * 16) + 'px'}">
                                                 <span sfx-bind-html-compile="ctrl.getBadge(parent)"></span>
