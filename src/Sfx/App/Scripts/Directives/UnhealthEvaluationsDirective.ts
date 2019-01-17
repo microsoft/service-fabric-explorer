@@ -16,12 +16,10 @@ module Sfx {
         public replace = false;
         public controller = UnhealthyEvaluationController;
         public controllerAs = "ctrl";
-        public templateUrl = "partials/unhealthyEvaluation.html";
+        public templateUrl = "partials/unhealthy-evaluation.html";
         public scope = {
             list: "=",
             listSettings: "=",
-            displayChildren: "="
-            // innerScroll: "=?"
         };
         public transclude = true;
 
@@ -67,23 +65,21 @@ module Sfx {
     }
 
     export class UnhealthyEvaluationController {
-        public static $inject = ["$filter", "$scope"];
+        public static $inject = ["$scope"];
         onlySource: boolean = true;
 
-        public constructor(private $filter: angular.IFilterService, public $scope: any) {
+        public constructor(public $scope: any) {
             this.$scope.visible = {};
         }
 
         public setParentsVisibility(event): void {
             const id = event.viewPathUrl;
-            console.log(id);
 
             if (id in this.$scope.visible) {
                 this.$scope.visible[id] = ! this.$scope.visible[id];
             }else {
                 this.$scope.visible[id] = true;
             }
-            console.log(this.$scope.visible);
         }
 
         public getParents(item): HealthEvaluation[] {

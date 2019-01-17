@@ -208,7 +208,6 @@ module Sfx {
                 // Make sure that the apps are initialized because some of the parsedHealth Evaluations need to reference the app's collection and that needs to be set.
                 this.data.apps.ensureInitialized().then( () => {
                     this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
-                    console.log(this.unhealthyEvaluations);
                     resolve();
                 });
             });

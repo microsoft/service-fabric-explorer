@@ -67,8 +67,8 @@ module Sfx {
                             parentUrl = `#${data.$location.url()}`;
                         }
                         const pathData = Utils.getViewPathUrl(healthEval, data, parentUrl);
-                        health.viewPathUrl = pathData["viewPathUrl"];
-                        health.displayName =  pathData["displayName"];
+                        health.viewPathUrl = pathData.viewPathUrl;
+                        health.displayName =  pathData.displayName;
                         healthEvals.push(health);
                         healthEvals = healthEvals.concat(Utils.getParsedHealthEvaluations(healthEval.UnhealthyEvaluations, level + 1, health, data));
                         children.push(health);
@@ -88,7 +88,7 @@ module Sfx {
          * @param data
          * @param parentUrl
          */
-        public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): any {
+        public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): {viewPathUrl: string, displayName: string } {
             let viewPathUrl = "";
             let replaceText = "";
 
