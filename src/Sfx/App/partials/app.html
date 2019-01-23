@@ -63,12 +63,8 @@
                 </table>
             </div>
             <div>
-                <h5>Progress by Upgrade Domain</h5>                
-                <div class="upgrade-progress">
-                    <div class="upgrade-domain-bar" ng-repeat="ud in upgradeProgress.upgradeDomains track by ud.name" title="{{::ud.name}} - {{::ud.raw.State}}">
-                        <div class="upgrade-domain-title {{ud.badgeClass}}">{{::ud.name}}</div>                        
-                    </div>                    
-                </div>               
+                <h5>Progress by Upgrade Domain</h5>
+                <sfx-upgrade-progress upgrade-domains="upgradeProgress.upgradeDomains"></sfx-upgrade-progress>
             </div>
         </div>       
 

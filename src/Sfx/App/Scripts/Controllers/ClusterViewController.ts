@@ -111,7 +111,7 @@ module Sfx {
             // For system application health state
             promises.push(this.$scope.systemApp.refresh(messageHandler));
 
-            promises.push(this.$scope.clusterUpgradeProgress.refresh(messageHandler));
+            promises.push(this.$scope.clusterUpgradeProgress.refresh(messageHandler).then(res=>{console.log(res)}));
 
             return this.$q.all(promises);
         }

@@ -255,7 +255,6 @@ module Sfx {
         module.directive(_.camelCase(Constants.DirectiveNameUpgradeProgress), (): angular.IDirective => {
             return {
                 restrict: "E",
-                replace: true,
                 scope: {
                     upgradeDomains: "="
                 },
@@ -285,6 +284,17 @@ module Sfx {
                 templateUrl: "partials/metrics-view.html"
             };
         });
+
+        // module.directive("sfxUpgradeDomain", (): angular.IDirective => {
+        //     return {
+        //         restrict: "AE",
+        //         replace: true,
+        //         scope: {
+        //             upgradeDomains: "="
+        //         },
+        //         templateUrl: "partials/metrics-view.html"
+        //     };
+        // });
 
         module.directive("sfxEventsView", () => new EventsViewDirective());
 
