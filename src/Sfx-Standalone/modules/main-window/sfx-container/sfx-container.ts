@@ -10,6 +10,7 @@ import { WebviewTag } from "electron";
 import { electron } from "../../../utilities/electron-adapter";
 import { ISfxContainer } from "sfx.sfx-view-container";
 import { resolve } from "donuts.node/path";
+import * as shell from "donuts.node/shell";
 
 export class SfxContainer implements ISfxContainer {
     static UrlUuidNameSpace: string = "6ba7b811-9dad-11d1-80b4-00c04fd430c8";
@@ -67,6 +68,12 @@ export class SfxContainer implements ISfxContainer {
         sfxWebView.addEventListener("dom-ready", async () => {
             container.children("#treeview-loading-glyph").remove();
             //sfxWebView.executeJavaScript(" angular.bootstrap(document, [Sfx.Constants.sfxAppName], { strictDi: true });");
+        });
+
+        sfxWebView.addEventListener("new-window",
+            (event) => {
+            event.preventDefault();
+            shell.start(event.url);
         });
 
         return Promise.resolve();
