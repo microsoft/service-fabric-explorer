@@ -106,12 +106,24 @@ module Sfx {
         public upgradeDomains: UpgradeDomain[] = [];
         public upgradeDescription: UpgradeDescription;
 
+        public get isUpgrading(): boolean {
+            return UpgradeDomainStateRegexes.InProgress.test(this.raw.UpgradeState);
+        }
+
         public get startTimestampUtc(): string {
             return TimeUtils.timestampToUTCString(this.raw.StartTimestampUtc);
         }
 
         public get failureTimestampUtc(): string {
             return TimeUtils.timestampToUTCString(this.raw.FailureTimestampUtc);
+        }
+
+        public get upgradeDuration(): string {
+            return TimeUtils.getDuration(this.raw.UpgradeDurationInMilliseconds);
+        }
+
+        public get upgradeDomainDuration(): string {
+            return TimeUtils.getDuration(this.raw.UpgradeDomainDurationInMilliseconds);
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawClusterUpgradeProgress> {
