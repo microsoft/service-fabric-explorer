@@ -47,7 +47,7 @@
                        title="{{item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row' }}"
                        ng-click="ctrl.handleClickRow(item)"
                        ng-class="{'bowtie-chevron-right': item.isSecondRowCollapsed, 'bowtie-chevron-down': !item.isSecondRowCollapsed}"></i>
-                        <span sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)"></span>
+                        <span sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)" ng-click="columnSetting.clickEvent(item);"></span>
                     </td>
                 </tr>
                 <!-- Optional second row -->
