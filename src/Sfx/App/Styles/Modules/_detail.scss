@@ -435,7 +435,7 @@ table.detail-list {
     border-spacing: 0;
 
     .upgrade-domain-bar {
-        display: table-cell;
+        display: inline-block;
         color: white;
         padding: 1px;
         text-align: center;
@@ -449,6 +449,8 @@ table.detail-list {
             white-space: nowrap;
             line-height: 32px;
             font-size: 9pt;
+            width: 80px;
+            height: 35px;
 
             &.badge-unknown {
                 background-color: $badge-unknown-color;
@@ -460,6 +462,7 @@ table.detail-list {
 
             &.badge-warning {
                 background-color: $azure-blue;
+                // width: 244px; /* need to account for the padding on upgrade domain title */
             }
 
             &.badge-error {

@@ -62,6 +62,20 @@
                     </tbody>
                 </table>
             </div>
+            <div class="table-responsive">
+                    <table class="table detail-list">
+                        <thead>
+                            <tr>
+                                <th>Upgrade Status Details</th>                                    
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td title="Checking health. Health-check has been going on for duration '00.004'.">Checking health. Health-check has been going on for duration '00.004'.</td>                          
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             <div>
                 <h5>Progress by Upgrade Domain</h5>
                 <sfx-upgrade-progress upgrade-domains="upgradeProgress.upgradeDomains"></sfx-upgrade-progress>
@@ -76,11 +90,11 @@
                             <tbody>
                             <tr>
                                 <th>Failure Reason</th>
-                                <td>{{upgradeProgress.failureTimestampUtc}}</td>                                
+                                <td><img class="badge-icon" src="images/badge-error.svg"><span> {{upgradeProgress.raw.FailureReason}}</span></td>                                
                             </tr>                        
                             <tr>
                                 <th>Failure Timestamp Utc</th>
-                                <td><img class="badge-icon" src="images/badge-error.svg"><span> {{upgradeProgress.raw.FailureReason}}</span></td>                                                            
+                                <td>{{upgradeProgress.failureTimestampUtc}}</td>                                                            
                             </tr>
                         </tbody>
                     </table>
