@@ -24,7 +24,6 @@ module Sfx {
 
         constructor(public data: DataService) {
             super(data);
-
             this.root.path = "";
             this.root.displayName = "Image Store";
 
@@ -157,6 +156,10 @@ module Sfx {
                     folder.allChildren = [].concat(folder.childrenFiles).concat(folder.childrenFolders);
                     resolve(raw);
                 }).catch(err => {
+                    if(err.status === 404){
+                        this.data.message.showMessage(
+                            `Directory ${path} does not appear to exist anymore. Navigating back to the base of the image store directory.`, MessageSeverity.Warn);
+                    }
                     //The folder to load does not exist anymore, i.e deleted outside of powershell and attempting to refresh
                     //if not the base directory then query for base directory, this is to stop a recurse.
                     if(this.currentFolder.path !== this.root.path){
