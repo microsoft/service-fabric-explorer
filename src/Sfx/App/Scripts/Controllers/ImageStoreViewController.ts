@@ -34,17 +34,18 @@ module Sfx {
                 new ListColumnSetting("displayedSize", "Size", null, true, (item: ImageStoreItem, property) => {
                         return  `<span style="cursor: initial"> ${item.displayedSize || ''} </span>`;
 
-                        //First check if its of type File, if so just display the size
-                        if(item['fileCount'] === undefined){
-                            return  `<span style="cursor: initial"> ${item.displayedSize} </span>`;
-                        }
-                        //if its a folder first check if its not loading data
-                        const sizeData = this.$scope.imagestoreroot.getCachedFolderSize(item.path);
+                        //TODO determine situation for folder size.
+                        // //First check if its of type File, if so just display the size
+                        // if(item['fileCount'] === undefined){
+                        //     return  `<span style="cursor: initial"> ${item.displayedSize} </span>`;
+                        // }
+                        // //if its a folder first check if its not loading data
+                        // const sizeData = this.$scope.imagestoreroot.getCachedFolderSize(item.path);
                         
-                        let size = sizeData.size ? Utils.getFriendlyFileSize(sizeData.size) : '';
-                        let loading = sizeData.loading ? 'rotate' : '';
+                        // let size = sizeData.size ? Utils.getFriendlyFileSize(sizeData.size) : '';
+                        // let loading = sizeData.loading ? 'rotate' : '';
 
-                        return `<span style="cursor: initial"> ${size} </span>` + `<a href class="bowtie-icon bowtie-navigate-refresh dark-background-link ${loading}" title="load file size"></a>`;
+                        // return `<span style="cursor: initial"> ${size} </span>` + `<a href class="bowtie-icon bowtie-navigate-refresh dark-background-link ${loading}" title="load file size"></a>`;
 
                     },1, (item) => {
                         if(!!item['fileCount']){
@@ -54,15 +55,6 @@ module Sfx {
                             if(!sizeData.loading){
                                 sizeData.loading = true;
                             }
-
-                            // let sizeData = this.$scope.imagestoreroot.cachedCurrentDirectoryFolderSizes[item.path];
-
-                            // if(sizeData && !sizeData.loading){
-                            //     sizeData.loading = true;
-                            // }else if(!sizeData ){
-                            //     sizeData = {size: null, loading: true }
-                            //     this.$scope.imagestoreroot.cachedCurrentDirectoryFolderSizes[item.path] = sizeData;
-                            // }
 
                             item.uniqueId = item.uniqueId + sizeData.loading.toString();
                             this.$scope.imagestoreroot.loadFolderSize(item.path).then(size => {

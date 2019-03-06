@@ -49,34 +49,17 @@ module Sfx {
         protected updateInternal(): angular.IPromise<any> | void {
             return this.data.$q.when(true);
         }
-        // protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
-        //     if (!this.isNative || this.isLoadingFolderContent) {
-        //         return this.data.$q.resolve(null);
-        //     }
-        //     this.data.$q( (resolve, reject) => {
-        //         this.loadFolderContent(this.currentFolder.path).then(content => {
-
-        //         }).catch(err => {
-        //             this.currentFolder.path = this.root.path;
-                    
-        //         })
-
-        //     })
-        // }
 
         protected expandFolder(path: string): angular.IPromise<IRawImageStoreContent> {
             const folder = this.uiFolderDictionary[path];
-            // if (!folder || this.isLoadingFolderContent) {
-            //     return this.data.$q.resolve(null);
-            // }
 
             this.isLoadingFolderContent = true;
             return this.loadFolderContent(path).then((raw) => {
-                console.log(raw)
-                console.log(path)
+
+
                 folder.isExpanded = true;
                 this.currentFolder = folder;
-                console.log(this.currentFolder);
+
                 let index = _.findIndex(this.pathBreadcrumbItems, item => item.path === folder.path);
                 if (index > -1) {
                     this.pathBreadcrumbItems = this.pathBreadcrumbItems.slice(0, index + 1);
@@ -85,10 +68,6 @@ module Sfx {
                 }
 
                 this.isLoadingFolderContent = false;
-
-                //TEST
-                //this.loadFolderSize(path).then(() => null);
-
                 return raw;
             });
         }
@@ -181,14 +160,13 @@ module Sfx {
                     //The folder to load does not exist anymore, i.e deleted outside of powershell and attempting to refresh
                     //if not the base directory then query for base directory, this is to stop a recurse.
                     if(this.currentFolder.path !== this.root.path){
-
-                        console.log("at base")
+                        // AT BASE DIRECTORY
                         this.currentFolder = this.root;
                         this.expandFolder(this.root.path).then( r => {
                             resolve(r);
                         })
                     }else{
-                        console.log("The base does not exist")
+                        //BASE image store directory does not exist.
                         resolve({StoreFiles: [], StoreFolders: []})
                     }
                 })
