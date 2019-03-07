@@ -128,6 +128,8 @@
             </div>
             <h5>Progress by Upgrade Domain</h5>
             <sfx-upgrade-progress upgrade-domains="clusterUpgradeProgress.upgradeDomains"></sfx-upgrade-progress>
+            <sfx-upgrade-domain-progress node-ugrrade-progress-list="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList" ></sfx-upgrade-domain-progress>
+
         </div>
 
         <div id="upgradeDetailsSection" ng-if="upgradeProgress && upgradeProgress.isInitialized">            

@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+
+    <!-- CSS imports -->
+    <link href="../../../sfx/css/lib.min.css" rel="stylesheet" />
+    <link href="../../../sfx/css/dark.min.css" rel="stylesheet" />
+    <style>
+        body {
+            background-color: transparent;
+        }
+
+        .div-container {
+            margin-top: 12px;            
+        }
+    </style>
+</head>
+
+<body style="overflow:hidden">
+    <div class="modal" role="document">
+        <div class="modal modal-content">
+            <div id="main-modal-dialog" class="modal" role="dialog">
+                <div class="modal-dialog" role="document" style="width: 800px; height: 600px;">
+                    <div class="modal-content">
+                        <webview src="./dialog-service/dialog.html" preload="./preload.js" nodeintegration></webview>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+
+<script type="text/javascript" src="./dialog.script.js"></script>
+
+</html>

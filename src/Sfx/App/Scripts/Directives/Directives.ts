@@ -262,6 +262,16 @@ module Sfx {
             };
         });
 
+        module.directive("sfxUpgradeDomainProgress", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                scope: {
+                    nodeUpgradeProgressList: "="
+                },
+                templateUrl: "partials/upgrade-domain-progress.html"
+            };
+        });
+
         module.directive(_.camelCase(Constants.DirectiveNameActionsRow), (): angular.IDirective => {
             return {
                 restrict: "E",

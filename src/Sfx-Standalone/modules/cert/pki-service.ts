@@ -31,7 +31,7 @@ export class PkiService implements IPkiCertificateService {
             throw new Error(`Invalid storeName: ${storeName}`);
         }
 
-        const outputs = await execAsync(`powershell -ExecutionPolicy Bypass "${local("./windows/Get-Certificates.ps1")}" -StoreName "${storeName}"`, { encoding: "utf8" });
+        const outputs = await execAsync(`powershell -ExecutionPolicy Bypass -File "${local("./windows/Get-Certificates.ps1")}" -StoreName "${storeName}"`, { encoding: "utf8" });
         const certJsonObjects: Array<ICertificateInfo> = JSON.parse(outputs.stdout);
 
         for (const certJsonObject of certJsonObjects) {
@@ -49,7 +49,7 @@ export class PkiService implements IPkiCertificateService {
             throw new Error("Invalid certInfo: missing thumbprint.");
         }
 
-        const cmdOutputs = await execAsync(`powershell -ExecutionPolicy Bypass "${local("./windows/Get-PfxCertificateData.ps1")}" -Thumbprint "${certInfo.thumbprint}"`, { encoding: "utf8" });
+        const cmdOutputs = await execAsync(`powershell -ExecutionPolicy Bypass -File "${local("./windows/Get-PfxCertificateData.ps1")}" -Thumbprint "${certInfo.thumbprint}"`, { encoding: "utf8" });
         const pfxBase64Data = cmdOutputs.stdout;
 
         if (pfxBase64Data === "undefined") {

@@ -65,14 +65,5 @@
                 ]
             }
         ]
-    },
-    "package-manager": {
-        "packagesDir": "packages",
-        "repos": {
-            "public": {
-                "name": "public",
-                "url": "https://www.myget.org/F/sfx/npm/"
-            }
-        }
     }
 }
