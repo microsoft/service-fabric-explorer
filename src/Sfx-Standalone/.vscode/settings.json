@@ -1,4 +1,3 @@
 {
-    "javascript.nameSuggestions": false,
-    "javascript.suggest.names": false
+    "javascript.nameSuggestions": false
 }

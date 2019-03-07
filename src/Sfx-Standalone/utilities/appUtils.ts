@@ -28,11 +28,11 @@ export function logUnhandledRejection(): void {
                     if (log) {
                         log.writeErrorAsync("Unhandled promise rejection: {}", reason);
                     } else {
-                        console.error("Unhandled promise rejection: ", promise);
+                        console.error("Unhandled promise rejection: ", promise, reason);
                     }
                 });
         } else {
-            console.error("Unhandled promise rejection: ", promise);
+            console.error("Unhandled promise rejection: ", promise, reason);
         }
     });
 }

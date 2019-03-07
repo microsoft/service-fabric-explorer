@@ -74,7 +74,8 @@ export default async function createBrowserWindowAsync(
         webPreferences: {
             preload: local("./preload.js"),
             nodeIntegration: true
-        }
+        },
+        title: "Service Fabric Explorer"
     };
 
     if (utils.isObject(options)) {
