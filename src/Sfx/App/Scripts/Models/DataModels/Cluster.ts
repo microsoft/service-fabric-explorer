@@ -115,24 +115,29 @@ module Sfx {
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawClusterUpgradeProgress> {
-            return Utils.getHttpResponseData(this.data.restClient.getClusterUpgradeProgress(messageHandler));
-        }
+            return this.data.$q( (resolve, reject) => {
+                Utils.getHttpResponseData(this.data.restClient.getClusterUpgradeProgress(messageHandler)).then(data => {
 
-        protected verifyCodeVersion(): angular.IPromise<any> {
-            if(this.raw.CodeVersion === '0.0.0.0'){
-                return Utils.getHttpResponseData(this.data.restClient.getClusterVersion())
-                .then(resp => {
-                    this.raw.CodeVersion = resp.Version;
+                    if(data.CodeVersion === '0.0.0.0'){
+                        return Utils.getHttpResponseData(this.data.restClient.getClusterVersion())
+                        .then(resp => {
+                            data.CodeVersion = resp.Version;
+                        }).finally( () => {
+                            resolve(data);
+                        })
+
+                    }else{
+                        resolve(data)
+                    }
+
                 })
-            }
-
+            })
+            
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
             this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations);
             CollectionUtils.updateDataModelCollection(this.upgradeDomains, _.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud)));
-
-            this.verifyCodeVersion();
 
             if (this.raw.UpgradeDescription) {
                 this.upgradeDescription = new UpgradeDescription(this.data, this.raw.UpgradeDescription);
