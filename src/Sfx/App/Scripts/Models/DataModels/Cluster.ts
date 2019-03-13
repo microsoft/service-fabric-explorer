@@ -120,7 +120,7 @@ module Sfx {
 
                     //if the code version is "0.0.0.0" this means there has not been a baseline upgrade and will require querying for the actual code versin of the cluster
                     if (data.CodeVersion === "0.0.0.0") {
-                        return Utils.getHttpResponseData(this.data.restClient.getClusterVersion())
+                        Utils.getHttpResponseData(this.data.restClient.getClusterVersion())
                         .then(resp => {
                             //set codeVersion here, essentially swapping it out
                             data.CodeVersion = resp.Version;
