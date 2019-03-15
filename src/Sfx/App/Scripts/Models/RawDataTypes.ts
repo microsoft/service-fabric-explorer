@@ -720,4 +720,9 @@ module Sfx {
         StoreRelativePath: string;
         FileCount: string;
     }
+
+    export interface IRawClusterVersion {
+        Version: string;
+    }
+
 }

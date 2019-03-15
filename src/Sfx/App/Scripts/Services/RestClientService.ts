@@ -630,6 +630,12 @@ module Sfx {
             return this.post(this.getApiUrl(url, RestClient.apiVersion60), "Restart replica", null, messageHandler);
         }
 
+        public getClusterVersion(messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawClusterVersion> {
+            let url = `$/GetClusterVersion`;
+
+            return this.get(this.getApiUrl(url, RestClient.apiVersion64), "Get cluster version", messageHandler);
+        }
+
         private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<T[]> {
             let apiUrl = url;
             if (startTime && endTime) {
