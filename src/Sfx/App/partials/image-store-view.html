@@ -18,6 +18,9 @@
     <div class="detail-pane store-content-pane" ng-if="imagestoreroot.isNative">
         <h4>Store Content</h4>
         <div class="image-store-breadcrumb essen-pane">
+            <span ng-if="imagestoreroot.isLoadingFolderContent" style="padding-right: 5px;">
+                <span  class="dark-background-link bowtie-icon bowtie-navigate-refresh rotate" aria-label="refresh" title="Loading folder content"></span>
+            </span>
             <span><a href="" ng-click="imageStoreCtrl.openFolder(imagestoreroot.pathBreadcrumbItems[0].path)" ng-disabled="imagestoreroot.currentFolder.path === imagestoreroot.pathBreadcrumbItems[0].path"
                     aria-label="click to go to root of image store">
                     {{imagestoreroot.pathBreadcrumbItems[0].name}} </a> </span>
@@ -25,68 +28,7 @@
                     ng-disabled="item === imagestoreroot.pathBreadcrumbItems[imagestoreroot.pathBreadcrumbItems.length - 1]" aria-label="click to open folder">
                     {{item.name}} </a> </span>
         </div>
-        <!-- <sfx-search-bar class="list-search-bar" placeholder="Search list" model="listSettings.search"
-        reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar>
-        <div class="detail-list-container flex-child">
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <th class="header-first-item">Name</th>
-                    <th class="column-item">Size</th>
-                    <th class="column-item">Date modified</th>
-                    <th class="column-item">File version</th>
-                    <th class="column-item">Count of files</th>
-                </thead>
-                <tbody>
-                        <tr class="list-item" ng-repeat="folder in imagestoreroot.currentFolder.allChildren | limitTo: imagestoresettings.limit: imagestoresettings.begin">
-                            <td ng-if="folder.fileCount"> 
-                                <div class="image-store-item-name">
-                                    <a href="" role="button" ng-click="imageStoreCtrl.openFolder(folder.path)" class="list-item-name">
-                                        <span class="bowtie-icon bowtie-folder"></span>
-                                        <span class="">{{folder.displayName}}</span>
-                                    </a>
-                                    <span ng-if="!folder.isReserved" uib-dropdown class="dropdown" ng-include="'ellipsisFolderTemplate'"></span>
-                                    <span ng-if="folder.isReserved" class="bowtie-icon bowtie-security-lock" aria-label="System reserved folder cannot be deleted"
-                                        title="System reserved folder cannot be deleted"></span>
-                                </div>
-                            </td>
-                            <td colspan="3" ng-if="folder.fileCount"></td>
-                            <td ng-if="folder.fileCount">
-                                {{folder.fileCount}}
-                            </td>
-
-                            <td ng-if="folder.displayedSize">
-                                <div class="image-store-item-name">
-                                    <div class="list-item-name">
-                                        <span class="bowtie-icon bowtie-file"></span>
-                                        <span class="">{{folder.displayName}}</span>
-                                    </div>
-                                    <span ng-if="!folder.isReserved" uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'"></span>
-                                    <span ng-if="folder.isReserved" class="bowtie-icon bowtie-security-lock" aria-label="System reserved file cannot be deleted"
-                                        title="System reserved file cannot be deleted"></span>
-                                </div>
-                            </td>
-                            <td ng-if="folder.displayedSize" class="column-item">
-                                {{folder.displayedSize}}
-                            </td>
-                            <td ng-if="folder.displayedSize" class="column-item">
-                                {{folder.modifiedDate}}
-                            </td>
-                            <td ng-if="folder.displayedSize" class="column-item">
-                                {{folder.version}}
-                            </td>
-                            <td ng-if="folder.displayedSize" class="column-item">
-                            </td>
-                        </tr>
-                </tbody>
-            </table>
-        </div>
-        <sfx-pager list="imagestoreroot.currentFolder.allChildren" list-settings="imagestoresettings"></sfx-pager>
-        </div> -->
-
         <sfx-detail-list list="imagestoreroot.currentFolder.allChildren" list-settings="fileListSettings"></sfx-detail-list>
-
-
     </div>
 
     <script type="text/ng-template" id="ellipsisFileTemplate">

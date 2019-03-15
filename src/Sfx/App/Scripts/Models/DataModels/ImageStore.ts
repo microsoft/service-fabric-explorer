@@ -1,6 +1,6 @@
 module Sfx {
     export class ImageStore extends DataModelBase<IRawImageStoreContent> {
-        public static reservedFileName: string = '_.dir';
+        public static reservedFileName: string = "_.dir";
 
         public isNative: boolean = true;
         public connectionString: string;
@@ -51,7 +51,9 @@ module Sfx {
 
         protected expandFolder(path: string): angular.IPromise<IRawImageStoreContent> {
             const folder = this.uiFolderDictionary[path];
-
+            if (this.isLoadingFolderContent) {
+                return;
+            }
             this.isLoadingFolderContent = true;
             return this.loadFolderContent(path).then((raw) => {
 
@@ -91,51 +93,45 @@ module Sfx {
 
         public getCachedFolderSize(path: string): {size: number, loading: boolean } {
             let cachedData = this.cachedCurrentDirectoryFolderSizes[path];
-            if(!cachedData){
+            if (!cachedData) {
                 cachedData = {size: null, loading: false};
             }
             return cachedData;
         }
 
-        public loadFolderSize(path: string): angular.IPromise<number> {
-            return this.data.$q( ( resolve, reject ) => {
-                setTimeout( () => {
-                    resolve(999);
-                }, 10000)
-            })
+        // public loadFolderSize(path: string): angular.IPromise<number> {
+        //     //TODO look into alternatives
+        //     // let size = 0;
+        //     // return this.data.$q( (resolve, reject) => {
 
-            //TODO look into alternatives
-            // let size = 0;
-            // return this.data.$q( (resolve, reject) => {
+        //     //     this.loadFolderContent(path).then(raw => {
+        //     //         //sum of file sizes
+        //     //         _.forEach(raw.StoreFiles, file => {
+        //     //             size += +file.FileSize;
+        //     //         })
 
-            //     this.loadFolderContent(path).then(raw => {
-            //         //sum of file sizes 
-            //         _.forEach(raw.StoreFiles, file => {
-            //             size += +file.FileSize;
-            //         })
+        //     //         // request sub folder sizes
+        //     //         let folders = _.map(raw.StoreFolders, folder => this.loadFolderSize(folder.StoreRelativePath))
 
-            //         // request sub folder sizes
-            //         let folders = _.map(raw.StoreFolders, folder => this.loadFolderSize(folder.StoreRelativePath))
+        //     //         this.data.$q.all(folders).then(allFolders => {
+        //     //             _.forEach(allFolders, folder => {
+        //     //                 size += folder;
+        //     //             })
 
-            //         this.data.$q.all(folders).then(allFolders => {
-            //             _.forEach(allFolders, folder => {
-            //                 size += folder;
-            //             })
+        //     //             console.log(path + ' ' + Utils.getFriendlyFileSize(size));
+        //     //             //resolve with this folder + sub folder size
+        //     //             resolve(size);
+        //     //         })
+        //     //     })
 
-            //             console.log(path + ' ' + Utils.getFriendlyFileSize(size));
-            //             //resolve with this folder + sub folder size
-            //             resolve(size);
-            //         })
-            //     })
-
-            // })
-        }
+        //     // })
+        // }
 
         private loadFolderContent(path: string): angular.IPromise<IRawImageStoreContent> {
             /*
             Currently only used to open up to a different directory/reload currently directory in the refresh interval loop
 
-            Attempt to load that directory and if it recieves a 404, indicating a file does not exist then attempt to load the base
+            Attempt to load that directory and if it recieves a 404, indicating a folder does not exist then attempt to load the base
             directory.
 
             If the base directory does not exist(really only due to nothing existing in the image store), then load in place of it an 'empty' image store base.
@@ -148,32 +144,32 @@ module Sfx {
                     folder.childrenFolders = _.map(raw.StoreFolders, f => {
                         let childFolder = new ImageStoreFolder(f);
                         this.uiFolderDictionary[childFolder.path] = childFolder;
-    
+
                         return childFolder;
                     });
-    
+
                     folder.childrenFiles = _.map(raw.StoreFiles, f => new ImageStoreFile(f));
                     folder.allChildren = [].concat(folder.childrenFiles).concat(folder.childrenFolders);
                     resolve(raw);
                 }).catch(err => {
-                    if(err.status === 404){
+                    if (err.status === 404) {
                         this.data.message.showMessage(
                             `Directory ${path} does not appear to exist anymore. Navigating back to the base of the image store directory.`, MessageSeverity.Warn);
                     }
                     //The folder to load does not exist anymore, i.e deleted outside of powershell and attempting to refresh
                     //if not the base directory then query for base directory, this is to stop a recurse.
-                    if(this.currentFolder.path !== this.root.path){
+                    if (this.currentFolder.path !== this.root.path) {
                         // AT BASE DIRECTORY
                         this.currentFolder = this.root;
                         this.expandFolder(this.root.path).then( r => {
                             resolve(r);
-                        })
-                    }else{
+                        });
+                    } else {
                         //BASE image store directory does not exist.
-                        resolve({StoreFiles: [], StoreFolders: []})
+                        resolve({StoreFiles: [], StoreFolders: []});
                     }
-                })
-            })
+                });
+            });
         }
     }
 
