@@ -27,10 +27,14 @@
                     </tr>
                     <tr>
                         <th>Status</th>
+                        <th ng-if="app.isUpgrading">Upgrade status</th>
                     </tr>
                     <tr>
                         <td>{{app.raw.Status}}</td>
+                        <td ng-if="app.isUpgrading">{{upgradeProgress.raw.UpgradeStatusDetails}}</td>
                     </tr>
+
+
                 </table>
             </div>
         </div>
@@ -62,11 +66,8 @@
                     </tbody>
                 </table>
             </div>
-            <div>
-                <h4>Upgrade Status Details</h4>
-                <p title="{{upgradeProgress.raw.UpgradeStatusDetails}}">{{upgradeProgress.raw.UpgradeStatusDetails}}</p>
-            </div>
         </div>
+
         <div class="detail-pane">
             <h4>Progress by Upgrade Domain</h4>                
             <sfx-upgrade-progress upgrade-domains="upgradeProgress.upgradeDomains"></sfx-upgrade-progress>

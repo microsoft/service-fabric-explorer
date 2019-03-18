@@ -301,5 +301,23 @@ module Sfx {
         module.directive("sfxTextFileInput", () => new TextFileInputDirective());
 
         module.directive("sfxDatePicker", () => new DatePickerDirective());
+
+        module.directive("sfxListShorten", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                replace: true,
+                scope: {
+                    list: "="
+                },
+                templateUrl: "partials/long-list-shorten.html",
+                link: function ($scope: any, $element, $attributes: any) {
+                    $scope.opened = false;
+                    $scope.flip = (): void => {
+                        $scope.opened  = !$scope.opened;
+                    }
+                }
+            };
+        });
+
     })();
 }
