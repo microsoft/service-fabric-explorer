@@ -259,7 +259,7 @@ module Sfx {
         protected updateInternal(): angular.IPromise<any> | void {
             this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations);
 
-            let domains = _.sortBy(_.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud)), "name");
+            let domains = _.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud));
             let groupedDomains = _.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Completed)
                 .concat(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.InProgress))
                 .concat(_.filter(domains, ud => ud.name === this.raw.NextUpgradeDomain))
