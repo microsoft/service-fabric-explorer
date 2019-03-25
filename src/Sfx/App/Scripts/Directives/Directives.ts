@@ -262,7 +262,7 @@ module Sfx {
                 templateUrl: "partials/upgrade-progress.html"
             };
         });
-        
+
         module.directive("sfxUpgradeDomainProgress", (): angular.IDirective => {
             return {
                 restrict: "E",
@@ -314,7 +314,7 @@ module Sfx {
                     $scope.opened = false;
                     $scope.flip = (): void => {
                         $scope.opened  = !$scope.opened;
-                    }
+                    };
                 }
             };
         });
