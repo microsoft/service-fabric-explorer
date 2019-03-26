@@ -263,6 +263,16 @@ module Sfx {
             };
         });
 
+        module.directive("sfxUpgradeDomainProgress", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                scope: {
+                    nodeUpgradeProgressList: "="
+                },
+                templateUrl: "partials/upgrade-domain-progress.html"
+            };
+        });
+
         module.directive(_.camelCase(Constants.DirectiveNameActionsRow), (): angular.IDirective => {
             return {
                 restrict: "E",
@@ -291,5 +301,23 @@ module Sfx {
         module.directive("sfxTextFileInput", () => new TextFileInputDirective());
 
         module.directive("sfxDatePicker", () => new DatePickerDirective());
+
+        module.directive("sfxListShorten", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                replace: true,
+                scope: {
+                    list: "="
+                },
+                templateUrl: "partials/long-list-shorten.html",
+                link: function ($scope: any, $element, $attributes: any) {
+                    $scope.opened = false;
+                    $scope.flip = (): void => {
+                        $scope.opened  = !$scope.opened;
+                    };
+                }
+            };
+        });
+
     })();
 }
