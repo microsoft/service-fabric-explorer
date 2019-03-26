@@ -85,18 +85,6 @@
     </script>
 
     <script type="text/ng-template" id="tab_details">
-        <div class="detail-pane">
-            <h4>
-                Health Events
-            </h4>
-            <sfx-detail-list list="clusterHealth.healthEvents" list-settings="healthEventsListSettings"></sfx-detail-list>
-        </div>
-
-        <div class="detail-pane">
-            <h4>Load Information</h4>
-            <sfx-detail-view-part data="clusterLoadInformation"></sfx-detail-view-part>
-        </div>
-
         <div class="detail-pane" ng-if="clusterUpgradeProgress.isInitialized">
             <h4 ng-if="clusterUpgradeProgress.isUpgrading">Upgrade In Progress</h4>
             <h4 ng-if="!clusterUpgradeProgress.isUpgrading">Latest Upgrade State</h4>
@@ -125,40 +113,50 @@
                         </tr>
                     </tbody>
                 </table>
-            </div>
-            <h5>Progress by Upgrade Domain</h5>
-            <sfx-upgrade-progress upgrade-domains="clusterUpgradeProgress.upgradeDomains"></sfx-upgrade-progress>
-            <sfx-upgrade-domain-progress node-ugrrade-progress-list="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList" ></sfx-upgrade-domain-progress>
-
-        </div>
-
-        <div id="upgradeDetailsSection" ng-if="upgradeProgress && upgradeProgress.isInitialized">            
-            <div class="detail-pane" ng-if="clusterUpgradeProgress.raw.FailureReason !== 'None'">                
-                <h4>Upgrade Failure</h4>                
-                <div class="table-responsive">
-                    <table class="table detail-table">
+                <h5>Progress by Upgrade Domain</h5>
+                <sfx-upgrade-progress upgrade-domains="clusterUpgradeProgress.upgradeDomains"></sfx-upgrade-progress>
+                <sfx-upgrade-domain-progress  ng-if="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList.length > 0" 
+                    node-ugrrade-progress-list="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList" ></sfx-upgrade-domain-progress>
+    
+                <div ng-if="clusterUpgradeProgress.raw.FailureReason !== 'None'">                
+                    <h4>Upgrade Failure</h4>                
+                    <div class="table-responsive">
+                        <table class="table detail-table">
                             <tbody>
-                            <tr>
-                                <th>Failure Timestamp Utc</th>
-                                <td>{{clusterUpgradeProgress.failureTimestampUtc}}</td>                                
-                            </tr>                        
-                            <tr>
-                                <th>Failure Reason</th>
-                                <td><img class="badge-icon" src="images/badge-error.svg"><span> {{clusterUpgradeProgress.raw.FailureReason}}</span></td>                                                            
-                            </tr>
-                        </tbody>
-                    </table>
-                </div> 
+                                <tr>
+                                    <th>Failure Timestamp Utc</th>
+                                    <td>{{clusterUpgradeProgress.failureTimestampUtc}}</td>                                
+                                </tr>                        
+                                <tr>
+                                    <th>Failure Reason</th>
+                                    <td><img class="badge-icon" src="images/badge-error.svg"><span> {{clusterUpgradeProgress.raw.FailureReason}}</span></td>                                                            
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div> 
+                </div>
             </div>
-        </div>
-        <div class="detail-pane">
-            <h4>Unhealthy Evaluations (Upgrade)</h4>
-            <sfx-detail-list list="clusterUpgradeProgress.unhealthyEvaluations" list-settings="upgradeProgressUnhealthyEvaluationsListSettings"></sfx-detail-list>
+            <div class="detail-pane" ng-if="clusterUpgradeProgress.unhealthyEvaluations.length > 0">
+                <h4>Unhealthy Evaluations (Upgrade)</h4>
+                <sfx-detail-list list="clusterUpgradeProgress.unhealthyEvaluations" list-settings="upgradeProgressUnhealthyEvaluationsListSettings"></sfx-detail-list>
+            </div>
+        
+            <div class="detail-pane">
+                <h4>Upgrade Description</h4>
+                <sfx-detail-view-part data="clusterUpgradeProgress.upgradeDescription"></sfx-detail-view-part>
+            </div>
         </div>
 
         <div class="detail-pane">
-            <h4>Upgrade Description</h4>
-            <sfx-detail-view-part data="clusterUpgradeProgress.upgradeDescription"></sfx-detail-view-part>
+            <h4>
+                Health Events
+            </h4>
+            <sfx-detail-list list="clusterHealth.healthEvents" list-settings="healthEventsListSettings"></sfx-detail-list>
+        </div>
+
+        <div class="detail-pane">
+            <h4>Load Information</h4>
+            <sfx-detail-view-part data="clusterLoadInformation"></sfx-detail-view-part>
         </div>
     </script>
 

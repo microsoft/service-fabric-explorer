@@ -27,10 +27,14 @@
                     </tr>
                     <tr>
                         <th>Status</th>
+                        <th ng-if="app.isUpgrading">Upgrade status</th>
                     </tr>
                     <tr>
                         <td>{{app.raw.Status}}</td>
+                        <td ng-if="app.isUpgrading">{{upgradeProgress.raw.UpgradeStatusDetails}}</td>
                     </tr>
+
+
                 </table>
             </div>
         </div>
@@ -61,34 +65,13 @@
                         </tr>
                     </tbody>
                 </table>
-                <div>
-                    <h4>Upgrade Status Details</h4>
-                    <p title="{{upgradeProgress.raw.UpgradeStatusDetails}}">{{upgradeProgress.raw.UpgradeStatusDetails}}</p>
-                </div>
             </div>
         </div>
-        <div class="detail-pane">
+
+        <div class="detail-pane" ng-if="upgradeProgress.upgradeDomains.length > 0">
             <h4>Progress by Upgrade Domain</h4>                
             <sfx-upgrade-progress upgrade-domains="upgradeProgress.upgradeDomains"></sfx-upgrade-progress>
-            <sfx-upgrade-domain-progress node-ugrrade-progress-list="upgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList" ></sfx-upgrade-domain-progress>
-            <!-- <div class="table-responsive">
-                <table class="table detail-list">
-                    <thead>
-                        <tr>
-                            <th>Node</th>                                    
-                            <th>Upgrade Phase</th>                                    
-                            <th title="Upgrade Duration">Pending Safety Checks</th>                                    
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr ng-repeat="upgradeStatus in upgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList">                    
-                            <td>{{upgradeStatus.NodeName}}</td>                            
-                            <td>{{upgradeStatus.UpgradePhase}}</td>                            
-                            <td>{{upgradeStatus.PendingSafetyChecks | json}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div> -->
+            <sfx-upgrade-domain-progress ng-if="upgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList.length > 0" node-upgrade-progress-list="upgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList" ></sfx-upgrade-domain-progress>
         </div>
 
         <div id="upgradeDetailsSection" ng-if="upgradeProgress && upgradeProgress.isInitialized">            
@@ -116,7 +99,7 @@
                 <sfx-detail-list list="upgradeProgress.unhealthyEvaluations" list-settings="upgradeProgressUnhealthyEvaluationsListSettings"></sfx-detail-list>
             </div>
 
-            <div class="detail-pane">
+            <div class="detail-pane" ng-if="upgradeProgress.upgradeDescription">
                 <h4>Upgrade Parameters</h4>
                 <sfx-detail-view-part data="upgradeProgress.upgradeDescription"></sfx-detail-view-part>
             </div>

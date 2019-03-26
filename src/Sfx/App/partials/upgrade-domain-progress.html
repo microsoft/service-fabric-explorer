@@ -8,10 +8,12 @@
                 </tr>
             </thead>
             <tbody>
-                <tr ng-repeat="upgradeStatus in nodeUpgradeProgressList">                    
+                <tr ng-repeat="upgradeStatus in nodeUpgradeProgressList track by upgradeStatus.NodeName">                    
                     <td>{{upgradeStatus.NodeName}}</td>                            
                     <td>{{upgradeStatus.UpgradePhase}}</td>                            
-                    <td>{{upgradeStatus.PendingSafetyChecks | json}}</td>
+                    <td>
+                        <sfx-list-shorten list="upgradeStatus.PendingSafetyChecks" ></sfx-list-shorten>
+                    </td>
                 </tr>
             </tbody>
         </table>
