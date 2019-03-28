@@ -167,7 +167,9 @@ module Sfx {
 
         module.factory("routes", ["$interval", "$location", ($interval, $location) => new RoutesService($interval, $location)]);
 
-        module.config(["$routeProvider", "$httpProvider", function ($routeProvider, $httpProvider) {
+        module.config(["$routeProvider", "$httpProvider", "$locationProvider", function ($routeProvider, $httpProvider, $locationProvider) {
+            $locationProvider.hashPrefix('');
+
             whenWithTabs($routeProvider, "/", {
                 templateUrl: "partials/cluster.html",
                 controller: "ClusterViewController",
