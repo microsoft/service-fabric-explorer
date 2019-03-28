@@ -27,11 +27,11 @@
                     </tr>
                     <tr>
                         <th>Status</th>
-                        <th ng-if="app.isUpgrading">Upgrade status</th>
+                        <th ng-if="app.isUpgrading">Upgrade status Details</th>
                     </tr>
                     <tr>
                         <td>{{app.raw.Status}}</td>
-                        <td ng-if="app.isUpgrading">{{upgradeProgress.raw.UpgradeStatusDetails}}</td>
+                        <td ng-if="app.isUpgrading && upgradeProgress && upgradeProgress.isInitialized">{{upgradeProgress.raw.UpgradeStatusDetails}}</td>
                     </tr>
 
 
@@ -39,7 +39,7 @@
             </div>
         </div>
 
-        <div class="detail-pane" ng-if="upgradeProgress">
+        <div id="upgradeDetailsSection" ng-if="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane" ng-if="upgradeProgress" >
             <h4 ng-if="app.isUpgrading">Upgrade In Progress</h4>
             <h4 ng-if="!app.isUpgrading">Latest Upgrade State</h4>
             <div class="table-responsive">
@@ -66,16 +66,14 @@
                     </tbody>
                 </table>
             </div>
-        </div>
 
-        <div class="detail-pane" ng-if="upgradeProgress.upgradeDomains.length > 0">
-            <h4>Progress by Upgrade Domain</h4>                
-            <sfx-upgrade-progress upgrade-domains="upgradeProgress.upgradeDomains"></sfx-upgrade-progress>
-            <sfx-upgrade-domain-progress ng-if="upgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList.length > 0" node-upgrade-progress-list="upgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList" ></sfx-upgrade-domain-progress>
-        </div>
-
-        <div id="upgradeDetailsSection" ng-if="upgradeProgress && upgradeProgress.isInitialized">            
-                <div class="detail-pane" ng-if="upgradeProgress.raw.FailureReason !== 'None'">                
+            <div class="detail-pane" ng-if="upgradeProgress.upgradeDomains.length > 0">
+                    <h4>Progress by Upgrade Domain</h4>                
+                    <sfx-upgrade-progress upgrade-domains="upgradeProgress.upgradeDomains"></sfx-upgrade-progress>
+                    <sfx-upgrade-domain-progress ng-if="upgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList.length > 0" node-upgrade-progress-list="upgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList" ></sfx-upgrade-domain-progress>
+                </div>
+        
+            <div class="detail-pane" ng-if="upgradeProgress.raw.FailureReason !== 'None'">                
                 <h4>Upgrade Failure</h4>                
                 <div class="table-responsive">
                     <table class="table detail-table">
