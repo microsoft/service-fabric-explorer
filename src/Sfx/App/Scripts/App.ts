@@ -46,6 +46,7 @@ module Sfx {
             "systemAppsViewController",
             "themeController",
             "settingsController",
+            "headerAlertController",
             "templates", // Template cache module generated from partials by gulp-angular-templatecache plugin
             "responseHeadersService",
             "ngAria"

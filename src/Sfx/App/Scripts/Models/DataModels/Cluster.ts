@@ -126,6 +126,10 @@ module Sfx {
             return TimeUtils.getDuration(this.raw.UpgradeDomainDurationInMilliseconds);
         }
 
+        public getCompletedUpgradeDomains(): number {
+            return _.filter(this.upgradeDomains, upgradeDomain => {return upgradeDomain.stateName === UpgradeDomainStateNames.Completed}).length;
+        }
+
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawClusterUpgradeProgress> {
             return this.data.$q( (resolve, reject) => {
                 Utils.getHttpResponseData(this.data.restClient.getClusterUpgradeProgress(messageHandler)).then(data => {
