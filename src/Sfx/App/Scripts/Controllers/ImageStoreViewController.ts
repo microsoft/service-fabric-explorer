@@ -31,18 +31,6 @@ module Sfx {
                 new ListColumnSetting("displayedSize", "Size", null, true, (item: ImageStoreItem, property) => {
                         return  `<span style="cursor: initial"> ${item.displayedSize || ""} </span>`;
 
-                        //TODO determine situation for folder size.
-                        // //First check if its of type File, if so just display the size
-                        // if(item['fileCount'] === undefined){
-                        //     return  `<span style="cursor: initial"> ${item.displayedSize} </span>`;
-                        // }
-                        // //if its a folder first check if its not loading data
-                        // const sizeData = this.$scope.imagestoreroot.getCachedFolderSize(item.path);
-                        // let size = sizeData.size ? Utils.getFriendlyFileSize(sizeData.size) : '';
-                        // let loading = sizeData.loading ? 'rotate' : '';
-
-                        // return `<span style="cursor: initial"> ${size} </span>` + `<a href class="bowtie-icon bowtie-navigate-refresh dark-background-link ${loading}" title="load file size"></a>`;
-
                     }, 1, (item) => {
                         if (!!item["fileCount"]) {
                             const sizeData = this.$scope.imagestoreroot.getCachedFolderSize(item.path);

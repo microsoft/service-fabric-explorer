@@ -2,12 +2,10 @@ module Sfx {
     export class ImageStore extends DataModelBase<IRawImageStoreContent> {
         public static reservedFileName: string = "_.dir";
 
-        public isNative: boolean = true;
+        public isNative: boolean = false;
         public connectionString: string;
         public root: ImageStoreFolder = new ImageStoreFolder();
         public uiFolderDictionary: { [path: string]: ImageStoreFolder } = {};
-
-        public cachedCurrentDirectoryFolderSizes: { [path: string]: {size: number, loading: boolean } } = {};
 
         public currentFolder: ImageStoreFolder;
         public pathBreadcrumbItems: IStorePathBreadcrumbItem[] = [];
@@ -33,9 +31,12 @@ module Sfx {
             manifest.refresh().then(() => {
                 this.connectionString = manifest.imageStoreConnectionString;
                 this.isNative = this.connectionString.toLowerCase() === "fabric:imagestore";
+
+                if(this.isNative){
+                    this.expandFolder(this.currentFolder.path);
+                }
             });
 
-            this.expandFolder(this.currentFolder.path);
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
@@ -90,43 +91,6 @@ module Sfx {
             return Utils.getHttpResponseData(this.data.restClient.deleteImageStoreContent(path)).then(() => this.refresh());
         }
 
-
-        public getCachedFolderSize(path: string): {size: number, loading: boolean } {
-            let cachedData = this.cachedCurrentDirectoryFolderSizes[path];
-            if (!cachedData) {
-                cachedData = {size: null, loading: false};
-            }
-            return cachedData;
-        }
-
-        // public loadFolderSize(path: string): angular.IPromise<number> {
-        //     //TODO look into alternatives
-        //     // let size = 0;
-        //     // return this.data.$q( (resolve, reject) => {
-
-        //     //     this.loadFolderContent(path).then(raw => {
-        //     //         //sum of file sizes
-        //     //         _.forEach(raw.StoreFiles, file => {
-        //     //             size += +file.FileSize;
-        //     //         })
-
-        //     //         // request sub folder sizes
-        //     //         let folders = _.map(raw.StoreFolders, folder => this.loadFolderSize(folder.StoreRelativePath))
-
-        //     //         this.data.$q.all(folders).then(allFolders => {
-        //     //             _.forEach(allFolders, folder => {
-        //     //                 size += folder;
-        //     //             })
-
-        //     //             console.log(path + ' ' + Utils.getFriendlyFileSize(size));
-        //     //             //resolve with this folder + sub folder size
-        //     //             resolve(size);
-        //     //         })
-        //     //     })
-
-        //     // })
-        // }
-
         private loadFolderContent(path: string): angular.IPromise<IRawImageStoreContent> {
             /*
             Currently only used to open up to a different directory/reload currently directory in the refresh interval loop
@@ -152,13 +116,13 @@ module Sfx {
                     folder.allChildren = [].concat(folder.childrenFiles).concat(folder.childrenFolders);
                     resolve(raw);
                 }).catch(err => {
-                    if (err.status === 404) {
-                        this.data.message.showMessage(
-                            `Directory ${path} does not appear to exist anymore. Navigating back to the base of the image store directory.`, MessageSeverity.Warn);
-                    }
                     //The folder to load does not exist anymore, i.e deleted outside of powershell and attempting to refresh
                     //if not the base directory then query for base directory, this is to stop a recurse.
                     if (this.currentFolder.path !== this.root.path) {
+                        if (err.status === 404) {
+                            this.data.message.showMessage(
+                                `Directory ${path} does not appear to exist anymore. Navigating back to the base of the image store directory.`, MessageSeverity.Warn);
+                        }
                         // AT BASE DIRECTORY
                         this.currentFolder = this.root;
                         this.expandFolder(this.root.path).then( r => {

@@ -1,7 +1,4 @@
 <span>
-    <!-- <span uib-dropdown class="dropdown" dropdown-append-to-body="true" ng-include="'ellipsisFolderTemplate'"></span> -->
-    <!-- <span class="bowtie-icon bowtie-security-lock" aria-label="System reserved folder cannot be deleted"
-                            title="System reserved folder cannot be deleted"></span> -->
     <span ng-if="!item.isReserved" uib-dropdown class="dropdown" dropdown-append-to-body="true" ng-include="'ellipsisFolderTemplate'"></span>
     <span ng-if="item.isReserved" class="bowtie-icon bowtie-security-lock" aria-label="System reserved folder cannot be deleted"
         title="System reserved folder cannot be deleted"></span>
