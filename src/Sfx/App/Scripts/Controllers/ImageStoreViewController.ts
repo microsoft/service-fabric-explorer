@@ -2,16 +2,14 @@ module Sfx {
     export class ImageStoreViewController {
         public static $inject = ["$scope", "$timeout", "settings"];
         public constructor(private $scope: any, private $timeout: any, private settings: SettingsService ) {
-            console.log(this.$scope.imagestoreroot);
-            console.log(this.settings);
+
             this.$scope.imagestoresFilesettings = this.settings.getNewOrExistingListSettings("imagestoreFiles");
             this.$scope.imagestoresettings = this.settings.getNewOrExistingListSettings("imagestoreFolders");
-            console.log(this.$scope.imagestoresettings);
             this.$scope.fileListSettings = this.settings.getNewOrExistingListSettings("imagestore", ["name"], [
                 new ListColumnSetting("", "", null, true, (item: ImageStoreItem, property) => {
                     return `<sfx-image-store-file-view item="item"></sfx-image-store-file-view>`;
                 }),
-                new ListColumnSetting("displayName", "name", null, true, (item: any, property) => {
+                new ListColumnSetting("displayName", "name", ["displayName", "displayedSize"], true, (item: any, property) => {
                     if (!!item["fileCount"]) {
                         return `<div class="image-store-item-name" style="display: inline-block;">
                         <a href="" role="button" class="list-item-name" style="display: table-cell;">
@@ -28,25 +26,9 @@ module Sfx {
                             this.openFolder(item.path);
                         };
                 }),
-                new ListColumnSetting("displayedSize", "Size", null, true, (item: ImageStoreItem, property) => {
+                new ListColumnSetting("displayedSize", "Size", ["displayedSize", "displayName"], false, (item: ImageStoreItem, property) => {
                         return  `<span style="cursor: initial"> ${item.displayedSize || ""} </span>`;
-
-                    }, 1, (item) => {
-                        if (!!item["fileCount"]) {
-                            const sizeData = this.$scope.imagestoreroot.getCachedFolderSize(item.path);
-                            if (!sizeData.loading) {
-                                sizeData.loading = true;
-                            };
-
-                            item.uniqueId = item.uniqueId + sizeData.loading.toString();
-                            this.$scope.imagestoreroot.loadFolderSize(item.path).then(size => {
-                               this.$scope.imagestoreroot.cachedCurrentDirectoryFolderSizes[item.path] = {size: size, loading: false };
-                                item.size = size;
-                                item.displayedSize = Utils.getFriendlyFileSize(size);
-                                item.uniqueId = item.uniqueId + "false";
-                            });
-                        }
-                    } ),
+                    }),
                 new ListColumnSetting("modifiedDate", "Date modified"),
                 new ListColumnSetting("version", "File version"),
                 new ListColumnSetting("fileCount", "Count of Files")

@@ -15,7 +15,10 @@
     <div class="alert alert-warning" ng-if="!imagestoreroot.isNative">
         <strong>Viewing image store content is only supported for the native Image Store (fabric:ImageStore).</strong>
     </div>
-    <div class="detail-pane store-content-pane" ng-if="imagestoreroot.isNative">
+    <div class="alert alert-warning" ng-if="imagestoreroot.isNative && !imagestoreroot.isAvailable">
+        <strong>Image store viewer does not appear to be supported on this cluster.</strong>
+    </div>
+    <div class="detail-pane store-content-pane" ng-if="imagestoreroot.isNative && imagestoreroot.isAvailable">
         <h4>Store Content</h4>
         <div class="image-store-breadcrumb essen-pane">
             <span ng-if="imagestoreroot.isLoadingFolderContent" style="padding-right: 5px;">

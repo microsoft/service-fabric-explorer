@@ -2,7 +2,9 @@ module Sfx {
     export class ImageStore extends DataModelBase<IRawImageStoreContent> {
         public static reservedFileName: string = "_.dir";
 
-        public isNative: boolean = false;
+        //These start as true to not display prematurely while loading correct state.
+        public isAvailable: boolean = true;
+        public isNative: boolean = true;
         public connectionString: string;
         public root: ImageStoreFolder = new ImageStoreFolder();
         public uiFolderDictionary: { [path: string]: ImageStoreFolder } = {};
@@ -32,8 +34,13 @@ module Sfx {
                 this.connectionString = manifest.imageStoreConnectionString;
                 this.isNative = this.connectionString.toLowerCase() === "fabric:imagestore";
 
-                if(this.isNative){
-                    this.expandFolder(this.currentFolder.path);
+                if (this.isNative) {
+                    // if we get an actual request error. i.e a 400 that means this cluster does not have the API
+                    this.expandFolder(this.currentFolder.path).then( () => {
+                        this.isAvailable = true;
+                    }).catch( err => {
+                        this.isAvailable = false;
+                    });
                 }
             });
 
@@ -116,6 +123,9 @@ module Sfx {
                     folder.allChildren = [].concat(folder.childrenFiles).concat(folder.childrenFolders);
                     resolve(raw);
                 }).catch(err => {
+                    if (err.status === 400) {
+                        reject(err);
+                    }
                     //The folder to load does not exist anymore, i.e deleted outside of powershell and attempting to refresh
                     //if not the base directory then query for base directory, this is to stop a recurse.
                     if (this.currentFolder.path !== this.root.path) {
