@@ -155,7 +155,7 @@
                     <sfx-detail-list list="clusterUpgradeProgress.unhealthyEvaluations" list-settings="upgradeProgressUnhealthyEvaluationsListSettings"></sfx-detail-list>
                 </div>
             
-                <div class="detail-pane">
+                <div class="detail-pane" ng-if="clusterUpgradeProgress.upgradeDescription">
                     <h4>Upgrade Description</h4>
                     <sfx-detail-view-part data="clusterUpgradeProgress.upgradeDescription"></sfx-detail-view-part>
                 </div>
