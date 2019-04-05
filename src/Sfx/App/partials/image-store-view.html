@@ -31,6 +31,8 @@
                     ng-disabled="item === imagestoreroot.pathBreadcrumbItems[imagestoreroot.pathBreadcrumbItems.length - 1]" aria-label="click to open folder">
                     {{item.name}} </a> </span>
         </div>
+        <p style="padding: 0px; margin: 0px;">
+            <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error" style="margin-right: 2px; color: #fcd116; font-size: larger;"></span>Search confined to current directory</p>
         <sfx-detail-list list="imagestoreroot.currentFolder.allChildren" list-settings="fileListSettings"></sfx-detail-list>
     </div>
 

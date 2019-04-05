@@ -9,7 +9,7 @@ module Sfx {
                 new ListColumnSetting("", "", null, true, (item: ImageStoreItem, property) => {
                     return `<sfx-image-store-file-view item="item"></sfx-image-store-file-view>`;
                 }),
-                new ListColumnSetting("displayName", "name", ["displayName", "displayedSize"], true, (item: any, property) => {
+                new ListColumnSetting("displayName", "name", ["isFolder", "displayName"], false, (item: any, property) => {
                     if (!!item["fileCount"]) {
                         return `<div class="image-store-item-name" style="display: inline-block;">
                         <a href="" role="button" class="list-item-name" style="display: table-cell;">
@@ -26,12 +26,12 @@ module Sfx {
                             this.openFolder(item.path);
                         };
                 }),
-                new ListColumnSetting("displayedSize", "Size", ["displayedSize", "displayName"], false, (item: ImageStoreItem, property) => {
+                new ListColumnSetting("displayedSize", "Size", ["isFolder", "size", "displayName"], false, (item: ImageStoreItem, property) => {
                         return  `<span style="cursor: initial"> ${item.displayedSize || ""} </span>`;
                     }),
                 new ListColumnSetting("modifiedDate", "Date modified"),
                 new ListColumnSetting("version", "File version"),
-                new ListColumnSetting("fileCount", "Count of Files")
+                new ListColumnSetting("fileCount", "Count of Files", ["isFolder", "fileCount"])
             ]);
         }
 

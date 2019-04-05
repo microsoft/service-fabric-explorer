@@ -148,6 +148,9 @@ module Sfx {
     }
 
     export class ImageStoreItem {
+        //Used for name based sorting in the table
+        public isFolder: number;
+
         public path: string;
         public displayName: string;
         public isReserved: boolean;
@@ -167,7 +170,9 @@ module Sfx {
     }
 
     export class ImageStoreFolder extends ImageStoreItem {
-        public fileCount: string;
+        public isFolder: number = -1;
+
+        public fileCount: number;
         public isExpanded: boolean = false;
         public childrenFolders: ImageStoreFolder[];
         public childrenFiles: ImageStoreFile[];
@@ -175,17 +180,18 @@ module Sfx {
 
         constructor(raw?: IRawStoreFolder) {
             super(raw ? raw.StoreRelativePath : "");
-
             if (!raw) {
                 return;
             }
 
             this.path = raw.StoreRelativePath;
-            this.fileCount = raw.FileCount;
+            this.fileCount = +raw.FileCount;
         }
     }
 
     export class ImageStoreFile extends ImageStoreItem {
+        public isFolder: number = 1;
+
         public version: string;
         public modifiedDate: string;
         public size: number = 0;
