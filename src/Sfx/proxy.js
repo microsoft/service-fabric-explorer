@@ -1,8 +1,20 @@
 
 const config = require("./appsettings.json");
 const axios = require('axios');
+const fs = require("fs");
+const https = require("https");
 
-console.log(config.TargetCluster.Url);
+httpsAgent = null;
+
+if(config.TargetCluster.PFXLocation){
+    httpsAgent = new https.Agent({
+        rejectUnauthorized: false,
+        cert: fs.readFileSync(config.TargetCluster.PFXLocation),
+      })
+      
+}
+
+console.log(httpsAgent);
 
 const proxyRequest = async (req) => {
     const url = req.url;
@@ -15,6 +27,11 @@ const proxyRequest = async (req) => {
         body, 
         headers: headers
     }
+
+    if(httpsAgent){
+        conf.httpsAgent = httpsAgent;
+    }
+
     console.log(conf);
     try {
         res = await axios(conf)
@@ -39,11 +56,18 @@ app.all('/*', async (req, res) => {
 
     const resp = await proxyRequest(req);
     // console.log(resp.config)
-    res.status(resp.status);
-    res.header(resp.headers);
+    if(resp){
+        res.status(resp.status);
+        res.header(resp.headers);
+    
+        res.send(resp.data);
+    }
 
-    res.send(resp.data);
 })
 
+console.log(`Target cluster url : ${config.TargetCluster.Url}`);
 
-app.listen(port, () => console.log(`Example app listening on port ${port}!`))
+if(httpsAgent){
+    console.log(`Certificate was Provided \n\t location: D:test ${config.TargetCluster.PFXLocation}`);
+}
+app.listen(port, () => console.log(`proxy listening on port ${port}!`))
