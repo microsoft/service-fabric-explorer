@@ -154,7 +154,14 @@ module Sfx {
 
         protected updateInternal(): angular.IPromise<any> | void {
             this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations);
-            CollectionUtils.updateDataModelCollection(this.upgradeDomains, _.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud)));
+            let domains = _.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud));
+            let groupedDomains = _.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Completed)
+                .concat(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.InProgress))
+                .concat(_.filter(domains, ud => ud.name === this.raw.NextUpgradeDomain))
+                .concat(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain));
+
+            this.upgradeDomains = groupedDomains;
+            //CollectionUtils.updateDataModelCollection(this.upgradeDomains, groupedDomains);
 
             if (this.raw.UpgradeDescription) {
                 this.upgradeDescription = new UpgradeDescription(this.data, this.raw.UpgradeDescription);
