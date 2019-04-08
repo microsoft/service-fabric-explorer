@@ -12,7 +12,6 @@ module Sfx {
 
         constructor(private data: DataService, private $scope: any) {
             this.clusterUpgradeProgress = this.data.clusterUpgradeProgress;
-            console.log(this['clusterUpgradeProgress'])
         }
 
         public getUpgradeDomainProgress(): string {

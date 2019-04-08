@@ -295,17 +295,6 @@ module Sfx {
             };
         });
 
-        // module.directive("sfxUpgradeDomain", (): angular.IDirective => {
-        //     return {
-        //         restrict: "AE",
-        //         replace: true,
-        //         scope: {
-        //             upgradeDomains: "="
-        //         },
-        //         templateUrl: "partials/metrics-view.html"
-        //     };
-        // });
-
         module.directive("sfxEventsView", () => new EventsViewDirective());
 
         module.directive("sfxTextFileInput", () => new TextFileInputDirective());

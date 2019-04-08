@@ -161,7 +161,6 @@ module Sfx {
                 .concat(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain));
 
             this.upgradeDomains = groupedDomains;
-            //CollectionUtils.updateDataModelCollection(this.upgradeDomains, groupedDomains);
 
             if (this.raw.UpgradeDescription) {
                 this.upgradeDescription = new UpgradeDescription(this.data, this.raw.UpgradeDescription);
