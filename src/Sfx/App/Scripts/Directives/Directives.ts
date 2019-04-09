@@ -255,7 +255,6 @@ module Sfx {
         module.directive(_.camelCase(Constants.DirectiveNameUpgradeProgress), (): angular.IDirective => {
             return {
                 restrict: "E",
-                replace: true,
                 scope: {
                     upgradeDomains: "="
                 },
