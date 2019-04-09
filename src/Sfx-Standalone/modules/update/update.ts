@@ -4,7 +4,6 @@
 //-----------------------------------------------------------------------------
 
 import { IVersionInfo, IPackageInfo } from "sfx.common";
-import { ILog } from "sfx.logging";
 import { IHttpClient } from "sfx.http";
 import { IUpdateService } from "sfx.update";
 
@@ -14,33 +13,46 @@ import * as tmp from "tmp";
 import * as path from "path";
 import * as url from "url";
 import * as fs from "fs";
-import * as util from "util";
+import * as http from "http";
+import * as https from "https";
 
-import * as utils from "../../utilities/utils";
-import { env, Architecture } from "../../utilities/env";
+import * as utils from "donuts.node/utils";
+import * as shell from "donuts.node/shell";
 
 export interface IUpdateSettings {
     baseUrl: string;
     defaultChannel: string;
 }
 
+const Platform: Donuts.IStringKeyDictionary<string> = {
+    "win32": "windows",
+    "darwin": "macos",
+    "linux": "linux"
+};
+
+const Architecture: Donuts.IStringKeyDictionary<string> = {
+    "ia32": "x86",
+    "x64": "x64",
+    "arm": "arm"
+};
+
 export default class UpdateService implements IUpdateService {
-    private readonly log: ILog;
+    private readonly log: Donuts.Logging.ILog;
 
     private readonly settings: IUpdateSettings;
 
     private readonly httpClient: IHttpClient;
 
-    constructor(log: ILog, updateSettings: IUpdateSettings, httpClient: IHttpClient) {
-        if (!Object.isObject(log)) {
+    constructor(log: Donuts.Logging.ILog, updateSettings: IUpdateSettings, httpClient: IHttpClient) {
+        if (!utils.isObject(log)) {
             throw new Error("log must be supplied.");
         }
 
-        if (!Object.isObject(updateSettings)) {
+        if (!utils.isObject(updateSettings)) {
             throw new Error("updateSettings must be supplied.");
         }
 
-        if (!Object.isObject(httpClient)) {
+        if (!utils.isObject(httpClient)) {
             throw new Error("httpClient must be supplied.");
         }
 
@@ -57,15 +69,15 @@ export default class UpdateService implements IUpdateService {
             return;
         }
 
-        const packageInfo: IPackageInfo | string = versionInfo[env.platform];
+        const packageInfo: IPackageInfo | string = versionInfo[Platform[process.platform]];
         let packageUrl: string;
 
         if (!packageInfo) {
-            this.log.writeErrorAsync("No package info found for platform: {}.", env.platform);
+            this.log.writeErrorAsync("No package info found for platform: {}.", Platform[process.platform]);
             return;
         }
 
-        if (String.isString(packageInfo)) {
+        if (utils.isString(packageInfo)) {
             packageUrl = packageInfo;
 
             await this.requestConfirmationAsync(versionInfo)
@@ -75,7 +87,7 @@ export default class UpdateService implements IUpdateService {
                     }
 
                     this.log.writeVerboseAsync("Applying the update package and quit the app: {}", path);
-                    env.start(url.parse(packageUrl).href);
+                    shell.start(url.parse(packageUrl).href);
                     app.quit();
                 });
         } else {
@@ -95,7 +107,7 @@ export default class UpdateService implements IUpdateService {
                             }
 
                             this.log.writeVerboseAsync("Applying the update package and quit the app: {}", packagePath);
-                            env.start(packagePath);
+                            shell.start(packagePath);
                             app.quit();
                         });
                 });
@@ -112,18 +124,11 @@ export default class UpdateService implements IUpdateService {
             updateChannel = this.settings.defaultChannel || "stable";
         }
 
-        const versionInfoUrl = `${this.settings.baseUrl}/${updateChannel}/${env.platform}`;
+        const versionInfoUrl = `${this.settings.baseUrl}/${updateChannel}/${Platform[process.platform]}`;
 
         this.log.writeInfoAsync(`Requesting version info json: ${versionInfoUrl}`);
 
-        return this.httpClient.getAsync(versionInfoUrl)
-            .then((response) => {
-                if (!response.data) {
-                    return Promise.reject(`Failed to retrieve the version info: HTTP${response.statusCode} ${response.statusMessage} => ${versionInfoUrl}`);
-                }
-
-                return response.data;
-            });
+        return this.httpClient.getAsync(versionInfoUrl);
     }
 
     private requestConfirmationAsync(versionInfo: IVersionInfo): Promise<boolean> {
@@ -146,16 +151,16 @@ export default class UpdateService implements IUpdateService {
     }
 
     private getPackagePath(packageInfo: IPackageInfo): string {
-        let packagePath = packageInfo[env.arch];
+        let packagePath = packageInfo[Architecture[process.arch]];
 
         if (!packagePath) {
             // fall back to x86 if the current one doesn't exist.
-            packagePath = packageInfo[Architecture.X86];
-            this.log.writeVerboseAsync("Fall back to x86 for platform {} from arch {}.", env.platform, env.arch);
+            packagePath = packageInfo[Architecture["x86"]];
+            this.log.writeVerboseAsync("Fall back to x86 for platform {} from arch {}.", Platform[process.platform], Architecture[process.arch]);
         }
 
         if (!packagePath) {
-            this.log.writeErrorAsync("Arch {1} is NOT found in {0} package info.", env.platform, env.arch);
+            this.log.writeErrorAsync("Arch {1} is NOT found in {0} package info.", Platform[process.platform], Architecture[process.arch]);
             return null;
         }
 
@@ -163,32 +168,47 @@ export default class UpdateService implements IUpdateService {
     }
 
     private async requestPackageAsync(packagePath: string): Promise<string> {
-        const tempFile: { name: string; fd: number } =
-            tmp.fileSync({ keep: true, postfix: path.extname(packagePath) });
-        this.log.writeInfoAsync("Created temp file for the update package: {}", tempFile.name);
-
         this.log.writeInfoAsync("Requesting the update package: {}", packagePath);
-        return this.httpClient.getAsync(packagePath)
-            .then(async (response) => {
-                const statusCode = await response.statusCode;
 
-                if (statusCode >= 200 && statusCode < 300) {
-                    this.log.writeVerboseAsync("Writing update package to file: {}", tempFile.name);
+        return new Promise<string>((resolve, reject) => {
+            const saveResponseToFile = (response: http.IncomingMessage) => {
+                if ([301, 302, 303, 307, 308].includes(response.statusCode)) {
+                    packagePath = response.headers.location;
 
-                    const fsWriteAsync = util.promisify(fs.write);
-
-                    let buffer: Buffer;
-
-                    while (buffer = await <Promise<Buffer>>response.readAsync()) {
-                        await fsWriteAsync(tempFile.fd, buffer);
+                    if (url.parse(packagePath).protocol === "https:") {
+                        https.get(packagePath, saveResponseToFile);
+                    } else {
+                        http.get(packagePath, saveResponseToFile);
                     }
 
-                    fs.closeSync(tempFile.fd);
-
-                    return tempFile.name;
+                    return;
                 }
 
-                return Promise.reject(new Error(`Downloading update package failed. HTTP ${response.statusCode}: ${response.statusMessage}`));
-            });
+                if (response.statusCode >= 300) {
+                    reject(new Error(`Downloading update package failed. HTTP ${response.statusCode}: ${response.statusMessage}`));
+                    return;
+                }
+
+                const fileNameMatches = /filename\=([^\\/\:\*\?\"\<\>\|]+)\;?/i.exec(response.headers["content-disposition"]);
+                let fileName: string = url.parse(packagePath).pathname;
+
+                if (fileNameMatches) {
+                    fileName = fileNameMatches[1];
+                }
+
+                const tempFile: { name: string; fd: number } =
+                    tmp.fileSync({ keep: true, postfix: path.extname(fileName) });
+                this.log.writeInfoAsync("Created temp file for the update package: {}", tempFile.name);
+
+                response.pipe(fs.createWriteStream(null, { fd: tempFile.fd }));
+                response.on("end", () => resolve(tempFile.name));
+            };
+
+            if (url.parse(packagePath).protocol === "https:") {
+                https.get(packagePath, saveResponseToFile);
+            } else {
+                http.get(packagePath, saveResponseToFile);
+            }
+        });
     }
 }

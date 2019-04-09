@@ -5,22 +5,15 @@
 
 declare module "sfx.prompt.select-certificate" {
     import { Certificate } from "electron";
-
-    export interface ISelectCertificatePromptResults {
-        selectedCertificate?: Certificate;
-        certificatesImported?: boolean;
-    }
 }
 
 declare module "sfx.module-manager" {
     import { IPrompt } from "sfx.prompt";
-    import { ISelectCertificatePromptResults } from "sfx.prompt.select-certificate";
-    import { Certificate } from "electron";
+    import { ICertificateInfo, ICertificate } from "sfx.cert";
 
-    export interface IModuleManager {
+    export interface ISfxModuleManager {
         getComponentAsync(
             componentIdentity: "prompt.select-certificate",
-            parentWindowId: number,
-            certificates: Array<Certificate>): Promise<IPrompt<ISelectCertificatePromptResults>>;
+            certInfos: Array<ICertificateInfo>): Promise<IPrompt<ICertificateInfo | ICertificate>>;
     }
 }

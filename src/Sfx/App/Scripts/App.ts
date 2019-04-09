@@ -28,6 +28,8 @@ module Sfx {
             "clusterViewController",
             "nodeViewController",
             "nodesViewController",
+            "networksViewController",
+            "networkViewController",
             "appTypeViewController",
             "appsViewController",
             "appViewController",

@@ -1,5 +1,5 @@
 //-----------------------------------------------------------------------------
-// Copyright (c) Microsoft Corporation.  All rights reserved.
+// Copyright (c) 2018 Steven Shan. All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
@@ -12,8 +12,8 @@ import {
 
 import { exec } from "child_process";
 import { promisify } from "util";
-import { env, Platform } from "../../utilities/env";
-import { local } from "../../utilities/appUtils";
+import { local } from "donuts.node/path";
+import * as utils from "donuts.node/utils";
 
 const execAsync = promisify(exec);
 
@@ -23,7 +23,7 @@ enum StoreNames {
 
 export class PkiService implements IPkiCertificateService {
     public async getCertificateInfosAsync(storeName: StoreName): Promise<Array<ICertificateInfo>> {
-        if (env.platform !== Platform.Windows) {
+        if (process.platform !== "win32") {
             return undefined;
         }
 
@@ -31,7 +31,7 @@ export class PkiService implements IPkiCertificateService {
             throw new Error(`Invalid storeName: ${storeName}`);
         }
 
-        const outputs = await execAsync(`powershell "${local("./windows/Get-Certificates.ps1")}" -StoreName "${storeName}"`, { encoding: "utf8" });
+        const outputs = await execAsync(`powershell -ExecutionPolicy Bypass -File "${local("./windows/Get-Certificates.ps1")}" -StoreName "${storeName}"`, { encoding: "utf8" });
         const certJsonObjects: Array<ICertificateInfo> = JSON.parse(outputs.stdout);
 
         for (const certJsonObject of certJsonObjects) {
@@ -45,11 +45,11 @@ export class PkiService implements IPkiCertificateService {
     public async getCertificateAsync(certInfo: ICertificateInfo): Promise<IPfxCertificate> {
         if (!certInfo
             || !certInfo.thumbprint
-            || !String.isString(certInfo.thumbprint)) {
+            || !utils.isString(certInfo.thumbprint)) {
             throw new Error("Invalid certInfo: missing thumbprint.");
         }
 
-        const cmdOutputs = await execAsync(`powershell "${local("./windows/Get-PfxCertificateData.ps1")}" -Thumbprint "${certInfo.thumbprint}"`, { encoding: "utf8" });
+        const cmdOutputs = await execAsync(`powershell -ExecutionPolicy Bypass -File "${local("./windows/Get-PfxCertificateData.ps1")}" -Thumbprint "${certInfo.thumbprint}"`, { encoding: "utf8" });
         const pfxBase64Data = cmdOutputs.stdout;
 
         if (pfxBase64Data === "undefined") {

@@ -3,9 +3,9 @@
 Service Fabric Explorer is an application for inspecting and managing cloud applications and nodes in a Microsoft Azure Service Fabric cluster.
 
 ## Build Status
-Windows | Linux | macOS
------------- | ------------- | -------------
-![Image of Windows Build Badge](https://msazure.visualstudio.com/_apis/public/build/definitions/b32aa71e-8ed2-41b2-9d77-5bc261222004/17273/badge) | ![Image of Linux Build Badge](https://msazure.visualstudio.com/_apis/public/build/definitions/b32aa71e-8ed2-41b2-9d77-5bc261222004/17274/badge) | ![Image of macOS Build Badge](https://msazure.visualstudio.com/_apis/public/build/definitions/b32aa71e-8ed2-41b2-9d77-5bc261222004/18832/badge) 
+Windows | Linux / macOS
+------------ | -------------
+![Image of Windows Build Badge](https://ci.appveyor.com/api/projects/status/ejfk6b0c3dlunkws/branch/master) | ![Image of Linux/macOS Build Badge](https://travis-ci.org/Microsoft/service-fabric-explorer.svg?branch=master) 
 
 ## Installation
 
@@ -25,7 +25,7 @@ For more information about the application and how to use it: https://docs.micro
 
 ## Developer Help and Documentation
 
-Service Fabric Explorer consists of two main components, an Angular based application (Sfx) and an Electron part to host the Angular application (Sfx-Stanalone).
+Service Fabric Explorer consists of two main components, an AngularJS based application (Sfx) and an Electron part to host the AngularJS application (Sfx-Standalone).
 
 ### Preparing the development machine
 
@@ -33,7 +33,7 @@ To develop Service Fabric Explorer, the following components are required.
 
 * Git: https://git-scm.com/
 * Python 2: https://www.python.org/
-* Node.js (Current is preferred): https://nodejs.org/
+* Node.js (Latest is preferred): https://nodejs.org/
 * C++ Compiler
    * Windows: Visual C++ https://www.visualstudio.com/
    * Ubuntu: `sudo apt-get install -y build-essential`
@@ -47,7 +47,7 @@ Here's a list of common IDE used.
 ### Set up the development environment
 
 1. Clone the master branch.
-`git clone https://github.com/Azure/service-fabric-explorer.git <path to the local folder>`
+`git clone --recurse-submodules https://github.com/Microsoft/service-fabric-explorer.git <path to the local folder>`
 2. Install project dependencies: *This can be done inside VSCode or use a console window.*
    1. [SFX] Navigate to `src/Sfx` and run the following scripts.
    ```Shell

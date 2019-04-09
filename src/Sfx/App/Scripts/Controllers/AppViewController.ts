@@ -16,6 +16,9 @@ module Sfx {
         serviceTypesListSettings: ListSettings;
         deployedApplicationsHealthStates: DeployedApplicationHealthState[];
         appEvents: ApplicationEventList;
+        networks: NetworkOnAppCollection;
+        networkListSettings: ListSettings;
+        clusterManifest: ClusterManifest;
     }
 
     export class AppViewController extends MainViewController {
@@ -70,36 +73,47 @@ module Sfx {
             this.$scope.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings("upgradeProgressUnhealthyEvaluations");
             this.$scope.appEvents = this.data.createApplicationEventList(this.appId);
 
+            this.$scope.networkListSettings = this.settings.getNewOrExistingListSettings("networks", ["networkDetail.name"], [
+                new ListColumnSettingForLink("networkDetail.name", "Network Name", item => item.viewPath),
+                new ListColumnSetting("networkDetail.type", "Network Type"),
+                new ListColumnSetting("networkDetail.addressPrefix", "Network Address Prefix"),
+                new ListColumnSetting("networkDetail.status", "Network Status"),
+            ]);
+            this.$scope.clusterManifest = new ClusterManifest(this.data);
+            this.$scope.networks = new NetworkOnAppCollection(this.data, this.appId);
             this.refresh();
         }
 
         protected refreshCommon(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            return this.data.getApp(this.appId, true, messageHandler).then(data => {
-                this.$scope.app = data;
+            return this.$q.all([
+                this.data.getApp(this.appId, true, messageHandler).then(data => {
+                    this.$scope.app = data;
 
-                return this.$scope.app.health.refresh(messageHandler).then(() => {
-                    this.$scope.deployedApplicationsHealthStates = this.$scope.app.health.deployedApplicationHealthStates;
+                    return this.$scope.app.health.refresh(messageHandler).then(() => {
+                        this.$scope.deployedApplicationsHealthStates = this.$scope.app.health.deployedApplicationHealthStates;
 
-                    if (this.$scope.app.health.deploymentsHealthState.text !== HealthStateConstants.OK) {
-                        this.tabs["deployments"].superscriptInHtml = () => {
-                            return `<image class="tab-superscript-badge" src="images/${this.$scope.app.health.deploymentsHealthState.badgeClass}.svg"></image>`;
-                        };
-                    } else {
-                        this.tabs["deployments"].superscriptInHtml = null;
-                    }
-                });
-            });
+                        if (this.$scope.app.health.deploymentsHealthState.text !== HealthStateConstants.OK) {
+                            this.tabs["deployments"].superscriptInHtml = () => {
+                                return `<image class="tab-superscript-badge" src="images/${this.$scope.app.health.deploymentsHealthState.badgeClass}.svg"></image>`;
+                            };
+                        } else {
+                            this.tabs["deployments"].superscriptInHtml = null;
+                        }
+                    });
+                }),
+                this.$scope.clusterManifest.ensureInitialized(false)
+            ]);
         }
 
         private refreshEssentials(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.$q.all([
-                this.$scope.app.isUpgrading
-                    ? this.$scope.app.upgradeProgress.refresh(messageHandler).then(upgradeProgress => {
-                        this.$scope.upgradeProgress = upgradeProgress;
-                    })
-                    : this.$q.when(true),
+                this.$scope.app.upgradeProgress.refresh(messageHandler).then(upgradeProgress => {
+                    this.$scope.upgradeProgress = upgradeProgress;
+                }),
                 this.$scope.app.serviceTypes.refresh(messageHandler),
-                this.$scope.app.services.refresh(messageHandler)]);
+                this.$scope.app.services.refresh(messageHandler),
+                this.$scope.clusterManifest.isNetworkInventoryManagerEnabled ? this.$scope.networks.refresh(messageHandler) : this.$q.when(true)
+            ]);
         }
 
         private refreshManifest(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {

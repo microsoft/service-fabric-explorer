@@ -22,6 +22,14 @@ module Sfx {
             return "<node group>";
         }
 
+        public static networkGroup(): string {
+            return "<network group>";
+        }
+
+        public static network(networkName: string): string {
+            return networkName;
+        }
+
         public static node(nodeName: string): string {
             return nodeName;
         }

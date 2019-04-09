@@ -4,7 +4,6 @@
         "defaultChannel": "stable"
     },
     "logging": {
-        "logCallerInfo": true,
         "loggers": [
             {
                 "name": "app-insights",
@@ -20,7 +19,7 @@
         ]
     },
     "defaultMenu": {
-        "macos": [
+        "darwin": [
             {
                 "submenu": [
                     {
@@ -66,14 +65,5 @@
                 ]
             }
         ]
-    },
-    "package-manager": {
-        "packagesDir": "packages",
-        "repos": {
-            "public": {
-                "name": "public",
-                "url": "https://www.myget.org/F/sfx/npm/"
-            }
-        }
     }
 }

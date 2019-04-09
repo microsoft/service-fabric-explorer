@@ -48,7 +48,7 @@ module Sfx {
         public get description(): string {
             let description = "";
             if (this.raw.UnhealthyEvent) {
-                description =  (this.raw.Description + "\n" + this.raw.UnhealthyEvent.Description).trim();
+                description = (this.raw.Description + "\n" + this.raw.UnhealthyEvent.Description).trim();
             } else {
                 description = this.raw.Description.trim();
             }
@@ -116,6 +116,10 @@ module Sfx {
     }
 
     export class UpgradeDescription extends DataModelBase<IRawUpgradeDescription> {
+        public decorators: IDecorators = {
+            hideList: ["Name", "TargetApplicationTypeVersion", "UpgradeKind", "RollingUpgradeMode"]
+        };
+
         public monitoringPolicy: MonitoringPolicy;
 
         public constructor(data: DataService, raw: IRawUpgradeDescription) {
@@ -159,6 +163,16 @@ module Sfx {
     export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain> {
         public constructor(data: DataService, raw: IRawUpgradeDomain) {
             super(data, raw);
+        }
+
+        public get stateName(): string {
+            if (UpgradeDomainStateRegexes.Completed.test(this.raw.State)) {
+                return UpgradeDomainStateNames.Completed;
+            } else if (UpgradeDomainStateRegexes.InProgress.test(this.raw.State)) {
+                return UpgradeDomainStateNames.InProgress;
+            }
+
+            return UpgradeDomainStateNames.Pending;
         }
 
         public get badgeClass(): string {

@@ -23,7 +23,7 @@ module Sfx {
         }
 
         public get isStandalone(): boolean {
-            return StandaloneIntegration.isStandalone;
+            return StandaloneIntegration.isStandalone();
         }
 
         public get userName(): string {
@@ -35,6 +35,16 @@ module Sfx {
                 }
             }
             return "";
+        }
+
+        public get brandTitle(): string {
+            let title = "Service Fabric Explorer";
+            if (this.isStandalone) {
+                let url = new URL(StandaloneIntegration.clusterUrl);
+                title = url.hostname;
+            }
+
+            return title;
         }
 
         public logOut(): void {

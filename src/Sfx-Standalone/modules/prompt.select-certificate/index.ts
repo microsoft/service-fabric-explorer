@@ -3,35 +3,29 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModule } from "sfx.module-manager";
 import { IPromptService, IPrompt } from "sfx.prompt";
-import { ISelectCertificatePromptResults } from "sfx.prompt.select-certificate";
-import { Certificate } from "electron";
+import { ICertificateInfo } from "sfx.cert";
 
-import * as appUtils from "../../utilities/appUtils";
+import * as shell from "donuts.node/shell";
+import { resolve } from "donuts.node/path";
+import * as utils from "donuts.node/utils";
 
-(<IModule>exports).getModuleMetadata = (components) => {
-    components.register<IPrompt<ISelectCertificatePromptResults>>({
-        name: "prompt.select-certificate",
-        version: appUtils.getAppVersion(),
+(<Donuts.Modularity.IModule>exports).getModuleMetadata = (components) => {
+    components.register<IPrompt<ICertificateInfo>>({
+        name: "select-certificate",
+        version: shell.getAppVersion(),
         descriptor:
             (promptService: IPromptService,
-                parentWindowId: number,
-                certificates: Array<Certificate>) => {
-                if (!Object.isObject(promptService)) {
+                certInfos: Array<ICertificateInfo>) => {
+                if (!utils.isObject(promptService)) {
                     throw new Error("promptService must be supplied.");
-                }
-
-                if (!Array.isArray(certificates)) {
-                    throw new Error("certificates must be supplied.");
                 }
 
                 return promptService.createAsync(
                     {
-                        parentWindowId: parentWindowId,
-                        pageUrl: appUtils.resolve("select-certificate.html"),
+                        pageUrl: resolve("select-certificate.html"),
                         height: 640,
-                        data: certificates
+                        data: certInfos
                     });
             },
         deps: ["prompt.prompt-service"]
@@ -39,6 +33,7 @@ import * as appUtils from "../../utilities/appUtils";
 
     return {
         name: "prompt.select-certificate",
-        version: appUtils.getAppVersion()
+        namespace: "prompt",
+        version: shell.getAppVersion()
     };
 };

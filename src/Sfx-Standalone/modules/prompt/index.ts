@@ -3,15 +3,14 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { IModule } from "sfx.module-manager";
 import { IPromptService } from "sfx.prompt";
 
-import * as appUtils from "../../utilities/appUtils";
+import * as shell from "donuts.node/shell";
 
-(<IModule>exports).getModuleMetadata = (components) => {
+(<Donuts.Modularity.IModule>exports).getModuleMetadata = (components) => {
     components.register<IPromptService>({
-        name: "prompt.prompt-service",
-        version: appUtils.getAppVersion(),
+        name: "prompt-service",
+        version: shell.getAppVersion(),
         singleton: true,
         descriptor: (moduleManager) => import("./prompt").then((module) => new module.PromptService(moduleManager)),
         deps: ["module-manager"]
@@ -19,6 +18,6 @@ import * as appUtils from "../../utilities/appUtils";
 
     return {
         name: "prompt",
-        version: appUtils.getAppVersion()
+        version: shell.getAppVersion()
     };
 };

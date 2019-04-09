@@ -1,0 +1,15 @@
+<span>
+    <span style="display: inline-block;">
+        <span ng-repeat="item in list">
+            <div ng-if="$first || opened">
+                {{item}}
+                <span ng-if="opened && !$last">,</span>
+            </div>
+        </span>
+    </span>
+    <span ng-if="list.length > 1">
+        <a href="" style="display: inline;" ng-if="!opened" ng-click="flip();">({{list.length - 1}})...</a>
+        <a href="" style="display: block;" ng-if="opened" ng-click="flip();">close</a>
+    </span>
+
+</span>

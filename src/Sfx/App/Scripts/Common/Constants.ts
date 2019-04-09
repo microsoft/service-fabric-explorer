@@ -166,4 +166,10 @@ module Sfx {
         public static InProgress: RegExp = /In.*Progress/i;
         public static Completed: RegExp = /Completed/i;
     }
+
+    export class UpgradeDomainStateNames {
+        public static InProgress: string = "InProgress";
+        public static Completed: string = "Completed";
+        public static Pending: string = "Pending";
+    }
 }

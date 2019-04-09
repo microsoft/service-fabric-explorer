@@ -3,59 +3,46 @@
   "version": "1.0.0-private",
   "description": "Service Fabric Explorer desktop version.",
   "main": "bootstrap.js",
-  "scripts": {
-    "start": "electron ./build/app/."
-  },
   "homepage": "https://docs.microsoft.com/en-us/azure/service-fabric/",
   "repository": {
     "url": "https://github.com/Azure/service-fabric-explorer.git",
     "type": "git"
   },
-  "author": "Microsoft Corporation <support@microsoft.com>",
+  "scripts": {
+    "clean-build": "gulp clean-build",
+    "build": "gulp build"
+  },
+  "author": "Microsoft Corporation",
   "license": "MIT",
   "dependencies": {
-    "angular": "^1.6.8",
+    "@types/bootstrap": "^4.1.1",
+    "angular": "^1.7.2",
     "applicationinsights": "^1.0.1",
+    "bootstrap": "^4.1.1",
+    "donuts.node": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-1.0.3.tgz",
+    "donuts.node-ipc": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-ipc-1.0.3.tgz",
+    "donuts.node-modularity": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-modularity-1.0.3.tgz",
+    "donuts.node-remote": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-remote-1.0.3.tgz",
+    "donuts.node-settings": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-settings-1.0.3.tgz",
     "jquery": "^3.2.1",
     "semver": "^5.5.0",
     "tar": "^4.4.4",
     "tmp": "0.0.33",
-    "uuid": "^3.1.0"
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@types/angular": "^1.6.39",
-    "@types/jquery": "^3.2.15",
-    "@types/node": "^8.5.10",
+    "@types/jquery": "^3.3.9",
+    "@types/node": "^10.9.2",
     "@types/semver": "^5.4.0",
     "@types/tar": "^4.0.0",
-    "asar": "0.13.1",
-    "async": "^2.6.0",
-    "del": "3.0.0",
-    "electron": "^2.0.4",
-    "electron-packager": "^12.1.0",
-    "fancy-log": "^1.3.2",
-    "globby": "^7.1.1",
+    "cookie.gulp": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.2/cookie.gulp-1.0.2.tgz",
+    "cookie.gulp-electron-installer": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.2/cookie.gulp-electron-installer-1.0.2.tgz",
+    "cookie.gulp-tsc": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.2/cookie.gulp-tsc-1.0.2.tgz",
+    "cookie.gulp-tslint": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.2/cookie.gulp-tslint-1.0.2.tgz",
+    "cookie.gulp-wix": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.2/cookie.gulp-wix-1.0.2.tgz",
+    "electron": "^3.0.10",
     "gulp": "^4.0.0",
-    "gulp-tslint": "^8.1.3",
-    "natives": "^1.1.3",
-    "pify": "^3.0.0",
-    "temp": "^0.8.3",
-    "tslint": "^5.10.0",
-    "typescript": "^2.9.1",
-    "yargs": "10.0.3"
-  },
-  "publishDependencies": {
-    "electron-installer-linux": {
-      "dependencyTypes": [
-        "dev"
-      ],
-      "platform": "linux"
-    },
-    "electron-installer-zip": {
-      "dependencyTypes": [
-        "dev"
-      ],
-      "platform": "darwin"
-    }
+    "typescript": "^3.1.3"
   }
 }
