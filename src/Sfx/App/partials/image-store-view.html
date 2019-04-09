@@ -15,77 +15,33 @@
     <div class="alert alert-warning" ng-if="!imagestoreroot.isNative">
         <strong>Viewing image store content is only supported for the native Image Store (fabric:ImageStore).</strong>
     </div>
-    <div class="detail-pane store-content-pane" ng-if="imagestoreroot.isNative">
+    <div class="alert alert-warning" ng-if="imagestoreroot.isNative && !imagestoreroot.isAvailable">
+        <strong>Image store viewer does not appear to be supported on this cluster.</strong>
+    </div>
+    <div class="detail-pane store-content-pane" ng-if="imagestoreroot.isNative && imagestoreroot.isAvailable">
         <h4>Store Content</h4>
         <div class="image-store-breadcrumb essen-pane">
-            <span><a href="" ng-click="ctrl.openFolder(imagestoreroot.pathBreadcrumbItems[0].path)" ng-disabled="imagestoreroot.currentFolder.path === imagestoreroot.pathBreadcrumbItems[0].path"
+            <span ng-if="imagestoreroot.isLoadingFolderContent" style="padding-right: 5px;">
+                <span  class="dark-background-link bowtie-icon bowtie-navigate-refresh rotate" aria-label="refresh" title="Loading folder content"></span>
+            </span>
+            <span><a href="" ng-click="imageStoreCtrl.openFolder(imagestoreroot.pathBreadcrumbItems[0].path)" ng-disabled="imagestoreroot.currentFolder.path === imagestoreroot.pathBreadcrumbItems[0].path"
                     aria-label="click to go to root of image store">
                     {{imagestoreroot.pathBreadcrumbItems[0].name}} </a> </span>
-            <span ng-repeat="item in imagestoreroot.pathBreadcrumbItems.slice(1, imagestoreroot.pathBreadcrumbItems.length)"> > <a href="" ng-click="ctrl.openFolder(item.path)"
+            <span ng-repeat="item in imagestoreroot.pathBreadcrumbItems.slice(1, imagestoreroot.pathBreadcrumbItems.length)"> > <a href="" ng-click="imageStoreCtrl.openFolder(item.path)"
                     ng-disabled="item === imagestoreroot.pathBreadcrumbItems[imagestoreroot.pathBreadcrumbItems.length - 1]" aria-label="click to open folder">
                     {{item.name}} </a> </span>
         </div>
-        <div class="table-responsive">
-            <table class="table">
-                <thead>
-                    <th class="header-first-item">Name</th>
-                    <th class="column-item">Size</th>
-                    <th class="column-item">Date modified</th>
-                    <th class="column-item">File version</th>
-                    <th class="column-item">Count of files</th>
-                </thead>
-                <tbody>
-                    <tr ng-repeat="folder in imagestoreroot.currentFolder.childrenFolders" class="list-item">
-                        <td>
-                            <div class="image-store-item-name">
-                                <a href="" role="button" ng-click="ctrl.openFolder(folder.path)" class="list-item-name">
-                                    <span class="bowtie-icon bowtie-folder"></span>
-                                    <span class="">{{folder.displayName}}</span>
-                                </a>
-                                <span ng-if="!folder.isReserved" uib-dropdown class="dropdown" ng-include="'ellipsisFolderTemplate'"></span>
-                                <span ng-if="folder.isReserved" class="bowtie-icon bowtie-security-lock" aria-label="System reserved folder cannot be deleted"
-                                    title="System reserved folder cannot be deleted"></span>
-                            </div>
-                        </td>
-                        <td colspan="3"></td>
-                        <td>
-                            {{folder.fileCount}}
-                        </td>
-                    </tr>
-                    <tr ng-repeat="file in imagestoreroot.currentFolder.childrenFiles" class="child list-item">
-                        <td>
-                            <div class="image-store-item-name">
-                                <div class="list-item-name">
-                                    <span class="bowtie-icon bowtie-file"></span>
-                                    <span class="">{{file.displayName}}</span>
-                                </div>
-                                <span ng-if="!file.isReserved" uib-dropdown class="dropdown" ng-include="'ellipsisFileTemplate'"></span>
-                                <span ng-if="file.isReserved" class="bowtie-icon bowtie-security-lock" aria-label="System reserved file cannot be deleted"
-                                    title="System reserved file cannot be deleted"></span>
-                            </div>
-                        </td>
-                        <td class="column-item">
-                            {{file.displayedSize}}
-                        </td>
-                        <td class="column-item">
-                            {{file.modifiedDate}}
-                        </td>
-                        <td class="column-item">
-                            {{file.version}}
-                        </td>
-                        <td class="column-item">
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
+        <p style="padding: 0px; margin: 0px;">
+            <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error" style="margin-right: 2px; color: #fcd116; font-size: larger;"></span>Search confined to current directory</p>
+        <sfx-detail-list list="imagestoreroot.currentFolder.allChildren" list-settings="fileListSettings"></sfx-detail-list>
     </div>
+
     <script type="text/ng-template" id="ellipsisFileTemplate">
         <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown">
         </a>
         <ul role="menu" class="dropdown-menu-left" uib-dropdown-menu>
             <li role="menuitem">
-                <a href="" role="button" ng-click="ctrl.deleteSelected(file.path)" ng-disabled="file.isReserved" title="System reserved file cannont be deleted.">
+                <a href="" role="button" ng-click="imageStoreCtrl.deleteSelected(file.path)" >
                     Delete
                 </a>
             </li>
@@ -97,7 +53,7 @@
         </a>
         <ul role="menu" class="dropdown-menu-left" uib-dropdown-menu>
             <li role="menuitem">
-                <a href="" role="button" ng-click="ctrl.deleteSelected(folder.path)" ng-disabled="folder.isReserved" title="System reserved folder cannont be deleted.">
+                <a href="" role="button" ng-click="imageStoreCtrl.deleteSelected(folder.path)" ng-disabled="folder.isReserved" title="System reserved folder cannont be deleted.">
                     Delete
                 </a>
             </li>
@@ -115,11 +71,11 @@
                     autocomplete="off" ng-model="usertypedkeyword" aria-hidden="false" aria-invalid="false">
             </div>
             <div class="modal-footer">
-                <button type="submit" class="btn btn-primary ng-binding" data-dismiss="modal" ng-disabled="confirmationKeyword !== usertypedkeyword" ng-click="ctrl.deleteConfirmed()"
+                <button type="submit" class="btn btn-primary ng-binding" data-dismiss="modal" ng-disabled="confirmationKeyword !== usertypedkeyword" ng-click="imageStoreCtrl.deleteConfirmed()"
                     disabled="disabled">
                     Delete Image Store content
                 </button>
-                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="usertypedkeyword = null; ctrl.deleteCanceled()">Cancel</button>
+                <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="usertypedkeyword = null; imageStoreCtrl.deleteCanceled()">Cancel</button>
             </div>
         </form>
     </div>
