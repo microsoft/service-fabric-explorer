@@ -3,6 +3,7 @@ const config = require("./appsettings.json");
 const axios = require('axios');
 const fs = require("fs");
 const https = require("https");
+const express = require('express')
 
 //get flags
 let recordRequest = process.argv.includes("-r");
@@ -26,9 +27,12 @@ const reformatUrl = (req) => {
 }
 
 const writeRequest = (req, resp) => {
+    //need to delete these properties to remove circular dependency 
     delete resp.request;
     delete resp.config;
     const replacedFile = reformatUrl(req);
+
+    //confirm base folder exists
     if (!fs.existsSync(config.recordFileBase)){
         fs.mkdirSync(config.recordFileBase);
     }
@@ -62,39 +66,31 @@ const proxyRequest = async (req) => {
     try {
         res = await axios(conf)
         return res;
-
     }
     //handle axios throwing an error(like 400 level issues) which should just be passed through
     catch(e){
         return e.response;
     }
-
 }
 
-const express = require('express')
 const app = express()
 const port = 3000
 app.use(express.static('wwwroot'))
 app.use(express.json())
-
 app.all('/*', async (req, res) => {
-
     let resp = null;
 
     if(replayRequest && checkFile(req)){
         resp = loadRequest(req);
         process.stdout.write("Playback: ");
-
     }else{
         resp = await proxyRequest(req);
     }
 
     console.log(`${req.url} ${req.method}`);
 
-
     res.status(resp.status);
     res.header(resp.headers);
-
     res.send(resp.data);
 
     if(recordRequest){
