@@ -87,7 +87,7 @@ module Sfx {
                 + `${_.padStart(Math.floor(duration.hours()).toString(), 2, "0")}:`
                 + `${_.padStart(Math.floor(duration.minutes()).toString(), 2, "0")}:`
                 + `${_.padStart(Math.floor(duration.seconds()).toString(), 2, "0")}.`
-                + `${duration.milliseconds()}`;
+                + `${Math.ceil(duration.milliseconds())}`;
         }
     }
 }

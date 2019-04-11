@@ -42,7 +42,7 @@ module Sfx {
             let refreshStartedTime = Date.now();
             this.isRefreshing = true;
 
-            this.$q.all([this.clusterTree.refresh(), this.controllerManager.refreshCurrentControllers()]).finally(() => {
+            this.$q.all([this.clusterTree.refresh(), this.controllerManager.refreshCurrentControllers(), this.data.clusterUpgradeProgress.refresh()]).finally(() => {
                 // Rotate the refreshing icon for at least 1 second
                 let remainingTime = Math.max(1000 - (Date.now() - refreshStartedTime), 0);
                 this.$timeout(() => {

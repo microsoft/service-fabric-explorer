@@ -80,7 +80,7 @@ module Sfx {
                 new ListColumnSetting("networkDetail.status", "Network Status"),
             ]);
             this.$scope.clusterManifest = new ClusterManifest(this.data);
-            this.$scope.networks = new  NetworkOnAppCollection(this.data, this.appId);
+            this.$scope.networks = new NetworkOnAppCollection(this.data, this.appId);
             this.refresh();
         }
 
@@ -107,15 +107,13 @@ module Sfx {
 
         private refreshEssentials(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.$q.all([
-                this.$scope.app.isUpgrading
-                    ? this.$scope.app.upgradeProgress.refresh(messageHandler).then(upgradeProgress => {
-                        this.$scope.upgradeProgress = upgradeProgress;
-                    })
-                    : this.$q.when(true),
+                this.$scope.app.upgradeProgress.refresh(messageHandler).then(upgradeProgress => {
+                    this.$scope.upgradeProgress = upgradeProgress;
+                }),
                 this.$scope.app.serviceTypes.refresh(messageHandler),
                 this.$scope.app.services.refresh(messageHandler),
                 this.$scope.clusterManifest.isNetworkInventoryManagerEnabled ? this.$scope.networks.refresh(messageHandler) : this.$q.when(true)
-                ]);
+            ]);
         }
 
         private refreshManifest(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
