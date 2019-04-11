@@ -1,5 +1,9 @@
 module Sfx {
     export class ImageStore extends DataModelBase<IRawImageStoreContent> {
+        public static reservedFileName: string = "_.dir";
+
+        //These start as true to not display prematurely while loading correct state.
+        public isAvailable: boolean = true;
         public isNative: boolean = true;
         public connectionString: string;
         public root: ImageStoreFolder = new ImageStoreFolder();
@@ -20,7 +24,6 @@ module Sfx {
 
         constructor(public data: DataService) {
             super(data);
-
             this.root.path = "";
             this.root.displayName = "Image Store";
 
@@ -30,27 +33,39 @@ module Sfx {
             manifest.refresh().then(() => {
                 this.connectionString = manifest.imageStoreConnectionString;
                 this.isNative = this.connectionString.toLowerCase() === "fabric:imagestore";
+
+                if (this.isNative) {
+                    // if we get an actual request error. i.e a 400 that means this cluster does not have the API
+                    this.expandFolder(this.currentFolder.path).then( () => {
+                        this.isAvailable = true;
+                    }).catch( err => {
+                        this.isAvailable = false;
+                    });
+                }
             });
 
-            this.expandFolder(this.currentFolder.path);
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
             if (!this.isNative || this.isLoadingFolderContent) {
                 return this.data.$q.resolve(null);
             }
-
             return this.loadFolderContent(this.currentFolder.path);
+        }
+
+        protected updateInternal(): angular.IPromise<any> | void {
+            return this.data.$q.when(true);
         }
 
         protected expandFolder(path: string): angular.IPromise<IRawImageStoreContent> {
             const folder = this.uiFolderDictionary[path];
-            if (!folder || this.isLoadingFolderContent) {
-                return this.data.$q.resolve(null);
+            if (this.isLoadingFolderContent) {
+                return;
             }
-
             this.isLoadingFolderContent = true;
             return this.loadFolderContent(path).then((raw) => {
+
+
                 folder.isExpanded = true;
                 this.currentFolder = folder;
 
@@ -66,7 +81,7 @@ module Sfx {
             });
         }
 
-        protected deleteContent(path: string): angular.IPromise<any> {
+        public deleteContent(path: string): angular.IPromise<any> {
             if (!path) {
                 return this.data.$q.resolve();
             }
@@ -84,61 +99,99 @@ module Sfx {
         }
 
         private loadFolderContent(path: string): angular.IPromise<IRawImageStoreContent> {
+            /*
+            Currently only used to open up to a different directory/reload currently directory in the refresh interval loop
+
+            Attempt to load that directory and if it recieves a 404, indicating a folder does not exist then attempt to load the base
+            directory.
+
+            If the base directory does not exist(really only due to nothing existing in the image store), then load in place of it an 'empty' image store base.
+
+            */
             let folder: ImageStoreFolder = this.uiFolderDictionary[path];
 
-            if (!folder) {
-                return this.data.$q.resolve(null);
-            }
+            return this.data.$q( (resolve, reject) => {
+                Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then(raw => {
+                    folder.childrenFolders = _.map(raw.StoreFolders, f => {
+                        let childFolder = new ImageStoreFolder(f);
+                        this.uiFolderDictionary[childFolder.path] = childFolder;
 
-            return Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then(raw => {
-                folder.childrenFolders = _.map(raw.StoreFolders, f => {
-                    let childFolder = new ImageStoreFolder(f);
-                    this.uiFolderDictionary[childFolder.path] = childFolder;
+                        return childFolder;
+                    });
 
-                    return childFolder;
+                    folder.childrenFiles = _.map(raw.StoreFiles, f => new ImageStoreFile(f));
+                    folder.allChildren = [].concat(folder.childrenFiles).concat(folder.childrenFolders);
+                    resolve(raw);
+                }).catch(err => {
+                    if (err.status === 400) {
+                        reject(err);
+                    }
+                    //The folder to load does not exist anymore, i.e deleted outside of powershell and attempting to refresh
+                    //if not the base directory then query for base directory, this is to stop a recurse.
+                    if (this.currentFolder.path !== this.root.path) {
+                        if (err.status === 404) {
+                            this.data.message.showMessage(
+                                `Directory ${path} does not appear to exist anymore. Navigating back to the base of the image store directory.`, MessageSeverity.Warn);
+                        }
+                        // AT BASE DIRECTORY
+                        this.currentFolder = this.root;
+                        this.expandFolder(this.root.path).then( r => {
+                            resolve(r);
+                        });
+                    } else {
+                        //BASE image store directory does not exist.
+                        resolve({StoreFiles: [], StoreFolders: []});
+                    }
                 });
-
-                folder.childrenFiles = _.map(raw.StoreFiles, f => new ImageStoreFile(f));
-
-                return raw;
             });
         }
     }
 
     export class ImageStoreItem {
+        //Used for name based sorting in the table
+        public isFolder: number;
+
         public path: string;
         public displayName: string;
         public isReserved: boolean;
         public displayedSize: string;
+        public size: number;
+
+        public uniqueId: string;
 
         constructor(path: string) {
+            this.uniqueId = path;
             this.path = path;
 
             let pathSegements = ImageStore.chopPath(path);
             this.displayName = _.last(pathSegements);
-            this.isReserved = pathSegements[0] === "Store" || pathSegements[0] === "WindowsFabricStore";
+            this.isReserved = pathSegements[0] === "Store" || pathSegements[0] === "WindowsFabricStore" || this.displayName === ImageStore.reservedFileName;
         }
     }
 
     export class ImageStoreFolder extends ImageStoreItem {
-        public fileCount: string;
+        public isFolder: number = -1;
+
+        public fileCount: number;
         public isExpanded: boolean = false;
         public childrenFolders: ImageStoreFolder[];
         public childrenFiles: ImageStoreFile[];
+        public allChildren: ImageStoreItem[];
 
         constructor(raw?: IRawStoreFolder) {
             super(raw ? raw.StoreRelativePath : "");
-
             if (!raw) {
                 return;
             }
 
             this.path = raw.StoreRelativePath;
-            this.fileCount = raw.FileCount;
+            this.fileCount = +raw.FileCount;
         }
     }
 
     export class ImageStoreFile extends ImageStoreItem {
+        public isFolder: number = 1;
+
         public version: string;
         public modifiedDate: string;
         public size: number = 0;
