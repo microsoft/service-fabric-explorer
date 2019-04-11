@@ -4,42 +4,69 @@ const axios = require('axios');
 const fs = require("fs");
 const https = require("https");
 
-httpsAgent = null;
+//get flags
+let recordRequest = process.argv.includes("-r");
+let replayRequest = process.argv.includes("-p");
 
+//if PFX location provided for cluster
+httpsAgent = null;
 if(config.TargetCluster.PFXLocation){
     httpsAgent = new https.Agent({
         rejectUnauthorized: false,
-        cert: fs.readFileSync(config.TargetCluster.PFXLocation),
+        pfx: fs.readFileSync(config.TargetCluster.PFXLocation),
+        passphrase: config.TargetCluster.PFXPassPhrase
       })
-      
 }
 
-console.log(httpsAgent);
+const reformatUrl = (req) => {
+    const copy = JSON.parse(JSON.stringify(req.query)); //make a deep copy to remove _cacheToken since it isnt necessary
+    delete copy._cacheToken;
+    const params =  Object.keys(copy).sort().map(key => `${key}=${copy[key]}` ).join("&")
+    return config.recordFileBase +  `${req.method.toLowerCase()}${req.path}${params}.json`.split('/').join('-');
+}
+
+const writeRequest = (req, resp) => {
+    delete resp.request;
+    delete resp.config;
+    const replacedFile = reformatUrl(req);
+    if (!fs.existsSync(config.recordFileBase)){
+        fs.mkdirSync(config.recordFileBase);
+    }
+    fs.writeFileSync(replacedFile, JSON.stringify(resp, null, 4));
+}
+
+const loadRequest = (req) => {
+    return JSON.parse(fs.readFileSync(reformatUrl(req)));
+}
+
+const checkFile = (req) => {
+    return fs.existsSync(reformatUrl(req))
+}
 
 const proxyRequest = async (req) => {
     const url = req.url;
     const headers = req.headers;
-    const body = req.body;
-    const method = req.method;
+    const data = req.body;
+    const method = req.method.toLowerCase();
     let conf = {
         method,
         url: `${config.TargetCluster.Url}${url}`,
-        body, 
-        headers: headers
+        data, 
+        headers
     }
 
     if(httpsAgent){
         conf.httpsAgent = httpsAgent;
     }
 
-    console.log(conf);
     try {
         res = await axios(conf)
-        return res
+        return res;
 
-    } 
+    }
+    //handle axios throwing an error(like 400 level issues) which should just be passed through
     catch(e){
-        console.log(e);
+        return e.response;
     }
 
 }
@@ -51,16 +78,27 @@ app.use(express.static('wwwroot'))
 app.use(express.json())
 
 app.all('/*', async (req, res) => {
-    console.log(req.method)
-    // console.log(`${req.url} ${req.method}`);
 
-    const resp = await proxyRequest(req);
-    // console.log(resp.config)
-    if(resp){
-        res.status(resp.status);
-        res.header(resp.headers);
-    
-        res.send(resp.data);
+    let resp = null;
+
+    if(replayRequest && checkFile(req)){
+        resp = loadRequest(req);
+        process.stdout.write("Playback: ");
+
+    }else{
+        resp = await proxyRequest(req);
+    }
+
+    console.log(`${req.url} ${req.method}`);
+
+
+    res.status(resp.status);
+    res.header(resp.headers);
+
+    res.send(resp.data);
+
+    if(recordRequest){
+        writeRequest(req, resp);
     }
 
 })
@@ -70,4 +108,4 @@ console.log(`Target cluster url : ${config.TargetCluster.Url}`);
 if(httpsAgent){
     console.log(`Certificate was Provided \n\t location: D:test ${config.TargetCluster.PFXLocation}`);
 }
-app.listen(port, () => console.log(`proxy listening on port ${port}!`))
+app.listen(port, () => console.log(`proxy listening on port ${port}`))

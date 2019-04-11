@@ -86,6 +86,24 @@ Here's a list of common IDE used.
       gulp clean-build
       ```
 
+### Run Local http server/Proxy
+node proxy.js
+There are 2 optional flags
+-r which would record every request to a folder(by default called playbackRecordings) and overwriting if the same request is made again
+-p every request will be checked for a saved response and if one exists get served instead
+
+If proxying requests to a secure cluster the appsettings.json can also take a cert pfx location like
+{
+  "TargetCluster": {
+    "Url": "https://jejarryacesstesting.eastus.cloudapp.azure.com:19080",
+    "PFXLocation": "C:/some_cert.pfx",
+    "PFXPassPhrase": "password"
+  },
+  "recordFileBase": "playbackRecordings/"
+}
+
+
+
 ### Run unit tests for Sfx
 
 Open `test/SfxTests` in VSCode or Navigate to `test/SfxTests` in console and run the `ut` gulp task.
