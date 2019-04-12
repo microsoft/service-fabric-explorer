@@ -61,6 +61,11 @@ Here's a list of common IDE used.
    ```Shell
    npm install   
    ```
+   34. [SFX Proxy] Navigate to `src/Sfx-Proxy` and run the following scripts.
+   ```Shell
+   npm install   
+   ```
+
 3. Build projects
    * VSCode
       1. Open `src/Sfx`, `src/Sfx-Standalone` and `test/SfxTests` in VSCode with multiple-root workspce.
@@ -85,6 +90,30 @@ Here's a list of common IDE used.
       ```Shell
       gulp clean-build
       ```
+
+### Run Local http server/Proxy
+Navigate to `src/Sfx-Proxy`
+```Shell
+npm start
+```
+
+There are 2 optional flags
+-r which would record every request to a folder(by default called playbackRecordings) and overwriting if the same request is made again
+-p every request will be checked for a saved response and if one exists get served instead
+```Shell
+npm start -- -r -p
+```
+
+If proxying requests to a secure cluster the appsettings.json can also take a cert pfx location like
+{
+  "TargetCluster": {
+    "Url": "https://jejarryacesstesting.eastus.cloudapp.azure.com:19080",
+    "PFXLocation": "C:/some_cert.pfx",
+    "PFXPassPhrase": "password"
+  },
+  "recordFileBase": "playbackRecordings/"
+}
+
 
 ### Run unit tests for Sfx
 
