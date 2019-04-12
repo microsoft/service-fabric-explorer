@@ -3,8 +3,8 @@ const config = require("./appsettings.json");
 const axios = require('axios');
 const fs = require("fs");
 const https = require("https");
-const express = require('express')
-
+const express = require('express');
+const path = require('path');
 //get flags
 let recordRequest = process.argv.includes("-r");
 let replayRequest = process.argv.includes("-p");
@@ -75,7 +75,7 @@ const proxyRequest = async (req) => {
 
 const app = express()
 const port = 3000
-app.use(express.static('wwwroot'))
+app.use(express.static(path.join('..', 'Sfx', 'wwwroot')))
 app.use(express.json())
 app.all('/*', async (req, res) => {
     let resp = null;

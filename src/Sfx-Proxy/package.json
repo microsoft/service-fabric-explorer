@@ -1,0 +1,21 @@
+{
+  "name": "sfx-proxy",
+  "version": "1.0.0",
+  "description": "A proxy for SFX development.",
+  "main": "proxy.js",
+  "scripts": {
+    "start": "node proxy.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://docs.microsoft.com/en-us/azure/service-fabric/"
+  },
+  "author": "Microsoft Corporation",
+  "license": "MIT",
+  "dependencies": {
+    "axios": "^0.18.0",
+    "body-parser": "^1.18.3",
+    "express": "^4.16.4"
+  }
+}

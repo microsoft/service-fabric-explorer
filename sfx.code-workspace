@@ -1,10 +1,13 @@
 {
 	"folders": [
 		{
-			"path": "src\\Sfx"
+			"path": "src\\Sfx-Standalone"
 		},
 		{
-			"path": "src\\Sfx-Standalone"
+			"path": "src\\Sfx-Proxy"
+		},
+		{
+			"path": "src\\Sfx"
 		}
 	],
 	"settings": {}
