@@ -15,7 +15,7 @@
                     <td>
                         <div style="padding-left: 5px;" ng-click="ctrl.setParentsVisibility(item.event)">
                                 <span sfx-bind-html-compile="ctrl.getBadge(item.event)"></span>
-                                <span sfx-bind-html-compile="item.event.description"></span>
+                                <span class="preserve-whitespace-wrap ng-scope" sfx-bind-html-compile="item.event.description"></span>
                         </div>
                     </td>
                     <td ng-if="item.parents.length > 0">

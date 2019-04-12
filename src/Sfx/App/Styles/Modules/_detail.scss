@@ -423,13 +423,6 @@ table.detail-list {
     }
 }
 
-@keyframes upgrade-domain-bar-active {
-    0% { background-color: $azure-blue; }
-    25% { background-color: $upgrade-domain-progress-color; }
-    50% { background-color: $azure-blue; }
-    100% { background-color: $azure-blue; }
-}
-
 .upgrade-progress {
     width: 98%;
     background-color: transparent;
@@ -442,7 +435,7 @@ table.detail-list {
     border-spacing: 0;
 
     .upgrade-domain-bar {
-        display: table-cell;
+        display: inline-block;
         color: white;
         padding: 1px;
         text-align: center;
@@ -454,6 +447,10 @@ table.detail-list {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
+            line-height: 32px;
+            font-size: 9pt;
+            width: 80px;
+            height: 35px;
 
             &.badge-unknown {
                 background-color: $badge-unknown-color;
@@ -464,9 +461,11 @@ table.detail-list {
             }
 
             &.badge-warning {
-                animation-name: upgrade-domain-bar-active;
-                animation-duration: 3s;
-                animation-iteration-count: infinite;
+                background-color: $azure-blue;
+            }
+
+            &.badge-error {
+                background-color: $badge-warning-color;
             }
         }
     }

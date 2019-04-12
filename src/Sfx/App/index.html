@@ -38,6 +38,17 @@
                 <a class="navbar-brand navbar-brand-title" href="#" ng-click="navbarCtrl.navigateToCluster()">
                     <img style="width: 24px" src="images/favicon.svg" title="{{authCtrl.brandTitle}}" class="navbar-brand-icon"
                     />{{authCtrl.brandTitle}}</a>
+
+                    <div style="display: grid; height: 50px;" ng-controller="HeaderAlertController as HeaderAlertCtrl">
+                        <a href="/#/tab/details" style="margin: auto;" ng-if="HeaderAlertCtrl.clusterUpgradeProgress.isInitialized && HeaderAlertCtrl.clusterUpgradeProgress.isUpgrading">
+                            <span class="essen-pane" ng-if="HeaderAlertCtrl.clusterUpgradeProgress.isInitialized">
+                                <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error"></span>
+                                Cluster Upgrade in Progress since {{HeaderAlertCtrl.clusterUpgradeProgress.startTimestampUtc}}
+                                 {{HeaderAlertCtrl.getUpgradeDomainProgress()}}
+                            </span>
+                        </a>
+                    </div>
+
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-right-control">
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>

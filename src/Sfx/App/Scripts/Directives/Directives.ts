@@ -21,6 +21,8 @@ module Sfx {
         module.directive("sfxDashboard", DashboardChartDirective.factory());
         module.directive("unhealthyEvaluation", () => new UnhealthyEvaluationDirective());
         module.directive("sfxImageStoreView", () => new ImageStoreViewDirective());
+        module.directive("sfxImageStoreFileView", () => new ImageStoreOptionsViewDirective());
+
         module.directive("sfxThemeImport", ["theme", (themeService: ThemeService): angular.IDirective => {
             return {
                 restrict: "A",
@@ -255,11 +257,20 @@ module Sfx {
         module.directive(_.camelCase(Constants.DirectiveNameUpgradeProgress), (): angular.IDirective => {
             return {
                 restrict: "E",
-                replace: true,
                 scope: {
                     upgradeDomains: "="
                 },
                 templateUrl: "partials/upgrade-progress.html"
+            };
+        });
+
+        module.directive("sfxUpgradeDomainProgress", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                scope: {
+                    nodeUpgradeProgressList: "="
+                },
+                templateUrl: "partials/upgrade-domain-progress.html"
             };
         });
 
@@ -291,5 +302,23 @@ module Sfx {
         module.directive("sfxTextFileInput", () => new TextFileInputDirective());
 
         module.directive("sfxDatePicker", () => new DatePickerDirective());
+
+        module.directive("sfxListShorten", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                replace: true,
+                scope: {
+                    list: "="
+                },
+                templateUrl: "partials/long-list-shorten.html",
+                link: function ($scope: any, $element, $attributes: any) {
+                    $scope.opened = false;
+                    $scope.flip = (): void => {
+                        $scope.opened  = !$scope.opened;
+                    };
+                }
+            };
+        });
+
     })();
 }
