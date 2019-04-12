@@ -44,8 +44,8 @@ module Sfx {
         module.directive("sfxInclude", ["$http", "$templateCache", "$compile", function ($http, $templateCache, $compile) {
             return function (scope, element, attrs: any) {
                 scope.$watch(attrs.src, function (templatePath) {
-                    $http.get(templatePath, { cache: $templateCache }).success(function (response) {
-                        let contents = element.html(response).contents();
+                    $http.get(templatePath, { cache: $templateCache }).then(function (response) {
+                        let contents = element.html(response.data).contents();
                         $compile(contents)(scope);
                     });
                 });
