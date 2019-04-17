@@ -2,7 +2,7 @@
     <ng-transclude></ng-transclude>
     <sfx-search-bar ng-if="::listSettings.searchable" class="list-search-bar" placeholder="Search list" model="listSettings.search"
         reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar>
-    <label id="sr-only-search-summary" aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
+    <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
     <div class="table-responsive" ng-class="{'inner-scroll': innerScroll}">
         <table class="table detail-list">
             <thead>
