@@ -15,6 +15,7 @@ module Sfx {
         private static apiVersion60: string = "6.0";
         private static apiVersion62Preview: string = "6.2-preview";
         private static apiVersion64: string = "6.4";
+        private static apiVersion65: string = "6.5";
 
         private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -569,6 +570,11 @@ module Sfx {
 
         public deleteImageStoreContent(path: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             return this.delete(this.getApiUrl(`ImageStore/${path}`, RestClient.apiVersion60), "Delete Image Store content", messageHandler);
+        }
+
+        public getImageStoreFolderSize(path?: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawStoreFolderSize> {
+            let url = (path ? `ImageStore/${path}` : "ImageStore") + '/$/FolderSize';
+            return this.get(this.getApiUrl(url, RestClient.apiVersion65), "Get Image Store Folder Size", messageHandler);
         }
 
         public getClusterEvents(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): angular.IPromise<ClusterEvent[]> {

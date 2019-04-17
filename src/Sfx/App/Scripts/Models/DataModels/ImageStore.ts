@@ -98,6 +98,42 @@ module Sfx {
             return Utils.getHttpResponseData(this.data.restClient.deleteImageStoreContent(path)).then(() => this.refresh());
         }
 
+        public getFolderSize(path: string): angular.IPromise<IRawStoreFolderSize> {
+            return this.data.restClient.getImageStoreFolderSize(path).then(raw => {
+                return raw;
+            }).catch( err => {
+                return err;
+            })
+        }
+
+        // public loadFolderSize(path: string): angular.IPromise<number> {
+        //     //TODO look into alternatives
+        //     // let size = 0;
+        //     // return this.data.$q( (resolve, reject) => {
+
+        //     //     this.loadFolderContent(path).then(raw => {
+        //     //         //sum of file sizes
+        //     //         _.forEach(raw.StoreFiles, file => {
+        //     //             size += +file.FileSize;
+        //     //         })
+
+        //     //         // request sub folder sizes
+        //     //         let folders = _.map(raw.StoreFolders, folder => this.loadFolderSize(folder.StoreRelativePath))
+
+        //     //         this.data.$q.all(folders).then(allFolders => {
+        //     //             _.forEach(allFolders, folder => {
+        //     //                 size += folder;
+        //     //             })
+
+        //     //             console.log(path + ' ' + Utils.getFriendlyFileSize(size));
+        //     //             //resolve with this folder + sub folder size
+        //     //             resolve(size);
+        //     //         })
+        //     //     })
+
+        //     // })
+        // }
+
         private loadFolderContent(path: string): angular.IPromise<IRawImageStoreContent> {
             /*
             Currently only used to open up to a different directory/reload currently directory in the refresh interval loop
