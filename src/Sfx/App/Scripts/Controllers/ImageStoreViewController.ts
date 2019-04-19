@@ -3,8 +3,6 @@ module Sfx {
         public static $inject = ["$scope", "$timeout", "settings"];
         public constructor(private $scope: any, private $timeout: any, private settings: SettingsService ) {
 
-            this.$scope.imagestoresFilesettings = this.settings.getNewOrExistingListSettings("imagestoreFiles");
-            this.$scope.imagestoresettings = this.settings.getNewOrExistingListSettings("imagestoreFolders");
             this.$scope.fileListSettings = this.settings.getNewOrExistingListSettings("imagestore", ["name"], [
                 new ListColumnSetting("", "", null, true, (item: ImageStoreItem, property) => {
                     return `<sfx-image-store-file-view item="item"></sfx-image-store-file-view>`;
@@ -22,12 +20,61 @@ module Sfx {
                             <span title="${item.path}">${item.displayName}</span>`;
                     };
                 }, 1, (item: ImageStoreItem) => {
-                        if (!!item["fileCount"]) {
+                        if (item.isFolder === -1) {
                             this.openFolder(item.path);
                         };
                 }),
                 new ListColumnSetting("displayedSize", "Size", ["isFolder", "size", "displayName"], false, (item: ImageStoreItem, property) => {
-                        return  `<span style="cursor: initial"> ${item.displayedSize || ""} </span>`;
+
+                        //First check if its of type File, if so just display the size
+                        if (item.isFolder === 1) {
+                            return  `<span style="cursor: initial"> ${item.displayedSize} </span>`;
+                        }
+                        //if its a folder first check if its not loading data
+                        const sizeData = this.$scope.imagestoreroot.getCachedFolderSize(item.path);
+                        let size = sizeData.size ? Utils.getFriendlyFileSize(sizeData.size) : "";
+                        let loading = sizeData.loading ? "rotate" : "";
+                        let date = sizeData.date ? `<span  class="dark-background-link bowtie-icon bowtie-status-waiting-fill" aria-label="timestamp" title="${"Last checked " + sizeData.date.toLocaleString()}"></span>` : '';
+                        // ("Last checked " + sizeData.date.toLocaleString() ) : "";
+
+                        let loadButton = (size.length === 0 && !loading ) ? `<button type="button" style="background-color: #262626;border: 1px solid #0075c9;"
+                                                                            class="checkbox-push">
+                                                                            Load Size
+                                                                          </button>` :
+                                                `<a href class="bowtie-icon bowtie-navigate-refresh dark-background-link ${loading}" title="Reload folder size"></a>`;
+
+                        return date + `<span style="cursor: initial; padding-right: 3px;"> ${size} </span>` + loadButton;
+                    }, 1, (item) => {
+                        if (item.isFolder === -1) {
+                            const sizeData = this.$scope.imagestoreroot.getCachedFolderSize(item.path);
+                            if (!sizeData.loading) {
+                                this.$scope.imagestoreroot.cachedCurrentDirectoryFolderSizes[item.path].loading = true;
+                                sizeData.loading = true;
+                            }else{
+                                return;
+                            }
+                            //TODO remove setTimeout
+                            setTimeout( () => {
+                                this.$scope.imagestoreroot.getFolderSize(item.path).then(size => {
+                                    this.$scope.imagestoreroot.cachedCurrentDirectoryFolderSizes[item.path] = {size: size,
+                                                                                                               loading: false,
+                                                                                                               date: new Date() };
+                                    item.size = size;
+                                    item.displayedSize = Utils.getFriendlyFileSize(size);
+
+                                }).catch( () => {
+                                    // .loading = false
+                                    const size = Math.floor(Math.random() * 10000);
+                                    item.size = size;
+                                    item.displayedSize = Utils.getFriendlyFileSize(size);
+                                    console.log(item);
+                                    this.$scope.imagestoreroot.currentFolder.childrenFolders.find(folder => folder.path === item.path).size = size;
+                                    this.$scope.imagestoreroot.cachedCurrentDirectoryFolderSizes[item.path] = {size: size, loading: false, date: new Date() };
+                                    this.$scope.imagestoreroot.allChildren = [].concat(this.$scope.imagestoreroot.allChildren);
+                                    console.log(this.$scope.imagestoreroot.currentFolder)
+                                });
+                            }, 2000);
+                        };
                     }),
                 new ListColumnSetting("modifiedDate", "Date modified"),
                 new ListColumnSetting("version", "File version"),

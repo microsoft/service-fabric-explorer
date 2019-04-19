@@ -573,7 +573,7 @@ module Sfx {
         }
 
         public getImageStoreFolderSize(path?: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawStoreFolderSize> {
-            let url = (path ? `ImageStore/${path}` : "ImageStore") + '/$/FolderSize';
+            let url = (path ? `ImageStore/${path}` : "ImageStore") + "/$/FolderSize";
             return this.get(this.getApiUrl(url, RestClient.apiVersion65), "Get Image Store Folder Size", messageHandler);
         }
 
