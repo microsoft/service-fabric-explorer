@@ -236,6 +236,7 @@ module Sfx {
         public upgradeDomains: string[];
         public faultDomains: string[];
         public healthySeedNodes: string;
+        public disabledNodes: string;
 
         public constructor(data: DataService) {
             super(data);
@@ -249,6 +250,23 @@ module Sfx {
             return this.updateCollectionFromHealthChunkList(clusterHealthChunk.NodeHealthStateChunks, item => IdGenerator.node(item.NodeName)).then(() => {
                 this.updateNodesHealthState();
             });
+        }
+
+        public getNodeStateCounts(): INodesStatusDetails[] {
+            let counts = {}
+            let allNodes = new NodeStatusDetails("All nodes")
+            let seedNodes = new NodeStatusDetails('Seed Nodes');
+            this.collection.forEach(node => {
+                if(node.raw.IsSeedNode){
+                    seedNodes.add(node);
+                }
+                if (!(node.raw.Type in counts)) {
+                    counts[node.raw.Type] = new NodeStatusDetails(node.raw.Type);
+                }
+                counts[node.raw.Type].add(node);
+                allNodes.add(node);
+            })
+            return [allNodes, seedNodes].concat(Object.keys(counts).map(key => counts[key]));
         }
 
         protected get indexPropery(): string {
@@ -273,6 +291,16 @@ module Sfx {
 
             let seedNodes = _.filter(this.collection, node => node.raw.IsSeedNode);
             let healthyNodes = _.filter(seedNodes, node => node.healthState.text === HealthStateConstants.OK);
+
+            let disabledNodes = 0;
+            let disablingNodes = 0;
+
+            this.collection.forEach(node => {
+                node.raw.NodeStatus === NodeStatusConstants.Disabled ? disabledNodes++ : null;
+                node.raw.NodeStatus === NodeStatusConstants.Disabling ? disablingNodes++ : null;
+            })
+
+            this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
 
             this.healthySeedNodes = seedNodes.length.toString() + " (" +
                 Math.round(healthyNodes.length / seedNodes.length * 100).toString() + "%)";

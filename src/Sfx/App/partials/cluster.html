@@ -32,10 +32,12 @@
                         <td>{{nodes.faultDomains.length}}</td>
                     </tr>
                     <tr>
-                        <th>Healthy Seed Nodes</th>                        
+                        <th>Healthy Seed Nodes</th>
+                        <th>Disabled/Disabling Nodes</th>                                               
                     </tr>
                     <tr>
-                        <td>{{nodes.healthySeedNodes}}</td>                        
+                        <td>{{nodes.healthySeedNodes}}</td> 
+                        <td>{{nodes.disabledNodes}}</td>                      
                     </tr>                    
                 </table>
             </div>
@@ -85,6 +87,13 @@
     </script>
 
     <script type="text/ng-template" id="tab_details">
+
+        <div class="detail-pane">
+            <h4> Node States </h4>
+            <sfx-detail-list list="nodesStatuses" list-settings="nodeStatusListSettings"></sfx-detail-list>
+
+        </div>
+
         <div class="detail-pane">
             <h4>
                 Health Events
