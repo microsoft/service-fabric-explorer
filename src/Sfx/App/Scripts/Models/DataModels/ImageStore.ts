@@ -42,14 +42,14 @@ module Sfx {
                 this.isNative = this.connectionString.toLowerCase() === "fabric:imagestore";
 
                 if (this.isNative) {
-                    // if we get an actual request error. i.e a 400 that means this cluster does not have the API
-                    this.expandFolder(this.currentFolder.path).then( () => {
-                        this.isAvailable = true;
-                    }).catch( err => {
-                        this.isAvailable = false;
-                    }).finally( () => {
+                        // if we get an actual request error. i.e a 400 that means this cluster does not have the API
+                        this.expandFolder(this.currentFolder.path).then( () => {
+                            this.isAvailable = true;
+                        }).catch( err => {
+                            this.isAvailable = false;
+                        }).finally( () => {
                         this.initialized = true;
-                    })
+                    });
                 }
             });
 
@@ -116,7 +116,7 @@ module Sfx {
         public getCachedFolderSize(path: string): {size: number, loading: boolean } {
             let cachedData = this.cachedCurrentDirectoryFolderSizes[path];
             if (!cachedData) {
-                cachedData = {size: null, loading: false};
+                cachedData = {size: -1, loading: false};
                 this.cachedCurrentDirectoryFolderSizes[path] = cachedData;
             }
             return cachedData;

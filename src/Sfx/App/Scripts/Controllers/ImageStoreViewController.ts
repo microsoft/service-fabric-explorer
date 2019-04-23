@@ -9,7 +9,7 @@ module Sfx {
                 }),
                 new ListColumnSetting("displayName", "name", ["isFolder", "displayName"], false, (item: any, property) => {
                     if (!!item["fileCount"]) {
-                        return `<div class="image-store-item-name" style="display: inline-block;">
+                        return `<div class="image-store-item-name" style="display: inline-block; cursor: pointer;">
                         <a href="" role="button" class="list-item-name" style="display: table-cell;">
                             <span class="bowtie-icon bowtie-folder"></span>
                             <span title="${item.path}">${item.displayName}</span>
@@ -30,50 +30,43 @@ module Sfx {
                         if (item.isFolder === 1) {
                             return  `<span style="cursor: initial"> ${item.displayedSize} </span>`;
                         }
+
                         //if its a folder first check if its not loading data
                         const sizeData = this.$scope.imagestoreroot.getCachedFolderSize(item.path);
-                        let size = sizeData.size ? Utils.getFriendlyFileSize(sizeData.size) : "";
+                        console.log(sizeData);
+                        let size = sizeData.size > -1 ? Utils.getFriendlyFileSize(sizeData.size) : "";
                         let loading = sizeData.loading ? "rotate" : "";
-                        let date = sizeData.date ? `<span  class="dark-background-link bowtie-icon bowtie-status-waiting-fill" aria-label="timestamp" title="${"Last checked " + sizeData.date.toLocaleString()}"></span>` : '';
-                        // ("Last checked " + sizeData.date.toLocaleString() ) : "";
+                        let date = sizeData.date ? `<span  class="dark-background-link bowtie-icon bowtie-status-waiting-fill" aria-label="timestamp" title="${"Last checked " + sizeData.date.toLocaleString()}"></span>` : "";
 
                         let loadButton = (size.length === 0 && !loading ) ? `<button type="button" style="background-color: #262626;border: 1px solid #0075c9;"
-                                                                            class="checkbox-push">
-                                                                            Load Size
-                                                                          </button>` :
+                                                                                class="checkbox-push">
+                                                                                Load Size
+                                                                            </button>` :
                                                 `<a href class="bowtie-icon bowtie-navigate-refresh dark-background-link ${loading}" title="Reload folder size"></a>`;
-
-                        return date + `<span style="cursor: initial; padding-right: 3px;"> ${size} </span>` + loadButton;
+                        
+                        return "<span style='white-space: nowrap;'>" + date + `<span style="cursor: initial; padding-right: 3px;"> ${size} </span>` + loadButton + "</span>";
                     }, 1, (item) => {
                         if (item.isFolder === -1) {
                             const sizeData = this.$scope.imagestoreroot.getCachedFolderSize(item.path);
                             if (!sizeData.loading) {
                                 this.$scope.imagestoreroot.cachedCurrentDirectoryFolderSizes[item.path].loading = true;
                                 sizeData.loading = true;
-                            }else{
+                            }else {
                                 return;
                             }
-                            //TODO remove setTimeout
-                            setTimeout( () => {
-                                this.$scope.imagestoreroot.getFolderSize(item.path).then(size => {
-                                    this.$scope.imagestoreroot.cachedCurrentDirectoryFolderSizes[item.path] = {size: size,
-                                                                                                               loading: false,
-                                                                                                               date: new Date() };
-                                    item.size = size;
-                                    item.displayedSize = Utils.getFriendlyFileSize(size);
 
-                                }).catch( () => {
-                                    // .loading = false
-                                    const size = Math.floor(Math.random() * 10000);
-                                    item.size = size;
-                                    item.displayedSize = Utils.getFriendlyFileSize(size);
-                                    console.log(item);
-                                    this.$scope.imagestoreroot.currentFolder.childrenFolders.find(folder => folder.path === item.path).size = size;
-                                    this.$scope.imagestoreroot.cachedCurrentDirectoryFolderSizes[item.path] = {size: size, loading: false, date: new Date() };
-                                    this.$scope.imagestoreroot.allChildren = [].concat(this.$scope.imagestoreroot.allChildren);
-                                    console.log(this.$scope.imagestoreroot.currentFolder)
-                                });
-                            }, 2000);
+                            this.$scope.imagestoreroot.getFolderSize(item.path).then(size => {
+                                this.$scope.imagestoreroot.cachedCurrentDirectoryFolderSizes[item.path] = {size: +size.FolderSize,
+                                                                                                            loading: false,
+                                                                                                            date: new Date() };
+                                item.size = +size.FolderSize;
+                                item.displayedSize = Utils.getFriendlyFileSize(+size.FolderSize);
+                                this.$scope.imagestoreroot.currentFolder.childrenFolders.find(folder => folder.path === item.path).size = +size.FolderSize;
+                                this.$scope.imagestoreroot.allChildren = [].concat(this.$scope.imagestoreroot.allChildren);
+
+                            }).catch( () => {
+                                this.$scope.imagestoreroot.cachedCurrentDirectoryFolderSizes[item.path].loading = false;
+                            });
                         };
                     }),
                 new ListColumnSetting("modifiedDate", "Date modified"),
