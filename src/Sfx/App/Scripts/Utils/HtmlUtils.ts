@@ -147,7 +147,7 @@ module Sfx {
                 return this.getSpanWithTitleHtml(badge.text);
             }
             // Keep the template here in sync with badge.html
-            return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="images/${badge.badgeClass}.svg"></img><span> ${badge.text}</span></div>`;
+            return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="images/${badge.badgeClass}.svg" alt="${badge.text} badge"></img><span> ${badge.text}</span></div>`;
         }
 
         public static getEventNameHtml(event: FabricEventBase): string {

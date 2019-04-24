@@ -1,15 +1,13 @@
 ﻿<div class="children" ng-show="node.isExpanded">
     <!-- use inline style to work around IE bug that list-style=none gets ignored for first load -->
-    <ul class="tree" style="list-style: none" sfx-include src="'nodeTemplate'" role="{{ node.owningNode ? 'group' : 'tree'}}"></ul>
-    <div class="more-children"
-         ng-show="node.loadingChildren"
-         ng-style="::{ 'marginLeft': node.paddingLeftPx }">
+    <ul class="tree" style="list-style: none" role="{{ node.owningNode ? 'group' : 'tree'}}">
+        <div class="more-children"
+        ng-show="node.loadingChildren"
+        ng-style="::{ 'marginLeft': node.paddingLeftPx }">
 
-        <span class="icon bowtie-icon bowtie-spinner rotate"></span>
-        <span>Loading...</span>
-    </div>
-
-    <script type="text/ng-template" id="nodeTemplate">
+       <span class="icon bowtie-icon bowtie-spinner rotate"></span>
+       <span>Loading...</span>
+   </div>
         <li class="pager-control" ng-if="node.owningNode.listSettings && node.owningNode.listSettings.pageCount > 1"
             ng-class="{'disabled': node.owningNode.listSettings && node.owningNode.listSettings.currentPage === 1}">
             <div ng-style="::{ 'paddingLeft': node.paddingLeftPx }">
@@ -21,7 +19,7 @@
             ng-repeat="child in node.displayedChildren track by child.nodeId" ng-show="child.isVisibleByBadge" ng-class="{ 'selected': child.selected }" 
             role="treeitem" aria-expanded="{{child.isExpanded}}" aria-label="{{ child.displayName() }}">
             <div class="self" ng-click="child.handleClick()" ng-dblclick="child.toggle()" ng-style="::{ 'paddingLeft': child.paddingLeftPx }" aria-label="{{ child.displayName() }}">
-                <span class="expander icon bowtie-icon" aria-hidden="true"
+                <span tabindex="-1" class="expander icon bowtie-icon" aria-hidden="true"
                       ng-click="child.toggle(); $event.stopPropagation()" ng-show="child.hasExpander"
                       ng-class="{ 'bowtie-chevron-right-light': child.isCollapsed, 'bowtie-chevron-down-light': child.isExpanded }"
                       ng-style="::{ 'left': (child.paddingLeft - 18) + 'px' }">
@@ -34,7 +32,7 @@
                      class="btn-group actions-menu"
                      uib-dropdown dropdown-append-to-body on-toggle="child.contextMenuToggled(open)"
                      ng-click="$event.stopPropagation()"
-                     ng-dblclick="$event.stopPropagation()">
+                     ng-dblclick="$event.stopPropagation()" role="presentation">
                     <a href="" role="button" uib-dropdown-toggle
                        class="dark-background-link actions-expander"
                        ng-disabled="child.actions && child.actions.anyRunning" aria-label="Click to open context menu">
@@ -63,5 +61,5 @@
                 <span ng-click="node.pageLast()" class="pagedown-icon bowtie-icon bowtie-chevron-down-end" title="Last {{node.owningNode.listSettings.limit}} items" aria-hidden="true"></span>
             </div>
         </li>
-    </script>
+    </ul>
 </div>
