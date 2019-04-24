@@ -87,13 +87,6 @@
     </script>
 
     <script type="text/ng-template" id="tab_details">
-
-        <div class="detail-pane">
-            <h4> Node States </h4>
-            <sfx-detail-list list="nodesStatuses" list-settings="nodeStatusListSettings"></sfx-detail-list>
-
-        </div>
-
         <div class="detail-pane">
             <h4>
                 Health Events
@@ -105,6 +98,12 @@
             <h4>Load Information</h4>
             <sfx-detail-view-part data="clusterLoadInformation"></sfx-detail-view-part>
         </div>
+
+        <div class="detail-pane">
+            <h4> Node States </h4>
+            <sfx-detail-list list="nodesStatuses" list-settings="nodeStatusListSettings"></sfx-detail-list>
+        </div>
+
 
         <div id="upgradeDetailsSection class="detail-pane" ng-if="clusterUpgradeProgress.isInitialized">
                 <h4 ng-if="clusterUpgradeProgress.isUpgrading">Cluster Upgrade In Progress</h4>
