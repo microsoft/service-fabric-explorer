@@ -565,6 +565,7 @@ module Sfx {
 
         public getImageStoreContent(path?: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawImageStoreContent> {
             let url = path ? `ImageStore/${path}` : "ImageStore";
+            url += '?timeout=300';
             return this.get(this.getApiUrl(url, RestClient.apiVersion60), "Get Image Store content", messageHandler);
         }
 
@@ -574,6 +575,8 @@ module Sfx {
 
         public getImageStoreFolderSize(path?: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawStoreFolderSize> {
             let url = (path ? `ImageStore/${path}` : "ImageStore") + "/$/FolderSize";
+            url += '?timeout=300';
+
             return this.get(this.getApiUrl(url, RestClient.apiVersion65), "Get Image Store Folder Size", messageHandler);
         }
 

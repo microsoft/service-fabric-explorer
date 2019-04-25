@@ -34,11 +34,14 @@
         </div>
         <sfx-detail-list list="imagestoreroot.currentFolder.allChildren" list-settings="fileListSettings" search-text="'Search confined to current directory'"></sfx-detail-list>
         <div>
-            <p style="float: right; padding: 15px 0 0 0; margin: 0px;">
+            <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
                 <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error" 
-                style="margin-right: 2px;"></span>
-                Folder sizes loaded are snapshots at that time and only updated by reloading that folder size.
-            </p>
+                style="margin-right: 2px; vertical-align: top;"></span>
+                <div style="display: inline-block;">
+                    Large folders can take longer to load. <br>
+                    Folder sizes loaded are snapshots at that time and only updated by reloading that folder size.        
+                </div>
+            </div>
         </div>
     </div>
 
