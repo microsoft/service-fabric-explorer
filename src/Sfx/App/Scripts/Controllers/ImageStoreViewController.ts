@@ -9,13 +9,13 @@ module Sfx {
                 }),
                 new ListColumnSetting("displayName", "name", ["isFolder", "displayName"], false, (item: any, property) => {
                     if (!!item["fileCount"]) {
-                        return `<div class="image-store-item-name" style="display: inline-block; cursor: pointer;">
+                        return `<div class="image-store-item-name" style="display: inline-block; cursor: pointer; white-space: nowrap;">
                         <a href="" role="button" class="list-item-name" style="display: table-cell;">
                             <span class="bowtie-icon bowtie-folder"></span>
                             <span title="${item.path}">${item.displayName}</span>
                         </a>`;
                     } else {
-                        return `<div class="image-store-item-name" style="display: inline-block; cursor: initial;">
+                        return `<div class="image-store-item-name" style="display: inline-block; cursor: initial; white-space: nowrap;">
                             <span class="bowtie-icon bowtie-file"></span>
                             <span title="${item.path}">${item.displayName}</span>`;
                     };
@@ -33,7 +33,7 @@ module Sfx {
 
                         //if its a folder first check if its not loading data
                         const sizeData = this.$scope.imagestoreroot.getCachedFolderSize(item.path);
-                        console.log(sizeData);
+
                         let size = sizeData.size > -1 ? Utils.getFriendlyFileSize(sizeData.size) : "";
                         let loading = sizeData.loading ? "rotate" : "";
                         let date = sizeData.date ? `<span  class="dark-background-link bowtie-icon bowtie-status-waiting-fill" aria-label="timestamp" title="${"Last checked " + sizeData.date.toLocaleString()}"></span>` : "";
@@ -70,7 +70,6 @@ module Sfx {
                         };
                     }),
                 new ListColumnSetting("modifiedDate", "Date modified"),
-                new ListColumnSetting("version", "File version"),
                 new ListColumnSetting("fileCount", "Count of Files", ["isFolder", "fileCount"])
             ]);
         }
