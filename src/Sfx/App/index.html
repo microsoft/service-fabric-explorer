@@ -39,15 +39,17 @@
                     <img style="width: 24px" src="images/favicon.svg" title="{{authCtrl.brandTitle}}" class="navbar-brand-icon"
                     />{{authCtrl.brandTitle}}</a>
 
-                    <div style="display: grid; height: 50px;" ng-controller="HeaderAlertController as HeaderAlertCtrl">
-                        <a href="/#/tab/details" style="margin: auto;" ng-if="HeaderAlertCtrl.clusterUpgradeProgress.isInitialized && HeaderAlertCtrl.clusterUpgradeProgress.isUpgrading">
-                            <span class="essen-pane" ng-if="HeaderAlertCtrl.clusterUpgradeProgress.isInitialized">
-                                <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error"></span>
-                                Cluster Upgrade in Progress since {{HeaderAlertCtrl.clusterUpgradeProgress.startTimestampUtc}}
-                                 {{HeaderAlertCtrl.getUpgradeDomainProgress()}}
-                            </span>
-                        </a>
-                    </div>
+                    <span ng-controller="HeaderAlertController as HeaderAlertCtrl">
+                        <div style="display: inline-flex; height: 50px;" ng-if="HeaderAlertCtrl.clusterUpgradeProgress.isInitialized && HeaderAlertCtrl.clusterUpgradeProgress.isUpgrading">
+                            <a href="/#/tab/details" style="margin: auto;" class="essen-pane">
+                                <span ng-if="HeaderAlertCtrl.clusterUpgradeProgress.isInitialized">
+                                    <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error"></span>
+                                    Cluster Upgrade in Progress since {{HeaderAlertCtrl.clusterUpgradeProgress.startTimestampUtc}}
+                                        {{HeaderAlertCtrl.getUpgradeDomainProgress()}}
+                                </span>
+                            </a>
+                        </div>
+                    </span>
 
                 <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-right-control">
                     <span class="icon-bar"></span>
