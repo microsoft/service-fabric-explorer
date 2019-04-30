@@ -721,6 +721,11 @@ module Sfx {
         FileCount: string;
     }
 
+    export interface IRawStoreFolderSize {
+        StoreRelativePath: string;
+        FolderSize: string;
+    }
+
     export interface IRawClusterVersion {
         Version: string;
     }

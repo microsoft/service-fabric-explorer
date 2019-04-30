@@ -7,15 +7,21 @@ module Sfx {
         public isNative: boolean = true;
         public connectionString: string;
         public root: ImageStoreFolder = new ImageStoreFolder();
-        public uiFolderDictionary: { [path: string]: ImageStoreFolder } = {};
+        public cachedCurrentDirectoryFolderSizes: { [path: string]: {size: number, loading: boolean, date?: Date } } = {};
 
         public currentFolder: ImageStoreFolder;
         public pathBreadcrumbItems: IStorePathBreadcrumbItem[] = [];
 
         private isLoadingFolderContent: boolean = false;
+        private initialized = false;
+
+        //helper to determine which way for slashes to be added in.
+        public static slashDirection(path: string): boolean {
+            return path.indexOf("\\") > -1;
+        }
 
         public static chopPath(path: string): string[] {
-            if (path.indexOf("\\") > -1) {
+            if (ImageStore.slashDirection(path)) {
                 return path.split("\\");
             }
 
@@ -27,19 +33,22 @@ module Sfx {
             this.root.path = "";
             this.root.displayName = "Image Store";
 
-            this.uiFolderDictionary[this.root.path] = this.root;
             this.currentFolder = this.root;
+            this.pathBreadcrumbItems = [<IStorePathBreadcrumbItem>{ path: this.root.path, name: this.root.displayName}];
+
             let manifest = new ClusterManifest(data);
             manifest.refresh().then(() => {
                 this.connectionString = manifest.imageStoreConnectionString;
                 this.isNative = this.connectionString.toLowerCase() === "fabric:imagestore";
 
                 if (this.isNative) {
-                    // if we get an actual request error. i.e a 400 that means this cluster does not have the API
-                    this.expandFolder(this.currentFolder.path).then( () => {
-                        this.isAvailable = true;
-                    }).catch( err => {
-                        this.isAvailable = false;
+                        // if we get an actual request error. i.e a 400 that means this cluster does not have the API
+                        this.expandFolder(this.currentFolder.path).then( () => {
+                            this.isAvailable = true;
+                        }).catch( err => {
+                            this.isAvailable = false;
+                        }).finally( () => {
+                        this.initialized = true;
                     });
                 }
             });
@@ -47,37 +56,43 @@ module Sfx {
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
-            if (!this.isNative || this.isLoadingFolderContent) {
+            if (!this.isNative || this.isLoadingFolderContent || !this.initialized) {
                 return this.data.$q.resolve(null);
             }
-            return this.loadFolderContent(this.currentFolder.path);
+            return this.expandFolder(this.currentFolder.path);
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
             return this.data.$q.when(true);
         }
 
-        protected expandFolder(path: string): angular.IPromise<IRawImageStoreContent> {
-            const folder = this.uiFolderDictionary[path];
+        protected expandFolder(path: string, clearCache: boolean = false): angular.IPromise<IRawImageStoreContent> {
             if (this.isLoadingFolderContent) {
                 return;
             }
             this.isLoadingFolderContent = true;
             return this.loadFolderContent(path).then((raw) => {
+                this.setCurrentFolder(path, raw, clearCache);
 
-
-                folder.isExpanded = true;
-                this.currentFolder = folder;
-
-                let index = _.findIndex(this.pathBreadcrumbItems, item => item.path === folder.path);
+                let index = _.findIndex(this.pathBreadcrumbItems, item => item.path === this.currentFolder.path);
                 if (index > -1) {
                     this.pathBreadcrumbItems = this.pathBreadcrumbItems.slice(0, index + 1);
                 } else {
-                    this.pathBreadcrumbItems.push(<IStorePathBreadcrumbItem>{ path: folder.path, name: folder.displayName });
+                    this.pathBreadcrumbItems.push(<IStorePathBreadcrumbItem>{ path: this.currentFolder.path, name: this.currentFolder.displayName });
                 }
 
                 this.isLoadingFolderContent = false;
                 return raw;
+            }).catch( err => {
+                this.isLoadingFolderContent = false;
+                if (err.status === 400) {
+                    return err;
+                }else if (err.status === 404) {
+                    this.data.message.showMessage(
+                        `Directory ${path} does not appear to exist anymore. Navigating back to the base of the image store directory.`, MessageSeverity.Warn);
+                    //go to the base directory
+                    return this.expandFolder(this.root.path);
+                }
             });
         }
 
@@ -98,7 +113,47 @@ module Sfx {
             return Utils.getHttpResponseData(this.data.restClient.deleteImageStoreContent(path)).then(() => this.refresh());
         }
 
-        private loadFolderContent(path: string): angular.IPromise<IRawImageStoreContent> {
+        public getCachedFolderSize(path: string): {size: number, loading: boolean } {
+            let cachedData = this.cachedCurrentDirectoryFolderSizes[path];
+            if (!cachedData) {
+                cachedData = {size: -1, loading: false};
+                this.cachedCurrentDirectoryFolderSizes[path] = cachedData;
+            }
+            return cachedData;
+        }
+
+        public getFolderSize(path: string): angular.IPromise<IRawStoreFolderSize> {
+            return Utils.getHttpResponseData(this.data.restClient.getImageStoreFolderSize(path)).then(raw => {
+                return raw;
+            });
+        }
+
+        private setCurrentFolder(path: string, content: IRawImageStoreContent, clearFolderSizeCache: boolean): void {
+            if (clearFolderSizeCache) {
+                this.cachedCurrentDirectoryFolderSizes = {};
+            }
+            let folder: ImageStoreFolder = new ImageStoreFolder();
+            folder.path = path;
+            let pathSegements = ImageStore.chopPath(path);
+            folder.displayName = _.last(pathSegements);
+
+            folder.childrenFolders = _.map(content.StoreFolders, f => {
+                let childFolder = new ImageStoreFolder(f);
+                if (childFolder.path in this.cachedCurrentDirectoryFolderSizes) {
+                    childFolder.size = this.cachedCurrentDirectoryFolderSizes[childFolder.path].size;
+                }
+
+                return childFolder;
+            });
+
+            folder.childrenFiles = _.map(content.StoreFiles, f => new ImageStoreFile(f));
+            folder.allChildren = [].concat(folder.childrenFiles).concat(folder.childrenFolders);
+            folder.fileCount = folder.childrenFiles.length;
+
+            this.currentFolder = folder;
+        }
+
+        private loadFolderContent(path: string, refresh: boolean = false): angular.IPromise<IRawImageStoreContent> {
             /*
             Currently only used to open up to a different directory/reload currently directory in the refresh interval loop
 
@@ -108,39 +163,19 @@ module Sfx {
             If the base directory does not exist(really only due to nothing existing in the image store), then load in place of it an 'empty' image store base.
 
             */
-            let folder: ImageStoreFolder = this.uiFolderDictionary[path];
 
             return this.data.$q( (resolve, reject) => {
                 Utils.getHttpResponseData(this.data.restClient.getImageStoreContent(path)).then(raw => {
-                    folder.childrenFolders = _.map(raw.StoreFolders, f => {
-                        let childFolder = new ImageStoreFolder(f);
-                        this.uiFolderDictionary[childFolder.path] = childFolder;
-
-                        return childFolder;
-                    });
-
-                    folder.childrenFiles = _.map(raw.StoreFiles, f => new ImageStoreFile(f));
-                    folder.allChildren = [].concat(folder.childrenFiles).concat(folder.childrenFolders);
+                    if (refresh) {
+                        this.setCurrentFolder(path, raw, false);
+                    }
                     resolve(raw);
                 }).catch(err => {
-                    if (err.status === 400) {
-                        reject(err);
-                    }
-                    //The folder to load does not exist anymore, i.e deleted outside of powershell and attempting to refresh
-                    //if not the base directory then query for base directory, this is to stop a recurse.
-                    if (this.currentFolder.path !== this.root.path) {
-                        if (err.status === 404) {
-                            this.data.message.showMessage(
-                                `Directory ${path} does not appear to exist anymore. Navigating back to the base of the image store directory.`, MessageSeverity.Warn);
-                        }
-                        // AT BASE DIRECTORY
-                        this.currentFolder = this.root;
-                        this.expandFolder(this.root.path).then( r => {
-                            resolve(r);
-                        });
-                    } else {
-                        //BASE image store directory does not exist.
+                    //handle bug if root directory does not exist.
+                    if (err.status === 404 && path === this.root.path) {
                         resolve({StoreFiles: [], StoreFolders: []});
+                    }else {
+                        reject(err);
                     }
                 });
             });
@@ -171,7 +206,7 @@ module Sfx {
 
     export class ImageStoreFolder extends ImageStoreItem {
         public isFolder: number = -1;
-
+        public size: number = -1; //setting to -1 for sorting
         public fileCount: number;
         public isExpanded: boolean = false;
         public childrenFolders: ImageStoreFolder[];

@@ -1,6 +1,6 @@
 ﻿<div class="detail-list-container flex-child">
     <ng-transclude></ng-transclude>
-    <sfx-search-bar ng-if="::listSettings.searchable" class="list-search-bar" placeholder="Search list" model="listSettings.search"
+    <sfx-search-bar ng-if="::listSettings.searchable" class="list-search-bar" placeholder="{{searchText || 'Search list' }}" model="listSettings.search"
         reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar>
     <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
     <div class="table-responsive" ng-class="{'inner-scroll': innerScroll}">
@@ -47,7 +47,7 @@
                        title="{{item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row' }}"
                        ng-click="ctrl.handleClickRow(item)"
                        ng-class="{'bowtie-chevron-right': item.isSecondRowCollapsed, 'bowtie-chevron-down': !item.isSecondRowCollapsed}"></i>
-                        <span sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)" ng-click="columnSetting.clickEvent(item);"></span>
+                        <span sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)" ng-click="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
                     </td>
                 </tr>
                 <!-- Optional second row -->

@@ -14,7 +14,8 @@ module Sfx {
         public scope = {
             list: "=",
             listSettings: "=",
-            innerScroll: "=?"
+            innerScroll: "=?",
+            searchText: "=?"
         };
         public transclude = true;
 
