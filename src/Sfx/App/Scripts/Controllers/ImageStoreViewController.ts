@@ -43,7 +43,6 @@ module Sfx {
                                                                                 Load Size
                                                                             </button>` :
                                                 `<a href class="bowtie-icon bowtie-navigate-refresh dark-background-link ${loading}" title="Reload folder size"></a>`;
-                        
                         return "<span style='white-space: nowrap;'>" + date + `<span style="cursor: initial; padding-right: 3px;"> ${size} </span>` + loadButton + "</span>";
                     }, 1, (item) => {
                         if (item.isFolder === -1) {
