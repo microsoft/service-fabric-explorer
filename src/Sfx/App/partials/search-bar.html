@@ -3,7 +3,8 @@
            autocomplete="off"
            placeholder="{{placeholder}}"
            ng-model="model"
-           ng-model-options="{ debounce: 300 }" />
+           ng-model-options="{ debounce: 300 }"
+           aria-label="{{placeholder}}" />
     <span class="bowtie-icon bowtie-search" ng-show="!model"></span>
     <span class="bowtie-icon bowtie-edit-delete" ng-show="model" ng-click="model = ''"></span>
     <a class="reset-link" ng-if="reset" href="" ng-click="reset()" role="button">Reset All</a>
