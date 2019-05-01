@@ -742,9 +742,10 @@ module Sfx {
         public statusTypeCounts: Record<string, number>;
         public warningCount: number = 0;
         public errorCount: number = 0;
-        public constructor(nodeType: string){
+        public totalCount: number = 0;
+        public constructor(nodeType: string) {
             this.nodeType = nodeType;
-            
+
             //easiest way to initialize all possible values with Enum strings
             this.statusTypeCounts = {};
             this.statusTypeCounts[NodeStatusConstants.Up] = 0;
@@ -755,11 +756,16 @@ module Sfx {
             this.statusTypeCounts[NodeStatusConstants.Unknown] = 0;
             this.statusTypeCounts[NodeStatusConstants.Invalid] = 0;
         }
-        
+
         public add(node: Node): void {
             this.statusTypeCounts[node.raw.NodeStatus]++;
-            node.healthState.text === HealthStateConstants.Warning ? this.warningCount++ : null;
-            node.healthState.text === HealthStateConstants.Error ? this.errorCount++ : null;
+            this.totalCount++;
+            if (node.healthState.text === HealthStateConstants.Warning) {
+                this.warningCount++;
+            }
+            if (node.healthState.text === HealthStateConstants.Error) {
+                this.errorCount++;
+            }
         }
     }
 

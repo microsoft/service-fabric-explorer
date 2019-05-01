@@ -109,7 +109,7 @@ module Sfx {
                 }));
 
             // For healthy seed nodes / fault domains and upgrade domains
-            promises.push(this.$scope.nodes.refresh(messageHandler))
+            promises.push(this.$scope.nodes.refresh(messageHandler));
 
             // For system application health state
             promises.push(this.$scope.systemApp.refresh(messageHandler));
@@ -130,7 +130,6 @@ module Sfx {
                 this.$scope.clusterLoadInformation.refresh(messageHandler),
                 this.$scope.nodes.refresh(messageHandler).then( () => {
                     this.$scope.nodesStatuses = this.$scope.nodes.getNodeStateCounts();
-                    console.log(this.$scope.nodesStatuses);
                 })
             ]);
         }

@@ -100,19 +100,17 @@ module Sfx {
             return this.getNewOrExistingListSettings(listKey, null,
                 [
                     new ListColumnSetting("nodeType", "Node Type"),
-                    new ListColumnSetting("errorCount", "Error"),
-                    new ListColumnSetting("warningCount", "Warning"),
+                    new ListColumnSetting("totalCount", "Total Node Count"),
                     new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Up}`, NodeStatusConstants.Up),
                     new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Down}`, NodeStatusConstants.Down),
                     new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Disabled}`, NodeStatusConstants.Disabled),
                     new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Disabling}`, NodeStatusConstants.Disabling),
-                    new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Invalid}`, NodeStatusConstants.Invalid),
-                    new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Unknown}`, NodeStatusConstants.Unknown),
-                    // new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Enabling}`, NodeStatusConstants.Enabling),
+                    new ListColumnSetting("errorCount", "Error"),
+                    new ListColumnSetting("warningCount", "Warning"),
                 ]
-            
-            )
-        }
+
+            );
+        };
 
         // Update all existing list settings to use new limit
         private updatePaginationLimit(limit: number): void {

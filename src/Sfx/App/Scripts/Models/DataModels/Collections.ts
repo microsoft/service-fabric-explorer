@@ -253,11 +253,12 @@ module Sfx {
         }
 
         public getNodeStateCounts(): INodesStatusDetails[] {
-            let counts = {}
-            let allNodes = new NodeStatusDetails("All nodes")
-            let seedNodes = new NodeStatusDetails('Seed Nodes');
+            let counts = {};
+            let allNodes = new NodeStatusDetails("All nodes");
+            let seedNodes = new NodeStatusDetails("Seed Nodes");
+
             this.collection.forEach(node => {
-                if(node.raw.IsSeedNode){
+                if (node.raw.IsSeedNode) {
                     seedNodes.add(node);
                 }
                 if (!(node.raw.Type in counts)) {
@@ -265,7 +266,7 @@ module Sfx {
                 }
                 counts[node.raw.Type].add(node);
                 allNodes.add(node);
-            })
+            });
             return [allNodes, seedNodes].concat(Object.keys(counts).map(key => counts[key]));
         }
 
@@ -296,9 +297,13 @@ module Sfx {
             let disablingNodes = 0;
 
             this.collection.forEach(node => {
-                node.raw.NodeStatus === NodeStatusConstants.Disabled ? disabledNodes++ : null;
-                node.raw.NodeStatus === NodeStatusConstants.Disabling ? disablingNodes++ : null;
-            })
+                if (node.raw.NodeStatus === NodeStatusConstants.Disabled) {
+                    disabledNodes++;
+                }
+                if (node.raw.NodeStatus === NodeStatusConstants.Disabling) {
+                    disablingNodes++;
+                }
+            });
 
             this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
 
