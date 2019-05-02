@@ -14,6 +14,8 @@ module Sfx {
         replicasDashboard: IDashboardViewModel;
         upgradesDashboard: IDashboardViewModel;
         nodes: NodeCollection;
+        nodesStatuses: INodesStatusDetails[];
+        nodeStatusListSettings: ListSettings;
         systemApp: SystemApplication;
         clusterHealth: ClusterHealth;
         clusterManifest: ClusterManifest;
@@ -59,6 +61,7 @@ module Sfx {
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings("clusterUpgradeProgressUnhealthyEvaluations");
+            this.$scope.nodeStatusListSettings = this.settings.getNewOrExistingNodeStatusListSetting();
 
             this.$scope.clusterHealth = this.data.getClusterHealth(HealthStateFilterFlags.Default, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
             this.$scope.clusterUpgradeProgress = this.data.clusterUpgradeProgress;
@@ -69,7 +72,7 @@ module Sfx {
             this.$scope.appsUpgradeTabViewPath = this.routes.getTabViewPath(this.routes.getAppsViewPath(), "upgrades");
             this.$scope.imageStore = this.data.imageStore;
             this.$scope.clusterEvents = this.data.createClusterEventList();
-
+            this.$scope.nodesStatuses = [];
             this.refresh();
         }
 
@@ -124,7 +127,10 @@ module Sfx {
             return this.$q.all([
                 this.$scope.clusterHealth.refresh(messageHandler),
                 this.$scope.clusterUpgradeProgress.refresh(messageHandler),
-                this.$scope.clusterLoadInformation.refresh(messageHandler)
+                this.$scope.clusterLoadInformation.refresh(messageHandler),
+                this.$scope.nodes.refresh(messageHandler).then( () => {
+                    this.$scope.nodesStatuses = this.$scope.nodes.getNodeStateCounts();
+                })
             ]);
         }
 
