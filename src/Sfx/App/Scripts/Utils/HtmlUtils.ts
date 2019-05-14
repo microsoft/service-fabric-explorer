@@ -12,14 +12,22 @@ module Sfx {
             "*UpgradeRollbackStart",                        //Old:6.2
             "*UpgradeRollbackComplete",                     //Old:6.2
             "*UpgradeRollbackStarted",
-            "*UpgradeRollbackCompleted" ],
+            "*UpgradeRollbackCompleted",
+            "BuildIdleReplicaFailed",
+            "PrimaryFaultedSlowSecondary",
+            "PrimaryReplicationQueueFull",
+            "PrimaryReplicationQueueWarning",
+            "ReplicatorFaulted",
+            "SecondaryReplicationQueueFull",
+            "SecondaryReplicationQueueWarning" ],
             item => item.split("-")[0].replace("*", "") );
         private ErrorEventTypes = _.keyBy( [
             "*HealthReportCreated-HealthState:Error",
             "*NewHealthReport-HealthState:Error",
             "NodeDown",
             "NodeOpenFailed",
-            "NodeAborted" ],
+            "NodeAborted",
+            "TStoreError" ],
             item => item.split("-")[0].replace("*", "") );
         private ResolvedEventTypes = _.keyBy( [
             "*HealthReportCreated-HealthState:Ok",
