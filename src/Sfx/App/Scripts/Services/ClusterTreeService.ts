@@ -367,7 +367,9 @@ module Sfx {
                 return _.map(partitions.collection, partition => {
                     return {
                         nodeId: IdGenerator.partition(partition.id),
-                        displayName: () => partition.id,
+                        displayName: () => partition.partitionInformation.isPartitionKindNamed
+                            ? `${partition.partitionInformation.raw.Name} (${partition.id})`
+                            : partition.id,
                         selectAction: () => this.routes.navigate(() => partition.viewPath),
                         childrenQuery: () => this.getReplicas(appId, serviceId, partition.id),
                         badge: () => partition.healthState,
