@@ -1,7 +1,7 @@
-﻿<ul class="pagination">
-    <li ng-if="::boundaryLinks" ng-class="{disabled: noPrevious()||ngDisabled}" class="pagination-first"><a href ng-click="selectPage(1, $event)" class="bowtie-icon bowtie-chevron-left-end"></a></li>
-    <li ng-if="::directionLinks" ng-class="{disabled: noPrevious()||ngDisabled}" class="pagination-prev"><a href ng-click="selectPage(page - 1, $event)" class="bowtie-icon bowtie-chevron-left"></a></li>
-    <li ng-repeat="page in pages track by $index" ng-class="{active: page.active,disabled: ngDisabled&&!page.active}" class="pagination-page"><a href ng-click="selectPage(page.number, $event)">{{page.text}}</a></li>
-    <li ng-if="::directionLinks" ng-class="{disabled: noNext()||ngDisabled}" class="pagination-next"><a href ng-click="selectPage(page + 1, $event)" class="bowtie-icon bowtie-chevron-right"></a></li>
-    <li ng-if="::boundaryLinks" ng-class="{disabled: noNext()||ngDisabled}" class="pagination-last"><a href ng-click="selectPage(totalPages, $event)" class="bowtie-icon bowtie-chevron-right-end"></a></li>
+﻿<ul class="pagination" role="menubar">
+    <li role="presentation" ng-if="::boundaryLinks" ng-class="{disabled: noPrevious()||ngDisabled}" class="pagination-first"><a href ng-click="selectPage(1, $event)" class="bowtie-icon bowtie-chevron-left-end" role="menuitem" aria-label="Skip to First"></a></li>
+    <li role="presentation" ng-if="::directionLinks" ng-class="{disabled: noPrevious()||ngDisabled}" class="pagination-prev"><a href ng-click="selectPage(page - 1, $event)" class="bowtie-icon bowtie-chevron-left" role="menuitem" aria-label="Go to previous page"></a></li>
+    <li role="presentation" ng-repeat="page in pages track by $index" ng-class="{active: page.active,disabled: ngDisabled&&!page.active}" class="pagination-page"><a href ng-click="selectPage(page.number, $event)" role="menuitem" aria-label="Go to {{page.text}} page">{{page.text}}</a></li>
+    <li role="presentation" ng-if="::directionLinks" ng-class="{disabled: noNext()||ngDisabled}" class="pagination-next"><a href ng-click="selectPage(page + 1, $event)" class="bowtie-icon bowtie-chevron-right" role="menuitem" aria-label="Go to next page"></a></li>
+    <li role="presentation" ng-if="::boundaryLinks" ng-class="{disabled: noNext()||ngDisabled}" class="pagination-last"><a href ng-click="selectPage(totalPages, $event)" class="bowtie-icon bowtie-chevron-right-end" role="menuitem" aria-label="Skip to End"></a></li>
 </ul>

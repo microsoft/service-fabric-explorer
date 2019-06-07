@@ -13,7 +13,8 @@
             Showing {{listSettings.begin + 1 | number}} - {{(listSettings.begin + listSettings.limit) > listSettings.count ? listSettings.count : (listSettings.begin + listSettings.limit) | number}} of {{listSettings.count | number}} items
         </span>
         <span>Page: &nbsp;</span>
-        <input class="input-flat" 
+        <input aria-label="current page"
+               class="input-flat" 
                type="number"
                autocomplete="off"
                onkeypress="return event.charCode >= 48 && event.charCode <= 57"

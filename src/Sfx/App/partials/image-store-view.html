@@ -1,4 +1,4 @@
-<div class="detail-pane image-store-view">
+<div class="detail-pane">
     <div class="detail-pane">
         <h4>Configuration</h4>
         <div class="table-responsive">
@@ -18,6 +18,7 @@
     <div class="alert alert-warning" ng-if="imagestoreroot.isNative && !imagestoreroot.isAvailable">
         <strong>Image store viewer does not appear to be supported on this cluster.</strong>
     </div>
+
     <div class="detail-pane store-content-pane" ng-if="imagestoreroot.isNative && imagestoreroot.isAvailable">
         <h4>Store Content</h4>
         <div class="image-store-breadcrumb essen-pane">
@@ -31,9 +32,17 @@
                     ng-disabled="item === imagestoreroot.pathBreadcrumbItems[imagestoreroot.pathBreadcrumbItems.length - 1]" aria-label="click to open folder">
                     {{item.name}} </a> </span>
         </div>
-        <p style="padding: 0px; margin: 0px;">
-            <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error" style="margin-right: 2px; color: #fcd116; font-size: larger;"></span>Search confined to current directory</p>
-        <sfx-detail-list list="imagestoreroot.currentFolder.allChildren" list-settings="fileListSettings"></sfx-detail-list>
+        <sfx-detail-list list="imagestoreroot.currentFolder.allChildren" list-settings="fileListSettings" search-text="'Search confined to current directory'"></sfx-detail-list>
+        <div>
+            <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
+                <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error" 
+                style="margin-right: 2px; vertical-align: top;"></span>
+                <div style="display: inline-block;">
+                    Large folders can take longer to load. <br>
+                    Folder sizes loaded are snapshots at that time and only updated by reloading that folder size.        
+                </div>
+            </div>
+        </div>
     </div>
 
     <script type="text/ng-template" id="ellipsisFileTemplate">

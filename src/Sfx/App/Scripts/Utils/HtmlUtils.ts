@@ -12,14 +12,22 @@ module Sfx {
             "*UpgradeRollbackStart",                        //Old:6.2
             "*UpgradeRollbackComplete",                     //Old:6.2
             "*UpgradeRollbackStarted",
-            "*UpgradeRollbackCompleted" ],
+            "*UpgradeRollbackCompleted",
+            "BuildIdleReplicaFailed",
+            "PrimaryFaultedSlowSecondary",
+            "PrimaryReplicationQueueFull",
+            "PrimaryReplicationQueueWarning",
+            "ReplicatorFaulted",
+            "SecondaryReplicationQueueFull",
+            "SecondaryReplicationQueueWarning" ],
             item => item.split("-")[0].replace("*", "") );
         private ErrorEventTypes = _.keyBy( [
             "*HealthReportCreated-HealthState:Error",
             "*NewHealthReport-HealthState:Error",
             "NodeDown",
             "NodeOpenFailed",
-            "NodeAborted" ],
+            "NodeAborted",
+            "TStoreError" ],
             item => item.split("-")[0].replace("*", "") );
         private ResolvedEventTypes = _.keyBy( [
             "*HealthReportCreated-HealthState:Ok",
@@ -155,7 +163,7 @@ module Sfx {
                 return this.getSpanWithTitleHtml(badge.text);
             }
             // Keep the template here in sync with badge.html
-            return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="images/${badge.badgeClass}.svg"></img><span> ${badge.text}</span></div>`;
+            return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="images/${badge.badgeClass}.svg" alt="${badge.text} badge"></img><span> ${badge.text}</span></div>`;
         }
 
         public static getBadgeOnlyHtml(badge: ITextAndBadge): string {

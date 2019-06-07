@@ -96,6 +96,22 @@ module Sfx {
                 ]);
         }
 
+        public getNewOrExistingNodeStatusListSetting(listKey: string = "nodeStatus") {
+            return this.getNewOrExistingListSettings(listKey, null,
+                [
+                    new ListColumnSetting("nodeType", "Node Type"),
+                    new ListColumnSetting("totalCount", "Total Node Count"),
+                    new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Up}`, NodeStatusConstants.Up),
+                    new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Down}`, NodeStatusConstants.Down),
+                    new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Disabled}`, NodeStatusConstants.Disabled),
+                    new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Disabling}`, NodeStatusConstants.Disabling),
+                    new ListColumnSetting("errorCount", "Error"),
+                    new ListColumnSetting("warningCount", "Warning"),
+                ]
+
+            );
+        };
+
         // Update all existing list settings to use new limit
         private updatePaginationLimit(limit: number): void {
             _.forEach(this.listSettings, (item) => {
