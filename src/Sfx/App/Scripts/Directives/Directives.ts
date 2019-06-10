@@ -19,7 +19,6 @@ module Sfx {
         module.directive("sfxDetailListDetailsView", () => new DetailListDetailsViewDirective());
         module.directive("sfxMetricsBarChart", MetricsBarChartDirective.factory());
         module.directive("sfxDashboard", DashboardChartDirective.factory());
-        module.directive("unhealthyEvaluation", () => new UnhealthyEvaluationDirective());
         module.directive("sfxImageStoreView", () => new ImageStoreViewDirective());
         module.directive("sfxImageStoreFileView", () => new ImageStoreOptionsViewDirective());
 
