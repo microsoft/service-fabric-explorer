@@ -111,9 +111,12 @@ module Sfx {
                     let applicationName = healthEval["ApplicationName"];
                     let appName = applicationName.replace("fabric:/", ""); //remove fabric:/
 
-                    let appType = data.apps.find(appName).raw.TypeName;
-                    viewPathUrl += `#/apptype/${data.routes.doubleEncode(appType)}/app/${data.routes.doubleEncode(appName)}`;
-                    replaceText = applicationName;
+                    let app = data.apps.find(appName)
+                    if(app){
+                        let appType = app.raw.TypeName;
+                        viewPathUrl += `#/apptype/${data.routes.doubleEncode(appType)}/app/${data.routes.doubleEncode(appName)}`;
+                        replaceText = applicationName;
+                    }
                     break;
                 }
                 case "Service" : {
