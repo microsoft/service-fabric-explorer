@@ -111,8 +111,8 @@ module Sfx {
                     let applicationName = healthEval["ApplicationName"];
                     let appName = applicationName.replace("fabric:/", ""); //remove fabric:/
 
-                    let app = data.apps.find(appName)
-                    if(app){
+                    let app = data.apps.find(appName);
+                    if (app) {
                         let appType = app.raw.TypeName;
                         viewPathUrl += `#/apptype/${data.routes.doubleEncode(appType)}/app/${data.routes.doubleEncode(appName)}`;
                         replaceText = applicationName;
@@ -162,10 +162,9 @@ module Sfx {
                     break;
                 }
 
-                
                 case "DeployedServicePackage" : {
-                    const serviceManifestName = healthEval['ServiceManifestName'];
-                    const activationId = healthEval['ServicePackageActivationId'];
+                    const serviceManifestName = healthEval["ServiceManifestName"];
+                    const activationId = healthEval["ServicePackageActivationId"];
                     const activationIdUrlInfo =  activationId ? "activationid/" + data.routes.doubleEncode(activationId) : "";
                     viewPathUrl = parentUrl + `/deployedservice/${activationIdUrlInfo}${serviceManifestName}`;
                     replaceText = serviceManifestName;
@@ -181,7 +180,7 @@ module Sfx {
                     break;
                 }
             }
-            if(replaceText.length > 0){
+            if (replaceText.length > 0) {
                 healthEval.Description = Utils.injectLink(healthEval.Description, replaceText, viewPathUrl, replaceText);
             }
             return {viewPathUrl: viewPathUrl, displayName: replaceText };
