@@ -41,7 +41,7 @@
     "cookie.gulp-tsc": "https://github.com/jeffj6123/mesh-lrc-test/releases/download/test/cookie.gulp-tsc-1.0.0-private.tgz",
     "cookie.gulp-tslint": "https://github.com/jeffj6123/mesh-lrc-test/releases/download/test/cookie.gulp-tslint-1.0.0-private.tgz",
     "cookie.gulp-wix": "https://github.com/jeffj6123/mesh-lrc-test/releases/download/test/cookie.gulp-wix-1.0.0-private.tgz",
-    "electron": "^3.0.10",
+    "electron": "3.0.10",
     "gulp": "^4.0.0",
     "typescript": "^3.1.3"
   }
