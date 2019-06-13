@@ -41,7 +41,7 @@
     "cookie.gulp-tsc": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.2/cookie.gulp-tsc-1.0.2.tgz",
     "cookie.gulp-tslint": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.2/cookie.gulp-tslint-1.0.2.tgz",
     "cookie.gulp-wix": "https://github.com/Microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.2/cookie.gulp-wix-1.0.2.tgz",
-    "electron": "^3.0.10",
+    "electron": "5.0.3",
     "gulp": "^4.0.0",
     "typescript": "^3.1.3"
   }
