@@ -18,7 +18,7 @@ module Sfx {
         public require = "^^ngController";
 
         public link($scope: any, element: JQuery, attributes: any, ctrl: ISliderController) {
-            console.log(element)
+
             let slider = $(element).slider({
                 value: ctrl.default,
                 min: ctrl.min,

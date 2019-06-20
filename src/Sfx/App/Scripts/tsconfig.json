@@ -12,8 +12,7 @@
       "angular-sanitize",
       "angular-ui-bootstrap",
       "lodash",
-      "d3",
-      "highcharts"
+      "d3"
     ]
   }
 }

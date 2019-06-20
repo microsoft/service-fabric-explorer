@@ -19,8 +19,7 @@ module Sfx {
             "PrimaryReplicationQueueWarning",
             "ReplicatorFaulted",
             "SecondaryReplicationQueueFull",
-            "SecondaryReplicationQueueWarning",
-            "*UpgradeRollbackCompleted" ],
+            "SecondaryReplicationQueueWarning"],
             item => item.split("-")[0].replace("*", "") );
         private ErrorEventTypes = _.keyBy( [
             "*HealthReportCreated-HealthState:Error",
@@ -140,7 +139,7 @@ module Sfx {
         }
 
         public static getSpanWithTitleHtml(text: string): string {
-            return `<span title="${text}">${text}</span>`; 
+            return `<span title="${text}">${text}</span>`;
         }
 
         public static getUpgradeProgressHtml(upgradeDomainsPropertyPath: string): string {
