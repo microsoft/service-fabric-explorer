@@ -138,6 +138,10 @@
     }
 }
 
+.nested-table-border {
+    border-bottom: 1px solid $table-section-divider-color !important;
+}
+
 .essen-pane {
     background-color: $essen-pane-background-color;
     padding: 5px 15px 10px 15px;

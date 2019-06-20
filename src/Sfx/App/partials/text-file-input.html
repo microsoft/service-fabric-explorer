@@ -1,8 +1,5 @@
 ﻿<p>
-    <label ng-disabled="loading" class="btn btn-default" role="button" aria-label="Load from file">
-        <input type="file" ng-disabled="loading" style="display: none" accept="{{accept}}" />
-        Load from file ...
-    </label>
+    <input ng-disabled="loading" class="btn btn-default" role="button" aria-label="Load from file" type="file" ng-disabled="loading" accept="{{accept}}" tabindex="0" />
 </p>
 <p>
     <textarea class="input-flat" ng-model="ngModel" style="width: 100%; height: 200px; resize:none;" ng-disabled="loading" ng-required="required" aria-label="Content"></textarea>

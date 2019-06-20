@@ -354,3 +354,7 @@ input[type=number]::-webkit-outer-spin-button {
     border: none;
     border-left: #CB444A solid 8px;
 }
+
+.focused-hightlight:focus{
+    border: #4BA0B5 solid 2px;
+}

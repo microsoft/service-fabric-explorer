@@ -6,6 +6,9 @@
 module Sfx {
     export interface IMetricsViewScope extends angular.IScope {
         metrics: IMetricsViewModel;
+        listSettings: SettingsService;
+        tableSettings: ListSettings;
+        tableData: any[];
     }
 
     export interface IMetricsViewModel {

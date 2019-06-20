@@ -8,19 +8,22 @@
             <thead>
                 <tr>
                 <th class="sort-filter-th" ng-repeat="columnSetting in ::listSettings.columnSettings track by columnSetting.propertyPath"
-                    ng-style="{'width': columnSetting.fixedWidthPx ? columnSetting.fixedWidthPx + 'px' : ''}">
+                    ng-style="{'width': columnSetting.fixedWidthPx ? columnSetting.fixedWidthPx + 'px' : ''}" 
+                    aria-sort="{{listSettings.isSortedByColumn(columnSetting) ? listSettings.sortReverse ? 'ascending' : 'descending' : 'none'}}">
                     <!-- Header label -->
                     <span ng-class="::{'active': columnSetting.sortable, 'shift-expander-col': $index === 0 && listSettings.secondRowCollapsible}"
-                          ng-click="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()">
+                          ng-click="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()" aria-label="Sort by {{::columnSetting.displayName}} {{ listSettings.sortReverse ? 'ascending' : 'descending'}}">
                             {{::columnSetting.displayName}}
                         </span>
 
                         <!-- Filter menu and icon -->
-                        <div class="btn-group" uib-dropdown dropdown-append-to-body on-toggle="listSettings.filterContextMenuToggled(open)" ng-if="columnSetting.hasFilters">
-                            <a role="button" uib-dropdown-toggle aria-label="Filter">
-                                <span class="bowtie-icon filter-icon" ng-class="{'bowtie-search-filter': !columnSetting.hasEffectiveFilters, 'bowtie-search-filter-fill active': columnSetting.hasEffectiveFilters}"></span>
+                        <div class="btn-group" uib-dropdown keyboard-nav on-toggle="listSettings.filterContextMenuToggled(open)" ng-if="columnSetting.hasFilters" aria-hidden="{{!columnSetting.hasFilters}}">
+                            <a href="javascript:void(0);" type="button" role="button" uib-dropdown-toggle aria-label="Filter" title="filter by {{::columnSetting.displayName}} options"
+                            aria-haspopup="true" id="{{$index}}-header">
+                                <span  class="bowtie-icon filter-icon" ng-class="{'bowtie-search-filter': !columnSetting.hasEffectiveFilters, 'bowtie-search-filter-fill active': columnSetting.hasEffectiveFilters}"></span>
                             </a>
-                            <ul class="dropdown-menu" role="menu" uib-dropdown-menu ng-class="{'dropdown-menu-right': $last}" style="list-style: none">
+                            <ul   class="dropdown-menu" role="menu" uib-dropdown-menu ng-class="{'dropdown-menu-right': $last}" style="list-style: none"
+                            aria-labelledby="{{$index}}-header" >
                                 <li role="menuitem" ng-repeat="filterValue in columnSetting.filterValues track by $index" class="checkbox-container-default" ng-click="$event.stopPropagation()">
                                     <label>
                                         <input type="checkbox" ng-model="filterValue.isChecked" ng-change="ctrl.updateList()" />
@@ -32,9 +35,13 @@
 
                         <!-- Sort direction icon -->
                         <!-- Use transparent color to hide the icon instead of using ng-show to avoid the table layout changes when the icon showed up -->
-                        <span class="bowtie-icon sort-icon" ng-if="::columnSetting.sortable" ng-click="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()"
-                              ng-class="{'transparent-icon': !listSettings.isSortedByColumn(columnSetting), 'bowtie-triangle-up': !listSettings.sortReverse, 'bowtie-triangle-down': listSettings.sortReverse}" aria-label="Sort">
-                        </span>
+                        <div style="width: 20px; height: 19px; display: inline-block;">
+                            <span class="bowtie-icon sort-icon" ng-if="columnSetting.sortable && listSettings.isSortedByColumn(columnSetting)" ng-click="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()"
+                                ng-class="{'bowtie-triangle-up': !listSettings.sortReverse, 'bowtie-triangle-down': listSettings.sortReverse}" aria-label="Sort"
+                                tabindex="{{listSettings.isSortedByColumn(columnSetting) ? 0 : -1}}" title="sort by {{::columnSetting.displayName}} {{ listSettings.sortReverse ? 'ascending' : 'descending'}}"
+                                aria-hidden="{{!listSettings.isSortedByColumn(columnSetting)}}">
+                            </span>
+                        </div>
                     </th>
                 </tr>
             </thead>
