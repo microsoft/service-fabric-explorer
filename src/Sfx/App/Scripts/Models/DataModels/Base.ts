@@ -206,6 +206,7 @@ module Sfx {
                 // There is no unique ID to identify the unhealthy evaluations collection, update the collection directly.               
                 // Make sure that the apps are initialized because some of the parsedHealth Evaluations need to reference the app's collection and that needs to be set.
                 this.data.apps.ensureInitialized().then( () => {
+                                                                                                                //setting base and parent regs to null
                     this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
                     resolve();
                 });

@@ -257,6 +257,7 @@ module Sfx {
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
+                                                                                                    //set depth to 0 and parent ref to null
             this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);
 
             let domains = _.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud));
