@@ -8,7 +8,7 @@ before_install:
   - npm install -g npm@latest
 install:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install fakeroot; fi
-  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt install rpm; fi
+  - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install rpm; fi
   - npm install -g gulp-cli
   - pushd ./src/Sfx; npm install; popd
   - pushd ./src/Sfx-Standalone; npm install; popd
