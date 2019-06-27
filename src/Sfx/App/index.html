@@ -30,10 +30,10 @@
 <body ng-cloak ng-show="authCtrl.isApplicationBootstrapped" ng-controller="AuthenticationController as authCtrl">
     <a href="#main" style="display: none;">Skip to main content</a>
     <!-- Navbar -->
-    <nav class="navbar navbar-inverse navbar-custom navbar-fixed-top" ng-controller="NavbarController as navbarCtrl">
+    <nav class="navbar navbar-inverse navbar-custom navbar-fixed-top" ng-controller="NavbarController as navbarCtrl" role="banner">
         <div class="container-fluid">
             <div class="navbar-header">
-                <a class="navbar-brand navbar-brand-azure" href="https://aka.ms/portalsfx" target="_blank">Microsoft Azure</a>
+                <a class="navbar-brand navbar-brand-azure" href="https://aka.ms/portalsfx" target="_blank" tabindex="0" sfx-tree-set-focus selected="true">Microsoft Azure</a>
                 <!-- Use inline style to limit the icon size to prevent a huge icon show up in browser before css is downloaded -->
                 <a class="navbar-brand navbar-brand-title" href="#" ng-click="navbarCtrl.navigateToCluster()">
                     <img style="width: 24px" src="images/favicon.svg" title="{{authCtrl.brandTitle}}" class="navbar-brand-icon"
@@ -67,17 +67,17 @@
                             aria-label="Change how often content is updated" role="slider" aria-valuenow="{{refreshCtrl.refreshRate}}" aria-valuemax="{{refreshCtrl.max}}" aria-valuemin="{{refreshCtrl.min}}" ></sfx-slider>
                         <a href="" class="slider-label" id="slider-max-label" role="button" aria-label="Set the refresh rate to the fastest">FAST</a>
                         <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-navigate-refresh" ng-class="{'disabled rotate': navbarCtrl.isRefreshing}"
-                            ng-click="navbarCtrl.refreshAll()" role="button" aria-label="refresh"></a>
+                            ng-click="navbarCtrl.refreshAll()" role="button" aria-label="refresh" title="refresh"></a>
                     </div>
 
                     <div class="settings-control dropdown">
                         <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-settings-gear" role="button" data-toggle="dropdown"
-                            aria-haspopup="true" aria-expanded="true" aria-label="settings"></a>
+                            aria-haspopup="true" aria-expanded="true" aria-label="settings" title="settings"></a>
                         <!-- use inline style to work around IE bug that list-style=none gets ignored for first load -->
                         <ul class="dropdown-menu dropdown-menu-right" style="list-style: none" ng-controller="SettingsController as settingsCtrl">
                             <li ng-controller="ThemeController as themeCtrl">
                                 <div class="settings-item-title">Choose a theme</div>
-                                <div class="choose-theme-container">
+                                <div class="choose-theme-container" role="menu">
                                     <img ng-class="{'selected': themeCtrl.getActiveThemeName() === 'dark'}" ng-click="themeCtrl.changeToTheme('dark'); $event.stopPropagation()"
                                         title="Use the dark theme" src="images/dark-theme.png" role="menuitemradio" />
                                     <img ng-class="{'selected': themeCtrl.getActiveThemeName() === 'light'}" ng-click="themeCtrl.changeToTheme('light'); $event.stopPropagation()"
@@ -128,13 +128,13 @@
     </nav>
 
     <!-- Tree -->
-    <div id="tree" class="left-panel">
+    <div id="tree" class="left-panel" aria-hidden="false" role="navigation">
         <div sfx-include src="'treeViewPanel'" ng-controller="TreeViewController as treeCtrl"></div>
         <div sfx-splitter id="splitter" aria-valuemin="150" aria-valuemax="600" ng-controller="SplitterController" tabindex="0" role="separator" aria-label="splitter - please use arrow key to resize the tree panel"></div>
     </div>
 
     <!-- View -->
-    <div id="main" class="right-panel">
+    <div id="main" role="main" class="right-panel" aria-hidden="false">
         <div id="view-container" ng-view></div>
     </div>
 

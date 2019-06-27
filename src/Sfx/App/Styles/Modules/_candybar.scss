@@ -130,7 +130,13 @@ $candybar-compact-color-height: 16px;
                 }
             }
 
-            &:hover {
+            &:focus-within, &:hover {
+                border-color: $candybar-hover-border-color;
+            }
+            &:focus-within {
+                border-color: $candybar-hover-border-color;
+            }
+            &:focus {
                 border-color: $candybar-hover-border-color;
             }
         }

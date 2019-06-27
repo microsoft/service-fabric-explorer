@@ -19,7 +19,7 @@ module Sfx {
             "PrimaryReplicationQueueWarning",
             "ReplicatorFaulted",
             "SecondaryReplicationQueueFull",
-            "SecondaryReplicationQueueWarning" ],
+            "SecondaryReplicationQueueWarning"],
             item => item.split("-")[0].replace("*", "") );
         private ErrorEventTypes = _.keyBy( [
             "*HealthReportCreated-HealthState:Error",

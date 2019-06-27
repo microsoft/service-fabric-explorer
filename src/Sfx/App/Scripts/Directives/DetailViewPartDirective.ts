@@ -15,7 +15,8 @@ module Sfx {
         public controllerAs = "ctrl";
         public templateUrl = "partials/detail-view-part.html";
         public scope = {
-            data: "="
+            data: "=",
+            title: "="
         };
 
         public link($scope: any, element: JQuery, attributes: any, ctrl: DetailViewPartController) {

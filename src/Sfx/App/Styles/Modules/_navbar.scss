@@ -129,16 +129,13 @@
                 margin-left: -2px;
                 background-color: $slider-handler-active-color;
 
-                &:focus {
-                    outline: none;
-                }
-
                 &.ui-state-active, &.ui-state-hover, &.ui-state-focus {
                     border: none;
                     background-color: $slider-handler-active-color;
                 }
             }
         }
+
     }
 
     .user-control {
