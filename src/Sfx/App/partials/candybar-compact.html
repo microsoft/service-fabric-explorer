@@ -1,10 +1,8 @@
 ﻿<div>
-    <div class="candybar compact {{item.healthState.badgeClass}}" title="{{item.tooltip}}">
-        <a href="{{viewPath}}">
-            <div class="candybar-inner-title">{{item.name}}</div>
-            <div class="candybar-inner-title">{{item.raw.Type}}</div>
-            <div class="candybar-color-hilight"></div>
-            <div class="candybar-color"></div>
-        </a>
-    </div>
+    <a class="candybar compact {{item.healthState.badgeClass}}" title="{{item.tooltip}}" href="{{viewPath}}" style="display: block">
+        <div class="candybar-inner-title">{{item.name}}</div>
+        <div class="candybar-inner-title">{{item.raw.Type}}</div>
+        <div class="candybar-color-hilight"></div>
+        <div class="candybar-color"></div>
+    </a>
 </div>

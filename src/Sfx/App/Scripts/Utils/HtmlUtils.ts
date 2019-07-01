@@ -12,14 +12,22 @@ module Sfx {
             "*UpgradeRollbackStart",                        //Old:6.2
             "*UpgradeRollbackComplete",                     //Old:6.2
             "*UpgradeRollbackStarted",
-            "*UpgradeRollbackCompleted" ],
+            "*UpgradeRollbackCompleted",
+            "BuildIdleReplicaFailed",
+            "PrimaryFaultedSlowSecondary",
+            "PrimaryReplicationQueueFull",
+            "PrimaryReplicationQueueWarning",
+            "ReplicatorFaulted",
+            "SecondaryReplicationQueueFull",
+            "SecondaryReplicationQueueWarning"],
             item => item.split("-")[0].replace("*", "") );
         private ErrorEventTypes = _.keyBy( [
             "*HealthReportCreated-HealthState:Error",
             "*NewHealthReport-HealthState:Error",
             "NodeDown",
             "NodeOpenFailed",
-            "NodeAborted" ],
+            "NodeAborted",
+            "TStoreError" ],
             item => item.split("-")[0].replace("*", "") );
         private ResolvedEventTypes = _.keyBy( [
             "*HealthReportCreated-HealthState:Ok",
@@ -130,6 +138,14 @@ module Sfx {
             return `<span class="${className}">${text}</span>`;
         }
 
+        public static getSpanWithLink(className: string, text: string, url: string): string {
+            if (url) {
+                return `<a class="${className}" title="${text}" ng-href="${url}" ">${text}</a>`;
+            }else {
+                return HtmlUtils.getSpanWithCustomClass(className, text);
+            }
+        }
+
         public static getSpanWithTitleHtml(text: string): string {
             return `<span title="${text}">${text}</span>`;
         }
@@ -148,6 +164,10 @@ module Sfx {
             }
             // Keep the template here in sync with badge.html
             return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="images/${badge.badgeClass}.svg" alt="${badge.text} badge"></img><span> ${badge.text}</span></div>`;
+        }
+
+        public static getBadgeOnlyHtml(badge: ITextAndBadge): string {
+            return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="images/${badge.badgeClass}.svg"></img></div>`;
         }
 
         public static getEventNameHtml(event: FabricEventBase): string {

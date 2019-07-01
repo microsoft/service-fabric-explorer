@@ -32,6 +32,7 @@ module Sfx {
         clusterEvents: ClusterEventList;
         backupPolicies: BackupPolicyCollection;
         actions: ActionCollection;
+        settings: SettingsService;
     }
 
     export class ClusterViewController extends MainViewController {
@@ -86,6 +87,7 @@ module Sfx {
             this.$scope.clusterEvents = this.data.createClusterEventList();
             this.$scope.nodesStatuses = [];
             this.$scope.backupPolicies = this.data.backupPolicies;
+            this.$scope.settings = this.settings;
             this.refresh();
         }
 
@@ -158,7 +160,6 @@ module Sfx {
                         }
 
                         let promises = _.map(this.$scope.nodes.collection, node => node.loadInformation.refresh(messageHandler));
-
                         return this.$q.all(promises).finally(() => {
                             this.$scope.metricsViewModel.refresh();
                         });

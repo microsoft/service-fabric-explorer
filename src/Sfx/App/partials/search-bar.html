@@ -5,7 +5,7 @@
            ng-model="model"
            ng-model-options="{ debounce: 300 }"
            aria-label="{{placeholder}}" />
-    <span class="bowtie-icon bowtie-search" ng-show="!model"></span>
-    <span class="bowtie-icon bowtie-edit-delete" ng-show="model" ng-click="model = ''"></span>
+    <span class="bowtie-icon bowtie-search" ng-show="!model" aria-label="Search and Filter" title="Search and Filter"></span>
+    <span class="bowtie-icon bowtie-edit-delete" tabindex="{{model ? 0 : -1}}" aria-label="Clear search filter" title="Clear search filter" ng-show="model" ng-click="model = ''"></span>
     <a class="reset-link" ng-if="reset" href="" ng-click="reset()" role="button">Reset All</a>
 </div>
