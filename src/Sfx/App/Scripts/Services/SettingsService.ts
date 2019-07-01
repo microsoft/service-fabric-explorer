@@ -112,6 +112,16 @@ module Sfx {
             );
         };
 
+        public getNewOrExistingBackupPolicyListSettings(listKey: string = "backupPolicies") {
+            return this.getNewOrExistingListSettings(listKey, [null], [
+                new ListColumnSetting("raw.Name", "Name", ["raw.Name"], false, (item, property) => "<a href='#/tab/backupPolicies'>" + property + "</a>", 1, item => item.action.runWithCallbacks.apply(item.action)),
+                new ListColumnSetting("raw.Schedule.ScheduleKind", "ScheduleKind"),
+                new ListColumnSetting("raw.Storage.StorageKind", "StorageKind"),
+                new ListColumnSetting("raw.AutoRestoreOnDataLoss", "AutoRestoreOnDataLoss"),
+                new ListColumnSetting("raw.MaxIncrementalBackups", "MaxIncrementalBackups"),
+            ]);
+        };
+
         // Update all existing list settings to use new limit
         private updatePaginationLimit(limit: number): void {
             _.forEach(this.listSettings, (item) => {

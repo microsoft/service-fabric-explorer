@@ -15,7 +15,7 @@ module Sfx {
             maxDate: "=?",
             initDate: "=?",
             readOnly: "=?",
-            placeHolderText: "=?"
+            placeHolderText: "=?",
         };
 
         public link($scope: any, element: JQuery, attributes: any) {

@@ -1,7 +1,7 @@
 ﻿{
   "compilerOptions": {
-    "target": "es5",
     "removeComments": true,
+    "target": "es5",
     "types": [
       "angular",
       "angular-route",

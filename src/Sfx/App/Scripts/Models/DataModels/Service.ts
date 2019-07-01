@@ -15,6 +15,9 @@ module Sfx {
         public partitions: PartitionCollection;
         public health: ServiceHealth;
         public description: ServiceDescription;
+        public serviceBackupConfigurationInfoCollection: ServiceBackupConfigurationInfoCollection;
+        public backupPolicyName: string;
+        public cleanBackup: boolean;
 
         public constructor(data: DataService, raw: IRawService, public parent: Application) {
             super(data, raw, parent);
@@ -22,10 +25,12 @@ module Sfx {
             this.partitions = new PartitionCollection(this.data, this);
             this.health = new ServiceHealth(this.data, this, HealthStateFilterFlags.Default, HealthStateFilterFlags.None);
             this.description = new ServiceDescription(this.data, this);
+            this.serviceBackupConfigurationInfoCollection = new ServiceBackupConfigurationInfoCollection(data, this);
 
             if (this.data.actionsEnabled()) {
                 this.setUpActions();
             }
+            this.cleanBackup = false;
         }
 
         public get isStatefulService(): boolean {
@@ -90,7 +95,78 @@ module Sfx {
 
             if (this.isStatelessService) {
                 this.actions.add(new ActionScaleService(this.data.$uibModal, this.data.$q, this));
+                return;
             }
+
+            this.actions.add(new ActionWithDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "enableServiceBackup",
+                "Enable/Update Service Backup",
+                "Enabling Service Backup",
+                () => this.data.restClient.enableServiceBackup(this).then(() => {
+                    this.serviceBackupConfigurationInfoCollection.refresh();
+                }),
+                () => true,
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/enableBackup.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this
+                    }
+                },
+                null
+            ));
+
+            this.actions.add(new ActionWithDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "disableServiceBackup",
+                "Disable Service Backup",
+                "Disabling Service Backup",
+                () => this.data.restClient.disableServiceBackup(this).then(() => {
+                    this.serviceBackupConfigurationInfoCollection.refresh();
+                }),
+                () => this.serviceBackupConfigurationInfoCollection.collection.length && this.serviceBackupConfigurationInfoCollection.collection[0].raw && this.serviceBackupConfigurationInfoCollection.collection[0].raw.Kind === "Service" && this.serviceBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Service",
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/disableBackup.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this
+                    }
+                },
+                null
+            ));
+
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "suspendServiceBackup",
+                "Suspend Service Backup",
+                "Suspending...",
+                () => this.data.restClient.suspendServiceBackup(this.id).then(() => {
+                    this.serviceBackupConfigurationInfoCollection.refresh();
+                }),
+                () => this.serviceBackupConfigurationInfoCollection.collection.length && this.serviceBackupConfigurationInfoCollection.collection[0].raw && this.serviceBackupConfigurationInfoCollection.collection[0].raw.Kind === "Service" && this.serviceBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Service" && this.serviceBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === false,
+                "Confirm Service Backup Suspension",
+                `Suspend service backup for ${this.name} ?`,
+                this.name));
+
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "resumeServiceBackup",
+                "Resume Service Backup",
+                "Resuming...",
+                () => this.data.restClient.resumeServiceBackup(this.id).then(() => {
+                    this.serviceBackupConfigurationInfoCollection.refresh();
+                }),
+                () => this.serviceBackupConfigurationInfoCollection.collection.length && this.serviceBackupConfigurationInfoCollection.collection[0].raw && this.serviceBackupConfigurationInfoCollection.collection[0].raw.Kind === "Service" && this.serviceBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Service" && this.serviceBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true,
+                "Confirm Service Backup Resumption",
+                `Resume service backup for ${this.name} ?`,
+                this.name));
+
+            
         }
 
         private delete(): angular.IPromise<any> {
@@ -432,6 +508,32 @@ module Sfx {
             };
         }
     }
-
+    export class ServiceBackupConfigurationInfo extends DataModelBase<IRawServiceBackupConfigurationInfo> {
+        public decorators: IDecorators = {
+            hideList: [
+                "action.Name",
+            ]
+        };
+        public action: ActionWithDialog;
+        public constructor(data: DataService, raw: IRawServiceBackupConfigurationInfo, public parent: Service) {
+            super(data, raw, parent);
+            this.action = new ActionWithDialog(
+                data.$uibModal,
+                data.$q,
+                raw.PolicyName,
+                raw.PolicyName,
+                "Creating",
+                () => this.data.restClient.deleteBackupPolicy(this.raw.PolicyName),
+                () => true,
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/backupPolicy.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this.data.getBackupPolicy(this.raw.PolicyName)
+                    }
+                },
+                null);
+        }
+    }
 }
 

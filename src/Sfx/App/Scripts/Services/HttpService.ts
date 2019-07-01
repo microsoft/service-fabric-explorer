@@ -30,7 +30,7 @@ module Sfx {
             this.$http.defaults.headers.common[Constants.SfxBuildMetadataName] = VersionInfo.Build;
         }
 
-        public getAsync<T>(url: string): angular.IHttpPromise<T> {
+        public getAsync<T>(url: string): angular.IHttpPromise<T> {            
             return this.httpClient ? this.requestAsync({ method: "GET", url: url }) : this.$http.get(url);
         }
 

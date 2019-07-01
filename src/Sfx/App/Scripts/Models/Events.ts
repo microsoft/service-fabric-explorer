@@ -84,6 +84,9 @@ module Sfx {
     export class ClusterEvent extends FabricEventBase {
     }
 
+    /*export class BackupEvent extends FabricEventBase {
+    }*/
+
     export class NodeEvent extends FabricEventBase {
         private _nodeName: string;
 

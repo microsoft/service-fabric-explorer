@@ -187,5 +187,45 @@ module Sfx {
             CollectionUtils.updateDataModelCollection(this.loadMetricInformation, _.map(this.raw.LoadMetricInformation, lmi => new LoadMetricInformation(this.data, lmi)));
         }
     }
+    export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
+        public decorators: IDecorators = {
+            hideList: [
+                "Name",
+            ]
+        };
+        public action: ActionWithDialog;
+        public updatePolicy: ActionWithDialog;
+
+        public constructor(data: DataService, raw?: IRawBackupPolicy) {
+            super(data, raw);
+            this.action = new ActionWithDialog(
+                data.$uibModal,
+                data.$q,
+                "deleteBackupPolicy",
+                "Delete Backup Policy",
+                "Deleting",
+                () => data.restClient.deleteBackupPolicy(this.raw.Name),
+                () => true,
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/backupPolicy.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this
+                    }
+                },
+                null);
+
+            this.updatePolicy = new ActionUpdateBackupPolicy(data, raw);
+        }
+
+        public updateBackupPolicy():void {
+            this.updatePolicy.runWithCallbacks.apply(this.updatePolicy);
+        }
+        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawBackupPolicy> {
+            return this.data.restClient.getBackupPolicy(this.name, messageHandler).then(response => {
+                return response.data;
+            });
+        }
+    }
 }
 

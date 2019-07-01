@@ -278,7 +278,6 @@ module Sfx {
                 controller: "ReplicaViewController",
                 controllerAs: "replicaCtrl"
             });
-
             $routeProvider.otherwise({
                 templateUrl: "partials/cluster.html",
                 controller: "ClusterViewController",

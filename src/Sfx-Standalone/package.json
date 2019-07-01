@@ -24,7 +24,7 @@
     "donuts.node-modularity": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-modularity-1.0.3.tgz",
     "donuts.node-remote": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-remote-1.0.3.tgz",
     "donuts.node-settings": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-settings-1.0.3.tgz",
-    "jquery": "^3.2.1",
+    "jquery": "^3.4.1",
     "semver": "^5.5.0",
     "tar": "^4.4.4",
     "tmp": "0.0.33",

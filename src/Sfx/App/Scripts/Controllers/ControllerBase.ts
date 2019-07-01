@@ -105,10 +105,10 @@ module Sfx {
         // Defines general refresh logic, DO NOT override this method in derived class.
         // Override refreshCommon or define tab specific refresh methods for tabs.
         public refresh(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            if (!this.authSvc.isApplicationBootstrapped) {
+            /*if (!this.authSvc.isApplicationBootstrapped) {
                 // Do not do any refresh until application is bootstrapped
                 return this.$q.reject();
-            }
+            }*/
 
             if (!this.refreshingPromise) {
 

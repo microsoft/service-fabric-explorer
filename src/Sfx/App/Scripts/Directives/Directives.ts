@@ -302,6 +302,8 @@ module Sfx {
 
         module.directive("sfxDatePicker", () => new DatePickerDirective());
 
+        module.directive("sfxDateTimePicker", () => new DateTimePickerDirective());
+
         module.directive("sfxListShorten", (): angular.IDirective => {
             return {
                 restrict: "E",

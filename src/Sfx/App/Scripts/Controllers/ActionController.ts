@@ -25,6 +25,7 @@ module Sfx {
         }
     }
 
+
     (function () {
 
         let module = angular.module("actionController", []);
