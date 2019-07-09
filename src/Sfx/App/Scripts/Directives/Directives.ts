@@ -116,8 +116,7 @@ module Sfx {
                 restrict: "A",
                 link: function ($scope: any, $element: any, $attributes: any) {
                     $attributes.$observe("selected", function (selected) {
-                        if(clusterTree.tree.firstTreeSelect){
-                            clusterTree.tree.firstTreeSelect = false;
+                        if (clusterTree.setFirstVisit()) {
                             return;
                         }
 
@@ -138,7 +137,7 @@ module Sfx {
                 restrict: "A",
                 link: function ($scope: any, $element: any, $attributes: any) {
                     $attributes.$observe("active", function (active) {
-                        if(controllerManager.firstPageLoad){
+                        if (controllerManager.firstPageLoad) {
                             controllerManager.firstPageLoad = false;
                             return;
                         }
