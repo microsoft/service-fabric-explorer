@@ -35,7 +35,7 @@
     "yargs": "7.0.1"
   },
   "dependencies": {
-    "adal-angular": "1.0.9",
+    "adal-angular": "1.0.17",
     "angular": "1.5.0",
     "angular-animate": "1.5.0",
     "angular-aria": "1.5.0",
