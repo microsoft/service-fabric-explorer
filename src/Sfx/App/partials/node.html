@@ -12,7 +12,7 @@
                         <th>Upgrade Domain</th>
                     </tr>
                     <tr>
-                        <td>{{node.name}}</td>
+                        <td>{{node.name}}<sfx-clip-board text="node.name"></sfx-clip-board></td>
                         <td>{{node.raw.UpgradeDomain}}</td>
                     </tr>
                     <tr>
@@ -22,7 +22,7 @@
 
                     <tr>
                         <td><sfx-badge badge-class="node.healthState.badgeClass" text="node.healthState.text"></sfx-badge></td>
-                        <td>{{node.raw.FaultDomain}}</td>
+                        <td>{{node.raw.FaultDomain}}<sfx-clip-board text="node.raw.FaultDomain"></sfx-clip-board></td>
                     </tr>
                     <tr>
                         <th>Status</th>
@@ -30,14 +30,14 @@
                     </tr>
                     <tr>                        
                         <td>{{node.nodeStatus}}</td>
-                        <td>{{node.raw.IpAddressOrFQDN}}</td>
+                        <td>{{node.raw.IpAddressOrFQDN}}<sfx-clip-board text="node.raw.IpAddressOrFQDN"></sfx-clip-board></td>
                     </tr>
                     <tr>
                         <th>Type</th>
                         <th>Is Seed Node</th>
                     </tr>
                     <tr>
-                        <td>{{node.raw.Type}}</td>
+                        <td>{{node.raw.Type}}<sfx-clip-board text="node.raw.Type"></sfx-clip-board></td>
                         <td>{{node.raw.IsSeedNode}}</td>
                     </tr>
                 </table>

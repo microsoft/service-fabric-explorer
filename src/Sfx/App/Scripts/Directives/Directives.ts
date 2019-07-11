@@ -328,5 +328,32 @@ module Sfx {
             };
         });
 
+        module.directive("sfxClipBoard", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                replace: true,
+                scope: {
+                    text: "=",
+                    nestedText: "=",
+                    nestedTextProperty: "="
+                },
+                templateUrl: "partials/copy-to-clipboard.html",
+                link: function ($scope: any, $element, $attributes: any) {
+                    $scope.copy = (): void => {
+                        try {
+                            let $temp_input = $("<textarea>");
+                            $("body").append($temp_input);
+                            $temp_input.val($scope.nestedTextProperty ? $scope.nestedText[$scope.nestedTextProperty] : $scope.text).select();
+                            document.execCommand("copy");
+                            $temp_input.remove();                            
+                        } catch(e) {
+                            console.log(e);
+                        }
+
+                    };
+                }
+            };
+        });
+
     })();
 }

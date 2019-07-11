@@ -73,7 +73,7 @@ module Sfx {
                 [
                     new ListColumnSetting("kind", "Kind", null, false, (item) => HtmlUtils.getSpanWithLink("preserve-whitespace", item.kind, item.viewPath)),
                     new ListColumnSettingForBadge("healthState", "Health State"),
-                    new ListColumnSetting("description", "Description", null, false, (item) => HtmlUtils.getSpanWithCustomClass("preserve-whitespace-wrap", item.description))
+                    new ListColumnSetting("description", "Description", null, false, (item) => { return `<sfx-clip-board text="item.description"></sfx-clip-board> ${HtmlUtils.getSpanWithCustomClass("preserve-whitespace-wrap", item.description)}` })
                 ]);
         }
 
