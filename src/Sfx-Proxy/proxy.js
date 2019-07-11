@@ -9,6 +9,9 @@ const path = require('path');
 let recordRequest = process.argv.includes("-r");
 let replayRequest = process.argv.includes("-p");
 
+console.log("record requests : " + recordRequest);
+console.log("replay requests : " + replayRequest);
+
 //if PFX location provided for cluster
 httpsAgent = null;
 if(config.TargetCluster.PFXLocation){

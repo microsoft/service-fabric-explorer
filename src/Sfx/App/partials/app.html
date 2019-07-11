@@ -13,8 +13,8 @@
                         <th>Application Type</th>
                     </tr>
                     <tr>
-                        <td title="{{app.name}}"><sfx-clip-board text="app.name"></sfx-clip-board>{{app.name}}</td>
-                        <td><sfx-clip-board text="app.raw.TypeName"></sfx-clip-board><a href="{{app.appTypeViewPath}}" title="{{app.raw.TypeName}}">{{app.raw.TypeName}}</a></td>
+                        <td title="{{app.name}}">{{app.name}}<sfx-clip-board text="app.name"></sfx-clip-board></td>
+                        <td><a href="{{app.appTypeViewPath}}" title="{{app.raw.TypeName}}">{{app.raw.TypeName}}</a><sfx-clip-board text="app.raw.TypeName"></sfx-clip-board></td>
                     </tr>
                     <tr>
                         <th>Health State</th>
@@ -23,7 +23,7 @@
 
                     <tr>
                         <td><sfx-badge badge-class="app.healthState.badgeClass" text="app.healthState.text"></sfx-badge></td>
-                        <td><sfx-clip-board text="app.raw.TypeVersion"></sfx-clip-board>{{app.raw.TypeVersion}}</td>
+                        <td>{{app.raw.TypeVersion}}<sfx-clip-board text="app.raw.TypeVersion"></sfx-clip-board></td>
                     </tr>
                     <tr>
                         <th>Status</th>
