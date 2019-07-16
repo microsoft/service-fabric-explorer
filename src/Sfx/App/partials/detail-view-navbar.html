@@ -12,7 +12,7 @@
 
             <!-- use inline style to work around IE bug that list-style=none gets ignored for first load -->
             <ul role="menu" class="dropdown-menu dropdown-menu-right" uib-dropdown-menu style="list-style: none">
-                <li role="menuitem" ng-repeat="action in ::actions.collection track by action.name">
+                <li role="menuitem" ng-repeat="action in actions.collection track by action.name">
                     <a role="menuitem"
                        href=""
                        ng-click="actions.runWithTelemetry(action, 'ActionsButton')"
