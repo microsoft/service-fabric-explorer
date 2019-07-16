@@ -1,4 +1,12 @@
-﻿<sfx-detail-view-navbar ctrl="clusterCtrl" type="Cluster" name="{{SFXClusterName}}"></sfx-detail-view-navbar>
+﻿<div style="display: flex;">
+    <div class="detail-pane alert alert-dismissible alert-danger" role="alert" style="background-color: #fcd116; border-color: yellow; color: black; width: 100%; max-width: 800px; text-align: center; margin: auto;">
+        <strong>Warning:</strong>
+        <span>This cluster is not production ready. See
+            <a class="light-background-link" target="_blank" href="https://aka.ms/servicefabricpreview">Best practices</a> for more details.</span>
+    </div>
+</div>
+
+<sfx-detail-view-navbar ctrl="clusterCtrl" type="Cluster" name="{{SFXClusterName}}"></sfx-detail-view-navbar>
 
 <div class="main-view">
     <div sfx-include src="'tab_' + clusterCtrl.activeTabId" ng-if="clusterCtrl.activeTabId" role="tabpanel" aria-label="{{clusterCtrl.activeTabId}}" class="flex-child"></div>
