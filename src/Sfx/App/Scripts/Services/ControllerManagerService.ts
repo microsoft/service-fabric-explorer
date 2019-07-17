@@ -6,9 +6,9 @@
 module Sfx {
 
     export class ControllerManagerService {
-        private currentControllers: IControllerBase[] = [];
-
         public firstPageLoad: boolean = true;
+
+        private currentControllers: IControllerBase[] = [];
 
         constructor(private $q: angular.IQService) {
         }

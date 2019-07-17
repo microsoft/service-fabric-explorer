@@ -345,8 +345,8 @@ module Sfx {
                             $("body").append($temp_input);
                             $temp_input.val($scope.nestedTextProperty ? $scope.nestedText[$scope.nestedTextProperty] : $scope.text).select();
                             document.execCommand("copy");
-                            $temp_input.remove();                            
-                        } catch(e) {
+                            $temp_input.remove();
+                        } catch (e) {
                             console.log(e);
                         }
 
