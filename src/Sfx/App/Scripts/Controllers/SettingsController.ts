@@ -19,7 +19,7 @@ module Sfx {
 
         public setAdvancedMode() {
             this.storage.setValue(Constants.AdvancedModeKey, this.advancedModeState);
-            console.log(this.advancedModeState);
+
             this.data.getNodes().then(nodeCollection => {
                 nodeCollection.setAdvancedMode(this.advancedModeState);
             })
