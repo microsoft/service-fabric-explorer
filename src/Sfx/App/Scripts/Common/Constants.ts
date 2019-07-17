@@ -22,7 +22,7 @@ module Sfx {
         public static DefaultAutoRefreshInterval: number = 15;
         // Keep this in sync with $left-panel-width in _config.scss
         public static DefaultSplitterLeftWidth: number = 400;
-        public static DefaultPaginationLimit: number = 10;
+        public static DefaultPaginationLimit: number = 100;
 
         // System app constants
         public static SystemAppId: string = "System";
