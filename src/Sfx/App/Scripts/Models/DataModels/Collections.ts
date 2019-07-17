@@ -237,6 +237,7 @@ module Sfx {
         public faultDomains: string[];
         public healthySeedNodes: string;
         public disabledNodes: string;
+        public seedNodeCount: number;
 
         public constructor(data: DataService) {
             super(data);
@@ -306,7 +307,7 @@ module Sfx {
             });
 
             this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
-
+            this.seedNodeCount = seedNodes.length;
             this.healthySeedNodes = seedNodes.length.toString() + " (" +
                 Math.round(healthyNodes.length / seedNodes.length * 100).toString() + "%)";
         }

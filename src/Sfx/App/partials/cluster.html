@@ -1,10 +1,4 @@
-﻿<div style="display: flex;">
-    <div class="detail-pane alert alert-dismissible alert-danger" role="alert" style="background-color: #fcd116; border-color: yellow; color: black; text-align: center; margin: auto;">
-        <strong>Warning:</strong>
-        <span>Cluster is degraded because it does not have 5 seed nodes. See
-            <a class="light-background-link" target="_blank" href="https://aka.ms/servicefabric/durability">Reliability</a> for more details.</span>
-    </div>
-</div>
+﻿<sfx-production-banner seed-node-count="nodes.seedNodeCount" ></sfx-production-banner>
 
 <sfx-detail-view-navbar ctrl="clusterCtrl" type="Cluster" name="{{SFXClusterName}}"></sfx-detail-view-navbar>
 

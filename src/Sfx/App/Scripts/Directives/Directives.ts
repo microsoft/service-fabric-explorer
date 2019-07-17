@@ -355,5 +355,23 @@ module Sfx {
             };
         });
 
+
+        module.directive("sfxProductionBanner", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                scope: {
+                    seedNodeCount: "="
+                },
+                templateUrl: "partials/production-banner.html",
+                controllerAs:'ctrl',
+                controller: function(){
+                    this.open = true;
+                    this.close = () => {
+                        this.open = false;
+                    }
+                }
+            };
+        });
+
     })();
 }
