@@ -244,13 +244,29 @@ module Sfx {
             return TimeUtils.timestampToUTCString(this.raw.FailureTimestampUtc);
         }
 
+        public get upgradeDuration(): string {
+            return TimeUtils.getDuration(this.raw.UpgradeDurationInMilliseconds);
+        }
+
+        public get upgradeDomainDuration(): string {
+            return TimeUtils.getDuration(this.raw.UpgradeDomainDurationInMilliseconds);
+        }
+
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawApplicationUpgradeProgress> {
             return Utils.getHttpResponseData(this.data.restClient.getApplicationUpgradeProgress(this.parent.id, messageHandler));
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
-            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations);
-            this.upgradeDomains = _.map(_.sortBy(this.raw.UpgradeDomains, "Name"), ud => new UpgradeDomain(this.data, ud));
+                                                                                                    //set depth to 0 and parent ref to null
+            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);
+
+            let domains = _.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud));
+            let groupedDomains = _.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Completed)
+                .concat(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.InProgress))
+                .concat(_.filter(domains, ud => ud.name === this.raw.NextUpgradeDomain))
+                .concat(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain));
+
+            this.upgradeDomains = groupedDomains;
 
             if (this.raw.UpgradeDescription) {
                 this.upgradeDescription = new UpgradeDescription(this.data, this.raw.UpgradeDescription);

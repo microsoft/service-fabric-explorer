@@ -15,6 +15,8 @@ module Sfx {
 
         public searchTerm: string = "";
 
+        public firstTreeSelect: boolean = true;
+
         public get isLoading(): boolean {
             return !this.childGroupViewModel ||
                 (this.childGroupViewModel.children.length === 0 && this.childGroupViewModel.loadingChildren);

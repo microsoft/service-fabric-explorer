@@ -1,7 +1,5 @@
 ﻿<div class="table-responsive">
-    <div sfx-include src="'view-part-template'" ng-if="data"></div>
-
-    <script type="text/ng-template" id="view-part-template">
+    <div ng-if="data">
         <table class="table detail-table" ng-class="{ 'table-layout-fixed': !noFixedLayout }" role="presentation">
 
             <tbody ng-repeat="(name, value) in resolvedData track by name"
@@ -30,29 +28,24 @@
                 </tr>
 
                 <!-- Render object property (two rows) -->
-                <tr ng-switch-when="Object">
+                <tr ng-if="title">
                     <!-- Render sub-object title in the first line -->
-                    <th colspan="2" class="sub-title" title="{{::name}}">
-                        {{::name}}
+                    <th colspan="2" class="sub-title" title="{{::title}}">
+                        {{::title}}
                     </th>
                 </tr>
                 <tr ng-switch-when="Object">
                     <td colspan="2">
+                        <h4 class="sub-title" title="{{::title}}" style="text-transform: none;" >{{::name}} </h4>
                         <div class="nested-table-container">
                             <sfx-detail-view-part data="value" no-fixed-layout="$parent.noFixedLayout"></sfx-detail-view-part>
                         </div>
                     </td>
                 </tr>
 
-                <!-- Render array property (two rows) -->
-                <tr ng-switch-when="Array">
-                    <!-- Render sub-object title in the first line -->
-                    <th colspan="2" class="sub-title" title="{{::name}}">
-                        {{::name}}
-                    </th>
-                </tr>
                 <tr ng-switch-when="Array">
                     <th colspan="2">
+                        <h4 class="sub-title" title="{{::title}}" style="text-transform: none;">{{::name}} </h4>
                         <div sfx-include src="'view-part-array-template'"></div>
                     </th>
                 </tr>
@@ -60,28 +53,31 @@
             </tbody>
 
         </table>
-    </script>
-
+    </div>
     <script type="text/ng-template" id="view-part-array-template">
         <div class="table-responsive">
             <div class="nested-table-container">
                 <!-- Set table-layout to be fixed only when they have only 1 or 2 properties -->
-                <table class="table detail-param-table" ng-class="{ 'table-layout-fixed': !noFixedLayout && ctrl.getResolvedObjectSize(value[0]) <= 3 }">
-                    <tr>
-                        <!-- Render sub-array table header -->
-                        <th ng-repeat="(subName, subValue) in ::value[0] track by subName" title="{{::subName}}">
-                            {{::subName}}
-                        </th>
-                    </tr>
-                    <tr ng-repeat="item in value">
-                        <!-- Render sub-array table body, assuming the properties are always simple properties rather than object -->
-                        <td ng-repeat="(subName, subValue) in item track by subName" ng-switch="::ctrl.getResolvedPropertyType(subValue)">
-                            <span ng-switch-when="Value" title="{{subValue}}">{{subValue}}</span>
-                            <span ng-switch-when="Html" ng-bind-html="subValue"></span>
-                            <div ng-switch-when="Array" sfx-include src="'view-part-array-template'" ng-init="value = subValue"></div>
-                            <sfx-detail-view-part ng-switch-when="Object" data="subValue" no-fixed-layout="$parent.noFixedLayout"></sfx-detail-view-part>
-                        </td>
-                    </tr>
+                <table class="table detail-table nested-table-border" ng-class="{ 'table-layout-fixed': !noFixedLayout && ctrl.getResolvedObjectSize(value[0]) <= 3 }">
+                    <thead>
+                        <tr class="nested-table-border">
+                            <!-- Render sub-array table header -->
+                            <th ng-repeat="(subName, subValue) in ::value[0] track by subName" title="{{::subName}}">
+                                {{::subName}}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in value"  ng-class="{ 'nested-table-border': !($last) }">
+                                <!-- Render sub-array table body, assuming the properties are always simple properties rather than object -->
+                            <td ng-repeat="(subName, subValue) in item track by subName" ng-switch="::ctrl.getResolvedPropertyType(subValue)">
+                                <span ng-switch-when="Value" title="{{subValue}}">{{subValue}}</span>
+                                <span ng-switch-when="Html" ng-bind-html="subValue"></span>
+                                <div ng-switch-when="Array" sfx-include src="'view-part-array-template'" ng-init="value = subValue"></div>
+                                <sfx-detail-view-part ng-switch-when="Object" data="subValue" no-fixed-layout="$parent.noFixedLayout"></sfx-detail-view-part>
+                            </td>
+                        </tr>
+                    </tbody>
                 </table>
             </div>
         </div>

@@ -721,8 +721,52 @@ module Sfx {
         FileCount: string;
     }
 
+    export interface IRawStoreFolderSize {
+        StoreRelativePath: string;
+        FolderSize: string;
+    }
+
     export interface IRawClusterVersion {
         Version: string;
+    }
+
+    export interface INodesStatusDetails {
+        nodeType: string;
+        statusTypeCounts: Record<string, number>;
+        warningCount: number;
+        errorCount: number;
+    }
+
+    export class NodeStatusDetails implements INodesStatusDetails {
+        public nodeType: string;
+        public statusTypeCounts: Record<string, number>;
+        public warningCount: number = 0;
+        public errorCount: number = 0;
+        public totalCount: number = 0;
+        public constructor(nodeType: string) {
+            this.nodeType = nodeType;
+
+            //easiest way to initialize all possible values with Enum strings
+            this.statusTypeCounts = {};
+            this.statusTypeCounts[NodeStatusConstants.Up] = 0;
+            this.statusTypeCounts[NodeStatusConstants.Down] = 0;
+            this.statusTypeCounts[NodeStatusConstants.Enabling] = 0;
+            this.statusTypeCounts[NodeStatusConstants.Disabling] = 0;
+            this.statusTypeCounts[NodeStatusConstants.Disabled] = 0;
+            this.statusTypeCounts[NodeStatusConstants.Unknown] = 0;
+            this.statusTypeCounts[NodeStatusConstants.Invalid] = 0;
+        }
+
+        public add(node: Node): void {
+            this.statusTypeCounts[node.raw.NodeStatus]++;
+            this.totalCount++;
+            if (node.healthState.text === HealthStateConstants.Warning) {
+                this.warningCount++;
+            }
+            if (node.healthState.text === HealthStateConstants.Error) {
+                this.errorCount++;
+            }
+        }
     }
 
 }

@@ -5,7 +5,7 @@
         </div>
 
         <div class="detail-view-actions btn-group" uib-dropdown ng-if="::actions && actions.length > 0">
-            <button class="btn btn-primary" uib-dropdown-toggle type="button" ng-disabled="actions.anyRunning">
+            <button class="btn btn-primary" uib-dropdown-toggle type="button" ng-disabled="actions.anyRunning" aria-label="Actions you can perform on {{type}} {{name}}">
                 <span>{{actions.title | uppercase}}</span>
                 <span class="caret"></span>
             </button>
@@ -26,7 +26,7 @@
 
     <div class="detail-view-navbar" role="tablist" aria-label="{{type}} {{name}}">
         <div class="detail-view-navbar-tab" ng-repeat-start="(id, tab) in mainViewCtrl.tabs">
-            <a sfx-tab-set-focus href="" active="{{mainViewCtrl.isActiveTab(id)}}" ng-class="{ active: mainViewCtrl.isActiveTab(id) }" ng-click="mainViewCtrl.navigateToTab(id)" title="{{::tab.name}}" role="tab">{{::tab.name}}</a>
+            <a sfx-tab-set-focus href="" active="{{mainViewCtrl.isActiveTab(id)}}" aria-selected="{{mainViewCtrl.isActiveTab(id)}}" ng-class="{ active: mainViewCtrl.isActiveTab(id) }" ng-click="mainViewCtrl.navigateToTab(id)" title="{{::tab.name}}" role="tab">{{::tab.name}}</a>
             <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div>
         </div>
         <div class="spacer" ng-repeat-end></div>

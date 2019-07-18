@@ -148,6 +148,7 @@ module Sfx {
          * @param enableFilter Whether to enable filters for this column
          * @param getDisplayHtml Customize the HTML to render in this column giving a specific item
          * @param colspan The colspan for the extra line, does not affect the first line
+         * @param clickEvent A callback that will be executed on click
          */
         public constructor(
             public propertyPath: string,
@@ -155,7 +156,8 @@ module Sfx {
             public sortPropertyPaths: string[] = [propertyPath],
             public enableFilter?: boolean,
             public getDisplayHtml?: (item, property) => string,
-            public colspan: number = 1) {
+            public colspan: number = 1,
+            public clickEvent: (item) => void = (item) => null ) {
         }
 
         public reset(): void {
@@ -234,5 +236,7 @@ module Sfx {
             super(propertyPath, displayName, [propertyPath], false, (item, property) => HtmlUtils.getLinkHtml(property, href(item)));
         }
     }
+
+
 }
 

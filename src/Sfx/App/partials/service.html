@@ -13,8 +13,8 @@
                             <th>Service Type</th>
                         </tr>
                         <tr>
-                            <td>{{service.name}}</td>
-                            <td>{{service.raw.TypeName}}</td>
+                            <td>{{service.name}}<sfx-clip-board text="service.name"></sfx-clip-board></td>
+                            <td>{{service.raw.TypeName}}<sfx-clip-board text="service.raw.TypeName"></sfx-clip-board></td>
                         </tr>
                         <tr>
                             <th>Health State</th>
@@ -22,13 +22,13 @@
                         </tr>
                         <tr>
                             <td><sfx-badge badge-class="service.healthState.badgeClass" text="service.healthState.text"></sfx-badge></td>
-                            <td>{{service.raw.ManifestVersion}}</td>
+                            <td>{{service.raw.ManifestVersion}}<sfx-clip-board text="service.raw.ManifestVersion"></sfx-clip-board></td>
                         </tr>
                     </tbody>
                     <tbody ng-if="service.isStatefulService">
                         <tr>
                             <th>Status</th>
-                            <th>Minimum Replica Size</th>
+                            <th>Minimum Replica Set Size</th>
                         </tr>
                         <tr>
                             <td>{{service.raw.ServiceStatus}}</td>
@@ -36,7 +36,7 @@
                         </tr>
                         <tr>
                             <th>Service Kind</th>
-                            <th>Target Replica Size</th>
+                            <th>Target Replica Set Size</th>
                         </tr>
                         <tr>
                             <td>{{service.raw.ServiceKind}}</td>

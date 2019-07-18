@@ -35,18 +35,18 @@
     "yargs": "7.0.1"
   },
   "dependencies": {
-    "adal-angular": "1.0.9",
+    "adal-angular": "1.0.17",
     "angular": "1.5.0",
     "angular-animate": "1.5.0",
     "angular-aria": "1.5.0",
     "angular-route": "1.5.0",
     "angular-sanitize": "1.5.0",
     "angular-ui-bootstrap": "2.5.6",
-    "bootstrap-sass": "3.3.7",
+    "bootstrap-sass": "3.4.1",
     "d3": "3.5.17",
-    "jquery": "^3.3.1",
+    "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
-    "lodash": "^4.17.10",
+    "lodash": "^4.17.11",
     "moment": "^2.22.2",
     "path": "^0.12.7",
     "url": "^0.11.0"

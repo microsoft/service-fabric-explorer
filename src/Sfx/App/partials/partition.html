@@ -12,7 +12,7 @@
                         <th>Partition Kind</th>
                     </tr>
                     <tr>
-                        <td title="{{partitionCtrl.partitionId}}">{{partitionCtrl.partitionId}}</td>
+                        <td title="{{partitionCtrl.partitionId}}">{{partitionCtrl.partitionId}}<sfx-clip-board text="partitionCtrl.partitionId"></sfx-clip-board></td>
                         <td>{{partition.partitionInformation.raw.ServicePartitionKind}}</td>
                     </tr>
                     <tr>
@@ -36,8 +36,8 @@
                         <td ng-show="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">{{partition.partitionInformation.raw.HighKey}}</td>
                     </tr>
                     <tr ng-show="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">
-                        <th>Minimum Replica Size</th>
-                        <th>Target Replica Size</th>
+                        <th>Minimum Replica Set Size</th>
+                        <th>Target Replica Set Size</th>
                     </tr>
                     <tr ng-show="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">
                         <td>{{partition.raw.MinReplicaSetSize}}</td>

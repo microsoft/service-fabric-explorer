@@ -20,6 +20,7 @@ module Sfx {
         module.directive("sfxMetricsBarChart", MetricsBarChartDirective.factory());
         module.directive("sfxDashboard", DashboardChartDirective.factory());
         module.directive("sfxImageStoreView", () => new ImageStoreViewDirective());
+        module.directive("sfxImageStoreFileView", () => new ImageStoreOptionsViewDirective());
 
         module.directive("sfxThemeImport", ["theme", (themeService: ThemeService): angular.IDirective => {
             return {
@@ -110,11 +111,15 @@ module Sfx {
 
         // When navigating in the tree view through arrow keys, make sure the selected node also gets
         // the focus since it could have been set on some other elements by using the tab key.
-        module.directive("sfxTreeSetFocus", ["$timeout", function ($timeout) {
+        module.directive("sfxTreeSetFocus", ["$timeout", "clusterTree", function ($timeout, clusterTree: ClusterTreeService) {
             return {
                 restrict: "A",
                 link: function ($scope: any, $element: any, $attributes: any) {
                     $attributes.$observe("selected", function (selected) {
+                        if (clusterTree.setFirstVisit()) {
+                            return;
+                        }
+
                         if (selected !== "true") {
                             return;
                         }
@@ -127,11 +132,15 @@ module Sfx {
             };
         }]);
 
-        module.directive("sfxTabSetFocus", ["$timeout", function ($timeout) {
+        module.directive("sfxTabSetFocus", ["$timeout", "controllerManager", function ($timeout, controllerManager: ControllerManagerService) {
             return {
                 restrict: "A",
                 link: function ($scope: any, $element: any, $attributes: any) {
                     $attributes.$observe("active", function (active) {
+                        if (controllerManager.firstPageLoad) {
+                            controllerManager.firstPageLoad = false;
+                            return;
+                        }
                         if (active !== "true") {
                             return;
                         }
@@ -255,11 +264,20 @@ module Sfx {
         module.directive(_.camelCase(Constants.DirectiveNameUpgradeProgress), (): angular.IDirective => {
             return {
                 restrict: "E",
-                replace: true,
                 scope: {
                     upgradeDomains: "="
                 },
                 templateUrl: "partials/upgrade-progress.html"
+            };
+        });
+
+        module.directive("sfxUpgradeDomainProgress", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                scope: {
+                    nodeUpgradeProgressList: "="
+                },
+                templateUrl: "partials/upgrade-domain-progress.html"
             };
         });
 
@@ -280,7 +298,8 @@ module Sfx {
                 restrict: "AE",
                 replace: true,
                 scope: {
-                    metrics: "="
+                    metrics: "=",
+                    listSettings: "="
                 },
                 templateUrl: "partials/metrics-view.html"
             };
@@ -291,5 +310,50 @@ module Sfx {
         module.directive("sfxTextFileInput", () => new TextFileInputDirective());
 
         module.directive("sfxDatePicker", () => new DatePickerDirective());
+
+        module.directive("sfxListShorten", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                replace: true,
+                scope: {
+                    list: "="
+                },
+                templateUrl: "partials/long-list-shorten.html",
+                link: function ($scope: any, $element, $attributes: any) {
+                    $scope.opened = false;
+                    $scope.flip = (): void => {
+                        $scope.opened  = !$scope.opened;
+                    };
+                }
+            };
+        });
+
+        module.directive("sfxClipBoard", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                replace: true,
+                scope: {
+                    text: "=",
+                    nestedText: "=",
+                    nestedTextProperty: "="
+                },
+                templateUrl: "partials/copy-to-clipboard.html",
+                link: function ($scope: any, $element, $attributes: any) {
+                    $scope.copy = (): void => {
+                        try {
+                            let $temp_input = $("<textarea>");
+                            $("body").append($temp_input);
+                            $temp_input.val($scope.nestedTextProperty ? $scope.nestedText[$scope.nestedTextProperty] : $scope.text).select();
+                            document.execCommand("copy");
+                            $temp_input.remove();                            
+                        } catch(e) {
+                            console.log(e);
+                        }
+
+                    };
+                }
+            };
+        });
+
     })();
 }

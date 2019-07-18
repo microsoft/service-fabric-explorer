@@ -9,6 +9,9 @@ module Sfx {
         public tree: TreeViewModel;
         private clusterHealth: ClusterHealth;
         private cm: ClusterManifest;
+        // controller views can get instantiated before this service and so a request to set the tree location might
+        //get requested before the init function is called and so it needs to be cached.
+        private cachedTreeSelection: {path: string[], skipSelectAction?: boolean};
 
         constructor(
             private $q: angular.IQService,
@@ -21,11 +24,32 @@ module Sfx {
         public init() {
             this.clusterHealth = new ClusterHealth(this.data, HealthStateFilterFlags.None, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
             this.tree = new TreeViewModel(this.$q, () => this.getRootNode());
+            if (this.cachedTreeSelection) {
+                this.tree.selectTreeNode(this.cachedTreeSelection.path, this.cachedTreeSelection.skipSelectAction);
+            }
+
             this.cm = new ClusterManifest(this.data);
         }
 
         public selectTreeNode(path: string[], skipSelectAction?: boolean): ng.IPromise<any> {
+            //if init hasnt been called and set this.tree, then cache request for tree selection
+            if (!this.tree) {
+                this.cachedTreeSelection = {path, skipSelectAction};
+                return this.$q.when(null);
+            }
+
             return this.tree.selectTreeNode(path, skipSelectAction);
+        }
+
+        public setFirstVisit(): boolean {
+            if (!this.tree) {
+                return true;
+            }
+            if (this.tree.firstTreeSelect) {
+                this.tree.firstTreeSelect = false;
+                return true;
+            }
+            return false;
         }
 
         public refresh(): angular.IPromise<any> {
@@ -367,7 +391,9 @@ module Sfx {
                 return _.map(partitions.collection, partition => {
                     return {
                         nodeId: IdGenerator.partition(partition.id),
-                        displayName: () => partition.id,
+                        displayName: () => partition.partitionInformation.isPartitionKindNamed
+                            ? `${partition.partitionInformation.raw.Name} (${partition.id})`
+                            : partition.id,
                         selectAction: () => this.routes.navigate(() => partition.viewPath),
                         childrenQuery: () => this.getReplicas(appId, serviceId, partition.id),
                         badge: () => partition.healthState,
