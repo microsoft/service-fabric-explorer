@@ -16,6 +16,7 @@ module Sfx {
         public static SplitterLeftWidth: string = "sfxSplitterleftWidth";
         public static ThemeNameStorageKey: string = "sfxThemeName";
         public static PaginationLimitStorageKey: string = "sfxPaginationLimit";
+        public static AdvancedModeKey: string = "sfxAdvancedMode";
 
         // Default values for storage keys
         public static DefaultThemeName: string = "dark";
