@@ -34,6 +34,10 @@ module Sfx {
         public static SfxVersionMetadataName: string = "SFX-Version";
         public static SfxBuildMetadataName: string = "SFX-Build";
 
+        //telemetry header
+        public static SfxTelemetryMetadataName: string = "X-ServiceFabricClientType";
+        public static SfxTelemetryHeaderValue: string = "SFX";
+
         // Custom headers
         public static SfxReadonlyHeaderName: string = "SFX-Readonly";
         public static SfxClusterNameHeaderName: string = "SFX-ClusterName";
