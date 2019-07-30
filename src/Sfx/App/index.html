@@ -91,6 +91,12 @@
                                     ng-model="settingsCtrl.settings.paginationLimit" ng-model-options="{ updateOn: 'blur' }"
                                     min="5" max="200" step="5" aria-labelledby="page-size-label" />
                             </li>
+                            <li>
+                                <label class="settings-item-title" id="page-size-label">
+                                    Advanced mode
+                                    <input type="checkbox" ng-model="settingsCtrl.advancedModeState" ng-change="settingsCtrl.setAdvancedMode()"> 
+                                </label>
+                            </li>
                             <li role="separator" class="divider"></li>
                             <li class="hoverable-link">
                                 <a href="https://go.microsoft.com/fwlink/?LinkId=512132" title="Privacy and Cookies" target="_blank">
