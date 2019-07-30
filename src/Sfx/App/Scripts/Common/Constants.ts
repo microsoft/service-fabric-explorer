@@ -172,4 +172,10 @@ module Sfx {
         public static Completed: string = "Completed";
         public static Pending: string = "Pending";
     }
+
+    export class StatusWarningLevel {
+        public static Warning: string = "warning";
+        public static Error: string = "danger";
+        public static Info: string = "info";
+    }
 }

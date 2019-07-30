@@ -17,5 +17,18 @@ module Sfx {
             };
         }]);
 
+        module.filter("warningPrefix", [function () {
+            return function (str) {
+                console.log(str);
+                if(str === StatusWarningLevel.Warning){
+                    return 'Warning'
+                }else if(str === StatusWarningLevel.Error){
+                    return 'Error'
+                }else{
+                    return 'Info'
+                }
+            };
+        }]);
+
     })();
 }

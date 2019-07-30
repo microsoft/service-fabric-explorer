@@ -308,6 +308,19 @@ module Sfx {
 
             this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
             this.seedNodeCount = seedNodes.length;
+            //if < 5 seed nodes display warning
+            if(this.seedNodeCount < 5){
+                this.data.warnings.addOrUpdateNotification({
+                    message: "Cluster is degraded because it does not have 5 seed nodes. See link for more details",
+                    level: StatusWarningLevel.Error,
+                    priority: 2,
+                    id: "degradedClusterState",
+                    link: "https://aka.ms/servicefabric/durability"
+                })
+            }else{
+                this.data.warnings.removeNotificationById("degradedClusterState");
+            }
+
             this.healthySeedNodes = seedNodes.length.toString() + " (" +
                 Math.round(healthyNodes.length / seedNodes.length * 100).toString() + "%)";
         }
