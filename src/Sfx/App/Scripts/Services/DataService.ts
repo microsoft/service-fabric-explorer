@@ -333,7 +333,7 @@ module Sfx {
     (function () {
 
         let module = angular.module("dataService", ["routes", "messages", "ui.bootstrap", "ngSanitize", "restClientService", "StatusWarningService", "storageService"]);
-        module.factory("data", ["routes", "message", "telemetry", "$location", "restClient", "warnings", "$q", "$timeout", "$uibModal", "$route", "$sanitize", "$rootScope",
+        module.factory("data", ["routes", "message", "telemetry", "$location", "restClient", "warnings", "storage", "$q", "$timeout", "$uibModal", "$route", "$sanitize", "$rootScope",
             (routes, message, telemetry, $location, restClient, warnings, storage, $q, $timeout, $uibModal, $route, $sanitize, $rootScope) =>
                 new DataService(routes, message, telemetry, $location, restClient, warnings, storage, $q, $timeout, $uibModal, $route, $sanitize, $rootScope)]);
 

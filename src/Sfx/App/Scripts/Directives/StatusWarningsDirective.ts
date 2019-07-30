@@ -18,24 +18,18 @@ module Sfx {
         };
 
         public link($scope: any, element: JQuery, attributes: any) {
-            // $scope.dwSelector = new DateWindowSelector($scope.eventsList);
-            // $scope.resetClick = () => {
-            //     $scope.dwSelector.reset();
-            // };
+
         }
     }
 
     export class StatusWarningController {
         static $inject = ["$scope", "data"];
 
-        clusterUpgradeProgress: ClusterUpgradeProgress;
         alerts: StatusWarningService;
 
         displayAll = false;
 
         constructor(private $scope: any, private data: DataService) {
-            this.clusterUpgradeProgress = this.data.clusterUpgradeProgress;
-            console.log(this.data.warnings.notifications);
             this.alerts = this.data.warnings;
         }
 

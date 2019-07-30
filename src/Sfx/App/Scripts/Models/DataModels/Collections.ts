@@ -274,10 +274,10 @@ module Sfx {
         public setAdvancedMode(state: boolean): void {
             this.collection.forEach( node => {
                 node.removeAdvancedActions();
-                if(state){
+                if (state) {
                     node.setAdvancedActions();
                 }
-            })
+            });
         }
 
         protected get indexPropery(): string {
@@ -318,15 +318,15 @@ module Sfx {
             this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
             this.seedNodeCount = seedNodes.length;
             //if < 5 seed nodes display warning
-            if(this.seedNodeCount < 5){
+            if (this.seedNodeCount < 5) {
                 this.data.warnings.addOrUpdateNotification({
                     message: "Cluster is degraded because it does not have 5 seed nodes. See link for more details",
                     level: StatusWarningLevel.Error,
                     priority: 2,
                     id: "degradedClusterState",
                     link: "https://aka.ms/servicefabric/durability"
-                })
-            }else{
+                });
+            }else {
                 this.data.warnings.removeNotificationById("degradedClusterState");
             }
 
