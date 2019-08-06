@@ -16,13 +16,14 @@ module Sfx {
         public static SplitterLeftWidth: string = "sfxSplitterleftWidth";
         public static ThemeNameStorageKey: string = "sfxThemeName";
         public static PaginationLimitStorageKey: string = "sfxPaginationLimit";
+        public static AdvancedModeKey: string = "sfxAdvancedMode";
 
         // Default values for storage keys
         public static DefaultThemeName: string = "dark";
         public static DefaultAutoRefreshInterval: number = 15;
         // Keep this in sync with $left-panel-width in _config.scss
         public static DefaultSplitterLeftWidth: number = 400;
-        public static DefaultPaginationLimit: number = 10;
+        public static DefaultPaginationLimit: number = 100;
 
         // System app constants
         public static SystemAppId: string = "System";
@@ -32,6 +33,10 @@ module Sfx {
         // Version header
         public static SfxVersionMetadataName: string = "SFX-Version";
         public static SfxBuildMetadataName: string = "SFX-Build";
+
+        //telemetry header
+        public static SfxTelemetryMetadataName: string = "X-ServiceFabricClientType";
+        public static SfxTelemetryHeaderValue: string = "SFX";
 
         // Custom headers
         public static SfxReadonlyHeaderName: string = "SFX-Readonly";

@@ -21,7 +21,7 @@
                     </tr>
                     <tr>
                         <td>{{replica.raw.ReplicaStatus}}</td>
-                        <td><a href="{{replica.serviceViewPath}}">{{replica.raw.ServiceName}}</a></td>
+                        <td><a href="{{replica.serviceViewPath}}">{{replica.raw.ServiceName}}</a><sfx-clip-board text="replica.raw.ServiceName"></sfx-clip-board></td>
                     </tr>
                     <tr>
                         <th ng-if="replica.isStatefulService">Replica Role</th>

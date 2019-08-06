@@ -27,6 +27,11 @@ module Sfx {
                     this.bootstrapApplication();
                 });
 
+                $rootScope.$on("adal:acquireTokenSuccess", () => {
+                    console.log("adal:acquireTokenSuccess");
+                    this.bootstrapApplication();
+                });
+
                 // Just for debugging purpose
                 $rootScope.$on("adal:loginFailure", () => {
                     console.log("adal:loginFailure");

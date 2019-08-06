@@ -270,6 +270,15 @@ module Sfx {
             return [allNodes, seedNodes].concat(Object.keys(counts).map(key => counts[key]));
         }
 
+        public setAdvancedMode(state: boolean): void {
+            this.collection.forEach( node => {
+                node.removeAdvancedActions();
+                if(state){
+                    node.setAdvancedActions();
+                }
+            })
+        }
+
         protected get indexPropery(): string {
             // node should be indexed by name
             return "name";
