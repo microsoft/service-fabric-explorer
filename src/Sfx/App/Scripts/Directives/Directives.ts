@@ -111,11 +111,16 @@ module Sfx {
 
         // When navigating in the tree view through arrow keys, make sure the selected node also gets
         // the focus since it could have been set on some other elements by using the tab key.
-        module.directive("sfxTreeSetFocus", ["$timeout", function ($timeout) {
+        module.directive("sfxTreeSetFocus", ["$timeout", "clusterTree", function ($timeout, clusterTree: ClusterTreeService) {
             return {
                 restrict: "A",
                 link: function ($scope: any, $element: any, $attributes: any) {
                     $attributes.$observe("selected", function (selected) {
+                        if(clusterTree.tree.firstTreeSelect){
+                            clusterTree.tree.firstTreeSelect = false;
+                            return;
+                        }
+
                         if (selected !== "true") {
                             return;
                         }
@@ -128,11 +133,15 @@ module Sfx {
             };
         }]);
 
-        module.directive("sfxTabSetFocus", ["$timeout", function ($timeout) {
+        module.directive("sfxTabSetFocus", ["$timeout", "controllerManager", function ($timeout, controllerManager: ControllerManagerService) {
             return {
                 restrict: "A",
                 link: function ($scope: any, $element: any, $attributes: any) {
                     $attributes.$observe("active", function (active) {
+                        if(controllerManager.firstPageLoad){
+                            controllerManager.firstPageLoad = false;
+                            return;
+                        }
                         if (active !== "true") {
                             return;
                         }
@@ -290,7 +299,8 @@ module Sfx {
                 restrict: "AE",
                 replace: true,
                 scope: {
-                    metrics: "="
+                    metrics: "=",
+                    listSettings: "="
                 },
                 templateUrl: "partials/metrics-view.html"
             };
@@ -301,6 +311,8 @@ module Sfx {
         module.directive("sfxTextFileInput", () => new TextFileInputDirective());
 
         module.directive("sfxDatePicker", () => new DatePickerDirective());
+
+        module.directive("sfxDateTimePicker", () => new DateTimePickerDirective());
 
         module.directive("sfxListShorten", (): angular.IDirective => {
             return {

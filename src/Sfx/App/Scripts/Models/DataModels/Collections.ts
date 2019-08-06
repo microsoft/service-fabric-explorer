@@ -95,8 +95,8 @@ module Sfx {
 
         private appendOnly: boolean;
         private hash: _.Dictionary<T>;
-        private refreshingLoadPromise: CancelablePromise<T[]>;
-        private refreshingPromise: angular.IPromise<any>;
+        private   refreshingLoadPromise: CancelablePromise<T[]>;
+        private   refreshingPromise: angular.IPromise<any>;
 
         public get viewPath(): string {
             return "";
@@ -160,7 +160,7 @@ module Sfx {
             }
         }
 
-        protected update(collection: T[]): angular.IPromise<any> {
+        protected  update(collection: T[]): angular.IPromise<any> {
             this.isInitialized = true;
             CollectionUtils.updateDataModelCollection(this.collection, collection, this.appendOnly);
             this.hash = _.keyBy(this.collection, this.indexPropery);
@@ -314,6 +314,14 @@ module Sfx {
         private updateNodesHealthState(): void {
             // calculates the nodes health state which is the max state value of all nodes
             this.healthState = this.valueResolver.resolveHealthStatus(_.max(_.map(this.collection, node => HealthStateConstants.Values[node.healthState.text])));
+        }
+    }
+
+    export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy> {
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getBackupPolicies(messageHandler).then(items => {
+                return _.map(items, raw => new BackupPolicy(this.data, raw));
+            });
         }
     }
 
@@ -505,6 +513,70 @@ module Sfx {
         }
     }
 
+    export class ApplicationBackupConfigurationInfoCollection extends DataModelCollectionBase<ApplicationBackupConfigurationInfo> {
+        public constructor(data: DataService, public parent: Application) {
+            super(data, parent);
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getApplicationBackupConfigurationInfoCollection(this.parent.id, messageHandler)
+            .then(items => {
+                return _.map(items, raw => new ApplicationBackupConfigurationInfo(this.data, raw, this.parent));
+            });
+                   
+        }
+    }
+
+    export class ServiceBackupConfigurationInfoCollection extends DataModelCollectionBase<ServiceBackupConfigurationInfo> {
+        public constructor(data: DataService, public parent: Service) {
+            super(data, parent);
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getServiceBackupConfigurationInfoCollection(this.parent.id, messageHandler)
+                .then(items => {
+                    return _.map(items, raw => new ServiceBackupConfigurationInfo(this.data, raw, this.parent));
+                });
+        }
+    }
+
+    export class PartitionBackupCollection extends DataModelCollectionBase<PartitionBackup> {
+        public startDate: Date;
+        public endDate: Date;
+        public constructor(data: DataService, public parent: Partition) {
+            super(data, parent);
+            this.startDate = null;
+            this.endDate = null;
+        }
+
+        public retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            if (this.startDate && this.endDate) {
+                return this.data.restClient.getPartitionBackupList(this.parent.id, messageHandler, this.startDate, this.endDate)
+                    .then(items => {
+                        return _.map(items, raw => new PartitionBackup(this.data, raw, this.parent));
+                    });
+            }
+            else
+                return this.data.restClient.getPartitionBackupList(this.parent.id, messageHandler)
+                    .then(items => {
+                        return _.map(items, raw => new PartitionBackup(this.data, raw, this.parent));
+                    });
+        }
+    }
+
+    export class SinglePartitionBackupCollection extends DataModelCollectionBase<PartitionBackup> {
+        public constructor(data: DataService, public parent: Partition) {
+            super(data, parent);
+        }
+
+        public retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getLatestPartitionBackup(this.parent.id, messageHandler)
+                .then(items => {
+                    return _.map(items, raw => new PartitionBackup(this.data, raw, this.parent));
+                });
+        }
+    }
+   
     export class ServiceTypeCollection extends DataModelCollectionBase<ServiceType> {
         public constructor(data: DataService, public parent: ApplicationType | Application) {
             super(data, parent);

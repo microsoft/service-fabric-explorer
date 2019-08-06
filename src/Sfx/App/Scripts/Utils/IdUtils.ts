@@ -42,6 +42,10 @@ module Sfx {
             return decodeURIComponent(routeParams.nodeName);
         }
 
+        public static getBackupPolicyName(routeParams: any): string {
+            return decodeURIComponent(routeParams.backupPolicyName);
+        }
+
         public static getNetworkName(routeParams: any): string {
             return decodeURIComponent(routeParams.networkName);
         }

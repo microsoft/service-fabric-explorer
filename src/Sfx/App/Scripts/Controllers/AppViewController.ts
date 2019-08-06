@@ -11,6 +11,7 @@ module Sfx {
         listSettings: ListSettings;
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
+        applicationBackupConfigurationInfoListSettings: ListSettings;
         upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
         deployedApplicationsHealthStatesListSettings: ListSettings;
         serviceTypesListSettings: ListSettings;
@@ -79,6 +80,16 @@ module Sfx {
                 new ListColumnSetting("networkDetail.addressPrefix", "Network Address Prefix"),
                 new ListColumnSetting("networkDetail.status", "Network Status"),
             ]);
+
+            this.$scope.applicationBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings("backupConfigurationInfoCollection", ["raw.PolicyName"], [
+                new ListColumnSetting("raw.PolicyName", "Policy Name", ["raw.PolicyName"], false, (item, property) => "<a href='" + item.parent.viewPath + "/tab/details'>" + property + "</a>", 1, item => item.action.runWithCallbacks.apply(item.action)),
+                new ListColumnSetting("raw.Kind", "Kind"),
+                new ListColumnSetting("raw.PolicyInheritedFrom", "Policy Inherited From"),
+                new ListColumnSetting("raw.ServiceName", "Service Name"),
+                new ListColumnSetting("raw.PartitionId", "Partition Id"),
+                new ListColumnSetting("raw.SuspensionInfo.IsSuspended", "Is Suspended"),
+                new ListColumnSetting("raw.SuspensionInfo.SuspensionInheritedFrom", "Suspension Inherited From"),
+            ]);
             this.$scope.clusterManifest = new ClusterManifest(this.data);
             this.$scope.networks = new NetworkOnAppCollection(this.data, this.appId);
             this.refresh();
@@ -88,7 +99,8 @@ module Sfx {
             return this.$q.all([
                 this.data.getApp(this.appId, true, messageHandler).then(data => {
                     this.$scope.app = data;
-
+                    this.$scope.app.applicationBackupConfigurationInfoCollection.refresh(messageHandler);
+                    this.data.backupPolicies.refresh(messageHandler);
                     return this.$scope.app.health.refresh(messageHandler).then(() => {
                         this.$scope.deployedApplicationsHealthStates = this.$scope.app.health.deployedApplicationHealthStates;
 
@@ -123,6 +135,7 @@ module Sfx {
         private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.$scope.appEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler));
         }
+
     }
 
     (function () {

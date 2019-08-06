@@ -1,0 +1,68 @@
+<form name="createBackupPolicyForm">
+    <div class="modal-header">
+        <h4 class="modal-title">Trigger Partition Backup</h4>
+    </div>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+            <dt>BackupTimeout</dt>
+            <dd>
+                <input type="number" class="input-flat" ng-model="action.BackupTimeout" required />
+            </dd>
+            <dt>StorageKind</dt>
+            <dd>
+                <label>
+                    <input type="radio" ng-model="action.storage.StorageKind" value="AzureBlobStore">
+                    AzureBlobStore
+                </label>
+                <label>
+                    <input type="radio" ng-model="action.storage.StorageKind" value="FileShare">
+                    FileShare
+                </label><br />
+            </dd>
+        </dl>
+        <dl class="dl-horizontal collapse" uib-collapse="!action.storage.StorageKind || action.storage.StorageKind!=='AzureBlobStore'">
+            <dt>FriendlyName</dt>
+            <dd>
+                <input type="text" class="input-flat" ng-model="action.storage.FriendlyName">
+            </dd>
+            <dt>ConnectionString</dt>
+            <dd>
+                <input type="text" class="input-flat" ng-model="action.storage.ConnectionString">
+            </dd>
+            <dt>ContainerName</dt>
+            <dd>
+                <input type="text" class="input-flat" ng-model="action.storage.ContainerName">
+            </dd>
+        </dl>
+        <dl class="dl-horizontal collapse" uib-collapse="!action.storage.StorageKind || action.storage.StorageKind!=='FileShare'">
+            <dt>FriendlyName</dt>
+            <dd>
+                <input type="text" class="input-flat" ng-model="action.storage.FriendlyName">
+            </dd>
+            <dt>Path</dt>
+            <dd>
+                <input type="text" class="input-flat" ng-model="action.storage.Path">
+            </dd>
+            <dt>PrimaryUserName</dt>
+            <dd>
+                <input type="text" class="input-flat" ng-model="action.storage.PrimaryUserName">
+            </dd>
+            <dt>PrimaryPassword</dt>
+            <dd>
+                <input type="password" class="input-flat" ng-model="action.storage.PrimaryPassword">
+            </dd>
+            <dt>SecondaryUserName</dt>
+            <dd>
+                <input type="text" class="input-flat" ng-model="action.storage.SecondaryUserName">
+            </dd>
+            <dt>SecondaryPassword</dt>
+            <dd>
+                <input type="password" class="input-flat" ng-model="action.storage.SecondaryPassword">
+            </dd>
+        </dl>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-disabled="createBackupPolicyForm.$invalid" ng-click="ok()">Trigger Partition Backup</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancel()">Cancel</button>
+    </div>
+</form>

@@ -12,6 +12,7 @@ module Sfx {
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
         serviceEvents: ServiceEventList;
+        serviceBackupConfigurationInfoListSettings: ListSettings;
     }
 
     export class ServiceViewController extends MainViewController {
@@ -61,6 +62,15 @@ module Sfx {
                 new ListColumnSettingWithFilter("raw.PartitionStatus", "Status"),
             ]);
 
+            this.$scope.serviceBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings("serviceBackupConfigurationInfoListSettings", ["raw.PolicyName"], [
+                new ListColumnSetting("raw.PolicyName", "Policy Name", ["raw.PolicyName"], false, (item, property) => "<a href='" + item.parent.viewPath + "/tab/details'>" + property + "</a>", 1, item => item.action.runWithCallbacks.apply(item.action)),
+                new ListColumnSetting("raw.Kind", "Kind"),
+                new ListColumnSetting("raw.PolicyInheritedFrom", "Policy Inherited From"),
+                new ListColumnSetting("raw.PartitionId", "Partition Id"),
+                new ListColumnSetting("raw.SuspensionInfo.IsSuspended", "Is Suspended"),
+                new ListColumnSetting("raw.SuspensionInfo.SuspensionInheritedFrom", "Suspension Inherited From"),
+            ]);
+
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.serviceEvents = this.data.createServiceEventList(this.serviceId);
@@ -72,6 +82,9 @@ module Sfx {
             return this.data.getService(this.appId, this.serviceId, true, messageHandler)
                 .then(service => {
                     this.$scope.service = service;
+                    if (this.$scope.service.isStatefulService)
+                        this.$scope.service.serviceBackupConfigurationInfoCollection.refresh(messageHandler);
+                    this.data.backupPolicies.refresh(messageHandler);
 
                     return this.$q.all([
                         this.$scope.service.health.refresh(messageHandler),

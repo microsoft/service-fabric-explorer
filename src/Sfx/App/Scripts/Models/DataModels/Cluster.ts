@@ -153,7 +153,7 @@ module Sfx {
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
-            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations);
+            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
             let domains = _.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud));
             let groupedDomains = _.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Completed)
                 .concat(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.InProgress))
@@ -185,6 +185,46 @@ module Sfx {
 
         protected updateInternal(): angular.IPromise<any> | void {
             CollectionUtils.updateDataModelCollection(this.loadMetricInformation, _.map(this.raw.LoadMetricInformation, lmi => new LoadMetricInformation(this.data, lmi)));
+        }
+    }
+    export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
+        public decorators: IDecorators = {
+            hideList: [
+                "Name",
+            ]
+        };
+        public action: ActionWithDialog;
+        public updatePolicy: ActionWithDialog;
+
+        public constructor(data: DataService, raw?: IRawBackupPolicy) {
+            super(data, raw);
+            this.action = new ActionWithDialog(
+                data.$uibModal,
+                data.$q,
+                "deleteBackupPolicy",
+                "Delete Backup Policy",
+                "Deleting",
+                () => data.restClient.deleteBackupPolicy(this.raw.Name),
+                () => true,
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/backupPolicy.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this
+                    }
+                },
+                null);
+
+            this.updatePolicy = new ActionUpdateBackupPolicy(data, raw);
+        }
+
+        public updateBackupPolicy():void {
+            this.updatePolicy.runWithCallbacks.apply(this.updatePolicy);
+        }
+        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawBackupPolicy> {
+            return this.data.restClient.getBackupPolicy(this.name, messageHandler).then(response => {
+                return response.data;
+            });
         }
     }
 }

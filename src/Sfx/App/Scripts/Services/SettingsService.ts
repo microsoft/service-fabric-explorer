@@ -71,7 +71,7 @@ module Sfx {
         public getNewOrExistingUnhealthyEvaluationsListSettings(listKey: string = "unhealthyEvaluations") {
             return this.getNewOrExistingListSettings(listKey, null,
                 [
-                    new ListColumnSetting("kind", "Kind", null, false, (item) => HtmlUtils.getSpanWithCustomClass("preserve-whitespace", item.kind)),
+                    new ListColumnSetting("kind", "Kind", null, false, (item) => HtmlUtils.getSpanWithLink("preserve-whitespace", item.kind, item.viewPath)),
                     new ListColumnSettingForBadge("healthState", "Health State"),
                     new ListColumnSetting("description", "Description", null, false, (item) => HtmlUtils.getSpanWithCustomClass("preserve-whitespace-wrap", item.description))
                 ]);
@@ -110,6 +110,16 @@ module Sfx {
                 ]
 
             );
+        };
+
+        public getNewOrExistingBackupPolicyListSettings(listKey: string = "backupPolicies") {
+            return this.getNewOrExistingListSettings(listKey, [null], [
+                new ListColumnSetting("raw.Name", "Name", ["raw.Name"], false, (item, property) => "<a href='#/tab/backupPolicies'>" + property + "</a>", 1, item => item.action.runWithCallbacks.apply(item.action)),
+                new ListColumnSetting("raw.Schedule.ScheduleKind", "ScheduleKind"),
+                new ListColumnSetting("raw.Storage.StorageKind", "StorageKind"),
+                new ListColumnSetting("raw.AutoRestoreOnDataLoss", "AutoRestoreOnDataLoss"),
+                new ListColumnSetting("raw.MaxIncrementalBackups", "MaxIncrementalBackups"),
+            ]);
         };
 
         // Update all existing list settings to use new limit

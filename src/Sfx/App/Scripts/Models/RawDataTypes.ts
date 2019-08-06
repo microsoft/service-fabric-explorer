@@ -24,6 +24,63 @@ module Sfx {
         ApplicationDefinitionKind: string;
     }
 
+    export interface IRawBackupConfigurationInfo {
+        Kind: string;
+        PolicyName: string;
+        PolicyInheritedFrom: string;
+        SuspensionInfo: IRawSuspensionInfo;
+    }
+
+    export interface IRawPartitionBackup {
+        BackupId: string;
+        BackupChainId: string;
+        ApplicationName: string;
+        ServiceManifestVersion: string;
+        ServiceName: string;
+        BackupLocation: string;
+        BackupType: string;
+        LsnOfLastBackupRecord: string;
+        CreationTimeUtc: string;
+        EpochOfLastBackupRecord: IRawEpochOfLastBackupRecord;
+    }
+
+    export interface IRawEpochOfLastBackupRecord {
+        DataLossVersion: string;
+        ConfigurationVersion: string;
+    }
+    export interface IRawApplicationBackupConfigurationInfo extends IRawPartitionBackupConfigurationInfo {
+        ApplicationName: string;
+    }
+
+    export interface IRawServiceBackupConfigurationInfo extends IRawPartitionBackupConfigurationInfo {
+        ServiceName: string;
+    }
+
+    export interface IRawPartitionBackupConfigurationInfo extends IRawBackupConfigurationInfo {
+        PartitionId: string;
+    }
+
+    export interface IRawBackupProgressInfo{
+        RestoreState: string;
+        TimeStampUtc: string;
+        RestoredEpoch: IRawEpochOfLastBackupRecord;
+        RestoredLsn: string;
+    }
+
+    export interface IRawRestoreProgressInfo {
+        BackupState: string;
+        TimeStampUtc: string;
+        BackupId: string;
+        BackupLocation: string;
+        EpochOfLastBackupRecord: IRawEpochOfLastBackupRecord;
+        LsnOfLastBackupRecord: string;
+    }
+
+    export interface IRawSuspensionInfo {
+        IsSuspended: boolean;
+        SuspensionInheritedFrom: string;
+    }
+
     export interface IRawApplicationManifest {
         Manifest: string;
     }
@@ -264,6 +321,20 @@ module Sfx {
         IsStopped: boolean;
     }
 
+    export interface IRawBackupPolicy {
+        Name: string;
+        AutoRestoreOnDataLoss: boolean;
+        MaxIncrementalBackups: number;
+        Schedule: IRawSchedule;
+        Storage: IRawStorage;
+    }
+
+    export interface IRawRetentionPolicy {
+        RetentionPolicyType: string;
+        MinimumNumberOfBackups: number;
+        RetentionDuration: string;
+    }
+
     export interface IRawNodeDeactivationInfo {
         NodeDeactivationIntent: string;
         NodeDeactivationStatus: string;
@@ -274,6 +345,24 @@ module Sfx {
         NodeDeactivationTaskId: IRawNodeDeactivationTaskId;
         NodeDeactivationIntent: string;
     }
+    export interface IRawSchedule {
+        ScheduleKind: string;
+        ScheduleFrequencyType: string;
+        RunDays: string[];
+        RunTimes: string[];
+        Interval: string;
+    };
+    export interface IRawStorage {
+        StorageKind: string;
+        FriendlyName: string;
+        Path: string;
+        ConnectionString: string;
+        ContainerName: string;
+        PrimaryUserName: string;
+        PrimaryPassword: string;
+        SecondaryUserName: string;
+        SecondaryPassword: string;
+    };
 
     export interface IRawNodeDeactivationTaskId {
         Id: string;
@@ -294,6 +383,7 @@ module Sfx {
         NodeName: string;
         NodeLoadMetricInformation: IRawNodeLoadMetricInformation[];
     }
+
 
     export interface IRawNodeLoadMetricInformation {
         Name: string;

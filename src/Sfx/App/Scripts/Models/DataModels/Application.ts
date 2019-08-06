@@ -19,6 +19,9 @@ module Sfx {
         public manifest: ApplicationManifest;
         public health: ApplicationHealth;
         public serviceTypes: ServiceTypeCollection;
+        public applicationBackupConfigurationInfoCollection: ApplicationBackupConfigurationInfoCollection;
+        public backupPolicyName: string;
+        public cleanBackup: boolean;
 
         public constructor(data: DataService, raw?: IRawApplication) {
             super(data, raw);
@@ -28,6 +31,8 @@ module Sfx {
             this.manifest = new ApplicationManifest(data, this);
             this.serviceTypes = new ServiceTypeCollection(data, this);
             this.upgradeProgress = new ApplicationUpgradeProgress(data, this);
+            this.applicationBackupConfigurationInfoCollection = new ApplicationBackupConfigurationInfoCollection(data, this);
+            this.cleanBackup=false;
 
             if (this.data.actionsEnabled()) {
                 this.setUpActions();
@@ -79,7 +84,7 @@ module Sfx {
             return Utils.getHttpResponseData(this.data.restClient.getApplication(this.id, messageHandler));
         }
 
-        private setUpActions() {
+        public setUpActions() {
             this.actions.add(new ActionWithConfirmationDialog(
                 this.data.$uibModal,
                 this.data.$q,
@@ -90,6 +95,73 @@ module Sfx {
                 () => true,
                 "Confirm Application Deletion",
                 `Delete application ${this.name} from cluster ${this.data.$location.host()}?`,
+                this.name));
+
+            this.actions.add(new ActionWithDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "enableApplicationBackup",
+                "Enable/Update Application Backup",
+                "Enabling Application Backup",
+                () => this.data.restClient.enableApplicationBackup(this).then(() => {
+                    this.applicationBackupConfigurationInfoCollection.refresh();
+                }),
+                () => true,
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/enableBackup.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this
+                    }
+                },
+                null
+            ));
+            this.actions.add(new ActionWithDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "disableApplicationBackup",
+                "Disable Application Backup",
+                "Disabling Application Backup",
+                () => this.data.restClient.disableApplicationBackup(this).then(() => {
+                    this.applicationBackupConfigurationInfoCollection.refresh();
+                }),
+                () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application",
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/disableBackup.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this
+                    }
+                },
+                null
+            ));
+
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "suspendApplicationBackup",
+                "Suspend Application Backup",
+                "Suspending...",
+                () => this.data.restClient.suspendApplicationBackup(this.id).then(() => {
+                    this.applicationBackupConfigurationInfoCollection.refresh();
+                }),
+                () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === false,
+                "Confirm Application Backup Suspension",
+                `Suspend application backup for ${this.name} ?`,
+                this.name));
+
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "resumeApplicationBackup",
+                "Resume Application Backup",
+                "Resuming...",
+                () => this.data.restClient.resumeApplicationBackup(this.id).then(() => {
+                    this.applicationBackupConfigurationInfoCollection.refresh();
+                }),
+                () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true,
+                "Confirm Application Backup Resumption",
+                `Resume application backup for ${this.name} ?`,
                 this.name));
         }
 
@@ -257,7 +329,8 @@ module Sfx {
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
-            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations);
+                                                                                                    //set depth to 0 and parent ref to null
+            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);
 
             let domains = _.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud));
             let groupedDomains = _.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Completed)
@@ -270,6 +343,33 @@ module Sfx {
             if (this.raw.UpgradeDescription) {
                 this.upgradeDescription = new UpgradeDescription(this.data, this.raw.UpgradeDescription);
             }
+        }
+    }
+    export class ApplicationBackupConfigurationInfo extends DataModelBase<IRawApplicationBackupConfigurationInfo> {
+        public decorators: IDecorators = {
+            hideList: [
+                "action.Name",
+            ]
+        };
+        public action: ActionWithDialog;
+        public constructor(data: DataService, raw: IRawApplicationBackupConfigurationInfo, public parent: Application) {
+            super(data, raw, parent);
+            this.action = new ActionWithDialog(
+                data.$uibModal,
+                data.$q,
+                raw.PolicyName,
+                raw.PolicyName,
+                "Creating",
+                () => this.data.restClient.deleteBackupPolicy(this.raw.PolicyName),
+                () => true,
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/backupPolicy.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this.data.getBackupPolicy(this.raw.PolicyName)
+                    }
+                },
+                null);
         }
     }
 }

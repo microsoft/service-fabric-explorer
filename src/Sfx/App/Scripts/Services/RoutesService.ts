@@ -4,7 +4,6 @@
 //-----------------------------------------------------------------------------
 
 module Sfx {
-
     // Important:
     // If modifying a route in the RoutesService, make sure to make a corresponding change in the routes configuration below, and vice versa.
 
@@ -128,7 +127,7 @@ module Sfx {
         }
 
         // Double encode may be necessary because the browser automatically decodes the token before we have access to it
-        private doubleEncode(str: string): string {
+        public doubleEncode(str: string): string {
             return this._forceSingleEncode ? encodeURIComponent(str) : encodeURIComponent(encodeURIComponent(str));
         }
 
@@ -278,7 +277,6 @@ module Sfx {
                 controller: "ReplicaViewController",
                 controllerAs: "replicaCtrl"
             });
-
             $routeProvider.otherwise({
                 templateUrl: "partials/cluster.html",
                 controller: "ClusterViewController",
