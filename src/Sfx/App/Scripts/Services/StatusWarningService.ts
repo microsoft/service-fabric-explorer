@@ -20,7 +20,7 @@ module Sfx {
 
         public getIndex(notificationId: string): number {
             let index = -1;
-            for(let i = 0; i < this.notifications.length; i++) {
+            for (let i = 0; i < this.notifications.length; i++) {
                 if (this.notifications[i].id === notificationId) {
                     index = i;
                 }
@@ -43,7 +43,7 @@ module Sfx {
             if (index > -1) {
                 this.notifications.splice(index, 1);
             }
-        } 
+        }
     }
 
     (function () {

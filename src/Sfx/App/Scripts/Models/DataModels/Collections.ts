@@ -323,35 +323,35 @@ module Sfx {
 
             this.healthySeedNodes = seedNodes.length.toString() + " (" +
                 Math.round(healthyNodes.length / seedNodes.length * 100).toString() + "%)";
-                
         }
 
-        private checkSeedNodeCount(count: number){
+        private checkSeedNodeCount(count: number) {
             //if < 5 seed nodes display warning
-            if (count < 5) {
+            //if count is 1, it is one box/test only scenario
+            if (count < 5 && count !== 1) {
                 this.data.warnings.addOrUpdateNotification({
                     message: "Cluster is degraded because it does not have 5 seed nodes. See link for more details",
                     level: StatusWarningLevel.Error,
                     priority: 2,
-                    id: "degradedClusterState",
+                    id: BannerWarningID.ClusterDegradedState,
                     link: "https://aka.ms/servicefabric/durability"
                 });
             }else {
-                this.data.warnings.removeNotificationById("degradedClusterState");
+                this.data.warnings.removeNotificationById(BannerWarningID.ClusterDegradedState);
             }
         }
 
-        private checkOneNodeScenario(): void{
-            if(this.collection.length === 1){
+        private checkOneNodeScenario(): void {
+            if (this.collection.length === 1) {
                 this.data.warnings.addOrUpdateNotification({
                     message: "One node cluster is considered test and can not perform cluster upgrades.",
                     level: StatusWarningLevel.Info,
                     priority: 1,
-                    id: "oneNodeCluster",
+                    id: BannerWarningID.OneNodeCluster,
                     link: "https://aka.ms/servicefabric/durability"
                 });
-            }else{
-                this.data.warnings.removeNotificationById("oneNodeCluster");
+            }else {
+                this.data.warnings.removeNotificationById(BannerWarningID.OneNodeCluster);
             }
         }
 
