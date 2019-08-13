@@ -8,7 +8,8 @@
             </span>
 
             <div style="float: right;" ng-click="ctrl.toggleViewed()" ng-if="ctrl.alerts.notifications.length > 1 && $first">
-                    <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-triangle-down" style="font-size: 20pt; vertical-align: bottom;"></span>
+                    <span ng-if="!ctrl.displayAll" class="dropdown-toggle dark-background-link bowtie-icon bowtie-triangle-down" style="font-size: 20pt; vertical-align: bottom;"></span>
+                    <span ng-if="ctrl.displayAll" class="dropdown-toggle dark-background-link bowtie-icon bowtie-triangle-up" style="font-size: 20pt; vertical-align: bottom;"></span>
                         ({{ctrl.alerts.notifications.length}})
             </div>
 

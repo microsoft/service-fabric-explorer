@@ -33,42 +33,24 @@ module Sfx {
         }
 
         public checkExpiredCertStatus() {
-            try{
-                if(!ClusterHealth.certExpirationChecked){
+            try {
+                if (!ClusterHealth.certExpirationChecked) {
                 //Check cluster health
                 //if healthy then no cert issue
-                //if warning
-                    //check if through unhealthy evaluations
+                //if warning/Error
+                    //starting walking and query all seed nodes in warning state for cluster cert issues
                     this.ensureInitialized().then( (clusterHealth: ClusterHealth) => {
-                        setTimeout( ()=> {
-                            clusterHealth = this;
-                            //if Error
-                                //starting walking and query all nodes in warning state
-                            if (clusterHealth.healthState.text === HealthStateConstants.Warning) {
-                                if ( clusterHealth.unhealthyEvaluations.some(event => {
-                                        if (event.raw.hasOwnProperty("UnhealthyEvent")) {
-                                            //property indexing is differen then for
-                                            return event.raw.UnhealthyEvent.Description.indexOf("Certificate expiration") === 0 && event.raw.UnhealthyEvent.Property === CertExpiraryHealthEventProperty.Cluster;
-                                        }
-                                        return false; 
-                                    })
-                                ){
-                                    this.setMessage();
-                                    ClusterHealth.certExpirationChecked = true;
-                                }
-                            }else if (clusterHealth.healthState.text === HealthStateConstants.Error) {
-                                //only check seed nodes for a reasonable confidence of the cluster cert state
-                                this.data.getNodes(true).then(nodes => {
-                                    let seedNodes = _.filter(nodes.collection, node => node.raw.IsSeedNode);
-                                    this.checkNodesContinually(0, seedNodes);
-                                });
-                            }else{
-                                ClusterHealth.certExpirationChecked = true;
-                            }
-                        })
+                        clusterHealth = this;
+
+                        if (clusterHealth.healthState.text === HealthStateConstants.Warning || clusterHealth.healthState.text === HealthStateConstants.Error) {
+                            this.data.getNodes(true).then(nodes => {
+                                let seedNodes = _.filter(nodes.collection, node => node.raw.IsSeedNode);
+                                this.checkNodesContinually(0, seedNodes);
+                            });
+                        }
                     });
                 }
-            }catch(e){
+            }catch (e) {
                 console.log(e);
             }
         }
@@ -85,7 +67,7 @@ module Sfx {
 
         private setMessage(): void {
             this.data.warnings.addOrUpdateNotification({
-                message: "A cluster certificate for this cluster is set to expire. Replace it as soon as possible.",
+                message: "A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure.",
                 level: StatusWarningLevel.Error,
                 priority: 5,
                 id: BannerWarningID.ExpiringClusterCert
@@ -94,25 +76,28 @@ module Sfx {
         }
 
         private containsCertExpiringHealthEvent(unhealthyEvaluations: HealthEvent[]): boolean {
-            return unhealthyEvaluations.some(event => event.raw.Description.indexOf("Certificate expiration") === 0 && event.raw.Property === CertExpiraryHealthEventProperty.Cluster);
+            console.log(unhealthyEvaluations)
+            return unhealthyEvaluations.some(event => event.raw.Description.indexOf("Certificate expiration") === 0 &&
+                                             event.raw.Property === CertExpiraryHealthEventProperty.Cluster && 
+                                             (event.raw.HealthState === HealthStateConstants.Warning || event.raw.HealthState === HealthStateConstants.Error));
         }
 
         private checkNodesContinually(index: number, nodes: Node[]) {
             if (index < nodes.length) {
                 const node = nodes[index];
                 console.log("checking node " + node.name);
-                if(node.healthState.text === HealthStateConstants.Error || node.healthState.text === HealthStateConstants.Warning) {
+                if (node.healthState.text === HealthStateConstants.Error || node.healthState.text === HealthStateConstants.Warning) {
                     node.health.ensureInitialized().then( () => {
-                        if(!this.containsCertExpiringHealthEvent(node.health.healthEvents)) {
+                        if (!this.containsCertExpiringHealthEvent(node.health.healthEvents)) {
                             this.checkNodesContinually(index + 1, nodes);
                         }else {
                             this.setMessage();
                         }
                     });
-                }else{
+                }else {
                     this.checkNodesContinually(index + 1, nodes);
                 }
-            }else{
+            }else {
                 ClusterHealth.certExpirationChecked = true;
             }
         }
