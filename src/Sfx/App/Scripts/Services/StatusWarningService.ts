@@ -3,6 +3,7 @@ module Sfx {
     export interface IStatusWarning {
         message: string;
         link?: string;
+        linkText?: string;
         level: string;
         priority: number;
         id: string;
