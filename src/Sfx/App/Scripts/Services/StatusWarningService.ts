@@ -12,7 +12,9 @@ module Sfx {
     export class StatusWarningService {
         notifications: IStatusWarning[] = [];
 
-        constructor() {}
+        constructor(storage: StorageService) {
+            console.log(storage);
+        }
 
         public addNotification(notification: IStatusWarning) {
             this.notifications.push(notification);
@@ -39,18 +41,22 @@ module Sfx {
             this.notifications.sort((a, b) => a.priority > b.priority ? -1 : 1);
         }
 
-        public removeNotificationById(notificationId: string) {
+        //hide Permanently will store the id in local storage so that it does not get put in the drop down again.
+        public removeNotificationById(notificationId: string, hidePermanently = false) {
             let index = this.getIndex(notificationId);
             if (index > -1) {
                 this.notifications.splice(index, 1);
+            }
+
+            if(hidePermanently){
             }
         }
     }
 
     (function () {
 
-        let module = angular.module("StatusWarningService", []);
-        module.factory("warnings", [ () => new StatusWarningService()]);
+        let module = angular.module("StatusWarningService", ["storageService"]);
+        module.factory("warnings", ["storage", (storage) => new StatusWarningService(storage)]);
 
     })();
 }

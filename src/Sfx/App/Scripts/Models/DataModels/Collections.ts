@@ -239,6 +239,8 @@ module Sfx {
         public disabledNodes: string;
         public seedNodeCount: number;
 
+        private static checkedOneNodeScenario = false;
+
         public constructor(data: DataService) {
             super(data);
         }
@@ -342,7 +344,7 @@ module Sfx {
         }
 
         private checkOneNodeScenario(): void {
-            if (this.collection.length === 1) {
+            if ( !NodeCollection.checkedOneNodeScenario && this.collection.length === 1) {
                 this.data.warnings.addOrUpdateNotification({
                     message: "One node cluster is considered test and can not perform cluster upgrades.",
                     level: StatusWarningLevel.Info,
@@ -350,9 +352,8 @@ module Sfx {
                     id: BannerWarningID.OneNodeCluster,
                     link: "https://aka.ms/servicefabric/durability"
                 });
-            }else {
-                this.data.warnings.removeNotificationById(BannerWarningID.OneNodeCluster);
             }
+            NodeCollection.checkedOneNodeScenario = true;
         }
 
         private updateNodesHealthState(): void {

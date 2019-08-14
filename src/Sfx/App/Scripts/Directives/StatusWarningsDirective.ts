@@ -37,5 +37,9 @@ module Sfx {
             this.displayAll = !this.displayAll;
         }
 
+        public remove(alert: IStatusWarning): void {
+            this.alerts.removeNotificationById(alert.id);
+        }
+
     }
 }
