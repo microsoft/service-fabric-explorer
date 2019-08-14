@@ -45,6 +45,33 @@ module Sfx {
                 "events": { name: "Events" }
             });
 
+            var groupCount = 3;
+            // create a data set with groups
+            var names = ['Upgrade Domains', 'Cluster Upgrade', "Cluster Health"];
+            var groups = new vis.DataSet();
+            for (var g = 0; g < groupCount; g++) {
+              groups.add({id: names[g], content: names[g]});
+            }
+            // create a dataset with items
+            let items = new vis.DataSet([
+                {id: 1, content: 'V 6.5.562.234', start: '2014-04-14', end: '2014-04-19', group: "Cluster Upgrade", type: 'range'},
+                {id: 2, content: '0', start: '2014-04-14', end: '2014-04-15',group: "Upgrade Domains", type: 'range', title: '<div class="tooltip-test">start: 2014-04-14 <br> end: 2014-05-15 <br> description: UD was in progress</div>'},
+                {id: 3, content: '1', start: '2014-04-16', end: '2014-04-17',group: "Upgrade Domains", type: 'range'},
+                {id: 4, content: '2', start: '2014-04-18', end: '2014-04-19', group: "Upgrade Domains", type: 'range', className: 'red'},
+                {id: 'A', content: 'OK', start: '2014-04-14',  className: 'green', group: "Cluster Health"},
+                {id: 'B', content: 'Error', start: '2014-04-17', className: 'red', group: "Cluster Health"}
+              ]);
+            // create visualization
+            let container = document.getElementById('visualization');
+            let options = {
+                max: '2014-4-20',
+                min: '2014-4-14'
+            };
+
+            console.log(groups);
+            console.log(items);
+            let timeline = new vis.Timeline(container, items, groups, options);
+
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
             this.tabs["details"].refresh = (messageHandler) => this.refreshDetails(messageHandler);
             this.tabs["clustermap"].refresh = (messageHandler) => this.refreshClusterMap(messageHandler);
