@@ -22,6 +22,7 @@ module Sfx {
             public telemetry: TelemetryService,
             public $location: angular.ILocationService,
             public restClient: RestClient,
+            public warnings: StatusWarningService,
             public storage: StorageService,
             public $q: angular.IQService,
             public $timeout: angular.ITimeoutService,
@@ -331,10 +332,10 @@ module Sfx {
 
     (function () {
 
-        let module = angular.module("dataService", ["routes", "messages", "ui.bootstrap", "ngSanitize", "restClientService", "storageService"]);
-        module.factory("data", ["routes", "message", "telemetry", "$location", "restClient", "storage", "$q", "$timeout", "$uibModal", "$route", "$sanitize", "$rootScope",
-            (routes, message, telemetry, $location, restClient, storage, $q, $timeout, $uibModal, $route, $sanitize, $rootScope) =>
-                new DataService(routes, message, telemetry, $location, restClient, storage, $q, $timeout, $uibModal, $route, $sanitize, $rootScope)]);
+        let module = angular.module("dataService", ["routes", "messages", "ui.bootstrap", "ngSanitize", "restClientService", "StatusWarningService", "storageService"]);
+        module.factory("data", ["routes", "message", "telemetry", "$location", "restClient", "warnings", "storage", "$q", "$timeout", "$uibModal", "$route", "$sanitize", "$rootScope",
+            (routes, message, telemetry, $location, restClient, warnings, storage, $q, $timeout, $uibModal, $route, $sanitize, $rootScope) =>
+                new DataService(routes, message, telemetry, $location, restClient, warnings, storage, $q, $timeout, $uibModal, $route, $sanitize, $rootScope)]);
 
         // Upon the route change [ie, user navigation], let us know that the cache is no longer valid.
         module.run(["$rootScope", "data", function ($rootScope: angular.IRootScopeService, data: DataService) {
