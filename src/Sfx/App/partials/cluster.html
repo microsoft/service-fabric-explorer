@@ -1,7 +1,4 @@
 ﻿
-        <div>
-                <div id="visualization"></div>
-        </div>
 <sfx-detail-view-navbar ctrl="clusterCtrl" type="Cluster" name="{{SFXClusterName}}"></sfx-detail-view-navbar>
 <div class="main-view">
     <div sfx-include src="'tab_' + clusterCtrl.activeTabId" ng-if="clusterCtrl.activeTabId" role="tabpanel" aria-label="{{clusterCtrl.activeTabId}}" class="flex-child"></div>
@@ -224,5 +221,6 @@
 
     <script type="text/ng-template" id="tab_events">
         <sfx-events-view events-list="clusterEvents" class="flex-child"></sfx-events-view>
+        <sfx-timeline></sfx-timeline>
     </script>
 </div>

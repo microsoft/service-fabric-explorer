@@ -211,4 +211,14 @@ module Sfx {
             });
         }
     }
+
+    export interface ITimelineData {
+        groups: any[];
+    }
+
+    export interface ITimelineDataGenerator<T extends FabricEventBase>{
+
+        consume(events: T): ITimelineData;
+
+    }
 }

@@ -21,6 +21,7 @@ module Sfx {
         module.directive("sfxDashboard", DashboardChartDirective.factory());
         module.directive("sfxImageStoreView", () => new ImageStoreViewDirective());
         module.directive("sfxImageStoreFileView", () => new ImageStoreOptionsViewDirective());
+        module.directive("sfxTimeline", () => new TimeLineChartDirective());
 
         module.directive("sfxThemeImport", ["theme", (themeService: ThemeService): angular.IDirective => {
             return {
