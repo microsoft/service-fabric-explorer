@@ -35,10 +35,10 @@ module Sfx {
 
         public addOrUpdateNotification(notification: IStatusWarning) {
             const canBeShown = this.storage.getValueBoolean(this.getStorageId(notification.id), true);
-            
-            if(canBeShown){
+
+            if (canBeShown) {
                 let index = this.getIndex(notification.id);
-                if (index > -1){
+                if (index > -1) {
                     this.notifications[index] = notification;
                 }else {
                     this.notifications.push(notification);
@@ -54,7 +54,7 @@ module Sfx {
                 this.notifications.splice(index, 1);
             }
 
-            if(hidePermanently){
+            if (hidePermanently) {
                 this.storage.setValue(this.getStorageId(notificationId), false);
             }
         }

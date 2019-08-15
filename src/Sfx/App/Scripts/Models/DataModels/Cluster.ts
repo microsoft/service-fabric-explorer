@@ -69,19 +69,19 @@ module Sfx {
             /*
             Example description for parsing reference(if this message changes this might need updating)
             Certificate expiration: thumbprint = 35d8f6bb4c52bd3f40a327a3094a9ee9692679ce, expiration = 2020-03-13 22:23:40.000
-            , remaining lifetime is 213:8:17:08.174, please refresh ahead of time to avoid catastrophic failure. 
-            Warning threshold Security/CertificateExpirySafetyMargin is configured at 289:8:26:40.000, if needed, you can 
+            , remaining lifetime is 213:8:17:08.174, please refresh ahead of time to avoid catastrophic failure.
+            Warning threshold Security/CertificateExpirySafetyMargin is configured at 289:8:26:40.000, if needed, you can
             adjust it to fit your refresh process.
 
             */
 
             const thumbprintSearchText = "thumbprint = ";
             const thumbprintIndex = healthEvent.raw.Description.indexOf(thumbprintSearchText);
-            const thumbprint =  healthEvent.raw.Description.substr(thumbprintIndex + thumbprintSearchText.length).split(',')[0];
+            const thumbprint =  healthEvent.raw.Description.substr(thumbprintIndex + thumbprintSearchText.length).split(",")[0];
 
             const expirationSearchText = "expiration = ";
             const expirationIndex = healthEvent.raw.Description.indexOf("expiration = ");
-            const expiration = healthEvent.raw.Description.substring(expirationIndex + expirationSearchText.length).split(',')[0];
+            const expiration = healthEvent.raw.Description.substring(expirationIndex + expirationSearchText.length).split(",")[0];
 
             this.data.warnings.addOrUpdateNotification({
                 message: `A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure. <br> Thumbprint : ${thumbprint}    Expiration: ${expiration}`,
@@ -95,9 +95,8 @@ module Sfx {
         }
 
         private containsCertExpiringHealthEvent(unhealthyEvaluations: HealthEvent[]): HealthEvent[] {
-            console.log(unhealthyEvaluations)
             return unhealthyEvaluations.filter(event => event.raw.Description.indexOf("Certificate expiration") === 0 &&
-                                             event.raw.Property === CertExpiraryHealthEventProperty.Cluster && 
+                                             event.raw.Property === CertExpiraryHealthEventProperty.Cluster &&
                                              (event.raw.HealthState === HealthStateConstants.Warning || event.raw.HealthState === HealthStateConstants.Error));
         }
 
