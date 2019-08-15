@@ -17,6 +17,7 @@ module Sfx {
 
     export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 
+        //make sure we only check once per session and this object will get destroyed/recreated
         private static certExpirationChecked = false;
 
         private emptyHealthStateCount: IRawHealthStateCount = {

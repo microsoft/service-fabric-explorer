@@ -239,6 +239,7 @@ module Sfx {
         public disabledNodes: string;
         public seedNodeCount: number;
 
+        //make sure we only check once per session and this object will get destroyed/recreated
         private static checkedOneNodeScenario = false;
 
         public constructor(data: DataService) {
