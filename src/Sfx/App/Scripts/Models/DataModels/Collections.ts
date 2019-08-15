@@ -347,7 +347,7 @@ module Sfx {
         private checkOneNodeScenario(): void {
             if ( !NodeCollection.checkedOneNodeScenario && this.collection.length === 1) {
                 this.data.warnings.addOrUpdateNotification({
-                    message: "One node cluster is considered test and can not perform cluster upgrades.",
+                    message: "One node cluster is considered a test cluster and cannot perform cluster upgrades.",
                     level: StatusWarningLevel.Info,
                     priority: 1,
                     id: BannerWarningID.OneNodeCluster,
