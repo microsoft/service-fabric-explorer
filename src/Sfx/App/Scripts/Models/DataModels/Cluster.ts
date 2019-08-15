@@ -103,7 +103,6 @@ module Sfx {
         private checkNodesContinually(index: number, nodes: Node[]) {
             if (index < nodes.length) {
                 const node = nodes[index];
-                console.log("checking node " + node.name);
                 if (node.healthState.text === HealthStateConstants.Error || node.healthState.text === HealthStateConstants.Warning) {
                     node.health.ensureInitialized().then( () => {
                         const certExpiringEvents = this.containsCertExpiringHealthEvent(node.health.healthEvents);
