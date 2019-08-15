@@ -11,9 +11,11 @@ module Sfx {
 
     export class StatusWarningService {
         notifications: IStatusWarning[] = [];
+        storage: StorageService;
 
         constructor(storage: StorageService) {
             console.log(storage);
+            this.storage = storage;
         }
 
         public addNotification(notification: IStatusWarning) {
@@ -32,13 +34,17 @@ module Sfx {
         }
 
         public addOrUpdateNotification(notification: IStatusWarning) {
-            let index = this.getIndex(notification.id);
-            if (index > -1){
-                this.notifications[index] = notification;
-            }else {
-                this.notifications.push(notification);
+            const canBeShown = this.storage.getValueBoolean(this.getStorageId(notification.id), true);
+            
+            if(canBeShown){
+                let index = this.getIndex(notification.id);
+                if (index > -1){
+                    this.notifications[index] = notification;
+                }else {
+                    this.notifications.push(notification);
+                }
+                this.notifications.sort((a, b) => a.priority > b.priority ? -1 : 1);
             }
-            this.notifications.sort((a, b) => a.priority > b.priority ? -1 : 1);
         }
 
         //hide Permanently will store the id in local storage so that it does not get put in the drop down again.
@@ -49,7 +55,12 @@ module Sfx {
             }
 
             if(hidePermanently){
+                this.storage.setValue(this.getStorageId(notificationId), false);
             }
+        }
+
+        private getStorageId(notificationId: string): string {
+            return `sfx-statuswarning-${notificationId}-noshow`;
         }
     }
 

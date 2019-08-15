@@ -37,8 +37,8 @@ module Sfx {
             this.displayAll = !this.displayAll;
         }
 
-        public remove(alert: IStatusWarning): void {
-            this.alerts.removeNotificationById(alert.id);
+        public remove(alert: IStatusWarning, hidePermenantly = false): void {
+            this.alerts.removeNotificationById(alert.id, hidePermenantly);
         }
 
     }

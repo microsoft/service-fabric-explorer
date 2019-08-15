@@ -6,7 +6,7 @@
             </div>
             <span style="display: inline-flex" ng-bind-html="alert.message"></span>
             <span ng-if="alert.level === 'info'">
-                    <span ng-click="ctrl.remove(alert)" class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-failure" style="font-size: 15pt; vertical-align: bottom; float: right;"></span>
+                    <span ng-click="ctrl.remove(alert, true)" class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-failure" style="font-size: 15pt; vertical-align: bottom; float: right;"></span>
             </span>
             <span ng-if="alert.link">
                     <a class="light-background-link" target="_blank" href="{{alert.link}}">{{alert.linkText || "(link)"}}</a>
