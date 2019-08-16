@@ -24,9 +24,11 @@
                         <td>{{replica.raw.ReplicaStatus}}</td>
                     </tr>
                     <tr>
+                        <th></th>
                         <th ng-if="replica.isStatefulService">Role</th>
                     </tr>
                     <tr>
+                        <td ng-if="nodeView"><a href="{{nodeView}}">View on Node</a></td>
                         <td ng-if="replica.isStatefulService">{{replica.role}}</td>
                     </tr>
                 </table>
