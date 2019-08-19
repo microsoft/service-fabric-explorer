@@ -70,8 +70,7 @@ module Sfx {
                     this.$scope.replica = replica;
                     if(!this.isSystem){
                         try {
-                            //service name is the difficult one
-                            //get service name with application name infront
+
                             this.$scope.replica.detail.refresh(messageHandler).then( () => {
                                 const rawDataProperty = this.$scope.replica.isStatefulService ? "DeployedServiceReplica" : "DeployedServiceReplicaInstance";
                                 const detailRaw = this.$scope.replica.detail.raw[rawDataProperty];

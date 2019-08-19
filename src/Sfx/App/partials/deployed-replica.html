@@ -31,13 +31,8 @@
                         <td ng-if="replica.isStatefulService">{{replica.role}}</td>
                         <td ng-if="replica.servicePackageActivationId">{{replica.servicePackageActivationId}}</td>
                     </tr>
-                    <tr>
-                        <th></th>
-                    </tr>
-                    <tr>
-                        <td ng-if="appView"><a href="{{appView}}">View on Application</a></td>
-                    </tr>
                 </table>
+                <div ng-if="appView"><a href="{{appView}}">View on Application</a></div>
             </div>
         </div>
 
