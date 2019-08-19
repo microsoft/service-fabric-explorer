@@ -68,17 +68,16 @@ module Sfx {
             return this.data.getReplicaOnPartition(this.appId, this.serviceId, this.partitionId, this.replicaId, true, messageHandler)
                 .then(replica => {
                     this.$scope.replica = replica;
-
                     if(!this.isSystem){
                         try {
                             //service name is the difficult one
                             //get service name with application name infront
-                            this.$scope.replica.detail.ensureInitialized().then( () => {
-                                const serviceAndApplicationName = this.$scope.replica.parent.parent.name;
-                                const applicatioName = this.$scope.replica.parent.parent.parent.name;
+                            this.$scope.replica.detail.refresh(messageHandler).then( () => {
+                                const rawDataProperty = this.$scope.replica.isStatefulService ? "DeployedServiceReplica" : "DeployedServiceReplicaInstance";
+                                const detailRaw = this.$scope.replica.detail.raw[rawDataProperty];
 
-                                const serviceNameOnly = this.$scope.replica.detail.raw['DeployedServiceReplicaInstance'].ServiceManifestName;
-                                const activationId = this.$scope.replica.detail.raw['DeployedServiceReplicaInstance']["ServicePackageActivationId"] || null;
+                                const serviceNameOnly = detailRaw.ServiceManifestName;
+                                const activationId = detailRaw.ServicePackageActivationId || null;
                                 this.$scope.nodeView = this.data.routes.getDeployedReplicaViewPath(this.$scope.replica.raw.NodeName, this.appId, serviceNameOnly, activationId, this.partitionId, this.replicaId);    
                             })
                         } catch(e) {
