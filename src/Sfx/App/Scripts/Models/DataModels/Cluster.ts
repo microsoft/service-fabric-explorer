@@ -188,7 +188,7 @@ module Sfx {
         public upgradeDescription: UpgradeDescription;
 
         public get isUpgrading(): boolean {
-            return UpgradeDomainStateRegexes.InProgress.test(this.raw.UpgradeState);
+            return UpgradeDomainStateRegexes.InProgress.test(this.raw.UpgradeState) || this.raw.UpgradeState === ClusterUpgradeStates.RollingForwardPending;
         }
 
         public get startTimestampUtc(): string {
@@ -228,6 +228,8 @@ module Sfx {
                     }else {
                         resolve(data);
                     }
+                }).catch( (err) => {
+                    reject(err);
                 });
             });
 
