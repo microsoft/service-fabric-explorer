@@ -32,7 +32,7 @@ module Sfx {
         };
         public transclude = true;
 
-        public link($scope: any, element: JQuery, attributes: any, ctrl: DetailListController) {
+        public link($scope: any, element: JQuery, attributes: any, ctrl: TimeLineChartController) {
             // The list passed in can be a normal array or a DataModelCollection object.
             // When it is a normal array, the directive only updates when the list reference
             // itself is changed or any items are added/removed from the list.
@@ -44,8 +44,8 @@ module Sfx {
             $scope.$watchCollection("events", () => {
                 // Only update if list is a normal array since the DataModelCollection will be updated
                 // via the isRefreshing watcher below and we don't want to update the list twice.
-                if ($scope.list) {
-                    ctrl.updateList();
+                if ($scope.events) {
+                    ctrl.updateList($scope.events);
                 }
             });
         }
@@ -55,58 +55,67 @@ module Sfx {
         public static $inject = ["$scope"];
 
         private _timeline: vis.Timeline;
+        private _start: Date;
+        private _end: Date;
 
         public constructor(public $scope: any) {
-            var groupCount = 3;
-            // create a data set with groups
-            var names = ['Upgrade Domains', 'Cluster Upgrade', "Cluster Health"];
-            var groups = new vis.DataSet();
-            for (var g = 0; g < groupCount; g++) {
-              groups.add({id: names[g], content: names[g]});
-            }
-            // create a dataset with items
+
+            let groups = new vis.DataSet();
+
             let items = new vis.DataSet([
-                {id: 1, content: 'V 6.5.562.234', start: '2014-04-14', end: '2014-04-19', group: "Cluster Upgrade", type: 'range'},
-                {id: 2, content: '0', start: '2014-04-14', end: '2014-04-15',group: "Upgrade Domains", type: 'range', title: '<div class="tooltip-test">start: 2014-04-14 <br> end: 2014-05-15 <br> description: UD was in progress</div>'},
-                {id: 3, content: '1', start: '2014-04-16', end: '2014-04-17',group: "Upgrade Domains", type: 'range'},
-                {id: 4, content: '2', start: '2014-04-18', end: '2014-04-19', group: "Upgrade Domains", type: 'range', className: 'red'},
-                {id: 5, content: 'V 6.5.562.234', start: '2014-03-14', end: '2014-03-19', group: "Cluster Upgrade", type: 'range'},
-                {id: 6, content: '0', start: '2014-03-14', end: '2014-03-15',group: "Upgrade Domains", type: 'range', title: '<div class="tooltip-test">start: 2014-04-14 <br> end: 2014-05-15 <br> description: UD was in progress</div>'},
-                {id: 7, content: '1', start: '2014-03-16', end: '2014-03-17',group: "Upgrade Domains", type: 'range'},
-                {id: 8, content: '2', start: '2014-03-18', end: '2014-03-19', group: "Upgrade Domains", type: 'range', className: 'red'},
-                {id: 'A', content: 'OK', start: '2014-04-14',  className: 'green', group: "Cluster Health"},
-                {id: 'B', content: 'Error', start: '2014-04-17', className: 'red', group: "Cluster Health"}
               ]);
             // create visualization
             let container = document.getElementById('visualization');
             let options = {
-                max: '2014-4-20',
-                min: '2014-3-10'
+                stackSubgroups: false,
+                tooltip: {
+                    overflowMethod: 'flip'
+                }
+
             };
 
             console.log(groups);
             console.log(items);
-            this._timeline = new vis.Timeline(container, items, groups, options);
-
-            setTimeout( () => {
-                [
-                    {id: 1, content: 'V 6.5.562.234', start: '2014-04-14', end: '2014-04-19', group: "Cluster Upgrade", type: 'range'},
-                    {id: 2, content: '0', start: '2014-04-14', end: '2014-04-15',group: "Upgrade Domains", type: 'range', title: '<div class="tooltip-test">start: 2014-04-14 <br> end: 2014-05-15 <br> description: UD was in progress</div>'},
-                    {id: 3, content: '1', start: '2014-04-16', end: '2014-04-17',group: "Upgrade Domains", type: 'range'},
-                    {id: 4, content: '2', start: '2014-04-18', end: '2014-04-19', group: "Upgrade Domains", type: 'range', className: 'red'}, 
-                    {id: 'A', content: 'OK', start: '2014-04-14',  className: 'green', group: "Cluster Health"},
-                    {id: 'B', content: 'Error', start: '2014-04-17', className: 'red', group: "Cluster Health"}
-                ].forEach( (item ) => {
-                    items.remove(item.id);
-                })
-                this._timeline.fit();
-            }, 5000)
+            this._timeline = new vis.Timeline(container, items, groups);
         }
 
-        public updateList() {
-            if (this.$scope.list) {
-                //this.$scope.sortedFilteredList = this.getSortedFilteredList();
-                this.$scope.listSettings.count = this.$scope.sortedFilteredList.length;
+        public fitData() {
+            this._timeline.fit();
+        }
+
+        public fitWindow() {
+            this._timeline.setWindow(this._start, this._end);
+        }
+
+        public moveStart(){
+            this._timeline.moveTo(this._start)
+        }
+        
+        public moveEnd(){
+            this._timeline.moveTo(this._end)
+        }
+
+        public updateList(events: ITimelineData) {
+            if (events) {
+                console.log(events);
+                this._timeline.setData({
+                    groups: events.groups,
+                    items: events.items
+                  })
+                this._timeline.setOptions({
+                    selectable: false,
+                    min: events.start,
+                    max: events.end,
+                    margin: {
+                        item : {
+                            horizontal : -1
+                        }
+                    }
+                })
+                this._timeline.fit();
+
+                this._start = events.start;
+                this._end = events.end;
             }
         }
 

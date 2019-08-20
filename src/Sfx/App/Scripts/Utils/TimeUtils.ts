@@ -59,9 +59,9 @@ module Sfx {
 
         /**
          * Format the input datetime as string e.g. "Fri, 28 Apr 2017 02:30:38 PST"
-         * @param datetime js Date object.
+         * @param datetime date formatted string.
          */
-        public static datetimeToString(datetime: Date): string {
+        public static datetimeToString(datetime: string): string {
             return moment(datetime).format("MMM D, YYYY [at] h:mm:ss A (ZZ)");
         }
 

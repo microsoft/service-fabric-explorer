@@ -6,17 +6,19 @@
 module Sfx {
     export interface IEventsViewScope extends angular.IScope {
         eventsList: EventListBase<any>;
+        timelineGenerator?: ITimelineDataGenerator<FabricEventBase>;
     }
 
     export class EventsViewDirective implements ng.IDirective {
         public restrict = "E";
         public templateUrl = "partials/events-view.html";
         public scope = {
-            eventsList: "="
+            eventsList: "=",
+            timelineGenerator: "=?",
         };
 
         public link($scope: any, element: JQuery, attributes: any) {
-            $scope.dwSelector = new DateWindowSelector($scope.eventsList);
+            $scope.dwSelector = new DateWindowSelector($scope.eventsList, $scope.timelineGenerator);
             $scope.resetClick = () => {
                 $scope.dwSelector.reset();
             };
@@ -40,9 +42,19 @@ module Sfx {
         private _startDate: Date = null;
         private _endDate: Date = null;
 
-        public constructor(eventsList: EventListBase<any>) {
+        public timeLineEventsData: ITimelineData;
+        private _timelineGenerator: ITimelineDataGenerator<FabricEventBase>;
+
+        public constructor(eventsList: EventListBase<any>, timelineGenerator?: ITimelineDataGenerator<FabricEventBase>) {
+            console.log(timelineGenerator);
+
             this.eventsList = eventsList;
+            if(timelineGenerator){
+                this._timelineGenerator = timelineGenerator;
+            }
             this.resetSelectionProperties();
+            this.setTimelineData();
+
         }
 
         public get startDate() { return this._startDate; }
@@ -83,7 +95,9 @@ module Sfx {
             this.isResetEnabled = false;
             if (this.eventsList.resetDateWindow()) {
                 this.resetSelectionProperties();
-                this.eventsList.reload();
+                this.eventsList.reload().then( data => {
+                    this.setTimelineData();
+                });
             } else {
                 this.resetSelectionProperties();
             }
@@ -102,9 +116,25 @@ module Sfx {
             if (this.eventsList.setDateWindow(this._startDate, this._endDate)) {
                 this.resetSelectionProperties();
                 this.isResetEnabled = true;
-                this.eventsList.reload();
+                this.eventsList.reload().then( data => {
+                    this.setTimelineData();
+                });
             } else {
                 this.resetSelectionProperties();
+            }
+        }
+
+        private setTimelineData(): void {
+            if(this._timelineGenerator){
+                this.eventsList.ensureInitialized().then( () => {
+                    const d = this._timelineGenerator.consume(this.eventsList.collection.map(event => event.raw), this._startDate, this._endDate);
+                    this.timeLineEventsData = {
+                        groups: d.groups,
+                        items: d.items,
+                        start: this._startDate,
+                        end: this._endDate
+                    }
+                })             
             }
         }
     }

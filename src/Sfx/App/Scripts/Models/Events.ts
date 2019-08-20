@@ -8,7 +8,7 @@ module Sfx {
     export interface IFabricEventMetadata {
         kind: string;
         eventInstanceId: string;
-        timeStamp: Date;
+        timeStamp: string;
         hasCorrelatedEvents?: boolean;
     }
 
@@ -20,7 +20,7 @@ module Sfx {
         private _kind: string;
         private _category?: string;
         private _eventInstanceId: string;
-        private _timeStamp: Date;
+        private _timeStamp: string;
         private _hasCorrelatedEvents?: boolean;
         private _eventProperties: { [key: string]: any; } = {};
 
@@ -213,12 +213,127 @@ module Sfx {
     }
 
     export interface ITimelineData {
-        groups: any[];
+        groups: vis.DataSet<vis.DataGroup>;
+        items: vis.DataSet<vis.DataItem>;
+        start?: Date;
+        end?: Date;
     }
 
     export interface ITimelineDataGenerator<T extends FabricEventBase>{
 
-        consume(events: T): ITimelineData;
+        consume(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData;
+    }
+
+    let tooltipFormat = (event: FabricEventBase, start: string, end: string = ''): string => {
+        return `<div class="tooltip-test">start: ${start} <br>${ end ? 'end: ' + end + '<br>' : ''}details:<br>${JSON.stringify(event.eventProperties, null, 4)}</div>`
+    }
+
+    export class NodeTimelineGenerator implements ITimelineDataGenerator<NodeEvent> {
+
+        consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+            return {
+                groups:[],
+                items:[]
+            }        
+        }
 
     }
+
+
+    export class ClusterTimelineGenerator implements ITimelineDataGenerator<ClusterEvent> {
+        static readonly upgradeDomainLabel = "Upgrade Domains";
+        static readonly clusterUpgradeLabel = "Cluster Upgrades";
+        static readonly seedNodeStatus = "Seed Node Warnings";
+
+        consume(events: ClusterEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+            let items = new vis.DataSet<vis.DataItem>();
+
+            //state necessary for some events
+            let previousClusterHealthReport: ClusterEvent;
+
+            events.forEach( event => {
+                if(event.kind === "ClusterUpgradeDomainCompleted"){
+                    this.parseClusterUpgradeDomain(event, items);
+                }else if(event.kind === "ClusterUpgradeCompleted"){
+                    this.parseClusterUpgrade(event, items);
+                }else if(event.kind === "ClusterNewHealthReport"){
+                    this.parseSeedNodeStatus(event, items, previousClusterHealthReport, endOfRange);
+                    previousClusterHealthReport = event;
+                }
+            })
+
+            let groups = new vis.DataSet<vis.DataGroup>([
+                {id: ClusterTimelineGenerator.upgradeDomainLabel, content: ClusterTimelineGenerator.upgradeDomainLabel},
+                {id: ClusterTimelineGenerator.clusterUpgradeLabel, content: ClusterTimelineGenerator.clusterUpgradeLabel},
+                {id: ClusterTimelineGenerator.seedNodeStatus, content: ClusterTimelineGenerator.seedNodeStatus}
+            ]);
+
+            console.log(items);
+
+            return {
+                groups,
+                items
+            }
+        }
+
+        parseClusterUpgradeDomain(event: ClusterEvent, items: vis.DataSet<vis.DataItem>): void {
+            const end = event.timeStamp;
+            const endDate = new Date(end);
+            const duration = event.eventProperties["UpgradeDomainElapsedTimeInMs"];
+
+            const start = new Date(endDate.getTime() - duration).toISOString();
+            const label = event.eventProperties["UpgradeDomains"];
+            items.add({
+                id: event.eventInstanceId + label, 
+                content: label, 
+                start: start, 
+                end: end, 
+                group: ClusterTimelineGenerator.upgradeDomainLabel, 
+                type: 'range',
+                title: tooltipFormat(event, start, end),
+                className: "green"
+            })
+        }
+
+        parseClusterUpgrade(event: ClusterEvent, items: vis.DataSet<vis.DataItem>): void {
+            const end = event.timeStamp;
+            const endDate = new Date(end);
+            const duration = event.eventProperties["OverallUpgradeElapsedTimeInMs"];
+
+            const start = new Date(endDate.getTime() - duration).toISOString();
+            const content = `${event.category} ${event.eventProperties["TargetClusterVersion"]}`;
+
+            items.add({
+                id: event.eventInstanceId + content, 
+                content, 
+                start, 
+                end, 
+                group: ClusterTimelineGenerator.clusterUpgradeLabel, 
+                type: 'range',
+                title: tooltipFormat(event, start, end),
+                className: "green"
+            }) 
+        }
+
+        parseSeedNodeStatus(event: ClusterEvent, items: vis.DataSet<vis.DataItem>, previousClusterHealthReport: ClusterEvent, endOfRange: Date): void {
+            if(event.eventProperties["HealthState"] === "Warning"){
+                //for end date if we dont have a previously seen health report(list iterates newest to oldest) then we know its still the ongoing state
+                let end = previousClusterHealthReport ? previousClusterHealthReport.timeStamp : endOfRange.toISOString();
+                const content = `${event.eventProperties["HealthState"]}`;
+
+                items.add({
+                    id: event.eventInstanceId + content, 
+                    content, 
+                    start: event.timeStamp, 
+                    end: end, 
+                    group: ClusterTimelineGenerator.seedNodeStatus, 
+                    type: 'range',
+                    title: tooltipFormat(event, event.timeStamp, end),
+                    className: "orange"
+                })
+            }
+        }
+
+    }
+
 }

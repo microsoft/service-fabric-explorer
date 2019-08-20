@@ -1,68 +1,80 @@
 @import "../Base/_config.scss";
 
 .vis-timeline {
-  font-size: $font-size-medium;
+  font-size: $font-size-default;
   background-color: $essen-pane-background-color;
-  }
-  .vis-item {
-    background-color: $dashboard-ok-color;
-    font-size: $font-size-small;
-    color: $dashboard-color;
-  }
-  .vis-item,
-  .vis-item.vis-line {
-    border-width: 0px;
-  }
-  .vis-item.vis-dot {
-    border-width: 10px;
-    border-radius: 10px;
-  }
-  .vis-item.vis-selected {
-    border-color: green;
-    background-color: lightgreen;
-  }
-  .vis-time-axis .vis-text {
-    color: $dashboard-color;
-    padding-top: 10px;
-    padding-left: 10px;
-  }
-  .vis-time-axis .vis-text.vis-major {
-    font-weight: bold;
-  }
-  .vis-time-axis .vis-grid.vis-minor {
-    border-width: 2px;
-    border-color: $dashboard-color;
-  }
-  .vis-time-axis .vis-grid.vis-major {
-    border-width: 2px;
-    border-color: $dashboard-color;
-  }
+}
 
-  .vis-labelset .vis-label {
-    font-size: $font-size-medium;
-    color: $dashboard-color;
-  }
+.vis-item {
+  background-color: $candybar-background-color;
+  font-size: $font-size-small;
+  color: $dashboard-color;
+}
+.vis-item,
+.vis-item.vis-line {
+  border-width: 0px;
+  color: white;
+  font-family: monospace;
+}
+.vis-item.vis-dot {
+  border-width: 10px;
+  border-radius: 10px;
+}
+.vis-item.vis-selected {
+  border-color: green;
+  background-color: lightgreen;
+}
+.vis-time-axis .vis-text {
+  color: $dashboard-color;
+  padding-top: 10px;
+  padding-left: 10px;
+}
+.vis-time-axis .vis-text.vis-major {
+  font-weight: bold;
+}
+.vis-time-axis .vis-grid.vis-minor {
+  border-width: 2px;
+  border-color: $dashboard-color;
+}
+.vis-time-axis .vis-grid.vis-major {
+  border-width: 2px;
+  border-color: $dashboard-color;
+}
 
-  .vis-item.red {
-    background-color: red;
-    border-color: darkred;
-    color: white;
-    font-family: monospace;
-    box-shadow: 0 0 10px gray;
-  }
+.vis-labelset .vis-label {
+  font-size: $font-size-medium;
+  color: $dashboard-color;
+}
 
-  .vis-item.green {
-    background-color: $dashboard-ok-color;
-    color: white;
-    font-family: monospace;
-    box-shadow: 0 0 10px gray;
-  }
+.vis-item.red {
+  background-color: red;
+  border-color: darkred;
+}
 
-  .tooltip-test{
-    border: solid;
-    border-width: 2px;
-    border-color: white;
-    background-color: $essen-pane-background-color;
-    font-size: $font-size-small;
-    color: $dashboard-color;
-    }
+.vis-item.green {
+  background-color: $dashboard-ok-color;
+}
+
+.vis-item.orange {
+  background-color: $dashboard-warning-color;
+}
+
+.tooltip-test{
+  padding: 5px;
+  border: solid;
+  border-width: 2px;
+  border-color: #0057c9;
+  background-color: $essen-pane-background-color;
+  font-size: $font-size-small;
+  color: $dashboard-color;
+  white-space: pre-wrap;
+}
+
+.vis-tooltip {
+  padding: 0px !important;
+  max-width: 300px;
+}
+
+.vis-timeline {
+  overflow:visible !important;
+}

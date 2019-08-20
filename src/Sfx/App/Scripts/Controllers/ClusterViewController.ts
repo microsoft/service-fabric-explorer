@@ -29,6 +29,7 @@ module Sfx {
         upgradeAppsCount: number;
         appsUpgradeTabViewPath: string;
         clusterEvents: ClusterEventList;
+        clusterTimelineGenerator: ClusterTimelineGenerator;
         settings: SettingsService;
     }
 
@@ -73,6 +74,7 @@ module Sfx {
             this.$scope.appsUpgradeTabViewPath = this.routes.getTabViewPath(this.routes.getAppsViewPath(), "upgrades");
             this.$scope.imageStore = this.data.imageStore;
             this.$scope.clusterEvents = this.data.createClusterEventList();
+            this.$scope.clusterTimelineGenerator = new ClusterTimelineGenerator();
             this.$scope.nodesStatuses = [];
             this.$scope.settings = this.settings;
             this.refresh();

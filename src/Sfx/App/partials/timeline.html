@@ -1,3 +1,23 @@
+
 <div>
-    <div id="visualization"></div>
+    <div style="margin-bottom: 10px;">
+        <button type="button" style="background-color: #262626;border: 1px solid #0075c9;" class="checkbox-push" ng-click="ctrl.fitData()">
+                Fit events
+        </button>
+        
+        <button type="button" style="background-color: #262626;border: 1px solid #0075c9;" class="checkbox-push" ng-click="ctrl.fitWindow()">
+            fit range
+        </button>
+
+        <button type="button" style="background-color: #262626;border: 1px solid #0075c9;" class="checkbox-push" ng-click="ctrl.moveStart()">
+                move to start
+        </button>
+        
+        <button type="button" style="background-color: #262626;border: 1px solid #0075c9;" class="checkbox-push" ng-click="ctrl.moveEnd()">
+            move to end
+        </button>
+    </div>
+    <div>
+        <div id="visualization"></div>
+    </div>
 </div>
