@@ -104,6 +104,8 @@ module Sfx {
 
                     let replicasHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Replica);
                     this.$scope.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
+
+                    clusterHealth.checkExpiredCertStatus();
                 }));
 
             // For upgrade dashboard

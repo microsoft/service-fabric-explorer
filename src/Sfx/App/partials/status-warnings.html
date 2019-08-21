@@ -1,0 +1,25 @@
+<div>
+    <div style="display: flex;" ng-repeat="alert in ctrl.alerts.notifications">
+        <div ng-if="$first || ctrl.displayAll " class="detail-pane alert alert-{{alert.level}} status-warning" role="alert">
+            <div style="display: inline-flex">
+                <strong>{{alert.level | warningPrefix}}:</strong>
+            </div>
+            <span style="display: inline-flex" ng-bind-html="alert.message"></span>
+            <span ng-if="alert.level === 'info'">
+                    <span ng-click="ctrl.remove(alert, true)" class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-failure" style="font-size: 15pt; vertical-align: bottom; float: right;"></span>
+            </span>
+            <span ng-if="alert.link">
+                    <a class="light-background-link" target="_blank" href="{{alert.link}}">{{alert.linkText || "(link)"}}</a>
+            </span>
+
+            <div style="float: right;" ng-click="ctrl.toggleViewed()" ng-if="ctrl.alerts.notifications.length > 1 && $first">
+                    <span ng-if="!ctrl.displayAll" class="dropdown-toggle dark-background-link bowtie-icon bowtie-triangle-down" style="font-size: 20pt; vertical-align: bottom;"></span>
+                    <span ng-if="ctrl.displayAll" class="dropdown-toggle dark-background-link bowtie-icon bowtie-triangle-up" style="font-size: 20pt; vertical-align: bottom;"></span>
+                        ({{ctrl.alerts.notifications.length}})
+            </div>
+
+        </div>
+    </div>
+</div>
+
+

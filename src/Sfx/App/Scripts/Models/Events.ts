@@ -232,8 +232,8 @@ module Sfx {
 
         consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
             return {
-                groups:[],
-                items:[]
+                groups: new vis.DataSet<vis.DataGroup>(),
+                items:new vis.DataSet<vis.DataItem>()
             }        
         }
 

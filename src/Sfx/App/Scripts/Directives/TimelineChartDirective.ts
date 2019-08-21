@@ -5,22 +5,6 @@
 
 module Sfx {
 
-    // {label: "person a", times: [{"color":"green", "label":"Weeee", "starting_time": 1355752800000, "ending_time": 1355759900000}, {"color":"blue", "label":"Weeee", "starting_time": 1355767900000, "ending_time": 1355774400000}]},
-
-
-    // export interface ITimeLineRow {
-    //     label: string;
-    //     times: ITimeLinwRowEntry[];
-    // }
-    
-    // export interface ITimeLinwRowEntry {
-    //     label: string;
-    //     starting_time: number;
-    //     ending_time: number;
-    //     color?: string;
-    //     data?: any;
-    // }
-
     export class TimeLineChartDirective implements ng.IDirective {
         public restrict = "E";
         public replace = true;
@@ -33,17 +17,9 @@ module Sfx {
         public transclude = true;
 
         public link($scope: any, element: JQuery, attributes: any, ctrl: TimeLineChartController) {
-            // The list passed in can be a normal array or a DataModelCollection object.
-            // When it is a normal array, the directive only updates when the list reference
-            // itself is changed or any items are added/removed from the list.
-            // The health events and unhealthy evaluations list references are changed
-            // every time they are refreshed. That is why the contents of this directive
-            // are always up-to-date.
-            // When it is a DataModelCollection list, list.isRefreshing will be watched so
-            // we know exactly when to refresh the list.
+
             $scope.$watchCollection("events", () => {
-                // Only update if list is a normal array since the DataModelCollection will be updated
-                // via the isRefreshing watcher below and we don't want to update the list twice.
+
                 if ($scope.events) {
                     ctrl.updateList($scope.events);
                 }
@@ -71,11 +47,8 @@ module Sfx {
                 tooltip: {
                     overflowMethod: 'flip'
                 }
-
             };
 
-            console.log(groups);
-            console.log(items);
             this._timeline = new vis.Timeline(container, items, groups);
         }
 
@@ -97,7 +70,6 @@ module Sfx {
 
         public updateList(events: ITimelineData) {
             if (events) {
-                console.log(events);
                 this._timeline.setData({
                     groups: events.groups,
                     items: events.items
@@ -117,11 +89,6 @@ module Sfx {
                 this._start = events.start;
                 this._end = events.end;
             }
-        }
-
-        public handleClickRow(item: any, event: any): void {
-            if (event && event.target !== event.currentTarget) { return; }
-
         }
 
     }

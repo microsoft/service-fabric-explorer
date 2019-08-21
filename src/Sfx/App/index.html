@@ -41,7 +41,7 @@
 
                     <span ng-controller="HeaderAlertController as HeaderAlertCtrl">
                         <div style="display: inline-flex; height: 50px;" ng-if="HeaderAlertCtrl.clusterUpgradeProgress.isInitialized && HeaderAlertCtrl.clusterUpgradeProgress.isUpgrading">
-                            <a href="/#/tab/details" style="margin: auto;" class="essen-pane">
+                            <a href="#/tab/details" style="margin: auto;" class="essen-pane">
                                 <span ng-if="HeaderAlertCtrl.clusterUpgradeProgress.isInitialized">
                                     <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error"></span>
                                     Cluster Upgrade in Progress since {{HeaderAlertCtrl.clusterUpgradeProgress.startTimestampUtc}}
@@ -99,13 +99,13 @@
                             </li>
                             <li role="separator" class="divider"></li>
                             <li class="hoverable-link">
-                                <a href="https://go.microsoft.com/fwlink/?LinkId=512132" title="Privacy and Cookies" target="_blank">
+                                <a href="https://go.microsoft.com/fwlink/?LinkId=512132" title="Privacy and Cookies" target="_blank" style="color:white;">
                                     <span>Privacy and Cookies</span>
                                     <i class="bowtie-icon bowtie-navigate-external"></i>
                                 </a>
                             </li>
                             <li class="hoverable-link">
-                                <a href="https://aka.ms/servicefabricfeedback" title="Suggest an improvement" target="_blank">
+                                <a href="https://aka.ms/servicefabricfeedback" title="Suggest an improvement" target="_blank" style="color:white;">
                                     <span>Suggest an improvement</span>
                                     <i class="bowtie-icon bowtie-navigate-external"></i>
                                 </a>
