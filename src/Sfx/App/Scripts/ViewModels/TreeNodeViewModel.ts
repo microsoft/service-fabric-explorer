@@ -137,6 +137,32 @@ module Sfx {
             this.childGroupViewModel.toggle();
         }
 
+        public toggleAll(){
+            if(!this.isExpanded){
+                this.childGroupViewModel.toggle().then( () => {
+                    this.childGroupViewModel.children.forEach(child => {
+                        child.toggleAll();
+                    })
+                })
+            }else{
+                this.closeAll();          
+            }
+        }
+
+        public closeAll(){
+            if(this.isExpanded){
+                this.childGroupViewModel.toggle().then( () => {
+                    this.childGroupViewModel.children.forEach(child => {
+                        child.closeAll();
+                    })
+                })
+            }else{
+                this.childGroupViewModel.children.forEach(child => {
+                    child.closeAll();
+                })
+            }
+        }
+
         public contextMenuToggled(open: boolean) {
             if (open) {
                 HtmlUtils.repositionContextMenu();
