@@ -229,11 +229,25 @@ module Sfx {
     }
 
     export class NodeTimelineGenerator implements ITimelineDataGenerator<NodeEvent> {
+        static readonly NodesDownLabel = "Nodes Down";
 
         consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+            let items = new vis.DataSet<vis.DataItem>();
+
+
+            events.forEach( event => {
+                if(event.category === "StateTransition"){
+
+                };
+            })
+
+            let groups = new vis.DataSet<vis.DataGroup>([
+                {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel},
+            ]);
+
             return {
-                groups: new vis.DataSet<vis.DataGroup>(),
-                items:new vis.DataSet<vis.DataItem>()
+                groups,
+                items
             }        
         }
 
