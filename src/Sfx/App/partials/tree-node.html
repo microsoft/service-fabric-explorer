@@ -24,7 +24,7 @@
                       ng-class="{ 'bowtie-chevron-right-light': child.isCollapsed, 'bowtie-chevron-down-light': child.isExpanded }"
                       ng-style="::{ 'left': (child.paddingLeft - 18) + 'px' }">
                 </span>
-                <span tabindex="-1" class="icon bowtie-icon" aria-hidden="true"
+                <span tabindex="-1" class="icon bowtie-icon" aria-hidden="true" ng-if="child.canExpandAll"
                 ng-click="child.toggleAll(); $event.stopPropagation()" ng-show="child.hasExpander"
                 ng-class="{ 'bowtie-math-plus-heavy': child.isCollapsed, 'bowtie-math-minus': child.isExpanded }"
                 title="{{child.isCollapsed ? 'Expand All' : 'Collapse All'}}">

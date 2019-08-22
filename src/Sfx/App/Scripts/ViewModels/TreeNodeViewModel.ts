@@ -17,7 +17,7 @@ module Sfx {
         public updateHealthChunkQueryDescription: (clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription) => void;
         public mergeClusterHealthStateChunk: (clusterHealthChunk: IClusterHealthChunk) => angular.IPromise<any>;
         public actions: ActionCollection;
-
+        public canExpandAll: boolean = false;
         public get depth(): number {
             if (this.parent) {
                 return this.parent.depth + 1;
@@ -131,6 +131,8 @@ module Sfx {
             } else {
                 this.childGroupViewModel = new TreeNodeGroupViewModel(this._tree, this, this._node.childrenQuery);
             }
+
+            this.canExpandAll = node.canExpandAll;
         }
 
         public toggle() {

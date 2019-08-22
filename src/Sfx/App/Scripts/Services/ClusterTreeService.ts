@@ -240,7 +240,8 @@ module Sfx {
                         childrenQuery: () => this.getApplicationsForType(appTypeGroup.name),
                         badge: () => appTypeGroup.appsHealthState,
                         sortBy: () => [appTypeGroup.name],
-                        actions: appTypeGroup.actions
+                        actions: appTypeGroup.actions,
+                        canExpandAll: true
                     };
                 });
             });
@@ -262,7 +263,8 @@ module Sfx {
                         },
                         mergeClusterHealthStateChunk: (clusterHealthChunk: IClusterHealthChunk) => {
                             return deployedApp.deployedServicePackages.mergeClusterHealthStateChunk(clusterHealthChunk);
-                        }
+                        },
+                        canExpandAll: true
                     };
                 });
             });
@@ -277,7 +279,8 @@ module Sfx {
                         selectAction: () => this.routes.navigate(() => deployedServicePackage.viewPath),
                         childrenQuery: () => this.getDeployedServiceChildrenGroupNodes(nodeName, applicationId, deployedServicePackage.name, deployedServicePackage.servicePackageActivationId),
                         badge: () => deployedServicePackage.health.healthState,
-                        sortBy: () => [deployedServicePackage.uniqueId]
+                        sortBy: () => [deployedServicePackage.uniqueId],
+                        canExpandAll: true
                     };
                 });
             });
@@ -291,7 +294,7 @@ module Sfx {
                     nodeId: IdGenerator.deployedCodePackageGroup(),
                     displayName: () => "Code Packages",
                     childrenQuery: () => this.getDeployedCodePackages(codePkgs, nodeName, applicationId, servicePackageName, servicePackageActivationId),
-                    selectAction: () => this.routes.navigate(() => codePkgs.viewPath)
+                    selectAction: () => this.routes.navigate(() => codePkgs.viewPath),
                 };
             });
 
@@ -303,7 +306,7 @@ module Sfx {
                     displayName: () => replicas.isStatelessService ? "Instances" : "Replicas",
                     childrenQuery: () => this.getDeployedReplicas(replicas, nodeName, applicationId, servicePackageName, servicePackageActivationId),
                     selectAction: () => this.routes.navigate(() => replicas.viewPath),
-                    listSettings: this.settings.getNewOrExistingTreeNodeListSettings(replicas.viewPath)
+                    listSettings: this.settings.getNewOrExistingTreeNodeListSettings(replicas.viewPath),
                 };
             });
 
@@ -357,7 +360,8 @@ module Sfx {
                         },
                         mergeClusterHealthStateChunk: (clusterHealthChunk: IClusterHealthChunk) => {
                             return app.services.mergeClusterHealthStateChunk(clusterHealthChunk);
-                        }
+                        },
+                        canExpandAll: true
                     };
                 });
             });
@@ -380,7 +384,8 @@ module Sfx {
                         },
                         mergeClusterHealthStateChunk: (clusterHealthChunk: IClusterHealthChunk) => {
                             return service.partitions.mergeClusterHealthStateChunk(clusterHealthChunk);
-                        }
+                        },
+                        canExpandAll: true
                     };
                 });
             });
@@ -420,7 +425,8 @@ module Sfx {
                         sortBy: () => replica.isStatelessService
                             ? [replica.raw.NodeName]
                             : [replica.replicaRoleSortPriority, replica.raw.NodeName],
-                        actions: replica.actions
+                        actions: replica.actions,
+                        canExpandAll: true
                     };
                 });
             });
