@@ -140,27 +140,21 @@ module Sfx {
         }
 
         public toggleAll(){
-            if(!this.isExpanded){
+            if(!this.childGroupViewModel.isExpanded){
                 this.childGroupViewModel.toggle().then( () => {
                     this.childGroupViewModel.children.forEach(child => {
                         child.toggleAll();
                     })
                 })
-            }else{
-                this.closeAll();          
             }
         }
 
         public closeAll(){
-            if(this.isExpanded){
+            if(this.childGroupViewModel.isExpanded){
                 this.childGroupViewModel.toggle().then( () => {
                     this.childGroupViewModel.children.forEach(child => {
                         child.closeAll();
                     })
-                })
-            }else{
-                this.childGroupViewModel.children.forEach(child => {
-                    child.closeAll();
                 })
             }
         }
