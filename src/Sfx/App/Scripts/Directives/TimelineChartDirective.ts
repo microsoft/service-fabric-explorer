@@ -33,13 +33,16 @@ module Sfx {
         private _timeline: vis.Timeline;
         private _start: Date;
         private _end: Date;
+        private _mostRecentEventTime: Date;
+        private _oldestEventTime: Date;
+        private _oldestEvent: vis.DataItem;
+        private _mostRecentEvent: vis.DataItem;
 
         public constructor(public $scope: any) {
 
             let groups = new vis.DataSet();
 
-            let items = new vis.DataSet([
-              ]);
+            let items = new vis.DataSet();
             // create visualization
             let container = document.getElementById('visualization');
             let options = {
@@ -68,6 +71,15 @@ module Sfx {
             this._timeline.moveTo(this._end)
         }
 
+        public moveToOldestEvent(){
+            // this._timeline.setSelection(this._oldestEvent.id);
+            this._timeline.setWindow(this._oldestEvent.start, this._oldestEvent.end)
+        }
+
+        public moveToNewestEvent(){
+            this._timeline.setWindow(this._mostRecentEvent.start, this._mostRecentEvent.end)
+        }
+
         public updateList(events: ITimelineData) {
             if (events) {
                 this._timeline.setData({
@@ -80,7 +92,7 @@ module Sfx {
                     max: events.end,
                     margin: {
                         item : {
-                            horizontal : -1
+                            horizontal : -1 //this makes it so items dont stack up when zoomed out too far.
                         }
                     }
                 })
@@ -88,6 +100,34 @@ module Sfx {
 
                 this._start = events.start;
                 this._end = events.end;
+
+                const range = this._timeline.getItemRange();
+
+                if(events.items.length > 0){
+                    let oldest = null;
+                    let newest = null;
+
+                    events.items.forEach(item => {
+                        if(!oldest  && !newest){
+                            oldest = item;
+                            newest = item;
+                        }
+                        if(oldest.start > item.start){
+                            oldest = item;
+                        }
+                        if(newest.end < item.end){
+                            newest = item;
+                        }
+                    })
+                    this._mostRecentEvent = newest;
+                    this._oldestEvent = oldest;
+                }
+
+                this._mostRecentEventTime = range.max;
+                this._oldestEventTime = range.min;
+            }else{
+                this._mostRecentEvent = null;
+                this._oldestEvent = null;
             }
         }
 

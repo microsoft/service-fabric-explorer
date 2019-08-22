@@ -11,6 +11,7 @@ module Sfx {
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
         partitionEvents: PartitionEventList;
+        partitionTimeLineGenerator: PartitionTimelineGenerator;
     }
 
     export class PartitionViewController extends MainViewController {
@@ -55,7 +56,7 @@ module Sfx {
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.partitionEvents = this.data.createPartitionEventList(this.partitionId);
-
+            this.$scope.partitionTimeLineGenerator = new PartitionTimelineGenerator();
             this.refresh();
         }
 

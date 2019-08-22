@@ -224,20 +224,41 @@ module Sfx {
         consume(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData;
     }
 
-    let tooltipFormat = (event: FabricEventBase, start: string, end: string = ''): string => {
-        return `<div class="tooltip-test">start: ${start} <br>${ end ? 'end: ' + end + '<br>' : ''}details:<br>${JSON.stringify(event.eventProperties, null, 4)}</div>`
+    let tooltipFormat = (event: FabricEventBase, start: string, end: string = '', title: string=""): string => {
+        return `<div class="tooltip-test">${title.length > 0 ? title + "<br>" : ''} start: ${start} <br>${ end ? 'end: ' + end + '<br>' : ''}details:<br>${JSON.stringify(event.eventProperties, null, 4)}</div>`
     }
 
     export class NodeTimelineGenerator implements ITimelineDataGenerator<NodeEvent> {
-        static readonly NodesDownLabel = "Nodes Down";
+        static readonly NodesDownLabel = "Node Down";
 
         consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
             let items = new vis.DataSet<vis.DataItem>();
 
+            let previousTransitions: Record<string, NodeEvent> = {};
 
             events.forEach( event => {
                 if(event.category === "StateTransition"){
+                    //check for current state
+                    if(event.kind === "NodeDown"){
+                        const end = previousTransitions[event.nodeName]? previousTransitions[event.nodeName].timeStamp : endOfRange.toISOString();
+                        const start = event.timeStamp;
+                        
+                        const label = "Node " + event.nodeName + " down";
+                        items.add({
+                            id: event.eventInstanceId + label, 
+                            content: label, 
+                            start: start, 
+                            end: end, 
+                            group: NodeTimelineGenerator.NodesDownLabel, 
+                            type: 'range',
+                            title: tooltipFormat(event, start, end, label),
+                            className: "red"
+                        })
+                    }
 
+                    if(event.kind === "NodeUp"){
+                        previousTransitions[event.nodeName] = event;
+                    }
                 };
             })
 
@@ -347,7 +368,96 @@ module Sfx {
                 })
             }
         }
+    }
+
+
+
+    export class PartitionTimelineGenerator implements ITimelineDataGenerator<NodeEvent> {
+        static readonly swapPrimaryLabel = "Primay Swap";
+        static readonly swapPrimaryDurations = "Swap Primary phases";
+
+        consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+            let items = new vis.DataSet<vis.DataItem>();
+
+            events.forEach( event => {
+                if(event.category === "StateTransition" && event.eventProperties["ReconfigType"] === "SwapPrimary"){
+                    const end = event.timeStamp;
+                    const endDate = new Date(end);
+                    const duration = event.eventProperties["TotalDurationMs"];
+        
+                    const start = new Date(endDate.getTime() - duration).toISOString();
+                        
+                    const label = event.eventProperties["NodeName"];
+                    items.add({
+                        id: event.eventInstanceId + label, 
+                        content: label, 
+                        start: start, 
+                        end: end, 
+                        group: PartitionTimelineGenerator.swapPrimaryLabel, 
+                        type: 'range',
+                        title: tooltipFormat(event, start, end, "Primary swap to " + label),
+                        className: "green"
+                    })
+                    
+
+                };
+            })
+
+            let groups = new vis.DataSet<vis.DataGroup>([
+                {id: PartitionTimelineGenerator.swapPrimaryLabel, content: PartitionTimelineGenerator.swapPrimaryLabel},
+            ]);
+
+            return {
+                groups,
+                items
+            }        
+        }
 
     }
+
+
+    export class ApplicationTimelineGenerator implements ITimelineDataGenerator<ApplicationEvent> {
+        static readonly swapPrimaryLabel = "Primay Swap";
+        static readonly swapPrimaryDurations = "Swap Primary phases";
+
+        consume(events: ApplicationEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+            let items = new vis.DataSet<vis.DataItem>();
+
+            events.forEach( event => {
+                if(event.category === "StateTransition" && event.eventProperties["ReconfigType"] === "SwapPrimary"){
+                    const end = event.timeStamp;
+                    const endDate = new Date(end);
+                    const duration = event.eventProperties["TotalDurationMs"];
+        
+                    const start = new Date(endDate.getTime() - duration).toISOString();
+                        
+                    const label = event.eventProperties["NodeName"];
+                    items.add({
+                        id: event.eventInstanceId + label, 
+                        content: label, 
+                        start: start, 
+                        end: end, 
+                        group: PartitionTimelineGenerator.swapPrimaryLabel, 
+                        type: 'range',
+                        title: tooltipFormat(event, start, end, "Primary swap to " + label),
+                        className: "green"
+                    })
+                    
+
+                };
+            })
+
+            let groups = new vis.DataSet<vis.DataGroup>([
+                {id: PartitionTimelineGenerator.swapPrimaryLabel, content: PartitionTimelineGenerator.swapPrimaryLabel},
+            ]);
+
+            return {
+                groups,
+                items
+            }        
+        }
+
+    }
+
 
 }
