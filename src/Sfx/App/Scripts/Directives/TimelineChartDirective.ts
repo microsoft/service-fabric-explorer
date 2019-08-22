@@ -44,11 +44,11 @@ module Sfx {
 
             let items = new vis.DataSet();
             // create visualization
-            let container = document.getElementById('visualization');
+            let container = document.getElementById("visualization");
             let options = {
                 stackSubgroups: false,
                 tooltip: {
-                    overflowMethod: 'flip'
+                    overflowMethod: "flip"
                 }
             };
 
@@ -63,21 +63,21 @@ module Sfx {
             this._timeline.setWindow(this._start, this._end);
         }
 
-        public moveStart(){
-            this._timeline.moveTo(this._start)
-        }
-        
-        public moveEnd(){
-            this._timeline.moveTo(this._end)
+        public moveStart() {
+            this._timeline.moveTo(this._start);
         }
 
-        public moveToOldestEvent(){
+        public moveEnd() {
+            this._timeline.moveTo(this._end);
+        }
+
+        public moveToOldestEvent() {
             // this._timeline.setSelection(this._oldestEvent.id);
-            this._timeline.setWindow(this._oldestEvent.start, this._oldestEvent.end)
+            this._timeline.setWindow(this._oldestEvent.start, this._oldestEvent.end);
         }
 
-        public moveToNewestEvent(){
-            this._timeline.setWindow(this._mostRecentEvent.start, this._mostRecentEvent.end)
+        public moveToNewestEvent() {
+            this._timeline.setWindow(this._mostRecentEvent.start, this._mostRecentEvent.end);
         }
 
         public updateList(events: ITimelineData) {
@@ -85,7 +85,7 @@ module Sfx {
                 this._timeline.setData({
                     groups: events.groups,
                     items: events.items
-                  })
+                  });
                 this._timeline.setOptions({
                     selectable: false,
                     min: events.start,
@@ -95,7 +95,7 @@ module Sfx {
                             horizontal : -1 //this makes it so items dont stack up when zoomed out too far.
                         }
                     }
-                })
+                });
                 this._timeline.fit();
 
                 this._start = events.start;
@@ -103,29 +103,29 @@ module Sfx {
 
                 const range = this._timeline.getItemRange();
 
-                if(events.items.length > 0){
+                if (events.items.length > 0) {
                     let oldest = null;
                     let newest = null;
 
                     events.items.forEach(item => {
-                        if(!oldest  && !newest){
+                        if (!oldest  && !newest) {
                             oldest = item;
                             newest = item;
                         }
-                        if(oldest.start > item.start){
+                        if (oldest.start > item.start) {
                             oldest = item;
                         }
-                        if(newest.end < item.end){
+                        if (newest.end < item.end) {
                             newest = item;
                         }
-                    })
+                    });
                     this._mostRecentEvent = newest;
                     this._oldestEvent = oldest;
                 }
 
                 this._mostRecentEventTime = range.max;
                 this._oldestEventTime = range.min;
-            }else{
+            }else {
                 this._mostRecentEvent = null;
                 this._oldestEvent = null;
             }

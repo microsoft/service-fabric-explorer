@@ -224,9 +224,14 @@ module Sfx {
         consume(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData;
     }
 
-    let tooltipFormat = (event: FabricEventBase, start: string, end: string = '', title: string=""): string => {
-        return `<div class="tooltip-test">${title.length > 0 ? title + "<br>" : ''} start: ${start} <br>${ end ? 'end: ' + end + '<br>' : ''}details:<br>${JSON.stringify(event.eventProperties, null, 4)}</div>`
-    }
+    let tooltipFormat = (event: FabricEventBase, start: string, end: string = "", title: string= ""): string => {
+
+        const rows = Object.keys(event.eventProperties).map(key => `<tr><td style="word-break: keep-all;">${key}</td><td> : ${event.eventProperties[key]}</td></tr>`).join("");
+
+        const outline = `<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
+
+        return `<div class="tooltip-test">${title.length > 0 ? title + "<br>" : ""}Start: ${start} <br>${ end ? "End: " + end + "<br>" : ""}<b style="text-align: center;">Details</b><br>${outline}</div>`;
+    };
 
     export class NodeTimelineGenerator implements ITimelineDataGenerator<NodeEvent> {
         static readonly NodesDownLabel = "Node Down";
@@ -237,30 +242,29 @@ module Sfx {
             let previousTransitions: Record<string, NodeEvent> = {};
 
             events.forEach( event => {
-                if(event.category === "StateTransition"){
+                if (event.category === "StateTransition") {
                     //check for current state
-                    if(event.kind === "NodeDown"){
+                    if (event.kind === "NodeDown") {
                         const end = previousTransitions[event.nodeName]? previousTransitions[event.nodeName].timeStamp : endOfRange.toISOString();
                         const start = event.timeStamp;
-                        
                         const label = "Node " + event.nodeName + " down";
                         items.add({
-                            id: event.eventInstanceId + label, 
-                            content: label, 
-                            start: start, 
-                            end: end, 
-                            group: NodeTimelineGenerator.NodesDownLabel, 
-                            type: 'range',
+                            id: event.eventInstanceId + label,
+                            content: label,
+                            start: start,
+                            end: end,
+                            group: NodeTimelineGenerator.NodesDownLabel,
+                            type: "range",
                             title: tooltipFormat(event, start, end, label),
                             className: "red"
-                        })
+                        });
                     }
 
-                    if(event.kind === "NodeUp"){
+                    if(event.kind === "NodeUp") {
                         previousTransitions[event.nodeName] = event;
                     }
                 };
-            })
+            });
 
             let groups = new vis.DataSet<vis.DataGroup>([
                 {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel},
@@ -269,7 +273,7 @@ module Sfx {
             return {
                 groups,
                 items
-            }        
+            };        
         }
 
     }
@@ -287,15 +291,15 @@ module Sfx {
             let previousClusterHealthReport: ClusterEvent;
 
             events.forEach( event => {
-                if(event.kind === "ClusterUpgradeDomainCompleted"){
+                if (event.kind === "ClusterUpgradeDomainCompleted") {
                     this.parseClusterUpgradeDomain(event, items);
-                }else if(event.kind === "ClusterUpgradeCompleted"){
+                }else if (event.kind === "ClusterUpgradeCompleted") {
                     this.parseClusterUpgrade(event, items);
-                }else if(event.kind === "ClusterNewHealthReport"){
+                }else if (event.kind === "ClusterNewHealthReport") {
                     this.parseSeedNodeStatus(event, items, previousClusterHealthReport, endOfRange);
                     previousClusterHealthReport = event;
                 }
-            })
+            });
 
             let groups = new vis.DataSet<vis.DataGroup>([
                 {id: ClusterTimelineGenerator.upgradeDomainLabel, content: ClusterTimelineGenerator.upgradeDomainLabel},
@@ -308,7 +312,7 @@ module Sfx {
             return {
                 groups,
                 items
-            }
+            };
         }
 
         parseClusterUpgradeDomain(event: ClusterEvent, items: vis.DataSet<vis.DataItem>): void {
@@ -319,15 +323,15 @@ module Sfx {
             const start = new Date(endDate.getTime() - duration).toISOString();
             const label = event.eventProperties["UpgradeDomains"];
             items.add({
-                id: event.eventInstanceId + label, 
-                content: label, 
-                start: start, 
-                end: end, 
-                group: ClusterTimelineGenerator.upgradeDomainLabel, 
-                type: 'range',
+                id: event.eventInstanceId + label,
+                content: label,
+                start: start,
+                end: end,
+                group: ClusterTimelineGenerator.upgradeDomainLabel,
+                type: "range",
                 title: tooltipFormat(event, start, end),
                 className: "green"
-            })
+            });
         }
 
         parseClusterUpgrade(event: ClusterEvent, items: vis.DataSet<vis.DataItem>): void {
@@ -339,33 +343,33 @@ module Sfx {
             const content = `${event.category} ${event.eventProperties["TargetClusterVersion"]}`;
 
             items.add({
-                id: event.eventInstanceId + content, 
-                content, 
-                start, 
-                end, 
-                group: ClusterTimelineGenerator.clusterUpgradeLabel, 
-                type: 'range',
+                id: event.eventInstanceId + content,
+                content,
+                start,
+                end,
+                group: ClusterTimelineGenerator.clusterUpgradeLabel,
+                type: "range",
                 title: tooltipFormat(event, start, end),
                 className: "green"
-            }) 
+            }); 
         }
 
         parseSeedNodeStatus(event: ClusterEvent, items: vis.DataSet<vis.DataItem>, previousClusterHealthReport: ClusterEvent, endOfRange: Date): void {
-            if(event.eventProperties["HealthState"] === "Warning"){
+            if (event.eventProperties["HealthState"] === "Warning") {
                 //for end date if we dont have a previously seen health report(list iterates newest to oldest) then we know its still the ongoing state
                 let end = previousClusterHealthReport ? previousClusterHealthReport.timeStamp : endOfRange.toISOString();
                 const content = `${event.eventProperties["HealthState"]}`;
 
                 items.add({
-                    id: event.eventInstanceId + content, 
-                    content, 
-                    start: event.timeStamp, 
-                    end: end, 
-                    group: ClusterTimelineGenerator.seedNodeStatus, 
-                    type: 'range',
+                    id: event.eventInstanceId + content,
+                    content,
+                    start: event.timeStamp,
+                    end: end,
+                    group: ClusterTimelineGenerator.seedNodeStatus,
+                    type: "range",
                     title: tooltipFormat(event, event.timeStamp, end),
                     className: "orange"
-                })
+                });
             }
         }
     }
@@ -380,28 +384,26 @@ module Sfx {
             let items = new vis.DataSet<vis.DataItem>();
 
             events.forEach( event => {
-                if(event.category === "StateTransition" && event.eventProperties["ReconfigType"] === "SwapPrimary"){
+                if (event.category === "StateTransition" && event.eventProperties["ReconfigType"] === "SwapPrimary") {
                     const end = event.timeStamp;
                     const endDate = new Date(end);
                     const duration = event.eventProperties["TotalDurationMs"];
-        
                     const start = new Date(endDate.getTime() - duration).toISOString();
-                        
                     const label = event.eventProperties["NodeName"];
+
                     items.add({
-                        id: event.eventInstanceId + label, 
-                        content: label, 
-                        start: start, 
-                        end: end, 
-                        group: PartitionTimelineGenerator.swapPrimaryLabel, 
-                        type: 'range',
+                        id: event.eventInstanceId + label,
+                        content: label,
+                        start: start,
+                        end: end,
+                        group: PartitionTimelineGenerator.swapPrimaryLabel,
+                        type: "range",
                         title: tooltipFormat(event, start, end, "Primary swap to " + label),
                         className: "green"
-                    })
-                    
+                    });
 
                 };
-            })
+            });
 
             let groups = new vis.DataSet<vis.DataGroup>([
                 {id: PartitionTimelineGenerator.swapPrimaryLabel, content: PartitionTimelineGenerator.swapPrimaryLabel},
@@ -410,7 +412,7 @@ module Sfx {
             return {
                 groups,
                 items
-            }        
+            };        
         }
 
     }
@@ -424,28 +426,25 @@ module Sfx {
             let items = new vis.DataSet<vis.DataItem>();
 
             events.forEach( event => {
-                if(event.category === "StateTransition" && event.eventProperties["ReconfigType"] === "SwapPrimary"){
+                if (event.category === "StateTransition" && event.eventProperties["ReconfigType"] === "SwapPrimary") {
                     const end = event.timeStamp;
                     const endDate = new Date(end);
                     const duration = event.eventProperties["TotalDurationMs"];
-        
                     const start = new Date(endDate.getTime() - duration).toISOString();
-                        
                     const label = event.eventProperties["NodeName"];
+
                     items.add({
-                        id: event.eventInstanceId + label, 
-                        content: label, 
-                        start: start, 
-                        end: end, 
-                        group: PartitionTimelineGenerator.swapPrimaryLabel, 
-                        type: 'range',
+                        id: event.eventInstanceId + label,
+                        content: label,
+                        start: start,
+                        end: end,
+                        group: PartitionTimelineGenerator.swapPrimaryLabel,
+                        type: "range",
                         title: tooltipFormat(event, start, end, "Primary swap to " + label),
                         className: "green"
                     })
-                    
-
                 };
-            })
+            });
 
             let groups = new vis.DataSet<vis.DataGroup>([
                 {id: PartitionTimelineGenerator.swapPrimaryLabel, content: PartitionTimelineGenerator.swapPrimaryLabel},
@@ -454,7 +453,7 @@ module Sfx {
             return {
                 groups,
                 items
-            }        
+            };        
         }
 
     }

@@ -35,6 +35,7 @@ module Sfx {
         public startDateInit: Date;
         public endDateInit: Date;
         public isResetEnabled: boolean = false;
+        public timeLineEventsData: ITimelineData;
 
         private eventsList: EventListBase<any>;
         private isStartSelected: boolean;
@@ -42,14 +43,13 @@ module Sfx {
         private _startDate: Date = null;
         private _endDate: Date = null;
 
-        public timeLineEventsData: ITimelineData;
         private _timelineGenerator: ITimelineDataGenerator<FabricEventBase>;
 
         public constructor(eventsList: EventListBase<any>, timelineGenerator?: ITimelineDataGenerator<FabricEventBase>) {
             console.log(timelineGenerator);
 
             this.eventsList = eventsList;
-            if(timelineGenerator){
+            if (timelineGenerator) {
                 this._timelineGenerator = timelineGenerator;
             }
             this.resetSelectionProperties();
@@ -125,7 +125,7 @@ module Sfx {
         }
 
         private setTimelineData(): void {
-            if(this._timelineGenerator){
+            if (this._timelineGenerator ){
                 this.eventsList.ensureInitialized().then( () => {
                     const d = this._timelineGenerator.consume(this.eventsList.collection.map(event => event.raw), this._startDate, this._endDate);
                     this.timeLineEventsData = {
@@ -133,8 +133,8 @@ module Sfx {
                         items: d.items,
                         start: this._startDate,
                         end: this._endDate
-                    }
-                })             
+                    };
+                });             
             }
         }
     }
