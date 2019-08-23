@@ -5,7 +5,11 @@ module Sfx {
 
             this.$scope.fileListSettings = this.settings.getNewOrExistingListSettings("imagestore", ["name"], [
                 new ListColumnSetting("", "", null, true, (item: ImageStoreItem, property) => {
-                    return `<sfx-image-store-file-view item="item"></sfx-image-store-file-view>`;
+                    if(this.$scope.imagestoreroot.data.actionsEnabled()){
+                        return `<sfx-image-store-file-view item="item"></sfx-image-store-file-view>`;
+                    }
+
+                    return "";
                 }),
                 new ListColumnSetting("displayName", "name", ["isFolder", "displayName"], false, (item: any, property) => {
                     if (!!item["fileCount"]) {
