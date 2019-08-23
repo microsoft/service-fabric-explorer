@@ -141,7 +141,7 @@ module Sfx {
 
         public toggleAll(){
             if(!this.childGroupViewModel.isExpanded){
-                this.childGroupViewModel.toggle().then( () => {
+                this.childGroupViewModel.expand().then( () => {
                     this.childGroupViewModel.children.forEach(child => {
                         child.toggleAll();
                     })
@@ -151,11 +151,10 @@ module Sfx {
 
         public closeAll(){
             if(this.childGroupViewModel.isExpanded){
-                this.childGroupViewModel.toggle().then( () => {
-                    this.childGroupViewModel.children.forEach(child => {
-                        child.closeAll();
-                    })
+                this.childGroupViewModel.children.forEach(child => {
+                    child.closeAll();
                 })
+                this.childGroupViewModel.collapse()
             }
         }
 
