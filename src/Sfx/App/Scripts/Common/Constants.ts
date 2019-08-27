@@ -172,6 +172,10 @@ module Sfx {
         public static Completed: RegExp = /Completed/i;
     }
 
+    export class ClusterUpgradeStates {
+        public static RollingForwardPending: string = "RollingForwardPending";
+    }
+
     export class UpgradeDomainStateNames {
         public static InProgress: string = "InProgress";
         public static Completed: string = "Completed";
