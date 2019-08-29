@@ -778,7 +778,7 @@ module Sfx {
         // requests take ~3 secs, and so we shouldn't be delaying every global refresh.
         public readonly minimumRefreshTimeInSecs: number = 10;
         public readonly pageSize: number = 15;
-        public readonly defaultDateWindowInDays: number = 2;
+        public readonly defaultDateWindowInDays: number = 7;
         public readonly latestRefreshPeriodInSecs: number = 60 * 60;
 
         protected readonly optionalColsStartIndex: number = 2;

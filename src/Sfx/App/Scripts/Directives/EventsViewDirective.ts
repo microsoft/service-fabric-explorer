@@ -83,7 +83,7 @@ module Sfx {
                 this.startDateMax = this._endDate;
                 this.startDateMin = TimeUtils.AddDays(
                     this._endDate,
-                    (-1 * DateWindowSelector.MaxWindowInDays));
+                    (-7 * DateWindowSelector.MaxWindowInDays));
                 this.startDateInit = this._endDate;
                 this.isEndSelected = true;
             } else {
