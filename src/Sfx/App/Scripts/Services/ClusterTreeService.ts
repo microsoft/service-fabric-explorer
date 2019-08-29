@@ -240,8 +240,7 @@ module Sfx {
                         childrenQuery: () => this.getApplicationsForType(appTypeGroup.name),
                         badge: () => appTypeGroup.appsHealthState,
                         sortBy: () => [appTypeGroup.name],
-                        actions: appTypeGroup.actions,
-                        canExpandAll: true
+                        actions: appTypeGroup.actions
                     };
                 });
             });
