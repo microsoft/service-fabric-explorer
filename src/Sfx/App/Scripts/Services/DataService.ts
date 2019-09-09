@@ -47,7 +47,7 @@ module Sfx {
         }
 
         public actionsAdvancedEnabled(): boolean {
-            return this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
+            return this.actionsEnabled && this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
         }
 
         public invalidateBrowserRestResponseCache(): void {
