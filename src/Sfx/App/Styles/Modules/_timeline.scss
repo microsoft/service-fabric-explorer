@@ -68,6 +68,7 @@
   font-size: $font-size-small;
   color: $dashboard-color;
   white-space: pre-wrap;
+  box-shadow: none;
 }
 
 .vis-tooltip {
@@ -82,4 +83,28 @@
 .timeline-button {
   background-color: #262626;
   border: 1px solid #0075c9;
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.vis-label{
+  background-color: #0075c9;
+  color: #dad7d7;
+}
+
+.noUi-tooltip {
+  display: none;
+}
+.noUi-active .noUi-tooltip {
+  display: block;
+}
+
+.noUi-target{
+  background-color: #bfbfbf;
+  box-shadow: none;
+  border: 0px;
+}
+
+.noUi-connect{
+  background-color: #0075c9;
 }

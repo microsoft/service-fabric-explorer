@@ -13,7 +13,8 @@
       "angular-ui-bootstrap",
       "lodash",
       "d3",
-      "vis"
+      "vis",
+      "noUiSlider"
     ]
   }
 }

@@ -46,15 +46,12 @@ module Sfx {
         private _timelineGenerator: ITimelineDataGenerator<FabricEventBase>;
 
         public constructor(eventsList: EventListBase<any>, timelineGenerator?: ITimelineDataGenerator<FabricEventBase>) {
-            console.log(timelineGenerator);
-
             this.eventsList = eventsList;
             if (timelineGenerator) {
                 this._timelineGenerator = timelineGenerator;
             }
             this.resetSelectionProperties();
             this.setTimelineData();
-
         }
 
         public get startDate() { return this._startDate; }
@@ -62,7 +59,6 @@ module Sfx {
         public set startDate(value: Date) {
             this._startDate = value;
             if (!this.isEndSelected) {
-                this._endDate = null;
                 this.endDateMin = this._startDate;
                 this.endDateMax = TimeUtils.AddDays(
                     this._startDate,
@@ -72,23 +68,20 @@ module Sfx {
                 }
                 this.endDateInit = this._startDate;
                 this.isStartSelected = true;
-            } else {
-                this.setNewDateWindow();
             }
+                this.setNewDateWindow();
         }
         public set endDate(value: Date) {
             this._endDate = value;
             if (!this.isStartSelected) {
-                this._startDate = null;
                 this.startDateMax = this._endDate;
                 this.startDateMin = TimeUtils.AddDays(
                     this._endDate,
                     (-7 * DateWindowSelector.MaxWindowInDays));
                 this.startDateInit = this._endDate;
                 this.isEndSelected = true;
-            } else {
-                this.setNewDateWindow();
             }
+                this.setNewDateWindow();
         }
 
         public reset(): void {
@@ -106,7 +99,7 @@ module Sfx {
         private resetSelectionProperties(): void {
             this._startDate = this.eventsList.startDate;
             this._endDate = this.eventsList.endDate;
-            this.startDateMin = this.endDateMin = null;
+            this.startDateMin = this.endDateMin = TimeUtils.AddDays(new Date(),-30);
             this.startDateMax = this.endDateMax = new Date(); //Today
             this.startDateInit = this.endDateInit = new Date(); //Today
             this.isStartSelected = this.isEndSelected = false;
@@ -127,12 +120,12 @@ module Sfx {
         private setTimelineData(): void {
             if (this._timelineGenerator ){
                 this.eventsList.ensureInitialized().then( () => {
-                    const d = this._timelineGenerator.consume(this.eventsList.collection.map(event => event.raw), this._startDate, this._endDate);
+                    const d = this._timelineGenerator.consume(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
                     this.timeLineEventsData = {
                         groups: d.groups,
                         items: d.items,
-                        start: this._startDate,
-                        end: this._endDate
+                        start: this.startDate,
+                        end: this.endDate
                     };
                 });             
             }

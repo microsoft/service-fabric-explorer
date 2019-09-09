@@ -1,12 +1,13 @@
-<div class="col-md-3">
-    <p class="input-group">
+<div style="display: inline-block;">
+    <p class="input-group" style="max-width: 250px;">
+        <input class="input-flat" ng-model="ngModel" type="time">
         <input type="text" class="input-flat clear-disabled" uib-datepicker-popup="{{format}}"
             ng-model="ngModel" is-open="opened"
             min-date="minDate" max-date="maxDate" init-date="initDate"
             datepicker-options="{ formatYear: 'yy', startingDay: 1, showWeeks: false, initDate: initDate, minDate: minDate, maxDate: maxDate }"
             placeholder="{{placeHolderText}}" show-button-bar="false"
             ng-required ng-readonly="readOnly" ng-click="ctrl.popupClick($event)"
-            ng-keydown="$event.keyCode === 13 && ctrl.popupFocus($event)" aria-haspopup="true" />
+            ng-keydown="$event.keyCode === 13 && ctrl.popupFocus($event)" aria-haspopup="true"/>
         <span class="input-group-btn">
             <a role="button" class="calendar-link" href="" ng-click="ctrl.popupClick($event)"
                 aria-haspopup="true" aria-label="Click to open the calendar">

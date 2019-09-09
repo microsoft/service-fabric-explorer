@@ -45,12 +45,6 @@ module Sfx {
             let items = new vis.DataSet();
             // create visualization
             let container = document.getElementById("visualization");
-            let options = {
-                stackSubgroups: false,
-                tooltip: {
-                    overflowMethod: "flip"
-                }
-            };
 
             this._timeline = new vis.Timeline(container, items, groups);
         }
@@ -92,8 +86,11 @@ module Sfx {
                     max: events.end,
                     margin: {
                         item : {
-                            horizontal : -1 //this makes it so items dont stack up when zoomed out too far.
+                            horizontal : -1 //this makes it so items dont stack up when zoomed out too far.,
                         }
+                    },
+                    tooltip: {
+                        overflowMethod: "flip"
                     }
                 });
                 this._timeline.fit();

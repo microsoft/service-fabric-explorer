@@ -1,20 +1,24 @@
 <div class="detail-pane overlay-details-wrapper flex-child">
+    <div style="margin-right:0px;">
+        <div class="col-md-3 col-sm-6 col-lg-2">
+            <sfx-date-picker ng-model="dwSelector.startDate" min-date="dwSelector.startDateMin"
+            max-date="dwSelector.startDateMax" init-date="dwSelector.startDateInit" place-holder-text="'Start Date'">
+            </sfx-date-picker>
+        </div>
+        <div class="col-md-3 col-sm-6 col-lg-2">
+                <sfx-date-picker ng-model="dwSelector.endDate" min-date="dwSelector.endDateMin"
+            max-date="dwSelector.endDateMax" init-date="dwSelector.endDateInit" place-holder-text="'End Date'">
+            </sfx-date-picker>
+        </div>
+        <div class="col-md-6 col-sm-12 col-lg-8">
+            <div style="width: 80%; margin-left: 50px; margin-top: 15px; margin-bottom: 15px;">
+                <sfx-double-slider start-date="dwSelector.startDate" end-date="dwSelector.endDate"></sfx-double-slider>
+            </div>
+        </div>
+    </div>
+    <sfx-timeline events="dwSelector.timeLineEventsData" ng-if="dwSelector.timeLineEventsData"></sfx-timeline>
+
     <sfx-detail-list list="eventsList" list-settings="eventsList.settings" inner-scroll="true">
         <sfx-detail-list-details-view details-list-settings="eventsList.detailsSettings"></sfx-detail-list-details-view>
-        <div class="row" style="margin-right:0px;">
-                <sfx-date-picker ng-model="dwSelector.startDate" min-date="dwSelector.startDateMin"
-                    max-date="dwSelector.startDateMax" init-date="dwSelector.startDateInit" place-holder-text="'Start Date'">
-                </sfx-date-picker>
-                <sfx-date-picker ng-model="dwSelector.endDate" min-date="dwSelector.endDateMin"
-                    max-date="dwSelector.endDateMax" init-date="dwSelector.endDateInit" place-holder-text="'End Date'">
-                </sfx-date-picker>
-                <div class="col-md-3">
-                    <div class="btn-group" style="margin-bottom:3px;">
-                        <a role="button" class="reset-link" href="" ng-click="resetClick()" ng-disabled="!dwSelector.isResetEnabled">Reset</a>
-                    </div>
-                </div>
-        </div>
-        <sfx-timeline events="dwSelector.timeLineEventsData" ng-if="dwSelector.timeLineEventsData"></sfx-timeline>
-
     </sfx-detail-list>
 </div>
