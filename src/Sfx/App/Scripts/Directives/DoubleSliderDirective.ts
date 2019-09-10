@@ -8,14 +8,11 @@ module Sfx {
     export class DoubleSliderDirective implements ng.IDirective {
         public restrict = "E";
         public replace = true;
-        // public controller = TimeLineChartController;
-        public controllerAs = "ctrl";
         public templateUrl = "partials/double-slider-directive.html";
         public scope = {
             startDate: "=",
             endDate: "=",
         };
-        public transclude = true;
 
         public link($scope: any, element: JQuery, attributes: any) {
 
@@ -47,7 +44,7 @@ module Sfx {
                                 min: TimeUtils.AddDays(new Date(), -30).getTime(),
                                 max: new Date().getTime(),
                             },
-                            step: 60 * 60 * 1000,
+                            step: 60 * 1000,
                             start: [new Date($scope.startDate).getTime(), new Date($scope.endDate).getTime()]
                         });
                     

@@ -33,8 +33,6 @@ module Sfx {
         private _timeline: vis.Timeline;
         private _start: Date;
         private _end: Date;
-        private _mostRecentEventTime: Date;
-        private _oldestEventTime: Date;
         private _oldestEvent: vis.DataItem;
         private _mostRecentEvent: vis.DataItem;
 
@@ -66,12 +64,15 @@ module Sfx {
         }
 
         public moveToOldestEvent() {
-            // this._timeline.setSelection(this._oldestEvent.id);
-            this._timeline.setWindow(this._oldestEvent.start, this._oldestEvent.end);
+            if(this._oldestEvent){
+                this._timeline.setWindow(this._oldestEvent.start, this._oldestEvent.end);
+            }
         }
 
         public moveToNewestEvent() {
-            this._timeline.setWindow(this._mostRecentEvent.start, this._mostRecentEvent.end);
+            if(this._mostRecentEvent){
+                this._timeline.setWindow(this._mostRecentEvent.start, this._mostRecentEvent.end);
+            }
         }
 
         public updateList(events: ITimelineData) {
@@ -98,13 +99,12 @@ module Sfx {
                 this._start = events.start;
                 this._end = events.end;
 
-                const range = this._timeline.getItemRange();
-
                 if (events.items.length > 0) {
                     let oldest = null;
                     let newest = null;
 
                     events.items.forEach(item => {
+                        //cant easily grab the first elements of the collection, easier to set here
                         if (!oldest  && !newest) {
                             oldest = item;
                             newest = item;
@@ -119,9 +119,6 @@ module Sfx {
                     this._mostRecentEvent = newest;
                     this._oldestEvent = oldest;
                 }
-
-                this._mostRecentEventTime = range.max;
-                this._oldestEventTime = range.min;
             }else {
                 this._mostRecentEvent = null;
                 this._oldestEvent = null;

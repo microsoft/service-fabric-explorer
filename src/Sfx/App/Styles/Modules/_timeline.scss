@@ -53,10 +53,16 @@
 
 .vis-item.green {
   background-color: $dashboard-ok-color;
+  color: black;
 }
 
 .vis-item.orange {
   background-color: $dashboard-warning-color;
+  color: black;
+}
+
+.vis-item.blue {
+  background-color: #0075c9;
 }
 
 .tooltip-test{

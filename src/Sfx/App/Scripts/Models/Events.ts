@@ -273,7 +273,7 @@ module Sfx {
             return {
                 groups,
                 items
-            };        
+            };
         }
 
     }
@@ -289,17 +289,45 @@ module Sfx {
 
             //state necessary for some events
             let previousClusterHealthReport: ClusterEvent;
+            let previousClusterUpgrade: ClusterEvent;
+            let upgradeClusterStarted: ClusterEvent;
+            let clusterRollBacks: Record<string, {complete: ClusterEvent, start?: ClusterEvent}> = {};
 
             events.forEach( event => {
-                if (event.kind === "ClusterUpgradeDomainCompleted") {
+                //we want the oldest cluster upgrade started before finding any previousClusterUpgrade
+                //this means we should have an ongoing cluster upgrade
+                if ( (event.kind === "ClusterUpgradeStarted" || event.kind === "ClusterUpgradeRollbackStarted") && !previousClusterUpgrade ) {
+                    upgradeClusterStarted = event;
+                }else if (event.kind === "ClusterUpgradeDomainCompleted") {
                     this.parseClusterUpgradeDomain(event, items);
                 }else if (event.kind === "ClusterUpgradeCompleted") {
-                    this.parseClusterUpgrade(event, items);
+                    this.parseClusterUpgradeCompleted(event, items);
+                    previousClusterUpgrade = event;
                 }else if (event.kind === "ClusterNewHealthReport") {
                     this.parseSeedNodeStatus(event, items, previousClusterHealthReport, endOfRange);
                     previousClusterHealthReport = event;
                 }
+
+                //handle roll backs alone
+                if(event.kind === "ClusterUpgradeRollbackCompleted"){
+                    previousClusterUpgrade = event;
+                    clusterRollBacks[event.eventInstanceId] = {complete: event};
+                }else if(event.kind === "ClusterUpgradeRollbackStarted" && event.eventInstanceId in clusterRollBacks){
+                    clusterRollBacks[event.eventInstanceId]["start"] = event;
+                }
             });
+
+            //we have to parse cluster upgrade roll backs into 2 seperate events and require 2 seperate events to piece together
+            //we gather them up and add them at the end so we can get corresponding events
+            Object.keys(clusterRollBacks).forEach(eventInstanceId => {
+                const data = clusterRollBacks[eventInstanceId];
+                this.parseClusterUpgradeAndRollback(data.complete, data.start, items, startOfRange);
+            })
+
+            //Display a pending upgrade
+            if(upgradeClusterStarted) {
+                this.parseClusterUpgradeStarted(upgradeClusterStarted, items, endOfRange);
+            }
 
             let groups = new vis.DataSet<vis.DataGroup>([
                 {id: ClusterTimelineGenerator.upgradeDomainLabel, content: ClusterTimelineGenerator.upgradeDomainLabel},
@@ -315,6 +343,45 @@ module Sfx {
             };
         }
 
+        parseClusterUpgradeAndRollback(rollbackCompleteEvent: ClusterEvent, rollbackStartedEvent: ClusterEvent, items: vis.DataSet<vis.DataItem>, startOfRange: Date){
+            const rollbackEnd = rollbackCompleteEvent.timeStamp;
+
+            let rollbackStarted = startOfRange.toISOString();
+            //wont always get this event
+            if(rollbackStartedEvent){
+                rollbackStarted = rollbackStartedEvent.timeStamp;
+                const rollbackStartedDate = new Date(rollbackEnd);
+                const upgradeDuration = rollbackCompleteEvent.eventProperties["OverallUpgradeElapsedTimeInMs"];
+    
+                const upgradeStart = new Date(rollbackStartedDate.getTime() - upgradeDuration).toISOString();
+                //roll forward
+                items.add({
+                    id: rollbackCompleteEvent.eventInstanceId + "upgrade",
+                    content: "upgrade rolling forward failed",
+                    start: upgradeStart,
+                    end: rollbackStarted,
+                    group: ClusterTimelineGenerator.clusterUpgradeLabel,
+                    type: "range",
+                    className: "red"
+                });
+            }
+
+            const label = `rolling back to ${rollbackCompleteEvent.eventProperties["TargetClusterVersion"]}`;
+
+            //roll back
+            items.add({
+                id: rollbackCompleteEvent.eventInstanceId + label,
+                content: label,
+                start: rollbackStarted,
+                end: rollbackEnd,
+                group: ClusterTimelineGenerator.clusterUpgradeLabel,
+                type: "range",
+                title: tooltipFormat(rollbackCompleteEvent, rollbackStarted, rollbackEnd),
+                className: "orange"
+            });
+
+        }
+
         parseClusterUpgradeDomain(event: ClusterEvent, items: vis.DataSet<vis.DataItem>): void {
             const end = event.timeStamp;
             const endDate = new Date(end);
@@ -323,7 +390,7 @@ module Sfx {
             const start = new Date(endDate.getTime() - duration).toISOString();
             const label = event.eventProperties["UpgradeDomains"];
             items.add({
-                id: event.eventInstanceId + label,
+                id: event.eventInstanceId + label + event.eventProperties["TargetClusterVersion"],
                 content: label,
                 start: start,
                 end: end,
@@ -334,13 +401,12 @@ module Sfx {
             });
         }
 
-        parseClusterUpgrade(event: ClusterEvent, items: vis.DataSet<vis.DataItem>): void {
-            const end = event.timeStamp;
-            const endDate = new Date(end);
-            const duration = event.eventProperties["OverallUpgradeElapsedTimeInMs"];
+        //Mainly used for if there is a current upgrade in progress.
+        parseClusterUpgradeStarted(event: ClusterEvent, items: vis.DataSet<vis.DataItem>, endOfRange: Date): void {
 
-            const start = new Date(endDate.getTime() - duration).toISOString();
-            const content = `${event.category} ${event.eventProperties["TargetClusterVersion"]}`;
+            let end = endOfRange.toISOString();
+            const start = event.timeStamp;
+            const content = `Upgrading to ${event.eventProperties["TargetClusterVersion"]}`;
 
             items.add({
                 id: event.eventInstanceId + content,
@@ -350,7 +416,29 @@ module Sfx {
                 group: ClusterTimelineGenerator.clusterUpgradeLabel,
                 type: "range",
                 title: tooltipFormat(event, start, end),
-                className: "green"
+                className: "blue"
+            });
+        }
+
+        parseClusterUpgradeCompleted(event: ClusterEvent, items: vis.DataSet<vis.DataItem>): void {
+            const rollBack = event.kind === "ClusterUpgradeRollbackCompleted";
+
+            const end = event.timeStamp;
+            const endDate = new Date(end);
+            const duration = event.eventProperties["OverallUpgradeElapsedTimeInMs"];
+
+            const start = new Date(endDate.getTime() - duration).toISOString();
+            const content = `${rollBack ? "upgrade Rolling back" : "Upgrade rolling forward"} to ${event.eventProperties["TargetClusterVersion"]}`;
+
+            items.add({
+                id: event.eventInstanceId + content,
+                content,
+                start,
+                end,
+                group: ClusterTimelineGenerator.clusterUpgradeLabel,
+                type: "range",
+                title: tooltipFormat(event, start, end),
+                className: rollBack  ? "orange" : "green"
             }); 
         }
 
