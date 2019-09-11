@@ -500,49 +500,5 @@ module Sfx {
                 items
             };
         }
-
     }
-
-
-    export class ApplicationTimelineGenerator implements ITimelineDataGenerator<ApplicationEvent> {
-        static readonly swapPrimaryLabel = "Primay Swap";
-        static readonly swapPrimaryDurations = "Swap Primary phases";
-
-        consume(events: ApplicationEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-            let items = new vis.DataSet<vis.DataItem>();
-
-            events.forEach( event => {
-                if (event.category === "StateTransition" && event.eventProperties["ReconfigType"] === "SwapPrimary") {
-                    const end = event.timeStamp;
-                    const endDate = new Date(end);
-                    const duration = event.eventProperties["TotalDurationMs"];
-                    const start = new Date(endDate.getTime() - duration).toISOString();
-                    const label = event.eventProperties["NodeName"];
-
-                    items.add({
-                        id: event.eventInstanceId + label,
-                        content: label,
-                        start: start,
-                        end: end,
-                        group: PartitionTimelineGenerator.swapPrimaryLabel,
-                        type: "range",
-                        title: tooltipFormat(event, start, end, "Primary swap to " + label),
-                        className: "green"
-                    });
-                };
-            });
-
-            let groups = new vis.DataSet<vis.DataGroup>([
-                {id: PartitionTimelineGenerator.swapPrimaryLabel, content: PartitionTimelineGenerator.swapPrimaryLabel},
-            ]);
-
-            return {
-                groups,
-                items
-            };
-        }
-
-    }
-
-
 }
