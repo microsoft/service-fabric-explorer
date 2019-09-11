@@ -64,13 +64,13 @@ module Sfx {
         }
 
         public moveToOldestEvent() {
-            if(this._oldestEvent){
+            if (this._oldestEvent) {
                 this._timeline.setWindow(this._oldestEvent.start, this._oldestEvent.end);
             }
         }
 
         public moveToNewestEvent() {
-            if(this._mostRecentEvent){
+            if (this._mostRecentEvent) {
                 this._timeline.setWindow(this._mostRecentEvent.start, this._mostRecentEvent.end);
             }
         }

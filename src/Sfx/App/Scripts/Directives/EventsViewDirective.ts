@@ -99,7 +99,7 @@ module Sfx {
         private resetSelectionProperties(): void {
             this._startDate = this.eventsList.startDate;
             this._endDate = this.eventsList.endDate;
-            this.startDateMin = this.endDateMin = TimeUtils.AddDays(new Date(),-30);
+            this.startDateMin = this.endDateMin = TimeUtils.AddDays(new Date(), -30);
             this.startDateMax = this.endDateMax = new Date(); //Today
             this.startDateInit = this.endDateInit = new Date(); //Today
             this.isStartSelected = this.isEndSelected = false;
@@ -118,16 +118,20 @@ module Sfx {
         }
 
         private setTimelineData(): void {
-            if (this._timelineGenerator ){
+            if (this._timelineGenerator) {
                 this.eventsList.ensureInitialized().then( () => {
-                    const d = this._timelineGenerator.consume(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
-                    this.timeLineEventsData = {
-                        groups: d.groups,
-                        items: d.items,
-                        start: this.startDate,
-                        end: this.endDate
-                    };
-                });             
+                    try {
+                        const d = this._timelineGenerator.consume(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
+                        this.timeLineEventsData = {
+                            groups: d.groups,
+                            items: d.items,
+                            start: this.startDate,
+                            end: this.endDate
+                        };
+                    }catch(e) {
+                        console.error(e);
+                    }
+                });
             }
         }
     }

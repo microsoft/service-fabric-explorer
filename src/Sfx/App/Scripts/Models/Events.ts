@@ -245,7 +245,7 @@ module Sfx {
                 if (event.category === "StateTransition") {
                     //check for current state
                     if (event.kind === "NodeDown") {
-                        const end = previousTransitions[event.nodeName]? previousTransitions[event.nodeName].timeStamp : endOfRange.toISOString();
+                        const end = previousTransitions[event.nodeName] ? previousTransitions[event.nodeName].timeStamp : endOfRange.toISOString();
                         const start = event.timeStamp;
                         const label = "Node " + event.nodeName + " down";
                         items.add({
@@ -260,7 +260,7 @@ module Sfx {
                         });
                     }
 
-                    if(event.kind === "NodeUp") {
+                    if (event.kind === "NodeUp") {
                         previousTransitions[event.nodeName] = event;
                     }
                 };
@@ -309,10 +309,10 @@ module Sfx {
                 }
 
                 //handle roll backs alone
-                if(event.kind === "ClusterUpgradeRollbackCompleted"){
+                if (event.kind === "ClusterUpgradeRollbackCompleted") {
                     previousClusterUpgrade = event;
                     clusterRollBacks[event.eventInstanceId] = {complete: event};
-                }else if(event.kind === "ClusterUpgradeRollbackStarted" && event.eventInstanceId in clusterRollBacks){
+                }else if (event.kind === "ClusterUpgradeRollbackStarted" && event.eventInstanceId in clusterRollBacks){
                     clusterRollBacks[event.eventInstanceId]["start"] = event;
                 }
             });
@@ -322,10 +322,10 @@ module Sfx {
             Object.keys(clusterRollBacks).forEach(eventInstanceId => {
                 const data = clusterRollBacks[eventInstanceId];
                 this.parseClusterUpgradeAndRollback(data.complete, data.start, items, startOfRange);
-            })
+            });
 
             //Display a pending upgrade
-            if(upgradeClusterStarted) {
+            if (upgradeClusterStarted) {
                 this.parseClusterUpgradeStarted(upgradeClusterStarted, items, endOfRange);
             }
 
@@ -335,24 +335,22 @@ module Sfx {
                 {id: ClusterTimelineGenerator.seedNodeStatus, content: ClusterTimelineGenerator.seedNodeStatus}
             ]);
 
-            console.log(items);
-
             return {
                 groups,
                 items
             };
         }
 
-        parseClusterUpgradeAndRollback(rollbackCompleteEvent: ClusterEvent, rollbackStartedEvent: ClusterEvent, items: vis.DataSet<vis.DataItem>, startOfRange: Date){
+        parseClusterUpgradeAndRollback(rollbackCompleteEvent: ClusterEvent, rollbackStartedEvent: ClusterEvent, items: vis.DataSet<vis.DataItem>, startOfRange: Date) {
             const rollbackEnd = rollbackCompleteEvent.timeStamp;
 
             let rollbackStarted = startOfRange.toISOString();
             //wont always get this event
-            if(rollbackStartedEvent){
+            if (rollbackStartedEvent) {
                 rollbackStarted = rollbackStartedEvent.timeStamp;
                 const rollbackStartedDate = new Date(rollbackEnd);
                 const upgradeDuration = rollbackCompleteEvent.eventProperties["OverallUpgradeElapsedTimeInMs"];
-    
+
                 const upgradeStart = new Date(rollbackStartedDate.getTime() - upgradeDuration).toISOString();
                 //roll forward
                 items.add({
@@ -439,7 +437,7 @@ module Sfx {
                 type: "range",
                 title: tooltipFormat(event, start, end),
                 className: rollBack  ? "orange" : "green"
-            }); 
+            });
         }
 
         parseSeedNodeStatus(event: ClusterEvent, items: vis.DataSet<vis.DataItem>, previousClusterHealthReport: ClusterEvent, endOfRange: Date): void {
@@ -500,7 +498,7 @@ module Sfx {
             return {
                 groups,
                 items
-            };        
+            };
         }
 
     }
@@ -530,7 +528,7 @@ module Sfx {
                         type: "range",
                         title: tooltipFormat(event, start, end, "Primary swap to " + label),
                         className: "green"
-                    })
+                    });
                 };
             });
 
@@ -541,7 +539,7 @@ module Sfx {
             return {
                 groups,
                 items
-            };        
+            };
         }
 
     }

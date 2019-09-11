@@ -114,3 +114,7 @@
 .noUi-connect{
   background-color: #0075c9;
 }
+
+.noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip { 
+  bottom:-32px 
+}
