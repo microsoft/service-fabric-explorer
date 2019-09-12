@@ -37,6 +37,10 @@ module Sfx {
             if (this.data.actionsEnabled()) {
                 this.setUpActions();
             }
+
+            if (this.data.actionsAdvancedEnabled()) {
+                this.setAdvancedActions();
+            }
         }
 
         public get isUpgrading(): boolean {
@@ -85,22 +89,10 @@ module Sfx {
         }
 
         public removeAdvancedActions(): void {
-            this.actions.collection = this.actions.collection.filter(action => ["deleteApplication", "enableApplicationBackup", "disableApplicationBackup", "suspendApplicationBackup", "resumeApplicationBackup"].indexOf(action.name) === -1);
+            this.actions.collection = this.actions.collection.filter(action => ["enableApplicationBackup", "disableApplicationBackup", "suspendApplicationBackup", "resumeApplicationBackup"].indexOf(action.name) === -1);
         }
 
         public setAdvancedActions() {
-            this.actions.add(new ActionWithConfirmationDialog(
-                this.data.$uibModal,
-                this.data.$q,
-                "deleteApplication",
-                "Delete Application",
-                "Deleting...",
-                () => this.delete(),
-                () => true,
-                "Confirm Application Deletion",
-                `Delete application ${this.name} from cluster ${this.data.$location.host()}?`,
-                this.name));
-
             this.actions.add(new ActionWithDialog(
                 this.data.$uibModal,
                 this.data.$q,
@@ -166,6 +158,20 @@ module Sfx {
                 () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true,
                 "Confirm Application Backup Resumption",
                 `Resume application backup for ${this.name} ?`,
+                this.name));
+        }
+
+        private setUpActions(): void {
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "deleteApplication",
+                "Delete Application",
+                "Deleting...",
+                () => this.delete(),
+                () => true,
+                "Confirm Application Deletion",
+                `Delete application ${this.name} from cluster ${this.data.$location.host()}?`,
                 this.name));
         }
 

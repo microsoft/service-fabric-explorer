@@ -162,7 +162,7 @@ module Sfx {
         }
 
         public getLatestPartitionBackup(partitionId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawPartitionBackup[]> {
-            return this.getFullCollection<IRawPartitionBackup>("Partitions/" + encodeURIComponent(partitionId) + "/$/GetBackups", "Gets the latest partition backup", RestClient.apiVersion64, messageHandler, undefined, undefined, undefined, undefined, true);
+            return this.getFullCollection2<IRawPartitionBackup>("Partitions/" + encodeURIComponent(partitionId) + "/$/GetBackups", "Gets the latest partition backup", RestClient.apiVersion64, messageHandler, undefined, undefined, undefined, undefined, true);
         }
 
         public getPartitionBackupList(partitionId: string, messageHandler?: IResponseMessageHandler, startDate?: Date, endDate?: Date, maxResults?: number): angular.IPromise<IRawPartitionBackup[]> {
@@ -802,7 +802,7 @@ module Sfx {
 
         private getApiUrl2(path: string, apiVersion = RestClient.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): string {
             // token to allow for invalidation of browser api call cache
-            let appUrl =  this.getApiUrl(url, apiVersion, continuationToken, false);
+            let appUrl =  this.getApiUrl(path, apiVersion, continuationToken, false);
             return appUrl +
                 `${maxResults === undefined || maxResults === null ? "" : `&MaxResults=${maxResults}`}${(startDate === undefined || startDate === null || endDate === undefined || endDate === null) ? "" : `&StartDateTimeFilter=${startDate.toISOString().substr(0, 19)}Z&EndDateTimeFilter=${endDate.toISOString().substr(0, 19)}Z`}${latest === true ? `&Latest=True` : ""}`;
         }
