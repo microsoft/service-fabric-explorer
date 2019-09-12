@@ -166,7 +166,7 @@ module Sfx {
         }
 
         public getPartitionBackupList(partitionId: string, messageHandler?: IResponseMessageHandler, startDate?: Date, endDate?: Date, maxResults?: number): angular.IPromise<IRawPartitionBackup[]> {
-            return this.getFullCollection<IRawPartitionBackup>("Partitions/" + encodeURIComponent(partitionId) + "/$/GetBackups", "Gets the partition backup list", RestClient.apiVersion64, messageHandler, undefined, startDate, endDate, maxResults);
+            return this.getFullCollection2<IRawPartitionBackup>("Partitions/" + encodeURIComponent(partitionId) + "/$/GetBackups", "Gets the partition backup list", RestClient.apiVersion64, messageHandler, undefined, startDate, endDate, maxResults);
         }
 
         public getBackupPolicy(backupName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawBackupPolicy> {
@@ -794,14 +794,21 @@ module Sfx {
          * @param path The Input URI path.
          * @param apiVersion An optional parameter to specify the API Version.  If no API Version specified, defaults to "1.0"  This is due to the platform having independent versions for each type of call.
          */
-        private getApiUrl(path: string, apiVersion = RestClient.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): string {
+        private getApiUrl(path: string, apiVersion = RestClient.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean): string {
             // token to allow for invalidation of browser api call cache
             return StandaloneIntegration.clusterUrl +
-                `/${path}${path.indexOf("?") === -1 ? "?" : "&"}api-version=${apiVersion ? apiVersion : RestClient.defaultApiVersion}${skipCacheToken === true ? "" : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ""}${maxResults === undefined || maxResults === null ? "" : `&MaxResults=${maxResults}`}${(startDate === undefined || startDate === null || endDate === undefined || endDate === null) ? "" : `&StartDateTimeFilter=${startDate.toISOString().substr(0, 19)}Z&EndDateTimeFilter=${endDate.toISOString().substr(0, 19)}Z`}${latest === true ? `&Latest=True` : ""}`;
+                `/${path}${path.indexOf("?") === -1 ? "?" : "&"}api-version=${apiVersion ? apiVersion : RestClient.defaultApiVersion}${skipCacheToken === true ? "" : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ""}`;
         }
 
-        private getFullCollection<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): angular.IPromise<T[]> {
-            let appUrl = this.getApiUrl(url, apiVersion, continuationToken, false, startDate, endDate, maxResults, latest);
+        private getApiUrl2(path: string, apiVersion = RestClient.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): string {
+            // token to allow for invalidation of browser api call cache
+            let appUrl =  this.getApiUrl(url, apiVersion, continuationToken, false);
+            return appUrl +
+                `${maxResults === undefined || maxResults === null ? "" : `&MaxResults=${maxResults}`}${(startDate === undefined || startDate === null || endDate === undefined || endDate === null) ? "" : `&StartDateTimeFilter=${startDate.toISOString().substr(0, 19)}Z&EndDateTimeFilter=${endDate.toISOString().substr(0, 19)}Z`}${latest === true ? `&Latest=True` : ""}`;
+        }
+
+        private getFullCollection<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string): angular.IPromise<T[]> {
+            let appUrl = this.getApiUrl(url, apiVersion, continuationToken, false);
             return this.get<IRawCollection<T>>(appUrl, apiDesc, messageHandler).then(response => {
                 if (response.data.ContinuationToken) {
                     return this.getFullCollection<T>(url, apiDesc, apiVersion, messageHandler, response.data.ContinuationToken).then(items => {
@@ -813,6 +820,21 @@ module Sfx {
                 return [];
             });
         }
+
+        private getFullCollection2<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): angular.IPromise<T[]> {
+            let appUrl = this.getApiUrl2(url, apiVersion, continuationToken, false, startDate, endDate, maxResults, latest);
+            return this.get<IRawCollection<T>>(appUrl, apiDesc, messageHandler).then(response => {
+                if (response.data.ContinuationToken) {
+                    return this.getFullCollection<T>(url, apiDesc, apiVersion, messageHandler, response.data.ContinuationToken).then(items => {
+                        return _.union(response.data.Items, items);
+                    });
+                }
+                return response.data.Items;
+            }).catch(err => {
+                return [];
+            });
+        }
+
 
         private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
             let result = this.wrapInCallbacks<T>(() => this.httpClient.getAsync(url));

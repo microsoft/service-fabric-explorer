@@ -84,7 +84,11 @@ module Sfx {
             return Utils.getHttpResponseData(this.data.restClient.getApplication(this.id, messageHandler));
         }
 
-        public setUpActions() {
+        public removeAdvancedActions(): void {
+            this.actions.collection = this.actions.collection.filter(action => ["deleteApplication", "enableApplicationBackup", "disableApplicationBackup", "suspendApplicationBackup", "resumeApplicationBackup"].indexOf(action.name) === -1);
+        }
+
+        public setAdvancedActions() {
             this.actions.add(new ActionWithConfirmationDialog(
                 this.data.$uibModal,
                 this.data.$q,
