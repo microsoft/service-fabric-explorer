@@ -135,7 +135,7 @@ module Sfx {
                     },
                     null
                 ));
-    
+
                 this.actions.add(new ActionWithConfirmationDialog(
                     this.data.$uibModal,
                     this.data.$q,
@@ -149,7 +149,7 @@ module Sfx {
                     "Confirm Application Backup Suspension",
                     `Suspend application backup for ${this.name} ?`,
                     this.name));
-    
+
                 this.actions.add(new ActionWithConfirmationDialog(
                     this.data.$uibModal,
                     this.data.$q,
