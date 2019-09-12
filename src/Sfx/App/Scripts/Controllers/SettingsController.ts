@@ -22,7 +22,7 @@ module Sfx {
 
             this.data.getNodes().then(nodeCollection => {
                 nodeCollection.setAdvancedMode(this.advancedModeState);
-            })
+            });
         }
     }
 

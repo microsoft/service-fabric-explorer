@@ -218,7 +218,7 @@ module Sfx {
             this.updatePolicy = new ActionUpdateBackupPolicy(data, raw);
         }
 
-        public updateBackupPolicy():void {
+        public updateBackupPolicy(): void {
             this.updatePolicy.runWithCallbacks.apply(this.updatePolicy);
         }
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawBackupPolicy> {

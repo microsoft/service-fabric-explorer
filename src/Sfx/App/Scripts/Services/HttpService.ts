@@ -35,7 +35,7 @@ module Sfx {
             this.$http.defaults.headers.common[Constants.SfxTelemetryMetadataName] = Constants.SfxTelemetryHeaderValue;
         }
 
-        public getAsync<T>(url: string): angular.IHttpPromise<T> {            
+        public getAsync<T>(url: string): angular.IHttpPromise<T> {
             return this.httpClient ? this.requestAsync({ method: "GET", url: url }) : this.$http.get(url);
         }
 

@@ -32,7 +32,7 @@ module Sfx {
             this.serviceTypes = new ServiceTypeCollection(data, this);
             this.upgradeProgress = new ApplicationUpgradeProgress(data, this);
             this.applicationBackupConfigurationInfoCollection = new ApplicationBackupConfigurationInfoCollection(data, this);
-            this.cleanBackup=false;
+            this.cleanBackup = false;
 
             if (this.data.actionsEnabled()) {
                 this.setUpActions();

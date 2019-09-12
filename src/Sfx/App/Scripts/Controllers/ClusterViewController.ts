@@ -186,13 +186,13 @@ module Sfx {
     }
     export class ActionCreateBackupPolicy extends ActionWithDialog {
 
-        public backupPolicy: IRawBackupPolicy; 
+        public backupPolicy: IRawBackupPolicy;
         public date: string;
         public retentionPolicyRequired: boolean;
         public RetentionPolicy: IRawRetentionPolicy;
         public weekDay: string[];
         public isSelected: boolean[];
-         
+
         constructor(data: DataService) {
             super(
                 data.$uibModal,
@@ -216,23 +216,6 @@ module Sfx {
             this.isSelected = [false, false, false, false, false, false, false];
         }
 
-        private createBackupPolicy(data: DataService): angular.IPromise<any> {
-            if (this.retentionPolicyRequired) {
-                this.RetentionPolicy.RetentionPolicyType = "Basic";
-                this.backupPolicy['RetentionPolicy'] = this.RetentionPolicy;
-            }
-            else
-                this.backupPolicy['RetentionPolicy'] = null;
-            if (this.backupPolicy.Schedule.ScheduleKind === 'TimeBased' && this.backupPolicy.Schedule.ScheduleFrequencyType === 'Weekly') {
-                this.backupPolicy.Schedule.RunDays = [];
-                for (let i = 0; i < 7; i++) {
-                    if (this.isSelected[i])
-                        this.backupPolicy.Schedule.RunDays.push(this.weekDay[i]);
-                }
-            }
-            return data.restClient.createBackupPolicy(this.backupPolicy);
-        }
-
         public add(): void {
             if (this.backupPolicy.Schedule.RunTimes === null || this.backupPolicy.Schedule.RunTimes === undefined)
                 this.backupPolicy.Schedule.RunTimes = [];
@@ -242,6 +225,27 @@ module Sfx {
 
         public deleteDate(index:number): void {
             this.backupPolicy.Schedule.RunTimes.splice(index,1);
+        }
+
+        private createBackupPolicy(data: DataService): angular.IPromise<any> {
+            if (this.retentionPolicyRequired) {
+                this.RetentionPolicy.RetentionPolicyType = "Basic";
+                this.backupPolicy["RetentionPolicy"] = this.RetentionPolicy;
+            }
+            else {
+                this.backupPolicy["RetentionPolicy"] = null;
+            }
+                
+            if (this.backupPolicy.Schedule.ScheduleKind === "TimeBased" && this.backupPolicy.Schedule.ScheduleFrequencyType === "Weekly") {
+                this.backupPolicy.Schedule.RunDays = [];
+                for (let i = 0; i < 7; i++) {
+                    if (this.isSelected[i])
+                    {
+                        this.backupPolicy.Schedule.RunDays.push(this.weekDay[i]);
+                    }
+                }
+            }
+            return data.restClient.createBackupPolicy(this.backupPolicy);
         }
     }
 
@@ -282,13 +286,15 @@ module Sfx {
             }
 
             this.backupPolicy = raw;
-            if (this.backupPolicy['RetentionPolicy']) {
+            if (this.backupPolicy["RetentionPolicy"]) {
                 this.retentionPolicyRequired = true;
-                this.RetentionPolicy = this.backupPolicy['RetentionPolicy'];
+                this.RetentionPolicy = this.backupPolicy["RetentionPolicy"];
             }
             if (this.backupPolicy.Schedule.RunDays) {
                 for (let day of this.backupPolicy.Schedule.RunDays)
+                {
                     this.isSelected[dayIndexMapping[day]] = true;
+                }
             }
             this.delete = () => {
                 data.restClient.deleteBackupPolicy(this.backupPolicy.Name);
@@ -298,11 +304,14 @@ module Sfx {
         private updateBackupPolicy(data: DataService): angular.IPromise<any> {
             if (this.retentionPolicyRequired) {
                 this.RetentionPolicy.RetentionPolicyType = "Basic";
-                this.backupPolicy['RetentionPolicy'] = this.RetentionPolicy;
+                this.backupPolicy["RetentionPolicy"] = this.RetentionPolicy;
             }
             else
-                this.backupPolicy['RetentionPolicy'] = null;
-            if (this.backupPolicy.Schedule.ScheduleKind === 'TimeBased' && this.backupPolicy.Schedule.ScheduleFrequencyType === 'Weekly') {
+            {
+                this.backupPolicy["RetentionPolicy"] = null;
+            }
+
+            if (this.backupPolicy.Schedule.ScheduleKind === "TimeBased" && this.backupPolicy.Schedule.ScheduleFrequencyType === "Weekly") {
                 this.backupPolicy.Schedule.RunDays = [];
                 for (let i = 0; i < 7; i++) {
                     if (this.isSelected[i])

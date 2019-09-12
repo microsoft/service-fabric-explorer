@@ -165,13 +165,13 @@ module Sfx {
             return this.getFullCollection<IRawPartitionBackup>("Partitions/" + encodeURIComponent(partitionId) + "/$/GetBackups", "Gets the latest partition backup", RestClient.apiVersion64, messageHandler, undefined, undefined, undefined, undefined, true);
         }
 
-        public getPartitionBackupList(partitionId: string, messageHandler?: IResponseMessageHandler,startDate?:Date,endDate?:Date, maxResults?: number): angular.IPromise<IRawPartitionBackup[]> {
+        public getPartitionBackupList(partitionId: string, messageHandler?: IResponseMessageHandler, startDate?: Date, endDate?: Date, maxResults?: number): angular.IPromise<IRawPartitionBackup[]> {
             return this.getFullCollection<IRawPartitionBackup>("Partitions/" + encodeURIComponent(partitionId) + "/$/GetBackups", "Gets the partition backup list", RestClient.apiVersion64, messageHandler, undefined, startDate, endDate, maxResults);
         }
 
         public getBackupPolicy(backupName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawBackupPolicy> {
             let url = "BackupRestore/BackupPolicies/" + encodeURIComponent(backupName) + "/";
-            return this.get(this.getApiUrl(url,RestClient.apiVersion64), "Get backup policy", messageHandler);
+            return this.get(this.getApiUrl(url, RestClient.apiVersion64), "Get backup policy", messageHandler);
         }
 
         public getNodeHealth(nodeName: string,
@@ -470,7 +470,7 @@ module Sfx {
 
         public suspendApplicationBackup(applicationId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Applications/" + encodeURIComponent(applicationId) + "/$/SuspendBackup";
-            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Suspend Application Backup",null, messageHandler);
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Suspend Application Backup", null, messageHandler);
         }
 
         public resumeApplicationBackup(applicationId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
@@ -504,12 +504,12 @@ module Sfx {
             return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Backup Policy deletion", null, messageHandler);
         }
 
-        public updateBackupPolicy(backupPolicy: IRawBackupPolicy,messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+        public updateBackupPolicy(backupPolicy: IRawBackupPolicy, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "BackupRestore/BackupPolicies/" + encodeURIComponent(backupPolicy.Name) + "/$/Update";
             return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Backup Policy updation", backupPolicy, messageHandler);
         }
 
-        public createBackupPolicy(backupPolicy: IRawBackupPolicy,messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+        public createBackupPolicy(backupPolicy: IRawBackupPolicy, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "BackupRestore/BackupPolicies/$/Create";
             return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Backup Policy creation", backupPolicy, messageHandler);
         }
@@ -517,14 +517,18 @@ module Sfx {
         public triggerPartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/Backup";
             if (partition.partitionBackupInfo.BackupTimeout)
+            {
                 url += "?BackupTimeout=" + partition.partitionBackupInfo.BackupTimeout.toString();
-            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Partition Backup trigger", { "BackupStorage":partition.partitionBackupInfo.storage }, messageHandler);
+            }
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Partition Backup trigger", { "BackupStorage": partition.partitionBackupInfo.storage }, messageHandler);
         }
 
         public restorePartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/Restore";
             if (partition.partitionBackupInfo.RestoreTimeout)
+            {
                 url += "?RestoreTimeout=" + partition.partitionBackupInfo.RestoreTimeout.toString();
+            }
             return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Partition Backup restore", { "BackupId": partition.partitionBackupInfo.backupId, "BackupStorage": partition.partitionBackupInfo.storage, "BackupLocation": partition.partitionBackupInfo.backupLocation }, messageHandler);
         }
 
@@ -792,13 +796,13 @@ module Sfx {
          * @param path The Input URI path.
          * @param apiVersion An optional parameter to specify the API Version.  If no API Version specified, defaults to "1.0"  This is due to the platform having independent versions for each type of call.
          */
-        private getApiUrl(path: string, apiVersion = RestClient.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean, startDate?: Date, endDate?: Date, maxResults?: number,latest?:boolean): string {
+        private getApiUrl(path: string, apiVersion = RestClient.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): string {
             // token to allow for invalidation of browser api call cache
             return StandaloneIntegration.clusterUrl +
-                `/${path}${path.indexOf("?") === -1 ? "?" : "&"}api-version=${apiVersion ? apiVersion : RestClient.defaultApiVersion}${skipCacheToken === true ? "" : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ""}${maxResults === undefined || maxResults === null ? "" : `&MaxResults=${maxResults}`}${(startDate === undefined || startDate === null || endDate == undefined || endDate === null) ? "" : `&StartDateTimeFilter=${startDate.toISOString().substr(0, 19)}Z&EndDateTimeFilter=${endDate.toISOString().substr(0, 19)}Z`}${latest === true ? `&Latest=True` : ""}`;
+                `/${path}${path.indexOf("?") === -1 ? "?" : "&"}api-version=${apiVersion ? apiVersion : RestClient.defaultApiVersion}${skipCacheToken === true ? "" : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ""}${maxResults === undefined || maxResults === null ? "" : `&MaxResults=${maxResults}`}${(startDate === undefined || startDate === null || endDate === undefined || endDate === null) ? "" : `&StartDateTimeFilter=${startDate.toISOString().substr(0, 19)}Z&EndDateTimeFilter=${endDate.toISOString().substr(0, 19)}Z`}${latest === true ? `&Latest=True` : ""}`;
         }
 
-        private getFullCollection<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string,startDate?:Date,endDate?:Date,maxResults?: number,latest?:boolean): angular.IPromise<T[]> {
+        private getFullCollection<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string,startDate?: Date,endDate?: Date, maxResults?: number, latest?: boolean): angular.IPromise<T[]> {
             let appUrl = this.getApiUrl(url, apiVersion, continuationToken, false, startDate, endDate, maxResults, latest);
             return this.get<IRawCollection<T>>(appUrl, apiDesc, messageHandler).then(response => {
                 if (response.data.ContinuationToken) {

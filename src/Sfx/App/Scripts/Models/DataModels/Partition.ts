@@ -46,7 +46,7 @@ module Sfx {
         }
 
         public get IsStatefulServiceAndSystemService(): Boolean {
-            return this.isStatefulService && this.parent.parent.raw.TypeName !== 'System';
+            return this.isStatefulService && this.parent.parent.raw.TypeName !== "System";
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawPartition> {
@@ -55,7 +55,9 @@ module Sfx {
 
         private setUpActions(): void {
             if (this.isStatelessService)
+            {
                 return;
+            }
             this.actions.add(new ActionWithDialog(
                 this.data.$uibModal,
                 this.data.$q,

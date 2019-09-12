@@ -26,7 +26,7 @@ module Sfx {
                 "essentials": { name: "Essentials" },
                 "details": { name: "Details" },
                 "events": { name: "Events" },
-                "backups": {name:"Backups"}
+                "backups": { name: "Backups" }
             });
 
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
@@ -61,7 +61,7 @@ module Sfx {
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.partitionEvents = this.data.createPartitionEventList(this.partitionId);
             this.$scope.partitionBackupListSettings = this.settings.getNewOrExistingListSettings("partitionBackups", [null], [
-                new ListColumnSetting("raw.BackupId", "BackupId", ["raw.BackupId"], false, (item, property) => `<a href='${item.parent.viewPath}/tab/backups'>${property}</a>` , 1, item => item.action.runWithCallbacks.apply(item.action)), 
+                new ListColumnSetting("raw.BackupId", "BackupId", ["raw.BackupId"], false, (item, property) => `<a href='${item.parent.viewPath}/tab/backups'>${property}</a>` , 1, item => item.action.runWithCallbacks.apply(item.action)),
                 new ListColumnSetting("raw.BackupType", "BackupType"),
                 new ListColumnSetting("raw.EpochOfLastBackupRecord.DataLossVersion", "Data Loss Version"),
                 new ListColumnSetting("raw.EpochOfLastBackupRecord.ConfigurationVersion", "Configuration Version"),
@@ -77,13 +77,15 @@ module Sfx {
                     this.$scope.partition = partition;
                     this.data.backupPolicies.refresh(messageHandler);
                     if (this.$scope.partition.isStatefulService)
+                    {
                         this.$scope.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler);
-                    if (this.$scope.partition.isStatelessService || partition.parent.parent.raw.TypeName === 'System') {
+                    }
+                    if (this.$scope.partition.isStatelessService || partition.parent.parent.raw.TypeName === "System") {
                         this.tabs = {
                             "essentials": { name: "Essentials" },
                             "details": { name: "Details" },
                             "events": { name: "Events" },
-                        }
+                        };
                         this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
                         this.tabs["details"].refresh = (messageHandler) => this.refreshDetails(messageHandler);
                         this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
@@ -118,7 +120,9 @@ module Sfx {
 
         private refreshEssentials(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             if (this.$scope.partition.isStatefulService)
+            {
                 this.$scope.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler);
+            }
             return this.$scope.partition.replicas.refresh(messageHandler);
         }
 
@@ -128,7 +132,9 @@ module Sfx {
 
         private refreshBackups(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             if (this.$scope.partition.isStatefulService)
+            {
                 return this.$scope.partition.partitionBackupInfo.partitionBackupList.refresh(messageHandler);
+            }
         }
     }
 

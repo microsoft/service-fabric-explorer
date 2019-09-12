@@ -60,7 +60,7 @@ module Sfx {
         PartitionId: string;
     }
 
-    export interface IRawBackupProgressInfo{
+    export interface IRawBackupProgressInfo {
         RestoreState: string;
         TimeStampUtc: string;
         RestoredEpoch: IRawEpochOfLastBackupRecord;

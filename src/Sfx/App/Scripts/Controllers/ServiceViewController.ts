@@ -63,7 +63,7 @@ module Sfx {
             ]);
 
             this.$scope.serviceBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings("serviceBackupConfigurationInfoListSettings", ["raw.PolicyName"], [
-                new ListColumnSetting("raw.PolicyName", "Policy Name", ["raw.PolicyName"], false, (item, property) => "<a href='" + item.parent.viewPath + "/tab/details'>" + property + "</a>", 1, item => item.action.runWithCallbacks.apply(item.action)),
+                new ListColumnSetting("raw.PolicyName", "Policy Name", ["raw.PolicyName"], false, (item, property) => `<a href='${item.parent.viewPath}/tab/details'>${property}</a>`, 1, item => item.action.runWithCallbacks.apply(item.action)),
                 new ListColumnSetting("raw.Kind", "Kind"),
                 new ListColumnSetting("raw.PolicyInheritedFrom", "Policy Inherited From"),
                 new ListColumnSetting("raw.PartitionId", "Partition Id"),
@@ -83,7 +83,9 @@ module Sfx {
                 .then(service => {
                     this.$scope.service = service;
                     if (this.$scope.service.isStatefulService)
+                    {
                         this.$scope.service.serviceBackupConfigurationInfoCollection.refresh(messageHandler);
+                    }
                     this.data.backupPolicies.refresh(messageHandler);
 
                     return this.$q.all([

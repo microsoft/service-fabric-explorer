@@ -273,10 +273,10 @@ module Sfx {
         public setAdvancedMode(state: boolean): void {
             this.collection.forEach( node => {
                 node.removeAdvancedActions();
-                if(state){
+                if (state) {
                     node.setAdvancedActions();
                 }
-            })
+            });
         }
 
         protected get indexPropery(): string {
@@ -532,7 +532,6 @@ module Sfx {
             .then(items => {
                 return _.map(items, raw => new ApplicationBackupConfigurationInfo(this.data, raw, this.parent));
             });
-                   
         }
     }
 
@@ -578,7 +577,7 @@ module Sfx {
                 });
         }
     }
-   
+
     export class ServiceTypeCollection extends DataModelCollectionBase<ServiceType> {
         public constructor(data: DataService, public parent: ApplicationType | Application) {
             super(data, parent);
