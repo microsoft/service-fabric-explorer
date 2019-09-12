@@ -37,10 +37,6 @@ module Sfx {
             if (this.data.actionsEnabled()) {
                 this.setUpActions();
             }
-
-            if (this.data.actionsAdvancedEnabled()) {
-                this.setAdvancedActions();
-            }
         }
 
         public get isUpgrading(): boolean {
@@ -88,79 +84,6 @@ module Sfx {
             return Utils.getHttpResponseData(this.data.restClient.getApplication(this.id, messageHandler));
         }
 
-        public removeAdvancedActions(): void {
-            this.actions.collection = this.actions.collection.filter(action => ["enableApplicationBackup", "disableApplicationBackup", "suspendApplicationBackup", "resumeApplicationBackup"].indexOf(action.name) === -1);
-        }
-
-        public setAdvancedActions() {
-            this.actions.add(new ActionWithDialog(
-                this.data.$uibModal,
-                this.data.$q,
-                "enableApplicationBackup",
-                "Enable/Update Application Backup",
-                "Enabling Application Backup",
-                () => this.data.restClient.enableApplicationBackup(this).then(() => {
-                    this.applicationBackupConfigurationInfoCollection.refresh();
-                }),
-                () => true,
-                <angular.ui.bootstrap.IModalSettings>{
-                    templateUrl: "partials/enableBackup.html",
-                    controller: ActionController,
-                    resolve: {
-                        action: () => this
-                    }
-                },
-                null
-            ));
-            this.actions.add(new ActionWithDialog(
-                this.data.$uibModal,
-                this.data.$q,
-                "disableApplicationBackup",
-                "Disable Application Backup",
-                "Disabling Application Backup",
-                () => this.data.restClient.disableApplicationBackup(this).then(() => {
-                    this.applicationBackupConfigurationInfoCollection.refresh();
-                }),
-                () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application",
-                <angular.ui.bootstrap.IModalSettings>{
-                    templateUrl: "partials/disableBackup.html",
-                    controller: ActionController,
-                    resolve: {
-                        action: () => this
-                    }
-                },
-                null
-            ));
-
-            this.actions.add(new ActionWithConfirmationDialog(
-                this.data.$uibModal,
-                this.data.$q,
-                "suspendApplicationBackup",
-                "Suspend Application Backup",
-                "Suspending...",
-                () => this.data.restClient.suspendApplicationBackup(this.id).then(() => {
-                    this.applicationBackupConfigurationInfoCollection.refresh();
-                }),
-                () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === false,
-                "Confirm Application Backup Suspension",
-                `Suspend application backup for ${this.name} ?`,
-                this.name));
-
-            this.actions.add(new ActionWithConfirmationDialog(
-                this.data.$uibModal,
-                this.data.$q,
-                "resumeApplicationBackup",
-                "Resume Application Backup",
-                "Resuming...",
-                () => this.data.restClient.resumeApplicationBackup(this.id).then(() => {
-                    this.applicationBackupConfigurationInfoCollection.refresh();
-                }),
-                () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true,
-                "Confirm Application Backup Resumption",
-                `Resume application backup for ${this.name} ?`,
-                this.name));
-        }
-
         private setUpActions(): void {
             this.actions.add(new ActionWithConfirmationDialog(
                 this.data.$uibModal,
@@ -173,6 +96,73 @@ module Sfx {
                 "Confirm Application Deletion",
                 `Delete application ${this.name} from cluster ${this.data.$location.host()}?`,
                 this.name));
+
+                this.actions.add(new ActionWithDialog(
+                    this.data.$uibModal,
+                    this.data.$q,
+                    "enableApplicationBackup",
+                    "Enable/Update Application Backup",
+                    "Enabling Application Backup",
+                    () => this.data.restClient.enableApplicationBackup(this).then(() => {
+                        this.applicationBackupConfigurationInfoCollection.refresh();
+                    }),
+                    () => true,
+                    <angular.ui.bootstrap.IModalSettings>{
+                        templateUrl: "partials/enableBackup.html",
+                        controller: ActionController,
+                        resolve: {
+                            action: () => this
+                        }
+                    },
+                    null
+                ));
+                this.actions.add(new ActionWithDialog(
+                    this.data.$uibModal,
+                    this.data.$q,
+                    "disableApplicationBackup",
+                    "Disable Application Backup",
+                    "Disabling Application Backup",
+                    () => this.data.restClient.disableApplicationBackup(this).then(() => {
+                        this.applicationBackupConfigurationInfoCollection.refresh();
+                    }),
+                    () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application",
+                    <angular.ui.bootstrap.IModalSettings>{
+                        templateUrl: "partials/disableBackup.html",
+                        controller: ActionController,
+                        resolve: {
+                            action: () => this
+                        }
+                    },
+                    null
+                ));
+    
+                this.actions.add(new ActionWithConfirmationDialog(
+                    this.data.$uibModal,
+                    this.data.$q,
+                    "suspendApplicationBackup",
+                    "Suspend Application Backup",
+                    "Suspending...",
+                    () => this.data.restClient.suspendApplicationBackup(this.id).then(() => {
+                        this.applicationBackupConfigurationInfoCollection.refresh();
+                    }),
+                    () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === false,
+                    "Confirm Application Backup Suspension",
+                    `Suspend application backup for ${this.name} ?`,
+                    this.name));
+    
+                this.actions.add(new ActionWithConfirmationDialog(
+                    this.data.$uibModal,
+                    this.data.$q,
+                    "resumeApplicationBackup",
+                    "Resume Application Backup",
+                    "Resuming...",
+                    () => this.data.restClient.resumeApplicationBackup(this.id).then(() => {
+                        this.applicationBackupConfigurationInfoCollection.refresh();
+                    }),
+                    () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true,
+                    "Confirm Application Backup Resumption",
+                    `Resume application backup for ${this.name} ?`,
+                    this.name));
         }
 
         private cleanUpApplicationReplicas() {
