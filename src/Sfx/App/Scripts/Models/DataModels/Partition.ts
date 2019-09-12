@@ -10,18 +10,7 @@ module Sfx {
         public replicas: ReplicaOnPartitionCollection;
         public loadInformation: PartitionLoadInformation;
         public health: PartitionHealth;
-        public partitionBackupConfigurationInfo: PartitionBackupConfigurationInfo;
-        public partitionBackupList: PartitionBackupCollection;
-        public latestPartitionBackup: SinglePartitionBackupCollection;
-        public backupPolicyName: string;
-        public cleanBackup: boolean;
-        public storage: IRawStorage;
-        public backupId: string;
-        public backupLocation: string;
-        public partitionBackupProgress: PartitionBackupProgress;
-        public partitionRestoreProgress: PartitionRestoreProgress;
-        public BackupTimeout: number;
-        public RestoreTimeout: number;
+        public partitionBackupInfo: PartitionBackupInfo;
 
         public constructor(data: DataService, raw: IRawPartition, public parent: Service) {
             super(data, raw, parent);
@@ -30,15 +19,10 @@ module Sfx {
             this.replicas = new ReplicaOnPartitionCollection(this.data, this);
             this.loadInformation = new PartitionLoadInformation(this.data, this);
             this.health = new PartitionHealth(this.data, this, HealthStateFilterFlags.Default, HealthStateFilterFlags.None);
-            this.partitionBackupConfigurationInfo = new PartitionBackupConfigurationInfo(this.data, this);
-            this.partitionBackupProgress = new PartitionBackupProgress(this.data, this);
-            this.partitionRestoreProgress = new PartitionRestoreProgress(this.data, this);
-            this.partitionBackupList = new PartitionBackupCollection(this.data, this);
-            this.latestPartitionBackup = new SinglePartitionBackupCollection(this.data, this);
+            this.partitionBackupInfo = new PartitionBackupInfo(this.data, this);
             if (this.data.actionsEnabled()) {
                 this.setUpActions();
             }
-            this.cleanBackup = false;
         }
 
         public get isStatefulService(): boolean {
@@ -61,6 +45,10 @@ module Sfx {
             return this.data.routes.getPartitionViewPath(this.parent.parent.raw.TypeName, this.parent.parent.id, this.parent.id, this.id);
         }
 
+        public get IsStatefulServiceAndSystemService(): Boolean {
+            return this.isStatefulService && this.parent.parent.raw.TypeName !== 'System';
+        }
+
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawPartition> {
             return Utils.getHttpResponseData(this.data.restClient.getPartition(this.parent.parent.id, this.parent.id, this.id, messageHandler));
         }
@@ -75,7 +63,7 @@ module Sfx {
                 "Enable/Update Partition Backup",
                 "Enabling Partition Backup",
                 () => this.data.restClient.enablePartitionBackup(this).then(() => {
-                    this.partitionBackupConfigurationInfo.refresh();
+                    this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
                 }),
                 () => true,
                 <angular.ui.bootstrap.IModalSettings>{
@@ -95,9 +83,9 @@ module Sfx {
                 "Disable Partition Backup",
                 "Disabling Partition Backup",
                 () => this.data.restClient.disablePartitionBackup(this).then(() => {
-                    this.partitionBackupConfigurationInfo.refresh();
+                    this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
                 }),
-                () => this.partitionBackupConfigurationInfo.raw && this.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition",
+                () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition",
                 <angular.ui.bootstrap.IModalSettings>{
                     templateUrl: "partials/disableBackup.html",
                     controller: ActionController,
@@ -115,9 +103,9 @@ module Sfx {
                 "Suspend Partition Backup",
                 "Suspending...",
                 () => this.data.restClient.suspendPartitionBackup(this.id).then(() => {
-                    this.partitionBackupConfigurationInfo.refresh();
+                    this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
                 }),
-                () => this.partitionBackupConfigurationInfo.raw && this.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition" && this.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === false,
+                () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition" && this.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === false,
                 "Confirm Partition Backup Suspension",
                 `Suspend partition backup for ${this.name} ?`,
                 this.name));
@@ -129,9 +117,9 @@ module Sfx {
                 "Resume Partition Backup",
                 "Resuming...",
                 () => this.data.restClient.resumePartitionBackup(this.id).then(() => {
-                    this.partitionBackupConfigurationInfo.refresh();
+                    this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
                 }),
-                () => this.partitionBackupConfigurationInfo.raw && this.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition" && this.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === true,
+                () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === true,
                 "Confirm Partition Backup Resumption",
                 `Resume partition backup for ${this.name} ?`,
                 this.name));
@@ -236,80 +224,6 @@ module Sfx {
         public get lastReportedUtc(): string {
             return TimeUtils.timestampToUTCString(this.raw.LastReportedUtc);
         }
-    }
-
-    export class PartitionBackupConfigurationInfo extends DataModelBase<IRawPartitionBackupConfigurationInfo> {
-        public decorators: IDecorators = {
-            hideList: [
-                "ServiceName",
-                "PartitionId"
-            ]
-        };
-
-        public constructor(data: DataService,public parent: Partition){
-            super(data,null ,parent);
-        }
-
-        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawPartitionBackupConfigurationInfo> {
-            return Utils.getHttpResponseData(this.data.restClient.getPartitionBackupConfigurationInfo(this.parent.id, messageHandler));
-        }
-    }
-
-    export class PartitionBackupProgress extends DataModelBase<IRawBackupProgressInfo> {
-
-        public constructor(data: DataService, public parent: Partition) {
-            super(data, null, parent);
-        }
-
-        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawBackupProgressInfo> {
-            return Utils.getHttpResponseData(this.data.restClient.getPartitionBackupProgress(this.parent.id, messageHandler));
-        }
-    }
-
-    export class PartitionRestoreProgress extends DataModelBase<IRawRestoreProgressInfo> {
-
-        public constructor(data: DataService, public parent: Partition) {
-            super(data, null, parent);
-        }
-
-        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawRestoreProgressInfo> {
-            return Utils.getHttpResponseData(this.data.restClient.getPartitionRestoreProgress(this.parent.id, messageHandler));
-        }
-    }
-
-    export class PartitionBackup extends DataModelBase<IRawPartitionBackup> {
-        public decorators: IDecorators = {
-            hideList: [
-                "ApplicationName",
-                "ServiceName",
-                "PartitionInformation",
-            ]
-        };
-        public action: ActionWithDialog;
-        public constructor(data: DataService, raw: IRawPartitionBackup, public parent: Partition) {
-            super(data, raw, parent);
-            if (raw)
-                this.action = new ActionWithDialog(
-                    data.$uibModal,
-                    data.$q,
-                    raw.BackupId,
-                    raw.BackupId,
-                    "Creating",
-                    null,
-                    () => true,
-                    <angular.ui.bootstrap.IModalSettings>{
-                        templateUrl: "partials/partitionBackup.html",
-                        controller: ActionController,
-                        resolve: {
-                            action: () => this
-                        }
-                    },
-                    null);
-            else
-                this.action = null;
-        }
-        
-
     }
 }
 

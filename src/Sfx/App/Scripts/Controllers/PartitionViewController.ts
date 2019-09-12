@@ -61,7 +61,7 @@ module Sfx {
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.partitionEvents = this.data.createPartitionEventList(this.partitionId);
             this.$scope.partitionBackupListSettings = this.settings.getNewOrExistingListSettings("partitionBackups", [null], [
-                new ListColumnSetting("raw.BackupId", "BackupId", ["raw.BackupId"], false, (item, property) => "<a href='" + item.parent.viewPath +"/tab/backups'>" + property + "</a>", 1, item => item.action.runWithCallbacks.apply(item.action)), 
+                new ListColumnSetting("raw.BackupId", "BackupId", ["raw.BackupId"], false, (item, property) => `<a href='${item.parent.viewPath}/tab/backups'>${property}</a>` , 1, item => item.action.runWithCallbacks.apply(item.action)), 
                 new ListColumnSetting("raw.BackupType", "BackupType"),
                 new ListColumnSetting("raw.EpochOfLastBackupRecord.DataLossVersion", "Data Loss Version"),
                 new ListColumnSetting("raw.EpochOfLastBackupRecord.ConfigurationVersion", "Configuration Version"),
@@ -77,7 +77,7 @@ module Sfx {
                     this.$scope.partition = partition;
                     this.data.backupPolicies.refresh(messageHandler);
                     if (this.$scope.partition.isStatefulService)
-                        this.$scope.partition.partitionBackupConfigurationInfo.refresh(messageHandler);
+                        this.$scope.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler);
                     if (this.$scope.partition.isStatelessService || partition.parent.parent.raw.TypeName === 'System') {
                         this.tabs = {
                             "essentials": { name: "Essentials" },
@@ -111,14 +111,14 @@ module Sfx {
         }
 
         private refreshDetails(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            this.$scope.partition.partitionBackupProgress.refresh(messageHandler);
-            this.$scope.partition.partitionRestoreProgress.refresh(messageHandler);
+            this.$scope.partition.partitionBackupInfo.partitionBackupProgress.refresh(messageHandler);
+            this.$scope.partition.partitionBackupInfo.partitionRestoreProgress.refresh(messageHandler);
             return this.$scope.partition.loadInformation.refresh(messageHandler);
         }
 
         private refreshEssentials(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             if (this.$scope.partition.isStatefulService)
-                this.$scope.partition.latestPartitionBackup.refresh(messageHandler);
+                this.$scope.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler);
             return this.$scope.partition.replicas.refresh(messageHandler);
         }
 
@@ -128,7 +128,7 @@ module Sfx {
 
         private refreshBackups(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             if (this.$scope.partition.isStatefulService)
-                return this.$scope.partition.partitionBackupList.refresh(messageHandler);
+                return this.$scope.partition.partitionBackupInfo.partitionBackupList.refresh(messageHandler);
         }
     }
 

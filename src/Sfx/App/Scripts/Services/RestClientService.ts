@@ -516,16 +516,16 @@ module Sfx {
 
         public triggerPartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/Backup";
-            if (partition.BackupTimeout)
-                url += "?BackupTimeout=" + partition.BackupTimeout.toString();
-            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Partition Backup trigger", { "BackupStorage":partition.storage }, messageHandler);
+            if (partition.partitionBackupInfo.BackupTimeout)
+                url += "?BackupTimeout=" + partition.partitionBackupInfo.BackupTimeout.toString();
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Partition Backup trigger", { "BackupStorage":partition.partitionBackupInfo.storage }, messageHandler);
         }
 
         public restorePartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/Restore";
-            if (partition.RestoreTimeout)
-                url += "?RestoreTimeout=" + partition.RestoreTimeout.toString();
-            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Partition Backup restore", { "BackupId": partition.backupId, "BackupStorage": partition.storage, "BackupLocation": partition.backupLocation }, messageHandler);
+            if (partition.partitionBackupInfo.RestoreTimeout)
+                url += "?RestoreTimeout=" + partition.partitionBackupInfo.RestoreTimeout.toString();
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Partition Backup restore", { "BackupId": partition.partitionBackupInfo.backupId, "BackupStorage": partition.partitionBackupInfo.storage, "BackupLocation": partition.partitionBackupInfo.backupLocation }, messageHandler);
         }
 
         public getServiceDescription(applicationId: string, serviceId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawServiceDescription> {
