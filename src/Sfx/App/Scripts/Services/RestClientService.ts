@@ -460,12 +460,12 @@ module Sfx {
 
         public enablePartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/EnableBackup";
-            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Enable Service Backup", { BackupPolicyName: partition.backupPolicyName }, messageHandler);
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Enable Service Backup", { BackupPolicyName: partition.partitionBackupInfo.backupPolicyName }, messageHandler);
         }
 
         public disablePartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/DisableBackup";
-            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Disable Service Backup", { CleanBackup: partition.cleanBackup }, messageHandler);
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Disable Service Backup", { CleanBackup: partition.partitionBackupInfo.cleanBackup }, messageHandler);
         }
 
         public suspendApplicationBackup(applicationId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {

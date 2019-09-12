@@ -105,7 +105,7 @@ module Sfx {
                 () => this.data.restClient.suspendPartitionBackup(this.id).then(() => {
                     this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
                 }),
-                () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition" && this.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === false,
+                () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === false,
                 "Confirm Partition Backup Suspension",
                 `Suspend partition backup for ${this.name} ?`,
                 this.name));
