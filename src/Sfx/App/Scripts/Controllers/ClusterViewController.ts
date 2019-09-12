@@ -301,8 +301,7 @@ module Sfx {
         }
 
         public add(): void {
-            if (this.backupPolicy.Schedule.RunTimes === null || this.backupPolicy.Schedule.RunTimes === undefined)
-            {
+            if (this.backupPolicy.Schedule.RunTimes === null || this.backupPolicy.Schedule.RunTimes === undefined) {
                 this.backupPolicy.Schedule.RunTimes = [];
             }
             this.backupPolicy.Schedule.RunTimes.push(this.date);
@@ -324,8 +323,7 @@ module Sfx {
             if (this.backupPolicy.Schedule.ScheduleKind === "TimeBased" && this.backupPolicy.Schedule.ScheduleFrequencyType === "Weekly") {
                 this.backupPolicy.Schedule.RunDays = [];
                 for (let i = 0; i < 7; i++) {
-                    if (this.isSelected[i])
-                    {
+                    if (this.isSelected[i]) {
                         this.backupPolicy.Schedule.RunDays.push(this.weekDay[i]);
                     }
                 }
