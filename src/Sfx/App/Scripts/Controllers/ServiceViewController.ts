@@ -82,8 +82,7 @@ module Sfx {
             return this.data.getService(this.appId, this.serviceId, true, messageHandler)
                 .then(service => {
                     this.$scope.service = service;
-                    if (this.$scope.service.isStatefulService)
-                    {
+                    if (this.$scope.service.isStatefulService) {
                         this.$scope.service.serviceBackupConfigurationInfoCollection.refresh(messageHandler);
                     }
                     this.data.backupPolicies.refresh(messageHandler);

@@ -516,8 +516,7 @@ module Sfx {
 
         public triggerPartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/Backup";
-            if (partition.partitionBackupInfo.BackupTimeout)
-            {
+            if (partition.partitionBackupInfo.BackupTimeout) {
                 url += "?BackupTimeout=" + partition.partitionBackupInfo.BackupTimeout.toString();
             }
             return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Partition Backup trigger", { "BackupStorage": partition.partitionBackupInfo.storage }, messageHandler);
@@ -525,8 +524,7 @@ module Sfx {
 
         public restorePartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
             let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/Restore";
-            if (partition.partitionBackupInfo.RestoreTimeout)
-            {
+            if (partition.partitionBackupInfo.RestoreTimeout) {
                 url += "?RestoreTimeout=" + partition.partitionBackupInfo.RestoreTimeout.toString();
             }
             return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Partition Backup restore", { "BackupId": partition.partitionBackupInfo.backupId, "BackupStorage": partition.partitionBackupInfo.storage, "BackupLocation": partition.partitionBackupInfo.backupLocation }, messageHandler);
@@ -802,7 +800,7 @@ module Sfx {
                 `/${path}${path.indexOf("?") === -1 ? "?" : "&"}api-version=${apiVersion ? apiVersion : RestClient.defaultApiVersion}${skipCacheToken === true ? "" : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ""}${maxResults === undefined || maxResults === null ? "" : `&MaxResults=${maxResults}`}${(startDate === undefined || startDate === null || endDate === undefined || endDate === null) ? "" : `&StartDateTimeFilter=${startDate.toISOString().substr(0, 19)}Z&EndDateTimeFilter=${endDate.toISOString().substr(0, 19)}Z`}${latest === true ? `&Latest=True` : ""}`;
         }
 
-        private getFullCollection<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string,startDate?: Date,endDate?: Date, maxResults?: number, latest?: boolean): angular.IPromise<T[]> {
+        private getFullCollection<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): angular.IPromise<T[]> {
             let appUrl = this.getApiUrl(url, apiVersion, continuationToken, false, startDate, endDate, maxResults, latest);
             return this.get<IRawCollection<T>>(appUrl, apiDesc, messageHandler).then(response => {
                 if (response.data.ContinuationToken) {

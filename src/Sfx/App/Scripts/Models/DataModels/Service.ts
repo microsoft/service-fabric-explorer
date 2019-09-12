@@ -164,7 +164,7 @@ module Sfx {
                 () => this.serviceBackupConfigurationInfoCollection.collection.length && this.serviceBackupConfigurationInfoCollection.collection[0].raw && this.serviceBackupConfigurationInfoCollection.collection[0].raw.Kind === "Service" && this.serviceBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Service" && this.serviceBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true,
                 "Confirm Service Backup Resumption",
                 `Resume service backup for ${this.name} ?`,
-                this.name));           
+                this.name));
         }
 
         private delete(): angular.IPromise<any> {

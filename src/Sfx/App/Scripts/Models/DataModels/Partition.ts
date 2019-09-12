@@ -54,8 +54,7 @@ module Sfx {
         }
 
         private setUpActions(): void {
-            if (this.isStatelessService)
-            {
+            if (this.isStatelessService) {
                 return;
             }
             this.actions.add(new ActionWithDialog(

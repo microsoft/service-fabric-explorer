@@ -217,30 +217,29 @@ module Sfx {
         }
 
         public add(): void {
-            if (this.backupPolicy.Schedule.RunTimes === null || this.backupPolicy.Schedule.RunTimes === undefined)
+            if (this.backupPolicy.Schedule.RunTimes === null || this.backupPolicy.Schedule.RunTimes === undefined) {
                 this.backupPolicy.Schedule.RunTimes = [];
+            }
             this.backupPolicy.Schedule.RunTimes.push(this.date);
             this.date = "";
         }
 
-        public deleteDate(index:number): void {
-            this.backupPolicy.Schedule.RunTimes.splice(index,1);
+        public deleteDate(index: number): void {
+            this.backupPolicy.Schedule.RunTimes.splice(index, 1);
         }
 
         private createBackupPolicy(data: DataService): angular.IPromise<any> {
             if (this.retentionPolicyRequired) {
                 this.RetentionPolicy.RetentionPolicyType = "Basic";
                 this.backupPolicy["RetentionPolicy"] = this.RetentionPolicy;
-            }
-            else {
+            } else {
                 this.backupPolicy["RetentionPolicy"] = null;
             }
-                
+
             if (this.backupPolicy.Schedule.ScheduleKind === "TimeBased" && this.backupPolicy.Schedule.ScheduleFrequencyType === "Weekly") {
                 this.backupPolicy.Schedule.RunDays = [];
                 for (let i = 0; i < 7; i++) {
-                    if (this.isSelected[i])
-                    {
+                    if (this.isSelected[i]) {
                         this.backupPolicy.Schedule.RunDays.push(this.weekDay[i]);
                     }
                 }
@@ -298,32 +297,14 @@ module Sfx {
             }
             this.delete = () => {
                 data.restClient.deleteBackupPolicy(this.backupPolicy.Name);
-            }
-        }
-
-        private updateBackupPolicy(data: DataService): angular.IPromise<any> {
-            if (this.retentionPolicyRequired) {
-                this.RetentionPolicy.RetentionPolicyType = "Basic";
-                this.backupPolicy["RetentionPolicy"] = this.RetentionPolicy;
-            }
-            else
-            {
-                this.backupPolicy["RetentionPolicy"] = null;
-            }
-
-            if (this.backupPolicy.Schedule.ScheduleKind === "TimeBased" && this.backupPolicy.Schedule.ScheduleFrequencyType === "Weekly") {
-                this.backupPolicy.Schedule.RunDays = [];
-                for (let i = 0; i < 7; i++) {
-                    if (this.isSelected[i])
-                        this.backupPolicy.Schedule.RunDays.push(this.weekDay[i]);
-                }
-            }
-            return data.restClient.updateBackupPolicy(this.backupPolicy);
+            };
         }
 
         public add(): void {
             if (this.backupPolicy.Schedule.RunTimes === null || this.backupPolicy.Schedule.RunTimes === undefined)
+            {
                 this.backupPolicy.Schedule.RunTimes = [];
+            }
             this.backupPolicy.Schedule.RunTimes.push(this.date);
             this.date = "";
         }
@@ -332,6 +313,25 @@ module Sfx {
             this.backupPolicy.Schedule.RunTimes.splice(index, 1);
         }
 
+        private updateBackupPolicy(data: DataService): angular.IPromise<any> {
+            if (this.retentionPolicyRequired) {
+                this.RetentionPolicy.RetentionPolicyType = "Basic";
+                this.backupPolicy["RetentionPolicy"] = this.RetentionPolicy;
+            } else {
+                this.backupPolicy["RetentionPolicy"] = null;
+            }
+
+            if (this.backupPolicy.Schedule.ScheduleKind === "TimeBased" && this.backupPolicy.Schedule.ScheduleFrequencyType === "Weekly") {
+                this.backupPolicy.Schedule.RunDays = [];
+                for (let i = 0; i < 7; i++) {
+                    if (this.isSelected[i])
+                    {
+                        this.backupPolicy.Schedule.RunDays.push(this.weekDay[i]);
+                    }
+                }
+            }
+            return data.restClient.updateBackupPolicy(this.backupPolicy);
+        }
     }
     (function () {
 

@@ -76,8 +76,7 @@ module Sfx {
                 .then(partition => {
                     this.$scope.partition = partition;
                     this.data.backupPolicies.refresh(messageHandler);
-                    if (this.$scope.partition.isStatefulService)
-                    {
+                    if (this.$scope.partition.isStatefulService) {
                         this.$scope.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler);
                     }
                     if (this.$scope.partition.isStatelessService || partition.parent.parent.raw.TypeName === "System") {
@@ -119,8 +118,7 @@ module Sfx {
         }
 
         private refreshEssentials(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            if (this.$scope.partition.isStatefulService)
-            {
+            if (this.$scope.partition.isStatefulService) {
                 this.$scope.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler);
             }
             return this.$scope.partition.replicas.refresh(messageHandler);
@@ -131,8 +129,7 @@ module Sfx {
         }
 
         private refreshBackups(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            if (this.$scope.partition.isStatefulService)
-            {
+            if (this.$scope.partition.isStatefulService) {
                 return this.$scope.partition.partitionBackupInfo.partitionBackupList.refresh(messageHandler);
             }
         }
