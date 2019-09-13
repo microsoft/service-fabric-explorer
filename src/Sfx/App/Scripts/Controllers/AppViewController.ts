@@ -19,6 +19,7 @@ module Sfx {
         networks: NetworkOnAppCollection;
         networkListSettings: ListSettings;
         clusterManifest: ClusterManifest;
+        timelineGenerator: ApplicationTimelineGenerator;
     }
 
     export class AppViewController extends MainViewController {
@@ -81,6 +82,8 @@ module Sfx {
             ]);
             this.$scope.clusterManifest = new ClusterManifest(this.data);
             this.$scope.networks = new NetworkOnAppCollection(this.data, this.appId);
+
+            this.$scope.timelineGenerator = new ApplicationTimelineGenerator();
             this.refresh();
         }
 
