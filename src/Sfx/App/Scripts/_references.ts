@@ -30,6 +30,9 @@
 /// <reference path="utils/collectionutils.ts" />
 /// <reference path="utils/valueresolver.ts" />
 
+/// <reference path="models/eventstore/Events.ts" />
+/// <reference path="models/eventstore/timelineGenerators.ts" />
+
 /// <reference path="models/action.ts" />
 /// <reference path="models/actioncollection.ts" />
 /// <reference path="models/authentication.ts" />
