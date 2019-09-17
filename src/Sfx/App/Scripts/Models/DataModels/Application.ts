@@ -37,6 +37,10 @@ module Sfx {
             if (this.data.actionsEnabled()) {
                 this.setUpActions();
             }
+
+            if (this.data.actionsAdvancedEnabled()) {
+                this.setAdvancedActions();
+            }
         }
 
         public get isUpgrading(): boolean {
@@ -84,6 +88,10 @@ module Sfx {
             return Utils.getHttpResponseData(this.data.restClient.getApplication(this.id, messageHandler));
         }
 
+        public removeAdvancedActions(): void {
+            this.actions.collection = this.actions.collection.filter(action => ["enableApplicationBackup", "disableApplicationBackup", "suspendApplicationBackup", "suspendApplicationBackup"].indexOf(action.name) === -1);
+        }
+
         private setUpActions(): void {
             this.actions.add(new ActionWithConfirmationDialog(
                 this.data.$uibModal,
@@ -96,7 +104,12 @@ module Sfx {
                 "Confirm Application Deletion",
                 `Delete application ${this.name} from cluster ${this.data.$location.host()}?`,
                 this.name));
+        }
 
+        private setAdvancedActions(): void {
+            if (this.raw.TypeName === Constants.SystemAppTypeName) {
+                return;
+            }
                 this.actions.add(new ActionWithDialog(
                     this.data.$uibModal,
                     this.data.$q,
@@ -116,6 +129,7 @@ module Sfx {
                     },
                     null
                 ));
+
                 this.actions.add(new ActionWithDialog(
                     this.data.$uibModal,
                     this.data.$q,

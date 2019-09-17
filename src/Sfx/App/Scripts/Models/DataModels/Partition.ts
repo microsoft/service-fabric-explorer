@@ -20,8 +20,9 @@ module Sfx {
             this.loadInformation = new PartitionLoadInformation(this.data, this);
             this.health = new PartitionHealth(this.data, this, HealthStateFilterFlags.Default, HealthStateFilterFlags.None);
             this.partitionBackupInfo = new PartitionBackupInfo(this.data, this);
-            if (this.data.actionsEnabled()) {
-                this.setUpActions();
+
+            if (this.data.actionsAdvancedEnabled()) {
+                this.setAdvancedActions();
             }
         }
 
@@ -53,10 +54,15 @@ module Sfx {
             return Utils.getHttpResponseData(this.data.restClient.getPartition(this.parent.parent.id, this.parent.id, this.id, messageHandler));
         }
 
-        private setUpActions(): void {
-            if (this.isStatelessService) {
+        public removeAdvancedActions(): void {
+            this.actions.collection = this.actions.collection.filter(action => ["enablePartitionBackup", "disablePartitionBackup", "suspendPartitionBackup", "resumePartitionBackup", "triggerPartitionBackup", "restorePartitionBackup"].indexOf(action.name) === -1);
+        }
+
+        public setAdvancedActions(): void {
+            if (this.isStatelessService || this.parent.parent.raw.TypeName === Constants.SystemAppTypeName) {
                 return;
             }
+
             this.actions.add(new ActionWithDialog(
                 this.data.$uibModal,
                 this.data.$q,

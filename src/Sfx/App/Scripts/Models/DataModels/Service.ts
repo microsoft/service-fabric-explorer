@@ -30,6 +30,11 @@ module Sfx {
             if (this.data.actionsEnabled()) {
                 this.setUpActions();
             }
+
+            if (this.data.actionsAdvancedEnabled()) {
+                this.setAdvancedActions();
+            }
+
             this.cleanBackup = false;
         }
 
@@ -75,6 +80,10 @@ module Sfx {
             return Utils.getHttpResponseData(this.data.restClient.getService(this.parent.id, this.id, messageHandler));
         }
 
+        public removeAdvancedActions(): void {
+            this.actions.collection = this.actions.collection.filter(action => ["enableServiceBackup", "disableServiceBackup", "suspendServiceBackup", "resumeServiceBackup"].indexOf(action.name) === -1);
+        }
+
         private setUpActions(): void {
             if (this.parent.raw.TypeName === Constants.SystemAppTypeName) {
                 return;
@@ -92,9 +101,10 @@ module Sfx {
                 `Delete service ${this.name} from cluster ${this.data.$location.host()}?`,
                 this.name
             ));
+        }
 
-            if (this.isStatelessService) {
-                this.actions.add(new ActionScaleService(this.data.$uibModal, this.data.$q, this));
+        private setAdvancedActions(): void {
+            if (this.parent.raw.TypeName === Constants.SystemAppTypeName || this.isStatelessService) {
                 return;
             }
 
