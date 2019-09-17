@@ -1,29 +1,39 @@
 
 <div>
     <div>
-        <button type="button" class="checkbox-push timeline-button" ng-click="ctrl.fitData()">
+        <button type="button" class="checkbox-push timeline-button" ng-click="ctrl.fitData()"
+            title="Fit the timeline to only display the time range that has events.">
             Fit events
         </button>
         
-        <button type="button" class="checkbox-push timeline-button" ng-click="ctrl.fitWindow()">
+        <button type="button" class="checkbox-push timeline-button" ng-click="ctrl.fitWindow()"
+            title="Fit the timeline to display the whole time range.">
             Fit range
         </button>
 
-        <button type="button" class="checkbox-push timeline-button" ng-click="ctrl.moveStart()">
+        <button type="button" class="checkbox-push timeline-button" ng-click="ctrl.moveStart()"
+            title="Move to the start of the timeline.">
             Move to start
         </button>
         
-        <button type="button" class="checkbox-push timeline-button" ng-click="ctrl.moveEnd()">
+        <button type="button" class="checkbox-push timeline-button" ng-click="ctrl.moveEnd()"
+            title="Move to the end of the timeline.">
             Move to end
         </button>
 
-        <button type="button" class="checkbox-push timeline-button" ng-click="ctrl.moveToOldestEvent()">
+        <button type="button" class="checkbox-push timeline-button" ng-click="ctrl.moveToOldestEvent()"
+            title="Move to the oldest event in the time range.">
             Move to oldest event
         </button>
         
-        <button type="button" class="checkbox-push timeline-button" ng-click="ctrl.moveToNewestEvent()">
+        <button type="button" class="checkbox-push timeline-button" ng-click="ctrl.moveToNewestEvent()"
+            title="Move to the newest event in the time range.">
             Move to newest event
         </button>
+
+        <a>
+            <span class="bowtie-icon bowtie-status-help-outline" title="This timeline might not fully reflect the state of events for this time."></span>
+        </a>
     </div>
     <div>
         <div id="visualization"></div>
