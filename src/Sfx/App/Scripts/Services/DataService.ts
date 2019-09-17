@@ -15,6 +15,7 @@ module Sfx {
         public nodes: NodeCollection;
         public imageStore: ImageStore;
         public networks: NetworkCollection;
+        public backupPolicies: BackupPolicyCollection;
 
         public constructor(
             public routes: RoutesService,
@@ -40,6 +41,7 @@ module Sfx {
             this.nodes = new NodeCollection(this);
             this.imageStore = new ImageStore(this);
             this.networks = new NetworkCollection(this);
+            this.backupPolicies = new BackupPolicyCollection(this);
         }
 
         public actionsEnabled(): boolean {
@@ -122,6 +124,16 @@ module Sfx {
 
         public getNode(name: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<Node> {
             return this.getNodes(false, messageHandler).then(collection => {
+                return this.tryGetValidItem(collection, name, forceRefresh, messageHandler);
+            });
+        }
+
+        public getBackupPolicies(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<BackupPolicyCollection> {
+            return this.backupPolicies.ensureInitialized(forceRefresh, messageHandler);
+        }
+
+        public getBackupPolicy(name: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): angular.IPromise<BackupPolicy> {
+            return this.getBackupPolicies(false, messageHandler).then(collection => {
                 return this.tryGetValidItem(collection, name, forceRefresh, messageHandler);
             });
         }

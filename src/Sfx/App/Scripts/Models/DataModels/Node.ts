@@ -83,30 +83,8 @@ module Sfx {
             return null;
         }
 
-        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNode> {
-            return this.data.restClient.getNode(this.name, messageHandler).then(response => {
-                this.expectedNodeStatus = NodeStatus.Invalid;
-                return response.data;
-            });
-        }
-
-        private setUpActions(): void {
-            this.actions.add(new ActionWithConfirmationDialog(
-                this.data.$uibModal,
-                this.data.$q,
-                "restartNode",
-                "Restart",
-                "Restarting",
-                () => this.restart(),
-                () => true,
-                "Confirm Node Restart",
-                `Restart node ${this.name} from the cluster ${this.data.$location.host()}?`,
-                this.name
-            ));
-        }
-
         public removeAdvancedActions(): void {
-            this.actions.collection = this.actions.collection.filter(action => ['activateNode', 'removeNodeState', 'deactivePauseNode', 'deactiveRestartNode', 'deactiveRemoveNodeData'].indexOf(action.name) === -1)
+            this.actions.collection = this.actions.collection.filter(action => ["activateNode", "removeNodeState", "deactivePauseNode", "deactiveRestartNode", "deactiveRemoveNodeData"].indexOf(action.name) === -1);
         }
 
         public setAdvancedActions(): void {
@@ -167,6 +145,28 @@ module Sfx {
                 () => this.raw.NodeStatus !== NodeStatusConstants.Down,
                 "Confirm Node Deactivation",
                 `Deactivate node '${this.name}' from cluster '${this.data.$location.host()}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
+                this.name
+            ));
+        }
+
+        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNode> {
+            return this.data.restClient.getNode(this.name, messageHandler).then(response => {
+                this.expectedNodeStatus = NodeStatus.Invalid;
+                return response.data;
+            });
+        }
+
+        private setUpActions(): void {
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "restartNode",
+                "Restart",
+                "Restarting",
+                () => this.restart(),
+                () => true,
+                "Confirm Node Restart",
+                `Restart node ${this.name} from the cluster ${this.data.$location.host()}?`,
                 this.name
             ));
         }

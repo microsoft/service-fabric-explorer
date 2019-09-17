@@ -68,7 +68,7 @@ module Sfx {
             return this.data.getReplicaOnPartition(this.appId, this.serviceId, this.partitionId, this.replicaId, true, messageHandler)
                 .then(replica => {
                     this.$scope.replica = replica;
-                    if(!this.isSystem){
+                    if (!this.isSystem) {
                         try {
 
                             this.$scope.replica.detail.refresh(messageHandler).then( () => {
@@ -77,12 +77,11 @@ module Sfx {
 
                                 const serviceNameOnly = detailRaw.ServiceManifestName;
                                 const activationId = detailRaw.ServicePackageActivationId || null;
-                                this.$scope.nodeView = this.data.routes.getDeployedReplicaViewPath(this.$scope.replica.raw.NodeName, this.appId, serviceNameOnly, activationId, this.partitionId, this.replicaId);    
-                            })
-                        } catch(e) {
+                                this.$scope.nodeView = this.data.routes.getDeployedReplicaViewPath(this.$scope.replica.raw.NodeName, this.appId, serviceNameOnly, activationId, this.partitionId, this.replicaId);
+                            });
+                        } catch (e) {
                             console.log(e);
                         }
-
                     }
 
                     return this.$scope.replica.health.refresh(messageHandler);

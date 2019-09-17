@@ -25,12 +25,15 @@ module Sfx {
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
         upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
+        backupPolicyListSettings: ListSettings;
         metricsViewModel: IMetricsViewModel;
         upgradeAppsCount: number;
         appsUpgradeTabViewPath: string;
+        backupPolicies: BackupPolicyCollection;
+        actions: ActionCollection;
+        settings: SettingsService;
         clusterEvents: ClusterEventList;
         clusterTimelineGenerator: ClusterTimelineGenerator;
-        settings: SettingsService;
     }
 
     export class ClusterViewController extends MainViewController {
@@ -43,8 +46,15 @@ module Sfx {
                 "clustermap": { name: "Cluster Map" },
                 "imagestore": { name: "Image Store" },
                 "manifest": { name: "Manifest" },
-                "events": { name: "Events" }
+                "events": { name: "Events" },
+                "backupPolicies": { name: "Backups" },
             });
+
+            $scope.actions = new ActionCollection(this.data.telemetry, this.data.$q);
+
+            if (this.data.actionsEnabled()) {
+                this.setupActions();
+            }
 
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
             this.tabs["details"].refresh = (messageHandler) => this.refreshDetails(messageHandler);
@@ -53,6 +63,7 @@ module Sfx {
             this.tabs["manifest"].refresh = (messageHandler) => this.refreshManifest(messageHandler);
             this.tabs["imagestore"].refresh = (messageHandler) => this.refreshImageStore(messageHandler);
             this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
+            this.tabs["backupPolicies"].refresh = (messageHandler) => this.refreshBackupPolicies(messageHandler);
 
             $scope.clusterAddress = this.$location.protocol() + "://" + this.$location.host();
 
@@ -64,6 +75,7 @@ module Sfx {
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings("clusterUpgradeProgressUnhealthyEvaluations");
             this.$scope.nodeStatusListSettings = this.settings.getNewOrExistingNodeStatusListSetting();
+            this.$scope.backupPolicyListSettings = this.settings.getNewOrExistingBackupPolicyListSettings();
 
             this.$scope.clusterHealth = this.data.getClusterHealth(HealthStateFilterFlags.Default, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
             this.$scope.clusterUpgradeProgress = this.data.clusterUpgradeProgress;
@@ -74,9 +86,10 @@ module Sfx {
             this.$scope.appsUpgradeTabViewPath = this.routes.getTabViewPath(this.routes.getAppsViewPath(), "upgrades");
             this.$scope.imageStore = this.data.imageStore;
             this.$scope.clusterEvents = this.data.createClusterEventList();
-            this.$scope.clusterTimelineGenerator = new ClusterTimelineGenerator();
             this.$scope.nodesStatuses = [];
+            this.$scope.backupPolicies = this.data.backupPolicies;
             this.$scope.settings = this.settings;
+            this.$scope.clusterTimelineGenerator = new ClusterTimelineGenerator();
             this.refresh();
         }
 
@@ -168,11 +181,158 @@ module Sfx {
         private refreshImageStore(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.$scope.imageStore.refresh(messageHandler);
         }
+        private refreshBackupPolicies(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.$scope.backupPolicies.refresh(messageHandler);
+        }
+        private setupActions() {
+            this.$scope.actions.add(new ActionCreateBackupPolicy(this.data));
+        }
+    }
+    export class ActionCreateBackupPolicy extends ActionWithDialog {
+
+        public backupPolicy: IRawBackupPolicy;
+        public date: string;
+        public retentionPolicyRequired: boolean;
+        public RetentionPolicy: IRawRetentionPolicy;
+        public weekDay: string[];
+        public daySelectedMapping: Map<string, Boolean>;
+
+        constructor(data: DataService) {
+            super(
+                data.$uibModal,
+                data.$q,
+                "createBackupPolicy",
+                "Create Backup Policy",
+                "Creating",
+                () => this.createBackupPolicy(data),
+                () => true,
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/create-backup-policy-dialog.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this
+                    }
+                },
+                null);
+            this.retentionPolicyRequired = false;
+            this.date = "";
+            this.weekDay = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+            this.daySelectedMapping = {};
+        }
+
+        public add(): void {
+            if (this.backupPolicy.Schedule.RunTimes === null || this.backupPolicy.Schedule.RunTimes === undefined) {
+                this.backupPolicy.Schedule.RunTimes = [];
+            }
+            this.backupPolicy.Schedule.RunTimes.push(this.date);
+            this.date = "";
+        }
+
+        public deleteDate(index: number): void {
+            this.backupPolicy.Schedule.RunTimes.splice(index, 1);
+        }
+
+        private createBackupPolicy(data: DataService): angular.IPromise<any> {
+            if (this.retentionPolicyRequired) {
+                this.RetentionPolicy.RetentionPolicyType = "Basic";
+                this.backupPolicy["RetentionPolicy"] = this.RetentionPolicy;
+            } else {
+                this.backupPolicy["RetentionPolicy"] = null;
+            }
+
+            if (this.backupPolicy.Schedule.ScheduleKind === "TimeBased" && this.backupPolicy.Schedule.ScheduleFrequencyType === "Weekly") {
+                this.backupPolicy.Schedule.RunDays = [];
+                for (let day of this.weekDay) {
+                    if (this.daySelectedMapping[day]) {
+                        this.backupPolicy.Schedule.RunDays.push(day);
+                    }
+                }
+            }
+            return data.restClient.createBackupPolicy(this.backupPolicy);
+        }
+    }
+
+    export class ActionUpdateBackupPolicy extends ActionWithDialog {
+
+        public backupPolicy: IRawBackupPolicy;
+        public date: string;
+        public retentionPolicyRequired: boolean;
+        public RetentionPolicy: IRawRetentionPolicy;
+        public weekDay: string[];
+        public daySelectedMapping: Map<string, Boolean>;
+        public delete: any;
+
+        constructor(data: DataService, raw: IRawBackupPolicy) {
+            super(
+                data.$uibModal,
+                data.$q,
+                "updateBackupPolicy",
+                "Update Backup Policy",
+                "Updating",
+                () => this.updateBackupPolicy(data),
+                () => true,
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/update-backup-policy-dialog.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this,
+                    }
+                },
+                null);
+            this.retentionPolicyRequired = false;
+            this.date = "";
+            this.weekDay = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
+            this.daySelectedMapping = {};
+            this.backupPolicy = raw;
+            if (this.backupPolicy["RetentionPolicy"]) {
+                this.retentionPolicyRequired = true;
+                this.RetentionPolicy = this.backupPolicy["RetentionPolicy"];
+            }
+            if (this.backupPolicy.Schedule.RunDays) {
+                for (let day of this.backupPolicy.Schedule.RunDays)
+                {
+                    this.daySelectedMapping[day] = true;
+                }
+            }
+            this.delete = () => {
+                data.restClient.deleteBackupPolicy(this.backupPolicy.Name);
+            };
+        }
+
+        public add(): void {
+            if (this.backupPolicy.Schedule.RunTimes === null || this.backupPolicy.Schedule.RunTimes === undefined) {
+                this.backupPolicy.Schedule.RunTimes = [];
+            }
+            this.backupPolicy.Schedule.RunTimes.push(this.date);
+            this.date = "";
+        }
+
+        public deleteDate(index: number): void {
+            this.backupPolicy.Schedule.RunTimes.splice(index, 1);
+        }
+
+        private updateBackupPolicy(data: DataService): angular.IPromise<any> {
+            if (this.retentionPolicyRequired) {
+                this.RetentionPolicy.RetentionPolicyType = "Basic";
+                this.backupPolicy["RetentionPolicy"] = this.RetentionPolicy;
+            } else {
+                this.backupPolicy["RetentionPolicy"] = null;
+            }
+
+            if (this.backupPolicy.Schedule.ScheduleKind === "TimeBased" && this.backupPolicy.Schedule.ScheduleFrequencyType === "Weekly") {
+                this.backupPolicy.Schedule.RunDays = [];
+                for (let day of this.weekDay) {
+                    if (this.daySelectedMapping[day]) {
+                        this.backupPolicy.Schedule.RunDays.push(day);
+                    }
+                }
+            }
+            return data.restClient.updateBackupPolicy(this.backupPolicy);
+        }
     }
     (function () {
 
         let module = angular.module("clusterViewController", ["dataService", "filters"]);
         module.controller("ClusterViewController", ["$injector", "$scope", ClusterViewController]);
-
     })();
 }

@@ -139,22 +139,22 @@ module Sfx {
             this.childGroupViewModel.toggle();
         }
 
-        public toggleAll(){
-            if(!this.childGroupViewModel.isExpanded){
+        public toggleAll() {
+            if (!this.childGroupViewModel.isExpanded) {
                 this.childGroupViewModel.expand().then( () => {
                     this.childGroupViewModel.children.forEach(child => {
                         child.toggleAll();
-                    })
-                })
+                    });
+                });
             }
         }
 
-        public closeAll(){
-            if(this.childGroupViewModel.isExpanded){
+        public closeAll() {
+            if (this.childGroupViewModel.isExpanded) {
                 this.childGroupViewModel.children.forEach(child => {
                     child.closeAll();
-                })
-                this.childGroupViewModel.collapse()
+                });
+                this.childGroupViewModel.collapse();
             }
         }
 

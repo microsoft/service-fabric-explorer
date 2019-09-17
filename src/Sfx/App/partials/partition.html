@@ -1,4 +1,4 @@
-<sfx-detail-view-navbar ctrl="partitionCtrl" type="Partition" name="{{partitionCtrl.partitionId}}"></sfx-detail-view-navbar>
+<sfx-detail-view-navbar ctrl="partitionCtrl" actions="partition.actions" type="Partition" name="{{partitionCtrl.partitionId}}"></sfx-detail-view-navbar>
 
 <div class="main-view">
     <div sfx-include src="'tab_' + partitionCtrl.activeTabId" ng-if="partitionCtrl.activeTabId" class="flex-child"></div>
@@ -56,6 +56,11 @@
             <h4>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h4>
             <sfx-detail-list list="partition.replicas" list-settings="listSettings"></sfx-detail-list>
         </div>
+
+        <div class="detail-pane" ng-if="partition.IsStatefulServiceAndSystemService">
+            <h4>Latest Backup</h4>
+            <sfx-detail-view-part data="partition.partitionBackupInfo.latestPartitionBackup.collection[0]"></sfx-detail-view-part>
+        </div>
     </script>
 
     <script type="text/ng-template" id="tab_details">
@@ -74,9 +79,33 @@
             <h4>Load Information</h4>
             <sfx-detail-view-part data="partition.loadInformation"></sfx-detail-view-part>
         </div>
+
+        <div class="detail-pane" ng-if="partition.IsStatefulServiceAndSystemService">
+            <h4>Partition Backup Configuration</h4>
+            <sfx-detail-view-part data="partition.partitionBackupInfo.partitionBackupConfigurationInfo"></sfx-detail-view-part>
+        </div>
+
+        <div class="detail-pane" ng-if="partition.IsStatefulServiceAndSystemService && partition.partitionBackupInfo.partitionBackupProgress.raw.TimeStampUtc">
+            <h4>Partition Backup Progress</h4>
+            <sfx-detail-view-part data="partition.partitionBackupInfo.partitionBackupProgress"></sfx-detail-view-part>
+        </div>
+
+        <div class="detail-pane" ng-if="partition.IsStatefulServiceAndSystemService && partition.partitionBackupInfo.partitionRestoreProgress.raw.TimeStampUtc">
+            <h4>Partition Restore Progress</h4>
+            <sfx-detail-view-part data="partition.partitionBackupInfo.partitionRestoreProgress"></sfx-detail-view-part>
+        </div>
     </script>
 
     <script type="text/ng-template" id="tab_events">
         <sfx-events-view events-list="partitionEvents" timeline-generator="partitionTimeLineGenerator" class="flex-child"></sfx-events-view>
+    </script>
+
+    <script type="text/ng-template" id="tab_backups">
+        <sfx-detail-list list="partition.partitionBackupInfo.partitionBackupList" list-settings="partitionBackupListSettings">
+            <div class="row" style="margin-right:0px;">
+                <sfx-date-time-picker ng-model="partition.partitionBackupInfo.partitionBackupList.startDate" place-holder-text="'Start Date'"></sfx-date-time-picker>
+                <sfx-date-time-picker ng-model="partition.partitionBackupInfo.partitionBackupList.endDate" place-holder-text="'End Date'"></sfx-date-time-picker>
+            </div>
+        </sfx-detail-list>
     </script>
 </div>
