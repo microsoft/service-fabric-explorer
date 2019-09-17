@@ -30,7 +30,9 @@ module Sfx {
         appsUpgradeTabViewPath: string;
         clusterEvents: ClusterEventList;
         backupPolicies: BackupPolicyCollection;
+        backupPolicyListSettings: ListSettings;
         settings: SettingsService;
+        actions: ActionCollection;
     }
 
     export class ClusterViewController extends MainViewController {
@@ -46,6 +48,10 @@ module Sfx {
                 "events": { name: "Events" },
                 "backupPolicies": { name: "Backups" }
             });
+
+            if (this.data.actionsEnabled()) {
+                this.setupActions();
+            }
 
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
             this.tabs["details"].refresh = (messageHandler) => this.refreshDetails(messageHandler);

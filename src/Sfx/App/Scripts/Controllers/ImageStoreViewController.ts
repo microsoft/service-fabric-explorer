@@ -5,7 +5,7 @@ module Sfx {
 
             this.$scope.fileListSettings = this.settings.getNewOrExistingListSettings("imagestore", ["name"], [
                 new ListColumnSetting("", "", null, true, (item: ImageStoreItem, property) => {
-                    if(this.$scope.imagestoreroot.data.actionsEnabled()){
+                    if (this.$scope.imagestoreroot.data.actionsEnabled()) {
                         return `<sfx-image-store-file-view item="item"></sfx-image-store-file-view>`;
                     }
 

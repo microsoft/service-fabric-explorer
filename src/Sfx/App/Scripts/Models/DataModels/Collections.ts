@@ -232,15 +232,14 @@ module Sfx {
     }
 
     export class NodeCollection extends DataModelCollectionBase<Node> {
+        //make sure we only check once per session and this object will get destroyed/recreated
+        private static checkedOneNodeScenario = false;
         public healthState: ITextAndBadge;
         public upgradeDomains: string[];
         public faultDomains: string[];
         public healthySeedNodes: string;
         public disabledNodes: string;
         public seedNodeCount: number;
-
-        //make sure we only check once per session and this object will get destroyed/recreated
-        private static checkedOneNodeScenario = false;
 
         public constructor(data: DataService) {
             super(data);

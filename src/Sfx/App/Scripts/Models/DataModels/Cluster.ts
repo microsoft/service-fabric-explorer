@@ -66,6 +66,12 @@ module Sfx {
             return this.emptyHealthStateCount;
         }
 
+        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return Utils.getHttpResponseData(this.data.restClient.getClusterHealth(this.eventsHealthStateFilter,
+                this.nodesHealthStateFilter, this.applicationsHealthStateFilter,
+                messageHandler));
+        }
+
         private setMessage(healthEvent: HealthEvent): void {
             /*
             Example description for parsing reference(if this message changes this might need updating)
@@ -119,12 +125,6 @@ module Sfx {
             }else {
                 ClusterHealth.certExpirationChecked = true;
             }
-        }
-
-        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            return Utils.getHttpResponseData(this.data.restClient.getClusterHealth(this.eventsHealthStateFilter,
-                this.nodesHealthStateFilter, this.applicationsHealthStateFilter,
-                messageHandler));
         }
     }
 
