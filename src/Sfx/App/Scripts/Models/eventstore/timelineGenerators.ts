@@ -15,11 +15,11 @@ module Sfx {
         public static tooltipFormat = (event: FabricEventBase, start: string, end: string = "", title: string= ""): string => {
 
             const rows = Object.keys(event.eventProperties).map(key => `<tr><td style="word-break: keep-all;">${key}</td><td> : ${event.eventProperties[key]}</td></tr>`).join("");
-    
+
             const outline = `<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
-    
+
             return `<div class="tooltip-test">${title.length > 0 ? title + "<br>" : ""}Start: ${start} <br>${ end ? "End: " + end + "<br>" : ""}<b style="text-align: center;">Details</b><br>${outline}</div>`;
-        };
+        }
 
         public static parseUpgradeAndRollback(rollbackCompleteEvent: FabricEventBase, rollbackStartedEvent: ClusterEvent, items: vis.DataSet<vis.DataItem>, startOfRange: Date, group: string, targetVersionProperty: string) {
             const rollbackEnd = rollbackCompleteEvent.timeStamp;
@@ -154,7 +154,7 @@ module Sfx {
                 if (event.kind === "ClusterUpgradeRollbackCompleted") {
                     previousClusterUpgrade = event;
                     clusterRollBacks[event.eventInstanceId] = {complete: event};
-                }else if (event.kind === "ClusterUpgradeRollbackStarted" && event.eventInstanceId in clusterRollBacks){
+                }else if (event.kind === "ClusterUpgradeRollbackStarted" && event.eventInstanceId in clusterRollBacks) {
                     clusterRollBacks[event.eventInstanceId]["start"] = event;
                 }
             });
@@ -164,7 +164,7 @@ module Sfx {
             Object.keys(clusterRollBacks).forEach(eventInstanceId => {
                 const data = clusterRollBacks[eventInstanceId];
                 // this.parseClusterUpgradeAndRollback(data.complete, data.start, items, startOfRange);
-                EventStoreUtils.parseUpgradeAndRollback(data.complete, data.start, items, startOfRange, 
+                EventStoreUtils.parseUpgradeAndRollback(data.complete, data.start, items, startOfRange,
                                                                 ClusterTimelineGenerator.clusterUpgradeLabel, "TargetClusterVersion");
             });
 
@@ -270,10 +270,9 @@ module Sfx {
                 }else if (event.kind === "ApplicationUpgradeDomainCompleted") {
                     EventStoreUtils.parseUpgradeDomain(event, items, ApplicationTimelineGenerator.upgradeDomainLabel, "ApplicationTypeVersion");
                 }else if (event.kind === "ApplicationUpgradeCompleted") {
-                    console.log(event)
                     EventStoreUtils.parseUpgradeCompleted(event, items, ApplicationTimelineGenerator.applicationUpgradeLabel, "ApplicationTypeVersion");
                     previousApplicationUpgrade = event;
-                }else if(event.kind === "ApplicationProcessExited"){
+                }else if (event.kind === "ApplicationProcessExited") {
                     this.parseApplicationProcessExited(event, items, processExitedGroups);
                 }
 
@@ -281,7 +280,7 @@ module Sfx {
                 if (event.kind === "ApplicationUpgradeRollbackCompleted") {
                     previousApplicationUpgrade = event;
                     applicationRollBacks[event.eventInstanceId] = {complete: event};
-                }else if (event.kind === "ApplicationUpgradeRollbackStarted" && event.eventInstanceId in applicationRollBacks){
+                }else if (event.kind === "ApplicationUpgradeRollbackStarted" && event.eventInstanceId in applicationRollBacks) {
                     applicationRollBacks[event.eventInstanceId]["start"] = event;
                 }
             });
@@ -307,8 +306,7 @@ module Sfx {
                 id: ApplicationTimelineGenerator.applicationPrcoessExitedLabel,
                 nestedGroups: [], subgroupStack: false,
                 content: ApplicationTimelineGenerator.applicationPrcoessExitedLabel,
-            }
-            console.log(processExitedGroups)
+            };
             Object.keys(processExitedGroups).forEach(groupName => {
                 nestedApplicationProcessExited.nestedGroups.push(groupName);
                 groups.add(processExitedGroups[groupName]);
@@ -316,7 +314,6 @@ module Sfx {
 
             groups.add(nestedApplicationProcessExited);
 
-            console.log(items);
             return {
                 groups,
                 items
@@ -324,12 +321,11 @@ module Sfx {
         }
 
 
-        parseApplicationProcessExited(event: FabricEventBase, items: vis.DataSet<vis.DataItem>, processExitedGroups: Record<string, vis.DataGroup>){
+        parseApplicationProcessExited(event: FabricEventBase, items: vis.DataSet<vis.DataItem>, processExitedGroups: Record<string, vis.DataGroup>) {
 
-            const groupLabel = `${event.eventProperties["ServicePackageName"]}`
+            const groupLabel = `${event.eventProperties["ServicePackageName"]}`;
             processExitedGroups[groupLabel] = {id: groupLabel, content: groupLabel, subgroupStack: {"1": false}};
 
-            console.log(groupLabel);
             const start = event.timeStamp;
             const label = event.eventProperties["ExeName"];
 

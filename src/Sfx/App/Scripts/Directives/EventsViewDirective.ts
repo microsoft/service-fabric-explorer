@@ -129,7 +129,7 @@ module Sfx {
                             start: this.startDate,
                             end: this.endDate
                         };
-                    }catch(e) {
+                    }catch (e) {
                         console.error(e);
                     }
                 });
