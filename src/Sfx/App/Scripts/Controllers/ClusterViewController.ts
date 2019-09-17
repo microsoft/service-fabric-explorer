@@ -25,14 +25,14 @@ module Sfx {
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
         upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
+        backupPolicyListSettings: ListSettings;
         metricsViewModel: IMetricsViewModel;
         upgradeAppsCount: number;
         appsUpgradeTabViewPath: string;
         clusterEvents: ClusterEventList;
         backupPolicies: BackupPolicyCollection;
-        backupPolicyListSettings: ListSettings;
-        settings: SettingsService;
         actions: ActionCollection;
+        settings: SettingsService;
     }
 
     export class ClusterViewController extends MainViewController {
@@ -46,8 +46,10 @@ module Sfx {
                 "imagestore": { name: "Image Store" },
                 "manifest": { name: "Manifest" },
                 "events": { name: "Events" },
-                "backupPolicies": { name: "Backups" }
+                "backupPolicies": { name: "Backups" },
             });
+
+            $scope.actions = new ActionCollection(this.data.telemetry, this.data.$q);
 
             if (this.data.actionsEnabled()) {
                 this.setupActions();
@@ -330,6 +332,5 @@ module Sfx {
 
         let module = angular.module("clusterViewController", ["dataService", "filters"]);
         module.controller("ClusterViewController", ["$injector", "$scope", ClusterViewController]);
-
     })();
 }
