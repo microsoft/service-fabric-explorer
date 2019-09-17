@@ -7,7 +7,7 @@
 
     <script type="text/ng-template" id="tab_essentials">
         <div class="detail-pane essen-pane">
-            <div class="table-responsive">      
+            <div class="table-responsive">
                 <table class="essen-table" role="presentation">
                     <tr>
                         <th>Code Version</th>
@@ -35,20 +35,22 @@
                     </tr>
                     <tr>
                         <th>Healthy Seed Nodes</th>
-                        <th>Disabled/Disabling Nodes</th>                                               
+                        <th>Disabled/Disabling Nodes</th>
                     </tr>
                     <tr>
-                        <td>{{nodes.healthySeedNodes}}</td> 
-                        <td>{{nodes.disabledNodes}}</td>                      
-                    </tr>                    
+                        <td>{{nodes.healthySeedNodes}}</td>
+                        <td>{{nodes.disabledNodes}}</td>
+                    </tr>
                 </table>
             </div>
         </div>
 
         <div class="detail-pane alert alert-dismissible alert-danger" role="alert" ng-if="$root.ShowPreviewWarning">
             <strong>Warning:</strong>
-            <span>This cluster is running an unsupported preview version of Service Fabric. Upgrades and downgrades to other versions of Service Fabric is not supported. See 
-                <a class="light-background-link" target="_blank" href="https://aka.ms/servicefabricpreview">https://aka.ms/servicefabricpreview</a> for more details.</span>
+            <span>
+                This cluster is running an unsupported preview version of Service Fabric. Upgrades and downgrades to other versions of Service Fabric is not supported. See
+                <a class="light-background-link" target="_blank" href="https://aka.ms/servicefabricpreview">https://aka.ms/servicefabricpreview</a> for more details.
+            </span>
         </div>
 
         <div class="detail-pane" ng-if="appsDashboard && nodesDashboard">
@@ -97,79 +99,79 @@
         </div>
 
         <div id="upgradeDetailsSection" class="detail-pane" ng-if="clusterUpgradeProgress.isInitialized">
-                <h4 ng-if="clusterUpgradeProgress.isUpgrading">Cluster Upgrade In Progress</h4>
-                <h4 ng-if="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h4>
+            <h4 ng-if="clusterUpgradeProgress.isUpgrading">Cluster Upgrade In Progress</h4>
+            <h4 ng-if="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h4>
+            <div class="table-responsive">
+                <table class="table detail-list">
+                    <thead>
+                        <tr>
+                            <th>Code Version</th>
+                            <th>Config Version</th>
+                            <th>Start Timestamp Utc</th>
+                            <th title="Upgrade Duration">Upgrade Duration</th>
+                            <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>
+                            <th>Upgrade Mode</th>
+                            <th>Upgrade State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>{{clusterUpgradeProgress.raw.CodeVersion}}</td>
+                            <td>{{clusterUpgradeProgress.raw.ConfigVersion}}</td>
+                            <td>{{clusterUpgradeProgress.startTimestampUtc}}</td>
+                            <td>{{clusterUpgradeProgress.upgradeDuration}}</td>
+                            <td>{{clusterUpgradeProgress.upgradeDomainDuration}}</td>
+                            <td>{{clusterUpgradeProgress.raw.RollingUpgradeMode}}</td>
+                            <td>{{clusterUpgradeProgress.raw.UpgradeState}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="detail-pane" ng-if="clusterUpgradeProgress.upgradeDomains.length > 0">
+                <h5>Progress by Upgrade Domain</h5>
+                <sfx-upgrade-progress upgrade-domains="clusterUpgradeProgress.upgradeDomains"></sfx-upgrade-progress>
+                <sfx-upgrade-domain-progress ng-if="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList.length > 0"
+                                             node-upgrade-progress-list="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList"></sfx-upgrade-domain-progress>
+            </div>
+
+            <div ng-if="clusterUpgradeProgress.raw.FailureReason !== 'None'">
+                <h4>Upgrade Failure</h4>
                 <div class="table-responsive">
-                    <table class="table detail-list">
-                        <thead>
-                            <tr>
-                                <th>Code Version</th>
-                                <th>Config Version</th>                                                                        
-                                <th>Start Timestamp Utc</th>                                    
-                                <th title="Upgrade Duration">Upgrade Duration</th>                                    
-                                <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>                                    
-                                <th>Upgrade Mode</th>
-                                <th>Upgrade State</th>
-                            </tr>
-                        </thead>
+                    <table class="table detail-table">
                         <tbody>
                             <tr>
-                                <td>{{clusterUpgradeProgress.raw.CodeVersion}}</td>
-                                <td>{{clusterUpgradeProgress.raw.ConfigVersion}}</td>
-                                <td>{{clusterUpgradeProgress.startTimestampUtc}}</td>
-                                <td>{{clusterUpgradeProgress.upgradeDuration}}</td>                            
-                                <td>{{clusterUpgradeProgress.upgradeDomainDuration}}</td>                            
-                                <td>{{clusterUpgradeProgress.raw.RollingUpgradeMode}}</td>
-                                <td>{{clusterUpgradeProgress.raw.UpgradeState}}</td>                            
+                                <th>Failure Timestamp Utc</th>
+                                <td>{{clusterUpgradeProgress.failureTimestampUtc}}</td>
+                            </tr>
+                            <tr>
+                                <th>Failure Reason</th>
+                                <td><img class="badge-icon" src="images/badge-error.svg"><span> {{clusterUpgradeProgress.raw.FailureReason}}</span></td>
                             </tr>
                         </tbody>
                     </table>
                 </div>
-                <div class="detail-pane" ng-if="clusterUpgradeProgress.upgradeDomains.length > 0">
-                    <h5>Progress by Upgrade Domain</h5>
-                    <sfx-upgrade-progress upgrade-domains="clusterUpgradeProgress.upgradeDomains"></sfx-upgrade-progress>
-                    <sfx-upgrade-domain-progress  ng-if="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList.length > 0" 
-                            node-upgrade-progress-list="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList" ></sfx-upgrade-domain-progress>    
-                </div>
-    
-                <div ng-if="clusterUpgradeProgress.raw.FailureReason !== 'None'">                
-                    <h4>Upgrade Failure</h4>                
-                    <div class="table-responsive">
-                        <table class="table detail-table">
-                            <tbody>
-                                <tr>
-                                    <th>Failure Timestamp Utc</th>
-                                    <td>{{clusterUpgradeProgress.failureTimestampUtc}}</td>                                
-                                </tr>                        
-                                <tr>
-                                    <th>Failure Reason</th>
-                                    <td><img class="badge-icon" src="images/badge-error.svg"><span> {{clusterUpgradeProgress.raw.FailureReason}}</span></td>                                                            
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div> 
-                </div>
-
-                <div class="detail-pane" ng-if="clusterUpgradeProgress.unhealthyEvaluations.length > 0">
-                    <h4>Unhealthy Evaluations (Upgrade)</h4>
-                    <sfx-detail-list list="clusterUpgradeProgress.unhealthyEvaluations" list-settings="upgradeProgressUnhealthyEvaluationsListSettings"></sfx-detail-list>
-                </div>
-            
-                <div class="detail-pane" ng-if="clusterUpgradeProgress.upgradeDescription">
-                    <h4>Upgrade Description</h4>
-                    <sfx-detail-view-part data="clusterUpgradeProgress.upgradeDescription"></sfx-detail-view-part>
-                </div>
             </div>
 
-            <div class="detail-pane">
-                <h4> Node States </h4>
-                <sfx-detail-list list="nodesStatuses" list-settings="nodeStatusListSettings"></sfx-detail-list>
+            <div class="detail-pane" ng-if="clusterUpgradeProgress.unhealthyEvaluations.length > 0">
+                <h4>Unhealthy Evaluations (Upgrade)</h4>
+                <sfx-detail-list list="clusterUpgradeProgress.unhealthyEvaluations" list-settings="upgradeProgressUnhealthyEvaluationsListSettings"></sfx-detail-list>
             </div>
 
-            <div class="detail-pane">
-                <h4>Load Information</h4>
-                <sfx-detail-view-part data="clusterLoadInformation"></sfx-detail-view-part>
+            <div class="detail-pane" ng-if="clusterUpgradeProgress.upgradeDescription">
+                <h4>Upgrade Description</h4>
+                <sfx-detail-view-part data="clusterUpgradeProgress.upgradeDescription"></sfx-detail-view-part>
             </div>
+        </div>
+
+        <div class="detail-pane">
+            <h4> Node States </h4>
+            <sfx-detail-list list="nodesStatuses" list-settings="nodeStatusListSettings"></sfx-detail-list>
+        </div>
+
+        <div class="detail-pane">
+            <h4>Load Information</h4>
+            <sfx-detail-view-part data="clusterLoadInformation"></sfx-detail-view-part>
+        </div>
 
     </script>
 
@@ -209,7 +211,7 @@
     </script>
 
     <script type="text/ng-template" id="tab_imagestore">
-        <sfx-image-store-view imagestoreroot="imageStore"></sfx-image-store-view>        
+        <sfx-image-store-view imagestoreroot="imageStore"></sfx-image-store-view>
     </script>
 
     <script type="text/ng-template" id="tab_manifest">
@@ -224,4 +226,31 @@
     <script type="text/ng-template" id="tab_events">
         <sfx-events-view events-list="clusterEvents" class="flex-child"></sfx-events-view>
     </script>
+
+    <script type="text/ng-template" id="tab_backupPolicies">
+        <div class="detail-view-actions btn-group" uib-dropdown ng-if="::actions && actions.length > 0">
+            <button class="btn btn-primary" uib-dropdown-toggle type="button" ng-disabled="actions.anyRunning" style="float:right">
+                <span>{{actions.title | uppercase}}</span>
+                <span class="caret"></span>
+            </button>
+
+            <!-- use inline style to work around IE bug that list-style=none gets ignored for first load -->
+            <ul role="menu" class="dropdown-menu dropdown-menu-right" uib-dropdown-menu style="list-style: none">
+                <li role="menuitem" ng-repeat="action in ::actions.collection track by action.name">
+                    <a role="menuitem"
+                       href=""
+                       ng-click="actions.runWithTelemetry(action, 'ActionsButton')"
+                       ng-disabled="!action.canRun()">
+                        {{::action.title}}
+                    </a>
+                </li>
+            </ul>
+        </div>
+        <div class="detail-pane">
+            <h2>Backup Policies</h2>
+            <sfx-detail-list list="backupPolicies" list-settings="backupPolicyListSettings"></sfx-detail-list>
+        </div>
+    </script>
+
+
 </div>

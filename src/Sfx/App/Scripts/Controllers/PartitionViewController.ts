@@ -10,8 +10,10 @@ module Sfx {
         listSettings: ListSettings;
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
+        partitionBackupListSettings: ListSettings;
         partitionEvents: PartitionEventList;
     }
+
 
     export class PartitionViewController extends MainViewController {
         public appId: string;
@@ -23,11 +25,14 @@ module Sfx {
             super($injector, {
                 "essentials": { name: "Essentials" },
                 "details": { name: "Details" },
-                "events": { name: "Events" }
+                "events": { name: "Events" },
+                "backups": { name: "Backups" }
             });
+
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
             this.tabs["details"].refresh = (messageHandler) => this.refreshDetails(messageHandler);
             this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
+            this.tabs["backups"].refresh = (messageHandler) => this.refreshBackups(messageHandler);
 
             this.appId = IdUtils.getAppId(this.routeParams);
             this.serviceId = IdUtils.getServiceId(this.routeParams);
@@ -55,7 +60,14 @@ module Sfx {
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.partitionEvents = this.data.createPartitionEventList(this.partitionId);
-
+            this.$scope.partitionBackupListSettings = this.settings.getNewOrExistingListSettings("partitionBackups", [null], [
+                new ListColumnSetting("raw.BackupId", "BackupId", ["raw.BackupId"], false, (item, property) => `<a href='${item.parent.viewPath}/tab/backups'>${property}</a>` , 1, item => item.action.runWithCallbacks.apply(item.action)),
+                new ListColumnSetting("raw.BackupType", "BackupType"),
+                new ListColumnSetting("raw.EpochOfLastBackupRecord.DataLossVersion", "Data Loss Version"),
+                new ListColumnSetting("raw.EpochOfLastBackupRecord.ConfigurationVersion", "Configuration Version"),
+                new ListColumnSetting("raw.LsnOfLastBackupRecord", "Lsn of last Backup Record"),
+                new ListColumnSetting("raw.CreationTimeUtc", "Creation Time Utc"),
+            ]);
             this.refresh();
         }
 
@@ -63,7 +75,20 @@ module Sfx {
             return this.data.getPartition(this.appId, this.serviceId, this.partitionId, true, messageHandler)
                 .then(partition => {
                     this.$scope.partition = partition;
-
+                    this.data.backupPolicies.refresh(messageHandler);
+                    if (this.$scope.partition.isStatefulService) {
+                        this.$scope.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler);
+                    }
+                    if (this.$scope.partition.isStatelessService || partition.parent.parent.raw.TypeName === "System") {
+                        this.tabs = {
+                            "essentials": { name: "Essentials" },
+                            "details": { name: "Details" },
+                            "events": { name: "Events" },
+                        };
+                        this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
+                        this.tabs["details"].refresh = (messageHandler) => this.refreshDetails(messageHandler);
+                        this.tabs["events"].refresh = (messageHandler) => this.refreshEvents(messageHandler);
+                    }
                     if (!this.$scope.listSettings) {
                         let defaultSortProperties = ["replicaRoleSortPriority", "raw.NodeName"];
                         let columnSettings = [
@@ -82,21 +107,31 @@ module Sfx {
                         // Keep the sort properties in sync with the sortBy for ClusterTreeService.getDeployedReplicas
                         this.$scope.listSettings = this.settings.getNewOrExistingListSettings("replicas", defaultSortProperties, columnSettings);
                     }
-
                     return this.$scope.partition.health.refresh(messageHandler);
                 });
         }
 
         private refreshDetails(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            this.$scope.partition.partitionBackupInfo.partitionBackupProgress.refresh(messageHandler);
+            this.$scope.partition.partitionBackupInfo.partitionRestoreProgress.refresh(messageHandler);
             return this.$scope.partition.loadInformation.refresh(messageHandler);
         }
 
         private refreshEssentials(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            if (this.$scope.partition.isStatefulService) {
+                this.$scope.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler);
+            }
             return this.$scope.partition.replicas.refresh(messageHandler);
         }
 
         private refreshEvents(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
             return this.$scope.partitionEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler));
+        }
+
+        private refreshBackups(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            if (this.$scope.partition.isStatefulService) {
+                return this.$scope.partition.partitionBackupInfo.partitionBackupList.refresh(messageHandler);
+            }
         }
     }
 

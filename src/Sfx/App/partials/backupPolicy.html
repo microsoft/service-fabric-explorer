@@ -1,0 +1,16 @@
+<section class="main-view">
+    <div class="modal-header">
+        <h4 class="modal-title">Backup Policy : {{action.raw.Name}}</h4>
+    </div>
+    <div sfx-include src="'backupPolicyDetails'" class="modal-body"></div>
+    <script type="text/ng-template" id="backupPolicyDetails">
+        <div class="detail-pane">
+            <sfx-detail-view-part data="action"></sfx-detail-view-part>
+        </div>
+    </script>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="ok()">{{::action.action.title}}</button>
+        <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="cancel();action.updateBackupPolicy()">Update Backup Policy</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="usertypedkeyword = null; cancel()">Cancel</button>
+    </div>
+</section>

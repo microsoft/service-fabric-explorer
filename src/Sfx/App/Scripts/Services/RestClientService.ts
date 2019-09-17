@@ -137,6 +137,43 @@ module Sfx {
             return this.get(this.getApiUrl(url), "Get node", messageHandler);
         }
 
+        public getBackupPolicies(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawBackupPolicy[]> {
+            return this.getFullCollection<IRawBackupPolicy>("BackupRestore/BackupPolicies/", "Get backup Policies", RestClient.apiVersion64);
+        }
+
+        public getApplicationBackupConfigurationInfoCollection(applicationId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawApplicationBackupConfigurationInfo[]> {
+            return this.getFullCollection<IRawApplicationBackupConfigurationInfo>("Applications/" + encodeURIComponent(applicationId) + "/$/GetBackupConfigurationInfo", "Gets the application backup configuration information", RestClient.apiVersion64, messageHandler);
+        }
+
+        public getServiceBackupConfigurationInfoCollection(serviceId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawServiceBackupConfigurationInfo[]> {
+            return this.getFullCollection<IRawServiceBackupConfigurationInfo>("Services/" + encodeURIComponent(serviceId) + "/$/GetBackupConfigurationInfo", "Gets the application backup configuration information", RestClient.apiVersion64, messageHandler);
+        }
+
+        public getPartitionBackupProgress(partitionId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawBackupProgressInfo> {
+            return this.get(this.getApiUrl("Partitions/" + encodeURIComponent(partitionId) + "/$/GetBackupProgress", RestClient.apiVersion64), "Gets the partition backup progress", messageHandler);
+        }
+
+        public getPartitionRestoreProgress(partitionId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawRestoreProgressInfo> {
+            return this.get(this.getApiUrl("Partitions/" + encodeURIComponent(partitionId) + "/$/GetRestoreProgress", RestClient.apiVersion64), "Gets the partition restore progress", messageHandler);
+        }
+
+        public getPartitionBackupConfigurationInfo(partitionId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawPartitionBackupConfigurationInfo> {
+            return this.get(this.getApiUrl("Partitions/" + encodeURIComponent(partitionId) + "/$/GetBackupConfigurationInfo", RestClient.apiVersion64), "Gets the partition backup configuration information", messageHandler);
+        }
+
+        public getLatestPartitionBackup(partitionId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<IRawPartitionBackup[]> {
+            return this.getFullCollection2<IRawPartitionBackup>("Partitions/" + encodeURIComponent(partitionId) + "/$/GetBackups", "Gets the latest partition backup", RestClient.apiVersion64, messageHandler, undefined, undefined, undefined, undefined, true);
+        }
+
+        public getPartitionBackupList(partitionId: string, messageHandler?: IResponseMessageHandler, startDate?: Date, endDate?: Date, maxResults?: number): angular.IPromise<IRawPartitionBackup[]> {
+            return this.getFullCollection2<IRawPartitionBackup>("Partitions/" + encodeURIComponent(partitionId) + "/$/GetBackups", "Gets the partition backup list", RestClient.apiVersion64, messageHandler, undefined, startDate, endDate, maxResults);
+        }
+
+        public getBackupPolicy(backupName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawBackupPolicy> {
+            let url = "BackupRestore/BackupPolicies/" + encodeURIComponent(backupName) + "/";
+            return this.get(this.getApiUrl(url, RestClient.apiVersion64), "Get backup policy", messageHandler);
+        }
+
         public getNodeHealth(nodeName: string,
             eventsHealthStateFilter: number = HealthStateFilterFlags.Default,
             messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawNodeHealth> {
@@ -399,6 +436,98 @@ module Sfx {
             let url = `Applications/${encodeURIComponent(applicationId)}/$/GetServices/${encodeURIComponent(serviceId)}/$/Update`;
 
             return this.post(this.getApiUrl(url), "Service update", updateServiceDescription, messageHandler);
+        }
+
+        public enableApplicationBackup(application: Application, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Applications/" + encodeURIComponent(application.id) + "/$/EnableBackup";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Enable Application Backup", { BackupPolicyName: application.backupPolicyName }, messageHandler);
+        }
+
+        public disableApplicationBackup(application: Application, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Applications/" + encodeURIComponent(application.id) + "/$/DisableBackup";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Disable Application Backup", { CleanBackup: application.cleanBackup }, messageHandler);
+        }
+
+        public enableServiceBackup(service: Service, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Services/" + encodeURIComponent(service.id) + "/$/EnableBackup";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Enable Service Backup", { BackupPolicyName: service.backupPolicyName }, messageHandler);
+        }
+
+        public disableServiceBackup(service: Service, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Services/" + encodeURIComponent(service.id) + "/$/DisableBackup";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Disable Service Backup", { CleanBackup: service.cleanBackup }, messageHandler);
+        }
+
+        public enablePartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/EnableBackup";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Enable Service Backup", { BackupPolicyName: partition.partitionBackupInfo.backupPolicyName }, messageHandler);
+        }
+
+        public disablePartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/DisableBackup";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Disable Service Backup", { CleanBackup: partition.partitionBackupInfo.cleanBackup }, messageHandler);
+        }
+
+        public suspendApplicationBackup(applicationId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Applications/" + encodeURIComponent(applicationId) + "/$/SuspendBackup";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Suspend Application Backup", null, messageHandler);
+        }
+
+        public resumeApplicationBackup(applicationId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Applications/" + encodeURIComponent(applicationId) + "/$/ResumeBackup";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Resume Application Backup", null, messageHandler);
+        }
+
+        public suspendServiceBackup(serviceId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Services/" + encodeURIComponent(serviceId) + "/$/SuspendBackup";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Suspend Service Backup", null, messageHandler);
+        }
+
+        public resumeServiceBackup(serviceId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Services/" + encodeURIComponent(serviceId) + "/$/ResumeBackup";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Resume Service Backup", null, messageHandler);
+        }
+
+        public suspendPartitionBackup(partitionId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Partitions/" + encodeURIComponent(partitionId) + "/$/SuspendBackup";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Suspend Partition Backup", null, messageHandler);
+        }
+
+        public resumePartitionBackup(partitionId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Partitions/" + encodeURIComponent(partitionId) + "/$/ResumeBackup";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Resume Partition Backup", null, messageHandler);
+        }
+
+
+        public deleteBackupPolicy(backupPolicyName: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "BackupRestore/BackupPolicies/" + encodeURIComponent(backupPolicyName) + "/$/Delete";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Backup Policy deletion", null, messageHandler);
+        }
+
+        public updateBackupPolicy(backupPolicy: IRawBackupPolicy, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "BackupRestore/BackupPolicies/" + encodeURIComponent(backupPolicy.Name) + "/$/Update";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Backup Policy updation", backupPolicy, messageHandler);
+        }
+
+        public createBackupPolicy(backupPolicy: IRawBackupPolicy, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "BackupRestore/BackupPolicies/$/Create";
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Backup Policy creation", backupPolicy, messageHandler);
+        }
+
+        public triggerPartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/Backup";
+            if (partition.partitionBackupInfo.BackupTimeout) {
+                url += "?BackupTimeout=" + partition.partitionBackupInfo.BackupTimeout.toString();
+            }
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Partition Backup trigger", { "BackupStorage": partition.partitionBackupInfo.storage }, messageHandler);
+        }
+
+        public restorePartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<{}> {
+            let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/Restore";
+            if (partition.partitionBackupInfo.RestoreTimeout) {
+                url += "?RestoreTimeout=" + partition.partitionBackupInfo.RestoreTimeout.toString();
+            }
+            return this.post(this.getApiUrl(url, RestClient.apiVersion64), "Partition Backup restore", { "BackupId": partition.partitionBackupInfo.backupId, "BackupStorage": partition.partitionBackupInfo.storage, "BackupLocation": partition.partitionBackupInfo.backupLocation }, messageHandler);
         }
 
         public getServiceDescription(applicationId: string, serviceId: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawServiceDescription> {
@@ -671,8 +800,15 @@ module Sfx {
                 `/${path}${path.indexOf("?") === -1 ? "?" : "&"}api-version=${apiVersion ? apiVersion : RestClient.defaultApiVersion}${skipCacheToken === true ? "" : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ""}`;
         }
 
+        private getApiUrl2(path: string, apiVersion = RestClient.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): string {
+            // token to allow for invalidation of browser api call cache
+            let appUrl =  this.getApiUrl(path, apiVersion, continuationToken, false);
+            return appUrl +
+                `${maxResults === undefined || maxResults === null ? "" : `&MaxResults=${maxResults}`}${(startDate === undefined || startDate === null || endDate === undefined || endDate === null) ? "" : `&StartDateTimeFilter=${startDate.toISOString().substr(0, 19)}Z&EndDateTimeFilter=${endDate.toISOString().substr(0, 19)}Z`}${latest === true ? `&Latest=True` : ""}`;
+        }
+
         private getFullCollection<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string): angular.IPromise<T[]> {
-            let appUrl = this.getApiUrl(url, apiVersion, continuationToken);
+            let appUrl = this.getApiUrl(url, apiVersion, continuationToken, false);
             return this.get<IRawCollection<T>>(appUrl, apiDesc, messageHandler).then(response => {
                 if (response.data.ContinuationToken) {
                     return this.getFullCollection<T>(url, apiDesc, apiVersion, messageHandler, response.data.ContinuationToken).then(items => {
@@ -680,8 +816,25 @@ module Sfx {
                     });
                 }
                 return response.data.Items;
+            }).catch(err => {
+                return [];
             });
         }
+
+        private getFullCollection2<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): angular.IPromise<T[]> {
+            let appUrl = this.getApiUrl2(url, apiVersion, continuationToken, false, startDate, endDate, maxResults, latest);
+            return this.get<IRawCollection<T>>(appUrl, apiDesc, messageHandler).then(response => {
+                if (response.data.ContinuationToken) {
+                    return this.getFullCollection<T>(url, apiDesc, apiVersion, messageHandler, response.data.ContinuationToken).then(items => {
+                        return _.union(response.data.Items, items);
+                    });
+                }
+                return response.data.Items;
+            }).catch(err => {
+                return [];
+            });
+        }
+
 
         private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): angular.IHttpPromise<T> {
             let result = this.wrapInCallbacks<T>(() => this.httpClient.getAsync(url));

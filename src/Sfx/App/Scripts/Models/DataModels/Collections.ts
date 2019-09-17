@@ -232,15 +232,14 @@ module Sfx {
     }
 
     export class NodeCollection extends DataModelCollectionBase<Node> {
+        //make sure we only check once per session and this object will get destroyed/recreated
+        private static checkedOneNodeScenario = false;
         public healthState: ITextAndBadge;
         public upgradeDomains: string[];
         public faultDomains: string[];
         public healthySeedNodes: string;
         public disabledNodes: string;
         public seedNodeCount: number;
-
-        //make sure we only check once per session and this object will get destroyed/recreated
-        private static checkedOneNodeScenario = false;
 
         public constructor(data: DataService) {
             super(data);
@@ -360,6 +359,14 @@ module Sfx {
         private updateNodesHealthState(): void {
             // calculates the nodes health state which is the max state value of all nodes
             this.healthState = this.valueResolver.resolveHealthStatus(_.max(_.map(this.collection, node => HealthStateConstants.Values[node.healthState.text])));
+        }
+    }
+
+    export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy> {
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getBackupPolicies(messageHandler).then(items => {
+                return _.map(items, raw => new BackupPolicy(this.data, raw));
+            });
         }
     }
 
@@ -551,6 +558,62 @@ module Sfx {
         }
     }
 
+    export class ApplicationBackupConfigurationInfoCollection extends DataModelCollectionBase<ApplicationBackupConfigurationInfo> {
+        public constructor(data: DataService, public parent: Application) {
+            super(data, parent);
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getApplicationBackupConfigurationInfoCollection(this.parent.id, messageHandler)
+            .then(items => {
+                return _.map(items, raw => new ApplicationBackupConfigurationInfo(this.data, raw, this.parent));
+            });
+        }
+    }
+
+    export class ServiceBackupConfigurationInfoCollection extends DataModelCollectionBase<ServiceBackupConfigurationInfo> {
+        public constructor(data: DataService, public parent: Service) {
+            super(data, parent);
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getServiceBackupConfigurationInfoCollection(this.parent.id, messageHandler)
+                .then(items => {
+                    return _.map(items, raw => new ServiceBackupConfigurationInfo(this.data, raw, this.parent));
+                });
+        }
+    }
+
+    export class PartitionBackupCollection extends DataModelCollectionBase<PartitionBackup> {
+        public startDate: Date;
+        public endDate: Date;
+        public constructor(data: DataService, public parent: PartitionBackupInfo) {
+            super(data, parent);
+            this.startDate = null;
+            this.endDate = null;
+        }
+
+        public retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getPartitionBackupList(this.parent.parent.id, messageHandler, this.startDate, this.endDate)
+                .then(items => {
+                    return _.map(items, raw => new PartitionBackup(this.data, raw, this.parent));
+                });
+        }
+    }
+
+    export class SinglePartitionBackupCollection extends DataModelCollectionBase<PartitionBackup> {
+        public constructor(data: DataService, public parent: PartitionBackupInfo) {
+            super(data, parent);
+        }
+
+        public retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getLatestPartitionBackup(this.parent.parent.id, messageHandler)
+                .then(items => {
+                    return _.map(items, raw => new PartitionBackup(this.data, raw, this.parent));
+                });
+        }
+    }
+
     export class ServiceTypeCollection extends DataModelCollectionBase<ServiceType> {
         public constructor(data: DataService, public parent: ApplicationType | Application) {
             super(data, parent);
@@ -636,7 +699,7 @@ module Sfx {
         }
 
         public get isStatefulService(): boolean {
-            return this.parent.isStatefulService;
+            return this.parent.parent.isStatefulService;
         }
 
         public get isStatelessService(): boolean {
