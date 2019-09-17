@@ -61,7 +61,7 @@
         <dl class="dl-horizontal collapse" uib-collapse="!action.backupPolicy.Schedule.ScheduleKind || action.backupPolicy.Schedule.ScheduleKind!=='TimeBased' || !action.backupPolicy.Schedule.ScheduleFrequencyType">
             <dt>RunTimes</dt>
             <dd>
-                <div ng-repeat="runTime in action.backupPolicy.Schedule.RunTimes track by $index">
+                <div ng-repeat="runTime in action.backupPolicy.Schedule.RunDays track by $index">
                     <input type="text" style="width: 80%;" class="input-flat" ng-model="action.backupPolicy.Schedule.RunTimes[$index]" />
                     <button type="button" class="btn btn-default" ng-click="action.deleteDate($index)" >Delete</button>
                 </div>
