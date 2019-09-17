@@ -29,6 +29,7 @@ module Sfx {
         upgradeAppsCount: number;
         appsUpgradeTabViewPath: string;
         clusterEvents: ClusterEventList;
+        settings: SettingsService;
     }
 
     export class ClusterViewController extends MainViewController {
@@ -73,6 +74,7 @@ module Sfx {
             this.$scope.imageStore = this.data.imageStore;
             this.$scope.clusterEvents = this.data.createClusterEventList();
             this.$scope.nodesStatuses = [];
+            this.$scope.settings = this.settings;
             this.refresh();
         }
 
@@ -100,6 +102,8 @@ module Sfx {
 
                     let replicasHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Replica);
                     this.$scope.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
+
+                    clusterHealth.checkExpiredCertStatus();
                 }));
 
             // For upgrade dashboard
@@ -145,7 +149,6 @@ module Sfx {
                         }
 
                         let promises = _.map(this.$scope.nodes.collection, node => node.loadInformation.refresh(messageHandler));
-
                         return this.$q.all(promises).finally(() => {
                             this.$scope.metricsViewModel.refresh();
                         });

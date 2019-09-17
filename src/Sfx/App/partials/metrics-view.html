@@ -42,4 +42,9 @@
         <span>Metric: {{::metric.name}}</span>
         <span ng-if="::metric.hasCapacity">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Capacity: {{metric.loadCapacityRatioString}}</span>
     </script>
+
+    <div>
+        <sfx-detail-list list="tableData" list-settings="tableSettings"></sfx-detail-list>
+
+    </div>
 </div>

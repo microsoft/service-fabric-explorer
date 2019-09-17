@@ -20,6 +20,7 @@ module Sfx {
         addHealthStateFiltersForChildren?: (clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription) => void;
         // If current node is expanded, merge the health chunk data back to the data models for current node and its children.
         mergeClusterHealthStateChunk?: (clusterHealthChunk: IClusterHealthChunk) => angular.IPromise<any>;
+        canExpandAll?: boolean;
     }
 }
 

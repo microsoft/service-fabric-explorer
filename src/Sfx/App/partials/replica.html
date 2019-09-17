@@ -12,8 +12,8 @@
                         <th>Node Name</th>
                     </tr>
                     <tr>
-                        <td title="{{replica.id}}">{{replica.id}}</td>
-                        <td><a href="{{replica.nodeViewPath}}">{{replica.raw.NodeName}}</a></td>
+                        <td title="{{replica.id}}">{{replica.id}}<sfx-clip-board text="replica.id"></sfx-clip-board></td>
+                        <td><a href="{{replica.nodeViewPath}}">{{replica.raw.NodeName}}</a><sfx-clip-board text="replica.raw.NodeName"></sfx-clip-board></td>
                     </tr>
                     <tr>
                         <th>Health State</th>
@@ -25,11 +25,14 @@
                     </tr>
                     <tr>
                         <th ng-if="replica.isStatefulService">Role</th>
+                        <th></th>
                     </tr>
                     <tr>
                         <td ng-if="replica.isStatefulService">{{replica.role}}</td>
+                        <td></td>
                     </tr>
                 </table>
+                <div ng-if="nodeView"><a href="{{nodeView}}">View on Node</a></div>
             </div>
         </div>
 

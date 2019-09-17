@@ -21,6 +21,10 @@ module Sfx {
                         {
                             name: Constants.SfxBuildMetadataName,
                             value: VersionInfo.Build
+                        },
+                        {
+                            name: Constants.SfxTelemetryMetadataName,
+                            value: Constants.SfxTelemetryHeaderValue
                         }
                     ]
                 }));
@@ -28,6 +32,7 @@ module Sfx {
 
             this.$http.defaults.headers.common[Constants.SfxVersionMetadataName] = VersionInfo.Version;
             this.$http.defaults.headers.common[Constants.SfxBuildMetadataName] = VersionInfo.Build;
+            this.$http.defaults.headers.common[Constants.SfxTelemetryMetadataName] = Constants.SfxTelemetryHeaderValue;
         }
 
         public getAsync<T>(url: string): angular.IHttpPromise<T> {

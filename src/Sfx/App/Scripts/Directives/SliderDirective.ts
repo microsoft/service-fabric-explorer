@@ -19,13 +19,24 @@ module Sfx {
 
         public link($scope: any, element: JQuery, attributes: any, ctrl: ISliderController) {
 
-            $(element).slider({
+            let slider = $(element).slider({
                 value: ctrl.default,
                 min: ctrl.min,
                 max: ctrl.max,
                 step: ctrl.step,
-                change: (event, ui) => ctrl.slide(ui.value)
+                change: (event, ui) => {
+                    ctrl.slide(ui.value);
+                    $(element).attr("aria-valuenow", ui.value);
+                    $(element[0].children[0]).attr("aria-valuenow", ui.value);
+                }
             });
+
+            const innerSlider = slider[0].children[0];
+            $(innerSlider).attr("aria-valuenow", ctrl.default);
+            $(innerSlider).attr("aria-label", "Change how often content is updated");
+            $(innerSlider).attr("aria-valuemin",  ctrl.min);
+            $(innerSlider).attr("aria-valuemax", ctrl.max);
+
 
             $("#" + attributes.minLabelId).click(() => {
                 $(element).slider("option", "value", ctrl.min);

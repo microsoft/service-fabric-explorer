@@ -17,6 +17,9 @@ module Sfx {
 
     export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 
+        //make sure we only check once per session and this object will get destroyed/recreated
+        private static certExpirationChecked = false;
+
         private emptyHealthStateCount: IRawHealthStateCount = {
             OkCount: 0,
             ErrorCount: 0,
@@ -30,6 +33,29 @@ module Sfx {
             super(data);
         }
 
+        public checkExpiredCertStatus() {
+            try {
+                if (!ClusterHealth.certExpirationChecked) {
+                //Check cluster health
+                //if healthy then no cert issue
+                //if warning/Error
+                    //starting walking and query all seed nodes in warning state for cluster cert issues
+                    this.ensureInitialized().then( (clusterHealth: ClusterHealth) => {
+                        clusterHealth = this;
+
+                        if (clusterHealth.healthState.text === HealthStateConstants.Warning || clusterHealth.healthState.text === HealthStateConstants.Error) {
+                            this.data.getNodes(true).then(nodes => {
+                                let seedNodes = _.filter(nodes.collection, node => node.raw.IsSeedNode);
+                                this.checkNodesContinually(0, seedNodes);
+                            });
+                        }
+                    });
+                }
+            }catch (e) {
+                console.log(e);
+            }
+        }
+
         public getHealthStateCount(entityKind: HealthStatisticsEntityKind): IRawHealthStateCount {
             if (this.raw) {
                 let entityHealthCount = _.find(this.raw.HealthStatistics.HealthStateCountList, item => item.EntityKind === HealthStatisticsEntityKind[entityKind]);
@@ -38,6 +64,61 @@ module Sfx {
                 }
             }
             return this.emptyHealthStateCount;
+        }
+
+        private setMessage(healthEvent: HealthEvent): void {
+            /*
+            Example description for parsing reference(if this message changes this might need updating)
+            Certificate expiration: thumbprint = 35d8f6bb4c52bd3f40a327a3094a9ee9692679ce, expiration = 2020-03-13 22:23:40.000
+            , remaining lifetime is 213:8:17:08.174, please refresh ahead of time to avoid catastrophic failure.
+            Warning threshold Security/CertificateExpirySafetyMargin is configured at 289:8:26:40.000, if needed, you can
+            adjust it to fit your refresh process.
+
+            */
+
+            const thumbprintSearchText = "thumbprint = ";
+            const thumbprintIndex = healthEvent.raw.Description.indexOf(thumbprintSearchText);
+            const thumbprint =  healthEvent.raw.Description.substr(thumbprintIndex + thumbprintSearchText.length).split(",")[0];
+
+            const expirationSearchText = "expiration = ";
+            const expirationIndex = healthEvent.raw.Description.indexOf("expiration = ");
+            const expiration = healthEvent.raw.Description.substring(expirationIndex + expirationSearchText.length).split(",")[0];
+
+            this.data.warnings.addOrUpdateNotification({
+                message: `A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure. <br> Thumbprint : ${thumbprint}    Expiration: ${expiration}`,
+                level: StatusWarningLevel.Error,
+                priority: 5,
+                id: BannerWarningID.ExpiringClusterCert,
+                link: "https://aka.ms/sfrenewclustercert/",
+                linkText: "Read here for more guidance"
+            });
+            ClusterHealth.certExpirationChecked = true;
+        }
+
+        private containsCertExpiringHealthEvent(unhealthyEvaluations: HealthEvent[]): HealthEvent[] {
+            return unhealthyEvaluations.filter(event => event.raw.Description.indexOf("Certificate expiration") === 0 &&
+                                             event.raw.Property === CertExpiraryHealthEventProperty.Cluster &&
+                                             (event.raw.HealthState === HealthStateConstants.Warning || event.raw.HealthState === HealthStateConstants.Error));
+        }
+
+        private checkNodesContinually(index: number, nodes: Node[]) {
+            if (index < nodes.length) {
+                const node = nodes[index];
+                if (node.healthState.text === HealthStateConstants.Error || node.healthState.text === HealthStateConstants.Warning) {
+                    node.health.ensureInitialized().then( () => {
+                        const certExpiringEvents = this.containsCertExpiringHealthEvent(node.health.healthEvents);
+                        if (certExpiringEvents.length === 0) {
+                            this.checkNodesContinually(index + 1, nodes);
+                        }else {
+                            this.setMessage(certExpiringEvents[0]);
+                        }
+                    });
+                }else {
+                    this.checkNodesContinually(index + 1, nodes);
+                }
+            }else {
+                ClusterHealth.certExpirationChecked = true;
+            }
         }
 
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
@@ -107,7 +188,7 @@ module Sfx {
         public upgradeDescription: UpgradeDescription;
 
         public get isUpgrading(): boolean {
-            return UpgradeDomainStateRegexes.InProgress.test(this.raw.UpgradeState);
+            return UpgradeDomainStateRegexes.InProgress.test(this.raw.UpgradeState) || this.raw.UpgradeState === ClusterUpgradeStates.RollingForwardPending;
         }
 
         public get startTimestampUtc(): string {
@@ -147,13 +228,15 @@ module Sfx {
                     }else {
                         resolve(data);
                     }
+                }).catch( (err) => {
+                    reject(err);
                 });
             });
 
         }
 
         protected updateInternal(): angular.IPromise<any> | void {
-            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations);
+            this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
             let domains = _.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud));
             let groupedDomains = _.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Completed)
                 .concat(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.InProgress))

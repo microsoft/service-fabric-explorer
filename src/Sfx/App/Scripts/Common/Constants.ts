@@ -16,13 +16,14 @@ module Sfx {
         public static SplitterLeftWidth: string = "sfxSplitterleftWidth";
         public static ThemeNameStorageKey: string = "sfxThemeName";
         public static PaginationLimitStorageKey: string = "sfxPaginationLimit";
+        public static AdvancedModeKey: string = "sfxAdvancedMode";
 
         // Default values for storage keys
         public static DefaultThemeName: string = "dark";
         public static DefaultAutoRefreshInterval: number = 15;
         // Keep this in sync with $left-panel-width in _config.scss
         public static DefaultSplitterLeftWidth: number = 400;
-        public static DefaultPaginationLimit: number = 10;
+        public static DefaultPaginationLimit: number = 100;
 
         // System app constants
         public static SystemAppId: string = "System";
@@ -32,6 +33,10 @@ module Sfx {
         // Version header
         public static SfxVersionMetadataName: string = "SFX-Version";
         public static SfxBuildMetadataName: string = "SFX-Build";
+
+        //telemetry header
+        public static SfxTelemetryMetadataName: string = "X-ServiceFabricClientType";
+        public static SfxTelemetryHeaderValue: string = "SFX";
 
         // Custom headers
         public static SfxReadonlyHeaderName: string = "SFX-Readonly";
@@ -167,9 +172,31 @@ module Sfx {
         public static Completed: RegExp = /Completed/i;
     }
 
+    export class ClusterUpgradeStates {
+        public static RollingForwardPending: string = "RollingForwardPending";
+    }
+
     export class UpgradeDomainStateNames {
         public static InProgress: string = "InProgress";
         public static Completed: string = "Completed";
         public static Pending: string = "Pending";
+    }
+
+    export class StatusWarningLevel {
+        public static Warning: string = "warning";
+        public static Error: string = "danger";
+        public static Info: string = "info";
+    }
+
+    export class BannerWarningID {
+        public static ClusterDegradedState = "degradedClusterState";
+        public static OneNodeCluster = "oneNodeCluster";
+        public static ExpiringClusterCert = "CertificateClusterExpiring";
+    }
+
+    export class CertExpiraryHealthEventProperty {
+        public static Client: string = "Certificate_client";
+        public static Cluster: string = "Certificate_cluster";
+        public static Server: string = "Certificate_server";
     }
 }

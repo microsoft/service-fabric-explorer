@@ -6,11 +6,12 @@
 module Sfx {
 
     (function () {
-        let module = angular.module("directives", ["templates", "ngAnimate", "ngSanitize", "ui.bootstrap"]);
+        let module = angular.module("directives", ["templates", "ngAnimate", "ngSanitize", "ui.bootstrap", "dataService"]);
 
         module.controller("RefreshSliderController", ["storage", "$rootScope", RefreshSliderController]);
         module.controller("SplitterController", ["storage", SplitterController]);
         module.controller("DetailListController", ["$filter", "$scope", DetailListController]);
+        module.controller("StatusWarningsController", ["$scope", "data", StatusWarningController]);
 
         module.directive("sfxSplitter", () => new SplitterDirective());
         module.directive("sfxSlider", () => new SliderDirective());
@@ -21,6 +22,7 @@ module Sfx {
         module.directive("sfxDashboard", DashboardChartDirective.factory());
         module.directive("sfxImageStoreView", () => new ImageStoreViewDirective());
         module.directive("sfxImageStoreFileView", () => new ImageStoreOptionsViewDirective());
+        module.directive("sfxStatusWarnings", () => new StatusWarningsDirective());
 
         module.directive("sfxThemeImport", ["theme", (themeService: ThemeService): angular.IDirective => {
             return {
@@ -111,11 +113,15 @@ module Sfx {
 
         // When navigating in the tree view through arrow keys, make sure the selected node also gets
         // the focus since it could have been set on some other elements by using the tab key.
-        module.directive("sfxTreeSetFocus", ["$timeout", function ($timeout) {
+        module.directive("sfxTreeSetFocus", ["$timeout", "clusterTree", function ($timeout, clusterTree: ClusterTreeService) {
             return {
                 restrict: "A",
                 link: function ($scope: any, $element: any, $attributes: any) {
                     $attributes.$observe("selected", function (selected) {
+                        if (clusterTree.setFirstVisit()) {
+                            return;
+                        }
+
                         if (selected !== "true") {
                             return;
                         }
@@ -128,11 +134,15 @@ module Sfx {
             };
         }]);
 
-        module.directive("sfxTabSetFocus", ["$timeout", function ($timeout) {
+        module.directive("sfxTabSetFocus", ["$timeout", "controllerManager", function ($timeout, controllerManager: ControllerManagerService) {
             return {
                 restrict: "A",
                 link: function ($scope: any, $element: any, $attributes: any) {
                     $attributes.$observe("active", function (active) {
+                        if (controllerManager.firstPageLoad) {
+                            controllerManager.firstPageLoad = false;
+                            return;
+                        }
                         if (active !== "true") {
                             return;
                         }
@@ -290,7 +300,8 @@ module Sfx {
                 restrict: "AE",
                 replace: true,
                 scope: {
-                    metrics: "="
+                    metrics: "=",
+                    listSettings: "="
                 },
                 templateUrl: "partials/metrics-view.html"
             };
@@ -314,6 +325,33 @@ module Sfx {
                     $scope.opened = false;
                     $scope.flip = (): void => {
                         $scope.opened  = !$scope.opened;
+                    };
+                }
+            };
+        });
+
+        module.directive("sfxClipBoard", (): angular.IDirective => {
+            return {
+                restrict: "E",
+                replace: true,
+                scope: {
+                    text: "=",
+                    nestedText: "=",
+                    nestedTextProperty: "="
+                },
+                templateUrl: "partials/copy-to-clipboard.html",
+                link: function ($scope: any, $element, $attributes: any) {
+                    $scope.copy = (): void => {
+                        try {
+                            let $temp_input = $("<textarea>");
+                            $("body").append($temp_input);
+                            $temp_input.val($scope.nestedTextProperty ? $scope.nestedText[$scope.nestedTextProperty] : $scope.text).select();
+                            document.execCommand("copy");
+                            $temp_input.remove();
+                        } catch (e) {
+                            console.log(e);
+                        }
+
                     };
                 }
             };

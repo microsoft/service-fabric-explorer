@@ -1,6 +1,8 @@
 ﻿<sfx-detail-view-navbar ctrl="clusterCtrl" type="Cluster" name="{{SFXClusterName}}"></sfx-detail-view-navbar>
 
 <div class="main-view">
+    <sfx-status-warnings style="margin-top: 10px;"></sfx-status-warnings>
+
     <div sfx-include src="'tab_' + clusterCtrl.activeTabId" ng-if="clusterCtrl.activeTabId" role="tabpanel" aria-label="{{clusterCtrl.activeTabId}}" class="flex-child"></div>
 
     <script type="text/ng-template" id="tab_essentials">
@@ -12,7 +14,7 @@
                         <th>Upgrade State</th>
                     </tr>
                     <tr>
-                        <td>{{clusterUpgradeProgress.raw.CodeVersion}}</td>
+                        <td>{{clusterUpgradeProgress.raw.CodeVersion}}<sfx-clip-board text="clusterUpgradeProgress.raw.CodeVersion"></sfx-clip-board> </td>
                         <td>{{clusterUpgradeProgress.raw.UpgradeState}}</td>
                     </tr>
                     <tr>
@@ -202,7 +204,7 @@
 
     <script type="text/ng-template" id="tab_metrics">
         <div class="detail-pane">
-            <div sfx-metrics-view metrics="metricsViewModel"></div>
+            <div sfx-metrics-view metrics="metricsViewModel" list-settings="settings"></div>
         </div>
     </script>
 

@@ -18,6 +18,7 @@ module Sfx {
         }
 
         public link: ng.IDirectiveLinkFn = ($scope: IMetricsViewScope, element: JQuery, attributes: ng.IAttributes) => {
+
             let self = this;
             let maxBarsShownInOneScreen = 20;
 
@@ -445,6 +446,25 @@ module Sfx {
                         .transition().duration(transitionDuration)
                         .style("opacity", 1e-6);
                 }
+
+                let settings = $scope.metrics.metrics.map(metric => {return new ListColumnSetting("data." + metric.name, metric.displayName); });
+                settings.splice(0, 0, new ListColumnSetting("node", "Node"));
+
+                let tableData = $scope.metrics.filteredNodeLoadInformation.map(metric => {
+                    const nodeMetrics = metric.nodeLoadMetricInformation.reduce(
+                        (obj: Record<string, number>, metricData) => {
+                            obj[metricData.name] = metricData.raw.NodeLoad;
+                            return obj;
+                        }, {} );
+                    return {
+                        node: metric.raw.NodeName,
+                        data: nodeMetrics
+                    };
+                });
+
+                //update table settings
+                $scope.tableData = tableData;
+                $scope.tableSettings = $scope.listSettings.getNewOrExistingListSettings("metricsettings", ["node"], settings);
             });
         }
     }

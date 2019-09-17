@@ -24,6 +24,11 @@
                       ng-class="{ 'bowtie-chevron-right-light': child.isCollapsed, 'bowtie-chevron-down-light': child.isExpanded }"
                       ng-style="::{ 'left': (child.paddingLeft - 18) + 'px' }">
                 </span>
+                <span tabindex="-1" class="icon bowtie-icon" aria-hidden="true" ng-if="child.canExpandAll"
+                ng-click="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()" ng-show="child.hasExpander"
+                ng-class="{ 'bowtie-math-plus-heavy': child.isCollapsed, 'bowtie-math-minus': child.isExpanded }"
+                title="{{child.isCollapsed ? 'Expand All' : 'Collapse All'}}">
+                </span>
                 <image ng-if="child.badge && child.badge() && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
                        class="tree-badge" title="{{child.badge().text}}"
                        ng-src="images/{{child.badge().badgeClass}}.svg" role="presentation"></image>
@@ -39,7 +44,7 @@
                         <span class="bowtie-icon bowtie-ellipsis"></span>
                     </a>
                     <ul role="menu" class="dropdown-menu dropdown-menu-right" uib-dropdown-menu style="list-style: none">
-                        <li role="menuitem" ng-repeat="action in ::child.actions.collection track by action.name">
+                        <li role="menuitem" ng-repeat="action in child.actions.collection track by action.name">
                             <a role="menuitem"
                                tabindex="-1"
                                href=""

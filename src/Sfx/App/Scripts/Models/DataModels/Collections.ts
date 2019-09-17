@@ -237,6 +237,10 @@ module Sfx {
         public faultDomains: string[];
         public healthySeedNodes: string;
         public disabledNodes: string;
+        public seedNodeCount: number;
+
+        //make sure we only check once per session and this object will get destroyed/recreated
+        private static checkedOneNodeScenario = false;
 
         public constructor(data: DataService) {
             super(data);
@@ -268,6 +272,15 @@ module Sfx {
                 allNodes.add(node);
             });
             return [allNodes, seedNodes].concat(Object.keys(counts).map(key => counts[key]));
+        }
+
+        public setAdvancedMode(state: boolean): void {
+            this.collection.forEach( node => {
+                node.removeAdvancedActions();
+                if (state) {
+                    node.setAdvancedActions();
+                }
+            });
         }
 
         protected get indexPropery(): string {
@@ -306,9 +319,42 @@ module Sfx {
             });
 
             this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
+            this.seedNodeCount = seedNodes.length;
+
+            this.checkSeedNodeCount(this.seedNodeCount);
+            this.checkOneNodeScenario();
 
             this.healthySeedNodes = seedNodes.length.toString() + " (" +
                 Math.round(healthyNodes.length / seedNodes.length * 100).toString() + "%)";
+        }
+
+        private checkSeedNodeCount(count: number) {
+            //if < 5 seed nodes display warning
+            //if count is 1, it is one box/test only scenario
+            if (count < 5 && count !== 1) {
+                this.data.warnings.addOrUpdateNotification({
+                    message: "Cluster is degraded because it does not have 5 seed nodes. See link for more details",
+                    level: StatusWarningLevel.Error,
+                    priority: 2,
+                    id: BannerWarningID.ClusterDegradedState,
+                    link: "https://aka.ms/servicefabric/durability"
+                });
+            }else {
+                this.data.warnings.removeNotificationById(BannerWarningID.ClusterDegradedState);
+            }
+        }
+
+        private checkOneNodeScenario(): void {
+            if ( !NodeCollection.checkedOneNodeScenario && this.collection.length === 1) {
+                this.data.warnings.addOrUpdateNotification({
+                    message: "One node cluster is considered a test cluster and cannot perform cluster upgrades.",
+                    level: StatusWarningLevel.Info,
+                    priority: 1,
+                    id: BannerWarningID.OneNodeCluster,
+                    link: "https://aka.ms/servicefabric/durability"
+                });
+            }
+            NodeCollection.checkedOneNodeScenario = true;
         }
 
         private updateNodesHealthState(): void {
