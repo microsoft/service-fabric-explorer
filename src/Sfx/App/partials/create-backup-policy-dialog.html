@@ -52,8 +52,8 @@
             <dd>
                 <div ng-repeat="temp in action.weekDay">
                     <label>
-                        {{action.weekDay[$index]}}
-                        <input type="checkbox" ng-model="action.isSelected[$index]">
+                        {{temp}}
+                        <input type="checkbox" ng-model="action.daySelectedMapping[temp]">
                     </label><br />
                 </div>
             </dd>

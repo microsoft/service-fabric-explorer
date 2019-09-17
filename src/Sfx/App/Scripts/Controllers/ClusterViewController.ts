@@ -191,7 +191,7 @@ module Sfx {
         public retentionPolicyRequired: boolean;
         public RetentionPolicy: IRawRetentionPolicy;
         public weekDay: string[];
-        public isSelected: boolean[];
+        public daySelectedMapping: Map<string, Boolean>;
 
         constructor(data: DataService) {
             super(
@@ -213,7 +213,7 @@ module Sfx {
             this.retentionPolicyRequired = false;
             this.date = "";
             this.weekDay = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-            this.isSelected = [false, false, false, false, false, false, false];
+            this.daySelectedMapping = {};
         }
 
         public add(): void {
@@ -238,9 +238,9 @@ module Sfx {
 
             if (this.backupPolicy.Schedule.ScheduleKind === "TimeBased" && this.backupPolicy.Schedule.ScheduleFrequencyType === "Weekly") {
                 this.backupPolicy.Schedule.RunDays = [];
-                for (let i = 0; i < 7; i++) {
-                    if (this.isSelected[i]) {
-                        this.backupPolicy.Schedule.RunDays.push(this.weekDay[i]);
+                for (let day of this.weekDay) {
+                    if (this.daySelectedMapping[day]) {
+                        this.backupPolicy.Schedule.RunDays.push(day);
                     }
                 }
             }
@@ -255,7 +255,7 @@ module Sfx {
         public retentionPolicyRequired: boolean;
         public RetentionPolicy: IRawRetentionPolicy;
         public weekDay: string[];
-        public isSelected: boolean[];
+        public daySelectedMapping: Map<string, Boolean>;
         public delete: any;
 
         constructor(data: DataService, raw: IRawBackupPolicy) {
@@ -278,12 +278,7 @@ module Sfx {
             this.retentionPolicyRequired = false;
             this.date = "";
             this.weekDay = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
-            this.isSelected = [false, false, false, false, false, false, false];
-            let dayIndexMapping = {};
-            for (let i = 0; i < 7; i++) {
-                dayIndexMapping[this.weekDay[i]] = i;
-            }
-
+            this.daySelectedMapping = {};
             this.backupPolicy = raw;
             if (this.backupPolicy["RetentionPolicy"]) {
                 this.retentionPolicyRequired = true;
@@ -292,7 +287,7 @@ module Sfx {
             if (this.backupPolicy.Schedule.RunDays) {
                 for (let day of this.backupPolicy.Schedule.RunDays)
                 {
-                    this.isSelected[dayIndexMapping[day]] = true;
+                    this.daySelectedMapping[day] = true;
                 }
             }
             this.delete = () => {
@@ -322,9 +317,9 @@ module Sfx {
 
             if (this.backupPolicy.Schedule.ScheduleKind === "TimeBased" && this.backupPolicy.Schedule.ScheduleFrequencyType === "Weekly") {
                 this.backupPolicy.Schedule.RunDays = [];
-                for (let i = 0; i < 7; i++) {
-                    if (this.isSelected[i]) {
-                        this.backupPolicy.Schedule.RunDays.push(this.weekDay[i]);
+                for (let day of this.weekDay) {
+                    if (this.daySelectedMapping[day]) {
+                        this.backupPolicy.Schedule.RunDays.push(day);
                     }
                 }
             }
