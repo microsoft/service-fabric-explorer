@@ -20,6 +20,7 @@ module Sfx {
             "refreshService",
             "telemetryService",
             "themeService",
+            "StatusWarningService",
             "dataService",
             "controllerManagerService",
             "authenticationController",

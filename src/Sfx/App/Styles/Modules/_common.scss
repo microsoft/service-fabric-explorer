@@ -90,7 +90,6 @@ h1, h2, h3, h4, h5, h6 {
     left: 0;
     min-width: 150px;
     width: $left-panel-width;
-    max-width: 600px;
     bottom: 0;
     overflow: hidden;
     padding: 10px 23px 20px 20px;
@@ -358,4 +357,18 @@ input[type=number]::-webkit-outer-spin-button {
 
 .focused-hightlight:focus{
     border: #4BA0B5 solid 2px;
+}
+
+.status-warning{
+    margin: auto;
+    color: black;
+    width: 1000px;
+    max-width: 100%;
+    margin-bottom: 10px !important;
+}
+
+//overriding bootstrap solution for IE 9 compatibility which breaks with chromium edge
+//we will take the chromium edge support as a higher pri
+.table-responsive{
+    min-height: unset !important;
 }

@@ -6,11 +6,12 @@
 module Sfx {
 
     (function () {
-        let module = angular.module("directives", ["templates", "ngAnimate", "ngSanitize", "ui.bootstrap"]);
+        let module = angular.module("directives", ["templates", "ngAnimate", "ngSanitize", "ui.bootstrap", "dataService"]);
 
         module.controller("RefreshSliderController", ["storage", "$rootScope", RefreshSliderController]);
         module.controller("SplitterController", ["storage", SplitterController]);
         module.controller("DetailListController", ["$filter", "$scope", DetailListController]);
+        module.controller("StatusWarningsController", ["$scope", "data", StatusWarningController]);
 
         module.directive("sfxSplitter", () => new SplitterDirective());
         module.directive("sfxSlider", () => new SliderDirective());
@@ -21,6 +22,7 @@ module Sfx {
         module.directive("sfxDashboard", DashboardChartDirective.factory());
         module.directive("sfxImageStoreView", () => new ImageStoreViewDirective());
         module.directive("sfxImageStoreFileView", () => new ImageStoreOptionsViewDirective());
+        module.directive("sfxStatusWarnings", () => new StatusWarningsDirective());
 
         module.directive("sfxThemeImport", ["theme", (themeService: ThemeService): angular.IDirective => {
             return {

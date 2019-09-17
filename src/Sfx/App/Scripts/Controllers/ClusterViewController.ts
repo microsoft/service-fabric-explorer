@@ -25,13 +25,11 @@ module Sfx {
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
         upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
-        backupPolicyListSettings: ListSettings;
         metricsViewModel: IMetricsViewModel;
         upgradeAppsCount: number;
         appsUpgradeTabViewPath: string;
         clusterEvents: ClusterEventList;
         backupPolicies: BackupPolicyCollection;
-        actions: ActionCollection;
         settings: SettingsService;
     }
 
@@ -46,14 +44,8 @@ module Sfx {
                 "imagestore": { name: "Image Store" },
                 "manifest": { name: "Manifest" },
                 "events": { name: "Events" },
-                "backupPolicies": { name: "Backups" },
+                "backupPolicies": { name: "Backups" }
             });
-
-            $scope.actions = new ActionCollection(this.data.telemetry, this.data.$q);
-
-            if (this.data.actionsEnabled()) {
-                this.setupActions();
-            }
 
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);
             this.tabs["details"].refresh = (messageHandler) => this.refreshDetails(messageHandler);
@@ -115,6 +107,8 @@ module Sfx {
 
                     let replicasHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Replica);
                     this.$scope.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
+
+                    clusterHealth.checkExpiredCertStatus();
                 }));
 
             // For upgrade dashboard
