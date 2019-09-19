@@ -107,7 +107,7 @@ module Sfx {
             const duration = event.eventProperties["OverallUpgradeElapsedTimeInMs"];
 
             const start = new Date(endDate.getTime() - duration).toISOString();
-            const content = `${rollBack ? "upgrade Rolling back" : "Upgrade rolling forward"} to ${event.eventProperties[targetVersionProperty]}`;
+            const content = `${rollBack ? "Upgrade Rolling back" : "Upgrade rolling forward"} to ${event.eventProperties[targetVersionProperty]}`;
 
             items.add({
                 id: event.eventInstanceId + content,
