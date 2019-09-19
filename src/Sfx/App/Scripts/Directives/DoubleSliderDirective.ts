@@ -43,7 +43,7 @@ module Sfx {
                                 min: TimeUtils.AddDays(new Date(), -30).getTime(),
                                 max: new Date().getTime(),
                             },
-                            step: 60 * 1000,
+                            step: 60 * 1000, //let the steps be as granular as a minute.
                             start: [new Date($scope.startDate).getTime(), new Date($scope.endDate).getTime()]
                         });
 

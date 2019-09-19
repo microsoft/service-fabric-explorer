@@ -25,7 +25,8 @@ module Sfx {
             const rollbackEnd = rollbackCompleteEvent.timeStamp;
 
             let rollbackStarted = startOfRange.toISOString();
-            //wont always get this event
+            //wont always get this event because of the time range that can be selected where we only get the 
+            //rollback completed which leaves us missing some of the info.
             if (rollbackStartedEvent) {
                 rollbackStarted = rollbackStartedEvent.timeStamp;
                 const rollbackStartedDate = new Date(rollbackEnd);
@@ -35,7 +36,7 @@ module Sfx {
                 //roll forward
                 items.add({
                     id: rollbackCompleteEvent.eventInstanceId + "upgrade",
-                    content: "upgrade rolling forward failed",
+                    content: "Upgrade rolling forward failed",
                     start: upgradeStart,
                     end: rollbackStarted,
                     group,
