@@ -47,7 +47,7 @@ module Sfx {
 
         public constructor(eventsList: EventListBase<any>, timelineGenerator?: ITimelineDataGenerator<FabricEventBase>) {
             this.eventsList = eventsList;
-            console.log(timelineGenerator);
+
             if (timelineGenerator) {
                 this._timelineGenerator = timelineGenerator;
             }
