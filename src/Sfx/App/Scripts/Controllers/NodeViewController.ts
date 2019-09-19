@@ -21,6 +21,7 @@ module Sfx {
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
         nodeEvents: NodeEventList;
+        nodeEventTimelineGenerator: NodeTimelineGenerator;
         networks: NetworkOnNodeCollection;
         networkListSettings: ListSettings;
         clusterManifest: ClusterManifest;
@@ -56,6 +57,7 @@ module Sfx {
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.nodeEvents = this.data.createNodeEventList(this.nodeName);
+            this.$scope.nodeEventTimelineGenerator = new NodeTimelineGenerator();
 
             this.$scope.networkListSettings = this.settings.getNewOrExistingListSettings("networks", ["networkDetail.name"], [
                 new ListColumnSettingForLink("networkDetail.name", "Network Name", item => item.viewPath),

@@ -12,6 +12,7 @@ module Sfx {
         unhealthyEvaluationsListSettings: ListSettings;
         partitionBackupListSettings: ListSettings;
         partitionEvents: PartitionEventList;
+        partitionTimeLineGenerator: PartitionTimelineGenerator;
     }
 
 
@@ -60,6 +61,7 @@ module Sfx {
             this.$scope.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
             this.$scope.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
             this.$scope.partitionEvents = this.data.createPartitionEventList(this.partitionId);
+            this.$scope.partitionTimeLineGenerator = new PartitionTimelineGenerator();
             this.$scope.partitionBackupListSettings = this.settings.getNewOrExistingListSettings("partitionBackups", [null], [
                 new ListColumnSetting("raw.BackupId", "BackupId", ["raw.BackupId"], false, (item, property) => `<a href='${item.parent.viewPath}/tab/backups'>${property}</a>` , 1, item => item.action.runWithCallbacks.apply(item.action)),
                 new ListColumnSetting("raw.BackupType", "BackupType"),

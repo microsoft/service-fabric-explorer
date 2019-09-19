@@ -9,6 +9,7 @@ module Sfx {
         nodes: NodeCollection;
         listSettings: ListSettings;
         nodeEvents: NodeEventList;
+        nodeEventTimelineGenerator: NodeTimelineGenerator;
     }
 
     export class NodesViewController extends MainViewController {
@@ -34,6 +35,8 @@ module Sfx {
                 new ListColumnSettingWithFilter("nodeStatus", "Status"),
             ]);
             this.$scope.nodeEvents = this.data.createNodeEventList(null);
+            this.$scope.nodeEventTimelineGenerator = new NodeTimelineGenerator();
+
             this.refresh();
         }
 

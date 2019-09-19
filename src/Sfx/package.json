@@ -35,6 +35,8 @@
     "yargs": "7.0.1"
   },
   "dependencies": {
+    "@types/nouislider": "^9.0.5",
+    "@types/vis": "^4.21.18",
     "adal-angular": "1.0.17",
     "angular": "1.5.0",
     "angular-animate": "1.5.0",
@@ -48,7 +50,9 @@
     "jquery-ui": "^1.12.1",
     "lodash": "^4.17.11",
     "moment": "^2.22.2",
+    "nouislider": "^14.0.2",
     "path": "^0.12.7",
-    "url": "^0.11.0"
+    "url": "^0.11.0",
+    "vis-timeline": "^5.1.0"
   }
 }

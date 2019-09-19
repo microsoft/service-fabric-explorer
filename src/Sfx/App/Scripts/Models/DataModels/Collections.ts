@@ -841,7 +841,7 @@ module Sfx {
         // requests take ~3 secs, and so we shouldn't be delaying every global refresh.
         public readonly minimumRefreshTimeInSecs: number = 10;
         public readonly pageSize: number = 15;
-        public readonly defaultDateWindowInDays: number = 2;
+        public readonly defaultDateWindowInDays: number = 7;
         public readonly latestRefreshPeriodInSecs: number = 60 * 60;
 
         protected readonly optionalColsStartIndex: number = 2;
@@ -979,14 +979,10 @@ module Sfx {
                     this.defaultDateWindowInDays);
             }
 
-            let bodStartDate = new Date(startDate.valueOf());
-            let eodEndDate = new Date(endDate.valueOf());
-            bodStartDate.setHours(0, 0, 0, 0);
-            eodEndDate.setHours(23, 59, 59, 999);
-            if (!this._startDate || this._startDate.getTime() !== bodStartDate.getTime() ||
-                !this._endDate || this._endDate.getTime() !== eodEndDate.getTime()) {
-                this._startDate = bodStartDate;
-                this._endDate = eodEndDate;
+            if (!this._startDate || this._startDate.getTime() !== startDate.getTime() ||
+                !this._endDate || this._endDate.getTime() !== endDate.getTime()) {
+                this._startDate = startDate;
+                this._endDate = endDate;
                 return true;
             }
 

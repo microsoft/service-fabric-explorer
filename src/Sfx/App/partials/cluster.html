@@ -1,5 +1,5 @@
-﻿<sfx-detail-view-navbar ctrl="clusterCtrl" type="Cluster" name="{{SFXClusterName}}"></sfx-detail-view-navbar>
-
+﻿
+<sfx-detail-view-navbar ctrl="clusterCtrl" type="Cluster" name="{{SFXClusterName}}"></sfx-detail-view-navbar>
 <div class="main-view">
     <sfx-status-warnings style="margin-top: 10px;"></sfx-status-warnings>
 
@@ -224,8 +224,9 @@
     </script>
 
     <script type="text/ng-template" id="tab_events">
-        <sfx-events-view events-list="clusterEvents" class="flex-child"></sfx-events-view>
+        <sfx-events-view events-list="clusterEvents" timeline-generator="clusterTimelineGenerator" class="flex-child"></sfx-events-view>
     </script>
+</div>
 
     <script type="text/ng-template" id="tab_backupPolicies">
         <div class="detail-view-actions btn-group" uib-dropdown ng-if="::actions && actions.length > 0">

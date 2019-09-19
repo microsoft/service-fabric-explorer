@@ -29,10 +29,11 @@ module Sfx {
         metricsViewModel: IMetricsViewModel;
         upgradeAppsCount: number;
         appsUpgradeTabViewPath: string;
-        clusterEvents: ClusterEventList;
         backupPolicies: BackupPolicyCollection;
         actions: ActionCollection;
         settings: SettingsService;
+        clusterEvents: ClusterEventList;
+        clusterTimelineGenerator: ClusterTimelineGenerator;
     }
 
     export class ClusterViewController extends MainViewController {
@@ -88,6 +89,7 @@ module Sfx {
             this.$scope.nodesStatuses = [];
             this.$scope.backupPolicies = this.data.backupPolicies;
             this.$scope.settings = this.settings;
+            this.$scope.clusterTimelineGenerator = new ClusterTimelineGenerator();
             this.refresh();
         }
 

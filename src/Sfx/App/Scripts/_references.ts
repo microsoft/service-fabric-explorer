@@ -52,6 +52,9 @@
 /// <reference path="models/datamodels/applicationtype.ts" />
 /// <reference path="models/datamodels/aad.ts" />
 
+/// <reference path="models/eventstore/Events.ts" />
+/// <reference path="models/eventstore/timelineGenerators.ts" />
+
 /// <reference path="viewmodels/treetypes.ts" />
 /// <reference path="viewmodels/treenodegroupviewmodel.ts" />
 /// <reference path="viewmodels/treenodeviewmodel.ts" />
