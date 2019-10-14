@@ -859,3 +859,11 @@ import { Node } from './DataModels/Node';
         }
     }
 
+    export enum NodeStatus {
+        Invalid = 0,
+        Up = 1,
+        Down = 2,
+        Enabling = 3,
+        Disabling = 4,
+        Disabled = 5
+    }

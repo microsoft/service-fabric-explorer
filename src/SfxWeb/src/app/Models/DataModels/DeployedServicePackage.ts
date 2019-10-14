@@ -1,6 +1,12 @@
 ﻿import { DataModelBase } from './Base';
-import { IRawDeployedServicePackage } from '../RawDataTypes';
+import { IRawDeployedServicePackage, IRawDeployedServicePackageHealth } from '../RawDataTypes';
 import { DeployedCodePackageCollection, DeployedReplicaCollection } from './Collections';
+import { DataService } from 'src/app/services/data.service';
+import { ServiceManifest } from './Service';
+import { HealthStateFilterFlags, IDeployedServicePackageHealthStateChunk } from '../HealthChunkRawDataTypes';
+import { IdGenerator } from 'src/app/Utils/IdGenerator';
+import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
+import { HealthBase } from './HealthEvent';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.

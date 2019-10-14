@@ -30,13 +30,13 @@ export class ValueResolver {
 
     public resolveHealthStatus(value: string): ITextAndBadge {
         // Default to Unknown health state if resolve failed
-        return this.resolve(value, ValueResolver.healthStatus, _.last(ValueResolver.healthStatus));
+        return this.resolve(value, ValueResolver.healthStatus, ValueResolver.healthStatus[ValueResolver.length - 1]);
     }
 
     public resolve(value: string, options: ITextAndBadge[], defaultValue: ITextAndBadge = null): ITextAndBadge {
 
         if (Utils.isNumeric(value)) {
-            let enumValue = _.parseInt(value);
+            let enumValue = +value;
             if (enumValue >= 0 && enumValue < options.length) {
                 return options[enumValue];
             }
@@ -53,6 +53,6 @@ export class ValueResolver {
             return null;
         }
 
-        return _.find(options, opt => opt.text.toLowerCase() === value.toLowerCase() || opt.badgeId.toLowerCase() === value.toLowerCase());
+        return options.find(opt => opt.text.toLowerCase() === value.toLowerCase() || opt.badgeId.toLowerCase() === value.toLowerCase());
     }
 }

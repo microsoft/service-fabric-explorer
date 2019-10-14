@@ -8,6 +8,10 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import { Utils } from 'src/app/Utils/Utils';
 import { ReplicaOnPartitionCollection } from './Collections';
+import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { ReplicaOnPartition } from './Replica';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -87,38 +91,38 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
         return SortPriorities.ReplicaRolesToSortPriorities[this.raw.ReplicaRole] || 0;
     }
 
-    public restartReplica(): angular.IPromise<any> {
+    public restartReplica(): Observable<any> {
         return this.data.restClient.restartReplica(this.parent.parent.parent.raw.Name, this.raw.PartitionId, this.raw.ReplicaId);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawDeployedReplica> {
-        const promises: angular.IPromise<any>[] = [
-            this.data.restClient.getPartitionById(this.raw.PartitionId, ResponseMessageHandlers.silentResponseMessageHandler).then(response => this.partition = response.data),
-            this.data.restClient.getDeployedReplica(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.raw.PartitionId, messageHandler).then(response => { return _.first(response.data); })
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedReplica> {
+        const promises: Observable<any>[] = [
+            this.data.restClient.getPartitionById(this.raw.PartitionId, ResponseMessageHandlers.silentResponseMessageHandler).pipe(map(response => {this.partition = response; return response})),
+            this.data.restClient.getDeployedReplica(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.raw.PartitionId, messageHandler).pipe(map(response => { return response[0]; }))
         ];
 
-        return this.data.$q.all(promises).then((values) => values[1]);
+        return forkJoin(promises).pipe(map((values) => values[1]));
     }
 
-    protected updateInternal(): angular.IPromise<any> | void {
-        this.address = Utils.parseReplicaAddress(this.raw.Address);
+    protected updateInternal(): Observable<any> | void {
+        this.address = HtmlUtils.parseReplicaAddress(this.raw.Address);
     }
 
     private setUpActions(): void {
         let serviceName = this.parent.parent.raw.Name;
 
-        this.actions.add(new ActionWithConfirmationDialog(
-            this.data.$uibModal,
-            this.data.$q,
-            "Restart Replica",
-            "Restart Replica",
-            "Restarting",
-            () => this.restartReplica(),
-            () => true,
-            `Confirm Replica Restart`,
-            `Restart Replica for ${serviceName}`,
-            "confirm"
-        ));
+        // this.actions.add(new ActionWithConfirmationDialog(
+        //     this.data.$uibModal,
+        //     this.data.$q,
+        //     "Restart Replica",
+        //     "Restart Replica",
+        //     "Restarting",
+        //     () => this.restartReplica(),
+        //     () => true,
+        //     `Confirm Replica Restart`,
+        //     `Restart Replica for ${serviceName}`,
+        //     "confirm"
+        // ));
     }
 }
 

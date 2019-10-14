@@ -13,8 +13,8 @@ import { mergeMap, map } from 'rxjs/operators';
 import { Utils } from 'src/app/Utils/Utils';
 import { BackupPolicy } from './Cluster';
 import { ApplicationBackupConfigurationInfo, Application } from './Application';
-import { ApplicationTypeGroup } from './ApplicationType';
-import { Service } from './Service';
+import { ApplicationTypeGroup, ApplicationType } from './ApplicationType';
+import { Service, ServiceType } from './Service';
 import { IdUtils } from 'src/app/Utils/IdUtils';
 import { Partition } from './Partition';
 import { ReplicaOnPartition } from './Replica';
@@ -29,6 +29,7 @@ import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { NetworkOnNode } from './NetworkOnNode';
 import { NetworkOnApp } from './NetworkOnApp';
 import { Network } from './Network';
+import { AppOnNetwork } from './AppOnNetwork';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -124,7 +125,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     protected valueResolver: ValueResolver = new ValueResolver();
 
     private appendOnly: boolean;
-    private hash: _.Dictionary<T>;
+    private hash: Record<string, T>;
     //private refreshingLoadPromise: CancelablePromise<T[]>;
     private refreshingPromise: Subject<any>;
 
@@ -157,16 +158,24 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
             this.refreshingPromise = new Subject<any>();
             
             this.retrieveNewCollection(messageHandler).pipe(mergeMap(collection => {
+                console.log(collection)
                 return this.update(collection)
-            }, error => {
-                if (error) {
-                    throw error;
-                }
-                // Else skipping as load got canceled.
-                return of(null);
-            })) .subscribe( () => {
+                //return this.update(collection)
+            })).subscribe( () => {
+                //console.log(this)
+                this.refreshingPromise.next(this);
+                this.refreshingPromise.complete();
                 this.refreshingPromise = null;
-            })
+            }
+            // , error => {
+            //     console.log(error)
+            //     if (error) {
+            //         throw error;
+            //     }
+            //     // Else skipping as load got canceled.
+            //     return of(null);
+            // }
+            );
                 // this.refreshingLoadPromise.load(() => {
                 //     return this.retrieveNewCollection(messageHandler);
                 // }).catch((error) => {
@@ -205,7 +214,9 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
 
     protected update(collection: T[]): Observable<any> {
         this.isInitialized = true;
-        CollectionUtils.updateDataModelCollection(this.collection, collection, this.appendOnly);
+        console.log(collection)
+        this.collection = CollectionUtils.updateDataModelCollection(this.collection, collection, this.appendOnly);
+        console.log(this.collection)
         this.hash = Utils.keyBy(this.collection, this.indexPropery);
         return this.updateInternal();
     }
@@ -234,8 +245,8 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     }
 
     // Derived class should override this function to do custom updating
-    protected updateInternal(): Observable<any> | void{
-        return of(true) || null;
+    protected updateInternal(): Observable<any>{
+        return of(true);
     }
 
     protected updateCollectionFromHealthChunkList<P extends IHealthStateChunk>(
@@ -293,9 +304,9 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        return this.updateCollectionFromHealthChunkList(clusterHealthChunk.NodeHealthStateChunks, item => IdGenerator.node(item.NodeName)).then(() => {
+        return this.updateCollectionFromHealthChunkList(clusterHealthChunk.NodeHealthStateChunks, item => IdGenerator.node(item.NodeName)).pipe(map(() => {
             this.updateNodesHealthState();
-        });
+        }));
     }
 
     public getNodeStateCounts(): INodesStatusDetails[] {
@@ -331,19 +342,19 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getNodes(messageHandler).then(items => {
-            return _.map(items, raw => new Node(this.data, raw));
-        });
+        return this.data.restClient.getNodes(messageHandler).pipe(map(items => {
+            return items.map(raw => new Node(this.data, raw));
+        }));
     }
 
-    protected updateInternal(): Observable<any> | void {
+    protected updateInternal(): Observable<any> {
         this.updateNodesHealthState();
 
         this.faultDomains = this.collection.map(node => node.raw.FaultDomain);
-        this.faultDomains = _.uniq(this.faultDomains).sort();
+        this.faultDomains = Utils.unique(this.faultDomains).sort();
 
         this.upgradeDomains = this.collection.map(node => node.raw.UpgradeDomain);
-        this.upgradeDomains = _.uniq(this.upgradeDomains).sort();
+        this.upgradeDomains = Utils.unique(this.upgradeDomains).sort();
 
         let seedNodes = this.collection.filter(node => node.raw.IsSeedNode);
         let healthyNodes = seedNodes.filter(node => node.healthState.text === HealthStateConstants.OK);
@@ -368,6 +379,8 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
 
         this.healthySeedNodes = seedNodes.length.toString() + " (" +
             Math.round(healthyNodes.length / seedNodes.length * 100).toString() + "%)";
+
+        return of(true);
     }
 
     private checkSeedNodeCount(count: number) {
@@ -401,15 +414,15 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
 
     private updateNodesHealthState(): void {
         // calculates the nodes health state which is the max state value of all nodes
-        this.healthState = this.valueResolver.resolveHealthStatus(_.max(_.map(this.collection, node => HealthStateConstants.Values[node.healthState.text])));
+        this.healthState = this.valueResolver.resolveHealthStatus(Utils.max(this.collection.map(node => HealthStateConstants.Values[node.healthState.text])).toString());
     }
 }
 
 export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy> {
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getBackupPolicies(messageHandler).then(items => {
-            return _.map(items, raw => new BackupPolicy(this.data, raw));
-        });
+        return this.data.restClient.getBackupPolicies(messageHandler).pipe(map(items => {
+            return items.map(raw => new BackupPolicy(this.data, raw));
+        }));
     }
 }
 
@@ -423,9 +436,9 @@ export class NetworkCollection extends DataModelCollectionBase<Network> {
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getNetworks(messageHandler).then(items => {
-            return _.map(items, raw => new Network(this.data, raw));
-        });
+        return this.data.restClient.getNetworks(messageHandler).pipe(map(items => {
+            return items.map(raw => new Network(this.data, raw));
+        }));
     }
 }
 
@@ -477,7 +490,7 @@ export class AppOnNetworkCollection extends DataModelCollectionBase<AppOnNetwork
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         let collection = [];
-        return this.data.restClient.getAppsOnNetwork(this.networkName, messageHandler).then(items => {
+        return this.data.restClient.getAppsOnNetwork(this.networkName, messageHandler).pipe(items => {
             let tasks = _.map(items, raw => {
                 let application = new AppOnNetwork(this.data, raw);
                 return application.refresh().then(() => collection.push(application));
@@ -556,29 +569,31 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getApplications(messageHandler).then(items => {
-            return _.map(items, raw => new Application(this.data, raw));
-        });
+        return this.data.restClient.getApplications(messageHandler).pipe(map(items => {
+            return items.map(raw => new Application(this.data, raw));
+        }));
     }
 
-    protected updateInternal(): Observable<any> | void {
-        this.upgradingAppCount = _.filter(this.collection, (app) => app.isUpgrading).length;
+    protected updateInternal(): Observable<any> {
+        this.upgradingAppCount = this.collection.filter(app => app.isUpgrading).length;
         this.updateAppsHealthState();
         return this.refreshAppTypeGroups();
     }
 
     private updateAppsHealthState(): void {
+        this.collection.map(app => HealthStateConstants.Values[app.healthState.text])
         // calculates the applications health state which is the max state value of all applications
         this.healthState = this.length > 0
-            ? this.valueResolver.resolveHealthStatus(_.max(_.map(this.collection, app => HealthStateConstants.Values[app.healthState.text])))
+            ? this.valueResolver.resolveHealthStatus(Math.max(...<number[]>this.collection.map(app => HealthStateConstants.Values[app.healthState.text])).toString())
             : ValueResolver.healthStatuses[1];
     }
 
     private refreshAppTypeGroups(): Observable<any> {
         // updates applications list in each application type group to keep them in sync.
-        return this.data.getAppTypeGroups(false).then(appTypeGroups => {
-            _.each(appTypeGroups.collection, appTypeGroup => appTypeGroup.refreshAppTypeApps(this));
-        });
+        return this.data.getAppTypeGroups(false).pipe(map(appTypeGroups => {
+            appTypeGroups.collection.forEach(appTypeGroup => appTypeGroup.refreshAppTypeApps(this));
+            return appTypeGroups;
+        }))
     }
 }
 
@@ -592,12 +607,11 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getApplicationTypes(null, messageHandler)
-            .then(response => {
-                let appTypes = _.map(response.data, item => new ApplicationType(this.data, item));
-                let groups = _.groupBy(appTypes, item => item.raw.Name);
-                return _.map(groups, g => new ApplicationTypeGroup(this.data, g));
-            });
+        return this.data.restClient.getApplicationTypes(null, messageHandler).pipe(map(response => {
+            let appTypes = response.map(item => new ApplicationType(this.data, item));
+            let groups = Utils.groupByFunc(appTypes, item => item.raw.Name);
+            return Object.keys(groups).map(g => new ApplicationTypeGroup(this.data, groups[g]));
+        }))
     }
 }
 
@@ -608,9 +622,9 @@ export class ApplicationBackupConfigurationInfoCollection extends DataModelColle
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getApplicationBackupConfigurationInfoCollection(this.parent.id, messageHandler)
-        .then(items => {
-            return _.map(items, raw => new ApplicationBackupConfigurationInfo(this.data, raw, this.parent));
-        });
+        .pipe(map(items => {
+            return items.map(raw => new ApplicationBackupConfigurationInfo(this.data, raw, this.parent));
+        }));
     }
 }
 
@@ -674,9 +688,9 @@ export class ServiceTypeCollection extends DataModelCollectionBase<ServiceType> 
         }
 
         return this.data.restClient.getServiceTypes(appTypeName, appTypeVersion, messageHandler)
-            .then(response => {
-                return _.map(response.data, raw => new ServiceType(this.data, raw, this.parent));
-            });
+            .pipe(map(response => {
+                return response.map(raw => new ServiceType(this.data, raw, this.parent));
+            }));
     }
 }
 
@@ -690,8 +704,7 @@ export class ServiceCollection extends DataModelCollectionBase<Service> {
         if (this.parent.name === Constants.SystemAppName) {
             serviceHealthStateChunks = clusterHealthChunk.SystemApplicationHealthStateChunk.ServiceHealthStateChunks;
         } else {
-            let appHealthChunk = _.find(clusterHealthChunk.ApplicationHealthStateChunks.Items,
-                item => item.ApplicationName === this.parent.name);
+            let appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.name);
             if (appHealthChunk) {
                 serviceHealthStateChunks = appHealthChunk.ServiceHealthStateChunks;
             }
@@ -699,14 +712,15 @@ export class ServiceCollection extends DataModelCollectionBase<Service> {
         if (serviceHealthStateChunks) {
             return this.updateCollectionFromHealthChunkList<IServiceHealthStateChunk>(serviceHealthStateChunks, item => IdGenerator.service(IdUtils.nameToId(item.ServiceName)));
         }
-        return this.data.$q.when(true);
+        return of(true);
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getServices(this.parent.id, messageHandler)
-            .then(items => {
-                return _.map(items, raw => new Service(this.data, raw, this.parent));
-            });
+        return this.data.restClient.getServices(this.parent.id, messageHandler).pipe(map(
+            items => {
+                return items.map(raw => new Service(this.data, raw, this.parent));
+            }
+        ))
     }
 }
 
@@ -716,23 +730,21 @@ export class PartitionCollection extends DataModelCollectionBase<Partition> {
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        let appHealthChunk = _.find(clusterHealthChunk.ApplicationHealthStateChunks.Items,
-            item => item.ApplicationName === this.parent.parent.name);
+        let appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.parent.name);
         if (appHealthChunk) {
-            let serviceHealthChunk = _.find(appHealthChunk.ServiceHealthStateChunks.Items,
-                item => item.ServiceName === this.parent.name);
+            let serviceHealthChunk = appHealthChunk.ServiceHealthStateChunks.Items.find(item => item.ServiceName === this.parent.name);
             if (serviceHealthChunk) {
                 return this.updateCollectionFromHealthChunkList(serviceHealthChunk.PartitionHealthStateChunks, item => IdGenerator.partition(item.PartitionId));
             }
         }
-        return this.data.$q.when(true);
+        return of(true);
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getPartitions(this.parent.parent.id, this.parent.id, messageHandler)
-            .then(items => {
-                return _.map(items, raw => new Partition(this.data, raw, this.parent));
-            });
+            .pipe(map(items => {
+                return items.map(raw => new Partition(this.data, raw, this.parent));
+            }));
     }
 }
 
@@ -751,9 +763,9 @@ export class ReplicaOnPartitionCollection extends DataModelCollectionBase<Replic
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getReplicasOnPartition(this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, messageHandler)
-            .then(items => {
-                return _.map(items, raw => new ReplicaOnPartition(this.data, raw, this.parent));
-            });
+            .pipe(map(items => {
+                return items.map(raw => new ReplicaOnPartition(this.data, raw, this.parent));
+            }));
     }
 }
 
@@ -763,7 +775,7 @@ export class DeployedApplicationCollection extends DataModelCollectionBase<Deplo
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        let nodeHealthChunk = _.find(clusterHealthChunk.NodeHealthStateChunks.Items, chunk => chunk.NodeName === this.parent.name);
+        let nodeHealthChunk = clusterHealthChunk.NodeHealthStateChunks.Items.find(chunk => chunk.NodeName === this.parent.name);
         if (nodeHealthChunk) {
             return this.updateCollectionFromHealthChunkList<IDeployedApplicationHealthStateChunk>(
                 nodeHealthChunk.DeployedApplicationHealthStateChunks,
@@ -773,21 +785,22 @@ export class DeployedApplicationCollection extends DataModelCollectionBase<Deplo
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getDeployedApplications(this.parent.name, messageHandler)
-            .then((raw: any) => {
-                let rawApps: IRawDeployedApplication[] = raw.data;
-                return _.map(rawApps, rawApp => new DeployedApplication(this.data, rawApp, this.parent));
-            });
+            .pipe(map((raw: IRawDeployedApplication[]) => {
+                return raw.map(rawApp => new DeployedApplication(this.data, rawApp, this.parent));
+            }));
     }
 
-    protected updateInternal(): Observable<any> | void {
+    protected updateInternal(): Observable<any> {
         // The deployed application does not include "HealthState" information by default.
         // Trigger a health chunk query to fill the health state information.
         if (this.length > 0) {
             let healthChunkQueryDescription = this.data.getInitialClusterHealthChunkQueryDescription();
             this.parent.addHealthStateFiltersForChildren(healthChunkQueryDescription);
-            return this.data.getClusterHealthChunk(healthChunkQueryDescription).then(healthChunk => {
+            return this.data.getClusterHealthChunk(healthChunkQueryDescription).pipe(mergeMap(healthChunk => {
                 return this.mergeClusterHealthStateChunk(healthChunk);
-            });
+            }));
+        }else{
+            return of(true);
         }
     }
 }
@@ -798,10 +811,9 @@ export class DeployedServicePackageCollection extends DataModelCollectionBase<De
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        let appHealthChunk = _.find(clusterHealthChunk.ApplicationHealthStateChunks.Items,
-            item => item.ApplicationName === this.parent.name);
+        let appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.name);
         if (appHealthChunk) {
-            let deployedAppHealthChunk = _.find(appHealthChunk.DeployedApplicationHealthStateChunks.Items,
+            let deployedAppHealthChunk = appHealthChunk.DeployedApplicationHealthStateChunks.Items.find(
                 deployedAppHealthChunk => deployedAppHealthChunk.NodeName === this.parent.parent.name);
             if (deployedAppHealthChunk) {
                 return this.updateCollectionFromHealthChunkList<IDeployedServicePackageHealthStateChunk>(
@@ -809,26 +821,28 @@ export class DeployedServicePackageCollection extends DataModelCollectionBase<De
                     item => IdGenerator.deployedServicePackage(item.ServiceManifestName, item.ServicePackageActivationId));
             }
         }
-        return this.data.$q.when(true);
+        return of(true);
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getDeployedServicePackages(this.parent.parent.name, this.parent.id, messageHandler)
-            .then((raw: any) => {
-                let rawServicePackages: IRawDeployedServicePackage[] = raw.data;
-                return _.map(rawServicePackages, rawServicePackage => new DeployedServicePackage(this.data, rawServicePackage, this.parent));
-            });
+            .pipe(map((raw: IRawDeployedServicePackage[]) => {
+                console.log(raw.map(rawServicePackage => new DeployedServicePackage(this.data, rawServicePackage, this.parent)))
+                return raw.map(rawServicePackage => new DeployedServicePackage(this.data, rawServicePackage, this.parent));
+            }));
     }
 
-    protected updateInternal(): Observable<any> | void {
+    protected updateInternal(): Observable<any> {
         // The deployed application does not include "HealthState" information by default.
         // Trigger a health chunk query to fill the health state information.
         if (this.length > 0) {
             let healthChunkQueryDescription = this.data.getInitialClusterHealthChunkQueryDescription();
             this.parent.addHealthStateFiltersForChildren(healthChunkQueryDescription);
-            return this.data.getClusterHealthChunk(healthChunkQueryDescription).then(healthChunk => {
+            return this.data.getClusterHealthChunk(healthChunkQueryDescription).pipe(mergeMap(healthChunk => {
                 return this.mergeClusterHealthStateChunk(healthChunk);
-            });
+            }));
+        }else{
+            return of(true);
         }
     }
 }
@@ -844,10 +858,10 @@ export class DeployedCodePackageCollection extends DataModelCollectionBase<Deplo
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getDeployedCodePackages(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, messageHandler)
-            .then(response => {
-                return _.map(_.filter(response.data, raw => raw.ServicePackageActivationId === this.parent.servicePackageActivationId),
+            .pipe(map(response => {
+                return response.filter(raw => raw.ServicePackageActivationId === this.parent.servicePackageActivationId).map(
                     raw => new DeployedCodePackage(this.data, raw, this.parent));
-            });
+            }));
     }
 }
 
@@ -861,19 +875,19 @@ export class DeployedReplicaCollection extends DataModelCollectionBase<DeployedR
     }
 
     public get isStatefulService(): boolean {
-        return this.length > 0 && _.first(this.collection).isStatefulService;
+        return this.length > 0 && this.collection[0].isStatefulService;
     }
 
     public get isStatelessService(): boolean {
-        return this.length > 0 && _.first(this.collection).isStatelessService;
+        return this.length > 0 && this.collection[0].isStatelessService;
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getDeployedReplicas(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, messageHandler)
-            .then(response => {
-                return _.map(_.filter(response.data, raw => raw.ServicePackageActivationId === this.parent.servicePackageActivationId),
+            .pipe(map(response => {
+                return response.filter(raw => raw.ServicePackageActivationId === this.parent.servicePackageActivationId).map(
                     raw => new DeployedReplica(this.data, raw, this.parent));
-            });
+            }));
     }
 }
 

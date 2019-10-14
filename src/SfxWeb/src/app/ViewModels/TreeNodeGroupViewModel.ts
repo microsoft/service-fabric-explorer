@@ -2,7 +2,7 @@
 import { ITreeNode } from './TreeTypes';
 import { TreeViewModel } from './TreeViewModel';
 import { IClusterHealthChunkQueryDescription, IClusterHealthChunk } from '../Models/HealthChunkRawDataTypes';
-import { Observable, of, forkJoin } from 'rxjs';
+import { Observable, of, forkJoin, Subject } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 
 //-----------------------------------------------------------------------------
@@ -47,7 +47,7 @@ export class TreeNodeGroupViewModel {
 
     private _tree: TreeViewModel;
     private _isExpanded: boolean = false;
-    private _currentGetChildrenPromise: Observable<any>;
+    private _currentGetChildrenPromise: Subject<any>;
 
     constructor(tree: TreeViewModel, owningNode: TreeNodeViewModel, childrenQuery: () => Observable<ITreeNode[]>) {
         this._tree = tree;
@@ -205,6 +205,7 @@ export class TreeNodeGroupViewModel {
     }
 
     private getChildren(): Observable<any> {
+        console.log("get children for ");
 
         if (!this.childrenQuery || this.childrenLoaded) {
             return of(true);
@@ -212,15 +213,17 @@ export class TreeNodeGroupViewModel {
 
         if (!this._currentGetChildrenPromise) {
             this.loadingChildren = true;
-            this._currentGetChildrenPromise = this.childrenQuery();
-            this.childrenQuery().subscribe((response) => {
+            console.log(this)
+            this._currentGetChildrenPromise = new Subject();
+            this.childrenQuery().subscribe(response => {
+                console.log(response);
                 let childrenViewModels: TreeNodeViewModel[] = [];
                 for (let i = 0; i < response.length; i++) {
                     let node = response[i];
                     childrenViewModels.push(new TreeNodeViewModel(this._tree, node, this.owningNode));
                 }
                 // Sort the children
-                this.children = _.sortBy(childrenViewModels, (item) => item.sortBy());
+                this.children = childrenViewModels //.sort( (item1, item2) => <number>item1.sortBy() - <number>item2.sortBy()); TODO fix the sorting here
 
                 this.childrenLoaded = true;
 
@@ -228,11 +231,14 @@ export class TreeNodeGroupViewModel {
                     this.owningNode.listSettings.count = this.children.length;
                 }
 
+                this._currentGetChildrenPromise.next();
+                this._currentGetChildrenPromise.complete();
                 this._currentGetChildrenPromise = null;
                 this.loadingChildren = false;
+
             });
         }
-
+        console.log(this._currentGetChildrenPromise)
         return this._currentGetChildrenPromise;
     }
 

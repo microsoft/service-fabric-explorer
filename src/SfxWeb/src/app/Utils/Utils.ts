@@ -6,6 +6,43 @@
 export class Utils {
     private static SingleUrlRegExp = new RegExp("^https?:\/\/[^;,]+");
 
+    /**
+     * Filter all duplicates
+     * @param list 
+     */
+    public static unique<T>(list: T[]): T[]{
+        return Array.from(new Set(list));
+    }
+
+    public static max(list: number[]): number{
+        return list.reduce( (a,b)=> Math.max(a,b));
+    }
+
+    /**
+     * implements lodash groupBy in es6. returns a dictionary of lists
+     * @param list 
+     * @param key key for value
+     */
+    public static groupByFunc<T>(list: T[], keyFunction: (T) => string): Record<string, T[]> {
+        return list.reduce( (previous, current) => { const key = keyFunction(current);
+                                                     if(key in previous){
+                                                        previous[key].push(current)
+                                                     }else{
+                                                        previous[key] = [current]
+                                                     }
+                                                    //  previous[key] = (previous[key] || []).push(current);
+                                                     return previous}, {})
+    }
+
+    /**
+     * implements lodash groupBy in es6. returns a dictionary of lists
+     * @param list 
+     * @param key key for value
+     */
+    public static groupBy<T>(list: T[], key: string): Record<string, T[]> {
+        return list.reduce( (previous, current) => { previous[key] = (previous[key] || []).push(current) ; return previous}, {})
+    }
+
         /**
      * implements lodash keyBy in es6. returns a dictionary of lists
      * @param list 
@@ -21,6 +58,8 @@ export class Utils {
      * @param keyFunction function to return a key based string for each entry.
      */
     public static keyByFromFunction<T>(list: T[], keyFunction: (T) => string): Record<string, T> {
+        console.log(list);
+
         return list.reduce( (previous, current) => { previous[keyFunction(current)] = current; return previous}, {})
     }
 

@@ -1,5 +1,12 @@
 ﻿import { DataModelBase } from './Base';
-import { IRawDeployedCodePackage } from '../RawDataTypes';
+import { IRawDeployedCodePackage, IRawCodePackageEntryPoint, IRawCodePackageEntryPointStatistics, IRawContainerLogs } from '../RawDataTypes';
+import { IdGenerator } from 'src/app/Utils/IdGenerator';
+import { DataService } from 'src/app/services/data.service';
+import { DeployedServicePackage } from './DeployedServicePackage';
+import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -34,37 +41,37 @@ export class DeployedCodePackage extends DataModelBase<IRawDeployedCodePackage> 
         return this.data.routes.getCodePackageViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId, this.name);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawDeployedCodePackage> {
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedCodePackage> {
         return this.data.restClient.getDeployedCodePackage(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.name, messageHandler)
-            .then(response => {
-                return _.find(response.data, raw => raw.ServicePackageActivationId === this.parent.servicePackageActivationId);
-            });
+            .pipe(map(response => {
+                return response.find(raw => raw.ServicePackageActivationId === this.parent.servicePackageActivationId);
+            }));
     }
 
-    protected updateInternal(): angular.IPromise<any> | void {
+    protected updateInternal(): Observable<any> | void {
         this.mainEntryPoint = new CodePackageEntryPoint(this.data, this.raw.MainEntryPoint, this);
         this.setupEntryPoint = new CodePackageEntryPoint(this.data, this.raw.SetupEntryPoint, this);
         this.containerLogs = new ContainerLogs(this.data, this);
     }
 
-    private restart(): angular.IPromise<any> {
+    private restart(): Observable<any> {
         return this.data.restClient.restartCodePackage(
             this.parent.parent.parent.name, this.parent.parent.id, this.raw.ServiceManifestName, this.name, this.raw.MainEntryPoint.InstanceId, this.servicePackageActivationId);
     }
 
     private setUpActions(): void {
-        this.actions.add(new ActionWithConfirmationDialog(
-            this.data.$uibModal,
-            this.data.$q,
-            "restartCodePackage",
-            "Restart",
-            "Restarting",
-            () => this.restart(),
-            () => true,
-            "Confirm Code Package Restart",
-            `Restart code package ${this.name}?`,
-            this.name
-        ));
+        // this.actions.add(new ActionWithConfirmationDialog(
+        //     this.data.$uibModal,
+        //     this.data.$q,
+        //     "restartCodePackage",
+        //     "Restart",
+        //     "Restarting",
+        //     () => this.restart(),
+        //     () => true,
+        //     "Confirm Code Package Restart",
+        //     `Restart code package ${this.name}?`,
+        //     this.name
+        // ));
     }
 }
 
@@ -110,10 +117,10 @@ export class ContainerLogs extends DataModelBase<IRawContainerLogs> {
         super(data, null, parent);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawContainerLogs> {
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawContainerLogs> {
         let deployedCodePackage = <DeployedCodePackage>(this.parent);
-        return Utils.getHttpResponseData(
-            this.data.restClient.getDeployedContainerLogs(deployedCodePackage.parent.parent.parent.name, deployedCodePackage.parent.parent.id, deployedCodePackage.parent.name, deployedCodePackage.name, deployedCodePackage.servicePackageActivationId, deployedCodePackage.containerLogsTail, messageHandler));
+        return this.data.restClient.getDeployedContainerLogs(deployedCodePackage.parent.parent.parent.name, deployedCodePackage.parent.parent.id, 
+            deployedCodePackage.parent.name, deployedCodePackage.name, deployedCodePackage.servicePackageActivationId, deployedCodePackage.containerLogsTail, messageHandler);
     }
 }
 

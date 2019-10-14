@@ -1,5 +1,5 @@
-﻿import { IRawNode, IRawNodeLoadInformation, IRawNodeLoadMetricInformation, IRawNodeHealth } from '../RawDataTypes';
-import { IDecorators, DataModelBase, HealthBase } from './Base';
+﻿import { IRawNode, IRawNodeLoadInformation, IRawNodeLoadMetricInformation, IRawNodeHealth, NodeStatus } from '../RawDataTypes';
+import { IDecorators, DataModelBase } from './Base';
 import { DeployedApplicationCollection } from './Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IHealthStateFilter } from '../HealthChunkRawDataTypes';
@@ -10,6 +10,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
+import { HealthBase } from './HealthEvent';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -82,11 +83,12 @@ export class Node extends DataModelBase<IRawNode> {
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IHealthStateFilter {
         // To get all deployed applications on this node, we need to add deployed application filters in all existing application filters.
         // (There will be at least one application filter there by default which is returned by DataService.getInitialClusterHealthChunkQueryDescription)
-        clusterHealthChunkQueryDescription.ApplicationFilters.forEach(filter => {
-            if (filter.DeployedApplicationFilters.length === 0) {
-                filter.DeployedApplicationFilters = [];
+        console.log(clusterHealthChunkQueryDescription)
+        Object.keys(clusterHealthChunkQueryDescription.ApplicationFilters).forEach(filter => {
+            if (!clusterHealthChunkQueryDescription.ApplicationFilters[filter].DeployedApplicationFilters) {
+                clusterHealthChunkQueryDescription.ApplicationFilters[filter].DeployedApplicationFilters = [];
             }
-            filter.DeployedApplicationFilters.push(
+            clusterHealthChunkQueryDescription.ApplicationFilters[filter].DeployedApplicationFilters.push(
                 {
                     NodeNameFilter: this.name
                 });

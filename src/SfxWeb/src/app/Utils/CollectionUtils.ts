@@ -24,11 +24,14 @@ export class CollectionUtils {
         keySelector: (item: T) => any, newKeySelector: (item: P) => any,
         create: (item: T, newItem: P) => T,
         update: (item: T, newItem: P) => void,
-        appendOnly: boolean = false) {
+        appendOnly: boolean = false): T[] {
 
         // create dictionary for old id => element
         let oldCollectionMap = Utils.keyByFromFunction(collection, keySelector);
-
+        
+        // console.log(collection);
+        
+        // console.log(newCollection);
         // remove deleted items first
         if (!appendOnly) {
             // create dictionary for new id => element
@@ -46,8 +49,11 @@ export class CollectionUtils {
             } else if (create) {
                 // add new item
                 collection.push(create(oldItem, newItem));
+                //console.log("add item")
             }
         });
+        //console.log(collection);
+        return collection
     }
 
     /**
@@ -77,8 +83,8 @@ export class CollectionUtils {
      * @param collection
      * @param newCollection
      */
-    public static updateDataModelCollection<T>(collection: IDataModel<T>[], newCollection: IDataModel<T>[], appendOnly: boolean = false) {
-        CollectionUtils.updateCollection(collection, newCollection, item => item.uniqueId, item => item.uniqueId, (item, newItem) => newItem, (item, newItem) => item.update(newItem.raw), appendOnly);
+    public static updateDataModelCollection<T>(collection: IDataModel<T>[], newCollection: IDataModel<T>[], appendOnly: boolean = false): IDataModel<T>[] {
+        return CollectionUtils.updateCollection(collection, newCollection, item => item.uniqueId, item => item.uniqueId, (item, newItem) => newItem, (item, newItem) => item.update(newItem.raw), appendOnly);
     }
 }
 

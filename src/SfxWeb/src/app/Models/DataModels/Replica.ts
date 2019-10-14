@@ -1,5 +1,5 @@
 ﻿import { IRawReplicaOnPartition, IRawReplicaHealth } from '../RawDataTypes';
-import { IDecorators, DataModelBase, HealthBase } from './Base';
+import { IDecorators, DataModelBase } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { DeployedReplicaDetail } from './DeployedReplica';
 import { DataService } from 'src/app/services/data.service';
@@ -9,6 +9,9 @@ import { ServiceKindRegexes, SortPriorities } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Utils } from 'src/app/Utils/Utils';
+import { HealthBase } from './HealthEvent';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -47,7 +50,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         }
     }
 
-    public restartReplica(): angular.IPromise<any> {
+    public restartReplica(): Observable<any> {
         return this.data.restClient.restartReplica(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.ReplicaId);
     }
 
@@ -91,31 +94,31 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         return SortPriorities.ReplicaRolesToSortPriorities[this.raw.ReplicaRole] || 0;
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<any> {
         // Refresh the parent partition here as well because we need its status to display the correct role name
-        return this.parent.refresh().then(
-            () => Utils.getHttpResponseData(this.data.restClient.getReplicaOnPartition(this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, this.id, messageHandler)));
+        return this.parent.refresh().pipe(map(
+            () => Utils.getHttpResponseData(this.data.restClient.getReplicaOnPartition(this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, this.id, messageHandler))));
     }
 
-    protected updateInternal(): angular.IPromise<any> | void {
-        this.address = Utils.parseReplicaAddress(this.raw.Address);
+    protected updateInternal():Observable<any> | void {
+        this.address = HtmlUtils.parseReplicaAddress(this.raw.Address);
     }
 
     private setUpActions(): void {
         let serviceName = this.parent.parent.raw.Name;
 
-        this.actions.add(new ActionWithConfirmationDialog(
-            this.data.$uibModal,
-            this.data.$q,
-            "Restart Replica",
-            "Restart Replica",
-            "Restarting",
-            () => this.restartReplica(),
-            () => true,
-            `Confirm Replica Restart`,
-            `Restart Replica for ${serviceName}`,
-            "confirm"
-        ));
+        // this.actions.add(new ActionWithConfirmationDialog(
+        //     this.data.$uibModal,
+        //     this.data.$q,
+        //     "Restart Replica",
+        //     "Restart Replica",
+        //     "Restarting",
+        //     () => this.restartReplica(),
+        //     () => true,
+        //     `Confirm Replica Restart`,
+        //     `Restart Replica for ${serviceName}`,
+        //     "confirm"
+        // ));
     }
 }
 

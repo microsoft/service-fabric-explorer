@@ -825,13 +825,16 @@ export class RestClientService {
       let appUrl = this.getApiUrl(url, apiVersion, continuationToken, false);
       return this.get<IRawCollection<T>>(appUrl, apiDesc, messageHandler).pipe(mergeMap(response => {
         if (response.ContinuationToken) {
-            return this.getFullCollection<T>(url, apiDesc, apiVersion, messageHandler, response.ContinuationToken).pipe(map(items => {
+            return this.getFullCollection<T>(url, apiDesc, apiVersion, messageHandler, response.ContinuationToken).pipe(mergeMap(items => {
+                //console.log(items);
                 return of(response.Items.concat(items));
             }));
+        }else{
+            //console.log(response)
+            return of(response.Items);    
         }
-        return of(response.Items);
-      }, err => {
-        return [];
+    //   }, err => {
+    //     return [];
     }))
 
   }

@@ -206,7 +206,7 @@ export class HtmlUtils {
         }
         return address.indexOf("{") === 0
             ? JSON.parse(address, (key: any, value: any) => {
-                if (_.isString(value) && Utils.isSingleURL(value)) {
+                if (typeof value === 'string' && Utils.isSingleURL(value)) {
                     return HtmlUtils.getLinkHtml(value, value, true);
                 }
                 return value;

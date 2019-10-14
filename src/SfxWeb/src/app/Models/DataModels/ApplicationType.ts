@@ -9,6 +9,7 @@ import { Application } from './Application';
 import { ITextAndBadge, ValueResolver } from 'src/app/Utils/ValueResolver';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { map } from 'rxjs/operators';
+import { Utils } from 'src/app/Utils/Utils';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -88,10 +89,10 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
     // update all applications for all application type group to keep the
     // applications in sync.
     public refreshAppTypeApps(apps: ApplicationCollection): void {
-        this.apps = _.filter(apps.collection, app => app.raw.TypeName === this.name);
+        this.apps = apps.collection.filter(app => app.raw.TypeName === this.name);
 
         if (this.apps.length > 0) {
-            this.appsHealthState = this.valueResolver.resolveHealthStatus(_.max(_.map(this.apps, app => HealthStateConstants.Values[app.healthState.text])));
+            this.appsHealthState = this.valueResolver.resolveHealthStatus(Utils.max(this.apps.map(app => HealthStateConstants.Values[app.healthState.text])).toString());
         } else {
             // When there are no apps in this apptype, treat it as healthy
             this.appsHealthState = ValueResolver.healthStatuses[1];

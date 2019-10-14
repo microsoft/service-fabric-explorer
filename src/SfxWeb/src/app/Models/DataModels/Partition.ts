@@ -8,6 +8,8 @@ import { ServiceKindRegexes, Constants, ServicePartitionKindRegexes } from 'src/
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Utils } from 'src/app/Utils/Utils';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { HealthBase } from './HealthEvent';
+import { PartitionBackupInfo } from './PartitionBackupInfo';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -28,7 +30,7 @@ export class Partition extends DataModelBase<IRawPartition> {
         this.replicas = new ReplicaOnPartitionCollection(this.data, this);
         this.loadInformation = new PartitionLoadInformation(this.data, this);
         this.health = new PartitionHealth(this.data, this, HealthStateFilterFlags.Default, HealthStateFilterFlags.None);
-        this.partitionBackupInfo = new this.partitionBackupInfo(this.data, this);
+        this.partitionBackupInfo = new PartitionBackupInfo(this.data, this);
 
         if (this.data.actionsAdvancedEnabled()) {
             this.setAdvancedActions();

@@ -61,6 +61,10 @@ export class DataService {
     this.clusterUpgradeProgress = new ClusterUpgradeProgress(this);
     this.clusterManifest = new ClusterManifest(this);
     this.clusterLoadInformation = new ClusterLoadInformation(this);
+    this.apps = new ApplicationCollection(this);
+    this.appTypeGroups = new ApplicationTypeGroupCollection(this);
+    this.nodes = new NodeCollection(this);
+    this.systemApp = new SystemApplication(this);
    }
 
 
@@ -98,7 +102,7 @@ export class DataService {
       // Will not report cluster chunk api errors
       return this.restClient.getClusterHealthChunk(healthDescriptor, ResponseMessageHandlers.silentResponseMessageHandler).pipe(map((raw: any) => {
           // Rre-process the health chunk data in order to match the SFX tree structure
-          return this.preprocessHealthChunkData(raw.data);
+          return this.preprocessHealthChunkData(raw);
       }));
   }
 
@@ -117,25 +121,29 @@ export class DataService {
   }
 
   public getSystemApp(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<SystemApplication> {
-    return this.systemApp.ensureInitialized(forceRefresh, messageHandler);
+      console.log("test")
+    return this.systemApp.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.systemApp));
   }
 
-  // public getSystemServices(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ServiceCollection> {
-  //     return this.getSystemApp(false, messageHandler).pipe(mergeMap(app => app.services.ensureInitialized(forceRefresh, messageHandler)
-  //     ),map(() => app.services));
-  // }
+  public getSystemServices(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ServiceCollection> {
+      return this.getSystemApp(false, messageHandler).pipe(mergeMap(app => app.services.ensureInitialized(forceRefresh, messageHandler)
+      ),map(app => app.services));
+  }
 
   public getApps(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationCollection> {
-      return this.apps.ensureInitialized(forceRefresh, messageHandler);
+    console.log("test")
+      return this.apps.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.apps));
   }
 
   public getApp(id: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<Application> {
       return this.getApps(false, messageHandler).pipe(mergeMap(collection => {
+          console.log("check")
           return this.tryGetValidItem(collection, id, forceRefresh, messageHandler);
       }));
   }
 
   public getNodes(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<NodeCollection> {
+            console.log("test")
       return this.nodes.ensureInitialized(forceRefresh, messageHandler);
   }
 
@@ -190,7 +198,7 @@ export class DataService {
         : this.getApp(appId, false, messageHandler);
 
     return getAppPromise.pipe(mergeMap(app => {
-        return app.services.ensureInitialized(forceRefresh, messageHandler), map( () => app.services);
+        return app.services.ensureInitialized(forceRefresh, messageHandler).pipe( map( () => app.services));
     }));
   }
 
@@ -202,7 +210,7 @@ export class DataService {
 
   public getPartitions(appId: string, serviceId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<PartitionCollection> {
     return this.getService(appId, serviceId, false, messageHandler).pipe(mergeMap(service => {
-        return service.partitions.ensureInitialized(forceRefresh, messageHandler), map( () => service.partitions)
+        return service.partitions.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => service.partitions));
     }));
   }
 
@@ -214,7 +222,7 @@ export class DataService {
 
   public getReplicasOnPartition(appId: string, serviceId: string, partitionId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ReplicaOnPartitionCollection> {
       return this.getPartition(appId, serviceId, partitionId, false, messageHandler).pipe(mergeMap(partition => {
-          return partition.replicas.ensureInitialized(forceRefresh, messageHandler), map( () => partition.replicas)
+          return partition.replicas.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => partition.replicas));
       }));
   }
 
@@ -226,7 +234,7 @@ export class DataService {
 
   public getDeployedApplications(nodeName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedApplicationCollection> {
       return this.getNode(nodeName, false, messageHandler).pipe(mergeMap(node => {
-          return node.deployedApps.ensureInitialized(forceRefresh, messageHandler), map( () => node.deployedApps)
+          return node.deployedApps.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => node.deployedApps))
       }));
   }
 
@@ -238,7 +246,7 @@ export class DataService {
 
   public getDeployedServicePackages(nodeName: string, appId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedServicePackageCollection> {
       return this.getDeployedApplication(nodeName, appId, false, messageHandler).pipe(mergeMap(deployedApp => {
-          return deployedApp.deployedServicePackages.ensureInitialized(forceRefresh, messageHandler), map( () => deployedApp.deployedServicePackages);
+          return deployedApp.deployedServicePackages.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => deployedApp.deployedServicePackages));
       }));
   }
 
@@ -250,7 +258,7 @@ export class DataService {
 
   public getDeployedCodePackages(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedCodePackageCollection> {
       return this.getDeployedServicePackage(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(deployedServicePackage => {
-          return deployedServicePackage.deployedCodePackages.ensureInitialized(forceRefresh, messageHandler), map( () => deployedServicePackage.deployedCodePackages);
+          return deployedServicePackage.deployedCodePackages.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => deployedServicePackage.deployedCodePackages));
       }));
   }
 
@@ -262,7 +270,7 @@ export class DataService {
 
   public getDeployedReplicas(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedReplicaCollection> {
       return this.getDeployedServicePackage(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(deployedServicePackage => {
-          return deployedServicePackage.deployedReplicas.ensureInitialized(forceRefresh, messageHandler), map( () => deployedServicePackage.deployedReplicas);
+          return deployedServicePackage.deployedReplicas.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => deployedServicePackage.deployedReplicas));
       }));
   }
 
@@ -275,8 +283,10 @@ export class DataService {
   private tryGetValidItem<T extends IDataModel<any>>(collection: IDataModelCollection<T>, uniqueId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<any> {
     let item = collection.find(uniqueId);
     if (item) {
+        console.log(item)
         return item.ensureInitialized(forceRefresh, messageHandler);
     } else {
+        console.log("error")
         return throwError(null);
     }
   } 

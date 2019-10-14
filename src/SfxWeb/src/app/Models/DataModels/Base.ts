@@ -134,7 +134,7 @@ export class DataModelBase<T> implements IDataModel<T> {
             })).subscribe( data => {
                 console.log(this)
 
-                this.refreshingPromise.next(data);
+                this.refreshingPromise.next(this);
                 this.refreshingPromise.complete();
                 this.refreshingPromise = null
             })
@@ -160,6 +160,7 @@ export class DataModelBase<T> implements IDataModel<T> {
     }
 
     public ensureInitialized(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<any> {
+        console.log("issue")
         if (!this.isInitialized || forceRefresh) {
             return this.refresh(messageHandler);
         }

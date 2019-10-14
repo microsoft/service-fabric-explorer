@@ -12,6 +12,7 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HealthEvaluation, UpgradeDescription, UpgradeDomain } from './Shared';
 import { Utils } from 'src/app/Utils/Utils';
 import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -98,7 +99,7 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
-        return Utils.getHttpResponseData(this.data.restClient.getApplication(this.id, messageHandler));
+        return this.data.restClient.getApplication(this.id, messageHandler);
     }
 
     public removeAdvancedActions(): void {
@@ -248,10 +249,11 @@ export class SystemApplication extends Application {
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
         // There is no special API to get system application, so we query its health
         // state and retrieve the health state from there.
-        return this.health.refresh(messageHandler).then(health => {
+        return this.health.refresh(messageHandler).pipe(map(health => {
+            console.log(health);
             this.raw.HealthState = health.raw.AggregatedHealthState;
             return this.raw;
-        });
+        }));
     }
 }
 
@@ -266,18 +268,18 @@ export class ApplicationHealth extends HealthBase<IRawApplicationHealth> {
     }
 
     public get deploymentsHealthState(): ITextAndBadge {
-        let deployedAppsHealthStates = _.map(this.raw.DeployedApplicationHealthStates, app => this.valueResolver.resolveHealthStatus(app.AggregatedHealthState));
-        return this.valueResolver.resolveHealthStatus(_.max(_.map(deployedAppsHealthStates, healthState => HealthStateConstants.Values[healthState.text])));
+        let deployedAppsHealthStates = this.raw.DeployedApplicationHealthStates.map(app => this.valueResolver.resolveHealthStatus(app.AggregatedHealthState));
+        return this.valueResolver.resolveHealthStatus(Utils.max(deployedAppsHealthStates.map( healthState => HealthStateConstants.Values[healthState.text])).toString());
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplicationHealth> {
-        return Utils.getHttpResponseData(this.data.restClient.getApplicationHealth(this.parent.id, this.eventsHealthStateFilter,
-            this.servicesHealthStateFilter, this.deployedApplicationsHealthStateFilter, messageHandler));
+        return this.data.restClient.getApplicationHealth(this.parent.id, this.eventsHealthStateFilter,
+            this.servicesHealthStateFilter, this.deployedApplicationsHealthStateFilter, messageHandler);
     }
 
     protected updateInternal(): Observable<any> | void {
         super.updateInternal();
-        this.deployedApplicationHealthStates = _.map(this.raw.DeployedApplicationHealthStates, healthState => new DeployedApplicationHealthState(this.data, healthState, this));
+        this.deployedApplicationHealthStates = this.raw.DeployedApplicationHealthStates.map(healthState => new DeployedApplicationHealthState(this.data, healthState, this));
     }
 }
 

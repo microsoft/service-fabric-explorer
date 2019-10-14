@@ -333,70 +333,70 @@ export class ServiceTypePackage extends DataModelBase<any> {
     }
 }
 
-export class ActionCreateService extends ActionWithDialog {
-    public description: CreateServiceDescription;
+// export class ActionCreateService extends ActionWithDialog {
+//     public description: CreateServiceDescription;
 
-    constructor($uibModal: ng.ui.bootstrap.IModalService, $q: ng.IQService, public serviceType: ServiceType) {
-        super($uibModal,
-            $q,
-            "createService",
-            "Create",
-            "Creating",
-            () => serviceType.createService(this.description).then(() => {
-                if (this.description) {
-                    // when success, reset the dialog
-                    this.description.reset();
-                }
-            }),
-            () => true,
-            <angular.ui.bootstrap.IModalSettings>{
-                templateUrl: "partials/create-service-dialog.html",
-                controller: ActionController,
-                size: "lg",
-                backdrop: "static", // Clicking outside of the dialog does not close it
-                resolve: {
-                    action: () => this
-                }
-            }
-        );
+//     constructor($uibModal: ng.ui.bootstrap.IModalService, $q: ng.IQService, public serviceType: ServiceType) {
+//         super($uibModal,
+//             $q,
+//             "createService",
+//             "Create",
+//             "Creating",
+//             () => serviceType.createService(this.description).then(() => {
+//                 if (this.description) {
+//                     // when success, reset the dialog
+//                     this.description.reset();
+//                 }
+//             }),
+//             () => true,
+//             <angular.ui.bootstrap.IModalSettings>{
+//                 templateUrl: "partials/create-service-dialog.html",
+//                 controller: ActionController,
+//                 size: "lg",
+//                 backdrop: "static", // Clicking outside of the dialog does not close it
+//                 resolve: {
+//                     action: () => this
+//                 }
+//             }
+//         );
 
-        this.description = new CreateServiceDescription(serviceType, <Application>serviceType.parent);
-    }
-}
+//         this.description = new CreateServiceDescription(serviceType, <Application>serviceType.parent);
+//     }
+// }
 
-export class ActionScaleService extends ActionWithDialog {
-    public updateServiceDescription: IRawUpdateServiceDescription;
+// export class ActionScaleService extends ActionWithDialog {
+//     public updateServiceDescription: IRawUpdateServiceDescription;
 
-    constructor($uibModal: ng.ui.bootstrap.IModalService, $q: ng.IQService, service: Service) {
-        super($uibModal,
-            $q,
-            "scaleService",
-            "Scale Service",
-            "Scaling Service",
-            () => service.updateService(this.updateServiceDescription),
-            () => service.isStatelessService,
-            <angular.ui.bootstrap.IModalSettings>{
-                templateUrl: "partials/scale-service-dialog.html",
-                controller: ActionController,
-                resolve: {
-                    action: () => this
-                }
-            },
-            () => {
-                // Before opening the dialog, refresh service description to get its updated instance count
-                return service.description.ensureInitialized().then(() => {
-                    this.updateServiceDescription.InstanceCount = service.description.raw.InstanceCount;
-                });
-            }
-        );
+//     constructor($uibModal: ng.ui.bootstrap.IModalService, $q: ng.IQService, service: Service) {
+//         super($uibModal,
+//             $q,
+//             "scaleService",
+//             "Scale Service",
+//             "Scaling Service",
+//             () => service.updateService(this.updateServiceDescription),
+//             () => service.isStatelessService,
+//             <angular.ui.bootstrap.IModalSettings>{
+//                 templateUrl: "partials/scale-service-dialog.html",
+//                 controller: ActionController,
+//                 resolve: {
+//                     action: () => this
+//                 }
+//             },
+//             () => {
+//                 // Before opening the dialog, refresh service description to get its updated instance count
+//                 return service.description.ensureInitialized().then(() => {
+//                     this.updateServiceDescription.InstanceCount = service.description.raw.InstanceCount;
+//                 });
+//             }
+//         );
 
-        this.updateServiceDescription = <IRawUpdateServiceDescription>{
-            ServiceKind: service.serviceKindInNumber,
-            Flags: 0x01, // Update InstanceCount flag
-            InstanceCount: 0
-        };
-    }
-}
+//         this.updateServiceDescription = <IRawUpdateServiceDescription>{
+//             ServiceKind: service.serviceKindInNumber,
+//             Flags: 0x01, // Update InstanceCount flag
+//             InstanceCount: 0
+//         };
+//     }
+// }
 
 export class CreateServiceDescription {
     public raw: IRawCreateServiceDescription;

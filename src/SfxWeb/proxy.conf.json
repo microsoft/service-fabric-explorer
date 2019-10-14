@@ -1,5 +1,23 @@
 {
-    "/$/*": {
+    "/*$/*": {
+      "target": "http://localhost:3000",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    },
+    "/Application*": {
+      "target": "http://localhost:3000",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    },
+    "/Applications**": {
+      "target": "http://localhost:3000",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    },
+    "**": {
       "target": "http://localhost:3000",
       "secure": false,
       "changeOrigin": true,

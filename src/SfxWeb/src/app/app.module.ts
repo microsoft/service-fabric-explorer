@@ -5,6 +5,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DataService } from './services/data.service';
+import { TreeModule } from './modules/tree/tree.module';
 
 @NgModule({
   declarations: [
@@ -13,7 +14,8 @@ import { DataService } from './services/data.service';
   imports: [
     BrowserModule,
     AppRoutingModule,
-    HttpClientModule
+    HttpClientModule,
+    TreeModule
   ],
   providers: [DataService],
   bootstrap: [AppComponent]

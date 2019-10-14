@@ -151,23 +151,24 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         super(data);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawClusterManifest> {
-        return Utils.getHttpResponseData(this.data.restClient.getClusterManifest(messageHandler));
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> {
+        return this.data.restClient.getClusterManifest(messageHandler);
     }
 
-    protected updateInternal(): angular.IPromise<any> | void {
-        let $xml = $($.parseXML(this.raw.Manifest));
-        let $manifest = $xml.find("ClusterManifest")[0];
-        this.clusterManifestName = $manifest.getAttribute("Name");
-        let $imageStoreConnectionStringParameter = $("Section[Name='Management'] > Parameter[Name='ImageStoreConnectionString']", $manifest);
-        if ($imageStoreConnectionStringParameter.length > 0) {
-            this._imageStoreConnectionString = $imageStoreConnectionStringParameter.attr("Value");
-        }
+    protected updateInternal(): Observable<any> | void {
+        //TODO fix xml parsing
+        // let $xml = $($.parseXML(this.raw.Manifest));
+        // let $manifest = $xml.find("ClusterManifest")[0];
+        // this.clusterManifestName = $manifest.getAttribute("Name");
+        // let $imageStoreConnectionStringParameter = $("Section[Name='Management'] > Parameter[Name='ImageStoreConnectionString']", $manifest);
+        // if ($imageStoreConnectionStringParameter.length > 0) {
+        //     this._imageStoreConnectionString = $imageStoreConnectionStringParameter.attr("Value");
+        // }
 
-        let $nimEnabledParameter = $("Section[Name=NetworkInventoryManager] > Parameter[Name='IsEnabled']", $manifest);
-        if ($nimEnabledParameter.length > 0) {
-            this._isNetworkInventoryManagerEnabled = $nimEnabledParameter.attr("Value").toLowerCase() === "true";
-        }
+        // let $nimEnabledParameter = $("Section[Name=NetworkInventoryManager] > Parameter[Name='IsEnabled']", $manifest);
+        // if ($nimEnabledParameter.length > 0) {
+        //     this._isNetworkInventoryManagerEnabled = $nimEnabledParameter.attr("Value").toLowerCase() === "true";
+        // }
     }
 
     public get isNetworkInventoryManagerEnabled(): boolean {

@@ -137,7 +137,8 @@ export class TreeViewModel {
                         node.select(0, skipSelectAction);
                     }
                 } else {
-                    this.selectTreeNodeInternal(path, currIndex + 1, node.childGroupViewModel, opId, skipSelectAction);
+                    console.log(path);
+                    this.selectTreeNodeInternal(path, currIndex + 1, node.childGroupViewModel, opId, skipSelectAction).subscribe();
                 }
             }
         });
