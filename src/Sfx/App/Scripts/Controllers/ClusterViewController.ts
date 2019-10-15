@@ -91,6 +91,14 @@ module Sfx {
             this.$scope.settings = this.settings;
             this.$scope.clusterTimelineGenerator = new ClusterTimelineGenerator();
             this.refresh();
+
+            this.$scope.nodes.refresh().then( () => {
+                this.$scope.clusterManifest.ensureInitialized().then( ()=> {
+                    //if < 5 seed nodes display warning for SFRP and <3 for on prem.
+                        const expectedCount = this.$scope.clusterManifest.isSfrpCluster ? 5 : 3;
+                        this.$scope.nodes.checkSeedNodeCount(expectedCount);
+                })
+            })
         }
 
         public getNodesForDomains(upgradeDomain: string, faultDomain: string): Node[] {
