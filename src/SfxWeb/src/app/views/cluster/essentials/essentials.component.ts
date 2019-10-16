@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
+import { ClusterUpgradeProgress, ClusterHealth } from '../../../Models/DataModels/Cluster';
+import { NodeCollection } from '../../../Models/DataModels/Collections';
 
 @Component({
   selector: 'app-essentials',
@@ -7,6 +9,10 @@ import { DataService } from 'src/app/services/data.service';
   styleUrls: ['./essentials.component.scss']
 })
 export class EssentialsComponent implements OnInit {
+
+  clusterUpgrade: ClusterUpgradeProgress;
+  nodes: NodeCollection;
+  clusterHealth: ClusterHealth;
 
   constructor(public dataService: DataService) { }
 
