@@ -158,7 +158,6 @@ module Sfx {
 
             try {
                 let $sfrp = $("Section[Name='UpgradeService']", $manifest);
-                console.log($sfrp)
                 this.isSfrpCluster = $sfrp.length > 0
             } catch(e) {
                 console.log(e)
