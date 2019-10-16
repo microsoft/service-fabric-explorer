@@ -130,6 +130,7 @@ module Sfx {
 
     export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         public clusterManifestName: string;
+        public isSfrpCluster: boolean = false;
         private _imageStoreConnectionString: string;
         private _isNetworkInventoryManagerEnabled: boolean = false;
 
@@ -153,6 +154,13 @@ module Sfx {
             let $nimEnabledParameter = $("Section[Name=NetworkInventoryManager] > Parameter[Name='IsEnabled']", $manifest);
             if ($nimEnabledParameter.length > 0) {
                 this._isNetworkInventoryManagerEnabled = $nimEnabledParameter.attr("Value").toLowerCase() === "true";
+            }
+
+            try {
+                let $sfrp = $("Section[Name='UpgradeService']", $manifest);
+                this.isSfrpCluster = $sfrp.length > 0
+            } catch(e) {
+                console.log(e)
             }
         }
 
