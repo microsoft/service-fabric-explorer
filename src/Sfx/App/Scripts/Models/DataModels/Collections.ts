@@ -329,13 +329,13 @@ module Sfx {
         public checkSeedNodeCount(expected: number) {
             if (this.seedNodeCount < expected && this.seedNodeCount !== 1) {
                 this.data.warnings.addOrUpdateNotification({
-                    message: `This cluster is currently running on the bronze reliability tier. For production workloads, a reliability level of silver or greater is recommended. 
-                    <br>See <a href="https://aka.ms/servicefabric/durability" style="color: #ec0000 !important;" target="_black">( link )</a> for more details`,
+                    message: `This cluster is currently running on the bronze reliability tier. For production workloads, only a reliability level of silver or greater is supported 
+                    <br>See <a href="https://aka.ms/servicefabric/reliability" target="_black">( link )</a> for more details`,
                     level: StatusWarningLevel.Warning,
                     priority: 2,
                     id: BannerWarningID.ClusterDegradedState,
-                    confirmText: `This cluster is currently running on the bronze reliability tier which indicates a test/staging environment. For production workloads a reliability, 
-                    level of silver or greater is recommended. For more information on the reliability characteristics of a cluster, please see https://aka.ms/sfreliabilitytiers.`
+                    confirmText: `This cluster is currently running on the bronze reliability tier which indicates a test/staging environment. For production workloads, only a reliability
+                    level of silver or greater is supported. For more information on the reliability characteristics of a cluster, please see https://aka.ms/sfreliabilitytiers`
                 });
             }else {
                 this.data.warnings.removeNotificationById(BannerWarningID.ClusterDegradedState);

@@ -94,9 +94,10 @@ module Sfx {
 
             this.$scope.nodes.refresh().then( () => {
                 this.$scope.clusterManifest.ensureInitialized().then( ()=> {
-                    //if < 5 seed nodes display warning for SFRP and <3 for on prem.
-                        const expectedCount = this.$scope.clusterManifest.isSfrpCluster ? 5 : 3;
-                        this.$scope.nodes.checkSeedNodeCount(expectedCount);
+                    //if < 5 seed nodes display warning for SFRP
+                    if(this.$scope.clusterManifest.isSfrpCluster){
+                        this.$scope.nodes.checkSeedNodeCount(5);
+                    }
                 })
             })
         }
