@@ -7,6 +7,8 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class NavbarComponent implements OnInit {
 
+  @Input() type: string = "";
+  @Input() name: string = "";
   @Input() tabs: ITab[] = [];
 
   constructor() { }

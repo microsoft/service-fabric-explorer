@@ -1,10 +1,11 @@
-<li *ngFor="let child of node.displayedChildren" >
+<li *ngFor="let child of node.displayedChildren" class="node" [ngClass]="{ 'selected': child.selected }" >
 
-    <div class="self" (click)="child.handleClick()" [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }" [attr.aria-label]="child.displayName()">
+    <div class="self" (click)="child.handleClick()" style="width: 100%" [attr.aria-label]="child.displayName()">
+        <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx, 'width': ('calc(100% - ' + child.paddingLeftPx.toString() + ')') }"></span>
             <span tabindex="-1" class="expander icon bowtie-icon" aria-hidden="true"
                     (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
                     [ngClass]="{ 'bowtie-chevron-right-light': child.isCollapsed, 'bowtie-chevron-down-light': child.isExpanded }"
-                    [ngStyle]="{ 'left': (child.paddingLeft - 18) + 'px' }">()
+                    [ngStyle]="{ 'left': (child.paddingLeft - 8) + 'px' }">()
             </span>
             <!-- <span tabindex="-1" class="icon bowtie-icon" aria-hidden="true" ng-if="child.canExpandAll"
             ng-click="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()" ng-show="child.hasExpander"

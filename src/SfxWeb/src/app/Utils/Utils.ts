@@ -72,15 +72,6 @@ export class Utils {
         return !isNaN(parseFloat(value)) && isFinite(value);
     }
 
-    /**
-     * Retrieve data object returned by IHttpPromise
-     * @param promise
-     */
-    public static getHttpResponseData<T>(promise: angular.IHttpPromise<T>): angular.IPromise<T> {
-        return promise.then(response => {
-            return response.data;
-        });
-    }
 
     /**
      * Extract resolved property from nested object.

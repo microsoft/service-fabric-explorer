@@ -11,13 +11,19 @@
       "changeOrigin": true,
       "logLevel": "debug"
     },
-    "/Applications**": {
+    "/Applications/*": {
       "target": "http://localhost:3000",
       "secure": false,
       "changeOrigin": true,
       "logLevel": "debug"
     },
-    "**": {
+    "/Nodes/*": {
+      "target": "http://localhost:3000",
+      "secure": false,
+      "changeOrigin": true,
+      "logLevel": "debug"
+    },
+    "/*api*": {
       "target": "http://localhost:3000",
       "secure": false,
       "changeOrigin": true,

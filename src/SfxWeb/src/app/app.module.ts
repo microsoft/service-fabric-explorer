@@ -6,6 +6,7 @@ import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DataService } from './services/data.service';
 import { TreeModule } from './modules/tree/tree.module';
+import { SharedModule } from './shared/shared.module';
 
 @NgModule({
   declarations: [
@@ -15,7 +16,8 @@ import { TreeModule } from './modules/tree/tree.module';
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    TreeModule
+    TreeModule,
+    SharedModule
   ],
   providers: [DataService],
   bootstrap: [AppComponent]

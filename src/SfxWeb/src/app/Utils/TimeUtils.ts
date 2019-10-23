@@ -36,7 +36,7 @@ export class TimeUtils {
     public static getDuration(duration: any) {
 
         let momentDuration;
-        if (_.isFinite(duration)) {
+        if (Number.isFinite(duration)) {
             // Finite number in milliseconds
             momentDuration = moment.duration(duration);
         } else if (Utils.isNumeric(duration)) {
@@ -85,9 +85,9 @@ export class TimeUtils {
         }
 
         return `${Math.floor(duration.asDays())}.`
-            + `${_.padStart(Math.floor(duration.hours()).toString(), 2, "0")}:`
-            + `${_.padStart(Math.floor(duration.minutes()).toString(), 2, "0")}:`
-            + `${_.padStart(Math.floor(duration.seconds()).toString(), 2, "0")}.`
+            + `${Math.floor(duration.hours()).toString().padStart(2, "0")}:`
+            + `${Math.floor(duration.minutes()).toString().padStart(2, "0")}:`
+            + `${Math.floor(duration.seconds()).toString().padStart(2, "0")}.`
             + `${Math.ceil(duration.milliseconds())}`;
     }
 }

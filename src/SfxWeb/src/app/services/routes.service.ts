@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -8,7 +9,7 @@ export class RoutesService {
 
   private _forceSingleEncode: boolean = false;
 
-  constructor(public location: Location) { }
+  constructor(public location: Location, public routing: Router) { }
 
   public navigate(pathGetter: () => string): void {
       let path: string;
@@ -20,9 +21,12 @@ export class RoutesService {
           this.forceSingleEncode(false);
       }
 
-      setTimeout(() => {
-        this.location.go(path.substring(1))
-      }, 0, 1);
+      console.log(path);
+      this.routing.navigate([path]);
+
+    //   setTimeout(() => {
+    //     this.location.go(path.substring(1))
+    //   }, 0, 1);
   }
 
   // public getTabViewPath(baseViewPath: string, tabId: string): string {
@@ -30,56 +34,56 @@ export class RoutesService {
   // }
 
   public getClusterViewPath(): string {
-      return "#/";
+      return "/";
   }
 
   public getNodesViewPath(): string {
-      return "#/nodes";
+      return "/nodes";
   }
 
   public getSystemAppsViewPath(): string {
-      return "#/system/apps";
+      return "/system/apps";
   }
 
   public getAppsViewPath(): string {
-      return "#/apps";
+      return "/apps";
   }
 
   public getAppTypesViewPath(): string {
-      return "#/appTypes";
+      return "/appTypes";
   }
 
   public getNodeViewPath(nodeName: string): string {
-      return "#/node/" + this.doubleEncode(nodeName);
+      return "/node/" + this.doubleEncode(nodeName);
   }
 
   public getNetworksViewPath(): string {
-      return "#/networks";
+      return "/networks";
   }
 
   public getNetworkViewPath(networkName: string): string {
-      return "#/network/" + this.doubleEncode(networkName);
+      return "/network/" + this.doubleEncode(networkName);
   }
 
   public getDeployedAppViewPath(nodeName: string, appId: string): string {
-      return "#/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId);
+      return "/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId);
   }
 
   public getDeployedServiceViewPath(nodeName: string, appId: string, serviceId: string, activationId: string): string {
-      return "#/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId) +
+      return "/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId) +
           "/deployedservice/" + this.doubleEncode(serviceId) +
           (activationId ? "/activationid/" + this.doubleEncode(activationId) : "");
   }
 
   public getDeployedReplicasViewPath(nodeName: string, appId: string, serviceId: string, activationId: string): string {
-      return "#/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId) +
+      return "/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId) +
           "/deployedservice/" + this.doubleEncode(serviceId) +
           (activationId ? "/activationid/" + this.doubleEncode(activationId) : "") +
           "/replicas/";
   }
 
   public getDeployedCodePackagesViewPath(nodeName: string, appId: string, serviceId: string, activationId: string): string {
-      return "#/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId) +
+      return "/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId) +
           "/deployedservice/" + this.doubleEncode(serviceId) +
           (activationId ? "/activationid/" + this.doubleEncode(activationId) : "") +
           "/codepackages/";
@@ -87,7 +91,7 @@ export class RoutesService {
 
   public getDeployedReplicaViewPath(nodeName: string, appId: string, serviceId: string, activationId: string, partitionId: string, replicaId: string): string {
       // A partition with a node/app/service is enough to uniquely identify a Replica.  A replicaId is NOT enough to identify a replica.  However, the replicaId is still used in displaying information.
-      return "#/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId) +
+      return "/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId) +
           "/deployedservice/" + this.doubleEncode(serviceId) +
           (activationId ? "/activationid/" + this.doubleEncode(activationId) : "") +
           "/partition/" + this.doubleEncode(partitionId) +
@@ -95,31 +99,31 @@ export class RoutesService {
   }
 
   public getCodePackageViewPath(nodeName: string, appId: string, serviceId: string, activationId: string, codePackageName: string): string {
-      return "#/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId) +
+      return "/node/" + this.doubleEncode(nodeName) + "/deployedapp/" + this.doubleEncode(appId) +
           "/deployedservice/" + this.doubleEncode(serviceId) +
           (activationId ? "/activationid/" + this.doubleEncode(activationId) : "") +
           "/codepackage/" + this.doubleEncode(codePackageName);
   }
 
   public getAppTypeViewPath(appTypeName: string): string {
-      return "#/apptype/" + this.doubleEncode(appTypeName);
+      return "/apptype/" + this.doubleEncode(appTypeName);
   }
 
   public getAppViewPath(appTypeName: string, appId: string): string {
-      return "#/apptype/" + this.doubleEncode(appTypeName) + "/app/" + this.doubleEncode(appId);
+      return "/apptype/" + this.doubleEncode(appTypeName) + "/app/" + this.doubleEncode(appId);
   }
 
   public getServiceViewPath(appTypeName: string, appId: string, serviceId: string): string {
-      return "#/apptype/" + this.doubleEncode(appTypeName) + "/app/" + this.doubleEncode(appId) + "/service/" + this.doubleEncode(serviceId);
+      return "/apptype/" + this.doubleEncode(appTypeName) + "/app/" + this.doubleEncode(appId) + "/service/" + this.doubleEncode(serviceId);
   }
 
   public getPartitionViewPath(appTypeName: string, appId: string, serviceId: string, partitionId: string): string {
-      return "#/apptype/" + this.doubleEncode(appTypeName) + "/app/" + this.doubleEncode(appId) + "/service/" + this.doubleEncode(serviceId) +
+      return "/apptype/" + this.doubleEncode(appTypeName) + "/app/" + this.doubleEncode(appId) + "/service/" + this.doubleEncode(serviceId) +
           "/partition/" + this.doubleEncode(partitionId);
   }
 
   public getReplicaViewPath(appTypeName: string, appId: string, serviceId: string, partitionId: string, replicaId: string): string {
-      return "#/apptype/" + this.doubleEncode(appTypeName) + "/app/" + this.doubleEncode(appId) + "/service/" + this.doubleEncode(serviceId) +
+      return "/apptype/" + this.doubleEncode(appTypeName) + "/app/" + this.doubleEncode(appId) + "/service/" + this.doubleEncode(serviceId) +
           "/partition/" + this.doubleEncode(partitionId) + "/replica/" + this.doubleEncode(replicaId);
   }
 

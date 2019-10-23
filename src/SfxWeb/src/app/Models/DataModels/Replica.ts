@@ -8,10 +8,9 @@ import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
 import { ServiceKindRegexes, SortPriorities } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Utils } from 'src/app/Utils/Utils';
 import { HealthBase } from './HealthEvent';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -96,8 +95,8 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<any> {
         // Refresh the parent partition here as well because we need its status to display the correct role name
-        return this.parent.refresh().pipe(map(
-            () => Utils.getHttpResponseData(this.data.restClient.getReplicaOnPartition(this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, this.id, messageHandler))));
+        return this.parent.refresh().pipe(mergeMap(
+            () => this.data.restClient.getReplicaOnPartition(this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, this.id, messageHandler)));
     }
 
     protected updateInternal():Observable<any> | void {
@@ -127,8 +126,8 @@ export class ReplicaHealth extends HealthBase<IRawReplicaHealth> {
         super(data, parent);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawReplicaHealth> {
-        return Utils.getHttpResponseData(this.data.restClient.getReplicaHealth(this.parent.parent.parent.parent.id, this.parent.parent.parent.id,
-            this.parent.parent.id, this.parent.id, this.eventsHealthStateFilter, messageHandler));
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawReplicaHealth> {
+        return this.data.restClient.getReplicaHealth(this.parent.parent.parent.parent.id, this.parent.parent.parent.id,
+            this.parent.parent.id, this.parent.id, this.eventsHealthStateFilter, messageHandler);
     }
 }

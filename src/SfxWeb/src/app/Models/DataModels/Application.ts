@@ -82,7 +82,7 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IApplicationHealthStateFilter {
-        let appFilter = _.find(clusterHealthChunkQueryDescription.ApplicationFilters, filter => filter.ApplicationNameFilter === this.name);
+        let appFilter = clusterHealthChunkQueryDescription.ApplicationFilters.find(filter => filter.ApplicationNameFilter === this.name);
         if (!appFilter) {
             appFilter = {
                 ApplicationNameFilter: this.name,

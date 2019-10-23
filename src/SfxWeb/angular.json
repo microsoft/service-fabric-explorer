@@ -28,9 +28,15 @@
               "src/assets"
             ],
             "styles": [
-              "src/styles.scss"
+              "src/styles.scss",
+              "src/Styles/modules/_candybar.scss"
             ],
-            "scripts": []
+            "scripts": [],
+            "stylePreprocessorOptions": {
+							"includePaths": [
+								"src/styles"
+							]
+						}
           },
           "configurations": {
             "production": {
@@ -67,7 +73,8 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "browserTarget": "SfxWeb:build"
+            "browserTarget": "SfxWeb:build",
+            "proxyConfig": "proxy.conf.js"
           },
           "configurations": {
             "production": {

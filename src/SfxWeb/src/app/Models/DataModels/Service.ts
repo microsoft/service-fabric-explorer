@@ -69,7 +69,7 @@ export class Service extends DataModelBase<IRawService> {
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IServiceHealthStateFilter {
         let appFilter = this.parent.addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription);
-        let serviceFilter = _.find(appFilter.ServiceFilters, filter => filter.ServiceNameFilter === this.name);
+        let serviceFilter = appFilter.ServiceFilters.find(filter => filter.ServiceNameFilter === this.name);
         if (!serviceFilter) {
             serviceFilter = {
                 ServiceNameFilter: this.name,
@@ -90,7 +90,7 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawService> {
-        return Utils.getHttpResponseData(this.data.restClient.getService(this.parent.id, this.id, messageHandler));
+        return this.data.restClient.getService(this.parent.id, this.id, messageHandler);
     }
 
     public removeAdvancedActions(): void {
@@ -205,8 +205,7 @@ export class ServiceHealth extends HealthBase<IRawServiceHealth> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceHealth> {
-        return Utils.getHttpResponseData(this.data.restClient.getServiceHealth(this.parent.parent.id, this.parent.id,
-            this.eventsHealthStateFilter, this.partitionsHealthStateFilter, messageHandler));
+        return this.data.restClient.getServiceHealth(this.parent.parent.id, this.parent.id, this.eventsHealthStateFilter, this.partitionsHealthStateFilter, messageHandler);
     }
 }
 
@@ -232,7 +231,7 @@ export class ServiceDescription extends DataModelBase<IRawServiceDescription> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceDescription> {
-        return Utils.getHttpResponseData(this.data.restClient.getServiceDescription(this.parent.parent.id, this.parent.id, messageHandler));
+        return this.data.restClient.getServiceDescription(this.parent.parent.id, this.parent.id, messageHandler);
     }
 }
 
@@ -319,7 +318,7 @@ export class ServiceManifest extends DataModelBase<IRawServiceManifest> {
 
     private getServiceManifest(appTypeName: string, appTypeVersion: string, manifestName: string,
         messageHandler?: IResponseMessageHandler): Observable<IRawServiceManifest> {
-        return Utils.getHttpResponseData(this.data.restClient.getServiceManifest(appTypeName, appTypeVersion, manifestName, messageHandler));
+        return this.data.restClient.getServiceManifest(appTypeName, appTypeVersion, manifestName, messageHandler);
     }
 }
 

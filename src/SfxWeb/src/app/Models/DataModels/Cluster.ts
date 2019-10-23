@@ -81,9 +81,9 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-        return Utils.getHttpResponseData(this.data.restClient.getClusterHealth(this.eventsHealthStateFilter,
+        return this.data.restClient.getClusterHealth(this.eventsHealthStateFilter,
             this.nodesHealthStateFilter, this.applicationsHealthStateFilter,
-            messageHandler));
+            messageHandler);
     }
 
     private setMessage(healthEvent: HealthEvent): void {

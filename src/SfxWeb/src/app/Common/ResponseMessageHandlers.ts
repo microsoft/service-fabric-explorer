@@ -1,19 +1,22 @@
-﻿//-----------------------------------------------------------------------------
+﻿import { HttpResponseBase, HttpResponse } from '@angular/common/http';
+import { Observable } from 'rxjs';
+
+//-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
 export interface IResponseMessageHandler {
-    getSuccessMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string;
-    getErrorMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string;
+    getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string;
+    getErrorMessage(apiDesc: string, response: HttpResponse<any>): string;
 }
 
 export class GetResponseMessageHandler implements IResponseMessageHandler {
-    public getSuccessMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    public getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string {
         return null;
     }
 
-    public getErrorMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    public getErrorMessage(apiDesc: string, response: HttpResponse<any>): string {
         if (response.status === 404) {
             // By default exclude 404 error for all get requests
             return null;
@@ -21,10 +24,10 @@ export class GetResponseMessageHandler implements IResponseMessageHandler {
         return this.getErrorMessageInternal(apiDesc, response);
     }
 
-    protected getErrorMessageInternal(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    protected getErrorMessageInternal(apiDesc: string, response: HttpResponse<any>): string {
         let message = `${apiDesc} failed`;
-        if (response.data && response.data.Error) {
-            message += `.\r\nCode: ${response.data.Error.Code}\r\nMessage: ${response.data.Error.Message}`;
+        if (response.body && response.body.Error) {
+            message += `.\r\nCode: ${response.body.Error.Code}\r\nMessage: ${response.body.Error.Message}`;
         } else if (response.statusText) {
             message += ` (${response.statusText})`;
         }
@@ -33,41 +36,41 @@ export class GetResponseMessageHandler implements IResponseMessageHandler {
 }
 
 export class PostResponseMessageHandler extends GetResponseMessageHandler {
-    public getSuccessMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    public getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string {
         return `${apiDesc} started.`;
     }
 
-    public getErrorMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    public getErrorMessage(apiDesc: string, response: HttpResponse<any>): string {
         return this.getErrorMessageInternal(apiDesc, response);
     }
 }
 
 export class PutResponseMessageHandler extends GetResponseMessageHandler {
-    public getSuccessMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    public getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string {
         return `${apiDesc}`;
     }
 
-    public getErrorMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    public getErrorMessage(apiDesc: string, response: HttpResponse<any>): string {
         return this.getErrorMessageInternal(apiDesc, response);
     }
 }
 
 export class DeleteResponseMessageHandler extends GetResponseMessageHandler {
-    public getSuccessMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    public getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string {
         return `${apiDesc}`;
     }
 
-    public getErrorMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    public getErrorMessage(apiDesc: string, response: HttpResponse<any>): string {
         return this.getErrorMessageInternal(apiDesc, response);
     }
 }
 
 export class SilentResponseMessageHandler implements IResponseMessageHandler {
-    public getSuccessMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    public getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string {
         return null;
     }
 
-    public getErrorMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    public getErrorMessage(apiDesc: string, response: HttpResponse<any>): string {
         return null;
     }
 }

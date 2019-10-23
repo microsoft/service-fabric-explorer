@@ -9,6 +9,8 @@ import { IdGenerator } from './Utils/IdGenerator';
 })
 export class AppComponent implements OnInit{
 
+  treeWidth: string = "450px";
+
   constructor(public treeService: TreeService) {
 
   }
@@ -22,4 +24,9 @@ export class AppComponent implements OnInit{
     // })
   }
   
+  resize($event: number): void {
+    console.log($event)
+    //have to subtract the 
+    this.treeWidth = ($event + 10).toString() + 'px';
+  }
 }

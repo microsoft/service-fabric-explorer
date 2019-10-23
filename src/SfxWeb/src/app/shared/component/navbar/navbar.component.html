@@ -1,5 +1,33 @@
-<ul>
-<li *ngFor="let tab of tabs">
-    <a [routerLink]="tab.route">{{tab.name}}</a>
-</li>
-</ul>
+<div class="main-header">
+        <div class="detail-view-title-bar">
+            <div class="detail-view-title" [title]="name">
+                <b>{{type}}</b> {{name}}
+            </div>
+    
+            <!-- <div class="detail-view-actions btn-group" uib-dropdown ng-if="::actions && actions.length > 0">
+                <button class="btn btn-primary" uib-dropdown-toggle type="button" ng-disabled="actions.anyRunning" aria-label="Actions you can perform on {{type}} {{name}}">
+                    <span>{{actions.title | uppercase}}</span>
+                    <span class="caret"></span>
+                </button>
+    
+                <ul role="menu" class="dropdown-menu dropdown-menu-right" uib-dropdown-menu style="list-style: none">
+                    <li role="menuitem" ng-repeat="action in actions.collection track by action.name">
+                        <a role="menuitem"
+                           href=""
+                           ng-click="actions.runWithTelemetry(action, 'ActionsButton')"
+                           ng-disabled="!action.canRun()">
+                            {{::action.title}}
+                        </a>
+                    </li>
+                </ul>
+            </div> -->
+        </div>
+    
+        <div class="detail-view-navbar" role="tablist" [attr.aria-label]="name">
+            <div class="detail-view-navbar-tab" *ngFor="let tab of tabs">
+                    <!-- sfx-tab-set-focus href="" active="{{mainViewCtrl.isActiveTab(id)}}" aria-selected="{{mainViewCtrl.isActiveTab(id)}}" ng-class="{ active: mainViewCtrl.isActiveTab(id) }" ng-click="mainViewCtrl.navigateToTab(id)"  -->
+                <a [routerLink]="tab.route" title="{{tab.name}}" role="tab" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{tab.name}}</a>
+                <!-- <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div> -->
+            </div>
+        </div>
+    </div>

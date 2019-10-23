@@ -1,10 +1,14 @@
-<!-- <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node> -->
-<div *ngIf="treeService.tree">
-    <div *ngIf="!treeService.tree.isLoading && !treeService.tree.isEmpty">
-        <ul>
-            <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
-        </ul>
-    </div>
+<div>
+    <div class="tree-header">
+
+        </div>
+        <div *ngIf="treeService.tree" class="tree-body">
+            <div *ngIf="!treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view">
+                <ul class="tree" style="list-style: none">
+                    <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
+                </ul>
+            </div>
+        </div>
 </div>
 
 

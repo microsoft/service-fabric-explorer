@@ -179,6 +179,7 @@ export class TreeNodeViewModel {
     }
 
     public select(actionDelay?: number, skipSelectAction?: boolean) {
+        console.log(this._node)
         if (this._tree.selectNode(this)) {
             if (this._node.selectAction && !skipSelectAction) {
                 setTimeout(() => {

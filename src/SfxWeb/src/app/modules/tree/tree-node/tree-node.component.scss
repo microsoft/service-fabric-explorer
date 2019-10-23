@@ -1,0 +1,74 @@
+@import "src/styles.scss";
+
+.node {
+    color: $tree-color;
+    .more-children {
+        margin-left: 46px;
+
+        .icon {
+            margin-right: 2px;
+        }
+    }
+
+    > .self {
+        // padding-right: 24px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        display: inline-block;
+        cursor: pointer;
+        width: 100%;
+        position: relative;
+        height: $tree-node-line-height;
+
+        &:hover {
+            background-color: $tree-node-hover-background-color;
+
+            .actions-menu .actions-expander {
+                display: inline-block;
+            }
+        }
+
+        .expander {
+            // position: absolute;
+            cursor: default;
+            padding: 3px 0px;
+        }
+
+        .actions-menu {
+            position: absolute;
+            padding: 3px 6px;
+            right: 0px;
+            cursor: pointer;
+
+            .actions-expander {
+                display: none;
+            }
+        }
+
+        .tree-badge {
+            font-size: $font-size-small;
+            position: relative;
+            width: 14px;
+            height: 14px;
+        }
+
+        .tree-label {
+            vertical-align: middle;
+
+            .search-match {
+                color: $tree-node-search-highlight-color;
+                background-color: $tree-node-search-highlight-background-color;
+            }
+        }
+    }
+
+    &.selected > .self {
+        background-color: $tree-node-selected-background-color;
+
+        .actions-expander {
+            display: inline-block;
+            color: $tree-color;
+        }
+    }
+}
