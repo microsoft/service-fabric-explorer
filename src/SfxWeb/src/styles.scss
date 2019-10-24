@@ -307,7 +307,9 @@ body {
 a, a:active, a:focus, a:hover {
     text-decoration: none !important;
 }
-
+a {
+    color: #70DAF8;
+}
 a[disabled], a.disabled {
     color: $link-disabled-color;
     cursor: default;
@@ -537,8 +539,45 @@ table.detail-list {
     }
 }
 
+.badge-container {
+    display: inline;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badge-icon {
+    display: inline-block;
+    position: relative;
+    bottom: 1px;
+    width: 16px;
+    height: 16px;
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: .65;
+}
+
+.preserve-whitespace {
+    white-space: pre !important;
+}
+
+.preserve-whitespace-wrap {
+    white-space: pre-wrap !important;
+}
 
 
 html,body {
     height: 100%;
+}
+
+// .table thead>tr>th {
+//     border-bottom: 1px solid #727272;
+// }
+
+.table>tbody>tr>td {
+        line-height: 1.42857;
+    vertical-align: top;
+    border-top: 1px solid #4c4c4c;
 }

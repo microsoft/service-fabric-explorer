@@ -226,7 +226,7 @@ export class NodeLoadInformation extends DataModelBase<IRawNodeLoadInformation> 
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawNodeLoadInformation> {
-        return Utils.getHttpResponseData(this.data.restClient.getNodeLoadInformation(this.parent.name, messageHandler));
+        return this.data.restClient.getNodeLoadInformation(this.parent.name, messageHandler);
     }
 
     protected updateInternal(): Observable<any> | void {
@@ -262,7 +262,7 @@ export class NodeHealth extends HealthBase<IRawNodeHealth> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawNodeHealth> {
-        return Utils.getHttpResponseData(this.data.restClient.getNodeHealth(this.parent.name, this.eventsHealthStateFilter, messageHandler));
+        return this.data.restClient.getNodeHealth(this.parent.name, this.eventsHealthStateFilter, messageHandler);
     }
 }
 

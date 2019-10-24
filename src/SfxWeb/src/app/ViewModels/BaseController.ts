@@ -1,15 +1,16 @@
-// import { OnDestroy } from '@angular/core';
-// import { Observable } from 'rxjs';
-// import { RefreshService } from '../services/refresh.service';
+import { OnDestroy } from '@angular/core';
+import { Observable, Subscription } from 'rxjs';
 
-// export abstract class BaseController implements OnDestroy {
+export abstract class BaseController implements OnDestroy {
 
-//     constructor(refreshService: RefreshService) {}
+    subscriptions: Subscription;
 
-//     abstract refresh(): Observable<any[]>
+    constructor() {}
 
-//     ngOnDestroy(){
+    
 
-//     }
+    ngOnDestroy(){
+        this.subscriptions.unsubscribe();
+    }
 
-// }
+}

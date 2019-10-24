@@ -47,7 +47,8 @@
                 </thead>
                 <tbody>
                         <!-- track by (item.uniqueId || $id(item)) -->
-                <ng-container *ngFor="let item of sortedFilteredList | slice: listSettings.limit: listSettings.begin; let i = index;">
+                        <!-- | slice: listSettings.limit: listSettings.begin; -->
+                <ng-container *ngFor="let item of sortedFilteredList let i = index;">
                     <tr>
                             <!-- track by columnSetting.propertyPath -->
                         <td *ngFor="let columnSetting of listSettings.columnSettings"

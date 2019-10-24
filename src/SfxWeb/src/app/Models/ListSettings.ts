@@ -31,7 +31,7 @@ export class ListSettings {
     }
 
     public get hasEnabledFilters(): boolean {
-        return _.some(this.columnSettings, cs => cs.enableFilter);
+        return this.columnSettings.some(cs => cs.enableFilter);
     }
 
     public set currentPage(page: number) {
@@ -88,11 +88,11 @@ export class ListSettings {
     }
 
     public isSortedByColumn(columnSetting: ListColumnSetting): boolean {
-        return _.isEqual(this.sortPropertyPaths, columnSetting.sortPropertyPaths);
+        return Utils.arraysAreEqual(this.sortPropertyPaths, columnSetting.sortPropertyPaths);
     }
 
     public reset(): void {
-        _.forEach(this.columnSettings, cs => cs.reset());
+        this.columnSettings.forEach(cs => cs.reset());
         this.search = null;
         this.sortPropertyPaths = this.defaultSortPropertyPaths;
         this.sortReverse = false;
@@ -100,9 +100,9 @@ export class ListSettings {
     }
 
     public getPluckedObject(item: any): any {
-        if (!_.isEmpty(this.columnSettings)) {
+        if (this.columnSettings.length > 0) {
             let newObj = {};
-            _.forEach(_.union(this.columnSettings, this.secondRowColumnSettings), column => newObj[column.propertyPath] = column.getTextValue(item));
+            Utils.unique(this.columnSettings.concat(this.secondRowColumnSettings)).forEach(column => newObj[column.propertyPath] = column.getTextValue(item));
             return newObj;
         }
         return item;
@@ -134,11 +134,11 @@ export class ListColumnSetting {
     }
 
     public get hasEffectiveFilters(): boolean {
-        return _.some(this.filterValues, filter => !filter.isChecked);
+        return this.filterValues.some(filter => !filter.isChecked);
     }
 
     public get sortable(): boolean {
-        return !_.isEmpty(this.sortPropertyPaths);
+        return this.sortPropertyPaths && this.sortPropertyPaths.length > 0;
     }
 
     /**
@@ -165,8 +165,8 @@ export class ListColumnSetting {
         this.filterValues.forEach(filter => filter.isChecked = true);
     }
 
-    public getProperty(item: any): any {
-        if (this.propertyPath && _.startsWith(this.propertyPath, "#")) {
+    public getProperty(item: any): any { // TODO CHECK IF THIS MEANS ROUTING RELATED STUFF?
+        if (this.propertyPath && this.propertyPath.startsWith("#")) {
             return this.propertyPath.substr(1);
         }
 

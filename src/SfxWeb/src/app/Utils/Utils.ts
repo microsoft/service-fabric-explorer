@@ -7,6 +7,18 @@ export class Utils {
     private static SingleUrlRegExp = new RegExp("^https?:\/\/[^;,]+");
 
     /**
+     * checks if two arrays have the same primitives;
+     * @param list
+     * @param list2 
+     */
+    public static arraysAreEqual<T>(list: T[], list2: T[]): boolean{
+        if(list === null || list === undefined || list2 === null || list2 === undefined){
+            return false;
+        }
+        return list.every(entry => list2.includes(entry)) && list2.every(entry => list.includes(entry));
+    }
+
+    /**
      * Filter all duplicates
      * @param list 
      */
@@ -84,7 +96,13 @@ export class Utils {
      */
     public static result(item: any, propertyPath: string) {
         let value = item;
-        propertyPath.split(".").forEach(path => { value = _.result(value, path); });
+        propertyPath.split(".").forEach(path => { 
+            if(typeof value[path] === 'function'){
+                value = value[path]();
+            }else{
+                value = value[path];
+            }
+        });
         return value;
     }
 

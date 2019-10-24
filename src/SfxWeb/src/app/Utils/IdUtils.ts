@@ -39,7 +39,7 @@ export class IdUtils {
     }
 
     public static getNodeName(routeParams: any): string {
-        return decodeURIComponent(routeParams.nodeName);
+        return decodeURIComponent(routeParams.get('nodeName'));
     }
 
     public static getBackupPolicyName(routeParams: any): string {

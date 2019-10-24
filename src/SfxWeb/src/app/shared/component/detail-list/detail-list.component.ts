@@ -11,17 +11,24 @@ export class DetailListComponent implements OnInit {
 
   @Input() listSettings: ListSettings;
   private _list: any[] | DataModelCollectionBase<any>;
-  private sortedFilteredList: any[] | DataModelCollectionBase<any>;
+  private sortedFilteredList: any[] | DataModelCollectionBase<any> = [];
 
   constructor() { }
 
   ngOnInit() {
+    console.log(this.listSettings)
   }
 
   @Input() 
   set list(data:  any[] | DataModelCollectionBase<any>) {
-    this._list = data;
-    this.sortedFilteredList = data;
+    if(data instanceof DataModelCollectionBase){
+      console.log(data);
+      this._list = data.collection;
+    }else{
+      this._list = data;
+    }
+
+    this.sortedFilteredList = this._list;
   }
 
 

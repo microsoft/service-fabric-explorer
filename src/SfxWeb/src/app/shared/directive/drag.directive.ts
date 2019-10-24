@@ -12,7 +12,6 @@ export class DragDirective {
   @HostListener('mousemove', ['$event'])
   handleDrag($event: MouseEvent){
     if(this.down){
-      console.log($event);
       this.onDrag.emit($event.screenX - 4);
     }
   }
@@ -27,10 +26,8 @@ export class DragDirective {
   @HostListener('mouseup', ['$event'])
   endDrag($event:any){
     this.down = false;
-    console.log($event);
   }
 
   constructor(){
-    console.log("wait")
   }
 }
