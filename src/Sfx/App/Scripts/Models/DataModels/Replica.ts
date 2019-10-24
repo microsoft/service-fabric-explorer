@@ -41,6 +41,10 @@ module Sfx {
             return this.data.restClient.restartReplica(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.ReplicaId);
         }
 
+        public deleteInstance(): angular.IPromise<any> {
+            return this.data.restClient.deleteReplica(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.InstanceId);
+        }
+
         public get isStatefulService(): boolean {
             return ServiceKindRegexes.Stateful.test(this.raw.ServiceKind);
         }
@@ -94,18 +98,33 @@ module Sfx {
         private setUpActions(): void {
             let serviceName = this.parent.parent.raw.Name;
 
-            this.actions.add(new ActionWithConfirmationDialog(
-                this.data.$uibModal,
-                this.data.$q,
-                "Restart Replica",
-                "Restart Replica",
-                "Restarting",
-                () => this.restartReplica(),
-                () => true,
-                `Confirm Replica Restart`,
-                `Restart Replica for ${serviceName}`,
-                "confirm"
-            ));
+            if(this.isStatefulService){
+                this.actions.add(new ActionWithConfirmationDialog(
+                    this.data.$uibModal,
+                    this.data.$q,
+                    "Restart Replica",
+                    "Restart Replica",
+                    "Restarting",
+                    () => this.restartReplica(),
+                    () => true,
+                    `Confirm Replica Restart`,
+                    `Restart Replica for ${serviceName}`,
+                    "confirm"
+                ));
+            }else if(this.isStatelessService){
+                this.actions.add(new ActionWithConfirmationDialog(
+                    this.data.$uibModal,
+                    this.data.$q,
+                    "Delete Instance",
+                    "Delete Instance",
+                    "Deleting",
+                    () => this.deleteInstance(),
+                    () => true,
+                    `Confirm Instance Delete`,
+                    `Delete Instance for ${serviceName}`,
+                    "confirm"
+                ));
+            }
         }
     }
 
