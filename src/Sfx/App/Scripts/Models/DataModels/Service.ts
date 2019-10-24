@@ -101,6 +101,11 @@ module Sfx {
                 `Delete service ${this.name} from cluster ${this.data.$location.host()}?`,
                 this.name
             ));
+
+            if (this.isStatelessService) {
+                this.actions.add(new ActionScaleService(this.data.$uibModal, this.data.$q, this));
+            }
+
         }
 
         private setAdvancedActions(): void {
