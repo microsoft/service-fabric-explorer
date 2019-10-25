@@ -768,12 +768,6 @@ module Sfx {
             return this.post(this.getApiUrl(url, RestClient.apiVersion60), "Restart replica", null, messageHandler);
         }
 
-        public deleteReplica(nodeName: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): angular.IPromise<{}> {
-            let url = `Nodes/${nodeName}/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/Delete`;
-
-            return this.post(this.getApiUrl(url, RestClient.apiVersion60), "Delete replica", null, messageHandler);
-        }
-
         public getClusterVersion(messageHandler?: IResponseMessageHandler): angular.IHttpPromise<IRawClusterVersion> {
             let url = `$/GetClusterVersion`;
 

@@ -98,7 +98,7 @@ module Sfx {
         private setUpActions(): void {
             let serviceName = this.parent.parent.raw.Name;
 
-            if(this.isStatefulService){
+            if (this.isStatefulService) {
                 this.actions.add(new ActionWithConfirmationDialog(
                     this.data.$uibModal,
                     this.data.$q,
@@ -111,7 +111,7 @@ module Sfx {
                     `Restart Replica for ${serviceName}`,
                     "confirm"
                 ));
-            }else if(this.isStatelessService){
+            } else if(this.isStatelessService) {
                 this.actions.add(new ActionWithConfirmationDialog(
                     this.data.$uibModal,
                     this.data.$q,
