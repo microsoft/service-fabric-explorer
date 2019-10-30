@@ -1,24 +1,27 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { NodeCollection } from 'src/app/Models/DataModels/Collections';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
+import { BaseController } from 'src/app/ViewModels/BaseController';
 
 @Component({
   selector: 'app-all-nodes',
   templateUrl: './all-nodes.component.html',
   styleUrls: ['./all-nodes.component.scss']
 })
-export class AllNodesComponent implements OnInit {
+export class AllNodesComponent extends BaseController {
 
   nodes: NodeCollection;
   listSettings: ListSettings;
 
-  constructor(private data: DataService, private settings: SettingsService) { }
+  constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
+    super(injector);
+   }
 
-  ngOnInit() {
+  setup() {
     this.nodes = this.data.nodes;
     this.listSettings = this.settings.getNewOrExistingListSettings("nodes", ["name"], [
       new ListColumnSettingForLink("name", "Name", item => item.viewPath),
@@ -30,11 +33,10 @@ export class AllNodesComponent implements OnInit {
       new ListColumnSettingForBadge("healthState", "Health State"),
       new ListColumnSettingWithFilter("nodeStatus", "Status"),
   ]);
-  this.refresh().subscribe();
-}
+  }
 
-refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-  return  this.nodes.refresh(messageHandler);
-}
+  refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
+    return  this.nodes.refresh(messageHandler);
+  }
 
 }

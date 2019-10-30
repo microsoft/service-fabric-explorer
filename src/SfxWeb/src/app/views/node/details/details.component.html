@@ -1,1 +1,26 @@
-<p>details works!</p>
+<div class="detail-pane essen-pane" *ngIf="node">
+    <app-collapse-container>
+        <h4 collapse-header>
+            Node
+        </h4>    
+        <app-detail-view-part [data]="node" collapse-body></app-detail-view-part>
+    </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="node && node.health">
+    <app-collapse-container>
+        <h4 collapse-header>
+            Health Events
+        </h4>    
+        <detail-list [list]="node.health.healthEvents" [listSettings]="healthEventsListSettings" collapse-body></detail-list>
+    </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="node && node.loadInformation">
+    <app-collapse-container>
+        <h4 collapse-header>
+            Load Metric Information
+        </h4>
+        <app-detail-view-part [data]="node.loadInformation" collapse-body></app-detail-view-part>
+    </app-collapse-container>
+</div>

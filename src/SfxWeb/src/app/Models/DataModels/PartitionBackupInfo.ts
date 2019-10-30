@@ -5,6 +5,7 @@ import { Partition } from './Partition';
 import { DataModelBase, IDecorators } from './Base';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Utils } from 'src/app/Utils/Utils';
+import { Observable } from 'rxjs';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -48,8 +49,8 @@ export class PartitionBackupConfigurationInfo extends DataModelBase<IRawPartitio
         super(data, null, parent);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawPartitionBackupConfigurationInfo> {
-        return Utils.getHttpResponseData(this.data.restClient.getPartitionBackupConfigurationInfo(this.parent.parent.id, messageHandler));
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawPartitionBackupConfigurationInfo> {
+        return this.data.restClient.getPartitionBackupConfigurationInfo(this.parent.parent.id, messageHandler);
     }
 }
 
@@ -59,8 +60,8 @@ export class PartitionBackupProgress extends DataModelBase<IRawBackupProgressInf
         super(data, null, parent);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawBackupProgressInfo> {
-        return Utils.getHttpResponseData(this.data.restClient.getPartitionBackupProgress(this.parent.parent.id, messageHandler));
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawBackupProgressInfo> {
+        return this.data.restClient.getPartitionBackupProgress(this.parent.parent.id, messageHandler);
     }
 }
 
@@ -70,8 +71,8 @@ export class PartitionRestoreProgress extends DataModelBase<IRawRestoreProgressI
         super(data, null, parent);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawRestoreProgressInfo> {
-        return Utils.getHttpResponseData(this.data.restClient.getPartitionRestoreProgress(this.parent.parent.id, messageHandler));
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawRestoreProgressInfo> {
+        return this.data.restClient.getPartitionRestoreProgress(this.parent.parent.id, messageHandler);
     }
 }
 

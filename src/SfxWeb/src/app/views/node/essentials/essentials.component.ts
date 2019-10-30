@@ -1,6 +1,6 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 import { switchMap, mergeMap, map } from 'rxjs/operators';
-import { ActivatedRoute, ParamMap } from '@angular/router';
+import { ActivatedRoute, ParamMap, ActivatedRouteSnapshot } from '@angular/router';
 import { IdUtils } from 'src/app/Utils/IdUtils';
 import { of, Subscription, Observable, forkJoin } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
@@ -9,47 +9,34 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { DeployedApplicationCollection } from 'src/app/Models/DataModels/Collections';
 import { ListSettings, ListColumnSetting, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
+import { BaseController } from 'src/app/ViewModels/BaseController';
 
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
   styleUrls: ['./essentials.component.scss']
 })
-export class EssentialsComponent implements OnInit, OnDestroy {
+export class EssentialsComponent extends BaseController {
 
   nodeName: string;
   node: Node;
   deployedApps: DeployedApplicationCollection;
   listSettings: ListSettings;
   unhealthyEvaluationsListSettings: ListSettings;
-  r: Subscription;
 
-  constructor(private data: DataService, private route: ActivatedRoute, private settings: SettingsService) { }
-
-  ngOnInit() {
-
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-
-
-    this.r = this.route.paramMap.pipe(
-      mergeMap((params: ParamMap) => {
-        console.log(params)
-        return of(IdUtils.getNodeName(params));
-      }
-    )).subscribe(d => {
-      this.nodeName = d;
-      this.refresh().subscribe();
-      this.listSettings = this.settings.getNewOrExistingListSettings("apps", ["name"], [
-        new ListColumnSettingForLink("name", "Name", item => item.viewPath),
-        new ListColumnSetting("raw.TypeName", "Application Type"),
-        new ListColumnSettingForBadge("health.healthState", "Health State"),
-        new ListColumnSettingWithFilter("raw.Status", "Status"),
-    ]);
-    })
+  constructor(private data: DataService, injector: Injector, private settings: SettingsService) { 
+    super(injector);
   }
 
-  ngOnDestroy(): void {
-    this.r.unsubscribe();
+  setup() {
+    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
+
+    this.listSettings = this.settings.getNewOrExistingListSettings("apps", ["name"], [
+      new ListColumnSettingForLink("name", "Name", item => item.viewPath),
+      new ListColumnSetting("raw.TypeName", "Application Type"),
+      new ListColumnSettingForBadge("health.healthState", "Health State"),
+      new ListColumnSettingWithFilter("raw.Status", "Status"),
+    ]);
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
@@ -62,8 +49,12 @@ export class EssentialsComponent implements OnInit, OnDestroy {
             this.deployedApps = deployedApps;
           }))
         ]) 
-      })),
+      }))
     ])
+  }
+
+  getParams(route: ActivatedRouteSnapshot): void {
+    this.nodeName = IdUtils.getNodeName(route);
   }
 
 }

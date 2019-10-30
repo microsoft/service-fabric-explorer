@@ -1,0 +1,9 @@
+<div>
+    <div (click)="changeCollapseState()" style="cursor: pointer;">
+        <ng-content select="[collapse-header]"></ng-content>
+    </div>
+
+    <div *ngIf="!collapsed">
+        <ng-content select="[collapse-body]"></ng-content>    
+    </div>
+</div>

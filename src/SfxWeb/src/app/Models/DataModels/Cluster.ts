@@ -54,12 +54,12 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
             //if healthy then no cert issue
             //if warning/Error
                 //starting walking and query all seed nodes in warning state for cluster cert issues
-                this.ensureInitialized().then( (clusterHealth: ClusterHealth) => {
+                this.ensureInitialized().subscribe( (clusterHealth: ClusterHealth) => {
                     clusterHealth = this;
 
                     if (clusterHealth.healthState.text === HealthStateConstants.Warning || clusterHealth.healthState.text === HealthStateConstants.Error) {
-                        this.data.getNodes(true).then(nodes => {
-                            let seedNodes = _.filter(nodes.collection, node => node.raw.IsSeedNode);
+                        this.data.getNodes(true).subscribe(nodes => {
+                            let seedNodes = nodes.collection.filter(node => node.raw.IsSeedNode);
                             this.checkNodesContinually(0, seedNodes);
                         });
                     }
@@ -72,7 +72,7 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 
     public getHealthStateCount(entityKind: HealthStatisticsEntityKind): IRawHealthStateCount {
         if (this.raw) {
-            let entityHealthCount = _.find(this.raw.HealthStatistics.HealthStateCountList, item => item.EntityKind === HealthStatisticsEntityKind[entityKind]);
+            let entityHealthCount = this.raw.HealthStatistics.HealthStateCountList.find(item => item.EntityKind === HealthStatisticsEntityKind[entityKind]);
             if (entityHealthCount) {
                 return entityHealthCount.HealthStateCount;
             }
@@ -80,7 +80,7 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
         return this.emptyHealthStateCount;
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getClusterHealth(this.eventsHealthStateFilter,
             this.nodesHealthStateFilter, this.applicationsHealthStateFilter,
             messageHandler);
@@ -125,7 +125,7 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
         if (index < nodes.length) {
             const node = nodes[index];
             if (node.healthState.text === HealthStateConstants.Error || node.healthState.text === HealthStateConstants.Warning) {
-                node.health.ensureInitialized().then( () => {
+                node.health.ensureInitialized().subscribe( () => {
                     const certExpiringEvents = this.containsCertExpiringHealthEvent(node.health.healthEvents);
                     if (certExpiringEvents.length === 0) {
                         this.checkNodesContinually(index + 1, nodes);
@@ -309,10 +309,10 @@ export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
     public updateBackupPolicy(): void {
         this.updatePolicy.runWithCallbacks.apply(this.updatePolicy);
     }
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawBackupPolicy> {
-        return this.data.restClient.getBackupPolicy(this.name, messageHandler).then(response => {
-            return response.data;
-        });
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawBackupPolicy> {
+        return this.data.restClient.getBackupPolicy(this.name, messageHandler).pipe(map(response => {
+            return response;
+        }));
     }
 }
 

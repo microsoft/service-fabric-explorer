@@ -26,7 +26,7 @@
         <div class="detail-view-navbar" role="tablist" [attr.aria-label]="name">
             <div class="detail-view-navbar-tab" *ngFor="let tab of tabs">
                     <!-- sfx-tab-set-focus href="" active="{{mainViewCtrl.isActiveTab(id)}}" aria-selected="{{mainViewCtrl.isActiveTab(id)}}" ng-class="{ active: mainViewCtrl.isActiveTab(id) }" ng-click="mainViewCtrl.navigateToTab(id)"  -->
-                <a [routerLink]="tab.route" title="{{tab.name}}" role="tab" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{tab.name}}</a>
+                <a [routerLink]="tab.route" [title]="tab.name" role="tab" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{tab.name}}</a>
                 <!-- <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div> -->
             </div>
         </div>

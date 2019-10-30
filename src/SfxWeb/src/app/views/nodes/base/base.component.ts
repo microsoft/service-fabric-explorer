@@ -14,10 +14,10 @@ export class BaseComponent implements OnInit {
     name: "all nodes",
     route: "./"
     },
-    // {
-    //   name: "details",
-    //   route: "/details"
-    // }
+    {
+      name: "events",
+      route: "./events"
+    }
   ];
   constructor(public tree: TreeService) { }
 

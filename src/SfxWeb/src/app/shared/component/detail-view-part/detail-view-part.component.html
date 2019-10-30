@@ -1,1 +1,87 @@
-<p>detail-view-part works!</p>
+<div class="table-responsive">
+    <div *ngIf="resolvedData">
+        <!-- {{resolvedData | json}} -->
+        <table class="table detail-table detail-list" [ngClass]="{ 'table-layout-fixed': !noFixedLayout }" role="presentation">
+<!-- 
+            <tbody *ngFor="(name, value) in resolvedData | keyvalue" -->
+            <tbody *ngFor="let item of resolvedData | keyvalue"
+                [ngSwitch]="getResolvedPropertyType(item.value)">
+                <!-- {{getResolvedPropertyType(item.value)}} -->
+                <!-- Render simple property (one row) -->
+                <tr *ngSwitchCase="'Value'">
+                    <!-- Render property name -->
+                    <th [title]="item.key">
+                        {{item.key}}
+                    </th>
+
+                    <!-- Render simple property value -->
+                    <td [title]="value">{{item.value}}</td>
+                </tr>
+
+                <!-- Render html property (one row) -->
+                <tr *ngSwitchCase="'Html'">
+                    <!-- Render property name -->
+                    <th [title]="item.key">
+                        {{item.key}}
+                    </th>
+
+                    <!-- Render simple property value -->
+                    <td [innerHtml]="item.value"></td>
+                </tr>
+
+                <!-- Render object property (two rows) -->
+                <tr *ngIf="title">
+                    <!-- Render sub-object title in the first line -->
+                    <th colspan="2" class="sub-title" [title]="title">
+                        {{title}}
+                    </th>
+                </tr>
+                <tr *ngSwitchCase="'Object'">
+                    <td colspan="2">
+                        <h4 class="sub-title" [title]="title" style="text-transform: none;" >{{item.key}} </h4>
+                        <div class="nested-table-container">
+                            <app-detail-view-part [data]="item.value" [noFixedLayout]="noFixedLayout"></app-detail-view-part>
+                        </div>
+                    </td>
+                </tr>
+
+                <!-- <tr *ngSwitchCase="Array">
+                    <th colspan="2">
+                        <h4 class="sub-title" [title]="{{title}}" style="text-transform: none;">{{::name}} </h4>
+                        <div sfx-include src="'view-part-array-template'"></div>
+                    </th>
+                </tr> -->
+
+            </tbody>
+
+        </table>
+    </div>
+    <script type="text/ng-template" id="view-part-array-template">
+        <div class="table-responsive">
+            <div class="nested-table-container">
+                <!-- Set table-layout to be fixed only when they have only 1 or 2 properties -->
+                <table class="table detail-table nested-table-border" ng-class="{ 'table-layout-fixed': !noFixedLayout && ctrl.getResolvedObjectSize(value[0]) <= 3 }">
+                    <thead>
+                        <tr class="nested-table-border">
+                            <!-- Render sub-array table header -->
+                            <th ng-repeat="(subName, subValue) in ::value[0] track by subName" title="{{::subName}}">
+                                {{::subName}}
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr ng-repeat="item in value"  ng-class="{ 'nested-table-border': !($last) }">
+                                <!-- Render sub-array table body, assuming the properties are always simple properties rather than object -->
+                            <td ng-repeat="(subName, subValue) in item track by subName" ng-switch="::ctrl.getResolvedPropertyType(subValue)">
+                                <span ng-switch-when="Value" title="{{subValue}}">{{subValue}}</span>
+                                <span ng-switch-when="Html" ng-bind-html="subValue"></span>
+                                <div ng-switch-when="Array" sfx-include src="'view-part-array-template'" ng-init="value = subValue"></div>
+                                <sfx-detail-view-part ng-switch-when="Object" data="subValue" no-fixed-layout="$parent.noFixedLayout"></sfx-detail-view-part>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </script>
+</div>

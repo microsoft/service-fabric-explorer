@@ -7,6 +7,9 @@ import { HealthStateFilterFlags, IDeployedServicePackageHealthStateChunk } from 
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { HealthBase } from './HealthEvent';
+import { DeployedApplication } from './DeployedApplication';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -40,16 +43,16 @@ export class DeployedServicePackage extends DataModelBase<IRawDeployedServicePac
         return this.data.routes.getDeployedServiceViewPath(this.parent.parent.name, this.parent.id, this.id, this.servicePackageActivationId);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawDeployedServicePackage> {
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedServicePackage> {
         return this.data.restClient.getDeployedServicePackage(this.parent.parent.name, this.parent.id, this.name, messageHandler)
-            .then(response => {
+            .pipe(map(response => {
                 return this.servicePackageActivationId
-                    ? _.find(response.data, item => this.servicePackageActivationId === item.ServicePackageActivationId)
-                    : _.first(response.data);
-            });
+                    ? response.find(item => this.servicePackageActivationId === item.ServicePackageActivationId)
+                    : response[0];
+            }));
     }
 
-    protected refreshFromHealthChunkInternal(healthChunk: IDeployedServicePackageHealthStateChunk): angular.IPromise<any> {
+    protected refreshFromHealthChunkInternal(healthChunk: IDeployedServicePackageHealthStateChunk): Observable<any> {
         return this.health.mergeHealthStateChunk(healthChunk);
     }
 }
@@ -63,9 +66,9 @@ export class DeployedServicePackageHealth extends HealthBase<IRawDeployedService
         return this.parent.servicePackageActivationId;
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-        return Utils.getHttpResponseData(this.data.restClient.getDeployedServicePackageHealth(this.parent.parent.parent.name, this.parent.parent.id,
-            this.parent.name, this.servicePackageActivationId, this.eventsHealthStateFilter, messageHandler));
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<any> {
+        return this.data.restClient.getDeployedServicePackageHealth(this.parent.parent.parent.name, this.parent.parent.id,
+               this.parent.name, this.servicePackageActivationId, this.eventsHealthStateFilter, messageHandler);
     }
 }
 

@@ -159,7 +159,7 @@ export class HtmlUtils {
     }
 
     public static getLinkHtml(text: string, url: string, targetBlank: boolean = false): string {
-        return `<a href="${url}"${targetBlank ? ` target="_blank"` : ""}>${text}</a>`;
+        return `<a routerLink="${url}" ${targetBlank ? ` target="_blank"` : ""}>${text}</a>`;
     }
 
     public static getBadgeHtml(badge: ITextAndBadge): string {

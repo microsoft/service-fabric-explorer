@@ -80,7 +80,7 @@ $detail-pane-pre-background-color: #262626 !default;
 $detail-pane-pre-color: #d1d1d1 !default;
 $detail-pane-main-title-color: #FFFFFF;
 $details-pane-table-sub-title-color: #FFFFFF;
-$detail-table-header-color: #FFFFFF !default;
+$detail-table-header-color: #939393 !default;
 $detail-table-cell-color: #A6A6A6 !default;
 $essen-pane-background-color: #262626 !default;
 $upgrade-domain-progress-color: #59B4D9 !default;
@@ -246,6 +246,7 @@ $tooltip-max-width: 100% !default;
         // set padding instead of margin to avoid jumping of collapsed section
         margin-top: 0;
         padding-top: 7px;
+        margin-bottom: 10px;
     }
 
     h4.no-uppercase {
@@ -491,7 +492,7 @@ table.detail-list {
 
 .detail-table {
     font-size: $font-size-default;
-    border-bottom: 1px solid $table-border-color;
+    // border-bottom: 1px solid $table-border-color;
 
     th {
         color: $detail-table-header-color;
@@ -508,7 +509,12 @@ table.detail-list {
     td, th {
         text-overflow: ellipsis;
         overflow: hidden;
+        border-bottom: 1px solid #4c4c4c;
     }
+
+    // td:last-child, th :last-child {
+    //     border-bottom: 0px solid #4c4c4c;
+    // }
 
     tbody > tr {
         &:first-child {
@@ -572,9 +578,12 @@ html,body {
     height: 100%;
 }
 
-// .table thead>tr>th {
-//     border-bottom: 1px solid #727272;
-// }
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;    
+}
 
 .table>tbody>tr>td {
         line-height: 1.42857;

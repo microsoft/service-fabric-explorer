@@ -3,6 +3,9 @@ import { IRawImageStoreContent, IRawStoreFolderSize, IRawStoreFolder, IRawStoreF
 import { DataService } from 'src/app/services/data.service';
 import { ClusterManifest } from './Cluster';
 import { Utils } from 'src/app/Utils/Utils';
+import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
+import { of, Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 export class ImageStore extends DataModelBase<IRawImageStoreContent> {
     public static reservedFileName: string = "_.dir";
@@ -42,13 +45,13 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
         this.pathBreadcrumbItems = [<IStorePathBreadcrumbItem>{ path: this.root.path, name: this.root.displayName}];
 
         let manifest = new ClusterManifest(data);
-        manifest.refresh().then(() => {
+        manifest.refresh().subscribe(() => {
             this.connectionString = manifest.imageStoreConnectionString;
             this.isNative = this.connectionString.toLowerCase() === "fabric:imagestore";
 
             if (this.isNative) {
                     // if we get an actual request error. i.e a 400 that means this cluster does not have the API
-                    this.expandFolder(this.currentFolder.path).then( () => {
+                    this.expandFolder(this.currentFolder.path).subscribe( () => {
                         this.isAvailable = true;
                     }).catch( err => {
                         this.isAvailable = false;
@@ -60,26 +63,26 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
 
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawImageStoreContent> {
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawImageStoreContent> {
         if (!this.isNative || this.isLoadingFolderContent || !this.initialized) {
-            return this.data.$q.resolve(null);
+            return of(null);
         }
         return this.expandFolder(this.currentFolder.path);
     }
 
-    protected updateInternal(): angular.IPromise<any> | void {
-        return this.data.$q.when(true);
+    protected updateInternal(): Observable<any> | void {
+        return of(true);
     }
 
-    protected expandFolder(path: string, clearCache: boolean = false): angular.IPromise<IRawImageStoreContent> {
+    protected expandFolder(path: string, clearCache: boolean = false): Observable<IRawImageStoreContent> {
         if (this.isLoadingFolderContent) {
             return;
         }
         this.isLoadingFolderContent = true;
-        return this.loadFolderContent(path).then((raw) => {
+        return this.loadFolderContent(path).subscribe((raw) => {
             this.setCurrentFolder(path, raw, clearCache);
 
-            let index = _.findIndex(this.pathBreadcrumbItems, item => item.path === this.currentFolder.path);
+            let index = this.pathBreadcrumbItems.findIndex(item => item.path === this.currentFolder.path);
             if (index > -1) {
                 this.pathBreadcrumbItems = this.pathBreadcrumbItems.slice(0, index + 1);
             } else {
@@ -101,21 +104,21 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
         });
     }
 
-    public deleteContent(path: string): angular.IPromise<any> {
+    public deleteContent(path: string): Observable<any> {
         if (!path) {
-            return this.data.$q.resolve();
+            return of(null);
         }
 
-        let item: ImageStoreItem = _.find(this.currentFolder.childrenFolders, folder => folder.path === path);
+        let item: ImageStoreItem = this.currentFolder.childrenFolders.find(folder => folder.path === path);
         if (!item) {
-            item = _.find(this.currentFolder.childrenFiles, file => file.path === path);
+            item = this.currentFolder.childrenFiles.find(file => file.path === path);
         }
 
         if (!item || item.isReserved) {
-            return this.data.$q.resolve();
+            return of(null);
         }
 
-        return Utils.getHttpResponseData(this.data.restClient.deleteImageStoreContent(path)).then(() => this.refresh());
+        return this.data.restClient.deleteImageStoreContent(path).pipe(map(() => this.refresh()));
     }
 
     public getCachedFolderSize(path: string): {size: number, loading: boolean } {
@@ -127,10 +130,8 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
         return cachedData;
     }
 
-    public getFolderSize(path: string): angular.IPromise<IRawStoreFolderSize> {
-        return Utils.getHttpResponseData(this.data.restClient.getImageStoreFolderSize(path)).then(raw => {
-            return raw;
-        });
+    public getFolderSize(path: string): Observable<IRawStoreFolderSize> {
+        return this.data.restClient.getImageStoreFolderSize(path)
     }
 
     private setCurrentFolder(path: string, content: IRawImageStoreContent, clearFolderSizeCache: boolean): void {
@@ -142,7 +143,7 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
         let pathSegements = ImageStore.chopPath(path);
         folder.displayName = _.last(pathSegements);
 
-        folder.childrenFolders = _.map(content.StoreFolders, f => {
+        folder.childrenFolders = content.StoreFolders.map(f => {
             let childFolder = new ImageStoreFolder(f);
             if (childFolder.path in this.cachedCurrentDirectoryFolderSizes) {
                 childFolder.size = this.cachedCurrentDirectoryFolderSizes[childFolder.path].size;
@@ -151,14 +152,14 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
             return childFolder;
         });
 
-        folder.childrenFiles = _.map(content.StoreFiles, f => new ImageStoreFile(f));
+        folder.childrenFiles = content.StoreFiles.map(f => new ImageStoreFile(f));
         folder.allChildren = [].concat(folder.childrenFiles).concat(folder.childrenFolders);
         folder.fileCount = folder.childrenFiles.length;
 
         this.currentFolder = folder;
     }
 
-    private loadFolderContent(path: string, refresh: boolean = false): angular.IPromise<IRawImageStoreContent> {
+    private loadFolderContent(path: string, refresh: boolean = false): Observable<IRawImageStoreContent> {
         /*
         Currently only used to open up to a different directory/reload currently directory in the refresh interval loop
 

@@ -1,17 +1,13 @@
-const PROXY_CONFIG = [
-    {
-        context: [
-            "/$/*",
-            "/*api*",
-            "/Application*",
-            "/Applications/*",
-            "/**",
-        ],
+const PROXY_CONFIG = {
+    "/**": {
         target: "http://localhost:3000",
         "secure": false,
         "changeOrigin": true,
-        "logLevel": "debug"
+        "logLevel": "debug",
+        "pathRewrite": {
+            "^/api": ""
+        }
     }
-]
+}
 
 module.exports = PROXY_CONFIG;

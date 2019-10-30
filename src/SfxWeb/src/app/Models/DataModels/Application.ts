@@ -11,8 +11,9 @@ import { HealthBase } from './HealthEvent';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HealthEvaluation, UpgradeDescription, UpgradeDomain } from './Shared';
 import { Utils } from 'src/app/Utils/Utils';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { HealthUtils } from 'src/app/Utils/healthUtils';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -76,9 +77,9 @@ export class Application extends DataModelBase<IRawApplication> {
         let compose = this.raw.ApplicationDefinitionKind === Constants.ComposeApplicationDefinitionKind;
         let action = compose ? this.data.restClient.deleteComposeApplication(this.id) : this.data.restClient.deleteApplication(this.id);
 
-        return action.then(() => {
+        return action.pipe(map(() => {
             this.cleanUpApplicationReplicas();
-        });
+        }));
     }
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IApplicationHealthStateFilter {
@@ -194,28 +195,30 @@ export class Application extends DataModelBase<IRawApplication> {
         //         this.name));
     }
 
+    //TODO TEST AND FIND OUT WHAT THIS IS
     private cleanUpApplicationReplicas() {
         this.data.getNodes(true)
-            .then(nodes => {
+            .subscribe(nodes => {
                 let replicas = [];
 
-                let replicaQueries = _.map(nodes.collection, (node) =>
+                let replicaQueries = nodes.collection.map((node) =>
                     this.data.restClient.getReplicasOnNode(node.name, this.id)
-                        .then((response) => _.forEach(response.data, (replica) => {
+                        .subscribe((response) => response.forEach((replica) => {
                             replicas.push({
                                 Replica: replica,
                                 NodeName: node.name
                             });
                         })));
 
-                this.data.$q.all(replicaQueries).then(() =>
-                    _.forEach(replicas, (replicaInfo) =>
+                forkJoin(replicaQueries).pipe(map(() => {
+                    replicas.forEach(replicaInfo =>
                         this.data.restClient.deleteReplica(
                             replicaInfo.NodeName,
                             replicaInfo.Replica.PartitionId,
                             replicaInfo.Replica.ReplicaId,
                             true /*force*/,
-                            ResponseMessageHandlers.silentResponseMessageHandler)));
+                            ResponseMessageHandlers.silentResponseMessageHandler).subscribe() )
+                })).subscribe();
             });
     }
 }
@@ -299,8 +302,8 @@ export class ApplicationManifest extends DataModelBase<IRawApplicationManifest> 
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return Utils.getHttpResponseData(this.data.restClient.getApplicationManifestForApplicationType(
-            this.parent.raw.TypeName, this.parent.raw.TypeVersion, messageHandler));
+        return this.data.restClient.getApplicationManifestForApplicationType(
+            this.parent.raw.TypeName, this.parent.raw.TypeVersion, messageHandler);
     }
 }
 
@@ -355,18 +358,18 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplicationUpgradeProgress> {
-        return Utils.getHttpResponseData(this.data.restClient.getApplicationUpgradeProgress(this.parent.id, messageHandler));
+        return this.data.restClient.getApplicationUpgradeProgress(this.parent.id, messageHandler);
     }
 
     protected updateInternal(): Observable<any> | void {
                                                                                                 //set depth to 0 and parent ref to null
-        this.unhealthyEvaluations = Utils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);
+        this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);
 
-        let domains = _.map(this.raw.UpgradeDomains, ud => new UpgradeDomain(this.data, ud));
-        let groupedDomains = _.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Completed)
-            .concat(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.InProgress))
-            .concat(_.filter(domains, ud => ud.name === this.raw.NextUpgradeDomain))
-            .concat(_.filter(domains, ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain));
+        let domains = this.raw.UpgradeDomains.map(ud => new UpgradeDomain(this.data, ud));
+        let groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
+            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.InProgress))
+            .concat(domains.filter(ud => ud.name === this.raw.NextUpgradeDomain))
+            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain));
 
         this.upgradeDomains = groupedDomains;
 
@@ -381,25 +384,26 @@ export class ApplicationBackupConfigurationInfo extends DataModelBase<IRawApplic
             "action.Name",
         ]
     };
-    public action: ActionWithDialog;
+    // TODO 
+    // public action: ActionWithDialog;
     public constructor(data: DataService, raw: IRawApplicationBackupConfigurationInfo, public parent: Application) {
         super(data, raw, parent);
-        this.action = new ActionWithDialog(
-            data.$uibModal,
-            data.$q,
-            raw.PolicyName,
-            raw.PolicyName,
-            "Creating",
-            () => this.data.restClient.deleteBackupPolicy(this.raw.PolicyName),
-            () => true,
-            <angular.ui.bootstrap.IModalSettings>{
-                templateUrl: "partials/backupPolicy.html",
-                controller: ActionController,
-                resolve: {
-                    action: () => this.data.getBackupPolicy(this.raw.PolicyName)
-                }
-            },
-            null);
+        // this.action = new ActionWithDialog(
+        //     data.$uibModal,
+        //     data.$q,
+        //     raw.PolicyName,
+        //     raw.PolicyName,
+        //     "Creating",
+        //     () => this.data.restClient.deleteBackupPolicy(this.raw.PolicyName),
+        //     () => true,
+        //     <angular.ui.bootstrap.IModalSettings>{
+        //         templateUrl: "partials/backupPolicy.html",
+        //         controller: ActionController,
+        //         resolve: {
+        //             action: () => this.data.getBackupPolicy(this.raw.PolicyName)
+        //         }
+        //     },
+        //     null);
     }
 }
 

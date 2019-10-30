@@ -22,14 +22,17 @@ import { DeployedApplication } from './DeployedApplication';
 import { DeployedServicePackage } from './DeployedServicePackage';
 import { DeployedCodePackage } from './DeployedCodePackage';
 import { DeployedReplica } from './DeployedReplica';
-import { FabricEventBase, FabricEventInstanceModel, ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent } from '../eventstore/Events';
-import { ListSettings } from '../ListSettings';
+import { FabricEventBase, FabricEventInstanceModel, ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent, FabricEvent } from '../eventstore/Events';
+import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter } from '../ListSettings';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { NetworkOnNode } from './NetworkOnNode';
 import { NetworkOnApp } from './NetworkOnApp';
 import { Network } from './Network';
 import { AppOnNetwork } from './AppOnNetwork';
+import { PartitionBackup, PartitionBackupInfo } from './PartitionBackupInfo';
+import { DeployedContainerOnNetwork } from './DeployedContainerOnNetwork';
+import { NodeOnNetwork } from './NodeOnNetwork';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -63,58 +66,6 @@ export interface IDataModelCollection<T extends IDataModel<any>> {
 
     // Find and merge the health chunk data into current collection
     mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any>;
-}
-
-export class CancelablePromise<T> {
-    private defer: angular.IDeferred<T> = null;
-
-    public constructor() {
-    }
-
-    public load(loadHandler: () => Observable<T>): Observable<T> {
-        if (this.hasPromise()) {
-            this.cancel();
-        }
-
-        this.defer = this.$q.defer<T>();
-        this.executeInternal(loadHandler);
-        return this.getPromise();
-    }
-
-    public hasPromise(): boolean {
-        return this.defer !== null;
-    }
-
-    public getPromise(): Observable<T> {
-        if (!this.hasPromise()) {
-            return null;
-        }
-        return this.defer.promise;
-    }
-
-    public cancel(): void {
-        if (this.hasPromise()) {
-            this.defer.reject({ isCanceled: true });
-            this.defer = null;
-        }
-    }
-
-    private executeInternal(loadHandler: () => Observable<T>): void {
-        let capturedDefer = this.defer;
-        loadHandler().then(result => {
-            if (this.defer === capturedDefer) {
-                this.defer.resolve(result);
-            }
-        }).catch((rejected) => {
-            if (this.defer === capturedDefer) {
-                this.defer.reject(rejected);
-            }
-        }).finally(() => {
-            if (this.defer === capturedDefer) {
-                this.defer = null;
-            }
-        });
-    }
 }
 
 export class DataModelCollectionBase<T extends IDataModel<any>> implements IDataModelCollection<T> {
@@ -511,7 +462,7 @@ export class NodeOnNetworkCollection extends DataModelCollectionBase<NodeOnNetwo
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         let collection = [];
         return this.data.restClient.getNodesOnNetwork(this.networkName, messageHandler).then(items => {
-            let tasks = _.map(items, raw => {
+            let tasks = items.map(raw => {
                 let node = new NodeOnNetwork(this.data, raw);
                 return node.refresh().then(() => {
                     collection.push(node);
@@ -530,22 +481,23 @@ export class DeployedContainerOnNetworkCollection extends DataModelCollectionBas
         this.networkName = networkName;
     }
 
+    //TODO CHECK THIS WORKS RIGHT
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getNodesOnNetwork(this.networkName, messageHandler).then(items => {
+        return this.data.restClient.getNodesOnNetwork(this.networkName, messageHandler).pipe(mergeMap(items => {
             let result: DeployedContainerOnNetwork[] = new Array();
             let promises = [];
-            _.each(items, raw => {
-                promises.push(this.data.restClient.getDeployedContainersOnNetwork(this.networkName, raw.nodeName, messageHandler).then(values => {
-                    _.each(values, value => {
+            items.forEach(raw => {
+                promises.push(this.data.restClient.getDeployedContainersOnNetwork(this.networkName, raw.nodeName, messageHandler).pipe(map(values => {
+                    values.forEach(value => {
                         result.push(new DeployedContainerOnNetwork(this.data, raw.nodeName, value));
                     });
-                }));
+                })));
             });
-            return this.data.$q.all(promises).then(values => {
+            return forkJoin(promises).pipe(map(values => {
                 return result;
-            });
+            }));
 
-        });
+        }));
     }
 }
 
@@ -635,9 +587,9 @@ export class ServiceBackupConfigurationInfoCollection extends DataModelCollectio
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getServiceBackupConfigurationInfoCollection(this.parent.id, messageHandler)
-            .then(items => {
-                return _.map(items, raw => new ServiceBackupConfigurationInfo(this.data, raw, this.parent));
-            });
+            .pipe(map(items => {
+                return items.map(raw => new ServiceBackupConfigurationInfo(this.data, raw, this.parent));
+            }));
     }
 }
 
@@ -652,9 +604,9 @@ export class PartitionBackupCollection extends DataModelCollectionBase<Partition
 
     public retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getPartitionBackupList(this.parent.parent.id, messageHandler, this.startDate, this.endDate)
-            .then(items => {
-                return _.map(items, raw => new PartitionBackup(this.data, raw, this.parent));
-            });
+            .pipe(map(items => {
+                return items.map(raw => new PartitionBackup(this.data, raw, this.parent));
+            }));
     }
 }
 
@@ -665,9 +617,9 @@ export class SinglePartitionBackupCollection extends DataModelCollectionBase<Par
 
     public retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getLatestPartitionBackup(this.parent.parent.id, messageHandler)
-            .then(items => {
-                return _.map(items, raw => new PartitionBackup(this.data, raw, this.parent));
-            });
+            .pipe(map(items => {
+                return items.map(raw => new PartitionBackup(this.data, raw, this.parent));
+            }));
     }
 }
 
@@ -963,16 +915,16 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
 
     public reload(messageHandler?: IResponseMessageHandler): Observable<any> {
         this.lastRefreshTime = null;
-        return this.clear().then(() => {
+        return this.clear().pipe(map(() => {
             return this.refresh(messageHandler);
-        });
+        }));
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         // Use existing collection if a refresh is called in less than minimumRefreshTimeInSecs.
         if (this.lastRefreshTime &&
             (new Date().getTime() - this.lastRefreshTime.getTime()) < (this.minimumRefreshTimeInSecs * 1000)) {
-            return this.data.$q.when(this.collection);
+            return of(this.collection);
         }
 
         this.lastRefreshTime = new Date();
@@ -985,7 +937,7 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<T>[]> {
         // Should be overriden to retrieve actual events.
-        return this.data.$q.when([]);
+        return of([]);
     }
 
     private createListSettings(): ListSettings {
@@ -1054,9 +1006,9 @@ export class ClusterEventList extends EventListBase<ClusterEvent> {
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<ClusterEvent>[]> {
         return this.data.restClient.getClusterEvents(this.queryStartDate, this.queryEndDate, messageHandler)
-            .then(result => {
+            .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<ClusterEvent>(this.data, event));
-            });
+            }));
     }
 }
 
@@ -1079,9 +1031,9 @@ export class NodeEventList extends EventListBase<NodeEvent> {
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<NodeEvent>[]> {
         return this.data.restClient.getNodeEvents(this.queryStartDate, this.queryEndDate, this.nodeName, messageHandler)
-            .then(result => {
+            .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<NodeEvent>(this.data, event));
-            });
+            }));
     }
 }
 
@@ -1107,9 +1059,9 @@ export class ApplicationEventList extends EventListBase<ApplicationEvent> {
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<ApplicationEvent>[]> {
         return this.data.restClient.getApplicationEvents(this.queryStartDate, this.queryEndDate, this.applicationId, messageHandler)
-            .then(result => {
+            .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<ApplicationEvent>(this.data, event));
-            });
+            }));
     }
 }
 
@@ -1134,9 +1086,9 @@ export class ServiceEventList extends EventListBase<ServiceEvent> {
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<ServiceEvent>[]> {
         return this.data.restClient.getServiceEvents(this.queryStartDate, this.queryEndDate, this.serviceId, messageHandler)
-            .then(result => {
+            .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<ServiceEvent>(this.data, event));
-            });
+            }));
     }
 }
 
@@ -1159,9 +1111,9 @@ export class PartitionEventList extends EventListBase<PartitionEvent> {
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<PartitionEvent>[]> {
         return this.data.restClient.getPartitionEvents(this.queryStartDate, this.queryEndDate, this.partitionId, messageHandler)
-            .then(result => {
+            .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<PartitionEvent>(this.data, event));
-            });
+            }));
     }
 }
 
@@ -1186,9 +1138,9 @@ export class ReplicaEventList extends EventListBase<ReplicaEvent> {
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<ReplicaEvent>[]> {
         return this.data.restClient.getReplicaEvents(this.queryStartDate, this.queryEndDate, this.partitionId, this.replicaId, messageHandler)
-            .then(result => {
+            .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<ReplicaEvent>(this.data, event));
-            });
+            }));
     }
 }
 
@@ -1202,8 +1154,8 @@ export class CorrelatedEventList extends EventListBase<FabricEvent> {
 
     protected retrieveEvents(messageHandler?: IResponseMessageHandler): Observable<FabricEventInstanceModel<FabricEvent>[]> {
         return this.data.restClient.getCorrelatedEvents(this.eventInstanceId, messageHandler)
-            .then(result => {
+            .pipe(map(result => {
                 return result.map(event => new FabricEventInstanceModel<FabricEvent>(this.data, event));
-            });
+            }));
     }
 }

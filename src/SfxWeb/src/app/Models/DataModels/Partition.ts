@@ -10,6 +10,7 @@ import { Utils } from 'src/app/Utils/Utils';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HealthBase } from './HealthEvent';
 import { PartitionBackupInfo } from './PartitionBackupInfo';
+import { Observable } from 'rxjs';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -61,8 +62,8 @@ export class Partition extends DataModelBase<IRawPartition> {
         return this.isStatefulService && this.parent.parent.raw.TypeName !== "System";
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawPartition> {
-        return Utils.getHttpResponseData(this.data.restClient.getPartition(this.parent.parent.id, this.parent.id, this.id, messageHandler));
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawPartition> {
+        return this.data.restClient.getPartition(this.parent.parent.id, this.parent.id, this.id, messageHandler);
     }
 
     public removeAdvancedActions(): void {
@@ -187,9 +188,9 @@ export class PartitionHealth extends HealthBase<IRawPartitionHealth> {
         super(data, parent);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawPartitionHealth> {
-        return Utils.getHttpResponseData(this.data.restClient.getPartitionHealth(this.parent.parent.parent.id, this.parent.parent.id, this.parent.id,
-            this.eventsHealthStateFilter, this.replicasHealthStateFilter, messageHandler));
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawPartitionHealth> {
+        return this.data.restClient.getPartitionHealth(this.parent.parent.parent.id, this.parent.parent.id, this.parent.id,
+            this.eventsHealthStateFilter, this.replicasHealthStateFilter, messageHandler);
     }
 }
 
@@ -223,14 +224,13 @@ export class PartitionLoadInformation extends DataModelBase<IRawPartitionLoadInf
         return this.isInitialized && (this.primaryLoadMetricReports.length > 0 || this.secondaryLoadMetricReports.length > 0);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawPartitionLoadInformation> {
-        return Utils.getHttpResponseData(this.data.restClient.getPartitionLoadInformation(
-            this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, messageHandler));
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawPartitionLoadInformation> {
+        return this.data.restClient.getPartitionLoadInformation(this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, messageHandler);
     }
 
-    protected updateInternal(): angular.IPromise<any> | void {
-        this.primaryLoadMetricReports = _.map(this.raw.PrimaryLoadMetricReports, report => new LoadMetricReport(this.data, report));
-        this.secondaryLoadMetricReports = _.map(this.raw.SecondaryLoadMetricReports, report => new LoadMetricReport(this.data, report));
+    protected updateInternal(): Observable<any> | void {
+        this.primaryLoadMetricReports = this.raw.PrimaryLoadMetricReports.map(report => new LoadMetricReport(this.data, report));
+        this.secondaryLoadMetricReports = this.raw.SecondaryLoadMetricReports.map(report => new LoadMetricReport(this.data, report));
     }
 }
 

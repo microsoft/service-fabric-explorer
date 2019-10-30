@@ -1,4 +1,5 @@
 ﻿import { Constants } from '../Common/Constants';
+import { ActivatedRouteSnapshot } from '@angular/router';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -6,8 +7,23 @@
 //-----------------------------------------------------------------------------
 
 export class IdUtils {
-    public static getAppId(routeParams: any): string {
-        return decodeURIComponent(routeParams.appId);
+
+    // This traverses the route, following ancestors, looking for the parameter.
+    public static getParam(route: ActivatedRouteSnapshot, key: string): any {
+      if (route != null) {
+        let param = route.params[key];
+        if (param === undefined) {
+          return IdUtils.getParam(route.parent, key);
+        } else {
+          return param;
+        }
+      } else {
+        return undefined;
+      }
+    }
+
+    public static getAppId(route: ActivatedRouteSnapshot): string {
+        return decodeURIComponent(IdUtils.getParam(route, 'appId'));
     }
 
     public static getPartitionId(routeParams: any): string {
@@ -38,8 +54,8 @@ export class IdUtils {
         return decodeURIComponent(routeParams.codePackageName);
     }
 
-    public static getNodeName(routeParams: any): string {
-        return decodeURIComponent(routeParams.get('nodeName'));
+    public static getNodeName(route: ActivatedRouteSnapshot): string {
+        return decodeURIComponent(IdUtils.getParam(route, 'nodeName'));
     }
 
     public static getBackupPolicyName(routeParams: any): string {

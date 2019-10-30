@@ -1,81 +1,95 @@
-<!-- <div class="detail-pane">
-    <h4>
-        Health Events
-    </h4>
-    <sfx-detail-list list="clusterHealth.healthEvents" list-settings="healthEventsListSettings"></sfx-detail-list>
-</div> -->
-
-<div id="upgradeDetailsSection" class="detail-pane essen-pane" ng-if="clusterUpgradeProgress.isInitialized">
-    <h4 *ngIf="clusterUpgradeProgress.isUpgrading">Cluster Upgrade In Progress</h4>
-    <h4 *ngIf="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h4>
-    <div class="table-responsive">
-            <table class="essen-table" role="presentation">
-                <tr>
-                    <th>Code Version</th>
-                    <th>Config Version</th>
-                    <th>Upgrade Mode</th>
-                    <th>Upgrade State</th>
-                </tr>
-                <tr>
-                    <td>{{clusterUpgradeProgress.raw.CodeVersion}}</td>
-                    <td>{{clusterUpgradeProgress.raw.ConfigVersion}}</td>
-                    <td>{{clusterUpgradeProgress.raw.UpgradeState}}</td>
-                    <td>{{clusterUpgradeProgress.raw.RollingUpgradeMode}}</td>
-                </tr>
-                <tr>
-                    <th>Start Timestamp Utc</th>
-                    <th title="Upgrade Duration">Upgrade Duration</th>
-                    <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>
-                </tr>
-                <tr>
-                    <td>{{clusterUpgradeProgress.startTimestampUtc}}</td>
-                    <td>{{clusterUpgradeProgress.upgradeDuration}}</td>
-                    <td>{{clusterUpgradeProgress.upgradeDomainDuration}}</td>
-                </tr>
-            </table>
-        </div>
-    <div class="detail-pane" *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
-        <h5>Progress by Upgrade Domain</h5>
-        <upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></upgrade-progress>
-        <!-- <sfx-upgrade-domain-progress ng-if="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList.length > 0"
-                                        node-upgrade-progress-list="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList"></sfx-upgrade-domain-progress> -->
-    </div>
-
-    <div *ngIf="clusterUpgradeProgress.raw.FailureReason !== 'None'">
-        <h4>Upgrade Failure</h4>
-        <div class="table-responsive">
-            <table class="table detail-table">
-                <tbody>
-                    <tr>
-                        <th>Failure Timestamp Utc</th>
-                        <td>{{clusterUpgradeProgress.failureTimestampUtc}}</td>
-                    </tr>
-                    <tr>
-                        <th>Failure Reason</th>
-                        <td><img class="badge-icon" src="images/badge-error.svg"><span> {{clusterUpgradeProgress.raw.FailureReason}}</span></td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <!-- <div class="detail-pane" ng-if="clusterUpgradeProgress.unhealthyEvaluations.length > 0">
-        <h4>Unhealthy Evaluations (Upgrade)</h4>
-        <sfx-detail-list list="clusterUpgradeProgress.unhealthyEvaluations" list-settings="upgradeProgressUnhealthyEvaluationsListSettings"></sfx-detail-list>
-    </div>
-
-    <div class="detail-pane" ng-if="clusterUpgradeProgress.upgradeDescription">
-        <h4>Upgrade Description</h4>
-        <sfx-detail-view-part data="clusterUpgradeProgress.upgradeDescription"></sfx-detail-view-part>
-    </div> -->
+<div class="detail-pane essen-pane" *ngIf="clusterHealth.isInitialized">
+    <app-collapse-container>
+        <h4 collapse-header>
+            Health Events
+        </h4>
+        <detail-list [list]="clusterHealth.healthEvents" [listSettings]="healthEventsListSettings"  collapse-body></detail-list>
+    </app-collapse-container>
 </div>
 
-<!-- <div class="detail-pane">
-    <h4> Node States </h4>
-    <sfx-detail-list list="nodesStatuses" list-settings="nodeStatusListSettings"></sfx-detail-list>
+<div id="upgradeDetailsSection" *ngIf="clusterUpgradeProgress.isInitialized" class="detail-pane essen-pane">
+    <app-collapse-container>
+        <div collapse-header>
+                <h4 *ngIf="clusterUpgradeProgress.isUpgrading">Cluster Upgrade In Progress</h4>
+                <h4 *ngIf="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h4>
+        </div>
+        <div collapse-body>
+            <div class="table-responsive">
+                    <table class="essen-table" role="presentation">
+                        <tr>
+                            <th>Code Version</th>
+                            <th>Config Version</th>
+                            <th>Upgrade Mode</th>
+                            <th>Upgrade State</th>
+                        </tr>
+                        <tr>
+                            <td>{{clusterUpgradeProgress.raw.CodeVersion}}</td>
+                            <td>{{clusterUpgradeProgress.raw.ConfigVersion}}</td>
+                            <td>{{clusterUpgradeProgress.raw.UpgradeState}}</td>
+                            <td>{{clusterUpgradeProgress.raw.RollingUpgradeMode}}</td>
+                        </tr>
+                        <tr>
+                            <th>Start Timestamp Utc</th>
+                            <th title="Upgrade Duration">Upgrade Duration</th>
+                            <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>
+                        </tr>
+                        <tr>
+                            <td>{{clusterUpgradeProgress.startTimestampUtc}}</td>
+                            <td>{{clusterUpgradeProgress.upgradeDuration}}</td>
+                            <td>{{clusterUpgradeProgress.upgradeDomainDuration}}</td>
+                        </tr>
+                    </table>
+                </div>
+            <div class="detail-pane" *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
+                <h5>Progress by Upgrade Domain</h5>
+                <upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></upgrade-progress>
+                <!-- <sfx-upgrade-domain-progress ng-if="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList.length > 0"
+                                                node-upgrade-progress-list="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList"></sfx-upgrade-domain-progress> -->
+            </div>
+            <div *ngIf="clusterUpgradeProgress.raw.FailureReason !== 'None'">
+                <h4>Upgrade Failure</h4>
+                <div class="table-responsive">
+                    <table class="table detail-table">
+                        <tbody>
+                            <tr>
+                                <th>Failure Timestamp Utc</th>
+                                <td>{{clusterUpgradeProgress.failureTimestampUtc}}</td>
+                            </tr>
+                            <tr>
+                                <th>Failure Reason</th>
+                                <td><img class="badge-icon" src="images/badge-error.svg"><span> {{clusterUpgradeProgress.raw.FailureReason}}</span></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="detail-pane" *ngIf="clusterUpgradeProgress.unhealthyEvaluations.length > 0">
+                <h4>Unhealthy Evaluations (Upgrade)</h4>
+                <detail-list [list]="clusterUpgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></detail-list>
+            </div>
+        </div>
+    </app-collapse-container>
 </div>
 
-<div class="detail-pane">
-    <h4>Load Information</h4>
-    <sfx-detail-view-part data="clusterLoadInformation"></sfx-detail-view-part>
-</div> -->
+<div class="detail-pane essen-pane" *ngIf="clusterUpgradeProgress">
+    <app-collapse-container>
+        <h4 collapse-header>Upgrade Description</h4>        
+        <div class="detail-pane" *ngIf="clusterUpgradeProgress.upgradeDescription" collapse-body>
+            <app-detail-view-part [data]="clusterUpgradeProgress.upgradeDescription"></app-detail-view-part>
+        </div>
+    </app-collapse-container>
+</div> 
+
+<div *ngIf="nodesStatuses" class="detail-pane essen-pane">
+    <app-collapse-container>
+        <h4 collapse-header>Node States</h4>        
+        <detail-list [list]="nodesStatuses" [listSettings]="nodeStatusListSettings" collapse-body></detail-list>
+    </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="clusterLoadInformation">
+    <app-collapse-container>
+        <h4 collapse-header>Load Information</h4>
+        <app-detail-view-part [data]="clusterLoadInformation" collapse-body></app-detail-view-part>
+    </app-collapse-container>
+</div>

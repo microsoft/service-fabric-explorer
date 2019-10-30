@@ -306,7 +306,15 @@ export class DataService {
         }));
 
     // Assign deployed apps under their belonging nodes
-    let nodeDeployedAppsGroups = deployedApps.reduce( (previous, current) => { previous[current.NodeName] = (previous[current.NodeName] || []).push(current) ; return previous}, {});
+    let nodeDeployedAppsGroups = deployedApps.reduce( (previous, current) => { 
+        if( current.NodeName in previous){
+            previous[current.NodeName].push(current);
+        }else{
+            previous[current.NodeName] = [current]
+        }
+        return previous}, {});
+    
+    // TODO 
     //let nodeDeployedAppsGroups = _.groupBy(deployedApps, deployedApp => deployedApp.NodeName);
     Object.keys(nodeDeployedAppsGroups).forEach(key => {
         const group = nodeDeployedAppsGroups[key];

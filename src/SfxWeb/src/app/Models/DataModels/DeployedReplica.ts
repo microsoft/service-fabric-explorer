@@ -12,6 +12,7 @@ import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ReplicaOnPartition } from './Replica';
+import { LoadMetricReport } from './Partition';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -146,7 +147,7 @@ export class DeployedReplicaDetail extends DataModelBase<IRawDeployedReplicaDeta
         super(data, null, parent);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawDeployedReplicaDetail> {
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedReplicaDetail> {
         let getDeployedReplicaDetailPromise = null;
         if (this.parent instanceof DeployedReplica) {
             let deployedReplica = <DeployedReplica>this.parent;
@@ -157,11 +158,11 @@ export class DeployedReplicaDetail extends DataModelBase<IRawDeployedReplicaDeta
             getDeployedReplicaDetailPromise = this.data.restClient.getDeployedReplicaDetail(
                 replica.raw.NodeName, replica.parent.id, replica.id, messageHandler);
         }
-        return Utils.getHttpResponseData(getDeployedReplicaDetailPromise);
+        return getDeployedReplicaDetailPromise;
     }
 
-    protected updateInternal(): angular.IPromise<any> | void {
-        this.reportedLoad = _.map(this.raw.ReportedLoad, report => new LoadMetricReport(this.data, report));
+    protected updateInternal(): Observable<any> | void {
+        this.reportedLoad = this.raw.ReportedLoad.map(report => new LoadMetricReport(this.data, report));
         if (this.raw.ReplicatorStatus) {
             this.replicatorStatus = new ReplicatorStatus(this.data, this.raw.ReplicatorStatus);
         }
@@ -187,7 +188,7 @@ export class ReplicatorStatus extends DataModelBase<IRawReplicatorStatus> {
         super(data, raw);
 
         if (raw.RemoteReplicators) {
-            this.remoteReplicators = _.map(raw.RemoteReplicators, rp => new RemoteReplicatorStatus(this.data, rp));
+            this.remoteReplicators = raw.RemoteReplicators.map(rp => new RemoteReplicatorStatus(this.data, rp));
         }
     }
 }

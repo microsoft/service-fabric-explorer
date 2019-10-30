@@ -19,16 +19,11 @@ export class BaseComponent implements OnInit {
     {
       name: "details",
       route: "./details"
-    },
-    // {
-    //   name: "details",
-    //   route: "/details"
-    // }
+    }
   ];
   constructor(public tree: TreeService) { }
 
   ngOnInit() {
-    console.log("here?")
     // this.tree.selectTreeNode([
     //   IdGenerator.node
     // ]);
