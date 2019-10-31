@@ -70,6 +70,21 @@
   border-width: 5px;
 }
 
+.vis-item.orange-point {
+  border-color: $dashboard-warning-color;
+  border-width: 5px;
+}
+
+.vis-item.white-point {
+  border-color: #ffffff;
+  border-width: 5px;
+}
+
+.vis-item.green-point {
+  border-color: $dashboard-ok-color;
+  border-width: 5px;
+}
+
 .tooltip-test{
   padding: 5px;
   border: solid;

@@ -43,6 +43,7 @@ module Sfx {
         private _startDate: Date = null;
         private _endDate: Date = null;
 
+        private _showAllEvents: boolean = false;
         private _timelineGenerator: ITimelineDataGenerator<FabricEventBase>;
 
         public constructor(eventsList: EventListBase<any>, timelineGenerator?: ITimelineDataGenerator<FabricEventBase>) {
@@ -50,6 +51,8 @@ module Sfx {
 
             if (timelineGenerator) {
                 this._timelineGenerator = timelineGenerator;
+            }else{
+                this._showAllEvents = true;
             }
             this.resetSelectionProperties();
             this.setTimelineData();
@@ -85,6 +88,12 @@ module Sfx {
                 this.setNewDateWindow();
         }
 
+        public get showAllEvents() { return this._showAllEvents};
+        public set showAllEvents(state: boolean) {
+            this._showAllEvents = state;
+            this.setTimelineData();
+        }
+
         public reset(): void {
             this.isResetEnabled = false;
             if (this.eventsList.resetDateWindow()) {
@@ -118,11 +127,25 @@ module Sfx {
             }
         }
 
+        public centerOnEvent(event: FabricEvent): void {
+            
+        }
+
         private setTimelineData(): void {
-            if (this._timelineGenerator) {
+            if(this._showAllEvents) {
+                const d = parseEventsGenerically(this.eventsList.collection.map(event => event.raw));
+                console.log(d);
+                this.timeLineEventsData = {
+                    groups: d.groups,
+                    items: d.items,
+                    start: this.startDate,
+                    end: this.endDate
+                };
+            }else if(this._timelineGenerator) {
                 this.eventsList.ensureInitialized().then( () => {
                     try {
                         const d = this._timelineGenerator.consume(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
+                        console.log(d);
                         this.timeLineEventsData = {
                             groups: d.groups,
                             items: d.items,
@@ -134,6 +157,7 @@ module Sfx {
                     }
                 });
             }
+        
         }
     }
 }

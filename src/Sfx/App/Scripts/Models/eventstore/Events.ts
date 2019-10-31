@@ -23,7 +23,7 @@ module Sfx {
         private _timeStamp: string;
         private _hasCorrelatedEvents?: boolean;
         private _eventProperties: { [key: string]: any; } = {};
-
+        
         public get kind() { return this._kind; }
         public get category() { return this._category; }
         public get eventInstanceId() { return this._eventInstanceId; }
@@ -32,7 +32,10 @@ module Sfx {
         public get hasCorrelatedEvents() { return this._hasCorrelatedEvents; }
         public get eventProperties() { return this._eventProperties; }
 
+        public raw: { [key: string]: any; } = {}
+
         public fillFromJSON(responseItem: any) {
+            this.raw = responseItem;
             for (const property in responseItem) {
                 if (!this.extractField(property, responseItem[property])) {
                     this.eventProperties[property] = responseItem[property];
@@ -70,6 +73,7 @@ module Sfx {
         public isSecondRowCollapsed: boolean = true;
         public constructor(data: DataService, raw: T) {
             super(data, raw);
+            console.log(raw);
         }
 
         // A temp solution till we have instanceId unique.
@@ -203,7 +207,7 @@ module Sfx {
         public constructor(private eventType: new () => T) {
         }
 
-        public getEvents(responseItems: any[]): T[]  {
+        public getEvents(responseItems: any[]): T[] {
             return responseItems.map(item => {
                 const eventObj = new this.eventType();
                 eventObj.fillFromJSON(item);

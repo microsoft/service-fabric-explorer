@@ -116,7 +116,7 @@ module Sfx {
     export class HtmlUtils {
 
         // Utility to mark warning/error/resolved events in the detail list
-        private static eventTypesUtil = new EventTypesUtil();
+        public static eventTypesUtil = new EventTypesUtil();
 
         // Reposition the filter context menu if they are out of current view port
         public static repositionContextMenu(): void {

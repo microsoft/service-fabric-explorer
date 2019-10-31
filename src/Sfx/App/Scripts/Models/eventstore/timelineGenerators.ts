@@ -12,9 +12,9 @@ module Sfx {
     }
 
     export class EventStoreUtils {
-        public static tooltipFormat = (event: FabricEventBase, start: string, end: string = "", title: string= ""): string => {
+        public static tooltipFormat = (data: Record<string, any> , start: string, end: string = "", title: string= ""): string => {
 
-            const rows = Object.keys(event.eventProperties).map(key => `<tr><td style="word-break: keep-all;">${key}</td><td> : ${event.eventProperties[key]}</td></tr>`).join("");
+            const rows = Object.keys(data).map(key => `<tr><td style="word-break: keep-all;">${key}</td><td> : ${data[key]}</td></tr>`).join("");
 
             const outline = `<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
 
@@ -55,7 +55,7 @@ module Sfx {
                 end: rollbackEnd,
                 group,
                 type: "range",
-                title: EventStoreUtils.tooltipFormat(rollbackCompleteEvent, rollbackStarted, rollbackEnd),
+                title: EventStoreUtils.tooltipFormat(rollbackCompleteEvent.eventProperties, rollbackStarted, rollbackEnd),
                 className: "orange"
             });
 
@@ -75,7 +75,7 @@ module Sfx {
                 end: end,
                 group,
                 type: "range",
-                title: EventStoreUtils.tooltipFormat(event, start, end),
+                title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
                 className: "green"
             });
         }
@@ -94,7 +94,7 @@ module Sfx {
                 end,
                 group,
                 type: "range",
-                title: EventStoreUtils.tooltipFormat(event, start, end),
+                title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
                 className: "blue"
             });
         }
@@ -116,7 +116,7 @@ module Sfx {
                 end,
                 group,
                 type: "range",
-                title: EventStoreUtils.tooltipFormat(event, start, end),
+                title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
                 className: rollBack  ? "orange" : "green"
             });
         }
@@ -199,7 +199,7 @@ module Sfx {
                     end: end,
                     group: ClusterTimelineGenerator.seedNodeStatus,
                     type: "range",
-                    title: EventStoreUtils.tooltipFormat(event, event.timeStamp, end),
+                    title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, end),
                     className: "orange"
                 });
             }
@@ -227,7 +227,7 @@ module Sfx {
                             end: end,
                             group: NodeTimelineGenerator.NodesDownLabel,
                             type: "range",
-                            title: EventStoreUtils.tooltipFormat(event, start, end, label),
+                            title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
                             className: "red"
                         });
                     }
@@ -338,7 +338,7 @@ module Sfx {
                 type: "point",
                 subgroup: "1",
                 className: "red-point",
-                title: EventStoreUtils.tooltipFormat(event, start, null, "Primary swap to " + label),
+                title: EventStoreUtils.tooltipFormat(event.eventProperties, start, null, "Primary swap to " + label),
             });
         }
     }
@@ -365,7 +365,7 @@ module Sfx {
                         end: end,
                         group: PartitionTimelineGenerator.swapPrimaryLabel,
                         type: "range",
-                        title: EventStoreUtils.tooltipFormat(event, start, end, "Primary swap to " + label),
+                        title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, "Primary swap to " + label),
                         className: "green"
                     });
 
@@ -381,5 +381,62 @@ module Sfx {
                 items
             };
         }
+    }
+
+
+    export function parseEventsGenerically(events: FabricEvent[]): ITimelineData {
+        let items = new vis.DataSet<vis.DataItem>();
+        let groupIds: any[] = [];
+
+        events.forEach( (event, index) => {
+
+            const groupId = event.category + event.kind;
+
+            if(_.findIndex(groupIds, (g:vis.DataGroup) => g.id === groupId) === -1){
+                const categoryGroupIndex = _.findIndex(groupIds, (g:vis.DataGroup) => g.id === event.category);
+                let categoryGroup = null;
+
+                if(categoryGroupIndex === -1){
+                    categoryGroup = {id: event.category, content: event.category, nestedGroups: []};
+                    groupIds.push(categoryGroup);
+                }else{
+                    categoryGroup = groupIds[categoryGroupIndex];
+                }
+
+
+                const typeGroup = {id: groupId, content: event.kind};
+
+                categoryGroup.nestedGroups.push(typeGroup.id);
+
+                groupIds.push(typeGroup);
+
+            }
+            
+            let color = "white";
+            if (HtmlUtils.eventTypesUtil.isResolved(event)) {
+                color = "green";
+            } else if (HtmlUtils.eventTypesUtil.isWarning(event)) {
+                color = "orange";
+            } else if (HtmlUtils.eventTypesUtil.isError(event)) {
+                color = "red";
+            }
+
+            items.add({
+                content: "",
+                id: index,
+                start: event.timeStamp,
+                group: groupId,
+                type: "point",
+                title: EventStoreUtils.tooltipFormat(event.raw, event.timeStamp),
+                className: `${color}-point`
+            });
+        });
+
+        let groups = new vis.DataSet<vis.DataGroup>(groupIds);
+
+        return {
+            groups,
+            items
+        };
     }
 }
