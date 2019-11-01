@@ -51,7 +51,7 @@ module Sfx {
 
             if (timelineGenerator) {
                 this._timelineGenerator = timelineGenerator;
-            }else{
+            }else {
                 this._showAllEvents = true;
             }
             this.resetSelectionProperties();
@@ -88,7 +88,7 @@ module Sfx {
                 this.setNewDateWindow();
         }
 
-        public get showAllEvents() { return this._showAllEvents};
+        public get showAllEvents() { return this._showAllEvents; };
         public set showAllEvents(state: boolean) {
             this._showAllEvents = state;
             this.setTimelineData();
@@ -127,12 +127,8 @@ module Sfx {
             }
         }
 
-        public centerOnEvent(event: FabricEvent): void {
-            
-        }
-
         private setTimelineData(): void {
-            if(this._showAllEvents) {
+            if (this._showAllEvents) {
                 const d = parseEventsGenerically(this.eventsList.collection.map(event => event.raw));
                 console.log(d);
                 this.timeLineEventsData = {
@@ -141,7 +137,7 @@ module Sfx {
                     start: this.startDate,
                     end: this.endDate
                 };
-            }else if(this._timelineGenerator) {
+            }else if (this._timelineGenerator) {
                 this.eventsList.ensureInitialized().then( () => {
                     try {
                         const d = this._timelineGenerator.consume(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
@@ -157,7 +153,7 @@ module Sfx {
                     }
                 });
             }
-        
+
         }
     }
 }

@@ -17,13 +17,15 @@ module Sfx {
     }
 
     export abstract class FabricEventBase implements IFabricEventMetadata, IEventPropertiesCollection {
+        public raw: { [key: string]: any; } = {};
+
         private _kind: string;
         private _category?: string;
         private _eventInstanceId: string;
         private _timeStamp: string;
         private _hasCorrelatedEvents?: boolean;
         private _eventProperties: { [key: string]: any; } = {};
-        
+
         public get kind() { return this._kind; }
         public get category() { return this._category; }
         public get eventInstanceId() { return this._eventInstanceId; }
@@ -31,8 +33,6 @@ module Sfx {
         public get timeStampString() { return TimeUtils.datetimeToString(this._timeStamp); }
         public get hasCorrelatedEvents() { return this._hasCorrelatedEvents; }
         public get eventProperties() { return this._eventProperties; }
-
-        public raw: { [key: string]: any; } = {}
 
         public fillFromJSON(responseItem: any) {
             this.raw = responseItem;
@@ -73,7 +73,6 @@ module Sfx {
         public isSecondRowCollapsed: boolean = true;
         public constructor(data: DataService, raw: T) {
             super(data, raw);
-            console.log(raw);
         }
 
         // A temp solution till we have instanceId unique.

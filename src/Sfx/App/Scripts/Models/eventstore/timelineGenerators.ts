@@ -25,7 +25,7 @@ module Sfx {
             const rollbackEnd = rollbackCompleteEvent.timeStamp;
 
             let rollbackStarted = startOfRange.toISOString();
-            //wont always get this event because of the time range that can be selected where we only get the 
+            //wont always get this event because of the time range that can be selected where we only get the
             //rollback completed which leaves us missing some of the info.
             if (rollbackStartedEvent) {
                 rollbackStarted = rollbackStartedEvent.timeStamp;
@@ -383,45 +383,67 @@ module Sfx {
         }
     }
 
-
     export function parseEventsGenerically(events: FabricEvent[]): ITimelineData {
         let items = new vis.DataSet<vis.DataItem>();
         let groupIds: any[] = [];
 
         events.forEach( (event, index) => {
 
+            //The layout is set to look like
+            // Category1  V
+            //    Category1 - kind 1
+            //    category1 - kind 2
+            // Category2  V
+            //    Category2 - kind 1
+            //    category2 - kind 2
+            //so vis expects a list of all these rows and for nested rows to have a reference in their parent's row nestedGroup property
+
             const groupId = event.category + event.kind;
 
-            if(_.findIndex(groupIds, (g:vis.DataGroup) => g.id === groupId) === -1){
-                const categoryGroupIndex = _.findIndex(groupIds, (g:vis.DataGroup) => g.id === event.category);
+            // check if the "tuple" of category + kind exists
+            if (_.findIndex(groupIds, (g: vis.DataGroup) => g.id === groupId) === -1) {
+
+                //if it doesnt then make sure the parent category group exists at least before adding the category + kind row.
+                const categoryGroupIndex = _.findIndex(groupIds, (g: vis.DataGroup) => g.id === event.category);
                 let categoryGroup = null;
 
-                if(categoryGroupIndex === -1){
+                if (categoryGroupIndex === -1) {
                     categoryGroup = {id: event.category, content: event.category, nestedGroups: []};
                     groupIds.push(categoryGroup);
-                }else{
+                }else {
                     categoryGroup = groupIds[categoryGroupIndex];
                 }
-
 
                 const typeGroup = {id: groupId, content: event.kind};
 
                 categoryGroup.nestedGroups.push(typeGroup.id);
-
                 groupIds.push(typeGroup);
 
             }
-            
+
             let color = "white";
-            if (HtmlUtils.eventTypesUtil.isResolved(event)) {
-                color = "green";
-            } else if (HtmlUtils.eventTypesUtil.isWarning(event)) {
-                color = "orange";
-            } else if (HtmlUtils.eventTypesUtil.isError(event)) {
-                color = "red";
+            if ("Status" in event.eventProperties) {
+                try {
+                    const status = event.eventProperties["Status"];
+                    if (status === "Ok") {
+                        color = "green";
+                    } else if (status === "Warning") {
+                        color = "orange";
+                    } else if (status === "Error") {
+                        color = "red";
+                    }
+                }catch (e) {}
+            }else {
+                if (HtmlUtils.eventTypesUtil.isResolved(event)) {
+                    color = "green";
+                } else if (HtmlUtils.eventTypesUtil.isWarning(event)) {
+                    color = "orange";
+                } else if (HtmlUtils.eventTypesUtil.isError(event)) {
+                    color = "red";
+                }
             }
 
-            items.add({
+            let item = {
                 content: "",
                 id: index,
                 start: event.timeStamp,
@@ -429,14 +451,45 @@ module Sfx {
                 type: "point",
                 title: EventStoreUtils.tooltipFormat(event.raw, event.timeStamp),
                 className: `${color}-point`
-            });
+            };
+
+            // optional event properties for higher degree of configuration
+            if ("Duration" in event.eventProperties) {
+                try {
+                    const duration = event.eventProperties["Duration"];
+                    const end = event.timeStamp;
+                    const endDate = new Date(end);
+                    const start = new Date(endDate.getTime() - duration).toISOString();
+
+                    if (duration < 0) {
+                        item.start = end;
+                        item["end"] = start;
+                    }else {
+                        item.start = start;
+                        item["end"] = end;
+                    }
+
+                    item.type = "range";
+                    item.className = color;
+
+                    groupIds[_.findIndex(groupIds, (g: vis.DataGroup) => g.id === groupId)]["subgroupStack"] = true;
+                }catch (e ) {}
+            }
+
+            // if("Description" in event.eventProperties) {
+            //     try{
+            //         item.content = event.eventProperties["Description"];
+            //     }catch(e){}
+            // }
+
+            items.add(item);
         });
 
-        let groups = new vis.DataSet<vis.DataGroup>(groupIds);
-
+        const groups = new vis.DataSet<vis.DataGroup>(groupIds);
         return {
             groups,
             items
         };
     }
 }
+
