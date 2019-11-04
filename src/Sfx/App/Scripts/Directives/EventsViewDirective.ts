@@ -44,9 +44,9 @@ module Sfx {
         private _endDate: Date = null;
 
         private _showAllEvents: boolean = false;
-        private _timelineGenerator: ITimelineDataGenerator<FabricEventBase>;
+        private _timelineGenerator: TimeLineGeneratorBase<FabricEventBase>;
 
-        public constructor(eventsList: EventListBase<any>, timelineGenerator?: ITimelineDataGenerator<FabricEventBase>) {
+        public constructor(eventsList: EventListBase<any>, timelineGenerator?: TimeLineGeneratorBase<FabricEventBase>) {
             this.eventsList = eventsList;
 
             if (timelineGenerator) {
@@ -140,7 +140,7 @@ module Sfx {
             }else if (this._timelineGenerator) {
                 this.eventsList.ensureInitialized().then( () => {
                     try {
-                        const d = this._timelineGenerator.consume(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
+                        const d = this._timelineGenerator.generateTimeLineData(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
                         console.log(d);
                         this.timeLineEventsData = {
                             groups: d.groups,

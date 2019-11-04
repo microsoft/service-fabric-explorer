@@ -92,7 +92,9 @@ module Sfx {
                     },
                     tooltip: {
                         overflowMethod: "flip"
-                    }, stack: false
+                    }, 
+                    stack: true,
+                    stackSubgroups: true
                 });
                 this._timeline.fit();
 

@@ -1,4 +1,24 @@
 module Sfx {
+    /*
+    NOTES:
+
+    Reference for understanding the timeline rendering library https://visjs.github.io/vis-timeline/docs/timeline/
+
+    high level concerns:
+
+    Currently there are 2 "versions" of the timeline event generation.
+    1. Applies some level of parsing event/multiple events to create one entry on the timeline. This is currently only used on significant items
+    2. Generically applies all events to the timeline. Some level of customization is available to drive their appearance from information on the event. Currently by adding "Duration", "Status", "Description" properties.
+
+    Ideally enough flexibility is applied to the generic handling to have all logic driven from there and no needing to update SFX except for updating to look for more fields.ContainerLogs
+
+
+    To handle the generic approach there is a distinction for what is allowed to "stack" on the graph. Point based events are intended to not be allowed to stack and only let range based events stack for visibility.
+    The current approach for handling this is by adding 2 subgroupStack groups of "stack" and "noStack", where only stack allows for that group to not overlap. This solution works because we dont currently have any
+    subgroups defubed itgerwuse,
+
+    */
+
     export interface ITimelineData {
         groups: vis.DataSet<vis.DataGroup>;
         items: vis.DataSet<vis.DataItem>;
@@ -120,9 +140,35 @@ module Sfx {
                 className: rollBack  ? "orange" : "green"
             });
         }
+
+        public static addSubGroups(groups: vis.DataSet<vis.DataGroup>): void {
+            groups.forEach(group => {
+                console.log(group)
+                group["subgroupStack"] = {"stack": true, "noStack": false };
+                groups.update(group)
+            });
+            console.log(groups);
+        }
     }
 
-    export class ClusterTimelineGenerator implements ITimelineDataGenerator<ClusterEvent> {
+    export abstract class TimeLineGeneratorBase<T extends FabricEventBase> {
+        consume(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData {
+             throw new Error("NotImplementedError");
+        }
+
+        generateTimeLineData(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData {
+            const data = this.consume(events, startOfRange, endOfRange);
+
+            EventStoreUtils.addSubGroups(data.groups);
+
+            return data;
+
+        }
+
+    }
+
+
+    export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent> {
         static readonly upgradeDomainLabel = "Upgrade Domains";
         static readonly clusterUpgradeLabel = "Cluster Upgrades";
         static readonly seedNodeStatus = "Seed Node Warnings";
@@ -205,7 +251,7 @@ module Sfx {
             }
         }
     }
-    export class NodeTimelineGenerator implements ITimelineDataGenerator<NodeEvent> {
+    export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         static readonly NodesDownLabel = "Node Down";
 
         consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
@@ -249,7 +295,7 @@ module Sfx {
         }
     }
 
-    export class ApplicationTimelineGenerator implements ITimelineDataGenerator<ApplicationEvent> {
+    export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<ApplicationEvent> {
         static readonly upgradeDomainLabel = "Upgrade Domains";
         static readonly applicationUpgradeLabel = "Application Upgrades";
         static readonly applicationPrcoessExitedLabel = "Application Process Exited";
@@ -336,14 +382,13 @@ module Sfx {
                 start: start,
                 group: groupLabel,
                 type: "point",
-                subgroup: "1",
                 className: "red-point",
                 title: EventStoreUtils.tooltipFormat(event.eventProperties, start, null, "Primary swap to " + label),
             });
         }
     }
 
-    export class PartitionTimelineGenerator implements ITimelineDataGenerator<NodeEvent> {
+    export class PartitionTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         static readonly swapPrimaryLabel = "Primay Swap";
         static readonly swapPrimaryDurations = "Swap Primary phases";
 
@@ -450,42 +495,49 @@ module Sfx {
                 group: groupId,
                 type: "point",
                 title: EventStoreUtils.tooltipFormat(event.raw, event.timeStamp),
-                className: `${color}-point`
+                className: `${color}-point`,
+                subgroup: "noStack"
             };
 
             // optional event properties for higher degree of configuration
             if ("Duration" in event.eventProperties) {
+                
+                //only display a description for range based events
+                if("Description" in event.eventProperties) {
+                    try{
+                        item.content = event.eventProperties["Description"];
+                    }catch(e){}
+                }
+
                 try {
                     const duration = event.eventProperties["Duration"];
                     const end = event.timeStamp;
                     const endDate = new Date(end);
                     const start = new Date(endDate.getTime() - duration).toISOString();
 
+                    //flip duration if negative
                     if (duration < 0) {
                         item.start = end;
                         item["end"] = start;
+                        item.title = EventStoreUtils.tooltipFormat(event.raw, start, end, item.content);
                     }else {
                         item.start = start;
                         item["end"] = end;
+                        item.title = EventStoreUtils.tooltipFormat(event.raw, end, start, item.content);
                     }
 
                     item.type = "range";
                     item.className = color;
-
-                    groupIds[_.findIndex(groupIds, (g: vis.DataGroup) => g.id === groupId)]["subgroupStack"] = true;
+                    item.subgroup = "stack";
                 }catch (e ) {}
             }
-
-            // if("Description" in event.eventProperties) {
-            //     try{
-            //         item.content = event.eventProperties["Description"];
-            //     }catch(e){}
-            // }
 
             items.add(item);
         });
 
-        const groups = new vis.DataSet<vis.DataGroup>(groupIds);
+        let groups = new vis.DataSet<vis.DataGroup>(groupIds);
+        EventStoreUtils.addSubGroups(groups);
+
         return {
             groups,
             items
