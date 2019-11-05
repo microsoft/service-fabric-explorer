@@ -143,11 +143,9 @@ module Sfx {
 
         public static addSubGroups(groups: vis.DataSet<vis.DataGroup>): void {
             groups.forEach(group => {
-                console.log(group)
                 group["subgroupStack"] = {"stack": true, "noStack": false };
                 groups.update(group)
             });
-            console.log(groups);
         }
     }
 
@@ -158,11 +156,8 @@ module Sfx {
 
         generateTimeLineData(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData {
             const data = this.consume(events, startOfRange, endOfRange);
-
             EventStoreUtils.addSubGroups(data.groups);
-
             return data;
-
         }
 
     }
@@ -513,10 +508,9 @@ module Sfx {
                     const duration = event.eventProperties["Duration"];
                     const end = event.timeStamp;
                     const endDate = new Date(end);
-                    const start = new Date(endDate.getTime() - duration).toISOString();
+                    const start = new Date(endDate.getTime() + duration).toISOString();
 
-                    //flip duration if negative
-                    if (duration < 0) {
+                    if (duration > 0) {
                         item.start = end;
                         item["end"] = start;
                         item.title = EventStoreUtils.tooltipFormat(event.raw, start, end, item.content);

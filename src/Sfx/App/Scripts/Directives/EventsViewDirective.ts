@@ -128,32 +128,31 @@ module Sfx {
         }
 
         private setTimelineData(): void {
-            if (this._showAllEvents) {
-                const d = parseEventsGenerically(this.eventsList.collection.map(event => event.raw));
-                console.log(d);
-                this.timeLineEventsData = {
-                    groups: d.groups,
-                    items: d.items,
-                    start: this.startDate,
-                    end: this.endDate
-                };
-            }else if (this._timelineGenerator) {
-                this.eventsList.ensureInitialized().then( () => {
-                    try {
-                        const d = this._timelineGenerator.generateTimeLineData(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
-                        console.log(d);
+            this.eventsList.ensureInitialized().then( () => {
+                try {
+                    if (this._showAllEvents) {
+                        const d = parseEventsGenerically(this.eventsList.collection.map(event => event.raw));
+
                         this.timeLineEventsData = {
                             groups: d.groups,
                             items: d.items,
                             start: this.startDate,
                             end: this.endDate
                         };
-                    }catch (e) {
-                        console.error(e);
-                    }
-                });
-            }
+                    }else if (this._timelineGenerator) {
+                        const d = this._timelineGenerator.generateTimeLineData(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
 
+                        this.timeLineEventsData = {
+                            groups: d.groups,
+                            items: d.items,
+                            start: this.startDate,
+                            end: this.endDate
+                        };
+                    }
+                }catch (e) {
+                    console.error(e);
+                }
+            });
         }
     }
 }
