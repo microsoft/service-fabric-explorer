@@ -94,7 +94,10 @@ module Sfx {
                         overflowMethod: "flip"
                     }, 
                     stack: true,
-                    stackSubgroups: true
+                    stackSubgroups: true,
+                    maxHeight: '700px',
+                    verticalScroll: true,
+                    width: '95%'
                 });
                 this._timeline.fit();
 

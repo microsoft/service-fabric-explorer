@@ -423,44 +423,70 @@ module Sfx {
         }
     }
 
-    export function parseEventsGenerically(events: FabricEvent[]): ITimelineData {
+    /**
+     * Take a csv string and parses the event into groups with nested references to properties specified in the query string.
+     * i.e "Category, Kind"
+     *   The layout is set to look like
+     *   Category1
+     *       Category1 - kind 1
+     *       category1 - kind 2
+     *    Category2
+     *       Category2 - kind 1
+     *       category2 - kind 2
+     * @param event
+     * @param groupIds
+     * @param query
+     */
+    function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: string): string {
+        const properties = query.split(",");
+
+        //the accumulated path of the events property values
+        let constructedPath = "";
+        
+        for(let i = 0; i < properties.length; i++){
+            let prop = properties[i];
+
+            //if the event doesnt have the property, exist early below and give an empty string groupId so that it doesnt get charted
+            if(prop in event.raw){
+                let currentPath = `${constructedPath} ${event.raw[prop]}`;
+
+                if(_.findIndex(groupIds, (g: vis.DataGroup) => g.id === currentPath) === -1){
+
+                    const content = _.padStart("", i * 3) + event.raw[prop].toString();
+                    const childGroup = {id: currentPath, content, treeLevel: (i + 1) };
+
+                    //"leaf" rows dont have nested rows
+                    if( (i + 1) < properties.length) {
+                        childGroup["nestedGroups"] = [];
+                    }
+
+                    //"root" rows dont have parents
+                    if(i > 0){
+                        const parentGroup = groupIds[_.findIndex(groupIds, (g: vis.DataGroup) => g.id === constructedPath)];
+                        parentGroup.nestedGroups.push(childGroup.id);    
+                    }
+
+                    groupIds.push(childGroup);
+                }
+
+                constructedPath = currentPath;
+
+            }else{
+                i = properties.length;
+                constructedPath = ""
+            }
+        }
+
+        return constructedPath
+    }
+
+
+    export function parseEventsGenerically(events: FabricEvent[], textSearch: string = ""): ITimelineData {
         let items = new vis.DataSet<vis.DataItem>();
         let groupIds: any[] = [];
 
         events.forEach( (event, index) => {
-
-            //The layout is set to look like
-            // Category1  V
-            //    Category1 - kind 1
-            //    category1 - kind 2
-            // Category2  V
-            //    Category2 - kind 1
-            //    category2 - kind 2
-            //so vis expects a list of all these rows and for nested rows to have a reference in their parent's row nestedGroup property
-
-            const groupId = event.category + event.kind;
-
-            // check if the "tuple" of category + kind exists
-            if (_.findIndex(groupIds, (g: vis.DataGroup) => g.id === groupId) === -1) {
-
-                //if it doesnt then make sure the parent category group exists at least before adding the category + kind row.
-                const categoryGroupIndex = _.findIndex(groupIds, (g: vis.DataGroup) => g.id === event.category);
-                let categoryGroup = null;
-
-                if (categoryGroupIndex === -1) {
-                    categoryGroup = {id: event.category, content: event.category, nestedGroups: []};
-                    groupIds.push(categoryGroup);
-                }else {
-                    categoryGroup = groupIds[categoryGroupIndex];
-                }
-
-                const typeGroup = {id: groupId, content: event.kind};
-
-                categoryGroup.nestedGroups.push(typeGroup.id);
-                groupIds.push(typeGroup);
-
-            }
-
+           const groupId = parseAndAddGroupIdByString(event, groupIds,  textSearch);
             let color = "white";
             if ("Status" in event.eventProperties) {
                 try {
@@ -529,6 +555,7 @@ module Sfx {
             items.add(item);
         });
 
+        console.log(groupIds)
         let groups = new vis.DataSet<vis.DataGroup>(groupIds);
         EventStoreUtils.addSubGroups(groups);
 

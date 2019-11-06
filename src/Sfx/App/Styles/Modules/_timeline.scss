@@ -143,3 +143,11 @@
 .noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip { 
   bottom:-32px 
 }
+
+.vis-panel.vis-left {
+  background-color: #0075c9;
+}
+.vis-ltr .vis-label.vis-nested-group .vis-inner {
+  padding-left: 0px;
+  white-space: pre;
+}

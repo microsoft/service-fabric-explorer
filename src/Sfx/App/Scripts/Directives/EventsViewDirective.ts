@@ -37,6 +37,8 @@ module Sfx {
         public isResetEnabled: boolean = false;
         public timeLineEventsData: ITimelineData;
 
+        public transformText: string = "Category,Kind";
+
         private eventsList: EventListBase<any>;
         private isStartSelected: boolean;
         private isEndSelected: boolean;
@@ -131,7 +133,7 @@ module Sfx {
             this.eventsList.ensureInitialized().then( () => {
                 try {
                     if (this._showAllEvents) {
-                        const d = parseEventsGenerically(this.eventsList.collection.map(event => event.raw));
+                        const d = parseEventsGenerically(this.eventsList.collection.map(event => event.raw), this.transformText);
 
                         this.timeLineEventsData = {
                             groups: d.groups,
