@@ -81,7 +81,7 @@ module Sfx {
                     groups: events.groups,
                     items: events.items
                   });
-                this._timeline.setOptions({
+                this._timeline.setOptions(<any>{
                     selectable: false,
                     min: events.start,
                     max: events.end,
@@ -97,7 +97,20 @@ module Sfx {
                     stackSubgroups: true,
                     maxHeight: '700px',
                     verticalScroll: true,
-                    width: '95%'
+                    width: '95%',
+                    cluster: {
+                        titleTemplate: "Cluster",
+                        showStipes: false,
+                        maxItems: 5
+                    },
+                    template: (itemData, element, data) => {
+                        if(data.isCluster) {
+                            // console.log(itemData, element,  data)
+                            return `${data.items.length}<br><div>events</div>`;
+                        }else{
+                            return data.content
+                        }
+                    }
                 });
                 this._timeline.fit();
 
