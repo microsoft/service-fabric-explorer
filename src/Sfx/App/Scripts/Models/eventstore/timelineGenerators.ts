@@ -346,7 +346,7 @@ module Sfx {
 
             let nestedApplicationProcessExited: vis.DataGroup = {
                 id: ApplicationTimelineGenerator.applicationPrcoessExitedLabel,
-                nestedGroups: [], subgroupStack: false,
+                nestedGroups: [],
                 content: ApplicationTimelineGenerator.applicationPrcoessExitedLabel,
             };
             Object.keys(processExitedGroups).forEach(groupName => {
@@ -366,7 +366,7 @@ module Sfx {
         parseApplicationProcessExited(event: FabricEventBase, items: vis.DataSet<vis.DataItem>, processExitedGroups: Record<string, vis.DataGroup>) {
 
             const groupLabel = `${event.eventProperties["ServicePackageName"]}`;
-            processExitedGroups[groupLabel] = {id: groupLabel, content: groupLabel, subgroupStack: {"1": false}};
+            processExitedGroups[groupLabel] = {id: groupLabel, content: groupLabel};
 
             const start = event.timeStamp;
             const label = event.eventProperties["ExeName"];

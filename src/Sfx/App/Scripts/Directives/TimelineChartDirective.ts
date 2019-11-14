@@ -90,27 +90,19 @@ module Sfx {
                             horizontal : -1 //this makes it so items dont stack up when zoomed out too far.,
                         }
                     },
-                    tooltip: {
-                        overflowMethod: "flip"
-                    }, 
                     stack: true,
                     stackSubgroups: true,
                     maxHeight: '700px',
                     verticalScroll: true,
                     width: '95%',
-                    cluster: {
-                        titleTemplate: "Cluster",
-                        showStipes: false,
-                        maxItems: 5
+                    // cluster: {
+                    //     // titleTemplate: "Cluster",
+                    //     // showStipes: true,
+                    //     // maxItems: 5
+                    // },
+                    tooltip : {
+                        overflowMethod: "flip"
                     },
-                    template: (itemData, element, data) => {
-                        if(data.isCluster) {
-                            // console.log(itemData, element,  data)
-                            return `${data.items.length}<br><div>events</div>`;
-                        }else{
-                            return data.content
-                        }
-                    }
                 });
                 this._timeline.fit();
 
