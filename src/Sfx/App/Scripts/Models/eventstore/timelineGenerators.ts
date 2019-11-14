@@ -10,12 +10,12 @@ module Sfx {
     1. Applies some level of parsing event/multiple events to create one entry on the timeline. This is currently only used on significant items
     2. Generically applies all events to the timeline. Some level of customization is available to drive their appearance from information on the event. Currently by adding "Duration", "Status", "Description" properties.
 
-    Ideally enough flexibility is applied to the generic handling to have all logic driven from there and no needing to update SFX except for updating to look for more fields.ContainerLogs
+    Ideally enough flexibility is applied to the generic handling to have all logic driven from there and no needing to update SFX except for updating to look for more fields.
 
 
     To handle the generic approach there is a distinction for what is allowed to "stack" on the graph. Point based events are intended to not be allowed to stack and only let range based events stack for visibility.
     The current approach for handling this is by adding 2 subgroupStack groups of "stack" and "noStack", where only stack allows for that group to not overlap. This solution works because we dont currently have any
-    subgroups defubed itgerwuse,
+    subgroups defined otherwise.
 
     */
 
@@ -141,6 +141,10 @@ module Sfx {
             });
         }
 
+        /*
+        add the subgroup stacking to every group so now we can always reliably place stacking/nonstacking items in any group.
+
+        */
         public static addSubGroups(groups: vis.DataSet<vis.DataGroup>): void {
             groups.forEach(group => {
                 group["subgroupStack"] = {"stack": true, "noStack": false };
