@@ -95,11 +95,6 @@ module Sfx {
                     maxHeight: '700px',
                     verticalScroll: true,
                     width: '95%',
-                    // cluster: {
-                    //     // titleTemplate: "Cluster",
-                    //     // showStipes: true,
-                    //     // maxItems: 5
-                    // },
                     tooltip : {
                         overflowMethod: "flip"
                     },

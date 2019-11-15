@@ -538,9 +538,9 @@ module Sfx {
                     const duration = event.eventProperties["Duration"];
                     const end = event.timeStamp;
                     const endDate = new Date(end);
-                    const start = new Date(endDate.getTime() + duration).toISOString();
+                    const start = new Date(endDate.getTime() - duration).toISOString();
 
-                    if (duration > 0) {
+                    if (duration < 0) {
                         item.start = end;
                         item["end"] = start;
                         item.title = EventStoreUtils.tooltipFormat(event.raw, start, end, item.content);
