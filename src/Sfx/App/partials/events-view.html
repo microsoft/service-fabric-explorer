@@ -18,9 +18,10 @@
     </div>
     <div ng-if="timelineGenerator">
         <div class="btn-group">
-            <label class="btn btn-primary" ng-model="dwSelector.showAllEvents" uib-btn-radio="false">Informed</label>
+            <label class="btn btn-primary" ng-model="dwSelector.showAllEvents" uib-btn-radio="false">Correlated</label>
             <label class="btn btn-primary" ng-model="dwSelector.showAllEvents" uib-btn-radio="true">All</label>
         </div>
+        <span class="bowtie-icon bowtie-status-help-outline" title="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
     </div>
     <sfx-timeline events="dwSelector.timeLineEventsData" ng-if="dwSelector.timeLineEventsData"></sfx-timeline>
 
