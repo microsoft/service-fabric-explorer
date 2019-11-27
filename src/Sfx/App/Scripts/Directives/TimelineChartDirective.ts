@@ -81,7 +81,7 @@ module Sfx {
                     groups: events.groups,
                     items: events.items
                   });
-                this._timeline.setOptions({
+                this._timeline.setOptions(<any>{
                     selectable: false,
                     min: events.start,
                     max: events.end,
@@ -90,9 +90,14 @@ module Sfx {
                             horizontal : -1 //this makes it so items dont stack up when zoomed out too far.,
                         }
                     },
-                    tooltip: {
+                    stack: true,
+                    stackSubgroups: true,
+                    maxHeight: "700px",
+                    verticalScroll: true,
+                    width: "95%",
+                    tooltip : {
                         overflowMethod: "flip"
-                    }, stack: false
+                    },
                 });
                 this._timeline.fit();
 

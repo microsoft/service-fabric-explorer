@@ -342,7 +342,8 @@ module Sfx {
                 scope: {
                     text: "=",
                     nestedText: "=",
-                    nestedTextProperty: "="
+                    nestedTextProperty: "=",
+                    encoded: "=" //pass this as true if its an encoded value to avoid issues with strings with ""
                 },
                 templateUrl: "partials/copy-to-clipboard.html",
                 link: function ($scope: any, $element, $attributes: any) {
@@ -350,7 +351,14 @@ module Sfx {
                         try {
                             let $temp_input = $("<textarea>");
                             $("body").append($temp_input);
-                            $temp_input.val($scope.nestedTextProperty ? $scope.nestedText[$scope.nestedTextProperty] : $scope.text).select();
+
+                            let text = $scope.nestedTextProperty ? $scope.nestedText[$scope.nestedTextProperty] : $scope.text;
+
+                            if ($scope.encoded) {
+                                text = decodeURI(text);
+                            }
+
+                            $temp_input.val(text).select();
                             document.execCommand("copy");
                             $temp_input.remove();
                         } catch (e) {

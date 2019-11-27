@@ -1,4 +1,23 @@
 module Sfx {
+    /*
+    NOTES:
+
+    Reference for understanding the timeline rendering library https://visjs.github.io/vis-timeline/docs/timeline/
+
+    high level concerns:
+
+    Currently there are 2 "versions" of the timeline event generation.
+    1. Applies some level of parsing event/multiple events to create one entry on the timeline. This is currently only used on significant items
+    2. Generically applies all events to the timeline. Some level of customization is available to drive their appearance from information on the event. Currently by adding "Duration", "Status", "Description" properties.
+
+    Ideally enough flexibility is applied to the generic handling to have all logic driven from there and no needing to update SFX except for updating to look for more fields.
+
+    To handle the generic approach there is a distinction for what is allowed to "stack" on the graph. Point based events are intended to not be allowed to stack and only let range based events stack for visibility.
+    The current approach for handling this is by adding 2 subgroupStack groups of "stack" and "noStack", where only stack allows for that group to not overlap. This solution works because we dont currently have any
+    subgroups defined otherwise.
+
+    */
+
     export interface ITimelineData {
         groups: vis.DataSet<vis.DataGroup>;
         items: vis.DataSet<vis.DataItem>;
@@ -12,9 +31,9 @@ module Sfx {
     }
 
     export class EventStoreUtils {
-        public static tooltipFormat = (event: FabricEventBase, start: string, end: string = "", title: string= ""): string => {
+        public static tooltipFormat = (data: Record<string, any> , start: string, end: string = "", title: string= ""): string => {
 
-            const rows = Object.keys(event.eventProperties).map(key => `<tr><td style="word-break: keep-all;">${key}</td><td> : ${event.eventProperties[key]}</td></tr>`).join("");
+            const rows = Object.keys(data).map(key => `<tr><td style="word-break: keep-all;">${key}</td><td> : ${data[key]}</td></tr>`).join("");
 
             const outline = `<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
 
@@ -25,7 +44,7 @@ module Sfx {
             const rollbackEnd = rollbackCompleteEvent.timeStamp;
 
             let rollbackStarted = startOfRange.toISOString();
-            //wont always get this event because of the time range that can be selected where we only get the 
+            //wont always get this event because of the time range that can be selected where we only get the
             //rollback completed which leaves us missing some of the info.
             if (rollbackStartedEvent) {
                 rollbackStarted = rollbackStartedEvent.timeStamp;
@@ -55,7 +74,7 @@ module Sfx {
                 end: rollbackEnd,
                 group,
                 type: "range",
-                title: EventStoreUtils.tooltipFormat(rollbackCompleteEvent, rollbackStarted, rollbackEnd),
+                title: EventStoreUtils.tooltipFormat(rollbackCompleteEvent.eventProperties, rollbackStarted, rollbackEnd),
                 className: "orange"
             });
 
@@ -75,7 +94,7 @@ module Sfx {
                 end: end,
                 group,
                 type: "range",
-                title: EventStoreUtils.tooltipFormat(event, start, end),
+                title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
                 className: "green"
             });
         }
@@ -94,7 +113,7 @@ module Sfx {
                 end,
                 group,
                 type: "range",
-                title: EventStoreUtils.tooltipFormat(event, start, end),
+                title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
                 className: "blue"
             });
         }
@@ -116,13 +135,37 @@ module Sfx {
                 end,
                 group,
                 type: "range",
-                title: EventStoreUtils.tooltipFormat(event, start, end),
+                title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
                 className: rollBack  ? "orange" : "green"
+            });
+        }
+
+        /*
+        add the subgroup stacking to every group so now we can always reliably place stacking/nonstacking items in any group.
+        */
+        public static addSubGroups(groups: vis.DataSet<vis.DataGroup>): void {
+            groups.forEach(group => {
+                group["subgroupStack"] = {"stack": true, "noStack": false };
+                groups.update(group);
             });
         }
     }
 
-    export class ClusterTimelineGenerator implements ITimelineDataGenerator<ClusterEvent> {
+    export abstract class TimeLineGeneratorBase<T extends FabricEventBase> {
+        consume(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData {
+             throw new Error("NotImplementedError");
+        }
+
+        generateTimeLineData(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData {
+            const data = this.consume(events, startOfRange, endOfRange);
+            EventStoreUtils.addSubGroups(data.groups);
+            return data;
+        }
+
+    }
+
+
+    export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent> {
         static readonly upgradeDomainLabel = "Upgrade Domains";
         static readonly clusterUpgradeLabel = "Cluster Upgrades";
         static readonly seedNodeStatus = "Seed Node Warnings";
@@ -199,13 +242,13 @@ module Sfx {
                     end: end,
                     group: ClusterTimelineGenerator.seedNodeStatus,
                     type: "range",
-                    title: EventStoreUtils.tooltipFormat(event, event.timeStamp, end),
+                    title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, end),
                     className: "orange"
                 });
             }
         }
     }
-    export class NodeTimelineGenerator implements ITimelineDataGenerator<NodeEvent> {
+    export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         static readonly NodesDownLabel = "Node Down";
 
         consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
@@ -227,7 +270,7 @@ module Sfx {
                             end: end,
                             group: NodeTimelineGenerator.NodesDownLabel,
                             type: "range",
-                            title: EventStoreUtils.tooltipFormat(event, start, end, label),
+                            title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
                             className: "red"
                         });
                     }
@@ -249,7 +292,7 @@ module Sfx {
         }
     }
 
-    export class ApplicationTimelineGenerator implements ITimelineDataGenerator<ApplicationEvent> {
+    export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<ApplicationEvent> {
         static readonly upgradeDomainLabel = "Upgrade Domains";
         static readonly applicationUpgradeLabel = "Application Upgrades";
         static readonly applicationPrcoessExitedLabel = "Application Process Exited";
@@ -305,7 +348,7 @@ module Sfx {
 
             let nestedApplicationProcessExited: vis.DataGroup = {
                 id: ApplicationTimelineGenerator.applicationPrcoessExitedLabel,
-                nestedGroups: [], subgroupStack: false,
+                nestedGroups: [],
                 content: ApplicationTimelineGenerator.applicationPrcoessExitedLabel,
             };
             Object.keys(processExitedGroups).forEach(groupName => {
@@ -325,7 +368,7 @@ module Sfx {
         parseApplicationProcessExited(event: FabricEventBase, items: vis.DataSet<vis.DataItem>, processExitedGroups: Record<string, vis.DataGroup>) {
 
             const groupLabel = `${event.eventProperties["ServicePackageName"]}`;
-            processExitedGroups[groupLabel] = {id: groupLabel, content: groupLabel, subgroupStack: {"1": false}};
+            processExitedGroups[groupLabel] = {id: groupLabel, content: groupLabel};
 
             const start = event.timeStamp;
             const label = event.eventProperties["ExeName"];
@@ -336,14 +379,13 @@ module Sfx {
                 start: start,
                 group: groupLabel,
                 type: "point",
-                subgroup: "1",
                 className: "red-point",
-                title: EventStoreUtils.tooltipFormat(event, start, null, "Primary swap to " + label),
+                title: EventStoreUtils.tooltipFormat(event.eventProperties, start, null, "Primary swap to " + label),
             });
         }
     }
 
-    export class PartitionTimelineGenerator implements ITimelineDataGenerator<NodeEvent> {
+    export class PartitionTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         static readonly swapPrimaryLabel = "Primay Swap";
         static readonly swapPrimaryDurations = "Swap Primary phases";
 
@@ -365,7 +407,7 @@ module Sfx {
                         end: end,
                         group: PartitionTimelineGenerator.swapPrimaryLabel,
                         type: "range",
-                        title: EventStoreUtils.tooltipFormat(event, start, end, "Primary swap to " + label),
+                        title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, "Primary swap to " + label),
                         className: "green"
                     });
 
@@ -382,4 +424,144 @@ module Sfx {
             };
         }
     }
+
+    /**
+     * Take a csv string and parses the event into groups with nested references to properties specified in the query string.
+     * i.e "Category, Kind"
+     *   The layout is set to look like
+     *   Category1
+     *       Category1 - kind 1
+     *       category1 - kind 2
+     *    Category2
+     *       Category2 - kind 1
+     *       category2 - kind 2
+     * @param event
+     * @param groupIds
+     * @param query
+     */
+    function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: string): string {
+        const properties = query.split(",");
+
+        //the accumulated path of the events property values
+        let constructedPath = "";
+
+        for (let i = 0; i < properties.length; i++) {
+            let prop = properties[i];
+
+            //if the event doesnt have the property, exist early below and give an empty string groupId so that it doesnt get charted
+            if (prop in event.raw) {
+                let currentPath = `${constructedPath} ${event.raw[prop]}`;
+
+                if (_.findIndex(groupIds, (g: vis.DataGroup) => g.id === currentPath) === -1) {
+
+                    const content = _.padStart("", i * 3) + event.raw[prop].toString();
+                    const childGroup = {id: currentPath, content, treeLevel: (i + 1) };
+
+                    //"leaf" rows dont have nested rows
+                    if ( (i + 1) < properties.length) {
+                        childGroup["nestedGroups"] = [];
+                    }
+
+                    //"root" rows dont have parents
+                    if (i > 0) {
+                        const parentGroup = groupIds[_.findIndex(groupIds, (g: vis.DataGroup) => g.id === constructedPath)];
+                        parentGroup.nestedGroups.push(childGroup.id);
+                    }
+
+                    groupIds.push(childGroup);
+                }
+
+                constructedPath = currentPath;
+
+            }else {
+                i = properties.length;
+                constructedPath = "";
+            }
+        }
+
+        return constructedPath;
+    }
+
+    export function parseEventsGenerically(events: FabricEvent[], textSearch: string = ""): ITimelineData {
+        let items = new vis.DataSet<vis.DataItem>();
+        let groupIds: any[] = [];
+
+        events.forEach( (event, index) => {
+           const groupId = parseAndAddGroupIdByString(event, groupIds,  textSearch);
+            let color = "white";
+            if ("Status" in event.eventProperties) {
+                try {
+                    const status = event.eventProperties["Status"];
+                    if (status === "Ok") {
+                        color = "green";
+                    } else if (status === "Warning") {
+                        color = "orange";
+                    } else if (status === "Error") {
+                        color = "red";
+                    }
+                }catch (e) {}
+            }else {
+                if (HtmlUtils.eventTypesUtil.isResolved(event)) {
+                    color = "green";
+                } else if (HtmlUtils.eventTypesUtil.isWarning(event)) {
+                    color = "orange";
+                } else if (HtmlUtils.eventTypesUtil.isError(event)) {
+                    color = "red";
+                }
+            }
+
+            let item = {
+                content: "",
+                id: index,
+                start: event.timeStamp,
+                group: groupId,
+                type: "point",
+                title: EventStoreUtils.tooltipFormat(event.raw, event.timeStamp),
+                className: `${color}-point`,
+                subgroup: "noStack"
+            };
+
+            // optional event properties for higher degree of configuration
+            if ("Duration" in event.eventProperties) {
+                //only display a description for range based events
+                if ("Description" in event.eventProperties) {
+                    try {
+                        item.content = event.eventProperties["Description"];
+                    }catch (e) {}
+                };
+
+                try {
+                    const duration = event.eventProperties["Duration"];
+                    const end = event.timeStamp;
+                    const endDate = new Date(end);
+                    const start = new Date(endDate.getTime() - duration).toISOString();
+
+                    if (duration < 0) {
+                        item.start = end;
+                        item["end"] = start;
+                        item.title = EventStoreUtils.tooltipFormat(event.raw, start, end, item.content);
+                    }else {
+                        item.start = start;
+                        item["end"] = end;
+                        item.title = EventStoreUtils.tooltipFormat(event.raw, end, start, item.content);
+                    }
+
+                    item.type = "range";
+                    item.className = color;
+                    item.subgroup = "stack";
+                }catch (e ) {}
+            }
+
+            items.add(item);
+        });
+
+        let groups = new vis.DataSet<vis.DataGroup>(groupIds);
+        EventStoreUtils.addSubGroups(groups);
+
+        return {
+            groups,
+            items
+        };
+    }
 }
+

@@ -65,8 +65,28 @@
   background-color: #0075c9;
 }
 
+.vis-item.white {
+  background-color: #ffffff;
+  color: black;
+}
+
 .vis-item.red-point {
   border-color: red;
+  border-width: 5px;
+}
+
+.vis-item.orange-point {
+  border-color: $dashboard-warning-color;
+  border-width: 5px;
+}
+
+.vis-item.white-point {
+  border-color: #ffffff;
+  border-width: 5px;
+}
+
+.vis-item.green-point {
+  border-color: $dashboard-ok-color;
   border-width: 5px;
 }
 
@@ -122,4 +142,17 @@
 
 .noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip { 
   bottom:-32px 
+}
+
+.vis-panel.vis-left {
+  background-color: #0075c9;
+}
+.vis-ltr .vis-label.vis-nested-group .vis-inner {
+  padding-left: 0px;
+  white-space: pre;
+}
+
+.vis-group-level-unknown-but-gte1 {
+  background-color: #0075c9 !important;
+  border: 1px solid white;
 }
