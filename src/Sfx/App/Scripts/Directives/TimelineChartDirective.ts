@@ -92,9 +92,9 @@ module Sfx {
                     },
                     stack: true,
                     stackSubgroups: true,
-                    maxHeight: '700px',
+                    maxHeight: "700px",
                     verticalScroll: true,
-                    width: '95%',
+                    width: "95%",
                     tooltip : {
                         overflowMethod: "flip"
                     },

@@ -12,7 +12,6 @@ module Sfx {
 
     Ideally enough flexibility is applied to the generic handling to have all logic driven from there and no needing to update SFX except for updating to look for more fields.
 
-
     To handle the generic approach there is a distinction for what is allowed to "stack" on the graph. Point based events are intended to not be allowed to stack and only let range based events stack for visibility.
     The current approach for handling this is by adding 2 subgroupStack groups of "stack" and "noStack", where only stack allows for that group to not overlap. This solution works because we dont currently have any
     subgroups defined otherwise.
@@ -143,12 +142,11 @@ module Sfx {
 
         /*
         add the subgroup stacking to every group so now we can always reliably place stacking/nonstacking items in any group.
-
         */
         public static addSubGroups(groups: vis.DataSet<vis.DataGroup>): void {
             groups.forEach(group => {
                 group["subgroupStack"] = {"stack": true, "noStack": false };
-                groups.update(group)
+                groups.update(group);
             });
         }
     }
@@ -446,28 +444,28 @@ module Sfx {
 
         //the accumulated path of the events property values
         let constructedPath = "";
-        
-        for(let i = 0; i < properties.length; i++){
+
+        for (let i = 0; i < properties.length; i++) {
             let prop = properties[i];
 
             //if the event doesnt have the property, exist early below and give an empty string groupId so that it doesnt get charted
-            if(prop in event.raw){
+            if (prop in event.raw) {
                 let currentPath = `${constructedPath} ${event.raw[prop]}`;
 
-                if(_.findIndex(groupIds, (g: vis.DataGroup) => g.id === currentPath) === -1){
+                if (_.findIndex(groupIds, (g: vis.DataGroup) => g.id === currentPath) === -1) {
 
                     const content = _.padStart("", i * 3) + event.raw[prop].toString();
                     const childGroup = {id: currentPath, content, treeLevel: (i + 1) };
 
                     //"leaf" rows dont have nested rows
-                    if( (i + 1) < properties.length) {
+                    if ( (i + 1) < properties.length) {
                         childGroup["nestedGroups"] = [];
                     }
 
                     //"root" rows dont have parents
-                    if(i > 0){
+                    if (i > 0) {
                         const parentGroup = groupIds[_.findIndex(groupIds, (g: vis.DataGroup) => g.id === constructedPath)];
-                        parentGroup.nestedGroups.push(childGroup.id);    
+                        parentGroup.nestedGroups.push(childGroup.id);
                     }
 
                     groupIds.push(childGroup);
@@ -475,15 +473,14 @@ module Sfx {
 
                 constructedPath = currentPath;
 
-            }else{
+            }else {
                 i = properties.length;
-                constructedPath = ""
+                constructedPath = "";
             }
         }
 
-        return constructedPath
+        return constructedPath;
     }
-
 
     export function parseEventsGenerically(events: FabricEvent[], textSearch: string = ""): ITimelineData {
         let items = new vis.DataSet<vis.DataItem>();
@@ -526,13 +523,12 @@ module Sfx {
 
             // optional event properties for higher degree of configuration
             if ("Duration" in event.eventProperties) {
-                
                 //only display a description for range based events
-                if("Description" in event.eventProperties) {
-                    try{
+                if ("Description" in event.eventProperties) {
+                    try {
                         item.content = event.eventProperties["Description"];
-                    }catch(e){}
-                }
+                    }catch (e) {}
+                };
 
                 try {
                     const duration = event.eventProperties["Duration"];
@@ -559,7 +555,6 @@ module Sfx {
             items.add(item);
         });
 
-        console.log(groupIds)
         let groups = new vis.DataSet<vis.DataGroup>(groupIds);
         EventStoreUtils.addSubGroups(groups);
 

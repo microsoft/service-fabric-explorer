@@ -354,7 +354,7 @@ module Sfx {
 
                             let text = $scope.nestedTextProperty ? $scope.nestedText[$scope.nestedTextProperty] : $scope.text;
 
-                            if($scope.encoded){
+                            if ($scope.encoded) {
                                 text = decodeURI(text);
                             }
 

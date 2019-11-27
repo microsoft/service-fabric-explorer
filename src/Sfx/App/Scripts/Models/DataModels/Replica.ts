@@ -111,7 +111,7 @@ module Sfx {
                     `Restart Replica for ${serviceName}`,
                     "confirm"
                 ));
-            } else if(this.isStatelessService) {
+            } else if (this.isStatelessService) {
                 this.actions.add(new ActionWithConfirmationDialog(
                     this.data.$uibModal,
                     this.data.$q,
