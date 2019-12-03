@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
+import { TreeService } from 'src/app/services/tree.service';
+import { IdGenerator } from 'src/app/Utils/IdGenerator';
 
 @Component({
   selector: 'app-base',
@@ -7,7 +9,7 @@ import { ITab } from 'src/app/shared/component/navbar/navbar.component';
   styleUrls: ['./base.component.scss']
 })
 export class BaseComponent implements OnInit {
-
+  
   tabs: ITab[] = [{
     name: "essentials",
     route: "./"
@@ -15,23 +17,13 @@ export class BaseComponent implements OnInit {
     {
       name: "details",
       route: "./details"
-    },
-    {
-      name: "deployments",
-      route: "./deployments"
-    },
-    {
-      name: "manifest",
-      route: "./manifest"
-    },
-    {
-      name: "events",
-      route: "./events"
     }
   ];
-  constructor() { }
+  constructor(public tree: TreeService) { }
 
   ngOnInit() {
+    // this.tree.selectTreeNode([
+    //   IdGenerator.cluster()
+    // ]);
   }
-
 }

@@ -1,37 +1,27 @@
 import { Component, OnInit } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
+import { TreeService } from 'src/app/services/tree.service';
 
 @Component({
   selector: 'app-base',
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent implements OnInit {
-
+export class BaseComponent {
+  SFXClusterName: string = "";
+  
   tabs: ITab[] = [{
-    name: "essentials",
+    name: "all applications",
     route: "./"
     },
     {
-      name: "details",
-      route: "./details"
-    },
-    {
-      name: "deployments",
-      route: "./deployments"
-    },
-    {
-      name: "manifest",
-      route: "./manifest"
+      name: "upgrades in progress",
+      route: "./upgrades"
     },
     {
       name: "events",
       route: "./events"
     }
   ];
-  constructor() { }
-
-  ngOnInit() {
-  }
-
+  constructor(public tree: TreeService) { }
 }

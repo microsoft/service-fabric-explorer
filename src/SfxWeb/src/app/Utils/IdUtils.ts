@@ -42,8 +42,8 @@ export class IdUtils {
         return routeParams.activationId ? decodeURIComponent(routeParams.activationId) : "";
     }
 
-    public static getAppTypeName(routeParams: any): string {
-        return decodeURIComponent(routeParams.appTypeName);
+    public static getAppTypeName(route: ActivatedRouteSnapshot): string {
+        return decodeURIComponent(IdUtils.getParam(route, 'appTypeName'));
     }
 
     public static getCodePackageName(routeParams: any): string {

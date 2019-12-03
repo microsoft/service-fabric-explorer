@@ -1,1 +1,13 @@
-<p>details works!</p>
+<div class="detail-pane">
+    <app-detail-view-part [data]="app"></app-detail-view-part>
+</div>
+
+<div class="detail-pane">
+    <h4>Health Events</h4>
+    <detail-list [list]="app?.health.healthEvents" [listSettings]="healthEventsListSettings"></detail-list>
+</div>
+
+<div class="detail-pane">
+    <h4>Application Backup Configuration</h4>
+    <detail-list [list]="app?.applicationBackupConfigurationInfoCollection" [listSettings]="applicationBackupConfigurationInfoListSettings"></detail-list>
+</div>

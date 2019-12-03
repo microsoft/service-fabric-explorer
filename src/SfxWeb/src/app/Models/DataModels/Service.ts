@@ -12,6 +12,7 @@ import { Observable } from 'rxjs';
 import { HealthBase } from './HealthEvent';
 import { ApplicationType } from './ApplicationType';
 import { mergeMap } from 'rxjs/operators';
+let parser = require('fast-xml-parser');
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -300,20 +301,23 @@ export class ServiceManifest extends DataModelBase<IRawServiceManifest> {
     }
 
     protected updateInternal(): Observable<any> | void {
-        let $xml = $($.parseXML(this.raw.Manifest));
-        let $packType = $xml.find("CodePackage");
+            parser = new DOMParser();
+            let xml = parser.parseFromString(this.raw.Manifest,"text/xml");
 
-        let packages = [];
-        $packType.forEach( (item) => {
-            packages.push(new ServiceTypePackage(this.data, "Code", item.getAttribute("Name"), item.getAttribute("Version")));
-        });
+            // let $xml = $($.parseXML(this.raw.Manifest));
+            let packType = xml.getElementsByTagName("CodePackage");
 
-        $packType = $xml.find("ConfigPackage");
-        $packType.forEach((item) => {
-            packages.push(new ServiceTypePackage(this.data, "Config", item.getAttribute("Name"), item.getAttribute("Version")));
-        });
+            let packages = [];
+            Array.from(packType).forEach( (item: any) => {
+                packages.push(new ServiceTypePackage(this.data, "Code", item.getAttribute("Name"), item.getAttribute("Version")));
+            });
+            
+            packType = xml.getElementsByTagName("ConfigPackage");
+            Array.from(packType).forEach((item: any) => {
+                packages.push(new ServiceTypePackage(this.data, "Config", item.getAttribute("Name"), item.getAttribute("Version")));
+            });
 
-        this.packages = packages;
+            this.packages = packages;
     }
 
     private getServiceManifest(appTypeName: string, appTypeVersion: string, manifestName: string,
