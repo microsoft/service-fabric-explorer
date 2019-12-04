@@ -1,0 +1,39 @@
+<div class="detail-pane essen-pane" *ngIf="replica">
+    <div class="table-responsive">
+        <table class="essen-table" role="presentation">
+            <tr>
+                <th>Id</th>
+                <th>Node Name</th>
+            </tr>
+            <tr>
+                <td [title]="replica.id">{{replica.id}}<app-clip-board text="replica.id"></app-clip-board></td>
+                <td><a [routerLink]="replica.nodeViewPath">{{replica.raw.NodeName}}</a><app-clip-board text="replica.raw.NodeName"></app-clip-board></td>
+            </tr>
+            <tr>
+                <th>Health State</th>
+                <th>Status</th>
+            </tr>
+            <tr *ngIf="replica.healthState.isInitialized">
+                <td><app-health-badge [badgeClass]="replica.healthState.badgeClass" [text]="replica.healthState.text"></app-health-badge></td>
+                <td>{{replica.raw.ReplicaStatus}}</td>
+            </tr>
+            <tr>
+                <th *ngIf="replica.isStatefulService">Role</th>
+                <th></th>
+            </tr>
+            <tr>
+                <td *ngIf="replica.isStatefulService">{{replica.role}}</td>
+                <td></td>
+            </tr>
+        </table>
+        <div *ngIf="nodeView"><a [routerLink]="nodeView">View on Node</a></div>
+    </div>
+
+    <!-- TODO replica address -->
+<!-- <sfx-replica-address address="replica.address"></sfx-replica-address> -->
+
+    <div class="detail-pane" *ngIf="replica.healthState.isInitialized">
+        <h4>Unhealthy Evaluations</h4>
+        <detail-list [list]="replica.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+    </div>
+</div>

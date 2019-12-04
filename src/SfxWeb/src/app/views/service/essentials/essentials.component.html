@@ -1,0 +1,76 @@
+<div class="detail-pane essen-pane">
+    <div class="table-responsive">
+        <table class="essen-table" role="presentation" *ngIf="service">
+            <tbody>
+                <tr>
+                    <th>Name</th>
+                    <th>Service Type</th>
+                </tr>
+                <tr>
+                    <td>{{service?.name}}<app-clip-board [text]="service?.name"></app-clip-board></td>
+                    <td>{{service?.raw.TypeName}}<app-clip-board [text]="service?.raw.TypeName"></app-clip-board></td>
+                </tr>
+                <tr>
+                    <th>Health State</th>
+                    <th>Service Type Version</th>
+                </tr>
+                <tr>
+                    <td><app-health-badge [badgeClass]="service?.healthState.badgeClass" [text]="service?.healthState.text"></app-health-badge></td>
+                    <td>{{service?.raw.ManifestVersion}}<app-clip-board text="service.raw.ManifestVersion"></app-clip-board></td>
+                </tr>
+            </tbody>
+            <tbody *ngIf="service.isStatefulService">
+                <tr>
+                    <th>Status</th>
+                    <th>Minimum Replica Set Size</th>
+                </tr>
+                <tr>
+                    <td>{{service.raw.ServiceStatus}}</td>
+                    <td *ngIf="service.description.raw">{{service.description.raw.MinReplicaSetSize}}</td>
+                </tr>
+                <tr>
+                    <th>Service Kind</th>
+                    <th>Target Replica Set Size</th>
+                </tr>
+                <tr>
+                    <td>{{service.raw.ServiceKind}}</td>
+                    <td *ngIf="service.description.raw">{{service.description.raw.TargetReplicaSetSize}}</td>
+                </tr>
+                <tr *ngIf="service.description.raw && service.description.raw.ServiceDnsName">
+                    <th>Service Dns Name</th>
+                </tr>
+                <tr *ngIf="service.description.raw && service.description.raw.ServiceDnsName">
+                    <td>{{service.description.raw.ServiceDnsName}}</td>
+                </tr>
+            </tbody>
+            <tbody *ngIf="service.isStatelessService">
+                <tr>
+                    <th>Status</th>
+                    <th>Instance Count</th>
+                </tr>
+                <tr>
+                    <td>{{service.raw.ServiceStatus}}</td>
+                    <td *ngIf="service.description.raw">{{service.description.raw.InstanceCount}}</td>
+                </tr>
+                <tr>
+                    <th>Service Kind</th>
+                    <th *ngIf="service.description.raw && service.description.raw.ServiceDnsName">Service Dns Name</th>
+                </tr>
+                <tr>
+                    <td>{{service.raw.ServiceKind}}</td>
+                    <td *ngIf="service.description.raw && service.description.raw.ServiceDnsName">{{service.description?.raw.ServiceDnsName}}</td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+
+<div class="detail-pane">
+    <h4>Unhealthy Evaluations</h4>
+    <detail-list [list]="service.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings" *ngIf="service && service.health"></detail-list>
+</div>
+
+<div class="detail-pane">
+    <h4>Partitions</h4>
+    <detail-list [list]="service.partitions" [listSettings]="listSettings" *ngIf="service && service.partitions.isInitialized"></detail-list>
+</div>

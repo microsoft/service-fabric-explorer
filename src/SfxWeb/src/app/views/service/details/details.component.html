@@ -1,0 +1,22 @@
+<div class="detail-pane">
+    <app-detail-view-part [data]="service"></app-detail-view-part>
+</div>
+
+<div class="detail-pane">
+    <h4>
+        Service Description
+    </h4>
+    <app-detail-view-part [data]="service.description"></app-detail-view-part>
+</div>
+
+<div class="detail-pane">
+    <h4>
+        Health Events
+    </h4>
+    <detail-list [list]="service.health.healthEvents" [listSettings]="healthEventsListSettings"></detail-list>
+</div>
+
+<div class="detail-pane" *ngIf="service.isStatefulService && service.parent.raw.TypeName !== 'System'">
+    <h4>Service Backup Configuration</h4>
+    <detail-list [list]="service.serviceBackupConfigurationInfoCollection" [listSettings]="serviceBackupConfigurationInfoListSettings"></detail-list>
+</div>

@@ -1,8 +1,21 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { BaseComponent } from './base/base.component';
+import { EssentialsComponent } from './essentials/essentials.component';
+import { DetailsComponent } from './details/details.component';
+import { EventsComponent } from './events/events.component';
+import { ManifestComponent } from './manifest/manifest.component';
 
 
-const routes: Routes = [];
+const routes: Routes = [{
+  path: '', component: BaseComponent, children: [
+    { path: '', component: EssentialsComponent },
+    { path: 'details', component: DetailsComponent },
+    { path: 'manifest', component: ManifestComponent },
+    { path: 'events', component: EventsComponent },
+    ]
+  }
+];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],

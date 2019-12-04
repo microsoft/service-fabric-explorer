@@ -26,16 +26,16 @@ export class IdUtils {
         return decodeURIComponent(IdUtils.getParam(route, 'appId'));
     }
 
-    public static getPartitionId(routeParams: any): string {
-        return decodeURIComponent(routeParams.partitionId);
+    public static getPartitionId(route: ActivatedRouteSnapshot): string {
+        return decodeURIComponent(IdUtils.getParam(route, 'partitionId'));
     }
 
-    public static getReplicaId(routeParams: any): string {
-        return decodeURIComponent(routeParams.replicaId);
+    public static getReplicaId(route: ActivatedRouteSnapshot): string {
+        return decodeURIComponent(IdUtils.getParam(route, 'replicaId'));
     }
 
-    public static getServiceId(routeParams: any): string {
-        return decodeURIComponent(routeParams.serviceId);
+    public static getServiceId(route: ActivatedRouteSnapshot): string {
+        return decodeURIComponent(IdUtils.getParam(route, 'serviceId'));
     }
 
     public static getServicePackageActivationId(routeParams: any): string {

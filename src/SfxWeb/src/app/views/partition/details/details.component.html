@@ -1,0 +1,35 @@
+
+<div *ngIf="partition">
+    <div class="detail-pane">
+        <app-detail-view-part [data]="partition"></app-detail-view-part>
+    </div>
+    
+    <div class="detail-pane">
+        <h4>
+            Health Events
+        </h4>
+        <detail-list [list]="partition.health.healthEvents" [listSettings]="healthEventsListSettings"></detail-list>
+    </div>
+    
+    <div class="detail-pane" *ngIf="partition.loadInformation && partition.loadInformation.isValid">
+        <h4>Load Information</h4>
+        <app-detail-view-part [data]="partition.loadInformation"></app-detail-view-part>
+    </div>
+    
+    <div *ngIf="partition.IsStatefulServiceAndSystemService && partition.partitionBackupInfo">
+        <div class="detail-pane">
+            <h4>Partition Backup Configuration</h4>
+            <app-detail-view-part [data]="partition.partitionBackupInfo.partitionBackupConfigurationInfo"></app-detail-view-part>
+        </div>
+        
+        <div class="detail-pane" *ngIf="partition.partitionBackupInfo.partitionBackupProgress.isInitialized && partition.partitionBackupInfo.partitionBackupProgress.raw.TimeStampUtc">
+            <h4>Partition Backup Progress</h4>
+            <app-detail-view-part [data]="partition.partitionBackupInfo.partitionBackupProgress"></app-detail-view-part>
+        </div>
+        
+        <div class="detail-pane" *ngIf="partition.partitionBackupInfo.partitionRestoreProgress.isInitialized && partition.partitionBackupInfo.partitionRestoreProgress.raw.TimeStampUtc">
+            <h4>Partition Restore Progress</h4>
+            <app-detail-view-part [data]="partition.partitionBackupInfo.partitionRestoreProgress"></app-detail-view-part>
+        </div>
+    </div>
+</div>
