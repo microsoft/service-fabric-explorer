@@ -6,13 +6,15 @@ import { BaseComponent } from './base/base.component';
 import { EssentialsComponent } from './essentials/essentials.component';
 import { DetailsComponent } from './details/details.component';
 import { ContainerLogsComponent } from './container-logs/container-logs.component';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
   declarations: [BaseComponent, EssentialsComponent, DetailsComponent, ContainerLogsComponent],
   imports: [
     CommonModule,
-    DeployedCodePackageRoutingModule
+    DeployedCodePackageRoutingModule,
+    SharedModule
   ]
 })
 export class DeployedCodePackageModule { }

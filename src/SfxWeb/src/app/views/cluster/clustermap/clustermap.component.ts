@@ -1,10 +1,10 @@
 import { Component, Injector } from '@angular/core';
-import { NodeCollection } from 'src/app/Models/DataModels/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { forkJoin, Observable } from 'rxjs';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { BaseController } from 'src/app/ViewModels/BaseController';
+import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 
 @Component({
   selector: 'app-clustermap',

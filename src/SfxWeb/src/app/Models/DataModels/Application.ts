@@ -1,7 +1,7 @@
 ﻿import { IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState, IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo } from '../RawDataTypes';
 import { DataModelBase, IDecorators } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
-import { ServiceCollection, ServiceTypeCollection, ApplicationBackupConfigurationInfoCollection } from './Collections';
+import { ServiceTypeCollection, ApplicationBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IApplicationHealthStateFilter } from '../HealthChunkRawDataTypes';
 import { AppStatusConstants, Constants, HealthStateConstants, UpgradeDomainStateNames } from 'src/app/Common/Constants';
@@ -14,6 +14,7 @@ import { Utils } from 'src/app/Utils/Utils';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
+import { ServiceCollection } from './collections/ServiceCollection';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.

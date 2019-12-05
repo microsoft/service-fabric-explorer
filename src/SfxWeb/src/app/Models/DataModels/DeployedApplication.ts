@@ -1,7 +1,7 @@
 ﻿import { DataModelBase, IDecorators } from './Base';
 import { IRawDeployedApplication, IRawApplicationHealth } from '../RawDataTypes';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
-import { DeployedServicePackageCollection } from './Collections';
+import { DeployedServicePackageCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IDeployedApplicationHealthStateFilter, IDeployedApplicationHealthStateChunk } from '../HealthChunkRawDataTypes';
 import { Node } from './Node';

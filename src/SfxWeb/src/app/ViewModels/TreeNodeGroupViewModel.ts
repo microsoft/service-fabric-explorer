@@ -205,12 +205,11 @@ export class TreeNodeGroupViewModel {
     }
 
     private getChildren(): Observable<any> {
-        console.log("get children for ");
-
         if (!this.childrenQuery || this.childrenLoaded) {
             return of(true);
         }
 
+        console.log(this._currentGetChildrenPromise)
         if (!this._currentGetChildrenPromise) {
             this.loadingChildren = true;
             console.log(this)
@@ -239,7 +238,7 @@ export class TreeNodeGroupViewModel {
             });
         }
         console.log(this._currentGetChildrenPromise)
-        return this._currentGetChildrenPromise;
+        return this._currentGetChildrenPromise || of(null);
     }
 
     private exists(array: any[], item: any, comparer: (a: any, b: any) => any): any {

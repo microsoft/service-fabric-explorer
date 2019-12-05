@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { IdGenerator } from '../Utils/IdGenerator';
 import { ITreeNode } from '../ViewModels/TreeTypes';
 import { IClusterHealthChunkQueryDescription, IClusterHealthChunk, HealthStateFilterFlags } from '../Models/HealthChunkRawDataTypes';
-import { DeployedReplicaCollection, DeployedCodePackageCollection } from '../Models/DataModels/Collections';
+import { DeployedReplicaCollection, DeployedCodePackageCollection } from '../Models/DataModels/collections/Collections';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterHealth, ClusterManifest } from '../Models/DataModels/Cluster';
 import { TreeViewModel } from '../ViewModels/TreeViewModel';
@@ -39,7 +39,7 @@ export class TreeService {
             }
 
             this.cm = new ClusterManifest(this.data);
-            console.log(this.cm);
+
         }
 
         public selectTreeNode(path: string[], skipSelectAction?: boolean): Observable<any> {
@@ -108,7 +108,7 @@ export class TreeService {
 
         private getGroupNodes(): Observable<ITreeNode[]> {
 
-            let getAppsPromise = this.data.getApps().pipe(map(apps => {console.log("woo")
+            let getAppsPromise = this.data.getApps().pipe(map(apps => {
               return {
                     nodeId: IdGenerator.appGroup(),
                     displayName: () => "Applications",
@@ -119,7 +119,7 @@ export class TreeService {
                 };
             }));
 
-            let getNodesPromise = this.data.getNodes().pipe(map(nodes => {console.log("woo")
+            let getNodesPromise = this.data.getNodes().pipe(map(nodes => {
               return {
                     nodeId: IdGenerator.nodeGroup(),
                     displayName: () => "Nodes",
@@ -132,7 +132,7 @@ export class TreeService {
             }));
 
             let systemNodePromise = this.data.getSystemApp().pipe(map(systemApp => {
-              console.log("woo")
+
               return {
                     nodeId: IdGenerator.systemAppGroup(),
                     displayName: () => Constants.SystemAppTypeName,

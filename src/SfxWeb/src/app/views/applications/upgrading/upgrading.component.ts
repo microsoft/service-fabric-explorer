@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 import { BaseController } from 'src/app/ViewModels/BaseController';
-import { ApplicationCollection } from 'src/app/Models/DataModels/Collections';
+import { ApplicationCollection } from 'src/app/Models/DataModels/collections/Collections';
 import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter } from 'src/app/Models/ListSettings';
 import { ApplicationUpgradeProgress } from 'src/app/Models/DataModels/Application';
 import { DataService } from 'src/app/services/data.service';

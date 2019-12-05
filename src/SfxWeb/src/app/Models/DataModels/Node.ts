@@ -1,16 +1,14 @@
 ﻿import { IRawNode, IRawNodeLoadInformation, IRawNodeLoadMetricInformation, IRawNodeHealth, NodeStatus } from '../RawDataTypes';
 import { IDecorators, DataModelBase } from './Base';
-import { DeployedApplicationCollection } from './Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IHealthStateFilter } from '../HealthChunkRawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
-import { NodeStatusConstants } from 'src/app/Common/Constants';
-import { Utils } from 'src/app/Utils/Utils';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
 import { HealthBase } from './HealthEvent';
+import { DeployedApplicationCollection } from './collections/DeployedApplicationCollection';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.

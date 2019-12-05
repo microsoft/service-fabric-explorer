@@ -1,0 +1,27 @@
+<div *ngIf="systemApp">
+    <div class="detail-pane essen-pane">
+        <div class="table-responsive">
+            <table class="essen-table" role="presentation">
+                <tr>
+                    <th>Name</th>
+                    <th>Health State</th>
+                </tr>
+    
+                <tr *ngIf="systemApp.healthState">
+                    <td>fabric:/System</td>
+                    <td><app-health-badge [badgeClass]="systemApp.healthState.badgeClass" [text]="systemApp.healthState.text"></app-health-badge></td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <div class="detail-pane" *ngIf="systemApp.health.isInitialized">
+        <h4>Unhealthy Evaluations</h4>
+        <detail-list [list]="systemApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+    </div>
+    
+    <div class="detail-pane" *ngIf="systemApp.services.isInitialized">
+        <h4>System</h4>
+        <detail-list [list]="systemApp.services" [listSettings]="listSettings"></detail-list>
+    </div>
+</div>

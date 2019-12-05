@@ -4,7 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
-import { ApplicationCollection } from 'src/app/Models/DataModels/Collections';
+import { ApplicationCollection } from 'src/app/Models/DataModels/collections/Collections';
 import { ListSettings, ListColumnSettingForLink, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { map } from 'rxjs/operators';
 

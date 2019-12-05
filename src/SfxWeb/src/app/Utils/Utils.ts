@@ -70,8 +70,6 @@ export class Utils {
      * @param keyFunction function to return a key based string for each entry.
      */
     public static keyByFromFunction<T>(list: T[], keyFunction: (T) => string): Record<string, T> {
-        console.log(list);
-
         return list.reduce( (previous, current) => { previous[keyFunction(current)] = current; return previous}, {})
     }
 

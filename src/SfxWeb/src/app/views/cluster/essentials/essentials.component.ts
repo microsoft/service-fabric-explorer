@@ -1,12 +1,12 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { ClusterUpgradeProgress, ClusterHealth } from '../../../Models/DataModels/Cluster';
-import { NodeCollection } from '../../../Models/DataModels/Collections';
 import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
 import { SystemApplication } from 'src/app/Models/DataModels/Application';
 import { Observable, forkJoin } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { BaseController } from 'src/app/ViewModels/BaseController';
+import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 
 
 @Component({

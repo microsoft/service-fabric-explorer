@@ -1,30 +1,26 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { BaseController } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { ActivatedRouteSnapshot } from '@angular/router';
-import { IdUtils } from 'src/app/Utils/IdUtils';
 import { ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForLink } from 'src/app/Models/ListSettings';
 import { Constants } from 'src/app/Common/Constants';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
-import { mergeMap } from 'rxjs/operators';
+import { ApplicationTypeBaseController } from '../ApplicationTypeBase';
 
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
   styleUrls: ['./essentials.component.scss']
 })
-export class EssentialsComponent extends BaseController {
-  appTypeName: string;
+export class EssentialsComponent extends ApplicationTypeBaseController {
   appTypeGroup: ApplicationTypeGroup;
   appsListSettings: ListSettings;
   appTypesListSettings: ListSettings;
 
-  constructor(private data: DataService, injector: Injector, private settings: SettingsService) { 
-    super(injector);
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+    super(data, injector);
   }
 
   setup() {
@@ -55,13 +51,7 @@ export class EssentialsComponent extends BaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return this.data.getAppTypeGroup(this.appTypeName, true).pipe(mergeMap( appTypeGroup => {
-        this.appTypeGroup = appTypeGroup;
-        return this.data.getApps(true, messageHandler)
-      }))
+    return this.data.getApps(true, messageHandler)
   }
 
-  getParams(route: ActivatedRouteSnapshot): void {
-    this.appTypeName = IdUtils.getAppTypeName(route);
-  }
 }

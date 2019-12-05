@@ -38,32 +38,33 @@ export class IdUtils {
         return decodeURIComponent(IdUtils.getParam(route, 'serviceId'));
     }
 
-    public static getServicePackageActivationId(routeParams: any): string {
-        return routeParams.activationId ? decodeURIComponent(routeParams.activationId) : "";
+    public static getServicePackageActivationId(route: ActivatedRouteSnapshot): string {
+        const id = IdUtils.getParam(route, 'activationId');
+        return id ? decodeURIComponent(id) : "";
     }
 
     public static getAppTypeName(route: ActivatedRouteSnapshot): string {
         return decodeURIComponent(IdUtils.getParam(route, 'appTypeName'));
     }
 
-    public static getCodePackageName(routeParams: any): string {
-        return decodeURIComponent(routeParams.codePackageName);
+    public static getCodePackageName(route: ActivatedRouteSnapshot): string {
+        return decodeURIComponent(IdUtils.getParam(route, 'codePackageName'));
     }
 
-    public static getContainerLogs(routeParams: any): string {
-        return decodeURIComponent(routeParams.codePackageName);
+    public static getContainerLogs(route: ActivatedRouteSnapshot): string {
+        return decodeURIComponent(IdUtils.getParam(route, 'codePackageName'));
     }
 
     public static getNodeName(route: ActivatedRouteSnapshot): string {
         return decodeURIComponent(IdUtils.getParam(route, 'nodeName'));
     }
 
-    public static getBackupPolicyName(routeParams: any): string {
-        return decodeURIComponent(routeParams.backupPolicyName);
+    public static getBackupPolicyName(route: ActivatedRouteSnapshot): string {
+        return decodeURIComponent(IdUtils.getParam(route, 'backupPolicyName'));
     }
 
-    public static getNetworkName(routeParams: any): string {
-        return decodeURIComponent(routeParams.networkName);
+    public static getNetworkName(route: ActivatedRouteSnapshot): string {
+        return decodeURIComponent(IdUtils.getParam(route, 'networkName'));
     }
 
     public static idToName(id: string): string {

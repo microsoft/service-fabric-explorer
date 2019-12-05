@@ -1,33 +1,28 @@
 import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
 import { Subscription, of, Observable, forkJoin } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
-import { ActivatedRoute, ParamMap, ActivatedRouteSnapshot } from '@angular/router';
+import { ActivatedRouteSnapshot } from '@angular/router';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IdUtils } from 'src/app/Utils/IdUtils';
-import { map, mergeMap, tap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { ListSettings, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { DeployedApplication } from 'src/app/Models/DataModels/DeployedApplication';
-import { DeployedServicePackageCollection } from 'src/app/Models/DataModels/Collections';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { DeployedServicePackageCollection } from 'src/app/Models/DataModels/collections/Collections';
+import { DeployedAppBaseController } from '../DeployedApplicationBase';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent extends BaseController {
-  nodeName: string;
-  appId: string;
-
-  deployedApp: DeployedApplication;
+export class DetailsComponent extends DeployedAppBaseController {
   deployedServicePackages: DeployedServicePackageCollection;
 
   unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
 
-  constructor(private data: DataService, injector: Injector, private settings: SettingsService) {
-    super(injector);
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
+    super(data, injector);
    }
 
   setup() {
@@ -46,14 +41,11 @@ export class DetailsComponent extends BaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return this.data.getDeployedApplication(this.nodeName, this.appId, true).pipe(mergeMap( deployedApp => {
-        this.deployedApp = deployedApp;
-        return forkJoin([
-          this.deployedApp.deployedServicePackages.refresh(messageHandler).pipe(map(servicePackages => {
-            this.deployedServicePackages = servicePackages;
-          })),
-          this.deployedApp.health.refresh(messageHandler)
-        ]);
-      }))
+    return forkJoin([
+      this.deployedApp.deployedServicePackages.refresh(messageHandler).pipe(map(servicePackages => {
+        this.deployedServicePackages = servicePackages;
+      })),
+      this.deployedApp.health.refresh(messageHandler)
+    ]);
   }
 }

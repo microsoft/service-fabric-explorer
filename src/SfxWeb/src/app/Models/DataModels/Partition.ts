@@ -1,6 +1,6 @@
 ﻿import { IRawPartition, IRawPartitionHealth, IRawPartitionInformation, IRawPartitionLoadInformation, IRawLoadMetricReport } from '../RawDataTypes';
 import { DataModelBase, IDecorators } from './Base';
-import { ReplicaOnPartitionCollection } from './Collections';
+import { ReplicaOnPartitionCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { Service } from './Service';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';

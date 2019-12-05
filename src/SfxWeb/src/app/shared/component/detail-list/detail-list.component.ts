@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { DataModelCollectionBase } from 'src/app/Models/DataModels/Collections';
 import { ListSettings } from 'src/app/Models/ListSettings';
+import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 
 @Component({
   selector: 'detail-list',

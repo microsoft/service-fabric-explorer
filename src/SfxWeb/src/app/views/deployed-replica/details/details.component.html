@@ -1,1 +1,12 @@
-<p>details works!</p>
+<div *ngIf="replica">
+    <div class="detail-pane">
+        <app-detail-view-part [data]="replica"></app-detail-view-part>
+    </div>
+
+    <div class="detail-pane" *ngIf="replica.detail && replica.detail.isInitialized">
+        <h4>
+            Details
+        </h4>
+        <app-detail-view-part [data]="replica.detail"></app-detail-view-part>
+    </div>
+</div>

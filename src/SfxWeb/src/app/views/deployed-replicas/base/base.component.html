@@ -1,1 +1,8 @@
-<p>base works!</p>
+<div *ngIf="replicas">
+    <app-navbar [type]="replicas.isStatelessService ? 'Deployed Instances' : 'Deployed Replicas'" ></app-navbar>
+    <div class="main-view">
+        <div class="detail-pane">
+            <detail-list [list]="replicas" [listSettings]="listSettings"></detail-list>
+        </div>
+    </div>
+</div>

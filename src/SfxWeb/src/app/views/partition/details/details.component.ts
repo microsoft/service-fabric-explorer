@@ -9,23 +9,19 @@ import { Partition } from 'src/app/Models/DataModels/Partition';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { BaseController } from 'src/app/ViewModels/BaseController';
 import { map } from 'rxjs/operators';
+import { PartitionBaseController } from '../PartitionBase';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent extends BaseController {
-  public appId: string;
-  public serviceId: string;
-  public partitionId: string;
-  public appTypeName: string;
+export class DetailsComponent extends PartitionBaseController {
 
-  partition: Partition;
   healthEventsListSettings: ListSettings;
 
-  constructor(private data: DataService, injector: Injector, private settings: SettingsService) { 
-    super(injector);
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+    super(data, injector);
   }
 
   setup() {
@@ -34,30 +30,18 @@ export class DetailsComponent extends BaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return this.data.getPartition(this.appId, this.serviceId, this.partitionId, true, messageHandler)
-    .pipe(map(partition => {
-        this.partition = partition;
-        // this.data.backupPolicies.refresh(messageHandler);
-        if (this.partition.isStatefulService) {
-            this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler);
-        }
+    if (this.partition.isStatefulService) {
+        this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler);
+    }
 
-        this.partition.partitionBackupInfo.partitionBackupProgress.refresh(messageHandler);
-        this.partition.partitionBackupInfo.partitionRestoreProgress.refresh(messageHandler);
+    this.partition.partitionBackupInfo.partitionBackupProgress.refresh(messageHandler);
+    this.partition.partitionBackupInfo.partitionRestoreProgress.refresh(messageHandler);
 
-        return forkJoin([
-          this.partition.loadInformation.refresh(messageHandler),
-          this.partition.health.refresh(messageHandler),
-          this.partition.replicas.refresh(messageHandler),
-          this.partition.isStatefulService ? this.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler) : of(null)
-        ]);
-    }));
-  }
-
-  getParams(route: ActivatedRouteSnapshot): void {
-    this.appId = IdUtils.getAppId(route);
-    this.serviceId = IdUtils.getServiceId(route);
-    this.partitionId = IdUtils.getPartitionId(route);
-    this.appTypeName = IdUtils.getAppTypeName(route);
+    return forkJoin([
+      this.partition.loadInformation.refresh(messageHandler),
+      this.partition.health.refresh(messageHandler),
+      this.partition.replicas.refresh(messageHandler),
+      this.partition.isStatefulService ? this.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler) : of(null)
+    ]);
   }
 }

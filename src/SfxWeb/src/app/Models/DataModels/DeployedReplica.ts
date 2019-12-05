@@ -7,7 +7,7 @@ import { ServiceKindRegexes, SortPriorities } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import { Utils } from 'src/app/Utils/Utils';
-import { ReplicaOnPartitionCollection } from './Collections';
+import { ReplicaOnPartitionCollection } from './collections/Collections';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -49,7 +49,8 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     public get serviceViewPath(): string {
-        return this.data.routes.getServiceViewPath(this.parent.parent.raw.TypeName, this.parent.parent.raw.Id, IdUtils.nameToId(this.raw.ServiceName));
+        console.log(this);
+        return this.data.routes.getServiceViewPath(this.parent.parent.raw.TypeName, this.parent.parent.raw.Id, encodeURI(IdUtils.nameToId(this.raw.ServiceName)));
     }
 
     public get isStatefulService(): boolean {

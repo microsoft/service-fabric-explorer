@@ -1,6 +1,6 @@
 ﻿import { DataModelBase } from './Base';
 import { IRawDeployedServicePackage, IRawDeployedServicePackageHealth } from '../RawDataTypes';
-import { DeployedCodePackageCollection, DeployedReplicaCollection } from './Collections';
+import { DeployedCodePackageCollection, DeployedReplicaCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { ServiceManifest } from './Service';
 import { HealthStateFilterFlags, IDeployedServicePackageHealthStateChunk } from '../HealthChunkRawDataTypes';

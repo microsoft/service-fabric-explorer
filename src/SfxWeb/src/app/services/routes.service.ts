@@ -7,14 +7,12 @@ import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
 })
 export class RoutesService {
 
-  private _forceSingleEncode: boolean = false;
+  private _forceSingleEncode: boolean = true;
 
   constructor(public location: Location, public routing: Router, private activatedRoute: ActivatedRoute) {
       this.routing.events.subscribe( event => {
           if(event instanceof NavigationEnd){
-              console.log(event);
               console.log(this.activatedRoute.snapshot);
-            //   this.activatedRoute.params()
           }
       })
    }
@@ -26,7 +24,7 @@ export class RoutesService {
           this.forceSingleEncode(true);
           path = pathGetter();
       } finally {
-          this.forceSingleEncode(false);
+        //   this.forceSingleEncode(false);
       }
 
       console.log(path);

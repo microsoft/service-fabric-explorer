@@ -1,3 +1,32 @@
-<div class="detail-pane">
-    <app-detail-view-part [data]="deployedCodePackage" *ngIf="deployedCodePackage"></app-detail-view-part>
-</div>
+<div class="detail-pane essen-pane" ngIf="deployedCodePackage">
+        <div class="table-responsive">
+            <table class="essen-table" role="presentation">
+                <tr>
+                    <th>Name</th>
+                    <th>Version</th>
+                </tr>
+                <tr *ngIf="deployedCodePackage">
+                    <td>{{deployedCodePackage.name}}<app-clip-board [text]="deployedCodePackage.name"></app-clip-board></td>
+                    <td>{{deployedCodePackage.raw.Version}}</td>
+                </tr>
+    
+                <tr>
+                    <th>Host Type</th>
+                    <th>Host Isolation Mode</th>
+                </tr>
+                <tr>
+                    <td>{{deployedCodePackage.raw.HostType}}</td>
+                    <td>{{deployedCodePackage.raw.HostIsolationMode}}</td>
+                </tr>
+    
+                <tr>
+                    <th>Status</th>
+                    <th *ngIf="deployedCodePackage && deployedCodePackage.servicePackageActivationId">Service Package Activation Id</th>
+                </tr>
+                <tr *ngIf="deployedCodePackage">
+                    <td>{{deployedCodePackage.raw.Status}}</td>
+                    <td *ngIf="deployedCodePackage.servicePackageActivationId">{{deployedCodePackage.servicePackageActivationId}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>

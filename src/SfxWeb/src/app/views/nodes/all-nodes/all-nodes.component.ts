@@ -2,10 +2,10 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
-import { NodeCollection } from 'src/app/Models/DataModels/Collections';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { BaseController } from 'src/app/ViewModels/BaseController';
+import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 
 @Component({
   selector: 'app-all-nodes',

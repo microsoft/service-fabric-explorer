@@ -1,6 +1,6 @@
 ﻿import { DataModelBase, IDecorators } from "./Base";
 import { IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest, IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription } from '../RawDataTypes';
-import { PartitionCollection, ServiceBackupConfigurationInfoCollection } from './Collections';
+import { PartitionCollection, ServiceBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IServiceHealthStateFilter } from '../HealthChunkRawDataTypes';
 import { ServiceKindRegexes, Constants, FabricEnumValues } from 'src/app/Common/Constants';

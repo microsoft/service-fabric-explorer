@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SystemApplication, Application } from '../Models/DataModels/Application';
-import { ApplicationTypeGroupCollection, ApplicationCollection, NodeCollection, NetworkCollection, BackupPolicyCollection, ServiceCollection, IDataModelCollection, ServiceTypeCollection, DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, DeployedApplicationCollection, ReplicaOnPartitionCollection, PartitionCollection } from '../Models/DataModels/Collections';
+import { ApplicationTypeGroupCollection, ApplicationCollection, NetworkCollection, BackupPolicyCollection, ServiceCollection, IDataModelCollection, ServiceTypeCollection, DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, DeployedApplicationCollection, ReplicaOnPartitionCollection, PartitionCollection } from '../Models/DataModels/collections/Collections';
 import { RoutesService } from './routes.service';
 import { MessageService } from './message.service';
 import { TelemetryService } from './telemetry.service';
@@ -26,6 +26,7 @@ import { DeployedServicePackage } from '../Models/DataModels/DeployedServicePack
 import { DeployedApplication } from '../Models/DataModels/DeployedApplication';
 import { ReplicaOnPartition } from '../Models/DataModels/Replica';
 import { Partition } from '../Models/DataModels/Partition';
+import { NodeCollection } from '../Models/DataModels/collections/NodeCollection';
 
 @Injectable({
   providedIn: 'root'
@@ -121,7 +122,6 @@ export class DataService {
   }
 
   public getSystemApp(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<SystemApplication> {
-      console.log("test")
     return this.systemApp.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.systemApp));
   }
 
@@ -131,19 +131,16 @@ export class DataService {
   }
 
   public getApps(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationCollection> {
-    console.log("test")
       return this.apps.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.apps));
   }
 
   public getApp(id: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<Application> {
       return this.getApps(false, messageHandler).pipe(mergeMap(collection => {
-          console.log("check")
           return this.tryGetValidItem(collection, id, forceRefresh, messageHandler);
       }));
   }
 
   public getNodes(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<NodeCollection> {
-            console.log("test")
       return this.nodes.ensureInitialized(forceRefresh, messageHandler);
   }
 
@@ -286,7 +283,7 @@ export class DataService {
         console.log(item)
         return item.ensureInitialized(forceRefresh, messageHandler);
     } else {
-        console.log("error")
+        console.log("error getting valid item")
         return throwError(null);
     }
   } 

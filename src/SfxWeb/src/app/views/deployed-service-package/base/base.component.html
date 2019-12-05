@@ -1,1 +1,6 @@
-<p>base works!</p>
+<app-navbar [tabs]="tabs" type="Deployed Service Package" [name]="servicePackage?.name"></app-navbar>
+<div class="main-view">
+    <div class="flex-child">
+        <router-outlet></router-outlet>
+    </div>
+</div>

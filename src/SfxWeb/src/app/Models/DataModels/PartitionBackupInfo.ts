@@ -1,4 +1,4 @@
-import { PartitionBackupCollection, SinglePartitionBackupCollection } from './Collections';
+import { PartitionBackupCollection, SinglePartitionBackupCollection } from './collections/Collections';
 import { IRawStorage, IRawPartitionBackupConfigurationInfo, IRawBackupProgressInfo, IRawRestoreProgressInfo, IRawPartitionBackup } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { Partition } from './Partition';

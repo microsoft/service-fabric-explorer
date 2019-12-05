@@ -5,11 +5,11 @@ import { tap, map } from 'rxjs/operators';
 import { forkJoin, Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
-import { NodeCollection } from 'src/app/Models/DataModels/Collections';
 import { INodesStatusDetails } from 'src/app/Models/RawDataTypes';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { BaseController } from 'src/app/ViewModels/BaseController';
+import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 
 
 @Component({

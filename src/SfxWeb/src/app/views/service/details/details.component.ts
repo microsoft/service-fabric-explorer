@@ -9,23 +9,19 @@ import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Service } from 'src/app/Models/DataModels/Service';
+import { ServiceBaseController } from '../ServiceBase';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent extends BaseController {
-  appId: string;
-  serviceId: string;
-
-  service: Service;
+export class DetailsComponent extends ServiceBaseController {
   healthEventsListSettings: ListSettings;
   serviceBackupConfigurationInfoListSettings: ListSettings;
 
-
-  constructor(private data: DataService, injector: Injector, private settings: SettingsService) { 
-    super(injector);
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+    super(data, injector);
   }
 
   setup() {
@@ -41,24 +37,15 @@ export class DetailsComponent extends BaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return this.data.getService(this.appId, this.serviceId, true, messageHandler).pipe(mergeMap(service => {
-      this.service = service;
+    if (this.service.isStatefulService) {
+      this.service.serviceBackupConfigurationInfoCollection.refresh(messageHandler);
+    }
 
-      if (this.service.isStatefulService) {
-        this.service.serviceBackupConfigurationInfoCollection.refresh(messageHandler);
-      }
-
-      return forkJoin([
-        this.service.health.refresh(messageHandler),
-        this.service.description.refresh(messageHandler),
-        this.service.partitions.refresh(messageHandler),
-        this.data.backupPolicies.refresh(messageHandler)
-      ]);
-    }))
-  }
-
-  getParams(route: ActivatedRouteSnapshot): void {
-    this.appId = IdUtils.getAppId(route);
-    this.serviceId = IdUtils.getServiceId(route);
+    return forkJoin([
+      this.service.health.refresh(messageHandler),
+      this.service.description.refresh(messageHandler),
+      this.service.partitions.refresh(messageHandler),
+      this.data.backupPolicies.refresh(messageHandler)
+    ]);
   }
 }

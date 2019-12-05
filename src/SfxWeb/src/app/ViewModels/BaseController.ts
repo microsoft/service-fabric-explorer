@@ -1,8 +1,8 @@
 import { OnDestroy, OnInit, Injector } from '@angular/core';
 import { Observable, Subscription, of } from 'rxjs';
 import { IResponseMessageHandler } from '../Common/ResponseMessageHandlers';
-import { ActivatedRoute, Router, NavigationEnd, ActivatedRouteSnapshot } from '@angular/router';
-import { map, filter, tap } from 'rxjs/operators';
+import { ActivatedRoute, Router, ActivatedRouteSnapshot } from '@angular/router';
+import { mergeMap } from 'rxjs/operators';
 
 export abstract class BaseController implements  OnInit, OnDestroy {
 
@@ -24,7 +24,7 @@ export abstract class BaseController implements  OnInit, OnDestroy {
 
              this.setup();
 
-             this.subscriptions.add(this.refresh().pipe(tap()).subscribe());
+             this.subscriptions.add(this.common().pipe(mergeMap( () => this.refresh())).subscribe());
          }))
     }
 
@@ -41,7 +41,10 @@ export abstract class BaseController implements  OnInit, OnDestroy {
     }
 
     refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-        return of();
+        return of(null);
     }
 
+    common(messageHandler?: IResponseMessageHandler): Observable<any>{
+        return of(null);
+    }
 }

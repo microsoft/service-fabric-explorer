@@ -1,6 +1,6 @@
 ﻿import { DataModelBase } from './Base';
 import { IRawApplicationType } from '../RawDataTypes';
-import { ServiceTypeCollection, ApplicationCollection } from './Collections';
+import { ServiceTypeCollection, ApplicationCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateConstants, Constants } from 'src/app/Common/Constants';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';

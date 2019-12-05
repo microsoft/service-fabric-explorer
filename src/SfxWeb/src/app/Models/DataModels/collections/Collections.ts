@@ -1,373 +1,44 @@
-﻿import { IDataModel } from './Base';
-import { IClusterHealthChunk, IHealthStateChunk, IHealthStateChunkList, IServiceHealthStateChunk, IDeployedApplicationHealthStateChunk, IDeployedServicePackageHealthStateChunk } from '../HealthChunkRawDataTypes';
+﻿import { IDataModel } from '../Base';
+import { IClusterHealthChunk, IHealthStateChunk, IHealthStateChunkList, IServiceHealthStateChunk, IDeployedApplicationHealthStateChunk, IDeployedServicePackageHealthStateChunk } from '../../HealthChunkRawDataTypes';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, Subject, of, throwError, forkJoin } from 'rxjs';
 import { ValueResolver, ITextAndBadge } from 'src/app/Utils/ValueResolver';
-import { INodesStatusDetails, NodeStatusDetails, IRawDeployedApplication, IRawDeployedServicePackage } from '../RawDataTypes';
+import { INodesStatusDetails, NodeStatusDetails, IRawDeployedApplication, IRawDeployedServicePackage } from '../../RawDataTypes';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
-import { Node } from './Node';
+import { Node } from '../Node';
 import { HealthStateConstants, NodeStatusConstants, StatusWarningLevel, BannerWarningID, Constants } from 'src/app/Common/Constants';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
 import { mergeMap, map } from 'rxjs/operators';
 import { Utils } from 'src/app/Utils/Utils';
-import { BackupPolicy } from './Cluster';
-import { ApplicationBackupConfigurationInfo, Application } from './Application';
-import { ApplicationTypeGroup, ApplicationType } from './ApplicationType';
-import { Service, ServiceType } from './Service';
+import { BackupPolicy } from '../Cluster';
+import { ApplicationBackupConfigurationInfo, Application } from '../Application';
+import { ApplicationTypeGroup, ApplicationType } from '../ApplicationType';
+import { Service, ServiceType } from '../Service';
 import { IdUtils } from 'src/app/Utils/IdUtils';
-import { Partition } from './Partition';
-import { ReplicaOnPartition } from './Replica';
-import { DeployedApplication } from './DeployedApplication';
-import { DeployedServicePackage } from './DeployedServicePackage';
-import { DeployedCodePackage } from './DeployedCodePackage';
-import { DeployedReplica } from './DeployedReplica';
-import { FabricEventBase, FabricEventInstanceModel, ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent, FabricEvent } from '../eventstore/Events';
-import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter } from '../ListSettings';
+import { Partition } from '../Partition';
+import { ReplicaOnPartition } from '../Replica';
+import { DeployedApplication } from '../DeployedApplication';
+import { DeployedServicePackage } from '../DeployedServicePackage';
+import { DeployedCodePackage } from '../DeployedCodePackage';
+import { DeployedReplica } from '../DeployedReplica';
+import { FabricEventBase, FabricEventInstanceModel, ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent, FabricEvent } from '../../eventstore/Events';
+import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter } from '../../ListSettings';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
-import { NetworkOnNode } from './NetworkOnNode';
-import { NetworkOnApp } from './NetworkOnApp';
-import { Network } from './Network';
-import { AppOnNetwork } from './AppOnNetwork';
-import { PartitionBackup, PartitionBackupInfo } from './PartitionBackupInfo';
-import { DeployedContainerOnNetwork } from './DeployedContainerOnNetwork';
-import { NodeOnNetwork } from './NodeOnNetwork';
+import { NetworkOnNode } from '../NetworkOnNode';
+import { NetworkOnApp } from '../NetworkOnApp';
+import { Network } from '../Network';
+import { AppOnNetwork } from '../AppOnNetwork';
+import { PartitionBackup, PartitionBackupInfo } from '../PartitionBackupInfo';
+import { DeployedContainerOnNetwork } from '../DeployedContainerOnNetwork';
+import { NodeOnNetwork } from '../NodeOnNetwork';
+import { DataModelCollectionBase } from './CollectionBase';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
-
-export interface IDataModelCollection<T extends IDataModel<any>> {
-    // The real collection wrapped
-    collection: T[];
-
-    // The length of current collection
-    length: number;
-
-    // Indicates if the collection has been initialized (refreshed at least one time)
-    isInitialized: boolean;
-
-    // Indicates if the current collection is refreshing (calling REST API to update the raw object)
-    isRefreshing: boolean;
-
-    // The relative URL of this collection page
-    viewPath: string;
-
-    // Find the entity from current collection by unique ID
-    find(uniqueId: string): T;
-
-    // Invokes service fabric REST API to retrieve updated version of this collection
-    refresh(messageHandler?: IResponseMessageHandler): Observable<any>;
-
-    // If current entity is not initialized, call refresh to get the object from server, or return the cached version of the object.
-    ensureInitialized(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<any>;
-
-    // Find and merge the health chunk data into current collection
-    mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any>;
-}
-
-export class DataModelCollectionBase<T extends IDataModel<any>> implements IDataModelCollection<T> {
-    public isInitialized: boolean = false;
-    public parent: any;
-    public collection: T[] = [];
-
-    protected valueResolver: ValueResolver = new ValueResolver();
-
-    private appendOnly: boolean;
-    private hash: Record<string, T>;
-    //private refreshingLoadPromise: CancelablePromise<T[]>;
-    private refreshingPromise: Subject<any>;
-
-    public get viewPath(): string {
-        return "";
-    }
-
-    public get length(): number {
-        return this.collection.length;
-    }
-
-    public get isRefreshing(): boolean {
-        return !!this.refreshingPromise;
-    }
-
-    protected get indexPropery(): string {
-        // index the collection by "uniqueId" by default
-        return "uniqueId";
-    }
-
-    public constructor(public data: DataService, parent?: any, appendOnly: boolean = false) {
-        this.parent = parent;
-        this.appendOnly = appendOnly;
-        //this.refreshingLoadPromise = new CancelablePromise(this.data.$q);
-    }
-
-    // Base refresh logic, do not override
-    public refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-        if (!this.refreshingPromise) {
-            this.refreshingPromise = new Subject<any>();
-            
-            this.retrieveNewCollection(messageHandler).pipe(mergeMap(collection => {
-                console.log(collection)
-                return this.update(collection)
-                //return this.update(collection)
-            })).subscribe( () => {
-                //console.log(this)
-                this.refreshingPromise.next(this);
-                this.refreshingPromise.complete();
-                this.refreshingPromise = null;
-            }
-            // , error => {
-            //     console.log(error)
-            //     if (error) {
-            //         throw error;
-            //     }
-            //     // Else skipping as load got canceled.
-            //     return of(null);
-            // }
-            );
-                // this.refreshingLoadPromise.load(() => {
-                //     return this.retrieveNewCollection(messageHandler);
-                // }).catch((error) => {
-                //     if (error && error.isCanceled !== true) {
-                //         throw error;
-                //     }
-                //     // Else skipping as load got canceled.
-                //     return this.data.$q.when(null);
-                // }).then(collection => {
-                //     if (collection) {
-                //         return this.update(collection);
-                //     }
-                // }).then(() => {
-                //     return this;
-                // }).finally(() => {
-                //     this.refreshingPromise = null;
-                // });
-        }
-        return this.refreshingPromise.asObservable();
-    }
-
-    public clear(): Observable<any> {
-        this.cancelLoad();
-        return of(this.refreshingPromise ? this.refreshingPromise : true).pipe(map(() => {
-            this.collection = [];
-            this.isInitialized = false;
-        }));
-    }
-
-    protected cancelLoad(): void {
-        if (this.refreshingPromise) {
-            this.refreshingPromise.next();
-            this.refreshingPromise.complete();
-        }
-    }
-
-    protected update(collection: T[]): Observable<any> {
-        this.isInitialized = true;
-        console.log(collection)
-        this.collection = CollectionUtils.updateDataModelCollection(this.collection, collection, this.appendOnly);
-        console.log(this.collection)
-        this.hash = Utils.keyBy(this.collection, this.indexPropery);
-        return this.updateInternal();
-    }
-
-    public ensureInitialized(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<any> {
-        if (!this.isInitialized || forceRefresh) {
-            return this.refresh(messageHandler);
-        }
-        return of(this);
-    }
-
-    public find(uniqueId: string): T {
-        if (this.hash) {
-            return this.hash[uniqueId];
-        }
-        return null;
-    }
-
-    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        return of(true);
-    }
-
-    // All derived class should override this function to do custom refreshing
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<T[]> {
-        return throwError(null);
-    }
-
-    // Derived class should override this function to do custom updating
-    protected updateInternal(): Observable<any>{
-        return of(true);
-    }
-
-    protected updateCollectionFromHealthChunkList<P extends IHealthStateChunk>(
-        healthChunkList: IHealthStateChunkList<P>,
-        newIdSelector: (item: P) => string): Observable<any> {
-
-        if (!CollectionUtils.compareCollectionsByKeys(this.collection, healthChunkList.Items, item => item[this.indexPropery], newIdSelector)) {
-            if (!this.isRefreshing) {
-                // If the health chunk data has different set of keys, refresh the entire collection
-                // to get full information of the new items.
-                return this.refresh();
-            } else {
-                return of(true);
-            }
-        }
-
-        // Merge health chunk data
-        let updatePromises = [];
-        CollectionUtils.updateCollection<T, P>(
-            this.collection,
-            healthChunkList.Items,
-            item => item[this.indexPropery],
-            newIdSelector,
-            null, // no need to create object because a full refresh will be scheduled when new object is returned by health chunk API,
-            // which is needed because the information returned by the health chunk api is not enough for us to create a full data object.
-            (item: T, newItem: P) => {
-                updatePromises.push(item.mergeHealthStateChunk(newItem));
-            });
-
-        return forkJoin(updatePromises);
-    }
-
-    // Derived class should implement this if it is going to use details-view directive as child and call showDetails(itemId).
-    protected getDetailsList(item: any): IDataModelCollection<any> {
-        return null;
-    }
-}
-
-export class NodeCollection extends DataModelCollectionBase<Node> {
-    //make sure we only check once per session and this object will get destroyed/recreated
-    private static checkedOneNodeScenario = false;
-    public healthState: ITextAndBadge;
-    public upgradeDomains: string[];
-    public faultDomains: string[];
-    public healthySeedNodes: string;
-    public disabledNodes: string;
-    public seedNodeCount: number;
-
-    public constructor(data: DataService) {
-        super(data);
-    }
-
-    public get viewPath(): string {
-        return this.data.routes.getNodesViewPath();
-    }
-
-    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        return this.updateCollectionFromHealthChunkList(clusterHealthChunk.NodeHealthStateChunks, item => IdGenerator.node(item.NodeName)).pipe(map(() => {
-            this.updateNodesHealthState();
-        }));
-    }
-
-    public getNodeStateCounts(): INodesStatusDetails[] {
-        let counts = {};
-        let allNodes = new NodeStatusDetails("All nodes");
-        let seedNodes = new NodeStatusDetails("Seed Nodes");
-
-        this.collection.forEach(node => {
-            if (node.raw.IsSeedNode) {
-                seedNodes.add(node);
-            }
-            if (!(node.raw.Type in counts)) {
-                counts[node.raw.Type] = new NodeStatusDetails(node.raw.Type);
-            }
-            counts[node.raw.Type].add(node);
-            allNodes.add(node);
-        });
-        return [allNodes, seedNodes].concat(Object.keys(counts).map(key => counts[key]));
-    }
-
-    public setAdvancedMode(state: boolean): void {
-        this.collection.forEach( node => {
-            node.removeAdvancedActions();
-            if (state) {
-                node.setAdvancedActions();
-            }
-        });
-    }
-
-    protected get indexPropery(): string {
-        // node should be indexed by name
-        return "name";
-    }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getNodes(messageHandler).pipe(map(items => {
-            return items.map(raw => new Node(this.data, raw));
-        }));
-    }
-
-    protected updateInternal(): Observable<any> {
-        this.updateNodesHealthState();
-
-        this.faultDomains = this.collection.map(node => node.raw.FaultDomain);
-        this.faultDomains = Utils.unique(this.faultDomains).sort();
-
-        this.upgradeDomains = this.collection.map(node => node.raw.UpgradeDomain);
-        this.upgradeDomains = Utils.unique(this.upgradeDomains).sort();
-
-        let seedNodes = this.collection.filter(node => node.raw.IsSeedNode);
-        let healthyNodes = seedNodes.filter(node => node.healthState.text === HealthStateConstants.OK);
-
-        let disabledNodes = 0;
-        let disablingNodes = 0;
-
-        this.collection.forEach(node => {
-            if (node.raw.NodeStatus === NodeStatusConstants.Disabled) {
-                disabledNodes++;
-            }
-            if (node.raw.NodeStatus === NodeStatusConstants.Disabling) {
-                disablingNodes++;
-            }
-        });
-
-        this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
-        this.seedNodeCount = seedNodes.length;
-
-        this.checkSeedNodeCount(this.seedNodeCount);
-        this.checkOneNodeScenario();
-
-        this.healthySeedNodes = seedNodes.length.toString() + " (" +
-            Math.round(healthyNodes.length / seedNodes.length * 100).toString() + "%)";
-
-        return of(true);
-    }
-
-    private checkSeedNodeCount(count: number) {
-        //if < 5 seed nodes display warning
-        //if count is 1, it is one box/test only scenario
-        if (count < 5 && count !== 1) {
-            this.data.warnings.addOrUpdateNotification({
-                message: "Cluster is degraded because it does not have 5 seed nodes. See link for more details",
-                level: StatusWarningLevel.Error,
-                priority: 2,
-                id: BannerWarningID.ClusterDegradedState,
-                link: "https://aka.ms/servicefabric/durability"
-            });
-        }else {
-            this.data.warnings.removeNotificationById(BannerWarningID.ClusterDegradedState);
-        }
-    }
-
-    private checkOneNodeScenario(): void {
-        if ( !NodeCollection.checkedOneNodeScenario && this.collection.length === 1) {
-            this.data.warnings.addOrUpdateNotification({
-                message: "One node cluster is considered a test cluster and cannot perform cluster upgrades.",
-                level: StatusWarningLevel.Info,
-                priority: 1,
-                id: BannerWarningID.OneNodeCluster,
-                link: "https://aka.ms/servicefabric/durability"
-            });
-        }
-        NodeCollection.checkedOneNodeScenario = true;
-    }
-
-    private updateNodesHealthState(): void {
-        // calculates the nodes health state which is the max state value of all nodes
-        this.healthState = this.valueResolver.resolveHealthStatus(Utils.max(this.collection.map(node => HealthStateConstants.Values[node.healthState.text])).toString());
-    }
-}
 
 export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy> {
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -646,36 +317,6 @@ export class ServiceTypeCollection extends DataModelCollectionBase<ServiceType> 
     }
 }
 
-export class ServiceCollection extends DataModelCollectionBase<Service> {
-    public constructor(data: DataService, public parent: Application) {
-        super(data, parent);
-    }
-
-    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        let serviceHealthStateChunks = null;
-        if (this.parent.name === Constants.SystemAppName) {
-            serviceHealthStateChunks = clusterHealthChunk.SystemApplicationHealthStateChunk.ServiceHealthStateChunks;
-        } else {
-            let appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.name);
-            if (appHealthChunk) {
-                serviceHealthStateChunks = appHealthChunk.ServiceHealthStateChunks;
-            }
-        }
-        if (serviceHealthStateChunks) {
-            return this.updateCollectionFromHealthChunkList<IServiceHealthStateChunk>(serviceHealthStateChunks, item => IdGenerator.service(IdUtils.nameToId(item.ServiceName)));
-        }
-        return of(true);
-    }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getServices(this.parent.id, messageHandler).pipe(map(
-            items => {
-                return items.map(raw => new Service(this.data, raw, this.parent));
-            }
-        ))
-    }
-}
-
 export class PartitionCollection extends DataModelCollectionBase<Partition> {
     public constructor(data: DataService, public parent: Service) {
         super(data, parent);
@@ -718,42 +359,6 @@ export class ReplicaOnPartitionCollection extends DataModelCollectionBase<Replic
             .pipe(map(items => {
                 return items.map(raw => new ReplicaOnPartition(this.data, raw, this.parent));
             }));
-    }
-}
-
-export class DeployedApplicationCollection extends DataModelCollectionBase<DeployedApplication> {
-    public constructor(data: DataService, public parent: Node) {
-        super(data, parent);
-    }
-
-    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        let nodeHealthChunk = clusterHealthChunk.NodeHealthStateChunks.Items.find(chunk => chunk.NodeName === this.parent.name);
-        if (nodeHealthChunk) {
-            return this.updateCollectionFromHealthChunkList<IDeployedApplicationHealthStateChunk>(
-                nodeHealthChunk.DeployedApplicationHealthStateChunks,
-                item => IdGenerator.deployedApp(IdUtils.nameToId(item.ApplicationName)));
-        }
-    }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getDeployedApplications(this.parent.name, messageHandler)
-            .pipe(map((raw: IRawDeployedApplication[]) => {
-                return raw.map(rawApp => new DeployedApplication(this.data, rawApp, this.parent));
-            }));
-    }
-
-    protected updateInternal(): Observable<any> {
-        // The deployed application does not include "HealthState" information by default.
-        // Trigger a health chunk query to fill the health state information.
-        if (this.length > 0) {
-            let healthChunkQueryDescription = this.data.getInitialClusterHealthChunkQueryDescription();
-            this.parent.addHealthStateFiltersForChildren(healthChunkQueryDescription);
-            return this.data.getClusterHealthChunk(healthChunkQueryDescription).pipe(mergeMap(healthChunk => {
-                return this.mergeClusterHealthStateChunk(healthChunk);
-            }));
-        }else{
-            return of(true);
-        }
     }
 }
 
