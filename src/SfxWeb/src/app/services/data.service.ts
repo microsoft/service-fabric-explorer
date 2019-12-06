@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SystemApplication, Application } from '../Models/DataModels/Application';
-import { ApplicationTypeGroupCollection, ApplicationCollection, NetworkCollection, BackupPolicyCollection, ServiceCollection, IDataModelCollection, ServiceTypeCollection, DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, DeployedApplicationCollection, ReplicaOnPartitionCollection, PartitionCollection } from '../Models/DataModels/collections/Collections';
+import { ApplicationTypeGroupCollection, ApplicationCollection, NetworkCollection, BackupPolicyCollection, ServiceTypeCollection, DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, ReplicaOnPartitionCollection, PartitionCollection } from '../Models/DataModels/collections/Collections';
 import { RoutesService } from './routes.service';
 import { MessageService } from './message.service';
 import { TelemetryService } from './telemetry.service';
@@ -27,6 +27,9 @@ import { DeployedApplication } from '../Models/DataModels/DeployedApplication';
 import { ReplicaOnPartition } from '../Models/DataModels/Replica';
 import { Partition } from '../Models/DataModels/Partition';
 import { NodeCollection } from '../Models/DataModels/collections/NodeCollection';
+import { ServiceCollection } from '../Models/DataModels/collections/ServiceCollection';
+import { IDataModelCollection } from '../Models/DataModels/collections/CollectionBase';
+import { DeployedApplicationCollection } from '../Models/DataModels/collections/DeployedApplicationCollection';
 
 @Injectable({
   providedIn: 'root'

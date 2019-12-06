@@ -5,6 +5,7 @@ import { Utils } from './Utils';
 
 export class HealthUtils {
     public static getParsedHealthEvaluations(rawUnhealthyEvals: IRawUnhealthyEvaluation[], level: number = 0, parent: HealthEvaluation = null, data: DataService): HealthEvaluation[] {
+        console.log(rawUnhealthyEvals)
         let healthEvals: HealthEvaluation[] = new Array(0);
         let children: HealthEvaluation[] = new Array(0);
         if (rawUnhealthyEvals) {

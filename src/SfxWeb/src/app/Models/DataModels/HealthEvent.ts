@@ -7,7 +7,7 @@ import { HealthEvaluation } from './Shared';
 import { Observable, of } from 'rxjs';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
-import { map } from 'rxjs/operators';
+import { map, tap } from 'rxjs/operators';
 
 export class HealthEvent extends DataModelBase<IRawHealthEvent> {
     public constructor(data: DataService, raw: IRawHealthEvent) {
@@ -51,12 +51,15 @@ export class HealthBase<T extends IRawHealth> extends DataModelBase<T> {
     }
 
     protected parseCommonHealthProperties(): Observable<any> {
+        console.log(this.raw)
         let healthEvents = this.raw.HealthEvents.map(rawHealthEvent => new HealthEvent(this.data, <IRawHealthEvent>rawHealthEvent));
-        CollectionUtils.updateDataModelCollection(this.healthEvents, healthEvents);
+        this.healthEvents = CollectionUtils.updateDataModelCollection(this.healthEvents, healthEvents);
+        console.log(CollectionUtils.updateDataModelCollection(this.healthEvents, healthEvents));
         // There is no unique ID to identify the unhealthy evaluations collection, update the collection directly.
         // Make sure that the apps are initialized because some of the parsedHealth Evaluations need to reference the app's collection and that needs to be set.
-        return this.data.apps.ensureInitialized().pipe(map( () => {                                                                                        //setting base and parent regs to null
+        this.data.apps.ensureInitialized().pipe(map( () => {
+            console.log(this)                                                                                    //setting base and parent regs to null
             this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
-        }));
+        })).pipe(tap()).subscribe();
     }
 }

@@ -1,0 +1,61 @@
+@import "src/styles.scss";
+
+.navbar-brand {
+    color: $navbar-color;
+    font-size: $font-size-large;
+    position: relative;
+    font-weight: lighter;
+    padding: 12px;
+    vertical-align: -webkit-baseline-middle;
+    &.navbar-brand-azure {
+        background-color: $navbar-brand-background-color;
+        width: 130px;
+    }
+
+    .navbar-brand-icon {
+        display: inline-block;
+        
+        margin-left: 14px;
+        margin-right: 14px;
+    }
+}
+
+.header-bar {
+    height: 50px; 
+    background-color: black;
+    color: white;
+    position: fixed;
+    right: 0;
+    left: 0; 
+
+    display: flex; 
+    flex-direction: row; 
+    align-items: center;
+
+}
+
+.left-bar {
+    display: block;
+    position: absolute;
+    top: 50px;
+    bottom: 0;
+}
+
+.main-content {
+    position: absolute;
+    left: 400px;
+    right: 20px;
+    top: 50px;
+    bottom: 20px;
+}
+
+.slider-bar {
+    z-index: 1;
+    position: absolute;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 15px;
+    background-color: black;
+    cursor: col-resize; height: 100%;
+}

@@ -1,45 +1,47 @@
-<li *ngFor="let child of node.displayedChildren" class="node" [ngClass]="{ 'selected': child.selected }" >
+<div *ngIf="node.isExpanded">
+    <li *ngFor="let child of node.displayedChildren" class="node" [ngClass]="{ 'selected': child.selected }" >
 
-    <div class="self" (click)="child.handleClick()" style="width: 100%" [attr.aria-label]="child.displayName()">
-        <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx, 'width': ('calc(100% - ' + child.paddingLeftPx.toString() + ')') }"></span>
-            <span tabindex="-1" class="expander icon bowtie-icon" aria-hidden="true"
-                    (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
-                    [ngClass]="{ 'bowtie-chevron-right-light': child.isCollapsed, 'bowtie-chevron-down-light': child.isExpanded }"
-                    [ngStyle]="{ 'left': (child.paddingLeft - 8) + 'px' }">()
-            </span>
-            <!-- <span tabindex="-1" class="icon bowtie-icon" aria-hidden="true" ng-if="child.canExpandAll"
-            ng-click="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()" ng-show="child.hasExpander"
-            ng-class="{ 'bowtie-math-plus-heavy': child.isCollapsed, 'bowtie-math-minus': child.isExpanded }"
-            title="{{child.isCollapsed ? 'Expand All' : 'Collapse All'}}">
-            </span> -->
-            <!-- <image ng-if="child.badge && child.badge() && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
-                    class="tree-badge" title="{{child.badge().text}}"
-                    ng-src="images/{{child.badge().badgeClass}}.svg" role="presentation"></image> -->
-            <span class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()"></span>
-
-            <!-- <div ng-if="::child.actions && child.actions.length > 0"
-                    class="btn-group actions-menu"
-                    uib-dropdown dropdown-append-to-body on-toggle="child.contextMenuToggled(open)"
-                    ng-click="$event.stopPropagation()"
-                    ng-dblclick="$event.stopPropagation()" role="presentation">
-                <a href="" role="button" uib-dropdown-toggle
-                    class="dark-background-link actions-expander"
-                    ng-disabled="child.actions && child.actions.anyRunning" aria-label="Click to open context menu">
-                    <span class="bowtie-icon bowtie-ellipsis"></span>
-                </a>
-                <ul role="menu" class="dropdown-menu dropdown-menu-right" uib-dropdown-menu style="list-style: none">
-                    <li role="menuitem" ng-repeat="action in child.actions.collection track by action.name">
-                        <a role="menuitem"
-                            tabindex="-1"
-                            href=""
-                            ng-click="child.actions.runWithTelemetry(action, 'ContextMenu')"
-                            ng-disabled="!action.canRun()">
-                            {{::action.title}}
+            <div class="self" (click)="child.handleClick()" style="width: 100%" [attr.aria-label]="child.displayName()">
+                <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx, 'width': ('calc(100% - ' + child.paddingLeftPx.toString() + ')') }"></span>
+                    <span tabindex="-1" class="expander icon bowtie-icon" aria-hidden="true"
+                            (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
+                            [ngClass]="{ 'bowtie-chevron-right-light': child.isCollapsed, 'bowtie-chevron-down-light': child.isExpanded }"
+                            [ngStyle]="{ 'left': (child.paddingLeft - 8) + 'px' }">()
+                    </span>
+                    <span tabindex="-1" class="icon bowtie-icon" aria-hidden="true" *ngIf="child.canExpandAll"
+                    (click)="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()"
+                    [ngClass]="{ 'bowtie-math-plus-heavy': child.isCollapsed, 'bowtie-math-minus': child.isExpanded }"
+                    [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'"> x
+                    </span>
+                    <img *ngIf="child.badge && child.badge() && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
+                            class="tree-badge" [title]="child.badge().text"
+                            [src]="child.badge().badgeClass + '.svg'" role="presentation">
+                    <span class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()"></span>
+        
+                    <!-- <div ng-if="::child.actions && child.actions.length > 0"
+                            class="btn-group actions-menu"
+                            uib-dropdown dropdown-append-to-body on-toggle="child.contextMenuToggled(open)"
+                            ng-click="$event.stopPropagation()" 
+                            ng-dblclick="$event.stopPropagation()" role="presentation">
+                        <a href="" role="button" uib-dropdown-toggle
+                            class="dark-background-link actions-expander"
+                            ng-disabled="child.actions && child.actions.anyRunning" aria-label="Click to open context menu">
+                            <span class="bowtie-icon bowtie-ellipsis"></span>
                         </a>
-                    </li>
-                </ul>
-            </div> -->
-        </div>
-
-    <app-tree-node [node]="child.childGroupViewModel" ></app-tree-node>
-</li>
+                        <ul role="menu" class="dropdown-menu dropdown-menu-right" uib-dropdown-menu style="list-style: none">
+                            <li role="menuitem" ng-repeat="action in child.actions.collection track by action.name">
+                                <a role="menuitem"
+                                    tabindex="-1"
+                                    href=""
+                                    ng-click="child.actions.runWithTelemetry(action, 'ContextMenu')"
+                                    ng-disabled="!action.canRun()">
+                                    {{::action.title}}
+                                </a>
+                            </li>
+                        </ul>
+                    </div> -->
+                </div>
+        
+            <app-tree-node [node]="child.childGroupViewModel" ></app-tree-node>
+        </li>
+</div>

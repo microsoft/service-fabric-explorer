@@ -58,7 +58,8 @@
                                 [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"
                                 (click)="handleClickRow(item)"
                                 [ngClass]="{'bowtie-chevron-right': item.isSecondRowCollapsed, 'bowtie-chevron-down': !item.isSecondRowCollapsed}"></i>
-                                <span [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
+                                <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
+                                <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
                             </td>
                         </tr>
                         <!-- Optional second row -->

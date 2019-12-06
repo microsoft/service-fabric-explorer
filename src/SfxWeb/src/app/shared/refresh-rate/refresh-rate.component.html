@@ -1,0 +1,14 @@
+REFRESH RATE {{displayRate}} 
+<button (click)="change(0)"> OFF </button>
+<input [(ngModel)]="refreshRate" type="range" list="tickmarks" step="1" min="0" max="6" (ngModelChange)="change($event)">
+<button (click)="change(6)"> FAST </button>
+
+<datalist id="tickmarks">
+  <option value="0"></option>
+  <option value="1"></option>
+  <option value="2"></option>
+  <option value="3"></option>
+  <option value="4"></option>
+  <option value="5"></option>
+  <option value="6"></option>
+</datalist> 

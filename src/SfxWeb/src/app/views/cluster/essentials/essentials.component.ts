@@ -7,6 +7,8 @@ import { Observable, forkJoin } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { BaseController } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
+import { ListSettings } from 'src/app/Models/ListSettings';
+import { SettingsService } from 'src/app/services/settings.service';
 
 
 @Component({
@@ -20,8 +22,9 @@ export class EssentialsComponent extends BaseController {
   nodes: NodeCollection;
   clusterHealth: ClusterHealth;
   systemApp: SystemApplication;
+  unhealthyEvaluationsListSettings: ListSettings;
 
-  constructor(public data: DataService, injector: Injector) {
+  constructor(public data: DataService, injector: Injector, public settings: SettingsService) {
     super(injector);
   }
 
@@ -30,6 +33,8 @@ export class EssentialsComponent extends BaseController {
     this.clusterUpgradeProgress = this.data.clusterUpgradeProgress;
     this.nodes = this.data.nodes;
     this.systemApp = this.data.systemApp;
+    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
+    console.log(this.clusterHealth)
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {

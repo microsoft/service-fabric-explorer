@@ -1,5 +1,6 @@
 ﻿import { HtmlUtils } from '../Utils/HtmlUtils';
 import { Utils } from '../Utils/Utils';
+import { HyperLinkComponent } from '../modules/detail-list-templates/hyper-link/hyper-link.component';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -229,12 +230,15 @@ export class ListColumnSettingWithFilter extends ListColumnSetting {
 }
 
 export class ListColumnSettingForLink extends ListColumnSetting {
+    template = HyperLinkComponent;
+    href: (item: any) => string;
     public constructor(
         propertyPath: string,
         displayName: string,
         href: (item: any) => string) {
 
         super(propertyPath, displayName, [propertyPath], false, (item, property) => HtmlUtils.getLinkHtml(property, href(item)));
+        this.href = href;
     }
 }
 

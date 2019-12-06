@@ -4,6 +4,7 @@ import { TreeService } from 'src/app/services/tree.service';
 import { ServiceBaseController } from '../ServiceBase';
 import { DataService } from 'src/app/services/data.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
+import { Constants } from 'src/app/Common/Constants';
 
 @Component({
   selector: 'app-base',
@@ -34,12 +35,23 @@ export class BaseComponent extends ServiceBaseController {
   }
 
   setup() {
-    this.tree.selectTreeNode([
-      IdGenerator.cluster(),
-      IdGenerator.appGroup(),
-      IdGenerator.appType(this.appTypeName),
-      IdGenerator.app(this.appId),
-      IdGenerator.service(this.serviceId)
-    ]);
+    if (this.appTypeName === Constants.SystemAppTypeName) {
+      // remove manifest tab for system app service
+      delete (this.tabs["manifest"]);
+
+      this.tree.selectTreeNode([
+          IdGenerator.cluster(),
+          IdGenerator.systemAppGroup(),
+          IdGenerator.service(this.serviceId)
+      ]);
+    } else {
+      this.tree.selectTreeNode([
+          IdGenerator.cluster(),
+          IdGenerator.appGroup(),
+          IdGenerator.appType(this.appTypeName),
+          IdGenerator.app(this.appId),
+          IdGenerator.service(this.serviceId)
+      ]);
+    }
   }
 }
