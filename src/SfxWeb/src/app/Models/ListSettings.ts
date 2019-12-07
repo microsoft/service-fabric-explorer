@@ -1,6 +1,7 @@
 ﻿import { HtmlUtils } from '../Utils/HtmlUtils';
 import { Utils } from '../Utils/Utils';
 import { HyperLinkComponent } from '../modules/detail-list-templates/hyper-link/hyper-link.component';
+import { CopyTextComponent } from '../modules/detail-list-templates/copy-text/copy-text.component';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -242,4 +243,12 @@ export class ListColumnSettingForLink extends ListColumnSetting {
     }
 }
 
+export class ListColumnSettingWithCopyText extends ListColumnSetting {
+    template = CopyTextComponent;
+    public constructor(
+        propertyPath: string,
+        displayName: string) {
 
+        super(propertyPath, displayName);
+    }
+}

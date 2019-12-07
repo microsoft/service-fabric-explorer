@@ -19,7 +19,7 @@ export class HealthUtils {
                     if (parent) {
                         parentUrl = parent.viewPathUrl;
                     }else {
-                        parentUrl = `#${location.pathname}`; // TODO CHECK THIS works?
+                        parentUrl = `${location.pathname}`; // TODO CHECK THIS works?
                     }
                     const pathData = HealthUtils.getViewPathUrl(healthEval, data, parentUrl);
                     health.viewPathUrl = pathData.viewPathUrl;
@@ -45,7 +45,6 @@ export class HealthUtils {
      */
     public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): {viewPathUrl: string, displayName: string } {
         let viewPathUrl = "";
-        let replaceText = "";
 
         switch (healthEval.Kind) {
             case "Nodes" : {
@@ -55,7 +54,6 @@ export class HealthUtils {
             case "Node" : {
                 let nodeName = healthEval["NodeName"];
                 viewPathUrl = data.routes.getNodeViewPath(nodeName);
-                replaceText = nodeName;
                 break;
             }
             case "Applications" : {
@@ -69,8 +67,7 @@ export class HealthUtils {
                 let app = data.apps.find(appName);
                 if (app) {
                     let appType = app.raw.TypeName;
-                    viewPathUrl += `#/apptype/${data.routes.doubleEncode(appType)}/app/${data.routes.doubleEncode(appName)}`;
-                    replaceText = applicationName;
+                    viewPathUrl += `/apptype/${data.routes.doubleEncode(appType)}/app/${data.routes.doubleEncode(appName)}`;
                 }
                 break;
             }
@@ -78,25 +75,22 @@ export class HealthUtils {
                 let exactServiceName = healthEval["ServiceName"].replace("fabric:/", "");
                 //Handle system services slightly different by setting their exact path
                 if (healthEval["ServiceName"].startsWith("fabric:/System")) {
-                    viewPathUrl = `#/apptype/System/app/System/service/${data.routes.doubleEncode(exactServiceName)}`;
+                    viewPathUrl = `/apptype/System/app/System/service/${data.routes.doubleEncode(exactServiceName)}`;
                 }else {
                     parentUrl += `/service/${data.routes.doubleEncode(exactServiceName)}`;
                     viewPathUrl = parentUrl;
                 }
-                replaceText = "fabric:/" + exactServiceName;
                 break;
             }
             case "Partition" : {
                 let partitionId = healthEval["PartitionId"];
                 parentUrl += `/partition/${data.routes.doubleEncode(partitionId)}`;
-                replaceText = partitionId;
                 viewPathUrl = parentUrl;
                 break;
             }
             case "Replica" : {
                 let replicaId = healthEval["ReplicaOrInstanceId"];
                 parentUrl += `/replica/${data.routes.doubleEncode(replicaId)}`;
-                replaceText = replicaId;
                 viewPathUrl = parentUrl;
                 break;
             }
@@ -111,9 +105,7 @@ export class HealthUtils {
                 const nodeName = healthEval["NodeName"];
                 const applicationName = healthEval["Name"];
                 const appName = applicationName.replace("fabric:/", "");
-
-                viewPathUrl += `#/node/${data.routes.doubleEncode(nodeName)}/deployedapp/${data.routes.doubleEncode(appName)}`;
-                replaceText = applicationName;
+                viewPathUrl += `/node/${data.routes.doubleEncode(nodeName)}/deployedapp/${data.routes.doubleEncode(appName)}`;
                 break;
             }
 
@@ -122,7 +114,6 @@ export class HealthUtils {
                 const activationId = healthEval["ServicePackageActivationId"];
                 const activationIdUrlInfo =  activationId ? "activationid/" + data.routes.doubleEncode(activationId) : "";
                 viewPathUrl = parentUrl + `/deployedservice/${activationIdUrlInfo}${serviceManifestName}`;
-                replaceText = serviceManifestName;
                 break;
             }
 
@@ -135,9 +126,9 @@ export class HealthUtils {
                 break;
             }
         }
-        if (replaceText.length > 0) {
-            healthEval.Description = Utils.injectLink(healthEval.Description, replaceText, viewPathUrl, replaceText);
-        }
-        return {viewPathUrl: viewPathUrl, displayName: replaceText };
+        // if (replaceText.length > 0) {
+        //     healthEval.Description = Utils.injectLink(healthEval.Description, replaceText, viewPathUrl, replaceText);
+        // }
+        return {viewPathUrl: viewPathUrl, displayName: "" };
     }
 }

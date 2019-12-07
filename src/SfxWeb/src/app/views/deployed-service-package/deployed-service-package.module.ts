@@ -7,6 +7,7 @@ import { DetailsComponent } from './details/details.component';
 import { ManifestComponent } from './manifest/manifest.component';
 import { EssentialsComponent } from './essentials/essentials.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     SharedModule,
-    DeployedServicePackageRoutingModule
+    DeployedServicePackageRoutingModule,
+    DetailListTemplatesModule
   ]
 })
 export class DeployedServicePackageModule { }

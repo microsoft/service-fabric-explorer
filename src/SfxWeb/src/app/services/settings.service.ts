@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ListColumnSetting, ListSettings, ListColumnSettingForBadge } from '../Models/ListSettings';
+import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink, ListColumnSettingWithCopyText } from '../Models/ListSettings';
 import { HtmlUtils } from '../Utils/HtmlUtils';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
@@ -76,9 +76,9 @@ export class SettingsService {
   public getNewOrExistingUnhealthyEvaluationsListSettings(listKey: string = "unhealthyEvaluations") {
       return this.getNewOrExistingListSettings(listKey, null,
           [
-              new ListColumnSetting("kind", "Kind", null, false, (item) => HtmlUtils.getSpanWithLink("preserve-whitespace", item.kind, item.viewPath)),
+              new ListColumnSettingForLink("kind", "Kind", (item) =>  item.viewPath),
               new ListColumnSettingForBadge("healthState", "Health State"),
-              new ListColumnSetting("description", "Description", null, false, (item) => { return `<sfx-clip-board text="item.description"></sfx-clip-board> ${HtmlUtils.getSpanWithCustomClass("preserve-whitespace-wrap", item.description)}`; })
+              new ListColumnSettingWithCopyText("description", "Description")
           ]);
   }
 

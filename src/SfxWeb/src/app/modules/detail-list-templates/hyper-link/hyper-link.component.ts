@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
-import { ListColumnSetting, ListColumnSettingForLink } from 'src/app/Models/ListSettings';
+import { ListColumnSettingForLink } from 'src/app/Models/ListSettings';
 
 @Component({
   selector: 'app-hyper-link',
@@ -18,7 +18,6 @@ export class HyperLinkComponent implements OnInit, DetailBaseComponent {
 
   ngOnInit() {
     this.link = this.listSetting.href(this.item);
-    console.log(this)
   }
 
 }

@@ -7,6 +7,7 @@ import { AllComponent } from './all/all.component';
 import { UpgradingComponent } from './upgrading/upgrading.component';
 import { EventsComponent } from './events/events.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 
 
 @NgModule({
@@ -14,7 +15,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     ApplicationsRoutingModule,
-    SharedModule
+    SharedModule,
+    DetailListTemplatesModule
   ]
 })
 export class ApplicationsModule { }

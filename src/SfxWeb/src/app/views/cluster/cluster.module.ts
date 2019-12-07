@@ -11,6 +11,7 @@ import { ClustermapComponent } from './clustermap/clustermap.component';
 import { ImagestoreComponent } from './imagestore/imagestore.component';
 import { ManifestComponent } from './manifest/manifest.component';
 import { EventsComponent } from './events/events.component';
+import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 
 
 @NgModule({
@@ -18,7 +19,8 @@ import { EventsComponent } from './events/events.component';
   imports: [
     CommonModule,
     ClusterRoutingModule,
-    SharedModule
+    SharedModule,
+    DetailListTemplatesModule
   ]
 })
 export class ClusterModule { }

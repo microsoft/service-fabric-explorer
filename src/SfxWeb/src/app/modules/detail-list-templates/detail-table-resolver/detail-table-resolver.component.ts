@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
-import { ResolverDirective } from '../../../shared/directive/resolver.directive';
+import { ResolverDirective } from '../resolver.directive';
 import { Type } from '@angular/core';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 

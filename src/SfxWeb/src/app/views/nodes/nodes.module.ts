@@ -6,6 +6,7 @@ import { BaseComponent } from './base/base.component';
 import { AllNodesComponent } from './all-nodes/all-nodes.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { EventsComponent } from './events/events.component';
+import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 
 
 @NgModule({
@@ -13,7 +14,8 @@ import { EventsComponent } from './events/events.component';
   imports: [
     CommonModule,
     NodesRoutingModule,
-    SharedModule
+    SharedModule,
+    DetailListTemplatesModule
   ]
 })
 export class NodesModule { }
