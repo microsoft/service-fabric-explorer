@@ -7,6 +7,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { ActionWithConfirmationDialog } from '../Action';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -60,18 +61,17 @@ export class DeployedCodePackage extends DataModelBase<IRawDeployedCodePackage> 
     }
 
     private setUpActions(): void {
-        // this.actions.add(new ActionWithConfirmationDialog(
-        //     this.data.$uibModal,
-        //     this.data.$q,
-        //     "restartCodePackage",
-        //     "Restart",
-        //     "Restarting",
-        //     () => this.restart(),
-        //     () => true,
-        //     "Confirm Code Package Restart",
-        //     `Restart code package ${this.name}?`,
-        //     this.name
-        // ));
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "restartCodePackage",
+            "Restart",
+            "Restarting",
+            () => this.restart(),
+            () => true,
+            "Confirm Code Package Restart",
+            `Restart code package ${this.name}?`,
+            this.name
+        ));
     }
 }
 

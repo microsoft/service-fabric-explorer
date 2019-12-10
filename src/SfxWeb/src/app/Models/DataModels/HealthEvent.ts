@@ -61,5 +61,6 @@ export class HealthBase<T extends IRawHealth> extends DataModelBase<T> {
             console.log(this)                                                                                    //setting base and parent regs to null
             this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
         })).pipe(tap()).subscribe();
+        return of(null)
     }
 }

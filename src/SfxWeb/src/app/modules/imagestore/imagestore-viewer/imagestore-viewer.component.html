@@ -1,0 +1,92 @@
+<div class="detail-pane">
+        <div class="detail-pane">
+            <h4>Configuration</h4>
+            <div class="table-responsive">
+                <table class="table detail-table table-layout-fixed" role="presentation">
+                    <tr>
+                        <th>Connection String <a title="Understand the Image Store connection string setting" aria-label="Understand the Image Store connection string setting"
+                                href="https://aka.ms/sfx-help-imagestore-connectionstring" target="_blank"><span class="bowtie-icon bowtie-status-help-outline"></span></a></th>
+                        <td>{{imagestoreRoot.connectionString}}
+                        </td>
+                    </tr>
+                </table>
+            </div>
+        </div>
+        <div class="alert alert-warning" *ngIf="!imagestoreRoot.isNative">
+            <strong>Viewing image store content is only supported for the native Image Store (fabric:ImageStore).</strong>
+        </div>
+        <div class="alert alert-warning" *ngIf="imagestoreRoot.isNative && !imagestoreRoot.isAvailable">
+            <strong>Image store viewer does not appear to be supported on this cluster.</strong>
+        </div>
+    
+        <div class="detail-pane store-content-pane" *ngIf="imagestoreRoot.isNative && imagestoreRoot.isAvailable">
+            <h4>Store Content</h4>
+            <div class="image-store-breadcrumb essen-pane">
+                <span *ngIf="imagestoreRoot.isLoadingFolderContent" style="padding-right: 5px;">
+                    <span  class="dark-background-link bowtie-icon bowtie-navigate-refresh rotate" aria-label="refresh" title="Loading folder content"></span>
+                </span>
+                <span><button (click)="openFolder(imagestoreRoot.pathBreadcrumbItems[0].path)" [disabled]="imagestoreRoot.currentFolder.path === imagestoreRoot.pathBreadcrumbItems[0].path"
+                        aria-label="click to go to root of image store">
+                        {{imagestoreRoot.pathBreadcrumbItems[0].name}} </button> </span>
+                <span *ngFor="let item of imagestoreRoot.pathBreadcrumbItems.slice(1, imagestoreRoot.pathBreadcrumbItems.length)"> <button (click)="openFolder(item.path)"
+                        [disabled]="item === imagestoreRoot.pathBreadcrumbItems[imagestoreRoot.pathBreadcrumbItems.length - 1]" aria-label="click to open folder">
+                        {{item.name}} </button> </span>
+            </div>
+            <!-- search-text="'Search confined to current directory'" TODO add this input -->
+            <detail-list [list]="imagestoreRoot.currentFolder.allChildren" [listSettings]="fileListSettings"></detail-list>
+            <div>
+                <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
+                    <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error" 
+                    style="margin-right: 2px; vertical-align: top;"></span>
+                    <div style="display: inline-block;">
+                        Large folders can take longer to load. <br>
+                        Folder sizes loaded are snapshots at that time and only updated by reloading that folder size.        
+                    </div>
+                </div>
+            </div>
+        </div>
+    
+        <!-- <script type="text/ng-template" id="ellipsisFileTemplate">
+            <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown">
+            </a>
+            <ul role="menu" class="dropdown-menu-left" uib-dropdown-menu>
+                <li role="menuitem">
+                    <a href="" role="button" (click)="imageStoreCtrl.deleteSelected(file.path)" >
+                        Delete
+                    </a>
+                </li>
+            </ul>
+        </script>
+    
+        <script type="text/ng-template" id="ellipsisFolderTemplate">
+            <a href="" role="button" class="bowtie-icon bowtie-ellipsis dropdown-toggle ellipsis" uib-dropdown-toggle ng-toggle="dropdown">
+            </a>
+            <ul role="menu" class="dropdown-menu-left" uib-dropdown-menu>
+                <li role="menuitem">
+                    <a href="" role="button" (click)="imageStoreCtrl.deleteSelected(folder.path)" [disabled]="folder.isReserved" title="System reserved folder cannont be deleted.">
+                        Delete
+                    </a>
+                </li>
+            </ul>
+        </script>
+        <div uib-modal-window="modal-window" ng-show="showDeleteConfirmation" class="modal fade ng-scope ng-isolate-scope in" role="dialog" index="0" animate="animate"
+            ng-style="{'z-index': 1050 + $$topModalIndex*10, display: 'block'}">
+            <form class="ng-pristine ng-valid ng-scope">
+                <div class="modal-header">
+                    <h4 class="modal-title ng-binding">Confirm deletion</h4>
+                </div>
+                <div class="modal-body">
+                    <p class="ng-binding">Delete {{confirmationKeyword}}? This action cannot be undone.</p>
+                    <input class="input-flat ng-pristine ng-untouched ng-valid ng-empty" type="text" placeholder="Type in '{{confirmationKeyword}}' to continue"
+                        autocomplete="off" ng-model="usertypedkeyword" aria-hidden="false" aria-invalid="false">
+                </div>
+                <div class="modal-footer">
+                    <button type="submit" class="btn btn-primary ng-binding" data-dismiss="modal" [disabled]="confirmationKeyword !== usertypedkeyword" (click)="imageStoreCtrl.deleteConfirmed()"
+                        disabled="disabled">
+                        Delete Image Store content
+                    </button>
+                    <button type="button" class="btn btn-default" data-dismiss="modal" (click)="usertypedkeyword = null; imageStoreCtrl.deleteCanceled()">Cancel</button>
+                </div>
+            </form>
+        </div> -->
+    </div>

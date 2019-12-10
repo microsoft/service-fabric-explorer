@@ -1,4 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
+import { ActionCollection } from 'src/app/Models/ActionCollection';
 
 @Component({
   selector: 'app-navbar',
@@ -10,7 +11,7 @@ export class NavbarComponent implements OnInit {
   @Input() type: string = "";
   @Input() name: string = "";
   @Input() tabs: ITab[] = [];
-
+  @Input() actions: ActionCollection;
   constructor() { }
 
   ngOnInit() {

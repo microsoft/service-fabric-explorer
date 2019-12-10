@@ -9,6 +9,8 @@ import { Observable } from 'rxjs';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
 import { HealthBase } from './HealthEvent';
 import { DeployedApplicationCollection } from './collections/DeployedApplicationCollection';
+import { ActionWithConfirmationDialog, Action } from '../Action';
+import { NodeStatusConstants } from 'src/app/Common/Constants';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -100,65 +102,61 @@ export class Node extends DataModelBase<IRawNode> {
 
     public setAdvancedActions(): void {
         // TODO 
-        // this.actions.add(new Action(
-        //     "activateNode",
-        //     "Activate",
-        //     "Activating",
-        //     () => this.activate(),
-        //     () => (this.expectedNodeStatus !== NodeStatus.Invalid) ?
-        //         this.expectedNodeStatus === NodeStatus.Disabled :
-        //         this.raw.NodeStatus === NodeStatusConstants.Down || this.raw.NodeStatus === NodeStatusConstants.Disabling || this.raw.NodeStatus === NodeStatusConstants.Disabled
-        // ));
-        // this.actions.add(new ActionWithConfirmationDialog(
-        //     this.data.$uibModal,
-        //     this.data.$q,
-        //     "removeNodeState",
-        //     "Remove node state",
-        //     "Removing",
-        //     () => this.removeNodeState(),
-        //     () => this.raw.NodeStatus === NodeStatusConstants.Down,
-        //     "Confirm Node Removal",
-        //     `Data about node ${this.name} will be completely erased from the cluster ${this.data.$location.host()}. All data stored on the node will be lost permanently. Are you sure to continue?`,
-        //     this.name
-        // ));
-        // this.actions.add(new ActionWithConfirmationDialog(
-        //     this.data.$uibModal,
-        //     this.data.$q,
-        //     "deactivePauseNode",
-        //     "Deactivate (pause)",
-        //     "Deactivating",
-        //     () => this.deactivate(1),
-        //     // There are various levels of "disabling" and it should be possible to disable "at a higher level" an already-disabled node.
-        //     () => this.raw.NodeStatus !== NodeStatusConstants.Down,
-        //     // We do not track the level of disabling, so we just enable the command as long as the node is not down.
-        //     "Confirm Node Deactivation",
-        //     `Deactivate node '${this.name}' from cluster '${this.data.$location.host()}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
-        //     this.name
-        // ));
-        // this.actions.add(new ActionWithConfirmationDialog(
-        //     this.data.$uibModal,
-        //     this.data.$q,
-        //     "deactiveRestartNode",
-        //     "Deactivate (restart)",
-        //     "Deactivating",
-        //     () => this.deactivate(2),
-        //     () => this.raw.NodeStatus !== NodeStatusConstants.Down,
-        //     "Confirm Node Deactivation",
-        //     `Deactivate node '${this.name}' from cluster '${this.data.$location.host()}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
-        //     this.name
-        // ));
-        // this.actions.add(new ActionWithConfirmationDialog(
-        //     this.data.$uibModal,
-        //     this.data.$q,
-        //     "deactiveRemoveNodeData",
-        //     "Deactivate (remove data)",
-        //     "Deactivating",
-        //     () => this.deactivate(3),
-        //     () => this.raw.NodeStatus !== NodeStatusConstants.Down,
-        //     "Confirm Node Deactivation",
-        //     `Deactivate node '${this.name}' from cluster '${this.data.$location.host()}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
-        //     this.name
-        // ));
+        this.actions.add(new Action(
+            "activateNode",
+            "Activate",
+            "Activating",
+            () => this.activate(),
+            () => (this.expectedNodeStatus !== NodeStatus.Invalid) ?
+                this.expectedNodeStatus === NodeStatus.Disabled :
+                this.raw.NodeStatus === NodeStatusConstants.Down || this.raw.NodeStatus === NodeStatusConstants.Disabling || this.raw.NodeStatus === NodeStatusConstants.Disabled
+        ));
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "removeNodeState",
+            "Remove node state",
+            "Removing",
+            () => this.removeNodeState(),
+            () => this.raw.NodeStatus === NodeStatusConstants.Down,
+            "Confirm Node Removal",
+            `Data about node ${this.name} will be completely erased from the cluster ${window.location.host}. All data stored on the node will be lost permanently. Are you sure to continue?`,
+            this.name
+        ));
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "deactivePauseNode",
+            "Deactivate (pause)",
+            "Deactivating",
+            () => this.deactivate(1),
+            // There are various levels of "disabling" and it should be possible to disable "at a higher level" an already-disabled node.
+            () => this.raw.NodeStatus !== NodeStatusConstants.Down,
+            // We do not track the level of disabling, so we just enable the command as long as the node is not down.
+            "Confirm Node Deactivation",
+            `Deactivate node '${this.name}' from cluster '${window.location.host}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
+            this.name
+        ));
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "deactiveRestartNode",
+            "Deactivate (restart)",
+            "Deactivating",
+            () => this.deactivate(2),
+            () => this.raw.NodeStatus !== NodeStatusConstants.Down,
+            "Confirm Node Deactivation",
+            `Deactivate node '${this.name}' from cluster '${window.location.host}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
+            this.name
+        ));
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "deactiveRemoveNodeData",
+            "Deactivate (remove data)",
+            "Deactivating",
+            () => this.deactivate(3),
+            () => this.raw.NodeStatus !== NodeStatusConstants.Down,
+            "Confirm Node Deactivation",
+            `Deactivate node '${this.name}' from cluster '${window.location.host}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
+            this.name
+        ));
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawNode> {
@@ -169,18 +167,18 @@ export class Node extends DataModelBase<IRawNode> {
     }
 
     private setUpActions(): void {
-        // this.actions.add(new ActionWithConfirmationDialog(
-        //     this.data.$uibModal,
-        //     this.data.$q,
-        //     "restartNode",
-        //     "Restart",
-        //     "Restarting",
-        //     () => this.restart(),
-        //     () => true,
-        //     "Confirm Node Restart",
-        //     `Restart node ${this.name} from the cluster ${this.data.$location.host()}?`,
-        //     this.name
-        // ));
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "restartNode",
+            "Restart",
+            "Restarting",
+            () => this.restart(),
+            () => true,
+            "Confirm Node Restart",
+            `Restart node ${this.name} from the cluster ${window.location.host}?`,
+            // `Restart node ${this.name} from the cluster ${this.data.$location.host()}?`, TODO
+            this.name
+        ));
     }
 
     private activate(): Observable<any> {

@@ -155,7 +155,50 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         return this.data.restClient.getClusterManifest(messageHandler);
     }
 
+    private getImageStoreConnectionString(element: Element) {
+        const params = element.getElementsByTagName("Parameter");
+        for(let i = 0; i < params.length; i ++) {
+            const item = params.item(i);
+            console.log(params.item(i).getAttribute("Name") === "Management");
+            if(item.getAttribute("Name") === "ImageStoreConnectionString"){
+                this._imageStoreConnectionString = item.getAttribute("Value");
+                break;
+            }
+        }
+    }
+
     protected updateInternal(): Observable<any> | void {
+        let parser = new DOMParser();
+        let xml = parser.parseFromString(this.raw.Manifest,"text/xml");
+
+        // let $xml = $($.parseXML(this.raw.Manifest));
+        let manifest = xml.getElementsByTagName("ClusterManifest")[0];
+        this.clusterManifestName = manifest.getAttribute("Name");
+
+        const FabricSettings = manifest.getElementsByTagName("FabricSettings")[0]
+        const management = FabricSettings.getElementsByTagName("Section") 
+
+        for(let i = 0; i < management.length; i ++) {
+            const item = management.item(i);
+            // console.log(management.item(i).getAttribute("Name") === "Management");
+            if(item.getAttribute("Name") === "Management"){
+                this.getImageStoreConnectionString(item);
+                break;
+            }
+        }
+
+        console.log(management)
+        // let packages = [];
+        // Array.from(packType).forEach( (item: any) => {
+        //     packages.push(new ServiceTypePackage(this.data, "Code", item.getAttribute("Name"), item.getAttribute("Version")));
+        // });
+        
+        // packType = xml.getElementsByTagName("ConfigPackage");
+        // Array.from(packType).forEach((item: any) => {
+        //     packages.push(new ServiceTypePackage(this.data, "Config", item.getAttribute("Name"), item.getAttribute("Version")));
+        // });
+
+        // this.packages = packages;
         //TODO fix xml parsing
         // let $xml = $($.parseXML(this.raw.Manifest));
         // let $manifest = $xml.find("ClusterManifest")[0];
@@ -227,7 +270,6 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> {
-        console.log("why")
         return this.data.restClient.getClusterUpgradeProgress(messageHandler).pipe(mergeMap( data => {
             if (data.CodeVersion === "0.0.0.0") {
                 return this.data.restClient.getClusterVersion().pipe(map(resp => {
@@ -272,7 +314,7 @@ export class ClusterLoadInformation extends DataModelBase<IRawClusterLoadInforma
     }
 
     protected updateInternal():Observable<any> | void {
-        CollectionUtils.updateDataModelCollection(this.loadMetricInformation, this.raw.LoadMetricInformation.map(lmi => new LoadMetricInformation(this.data, lmi)));
+        this.loadMetricInformation = CollectionUtils.updateDataModelCollection(this.loadMetricInformation, this.raw.LoadMetricInformation.map(lmi => new LoadMetricInformation(this.data, lmi)));
     }
 }
 export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {

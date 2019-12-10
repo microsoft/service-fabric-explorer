@@ -1,0 +1,14 @@
+<form>
+    <div class="modal-header">
+        <h4 class="modal-title">{{data.confirmationDialogTitle}}</h4>
+    </div>
+    <div class="modal-body">
+        <p>{{data.confirmationDialogMessage}}</p>
+        <input class="input-flat" type="text" [placeholder]="placeHolderText" name="userInput"
+               *ngIf="data.confirmationKeyword" [(ngModel)]="userInput" aria-label="placeHolderText">
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" [disabled]="data.confirmationKeyword !== userInput" (click)="ok()">{{data.title}}</button>
+        <button type="button" class="btn btn-default" (click)="cancel()">Cancel</button>
+    </div>
+</form>

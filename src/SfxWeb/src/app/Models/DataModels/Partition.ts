@@ -11,6 +11,8 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HealthBase } from './HealthEvent';
 import { PartitionBackupInfo } from './PartitionBackupInfo';
 import { Observable } from 'rxjs';
+import { ActionWithConfirmationDialog } from '../Action';
+import { mergeMap } from 'rxjs/operators';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -116,36 +118,33 @@ export class Partition extends DataModelBase<IRawPartition> {
         ));
 
         this.actions.add(new ActionWithConfirmationDialog(
-            this.data.$uibModal,
-            this.data.$q,
+            this.data.dialog,
             "suspendPartitionBackup",
             "Suspend Partition Backup",
             "Suspending...",
-            () => this.data.restClient.suspendPartitionBackup(this.id).then(() => {
-                this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
-            }),
+            () => this.data.restClient.suspendPartitionBackup(this.id).pipe(mergeMap(() => {
+                return this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
+            })),
             () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === false,
             "Confirm Partition Backup Suspension",
             `Suspend partition backup for ${this.name} ?`,
             this.name));
 
         this.actions.add(new ActionWithConfirmationDialog(
-            this.data.$uibModal,
-            this.data.$q,
+            this.data.dialog,
             "resumePartitionBackup",
             "Resume Partition Backup",
             "Resuming...",
-            () => this.data.restClient.resumePartitionBackup(this.id).then(() => {
-                this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
-            }),
+            () => this.data.restClient.resumePartitionBackup(this.id).pipe(mergeMap(() => {
+                return this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
+            })),
             () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === true,
             "Confirm Partition Backup Resumption",
             `Resume partition backup for ${this.name} ?`,
             this.name));
 
         this.actions.add(new ActionWithDialog(
-            this.data.$uibModal,
-            this.data.$q,
+            this.data.dialog,
             "triggerPartitionBackup",
             "Trigger Partition Backup",
             "Triggering Partition Backup",

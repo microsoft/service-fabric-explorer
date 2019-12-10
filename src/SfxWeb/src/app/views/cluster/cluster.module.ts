@@ -12,6 +12,7 @@ import { ImagestoreComponent } from './imagestore/imagestore.component';
 import { ManifestComponent } from './manifest/manifest.component';
 import { EventsComponent } from './events/events.component';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
+import { ImagestoreModule } from 'src/app/modules/imagestore/imagestore.module';
 
 
 @NgModule({
@@ -20,7 +21,8 @@ import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates
     CommonModule,
     ClusterRoutingModule,
     SharedModule,
-    DetailListTemplatesModule
+    DetailListTemplatesModule,
+    ImagestoreModule
   ]
 })
 export class ClusterModule { }

@@ -87,9 +87,9 @@
     </app-collapse-container>
 </div>
 
-<div class="detail-pane essen-pane" *ngIf="clusterLoadInformation">
+<div class="detail-pane essen-pane" *ngIf="clusterLoadInformation && clusterLoadInformation.isInitialized">
     <app-collapse-container>
         <h4 collapse-header>Load Information</h4>
-        <app-detail-view-part [data]="clusterLoadInformation" collapse-body></app-detail-view-part>
+        <app-detail-view-part [data]="clusterLoadInformation.raw" collapse-body></app-detail-view-part>
     </app-collapse-container>
 </div>

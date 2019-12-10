@@ -15,6 +15,7 @@ import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
 import { ServiceCollection } from './collections/ServiceCollection';
+import { ActionWithConfirmationDialog } from '../Action';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -110,17 +111,16 @@ export class Application extends DataModelBase<IRawApplication> {
 
     // TODO FIX THESE
     private setUpActions(): void {
-    //     this.actions.add(new ActionWithConfirmationDialog(
-    //         this.data.$uibModal,
-    //         this.data.$q,
-    //         "deleteApplication",
-    //         "Delete Application",
-    //         "Deleting...",
-    //         () => this.delete(),
-    //         () => true,
-    //         "Confirm Application Deletion",
-    //         `Delete application ${this.name} from cluster ${this.data.$location.host()}?`,
-    //         this.name));
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "deleteApplication",
+            "Delete Application",
+            "Deleting...",
+            () => this.delete(),
+            () => true,
+            "Confirm Application Deletion",
+            `Delete application ${this.name} from cluster ${window.location.host}?`,
+            this.name));
     }
 
     private setAdvancedActions(): void {

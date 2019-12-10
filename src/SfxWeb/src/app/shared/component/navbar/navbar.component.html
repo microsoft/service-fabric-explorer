@@ -21,6 +21,23 @@
                     </li>
                 </ul>
             </div> -->
+
+            <div *ngIf="actions && actions.length > 0">
+                <div class="dropdown">
+                    <button class="dropbtn">{{actions.title | uppercase}}</button>
+                    <div class="dropdown-content">
+                        <!--  track by action.name TODO -->
+                        <div *ngFor="let action of actions.collection">
+                            <button (click)="actions.runWithTelemetry(action, 'ActionsButton')"
+                                    [disabled]="!action.canRun()">
+                                {{action.title}}
+                            </button>
+                        </div>
+                        <!-- <a href="#">Link 2</a>
+                        <a href="#">Link 3</a> -->
+                    </div>
+                </div>
+            </div>
         </div>
     
         <div class="detail-view-navbar" role="tablist" [attr.aria-label]="name">

@@ -7,6 +7,8 @@ import { AppComponent } from './app.component';
 import { DataService } from './services/data.service';
 import { TreeModule } from './modules/tree/tree.module';
 import { SharedModule } from './shared/shared.module';
+import { NoopAnimationsModule } from '@angular/platform-browser/animations';
+import { MatDialogModule } from '@angular/material/dialog';
 
 @NgModule({
   declarations: [
@@ -17,7 +19,9 @@ import { SharedModule } from './shared/shared.module';
     AppRoutingModule,
     HttpClientModule,
     TreeModule,
-    SharedModule
+    SharedModule,
+    NoopAnimationsModule,
+    MatDialogModule
   ],
   providers: [DataService],
   bootstrap: [AppComponent]

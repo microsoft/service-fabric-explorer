@@ -11,6 +11,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { HealthBase } from './HealthEvent';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
+import { ActionWithConfirmationDialog } from '../Action';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -106,18 +107,17 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     private setUpActions(): void {
         let serviceName = this.parent.parent.raw.Name;
 
-        // this.actions.add(new ActionWithConfirmationDialog(
-        //     this.data.$uibModal,
-        //     this.data.$q,
-        //     "Restart Replica",
-        //     "Restart Replica",
-        //     "Restarting",
-        //     () => this.restartReplica(),
-        //     () => true,
-        //     `Confirm Replica Restart`,
-        //     `Restart Replica for ${serviceName}`,
-        //     "confirm"
-        // ));
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "Restart Replica",
+            "Restart Replica",
+            "Restarting",
+            () => this.restartReplica(),
+            () => true,
+            `Confirm Replica Restart`,
+            `Restart Replica for ${serviceName}`,
+            "confirm"
+        ));
     }
 }
 

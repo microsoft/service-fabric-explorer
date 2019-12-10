@@ -867,7 +867,7 @@ export class RestClientService {
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = this.wrapInCallbacks<T>(() => this.httpClient.post<T>(RestClientService.baseUrl + url, data));
+      let result = this.httpClient.post<T>(RestClientService.baseUrl + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
@@ -878,7 +878,7 @@ export class RestClientService {
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = this.wrapInCallbacks<T>(() => this.httpClient.put<T>(RestClientService.baseUrl + url, data));
+      let result = this.httpClient.put<T>(RestClientService.baseUrl + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
@@ -889,7 +889,7 @@ export class RestClientService {
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = this.wrapInCallbacks<T>(() => this.httpClient.delete<T>(RestClientService.baseUrl + url));
+      let result = this.httpClient.delete<T>(RestClientService.baseUrl + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
       }

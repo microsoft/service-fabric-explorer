@@ -13,11 +13,11 @@ export class ActionCollection {
     constructor(private telemetry: TelemetryService) {
     }
 
-    public runWithTelemetry(action: Action, source: string): Observable<any> {
+    public runWithTelemetry(action: Action, source: string) {
         if (!action.canRun || action.running) {
             return of(true);
         }
-        return this.runInternal(action, source);
+        this.runInternal(action, source).subscribe();
     }
 
     public get length(): number {
@@ -29,11 +29,11 @@ export class ActionCollection {
     }
 
     public get anyRunning(): boolean {
-        return _.some(this.collection, "running");
+        return this.collection.some(action  => action.running);
     }
 
     public get title(): string {
-        let runningAction = _.find(this.collection, a => a.running);
+        let runningAction = this.collection.find(a => a.running);
         if (runningAction) {
             return runningAction.runningTitle;
         } else {

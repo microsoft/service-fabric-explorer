@@ -1,4 +1,7 @@
-﻿import { Observable } from 'rxjs';
+﻿import { Observable, of } from 'rxjs';
+import { mergeMap, map } from 'rxjs/operators';
+import { MatDialog } from '@angular/material/dialog';
+import { ActionDialogComponent } from '../shared/component/action-dialog/action-dialog.component';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -26,8 +29,9 @@ export class Action {
         this._running = false;
     }
 
-    public run(...params: any[]): Observable<any> {
-        return this.runInternal(ng.noop, ng.noop, params);
+    public run(...params: any[]) {
+        console.log("1")
+       this.runInternal(() => null, () => null, params).subscribe();
     }
 
     public runWithCallbacks(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
@@ -35,74 +39,85 @@ export class Action {
     }
 
     protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
+        
         if (this.canRun()) {
             this._running = true;
             const executing = this.execute();
-            executing.subscribe( ()=> {
+            executing.pipe(map( ()=> {
                 this._running = false;
-            })
+            }))
             return executing;
 
         }
     }
 }
 
-// export class ActionWithDialog extends Action {
-//     /**
-//      * Creates an action with dialog support
-//      * @param name The action name
-//      * @param title The action display title
-//      * @param runningTitle The action display title when running
-//      * @param execute The execute function
-//      * @param canRun The query to see if the action is runnable
-//      * @param modalSettings The dialog settings
-//      * @param beforeOpen The function runs before dialog is opened
-//      */
-//     constructor(
-//         public $uibModal: ng.ui.bootstrap.IModalService,
-//         public $q: ng.IQService,
-//         public name: string,
-//         public title: string,
-//         public runningTitle: string,
-//         protected execute: (...params: any[]) => Observable<any>,
-//         public canRun: () => boolean,
-//         public modalSettings: angular.ui.bootstrap.IModalSettings,
-//         public beforeOpen?: () => Observable<any>) {
+export class ActionWithDialog extends Action {
+    /**
+     * Creates an action with dialog support
+     * @param name The action name
+     * @param title The action display title
+     * @param runningTitle The action display title when running
+     * @param execute The execute function
+     * @param canRun The query to see if the action is runnable
+     * @param modalSettings The dialog settings
+     * @param beforeOpen The function runs before dialog is opened
+     */
 
-//         super(name, title, runningTitle, execute, canRun);
-//     }
+    template = ActionDialogComponent;
+    constructor(
+        public dialog: MatDialog,
+        public name: string,
+        public title: string,
+        public runningTitle: string,
+        public execute: (...params: any[]) => Observable<any>,
+        public canRun: () => boolean,
+        // public modalSettings: angular.ui.bootstrap.IModalSettings,
+        public beforeOpen?: () => Observable<any>) {
 
-//     protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
-//         if (this.canRun()) {
-//             return this.$q.when(this.beforeOpen ? this.beforeOpen() : true).then(() => {
-//                 return this.$uibModal.open(this.modalSettings).result.then(() => {
-//                     return super.runInternal(success, error, params);
-//                 });
-//             });
-//         }
-//     }
-// }
+        super(name, title, runningTitle, execute, canRun);
+    }
 
-// export class ActionWithConfirmationDialog extends ActionWithDialog {
-//     constructor(
-//         public $uibModal: ng.ui.bootstrap.IModalService,
-//         public $q: ng.IQService,
-//         public name: string,
-//         public title: string,
-//         public runningTitle: string,
-//         protected execute: (...params: any[]) => Observable<any>,
-//         public canRun: () => boolean,
-//         public confirmationDialogTitle?: string,
-//         public confirmationDialogMessage?: string,
-//         public confirmationKeyword?: string) {
+    protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
+        if (this.canRun()) {
+            return of(this.beforeOpen ? this.beforeOpen() : true).pipe(mergeMap(() => {
+                let dialogRef = this.dialog.open(this.template, {data: this});
+                return dialogRef.afterClosed().pipe(mergeMap( (data: boolean) => {
+                    if(data){
+                        return super.runInternal(success, error, params);
+                    }
+                    return of(null)
+                }))
+                // return this.$uibModal.open(this.modalSettings).result.then(() => {
+                //     return super.runInternal(success, error, params);
+                // });
+            }));
+        }else{
+            return of(null);
+        }
+    }
+}
 
-//         super($uibModal, $q, name, title, runningTitle, execute, canRun, {
-//             templateUrl: "partials/action-confirmation-dialog.html",
-//             controller: ActionController,
-//             resolve: {
-//                 action: () => this
-//             }
-//         });
-//     }
-// }
+export class ActionWithConfirmationDialog extends ActionWithDialog {
+    constructor(
+        public dialog: MatDialog,
+        public name: string,
+        public title: string,
+        public runningTitle: string,
+        public execute: (...params: any[]) => Observable<any>,
+        public canRun: () => boolean,
+        public confirmationDialogTitle?: string,
+        public confirmationDialogMessage?: string,
+        public confirmationKeyword?: string) {
+
+        super(dialog, name, title, runningTitle, execute, canRun
+            // , {
+            // templateUrl: "partials/action-confirmation-dialog.html",
+            // controller: ActionController,
+            // resolve: {
+            //     action: () => this
+            // }
+        );
+    }
+}
 

@@ -30,6 +30,7 @@ import { NodeCollection } from '../Models/DataModels/collections/NodeCollection'
 import { ServiceCollection } from '../Models/DataModels/collections/ServiceCollection';
 import { IDataModelCollection } from '../Models/DataModels/collections/CollectionBase';
 import { DeployedApplicationCollection } from '../Models/DataModels/collections/DeployedApplicationCollection';
+import { MatDialog } from '@angular/material/dialog';
 
 @Injectable({
   providedIn: 'root'
@@ -53,7 +54,8 @@ export class DataService {
     public telemetry: TelemetryService,
     public warnings: StatusWarningService,
     public storage: StorageService,
-    public restClient: RestClientService
+    public restClient: RestClientService,
+    public dialog: MatDialog
     // public $q: angular.IQService,
     // public $timeout: angular.ITimeoutService,
     // public $uibModal: angular.ui.bootstrap.IModalService,

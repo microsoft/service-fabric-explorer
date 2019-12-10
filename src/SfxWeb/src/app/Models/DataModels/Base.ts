@@ -144,9 +144,8 @@ export class DataModelBase<T> implements IDataModel<T> {
             //     return this.update(raw);
             // }))
             //console.log(this.refreshingPromise)
-            return this.refreshingPromise.asObservable();
+            return this.refreshingPromise? this.refreshingPromise.asObservable() : of(null);
         }
-        console.log("new promise?")
         return this.refreshingPromise.asObservable();
     }
 

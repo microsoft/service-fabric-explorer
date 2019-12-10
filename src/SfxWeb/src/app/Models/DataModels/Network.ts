@@ -2,6 +2,8 @@ import { IRawNetwork, IRawNetworkProperties } from '../RawDataTypes';
 import { DataModelBase } from './Base';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
+import { ActionWithConfirmationDialog } from '../Action';
+import { Observable } from 'rxjs';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -36,17 +38,13 @@ export class Network extends DataModelBase<IRawNetwork> {
         return this.data.routes.getNetworkViewPath(this.name);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawNetwork> {
-        return this.data.restClient.getNetwork(this.name, messageHandler).then(response => {
-            return response.data;
-        });
-
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawNetwork> {
+        return this.data.restClient.getNetwork(this.name, messageHandler);
     }
 
     private setUpActions(): void {
         this.actions.add(new ActionWithConfirmationDialog(
-            this.data.$uibModal,
-            this.data.$q,
+            this.data.dialog,
             "deleteNetwork",
             "Delete",
             "Deleting",
@@ -58,7 +56,7 @@ export class Network extends DataModelBase<IRawNetwork> {
         ));
     }
 
-    private delete(): angular.IPromise<any> {
+    private delete(): Observable<any> {
         return this.data.restClient.deleteNetwork(this.name);
     }
 }

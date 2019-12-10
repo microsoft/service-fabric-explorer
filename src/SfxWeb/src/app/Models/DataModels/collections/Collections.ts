@@ -33,7 +33,7 @@ import { AppOnNetwork } from '../AppOnNetwork';
 import { PartitionBackup, PartitionBackupInfo } from '../PartitionBackupInfo';
 import { DeployedContainerOnNetwork } from '../DeployedContainerOnNetwork';
 import { NodeOnNetwork } from '../NodeOnNetwork';
-import { DataModelCollectionBase } from './CollectionBase';
+import { DataModelCollectionBase, IDataModelCollection } from './CollectionBase';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -71,15 +71,16 @@ export class NetworkOnAppCollection extends DataModelCollectionBase<NetworkOnApp
         this.appId = appId;
     }
 
+    //TODO figure out whats going on here
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         let collection = [];
-        return this.data.restClient.getNetworksOnApp(this.appId, messageHandler).then(items => {
-            let tasks = _.map(items, raw => {
+        return this.data.restClient.getNetworksOnApp(this.appId, messageHandler).pipe(mergeMap(items => {
+            let tasks = items.map(raw => {
                 let network = new NetworkOnApp(this.data, raw);
-                return network.refresh().then(() => collection.push(network));
+                return network.refresh().pipe(map(() => collection.push(network)));
             });
-            return this.data.$q.all(tasks).then(() => collection);
-        });
+            return forkJoin(tasks).pipe(map(() => collection));
+        }));
     }
 }
 
@@ -92,14 +93,14 @@ export class NetworkOnNodeCollection extends DataModelCollectionBase<NetworkOnNo
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         let collection = [];
-        return this.data.restClient.getNetworksOnNode(this.nodeName, messageHandler).then(items => {
-            let filtered = _.filter(items, item => { return item.NetworkName !== "servicefabric_network"; });
-            let tasks = _.map(filtered, raw => {
+        return this.data.restClient.getNetworksOnNode(this.nodeName, messageHandler).pipe(map(items => {
+            let filtered = items.filter(item => { return item.NetworkName !== "servicefabric_network"; });
+            let tasks = filtered.map(raw => {
                 let network = new NetworkOnNode(this.data, raw);
-                return network.refresh().then(() => collection.push(network));
+                return network.refresh().pipe(map(() => collection.push(network)));
             });
-            return this.data.$q.all(tasks).then(() => collection);
-        });
+            return forkJoin(tasks).pipe(map(() => collection));
+        }));
     }
 }
 
@@ -112,14 +113,14 @@ export class AppOnNetworkCollection extends DataModelCollectionBase<AppOnNetwork
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         let collection = [];
-        return this.data.restClient.getAppsOnNetwork(this.networkName, messageHandler).pipe(items => {
-            let tasks = _.map(items, raw => {
+        return this.data.restClient.getAppsOnNetwork(this.networkName, messageHandler).pipe(map(items => {
+            let tasks = items.map(raw => {
                 let application = new AppOnNetwork(this.data, raw);
-                return application.refresh().then(() => collection.push(application));
+                return application.refresh().pipe(map(() => collection.push(application)));
             });
 
-            return this.data.$q.all(tasks).then(() => collection);
-        });
+            return forkJoin(tasks).pipe(map(() => collection));
+        }));
     }
 }
 
@@ -132,16 +133,13 @@ export class NodeOnNetworkCollection extends DataModelCollectionBase<NodeOnNetwo
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         let collection = [];
-        return this.data.restClient.getNodesOnNetwork(this.networkName, messageHandler).then(items => {
+        return this.data.restClient.getNodesOnNetwork(this.networkName, messageHandler).pipe(map(items => {
             let tasks = items.map(raw => {
                 let node = new NodeOnNetwork(this.data, raw);
-                return node.refresh().then(() => {
-                    collection.push(node);
-                });
-
+                return node.refresh().pipe(map(() => collection.push(node)));
             });
-            return this.data.$q.all(tasks).then(() => collection);
-        });
+            return forkJoin(tasks).pipe(map(() => collection));
+        }));
     }
 }
 
@@ -185,10 +183,10 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        return this.updateCollectionFromHealthChunkList(clusterHealthChunk.ApplicationHealthStateChunks, item => IdGenerator.app(IdUtils.nameToId(item.ApplicationName))).then(() => {
+        return this.updateCollectionFromHealthChunkList(clusterHealthChunk.ApplicationHealthStateChunks, item => IdGenerator.app(IdUtils.nameToId(item.ApplicationName))).pipe(mergeMap(() => {
             this.updateAppsHealthState();
             return this.refreshAppTypeGroups();
-        });
+        }));
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {

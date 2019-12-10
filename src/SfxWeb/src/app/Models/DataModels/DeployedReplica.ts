@@ -13,6 +13,7 @@ import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ReplicaOnPartition } from './Replica';
 import { LoadMetricReport } from './Partition';
+import { ActionWithConfirmationDialog } from '../Action';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -113,18 +114,17 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     private setUpActions(): void {
         let serviceName = this.parent.parent.raw.Name;
 
-        // this.actions.add(new ActionWithConfirmationDialog(
-        //     this.data.$uibModal,
-        //     this.data.$q,
-        //     "Restart Replica",
-        //     "Restart Replica",
-        //     "Restarting",
-        //     () => this.restartReplica(),
-        //     () => true,
-        //     `Confirm Replica Restart`,
-        //     `Restart Replica for ${serviceName}`,
-        //     "confirm"
-        // ));
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "Restart Replica",
+            "Restart Replica",
+            "Restarting",
+            () => this.restartReplica(),
+            () => true,
+            `Confirm Replica Restart`,
+            `Restart Replica for ${serviceName}`,
+            "confirm"
+        ));
     }
 }
 

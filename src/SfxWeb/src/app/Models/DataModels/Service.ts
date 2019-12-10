@@ -12,7 +12,6 @@ import { Observable } from 'rxjs';
 import { HealthBase } from './HealthEvent';
 import { ApplicationType } from './ApplicationType';
 import { mergeMap } from 'rxjs/operators';
-let parser = require('fast-xml-parser');
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -301,7 +300,7 @@ export class ServiceManifest extends DataModelBase<IRawServiceManifest> {
     }
 
     protected updateInternal(): Observable<any> | void {
-            parser = new DOMParser();
+            let parser = new DOMParser();
             let xml = parser.parseFromString(this.raw.Manifest,"text/xml");
 
             // let $xml = $($.parseXML(this.raw.Manifest));
@@ -336,6 +335,7 @@ export class ServiceTypePackage extends DataModelBase<any> {
     }
 }
 
+//TODO
 // export class ActionCreateService extends ActionWithDialog {
 //     public description: CreateServiceDescription;
 

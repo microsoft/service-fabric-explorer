@@ -10,6 +10,7 @@ import { ITextAndBadge, ValueResolver } from 'src/app/Utils/ValueResolver';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { map } from 'rxjs/operators';
 import { Utils } from 'src/app/Utils/Utils';
+import { ActionWithConfirmationDialog } from '../Action';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -45,23 +46,24 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
     }
 
     private setUpActions() {
-    // TODO
-        //     this.actions.add(new ActionWithConfirmationDialog(
-    //         this.data.$uibModal,
-    //         this.data.$q,
-    //         "unprovisionAppType",
-    //         "Unprovision",
-    //         "Unprovisioning",
-    //         () => this.unprovision(),
-    //         () => true,
-    //         "Confirm Type Unprovision",
-    //         `Unprovision application type ${this.name}@${this.raw.Version} from cluster ${this.data.$location.host()}?`,
-    //         `${this.name}@${this.raw.Version}`
-    //     ));
-    //     this.actions.add(new ActionCreateAppInstance(
-    //         this.data.$uibModal,
-    //         this.data.$q,
-    //         this));
+
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "unprovisionAppType",
+            "Unprovision",
+            "Unprovisioning",
+            () => this.unprovision(),
+            () => true,
+            "Confirm Type Unprovision",
+            `Unprovision application type ${this.name}@${this.raw.Version} from cluster ${window.location.host}?`,
+            `${this.name}@${this.raw.Version}`
+        ));
+
+        // TODO
+        // this.actions.add(new ActionCreateAppInstance(
+        //     this.data.$uibModal,
+        //     this.data.$q,
+        //     this));
     }
 }
 
@@ -109,24 +111,23 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
 
     private setUpActions() {
         // TODO
-        // this.actions.add(new ActionWithConfirmationDialog(
-        //     this.data.$uibModal,
-        //     this.data.$q,
-        //     "unprovisionType",
-        //     "Unprovision Type",
-        //     "Unprovisioning",
-        //     () => this.unprovision(),
-        //     () => true,
-        //     "Confirm Type Unprovision",
-        //     `Unprovision all versions of application type ${this.name} from cluster ${this.data.$location.host()}?`,
-        //     this.name
-        // ));
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "unprovisionType",
+            "Unprovision Type",
+            "Unprovisioning",
+            () => this.unprovision(),
+            () => true,
+            "Confirm Type Unprovision",
+            `Unprovision all versions of application type ${this.name} from cluster ${window.location.host}?`,
+            this.name
+        ));
     }
 
     private unprovision(): Observable<any> {
         return this.data.getAppTypeGroup(this.name, true).pipe(map(appTypeGroup => {
             let unprovisonPromises = [];
-            appTypeGroup.appTypes.each(applicationType => {
+            appTypeGroup.appTypes.forEach(applicationType => {
                 unprovisonPromises.push(applicationType.unprovision());
             });
             return forkJoin(unprovisonPromises);

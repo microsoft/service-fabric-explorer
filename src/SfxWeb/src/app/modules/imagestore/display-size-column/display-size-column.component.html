@@ -1,0 +1,20 @@
+<span style="cursor: initial" *ngIf="item.isFolder === 1"> {{item.displayedSize}} </span>
+
+<span style='white-space: nowrap;' *ngIf="item.isFolder === -1">
+    <span *ngIf="date"  class="dark-background-link bowtie-icon bowtie-status-waiting-fill" 
+            aria-label="timestamp" [title]="date"></span>
+    <span style="cursor: initial; padding-right: 3px;"> 
+        
+        {{item.displayedSize}} </span>
+
+    <span *ngIf="loadButton; else elseBlock">
+        <button type="button" style="background-color: #262626;border: 1px solid #0075c9;"
+            class="checkbox-push" (click)="loadFolderSize(item)">
+            Load Size
+        </button>
+    </span>
+    <ng-template #elseBlock>
+        <!-- TODO add rotating oading button -->
+        <a href class="bowtie-icon bowtie-navigate-refresh dark-background-link" title="Reload folder size"></a>
+    </ng-template>
+</span>
