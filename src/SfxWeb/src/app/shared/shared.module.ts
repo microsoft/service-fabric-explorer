@@ -12,15 +12,16 @@ import { CollapseContainerComponent } from './component/collapse-container/colla
 import { RefreshRateComponent } from './refresh-rate/refresh-rate.component';
 import { DragDirective } from './directive/drag.directive';
 import { ActionDialogComponent } from './component/action-dialog/action-dialog.component';
+import { ManifestComponent } from './component/manifest/manifest.component';
 
 @NgModule({
-  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent],
+  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
   ],
-  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent],
+  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent],
   entryComponents: [ActionDialogComponent],
 })
 export class SharedModule { }

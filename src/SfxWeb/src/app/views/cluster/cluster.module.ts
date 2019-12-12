@@ -13,16 +13,23 @@ import { ManifestComponent } from './manifest/manifest.component';
 import { EventsComponent } from './events/events.component';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { ImagestoreModule } from 'src/app/modules/imagestore/imagestore.module';
+import { ActionUpdateBackupPolicyComponent } from './action-update-backup-policy/action-update-backup-policy.component';
+import { FormsModule } from '@angular/forms';
+import { ActionCreateBackupPolicyComponent } from './action-create-backup-policy/action-create-backup-policy.component';
+import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 
 
 @NgModule({
-  declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent, ImagestoreComponent, ManifestComponent, EventsComponent],
+  declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent, ImagestoreComponent, ManifestComponent, EventsComponent, ActionUpdateBackupPolicyComponent, ActionCreateBackupPolicyComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,
     SharedModule,
     DetailListTemplatesModule,
-    ImagestoreModule
-  ]
+    ImagestoreModule,
+    FormsModule,
+    EventStoreModule
+  ],
+  entryComponents: [ActionUpdateBackupPolicyComponent, ActionCreateBackupPolicyComponent]
 })
 export class ClusterModule { }

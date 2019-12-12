@@ -98,46 +98,6 @@ export class RestClientService {
       return this.post(this.getApiUrl("$/GetClusterHealthChunk"), "Get cluster health chunk", healthDescriptor, messageHandler);
   }
 
-  public createNetwork(networkName: string, networkAddressPrefix: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
-      let url = "Resources/Networks/" + encodeURIComponent(networkName);
-      let body: any = { "name": networkName, "properties": { "kind": "Local", "networkAddressPrefix": networkAddressPrefix } };
-      return this.put(this.getApiUrl(url, RestClientService.apiVersion64), "Creating isolated network \"" + networkName + "\" succeeded", body, messageHandler);
-  }
-
-  public getNetwork(networkName: string, messageHandler?: IResponseMessageHandler): Observable<IRawNetwork> {
-      let url = "Resources/Networks/" + encodeURIComponent(networkName) + "/";
-      return this.get(this.getApiUrl(url, RestClientService.apiVersion64), "Get network", messageHandler);
-  }
-
-  public getNetworks(messageHandler?: IResponseMessageHandler): Observable<IRawNetwork[]> {
-      return this.getFullCollection<IRawNetwork>("Resources/Networks/", "Get networks", RestClientService.apiVersion64);
-  }
-
-  public deleteNetwork(networkName: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
-      let url = "Resources/Networks/" + encodeURIComponent(networkName);
-      return this.delete(this.getApiUrl(url, RestClientService.apiVersion64), "Network \"" + networkName + "\" deleted", messageHandler);
-  }
-
-  public getNetworksOnApp(appId: string, messageHandler?: IResponseMessageHandler): Observable<IRawNetworkOnApp[]> {
-      let url = "Applications/" + encodeURIComponent(appId) + "/$/GetNetworks";
-      return this.getFullCollection<IRawNetworkOnApp>(url, "Get networks attached to a application", RestClientService.apiVersion60);
-  }
-
-  public getNetworksOnNode(nodeName: string, messageHandler?: IResponseMessageHandler): Observable<IRawNetworkOnNode[]> {
-      let url = "Nodes/" + encodeURIComponent(nodeName) + "/$/GetNetworks";
-      return this.getFullCollection<IRawNetworkOnNode>(url, "Get networks deployed on a node", RestClientService.apiVersion60);
-  }
-
-  public getAppsOnNetwork(networkName: string, messageHandler?: IResponseMessageHandler): Observable<IRawAppOnNetwork[]> {
-      let url = "Resources/Networks/" + encodeURIComponent(networkName) + "/ApplicationRefs";
-      return this.getFullCollection<IRawAppOnNetwork>(url, "Get applications using current network", RestClientService.apiVersion64);
-  }
-
-  public getNodesOnNetwork(networkName: string, messageHandler?: IResponseMessageHandler): Observable<IRawNodeOnNetwork[]> {
-      let url = "Resources/Networks/" + encodeURIComponent(networkName) + "/DeployedNodes";
-      return this.getFullCollection<IRawNodeOnNetwork>(url, "Get nodes, current network is deployed on", RestClientService.apiVersion64);
-  }
-
   public getDeployedContainersOnNetwork(networkName: string, nodeName: string, messageHandler?: IResponseMessageHandler): Observable<IRawDeployedContainerOnNetwork[]> {
       let url = "Nodes/" + encodeURIComponent(nodeName) + "/$/GetNetworks/" + encodeURIComponent(networkName) + "/$/GetCodePackages";
       return this.getFullCollection<IRawDeployedContainerOnNetwork>(url, "Get containers on network", RestClientService.apiVersion60);
@@ -910,17 +870,5 @@ export class RestClientService {
               this.message.showMessage(message, MessageSeverity.Err);
           }
       }));
-  }
-
-  private wrapInCallbacks<T>(operation: () => Observable<T>): Observable<T> {
-      this.requestCount++;
-      console.log("???")
-      let promise = operation();
-
-      promise.subscribe(() => {
-          this.requestCount--;
-      });
-
-      return promise;
   }
 }

@@ -1,1 +1,3 @@
-<p>manifest works!</p>
+<div *ngIf="app && app.manifest">
+    <app-manifest-viewer [manifestName]="app.name" [manifest]="app.manifest.raw.Manifest" *ngIf="app.manifest.raw"></app-manifest-viewer>
+</div>

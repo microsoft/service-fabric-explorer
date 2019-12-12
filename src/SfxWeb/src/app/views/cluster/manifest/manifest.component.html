@@ -1,6 +1,3 @@
-<div class="detail-pane">
-    <h4>
-        <span id="clusterManifestName">{{clusterManifest.clusterManifestName}}</span>
-    </h4>
-    <code [attr.aria-label]="'manifest of ' + clusterManifest.clusterManifestName">{{clusterManifest.raw.Manifest}}</code>
+<div *ngIf="clusterManifest && clusterManifest.raw">
+    <app-manifest-viewer [manifestName]="clusterManifest.clusterManifestName" [manifest]="clusterManifest.raw.Manifest"></app-manifest-viewer>
 </div>

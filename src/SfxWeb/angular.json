@@ -24,10 +24,11 @@
             "tsConfig": "tsconfig.app.json",
             "aot": false,
             "assets": [
-              "src/favicon.ico",
+              "src/favicon.png",
               "src/assets"
             ],
             "styles": [
+              "node_modules/vis-timeline/dist/vis-timeline-graph2d.min.css",
               "src/styles.scss",
               "src/Styles/modules/_candybar.scss"
             ],

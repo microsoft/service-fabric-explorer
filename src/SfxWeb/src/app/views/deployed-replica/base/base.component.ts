@@ -40,7 +40,7 @@ export class BaseComponent extends DeployedReplicaBaseController {
         IdGenerator.deployedServicePackage(this.serviceId, this.activationId),
         IdGenerator.deployedReplicaGroup(),
         IdGenerator.deployedReplica(this.partitionId)
-    ]);
+    ], true);
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

@@ -209,13 +209,11 @@ export class TreeNodeGroupViewModel {
             return of(true);
         }
 
-        console.log(this._currentGetChildrenPromise)
         if (!this._currentGetChildrenPromise) {
             this.loadingChildren = true;
-            console.log(this)
             this._currentGetChildrenPromise = new Subject();
             this.childrenQuery().subscribe(response => {
-                console.log(response);
+
                 let childrenViewModels: TreeNodeViewModel[] = [];
                 for (let i = 0; i < response.length; i++) {
                     let node = response[i];
@@ -237,7 +235,7 @@ export class TreeNodeGroupViewModel {
 
             });
         }
-        console.log(this._currentGetChildrenPromise)
+
         return this._currentGetChildrenPromise || of(null);
     }
 

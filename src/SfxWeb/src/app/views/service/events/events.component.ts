@@ -1,15 +1,23 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Injector } from '@angular/core';
+import { ServiceBaseController } from '../ServiceBase';
+import { DataService } from 'src/app/services/data.service';
+import { ServiceEventList } from 'src/app/Models/DataModels/collections/Collections';
 
 @Component({
   selector: 'app-events',
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss']
 })
-export class EventsComponent implements OnInit {
+export class EventsComponent extends ServiceBaseController {
 
-  constructor() { }
+  serviceEvents: ServiceEventList;
 
-  ngOnInit() {
+  constructor(protected data: DataService, injector: Injector) { 
+    super(data, injector);
+  }
+
+  setup() {
+    this.serviceEvents = this.data.createServiceEventList(this.serviceId);
   }
 
 }

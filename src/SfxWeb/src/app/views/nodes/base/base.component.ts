@@ -23,7 +23,8 @@ export class BaseComponent implements OnInit {
 
   ngOnInit() {
     this.tree.selectTreeNode([
+      IdGenerator.cluster(),
       IdGenerator.nodeGroup()
-    ]);
+    ], true);
   }
 }

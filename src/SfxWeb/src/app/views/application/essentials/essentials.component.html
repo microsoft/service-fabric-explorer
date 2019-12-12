@@ -1,5 +1,5 @@
 <div class="detail-pane essen-pane">
-    <div class="table-responsive">
+    <div class="table-responsive" *ngIf="app && app.isInitialized">
         <table class="essen-table" role="presentation">
             <tr>
                 <th>Name</th>

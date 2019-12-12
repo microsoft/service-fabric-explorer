@@ -11,7 +11,7 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HealthBase } from './HealthEvent';
 import { PartitionBackupInfo } from './PartitionBackupInfo';
 import { Observable } from 'rxjs';
-import { ActionWithConfirmationDialog } from '../Action';
+import { ActionWithConfirmationDialog, ActionWithDialog } from '../Action';
 import { mergeMap } from 'rxjs/operators';
 
 //-----------------------------------------------------------------------------

@@ -8,6 +8,7 @@ import { EssentialsComponent } from './essentials/essentials.component';
 import { EventsComponent } from './events/events.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
+import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates
     CommonModule,
     ReplicaRoutingModule,
     SharedModule,
-    DetailListTemplatesModule
+    DetailListTemplatesModule,
+    EventStoreModule
   ]
 })
 export class ReplicaModule { }

@@ -31,6 +31,6 @@ export class BaseComponent extends ApplicationTypeBaseController {
       IdGenerator.cluster(),
       IdGenerator.appGroup(),
       IdGenerator.appType(this.appTypeName),
-    ]);
+    ], true);
   }
 }

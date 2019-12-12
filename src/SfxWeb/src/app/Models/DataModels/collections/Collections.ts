@@ -23,7 +23,7 @@ import { DeployedServicePackage } from '../DeployedServicePackage';
 import { DeployedCodePackage } from '../DeployedCodePackage';
 import { DeployedReplica } from '../DeployedReplica';
 import { FabricEventBase, FabricEventInstanceModel, ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent, FabricEvent } from '../../eventstore/Events';
-import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter } from '../../ListSettings';
+import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingWithEventStoreFullDescription, ListColumnSettingWithEventStoreRowDisplay } from '../../ListSettings';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { NetworkOnNode } from '../NetworkOnNode';
@@ -34,6 +34,7 @@ import { PartitionBackup, PartitionBackupInfo } from '../PartitionBackupInfo';
 import { DeployedContainerOnNetwork } from '../DeployedContainerOnNetwork';
 import { NodeOnNetwork } from '../NodeOnNetwork';
 import { DataModelCollectionBase, IDataModelCollection } from './CollectionBase';
+import { ListColumnSettingWithDisplayName } from 'src/app/modules/imagestore/display-name-column/display-name-column.component';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -44,128 +45,6 @@ export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getBackupPolicies(messageHandler).pipe(map(items => {
             return items.map(raw => new BackupPolicy(this.data, raw));
-        }));
-    }
-}
-
-export class NetworkCollection extends DataModelCollectionBase<Network> {
-    public constructor(data: DataService) {
-        super(data);
-    }
-
-    public get viewPath(): string {
-        return this.data.routes.getNetworksViewPath();
-    }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getNetworks(messageHandler).pipe(map(items => {
-            return items.map(raw => new Network(this.data, raw));
-        }));
-    }
-}
-
-export class NetworkOnAppCollection extends DataModelCollectionBase<NetworkOnApp> {
-    appId: string;
-    public constructor(data: DataService, appId: string) {
-        super(data);
-        this.appId = appId;
-    }
-
-    //TODO figure out whats going on here
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        let collection = [];
-        return this.data.restClient.getNetworksOnApp(this.appId, messageHandler).pipe(mergeMap(items => {
-            let tasks = items.map(raw => {
-                let network = new NetworkOnApp(this.data, raw);
-                return network.refresh().pipe(map(() => collection.push(network)));
-            });
-            return forkJoin(tasks).pipe(map(() => collection));
-        }));
-    }
-}
-
-export class NetworkOnNodeCollection extends DataModelCollectionBase<NetworkOnNode> {
-    nodeName: string;
-    public constructor(data: DataService, nodeName: string) {
-        super(data);
-        this.nodeName = nodeName;
-    }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        let collection = [];
-        return this.data.restClient.getNetworksOnNode(this.nodeName, messageHandler).pipe(map(items => {
-            let filtered = items.filter(item => { return item.NetworkName !== "servicefabric_network"; });
-            let tasks = filtered.map(raw => {
-                let network = new NetworkOnNode(this.data, raw);
-                return network.refresh().pipe(map(() => collection.push(network)));
-            });
-            return forkJoin(tasks).pipe(map(() => collection));
-        }));
-    }
-}
-
-export class AppOnNetworkCollection extends DataModelCollectionBase<AppOnNetwork> {
-    networkName: string;
-    public constructor(data: DataService, networkName: string) {
-        super(data);
-        this.networkName = networkName;
-    }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        let collection = [];
-        return this.data.restClient.getAppsOnNetwork(this.networkName, messageHandler).pipe(map(items => {
-            let tasks = items.map(raw => {
-                let application = new AppOnNetwork(this.data, raw);
-                return application.refresh().pipe(map(() => collection.push(application)));
-            });
-
-            return forkJoin(tasks).pipe(map(() => collection));
-        }));
-    }
-}
-
-export class NodeOnNetworkCollection extends DataModelCollectionBase<NodeOnNetwork> {
-    networkName: string;
-    public constructor(data: DataService, networkName: string) {
-        super(data);
-        this.networkName = networkName;
-    }
-
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        let collection = [];
-        return this.data.restClient.getNodesOnNetwork(this.networkName, messageHandler).pipe(map(items => {
-            let tasks = items.map(raw => {
-                let node = new NodeOnNetwork(this.data, raw);
-                return node.refresh().pipe(map(() => collection.push(node)));
-            });
-            return forkJoin(tasks).pipe(map(() => collection));
-        }));
-    }
-}
-
-export class DeployedContainerOnNetworkCollection extends DataModelCollectionBase<DeployedContainerOnNetwork> {
-    networkName: string;
-    public constructor(data: DataService, networkName: string) {
-        super(data);
-        this.networkName = networkName;
-    }
-
-    //TODO CHECK THIS WORKS RIGHT
-    protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getNodesOnNetwork(this.networkName, messageHandler).pipe(mergeMap(items => {
-            let result: DeployedContainerOnNetwork[] = new Array();
-            let promises = [];
-            items.forEach(raw => {
-                promises.push(this.data.restClient.getDeployedContainersOnNetwork(this.networkName, raw.nodeName, messageHandler).pipe(map(values => {
-                    values.forEach(value => {
-                        result.push(new DeployedContainerOnNetwork(this.data, raw.nodeName, value));
-                    });
-                })));
-            });
-            return forkJoin(promises).pipe(map(values => {
-                return result;
-            }));
-
         }));
     }
 }
@@ -495,16 +374,6 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
         this.settings = this.createListSettings();
         this.detailsSettings = this.createListSettings();
 
-        // Add correlated event col.
-        let correlatedEventsCol = new ListColumnSetting(
-            "#CorrelatedEvents",
-            "",
-            [],
-            null,
-            (item) => HtmlUtils.getEventDetailsViewLinkHtml(item.raw));
-        correlatedEventsCol.fixedWidthPx = 40;
-        this.settings.columnSettings.splice(1, 0, correlatedEventsCol);
-
         this.setNewDateWindowInternal(startDate, endDate);
     }
 
@@ -547,12 +416,8 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
         let listSettings = new ListSettings(
             this.pageSize,
             ["raw.timeStamp"],
-            [new ListColumnSetting(
-                "raw.kind",
-                "Type",
-                ["raw.kind"],
-                true,
-                (item) => HtmlUtils.getEventNameHtml(item.raw)),
+            [
+                new ListColumnSettingWithEventStoreRowDisplay(),
             new ListColumnSetting(
                 "raw.category",
                 "Event Category",
@@ -560,13 +425,9 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
                 true,
                 (item) => (!item.raw.category ? "Operational" : item.raw.category)),
             new ListColumnSetting("raw.timeStampString", "Timestamp"), ],
-            [new ListColumnSetting(
-                "raw.eventInstanceId",
-                "",
-                [],
-                null,
-                (item) => HtmlUtils.getEventSecondRowHtml(item.raw),
-                -1), ],
+            [
+                new ListColumnSettingWithEventStoreFullDescription()
+            ],
             true,
             (item) => (Object.keys(item.raw.eventProperties).length > 0),
             true);

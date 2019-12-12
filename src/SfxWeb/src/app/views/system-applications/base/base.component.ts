@@ -28,6 +28,6 @@ export class BaseComponent extends ServiceApplicationsBaseController {
     this.tree.selectTreeNode([
       IdGenerator.cluster(),
       IdGenerator.systemAppGroup()
-    ]);
+    ], true);
   }
 }

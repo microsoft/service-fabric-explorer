@@ -2,6 +2,8 @@
 import { Utils } from '../Utils/Utils';
 import { HyperLinkComponent } from '../modules/detail-list-templates/hyper-link/hyper-link.component';
 import { CopyTextComponent } from '../modules/detail-list-templates/copy-text/copy-text.component';
+import { RowDisplayComponent } from '../modules/event-store/row-display/row-display.component';
+import { FullDescriptionComponent } from '../modules/event-store/full-description/full-description.component';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -250,5 +252,19 @@ export class ListColumnSettingWithCopyText extends ListColumnSetting {
         displayName: string) {
 
         super(propertyPath, displayName);
+    }
+}
+
+export class ListColumnSettingWithEventStoreRowDisplay extends ListColumnSetting {
+    template = RowDisplayComponent;
+    public constructor() {
+        super("raw.kind", "Type");
+    }
+}
+
+export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSetting {
+    template = FullDescriptionComponent;
+    public constructor() {
+        super("raw.eventInstanceId", "", [], false, () => "", -1);
     }
 }

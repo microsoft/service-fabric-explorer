@@ -12,14 +12,14 @@ import { EventsComponent } from './events/events.component';
 
 const routes: Routes = [{
   path: '', component: BaseComponent, children: [
-    { path: '', component: EssentialsComponent },
     { path: 'details', component: DetailsComponent },
     { path: 'metrics', component: MetricsComponent },
     { path: 'clustermap', component: ClustermapComponent },
     { path: 'imagestore', component: ImagestoreComponent },
     { path: 'manifest', component: ManifestComponent },
     { path: 'events', component: EventsComponent },
-    ]
+    { path: '', component: EssentialsComponent },
+  ]
   }
 ];
 

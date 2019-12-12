@@ -32,6 +32,6 @@ export class BaseComponent extends DeployedAppBaseController {
       IdGenerator.nodeGroup(),
       IdGenerator.node(this.nodeName),
       IdGenerator.deployedApp(this.appId)
-    ]);
+    ], true);
   }
 }

@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { SystemApplication, Application } from '../Models/DataModels/Application';
-import { ApplicationTypeGroupCollection, ApplicationCollection, NetworkCollection, BackupPolicyCollection, ServiceTypeCollection, DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, ReplicaOnPartitionCollection, PartitionCollection } from '../Models/DataModels/collections/Collections';
+import { ApplicationTypeGroupCollection, ApplicationCollection, BackupPolicyCollection, ServiceTypeCollection, DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, ReplicaOnPartitionCollection, PartitionCollection, ClusterEventList, NodeEventList, ApplicationEventList, ServiceEventList, PartitionEventList, ReplicaEventList, CorrelatedEventList } from '../Models/DataModels/collections/Collections';
 import { RoutesService } from './routes.service';
 import { MessageService } from './message.service';
 import { TelemetryService } from './telemetry.service';
@@ -45,7 +45,6 @@ export class DataService {
   public apps: ApplicationCollection;
   public nodes: NodeCollection;
   public imageStore: ImageStore;
-  public networks: NetworkCollection;
   public backupPolicies: BackupPolicyCollection;
 
   constructor(
@@ -153,16 +152,6 @@ export class DataService {
       return this.getNodes(false, messageHandler).pipe(mergeMap(collection => {
           return this.tryGetValidItem(collection, name, forceRefresh, messageHandler);
       }));
-  }
-
-  public getNetwork(networkName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<Network> {
-    return this.getNetworks(false, messageHandler).pipe(mergeMap(collection => {
-        return this.tryGetValidItem(collection, networkName, forceRefresh, messageHandler);
-    }));
-  }
-
-  public getNetworks(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<NetworkCollection> {
-    return this.networks.ensureInitialized(forceRefresh, messageHandler);
   }
 
   public getAppTypeGroups(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationTypeGroupCollection> {
@@ -281,6 +270,34 @@ export class DataService {
           return this.tryGetValidItem(collection, IdGenerator.deployedReplica(partitionId), forceRefresh, messageHandler);
       }));
   }
+
+  public createClusterEventList(): ClusterEventList {
+    return new ClusterEventList(this);
+    }
+
+    public createNodeEventList(nodeName?: string): NodeEventList {
+        return new NodeEventList(this, nodeName);
+    }
+
+    public createApplicationEventList(applicationId?: string): ApplicationEventList {
+        return new ApplicationEventList(this, applicationId);
+    }
+
+    public createServiceEventList(serviceId?: string): ServiceEventList {
+        return new ServiceEventList(this, serviceId);
+    }
+
+    public createPartitionEventList(partitionId?: string): PartitionEventList {
+        return new PartitionEventList(this, partitionId);
+    }
+
+    public createReplicaEventList(partitionId: string, replicaId?: string): ReplicaEventList {
+        return new ReplicaEventList(this, partitionId, replicaId);
+    }
+
+    public createCorrelatedEventList(eventInstanceId: string) {
+        return new CorrelatedEventList(this, eventInstanceId);
+    }
 
   private tryGetValidItem<T extends IDataModel<any>>(collection: IDataModelCollection<T>, uniqueId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<any> {
     let item = collection.find(uniqueId);

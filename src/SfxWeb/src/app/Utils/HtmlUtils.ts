@@ -119,7 +119,7 @@ export class EventTypesUtil {
 export class HtmlUtils {
 
     // Utility to mark warning/error/resolved events in the detail list
-    private static eventTypesUtil = new EventTypesUtil();
+    public static eventTypesUtil = new EventTypesUtil();
 
     // Reposition the filter context menu if they are out of current view port
     public static repositionContextMenu(): void {
@@ -142,14 +142,6 @@ export class HtmlUtils {
         return `<span class="${className}">${text}</span>`;
     }
 
-    public static getSpanWithLink(className: string, text: string, url: string): string {
-        if (url) {
-            return `<a class="${className}" title="${text}" ng-href="${url}" ">${text}</a>`;
-        }else {
-            return HtmlUtils.getSpanWithCustomClass(className, text);
-        }
-    }
-
     public static getSpanWithTitleHtml(text: string): string {
         return `<span title="${text}">${text}</span>`;
     }
@@ -167,38 +159,13 @@ export class HtmlUtils {
             return this.getSpanWithTitleHtml(badge.text);
         }
         // Keep the template here in sync with badge.html
-        return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="images/${badge.badgeClass}.svg" alt="${badge.text} badge"></img><span> ${badge.text}</span></div>`;
+        return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="assets/${badge.badgeClass}.svg" alt="${badge.text} badge"></img><span> ${badge.text}</span></div>`;
     }
 
     public static getBadgeOnlyHtml(badge: ITextAndBadge): string {
-        return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="images/${badge.badgeClass}.svg"></img></div>`;
+        return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="assets/${badge.badgeClass}.svg"></img></div>`;
     }
 
-    public static getEventNameHtml(event: FabricEventBase): string {
-        let color = null;
-        if (HtmlUtils.eventTypesUtil.isResolved(event)) {
-            color = "#3AA655";
-        } else if (HtmlUtils.eventTypesUtil.isWarning(event)) {
-            color = "#F2C649";
-        } else if (HtmlUtils.eventTypesUtil.isError(event)) {
-            color = "#FF5349";
-        }
-
-        if (color) {
-            return `<span style="color:${color}">${event.kind}</span>`;
-        }
-        return event.kind;
-    }
-
-    public static getEventSecondRowHtml(event: FabricEventBase): string {
-        let json = `EventInstanceId: "${event.eventInstanceId}"</br>` +
-            `Additional Properties: ${JSON.stringify(event.eventProperties, null, "&nbsp;")}`;
-        return `<div style="margin-left:20px">${json.replace(new RegExp("\\n", "g"), "<br/>")}</div>`;
-    }
-
-    public static getEventDetailsViewLinkHtml(event: FabricEventBase): string {
-        return event.hasCorrelatedEvents ? `<a title="Correlated Events" href ng-click="showDetails('` + event.eventInstanceId + `')">View</a>` : "";
-    }
 
     public static parseReplicaAddress(address: string): any {
         if (!address) {

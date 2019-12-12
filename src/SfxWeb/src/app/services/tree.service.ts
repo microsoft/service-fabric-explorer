@@ -153,26 +153,26 @@ export class TreeService {
 
             return forkJoin([getAppsPromise, getNodesPromise, systemNodePromise]);
             
-            return this.data.getClusterManifest().pipe(mergeMap( (cm) => {
-                console.log("wait")
-                //check to see if network inventory manager is enabled and if SFX should display Network information
-                // if (cm.isNetworkInventoryManagerEnabled) {
-                //     let networkNode;
-                //     let getNetworkPromise = this.data.getNetworks(true).pipe(map(net => {
-                //         networkNode = {
-                //             nodeId: IdGenerator.networkGroup(),
-                //             displayName: () => "Networks",
-                //             childrenQuery: () => this.getNetworks(),
-                //             selectAction: () => this.routes.navigate(() => net.viewPath),
-                //             alwaysVisible: true
-                //         };
-                //     }));
-                //     return forkJoin([getAppsPromise, getNodesPromise, getNetworkPromise, systemNodePromise]).pipe(map(() => {
-                //         return [appsNode, nodesNode, networkNode, systemAppNode];
-                //     }));
-                // }
-                return forkJoin([getAppsPromise, getNodesPromise, systemNodePromise]);
-            }));
+            // return this.data.getClusterManifest().pipe(mergeMap( (cm) => {
+            //     console.log("wait")
+            //     //check to see if network inventory manager is enabled and if SFX should display Network information
+            //     // if (cm.isNetworkInventoryManagerEnabled) {
+            //     //     let networkNode;
+            //     //     let getNetworkPromise = this.data.getNetworks(true).pipe(map(net => {
+            //     //         networkNode = {
+            //     //             nodeId: IdGenerator.networkGroup(),
+            //     //             displayName: () => "Networks",
+            //     //             childrenQuery: () => this.getNetworks(),
+            //     //             selectAction: () => this.routes.navigate(() => net.viewPath),
+            //     //             alwaysVisible: true
+            //     //         };
+            //     //     }));
+            //     //     return forkJoin([getAppsPromise, getNodesPromise, getNetworkPromise, systemNodePromise]).pipe(map(() => {
+            //     //         return [appsNode, nodesNode, networkNode, systemAppNode];
+            //     //     }));
+            //     // }
+            //     return forkJoin([getAppsPromise, getNodesPromise, systemNodePromise]);
+            // }));
         }
 
         private getNodes(): Observable<ITreeNode[]> {
@@ -218,21 +218,21 @@ export class TreeService {
             }));
         }
 
-        private getNetworks(): Observable<ITreeNode[]> {
-            // App type groups cannot be inferred from health chunk data, because we need all app types
-            // even there are currently no application instances for them.
-            return this.data.getNetworks(true).pipe(map(networks => {
-                return networks.collection.map(network => {
-                    return {
-                        nodeId: IdGenerator.network(network.name),
-                        displayName: () => network.name,
-                        selectAction: () => this.routes.navigate(() => network.viewPath),
-                        sortBy: () => [network.name],
-                        actions: network.actions
-                    };
-                });
-            }));
-        }
+        // private getNetworks(): Observable<ITreeNode[]> {
+        //     // App type groups cannot be inferred from health chunk data, because we need all app types
+        //     // even there are currently no application instances for them.
+        //     return this.data.getNetworks(true).pipe(map(networks => {
+        //         return networks.collection.map(network => {
+        //             return {
+        //                 nodeId: IdGenerator.network(network.name),
+        //                 displayName: () => network.name,
+        //                 selectAction: () => this.routes.navigate(() => network.viewPath),
+        //                 sortBy: () => [network.name],
+        //                 actions: network.actions
+        //             };
+        //         });
+        //     }));
+        // }
 
         private getApplicationTypes(): Observable<ITreeNode[]> {
             // App type groups cannot be inferred from health chunk data, because we need all app types
@@ -350,6 +350,7 @@ export class TreeService {
 
         private getApplicationsForType(appTypeName: string): Observable<ITreeNode[]> {
             return this.data.getAppTypeGroup(appTypeName).pipe(map(appTypeGroup => {
+                console.log("test test test")
                 return appTypeGroup.apps.map(app => {
                     return {
                         nodeId: IdGenerator.app(app.id),

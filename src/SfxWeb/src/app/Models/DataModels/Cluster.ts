@@ -13,6 +13,7 @@ import { Observable, of } from 'rxjs';
 import { mergeMap, map } from 'rxjs/operators';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
+import { ActionWithDialog } from '../Action';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.

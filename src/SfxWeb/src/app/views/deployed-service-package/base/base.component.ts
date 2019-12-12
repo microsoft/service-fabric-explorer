@@ -37,6 +37,6 @@ export class BaseComponent extends DeployedServicePackageBaseController {
       IdGenerator.node(this.nodeName),
       IdGenerator.deployedApp(this.appId),
       IdGenerator.deployedServicePackage(this.serviceId, this.activationId)
-    ]);
+    ], true);
   }
 }

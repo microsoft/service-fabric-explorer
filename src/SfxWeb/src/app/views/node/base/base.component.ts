@@ -19,6 +19,10 @@ export class BaseComponent extends NodeBaseController {
     {
       name: "details",
       route: "./details"
+    },
+    {
+      name: "events",
+      route: "./events"
     }
   ];
 

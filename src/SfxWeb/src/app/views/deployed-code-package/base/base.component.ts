@@ -43,9 +43,7 @@ export class BaseComponent extends DeployedCodePackageBaseController {
       IdGenerator.deployedServicePackage(this.serviceId, this.activationId),
       IdGenerator.deployedCodePackageGroup(),
       IdGenerator.deployedCodePackage(this.codePackageName)
-    ]);
-
-
+    ], true);
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

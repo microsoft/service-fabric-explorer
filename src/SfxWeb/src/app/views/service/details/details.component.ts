@@ -1,14 +1,9 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { BaseController } from 'src/app/ViewModels/BaseController';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
-import { IdUtils } from 'src/app/Utils/IdUtils';
-import { ActivatedRouteSnapshot } from '@angular/router';
 import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
-import { Service } from 'src/app/Models/DataModels/Service';
 import { ServiceBaseController } from '../ServiceBase';
 
 @Component({

@@ -1,6 +1,5 @@
 import { Component, OnInit } from '@angular/core';
 import { TreeService } from './services/tree.service';
-import { IdGenerator } from './Utils/IdGenerator';
 
 @Component({
   selector: 'app-root',
@@ -18,15 +17,11 @@ export class AppComponent implements OnInit{
   ngOnInit() {
     this.treeService.init();
 
-    // this.treeService.selectTreeNode([                IdGenerator.cluster(),
-    //   IdGenerator.appGroup()]).subscribe( ()=> {
-    //   console.log(this.treeService.tree)
-    // })
   }
   
   resize($event: number): void {
     console.log($event)
-    //have to subtract the 
-    this.treeWidth = ($event + 10).toString() + 'px';
+    //have to subtract the offset
+    this.treeWidth = ($event + 5).toString() + 'px';
   }
 }

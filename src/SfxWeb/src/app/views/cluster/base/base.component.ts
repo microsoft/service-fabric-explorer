@@ -46,7 +46,7 @@ export class BaseComponent implements OnInit {
   ngOnInit() {
     this.tree.selectTreeNode([
       IdGenerator.cluster()
-    ]);
+    ], true);
 
     this.SFXClusterName = window.location.host; //TODO FIX THIS
   }

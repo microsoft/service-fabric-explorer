@@ -38,7 +38,7 @@ export class BaseComponent extends BaseController {
       IdGenerator.deployedApp(this.appId),
       IdGenerator.deployedServicePackage(this.serviceId, this.activationId),
       IdGenerator.deployedCodePackageGroup()
-  ]);
+  ], true);
   }
 
   common(messageHandler?: IResponseMessageHandler): Observable<any> {

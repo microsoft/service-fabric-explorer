@@ -15,7 +15,7 @@
                     </span>
                     <img *ngIf="child.badge && child.badge() && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
                             class="tree-badge" [title]="child.badge().text"
-                            [src]="child.badge().badgeClass + '.svg'" role="presentation">
+                            [src]="'assets/' + child.badge().badgeClass + '.svg'" role="presentation">
                     <span class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()"></span>
         
                     <!-- <div ng-if="::child.actions && child.actions.length > 0"

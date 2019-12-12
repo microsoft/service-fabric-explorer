@@ -48,29 +48,31 @@
                 <tbody>
                         <!-- track by (item.uniqueId || $id(item)) -->
                         <!-- | slice: listSettings.limit: listSettings.begin; -->
-                <ng-container *ngFor="let item of sortedFilteredList let i = index;">
+                <ng-container *ngFor="let item of partialList; ">
                     <tr>
                             <!-- track by columnSetting.propertyPath -->
-                        <td *ngFor="let columnSetting of listSettings.columnSettings"
-                            ng-mousedown="handleClickRow(item, $event)">
-                            <i class="bowtie-icon row-expander"
+                            <!-- ng-mousedown="handleClickRow(item, $event)" -->
+                        <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index; trackBy: trackByColumnSetting;">
+                            <span class="bowtie-icon row-expander" (click)="handleClickRow(item, $event)"
                                 *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)"
                                 [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"
-                                (click)="handleClickRow(item)"
-                                [ngClass]="{'bowtie-chevron-right': item.isSecondRowCollapsed, 'bowtie-chevron-down': !item.isSecondRowCollapsed}"></i>
+                                [ngClass]="{'bowtie-chevron-right': item.isSecondRowCollapsed, 'bowtie-chevron-down': !item.isSecondRowCollapsed}">close</span>
                                 <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
                                 <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
                             </td>
                         </tr>
                         <!-- Optional second row -->
                         <tr *ngIf="listSettings.secondRowColumnSettings.length > 0 && listSettings.showSecondRow(item)">
+                            <!-- TODO  track by columnSetting.propertyPath -->
                             <td class="no-border"
-                                ng-repeat="columnSetting in ::listSettings.secondRowColumnSettings track by columnSetting.propertyPath"
+                                *ngFor="let columnSetting of listSettings.secondRowColumnSettings; trackBy: trackByColumnSetting;"
                                 [colSpan]="columnSetting.colspan === -1 ? (listSettings.columnSettings.length - listSettings.secondRowColumnSettings.length + 1) : columnSetting.colspan"
                                 [ngClass]="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed}">
-                                <!-- <div uib-collapse="listSettings.secondRowCollapsible && item.isSecondRowCollapsed" sfx-bind-html-compile="columnSetting.getDisplayContentsInHtml(item)"
-                                    [ng-class]="{'shift-expander-col': $index === 0 && listSettings.secondRowCollapsible}">
-                                </div> -->
+                                <div *ngIf="listSettings.secondRowCollapsible && item.isSecondRowCollapsed" 
+                                    [ngClass]="{'shift-expander-col': $index === 0 && listSettings.secondRowCollapsible}">
+                                    <!-- [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" -->
+                                    <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
+                                </div>
                             </td>
                         </tr>
                 </ng-container>

@@ -3,7 +3,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable, Subject, throwError, of, forkJoin } from 'rxjs';
 import { IClusterHealthChunk, IHealthStateChunk, IHealthStateChunkList } from '../../HealthChunkRawDataTypes';
 import { ValueResolver } from 'src/app/Utils/ValueResolver';
-import { mergeMap } from 'rxjs/operators';
+import { mergeMap, map } from 'rxjs/operators';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
 import { Utils } from 'src/app/Utils/Utils';
 import { DataService } from 'src/app/services/data.service';
