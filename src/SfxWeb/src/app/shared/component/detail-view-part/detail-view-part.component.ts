@@ -22,7 +22,6 @@ export class DetailViewPartComponent implements OnInit {
   @Input() 
   set data(data:  any) {
     this.resolvedData = this.getResolvedDataObject(data);
-    console.log(this.resolvedData)
   }
 
   constructor() { }

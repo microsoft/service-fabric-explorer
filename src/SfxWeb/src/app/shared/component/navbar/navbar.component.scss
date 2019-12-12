@@ -1,16 +1,16 @@
 @import "src/styles.scss";
 
 .main-header {
-    padding-right: 5px;
-    position: fixed;
+    position: sticky;
     background-color: #191919;
-    width: 100%;
+    width: inherit;
+    top: 0px;
     ul {
         list-style: none;
     }
 
     .detail-view-title-bar {
-        margin-top: 18px;
+        margin-bottom: 18px;
         position: relative;
 
         .detail-view-title {
@@ -20,7 +20,6 @@
             font-size: $font-size-title;
             font-weight: $font-weight-semilight;
             color: $detail-pane-main-title-color;
-            padding-right: 120px;
 
             b {
                 font-weight: $font-weight-semibold;

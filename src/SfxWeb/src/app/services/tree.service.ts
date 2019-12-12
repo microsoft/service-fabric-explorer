@@ -11,6 +11,7 @@ import { RoutesService } from './routes.service';
 import { of, Observable, forkJoin } from 'rxjs';
 import { mergeMap, map } from 'rxjs/operators';
 import { SettingsService } from './settings.service';
+import { RefreshService } from './refresh.service';
 
 @Injectable({
   providedIn: 'root'
@@ -27,7 +28,8 @@ export class TreeService {
         constructor(
             private data: DataService,
             private routes: RoutesService,
-            private settings: SettingsService) {
+            private settings: SettingsService,
+            private refreshService: RefreshService) {
         }
 
         // AuthenticationController will call this function to initialize the tree view once authentication is cleared
@@ -39,7 +41,7 @@ export class TreeService {
             }
 
             this.cm = new ClusterManifest(this.data);
-
+            this.refreshService.insertRefreshSubject("tree", this.refresh.bind(this))
         }
 
         public selectTreeNode(path: string[], skipSelectAction?: boolean): Observable<any> {
@@ -70,13 +72,13 @@ export class TreeService {
             let clusterHealthQueryDescription = this.tree.addHealthChunkFiltersRecursively(this.data.getInitialClusterHealthChunkQueryDescription());
             return this.data.getClusterHealthChunk(clusterHealthQueryDescription)
                 .pipe(mergeMap(healthChunk => {
+                    console.log(this.clusterHealth.mergeHealthStateChunk(healthChunk))
+                    console.log(this.tree.mergeClusterHealthStateChunk(healthChunk))
                     return forkJoin([
                         // cluster health needs to be refreshed even when the root node is collapsed
                         this.clusterHealth.mergeHealthStateChunk(healthChunk),
                         this.tree.mergeClusterHealthStateChunk(healthChunk)
-                    ]);
-                },() => {
-                    return this.tree.refresh();
+                    ]).pipe(mergeMap( () => this.tree.refresh()) )
                 }));
         }
 
@@ -152,27 +154,6 @@ export class TreeService {
 
 
             return forkJoin([getAppsPromise, getNodesPromise, systemNodePromise]);
-            
-            // return this.data.getClusterManifest().pipe(mergeMap( (cm) => {
-            //     console.log("wait")
-            //     //check to see if network inventory manager is enabled and if SFX should display Network information
-            //     // if (cm.isNetworkInventoryManagerEnabled) {
-            //     //     let networkNode;
-            //     //     let getNetworkPromise = this.data.getNetworks(true).pipe(map(net => {
-            //     //         networkNode = {
-            //     //             nodeId: IdGenerator.networkGroup(),
-            //     //             displayName: () => "Networks",
-            //     //             childrenQuery: () => this.getNetworks(),
-            //     //             selectAction: () => this.routes.navigate(() => net.viewPath),
-            //     //             alwaysVisible: true
-            //     //         };
-            //     //     }));
-            //     //     return forkJoin([getAppsPromise, getNodesPromise, getNetworkPromise, systemNodePromise]).pipe(map(() => {
-            //     //         return [appsNode, nodesNode, networkNode, systemAppNode];
-            //     //     }));
-            //     // }
-            //     return forkJoin([getAppsPromise, getNodesPromise, systemNodePromise]);
-            // }));
         }
 
         private getNodes(): Observable<ITreeNode[]> {
@@ -218,25 +199,10 @@ export class TreeService {
             }));
         }
 
-        // private getNetworks(): Observable<ITreeNode[]> {
-        //     // App type groups cannot be inferred from health chunk data, because we need all app types
-        //     // even there are currently no application instances for them.
-        //     return this.data.getNetworks(true).pipe(map(networks => {
-        //         return networks.collection.map(network => {
-        //             return {
-        //                 nodeId: IdGenerator.network(network.name),
-        //                 displayName: () => network.name,
-        //                 selectAction: () => this.routes.navigate(() => network.viewPath),
-        //                 sortBy: () => [network.name],
-        //                 actions: network.actions
-        //             };
-        //         });
-        //     }));
-        // }
-
         private getApplicationTypes(): Observable<ITreeNode[]> {
             // App type groups cannot be inferred from health chunk data, because we need all app types
             // even there are currently no application instances for them.
+            console.log("why?")
             return this.data.getAppTypeGroups(true).pipe(map(appGroups => {
                 return appGroups.collection.map(appTypeGroup => {
                     return {

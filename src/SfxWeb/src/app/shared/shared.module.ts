@@ -9,7 +9,7 @@ import { UpgradeProgressComponent } from './component/upgrade-progress/upgrade-p
 import { CandyBarCompactComponent } from './component/candy-bar-compact/candy-bar-compact.component';
 import { DetailViewPartComponent } from './component/detail-view-part/detail-view-part.component';
 import { CollapseContainerComponent } from './component/collapse-container/collapse-container.component';
-import { RefreshRateComponent } from './refresh-rate/refresh-rate.component';
+import { RefreshRateComponent } from './component/refresh-rate/refresh-rate.component';
 import { DragDirective } from './directive/drag.directive';
 import { ActionDialogComponent } from './component/action-dialog/action-dialog.component';
 import { ManifestComponent } from './component/manifest/manifest.component';

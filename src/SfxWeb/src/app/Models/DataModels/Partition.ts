@@ -78,12 +78,11 @@ export class Partition extends DataModelBase<IRawPartition> {
         }
 
         this.actions.add(new ActionWithDialog(
-            this.data.$uibModal,
-            this.data.$q,
+            this.data.dialog,
             "enablePartitionBackup",
             "Enable/Update Partition Backup",
             "Enabling Partition Backup",
-            () => this.data.restClient.enablePartitionBackup(this).then(() => {
+            () => this.data.restClient.enablePartitionBackup(this).subscribe(() => {
                 this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
             }),
             () => true,
@@ -98,12 +97,11 @@ export class Partition extends DataModelBase<IRawPartition> {
         ));
 
         this.actions.add(new ActionWithDialog(
-            this.data.$uibModal,
-            this.data.$q,
+            this.data.dialog,
             "disablePartitionBackup",
             "Disable Partition Backup",
             "Disabling Partition Backup",
-            () => this.data.restClient.disablePartitionBackup(this).then(() => {
+            () => this.data.restClient.disablePartitionBackup(this).subscribe(() => {
                 this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
             }),
             () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition",
@@ -161,8 +159,7 @@ export class Partition extends DataModelBase<IRawPartition> {
         ));
 
         this.actions.add(new ActionWithDialog(
-            this.data.$uibModal,
-            this.data.$q,
+            this.data.dialog,
             "restorePartitionBackup",
             "Restore Partition Backup",
             "Restoring Partition Backup",

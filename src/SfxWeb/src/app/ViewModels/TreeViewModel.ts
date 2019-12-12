@@ -87,6 +87,7 @@ export class TreeViewModel {
 
     // Recursively refreshes all expanded nodes starting from the root
     public refresh(): Observable<any> {
+        console.log("test")
         return this.childGroupViewModel.refreshExpandedChildrenRecursively();
     }
 

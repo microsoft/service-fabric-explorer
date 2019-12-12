@@ -21,7 +21,7 @@
     <div style="margin-left: auto;"></div>
 
     <div>
-      <app-refresh-rate></app-refresh-rate>
+      <app-refresh-rate [value]="refreshService.refreshRate" (onChange)="refreshService.updateRefreshInterval($event)"></app-refresh-rate>
     </div>
 
     <div>

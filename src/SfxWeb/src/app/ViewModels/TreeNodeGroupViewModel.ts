@@ -128,7 +128,7 @@ export class TreeNodeGroupViewModel {
             return of(true);
         }
 
-        of(this.owningNode && this.owningNode.mergeClusterHealthStateChunk
+        return of(this.owningNode && this.owningNode.mergeClusterHealthStateChunk
             ? this.owningNode.mergeClusterHealthStateChunk(clusterHealthChunk)
             : true).pipe(map( () => {
                 let updateChildrenPromises = this.children.map(child => {

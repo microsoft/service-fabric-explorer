@@ -3,6 +3,7 @@ import { Observable, Subscription, of } from 'rxjs';
 import { IResponseMessageHandler } from '../Common/ResponseMessageHandlers';
 import { ActivatedRoute, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { mergeMap } from 'rxjs/operators';
+import { RefreshService } from '../services/refresh.service';
 
 export abstract class BaseController implements  OnInit, OnDestroy {
 
@@ -10,13 +11,14 @@ export abstract class BaseController implements  OnInit, OnDestroy {
 
     activatedRoute: ActivatedRoute;
     router: Router;
+    refreshService: RefreshService;
 
     constructor(public injector: Injector) {}
 
     
     ngOnInit(){
          this.activatedRoute = this.injector.get<ActivatedRoute>(ActivatedRoute);
-
+         this.refreshService = this.injector.get<RefreshService>(RefreshService);
          this.router = this.injector.get<Router>(Router);
          this.subscriptions.add(this.activatedRoute.params.subscribe( () => {
              //get params
@@ -25,8 +27,14 @@ export abstract class BaseController implements  OnInit, OnDestroy {
              this.setup();
 
              this.subscriptions.add(this.common().pipe(mergeMap( () => this.refresh())).subscribe());
-         }))
+            
+             this.refreshService.insertRefreshSubject("current controller" + this.getClassName(), this.refresh.bind(this));
+        }))
     }
+
+    getClassName() {
+        return this.constructor.name;
+      }
 
     setup(){
 
@@ -34,6 +42,7 @@ export abstract class BaseController implements  OnInit, OnDestroy {
 
     ngOnDestroy(){
         this.subscriptions.unsubscribe();
+        this.refreshService.removeRefreshSubject("current controller" + this.getClassName());
     }
 
     getParams(route: ActivatedRouteSnapshot): void {

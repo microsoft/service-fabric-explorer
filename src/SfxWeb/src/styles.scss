@@ -314,7 +314,6 @@ $tooltip-max-width: 100% !default;
 }
 
 .main-view {
-    margin-top: 100px;
     padding-right: 5px;
     overflow: auto;
     flex: 1;
@@ -620,3 +619,7 @@ html,body {
 }
 html, body { height: 100%; }
 body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+app-navbar {
+    width: 100%;
+}

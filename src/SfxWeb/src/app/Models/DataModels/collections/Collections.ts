@@ -6,9 +6,7 @@ import { ValueResolver, ITextAndBadge } from 'src/app/Utils/ValueResolver';
 import { INodesStatusDetails, NodeStatusDetails, IRawDeployedApplication, IRawDeployedServicePackage } from '../../RawDataTypes';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
-import { Node } from '../Node';
 import { HealthStateConstants, NodeStatusConstants, StatusWarningLevel, BannerWarningID, Constants } from 'src/app/Common/Constants';
-import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
 import { mergeMap, map } from 'rxjs/operators';
 import { Utils } from 'src/app/Utils/Utils';
 import { BackupPolicy } from '../Cluster';
@@ -25,16 +23,9 @@ import { DeployedReplica } from '../DeployedReplica';
 import { FabricEventBase, FabricEventInstanceModel, ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent, FabricEvent } from '../../eventstore/Events';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingWithEventStoreFullDescription, ListColumnSettingWithEventStoreRowDisplay } from '../../ListSettings';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
-import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
-import { NetworkOnNode } from '../NetworkOnNode';
-import { NetworkOnApp } from '../NetworkOnApp';
-import { Network } from '../Network';
-import { AppOnNetwork } from '../AppOnNetwork';
 import { PartitionBackup, PartitionBackupInfo } from '../PartitionBackupInfo';
-import { DeployedContainerOnNetwork } from '../DeployedContainerOnNetwork';
-import { NodeOnNetwork } from '../NodeOnNetwork';
+
 import { DataModelCollectionBase, IDataModelCollection } from './CollectionBase';
-import { ListColumnSettingWithDisplayName } from 'src/app/modules/imagestore/display-name-column/display-name-column.component';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.

@@ -67,7 +67,7 @@ export class DeployedApplication extends DataModelBase<IRawDeployedApplication> 
             };
             appFilter.DeployedApplicationFilters.push(deployedApplicationFilter);
         }
-        if (deployedApplicationFilter.DeployedServicePackageFilters.length === 0) {
+        if (deployedApplicationFilter.DeployedServicePackageFilters && deployedApplicationFilter.DeployedServicePackageFilters.length === 0) {
             deployedApplicationFilter.DeployedServicePackageFilters = [{
                 HealthStateFilter: HealthStateFilterFlags.All
             }];

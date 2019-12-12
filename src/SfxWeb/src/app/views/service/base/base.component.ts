@@ -22,10 +22,6 @@ export class BaseComponent extends ServiceBaseController {
       route: "./details"
     },
     {
-      name: "manifest",
-      route: "./manifest"
-    },
-    {
       name: "events",
       route: "./events"
     }
@@ -36,22 +32,25 @@ export class BaseComponent extends ServiceBaseController {
 
   setup() {
     if (this.appTypeName === Constants.SystemAppTypeName) {
-      // remove manifest tab for system app service
-      delete (this.tabs["manifest"]);
-
       this.tree.selectTreeNode([
           IdGenerator.cluster(),
           IdGenerator.systemAppGroup(),
           IdGenerator.service(this.serviceId)
-      ]);
+      ], true);
     } else {
+      // TODO consider route guard here?
+      this.tabs.splice(2, 0,{
+        name: "manifest",
+        route: "./manifest"
+      })
+
       this.tree.selectTreeNode([
           IdGenerator.cluster(),
           IdGenerator.appGroup(),
           IdGenerator.appType(this.appTypeName),
           IdGenerator.app(this.appId),
           IdGenerator.service(this.serviceId)
-      ]);
+      ], true);
     }
   }
 }
