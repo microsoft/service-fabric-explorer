@@ -6,8 +6,6 @@ import { IdUtils } from 'src/app/Utils/IdUtils';
 import { ServiceKindRegexes, SortPriorities } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
-import { Utils } from 'src/app/Utils/Utils';
-import { ReplicaOnPartitionCollection } from './collections/Collections';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Observable, forkJoin } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -138,13 +136,13 @@ export class DeployedReplicaDetail extends DataModelBase<IRawDeployedReplicaDeta
     };
 
     public replicatorStatus: ReplicatorStatus;
-    public reportedLoad: IRawLoadMetricReport[];
+    public reportedLoad: LoadMetricReport[];
 
     public get currentServiceOperationStartTimeUtc(): string {
         return TimeUtils.timestampToUTCString(this.raw.CurrentServiceOperationStartTimeUtc);
     }
 
-    public constructor(data: DataService, public parent: DeployedReplica | ReplicaOnPartitionCollection) {
+    public constructor(data: DataService, public parent: DeployedReplica | ReplicaOnPartition) {
         super(data, null, parent);
     }
 

@@ -11,7 +11,7 @@ const routes: Routes = [{
   path: '', component: BaseComponent, children: [
     { path: '', component: EssentialsComponent },
     { path: 'details', component: DetailsComponent },
-    { path: 'deployments', component: BackupsComponent },
+    { path: 'backups', component: BackupsComponent },
     { path: 'events', component: EventsComponent },
     ]
   }

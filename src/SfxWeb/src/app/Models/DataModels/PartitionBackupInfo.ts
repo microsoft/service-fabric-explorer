@@ -6,6 +6,8 @@ import { DataModelBase, IDecorators } from './Base';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Utils } from 'src/app/Utils/Utils';
 import { Observable } from 'rxjs';
+import { IsolatedAction } from '../Action';
+import { PartitionViewBackupComponent } from 'src/app/modules/backup-restore/partition-view-backup/partition-view-backup.component';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -84,26 +86,27 @@ export class PartitionBackup extends DataModelBase<IRawPartitionBackup> {
             "PartitionInformation",
         ]
     };
-    public action: ActionWithDialog;
+    public action: IsolatedAction;
     public constructor(data: DataService, raw: IRawPartitionBackup, public parent: PartitionBackupInfo) {
         super(data, raw, parent);
         if (raw) {
-            this.action = new ActionWithDialog(
-                data.$uibModal,
-                data.$q,
+            this.action = new IsolatedAction(
+                data.dialog,
                 raw.BackupId,
                 raw.BackupId,
-                "Creating",
-                null,
-                () => true,
-                <angular.ui.bootstrap.IModalSettings>{
-                    templateUrl: "partials/partitionBackup.html",
-                    controller: ActionController,
-                    resolve: {
-                        action: () => this
-                    }
-                },
-                null);
+                this,
+                PartitionViewBackupComponent
+                // "Creating",
+                // null,
+                // () => true,
+                // <angular.ui.bootstrap.IModalSettings>{
+                //     templateUrl: "partials/partitionBackup.html",
+                //     controller: ActionController,
+                //     resolve: {
+                //         action: () => this
+                //     }
+                // },
+                // null);
         } else {
             this.action = null;
         }

@@ -1,0 +1,15 @@
+<div class="dashboard-wrapper">
+    <a href="{{appsUpgradeTabViewPath}}">
+        <div class="dashboard">
+            <div class="dashboard-tile">
+                <div class="dashboard-tile-inner">
+                        <!-- {{upgradeAppsCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'}} -->
+                    <div class="dashboard-tile-leftbar" [ngClass]="barClass"></div>
+                    <div class="dashboard-tile-title">{{title}}</div>
+                    <!-- <div class="dashboard-tile-title" ng-if="upgradeAppsCount <= 1">APPLICATION UPGRADE IN PROGRESS</div> -->
+                    <div class="dashboard-tile-number">{{count}}</div>
+                </div>
+            </div>
+        </div>
+    </a>
+</div>

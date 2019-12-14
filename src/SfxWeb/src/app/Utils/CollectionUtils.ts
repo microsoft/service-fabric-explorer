@@ -83,7 +83,8 @@ export class CollectionUtils {
      * @param collection
      * @param newCollection
      */
-    public static updateDataModelCollection<T>(collection: IDataModel<T>[], newCollection: IDataModel<T>[], appendOnly: boolean = false): IDataModel<T>[] {
+    public static updateDataModelCollection<T>(collection: IDataModel<T>[], newCollection: IDataModel<T>[], appendOnly: boolean = false): any[] {
+        //TODO FIND OUT IF SETTING TO any is bad
         return CollectionUtils.updateCollection(collection, newCollection, item => item.uniqueId, item => item.uniqueId, (item, newItem) => newItem, (item, newItem) => item.update(newItem.raw), appendOnly);
     }
 }

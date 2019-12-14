@@ -1,5 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
+import { Observable } from 'rxjs';
+import { IRawBackupPolicy, IRawRetentionPolicy } from 'src/app/Models/RawDataTypes';
 
 @Component({
   selector: 'app-action-create-backup-policy',
@@ -50,7 +52,7 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
       this.backupPolicy.Schedule.RunTimes.splice(index, 1);
   }
 
-  private createBackupPolicy(data: DataService): angular.IPromise<any> {
+  private createBackupPolicy(data: DataService): Observable<any> {
       if (this.retentionPolicyRequired) {
           this.RetentionPolicy.RetentionPolicyType = "Basic";
           this.backupPolicy["RetentionPolicy"] = this.RetentionPolicy;

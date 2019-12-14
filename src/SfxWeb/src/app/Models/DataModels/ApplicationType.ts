@@ -59,6 +59,18 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
             `${this.name}@${this.raw.Version}`
         ));
 
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "createAppInstance",
+            "create",
+            "Creating",
+            (data) => this.createInstance(data),
+            () => true,
+            "Create app instance",
+            `Supply the full application name to create an application instance of ${this.name}@${this.raw.Version} :`,
+            `${this.name}@${this.raw.Version}`
+        ));
+
         // TODO
         // this.actions.add(new ActionCreateAppInstance(
         //     this.data.$uibModal,

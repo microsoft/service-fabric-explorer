@@ -44,7 +44,7 @@ export class EventStoreComponent implements OnInit {
           this.endDateMin = this._startDate;
           this.endDateMax = TimeUtils.AddDays(
               this._startDate,
-              DateWindowSelector.MaxWindowInDays);
+              EventStoreComponent.MaxWindowInDays);
           if (this.endDateMax > new Date()) {
               this.endDateMax = new Date();
           }
@@ -59,7 +59,7 @@ export class EventStoreComponent implements OnInit {
           this.startDateMax = this._endDate;
           this.startDateMin = TimeUtils.AddDays(
               this._endDate,
-              (-7 * DateWindowSelector.MaxWindowInDays));
+              (-7 * EventStoreComponent.MaxWindowInDays));
           this.startDateInit = this._endDate;
           this.isEndSelected = true;
       }

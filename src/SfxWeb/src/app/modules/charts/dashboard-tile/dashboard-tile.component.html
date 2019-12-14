@@ -1,0 +1,14 @@
+<div class="dashboard-wrapper">
+        <!-- aria-label="{{data.displayTitle}}" -->
+        <!-- ng-click="data.onClick()" -->
+    <div class="dashboard" [ngClass]="{'has-view-path' : data.viewPath, 'dashboard-large': data.largeTile,  'dashboard-small': !data.largeTile}"  role="group">
+        <div #chart class="dashboard-donut-chart"></div>
+        <div class="dashboard-datapoints">
+            <div class="dashboard-datapoint" *ngFor="let dataPoint of data.dataPoints; let i = index">
+                <div class="dashboard-datapoint-leftbar" [ngClass]="dataPoint.state.badgeClass"></div>
+                <div class="dashboard-datapoint-title">{{dataPoint.title | uppercase}}</div>
+                <div class="dashboard-datapoint-number">{{dataPoint.count}}</div>
+            </div>
+        </div>
+    </div>
+</div>

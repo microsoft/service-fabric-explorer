@@ -72,8 +72,6 @@ export class TreeService {
             let clusterHealthQueryDescription = this.tree.addHealthChunkFiltersRecursively(this.data.getInitialClusterHealthChunkQueryDescription());
             return this.data.getClusterHealthChunk(clusterHealthQueryDescription)
                 .pipe(mergeMap(healthChunk => {
-                    console.log(this.clusterHealth.mergeHealthStateChunk(healthChunk))
-                    console.log(this.tree.mergeClusterHealthStateChunk(healthChunk))
                     return forkJoin([
                         // cluster health needs to be refreshed even when the root node is collapsed
                         this.clusterHealth.mergeHealthStateChunk(healthChunk),

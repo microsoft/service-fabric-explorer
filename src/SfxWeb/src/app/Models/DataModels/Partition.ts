@@ -6,13 +6,16 @@ import { Service } from './Service';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
 import { ServiceKindRegexes, Constants, ServicePartitionKindRegexes } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Utils } from 'src/app/Utils/Utils';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HealthBase } from './HealthEvent';
 import { PartitionBackupInfo } from './PartitionBackupInfo';
 import { Observable } from 'rxjs';
-import { ActionWithConfirmationDialog, ActionWithDialog } from '../Action';
+import { ActionWithConfirmationDialog, ActionWithDialog, IsolatedAction } from '../Action';
 import { mergeMap } from 'rxjs/operators';
+import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/partition-enable-back-up/partition-enable-back-up.component';
+import { PartitionDisableBackUpComponent } from 'src/app/modules/backup-restore/partition-disable-back-up/partition-disable-back-up.component';
+import { PartitionTriggerBackUpComponent } from 'src/app/modules/backup-restore/partition-trigger-back-up/partition-trigger-back-up.component';
+import { PartitionRestoreBackUpComponent } from 'src/app/modules/backup-restore/partition-restore-back-up/partition-restore-back-up.component';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -77,42 +80,48 @@ export class Partition extends DataModelBase<IRawPartition> {
             return;
         }
 
-        this.actions.add(new ActionWithDialog(
+        this.actions.add(new IsolatedAction(
             this.data.dialog,
             "enablePartitionBackup",
             "Enable/Update Partition Backup",
             "Enabling Partition Backup",
-            () => this.data.restClient.enablePartitionBackup(this).subscribe(() => {
-                this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
-            }),
-            () => true,
-            <angular.ui.bootstrap.IModalSettings>{
-                templateUrl: "partials/enableBackup.html",
-                controller: ActionController,
-                resolve: {
-                    action: () => this
-                }
-            },
-            null
+            {},
+            PartitionEnableBackUpComponent,
+            () => true
+            // () => this.data.restClient.enablePartitionBackup(this).subscribe(() => {
+            //     this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
+            // }),
+            // () => true,
+            // <angular.ui.bootstrap.IModalSettings>{
+            //     templateUrl: "partials/enableBackup.html",
+            //     controller: ActionController,
+            //     resolve: {
+            //         action: () => this
+            //     }
+            // },
+            // null
         ));
 
-        this.actions.add(new ActionWithDialog(
+        this.actions.add(new IsolatedAction(
             this.data.dialog,
             "disablePartitionBackup",
             "Disable Partition Backup",
             "Disabling Partition Backup",
-            () => this.data.restClient.disablePartitionBackup(this).subscribe(() => {
-                this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
-            }),
-            () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition",
-            <angular.ui.bootstrap.IModalSettings>{
-                templateUrl: "partials/disableBackup.html",
-                controller: ActionController,
-                resolve: {
-                    action: () => this
-                }
-            },
-            null
+            {},
+            PartitionDisableBackUpComponent,
+            () => true
+            // () => this.data.restClient.disablePartitionBackup(this).subscribe(() => {
+            //     this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
+            // }),
+            // () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition",
+            // <angular.ui.bootstrap.IModalSettings>{
+            //     templateUrl: "partials/disableBackup.html",
+            //     controller: ActionController,
+            //     resolve: {
+            //         action: () => this
+            //     }
+            // },
+            // null
         ));
 
         this.actions.add(new ActionWithConfirmationDialog(
@@ -141,38 +150,44 @@ export class Partition extends DataModelBase<IRawPartition> {
             `Resume partition backup for ${this.name} ?`,
             this.name));
 
-        this.actions.add(new ActionWithDialog(
+        this.actions.add(new IsolatedAction(
             this.data.dialog,
             "triggerPartitionBackup",
             "Trigger Partition Backup",
             "Triggering Partition Backup",
-            () => this.data.restClient.triggerPartitionBackup(this),
-            () => true,
-            <angular.ui.bootstrap.IModalSettings>{
-                templateUrl: "partials/triggerPartitionBackup.html",
-                controller: ActionController,
-                resolve: {
-                    action: () => this
-                }
-            },
-            null
+            {},
+            PartitionTriggerBackUpComponent,
+            () => true
+            // () => this.data.restClient.triggerPartitionBackup(this),
+            // () => true,
+            // <angular.ui.bootstrap.IModalSettings>{
+            //     templateUrl: "partials/triggerPartitionBackup.html",
+            //     controller: ActionController,
+            //     resolve: {
+            //         action: () => this
+            //     }
+            // },
+            // null
         ));
 
-        this.actions.add(new ActionWithDialog(
+        this.actions.add(new IsolatedAction(
             this.data.dialog,
             "restorePartitionBackup",
             "Restore Partition Backup",
             "Restoring Partition Backup",
-            () => this.data.restClient.restorePartitionBackup(this),
-            () => true,
-            <angular.ui.bootstrap.IModalSettings>{
-                templateUrl: "partials/restorePartitionBackup.html",
-                controller: ActionController,
-                resolve: {
-                    action: () => this
-                }
-            },
-            null
+            {},
+            PartitionRestoreBackUpComponent,
+            () => true
+            // () => this.data.restClient.restorePartitionBackup(this),
+            // () => true,
+            // <angular.ui.bootstrap.IModalSettings>{
+            //     templateUrl: "partials/restorePartitionBackup.html",
+            //     controller: ActionController,
+            //     resolve: {
+            //         action: () => this
+            //     }
+            // },
+            // null
         ));
     }
 }

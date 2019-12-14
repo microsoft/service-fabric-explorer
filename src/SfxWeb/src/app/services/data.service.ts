@@ -17,7 +17,6 @@ import { map, mergeMap } from 'rxjs/operators';
 import { IDataModel } from '../Models/DataModels/Base';
 import { IdGenerator } from '../Utils/IdGenerator';
 import { Node } from '../Models/DataModels/Node';
-import { Network } from '../Models/DataModels/Network';
 import { ApplicationTypeGroup, ApplicationType } from '../Models/DataModels/ApplicationType';
 import { ServiceType, Service } from '../Models/DataModels/Service';
 import { DeployedReplica } from '../Models/DataModels/DeployedReplica';
@@ -55,13 +54,6 @@ export class DataService {
     public storage: StorageService,
     public restClient: RestClientService,
     public dialog: MatDialog
-    // public $q: angular.IQService,
-    // public $timeout: angular.ITimeoutService,
-    // public $uibModal: angular.ui.bootstrap.IModalService,
-    // public $route: angular.route.IRouteService,
-    // public $sanitize: angular.sanitize.ISanitizeService,
-    // public $rootScope: angular.IRootScopeService
-    // public $location: angular.ILocationService,
   ) {
     this.clusterUpgradeProgress = new ClusterUpgradeProgress(this);
     this.clusterManifest = new ClusterManifest(this);
@@ -80,7 +72,7 @@ export class DataService {
   }
 
   public actionsAdvancedEnabled(): boolean {
-      return this.actionsEnabled && this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
+      return true; //this.actionsEnabled && this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
   }
 
   public getClusterHealth(

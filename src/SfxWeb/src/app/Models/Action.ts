@@ -2,6 +2,7 @@
 import { mergeMap, map } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ActionDialogComponent } from '../shared/component/action-dialog/action-dialog.component';
+import { ComponentType } from '@angular/cdk/portal';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -72,7 +73,6 @@ export class ActionWithDialog extends Action {
         public runningTitle: string,
         public execute: (...params: any[]) => Observable<any>,
         public canRun: () => boolean,
-        // public modalSettings: angular.ui.bootstrap.IModalSettings,
         public beforeOpen?: () => Observable<any>) {
 
         super(name, title, runningTitle, execute, canRun);
@@ -88,9 +88,6 @@ export class ActionWithDialog extends Action {
                     }
                     return of(null)
                 }))
-                // return this.$uibModal.open(this.modalSettings).result.then(() => {
-                //     return super.runInternal(success, error, params);
-                // });
             }));
         }else{
             return of(null);
@@ -110,14 +107,40 @@ export class ActionWithConfirmationDialog extends ActionWithDialog {
         public confirmationDialogMessage?: string,
         public confirmationKeyword?: string) {
 
-        super(dialog, name, title, runningTitle, execute, canRun
-            // , {
-            // templateUrl: "partials/action-confirmation-dialog.html",
-            // controller: ActionController,
-            // resolve: {
-            //     action: () => this
-            // }
-        );
+        super(dialog, name, title, runningTitle, execute, canRun);
     }
 }
 
+export class IsolatedAction extends Action {
+    constructor(
+        public dialog: MatDialog,
+        public name: string,
+        public title: string,
+        public runningTitle: string,
+        public data: any,
+        public template: ComponentType<any>,
+        public canRun: () => boolean,
+        public beforeOpen?: () => Observable<any>) {
+
+        super(name, title, runningTitle, null, canRun);
+    }
+
+
+    protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
+        if (this.canRun()) {
+            return of(this.beforeOpen ? this.beforeOpen() : true).pipe(mergeMap(() => {
+                let dialogRef = this.dialog.open(this.template, {data: this});
+                return dialogRef.afterClosed()
+                // .pipe(mergeMap( (data: boolean) => {
+                //     if(data){
+                //         return super.runInternal(success, error, params);
+                //     }
+                //     return of(null)
+                // }))
+            }));
+        }else{
+            return of(null);
+        }
+    }
+
+}

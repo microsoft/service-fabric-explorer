@@ -330,8 +330,7 @@ export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
     public constructor(data: DataService, raw?: IRawBackupPolicy) {
         super(data, raw);
         this.action = new ActionWithDialog(
-            data.$uibModal,
-            data.$q,
+            data.dialog,
             "deleteBackupPolicy",
             "Delete Backup Policy",
             "Deleting",

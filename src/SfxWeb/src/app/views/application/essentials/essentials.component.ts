@@ -8,7 +8,6 @@ import { Constants } from 'src/app/Common/Constants';
 import { forkJoin, of, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ClusterManifest } from 'src/app/Models/DataModels/Cluster';
-// import { NetworkOnAppCollection } from 'src/app/Models/DataModels/collections/Collections';
 import { ApplicationBaseController } from '../applicationBase';
 
 @Component({
@@ -24,7 +23,6 @@ export class EssentialsComponent extends ApplicationBaseController {
   upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
   serviceTypesListSettings: ListSettings;
   clusterManifest: ClusterManifest;
-  // networks: NetworkOnAppCollection;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
     super(data, injector);
@@ -32,7 +30,6 @@ export class EssentialsComponent extends ApplicationBaseController {
 
   setup() {
     this.clusterManifest = new ClusterManifest(this.data);
-    // this.networks = new NetworkOnAppCollection(this.data, this.appId);
 
     this.listSettings = this.settings.getNewOrExistingListSettings("services", ["name"], [
       new ListColumnSettingForLink("name", "Name", item => item.viewPath),
@@ -65,7 +62,6 @@ export class EssentialsComponent extends ApplicationBaseController {
       })),
       this.app.serviceTypes.refresh(messageHandler),
       this.app.services.refresh(messageHandler),
-      this.clusterManifest.isNetworkInventoryManagerEnabled ? this.networks.refresh(messageHandler) : of(true)
     ]);
   }
 

@@ -8,6 +8,7 @@ import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColum
 import { Constants } from 'src/app/Common/Constants';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { ApplicationTypeBaseController } from '../ApplicationTypeBase';
+import { ListColumnSettingForApplicationType } from '../action-row/action-row.component';
 
 @Component({
   selector: 'app-essentials',
@@ -31,7 +32,8 @@ export class EssentialsComponent extends ApplicationTypeBaseController {
           new ListColumnSetting("name", "Name"),
           new ListColumnSetting("raw.Version", "Version"),
           new ListColumnSettingWithFilter("raw.Status", "Status"),
-          new ListColumnSetting("actions", "Actions", null, false, (item) => `<${Constants.DirectiveNameActionsRow} actions="item.actions" source="serviceTypesTable"></${Constants.DirectiveNameActionsRow}>`)
+          new ListColumnSettingForApplicationType()
+          // new ListColumnSetting("actions", "Actions", null, false, (item) => `<${Constants.DirectiveNameActionsRow} actions="item.actions" source="serviceTypesTable"></${Constants.DirectiveNameActionsRow}>`)
       ],
       [
           new ListColumnSetting("placeholder", "placeholder", null, false), // Empty column

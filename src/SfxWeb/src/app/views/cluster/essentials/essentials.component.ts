@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
-import { ClusterUpgradeProgress, ClusterHealth } from '../../../Models/DataModels/Cluster';
+import { ClusterUpgradeProgress, ClusterHealth, HealthStatisticsEntityKind } from '../../../Models/DataModels/Cluster';
 import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
 import { SystemApplication } from 'src/app/Models/DataModels/Application';
 import { Observable, forkJoin } from 'rxjs';
@@ -9,6 +9,9 @@ import { BaseController } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
+import { map } from 'rxjs/operators';
+import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
+import { RoutesService } from 'src/app/services/routes.service';
 
 
 @Component({
@@ -24,7 +27,18 @@ export class EssentialsComponent extends BaseController {
   systemApp: SystemApplication;
   unhealthyEvaluationsListSettings: ListSettings;
 
-  constructor(public data: DataService, injector: Injector, public settings: SettingsService) {
+  nodesDashboard: IDashboardViewModel;
+  appsDashboard: IDashboardViewModel;
+  servicesDashboard: IDashboardViewModel;
+  partitionsDashboard: IDashboardViewModel;
+  replicasDashboard: IDashboardViewModel;
+  upgradesDashboard: IDashboardViewModel;
+  upgradeAppsCount: number = 0;
+
+  constructor(public data: DataService, 
+              public injector: Injector, 
+              public settings: SettingsService,
+              private routes: RoutesService) {
     super(injector);
   }
 
@@ -34,12 +48,32 @@ export class EssentialsComponent extends BaseController {
     this.nodes = this.data.nodes;
     this.systemApp = this.data.systemApp;
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-    console.log(this.clusterHealth)
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
-      this.clusterHealth.refresh(messageHandler),
+      this.clusterHealth.refresh(messageHandler).pipe(map((clusterHealth: ClusterHealth) => {
+        let nodesHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Node);
+        this.nodesDashboard = DashboardViewModel.fromHealthStateCount("Nodes", "Node", true, nodesHealthStateCount, this.data.routes, this.routes.getNodesViewPath());
+
+        let appsHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Application);
+        this.appsDashboard = DashboardViewModel.fromHealthStateCount("Applications", "Application", true, appsHealthStateCount, this.data.routes, this.routes.getAppsViewPath());
+
+        let servicesHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Service);
+        this.servicesDashboard = DashboardViewModel.fromHealthStateCount("Services", "Service", false, servicesHealthStateCount);
+
+        let partitionsDashboard = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Partition);
+        this.partitionsDashboard = DashboardViewModel.fromHealthStateCount("Partitions", "Partition", false, partitionsDashboard);
+
+        let replicasHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Replica);
+        this.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
+        console.log(this.nodesDashboard)
+        clusterHealth.checkExpiredCertStatus();
+    })),
+      this.data.getApps(true, messageHandler)
+                .pipe(map(apps => {
+                    this.upgradeAppsCount = apps.collection.filter(app => app.isUpgrading).length;
+                })),
       this.nodes.refresh(messageHandler),
       this.systemApp.refresh(messageHandler),
       this.clusterUpgradeProgress.refresh(messageHandler)

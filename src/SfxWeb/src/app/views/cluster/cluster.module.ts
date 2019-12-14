@@ -17,6 +17,7 @@ import { ActionUpdateBackupPolicyComponent } from './action-update-backup-policy
 import { FormsModule } from '@angular/forms';
 import { ActionCreateBackupPolicyComponent } from './action-create-backup-policy/action-create-backup-policy.component';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
 
 
 @NgModule({
@@ -28,7 +29,8 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
     DetailListTemplatesModule,
     ImagestoreModule,
     FormsModule,
-    EventStoreModule
+    EventStoreModule,
+    ChartsModule
   ],
   entryComponents: [ActionUpdateBackupPolicyComponent, ActionCreateBackupPolicyComponent]
 })

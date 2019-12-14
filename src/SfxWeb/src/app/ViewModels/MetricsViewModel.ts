@@ -2,6 +2,7 @@
 import { NodeLoadInformation } from '../Models/DataModels/Node';
 import { ListSettings } from '../Models/ListSettings';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
+import { scaleOrdinal } from 'd3';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -43,13 +44,13 @@ export class MetricsViewModel implements IMetricsViewModel {
     public isFullScreen: boolean = false;
 
     private _metrics: LoadMetricInformation[] = null;
-    private legendColorPalette = d3.scale.ordinal<string>()
+    private legendColorPalette = scaleOrdinal<string>()
         .range(["#71b252", "#ff8418", "#FCB714", "#903F8B", "#3f5fb6", "#79D7F2", "#B5B5B5", "#8c564b"]);
 
     private static ensureResourceGovernanceMetrics(metrics: LoadMetricInformation[]): LoadMetricInformation[] {
         let cpuCapacityAvailable: boolean = false;
         let memoryCapacityAvailable: boolean = false;
-        let metricsWithResourceGov: LoadMetricInformation[] = _.map(metrics, m => {
+        let metricsWithResourceGov: LoadMetricInformation[] = metrics.map(m => {
             if (m.name === "servicefabric:/_CpuCores") {
                 cpuCapacityAvailable = true;
             } else if (m.name === "servicefabric:/_MemoryInMB") {
