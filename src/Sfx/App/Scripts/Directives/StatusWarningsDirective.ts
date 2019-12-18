@@ -41,5 +41,20 @@ module Sfx {
             this.alerts.removeNotificationById(alert.id, hidePermenantly);
         }
 
+        public removeWithConfirm(alert: IStatusWarning): void {
+            new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "",
+                "Accept",
+                "acknowledge",
+                () => this.data.$q.when(this.alerts.removeNotificationById(alert.id, true)),
+                () => true,
+                "Acknowledge",
+                alert.confirmText,
+                "Accept").runWithCallbacks( () => null, () => {});
+
+        }
+
     }
 }

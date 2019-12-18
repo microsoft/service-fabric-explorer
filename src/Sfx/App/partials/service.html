@@ -100,6 +100,12 @@
             </h4>
             <sfx-detail-list list="service.health.healthEvents" list-settings="healthEventsListSettings"></sfx-detail-list>
         </div>
+
+        <div class="detail-pane" ng-if="service.isStatefulService && service.parent.raw.TypeName !== 'System'">
+            <h4>Service Backup Configuration</h4>
+            <sfx-detail-list list="service.serviceBackupConfigurationInfoCollection" list-settings="serviceBackupConfigurationInfoListSettings"></sfx-detail-list>
+        </div>
+
     </script>
 
     <script type="text/ng-template" id="tab_manifest">

@@ -1,18 +1,41 @@
 <div class="detail-pane overlay-details-wrapper flex-child">
+    <div style="margin-right:0px;">
+        <div class="col-md-3 col-sm-6 col-lg-2">
+            <sfx-date-picker ng-model="dwSelector.startDate" min-date="dwSelector.startDateMin"
+            max-date="dwSelector.startDateMax" init-date="dwSelector.startDateInit" place-holder-text="'Start Date'">
+            </sfx-date-picker>
+        </div>
+        <div class="col-md-3 col-sm-6 col-lg-2">
+                <sfx-date-picker ng-model="dwSelector.endDate" min-date="dwSelector.endDateMin"
+            max-date="dwSelector.endDateMax" init-date="dwSelector.endDateInit" place-holder-text="'End Date'">
+            </sfx-date-picker>
+        </div>
+        <div class="col-md-6 col-sm-12 col-lg-8">
+            <div style="width: 80%; margin-left: 50px; margin-top: 15px; margin-bottom: 15px;">
+                <sfx-double-slider start-date="dwSelector.startDate" end-date="dwSelector.endDate"></sfx-double-slider>
+            </div>
+        </div>
+    </div>
+    <div ng-if="timelineGenerator">
+        <div class="btn-group">
+            <label class="btn btn-primary" ng-model="dwSelector.showAllEvents" uib-btn-radio="false">Correlated</label>
+            <label class="btn btn-primary" ng-model="dwSelector.showAllEvents" uib-btn-radio="true">All</label>
+        </div>
+        <span class="bowtie-icon bowtie-status-help-outline" title="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
+    </div>
+    <sfx-timeline events="dwSelector.timeLineEventsData" ng-if="dwSelector.timeLineEventsData"></sfx-timeline>
+
     <sfx-detail-list list="eventsList" list-settings="eventsList.settings" inner-scroll="true">
         <sfx-detail-list-details-view details-list-settings="eventsList.detailsSettings"></sfx-detail-list-details-view>
-        <div class="row" style="margin-right:0px;">
-                <sfx-date-picker ng-model="dwSelector.startDate" min-date="dwSelector.startDateMin"
-                    max-date="dwSelector.startDateMax" init-date="dwSelector.startDateInit" place-holder-text="'Start Date'">
-                </sfx-date-picker>
-                <sfx-date-picker ng-model="dwSelector.endDate" min-date="dwSelector.endDateMin"
-                    max-date="dwSelector.endDateMax" init-date="dwSelector.endDateInit" place-holder-text="'End Date'">
-                </sfx-date-picker>
-                <div class="col-md-3">
-                    <div class="btn-group" style="margin-bottom:3px;">
-                        <a role="button" class="reset-link" href="" ng-click="resetClick()" ng-disabled="!dwSelector.isResetEnabled">Reset</a>
-                    </div>
-                </div>
-        </div>
     </sfx-detail-list>
+
+    <div>
+        <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
+            <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error" 
+            style="margin-right: 2px; vertical-align: top;"></span>
+            <div style="display: inline-block;">
+                There is a limit of up to 500 events for a given range.
+            </div>
+        </div>
+    </div>
 </div>

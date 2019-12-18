@@ -14,7 +14,9 @@
       "angular-sanitize",
       "angular-ui-bootstrap",
       "lodash",
-      "d3"
+      "d3",
+      "vis",
+      "noUiSlider"
     ]
   }
 }

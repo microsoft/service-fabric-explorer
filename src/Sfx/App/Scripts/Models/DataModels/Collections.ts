@@ -232,15 +232,14 @@ module Sfx {
     }
 
     export class NodeCollection extends DataModelCollectionBase<Node> {
+        //make sure we only check once per session and this object will get destroyed/recreated
+        private static checkedOneNodeScenario = false;
         public healthState: ITextAndBadge;
         public upgradeDomains: string[];
         public faultDomains: string[];
         public healthySeedNodes: string;
         public disabledNodes: string;
         public seedNodeCount: number;
-
-        //make sure we only check once per session and this object will get destroyed/recreated
-        private static checkedOneNodeScenario = false;
 
         public constructor(data: DataService) {
             super(data);
@@ -321,23 +320,22 @@ module Sfx {
             this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
             this.seedNodeCount = seedNodes.length;
 
-            this.checkSeedNodeCount(this.seedNodeCount);
             this.checkOneNodeScenario();
 
             this.healthySeedNodes = seedNodes.length.toString() + " (" +
                 Math.round(healthyNodes.length / seedNodes.length * 100).toString() + "%)";
         }
 
-        private checkSeedNodeCount(count: number) {
-            //if < 5 seed nodes display warning
-            //if count is 1, it is one box/test only scenario
-            if (count < 5 && count !== 1) {
+        public checkSeedNodeCount(expected: number) {
+            if (this.seedNodeCount < expected && this.seedNodeCount !== 1) {
                 this.data.warnings.addOrUpdateNotification({
-                    message: "Cluster is degraded because it does not have 5 seed nodes. See link for more details",
-                    level: StatusWarningLevel.Error,
+                    message: `This cluster is currently running on the bronze reliability tier. For production workloads, only a reliability level of silver or greater is supported 
+                    <br>See <a href="https://aka.ms/servicefabric/reliability" target="_black">( link )</a> for more details`,
+                    level: StatusWarningLevel.Warning,
                     priority: 2,
                     id: BannerWarningID.ClusterDegradedState,
-                    link: "https://aka.ms/servicefabric/durability"
+                    confirmText: `This cluster is currently running on the bronze reliability tier which indicates a test/staging environment. For production workloads, only a reliability
+                    level of silver or greater is supported. For more information on the reliability characteristics of a cluster, please see https://aka.ms/sfreliabilitytiers`
                 });
             }else {
                 this.data.warnings.removeNotificationById(BannerWarningID.ClusterDegradedState);
@@ -360,6 +358,14 @@ module Sfx {
         private updateNodesHealthState(): void {
             // calculates the nodes health state which is the max state value of all nodes
             this.healthState = this.valueResolver.resolveHealthStatus(_.max(_.map(this.collection, node => HealthStateConstants.Values[node.healthState.text])));
+        }
+    }
+
+    export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy> {
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getBackupPolicies(messageHandler).then(items => {
+                return _.map(items, raw => new BackupPolicy(this.data, raw));
+            });
         }
     }
 
@@ -551,6 +557,62 @@ module Sfx {
         }
     }
 
+    export class ApplicationBackupConfigurationInfoCollection extends DataModelCollectionBase<ApplicationBackupConfigurationInfo> {
+        public constructor(data: DataService, public parent: Application) {
+            super(data, parent);
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getApplicationBackupConfigurationInfoCollection(this.parent.id, messageHandler)
+            .then(items => {
+                return _.map(items, raw => new ApplicationBackupConfigurationInfo(this.data, raw, this.parent));
+            });
+        }
+    }
+
+    export class ServiceBackupConfigurationInfoCollection extends DataModelCollectionBase<ServiceBackupConfigurationInfo> {
+        public constructor(data: DataService, public parent: Service) {
+            super(data, parent);
+        }
+
+        protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getServiceBackupConfigurationInfoCollection(this.parent.id, messageHandler)
+                .then(items => {
+                    return _.map(items, raw => new ServiceBackupConfigurationInfo(this.data, raw, this.parent));
+                });
+        }
+    }
+
+    export class PartitionBackupCollection extends DataModelCollectionBase<PartitionBackup> {
+        public startDate: Date;
+        public endDate: Date;
+        public constructor(data: DataService, public parent: PartitionBackupInfo) {
+            super(data, parent);
+            this.startDate = null;
+            this.endDate = null;
+        }
+
+        public retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getPartitionBackupList(this.parent.parent.id, messageHandler, this.startDate, this.endDate)
+                .then(items => {
+                    return _.map(items, raw => new PartitionBackup(this.data, raw, this.parent));
+                });
+        }
+    }
+
+    export class SinglePartitionBackupCollection extends DataModelCollectionBase<PartitionBackup> {
+        public constructor(data: DataService, public parent: PartitionBackupInfo) {
+            super(data, parent);
+        }
+
+        public retrieveNewCollection(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return this.data.restClient.getLatestPartitionBackup(this.parent.parent.id, messageHandler)
+                .then(items => {
+                    return _.map(items, raw => new PartitionBackup(this.data, raw, this.parent));
+                });
+        }
+    }
+
     export class ServiceTypeCollection extends DataModelCollectionBase<ServiceType> {
         public constructor(data: DataService, public parent: ApplicationType | Application) {
             super(data, parent);
@@ -636,7 +698,7 @@ module Sfx {
         }
 
         public get isStatefulService(): boolean {
-            return this.parent.isStatefulService;
+            return this.parent.parent.isStatefulService;
         }
 
         public get isStatelessService(): boolean {
@@ -778,7 +840,7 @@ module Sfx {
         // requests take ~3 secs, and so we shouldn't be delaying every global refresh.
         public readonly minimumRefreshTimeInSecs: number = 10;
         public readonly pageSize: number = 15;
-        public readonly defaultDateWindowInDays: number = 2;
+        public readonly defaultDateWindowInDays: number = 7;
         public readonly latestRefreshPeriodInSecs: number = 60 * 60;
 
         protected readonly optionalColsStartIndex: number = 2;
@@ -916,14 +978,10 @@ module Sfx {
                     this.defaultDateWindowInDays);
             }
 
-            let bodStartDate = new Date(startDate.valueOf());
-            let eodEndDate = new Date(endDate.valueOf());
-            bodStartDate.setHours(0, 0, 0, 0);
-            eodEndDate.setHours(23, 59, 59, 999);
-            if (!this._startDate || this._startDate.getTime() !== bodStartDate.getTime() ||
-                !this._endDate || this._endDate.getTime() !== eodEndDate.getTime()) {
-                this._startDate = bodStartDate;
-                this._endDate = eodEndDate;
+            if (!this._startDate || this._startDate.getTime() !== startDate.getTime() ||
+                !this._endDate || this._endDate.getTime() !== endDate.getTime()) {
+                this._startDate = startDate;
+                this._endDate = endDate;
                 return true;
             }
 

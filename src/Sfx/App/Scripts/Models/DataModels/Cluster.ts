@@ -66,6 +66,12 @@ module Sfx {
             return this.emptyHealthStateCount;
         }
 
+        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
+            return Utils.getHttpResponseData(this.data.restClient.getClusterHealth(this.eventsHealthStateFilter,
+                this.nodesHealthStateFilter, this.applicationsHealthStateFilter,
+                messageHandler));
+        }
+
         private setMessage(healthEvent: HealthEvent): void {
             /*
             Example description for parsing reference(if this message changes this might need updating)
@@ -120,16 +126,11 @@ module Sfx {
                 ClusterHealth.certExpirationChecked = true;
             }
         }
-
-        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            return Utils.getHttpResponseData(this.data.restClient.getClusterHealth(this.eventsHealthStateFilter,
-                this.nodesHealthStateFilter, this.applicationsHealthStateFilter,
-                messageHandler));
-        }
     }
 
     export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         public clusterManifestName: string;
+        public isSfrpCluster: boolean = false;
         private _imageStoreConnectionString: string;
         private _isNetworkInventoryManagerEnabled: boolean = false;
 
@@ -153,6 +154,13 @@ module Sfx {
             let $nimEnabledParameter = $("Section[Name=NetworkInventoryManager] > Parameter[Name='IsEnabled']", $manifest);
             if ($nimEnabledParameter.length > 0) {
                 this._isNetworkInventoryManagerEnabled = $nimEnabledParameter.attr("Value").toLowerCase() === "true";
+            }
+
+            try {
+                let $sfrp = $("Section[Name='UpgradeService']", $manifest);
+                this.isSfrpCluster = $sfrp.length > 0;
+            } catch (e) {
+                console.log(e);
             }
         }
 
@@ -188,7 +196,7 @@ module Sfx {
         public upgradeDescription: UpgradeDescription;
 
         public get isUpgrading(): boolean {
-            return UpgradeDomainStateRegexes.InProgress.test(this.raw.UpgradeState);
+            return UpgradeDomainStateRegexes.InProgress.test(this.raw.UpgradeState) || this.raw.UpgradeState === ClusterUpgradeStates.RollingForwardPending;
         }
 
         public get startTimestampUtc(): string {
@@ -228,6 +236,8 @@ module Sfx {
                     }else {
                         resolve(data);
                     }
+                }).catch( (err) => {
+                    reject(err);
                 });
             });
 
@@ -266,6 +276,46 @@ module Sfx {
 
         protected updateInternal(): angular.IPromise<any> | void {
             CollectionUtils.updateDataModelCollection(this.loadMetricInformation, _.map(this.raw.LoadMetricInformation, lmi => new LoadMetricInformation(this.data, lmi)));
+        }
+    }
+    export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
+        public decorators: IDecorators = {
+            hideList: [
+                "Name",
+            ]
+        };
+        public action: ActionWithDialog;
+        public updatePolicy: ActionWithDialog;
+
+        public constructor(data: DataService, raw?: IRawBackupPolicy) {
+            super(data, raw);
+            this.action = new ActionWithDialog(
+                data.$uibModal,
+                data.$q,
+                "deleteBackupPolicy",
+                "Delete Backup Policy",
+                "Deleting",
+                () => data.restClient.deleteBackupPolicy(this.raw.Name),
+                () => true,
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/backupPolicy.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this
+                    }
+                },
+                null);
+
+            this.updatePolicy = new ActionUpdateBackupPolicy(data, raw);
+        }
+
+        public updateBackupPolicy(): void {
+            this.updatePolicy.runWithCallbacks.apply(this.updatePolicy);
+        }
+        protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawBackupPolicy> {
+            return this.data.restClient.getBackupPolicy(this.name, messageHandler).then(response => {
+                return response.data;
+            });
         }
     }
 }

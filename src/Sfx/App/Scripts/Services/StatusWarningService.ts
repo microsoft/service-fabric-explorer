@@ -7,6 +7,7 @@ module Sfx {
         level: string;
         priority: number;
         id: string;
+        confirmText?: string;
     }
 
     export class StatusWarningService {

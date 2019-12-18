@@ -116,7 +116,7 @@ module Sfx {
     export class HtmlUtils {
 
         // Utility to mark warning/error/resolved events in the detail list
-        private static eventTypesUtil = new EventTypesUtil();
+        public static eventTypesUtil = new EventTypesUtil();
 
         // Reposition the filter context menu if they are out of current view port
         public static repositionContextMenu(): void {
@@ -189,7 +189,10 @@ module Sfx {
         public static getEventSecondRowHtml(event: FabricEventBase): string {
             let json = `EventInstanceId: "${event.eventInstanceId}"</br>` +
                 `Additional Properties: ${JSON.stringify(event.eventProperties, null, "&nbsp;")}`;
-            return `<div style="margin-left:20px">${json.replace(new RegExp("\\n", "g"), "<br/>")}</div>`;
+
+            const clipboardText = encodeURI(`EventInstanceId: "${event.eventInstanceId}"\nAdditional Properties: ${JSON.stringify(event.eventProperties, null, 2)}`);
+
+            return `<div style="margin-left:20px"><sfx-clip-board text="'${clipboardText}'" encoded="true" style="position: absolute; left: 25px;"></sfx-clip-board> ${json.replace(new RegExp("\\n", "g"), "<br/>")}</div>`;
         }
 
         public static getEventDetailsViewLinkHtml(event: FabricEventBase): string {

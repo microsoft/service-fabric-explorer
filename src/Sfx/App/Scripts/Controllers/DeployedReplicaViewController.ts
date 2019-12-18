@@ -7,6 +7,7 @@ module Sfx {
 
     export interface IDeployedReplicaViewScope extends angular.IScope {
         replica: DeployedReplica;
+        appView: string;
     }
 
     export class DeployedReplicaViewController extends MainViewController {
@@ -48,6 +49,11 @@ module Sfx {
             return this.data.getDeployedReplica(this.nodeName, this.applicationId, this.serviceId, this.activationId, this.partitionId, true, messageHandler)
                 .then(deployedReplica => {
                     this.$scope.replica = deployedReplica;
+                    const deployedService = this.$scope.replica.parent;
+                    const deployedApplication = deployedService.parent;
+                    const serviceName = encodeURI(this.$scope.replica.raw.ServiceName.replace("fabric:/", ""));
+                    this.$scope.appView = this.data.routes.getReplicaViewPath(deployedApplication.raw.TypeName, deployedApplication.raw.Id, serviceName,
+                                                                                  this.$scope.replica.raw.PartitionId, this.$scope.replica.id);
                 });
         }
 

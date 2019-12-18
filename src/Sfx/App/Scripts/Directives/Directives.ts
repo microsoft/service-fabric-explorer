@@ -22,6 +22,8 @@ module Sfx {
         module.directive("sfxDashboard", DashboardChartDirective.factory());
         module.directive("sfxImageStoreView", () => new ImageStoreViewDirective());
         module.directive("sfxImageStoreFileView", () => new ImageStoreOptionsViewDirective());
+        module.directive("sfxTimeline", () => new TimeLineChartDirective());
+        module.directive("sfxDoubleSlider", () => new DoubleSliderDirective());
         module.directive("sfxStatusWarnings", () => new StatusWarningsDirective());
         module.directive("sfxRingView", () => new RingViewDirective());
 
@@ -120,6 +122,7 @@ module Sfx {
                 link: function ($scope: any, $element: any, $attributes: any) {
                     $attributes.$observe("selected", function (selected) {
                         if (clusterTree.setFirstVisit()) {
+                            clusterTree.tree.firstTreeSelect = false;
                             return;
                         }
 
@@ -314,6 +317,8 @@ module Sfx {
 
         module.directive("sfxDatePicker", () => new DatePickerDirective());
 
+        module.directive("sfxDateTimePicker", () => new DateTimePickerDirective());
+
         module.directive("sfxListShorten", (): angular.IDirective => {
             return {
                 restrict: "E",
@@ -338,7 +343,8 @@ module Sfx {
                 scope: {
                     text: "=",
                     nestedText: "=",
-                    nestedTextProperty: "="
+                    nestedTextProperty: "=",
+                    encoded: "=" //pass this as true if its an encoded value to avoid issues with strings with ""
                 },
                 templateUrl: "partials/copy-to-clipboard.html",
                 link: function ($scope: any, $element, $attributes: any) {
@@ -346,7 +352,14 @@ module Sfx {
                         try {
                             let $temp_input = $("<textarea>");
                             $("body").append($temp_input);
-                            $temp_input.val($scope.nestedTextProperty ? $scope.nestedText[$scope.nestedTextProperty] : $scope.text).select();
+
+                            let text = $scope.nestedTextProperty ? $scope.nestedText[$scope.nestedTextProperty] : $scope.text;
+
+                            if ($scope.encoded) {
+                                text = decodeURI(text);
+                            }
+
+                            $temp_input.val(text).select();
                             document.execCommand("copy");
                             $temp_input.remove();
                         } catch (e) {

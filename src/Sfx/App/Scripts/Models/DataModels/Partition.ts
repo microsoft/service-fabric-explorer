@@ -10,6 +10,7 @@ module Sfx {
         public replicas: ReplicaOnPartitionCollection;
         public loadInformation: PartitionLoadInformation;
         public health: PartitionHealth;
+        public partitionBackupInfo: PartitionBackupInfo;
 
         public constructor(data: DataService, raw: IRawPartition, public parent: Service) {
             super(data, raw, parent);
@@ -18,6 +19,11 @@ module Sfx {
             this.replicas = new ReplicaOnPartitionCollection(this.data, this);
             this.loadInformation = new PartitionLoadInformation(this.data, this);
             this.health = new PartitionHealth(this.data, this, HealthStateFilterFlags.Default, HealthStateFilterFlags.None);
+            this.partitionBackupInfo = new PartitionBackupInfo(this.data, this);
+
+            if (this.data.actionsAdvancedEnabled()) {
+                this.setAdvancedActions();
+            }
         }
 
         public get isStatefulService(): boolean {
@@ -40,8 +46,126 @@ module Sfx {
             return this.data.routes.getPartitionViewPath(this.parent.parent.raw.TypeName, this.parent.parent.id, this.parent.id, this.id);
         }
 
+        public get IsStatefulServiceAndSystemService(): Boolean {
+            return this.isStatefulService && this.parent.parent.raw.TypeName !== "System";
+        }
+
         protected retrieveNewData(messageHandler?: IResponseMessageHandler): angular.IPromise<IRawPartition> {
             return Utils.getHttpResponseData(this.data.restClient.getPartition(this.parent.parent.id, this.parent.id, this.id, messageHandler));
+        }
+
+        public removeAdvancedActions(): void {
+            this.actions.collection = this.actions.collection.filter(action => ["enablePartitionBackup", "disablePartitionBackup", "suspendPartitionBackup", "resumePartitionBackup", "triggerPartitionBackup", "restorePartitionBackup"].indexOf(action.name) === -1);
+        }
+
+        public setAdvancedActions(): void {
+            if (this.isStatelessService || this.parent.parent.raw.TypeName === Constants.SystemAppTypeName) {
+                return;
+            }
+
+            this.actions.add(new ActionWithDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "enablePartitionBackup",
+                "Enable/Update Partition Backup",
+                "Enabling Partition Backup",
+                () => this.data.restClient.enablePartitionBackup(this).then(() => {
+                    this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
+                }),
+                () => true,
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/enableBackup.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this
+                    }
+                },
+                null
+            ));
+
+            this.actions.add(new ActionWithDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "disablePartitionBackup",
+                "Disable Partition Backup",
+                "Disabling Partition Backup",
+                () => this.data.restClient.disablePartitionBackup(this).then(() => {
+                    this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
+                }),
+                () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition",
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/disableBackup.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this
+                    }
+                },
+                null
+            ));
+
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "suspendPartitionBackup",
+                "Suspend Partition Backup",
+                "Suspending...",
+                () => this.data.restClient.suspendPartitionBackup(this.id).then(() => {
+                    this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
+                }),
+                () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === false,
+                "Confirm Partition Backup Suspension",
+                `Suspend partition backup for ${this.name} ?`,
+                this.name));
+
+            this.actions.add(new ActionWithConfirmationDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "resumePartitionBackup",
+                "Resume Partition Backup",
+                "Resuming...",
+                () => this.data.restClient.resumePartitionBackup(this.id).then(() => {
+                    this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
+                }),
+                () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === true,
+                "Confirm Partition Backup Resumption",
+                `Resume partition backup for ${this.name} ?`,
+                this.name));
+
+            this.actions.add(new ActionWithDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "triggerPartitionBackup",
+                "Trigger Partition Backup",
+                "Triggering Partition Backup",
+                () => this.data.restClient.triggerPartitionBackup(this),
+                () => true,
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/triggerPartitionBackup.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this
+                    }
+                },
+                null
+            ));
+
+            this.actions.add(new ActionWithDialog(
+                this.data.$uibModal,
+                this.data.$q,
+                "restorePartitionBackup",
+                "Restore Partition Backup",
+                "Restoring Partition Backup",
+                () => this.data.restClient.restorePartitionBackup(this),
+                () => true,
+                <angular.ui.bootstrap.IModalSettings>{
+                    templateUrl: "partials/restorePartitionBackup.html",
+                    controller: ActionController,
+                    resolve: {
+                        action: () => this
+                    }
+                },
+                null
+            ));
         }
     }
 

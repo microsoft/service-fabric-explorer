@@ -366,3 +366,13 @@ input[type=number]::-webkit-outer-spin-button {
     max-width: 100%;
     margin-bottom: 10px !important;
 }
+
+//overriding bootstrap solution for IE 9 compatibility which breaks with chromium edge
+//we will take the chromium edge support as a higher pri
+.table-responsive{
+    min-height: unset !important;
+}
+
+.btn-group>.active , .btn-group>.active:hover {
+    border: 1px white solid;
+}

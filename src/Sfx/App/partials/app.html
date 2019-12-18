@@ -39,17 +39,17 @@
             </div>
         </div>
 
-        <div id="upgradeDetailsSection" ng-if="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane" ng-if="upgradeProgress" >
+        <div id="upgradeDetailsSection" ng-if="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane">
             <h4 ng-if="app.isUpgrading">Upgrade In Progress</h4>
             <h4 ng-if="!app.isUpgrading">Latest Upgrade State</h4>
             <div class="table-responsive">
                 <table class="table detail-list">
                     <thead>
                         <tr>
-                            <th>Target Version</th>                                    
-                            <th>Start Timestamp Utc</th>                                    
-                            <th title="Upgrade Duration">Upgrade Duration</th>                                    
-                            <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>                                    
+                            <th>Target Version</th>
+                            <th>Start Timestamp Utc</th>
+                            <th title="Upgrade Duration">Upgrade Duration</th>
+                            <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>
                             <th>Upgrade Mode</th>
                             <th>Upgrade State</th>
                         </tr>
@@ -58,37 +58,37 @@
                         <tr>
                             <td title="{{upgradeProgress.raw.TargetApplicationTypeVersion}}">{{upgradeProgress.raw.TargetApplicationTypeVersion}}</td>
                             <td>{{upgradeProgress.startTimestampUtc}}</td>
-                            <td>{{upgradeProgress.upgradeDuration}}</td>                            
-                            <td>{{upgradeProgress.upgradeDomainDuration}}</td>                            
+                            <td>{{upgradeProgress.upgradeDuration}}</td>
+                            <td>{{upgradeProgress.upgradeDomainDuration}}</td>
                             <td>{{upgradeProgress.raw.RollingUpgradeMode}}</td>
-                            <td>{{upgradeProgress.raw.UpgradeState}}</td>                            
+                            <td>{{upgradeProgress.raw.UpgradeState}}</td>
                         </tr>
                     </tbody>
                 </table>
             </div>
 
             <div class="detail-pane" ng-if="upgradeProgress.upgradeDomains.length > 0">
-                    <h4>Progress by Upgrade Domain</h4>                
-                    <sfx-upgrade-progress upgrade-domains="upgradeProgress.upgradeDomains"></sfx-upgrade-progress>
-                    <sfx-upgrade-domain-progress ng-if="upgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList.length > 0" node-upgrade-progress-list="upgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList" ></sfx-upgrade-domain-progress>
-                </div>
-        
-            <div class="detail-pane" ng-if="upgradeProgress.raw.FailureReason !== 'None'">                
-                <h4>Upgrade Failure</h4>                
+                <h4>Progress by Upgrade Domain</h4>
+                <sfx-upgrade-progress upgrade-domains="upgradeProgress.upgradeDomains"></sfx-upgrade-progress>
+                <sfx-upgrade-domain-progress ng-if="upgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList.length > 0" node-upgrade-progress-list="upgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList"></sfx-upgrade-domain-progress>
+            </div>
+
+            <div class="detail-pane" ng-if="upgradeProgress.raw.FailureReason !== 'None'">
+                <h4>Upgrade Failure</h4>
                 <div class="table-responsive">
                     <table class="table detail-table">
-                            <tbody>
+                        <tbody>
                             <tr>
                                 <th>Failure Reason</th>
-                                <td><img class="badge-icon" src="images/badge-error.svg"><span> {{upgradeProgress.raw.FailureReason}}</span></td>                                
-                            </tr>                        
+                                <td><img class="badge-icon" src="images/badge-error.svg"><span> {{upgradeProgress.raw.FailureReason}}</span></td>
+                            </tr>
                             <tr>
                                 <th>Failure Timestamp Utc</th>
-                                <td>{{upgradeProgress.failureTimestampUtc}}</td>                                                            
+                                <td>{{upgradeProgress.failureTimestampUtc}}</td>
                             </tr>
                         </tbody>
                     </table>
-                </div>               
+                </div>
                 <h5>Upgrade Domain Progress At Failure</h5>
                 <sfx-detail-view-part data="upgradeProgress.raw.UpgradeDomainProgressAtFailure"></sfx-detail-view-part>
             </div>
@@ -134,6 +134,11 @@
             <h4>Health Events</h4>
             <sfx-detail-list list="app.health.healthEvents" list-settings="healthEventsListSettings"></sfx-detail-list>
         </div>
+
+        <div class="detail-pane">
+            <h4>Application Backup Configuration</h4>
+            <sfx-detail-list list="app.applicationBackupConfigurationInfoCollection" list-settings="applicationBackupConfigurationInfoListSettings"></sfx-detail-list>
+        </div>
     </script>
 
     <!-- Deployments tab -->
@@ -151,10 +156,7 @@
     </script>
 
     <script type="text/ng-template" id="tab_events">
-        <sfx-events-view events-list="appEvents" class="flex-child"></sfx-events-view>
+        <sfx-events-view events-list="appEvents" class="flex-child" timeline-generator="timelineGenerator"></sfx-events-view>
     </script>
 
-    <script type="text/ng-template" id="expandable-detail-view">
-        <sfx-events-view events-list="appEvents" class="flex-child"></sfx-events-view>
-    </script>
 </div>

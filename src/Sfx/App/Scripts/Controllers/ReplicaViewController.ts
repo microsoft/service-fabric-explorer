@@ -10,6 +10,7 @@ module Sfx {
         healthEventsListSettings: ListSettings;
         unhealthyEvaluationsListSettings: ListSettings;
         replicaEvents: ReplicaEventList;
+        nodeView: string;
     }
 
     export class ReplicaViewController extends MainViewController {
@@ -18,6 +19,7 @@ module Sfx {
         public partitionId: string;
         public replicaId: string;
         public appTypeName: string;
+        public isSystem: boolean;
 
         constructor($injector: angular.auto.IInjectorService, private $scope: IReplicaViewScope) {
             super($injector, {
@@ -34,8 +36,8 @@ module Sfx {
             this.partitionId = IdUtils.getPartitionId(params);
             this.replicaId = IdUtils.getReplicaId(params);
             this.appTypeName = IdUtils.getAppTypeName(params);
-
-            if (this.appTypeName === Constants.SystemAppTypeName) {
+            this.isSystem = this.appTypeName === Constants.SystemAppTypeName;
+            if (this.isSystem) {
                 this.selectTreeNode([
                     IdGenerator.cluster(),
                     IdGenerator.systemAppGroup(),
@@ -66,6 +68,21 @@ module Sfx {
             return this.data.getReplicaOnPartition(this.appId, this.serviceId, this.partitionId, this.replicaId, true, messageHandler)
                 .then(replica => {
                     this.$scope.replica = replica;
+                    if (!this.isSystem) {
+                        try {
+
+                            this.$scope.replica.detail.refresh(messageHandler).then( () => {
+                                const rawDataProperty = this.$scope.replica.isStatefulService ? "DeployedServiceReplica" : "DeployedServiceReplicaInstance";
+                                const detailRaw = this.$scope.replica.detail.raw[rawDataProperty];
+
+                                const serviceNameOnly = detailRaw.ServiceManifestName;
+                                const activationId = detailRaw.ServicePackageActivationId || null;
+                                this.$scope.nodeView = this.data.routes.getDeployedReplicaViewPath(this.$scope.replica.raw.NodeName, this.appId, serviceNameOnly, activationId, this.partitionId, this.replicaId);
+                            });
+                        } catch (e) {
+                            console.log(e);
+                        }
+                    }
 
                     return this.$scope.replica.health.refresh(messageHandler);
                 });

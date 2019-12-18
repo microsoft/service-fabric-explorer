@@ -21,10 +21,14 @@
         "./node_modules/cytoscape/dist/cytoscape.min.js",
         "./node_modules/popper.js/dist/umd/popper.js",
         "./node_modules/cytoscape-popper/cytoscape-popper.js",
-        "./node_modules/tippy.js/dist/tippy.min.js"
+        "./node_modules/tippy.js/dist/tippy.min.js",
+        "./node_modules/vis-timeline/dist/vis-timeline-graph2d.min.js",
+        "./node_modules/nouislider/distribute/nouislider.js"
     ],
     "css": [
+        "./node_modules/tippy.js/dist/tippy.css",
         "./node_modules/jquery-ui/themes/base/slider.css",
-        "./node_modules/tippy.js/dist/tippy.css"
+        "./node_modules/vis-timeline/dist/vis-timeline-graph2d.min.css",
+        "./node_modules/nouislider/distribute/nouislider.css"
     ]
 }
