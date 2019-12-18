@@ -42,7 +42,8 @@ module Sfx {
                 "clustermap": { name: "Cluster Map" },
                 "imagestore": { name: "Image Store" },
                 "manifest": { name: "Manifest" },
-                "events": { name: "Events" }
+                "events": { name: "Events" },
+                "ringview": { name: "Ringview" },
             });
 
             this.tabs["essentials"].refresh = (messageHandler) => this.refreshEssentials(messageHandler);

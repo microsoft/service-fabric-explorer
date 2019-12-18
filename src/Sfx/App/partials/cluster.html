@@ -7,7 +7,7 @@
 
     <script type="text/ng-template" id="tab_essentials">
         <div class="detail-pane essen-pane">
-            <div class="table-responsive">      
+            <div class="table-responsive">
                 <table class="essen-table" role="presentation">
                     <tr>
                         <th>Code Version</th>
@@ -35,20 +35,22 @@
                     </tr>
                     <tr>
                         <th>Healthy Seed Nodes</th>
-                        <th>Disabled/Disabling Nodes</th>                                               
+                        <th>Disabled/Disabling Nodes</th>
                     </tr>
                     <tr>
-                        <td>{{nodes.healthySeedNodes}}</td> 
-                        <td>{{nodes.disabledNodes}}</td>                      
-                    </tr>                    
+                        <td>{{nodes.healthySeedNodes}}</td>
+                        <td>{{nodes.disabledNodes}}</td>
+                    </tr>
                 </table>
             </div>
         </div>
 
         <div class="detail-pane alert alert-dismissible alert-danger" role="alert" ng-if="$root.ShowPreviewWarning">
             <strong>Warning:</strong>
-            <span>This cluster is running an unsupported preview version of Service Fabric. Upgrades and downgrades to other versions of Service Fabric is not supported. See 
-                <a class="light-background-link" target="_blank" href="https://aka.ms/servicefabricpreview">https://aka.ms/servicefabricpreview</a> for more details.</span>
+            <span>
+                This cluster is running an unsupported preview version of Service Fabric. Upgrades and downgrades to other versions of Service Fabric is not supported. See
+                <a class="light-background-link" target="_blank" href="https://aka.ms/servicefabricpreview">https://aka.ms/servicefabricpreview</a> for more details.
+            </span>
         </div>
 
         <div class="detail-pane" ng-if="appsDashboard && nodesDashboard">
@@ -81,6 +83,7 @@
                 </div>
             </div>
         </div>
+
 
         <div class="detail-pane">
             <h4>Unhealthy Evaluations</h4>
@@ -222,6 +225,21 @@
     </script>
 
     <script type="text/ng-template" id="tab_events">
-        <sfx-events-view events-list="clusterEvents" class="flex-child"></sfx-events-view>
+        <sfx-events-view events-list="clusterEvents" class="flex-child"></sfx-events-view>        
+    </script>
+
+    <script type="text/ng-template" id="tab_ringview">
+        <div class="detail-pane">
+            <h4>
+                Ring
+            </h4>
+            <div>
+           {{systemApp.healthState.text}}
+            </div>
+            <div sfx-ring-view nodes="nodes" cluster-manifest="clusterManifest" ng-if="nodes.isInitialized">
+            <!-- <div sfx-ring-view ng-if="nodes.isInitialized"> -->
+            </div>
+        </div>
+
     </script>
 </div>

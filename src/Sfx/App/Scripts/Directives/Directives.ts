@@ -23,6 +23,7 @@ module Sfx {
         module.directive("sfxImageStoreView", () => new ImageStoreViewDirective());
         module.directive("sfxImageStoreFileView", () => new ImageStoreOptionsViewDirective());
         module.directive("sfxStatusWarnings", () => new StatusWarningsDirective());
+        module.directive("sfxRingView", () => new RingViewDirective());
 
         module.directive("sfxThemeImport", ["theme", (themeService: ThemeService): angular.IDirective => {
             return {

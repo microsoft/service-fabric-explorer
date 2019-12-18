@@ -3,6 +3,8 @@
     "target": "es5",
     "removeComments": true,
     "declaration": true,
+    "esModuleInterop": true,
+    "typeRoots": [ "@types", "./types" ],
     "types": [
       "jquery",
       "bootstrap",
