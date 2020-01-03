@@ -1,5 +1,10 @@
 module Sfx {
 
+  interface INode {
+    node_id: string;
+    phase: string;
+    neighborhood: INode[];
+  }
 
 
   export class RingViewDirective implements ng.IDirective {
@@ -150,11 +155,9 @@ module Sfx {
         hideAllTippies();
       });
 
-      $scope.buildLabel = (node: any) => {
-        return `${node.node_id.substring(0, 5)}(${node.phase})`;
-      };
+      $scope.buildLabel = (node: INode) => `${node.node_id.substring(0, 5)}(${node.phase})`;
 
-      $scope.messageHandler = (node: any) => {
+      $scope.messageHandler = (node: INode) => {
 
         let id = "sfnode_" + node.node_id;
         let n = cy.nodes("#" + id).first();
@@ -218,12 +221,6 @@ module Sfx {
 
         let layout = cy.layout({ "name": "circle" });
         layout.run();
-      };
-
-      $scope.preprocess = (node: any) => {
-        node.node_id = node.node_id.padStart(32, "0");
-        node.routing_token_start = node.routing_token_start.padStart(32, "0");
-        node.routing_token_end = node.routing_token_end.padStart(32, "0");
       };
     }
   }
