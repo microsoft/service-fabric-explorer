@@ -35,6 +35,7 @@
     "yargs": "7.0.1"
   },
   "dependencies": {
+    "@types/cytoscape": "^3.8.7",
     "@types/nouislider": "^9.0.5",
     "@types/vis": "^4.21.18",
     "adal-angular": "1.0.17",

@@ -16,7 +16,8 @@
       "lodash",
       "d3",
       "vis",
-      "noUiSlider"
+      "noUiSlider",
+      "cytoscape"
     ]
   }
 }

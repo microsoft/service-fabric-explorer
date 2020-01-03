@@ -114,16 +114,16 @@ module Sfx {
         style: [{
           "selector": "node",
           "style": {
-              "content": "data(label)",
-              "font-size": "12px",
-              "text-valign": "center",
-              "text-halign": "center",
-              "background-color": "#7FBA00",
-              "text-outline-color": "#555",
-              "text-outline-width": "2px",
-              "color": "#fff",
-              "overlay-padding": "6px",
-              "z-index": "10"
+            "content": "data(label)",
+            "font-size": "12px",
+            "text-valign": "center",
+            "text-halign": "center",
+            "background-color": "#7FBA00",
+            "text-outline-color": "#555",
+            "text-outline-width": "2px",
+            "color": "#fff",
+            "overlay-padding": "6px",
+            "z-index": 10,
           }
        }],
       });
@@ -157,7 +157,7 @@ module Sfx {
       $scope.messageHandler = (node: any) => {
 
         let id = "sfnode_" + node.node_id;
-        let n = cy.nodes("#" + id);
+        let n = cy.nodes("#" + id).first();
 
         if (!n.id()) {
           n = cy.add({
@@ -172,9 +172,9 @@ module Sfx {
             let el = document.createElement('div')
             let tippy = makeTippy(n, el);
 
+
             n.data('tippy', tippy);
             n.data('el', el);
-
 
             n.on("click", () => {
               let origin = n.data('origin');
