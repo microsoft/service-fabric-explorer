@@ -54,7 +54,7 @@ module Sfx {
           candidateEndpoints.push($(n).attr("IPAddressOrFQDN") + ":" + tmap[$(n).attr("NodeTypeRef")]);
         })
 
-        // TODO load from config
+        // load from 0 temporarily  
         ws = new WebSocket("ws://" + candidateEndpoints[0]);
         // ws = new WebSocket("ws://127.0.0.1:10286");
   
