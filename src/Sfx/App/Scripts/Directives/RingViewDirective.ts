@@ -12,7 +12,7 @@ module Sfx {
     };
 
     public link($scope: any, element: JQuery, attributes: any, ctrl: DetailViewPartController) {
-      let makeTippy = function(node, html){
+      let makeTippy = (node, html) => {
         return tippy( node.popperRef(), {
           html: html,
           trigger: 'manual',
@@ -23,7 +23,7 @@ module Sfx {
         } ).tooltips[0];
       };
 
-      let hideTippy = function(node){
+      let hideTippy = (node) => {
         let tippy = node.data('tippy');
   
         if(tippy != null){
@@ -37,7 +37,7 @@ module Sfx {
 
 
   
-      let recreateWs = function() {
+      let recreateWs = () => {
 
         let tmap = {}
 
@@ -58,7 +58,7 @@ module Sfx {
         ws = new WebSocket("ws://" + candidateEndpoints[0]);
         // ws = new WebSocket("ws://127.0.0.1:10286");
   
-        ws.onerror = function (error) {
+        ws.onerror = (error) => {
           console.log(error)
           if (recreateTimer){
             clearTimeout(recreateTimer);
@@ -66,7 +66,7 @@ module Sfx {
           recreateTimer = setTimeout(recreateWs, 1000);
         };
 
-        ws.onmessage = function (message) {
+        ws.onmessage = (message) => {
           let json;
           try {
             json = JSON.parse(message.data);
@@ -77,7 +77,7 @@ module Sfx {
           $scope.messageHandler(json);
         };
 
-        ws.onopen = function(){
+        ws.onopen = () => {
           candidateEndpoints.forEach((ip) => {
             $scope.sendQuery(ip);
           })
@@ -88,7 +88,7 @@ module Sfx {
         recreateWs();
       })
 
-      $scope.sendQuery = function(endpint: string){
+      $scope.sendQuery = (endpint: string) => {
         if(ws.readyState !== WebSocket.OPEN){
           return;
         }
@@ -101,7 +101,7 @@ module Sfx {
         ))
       }
 
-      $scope.addNode = function(){
+      $scope.addNode = () => {
         $scope.sendQuery($scope.ipaddr);
         $scope.ipaddr = "";
       }
@@ -128,34 +128,34 @@ module Sfx {
        }],
       });
 
-      let hideAllTippies = function(){
+      let hideAllTippies = () => {
         cy.nodes().forEach(hideTippy);
       };
 
-      cy.on('tap', function(e){
+      cy.on('tap', (e) => {
         if(e.target === cy){
           hideAllTippies();
         }
       });
   
-      cy.on('tap', 'edge', function(e){
+      cy.on('tap', 'edge', (e) => {
         hideAllTippies();
       });
   
-      cy.on('zoom pan', function(e){
+      cy.on('zoom pan', (e) => {
         hideAllTippies();
       });   
 
-      $(".main-view").scroll(function(e){
+      $(".main-view").scroll((e) => {
         hideAllTippies();
       });
 
-      $scope.buildLabel = function(node: any){
+      $scope.buildLabel = (node: any) => {
         // return node.node_name + " (" + node.phase + ")";
         return node.node_id.substring(0, 5) + " (" + node.phase + ")";
       }
 
-      $scope.messageHandler = function (node: any) {
+      $scope.messageHandler = (node: any) => {
 
         let id = "sfnode_" + node.node_id;
         let n = cy.nodes("#" + id);
@@ -221,7 +221,7 @@ module Sfx {
         layout.run();
       }
 
-      $scope.preprocess = function (node: any) {
+      $scope.preprocess = (node: any) => {
         node.node_id = node.node_id.padStart(32, "0");
         node.routing_token_start = node.routing_token_start.padStart(32, "0");
         node.routing_token_end = node.routing_token_end.padStart(32, "0");
