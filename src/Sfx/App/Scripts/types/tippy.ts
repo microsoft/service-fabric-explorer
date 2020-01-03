@@ -1,1 +1,1 @@
-declare var tippy:any;
+declare var tippy: any;
