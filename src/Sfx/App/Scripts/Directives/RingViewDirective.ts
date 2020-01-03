@@ -151,8 +151,7 @@ module Sfx {
       });
 
       $scope.buildLabel = (node: any) => {
-        // return node.node_name + " (" + node.phase + ")";
-        return node.node_id.substring(0, 5) + " (" + node.phase + ")";
+        return `${node.node_id.substring(0, 5)}(${node.phase})"`;
       }
 
       $scope.messageHandler = (node: any) => {
