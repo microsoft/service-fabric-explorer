@@ -1,7 +1,8 @@
-import { Component, OnInit, Input} from '@angular/core';
-import { ListSettings, ListColumnSetting } from 'src/app/Models/ListSettings';
+import { Component, OnInit, Input, OnChanges, ChangeDetectorRef} from '@angular/core';
+import { ListSettings, ListColumnSetting, FilterValue } from 'src/app/Models/ListSettings';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
-
+import * as _ from 'lodash';
+import { Utils } from 'src/app/Utils/Utils';
 @Component({
   selector: 'detail-list',
   templateUrl: './detail-list.component.html',
@@ -10,36 +11,35 @@ import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/C
 export class DetailListComponent implements OnInit {
 
   @Input() listSettings: ListSettings;
-  private _list: any[] | DataModelCollectionBase<any>;
-  private sortedFilteredList: any[] =[]; 
+  @Input() searchText = "Search list";
+  private _list: any[];
+  private sortedFilteredList: any[] = []; //actual list displayed in html.
 
-  constructor() { }
+  page = 1;
+  pageSize = 10;
+  totalListSize = 0;
+  constructor(private cdr: ChangeDetectorRef) { }
 
   ngOnInit() {
-    console.log(this.listSettings)
   }
 
   @Input() 
   set list(data:  any[] | DataModelCollectionBase<any>) {
     if(data instanceof DataModelCollectionBase){
-      console.log(data);
+
       this._list = data.collection;
+      data.ensureInitialized().subscribe(data => {
+        this.sortedFilteredList = this._list || [];
+        this.updateList();
+        this.cdr.detectChanges();
+      })
     }else{
       this._list = data;
     }
 
     this.sortedFilteredList = this._list || [];
+    this.updateList();
   }
-
-
-  get partialList() {
-    if(this.sortedFilteredList){
-      return this.sortedFilteredList.slice(0 , 10);
-    }
-
-    return [];
-  }
-
 
   public handleClickRow(item: any, event: any): void {
       if (event && event.target !== event.currentTarget) { return; }
@@ -52,10 +52,144 @@ export class DetailListComponent implements OnInit {
     return columnSetting.propertyPath
   }
 
+  private getSortedFilteredList(): any[] {
+    let list = this._list;
+
+    console.log(this.listSettings)
+    if (this.listSettings.hasEnabledFilters || this.listSettings.search) {
+
+        // Retrieve text values of all columns for searching and filtering
+        let pluckedList = list.map(item => {
+            let pluckedObj = this.listSettings.getPluckedObject(item);
+            // Preserve the original object, property start with $ will be ignored by filter
+            pluckedObj["$originalItem"] = item;
+            return pluckedObj;
+        });
+
+        // Filter on columns and update filters based on new list
+        pluckedList = this.filterOnColumns(pluckedList, this.listSettings);
+
+        // Search
+        if (this.listSettings.search) {
+            let keywords = this.listSettings.search.trim().toLowerCase().split(/\s+/);
+
+            keywords.forEach(keyword => {
+                pluckedList = pluckedList.filter(item => filterByProperty(item, keyword) ) //this.$filter("filter")(pluckedList, keyword);
+            });
+        }
+
+        // Retrieve the original objects from filtered plucked object list
+        list = pluckedList.map(pluckedObj => pluckedObj["$originalItem"]);
+    }
+
+    // Sort
+    if (!_.isEmpty(this.listSettings.sortPropertyPaths)) {
+        list = sortByProperty(list, 
+                              this.listSettings.sortPropertyPaths,
+                              this.listSettings.sortReverse)
+        // list = this.$filter("orderBy")(
+        //     list,
+        //     this.listSettings.sortPropertyPaths,
+        //     this.listSettings.sortReverse);
+    }
+
+    return list;
 }
 
+  private filterOnColumns(pluckedList: any, listSettings: ListSettings): any {
 
-/*
+    // Initialize the filter array, false indicate filtered, true indicate not filtered
+    let filterMark: boolean[] = new Array(pluckedList.length);
+    _.fill(filterMark, true);
+
+    // Update each column filter values by scanning through the list and found out all unique values exist in current column
+    _.forEach(listSettings.columnSettings, (columnSetting: ListColumnSetting) => {
+        if (!columnSetting.enableFilter) {
+            return;
+        }
+
+        // If any filter value is unchecked, we need to filter on this column
+        let hasEffectiveFilters = _.some(columnSetting.filterValues, filterValue => !filterValue.isChecked);
+        let checkedValues = _.map(_.filter(columnSetting.filterValues, filterValue => filterValue.isChecked), "value");
+
+        // Update filter values in each column and filter the list at the same time
+        columnSetting.filterValues =
+            _.sortBy( // Sort alphabetically
+                _.union( // Union with original filters, user may already set filter on them, should not overwrite
+                    _.map( // Create new filters
+                        _.filter( // Get rid of those values already in the filters
+                            _.uniq( // Get all unique property values in current column
+                                _.filter( // Get rid of empty values
+                                    _.map( // Get all property values in current column
+                                        pluckedList,
+                                        (item, index) => {
+                                            let targetPropertyTextValue = item[columnSetting.propertyPath];
+                                            filterMark[index] = filterMark[index] // Not already filtered
+                                                && (!hasEffectiveFilters // No effective filters
+                                                    || !targetPropertyTextValue // Target value is empty, no filters apply
+                                                    || _.includes(checkedValues, targetPropertyTextValue)); // The checked values include the target value
+                                            return targetPropertyTextValue;
+                                        }
+                                    ),
+                                    value => !_.isEmpty(value)
+                                )
+                            ),
+                            value => _.every(columnSetting.filterValues, filterValue => filterValue.value !== value)
+                        ),
+                        value => new FilterValue(value)
+                    ),
+                    columnSetting.filterValues
+                ),
+                "value"
+            );
+    });
+
+    pluckedList = _.filter(pluckedList, (item, index) => filterMark[index]);
+    return pluckedList;
+  }
+
+  pageChange(newPage: number) {
+    this.page = newPage;
+  }
+
+  updateList() {
+    this.sortedFilteredList = this.getSortedFilteredList();
+  }
+
+}
+
+//TODO verify this works
+const sortByProperty = (items: any[], propertyPath: string[], sortReverse: boolean): any[] => {
+  //need to continually check each property in this list
+  const direction = sortReverse ? 1 : -1;
+  return items.sort( (a, b) => {
+    let i = 0;
+
+    while(i < propertyPath.length) {
+      const aResult = Utils.result(a, propertyPath[i]);
+      const bResult = Utils.result(b, propertyPath[i]);
+      
+      if(aResult !== bResult){
+        return direction * ( aResult > bResult ? 1 : -1 );
+      }
+
+      i++;
+    }
+
+    return 0;
+  })
+}
+
+const filterByProperty = (obj: any, filter: string): boolean => {
+  return Object.keys(obj).some(property => {
+    if(!property.startsWith("$")){
+      const val = obj[property];
+      return (val as string|number|boolean).toString().toLowerCase().includes(filter);
+    }
+  })
+}
+
+/* TODO
 set up track by function for columnSettings
 track by columnSetting.propertyPath
 

@@ -1,17 +1,7 @@
 <div class="main-header" style="padding-top: 20px;">
     <div class="detail-view-title-bar">
         <div *ngIf="actions && actions.length > 0" style="float: right; height: 40px; margin-top: 20px">
-            <div class="dropdown">
-                <button class="dropbtn">{{actions.title | uppercase}}</button>
-                <div class="dropdown-content">
-                    <div *ngFor="let action of actions.collection">
-                        <button (click)="actions.runWithTelemetry(action, 'ActionsButton')"
-                                [disabled]="!action.canRun()">
-                            {{action.title}}
-                        </button>
-                    </div>
-                </div>
-            </div>
+            <app-action-collection-drop-down [actionCollection]="actions"></app-action-collection-drop-down>
         </div>
         <div class="detail-view-title" [title]="name">
             <b>{{type}}</b> {{name}}
@@ -40,4 +30,5 @@
             <!-- <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div> -->
         </div>
     </div>
+    <ng-content></ng-content>
 </div>

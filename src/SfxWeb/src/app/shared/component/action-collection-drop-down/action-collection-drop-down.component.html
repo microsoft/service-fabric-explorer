@@ -1,0 +1,23 @@
+<!-- <div class="dropdown">
+    <button class="dropbtn">{{actionCollection.title | uppercase}}</button>
+    <div class="dropdown-content">
+        <div *ngFor="let action of actionCollection.collection">
+            <button (click)="actionCollection.runWithTelemetry(action, 'ActionsButton')"
+                    [disabled]="!action.canRun()">
+                {{action.title}}
+            </button>
+        </div>
+    </div>
+</div> -->
+
+
+<div ngbDropdown container="body">
+    <button class="simple-button" ngbDropdownToggle>{{actionCollection.title | uppercase}}</button>
+    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+        <button *ngFor="let action of actionCollection.collection" ngbDropdownItem
+                (click)="actionCollection.runWithTelemetry(action, 'ActionsButton')"
+                [disabled]="!action.canRun()">
+            {{action.title}}
+        </button>
+    </div>
+</div>

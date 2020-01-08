@@ -13,15 +13,19 @@ import { RefreshRateComponent } from './component/refresh-rate/refresh-rate.comp
 import { DragDirective } from './directive/drag.directive';
 import { ActionDialogComponent } from './component/action-dialog/action-dialog.component';
 import { ManifestComponent } from './component/manifest/manifest.component';
+import { ActionCollectionDropDownComponent } from './component/action-collection-drop-down/action-collection-drop-down.component';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { InputComponent } from './component/input/input.component';
 
 @NgModule({
-  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent],
+  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
+    NgbDropdownModule
   ],
-  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent],
+  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent],
   entryComponents: [ActionDialogComponent],
 })
 export class SharedModule { }

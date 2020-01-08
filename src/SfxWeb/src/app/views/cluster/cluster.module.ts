@@ -18,10 +18,12 @@ import { FormsModule } from '@angular/forms';
 import { ActionCreateBackupPolicyComponent } from './action-create-backup-policy/action-create-backup-policy.component';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
+import { StatusWarningsComponent } from './status-warnings/status-warnings.component';
+import { BackupsComponent } from './backups/backups.component';
 
 
 @NgModule({
-  declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent, ImagestoreComponent, ManifestComponent, EventsComponent, ActionUpdateBackupPolicyComponent, ActionCreateBackupPolicyComponent],
+  declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent, ImagestoreComponent, ManifestComponent, EventsComponent, ActionUpdateBackupPolicyComponent, ActionCreateBackupPolicyComponent, StatusWarningsComponent, BackupsComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,

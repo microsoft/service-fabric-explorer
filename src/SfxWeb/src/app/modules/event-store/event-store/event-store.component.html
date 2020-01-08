@@ -1,6 +1,6 @@
 <div class="detail-pane">
-        <!-- <div style="margin-right:0px;">
-            <div class="col-md-3 col-sm-6 col-lg-2">
+        <div style="margin-right:0px;">
+            <!-- <div class="col-md-3 col-sm-6 col-lg-2">
                 <sfx-date-picker ng-model="dwSelector.startDate" min-date="dwSelector.startDateMin"
                 max-date="dwSelector.startDateMax" init-date="dwSelector.startDateInit" place-holder-text="'Start Date'">
                 </sfx-date-picker>
@@ -9,13 +9,13 @@
                     <sfx-date-picker ng-model="dwSelector.endDate" min-date="dwSelector.endDateMin"
                 max-date="dwSelector.endDateMax" init-date="dwSelector.endDateInit" place-holder-text="'End Date'">
                 </sfx-date-picker>
-            </div>
+            </div> -->
             <div class="col-md-6 col-sm-12 col-lg-8">
                 <div style="width: 80%; margin-left: 50px; margin-top: 15px; margin-bottom: 15px;">
-                        <app-double-slider start-date="dwSelector.startDate" end-date="dwSelector.endDate"></app-double-slider>
+                        <app-double-slider [startDate]="startDate" [endDate]="endDate"></app-double-slider>
                     </div>
             </div>
-        </div> -->
+        </div>
         <div *ngIf="timelineGenerator">
             <div class="btn-group">
                 <!-- <label class="btn btn-primary" ng-model="dwSelector.showAllEvents" uib-btn-radio="false">Correlated</label>

@@ -9,6 +9,9 @@ import { SharedModule } from './shared/shared.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
 import { BackupRestoreModule } from './modules/backup-restore/backup-restore.module';
+import { ActionCreateBackupPolicyComponent } from './views/cluster/action-create-backup-policy/action-create-backup-policy.component';
+import { ClusterModule } from './views/cluster/cluster.module';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [
@@ -22,9 +25,14 @@ import { BackupRestoreModule } from './modules/backup-restore/backup-restore.mod
     SharedModule,
     NoopAnimationsModule,
     MatDialogModule,
-    BackupRestoreModule
+    BackupRestoreModule,
+    NgbDropdownModule,
+
+    //test
+    ClusterModule
   ],
   providers: [DataService],
+  entryComponents: [ActionCreateBackupPolicyComponent],
   bootstrap: [AppComponent],
 })
 export class AppModule { } 

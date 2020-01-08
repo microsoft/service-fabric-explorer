@@ -9,6 +9,8 @@ import { CopyTextComponent } from './copy-text/copy-text.component';
 import { DetailListComponent } from './detail-list/detail-list.component';
 import { PagerComponent } from './pager/pager.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { NgbPaginationModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -17,7 +19,10 @@ import { SharedModule } from 'src/app/shared/shared.module';
   imports: [
     CommonModule,
     RouterModule,
-    SharedModule
+    SharedModule,
+    NgbPaginationModule,
+    NgbDropdownModule,
+    FormsModule
   ],
   exports: [PlainTextComponent, DetailTableResolverComponent, HyperLinkComponent, CopyTextComponent, DetailListComponent],
   entryComponents: [PlainTextComponent, HyperLinkComponent, CopyTextComponent]

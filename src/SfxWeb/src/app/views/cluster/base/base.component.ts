@@ -39,6 +39,10 @@ export class BaseComponent implements OnInit {
     {
       name: "events",
       route: "/events"
+    },
+    {
+      name: "backups",
+      route: "/backups"
     }
   ];
   constructor(public tree: TreeService) { }

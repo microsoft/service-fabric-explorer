@@ -4,35 +4,37 @@
             <tr>
                 <th>Code Version</th>
                 <th>Upgrade State</th>
-            </tr>
-            <tr *ngIf="clusterUpgradeProgress.isInitialized">
-                <td>{{clusterUpgradeProgress.raw.CodeVersion}}<app-clip-board [text]="clusterUpgradeProgress.raw.CodeVersion"></app-clip-board> </td>
-                <td>{{clusterUpgradeProgress.raw.UpgradeState}}</td>
-            </tr>
-            <tr>
-                <th>Cluster Health State</th>
+                <th>Fault Domains</th>
                 <th>Upgrade Domains</th>
             </tr>
-            <tr *ngIf="clusterHealth.isInitialized && nodes.isInitialized">
-                <td><app-health-badge [badgeClass]="clusterHealth.healthState.badgeClass" [text]="clusterHealth.healthState.text"></app-health-badge></td>
+            <tr *ngIf="clusterUpgradeProgress.isInitialized && nodes.isInitialized">
+                <td>{{clusterUpgradeProgress.raw.CodeVersion}}<app-clip-board [text]="clusterUpgradeProgress.raw.CodeVersion"></app-clip-board> </td>
+                <td>{{clusterUpgradeProgress.raw.UpgradeState}}</td>
+                <td>{{nodes.faultDomains.length}}</td>
                 <td>{{nodes.upgradeDomains.length}}</td>
             </tr>
             <tr>
+                <th>Cluster Health State</th>
                 <th>System Application Health State</th>
-                <th>Fault Domains</th>
-            </tr>
-            <tr *ngIf="systemApp.isInitialized && nodes.isInitialized">
-                <td><app-health-badge [badgeClass]="systemApp.healthState.badgeClass" [text]="systemApp.healthState.text"></app-health-badge></td>
-                <td>{{nodes.faultDomains.length}}</td>
-            </tr>
-            <tr>
                 <th>Healthy Seed Nodes</th>
                 <th>Disabled/Disabling Nodes</th>
             </tr>
-            <tr *ngIf="nodes.isInitialized">
+            <tr *ngIf="clusterHealth.isInitialized && nodes.isInitialized && systemApp.isInitialized">
+                <td><app-health-badge [badgeClass]="clusterHealth.healthState.badgeClass" [text]="clusterHealth.healthState.text"></app-health-badge></td>
+                <td><app-health-badge [badgeClass]="systemApp.healthState.badgeClass" [text]="systemApp.healthState.text"></app-health-badge></td>
                 <td>{{nodes.healthySeedNodes}}</td>
                 <td>{{nodes.disabledNodes}}</td>
             </tr>
+            <!-- <tr>
+            </tr>
+            <tr *ngIf="systemApp.isInitialized && nodes.isInitialized">
+            </tr>
+            <tr>
+
+            </tr>
+            <tr *ngIf="nodes.isInitialized">
+
+            </tr> -->
         </table>
     </div>
 </div>

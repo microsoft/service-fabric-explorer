@@ -49,6 +49,7 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
     }
 
     public checkExpiredCertStatus() {
+        console.log("check")
         try {
             if (!ClusterHealth.certExpirationChecked) {
             //Check cluster health
@@ -106,7 +107,7 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
         const expiration = healthEvent.raw.Description.substring(expirationIndex + expirationSearchText.length).split(",")[0];
 
         this.data.warnings.addOrUpdateNotification({
-            message: `A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure. <br> Thumbprint : ${thumbprint}    Expiration: ${expiration}`,
+            message: `A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure. <br> Thumbprint : ${thumbprint} <br> Expiration: ${expiration}`,
             level: StatusWarningLevel.Error,
             priority: 5,
             id: BannerWarningID.ExpiringClusterCert,
@@ -123,10 +124,12 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
     }
 
     private checkNodesContinually(index: number, nodes: Node[]) {
+        console.log("checked node")
         if (index < nodes.length) {
             const node = nodes[index];
             if (node.healthState.text === HealthStateConstants.Error || node.healthState.text === HealthStateConstants.Warning) {
-                node.health.ensureInitialized().subscribe( () => {
+                node.health.ensureInitialized(true).subscribe( () => {
+                    console.log(node.health.healthEvents)
                     const certExpiringEvents = this.containsCertExpiringHealthEvent(node.health.healthEvents);
                     if (certExpiringEvents.length === 0) {
                         this.checkNodesContinually(index + 1, nodes);

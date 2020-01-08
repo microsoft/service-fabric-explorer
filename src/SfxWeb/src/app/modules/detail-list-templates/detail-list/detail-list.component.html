@@ -1,6 +1,7 @@
-<div class="detail-list-container flex-child">
-        <!-- <sfx-search-bar ng-if="::listSettings.searchable" class="list-search-bar" placeholder="{{searchText || 'Search list' }}" model="listSettings.search"
-            reset="listSettings.reset(); ctrl.updateList()"></sfx-search-bar> -->
+<div class="detail-list-container flex-child" style="margin-top: 15px;">
+        <app-input [placeholder]="searchText" [model]="listSettings.search" (onChange)="listSettings.search = $event; updateList()"></app-input>
+        <button class="empty-button"><span class="link">Reset All</span></button>
+        
         <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
         <div class="table-responsive" [ngClass]="{'inner-scroll': innerScroll}">
             <table class="table detail-list">
@@ -11,27 +12,25 @@
                         [attr.aria-sort]="listSettings.isSortedByColumn(columnSetting) ? listSettings.sortReverse ? 'ascending' : 'descending' : 'none'">
                         <!-- Header label -->
                         <span [ngClass]="{'active': columnSetting.sortable, 'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}"
-                              (click)="listSettings.sort(columnSetting.sortPropertyPaths); ctrl.updateList()" [attr.aria-label]="'Sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'">
-                                {{columnSetting.displayName}}
-                            </span>
-    
-                            <!-- Filter menu and icon -->
-                            <!-- uib-dropdown keyboard-nav on-toggle="listSettings.filterContextMenuToggled(open)"TODO fix the drop down -->
-                            <!-- <div class="btn-group" *ngFf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters">
-                                <a href="javascript:void(0);" type="button" role="button" uib-dropdown-toggle aria-label="Filter" title="filter by {{::columnSetting.displayName}} options"
-                                aria-haspopup="true" id="{{$index}}-header">
-                                    <span  class="bowtie-icon filter-icon" ng-class="{'bowtie-search-filter': !columnSettingb.hasEffectiveFilters, 'bowtie-search-filter-fill active': columnSetting.hasEffectiveFilters}"></span>
-                                </a>
-                                <ul   class="dropdown-menu" role="menu" uib-dropdown-menu ng-class="{'dropdown-menu-right': $last}" style="list-style: none"
-                                aria-labelledby="{{$index}}-header" >
-                                    <li role="menuitem" ng-repeat="filterValue in columnSetting.filterValues track by $index" class="checkbox-container-default" ng-click="$event.stopPropagation()">
-                                        <label>
-                                            <input type="checkbox" ng-model="filterValue.isChecked" ng-change="ctrl.updateList()" />
+                            (click)="listSettings.sort(columnSetting.sortPropertyPaths); updateList()" [attr.aria-label]="'Sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'">
+                            {{columnSetting.displayName}}
+                        </span>
+
+                        <div ngbDropdown container="body" *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle">
+                            <button class="flat-button" ngbDropdownToggle aria-label="Filter" title="filter by columnSetting.displayName options">
+                                <span  class="bowtie-icon filter-icon" [ngClass]="{'bowtie-search-filter': !columnSetting.hasEffectiveFilters, 'bowtie-search-filter-fill active': columnSetting.hasEffectiveFilters}"></span>
+                            </button>
+                            <div ngbDropdownMenu >
+                                <ul role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;"  >
+                                    <li role="menuitem" *ngFor="let filterValue of columnSetting.filterValues" >
+                                        <label style="margin-bottom: 0px; font-size: 15px;">
+                                            <input type="checkbox" [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList()" />
                                             {{filterValue.value}}
                                         </label>
                                     </li>
                                 </ul>
-                            </div> -->
+                            </div>
+                        </div>
     
                             <!-- Sort direction icon -->
                             <!-- Use transparent color to hide the icon instead of using ng-show to avoid the table layout changes when the icon showed up -->
@@ -48,7 +47,7 @@
                 <tbody>
                         <!-- track by (item.uniqueId || $id(item)) -->
                         <!-- | slice: listSettings.limit: listSettings.begin; -->
-                <ng-container *ngFor="let item of partialList; ">
+                <ng-container *ngFor="let item of sortedFilteredList.slice( (page - 1) * pageSize , page * pageSize); ">
                     <tr>
                             <!-- track by columnSetting.propertyPath -->
                             <!-- ng-mousedown="handleClickRow(item, $event)" -->
@@ -68,7 +67,7 @@
                                 *ngFor="let columnSetting of listSettings.secondRowColumnSettings; trackBy: trackByColumnSetting;"
                                 [colSpan]="columnSetting.colspan === -1 ? (listSettings.columnSettings.length - listSettings.secondRowColumnSettings.length + 1) : columnSetting.colspan"
                                 [ngClass]="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed}">
-                                <div *ngIf="listSettings.secondRowCollapsible && item.isSecondRowCollapsed" 
+                                <div *ngIf="listSettings.secondRowCollapsible && !item.isSecondRowCollapsed" 
                                     [ngClass]="{'shift-expander-col': $index === 0 && listSettings.secondRowCollapsible}">
                                     <!-- [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" -->
                                     <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
@@ -85,5 +84,13 @@
                 </tbody>
             </table>
         </div>
-        <app-pager list="sortedFilteredList" list-settings="listSettings"></app-pager>
+        
+        <div style="margin-top: 10px;">
+            <ngb-pagination [collectionSize]="sortedFilteredList.length" [(page)]="page" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                            (pageChange)="pageChange($event)" style="display: inline-block;"></ngb-pagination>
+            <div style="float: right; margin-top: 10px;">
+                Showing {{(page - 1) * pageSize + 1}} - {{page * pageSize}} of {{sortedFilteredList.length}} items 
+            </div>
+        </div>
+        <!-- <app-pager list="sortedFilteredList" list-settings="listSettings"></app-pager> -->
     </div>

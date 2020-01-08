@@ -28,7 +28,9 @@
               "src/assets"
             ],
             "styles": [
+              "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/vis-timeline/dist/vis-timeline-graph2d.min.css",
+              "node_modules/nouislider/distribute/nouislider.css",
               "src/styles.scss",
               "src/Styles/modules/_candybar.scss"
             ],

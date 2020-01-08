@@ -1,0 +1,288 @@
+<!-- <form name="createServiceForm">
+    <div class="modal-header">
+        <h4 class="modal-title">Create Service</h4>
+    </div>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+            <dt>Service Kind</dt>
+            <dd>
+                <input type="text" class="input-flat" readonly="readonly" ng-model="action.serviceType.serviceKind" aria-label="Service Kind">
+            </dd>
+            <dt>Service Type Name</dt>
+            <dd>
+                <input type="text" class="input-flat" readonly="readonly" ng-model="action.description.raw.ServiceTypeName" aria-label="Service Type Name">
+            </dd>
+            <dt>Application Name</dt>
+            <dd>
+                <input type="text" class="input-flat" readonly="readonly" ng-model="action.description.raw.ApplicationName" aria-label="Application Name">
+            </dd>
+            <dt>Service Name</dt>
+            <dd>
+                <input type="text" class="input-flat" autocomplete="off" ng-model="action.description.raw.ServiceName" title="Service name must start with application name"
+                    required ng-pattern="action.description.serviceNamePattern" aria-label="Service Name">
+            </dd>
+            <dt title="Service Package Activation Mode">Service Package Activation Mode</dt>
+            <dd>
+                <div class="btn-group">
+                    <button class="btn btn-primary" ng-repeat="activationMode in action.description.servicePackageActivationModes" ng-model="action.description.raw.ServicePackageActivationMode"
+                        uib-btn-radio="$index.toString()">
+                        {{activationMode}}
+                    </button>
+                </div>
+            </dd>
+            <dt>Initialization Data</dt>
+            <dd>
+                <input type="text" class="input-flat" autocomplete="off" placeholder="Hexadecimal string with even length, e.g. 13A013FF"
+                    title="Hexadecimal string with even length, e.g. 13A013FF" aria-label="Initialization Data" ng-model="action.description.initializationData"
+                    ng-pattern="/^([0-9a-fA-F][0-9a-fA-F])+$/">
+            </dd>
+            <dd class="checkbox-container-default">
+                <label>
+                    <input type="checkbox" ng-model="action.description.createFromTemplate" ng-change="action.description.isAdvancedOptionCollapsed = true">Create From Template
+                </label>
+            </dd>
+        </dl>
+
+        <a href="javascript:void(0)" ng-click="action.description.toggleAdvancedOptions()" ng-disabled="action.description.createFromTemplate" role="button">
+            {{action.description.isAdvancedOptionCollapsed ? "Show" : "Hide"}} Advanced Options
+        </a>
+
+        <dl class="dl-horizontal collapse" uib-collapse="action.description.isAdvancedOptionCollapsed" ng-if="!action.description.createFromTemplate">
+            <dt>Service Dns Name</dt>
+            <dd>
+                <input type="text" class="input-flat" autocomplete="off" ng-model="action.description.raw.ServiceDnsName" aria-label="Service Dns Name">
+            </dd>
+            <dt ng-if="!action.serviceType.raw.ServiceTypeDescription.IsStateful">Instance Count</dt>
+            <dd ng-if="!action.serviceType.raw.ServiceTypeDescription.IsStateful">
+                <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.InstanceCount" aria-label="Instance Count" min="1" aria-valuemin="1" integer>
+            </dd>
+            <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">Has Persisted State</dt>
+            <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">
+                <input type="text" class="input-flat" readonly="readonly" ng-model="action.description.raw.HasPersistedState" aria-label="Has Persisted State">
+            </dd>
+            <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">Min Replica Set Size</dt>
+            <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">
+                <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.MinReplicaSetSize" name="MinReplicaSetSize" 
+                aria-label="Min Replica Set Size" min="1" aria-valuemin="1" integer>                
+            </dd>
+            <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">Target Replica Set Size</dt>
+            <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">
+                <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.TargetReplicaSetSize" aria-label="Target Replica Set Size" min="1" aria-valuemin="1" integer>
+            </dd>
+            <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful" title="Replica Restart Wait Duration">Replica Restart Wait Duration</dt>
+            <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">
+                <input type="number" class="input-flat" autocomplete="off" placeholder="Duration in seconds" ng-model="action.description.raw.ReplicaRestartWaitDurationSeconds"
+                    aria-label="Replica Restart Wait Duration" min="0" aria-valuemin="0">
+            </dd>
+            <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful" title="Quorum Loss Wait Duration">Quorum Loss Wait Duration</dt>
+            <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">
+                <input type="number" class="input-flat" autocomplete="off" placeholder="Duration in seconds" ng-model="action.description.raw.QuorumLossWaitDurationSeconds"
+                    aria-label="Quorum Loss Wait Duration" min="0" aria-valuemin="0">
+            </dd>
+            <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful" title="Stand By Replica Keep Duration">Stand By Replica Keep Duration</dt>
+            <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">
+                <input type="number" class="input-flat" autocomplete="off" placeholder="Duration in seconds" ng-model="action.description.raw.StandByReplicaKeepDurationSeconds"
+                    aria-label="Stand By Replica Keep Duration" min="0" aria-valuemin="0">
+            </dd>
+            <dt>Placement Constraints</dt>
+            <dd>
+                <input type="text" class="input-flat" autocomplete="off" ng-model="action.description.raw.PlacementConstraints" aria-label="Placement Constraints">
+            </dd>
+            <dt>Partition Scheme</dt>
+            <dd>
+                <div class="btn-group">
+                    <button class="btn btn-primary" ng-repeat="partitionScheme in action.description.servicePartitionKinds" ng-model="action.description.raw.PartitionDescription.PartitionScheme"
+                        ng-if="$index > 0" uib-btn-radio="$index.toString()">
+                        {{partitionScheme}}
+                    </button>
+                </div>
+                <dl class="dl-horizontal short">
+                    <dt ng-if="action.description.raw.PartitionDescription.PartitionScheme !== '1'">Count</dt>
+                    <dd ng-if="action.description.raw.PartitionDescription.PartitionScheme !== '1'">
+                        <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.PartitionDescription.Count" required
+                            aria-label="Count" min="1" aria-valuemin="1">
+                    </dd>
+                    <dt ng-if="action.description.raw.PartitionDescription.PartitionScheme === '2'">Low Key</dt>
+                    <dd ng-if="action.description.raw.PartitionDescription.PartitionScheme === '2'">
+                        <input type="text" class="input-flat" autocomplete="off" ng-model="action.description.raw.PartitionDescription.LowKey" required
+                            aria-label="Low Key">
+                    </dd>
+                    <dt ng-if="action.description.raw.PartitionDescription.PartitionScheme === '2'">High Key</dt>
+                    <dd ng-if="action.description.raw.PartitionDescription.PartitionScheme === '2'">
+                        <input type="text" class="input-flat" autocomplete="off" ng-model="action.description.raw.PartitionDescription.HighKey" required
+                            aria-label="High Key">
+                    </dd>
+                    <dt ng-if="action.description.raw.PartitionDescription.PartitionScheme === '3'">Name List</dt>
+                    <dd ng-if="action.description.raw.PartitionDescription.PartitionScheme === '3'">
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>
+                                            <a href="" ng-click="action.description.addName()" role="button">Add</a>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr ng-repeat="name in action.description.raw.PartitionDescription.Names track by $index">
+                                        <td>
+                                            <input type="text" class="input-flat" autocomplete="off" ng-model="action.description.raw.PartitionDescription.Names[$index]"
+                                                required aria-label="Name">
+                                        </td>
+                                        <td>
+                                            <a href="" ng-click="action.description.raw.PartitionDescription.Names.splice($index, 1)"  role="button">Remove</a>
+                                        </td>
+                                    </tr>
+                                    <tr ng-if="action.description.raw.PartitionDescription.Names.length === 0">
+                                        <td colspan="2">No items to display</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </dd>
+                </dl>
+            </dd>
+            <dt>Placement Policies</dt>
+            <dd>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Type</th>
+                                <th>Domain Name</th>
+                                <th>
+                                    <a href="" ng-click="action.description.addPlacementPolicy()" role="button">Add</a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="placementPolicy in action.description.raw.ServicePlacementPolicies track by $index">
+                                <td>
+                                    <div uib-dropdown dropdown-append-to-body>
+                                        <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select a placement policy">
+                                            {{action.description.resolvePlacementPolicyType(placementPolicy.Type)}}
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
+                                            <li class="dropdown-item" ng-repeat="placementPolicyOption in action.description.placementPolicies track by $index" ng-if="$index > 0">
+                                                <a href="" ng-click="placementPolicy.Type = $index.toString()" role="button">{{placementPolicyOption}}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="text" class="input-flat" autocomplete="off" ng-model="placementPolicy.DomainName" required aria-label="Domain name">
+                                </td>
+                                <td>
+                                    <a href="" ng-click="action.description.raw.ServicePlacementPolicies.splice($index, 1)" role="button">Remove</a>
+                                </td>
+                            </tr>
+                            <tr ng-if="action.description.raw.ServicePlacementPolicies.length === 0">
+                                <td colspan="3">No items to display</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </dd>
+            <dt>Service Correlations</dt>
+            <dd>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Scheme</th>
+                                <th>Service Name</th>
+                                <th>
+                                    <a href="" ng-click="action.description.addServiceCorrelation()" role="button">Add</a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="correlation in action.description.raw.CorrelationScheme track by $index">
+                                <td>
+                                    <div uib-dropdown dropdown-append-to-body>
+                                        <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select a scheme">
+                                            {{action.description.resolveCorrelationScheme(correlation.Scheme)}}
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
+                                            <li class="dropdown-item" ng-repeat="correlationSchemeOption in action.description.serviceCorrelationSchemes track by $index"
+                                                ng-if="$index > 0">
+                                                <a href="" ng-click="correlation.Scheme = $index.toString()" role="button">{{correlationSchemeOption}}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td>
+                                    <input type="text" class="input-flat" autocomplete="off" ng-model="correlation.ServiceName" required aria-label="Service name">
+                                </td>
+                                <td>
+                                    <a href="" ng-click="action.description.raw.CorrelationScheme.splice($index, 1)" role="button">Remove</a>
+                                </td>
+                            </tr>
+                            <tr ng-if="action.description.raw.CorrelationScheme.length === 0">
+                                <td colspan="3">No items to display</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </dd>
+            <dt>Load Metrics</dt>
+            <dd>
+                <div class="table-responsive">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th>Name</th>
+                                <th>Primary</th>
+                                <th>Secondary</th>
+                                <th>Weight</th>
+                                <th>
+                                    <a href="" ng-click="action.description.addLoadMetric()" role="button">Add</a>
+                                </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr ng-repeat="loadMetric in action.description.raw.ServiceLoadMetrics track by $index">
+                                <td>
+                                    <input type="text" class="input-flat" autocomplete="off" ng-model="loadMetric.Name" required aria-label="Metric name">
+                                </td>
+                                <td>
+                                    <input type="number" class="input-flat" autocomplete="off" ng-model="loadMetric.PrimaryDefaultLoad" required aria-label="Primary default load" min="0" aria-valuemin="0">
+                                </td>
+                                <td>
+                                    <input type="number" class="input-flat" autocomplete="off" ng-model="loadMetric.SecondaryDefaultLoad" required aria-label="Secondary default load" min="0" aria-valuemin="0">
+                                </td>
+                                <td>
+                                    <div uib-dropdown dropdown-append-to-body>
+                                        <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select a weight">
+                                            {{action.description.resolveLoadMetricWeight(loadMetric.Weight)}}
+                                            <span class="caret"></span>
+                                        </button>
+                                        <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
+                                            <li class="dropdown-item" ng-repeat="loadMetricOption in action.description.serviceLoadMetricWeights track by $index">
+                                                <a href="" ng-click="loadMetric.Weight = $index.toString()" role="button">{{loadMetricOption}}</a>
+                                            </li>
+                                        </ul>
+                                    </div>
+                                </td>
+                                <td>
+                                    <a href="" ng-click="action.description.raw.ServiceLoadMetrics.splice($index, 1)" role="button">Remove</a>
+                                </td>
+                            </tr>
+                            <tr ng-if="action.description.raw.ServiceLoadMetrics.length === 0">
+                                <td colspan="5">No items to display</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </dd>
+        </dl>
+    </div>
+    <div class="modal-footer">
+        <a href="" id="reset-dialog-link" ng-click="action.description.reset()" title="Reset dialog with default settings">Reset</a>
+        <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-click="createServiceForm.$invalid ? return : ok()" >{{action.title}}</button>
+        <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="cancel()">Cancel</button>
+    </div>
+</form> -->

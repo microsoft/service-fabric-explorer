@@ -2,7 +2,7 @@
         <div class="detail-pane">
             <h4>Configuration</h4>
             <div class="table-responsive">
-                <table class="table detail-table table-layout-fixed" role="presentation">
+                <table class="table detail-table table-layout-fixed" role="presentation" style="width: 100%;">
                     <tr>
                         <th>Connection String <a title="Understand the Image Store connection string setting" aria-label="Understand the Image Store connection string setting"
                                 href="https://aka.ms/sfx-help-imagestore-connectionstring" target="_blank"><span class="bowtie-icon bowtie-status-help-outline"></span></a></th>
@@ -25,12 +25,16 @@
                 <span *ngIf="imagestoreRoot.isLoadingFolderContent" style="padding-right: 5px;">
                     <span  class="dark-background-link bowtie-icon bowtie-navigate-refresh rotate" aria-label="refresh" title="Loading folder content"></span>
                 </span>
-                <span><button (click)="openFolder(imagestoreRoot.pathBreadcrumbItems[0].path)" [disabled]="imagestoreRoot.currentFolder.path === imagestoreRoot.pathBreadcrumbItems[0].path"
+                <span><button class="clear-button" (click)="openFolder(imagestoreRoot.pathBreadcrumbItems[0].path)" [disabled]="imagestoreRoot.currentFolder.path === imagestoreRoot.pathBreadcrumbItems[0].path"
                         aria-label="click to go to root of image store">
                         {{imagestoreRoot.pathBreadcrumbItems[0].name}} </button> </span>
-                <span *ngFor="let item of imagestoreRoot.pathBreadcrumbItems.slice(1, imagestoreRoot.pathBreadcrumbItems.length)"> <button (click)="openFolder(item.path)"
-                        [disabled]="item === imagestoreRoot.pathBreadcrumbItems[imagestoreRoot.pathBreadcrumbItems.length - 1]" aria-label="click to open folder">
-                        {{item.name}} </button> </span>
+                <span  *ngFor="let item of imagestoreRoot.pathBreadcrumbItems.slice(1, imagestoreRoot.pathBreadcrumbItems.length)"> 
+                    <span class="dividing-slash">/</span>
+                    <button (click)="openFolder(item.path)" [disabled]="item === imagestoreRoot.pathBreadcrumbItems[imagestoreRoot.pathBreadcrumbItems.length - 1]" 
+                    aria-label="click to open folder" class="clear-button">
+                        {{item.name}}
+                    </button> 
+                </span>
             </div>
             <!-- search-text="'Search confined to current directory'" TODO add this input -->
             <detail-list [list]="imagestoreRoot.currentFolder.allChildren" [listSettings]="fileListSettings"></detail-list>

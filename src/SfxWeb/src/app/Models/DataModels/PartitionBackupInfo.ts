@@ -94,8 +94,10 @@ export class PartitionBackup extends DataModelBase<IRawPartitionBackup> {
                 data.dialog,
                 raw.BackupId,
                 raw.BackupId,
-                this,
-                PartitionViewBackupComponent
+                raw.BackupId,
+                {},
+                PartitionViewBackupComponent,
+                () => true
                 // "Creating",
                 // null,
                 // () => true,
@@ -107,6 +109,7 @@ export class PartitionBackup extends DataModelBase<IRawPartitionBackup> {
                 //     }
                 // },
                 // null);
+            );
         } else {
             this.action = null;
         }

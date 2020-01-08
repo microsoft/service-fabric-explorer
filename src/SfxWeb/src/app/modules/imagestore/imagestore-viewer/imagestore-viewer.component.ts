@@ -4,6 +4,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { ListColumnSettingWithDisplaySize } from '../display-size-column/display-size-column.component';
 import { ListColumnSettingWithDisplayName } from '../display-name-column/display-name-column.component';
+import { ListColumnSettingWithImageStoreActions } from '../folder-actions/folder-actions.component';
 
 @Component({
   selector: 'app-imagestore-viewer',
@@ -33,6 +34,7 @@ export class ImagestoreViewerComponent implements OnInit {
 
       //     return "";
       // }),
+      new ListColumnSettingWithImageStoreActions(this.imagestoreRoot),
       new ListColumnSettingWithDisplayName(this.imagestoreRoot),
       new ListColumnSettingWithDisplaySize(this.imagestoreRoot),
       new ListColumnSetting("modifiedDate", "Date modified"),

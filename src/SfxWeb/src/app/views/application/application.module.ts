@@ -11,9 +11,10 @@ import { ManifestComponent } from './manifest/manifest.component';
 import { EventsComponent } from './events/events.component';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
+import { CreateServiceComponent } from './create-service/create-service.component';
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent],
   imports: [
     CommonModule,
     ApplicationRoutingModule,

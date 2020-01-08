@@ -183,7 +183,7 @@ export class UpgradeDomainStateNames {
 
 export class StatusWarningLevel {
     public static Warning: string = "warning";
-    public static Error: string = "danger";
+    public static Error: string = "error";
     public static Info: string = "info";
 }
 

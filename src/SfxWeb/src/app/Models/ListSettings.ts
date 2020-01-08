@@ -11,7 +11,7 @@ import { FullDescriptionComponent } from '../modules/event-store/full-descriptio
 //-----------------------------------------------------------------------------
 
 export class ListSettings {
-    public search: string;
+    public search: string = "";
     public sortPropertyPaths: string[] = [];
     public sortReverse: boolean = false;
 
@@ -97,7 +97,7 @@ export class ListSettings {
 
     public reset(): void {
         this.columnSettings.forEach(cs => cs.reset());
-        this.search = null;
+        this.search = "";
         this.sortPropertyPaths = this.defaultSortPropertyPaths;
         this.sortReverse = false;
         this.currentPage = 1;
@@ -109,6 +109,7 @@ export class ListSettings {
             Utils.unique(this.columnSettings.concat(this.secondRowColumnSettings)).forEach(column => newObj[column.propertyPath] = column.getTextValue(item));
             return newObj;
         }
+        console.log(item)
         return item;
     }
 
@@ -258,7 +259,7 @@ export class ListColumnSettingWithCopyText extends ListColumnSetting {
 export class ListColumnSettingWithEventStoreRowDisplay extends ListColumnSetting {
     template = RowDisplayComponent;
     public constructor() {
-        super("raw.kind", "Type");
+        super("raw.kind", "Type", ["raw.kind"], true);
     }
 }
 
