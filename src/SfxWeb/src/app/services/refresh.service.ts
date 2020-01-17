@@ -3,6 +3,7 @@ import { StorageService } from './storage.service';
 import { Constants } from '../Common/Constants';
 import { Observable, interval, Subscription, forkJoin, timer } from 'rxjs';
 import { catchError } from 'rxjs/operators';
+import { MessageService } from './message.service';
 
 @Injectable({
   providedIn: 'root'
@@ -17,7 +18,8 @@ export class RefreshService {
   private refreshSubjects: { (): Observable<any>; } [] = [];
   private _refreshSubjectsMap: Record<string, { (): Observable<any>; }> = {}; 
 
-  constructor(private storage: StorageService) { }
+  constructor(private storage: StorageService,
+              private toastService: MessageService) { }
 
   public init(): void {
     let defaultRefreshInterval = this.storage.getValueNumber(
@@ -30,7 +32,7 @@ export class RefreshService {
     if(key in this._refreshSubjectsMap) {
       return
     }
-    console.log(this._refreshSubjectsMap);
+
     this._refreshSubjectsMap[key] = func;
     this.refreshSubjects.push(func)
   }
@@ -40,28 +42,26 @@ export class RefreshService {
       this.refreshSubjects = this.refreshSubjects.filter( subject => subject !== this._refreshSubjectsMap[key]) 
       delete this._refreshSubjectsMap[key];
     }
-    console.log(this._refreshSubjectsMap);
   }
 
   public refreshAll(): void {
-      if (this.isRefreshing) {
-          return;
-      }
-      console.log(new Date().toLocaleTimeString());
-      // this.data.invalidateBrowserRestResponseCache();
+    // console.log(this.isRefreshing);
+    //   if (this.isRefreshing) {
+    //       return;
+    //   }
+      // console.log(new Date().toLocaleTimeString());
 
       let refreshStartedTime = Date.now();
       this.isRefreshing = true;
       
       const subs =  this.refreshSubjects.map(observeFunction => {
-         return observeFunction().pipe(catchError(err => null));  //TODO Figure out what we want to do here
+         return observeFunction().pipe(catchError(err => {console.log(err); return null}));  //TODO Figure out what we want to do here
       })
 
       forkJoin(subs).subscribe( () => {
         // Rotate the refreshing icon for at least 1 second
         let remainingTime = Math.max(1000 - (Date.now() - refreshStartedTime), 0);
         timer(remainingTime).subscribe( () => this.isRefreshing = false);
-        this.isRefreshing = false
       })
   }
 

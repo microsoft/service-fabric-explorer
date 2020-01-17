@@ -4,7 +4,6 @@ import { DataService } from 'src/app/services/data.service';
 import { Partition } from './Partition';
 import { DataModelBase, IDecorators } from './Base';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Utils } from 'src/app/Utils/Utils';
 import { Observable } from 'rxjs';
 import { IsolatedAction } from '../Action';
 import { PartitionViewBackupComponent } from 'src/app/modules/backup-restore/partition-view-backup/partition-view-backup.component';

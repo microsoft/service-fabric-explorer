@@ -16,7 +16,7 @@ export class DisplaySizeColumnComponent implements OnChanges, OnInit, DetailBase
 
   date: any;
   loadButton: boolean;
-  size: "";
+  size: string = "";
   constructor() { }
 
   ngOnInit() {
@@ -24,15 +24,14 @@ export class DisplaySizeColumnComponent implements OnChanges, OnInit, DetailBase
   }
 
   ngOnChanges() {
-    console.log(this);
     if(this.item.isFolder === 1){
      return; 
     }
     const sizeData = this.listSetting.imagestore.getCachedFolderSize(this.item.path);
-    let size = sizeData.size > -1 ? Utils.getFriendlyFileSize(sizeData.size) : "";
+    this.size = sizeData.size > -1 ? Utils.getFriendlyFileSize(sizeData.size) : "";
     let loading = sizeData.loading ? "rotate" : "";
     this.date = sizeData.date ? sizeData.date.toLocaleString(): "";
-    this.loadButton = size.length === 0 && !loading;
+    this.loadButton = this.size.length === 0 && !loading;
   }
 
   loadFolderSize(item: ImageStoreItem) {
@@ -53,7 +52,7 @@ export class DisplaySizeColumnComponent implements OnChanges, OnInit, DetailBase
           item.displayedSize = Utils.getFriendlyFileSize(+size.FolderSize);
           this.listSetting.imagestore.currentFolder.childrenFolders.find(folder => folder.path === item.path).size = +size.FolderSize;
           this.listSetting.imagestore.allChildren = [].concat(this.listSetting.imagestore.allChildren);
-
+          this.ngOnChanges();
       }, () => {
         this.listSetting.imagestore.cachedCurrentDirectoryFolderSizes[item.path].loading = false;
       });

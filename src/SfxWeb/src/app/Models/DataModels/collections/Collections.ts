@@ -252,7 +252,6 @@ export class DeployedServicePackageCollection extends DataModelCollectionBase<De
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getDeployedServicePackages(this.parent.parent.name, this.parent.id, messageHandler)
             .pipe(map((raw: IRawDeployedServicePackage[]) => {
-                console.log(raw.map(rawServicePackage => new DeployedServicePackage(this.data, rawServicePackage, this.parent)))
                 return raw.map(rawServicePackage => new DeployedServicePackage(this.data, rawServicePackage, this.parent));
             }));
     }

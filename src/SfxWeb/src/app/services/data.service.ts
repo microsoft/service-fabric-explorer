@@ -170,7 +170,6 @@ export class DataService {
   }
 
   public getServiceType(appTypeName: string, appTypeVersion: string, serviceTypeName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ServiceType> {
-    console.log(appTypeName, appTypeVersion, serviceTypeName)
     return this.getServiceTypes(appTypeName, appTypeVersion, false, messageHandler).pipe(mergeMap(collection => {
         return this.tryGetValidItem(collection, serviceTypeName, forceRefresh, messageHandler);
     }));
@@ -295,10 +294,8 @@ export class DataService {
   private tryGetValidItem<T extends IDataModel<any>>(collection: IDataModelCollection<T>, uniqueId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<any> {
     let item = collection.find(uniqueId);
     if (item) {
-        console.log(item)
         return item.ensureInitialized(forceRefresh, messageHandler);
     } else {
-        console.log("error getting valid item")
         return throwError(null);
     }
   } 

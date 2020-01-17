@@ -8,16 +8,12 @@ import { FabricEventBase } from 'src/app/Models/eventstore/Events';
   templateUrl: './full-description.component.html',
   styleUrls: ['./full-description.component.scss']
 })
-export class FullDescriptionComponent implements OnInit, DetailBaseComponent {
+export class FullDescriptionComponent implements DetailBaseComponent {
 
   item: FabricEventBase;
   listSetting: ListColumnSetting;
 
   color =  "white";
   constructor() { }
-
-  ngOnInit() {
-    console.log(this.item)
-  }
 
 }

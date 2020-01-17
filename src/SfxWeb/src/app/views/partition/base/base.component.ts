@@ -45,7 +45,6 @@ export class BaseComponent extends PartitionBaseController {
       IdGenerator.service(this.serviceId),
       IdGenerator.partition(this.partitionId),
     ], true);
-    console.log(this.partition)
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

@@ -77,7 +77,7 @@ const proxyRequest = async (req) => {
 }
 
 const app = express()
-const port = 3000
+const port = 2500
 
 //need to be set to accept certs from secure clusters when certs cant be trusted
 //this is mainly for SFRP clusters to test against.

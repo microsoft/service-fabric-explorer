@@ -31,7 +31,6 @@ export class Action {
     }
 
     public run(...params: any[]) {
-        console.log("1")
        this.runInternal(() => null, () => null, params).subscribe();
     }
 

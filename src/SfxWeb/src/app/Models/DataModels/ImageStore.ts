@@ -132,6 +132,7 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
 
     public getCachedFolderSize(path: string): {size: number, loading: boolean, date?: Date } {
         let cachedData = this.cachedCurrentDirectoryFolderSizes[path];
+        console.log(this.cachedCurrentDirectoryFolderSizes);
         if (!cachedData) {
             cachedData = {size: -1, loading: false};
             this.cachedCurrentDirectoryFolderSizes[path] = cachedData;

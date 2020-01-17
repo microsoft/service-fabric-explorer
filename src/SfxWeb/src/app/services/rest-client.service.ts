@@ -1,9 +1,9 @@
 import { Injectable } from '@angular/core';
 import { MessageService, MessageSeverity } from './message.service';
-import { HttpClient, HttpResponse } from '@angular/common/http';
+import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription } from '../Models/HealthChunkRawDataTypes';
 import { IResponseMessageHandler, ResponseMessageHandlers } from '../Common/ResponseMessageHandlers';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Observer, throwError } from 'rxjs';
 import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgradeProgress, IRawClusterLoadInformation, IRawNetwork, IRawNetworkOnApp, 
          IRawNetworkOnNode, IRawAppOnNetwork, IRawNodeOnNetwork, IRawDeployedContainerOnNetwork, IRawNode, IRawBackupPolicy, IRawApplicationBackupConfigurationInfo, 
          IRawServiceBackupConfigurationInfo, IRawBackupProgressInfo, IRawRestoreProgressInfo, IRawPartitionBackupConfigurationInfo, IRawPartitionBackup, IRawNodeHealth, 
@@ -11,13 +11,14 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawDeployedReplica, IRawServiceType, IRawDeployedCodePackage, IRawContainerLogs, IRawDeployedReplicaDetail, IRawApplicationType, IRawApplicationManifest, 
          IRawApplication, IRawService, IRawCreateServiceDescription, IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription, IRawServiceDescription, 
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation, 
-         IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList } from '../Models/RawDataTypes';
-import { mergeMap, map } from 'rxjs/operators';
+         IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadataMetadata, IRawAadMetadata } from '../Models/RawDataTypes';
+import { mergeMap, map, catchError } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
 import { Partition } from '../Models/DataModels/Partition';
 import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent, FabricEvent, EventsResponseAdapter, FabricEventBase } from '../Models/eventstore/Events';
 import { StandaloneIntegration } from '../Common/StandaloneIntegration';
+import { AadMetadata } from '../Models/DataModels/Aad';
 
 @Injectable({
   providedIn: 'root'
@@ -86,7 +87,6 @@ export class RestClientService {
   }
 
   public getClusterUpgradeProgress(messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> {
-    console.log(new Date())
       return this.get(this.getApiUrl("$/GetUpgradeProgress"), "Get cluster upgrade progress", messageHandler);
   }
 
@@ -111,6 +111,14 @@ export class RestClientService {
       let url = "Nodes/" + encodeURIComponent(nodeName) + "/";
       return this.get(this.getApiUrl(url), "Get node", messageHandler);
   }
+
+  ///$/GetAadMetadata?api-version=6.0
+
+  public getAADmetadata(messageHandler?: IResponseMessageHandler): Observable<AadMetadata> {
+    let url = "$/GetAadMetadata/"
+    return this.get<IRawAadMetadata>(this.getApiUrl(url, RestClientService.apiVersion60), "Get aadmetadata", messageHandler).pipe(map(data => new AadMetadata(data)));
+}
+
 
   public getBackupPolicies(messageHandler?: IResponseMessageHandler):Observable<IRawBackupPolicy[]> {
       return this.getFullCollection<IRawBackupPolicy>("BackupRestore/BackupPolicies/", "Get backup Policies", RestClientService.apiVersion64);
@@ -786,11 +794,9 @@ export class RestClientService {
       return this.get<IRawCollection<T>>(appUrl, apiDesc, messageHandler).pipe(mergeMap(response => {
         if (response.ContinuationToken) {
             return this.getFullCollection<T>(url, apiDesc, apiVersion, messageHandler, response.ContinuationToken).pipe(mergeMap(items => {
-                //console.log(items);
                 return of(response.Items.concat(items));
             }));
         }else{
-            //console.log(response)
             return of(response.Items);    
         }
     //   }, err => {
@@ -820,10 +826,7 @@ export class RestClientService {
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
       }
-      this.handleResponse(apiDesc, <any>result, messageHandler);
-
-      // Return original response object
-      return result;
+      return this.handleResponse<T>(apiDesc, <any>result, messageHandler);
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
@@ -831,10 +834,7 @@ export class RestClientService {
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
-      this.handleResponse(apiDesc, <any>result, messageHandler);
-
-      // Return original response object
-      return result;
+      return this.handleResponse<T>(apiDesc, <any>result, messageHandler);
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
@@ -842,10 +842,7 @@ export class RestClientService {
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
-      this.handleResponse(apiDesc, <any>result, messageHandler);
-
-      // Return original response object
-      return result;
+      return this.handleResponse<T>(apiDesc, <any>result, messageHandler);
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
@@ -853,22 +850,32 @@ export class RestClientService {
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
       }
-      this.handleResponse(apiDesc, <any>result, messageHandler);
-
-      return result;
+      return this.handleResponse<T>(apiDesc, <any>result, messageHandler);
   }
 
-  private handleResponse(apiDesc: string, resultPromise: Observable<HttpResponse<any>>, messageHandler?: IResponseMessageHandler): void {
-      resultPromise.pipe(map((response: HttpResponse<any>) => {
-          let message = messageHandler.getSuccessMessage(apiDesc, response);
-          if (message) {
-              this.message.showMessage(message, MessageSeverity.Info);
-          }
-      }, (response: HttpResponse<any>) => {
-          let message = messageHandler.getErrorMessage(apiDesc, response);
-          if (message) {
-              this.message.showMessage(message, MessageSeverity.Err);
-          }
-      }));
-  }
+  private handleResponse<T>(apiDesc: string, resultPromise: Observable<HttpResponse<any>>, messageHandler?: IResponseMessageHandler): Observable<T> {
+    return <Observable<T>>resultPromise.pipe(catchError((err: HttpErrorResponse) => {
+        let message = messageHandler.getErrorMessage(apiDesc, err);
+            console.log(message)
+            if (message) {
+                this.message.showMessage(message, MessageSeverity.Err);
+            }
+    
+        if (err.error instanceof Error) {
+        // A client-side or network error occurred. Handle it accordingly.
+        console.error('An error occurred:', err.error.message);
+        } else {
+        // The backend returned an unsuccessful response code.
+        // The response body may contain clues as to what went wrong,
+        console.error(`Backend returned code ${err.status}, body was: ${err.error}`);
+        }
+    
+        // ...optionally return a default fallback value so app can continue (pick one)
+        // which could be a default value (which has to be a HttpResponse here)
+        // return Observable.of(new HttpResponse({body: [{name: "Default value..."}]}));
+        // or simply an empty observable
+        return throwError(err);
+    }));
+    }
 }
+

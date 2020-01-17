@@ -67,7 +67,6 @@ export class EssentialsComponent extends BaseController {
 
         let replicasHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Replica);
         this.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
-        console.log(this.nodesDashboard)
         clusterHealth.checkExpiredCertStatus();
     })),
       this.data.getApps(true, messageHandler)

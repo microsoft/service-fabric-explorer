@@ -11,8 +11,6 @@ export class TreeViewComponent implements OnInit {
   constructor(public treeService: TreeService) { }
 
   ngOnInit() {
-    console.log(this.treeService.tree)
-    // this.treeService.tree.childGroupViewModel
   }
 
 }

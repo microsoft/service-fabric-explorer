@@ -200,7 +200,6 @@ export class TreeService {
         private getApplicationTypes(): Observable<ITreeNode[]> {
             // App type groups cannot be inferred from health chunk data, because we need all app types
             // even there are currently no application instances for them.
-            console.log("why?")
             return this.data.getAppTypeGroups(true).pipe(map(appGroups => {
                 return appGroups.collection.map(appTypeGroup => {
                     return {
@@ -314,7 +313,6 @@ export class TreeService {
 
         private getApplicationsForType(appTypeName: string): Observable<ITreeNode[]> {
             return this.data.getAppTypeGroup(appTypeName).pipe(map(appTypeGroup => {
-                console.log("test test test")
                 return appTypeGroup.apps.map(app => {
                     return {
                         nodeId: IdGenerator.app(app.id),

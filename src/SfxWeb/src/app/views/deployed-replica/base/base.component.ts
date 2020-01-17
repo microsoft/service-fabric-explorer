@@ -31,7 +31,6 @@ export class BaseComponent extends DeployedReplicaBaseController {
   }
 
   setup() {
-    console.log(this)
     this.tree.selectTreeNode([
         IdGenerator.cluster(),
         IdGenerator.nodeGroup(),

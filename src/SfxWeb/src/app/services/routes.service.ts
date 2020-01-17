@@ -10,11 +10,11 @@ export class RoutesService {
   private _forceSingleEncode: boolean = true;
 
   constructor(public location: Location, public routing: Router, private activatedRoute: ActivatedRoute) {
-      this.routing.events.subscribe( event => {
-          if(event instanceof NavigationEnd){
-              console.log(this.activatedRoute.snapshot);
-          }
-      })
+    //   this.routing.events.subscribe( event => {
+    //       if(event instanceof NavigationEnd){
+    //           console.log(this.activatedRoute.snapshot);
+    //       }
+    //   })
    }
 
   public navigate(pathGetter: () => string): void {
@@ -29,15 +29,7 @@ export class RoutesService {
 
       console.log(path);
       this.routing.navigate([path]).then(r => console.log(r));
-
-    //   setTimeout(() => {
-    //     this.location.go(path.substring(1))
-    //   }, 0, 1);
   }
-
-  // public getTabViewPath(baseViewPath: string, tabId: string): string {
-  //     return _.trimEnd(baseViewPath, "/") + "/tab/" + tabId;
-  // }
 
   public getClusterViewPath(): string {
       return "/";

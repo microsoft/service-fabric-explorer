@@ -64,53 +64,9 @@ export class DoubleSliderComponent implements OnInit, OnChanges, AfterViewInit {
         })
     });
 
-                //watch for changes to dates to know when to attempt to update the scroll bar
-            // note: when this updates the value it'll cycle back down and call this so making sure you have a check
-            //for only updating on new values so it doesnt get stuck on an update loop.
-          //   $scope.$watchGroup(["startDate", "endDate"], () => {
-          //     if ($scope.startDate &&  $scope.endDate) {
-          //         //create the slider if one doesnt exist on this element
-          //         //noUiSlider throws an error if you attempt to create on an element that already has it.
-          //         if (!$scope.slider) {
-          //             $scope.slider = noUiSlider.create(element[0], {
-          //                 format: {
-          //                     to : num => {
-          //                         const date = new Date(num);
-          //                         return date.toLocaleString("en-us");
-          //                     },
-          //                     from: Number
-          //                 },
-          //                 tooltips: true,
-          //                 connect: true,
-          //                 range: {
-          //                     min: TimeUtils.AddDays(new Date(), -30).getTime(),
-          //                     max: new Date().getTime(),
-          //                 },
-          //                 step: 60 * 1000, //let the steps be as granular as a minute.
-          //                 start: [new Date($scope.startDate).getTime(), new Date($scope.endDate).getTime()]
-          //             });
-
-          //             $scope.slider.on("set", (data) => {
-          //                 const end = new Date(data[1]);
-          //                 const start = new Date(data[0]);
-
-          //                 if ($scope.endDate.toUTCString() !== end.toUTCString()) {
-          //                     $scope.endDate = end;
-          //                     forceUpdate();
-          //                 }
-          //                 if ($scope.startDate.toUTCString() !== start.toUTCString()) {
-          //                     $scope.startDate = start;
-          //                     forceUpdate();
-          //                 }
-          //             });
-          //         }
-          //     }
-          // });
-          console.log(this)
   }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(changes);
     if(this.slider){
       this.slider.set([new Date(this.startDate).getTime(), new Date(this.endDate).getTime()]);
     }

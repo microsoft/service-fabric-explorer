@@ -34,7 +34,6 @@ export class BaseComponent extends DeployedCodePackageBaseController {
   }
 
   setup() {
-    console.log(this)
     this.tree.selectTreeNode([
       IdGenerator.cluster(),
       IdGenerator.nodeGroup(),

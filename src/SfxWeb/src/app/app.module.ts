@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule } from '@angular/core';
+import { NgModule, APP_INITIALIZER } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -12,6 +12,9 @@ import { BackupRestoreModule } from './modules/backup-restore/backup-restore.mod
 import { ActionCreateBackupPolicyComponent } from './views/cluster/action-create-backup-policy/action-create-backup-policy.component';
 import { ClusterModule } from './views/cluster/cluster.module';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { initApp } from './app-initializers';
+import { AdalService } from './services/adal.service';
+import { httpInterceptorProviders } from './http-interceptor';
 
 @NgModule({
   declarations: [
@@ -31,7 +34,18 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
     //test
     ClusterModule
   ],
-  providers: [DataService],
+  
+  providers: [
+    AdalService,
+    DataService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initApp,
+      multi: true,
+      deps: [AdalService]
+    },
+    httpInterceptorProviders
+  ],
   entryComponents: [ActionCreateBackupPolicyComponent],
   bootstrap: [AppComponent],
 })

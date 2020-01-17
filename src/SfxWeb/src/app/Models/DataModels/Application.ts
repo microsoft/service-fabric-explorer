@@ -16,7 +16,7 @@ import { map } from 'rxjs/operators';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
 import { ServiceCollection } from './collections/ServiceCollection';
 import { ActionWithConfirmationDialog } from '../Action';
-
+import * as _ from 'lodash';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -254,7 +254,6 @@ export class SystemApplication extends Application {
         // There is no special API to get system application, so we query its health
         // state and retrieve the health state from there.
         return this.health.refresh(messageHandler).pipe(map(health => {
-            console.log(health);
             this.raw.HealthState = health.raw.AggregatedHealthState;
             return this.raw;
         }));

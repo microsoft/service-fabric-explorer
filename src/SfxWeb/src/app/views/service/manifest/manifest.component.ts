@@ -21,10 +21,7 @@ export class ManifestComponent extends ServiceBaseController {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     let app = this.service.parent;
-    console.log(app.raw.TypeName);
-    console.log(app);
 
-    console.log(this.service.description.raw.ServiceTypeName);
     return this.data.getServiceType(app.raw.TypeName, app.raw.TypeVersion, this.service.description.raw.ServiceTypeName, true, messageHandler)
         .pipe(mergeMap(serviceType => {
             return serviceType.manifest.refresh(messageHandler).pipe(map(() => {

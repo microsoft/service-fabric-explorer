@@ -109,7 +109,6 @@ export class ListSettings {
             Utils.unique(this.columnSettings.concat(this.secondRowColumnSettings)).forEach(column => newObj[column.propertyPath] = column.getTextValue(item));
             return newObj;
         }
-        console.log(item)
         return item;
     }
 

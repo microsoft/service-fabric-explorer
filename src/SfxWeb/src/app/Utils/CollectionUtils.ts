@@ -28,10 +28,6 @@ export class CollectionUtils {
 
         // create dictionary for old id => element
         let oldCollectionMap = Utils.keyByFromFunction(collection, keySelector);
-        
-        // console.log(collection);
-        
-        // console.log(newCollection);
         // remove deleted items first
         if (!appendOnly) {
             // create dictionary for new id => element

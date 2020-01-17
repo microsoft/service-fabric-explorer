@@ -14,18 +14,20 @@ import { DragDirective } from './directive/drag.directive';
 import { ActionDialogComponent } from './component/action-dialog/action-dialog.component';
 import { ManifestComponent } from './component/manifest/manifest.component';
 import { ActionCollectionDropDownComponent } from './component/action-collection-drop-down/action-collection-drop-down.component';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
 import { InputComponent } from './component/input/input.component';
+import { ToastContainerComponent } from './component/toast-container/toast-container.component';
 
 @NgModule({
-  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent],
+  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
-    NgbDropdownModule
+    NgbDropdownModule,
+    NgbToastModule
   ],
-  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent],
+  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent],
   entryComponents: [ActionDialogComponent],
 })
 export class SharedModule { }

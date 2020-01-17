@@ -5,11 +5,8 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './event-store-table.component.html',
   styleUrls: ['./event-store-table.component.scss']
 })
-export class EventStoreTableComponent implements OnInit {
+export class EventStoreTableComponent {
 
   constructor() { }
-
-  ngOnInit() {
-  }
 
 }

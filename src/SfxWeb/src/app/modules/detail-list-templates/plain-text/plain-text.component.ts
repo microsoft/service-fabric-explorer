@@ -5,11 +5,8 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './plain-text.component.html',
   styleUrls: ['./plain-text.component.scss']
 })
-export class PlainTextComponent implements OnInit {
+export class PlainTextComponent {
 
   constructor() { }
-
-  ngOnInit() {
-  }
 
 }

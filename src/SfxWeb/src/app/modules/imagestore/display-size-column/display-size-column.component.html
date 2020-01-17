@@ -3,9 +3,10 @@
 <span style='white-space: nowrap;' *ngIf="item.isFolder === -1">
     <span *ngIf="date"  class="dark-background-link bowtie-icon bowtie-status-waiting-fill" 
             aria-label="timestamp" [title]="date"></span>
+
     <span style="cursor: initial; padding-right: 3px;"> 
-        
-        {{item.displayedSize}} </span>
+        {{size}}
+    </span>
 
     <span *ngIf="loadButton; else elseBlock">
         <button type="button" 

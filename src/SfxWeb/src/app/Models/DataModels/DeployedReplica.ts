@@ -48,7 +48,6 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     public get serviceViewPath(): string {
-        console.log(this);
         return this.data.routes.getServiceViewPath(this.parent.parent.raw.TypeName, this.parent.parent.raw.Id, encodeURI(IdUtils.nameToId(this.raw.ServiceName)));
     }
 

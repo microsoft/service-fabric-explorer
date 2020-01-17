@@ -15,7 +15,6 @@ export class ActionDialogComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: ActionWithConfirmationDialog) { }
 
   ngOnInit() {
-    console.log(this.data)
     this.placeHolderText = `Type in ${this.data.confirmationKeyword} to continue`;
   }
 

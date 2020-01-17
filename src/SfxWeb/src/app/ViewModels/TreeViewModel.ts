@@ -87,7 +87,6 @@ export class TreeViewModel {
 
     // Recursively refreshes all expanded nodes starting from the root
     public refresh(): Observable<any> {
-        console.log("test")
         return this.childGroupViewModel.refreshExpandedChildrenRecursively();
     }
 
@@ -138,7 +137,6 @@ export class TreeViewModel {
                         node.select(0, skipSelectAction);
                     }
                 } else {
-                    console.log(path);
                     this.selectTreeNodeInternal(path, currIndex + 1, node.childGroupViewModel, opId, skipSelectAction).subscribe();
                 }
             }

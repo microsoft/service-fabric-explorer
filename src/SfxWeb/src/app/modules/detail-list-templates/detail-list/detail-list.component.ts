@@ -55,7 +55,6 @@ export class DetailListComponent implements OnInit {
   private getSortedFilteredList(): any[] {
     let list = this._list;
 
-    console.log(this.listSettings)
     if (this.listSettings.hasEnabledFilters || this.listSettings.search) {
 
         // Retrieve text values of all columns for searching and filtering

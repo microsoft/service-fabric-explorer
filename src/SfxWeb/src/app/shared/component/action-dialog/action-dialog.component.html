@@ -4,7 +4,7 @@
     </div>
     <div class="modal-body">
         <p>{{data.confirmationDialogMessage}}</p>
-        <input class="input-flat" type="text" [placeholder]="placeHolderText" name="userInput"
+        <input class="input-flat" type="text" [placeholder]="placeHolderText" name="userInput" style="width: 100%;"
                *ngIf="data.confirmationKeyword" [(ngModel)]="userInput" aria-label="placeHolderText">
     </div>
     <div class="modal-footer">

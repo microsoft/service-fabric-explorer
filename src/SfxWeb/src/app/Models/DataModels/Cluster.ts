@@ -49,7 +49,6 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
     }
 
     public checkExpiredCertStatus() {
-        console.log("check")
         try {
             if (!ClusterHealth.certExpirationChecked) {
             //Check cluster health
@@ -124,12 +123,10 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
     }
 
     private checkNodesContinually(index: number, nodes: Node[]) {
-        console.log("checked node")
         if (index < nodes.length) {
             const node = nodes[index];
             if (node.healthState.text === HealthStateConstants.Error || node.healthState.text === HealthStateConstants.Warning) {
                 node.health.ensureInitialized(true).subscribe( () => {
-                    console.log(node.health.healthEvents)
                     const certExpiringEvents = this.containsCertExpiringHealthEvent(node.health.healthEvents);
                     if (certExpiringEvents.length === 0) {
                         this.checkNodesContinually(index + 1, nodes);
@@ -163,7 +160,6 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         const params = element.getElementsByTagName("Parameter");
         for(let i = 0; i < params.length; i ++) {
             const item = params.item(i);
-            console.log(params.item(i).getAttribute("Name") === "Management");
             if(item.getAttribute("Name") === "ImageStoreConnectionString"){
                 this._imageStoreConnectionString = item.getAttribute("Value");
                 break;
@@ -184,38 +180,11 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
 
         for(let i = 0; i < management.length; i ++) {
             const item = management.item(i);
-            // console.log(management.item(i).getAttribute("Name") === "Management");
             if(item.getAttribute("Name") === "Management"){
                 this.getImageStoreConnectionString(item);
                 break;
             }
         }
-
-        console.log(management)
-        // let packages = [];
-        // Array.from(packType).forEach( (item: any) => {
-        //     packages.push(new ServiceTypePackage(this.data, "Code", item.getAttribute("Name"), item.getAttribute("Version")));
-        // });
-        
-        // packType = xml.getElementsByTagName("ConfigPackage");
-        // Array.from(packType).forEach((item: any) => {
-        //     packages.push(new ServiceTypePackage(this.data, "Config", item.getAttribute("Name"), item.getAttribute("Version")));
-        // });
-
-        // this.packages = packages;
-        //TODO fix xml parsing
-        // let $xml = $($.parseXML(this.raw.Manifest));
-        // let $manifest = $xml.find("ClusterManifest")[0];
-        // this.clusterManifestName = $manifest.getAttribute("Name");
-        // let $imageStoreConnectionStringParameter = $("Section[Name='Management'] > Parameter[Name='ImageStoreConnectionString']", $manifest);
-        // if ($imageStoreConnectionStringParameter.length > 0) {
-        //     this._imageStoreConnectionString = $imageStoreConnectionStringParameter.attr("Value");
-        // }
-
-        // let $nimEnabledParameter = $("Section[Name=NetworkInventoryManager] > Parameter[Name='IsEnabled']", $manifest);
-        // if ($nimEnabledParameter.length > 0) {
-        //     this._isNetworkInventoryManagerEnabled = $nimEnabledParameter.attr("Value").toLowerCase() === "true";
-        // }
     }
 
     public get isNetworkInventoryManagerEnabled(): boolean {

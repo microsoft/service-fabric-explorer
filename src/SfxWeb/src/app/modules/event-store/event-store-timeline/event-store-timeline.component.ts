@@ -8,7 +8,7 @@ import { Timeline, DataItem, DataSet, DataGroup } from 'vis-timeline';
   templateUrl: './event-store-timeline.component.html',
   styleUrls: ['./event-store-timeline.component.scss']
 })
-export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, OnInit  {
+export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
 
   @Input() events: ITimelineData;
 
@@ -22,16 +22,6 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges, On
 
 
   constructor() { }
-
-  ngOnInit() {
-    
-    // let groups = new DataSet<DataGroup>([]);
-    // let items = new DataSet<DataItem>();
-  
-    // console.log(this.events)
-    // // create visualization
-    // this._timeline = new Timeline(this.container.nativeElement, items, groups);
-  }
 
   ngOnChanges() {
     if(this._timeline)

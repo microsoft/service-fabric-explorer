@@ -1,4 +1,4 @@
-﻿import { HttpResponseBase, HttpResponse } from '@angular/common/http';
+﻿import { HttpResponseBase, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Observable } from 'rxjs';
 
 //-----------------------------------------------------------------------------
@@ -8,7 +8,7 @@ import { Observable } from 'rxjs';
 
 export interface IResponseMessageHandler {
     getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string;
-    getErrorMessage(apiDesc: string, response: HttpResponse<any>): string;
+    getErrorMessage(apiDesc: string, response: HttpErrorResponse): string;
 }
 
 export class GetResponseMessageHandler implements IResponseMessageHandler {
@@ -16,7 +16,7 @@ export class GetResponseMessageHandler implements IResponseMessageHandler {
         return null;
     }
 
-    public getErrorMessage(apiDesc: string, response: HttpResponse<any>): string {
+    public getErrorMessage(apiDesc: string, response: HttpErrorResponse): string {
         if (response.status === 404) {
             // By default exclude 404 error for all get requests
             return null;
@@ -24,10 +24,10 @@ export class GetResponseMessageHandler implements IResponseMessageHandler {
         return this.getErrorMessageInternal(apiDesc, response);
     }
 
-    protected getErrorMessageInternal(apiDesc: string, response: HttpResponse<any>): string {
+    protected getErrorMessageInternal(apiDesc: string, response: HttpErrorResponse): string {
         let message = `${apiDesc} failed`;
-        if (response.body && response.body.Error) {
-            message += `.\r\nCode: ${response.body.Error.Code}\r\nMessage: ${response.body.Error.Message}`;
+        if (response.error.Error.Code && response.error.Error.Message) {
+            message += `.\r\nCode: ${response.error.Error.Code}\r\nMessage: ${response.error.Error.Message}`;
         } else if (response.statusText) {
             message += ` (${response.statusText})`;
         }
@@ -40,7 +40,7 @@ export class PostResponseMessageHandler extends GetResponseMessageHandler {
         return `${apiDesc} started.`;
     }
 
-    public getErrorMessage(apiDesc: string, response: HttpResponse<any>): string {
+    public getErrorMessage(apiDesc: string, response: HttpErrorResponse): string {
         return this.getErrorMessageInternal(apiDesc, response);
     }
 }
@@ -50,7 +50,7 @@ export class PutResponseMessageHandler extends GetResponseMessageHandler {
         return `${apiDesc}`;
     }
 
-    public getErrorMessage(apiDesc: string, response: HttpResponse<any>): string {
+    public getErrorMessage(apiDesc: string, response: HttpErrorResponse): string {
         return this.getErrorMessageInternal(apiDesc, response);
     }
 }
@@ -60,7 +60,7 @@ export class DeleteResponseMessageHandler extends GetResponseMessageHandler {
         return `${apiDesc}`;
     }
 
-    public getErrorMessage(apiDesc: string, response: HttpResponse<any>): string {
+    public getErrorMessage(apiDesc: string, response: HttpErrorResponse): string {
         return this.getErrorMessageInternal(apiDesc, response);
     }
 }
@@ -70,7 +70,7 @@ export class SilentResponseMessageHandler implements IResponseMessageHandler {
         return null;
     }
 
-    public getErrorMessage(apiDesc: string, response: HttpResponse<any>): string {
+    public getErrorMessage(apiDesc: string, response: HttpErrorResponse): string {
         return null;
     }
 }
@@ -89,12 +89,12 @@ export class EventsStoreResponseMessageHandler implements IResponseMessageHandle
         this.innerHandler = innerHandler;
     }
 
-    public getSuccessMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    public getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string {
         let handler = this.innerHandler ? this.innerHandler : ResponseMessageHandlers.getResponseMessageHandler;
         return handler.getSuccessMessage(apiDesc, response);
     }
 
-    public getErrorMessage(apiDesc: string, response: ng.IHttpPromiseCallbackArg<any>): string {
+    public getErrorMessage(apiDesc: string, response: HttpErrorResponse): string {
         // API is not available on this cluster.
         if (response.status === 400) {
             return "Events API is not available on current cluster.";

@@ -24,7 +24,6 @@ export class DeployedCodePackageBaseController extends BaseController {
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getDeployedCodePackage(this.nodeName, this.appId, this.serviceId, this.activationId, this.codePackageName, true, messageHandler)
         .pipe(map(deployedCodePackage => {
-            console.log(this.deployedCodePackage)
             this.deployedCodePackage = deployedCodePackage;
         }));
     }

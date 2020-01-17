@@ -4,6 +4,7 @@ import { IResponseMessageHandler } from '../Common/ResponseMessageHandlers';
 import { ActivatedRoute, Router, ActivatedRouteSnapshot } from '@angular/router';
 import { mergeMap } from 'rxjs/operators';
 import { RefreshService } from '../services/refresh.service';
+import { MessageService } from '../services/message.service';
 
 export abstract class BaseController implements  OnInit, OnDestroy {
 
@@ -12,6 +13,7 @@ export abstract class BaseController implements  OnInit, OnDestroy {
     activatedRoute: ActivatedRoute;
     router: Router;
     refreshService: RefreshService;
+    messageService: MessageService;
 
     constructor(public injector: Injector) {}
 
@@ -19,6 +21,7 @@ export abstract class BaseController implements  OnInit, OnDestroy {
     ngOnInit(){
          this.activatedRoute = this.injector.get<ActivatedRoute>(ActivatedRoute);
          this.refreshService = this.injector.get<RefreshService>(RefreshService);
+         this.messageService = this.injector.get<MessageService>(MessageService);
          this.router = this.injector.get<Router>(Router);
          this.subscriptions.add(this.activatedRoute.params.subscribe( () => {
              //get params
@@ -28,7 +31,7 @@ export abstract class BaseController implements  OnInit, OnDestroy {
 
              this.subscriptions.add(this.common().pipe(mergeMap( () => this.refresh())).subscribe());
             
-             this.refreshService.insertRefreshSubject("current controller" + this.getClassName(), this.refresh.bind(this));
+             this.refreshService.insertRefreshSubject("current controller" + this.getClassName(), this.refresh.bind(this, this.messageService));
         }))
     }
 

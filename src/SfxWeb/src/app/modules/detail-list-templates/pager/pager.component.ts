@@ -5,11 +5,8 @@ import { Component, OnInit } from '@angular/core';
   templateUrl: './pager.component.html',
   styleUrls: ['./pager.component.scss']
 })
-export class PagerComponent implements OnInit {
+export class PagerComponent {
 
   constructor() { }
-
-  ngOnInit() {
-  }
 
 }

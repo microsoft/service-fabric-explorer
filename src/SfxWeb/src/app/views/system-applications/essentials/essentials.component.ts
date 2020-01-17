@@ -36,7 +36,6 @@ export class EssentialsComponent extends ServiceApplicationsBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    console.log(this.systemApp)
     return this.systemApp.services.refresh(messageHandler);
   }
 
