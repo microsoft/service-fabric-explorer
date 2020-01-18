@@ -12,15 +12,26 @@ import { EventsComponent } from './events/events.component';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 import { CreateServiceComponent } from './create-service/create-service.component';
+import { FormsModule } from '@angular/forms';
+import { NgbTypeaheadModule, NgbDropdownModule, NgbButtonsModule } from '@ng-bootstrap/ng-bootstrap';
+import { ActionRowComponent } from './action-row/action-row.component';
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent, ActionRowComponent],
   imports: [
     CommonModule,
     ApplicationRoutingModule,
     SharedModule,
     DetailListTemplatesModule,
-    EventStoreModule
+    EventStoreModule,
+    FormsModule,
+    NgbTypeaheadModule,
+    NgbDropdownModule,
+    NgbButtonsModule
+  ],
+  entryComponents: [
+    ActionRowComponent,
+    CreateServiceComponent
   ]
 })
 export class ApplicationModule { }

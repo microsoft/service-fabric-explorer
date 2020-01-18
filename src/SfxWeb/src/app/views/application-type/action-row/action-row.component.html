@@ -1,5 +1,5 @@
 <div class="actions-row">
-    <button *ngFor="let action of item.actions.collection" [disabled]="action.running"
+    <button class="simple-button" *ngFor="let action of item.actions.collection" [disabled]="action.running"
              (click)="item.actions.runWithTelemetry(action, 'serviceTypesTable')">
         {{ action.displayTitle }}
     </button>

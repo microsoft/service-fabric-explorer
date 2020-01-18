@@ -1,4 +1,4 @@
-import { Component, Injector } from '@angular/core';
+import { Component, Injector, ChangeDetectorRef } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
 import { ApplicationUpgradeProgress } from 'src/app/Models/DataModels/Application';
@@ -9,7 +9,7 @@ import { forkJoin, of, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ClusterManifest } from 'src/app/Models/DataModels/Cluster';
 import { ApplicationBaseController } from '../applicationBase';
-
+import { ListColumnSettingForApplicationServiceRow } from '../action-row/action-row.component';
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
@@ -24,7 +24,7 @@ export class EssentialsComponent extends ApplicationBaseController {
   serviceTypesListSettings: ListSettings;
   clusterManifest: ClusterManifest;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService, private cdr: ChangeDetectorRef) { 
     super(data, injector);
   }
 
@@ -44,11 +44,12 @@ export class EssentialsComponent extends ApplicationBaseController {
         new ListColumnSetting("raw.ServiceTypeDescription.ServiceTypeName", "Service Type Name"),
         new ListColumnSettingWithFilter("serviceKind", "Service Kind"),
         new ListColumnSetting("raw.ServiceManifestVersion", "Service Manifest Version"),
-        new ListColumnSetting("actions", "Actions", null, false, (item) => `<${Constants.DirectiveNameActionsRow} actions="item.actions" source="serviceTypesTable"></${Constants.DirectiveNameActionsRow}>`)
+        new ListColumnSettingForApplicationServiceRow(),
     ]);
 
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
     this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings("upgradeProgressUnhealthyEvaluations");
+      this.cdr.detectChanges();
 
   }
 
@@ -62,7 +63,10 @@ export class EssentialsComponent extends ApplicationBaseController {
       })),
       this.app.serviceTypes.refresh(messageHandler),
       this.app.services.refresh(messageHandler),
-    ]);
+    ])
+    // .pipe(map( () => {
+    //   this.cdr.detectChanges();
+    // }))
   }
 
 }

@@ -12,17 +12,19 @@ import { Application } from 'src/app/Models/DataModels/Application';
 export class CreateServiceComponent implements OnInit {
 
   description: CreateServiceDescription;
-
+  serviceType: ServiceType;
   constructor(public dialogRef: MatDialogRef<CreateServiceComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ServiceType,
+    @Inject(MAT_DIALOG_DATA) public data: any,
     private dataService: DataService) { }
 
   ngOnInit() {
-    this.description = new CreateServiceDescription(this.data, <Application>this.data.parent);
+    this.serviceType = this.data.data;
+    console.log(this.serviceType)
+    this.description = new CreateServiceDescription(this.serviceType, <Application>this.serviceType.parent);
   }
 
   create() {
-    this.data.createService(this.description).subscribe(() => {
+    this.serviceType.createService(this.description).subscribe(() => {
       if(this.description) {
         //when success, reset the dialog
         this.description.reset();
@@ -30,4 +32,7 @@ export class CreateServiceComponent implements OnInit {
     })
   }
 
+  cancel() {
+
+  }
 }

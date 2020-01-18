@@ -97,19 +97,19 @@
     </div>
 </div>
 
-<div class="detail-pane essen-pane">
+<div class="detail-pane essen-pane" *ngIf="app && app.health">
     <h4>Unhealthy Evaluations</h4>
-    <detail-list [list]="app?.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+    <detail-list [list]="app.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
 </div>
 
-<div class="detail-pane essen-pane">
+<div class="detail-pane essen-pane" *ngIf="app && app.services">
     <h4>Services</h4>
-    <detail-list [list]="app?.services" [listSettings]="listSettings"></detail-list>
+    <detail-list [list]="app.services" [listSettings]="listSettings"></detail-list>
 </div>
 
-<div class="detail-pane essen-pane">
+<div class="detail-pane essen-pane" *ngIf="app && app.serviceTypes">
     <h4>Service Types</h4>
-    <detail-list [list]="app?.serviceTypes" [listSettings]="serviceTypesListSettings"></detail-list>
+    <detail-list [list]="app.serviceTypes" [listSettings]="serviceTypesListSettings"></detail-list>
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="clusterManifest && clusterManifest.isNetworkInventoryManagerEnabled">

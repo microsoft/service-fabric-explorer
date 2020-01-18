@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, ChangeDetectorRef} from '@angular/core';
+import { Component, OnInit, Input, OnChanges, ChangeDetectorRef, SimpleChanges} from '@angular/core';
 import { ListSettings, ListColumnSetting, FilterValue } from 'src/app/Models/ListSettings';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import * as _ from 'lodash';
@@ -8,7 +8,7 @@ import { Utils } from 'src/app/Utils/Utils';
   templateUrl: './detail-list.component.html',
   styleUrls: ['./detail-list.component.scss']
 })
-export class DetailListComponent implements OnInit {
+export class DetailListComponent {
 
   @Input() listSettings: ListSettings;
   @Input() searchText = "Search list";
@@ -18,27 +18,23 @@ export class DetailListComponent implements OnInit {
   page = 1;
   pageSize = 10;
   totalListSize = 0;
-  constructor(private cdr: ChangeDetectorRef) { }
-
-  ngOnInit() {
-  }
+  constructor() { }
 
   @Input() 
   set list(data:  any[] | DataModelCollectionBase<any>) {
     if(data instanceof DataModelCollectionBase){
-
-      this._list = data.collection;
+      console.log(data);
       data.ensureInitialized().subscribe(data => {
-        this.sortedFilteredList = this._list || [];
+        this._list = [].concat(data.collection);
         this.updateList();
-        this.cdr.detectChanges();
       })
     }else{
       this._list = data;
     }
 
-    this.sortedFilteredList = this._list || [];
+    this._list = this._list || [];
     this.updateList();
+    console.log(this.sortedFilteredList);
   }
 
   public handleClickRow(item: any, event: any): void {
@@ -86,10 +82,6 @@ export class DetailListComponent implements OnInit {
         list = sortByProperty(list, 
                               this.listSettings.sortPropertyPaths,
                               this.listSettings.sortReverse)
-        // list = this.$filter("orderBy")(
-        //     list,
-        //     this.listSettings.sortPropertyPaths,
-        //     this.listSettings.sortReverse);
     }
 
     return list;

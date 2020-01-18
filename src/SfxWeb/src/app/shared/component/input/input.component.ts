@@ -39,7 +39,9 @@ export class InputComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    this.debouncerHandlerSubscription.unsubscribe();
+    if(this.debouncerHandlerSubscription){
+      this.debouncerHandlerSubscription.unsubscribe();
+    }
   }
 
   onValueChange(event: string) {

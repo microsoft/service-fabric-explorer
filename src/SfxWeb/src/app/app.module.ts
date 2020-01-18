@@ -15,6 +15,8 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { initApp } from './app-initializers';
 import { AdalService } from './services/adal.service';
 import { httpInterceptorProviders } from './http-interceptor';
+import { CreateServiceComponent } from './views/application/create-service/create-service.component';
+import { ApplicationModule } from './views/application/application.module';
 
 @NgModule({
   declarations: [
@@ -30,7 +32,7 @@ import { httpInterceptorProviders } from './http-interceptor';
     MatDialogModule,
     BackupRestoreModule,
     NgbDropdownModule,
-
+    ApplicationModule,
     //test
     ClusterModule
   ],
@@ -46,7 +48,7 @@ import { httpInterceptorProviders } from './http-interceptor';
     },
     httpInterceptorProviders
   ],
-  entryComponents: [ActionCreateBackupPolicyComponent],
+  entryComponents: [ActionCreateBackupPolicyComponent, CreateServiceComponent],
   bootstrap: [AppComponent],
 })
 export class AppModule { } 

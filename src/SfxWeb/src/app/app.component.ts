@@ -2,7 +2,6 @@ import { Component, OnInit } from '@angular/core';
 import { TreeService } from './services/tree.service';
 import { RefreshService } from './services/refresh.service';
 import { AdalService } from './services/adal.service';
-import { SettingsService } from './services/settings.service';
 import { StorageService } from './services/storage.service';
 
 @Component({
