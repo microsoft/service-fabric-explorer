@@ -24,9 +24,11 @@ export class DeployedReplicaBaseController extends BaseController {
     }
   
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
+        console.log("test")
         return this.data.getDeployedReplica(this.nodeName, this.applicationId, this.serviceId, this.activationId, this.partitionId, true, messageHandler)
         .pipe(map(deployedReplica => {
             this.replica = deployedReplica;
+            console.log(this.replica)
         }));
     }
     

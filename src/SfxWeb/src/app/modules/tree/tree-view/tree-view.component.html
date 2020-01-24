@@ -1,14 +1,31 @@
-<div>
-    <div class="tree-header">
-
+<div class="tree-header">
+    <app-check-box [(state)]="treeService.tree.showOkItems">
+        <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+    </app-check-box>
+    <app-check-box [(state)]="treeService.tree.showWarningItems">
+        <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+    </app-check-box>
+    <app-check-box [(state)]="treeService.tree.showErrorItems">
+        <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+    </app-check-box>
+    <!-- <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showOkItems}" (click)="treeService.tree.showOkItems = !treeService.tree.showOkItems">
+        <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+    </div>
+    <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showWarningItems}" (click)="treeService.tree.showWarningItems = !treeService.tree.showWarningItems">
+        <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+    </div>
+    <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showErrorItems}" (click)="treeService.tree.showErrorItems = !treeService.tree.showErrorItems">
+        <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+    </div> -->
+</div>
+<div style="height: 100%; overflow: auto;">
+    <div *ngIf="treeService.tree" class="tree-body">
+        <div *ngIf="!treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view">
+            <ul class="tree" style="list-style: none">
+                <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
+            </ul>
         </div>
-        <div *ngIf="treeService.tree" class="tree-body">
-            <div *ngIf="!treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view">
-                <ul class="tree" style="list-style: none">
-                    <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
-                </ul>
-            </div>
-        </div>
+    </div>
 </div>
 
 

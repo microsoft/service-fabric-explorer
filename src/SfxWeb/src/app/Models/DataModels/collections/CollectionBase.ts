@@ -46,7 +46,6 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
 
     private appendOnly: boolean;
     private hash: Record<string, T>;
-    //private refreshingLoadPromise: CancelablePromise<T[]>;
     private refreshingPromise: Subject<any>;
 
     public get viewPath(): string {
@@ -69,7 +68,6 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     public constructor(public data: DataService, parent?: any, appendOnly: boolean = false) {
         this.parent = parent;
         this.appendOnly = appendOnly;
-        //this.refreshingLoadPromise = new CancelablePromise(this.data.$q);
     }
 
     // Base refresh logic, do not override
@@ -113,7 +111,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
                 //     this.refreshingPromise = null;
                 // });
         }
-        return this.refreshingPromise.asObservable();
+        return this.refreshingPromise ? this.refreshingPromise.asObservable() : of(null);
     }
 
     public clear(): Observable<any> {

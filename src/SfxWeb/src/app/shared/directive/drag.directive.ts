@@ -9,10 +9,10 @@ export class DragDirective {
 
   @Output() onDrag = new EventEmitter();
 
-  @HostListener('mousemove', ['$event'])
+  @HostListener('document:mousemove', ['$event'])
   handleDrag($event: MouseEvent){
     if(this.down){
-      this.onDrag.emit($event.screenX - 4);
+      this.onDrag.emit($event.clientX);
     }
   }
 
@@ -22,9 +22,11 @@ export class DragDirective {
     $event.preventDefault();
   }
 
-  @HostListener('mouseleave', ['$event'])
-  @HostListener('mouseup', ['$event'])
+  @HostListener('document:mouseup', ['$event'])
   endDrag($event:any){
+    if(this.down){
+      this.onDrag.emit($event.clientX);
+    }
     this.down = false;
   }
 

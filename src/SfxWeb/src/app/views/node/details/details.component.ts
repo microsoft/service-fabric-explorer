@@ -5,6 +5,7 @@ import { Observable, forkJoin } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { SettingsService } from 'src/app/services/settings.service';
 import { NodeBaseController } from '../NodeBase';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-details',
@@ -27,6 +28,7 @@ export class DetailsComponent extends NodeBaseController {
     return forkJoin([
       this.node.loadInformation.refresh(messageHandler),
       this.node.health.refresh(messageHandler)
-    ]);
+    ]).pipe(map( ()=>     console.log(this.node)
+    ));
   }
 }

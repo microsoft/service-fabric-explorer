@@ -61,11 +61,10 @@ export class TreeNodeViewModel {
             (this.badge().badgeClass !== BadgeConstants.BadgeOK || this._tree.showOkItems) &&
             (this.badge().badgeClass !== BadgeConstants.BadgeWarning || this._tree.showWarningItems) &&
             (this.badge().badgeClass !== BadgeConstants.BadgeError || this._tree.showErrorItems);
-
         if (this.selected && !isVisible) {
             this._tree.selectTreeNode([IdGenerator.cluster()]);
         }
-
+        
         return isVisible;
     }
 
@@ -111,9 +110,8 @@ export class TreeNodeViewModel {
     }
 
     private get paddingLeft(): number {
-        // 20px is tree's left padding
         // 18px is the total width of the expander icon
-        return 20 + (18 * (this.depth + 1));
+        return (18 * (this.depth + 1));
     }
 
     constructor(tree: TreeViewModel, node: ITreeNode, parent: TreeNodeViewModel) {

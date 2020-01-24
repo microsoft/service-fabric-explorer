@@ -17,6 +17,7 @@ export class EssentialsComponent extends DeployedReplicaBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    console.log(this.replica)
     const deployedService = this.replica.parent;
     const deployedApplication = deployedService.parent;
     const serviceName = encodeURI(this.replica.raw.ServiceName.replace("fabric:/", ""));

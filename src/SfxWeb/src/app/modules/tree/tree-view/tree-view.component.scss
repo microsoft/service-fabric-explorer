@@ -4,6 +4,8 @@
 .tree-header {
     white-space: nowrap;
     color: $tree-color;
+    position: sticky;
+    padding: 15px;
 
     .toolbar {
         margin-top: 16px;

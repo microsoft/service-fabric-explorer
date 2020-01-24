@@ -29,7 +29,7 @@ export class AppComponent implements OnInit{
   
   resize($event: number): void {
     //have to subtract the offset
-    this.treeWidth = ($event + 5).toString() + 'px';
+    this.treeWidth = ($event + 8).toString() + 'px';
     this.storageService.setValue("treeWidth", this.treeWidth);
   }
 }

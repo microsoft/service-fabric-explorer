@@ -7,7 +7,7 @@ import { ActionCollection } from 'src/app/Models/ActionCollection';
   styleUrls: ['./action-collection-drop-down.component.scss']
 })
 export class ActionCollectionDropDownComponent implements OnInit {
-
+  @Input() treeView: boolean = false;
   @Input() actionCollection: ActionCollection;
 
   constructor() { }

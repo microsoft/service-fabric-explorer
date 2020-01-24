@@ -1,1 +1,4 @@
-<span>{{text}}</span>
+<div class="badge-container" [title]="text">
+    <img *ngIf="badgeClass" class="badge-icon" [src]="'assets/' + badgeClass + '.svg'" [alt]="text + 'badge'"/>
+    <span>{{text}}</span>
+</div>

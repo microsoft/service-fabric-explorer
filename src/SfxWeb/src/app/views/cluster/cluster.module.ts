@@ -20,6 +20,7 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { StatusWarningsComponent } from './status-warnings/status-warnings.component';
 import { BackupsComponent } from './backups/backups.component';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -32,7 +33,8 @@ import { BackupsComponent } from './backups/backups.component';
     ImagestoreModule,
     FormsModule,
     EventStoreModule,
-    ChartsModule
+    ChartsModule,
+    NgbDropdownModule
   ],
   entryComponents: [ActionUpdateBackupPolicyComponent, ActionCreateBackupPolicyComponent]
 })

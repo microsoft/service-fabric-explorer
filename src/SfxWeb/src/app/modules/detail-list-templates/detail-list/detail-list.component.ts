@@ -23,7 +23,6 @@ export class DetailListComponent {
   @Input() 
   set list(data:  any[] | DataModelCollectionBase<any>) {
     if(data instanceof DataModelCollectionBase){
-      console.log(data);
       data.ensureInitialized().subscribe(data => {
         this._list = [].concat(data.collection);
         this.updateList();
@@ -34,7 +33,6 @@ export class DetailListComponent {
 
     this._list = this._list || [];
     this.updateList();
-    console.log(this.sortedFilteredList);
   }
 
   public handleClickRow(item: any, event: any): void {

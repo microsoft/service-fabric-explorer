@@ -8,7 +8,7 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { ReplicaOnPartition } from './Replica';
 import { LoadMetricReport } from './Partition';
 import { ActionWithConfirmationDialog } from '../Action';
@@ -96,12 +96,19 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedReplica> {
-        const promises: Observable<any>[] = [
-            this.data.restClient.getPartitionById(this.raw.PartitionId, ResponseMessageHandlers.silentResponseMessageHandler).pipe(map(response => {this.partition = response; return response})),
-            this.data.restClient.getDeployedReplica(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.raw.PartitionId, messageHandler).pipe(map(response => { return response[0]; }))
-        ];
-
-        return forkJoin(promises).pipe(map((values) => values[1]));
+        return this.data.restClient.getPartitionById(this.raw.PartitionId, ResponseMessageHandlers.silentResponseMessageHandler).pipe(mergeMap(data => {
+            this.partition = data;
+            return this.data.restClient.getDeployedReplica(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.raw.PartitionId, messageHandler)
+        })).pipe(map( values => values[0]))
+        //TODO check into this
+        // return forkJoin([
+        //     this.data.restClient.getPartitionById(this.raw.PartitionId, ResponseMessageHandlers.silentResponseMessageHandler),
+        //     this.data.restClient.getDeployedReplica(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.raw.PartitionId, messageHandler)
+        // ]).pipe(map((values) => {
+        //     console.log("test")
+        //                             this.partition = values[0];
+        //                             return values[1][0];
+        //                         }));
     }
 
     protected updateInternal(): Observable<any> | void {

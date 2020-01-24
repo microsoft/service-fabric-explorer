@@ -4,9 +4,8 @@
         <table class="table detail-table detail-list" [ngClass]="{ 'table-layout-fixed': !noFixedLayout }" role="presentation">
 <!-- 
             <tbody *ngFor="(name, value) in resolvedData | keyvalue" -->
-            <tbody *ngFor="let item of resolvedData | keyvalue"
-                [ngSwitch]="getResolvedPropertyType(item.value)">
-                <!-- {{getResolvedPropertyType(item.value)}} -->
+            <tbody *ngFor="let item of resolvedData | keyvalue : asIsOrder"
+                [ngSwitch]="getResolvedPropertyType(item.value)" style="border-top: 0px solid;">
                 <!-- Render simple property (one row) -->
                 <tr *ngSwitchCase="'Value'">
                     <!-- Render property name -->
@@ -45,12 +44,41 @@
                     </td>
                 </tr>
 
-                <!-- <tr *ngSwitchCase="Array">
+                <tr *ngSwitchCase="'Array'">
                     <th colspan="2">
-                        <h4 class="sub-title" [title]="{{title}}" style="text-transform: none;">{{::name}} </h4>
-                        <div sfx-include src="'view-part-array-template'"></div>
+                        <h4 class="sub-title" [title]="title" style="text-transform: none;">{{item.key}} </h4>
+                        <div class="table-responsive">
+                            <div class="nested-table-container">
+                                <!-- Set table-layout to be fixed only when they have only 1 or 2 properties -->
+                                <table class="table detail-table nested-table-border" [ngClass]="{ 'table-layout-fixed': !noFixedLayout && getResolvedObjectSize(item.value[0]) <= 3 }">
+                                    <thead>
+                                        <tr class="nested-table-border">
+                                            <!-- Render sub-array table header -->
+                                            <th *ngFor="let subItem of item.value[0] | keyvalue : asIsOrder" [title]="subItem.key">
+                                                {{subItem.key}}
+                                            </th>
+                                        </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr *ngFor="let item of item.value; let $last = last;"  [ngClass]="{ 'nested-table-border': !($last) }">
+                                                <!-- Render sub-array table body, assuming the properties are always simple properties rather than object -->
+                                            <td *ngFor="let subItem of item | keyvalue" [ngSwitch]="getResolvedPropertyType(subItem.value)">
+                                                <span *ngSwitchCase="'Value'" [title]="subItem.value">{{subItem.value}}</span>
+                                                <span *ngSwitchCase="'Html'" [innerHtml]="subItem.value"></span>
+                                                <!-- <div *ngSwitchCase="'Array'" sfx-include src="'view-part-array-template'" ng-init="value = subValue"></div>
+                                                <sfx-detail-view-part *ngSwitchCase="Object" data="subValue" no-fixed-layout="$parent.noFixedLayout"></sfx-detail-view-part> -->
+
+                                                <app-detail-view-part *ngSwitchCase="'Array'" [data]="subItem.value"></app-detail-view-part>
+                                                <app-detail-view-part *ngSwitchCase="'Object'" [data]="subItem.value"></app-detail-view-part>
+                                            </td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+
                     </th>
-                </tr> -->
+                </tr>
 
             </tbody>
 

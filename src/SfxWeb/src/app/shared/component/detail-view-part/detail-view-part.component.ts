@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Constants } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
@@ -13,22 +13,34 @@ export class ResolvedObject {
   templateUrl: './detail-view-part.component.html',
   styleUrls: ['./detail-view-part.component.scss']
 })
-export class DetailViewPartComponent implements OnInit {
+export class DetailViewPartComponent implements OnInit, OnChanges {
 
   @Input() noFixedLayout: boolean = false;
 
   resolvedData: any;
   
-  @Input() 
-  set data(data:  any) {
-    this.resolvedData = this.getResolvedDataObject(data);
-  }
+  @Input() data: any;
 
+  //with parent added it will assume data is from data.raw and this allows to run change detection.
+  @Input() parent: any;
   constructor() { }
 
   ngOnInit() {
   }
 
+  ngOnChanges() {
+      console.log(this.data)
+      if(this.parent){
+        this.resolvedData = this.getResolvedDataObjectInternal(this.data, this.parent);          
+      }else{
+        this.resolvedData = this.getResolvedDataObject(this.data);
+      }
+      console.log(this.resolvedData)
+  }
+
+  public getResolvedObjectSize(object: any): number {
+    return _.size(object);
+    }
 
   public getResolvedPropertyType(value: any): string {
     if (this.isResolvedObject(value)) {
@@ -52,6 +64,8 @@ export class DetailViewPartComponent implements OnInit {
         }
 
         if (data.hasOwnProperty("raw")) {
+            console.log(data);
+            console.log(data['raw'])
             if (data.raw === undefined|| data.raw === null) {
                 return null;
             }
@@ -154,6 +168,10 @@ export class DetailViewPartComponent implements OnInit {
       });
 
       return _.size(resolvedObject) > 0 ? resolvedObject : null;
+  }
+
+  asIsOrder(a: string, b: string): number {
+    return 1;
   }
 
 }

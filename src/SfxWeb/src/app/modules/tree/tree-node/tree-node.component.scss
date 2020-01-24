@@ -72,3 +72,21 @@
         }
     }
 }
+
+.hide-nested{
+
+    &:hover {
+        .hidden {
+            display: inherit;
+        }
+    }
+
+    .hidden {
+        display: none;
+    }
+}
+
+.right-action {
+    float:  right;
+    padding: 1px;
+}

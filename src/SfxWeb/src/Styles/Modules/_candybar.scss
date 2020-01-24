@@ -46,11 +46,10 @@ $candybar-compact-color-height: 16px;
             width: $candybar-width;
             height: $candybar-height;
             padding: $candybar-padding;
-            background: $candybar-background-color;
             border-style: solid;
             border-width: $candybar-border-width;
             border-color: $candybar-border-color;
-
+            color: $light-link-color;
             &.compact {
                 width: auto;
                 min-width: $candybar-width;
@@ -67,7 +66,7 @@ $candybar-compact-color-height: 16px;
 
             .candybar-inner-title {
                 min-height: 21px;
-                background-color: $candybar-inner-background-color;
+                background-color: $essen-pane-background-color;
                 padding: $candybar-border-width;
                 padding-top: 0;
             }

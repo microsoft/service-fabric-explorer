@@ -13,7 +13,7 @@ import { StorageService } from './storage.service';
 export class SettingsService {
   private listSettings: Record<string, ListSettings>;
   private _paginationLimit: number;
-  private _metricsViewModel: IMetricsViewModel;
+  private _metricsViewModel: MetricsViewModel;
 
   public get paginationLimit(): number {
       return this._paginationLimit;
@@ -38,7 +38,7 @@ export class SettingsService {
       this._paginationLimit = storage.getValueNumber(Constants.PaginationLimitStorageKey, Constants.DefaultPaginationLimit);
   }
 
-  public getNewOrExistingMetricsViewModel(clusterLoadInformation: ClusterLoadInformation, nodesLoadInformation: NodeLoadInformation[]): IMetricsViewModel {
+  public getNewOrExistingMetricsViewModel(clusterLoadInformation: ClusterLoadInformation, nodesLoadInformation: NodeLoadInformation[]): MetricsViewModel {
       if (!this._metricsViewModel) {
           this._metricsViewModel = new MetricsViewModel(clusterLoadInformation, nodesLoadInformation);
       }
