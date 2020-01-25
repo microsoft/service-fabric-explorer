@@ -17,6 +17,7 @@ export class DisplaySizeColumnComponent implements OnChanges, OnInit, DetailBase
   date: any;
   loadButton: boolean;
   size: string = "";
+  loading: boolean = false;
   constructor() { }
 
   ngOnInit() {
@@ -40,6 +41,7 @@ export class DisplaySizeColumnComponent implements OnChanges, OnInit, DetailBase
       if (!sizeData.loading) {
           this.listSetting.imagestore.cachedCurrentDirectoryFolderSizes[item.path].loading = true;
           sizeData.loading = true;
+          this.loading = true;
       }else {
           return;
       }
@@ -55,6 +57,7 @@ export class DisplaySizeColumnComponent implements OnChanges, OnInit, DetailBase
           this.ngOnChanges();
       }, () => {
         this.listSetting.imagestore.cachedCurrentDirectoryFolderSizes[item.path].loading = false;
+        this.loading = false;
       });
 
       this.ngOnChanges();

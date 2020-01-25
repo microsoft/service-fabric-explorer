@@ -17,8 +17,8 @@
                         </span>
 
                         <div ngbDropdown container="body" *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle">
-                            <button class="flat-button" ngbDropdownToggle aria-label="Filter" title="filter by columnSetting.displayName options">
-                                <span  class="bowtie-icon filter-icon" [ngClass]="{'bowtie-search-filter': !columnSetting.hasEffectiveFilters, 'bowtie-search-filter-fill active': columnSetting.hasEffectiveFilters}"></span>
+                            <button class="flat-button" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" title="filter by columnSetting.displayName options">
+                                <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}"></span>
                             </button>
                             <div ngbDropdownMenu >
                                 <ul role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;"  >
@@ -36,7 +36,7 @@
                             <!-- Use transparent color to hide the icon instead of using ng-show to avoid the table layout changes when the icon showed up -->
                             <div style="width: 20px; height: 19px; display: inline-block;">
                                 <span class="bowtie-icon sort-icon" *ngIf="columnSetting.sortable && listSettings.isSortedByColumn(columnSetting)" (click)="listSettings.sort(columnSetting.sortPropertyPaths); updateList()"
-                                    [ngClass]="{'bowtie-triangle-up': !listSettings.sortReverse, 'bowtie-triangle-down': listSettings.sortReverse}" [attr.aria-label]="Sort"
+                                    [ngClass]="{'mif-arrow-up': !listSettings.sortReverse, 'mif-arrow-down': listSettings.sortReverse}" [attr.aria-label]="Sort"
                                     [attr.tabIndex]="listSettings.isSortedByColumn(columnSetting) ? 0 : -1" [title]="'sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'"
                                     [attr.ariaHidden]="!listSettings.isSortedByColumn(columnSetting)">
                                 </span>

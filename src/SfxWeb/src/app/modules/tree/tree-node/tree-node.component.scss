@@ -15,7 +15,6 @@
         overflow: hidden;
         text-overflow: ellipsis;
         white-space: nowrap;
-        display: inline-block;
         cursor: pointer;
         width: 100%;
         position: relative;
@@ -30,9 +29,8 @@
         }
 
         .expander {
-            // position: absolute;
             cursor: default;
-            padding: 3px 0px;
+            padding: 3px 3px;
         }
 
         .actions-menu {
@@ -54,7 +52,8 @@
         }
 
         .tree-label {
-            vertical-align: middle;
+            overflow: hidden;
+            text-overflow: ellipsis;
 
             .search-match {
                 color: $tree-node-search-highlight-color;
@@ -87,6 +86,8 @@
 }
 
 .right-action {
-    float:  right;
+    position: absolute;
+    right: 0;
+    // float:  right;
     padding: 1px;
 }

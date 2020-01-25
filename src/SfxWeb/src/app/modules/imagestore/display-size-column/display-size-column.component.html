@@ -1,7 +1,7 @@
 <span style="cursor: initial" *ngIf="item.isFolder === 1"> {{item.displayedSize}} </span>
 
 <span style='white-space: nowrap;' *ngIf="item.isFolder === -1">
-    <span *ngIf="date"  class="dark-background-link bowtie-icon bowtie-status-waiting-fill" 
+    <span *ngIf="date"  class="mif-watch" 
             aria-label="timestamp" [title]="date"></span>
 
     <span style="cursor: initial; padding-right: 3px;"> 
@@ -9,13 +9,11 @@
     </span>
 
     <span *ngIf="loadButton; else elseBlock">
-        <button type="button" 
-            class="simple-button" (click)="loadFolderSize(item)">
+        <button type="button" class="simple-button" (click)="loadFolderSize(item)">
             Load Size
         </button>
     </span>
     <ng-template #elseBlock>
-        <!-- TODO add rotating oading button -->
-        <a href class="bowtie-icon bowtie-navigate-refresh dark-background-link" title="Reload folder size"></a>
+        <span class="mif-refresh mif-2x" [ngClass]="{'rotate': loading}" (click)="loadFolderSize(item)" title="Reload folder size"></span>
     </ng-template>
 </span>

@@ -6,7 +6,7 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
   styleUrls: ['./refresh-rate.component.scss']
 })
 export class RefreshRateComponent implements OnInit {
-
+  @Input() refresh: boolean = false;
   @Input() 
   set value( val: number) {
     this.change( +(Object.keys(this._mapping).find(key => this._mapping[key] === val) || 4), false )

@@ -850,3 +850,33 @@ app-navbar {
   .noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip { 
     bottom:-32px 
   }
+
+.rotate {
+    animation-name: rotate;
+    -webkit-animation-name: webkit-rotate;
+    animation-duration: 1s;
+    -webkit-animation-duration: 1s;
+    animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    -webkit-animation-timing-function: linear;
+}
+@keyframes rotate {
+    from {
+        transform: scale( 1 ) rotate( 0deg );
+    }
+
+    to {
+        transform: scale( 1 ) rotate( 360deg );
+    }
+}
+
+@-webkit-keyframes webkit-rotate {
+    from {
+        transform: scale( 1 ) rotate( 0deg );
+    }
+
+    to {
+        transform: scale( 1 ) rotate( 360deg );
+    }
+}

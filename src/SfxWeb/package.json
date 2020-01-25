@@ -32,6 +32,7 @@
     "fast-xml-parser": "^3.15.0",
     "highcharts": "^8.0.0",
     "lodash": "^4.17.15",
+    "metro4": "^4.3.5",
     "moment": "^2.24.0",
     "nouislider": "^14.1.1",
     "rxjs": "~6.4.0",
