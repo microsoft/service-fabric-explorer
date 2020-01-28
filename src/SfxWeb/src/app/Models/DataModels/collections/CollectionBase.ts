@@ -1,6 +1,6 @@
 import { IDataModel } from '../Base';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, Subject, throwError, of, forkJoin } from 'rxjs';
+import { Observable, Subject, throwError, of, forkJoin, AsyncSubject } from 'rxjs';
 import { IClusterHealthChunk, IHealthStateChunk, IHealthStateChunkList } from '../../HealthChunkRawDataTypes';
 import { ValueResolver } from 'src/app/Utils/ValueResolver';
 import { mergeMap, map } from 'rxjs/operators';
@@ -73,17 +73,15 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     // Base refresh logic, do not override
     public refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
         if (!this.refreshingPromise) {
-            this.refreshingPromise = new Subject<any>();
+            this.refreshingPromise = new AsyncSubject<any>();
             
             this.retrieveNewCollection(messageHandler).pipe(mergeMap(collection => {
                 return this.update(collection)
-                //return this.update(collection)
             })).subscribe( () => {
-                //console.log(this)
                 this.refreshingPromise.next(this);
                 this.refreshingPromise.complete();
                 this.refreshingPromise = null;
-            }
+            });
             // , error => {
             //     console.log(error)
             //     if (error) {
@@ -92,7 +90,6 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
             //     // Else skipping as load got canceled.
             //     return of(null);
             // }
-            );
                 // this.refreshingLoadPromise.load(() => {
                 //     return this.retrieveNewCollection(messageHandler);
                 // }).catch((error) => {

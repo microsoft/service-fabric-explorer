@@ -27,6 +27,7 @@ import { PartitionBackup, PartitionBackupInfo } from '../PartitionBackupInfo';
 
 import { DataModelCollectionBase, IDataModelCollection } from './CollectionBase';
 
+import * as _ from 'lodash';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -100,7 +101,7 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getApplicationTypes(null, messageHandler).pipe(map(response => {
             let appTypes = response.map(item => new ApplicationType(this.data, item));
-            let groups = Utils.groupByFunc(appTypes, item => item.raw.Name);
+            let groups = _.groupBy(appTypes, item => item.raw.Name);
             return Object.keys(groups).map(g => new ApplicationTypeGroup(this.data, groups[g]));
         }))
     }

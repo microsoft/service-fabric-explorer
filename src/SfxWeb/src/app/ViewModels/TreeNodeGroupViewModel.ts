@@ -18,6 +18,7 @@ export class TreeNodeGroupViewModel {
     public childrenQuery: () => Observable<ITreeNode[]>;
 
     public get displayedChildren(): TreeNodeViewModel[] {
+        // console.log(this.owningNode && this.owningNode.listSettings)
         let result = this.children;
         if (this.owningNode && this.owningNode.listSettings) {
             result = result.slice(this.owningNode.listSettings.begin, this.owningNode.listSettings.begin + this.owningNode.listSettings.limit);
@@ -50,6 +51,7 @@ export class TreeNodeGroupViewModel {
     private _currentGetChildrenPromise: Subject<any>;
 
     constructor(tree: TreeViewModel, owningNode: TreeNodeViewModel, childrenQuery: () => Observable<ITreeNode[]>) {
+        console.log(this.owningNode)
         this._tree = tree;
         this.owningNode = owningNode;
         this.childrenQuery = childrenQuery;
@@ -213,21 +215,22 @@ export class TreeNodeGroupViewModel {
             this.loadingChildren = true;
             this._currentGetChildrenPromise = new Subject();
             this.childrenQuery().subscribe(response => {
-
-                let childrenViewModels: TreeNodeViewModel[] = [];
-                for (let i = 0; i < response.length; i++) {
-                    let node = response[i];
-                    childrenViewModels.push(new TreeNodeViewModel(this._tree, node, this.owningNode));
-                }
+                // console.log(response)
+                // let childrenViewModels: TreeNodeViewModel[] = [];
+                // for (let i = 0; i < response.length; i++) {
+                //     let node = response[i];
+                //     childrenViewModels.push(new TreeNodeViewModel(this._tree, node, this.owningNode));
+                // }
+                this.children = response.map(node => new TreeNodeViewModel(this._tree, node, this.owningNode))
                 // Sort the children
-                this.children = childrenViewModels //.sort( (item1, item2) => <number>item1.sortBy() - <number>item2.sortBy()); TODO fix the sorting here
+                //this.children = childrenViewModels //.sort( (item1, item2) => <number>item1.sortBy() - <number>item2.sortBy()); TODO fix the sorting here
 
                 this.childrenLoaded = true;
 
                 if (this.owningNode && this.owningNode.listSettings) {
                     this.owningNode.listSettings.count = this.children.length;
                 }
-
+                console.log(this.children);
                 this._currentGetChildrenPromise.next();
                 this._currentGetChildrenPromise.complete();
                 this._currentGetChildrenPromise = null;
@@ -236,7 +239,7 @@ export class TreeNodeGroupViewModel {
             });
         }
 
-        return this._currentGetChildrenPromise || of(null);
+        return this._currentGetChildrenPromise ? this._currentGetChildrenPromise.asObservable() : of(null);
     }
 
     private exists(array: any[], item: any, comparer: (a: any, b: any) => any): any {

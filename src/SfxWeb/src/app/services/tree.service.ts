@@ -9,7 +9,7 @@ import { TreeViewModel } from '../ViewModels/TreeViewModel';
 import { DataService } from './data.service';
 import { RoutesService } from './routes.service';
 import { of, Observable, forkJoin } from 'rxjs';
-import { mergeMap, map } from 'rxjs/operators';
+import { mergeMap, map, finalize, catchError } from 'rxjs/operators';
 import { SettingsService } from './settings.service';
 import { RefreshService } from './refresh.service';
 
@@ -394,7 +394,7 @@ export class TreeService {
                             ? [replica.raw.NodeName]
                             : [replica.replicaRoleSortPriority, replica.raw.NodeName],
                         actions: replica.actions,
-                        canExpandAll: true
+                        canExpandAll: false
                     };
                 });
             }));

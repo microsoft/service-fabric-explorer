@@ -1,29 +1,53 @@
 <div *ngIf="node.isExpanded">
+    <div class="more-children"
+        *ngIf="node.loadingChildren"
+        [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }">
+        <span style="padding-left: 18px;"></span>
+        <span class="mif-loop2 rotate" ></span>
+        <span>Loading...</span>
+    </div>
+    <li class="pager-control" *ngIf="node.owningNode && node.owningNode.listSettings && node.owningNode.listSettings.pageCount > 1"
+        [ngClass]="{'disabled': node.owningNode.listSettings && node.owningNode.listSettings.currentPage === 1}">
+        <div style="padding-left: 54px;">
+            <span  [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }"></span>
+            <div (click)="node.pageUp()" class=" expander icon mif-chevron-thin-up" [title]="'Previous ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></div>
+            <div (click)="node.pageFirst()" style="padding-left: 10px;" class="expander icon mif-vertical-align-top" [title]="'First ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></div>
+        </div>
+    </li>
     <li *ngFor="let child of node.displayedChildren" class="node" [ngClass]="{ 'selected': child.selected }" >
+        <div class="self hide-nested" (click)="child.handleClick()" style="width: 100%; display: flex; align-items: center;" 
+             [attr.aria-label]="child.displayName()" *ngIf="child.isVisibleByBadge">
+            <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
+            <!-- , 'width': ('calc(100% - ' + child.paddingLeftPx.toString() + ')') -->
+            <div tabindex="-1" class="expander icon " aria-hidden="true"
+                    (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
+                    [ngClass]="{ 'mif-chevron-thin-up': child.isCollapsed, 'mif-chevron-thin-down': child.isExpanded }"
+                    style="display: inline-block;">
+            </div>
+            <span tabindex="-1" class="icon" aria-hidden="true" *ngIf="child.canExpandAll"
+            (click)="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()"
+            [ngClass]="{ 'mif-unfold-more': child.isCollapsed, 'mif-unfold-less': child.isExpanded }"
+            [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'" style="font-size: large;"></span>
 
-            <div class="self hide-nested" (click)="child.handleClick()" style="width: 100%; display: flex;" [attr.aria-label]="child.displayName()" *ngIf="child.isVisibleByBadge">
-                <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
-                <!-- , 'width': ('calc(100% - ' + child.paddingLeftPx.toString() + ')') -->
-                    <div tabindex="-1" class="expander icon " aria-hidden="true"
-                            (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
-                            [ngClass]="{ 'mif-chevron-thin-up': child.isCollapsed, 'mif-chevron-thin-down': child.isExpanded }"
-                            style="display: inline-block;">
-                    </div>
-                    <span tabindex="-1" class="icon" aria-hidden="true" *ngIf="child.canExpandAll"
-                    (click)="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()"
-                    [ngClass]="{ 'mif-unfold-more': child.isCollapsed, 'mif-unfold-less': child.isExpanded }"
-                    [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'"></span>
-
-                    <img *ngIf="child.badge && child.badge() && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
-                            class="tree-badge" [title]="child.badge().text" style="margin-right: 3px;"
-                            [src]="'assets/' + child.badge().badgeClass + '.svg'" role="presentation">
-                    <div class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()" ></div>
-                    
-                    <div *ngIf="child.actions && child.actions.length > 0" class="hidden right-action">
-                        <app-action-collection-drop-down [actionCollection]="child.actions" [treeView]="true"></app-action-collection-drop-down>
-                    </div>
-                </div>
+            <img *ngIf="child.badge && child.badge() && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
+                    class="tree-badge" [title]="child.badge().text" style="margin-right: 3px;"
+                    [src]="'assets/' + child.badge().badgeClass + '.svg'" role="presentation">
+            <div class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()" ></div>
+            
+            <div *ngIf="child.actions && child.actions.length > 0" class="hidden right-action">
+                <app-action-collection-drop-down [actionCollection]="child.actions" [treeView]="true"></app-action-collection-drop-down>
+            </div>
+        </div>
         
-            <app-tree-node [node]="child.childGroupViewModel" *ngIf="child.isVisibleByBadge"></app-tree-node>
-        </li>
+        <app-tree-node [node]="child.childGroupViewModel" *ngIf="child.isVisibleByBadge"></app-tree-node>
+    </li>
+    <li class="pager-control"
+        *ngIf="node.owningNode && node.owningNode.listSettings && node.owningNode.listSettings.pageCount > 1"
+        [ngClass]="{'disabled': node.owningNode.listSettings && node.owningNode.listSettings.currentPage === node.owningNode.listSettings.pageCount}">
+        <div style="padding-left: 54px;">
+            <span  [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }"></span>
+            <span (click)="node.pageDown()" class="icon pagedown-icon mif-chevron-thin-down" [title]="'Next ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></span>
+            <span style="padding-left: 10px;" (click)="node.pageLast()" class="icon pagedown-icon mif-vertical-align-bottom" [title]="'Last ' + node.owningNode.listSettings.limit +  ' items'" aria-hidden="true"></span>
+        </div>
+    </li>
 </div>

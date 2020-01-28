@@ -11,9 +11,9 @@ import { ClusterUpgradeProgress, ClusterLoadInformation, ClusterManifest, Cluste
 import { ImageStore } from '../Models/DataModels/ImageStore';
 import { Constants } from '../Common/Constants';
 import { IResponseMessageHandler, ResponseMessageHandlers } from '../Common/ResponseMessageHandlers';
-import { Observable, throwError } from 'rxjs';
+import { Observable, throwError, of } from 'rxjs';
 import { RestClientService } from './rest-client.service';
-import { map, mergeMap } from 'rxjs/operators';
+import { map, mergeMap, finalize } from 'rxjs/operators';
 import { IDataModel } from '../Models/DataModels/Base';
 import { IdGenerator } from '../Utils/IdGenerator';
 import { Node } from '../Models/DataModels/Node';

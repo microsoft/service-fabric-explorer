@@ -49,6 +49,7 @@
             position: relative;
             width: 14px;
             height: 14px;
+            margin-right: 5px;
         }
 
         .tree-label {
@@ -90,4 +91,15 @@
     right: 0;
     // float:  right;
     padding: 1px;
+}
+
+.icon {
+    cursor: pointer;
+}
+
+.disabled {
+    .icon {
+        cursor: auto;
+        color: gray;
+    }
 }
