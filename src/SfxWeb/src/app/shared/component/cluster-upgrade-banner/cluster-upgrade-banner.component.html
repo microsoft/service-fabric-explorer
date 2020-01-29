@@ -13,10 +13,16 @@
 
 <span>
     <div style="display: inline-flex; height: 50px;" >
-        <a href="#/tab/details" style="margin: auto;" class="essen-pane">
-            <span>
-                <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error"></span>
-                Cluster Upgrade in Progress since "some date time" : 0/5 UDS
+        <a routerLink="/details" style="margin: auto;" class="essen-pane" >
+            <span class="dark-background-link mif-info"></span>
+            <span *ngIf="displayAllText">
+                <span> Cluster Upgrade </span>
+                <span *ngIf="displayMiddleText">
+                    in Progress since Fri, 22 Nov 2019 17:27:00 GMT
+                </span>
+                <span>
+                    : 0/5 UDS complete
+                </span>
             </span>
         </a>
     </div>

@@ -645,6 +645,26 @@ app-navbar {
     padding: 4px 12px;
     cursor: pointer;
     background-color: $detail-pane-pre-background-color;
+
+    &:disabled {
+        border-color: #727272;
+    }
+}
+
+.solid-button {
+    border: $azure-blue 1px solid;
+    color: white;
+    padding: 4px 12px;
+    cursor: pointer;
+    background-color: $azure-blue;
+
+    &:disabled {
+        opacity: .65;
+    }
+}
+
+.blue {
+    background-color: $azure-blue;
 }
 
 .dropdown-menu {
@@ -686,12 +706,17 @@ app-navbar {
 }
 
 .flat-button {
-    border: $azure-blue 0px solid;
+    border: transparent 1px solid;
     color: white;
     padding: 4px 12px;
     cursor: pointer;
-    background-color: $detail-pane-pre-background-color;
+    background-color: transparent;
     border-radius: 2px;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.25);
+        // border: $azure-blue 1px solid;
+    }
 }
 
 .empty-button {
@@ -720,13 +745,8 @@ app-navbar {
 
 
 
-
-
-
-
-
-
-
+//needs to be placed in a globel css file due to how css in components work and vis timeline uses
+// global css names
 .vis-timeline {
     font-size: $font-size-default;
     background-color: $essen-pane-background-color;
