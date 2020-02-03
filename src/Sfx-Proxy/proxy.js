@@ -26,7 +26,7 @@ const reformatUrl = (req) => {
     const copy = JSON.parse(JSON.stringify(req.query)); //make a deep copy to remove _cacheToken since it isnt necessary
     delete copy._cacheToken;
     const params =  Object.keys(copy).sort().map(key => `${key}=${copy[key]}` ).join("&")
-    return config.recordFileBase +  `${req.method.toLowerCase()}${req.path}${params}.json`.split('/').join('-');
+    return config.recordFileBase +  `${req.method.toLowerCase()}${req.path}${params}.json`.split('/').join('-').replace(/:/g, "-");
 }
 
 const writeRequest = (req, resp) => {

@@ -26,8 +26,6 @@
                 <td>{{app.raw.Status}}</td>
                 <td *ngIf="app && app.isUpgrading && upgradeProgress && upgradeProgress.isInitialized">{{upgradeProgress.raw.UpgradeStatusDetails}}</td>
             </tr>
-
-
         </table>
     </div>
 </div>
@@ -104,12 +102,12 @@
 
 <div class="detail-pane essen-pane" *ngIf="app && app.services">
     <h4>Services</h4>
-    <detail-list [list]="app.services" [listSettings]="listSettings"></detail-list>
+    <detail-list [list]="app.services.collection" [listSettings]="listSettings"></detail-list>
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="app && app.serviceTypes">
     <h4>Service Types</h4>
-    <detail-list [list]="app.serviceTypes" [listSettings]="serviceTypesListSettings"></detail-list>
+    <detail-list [list]="app.serviceTypes.collection" [listSettings]="serviceTypesListSettings"></detail-list>
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="clusterManifest && clusterManifest.isNetworkInventoryManagerEnabled">

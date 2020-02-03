@@ -24,7 +24,7 @@
 
     <div>
       <app-refresh-rate [value]="refreshService.refreshRate" (onChange)="refreshService.updateRefreshInterval($event)" 
-                        [refresh]="refreshService.isRefreshing"></app-refresh-rate>
+                        [refresh]="refreshService.isRefreshing" (onForceRefresh)="attemptForceRefresh()"></app-refresh-rate>
     </div>
     <div class="essen-pane" *ngIf="adalService.aadEnabled" style="display: flex;
     flex-direction: row;

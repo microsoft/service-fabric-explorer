@@ -60,4 +60,8 @@ export class AppComponent implements OnInit{
     this.rightOffset = this.treeWidth;
     this.storageService.setValue("treeWidth", this.treeWidth);
   }
+
+  attemptForceRefresh() {
+    this.refreshService.refreshAll();
+  }
 }

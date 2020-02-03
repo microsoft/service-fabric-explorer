@@ -3,7 +3,7 @@
         <h4 collapse-header>
             Node
         </h4>    
-        <app-detail-view-part [data]="node" collapse-body></app-detail-view-part>
+        <app-detail-view-part [data]="node.raw" [parent]="node" collapse-body></app-detail-view-part>
     </app-collapse-container>
 </div>
 

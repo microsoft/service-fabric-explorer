@@ -8,11 +8,12 @@ import { Utils } from 'src/app/Utils/Utils';
 import { DeployedServicePackage } from './DeployedServicePackage';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Application } from './Application';
-import { Observable } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { HealthBase } from './HealthEvent';
 import { ApplicationType } from './ApplicationType';
-import { mergeMap } from 'rxjs/operators';
+import { mergeMap, map } from 'rxjs/operators';
 import * as _ from 'lodash';
+import { ActionWithConfirmationDialog } from '../Action';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -102,19 +103,19 @@ export class Service extends DataModelBase<IRawService> {
             return;
         }
 
-        //TODO 
-        // this.actions.add(new ActionWithConfirmationDialog(
-        //     this.data.$uibModal,
-        //     this.data.$q,
-        //     "deleteService",
-        //     "Delete Service",
-        //     "Deleting",
-        //     () => this.delete(),
-        //     () => true,
-        //     "Confirm Service Deletion",
-        //     `Delete service ${this.name} from cluster ${this.data.$location.host()}?`,
-        //     this.name
-        // ));
+        this.actions.add(new ActionWithConfirmationDialog(
+            this.data.dialog,
+            "deleteService",
+            "Delete Service",
+            "Deleting",
+            () => this.delete().pipe(map( () => {
+                this.data.routes.navigate(() => this.parent.viewPath)
+            })),
+            () => true,
+            "Confirm Service Deletion",
+            `Delete service ${this.name} from cluster ${window.location.host}?`,
+            this.name
+        ));
     }
 
     private setAdvancedActions(): void {
@@ -317,6 +318,7 @@ export class ServiceManifest extends DataModelBase<IRawServiceManifest> {
             });
 
             this.packages = packages;
+            return of(null);
     }
 
     private getServiceManifest(appTypeName: string, appTypeVersion: string, manifestName: string,
@@ -490,6 +492,18 @@ export class CreateServiceDescription {
             ServiceName: "",
             Scheme: "1"
         });
+    }
+
+    public resolveCorrelationScheme(scheme: string) {
+        return FabricEnumValues.ServiceCorrelationSchemes[+scheme];
+    }
+
+    public resolveLoadMetricWeight(scheme: string) {
+        return FabricEnumValues.ServiceLoadMetricWeights[+scheme];
+    }
+
+    public resolvePlacementPolicyType(scheme: string) {
+        return FabricEnumValues.PlacementPolicies[+scheme];
     }
 
     public addLoadMetric(): void {

@@ -3,6 +3,7 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { Utils } from 'src/app/Utils/Utils';
+import { FabricEventInstanceModel } from 'src/app/Models/eventstore/Events';
 
 @Component({
   selector: 'app-row-display',
@@ -11,7 +12,7 @@ import { Utils } from 'src/app/Utils/Utils';
 })
 export class RowDisplayComponent implements OnInit, DetailBaseComponent {
 
-  item: any;
+  item: any; //FabricEventInstanceModel
   listSetting: ListColumnSetting;
 
   color =  "white";
@@ -19,6 +20,7 @@ export class RowDisplayComponent implements OnInit, DetailBaseComponent {
   constructor() { }
 
   ngOnInit() { 
+    console.log(this.item)
     //TODO FIX THIS EVERYWHERE
     this.value = Utils.result(this.item, this.listSetting.propertyPath)
 

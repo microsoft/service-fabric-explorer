@@ -84,7 +84,11 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
               },
               tooltip: {
                   overflowMethod: "flip"
-              }, stack: false
+              }, stack: true,
+              stackSubgroups: true,
+              maxHeight: "700px",
+              verticalScroll: true,
+              width: "95%"
           });
           this._timeline.fit();
 

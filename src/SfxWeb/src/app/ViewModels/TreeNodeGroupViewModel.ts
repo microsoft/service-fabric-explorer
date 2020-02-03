@@ -51,7 +51,6 @@ export class TreeNodeGroupViewModel {
     private _currentGetChildrenPromise: Subject<any>;
 
     constructor(tree: TreeViewModel, owningNode: TreeNodeViewModel, childrenQuery: () => Observable<ITreeNode[]>) {
-        console.log(this.owningNode)
         this._tree = tree;
         this.owningNode = owningNode;
         this.childrenQuery = childrenQuery;
@@ -147,7 +146,6 @@ export class TreeNodeGroupViewModel {
 
         return this.childrenQuery().pipe(mergeMap(response => {
             let children = this.children;
-
             // Remove nodes that no longer exist
             for (let i = 0; i < children.length; i++) {
                 let node = children[i];
@@ -230,7 +228,7 @@ export class TreeNodeGroupViewModel {
                 if (this.owningNode && this.owningNode.listSettings) {
                     this.owningNode.listSettings.count = this.children.length;
                 }
-                console.log(this.children);
+
                 this._currentGetChildrenPromise.next();
                 this._currentGetChildrenPromise.complete();
                 this._currentGetChildrenPromise = null;

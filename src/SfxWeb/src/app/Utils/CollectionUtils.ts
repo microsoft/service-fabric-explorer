@@ -49,7 +49,7 @@ export class CollectionUtils {
             }
         });
         //console.log(collection);
-        return collection
+        return [].concat(collection);
     }
 
     /**

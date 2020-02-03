@@ -26,6 +26,7 @@ export abstract class FabricEventBase implements IFabricEventMetadata, IEventPro
     private _hasCorrelatedEvents?: boolean;
     private _eventProperties: { [key: string]: any; } = {};
 
+    public raw: { [key: string]: any; } = {};
     public get kind() { return this._kind; }
     public get category() { return this._category; }
     public get eventInstanceId() { return this._eventInstanceId; }
@@ -35,6 +36,7 @@ export abstract class FabricEventBase implements IFabricEventMetadata, IEventPro
     public get eventProperties() { return this._eventProperties; }
 
     public fillFromJSON(responseItem: any) {
+        this.raw = responseItem;
         for (const property in responseItem) {
             if (!this.extractField(property, responseItem[property])) {
                 this.eventProperties[property] = responseItem[property];

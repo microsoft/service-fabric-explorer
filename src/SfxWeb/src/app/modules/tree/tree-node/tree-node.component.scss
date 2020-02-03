@@ -77,12 +77,12 @@
 
     &:hover {
         .hidden {
-            display: inherit;
+            z-index: 1;
         }
     }
 
     .hidden {
-        display: none;
+        z-index: -1;
     }
 }
 

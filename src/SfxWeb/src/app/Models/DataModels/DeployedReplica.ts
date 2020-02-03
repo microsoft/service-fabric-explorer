@@ -98,6 +98,7 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedReplica> {
         return this.data.restClient.getPartitionById(this.raw.PartitionId, ResponseMessageHandlers.silentResponseMessageHandler).pipe(mergeMap(data => {
             this.partition = data;
+            console.log(this.partition)
             return this.data.restClient.getDeployedReplica(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.raw.PartitionId, messageHandler)
         })).pipe(map( values => values[0]))
         //TODO check into this

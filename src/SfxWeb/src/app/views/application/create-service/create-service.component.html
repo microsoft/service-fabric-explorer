@@ -1,8 +1,8 @@
-<form name="createServiceForm" *ngIf="description">
+<form name="createServiceForm" *ngIf="description" class="action-modal">
     <div class="modal-header">
         <h4 class="modal-title">Create Service</h4>
     </div>
-    <div class="modal-body">
+    <div class="modal-body" style="max-height: 550px;">
         <dl class="dl-horizontal">
             <dt>Service Kind</dt>
             <dd>
@@ -24,16 +24,10 @@
             <dt title="Service Package Activation Mode">Service Package Activation Mode</dt>
             <dd>
                 <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="description.raw.ServicePackageActivationMode" [ngModelOptions]="{standalone: true}">
-                    <button class="btn btn-primary" *ngFor="let activationMode of description.servicePackageActivationModes" ngbButtonLabel [value]="activationMode">
-                        {{activationMode}}
-                    </button>
+                    <label class=" flat-button checkbox-push solid-grey" *ngFor="let activationMode of description.servicePackageActivationModes; let i = index;" ngbButtonLabel>
+                        <input ngbButton type="radio" [value]="i.toString()"> {{activationMode}}
+                    </label>
                   </div>
-                <!-- <div class="btn-group">
-                    <button class="btn btn-primary" *ngFor="let activationMode of description.servicePackageActivationModes" [(ngModel)]="description.raw.ServicePackageActivationMode"
-                        uib-btn-radio="index.toString()" [ngModelOptions]="{standalone: true}">
-                        {{activationMode}}
-                    </button>
-                </div> -->
             </dd>
             <dt>Initialization Data</dt>
             <dd>
@@ -41,263 +35,292 @@
                     title="Hexadecimal string with even length, e.g. 13A013FF" aria-label="Initialization Data" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.initializationData"
                     pattern="/^([0-9a-fA-F][0-9a-fA-F])+$/">
             </dd>
+            <dt>
+                Create From Template
+            </dt>
             <dd class="checkbox-container-default">
-                <label>
-                    <input type="checkbox" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.createFromTemplate" (ngModelChange)="description.isAdvancedOptionCollapsed = true" [ngModelOptions]="{standalone: true}">Create From Template
-                </label>
+                    <input type="checkbox" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.createFromTemplate"  style="float: left; width: auto;"
+                            (ngModelChange)="description.isAdvancedOptionCollapsed = true" [ngModelOptions]="{standalone: true}">
             </dd>
         </dl>
 
-        <button (click)="description.toggleAdvancedOptions()" [disabled]="description.createFromTemplate" role="button">
-            {{description.isAdvancedOptionCollapsed ? "Show" : "Hide"}} Advanced Options
-        </button>
-
-        
-        <!-- <app-collapse-container [collapsed]="description.isAdvancedOptionCollapsed" *ngIf="!description.createFromTemplate">
+        <app-collapse-container [collapsed]="description.isAdvancedOptionCollapsed" *ngIf="!description.createFromTemplate" >
             <h4 collapse-header>{{description.isAdvancedOptionCollapsed ? "Show" : "Hide"}} Advanced Options</h4>
-        </app-collapse-container> -->
+            <div collapse-body>
+                <dl class="dl-horizontal" >
+                    <dt>Service Dns Name</dt>
+                    <dd>
+                        <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.ServiceDnsName" aria-label="Service Dns Name">
+                    </dd>
+                    <dt *ngIf="!serviceType.raw.ServiceTypeDescription.IsStateful">Instance Count</dt>
+                    <dd *ngIf="!serviceType.raw.ServiceTypeDescription.IsStateful">
+                        <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.InstanceCount" aria-label="Instance Count" min="1" aria-valuemin="1" integer>
+                    </dd>
+                    <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">Has Persisted State</dt>
+                    <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
+                        <input type="text" class="input-flat" readonly="readonly" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.HasPersistedState" aria-label="Has Persisted State">
+                    </dd>
+                    <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">Min Replica Set Size</dt>
+                    <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
+                        <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.MinReplicaSetSize" name="MinReplicaSetSize" 
+                        aria-label="Min Replica Set Size" min="1" aria-valuemin="1" integer>                
+                    </dd>
+                    <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">Target Replica Set Size</dt>
+                    <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
+                        <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.TargetReplicaSetSize" aria-label="Target Replica Set Size" min="1" aria-valuemin="1" integer>
+                    </dd>
+                    <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful" title="Replica Restart Wait Duration">Replica Restart Wait Duration</dt>
+                    <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
+                        <input type="number" class="input-flat" autocomplete="off" placeholder="Duration in seconds" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.ReplicaRestartWaitDurationSeconds"
+                            aria-label="Replica Restart Wait Duration" min="0" aria-valuemin="0">
+                    </dd>
+                    <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful" title="Quorum Loss Wait Duration">Quorum Loss Wait Duration</dt>
+                    <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
+                        <input type="number" class="input-flat" autocomplete="off" placeholder="Duration in seconds" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.QuorumLossWaitDurationSeconds"
+                            aria-label="Quorum Loss Wait Duration" min="0" aria-valuemin="0">
+                    </dd>
+                    <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful" title="Stand By Replica Keep Duration">Stand By Replica Keep Duration</dt>
+                    <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
+                        <input type="number" class="input-flat" autocomplete="off" placeholder="Duration in seconds" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.StandByReplicaKeepDurationSeconds"
+                            aria-label="Stand By Replica Keep Duration" min="0" aria-valuemin="0">
+                    </dd>
+                    <dt>Placement Constraints</dt>
+                    <dd>
+                        <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PlacementConstraints" aria-label="Placement Constraints">
+                    </dd>
+                    <dt>Partition Scheme</dt>
+                    <dd>
+                        <!-- <div class="btn-group">
+                            <span *ngFor="let partitionScheme of description.servicePartitionKinds">
+                                <button class="btn btn-primary" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.PartitionScheme"
+                                *ngIf="index > 0" uib-btn-radio="index.toString()">
+                                {{partitionScheme}}
+                            </button>
+                            </span>
+                        </div> -->
+                        <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="description.raw.PartitionDescription.PartitionScheme" [ngModelOptions]="{standalone: true}">
+                            <label class=" flat-button checkbox-push solid-grey" *ngFor="let partitionScheme of description.servicePartitionKinds;  let i = index;" ngbButtonLabel>
+                                <input ngbButton type="radio" [value]="i.toString()"> {{partitionScheme}}
+                            </label>
+                        </div>
+                        <dl class="dl-horizontal short">
+                            <dt *ngIf="description.raw.PartitionDescription.PartitionScheme !== '1'">Count</dt>
+                            <dd *ngIf="description.raw.PartitionDescription.PartitionScheme !== '1'">
+                                <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.Count" required
+                                    aria-label="Count" min="1" aria-valuemin="1">
+                            </dd>
+                            <dt *ngIf="description.raw.PartitionDescription.PartitionScheme === '2'">Low Key</dt>
+                            <dd *ngIf="description.raw.PartitionDescription.PartitionScheme === '2'">
+                                <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.LowKey" required
+                                    aria-label="Low Key">
+                            </dd>
+                            <dt *ngIf="description.raw.PartitionDescription.PartitionScheme === '2'">High Key</dt>
+                            <dd *ngIf="description.raw.PartitionDescription.PartitionScheme === '2'">
+                                <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.HighKey" required
+                                    aria-label="High Key">
+                            </dd>
+                            <dt *ngIf="description.raw.PartitionDescription.PartitionScheme === '3'">Name List</dt>
+                            <dd *ngIf="description.raw.PartitionDescription.PartitionScheme === '3'">
+                                <div class="table-responsive">
+                                    <table class="table">
+                                        <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>
+                                                    <button (click)="description.addName()" role="button" class="flat-button">Add</button>
+                                                </th>
+                                            </tr>
+                                        </thead>
+                                        <tbody>
+                                            <tr *ngFor="let name of description.raw.PartitionDescription.Names">
+                                                <td>
+                                                    <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.Names[index]"
+                                                        required aria-label="Name">
+                                                </td>
+                                                <td>
+                                                    <button (click)="description.raw.PartitionDescription.Names.splice(index, 1)" class="flat-button" role="button">Remove</button>
+                                                </td>
+                                            </tr>
+                                            <tr *ngIf="description.raw.PartitionDescription.Names.length === 0">
+                                                <td colspan="2">No items to display</td>
+                                            </tr>
+                                        </tbody>
+                                    </table>
+                                </div>
+                            </dd>
+                        </dl>
+                    </dd>
+                    <dt>Placement Policies</dt>
+                    <dd>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Type</th>
+                                        <th>Domain Name</th>
+                                        <th>
+                                            <button (click)="description.addPlacementPolicy()" class="simple-button">
+                                                Add
+                                            </button>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let placementPolicy of description.raw.ServicePlacementPolicies">
+                                        <td>
+                                            <div ngbDropdown container="body">
+                                                <button class="simple-button" ngbDropdownToggle>
+                                                    {{description.resolvePlacementPolicyType(placementPolicy.Type)}}
+                                                </button>
+                                                <div ngbDropdownMenu>
+                                                    <span *ngFor="let placementPolicyOption of description.placementPolicies; let isFirst=first; let i = index">
+                                                        <button ngbDropdownItem (click)="placementPolicy.Type = i.toString()" *ngIf="!isFirst">
+                                                        {{placementPolicyOption}}
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>
+                                            <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="placementPolicy.DomainName" required aria-label="Domain name">
+                                        </td>
+                                        <td>
+                                            <button (click)="description.raw.ServicePlacementPolicies.splice(index, 1)" role="button" class="flat-button">Remove</button>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="description.raw.ServicePlacementPolicies.length === 0">
+                                        <td colspan="3">No items to display</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </dd>
+                    <dt>Service Correlations</dt>
+                    <dd>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Scheme</th>
+                                        <th>Service Name</th>
+                                        <th>
+                                            <button (click)="description.addServiceCorrelation()" class="simple-button">Add</button>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let correlation of description.raw.CorrelationScheme">
+                                        <td>
+                                            <div ngbDropdown container="body">
+                                                <button class="simple-button" ngbDropdownToggle>
+                                                    {{description.resolveCorrelationScheme(correlation.Scheme)}}
+                                                </button>
+                                                <div ngbDropdownMenu>
+                                                    <span *ngFor="let correlationSchemeOption of description.serviceCorrelationSchemes; let isFirst=first; let i = index">
+                                                        <button ngbDropdownItem (click)="correlation.Scheme = i.toString()" *ngIf="!isFirst">
+                                                        {{correlationSchemeOption}}
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <!-- <div uib-dropdown dropdown-append-to-body>
+                                                <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select a scheme">
+                                                    {{description.resolveCorrelationScheme(correlation.Scheme)}}
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
+                                                    <li class="dropdown-item" *ngFor="let correlationSchemeOption of description.serviceCorrelationSchemes">
+                                                        <button (click)="correlation.Scheme = index.toString()" *ngIf="index > 0">{{correlationSchemeOption}}</button>
+                                                    </li>
+                                                </ul>
+                                            </div> -->
+                                        </td>
+                                        <td>
+                                            <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="correlation.ServiceName" required aria-label="Service name">
+                                        </td>
+                                        <td>
+                                            <button (click)="description.raw.CorrelationScheme.splice(index, 1)" class="flat-button">Remove</button>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="description.raw.CorrelationScheme.length === 0">
+                                        <td colspan="3">No items to display</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </dd>
+                    <dt>Load Metrics</dt>
+                    <dd>
+                        <div class="table-responsive">
+                            <table class="table">
+                                <thead>
+                                    <tr>
+                                        <th>Name</th>
+                                        <th>Primary</th>
+                                        <th>Secondary</th>
+                                        <th>Weight</th>
+                                        <th>
+                                            <button (click)="description.addLoadMetric()" class="simple-button">Add</button>
+                                        </th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr *ngFor="let loadMetric of description.raw.ServiceLoadMetrics">
+                                        <td>
+                                            <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="loadMetric.Name" required aria-label="Metric name">
+                                        </td>
+                                        <td>
+                                            <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="loadMetric.PrimaryDefaultLoad" required aria-label="Primary default load" min="0" aria-valuemin="0">
+                                        </td>
+                                        <td>
+                                            <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="loadMetric.SecondaryDefaultLoad" required aria-label="Secondary default load" min="0" aria-valuemin="0">
+                                        </td>
+                                        <td>
+                                            <div ngbDropdown container="body">
+                                                <button class="simple-button" ngbDropdownToggle aria-label="Select a weight">
+                                                    {{description.resolveLoadMetricWeight(loadMetric.Weight)}}
+                                                </button>
+                                                <div ngbDropdownMenu>
+                                                    <span *ngFor="let loadMetricOption of description.serviceLoadMetricWeights; let isFirst=first; let i = index">
+                                                        <button ngbDropdownItem (click)="loadMetric.Weight = i.toString()" *ngIf="!isFirst">
+                                                        {{loadMetricOption}}
+                                                        </button>
+                                                    </span>
+                                                </div>
+                                            </div>
+                                            <!-- <div uib-dropdown dropdown-append-to-body>
+                                                <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select a weight">
+                                                    {{description.resolveLoadMetricWeight(loadMetric.Weight)}}
+                                                    <span class="caret"></span>
+                                                </button>
+                                                <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
+                                                    <li class="dropdown-item" *ngFor="let loadMetricOption of description.serviceLoadMetricWeights">
+                                                        <button (click)="loadMetric.Weight = index.toString()">{{loadMetricOption}}</button>
+                                                    </li>
+                                                </ul>
+                                            </div> -->
+                                        </td>
+                                        <td>
+                                            <button (click)="description.raw.ServiceLoadMetrics.splice(index, 1)" class="flat-button">Remove</button>
+                                        </td>
+                                    </tr>
+                                    <tr *ngIf="description.raw.ServiceLoadMetrics.length === 0">
+                                        <td colspan="5">No items to display</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+        </app-collapse-container>
 
-        <div *ngIf="!description.createFromTemplate">
-            <dl class="dl-horizontal collapse" *ngIf="description.isAdvancedOptionCollapsed">
-                <dt>Service Dns Name</dt>
-                <dd>
-                    <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.ServiceDnsName" aria-label="Service Dns Name">
-                </dd>
-                <dt *ngIf="!serviceType.raw.ServiceTypeDescription.IsStateful">Instance Count</dt>
-                <dd *ngIf="!serviceType.raw.ServiceTypeDescription.IsStateful">
-                    <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.InstanceCount" aria-label="Instance Count" min="1" aria-valuemin="1" integer>
-                </dd>
-                <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">Has Persisted State</dt>
-                <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
-                    <input type="text" class="input-flat" readonly="readonly" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.HasPersistedState" aria-label="Has Persisted State">
-                </dd>
-                <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">Min Replica Set Size</dt>
-                <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
-                    <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.MinReplicaSetSize" name="MinReplicaSetSize" 
-                    aria-label="Min Replica Set Size" min="1" aria-valuemin="1" integer>                
-                </dd>
-                <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">Target Replica Set Size</dt>
-                <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
-                    <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.TargetReplicaSetSize" aria-label="Target Replica Set Size" min="1" aria-valuemin="1" integer>
-                </dd>
-                <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful" title="Replica Restart Wait Duration">Replica Restart Wait Duration</dt>
-                <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
-                    <input type="number" class="input-flat" autocomplete="off" placeholder="Duration in seconds" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.ReplicaRestartWaitDurationSeconds"
-                        aria-label="Replica Restart Wait Duration" min="0" aria-valuemin="0">
-                </dd>
-                <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful" title="Quorum Loss Wait Duration">Quorum Loss Wait Duration</dt>
-                <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
-                    <input type="number" class="input-flat" autocomplete="off" placeholder="Duration in seconds" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.QuorumLossWaitDurationSeconds"
-                        aria-label="Quorum Loss Wait Duration" min="0" aria-valuemin="0">
-                </dd>
-                <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful" title="Stand By Replica Keep Duration">Stand By Replica Keep Duration</dt>
-                <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">
-                    <input type="number" class="input-flat" autocomplete="off" placeholder="Duration in seconds" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.StandByReplicaKeepDurationSeconds"
-                        aria-label="Stand By Replica Keep Duration" min="0" aria-valuemin="0">
-                </dd>
-                <dt>Placement Constraints</dt>
-                <dd>
-                    <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PlacementConstraints" aria-label="Placement Constraints">
-                </dd>
-                <dt>Partition Scheme</dt>
-                <dd>
-                    <div class="btn-group">
-                        <span *ngFor="let partitionScheme of description.servicePartitionKinds">
-                            <button class="btn btn-primary" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.PartitionScheme"
-                            *ngIf="index > 0" uib-btn-radio="index.toString()">
-                            {{partitionScheme}}
-                        </button>
-                        </span>
-                    </div>
-                    <dl class="dl-horizontal short">
-                        <dt *ngIf="description.raw.PartitionDescription.PartitionScheme !== '1'">Count</dt>
-                        <dd *ngIf="description.raw.PartitionDescription.PartitionScheme !== '1'">
-                            <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.Count" required
-                                aria-label="Count" min="1" aria-valuemin="1">
-                        </dd>
-                        <dt *ngIf="description.raw.PartitionDescription.PartitionScheme === '2'">Low Key</dt>
-                        <dd *ngIf="description.raw.PartitionDescription.PartitionScheme === '2'">
-                            <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.LowKey" required
-                                aria-label="Low Key">
-                        </dd>
-                        <dt *ngIf="description.raw.PartitionDescription.PartitionScheme === '2'">High Key</dt>
-                        <dd *ngIf="description.raw.PartitionDescription.PartitionScheme === '2'">
-                            <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.HighKey" required
-                                aria-label="High Key">
-                        </dd>
-                        <dt *ngIf="description.raw.PartitionDescription.PartitionScheme === '3'">Name List</dt>
-                        <dd *ngIf="description.raw.PartitionDescription.PartitionScheme === '3'">
-                            <div class="table-responsive">
-                                <table class="table">
-                                    <thead>
-                                        <tr>
-                                            <th>Name</th>
-                                            <th>
-                                                <a href="" (click)="description.addName()" role="button">Add</a>
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr *ngFor="let name of description.raw.PartitionDescription.Names">
-                                            <td>
-                                                <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.Names[index]"
-                                                    required aria-label="Name">
-                                            </td>
-                                            <td>
-                                                <a href="" (click)="description.raw.PartitionDescription.Names.splice(index, 1)"  role="button">Remove</a>
-                                            </td>
-                                        </tr>
-                                        <tr *ngIf="description.raw.PartitionDescription.Names.length === 0">
-                                            <td colspan="2">No items to display</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </dd>
-                    </dl>
-                </dd>
-                <dt>Placement Policies</dt>
-                <dd>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Type</th>
-                                    <th>Domain Name</th>
-                                    <th>
-                                        <a href="" (click)="description.addPlacementPolicy()" role="button">Add</a>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let placementPolicy of description.raw.ServicePlacementPolicies">
-                                    <td>
-                                        <div uib-dropdown dropdown-append-to-body>
-                                            <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select a placement policy">
-                                                {{description.resolvePlacementPolicyType(placementPolicy.Type)}}
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
-                                                <li class="dropdown-item" *ngFor="let placementPolicyOption of description.placementPolicies;">
-                                                    <button *ngIf="index > 0" (click)="placementPolicy.Type = index.toString()">{{placementPolicyOption}}</button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="placementPolicy.DomainName" required aria-label="Domain name">
-                                    </td>
-                                    <td>
-                                        <button (click)="description.raw.ServicePlacementPolicies.splice(index, 1)" role="button">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="description.raw.ServicePlacementPolicies.length === 0">
-                                    <td colspan="3">No items to display</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </dd>
-                <dt>Service Correlations</dt>
-                <dd>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Scheme</th>
-                                    <th>Service Name</th>
-                                    <th>
-                                        <button (click)="description.addServiceCorrelation()">Add</button>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let correlation of description.raw.CorrelationScheme">
-                                    <td>
-                                        <div uib-dropdown dropdown-append-to-body>
-                                            <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select a scheme">
-                                                {{description.resolveCorrelationScheme(correlation.Scheme)}}
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
-                                                <li class="dropdown-item" *ngFor="let correlationSchemeOption of description.serviceCorrelationSchemes">
-                                                    <button (click)="correlation.Scheme = index.toString()" *ngIf="index > 0">{{correlationSchemeOption}}</button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="correlation.ServiceName" required aria-label="Service name">
-                                    </td>
-                                    <td>
-                                        <button (click)="description.raw.CorrelationScheme.splice(index, 1)" >Remove</button>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="description.raw.CorrelationScheme.length === 0">
-                                    <td colspan="3">No items to display</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </dd>
-                <dt>Load Metrics</dt>
-                <dd>
-                    <div class="table-responsive">
-                        <table class="table">
-                            <thead>
-                                <tr>
-                                    <th>Name</th>
-                                    <th>Primary</th>
-                                    <th>Secondary</th>
-                                    <th>Weight</th>
-                                    <th>
-                                        <button (click)="description.addLoadMetric()">Add</button>
-                                    </th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr *ngFor="let loadMetric of description.raw.ServiceLoadMetrics">
-                                    <td>
-                                        <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="loadMetric.Name" required aria-label="Metric name">
-                                    </td>
-                                    <td>
-                                        <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="loadMetric.PrimaryDefaultLoad" required aria-label="Primary default load" min="0" aria-valuemin="0">
-                                    </td>
-                                    <td>
-                                        <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="loadMetric.SecondaryDefaultLoad" required aria-label="Secondary default load" min="0" aria-valuemin="0">
-                                    </td>
-                                    <td>
-                                        <div uib-dropdown dropdown-append-to-body>
-                                            <button type="button" class="btn btn-primary dropdown-toggle" uib-dropdown-toggle aria-label="Select a weight">
-                                                {{description.resolveLoadMetricWeight(loadMetric.Weight)}}
-                                                <span class="caret"></span>
-                                            </button>
-                                            <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
-                                                <li class="dropdown-item" *ngFor="let loadMetricOption of description.serviceLoadMetricWeights">
-                                                    <button (click)="loadMetric.Weight = index.toString()">{{loadMetricOption}}</button>
-                                                </li>
-                                            </ul>
-                                        </div>
-                                    </td>
-                                    <td>
-                                        <button (click)="description.raw.ServiceLoadMetrics.splice(index, 1)">Remove</button>
-                                    </td>
-                                </tr>
-                                <tr *ngIf="description.raw.ServiceLoadMetrics.length === 0">
-                                    <td colspan="5">No items to display</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </dd>
-            </dl>
-        </div>
 
 
     </div>
     <div class="modal-footer">
-        <a href="" id="reset-dialog-link" (click)="description.reset()" title="Reset dialog with default settings">Reset</a>
-        <button type="submit" class="btn btn-primary" (click)="create()" >Create</button>
-        <button type="button" class="btn btn-default" (click)="cancel()">Cancel</button>
+        <button (click)="description.reset()" title="Reset dialog with default settings" class="flat-button">Reset</button>
+        <button type="submit" class="solid-button blue" (click)="create()" >Create</button>
+        <button type="button" class="flat-button" (click)="cancel()">Cancel</button>
     </div>
 </form>

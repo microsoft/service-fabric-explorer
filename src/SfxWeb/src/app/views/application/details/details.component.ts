@@ -34,7 +34,11 @@ export class DetailsComponent extends ApplicationBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    this.app.applicationBackupConfigurationInfoCollection.refresh(messageHandler);
+    this.subscriptions.add(this.data.clusterManifest.ensureInitialized().subscribe( () => {
+      if(this.data.clusterManifest.isBackupRestoreEnabled){
+        this.app.applicationBackupConfigurationInfoCollection.refresh(messageHandler);
+      }
+    }))
     return this.app.health.refresh(messageHandler);
   }
 

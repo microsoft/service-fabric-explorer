@@ -26,6 +26,8 @@ export class BaseComponent extends BaseController {
   replicas: DeployedReplicaCollection;
   listSettings: ListSettings;
 
+  type: string;
+
   constructor(protected data: DataService, injector: Injector, private tree: TreeService, private settings: SettingsService) { 
     super(injector);
   }
@@ -39,12 +41,15 @@ export class BaseComponent extends BaseController {
       IdGenerator.deployedServicePackage(this.serviceId, this.activationId),
       IdGenerator.deployedReplicaGroup()
     ], true);
+
+    this.listSettings = null;
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.data.getDeployedReplicas(this.nodeName, this.appId, this.serviceId, this.activationId, true, messageHandler)
     .pipe(map(replicas => {
         this.replicas = replicas;
+        this.type = replicas.isStatelessService ? 'Deployed Instances' : 'Deployed Replicas';
 
         if (!this.listSettings && replicas.length > 0) {
             let replica = replicas.collection[0];
@@ -66,8 +71,7 @@ export class BaseComponent extends BaseController {
                 columnSettings.splice(1, 0, new ListColumnSetting("servicePackageActivationId", "Service Package Activation Id"));
             }
 
-            // Keep the sort properties in sync with the sortBy for ClusterTreeService.getDeployedReplicas
-            this.listSettings = this.settings.getNewOrExistingListSettings("replicas", defaultSortProperties, columnSettings);
+            this.listSettings = this.settings.getNewOrExistingListSettings(`replicas-${this.serviceId}${this.nodeName}`, defaultSortProperties, columnSettings);
         }
     }));
   }

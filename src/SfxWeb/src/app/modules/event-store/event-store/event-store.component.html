@@ -17,13 +17,24 @@
             </div>
         </div>
         <div *ngIf="timelineGenerator">
-            <div class="btn-group">
-                <!-- <label class="btn btn-primary" ng-model="dwSelector.showAllEvents" uib-btn-radio="false">Correlated</label>
-                <label class="btn btn-primary" ng-model="dwSelector.showAllEvents" uib-btn-radio="true">All</label> -->
+            <div class="btn-group btn-group-toggle" ngbRadioGroup [(ngModel)]="showAllEvents">
+                <label class="flat-button checkbox-push solid-grey" ngbButtonLabel>
+                    <input ngbButton type="radio" [value]="false"> Correlated
+                </label>
+                <label class="flat-button checkbox-push solid-grey" ngbButtonLabel>
+                    <input ngbButton type="radio" [value]="true"> All
+                </label>
             </div>
-            <span class="bowtie-icon bowtie-status-help-outline" title="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
+            <!-- <div class="btn-group">
+                <label class="btn btn-primary" ng-model="dwSelector.showAllEvents" uib-btn-radio="false">Correlated</label>
+                <label class="btn btn-primary" ng-model="dwSelector.showAllEvents" uib-btn-radio="true">All</label>
+            </div> -->
+            <span class="mif-info" title="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
         </div>
-        <app-event-store-timeline [events]="timeLineEventsData" *ngIf="timeLineEventsData"></app-event-store-timeline>
+
+        <div *ngIf="timeLineEventsData">
+            <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>            
+        </div>
 
                     <!-- <sfx-detail-list-details-view details-list-settings="eventsList.detailsSettings"></sfx-detail-list-details-view> -->
 

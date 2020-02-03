@@ -43,7 +43,7 @@
     <detail-list *ngIf="node" [list]="node.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
 </div>
 
-<div class="detail-pane essen-pane">
+<div class="detail-pane essen-pane"  *ngIf="deployedApps">
     <h4>Deployed Applications</h4>
-    <detail-list *ngIf="deployedApps" [list]="deployedApps" [listSettings]="listSettings"></detail-list>
+    <detail-list [list]="deployedApps.collection" [listSettings]="listSettings"></detail-list>
 </div>

@@ -4,15 +4,13 @@ $modal-dt-width: 160px;
 $modal-short-dt-width: 100px;
 
 .action-modal {
-    background-color: $modal-content-bg;
+    background-color: #373737;
+    font-weight: $font-weight-normal;
 
     .input-flat {
+        background-color: $dialog-input-bg-color;
         border: 0px solid;
         color: white;
-    }
-
-    .input-flat:not([readonly]) {
-        background-color: $dialog-input-bg-color;
     }
 
     [type="checkbox"] + label:before {
@@ -40,14 +38,11 @@ $modal-short-dt-width: 100px;
 
         .dl-horizontal {
             margin-bottom: 0px;
+            font-weight: $font-weight-normal !important;
 
             &.short {
                 dt {
                     width: $modal-short-dt-width;
-                }
-
-                dd {
-                    margin-left: $modal-short-dt-width + 10px;
                 }
             }
 
@@ -55,11 +50,9 @@ $modal-short-dt-width: 100px;
                 width: $modal-dt-width;
                 margin: 5px 0px;
                 text-align: left;
-                font-weight: $font-weight-semibold;
             }
 
             dd {
-                margin-left: $modal-dt-width + 10px;
                 padding: 5px 0px;
 
                 dl {
@@ -91,7 +84,7 @@ $modal-short-dt-width: 100px;
 
                 .table {
                     margin-bottom: 0;
-
+                    color: white;
                     thead > tr > th {
                         font-weight: $font-weight-semibold;
                         border-bottom: 1px solid $tree-searchbox-border-color;

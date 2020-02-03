@@ -1,10 +1,7 @@
-import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
-import { switchMap, mergeMap, map } from 'rxjs/operators';
-import { ActivatedRoute, ParamMap, ActivatedRouteSnapshot } from '@angular/router';
-import { IdUtils } from 'src/app/Utils/IdUtils';
-import { of, Subscription, Observable, forkJoin } from 'rxjs';
+import { Component, Injector } from '@angular/core';
+import { map } from 'rxjs/operators';
+import { Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
-import { Node } from 'src/app/Models/DataModels/Node';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { ListSettings, ListColumnSetting, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -38,11 +35,9 @@ export class EssentialsComponent extends NodeBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return forkJoin([
-      this.node.health.refresh(messageHandler),
-      this.node.deployedApps.refresh(messageHandler).pipe(map(deployedApps => {
+    return this.node.deployedApps.refresh(messageHandler).pipe(map(deployedApps => {
         this.deployedApps = deployedApps;
+        console.log(this.deployedApps)
       }))
-    ])
   }
 }

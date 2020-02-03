@@ -1,7 +1,7 @@
 <div *ngIf="replicas">
-    <app-navbar [type]="replicas.isStatelessService ? 'Deployed Instances' : 'Deployed Replicas'" ></app-navbar>
+    <app-navbar [type]="type" ></app-navbar>
     <div class="main-view">
-        <div class="detail-pane">
+        <div class="detail-pane" *ngIf="listSettings">
             <detail-list [list]="replicas" [listSettings]="listSettings"></detail-list>
         </div>
     </div>

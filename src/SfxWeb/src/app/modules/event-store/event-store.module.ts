@@ -7,6 +7,7 @@ import { DoubleSliderComponent } from './double-slider/double-slider.component';
 import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
 import { FullDescriptionComponent } from './full-description/full-description.component';
 import { RowDisplayComponent } from './row-display/row-display.component';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -14,7 +15,8 @@ import { RowDisplayComponent } from './row-display/row-display.component';
   declarations: [EventStoreComponent, EventStoreTimelineComponent, EventStoreTableComponent, DoubleSliderComponent, FullDescriptionComponent, RowDisplayComponent],
   imports: [
     CommonModule,
-    DetailListTemplatesModule
+    DetailListTemplatesModule,
+    FormsModule
   ],
   exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent],
   entryComponents: [FullDescriptionComponent, RowDisplayComponent]

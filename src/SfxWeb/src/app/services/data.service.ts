@@ -62,6 +62,7 @@ export class DataService {
     this.appTypeGroups = new ApplicationTypeGroupCollection(this);
     this.nodes = new NodeCollection(this);
     this.systemApp = new SystemApplication(this);
+    this.backupPolicies = new BackupPolicyCollection(this);
    }
 
 
@@ -165,12 +166,13 @@ export class DataService {
 
   public getServiceTypes(appTypeName: string, appTypeVersion: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ServiceTypeCollection> {
     return this.getAppType(appTypeName, appTypeVersion, false, messageHandler).pipe(mergeMap(appType => {
-        return appType.serviceTypes.ensureInitialized(forceRefresh, messageHandler), map( () => appType.serviceTypes);
+        return appType.serviceTypes.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => appType.serviceTypes));
     }));
   }
 
   public getServiceType(appTypeName: string, appTypeVersion: string, serviceTypeName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ServiceType> {
     return this.getServiceTypes(appTypeName, appTypeVersion, false, messageHandler).pipe(mergeMap(collection => {
+        console.log(collection)
         return this.tryGetValidItem(collection, serviceTypeName, forceRefresh, messageHandler);
     }));
   }
@@ -261,6 +263,16 @@ export class DataService {
     return this.getDeployedReplicas(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(collection => {
         return this.tryGetValidItem(collection, IdGenerator.deployedReplica(partitionId), forceRefresh, messageHandler);
       }));
+  }
+
+  public refreshBackupPolicies(messageHandler: IResponseMessageHandler): Observable<any> {
+    return this.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
+        if(this.clusterManifest.isBackupRestoreEnabled){
+            return this.backupPolicies.refresh(messageHandler);
+        }else{
+            return of(null)
+        }
+      }))
   }
 
   public createClusterEventList(): ClusterEventList {

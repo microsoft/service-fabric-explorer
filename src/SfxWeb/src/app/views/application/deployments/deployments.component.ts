@@ -32,8 +32,6 @@ export class DeploymentsComponent extends ApplicationBaseController {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.app.health.refresh(messageHandler).pipe(map(() => {
       this.deployedApplicationsHealthStates = this.app.health.deployedApplicationHealthStates;
-      console.log(this.deployedApplicationsHealthStates);
-
     }));
   }
 }

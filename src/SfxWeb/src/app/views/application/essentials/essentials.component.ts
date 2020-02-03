@@ -54,8 +54,9 @@ export class EssentialsComponent extends ApplicationBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    this.app.applicationBackupConfigurationInfoCollection.refresh(messageHandler);
+    this.data.refreshBackupPolicies(messageHandler);
 
+    console.log(this.app)
     return forkJoin([
       this.clusterManifest.ensureInitialized(false),
       this.app.upgradeProgress.refresh(messageHandler).pipe(map(upgradeProgress => {
@@ -63,10 +64,9 @@ export class EssentialsComponent extends ApplicationBaseController {
       })),
       this.app.serviceTypes.refresh(messageHandler),
       this.app.services.refresh(messageHandler),
-    ])
-    // .pipe(map( () => {
-    //   this.cdr.detectChanges();
-    // }))
+    ]).pipe(map( () => {
+      this.cdr.detectChanges();
+    }))
   }
 
 }

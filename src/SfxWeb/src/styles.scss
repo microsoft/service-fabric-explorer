@@ -793,6 +793,24 @@ app-navbar {
     color: $dashboard-color;
   }
   
+  .vis-panel.vis-left {
+    background-color: #0075c9;
+  }
+  .vis-ltr .vis-label.vis-nested-group .vis-inner {
+    padding-left: 0px;
+    white-space: pre;
+  }
+  
+  .vis-group-level-unknown-but-gte1 {
+    background-color: #0075c9 !important;
+    border: 1px solid white;
+  }
+
+  .vis-item.white {
+    background-color: #ffffff;
+    color: black;
+  }
+
   .vis-item.red {
     background-color: red;
     border-color: darkred;
@@ -817,6 +835,21 @@ app-navbar {
     border-width: 5px;
   }
   
+  .vis-item.orange-point {
+    border-color: $dashboard-warning-color;
+    border-width: 5px;
+  }
+  
+  .vis-item.white-point {
+    border-color: #ffffff;
+    border-width: 5px;
+  }
+  
+  .vis-item.green-point {
+    border-color: $dashboard-ok-color;
+    border-width: 5px;
+  }
+
   .tooltip-test{
     padding: 5px;
     border: solid;

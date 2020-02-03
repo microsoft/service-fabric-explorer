@@ -33,7 +33,6 @@ export class EssentialsComponent extends ApplicationTypeBaseController {
           new ListColumnSetting("raw.Version", "Version"),
           new ListColumnSettingWithFilter("raw.Status", "Status"),
           new ListColumnSettingForApplicationType()
-          // new ListColumnSetting("actions", "Actions", null, false, (item) => `<${Constants.DirectiveNameActionsRow} actions="item.actions" source="serviceTypesTable"></${Constants.DirectiveNameActionsRow}>`)
       ],
       [
           new ListColumnSetting("placeholder", "placeholder", null, false), // Empty column
@@ -49,7 +48,7 @@ export class EssentialsComponent extends ApplicationTypeBaseController {
         new ListColumnSetting("raw.TypeVersion", "Version"),
         new ListColumnSettingForBadge("healthState", "Health State"),
         new ListColumnSettingWithFilter("raw.Status", "Status"),
-    ]);  
+    ]);
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

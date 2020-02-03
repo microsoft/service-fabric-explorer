@@ -194,6 +194,10 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public get imageStoreConnectionString(): string {
         return this._imageStoreConnectionString;
     }
+
+    public get isBackupRestoreEnabled(): boolean {
+        return false;
+    }
 }
 
 export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProgress> {

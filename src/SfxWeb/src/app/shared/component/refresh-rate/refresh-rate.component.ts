@@ -5,7 +5,7 @@ import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
   templateUrl: './refresh-rate.component.html',
   styleUrls: ['./refresh-rate.component.scss']
 })
-export class RefreshRateComponent implements OnInit {
+export class RefreshRateComponent {
   @Input() refresh: boolean = false;
   @Input() 
   set value( val: number) {
@@ -13,7 +13,7 @@ export class RefreshRateComponent implements OnInit {
   }
 
   @Output() onChange = new EventEmitter<string>();
-
+  @Output() onForceRefresh = new EventEmitter<any>();
   refreshRate: number = 0;
 
   displayRate: string | number;
@@ -42,11 +42,11 @@ export class RefreshRateComponent implements OnInit {
     }
   }
 
+  forceRefresh() {
+    this.onForceRefresh.emit();
+  }
+
 
   constructor() { }
-
-  ngOnInit() {
-    // this.change(this.initialValue, false);
-  }
 
 }

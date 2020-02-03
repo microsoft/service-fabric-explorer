@@ -40,7 +40,7 @@ export class DetailsComponent extends ServiceBaseController {
       this.service.health.refresh(messageHandler),
       this.service.description.refresh(messageHandler),
       this.service.partitions.refresh(messageHandler),
-      this.data.backupPolicies.refresh(messageHandler)
+      this.data.refreshBackupPolicies(messageHandler)
     ]);
   }
 }

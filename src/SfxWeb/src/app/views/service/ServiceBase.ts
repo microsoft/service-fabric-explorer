@@ -1,8 +1,8 @@
 import { DataService } from 'src/app/services/data.service';
 import { Injector } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { IdUtils } from 'src/app/Utils/IdUtils';
 import { BaseController } from 'src/app/ViewModels/BaseController';
@@ -20,9 +20,13 @@ export class ServiceBaseController extends BaseController {
     }
   
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.getService(this.appId, this.serviceId, true, messageHandler).pipe(map(service => {
+        return this.data.getService(this.appId, this.serviceId, true, messageHandler).pipe(mergeMap(service => {
             this.service = service;
-            }))
+            return forkJoin([
+              this.service.health.refresh(messageHandler),
+              this.service.description.refresh(messageHandler)
+            ])
+        }))
     }
     
     getParams(route: ActivatedRouteSnapshot): void {

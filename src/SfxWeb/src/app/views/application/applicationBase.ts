@@ -20,6 +20,7 @@ export class ApplicationBaseController extends BaseController {
   
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getApp(this.appId, true, messageHandler).pipe(map(data => {
+          console.log("test")
             this.app = data;
         }));
     }

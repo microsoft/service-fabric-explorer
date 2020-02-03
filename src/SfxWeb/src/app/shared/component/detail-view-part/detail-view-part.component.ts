@@ -29,13 +29,11 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-      console.log(this.data)
       if(this.parent){
         this.resolvedData = this.getResolvedDataObjectInternal(this.data, this.parent);          
       }else{
         this.resolvedData = this.getResolvedDataObject(this.data);
       }
-      console.log(this.resolvedData)
   }
 
   public getResolvedObjectSize(object: any): number {
@@ -64,8 +62,6 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
         }
 
         if (data.hasOwnProperty("raw")) {
-            console.log(data);
-            console.log(data['raw'])
             if (data.raw === undefined|| data.raw === null) {
                 return null;
             }

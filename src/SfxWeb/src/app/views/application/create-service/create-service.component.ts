@@ -21,6 +21,7 @@ export class CreateServiceComponent implements OnInit {
     this.serviceType = this.data.data;
     console.log(this.serviceType)
     this.description = new CreateServiceDescription(this.serviceType, <Application>this.serviceType.parent);
+    console.log(this.description);
   }
 
   create() {
@@ -28,11 +29,12 @@ export class CreateServiceComponent implements OnInit {
       if(this.description) {
         //when success, reset the dialog
         this.description.reset();
+        this.dialogRef.close();
       }
     })
   }
 
   cancel() {
-
+    this.dialogRef.close();
   }
 }

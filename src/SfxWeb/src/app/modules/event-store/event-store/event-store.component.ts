@@ -1,5 +1,5 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ITimelineData, ITimelineDataGenerator } from 'src/app/Models/eventstore/timelineGenerators';
+import { ITimelineData, ITimelineDataGenerator, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
 import { EventListBase } from 'src/app/Models/DataModels/collections/Collections';
 import { FabricEventBase } from 'src/app/Models/eventstore/Events';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
@@ -14,14 +14,16 @@ export class EventStoreComponent implements OnInit {
   //TODO add a button that will set to current time
 
   @Input() eventsList: EventListBase<any>;
-  @Input() timelineGenerator: ITimelineDataGenerator<FabricEventBase>;
+  @Input() timelineGenerator: TimeLineGeneratorBase<FabricEventBase>;
 
   constructor() { }
 
   ngOnInit() {
+    this._showAllEvents = !this.timelineGenerator;
     this.resetSelectionProperties();
     this.setTimelineData();
   }
+
   public static MaxWindowInDays: number = 7;
   public startDateMin: Date;
   public endDateMin: Date;
@@ -31,10 +33,15 @@ export class EventStoreComponent implements OnInit {
   public endDateInit: Date;
   public isResetEnabled: boolean = false;
   public timeLineEventsData: ITimelineData;
+
+  public transformText: string = "Category,Kind";
+
   private isStartSelected: boolean;
   private isEndSelected: boolean;
   private _startDate: Date = null;
   private _endDate: Date = null;
+
+  private _showAllEvents: boolean = false;
 
   public get startDate() { return this._startDate; }
   public get endDate() { return this._endDate; }
@@ -64,6 +71,12 @@ export class EventStoreComponent implements OnInit {
           this.isEndSelected = true;
       }
           this.setNewDateWindow();
+  }
+
+  public get showAllEvents() { return this._showAllEvents; };
+  public set showAllEvents(state: boolean) {
+      this._showAllEvents = state;
+      this.setTimelineData();
   }
 
   public reset(): void {
@@ -100,20 +113,32 @@ export class EventStoreComponent implements OnInit {
   }
 
   private setTimelineData(): void {
-      if (this.timelineGenerator) {
-          this.eventsList.ensureInitialized().subscribe( () => {
-              try {
-                  const d = this.timelineGenerator.consume(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
-                  this.timeLineEventsData = {
-                      groups: d.groups,
-                      items: d.items,
-                      start: this.startDate,
-                      end: this.endDate
-                  };
-              }catch (e) {
-                  console.error(e);
-              }
-          });
-      }
-  }
+    this.eventsList.ensureInitialized().subscribe( () => {
+        try {
+            if (this._showAllEvents) {
+                const d = parseEventsGenerically(this.eventsList.collection.map(event => event.raw), this.transformText);
+
+                this.timeLineEventsData = {
+                    groups: d.groups,
+                    items: d.items,
+                    start: this.startDate,
+                    end: this.endDate
+                };
+
+                console.log(this.timeLineEventsData)
+            }else if (this.timelineGenerator) {
+                const d = this.timelineGenerator.generateTimeLineData(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
+
+                this.timeLineEventsData = {
+                    groups: d.groups,
+                    items: d.items,
+                    start: this.startDate,
+                    end: this.endDate
+                };
+            }
+        }catch (e) {
+            console.error(e);
+        }
+    });
+}
 }
