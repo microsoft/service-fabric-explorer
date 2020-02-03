@@ -4,7 +4,7 @@
   "description": "A proxy for SFX development.",
   "main": "proxy.js",
   "scripts": {
-    "start": "node proxy.js",
+    "start": "node proxy.js -- -p",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
