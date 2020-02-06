@@ -1,150 +1,166 @@
-<form name="createBackupPolicyForm">
-        <div class="modal-header">
-            <h4 class="modal-title">Create Backup Policy</h4>
-        </div>
-        <div class="modal-body">
-            <dl class="dl-horizontal">
-                <dt>Name</dt>
-                <dd>
-                    <input type="text" class="input-flat" [(ngModel)]="backupPolicy.Name" required aria-label="Backup Policy name" name="name">
-                </dd>
-                <dt>AutoRestoreOnDataLoss</dt>
-                <dd class="checkbox-container-default">
-                    <input type="checkbox" [(ngModel)]="backupPolicy.AutoRestoreOnDataLoss" name="AutoRestoreOnDataLoss"/>
-                </dd>
-                <dt>MaxIncrementalBackups</dt>
-                <dd>
-                    <input type="number" class="input-flat" [(ngModel)]="backupPolicy.MaxIncrementalBackups" required name="MaxIncrementalBackups"/>
-                </dd>
-                <dt>ScheduleKind</dt>
-                <dd required>
-                    <label>
-                        <input type="radio" [(ngModel)]="backupPolicy.Schedule.ScheduleKind" value="FrequencyBased" name="FrequencyBased">
-                        FrequencyBased
-                    </label>
-                    <label>
-                        <input type="radio" [(ngModel)]="backupPolicy.Schedule.ScheduleKind" value="TimeBased" name="TimeBased">
-                        TimeBased
-                    </label><br />
-                </dd>
-            </dl>
-            <dl class="dl-horizontal" *ngIf="!(!backupPolicy.Schedule.ScheduleKind || backupPolicy.Schedule.ScheduleKind!=='FrequencyBased')">
-                <dt>Interval</dt>
-                <dd>
-                    <input type="text" class="input-flat" [(ngModel)]="backupPolicy.Schedule.Interval" name="Interval"/>
-                </dd>
-            </dl>
-            <dl class="dl-horizontal" *ngIf="!(!backupPolicy.Schedule.ScheduleKind ||  backupPolicy.Schedule.ScheduleKind!=='TimeBased')">
-                <dt>ScheduleFrequencyType</dt>
-                <dd>
-                    <label>
-                        <input type="radio" [(ngModel)]="backupPolicy.Schedule.ScheduleFrequencyType" value="Daily" name="Daily">
-                        Daily
-                    </label>
-                    <label>
-                        <input type="radio" [(ngModel)]="backupPolicy.Schedule.ScheduleFrequencyType" value="Weekly" name="weekly">
-                        Weekly
-                    </label><br />
-                </dd>
-            </dl>
-            <dl class="dl-horizontal" *ngIf="! (!backupPolicy.Schedule.ScheduleKind || backupPolicy.Schedule.ScheduleKind!=='TimeBased' || backupPolicy.Schedule.ScheduleFrequencyType!=='Weekly')">
-                <dt>RunDays</dt>
-                <dd>
-                    <div *ngFor="let temp of weekDay">
+<form [formGroup]="form" class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Create Backup Policy</h4>
+    </div>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+            <dt>Name</dt>
+            <dd>
+                <input type="text" class="input-flat" formControlName="Name" required aria-label="Backup Policy name"
+                    name="name">
+            </dd>
+            <dt>AutoRestoreOnDataLoss</dt>
+            <dd class="checkbox-container-default">
+                <input type="checkbox" formControlName="AutoRestoreOnDataLoss" name="AutoRestoreOnDataLoss" />
+            </dd>
+            <dt>MaxIncrementalBackups</dt>
+            <dd>
+                <input type="number" class="input-flat" formControlName="MaxIncrementalBackups" required
+                    name="MaxIncrementalBackups" />
+            </dd>
+            <dt>ScheduleKind</dt>
+            <div formGroupName="Schedule">
+                <dl>
+                    <dd>
                         <label>
-                            {{temp}}
-                            <input type="checkbox" [(ngModel)]="daySelectedMapping[temp]" [name]="weekDay">
+                            <input type="radio" formControlName="ScheduleKind" value="FrequencyBased">
+                            FrequencyBased
+                        </label>
+                        <label>
+                            <input type="radio" formControlName="ScheduleKind" value="TimeBased">
+                            TimeBased
                         </label><br />
+                    </dd>
+                </dl>
+                <dl class="dl-horizontal" *ngIf="form.value.Schedule.ScheduleKind === 'FrequencyBased'">
+                    <dt>Interval</dt>
+                    <dd>
+                        <input type="text" class="input-flat" formControlName="Interval" name="Interval" />
+                    </dd>
+                </dl>
+                <dl class="dl-horizontal" *ngIf="form.value.Schedule.ScheduleKind === 'TimeBased'">
+                    <dt>ScheduleFrequencyType</dt>
+                    <dd>
+                        <label>
+                            <input type="radio" formControlName="ScheduleFrequencyType" value="Daily">
+                            Daily
+                        </label>
+                        <label>
+                            <input type="radio" formControlName="ScheduleFrequencyType" value="Weekly">
+                            Weekly
+                        </label><br />
+                    </dd>
+                </dl>
+                <dl class="dl-horizontal" *ngIf="form.value.Schedule.ScheduleKind === 'TimeBased'">
+                    <div *ngIf="form.value.Schedule.ScheduleFrequencyType === 'Weekly'">
+                        <dt>RunDays</dt>
+                        <dd formArrayName="RunDays">
+                            <div *ngFor="let day of form.controls.Schedule.controls.RunDays.controls; let i = index">
+                                <label>
+                                    {{weekDay[i]}}
+                                    <input type="checkbox" [formControlName]="i">
+                                </label><br />
+                            </div>
+                        </dd>
                     </div>
-                </dd>
-            </dl>
+                    <dt>RunTimes</dt>
+                    <dd formArrayName="RunTimes">
+                        <div *ngFor="let r of RunTimes.controls; let i = index; ">
+                            <input type="text" style="width: 80%;" class="input-flat" [formControlName]="i" />
+                            <button type="button" class="flat-button" (click)="removeRunTime(i)">Delete</button>
+                        </div>
+                        <div>
+                            <input type="text" style="width: 80%;" class="input-flat" [(ngModel)]="date" name="date" [ngModelOptions]="{standalone: true}" />
+                            <button type="button" class="flat-button" (click)="addRunTime()" [disabled]="date===''">Add</button>
+                        </div>
+                    </dd>
+                </dl>
+            </div>
 
-            <dl class="dl-horizontal" *ngIf="! (!backupPolicy.Schedule.ScheduleKind || backupPolicy.Schedule.ScheduleKind!=='TimeBased' || !backupPolicy.Schedule.ScheduleFrequencyType)">
-                <dt>RunTimes</dt>
-                <dd>
-                    <div *ngFor="let runTime of backupPolicy.Schedule.RunDays; ">
-                        <input type="text" style="width: 80%;" class="input-flat" [(ngModel)]="backupPolicy.Schedule.RunTimes[index]" [name]="index"/>
-                        <button type="button" class="btn btn-default" (click)="deleteDate(index)" >Delete</button>
-                    </div>
-                    <div>
-                        <input type="text" style="width: 80%;" class="input-flat" [(ngModel)]="date" name="date" />
-                        <button type="button" class="btn btn-default" (click)="add()" [disabled]="date===''">Add</button>
-                    </div>
-                </dd>
-            </dl>
-            <dl class="dl-horizontal">
-                <dt>StorageKind</dt>
-                <dd>
-                    <label>
-                        <input type="radio" [(ngModel)]="backupPolicy.Storage.StorageKind" value="AzureBlobStore" name="AzureBlobStore">
-                        AzureBlobStore
-                    </label>
-                    <label>
-                        <input type="radio" [(ngModel)]="backupPolicy.Storage.StorageKind" value="FileShare" name="FileShare">
-                        FileShare
-                    </label><br />
-                </dd>
-            </dl>
-            <dl class="dl-horizontal collapse" *ngIf="!(!backupPolicy.Storage.StorageKind || backupPolicy.Storage.StorageKind!=='AzureBlobStore')">
-                <dt>FriendlyName</dt>
-                <dd>
-                    <input type="text" class="input-flat" [(ngModel)]="backupPolicy.Storage.FriendlyName" name="FriendlyName">
-                </dd>
-                <dt>ConnectionString</dt>
-                <dd>
-                    <input type="text" class="input-flat" [(ngModel)]="backupPolicy.Storage.ConnectionString" name="ConnectionString">
-                </dd>
-                <dt>ContainerName</dt>
-                <dd>
-                    <input type="text" class="input-flat" [(ngModel)]="backupPolicy.Storage.ContainerName" name="ContainerName">
-                </dd>
-            </dl>
-            <dl class="dl-horizontal collapse" *ngIf="!( !backupPolicy.Storage.StorageKind || backupPolicy.Storage.StorageKind!=='FileShare')">
-                <dt>FriendlyName</dt>
-                <dd>
-                    <input type="text" class="input-flat" [(ngModel)]="backupPolicy.Storage.FriendlyName" name="FriendlyName">
-                </dd>
-                <dt>Path</dt>
-                <dd>
-                    <input type="text" class="input-flat" [(ngModel)]="backupPolicy.Storage.Path" name="Path">
-                </dd>
-                <dt>PrimaryUserName</dt>
-                <dd>
-                    <input type="text" class="input-flat" [(ngModel)]="backupPolicy.Storage.PrimaryUserName" name="PrimaryUserName">
-                </dd>
-                <dt>PrimaryPassword</dt>
-                <dd>
-                    <input type="password" class="input-flat" [(ngModel)]="backupPolicy.Storage.PrimaryPassword" name="PrimaryPassword">
-                </dd>
-                <dt>SecondaryUserName</dt>
-                <dd>
-                    <input type="text" class="input-flat" [(ngModel)]="backupPolicy.Storage.SecondaryUserName" name="SecondaryUserName">
-                </dd>
-                <dt>SecondaryPassword</dt>
-                <dd>
-                    <input type="password" class="input-flat" [(ngModel)]="backupPolicy.Storage.SecondaryPassword" name="SecondaryPassword">
-                </dd>
-            </dl>
+            <div formGroupName="Storage">
+                <dl class="dl-horizontal">
+                    <dt>StorageKind</dt>
+                    <dd>
+                        <label>
+                            <input type="radio" formControlName="StorageKind" value="AzureBlobStore">
+                            AzureBlobStore
+                        </label>
+                        <label>
+                            <input type="radio" formControlName="StorageKind" value="FileShare">
+                            FileShare
+                        </label><br />
+                    </dd>
+                </dl>
+                <dl class="dl-horizontal" *ngIf="form.value.Storage.StorageKind === 'AzureBlobStore'">
+                    <dt>FriendlyName</dt>
+                    <dd>
+                        <input type="text" class="input-flat" formControlName="FriendlyName" name="FriendlyName">
+                    </dd>
+                    <dt>ConnectionString</dt>
+                    <dd>
+                        <input type="text" class="input-flat" formControlName="ConnectionString"
+                            name="ConnectionString">
+                    </dd>
+                    <dt>ContainerName</dt>
+                    <dd>
+                        <input type="text" class="input-flat" formControlName="ContainerName" name="ContainerName">
+                    </dd>
+                </dl>
+                <dl class="dl-horizontal" *ngIf="form.value.Storage.StorageKind === 'FileShare'">
+                    <dt>FriendlyName</dt>
+                    <dd>
+                        <input type="text" class="input-flat" formControlName="FriendlyName" name="FriendlyName">
+                    </dd>
+                    <dt>Path</dt>
+                    <dd>
+                        <input type="text" class="input-flat" formControlName="Path" name="Path">
+                    </dd>
+                    <dt>PrimaryUserName</dt>
+                    <dd>
+                        <input type="text" class="input-flat" formControlName="PrimaryUserName" name="PrimaryUserName">
+                    </dd>
+                    <dt>PrimaryPassword</dt>
+                    <dd>
+                        <input type="password" class="input-flat" formControlName="PrimaryPassword"
+                            name="PrimaryPassword">
+                    </dd>
+                    <dt>SecondaryUserName</dt>
+                    <dd>
+                        <input type="text" class="input-flat" formControlName="SecondaryUserName"
+                            name="SecondaryUserName">
+                    </dd>
+                    <dt>SecondaryPassword</dt>
+                    <dd>
+                        <input type="password" class="input-flat" formControlName="SecondaryPassword"
+                            name="SecondaryPassword">
+                    </dd>
+                </dl>
+            </div>
+
             <dl class="dl-horizontal">
                 <dt>RetentionPolicy</dt>
                 <dd class="checkbox-container-default">
-                    <input type="checkbox" [(ngModel)]="retentionPolicyRequired" name="retentionPolicyRequired" />
+                    <input type="checkbox" formControlName="retentionPolicyRequired"/>
                 </dd>
             </dl>
-            <dl class="dl-horizontal collapse" *ngIf="retentionPolicyRequired">
+            <dl class="dl-horizontal" *ngIf="retentionPolicyRequired.value" formGroupName="RetentionPolicy">
                 <dt>MinNumberOfBackups</dt>
                 <dd>
-                    <input type="number" class="input-flat" [(ngModel)]="RetentionPolicy.MinimumNumberOfBackups" name="MinimumNumberOfBackups">
+                    <input type="number" class="input-flat" formControlName="MinimumNumberOfBackups">
                 </dd>
                 <dt>RetentionDuration</dt>
                 <dd>
-                    <input type="text" class="input-flat" [(ngModel)]="RetentionPolicy.RetentionDuration" name="RetentionDuration">
+                    <input type="text" class="input-flat" formControlName="RetentionDuration">
                 </dd>
             </dl>
-        </div>
-        <div class="modal-footer">
-            <!-- TODO handle all of the validation somewhere -->
-            <button type="submit" class="btn btn-primary" [disabled]="false" (click)="saveBackupPolicy()">{{isUpdateOperation ? 'Update backup policy' : 'Create backup policy'}}</button>
-            <button type="button" class="btn btn-default" (click)="cancel()">Cancel</button>
-        </div>
-    </form>
+        </dl>
+    </div>
+    <div class="modal-footer">
+        <!-- TODO handle all of the validation somewhere -->
+        <button class="solid-button blue" [disabled]=""
+            (click)="saveBackupPolicy()">{{isUpdateOperation ? 'Update backup policy' : 'Create backup policy'}}</button>
+        <button class="flat-button" (click)="cancel()">Cancel</button>
+    </div>
+</form>
+
+<!-- {{backupPolicy | json}} -->

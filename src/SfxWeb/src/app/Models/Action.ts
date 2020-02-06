@@ -25,7 +25,8 @@ export class Action {
         public title: string,
         public runningTitle: string,
         protected execute: (...params: any[]) => Observable<any>,
-        public canRun: () => boolean) {
+        public canRun: () => boolean,
+        public isAdvanced: boolean = false) {
 
         this._running = false;
     }

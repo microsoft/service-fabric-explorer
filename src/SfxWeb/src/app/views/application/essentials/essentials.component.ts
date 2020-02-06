@@ -64,6 +64,7 @@ export class EssentialsComponent extends ApplicationBaseController {
       })),
       this.app.serviceTypes.refresh(messageHandler),
       this.app.services.refresh(messageHandler),
+      this.app.health.refresh(messageHandler)
     ]).pipe(map( () => {
       this.cdr.detectChanges();
     }))

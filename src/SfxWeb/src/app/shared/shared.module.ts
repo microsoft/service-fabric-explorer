@@ -14,23 +14,26 @@ import { DragDirective } from './directive/drag.directive';
 import { ActionDialogComponent } from './component/action-dialog/action-dialog.component';
 import { ManifestComponent } from './component/manifest/manifest.component';
 import { ActionCollectionDropDownComponent } from './component/action-collection-drop-down/action-collection-drop-down.component';
-import { NgbDropdownModule, NgbToastModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbToastModule, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
 import { InputComponent } from './component/input/input.component';
 import { ToastContainerComponent } from './component/toast-container/toast-container.component';
 import { BarChartComponent } from './component/bar-chart/bar-chart.component';
 import { CheckBoxComponent } from './component/check-box/check-box.component';
 import { ClusterUpgradeBannerComponent } from './component/cluster-upgrade-banner/cluster-upgrade-banner.component';
+import { DualDatePickerComponent } from './component/dual-date-picker/dual-date-picker.component';
+import { AdvancedOptionComponent } from './component/advanced-option/advanced-option.component';
 
 @NgModule({
-  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent],
+  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent],
   imports: [
     CommonModule,
     RouterModule,
     FormsModule,
     NgbDropdownModule,
-    NgbToastModule
+    NgbToastModule,
+    NgbDatepickerModule,
   ],
-  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent],
+  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent],
   entryComponents: [ActionDialogComponent],
 })
 export class SharedModule { }

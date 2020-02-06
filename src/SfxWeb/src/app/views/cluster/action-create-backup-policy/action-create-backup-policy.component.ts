@@ -3,6 +3,7 @@ import { DataService } from 'src/app/services/data.service';
 import { Observable } from 'rxjs';
 import { IRawBackupPolicy, IRawRetentionPolicy } from 'src/app/Models/RawDataTypes';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { FormGroup, FormBuilder, Validators, FormArray } from '@angular/forms';
 
 @Component({
   selector: 'app-action-create-backup-policy',
@@ -10,6 +11,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
   styleUrls: ['./action-create-backup-policy.component.scss']
 })
 export class ActionCreateBackupPolicyComponent implements OnInit {
+
+  form: FormGroup
 
   public backupPolicy: IRawBackupPolicy = {
       Name: "",
@@ -48,7 +51,8 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
 
   constructor(public dialogRef: MatDialogRef<ActionCreateBackupPolicyComponent>,
     @Inject(MAT_DIALOG_DATA) public data: IRawBackupPolicy,
-    private dataService: DataService) {
+    private dataService: DataService,
+    private formBuilder: FormBuilder) {
         this.isUpdateOperation = !!data;
         
     //   super(
@@ -103,6 +107,55 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
     this.dialogRef.close();
     }
   ngOnInit() {
+    this.form = this.formBuilder.group({
+      Name: ["", [Validators.required]],
+      AutoRestoreOnDataLoss: [false],
+      MaxIncrementalBackups: [0],
+      Schedule: this.formBuilder.group({
+        ScheduleKind: ["", [Validators.required]],
+        ScheduleFrequencyType: [""],
+        RunDays: this.getRunDaysControl(),
+        RunTimes: this.formBuilder.array([]),
+        Interval: [""]
+      }),
+      Storage: this.formBuilder.group({
+        StorageKind: ["AzureBlobStore", [Validators.required]],
+        FriendlyName: [""],
+        Path: [""],
+        ConnectionString: [""],
+        ContainerName: [""],
+        PrimaryUserName: [""],
+        PrimaryPassword: [""],
+        SecondaryUserName: [""],
+        SecondaryPassword: [""]
+      }),
+      retentionPolicyRequired: [false],
+      RetentionPolicy: {
+        RetentionPolicyType: [""],
+        MinimumNumberOfBackups: [0],
+        RetentionDuration: [""]
+      }
+
+    })
+    console.log(this.form)
+  }
+
+  get RunTimes() {
+    return this.form.get(['Schedule', 'RunTimes']) as FormArray;
+  }
+
+  addRunTime() {
+    this.RunTimes.push(this.formBuilder.control([this.date]))
+    this.date = "";
+  }
+
+  removeRunTime(index: number) {
+    this.RunTimes.removeAt(index);
+  }
+
+  getRunDaysControl() {
+    const arr = this.weekDay.map(day => this.formBuilder.control(false)) // TODO set this with initial data
+    return this.formBuilder.array(arr);
   }
 
 }

@@ -44,12 +44,8 @@ export class Node extends DataModelBase<IRawNode> {
 
         if (this.data.actionsEnabled()) {
             this.setUpActions();
-        }
-
-        if (this.data.actionsAdvancedEnabled()) {
             this.setAdvancedActions();
         }
-
     }
 
     public get nodeStatus(): string {
@@ -95,12 +91,7 @@ export class Node extends DataModelBase<IRawNode> {
         return null;
     }
 
-    public removeAdvancedActions(): void {
-        this.actions.collection = this.actions.collection.filter(action => ["activateNode", "removeNodeState", "deactivePauseNode", "deactiveRestartNode", "deactiveRemoveNodeData"].indexOf(action.name) === -1);
-    }
-
     public setAdvancedActions(): void {
-        // TODO 
         this.actions.add(new Action(
             "activateNode",
             "Activate",
@@ -109,8 +100,10 @@ export class Node extends DataModelBase<IRawNode> {
             () => (this.expectedNodeStatus !== NodeStatus.Invalid) ?
                 this.expectedNodeStatus === NodeStatus.Disabled :
                 this.raw.NodeStatus === NodeStatusConstants.Down || this.raw.NodeStatus === NodeStatusConstants.Disabling || this.raw.NodeStatus === NodeStatusConstants.Disabled
-        ));
-        this.actions.add(new ActionWithConfirmationDialog(
+            ,true
+                ));
+
+        const removeNodeState = new ActionWithConfirmationDialog(
             this.data.dialog,
             "removeNodeState",
             "Remove node state",
@@ -120,8 +113,11 @@ export class Node extends DataModelBase<IRawNode> {
             "Confirm Node Removal",
             `Data about node ${this.name} will be completely erased from the cluster ${window.location.host}. All data stored on the node will be lost permanently. Are you sure to continue?`,
             this.name
-        ));
-        this.actions.add(new ActionWithConfirmationDialog(
+            )
+        removeNodeState.isAdvanced = true;
+        this.actions.add(removeNodeState);
+
+        const deactivePauseNode = new ActionWithConfirmationDialog(
             this.data.dialog,
             "deactivePauseNode",
             "Deactivate (pause)",
@@ -133,8 +129,11 @@ export class Node extends DataModelBase<IRawNode> {
             "Confirm Node Deactivation",
             `Deactivate node '${this.name}' from cluster '${window.location.host}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
             this.name
-        ));
-        this.actions.add(new ActionWithConfirmationDialog(
+        )
+        deactivePauseNode.isAdvanced = true;
+        this.actions.add(deactivePauseNode);
+
+        const deactiveRestartNode = new ActionWithConfirmationDialog(
             this.data.dialog,
             "deactiveRestartNode",
             "Deactivate (restart)",
@@ -144,8 +143,11 @@ export class Node extends DataModelBase<IRawNode> {
             "Confirm Node Deactivation",
             `Deactivate node '${this.name}' from cluster '${window.location.host}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
             this.name
-        ));
-        this.actions.add(new ActionWithConfirmationDialog(
+        )
+        deactiveRestartNode.isAdvanced = true;
+        this.actions.add(deactiveRestartNode);
+
+        const deactiveRemoveNodeData =  new ActionWithConfirmationDialog(
             this.data.dialog,
             "deactiveRemoveNodeData",
             "Deactivate (remove data)",
@@ -155,7 +157,9 @@ export class Node extends DataModelBase<IRawNode> {
             "Confirm Node Deactivation",
             `Deactivate node '${this.name}' from cluster '${window.location.host}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
             this.name
-        ));
+        )
+        deactiveRemoveNodeData.isAdvanced = true;
+        this.actions.add(deactiveRemoveNodeData);
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawNode> {

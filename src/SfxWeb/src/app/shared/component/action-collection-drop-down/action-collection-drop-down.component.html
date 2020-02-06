@@ -1,10 +1,12 @@
 <div ngbDropdown container="body">
     <button class="simple-button" ngbDropdownToggle [ngClass]="{'tree-view': treeView}">{{treeView ? '' : (actionCollection.title | uppercase)}}</button>
     <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-        <button *ngFor="let action of actionCollection.collection" ngbDropdownItem
+        <div *ngFor="let action of actionCollection.collection">
+            <button *ngIf="!action.isAdvanced || dataService.actionsAdvancedEnabled()" ngbDropdownItem
                 (click)="actionCollection.runWithTelemetry(action, 'ActionsButton')"
                 [disabled]="!action.canRun()">
-            {{action.title}}
-        </button>
+                {{action.title}}
+            </button>
+        </div>
     </div>
 </div>

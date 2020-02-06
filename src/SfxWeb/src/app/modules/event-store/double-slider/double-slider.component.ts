@@ -1,6 +1,11 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import * as noUiSlider from "nouislider";
+
+export interface IOnDateChange {
+  endDate: any,
+  startDate: any;
+}
 @Component({
   selector: 'app-double-slider',
   templateUrl: './double-slider.component.html',
@@ -11,7 +16,7 @@ export class DoubleSliderComponent implements OnInit, OnChanges, AfterViewInit {
   @Input() startDate: any;
   @Input() endDate: any;
 
-  @Output() onDateChange = new EventEmitter();
+  @Output() onDateChange = new EventEmitter<IOnDateChange>();
 
   slider: noUiSlider.noUiSlider;
 
@@ -51,19 +56,24 @@ export class DoubleSliderComponent implements OnInit, OnChanges, AfterViewInit {
         const start = new Date(data[0]);
         const end = new Date(data[1]);
 
+        let changed = false;
+        
         if (this.endDate.toUTCString() !== end.toUTCString()) {
             this.endDate = end;
+            changed = true;
         }
         if (this.startDate.toUTCString() !== start.toUTCString()) {
             this.startDate = start;
+            changed = true;
         }
 
-        this.onDateChange.emit({
-          endDate: this.endDate,
-          startDate: this.startDate
-        })
+        if(changed){
+          this.onDateChange.emit({
+            endDate: this.endDate,
+            startDate: this.startDate
+          })
+        }
     });
-
   }
 
   ngOnChanges(changes: SimpleChanges) {

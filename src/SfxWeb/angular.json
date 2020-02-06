@@ -34,6 +34,7 @@
               "node_modules/metro4/build/css/metro-icons.min.css",
               "src/styles.scss",
               "src/modal.scss",
+              "src/calender.scss",
               "src/Styles/modules/_candybar.scss"
 
             ],

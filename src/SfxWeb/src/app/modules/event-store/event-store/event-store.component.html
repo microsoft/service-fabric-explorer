@@ -1,44 +1,33 @@
 <div class="detail-pane">
-        <div style="margin-right:0px;">
-            <!-- <div class="col-md-3 col-sm-6 col-lg-2">
-                <sfx-date-picker ng-model="dwSelector.startDate" min-date="dwSelector.startDateMin"
-                max-date="dwSelector.startDateMax" init-date="dwSelector.startDateInit" place-holder-text="'Start Date'">
-                </sfx-date-picker>
-            </div>
-            <div class="col-md-3 col-sm-6 col-lg-2">
-                    <sfx-date-picker ng-model="dwSelector.endDate" min-date="dwSelector.endDateMin"
-                max-date="dwSelector.endDateMax" init-date="dwSelector.endDateInit" place-holder-text="'End Date'">
-                </sfx-date-picker>
-            </div> -->
-            <div class="col-md-6 col-sm-12 col-lg-8">
-                <div style="width: 80%; margin-left: 50px; margin-top: 15px; margin-bottom: 15px;">
-                        <app-double-slider [startDate]="startDate" [endDate]="endDate"></app-double-slider>
+        <div class="container">
+            <div class="row">
+                <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (onDateChange)="setNewDates($event)"
+                [currentStartDate]="startDate" [currentEndDate]="endDate" class="col-md-6 col-sm-12 col-lg-4"></app-dual-date-picker>
+
+                <div class="col-md-6 col-sm-12 col-lg-8">
+                    <div style="width: 90%; margin-top: 15px; margin-bottom: 15px;">
+                        <app-double-slider [startDate]="startDate" [endDate]="endDate" (onDateChange)="setNewDates($event)"></app-double-slider>
                     </div>
+                </div>
             </div>
         </div>
-        <div *ngIf="timelineGenerator">
-            <div class="btn-group btn-group-toggle" ngbRadioGroup [(ngModel)]="showAllEvents">
-                <label class="flat-button checkbox-push solid-grey" ngbButtonLabel>
+        <div>
+            <div class="btn-group btn-group-toggle" ngbRadioGroup [(ngModel)]="showAllEvents" name="radioBasic">
+                <label class="flat-button checkbox-push solid-grey" ngbButtonLabel *ngIf="timelineGenerator">
                     <input ngbButton type="radio" [value]="false"> Correlated
                 </label>
                 <label class="flat-button checkbox-push solid-grey" ngbButtonLabel>
                     <input ngbButton type="radio" [value]="true"> All
                 </label>
             </div>
-            <!-- <div class="btn-group">
-                <label class="btn btn-primary" ng-model="dwSelector.showAllEvents" uib-btn-radio="false">Correlated</label>
-                <label class="btn btn-primary" ng-model="dwSelector.showAllEvents" uib-btn-radio="true">All</label>
-            </div> -->
-            <span class="mif-info" title="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
+            <span class="mif-info mif-lg" style="vertical-align: middle; margin-left: 10px;" title="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
         </div>
 
         <div *ngIf="timeLineEventsData">
             <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>            
         </div>
 
-                    <!-- <sfx-detail-list-details-view details-list-settings="eventsList.detailsSettings"></sfx-detail-list-details-view> -->
-
-        <detail-list [list]="eventsList" [listSettings]="eventsList.settings"></detail-list>
+        <detail-list [list]="eventsList.collection" [listSettings]="eventsList.settings"></detail-list>
     
         <div>
             <div style="float: right; padding: 15px 0 0 0; margin: 0px;">

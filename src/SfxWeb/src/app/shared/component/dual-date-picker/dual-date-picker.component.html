@@ -1,0 +1,51 @@
+<form class="form-inline">
+    <div class="form-group hidden">
+        <div class="input-group">
+        <input name="datepicker"
+                class="form-control hidden"
+                ngbDatepicker
+                #datepicker="ngbDatepicker"
+                [autoClose]="'outside'"
+                (dateSelect)="onDateSelection($event)"
+                [displayMonths]="2"
+                [dayTemplate]="t"
+                outsideDays="'collapsed'"
+                [markDisabled]="isDisabled" [navigation]="'arrows'"
+                [startDate]="fromDate">
+        <ng-template #t let-date let-focused="focused">
+            <div class="custom-day"
+                [class.focused]="focused"
+                [class.range]="isRange(date)"
+                [class.faded]="isHovered(date) || isInside(date)"
+                (mouseenter)="hoveredDate = date"
+                (mouseleave)="hoveredDate = null">
+            {{ date.day }}
+        </div>
+        </ng-template>
+        </div>
+    </div>
+    <div class="form-group">
+        <div class="input-group">
+        <input #dpFromDate
+                class="input-flat" placeholder="yyyy-mm-dd"
+                name="dpFromDate"
+                [value]="formatter.format(fromDate)"
+                (input)="fromDate = validateInput(fromDate, dpFromDate.value)">
+        <div class="input-group-append">
+            <button class="mif-calendar simple-button" (click)="datepicker.toggle()" type="button"></button>
+        </div>
+        </div>
+    </div>
+    <div class="form-group ml-2">
+        <div class="input-group">
+        <input #dpToDate
+                class="input-flat" placeholder="yyyy-mm-dd"
+                name="dpToDate"
+                [value]="formatter.format(toDate)"
+                (input)="toDate = validateInput(toDate, dpToDate.value)">
+        <div class="input-group-append">
+            <button class="mif-calendar simple-button" (click)="datepicker.toggle()" type="button"></button>
+        </div>
+        </div>
+    </div>
+</form>

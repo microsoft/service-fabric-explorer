@@ -8,7 +8,8 @@ import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-
 import { FullDescriptionComponent } from './full-description/full-description.component';
 import { RowDisplayComponent } from './row-display/row-display.component';
 import { FormsModule } from '@angular/forms';
-
+import { NgbButtonsModule } from '@ng-bootstrap/ng-bootstrap';
+import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
@@ -16,7 +17,9 @@ import { FormsModule } from '@angular/forms';
   imports: [
     CommonModule,
     DetailListTemplatesModule,
-    FormsModule
+    FormsModule,
+    NgbButtonsModule,
+    SharedModule
   ],
   exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent],
   entryComponents: [FullDescriptionComponent, RowDisplayComponent]

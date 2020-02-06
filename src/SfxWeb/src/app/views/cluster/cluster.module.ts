@@ -14,7 +14,7 @@ import { EventsComponent } from './events/events.component';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { ImagestoreModule } from 'src/app/modules/imagestore/imagestore.module';
 import { ActionUpdateBackupPolicyComponent } from './action-update-backup-policy/action-update-backup-policy.component';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActionCreateBackupPolicyComponent } from './action-create-backup-policy/action-create-backup-policy.component';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
@@ -32,6 +32,7 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
     DetailListTemplatesModule,
     ImagestoreModule,
     FormsModule,
+    ReactiveFormsModule,
     EventStoreModule,
     ChartsModule,
     NgbDropdownModule

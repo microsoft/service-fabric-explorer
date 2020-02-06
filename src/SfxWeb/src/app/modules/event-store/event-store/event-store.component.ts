@@ -3,6 +3,9 @@ import { ITimelineData, ITimelineDataGenerator, TimeLineGeneratorBase, parseEven
 import { EventListBase } from 'src/app/Models/DataModels/collections/Collections';
 import { FabricEventBase } from 'src/app/Models/eventstore/Events';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { IOnDateChange } from '../double-slider/double-slider.component';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
 @Component({
   selector: 'app-event-store',
@@ -11,6 +14,9 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 })
 export class EventStoreComponent implements OnInit {
 
+    debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
+    debouncerHandlerSubscription: Subscription;
+  
   //TODO add a button that will set to current time
 
   @Input() eventsList: EventListBase<any>;
@@ -22,6 +28,13 @@ export class EventStoreComponent implements OnInit {
     this._showAllEvents = !this.timelineGenerator;
     this.resetSelectionProperties();
     this.setTimelineData();
+    this.debouncerHandlerSubscription = this.debounceHandler
+    .pipe(debounceTime(400), distinctUntilChanged())
+    .subscribe(dates => {
+        this.startDate = dates.startDate;
+        this.endDate = dates.endDate;
+        this.setNewDateWindow();
+     });
   }
 
   public static MaxWindowInDays: number = 7;
@@ -29,49 +42,16 @@ export class EventStoreComponent implements OnInit {
   public endDateMin: Date;
   public startDateMax: Date;
   public endDateMax: Date;
-  public startDateInit: Date;
   public endDateInit: Date;
   public isResetEnabled: boolean = false;
   public timeLineEventsData: ITimelineData;
 
   public transformText: string = "Category,Kind";
 
-  private isStartSelected: boolean;
-  private isEndSelected: boolean;
-  private _startDate: Date = null;
-  private _endDate: Date = null;
-
   private _showAllEvents: boolean = false;
 
-  public get startDate() { return this._startDate; }
-  public get endDate() { return this._endDate; }
-  public set startDate(value: Date) {
-      this._startDate = value;
-      if (!this.isEndSelected) {
-          this.endDateMin = this._startDate;
-          this.endDateMax = TimeUtils.AddDays(
-              this._startDate,
-              EventStoreComponent.MaxWindowInDays);
-          if (this.endDateMax > new Date()) {
-              this.endDateMax = new Date();
-          }
-          this.endDateInit = this._startDate;
-          this.isStartSelected = true;
-      }
-          this.setNewDateWindow();
-  }
-  public set endDate(value: Date) {
-      this._endDate = value;
-      if (!this.isStartSelected) {
-          this.startDateMax = this._endDate;
-          this.startDateMin = TimeUtils.AddDays(
-              this._endDate,
-              (-7 * EventStoreComponent.MaxWindowInDays));
-          this.startDateInit = this._endDate;
-          this.isEndSelected = true;
-      }
-          this.setNewDateWindow();
-  }
+  public startDate: Date;
+  public endDate: Date;
 
   public get showAllEvents() { return this._showAllEvents; };
   public set showAllEvents(state: boolean) {
@@ -92,16 +72,14 @@ export class EventStoreComponent implements OnInit {
   }
 
   private resetSelectionProperties(): void {
-      this._startDate = this.eventsList.startDate;
-      this._endDate = this.eventsList.endDate;
+      this.startDate = this.eventsList.startDate;
+      this.endDate = this.eventsList.endDate;
       this.startDateMin = this.endDateMin = TimeUtils.AddDays(new Date(), -30);
       this.startDateMax = this.endDateMax = new Date(); //Today
-      this.startDateInit = this.endDateInit = new Date(); //Today
-      this.isStartSelected = this.isEndSelected = false;
   }
 
   private setNewDateWindow(): void {
-      if (this.eventsList.setDateWindow(this._startDate, this._endDate)) {
+      if (this.eventsList.setDateWindow(this.startDate, this.endDate)) {
           this.resetSelectionProperties();
           this.isResetEnabled = true;
           this.eventsList.reload().subscribe( data => {
@@ -140,5 +118,9 @@ export class EventStoreComponent implements OnInit {
             console.error(e);
         }
     });
-}
+    }
+
+    setNewDates(dates: IOnDateChange) {
+        this.debounceHandler.next(dates);
+    }
 }

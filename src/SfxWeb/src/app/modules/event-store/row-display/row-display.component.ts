@@ -20,7 +20,6 @@ export class RowDisplayComponent implements OnInit, DetailBaseComponent {
   constructor() { }
 
   ngOnInit() { 
-    console.log(this.item)
     //TODO FIX THIS EVERYWHERE
     this.value = Utils.result(this.item, this.listSetting.propertyPath)
 

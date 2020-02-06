@@ -47,7 +47,7 @@ export class HealthBase<T extends IRawHealth> extends DataModelBase<T> {
     }
 
     protected updateInternal(): Observable<any> | void {
-        this.parseCommonHealthProperties();
+        this.parseCommonHealthProperties().subscribe();
     }
 
     protected parseCommonHealthProperties(): Observable<any> {
@@ -55,9 +55,9 @@ export class HealthBase<T extends IRawHealth> extends DataModelBase<T> {
         this.healthEvents = CollectionUtils.updateDataModelCollection(this.healthEvents, healthEvents);
         // There is no unique ID to identify the unhealthy evaluations collection, update the collection directly.
         // Make sure that the apps are initialized because some of the parsedHealth Evaluations need to reference the app's collection and that needs to be set.
-        this.data.apps.ensureInitialized().pipe(map( () => {
+        return this.data.apps.ensureInitialized().pipe(map( () => {
             this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
-        })).pipe(tap()).subscribe();
-        return of(null)
+        }))
+        // return of(null)
     }
 }

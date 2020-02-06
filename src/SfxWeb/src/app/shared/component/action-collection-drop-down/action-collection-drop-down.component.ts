@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-action-collection-drop-down',
@@ -10,7 +11,7 @@ export class ActionCollectionDropDownComponent implements OnInit {
   @Input() treeView: boolean = false;
   @Input() actionCollection: ActionCollection;
 
-  constructor() { }
+  constructor(public dataService: DataService) { }
 
   ngOnInit() {
   }

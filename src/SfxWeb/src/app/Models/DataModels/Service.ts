@@ -13,7 +13,7 @@ import { HealthBase } from './HealthEvent';
 import { ApplicationType } from './ApplicationType';
 import { mergeMap, map } from 'rxjs/operators';
 import * as _ from 'lodash';
-import { ActionWithConfirmationDialog } from '../Action';
+import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -116,6 +116,33 @@ export class Service extends DataModelBase<IRawService> {
             `Delete service ${this.name} from cluster ${window.location.host}?`,
             this.name
         ));
+
+        if (this.isStatelessService) {
+    
+                this.actions.add(new IsolatedAction(
+                    this.data.dialog,
+                    "enablePartitionBackup",
+                    "Enable/Update Partition Backup",
+                    "Enabling Partition Backup",
+                    {},
+                    PartitionEnableBackUpComponent,
+                    () => true
+                    // () => this.data.restClient.enablePartitionBackup(this).subscribe(() => {
+                    //     this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
+                    // }),
+                    // () => true,
+                    // <angular.ui.bootstrap.IModalSettings>{
+                    //     templateUrl: "partials/enableBackup.html",
+                    //     controller: ActionController,
+                    //     resolve: {
+                    //         action: () => this
+                    //     }
+                    // },
+                    // null
+                ));
+            // this.actions.add(new ActionScaleService(this.data.$uibModal, this.data.$q, this));
+        }
+
     }
 
     private setAdvancedActions(): void {

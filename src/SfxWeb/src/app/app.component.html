@@ -26,18 +26,21 @@
       <app-refresh-rate [value]="refreshService.refreshRate" (onChange)="refreshService.updateRefreshInterval($event)" 
                         [refresh]="refreshService.isRefreshing" (onForceRefresh)="attemptForceRefresh()"></app-refresh-rate>
     </div>
-    <div class="essen-pane" *ngIf="adalService.aadEnabled" style="display: flex;
-    flex-direction: row;
-    align-items: center;
-    white-space: nowrap;">
-      {{adalService.userInfo.profile.name}}
-      <button class="simple-button" (click)="adalService.logout()">
-        Log Out
-      </button>
+    <app-advanced-option></app-advanced-option>
+
+    <div ngbDropdown *ngIf="adalService.aadEnabled" display="'static'" placement="'bottom-left'">
+        <button class="simple-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
+            <span class="mif-user"></span>
+        </button>
+        <div ngbDropdownMenu style="padding: 10px;" *ngIf="dataService.actionsEnabled()">
+          <div ngbDropdownItem style="padding-bottom: 10px;" class="repress-highlight">
+            {{adalService.userInfo.profile.name}}
+          </div>
+          <button class="simple-button" (click)="adalService.logout()" ngbDropdownItem>
+            Log Out
+          </button>
+        </div>
     </div>
-    <!-- <div>
-      other things
-    </div> -->
   </div>
 
   <div>
@@ -54,7 +57,5 @@
       </div>
     </div>
   </div>
-
   <app-toast-container aria-live="polite" aria-atomic="true"></app-toast-container>
-
 </div>

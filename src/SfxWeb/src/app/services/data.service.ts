@@ -46,6 +46,9 @@ export class DataService {
   public imageStore: ImageStore;
   public backupPolicies: BackupPolicyCollection;
 
+  public readOnlyHeader: boolean =  null;
+  public clusterNameMetadata: string =  null;
+
   constructor(
     public routes: RoutesService,
     public message: MessageService,
@@ -65,15 +68,12 @@ export class DataService {
     this.backupPolicies = new BackupPolicyCollection(this);
    }
 
-
-  // TODO the state of whether or not actions are enabled should be stored here and set using an http interceptor
   public actionsEnabled(): boolean {
-    return true;
-    //return this.$rootScope[Constants.SfxReadonlyMetadataName] !== true;
+    return this.readOnlyHeader !== true;
   }
 
   public actionsAdvancedEnabled(): boolean {
-      return true; //this.actionsEnabled && this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
+      return this.actionsEnabled() && this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
   }
 
   public getClusterHealth(
