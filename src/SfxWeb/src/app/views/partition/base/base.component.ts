@@ -52,6 +52,12 @@ export class BaseComponent extends PartitionBaseController {
       this.tabs = this.tabs.filter(tab => tab.name !== "backups")
     };
 
+    this.data.clusterManifest.ensureInitialized().subscribe(() => {
+      if(!this.data.clusterManifest.isBackupRestoreEnabled) {
+        this.tabs = this.tabs.filter(tab => tab.name !== "backups")
+      }
+    })
+
     return of(null);
   }
 }

@@ -52,7 +52,7 @@
         <detail-list [list]="partition.replicas" [listSettings]="listSettings" *ngIf="partition.replicas.isInitialized"></detail-list>
     </div>
     
-    <div class="detail-pane" *ngIf="partition.IsStatefulServiceAndSystemService">
+    <div class="detail-pane" *ngIf="partition.IsStatefulServiceAndSystemService && data.clusterManifest.isBackupRestoreEnabled">
         <h4>Latest Backup</h4>
         <app-detail-view-part [data]="partition.partitionBackupInfo.latestPartitionBackup.collection[0]"></app-detail-view-part>
     </div>

@@ -39,7 +39,7 @@
                     </dd>
                 </dl>
                 <dl class="dl-horizontal" *ngIf="form.value.Schedule.ScheduleKind === 'TimeBased'">
-                    <dt>ScheduleFrequencyType</dt>
+                    <dt>ScheduleFrequencyType *</dt>
                     <dd>
                         <label>
                             <input type="radio" formControlName="ScheduleFrequencyType" value="Daily">
@@ -143,7 +143,7 @@
                     <input type="checkbox" formControlName="retentionPolicyRequired"/>
                 </dd>
             </dl>
-            <dl class="dl-horizontal" *ngIf="retentionPolicyRequired.value" formGroupName="RetentionPolicy">
+            <dl class="dl-horizontal" *ngIf="form.get('retentionPolicyRequired').value" formGroupName="RetentionPolicy">
                 <dt>MinNumberOfBackups</dt>
                 <dd>
                     <input type="number" class="input-flat" formControlName="MinimumNumberOfBackups">
@@ -157,9 +157,9 @@
     </div>
     <div class="modal-footer">
         <!-- TODO handle all of the validation somewhere -->
-        <button class="solid-button blue" [disabled]=""
+        <button class="solid-button blue" [disabled]="!form.valid"
             (click)="saveBackupPolicy()">{{isUpdateOperation ? 'Update backup policy' : 'Create backup policy'}}</button>
-        <button class="flat-button" (click)="cancel()">Cancel</button>
+        <button class="flat-button" (click)="dialogRef.close()">Cancel</button>
     </div>
 </form>
 

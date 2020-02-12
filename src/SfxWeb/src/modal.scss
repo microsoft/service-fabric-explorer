@@ -112,3 +112,31 @@ $modal-short-dt-width: 100px;
     // // left: 20%;
     // top: 10%
 }
+
+
+dl {
+    dt {
+        width: 160px;
+        display: inline-block;
+        vertical-align: top;
+        font-weight: 400;
+    }
+
+    dd {
+        width: calc(100% - 160px);
+        display: inline-block;
+        margin-left: 0px;
+        input {
+            width: 100%;
+        }
+
+        input[type=checkbox] {
+            width: auto;
+            float: left;
+        }
+
+        input[type=radio] {
+            width: auto;
+        }
+    }
+}

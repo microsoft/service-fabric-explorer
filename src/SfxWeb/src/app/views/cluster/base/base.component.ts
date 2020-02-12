@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-base',
@@ -39,18 +40,23 @@ export class BaseComponent implements OnInit {
     {
       name: "events",
       route: "/events"
-    },
-    {
-      name: "backups",
-      route: "/backups"
     }
   ];
-  constructor(public tree: TreeService) { }
+  constructor(public tree: TreeService, public dataService: DataService) { }
 
   ngOnInit() {
     this.tree.selectTreeNode([
       IdGenerator.cluster()
     ], true);
+
+    this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
+      if(this.dataService.clusterManifest.isBackupRestoreEnabled) {
+        this.tabs.push({
+          name: "backups",
+          route: "/backups"
+        })
+      }
+    })
 
     this.SFXClusterName = window.location.host; //TODO FIX THIS
   }

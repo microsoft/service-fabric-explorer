@@ -147,7 +147,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public clusterManifestName: string;
     private _imageStoreConnectionString: string;
     private _isNetworkInventoryManagerEnabled: boolean = false;
-
+    private _isBackUpRestoreEnabled: boolean = true;
     public constructor(data: DataService) {
         super(data);
     }
@@ -183,6 +183,8 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
             if(item.getAttribute("Name") === "Management"){
                 this.getImageStoreConnectionString(item);
                 break;
+            }else if (item.getAttribute("Name") === "BackUpRestoreService"){
+                this._isBackUpRestoreEnabled = true;
             }
         }
     }
@@ -196,7 +198,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     }
 
     public get isBackupRestoreEnabled(): boolean {
-        return false;
+        return this._isBackUpRestoreEnabled;
     }
 }
 
@@ -305,23 +307,23 @@ export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
 
     public constructor(data: DataService, raw?: IRawBackupPolicy) {
         super(data, raw);
-        this.action = new ActionWithDialog(
-            data.dialog,
-            "deleteBackupPolicy",
-            "Delete Backup Policy",
-            "Deleting",
-            () => data.restClient.deleteBackupPolicy(this.raw.Name),
-            () => true,
-            <angular.ui.bootstrap.IModalSettings>{
-                templateUrl: "partials/backupPolicy.html",
-                controller: ActionController,
-                resolve: {
-                    action: () => this
-                }
-            },
-            null);
+        // this.action = new ActionWithDialog(
+        //     data.dialog,
+        //     "deleteBackupPolicy",
+        //     "Delete Backup Policy",
+        //     "Deleting",
+        //     () => data.restClient.deleteBackupPolicy(this.raw.Name),
+        //     () => true,
+        //     <angular.ui.bootstrap.IModalSettings>{
+        //         templateUrl: "partials/backupPolicy.html",
+        //         controller: ActionController,
+        //         resolve: {
+        //             action: () => this
+        //         }
+        //     },
+        //     null);
 
-        this.updatePolicy = new ActionUpdateBackupPolicy(data, raw);
+        // this.updatePolicy = new ActionUpdateBackupPolicy(data, raw);
     }
 
     public updateBackupPolicy(): void {
