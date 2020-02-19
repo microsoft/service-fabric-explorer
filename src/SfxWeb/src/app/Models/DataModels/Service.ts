@@ -16,6 +16,7 @@ import * as _ from 'lodash';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/partition-enable-back-up/partition-enable-back-up.component';
 import { ScaleServiceComponent } from 'src/app/views/service/scale-service/scale-service.component';
+import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -474,25 +475,25 @@ export class ServiceBackupConfigurationInfo extends DataModelBase<IRawServiceBac
             "action.Name",
         ]
     };
-    // public action: ActionWithDialog;
+    public action: IsolatedAction;
     public constructor(data: DataService, raw: IRawServiceBackupConfigurationInfo, public parent: Service) {
         super(data, raw, parent);
-        // this.action = new ActionWithDialog(
-        //     data.$uibModal,
-        //     data.$q,
-        //     raw.PolicyName,
-        //     raw.PolicyName,
-        //     "Creating",
-        //     () => this.data.restClient.deleteBackupPolicy(this.raw.PolicyName),
-        //     () => true,
-        //     <angular.ui.bootstrap.IModalSettings>{
-        //         templateUrl: "partials/backupPolicy.html",
-        //         controller: ActionController,
-        //         resolve: {
-        //             action: () => this.data.getBackupPolicy(this.raw.PolicyName)
-        //         }
-        //     },
-        //     null);
+
+        this.action = new IsolatedAction(
+            data.dialog,
+            "deleteBackupPolicy",
+            "Delete Backup Policy",
+            "Deleting",
+            {
+                backup: raw,
+                delete: () => data.restClient.deleteBackupPolicy(this.raw.PolicyName)
+            },
+            ViewBackupComponent,
+            () => true,
+            () => this.data.restClient.getBackupPolicy(this.raw.PolicyName).pipe(map(data => {
+                this.action.data.backup = data;
+            }))
+            );
     }
 }
 

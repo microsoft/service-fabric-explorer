@@ -249,9 +249,12 @@ export class ListColumnSettingWithCopyText extends ListColumnSetting {
     template = CopyTextComponent;
     public constructor(
         propertyPath: string,
-        displayName: string) {
+        displayName: string,
+        sortPropertyPath: string[] = [],
+        enableFilter: boolean = false, 
+        colSpan: number = 1) {
 
-        super(propertyPath, displayName);
+        super(propertyPath, displayName, sortPropertyPath, enableFilter, null, colSpan);
     }
 }
 

@@ -66,9 +66,9 @@
                                 *ngFor="let columnSetting of listSettings.secondRowColumnSettings; trackBy: trackByColumnSetting;"
                                 [colSpan]="columnSetting.colspan === -1 ? (listSettings.columnSettings.length - listSettings.secondRowColumnSettings.length + 1) : columnSetting.colspan"
                                 [ngClass]="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed}">
-                                <div *ngIf="listSettings.secondRowCollapsible && !item.isSecondRowCollapsed" 
+                                <div *ngIf="!listSettings.secondRowCollapsible || (listSettings.secondRowCollapsible && !item.isSecondRowCollapsed)" 
                                     [ngClass]="{'shift-expander-col': $index === 0 && listSettings.secondRowCollapsible}">
-                                    <!-- [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" -->
+                                    <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
                                     <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
                                 </div>
                             </td>

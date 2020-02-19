@@ -97,8 +97,11 @@ export class SettingsService {
           // Second row with description
           [
               new ListColumnSetting("placeholder", "placeholder", null, false), // Empty column
-              new ListColumnSetting("description", "Description", null, false, (item) => HtmlUtils.getSpanWithCustomClass("preserve-whitespace-wrap", item.description), 100)
-          ]);
+              new ListColumnSettingWithCopyText("description", "Description", [], false, 7)
+          ],
+          false,
+          (item) => true
+          );
   }
 
   public getNewOrExistingNodeStatusListSetting(listKey: string = "nodeStatus") {

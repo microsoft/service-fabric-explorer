@@ -11,14 +11,13 @@ import { HealthBase } from './HealthEvent';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HealthEvaluation, UpgradeDescription, UpgradeDomain } from './Shared';
 import { Utils } from 'src/app/Utils/Utils';
-import { Observable, forkJoin, merge } from 'rxjs';
-import { map, mergeMap } from 'rxjs/operators';
+import { Observable, forkJoin } from 'rxjs';
+import { map } from 'rxjs/operators';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
 import { ServiceCollection } from './collections/ServiceCollection';
-import { ActionWithConfirmationDialog, ActionWithDialog, IsolatedAction } from '../Action';
+import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import * as _ from 'lodash';
-import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/partition-enable-back-up/partition-enable-back-up.component';
-import { PartitionDisableBackUpComponent } from 'src/app/modules/backup-restore/partition-disable-back-up/partition-disable-back-up.component';
+import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -322,26 +321,25 @@ export class ApplicationBackupConfigurationInfo extends DataModelBase<IRawApplic
             "action.Name",
         ]
     };
-    // TODO 
-    // public action: ActionWithDialog;
+
+    public action: IsolatedAction;
     public constructor(data: DataService, raw: IRawApplicationBackupConfigurationInfo, public parent: Application) {
         super(data, raw, parent);
-        // this.action = new ActionWithDialog(
-        //     data.$uibModal,
-        //     data.$q,
-        //     raw.PolicyName,
-        //     raw.PolicyName,
-        //     "Creating",
-        //     () => this.data.restClient.deleteBackupPolicy(this.raw.PolicyName),
-        //     () => true,
-        //     <angular.ui.bootstrap.IModalSettings>{
-        //         templateUrl: "partials/backupPolicy.html",
-        //         controller: ActionController,
-        //         resolve: {
-        //             action: () => this.data.getBackupPolicy(this.raw.PolicyName)
-        //         }
-        //     },
-        //     null);
+        this.action = new IsolatedAction(
+            data.dialog,
+            "deleteBackupPolicy",
+            "Delete Backup Policy",
+            "Deleting",
+            {
+                backup: raw,
+                delete: () => data.restClient.deleteBackupPolicy(this.raw.PolicyName)
+            },
+            ViewBackupComponent,
+            () => true,
+            () => this.data.restClient.getBackupPolicy(this.raw.PolicyName).pipe(map(data => {
+                this.action.data.backup = data;
+            }))
+            );
     }
 }
 

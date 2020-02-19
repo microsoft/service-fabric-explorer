@@ -1,7 +1,7 @@
 
 .alert-wrapper {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     width: 90%;
     max-width: 800px;
     margin: auto;
@@ -14,7 +14,7 @@
 
 .alert {
     display: flex;
-    flex-direction: row;
+    flex-direction: column;
     justify-content: space-between;
     padding: 15px;
     color: black;
@@ -34,6 +34,11 @@
 .alert-error {
     background-color: #f2dede;
     border-left: #CB444A solid 8px;
+}
+
+.alert-warning {
+    background-color: #fcf8e3;
+    border-left: #FFC646 solid 8px;
 }
 
 .remove-placement {

@@ -107,7 +107,7 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
         const expiration = healthEvent.raw.Description.substring(expirationIndex + expirationSearchText.length).split(",")[0];
 
         this.data.warnings.addOrUpdateNotification({
-            message: `A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure. <br> Thumbprint : ${thumbprint} <br> Expiration: ${expiration}`,
+            message: `A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure. <br> <b>Thumbprint</b> : ${thumbprint}  <b>Expiration</b>: ${expiration}`,
             level: StatusWarningLevel.Error,
             priority: 5,
             id: BannerWarningID.ExpiringClusterCert,
@@ -146,6 +146,9 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 
 export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public clusterManifestName: string;
+
+    public isSfrpCluster: boolean = false;
+
     private _imageStoreConnectionString: string;
     private _isNetworkInventoryManagerEnabled: boolean = false;
     private _isBackUpRestoreEnabled: boolean = true;
@@ -183,9 +186,10 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
             const item = management.item(i);
             if(item.getAttribute("Name") === "Management"){
                 this.getImageStoreConnectionString(item);
-                break;
             }else if (item.getAttribute("Name") === "BackUpRestoreService"){
                 this._isBackUpRestoreEnabled = true;
+            }else if (item.getAttribute("Name") === "UpgradeService"){
+                this.isSfrpCluster = true;
             }
         }
     }
@@ -304,7 +308,6 @@ export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
         ]
     };
     public action: IsolatedAction;
-    public updatePolicy: ActionWithDialog;
 
     public constructor(data: DataService, raw?: IRawBackupPolicy) {
         super(data, raw);
@@ -318,15 +321,10 @@ export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
                 delete: () => data.restClient.deleteBackupPolicy(this.raw.Name)
             },
             ViewBackupComponent,
-            // () => data.restClient.deleteBackupPolicy(this.raw.Name),
             () => true,
             );
-        // this.updatePolicy = new ActionUpdateBackupPolicy(data, raw);
     }
 
-    public updateBackupPolicy(): void {
-        this.updatePolicy.runWithCallbacks.apply(this.updatePolicy);
-    }
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawBackupPolicy> {
         return this.data.restClient.getBackupPolicy(this.name, messageHandler).pipe(map(response => {
             return response;

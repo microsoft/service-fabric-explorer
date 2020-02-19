@@ -2,25 +2,28 @@
     <div style="flex-grow: 1;">
         <div *ngFor="let alert of alerts.notifications; index as i">
             <div class="alert margin-bottom-setter" [ngClass]="'alert-' + alert.level" role="alert"  *ngIf="i === 0 || displayAll ">
-                <div>
-                    <strong>{{alert.level}}:</strong>
+                <div style="display: flex;
+                flex-direction: row;
+                justify-content: inherit;">
+                    <div>
+                        <b style="text-transform: capitalize;">{{alert.level}}:</b>
+                    </div>
+                    <div>
+                        <div  *ngIf="alert.link" style="display: inline-block;">
+                            <a target="_blank" [href]="alert.link" style=" color: #3b49b1;">{{alert.linkText || "(link)"}}</a>
+                        </div>
+                        <div style="margin-left: 10px; display: inline-block; cursor: pointer;"  (click)="toggleViewed()" *ngIf="alerts.notifications.length > 1 && i === 0 " title="See additional notifications" role="button">
+                            <span [ngClass]="{ 'mif-chevron-thin-up': displayAll, 'mif-chevron-thin-down': !displayAll }" ></span>
+                            ({{alerts.notifications.length}})
+                        </div>
+                    </div>
                 </div>
                 <span [innerHTML]="alert.message"></span>
-                <span *ngIf="alert.level === 'info'">
-                    <span (click)="remove(alert, true)" class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-failure remove-placement"></span>
-                </span>
-                <div>
-                    <div  *ngIf="alert.link">
-                        <a class="light-background-link" target="_blank" [href]="alert.link">{{alert.linkText || "(link)"}}</a>
-                    </div>
-                </div>            
+                <div *ngIf="alert.level !== 'error'">
+                    <span (click)="remove(alert, true)" class="mif-cancel mif-lg" style="float: right; cursor: pointer;" role="button"></span>
+                </div>        
             </div>
         </div>
-    </div>
-    <div style="margin-left: 10px; margin-top: 15px;"  (click)="toggleViewed()" *ngIf="alerts.notifications.length > 1 ">
-        <span *ngIf="!displayAll" class="dropdown-toggle dark-background-link bowtie-icon bowtie-triangle-down" > V</span>
-        <span *ngIf="displayAll" class="dropdown-toggle dark-background-link bowtie-icon bowtie-triangle-up" > V</span>
-        ({{alerts.notifications.length}})
     </div>
 </div>
 

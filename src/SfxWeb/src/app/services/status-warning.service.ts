@@ -2,12 +2,13 @@ import { Injectable } from '@angular/core';
 import { StorageService } from './storage.service';
 
 export interface IStatusWarning {
-  message: string;
-  link?: string;
-  linkText?: string;
-  level: string;
-  priority: number;
-  id: string;
+    message: string;
+    link?: string;
+    linkText?: string;
+    level: string;
+    priority: number;
+    id: string;
+    confirmText?: string;
 }
 
 @Injectable({
@@ -17,7 +18,8 @@ export class StatusWarningService {
 
   notifications: IStatusWarning[] = [];
 
-  constructor(public storage: StorageService) {}
+  constructor(public storage: StorageService) {
+  }
 
   public addNotification(notification: IStatusWarning) {
       this.notifications.push(notification);
@@ -46,6 +48,8 @@ export class StatusWarningService {
           }
           this.notifications.sort((a, b) => a.priority > b.priority ? -1 : 1);
       }
+      console.log(this);
+
   }
 
   //hidePermanently will store the id in local storage so that it does not get put in the drop down again.
@@ -58,6 +62,8 @@ export class StatusWarningService {
       if (hidePermanently) {
           this.storage.setValue(this.getStorageId(notificationId), false);
       }
+      console.log(this);
+
   }
 
   private getStorageId(notificationId: string): string {

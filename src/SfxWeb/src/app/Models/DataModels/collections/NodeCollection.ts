@@ -91,7 +91,6 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
         this.seedNodeCount = seedNodes.length;
 
-        this.checkSeedNodeCount(this.seedNodeCount);
         this.checkOneNodeScenario();
 
         this.healthySeedNodes = seedNodes.length.toString() + " (" +
@@ -100,21 +99,24 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         return of(true);
     }
 
-    private checkSeedNodeCount(count: number) {
-        //if < 5 seed nodes display warning
-        //if count is 1, it is one box/test only scenario
-        if (count < 5 && count !== 1) {
+    public checkSeedNodeCount(expected: number) {
+        if (this.seedNodeCount < expected && this.seedNodeCount !== 1) {
             this.data.warnings.addOrUpdateNotification({
-                message: "Cluster is degraded because it does not have 5 seed nodes. See link for more details",
-                level: StatusWarningLevel.Error,
+                message: `This cluster is currently running on the bronze reliability tier. For production workloads, only a reliability level of silver or greater is supported `,
+                level: StatusWarningLevel.Warning,
                 priority: 2,
                 id: BannerWarningID.ClusterDegradedState,
-                link: "https://aka.ms/servicefabric/durability"
+                link: "https://aka.ms/servicefabric/reliability",
+                linkText: "Read here for more guidance",
+                confirmText: `This cluster is currently running on the bronze reliability tier which indicates a test/staging environment. For production workloads, only a reliability
+                level of silver or greater is supported. For more information on the reliability characteristics of a cluster, please see https://aka.ms/sfreliabilitytiers`
             });
         }else {
             this.data.warnings.removeNotificationById(BannerWarningID.ClusterDegradedState);
+            console.log("why")
         }
     }
+
 
     private checkOneNodeScenario(): void {
         if ( !NodeCollection.checkedOneNodeScenario && this.collection.length === 1) {
