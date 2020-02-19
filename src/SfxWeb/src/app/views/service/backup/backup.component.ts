@@ -28,7 +28,7 @@ export class BackupComponent extends ServiceBaseController {
 
   setup() {
     this.serviceBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings("serviceBackupConfigurationInfoListSettings", ["raw.PolicyName"], [
-      new ListColumnSetting("raw.PolicyName", "Policy Name", ["raw.PolicyName"], false, (item, property) => `<a href='${item.parent.viewPath}/tab/details'>${property}</a>`, 1, item => item.action.runWithCallbacks.apply(item.action)),
+      new ListColumnSetting("raw.PolicyName", "Policy Name", ["raw.PolicyName"], false, (item, property) => property, 1, item => item.action.run()),
       new ListColumnSetting("raw.Kind", "Kind"),
       new ListColumnSetting("raw.PolicyInheritedFrom", "Policy Inherited From"),
       new ListColumnSetting("raw.PartitionId", "Partition Id"),

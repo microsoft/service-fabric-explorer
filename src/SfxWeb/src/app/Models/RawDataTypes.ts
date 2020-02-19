@@ -742,14 +742,14 @@ import { Node } from './DataModels/Node';
     }
 
     export interface IRawUpdateServiceDescription {
-        ServiceKind: number;
-        Flags: number;
-        TargetReplicaSetSize: number;
-        MinReplicaSetSize: number;
-        InstanceCount: number;
-        ReplicaRestartWaitDurationSeconds: number;
-        QuorumLossWaitDurationSeconds: number;
-        StandByReplicaKeepDurationSeconds: number;
+        ServiceKind?: number;
+        Flags?: number;
+        TargetReplicaSetSize?: number;
+        MinReplicaSetSize?: number;
+        InstanceCount?: number;
+        ReplicaRestartWaitDurationSeconds?: number;
+        QuorumLossWaitDurationSeconds?: number;
+        StandByReplicaKeepDurationSeconds?: number;
     }
 
     export interface IRawCreateServiceDescription extends IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription {

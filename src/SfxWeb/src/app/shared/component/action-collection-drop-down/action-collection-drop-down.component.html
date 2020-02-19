@@ -1,5 +1,5 @@
 <div ngbDropdown container="body">
-    <button class="simple-button" ngbDropdownToggle [ngClass]="{'tree-view': treeView}">{{treeView ? '' : (actionCollection.title | uppercase)}}</button>
+    <button class="simple-button" ngbDropdownToggle [ngClass]="{'tree-view': treeView}">{{treeView ? '' : ( (displayText || actionCollection.title) | uppercase)}}</button>
     <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
         <div *ngFor="let action of actionCollection.collection">
             <button *ngIf="!action.isAdvanced || dataService.actionsAdvancedEnabled()" ngbDropdownItem

@@ -10,7 +10,7 @@ import { DataService } from 'src/app/services/data.service';
 export class ActionCollectionDropDownComponent implements OnInit {
   @Input() treeView: boolean = false;
   @Input() actionCollection: ActionCollection;
-
+  @Input() displayText: string;
   constructor(public dataService: DataService) { }
 
   ngOnInit() {

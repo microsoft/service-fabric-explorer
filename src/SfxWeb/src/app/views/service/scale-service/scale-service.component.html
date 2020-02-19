@@ -1,1 +1,14 @@
-<p>scale-service works!</p>
+<form name="scaleServiceForm" class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Scale Service</h4>
+    </div>
+    <div class="modal-body">
+        <p>Enter the new number of instances for the service:</p>
+        <input class="input-flat" type="number" [(ngModel)]="updateServiceDescription.InstanceCount" required
+        [ngModelOptions]="{standalone: true}" min="-1">
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="solid-button blue" (click)="ok()" >Update Service</button>
+        <button type="button" class="flat-button" (click)="close()">Cancel</button>
+    </div>
+</form>

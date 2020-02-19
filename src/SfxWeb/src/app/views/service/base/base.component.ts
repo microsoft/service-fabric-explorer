@@ -63,7 +63,8 @@ export class BaseComponent extends ServiceBaseController {
     return this.data.clusterManifest.ensureInitialized().pipe(map(() => {
       this.tabs = this.tabs.filter(tab => tab.name !== "backup")
 
-      if(this.data.clusterManifest.isBackupRestoreEnabled && this.service.isStatefulService) {
+      if(this.data.clusterManifest.isBackupRestoreEnabled && this.service.isStatefulService
+          && this.appTypeName !== Constants.SystemAppTypeName) {
           this.tabs.push({
             name: "backup",
             route: "./backup"

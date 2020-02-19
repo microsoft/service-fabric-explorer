@@ -15,6 +15,7 @@ import { mergeMap, map } from 'rxjs/operators';
 import * as _ from 'lodash';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/partition-enable-back-up/partition-enable-back-up.component';
+import { ScaleServiceComponent } from 'src/app/views/service/scale-service/scale-service.component';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -119,7 +120,15 @@ export class Service extends DataModelBase<IRawService> {
         ));
 
         if (this.isStatelessService) {
-            // this.actions.add(new ActionScaleService(this.data.$uibModal, this.data.$q, this));
+            this.actions.add(new IsolatedAction(
+                this.data.dialog,
+                "scaleService",
+                "Scale Service",
+                "Scaling Service",
+                this,
+                ScaleServiceComponent,
+                () => this.isStatelessService
+            ));
         }
 
     }
@@ -210,10 +219,17 @@ export class ServiceType extends DataModelBase<IRawServiceType> {
     }
 
     private setUpActions() {
-        // TODO
-        // if (this.parent instanceof Application) {
-        //     this.actions.add(new ActionCreateService(this.data.$uibModal, this.data.$q, this));
-        // }
+        if (this.parent instanceof Application) {
+            this.actions.add(new IsolatedAction(
+                this.data.dialog,
+                "scaleService",
+                "Scale Service",
+                "Scaling Service",
+                this,
+                ScaleServiceComponent,
+                () => !this.raw.ServiceTypeDescription.IsStateful
+            ));
+        }
     }
 }
 
@@ -303,40 +319,6 @@ export class ServiceTypePackage extends DataModelBase<any> {
 //         );
 
 //         this.description = new CreateServiceDescription(serviceType, <Application>serviceType.parent);
-//     }
-// }
-
-// export class ActionScaleService extends ActionWithDialog {
-//     public updateServiceDescription: IRawUpdateServiceDescription;
-
-//     constructor($uibModal: ng.ui.bootstrap.IModalService, $q: ng.IQService, service: Service) {
-//         super($uibModal,
-//             $q,
-//             "scaleService",
-//             "Scale Service",
-//             "Scaling Service",
-//             () => service.updateService(this.updateServiceDescription),
-//             () => service.isStatelessService,
-//             <angular.ui.bootstrap.IModalSettings>{
-//                 templateUrl: "partials/scale-service-dialog.html",
-//                 controller: ActionController,
-//                 resolve: {
-//                     action: () => this
-//                 }
-//             },
-//             () => {
-//                 // Before opening the dialog, refresh service description to get its updated instance count
-//                 return service.description.ensureInitialized().then(() => {
-//                     this.updateServiceDescription.InstanceCount = service.description.raw.InstanceCount;
-//                 });
-//             }
-//         );
-
-//         this.updateServiceDescription = <IRawUpdateServiceDescription>{
-//             ServiceKind: service.serviceKindInNumber,
-//             Flags: 0x01, // Update InstanceCount flag
-//             InstanceCount: 0
-//         };
 //     }
 // }
 

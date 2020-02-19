@@ -3,7 +3,7 @@ import { ListSettings, ListColumnSettingForLink, ListColumnSettingWithFilter, Li
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { ServiceBaseController } from '../ServiceBase';
 
 @Component({
@@ -34,10 +34,11 @@ export class EssentialsComponent extends ServiceBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    this.service.description.refresh(messageHandler).subscribe();
+
     return forkJoin([
-      this.service.health.refresh(messageHandler),
-      this.service.description.refresh(messageHandler),
-      this.service.partitions.refresh(messageHandler)
+      this.service.health.refresh(messageHandler),//.subscribe();
+      this.service.partitions.refresh(messageHandler) //.subscribe();
     ]);
   }
 

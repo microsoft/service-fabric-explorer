@@ -17,6 +17,7 @@ import { AdalService } from './services/adal.service';
 import { httpInterceptorProviders } from './http-interceptor';
 import { CreateServiceComponent } from './views/application/create-service/create-service.component';
 import { ApplicationModule } from './views/application/application.module';
+import { ServiceModule } from './views/service/service.module';
 
 @NgModule({
   declarations: [
@@ -34,7 +35,8 @@ import { ApplicationModule } from './views/application/application.module';
     NgbDropdownModule,
     ApplicationModule,
     //test
-    ClusterModule
+    ClusterModule,
+    ServiceModule
   ],
   
   providers: [

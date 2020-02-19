@@ -28,7 +28,7 @@
         </div>
     </div>
 
-    <div class="detail-pane" *ngIf="servicePackage.health">
+    <div class="detail-pane essen-pane" *ngIf="servicePackage.health">
         <h4>Unhealthy Evaluations</h4>
         <detail-list [list]="servicePackage.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
     </div>

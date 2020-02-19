@@ -12,6 +12,7 @@ import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 import { ScaleServiceComponent } from './scale-service/scale-service.component';
 import { BackupComponent } from './backup/backup.component';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -21,7 +22,8 @@ import { BackupComponent } from './backup/backup.component';
     ServiceRoutingModule,
     SharedModule,
     DetailListTemplatesModule,
-    EventStoreModule
+    EventStoreModule,
+    FormsModule
   ],
   entryComponents: [ScaleServiceComponent]
 })
