@@ -46,7 +46,7 @@ export class Action {
             const executing = this.execute();
             executing.pipe(map( ()=> {
                 this._running = false;
-            }))
+            })).subscribe();
             return executing;
 
         }

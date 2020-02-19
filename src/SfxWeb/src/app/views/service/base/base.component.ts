@@ -5,6 +5,9 @@ import { ServiceBaseController } from '../ServiceBase';
 import { DataService } from 'src/app/services/data.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { Constants } from 'src/app/Common/Constants';
+import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
+import { Observable } from 'rxjs';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-base',
@@ -39,10 +42,12 @@ export class BaseComponent extends ServiceBaseController {
       ], true);
     } else {
       // TODO consider route guard here?
-      this.tabs.splice(2, 0,{
-        name: "manifest",
-        route: "./manifest"
-      })
+      if(!this.tabs.some(tab => tab.name === "manifest")){
+        this.tabs.splice(2, 0,{
+          name: "manifest",
+          route: "./manifest"
+        })  
+      }
 
       this.tree.selectTreeNode([
           IdGenerator.cluster(),
@@ -52,5 +57,18 @@ export class BaseComponent extends ServiceBaseController {
           IdGenerator.service(this.serviceId)
       ], true);
     }
+  }
+
+  refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    return this.data.clusterManifest.ensureInitialized().pipe(map(() => {
+      this.tabs = this.tabs.filter(tab => tab.name !== "backup")
+
+      if(this.data.clusterManifest.isBackupRestoreEnabled && this.service.isStatefulService) {
+          this.tabs.push({
+            name: "backup",
+            route: "./backup"
+          })
+      }
+    }));
   }
 }

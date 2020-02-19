@@ -6,6 +6,7 @@ import { DetailsComponent } from './details/details.component';
 import { DeploymentsComponent } from './deployments/deployments.component';
 import { ManifestComponent } from './manifest/manifest.component';
 import { EventsComponent } from './events/events.component';
+import { BackupComponent } from './backup/backup.component';
 
 
 const routes: Routes = [{
@@ -15,6 +16,7 @@ const routes: Routes = [{
     { path: 'deployments', component: DeploymentsComponent },
     { path: 'manifest', component: ManifestComponent },
     { path: 'events', component: EventsComponent },
+    { path: 'backup', component: BackupComponent },
     ]
   }
 ];

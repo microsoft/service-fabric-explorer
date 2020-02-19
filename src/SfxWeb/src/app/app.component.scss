@@ -7,14 +7,13 @@
     font-weight: lighter;
     padding: 12px;
     vertical-align: -webkit-baseline-middle;
+    margin-right: 0px;
     &.navbar-brand-azure {
         background-color: $navbar-brand-background-color;
     }
 
     .navbar-brand-icon {
         display: inline-block;
-        
-        margin-left: 14px;
         margin-right: 14px;
     }
 }

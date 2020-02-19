@@ -13,7 +13,8 @@ import { Observable, of } from 'rxjs';
 import { mergeMap, map } from 'rxjs/operators';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
-import { ActionWithDialog } from '../Action';
+import { ActionWithDialog, IsolatedAction } from '../Action';
+import { IViewBackUpData, ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -302,27 +303,24 @@ export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
             "Name",
         ]
     };
-    public action: ActionWithDialog;
+    public action: IsolatedAction;
     public updatePolicy: ActionWithDialog;
 
     public constructor(data: DataService, raw?: IRawBackupPolicy) {
         super(data, raw);
-        // this.action = new ActionWithDialog(
-        //     data.dialog,
-        //     "deleteBackupPolicy",
-        //     "Delete Backup Policy",
-        //     "Deleting",
-        //     () => data.restClient.deleteBackupPolicy(this.raw.Name),
-        //     () => true,
-        //     <angular.ui.bootstrap.IModalSettings>{
-        //         templateUrl: "partials/backupPolicy.html",
-        //         controller: ActionController,
-        //         resolve: {
-        //             action: () => this
-        //         }
-        //     },
-        //     null);
-
+        this.action = new IsolatedAction(
+            data.dialog,
+            "deleteBackupPolicy",
+            "Delete Backup Policy",
+            "Deleting",
+            {
+                backup: raw,
+                delete: () => data.restClient.deleteBackupPolicy(this.raw.Name)
+            },
+            ViewBackupComponent,
+            // () => data.restClient.deleteBackupPolicy(this.raw.Name),
+            () => true,
+            );
         // this.updatePolicy = new ActionUpdateBackupPolicy(data, raw);
     }
 

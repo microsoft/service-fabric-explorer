@@ -35,6 +35,8 @@ export abstract class BaseController implements  OnInit, OnDestroy {
                  }
              ));
         }))
+
+        console.log(this)
     }
 
     getClassName() {

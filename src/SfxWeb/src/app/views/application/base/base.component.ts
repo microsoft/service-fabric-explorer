@@ -46,6 +46,17 @@ export class BaseComponent extends ApplicationBaseController {
       IdGenerator.appType(this.appTypeName),
       IdGenerator.app(this.appId)
     ]);
+
+    this.data.clusterManifest.ensureInitialized().subscribe(() => {
+      if(this.data.clusterManifest.isBackupRestoreEnabled) {
+        if(!this.tabs.some(tab => tab.name === "backup")) {
+          this.tabs.push({
+            name: "backup",
+            route: "./backup"
+          })
+        }
+      }
+    });
   }
 
 }

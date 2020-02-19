@@ -11,12 +11,14 @@ import { HealthBase } from './HealthEvent';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HealthEvaluation, UpgradeDescription, UpgradeDomain } from './Shared';
 import { Utils } from 'src/app/Utils/Utils';
-import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin, merge } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
 import { ServiceCollection } from './collections/ServiceCollection';
-import { ActionWithConfirmationDialog } from '../Action';
+import { ActionWithConfirmationDialog, ActionWithDialog, IsolatedAction } from '../Action';
 import * as _ from 'lodash';
+import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/partition-enable-back-up/partition-enable-back-up.component';
+import { PartitionDisableBackUpComponent } from 'src/app/modules/backup-restore/partition-disable-back-up/partition-disable-back-up.component';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -111,6 +113,9 @@ export class Application extends DataModelBase<IRawApplication> {
 
     // TODO FIX THESE
     private setUpActions(): void {
+        if (this.raw.TypeName === Constants.SystemAppTypeName) {
+            return;
+        }
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
             "deleteApplication",
@@ -124,76 +129,9 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     private setAdvancedActions(): void {
-        // if (this.raw.TypeName === Constants.SystemAppTypeName) {
-        //     return;
-        // }
-        //     this.actions.add(new ActionWithDialog(
-        //         this.data.$uibModal,
-        //         this.data.$q,
-        //         "enableApplicationBackup",
-        //         "Enable/Update Application Backup",
-        //         "Enabling Application Backup",
-        //         () => this.data.restClient.enableApplicationBackup(this).then(() => {
-        //             this.applicationBackupConfigurationInfoCollection.refresh();
-        //         }),
-        //         () => true,
-        //         <angular.ui.bootstrap.IModalSettings>{
-        //             templateUrl: "partials/enableBackup.html",
-        //             controller: ActionController,
-        //             resolve: {
-        //                 action: () => this
-        //             }
-        //         },
-        //         null
-        //     ));
-
-        //     this.actions.add(new ActionWithDialog(
-        //         this.data.$uibModal,
-        //         this.data.$q,
-        //         "disableApplicationBackup",
-        //         "Disable Application Backup",
-        //         "Disabling Application Backup",
-        //         () => this.data.restClient.disableApplicationBackup(this).then(() => {
-        //             this.applicationBackupConfigurationInfoCollection.refresh();
-        //         }),
-        //         () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application",
-        //         <angular.ui.bootstrap.IModalSettings>{
-        //             templateUrl: "partials/disableBackup.html",
-        //             controller: ActionController,
-        //             resolve: {
-        //                 action: () => this
-        //             }
-        //         },
-        //         null
-        //     ));
-
-        //     this.actions.add(new ActionWithConfirmationDialog(
-        //         this.data.$uibModal,
-        //         this.data.$q,
-        //         "suspendApplicationBackup",
-        //         "Suspend Application Backup",
-        //         "Suspending...",
-        //         () => this.data.restClient.suspendApplicationBackup(this.id).then(() => {
-        //             this.applicationBackupConfigurationInfoCollection.refresh();
-        //         }),
-        //         () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === false,
-        //         "Confirm Application Backup Suspension",
-        //         `Suspend application backup for ${this.name} ?`,
-        //         this.name));
-
-        //     this.actions.add(new ActionWithConfirmationDialog(
-        //         this.data.$uibModal,
-        //         this.data.$q,
-        //         "resumeApplicationBackup",
-        //         "Resume Application Backup",
-        //         "Resuming...",
-        //         () => this.data.restClient.resumeApplicationBackup(this.id).then(() => {
-        //             this.applicationBackupConfigurationInfoCollection.refresh();
-        //         }),
-        //         () => this.applicationBackupConfigurationInfoCollection.collection.length && this.applicationBackupConfigurationInfoCollection.collection[0].raw && this.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application" && this.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true,
-        //         "Confirm Application Backup Resumption",
-        //         `Resume application backup for ${this.name} ?`,
-        //         this.name));
+        if (this.raw.TypeName === Constants.SystemAppTypeName) {
+            return;
+        }
     }
 
     //TODO TEST AND FIND OUT WHAT THIS IS

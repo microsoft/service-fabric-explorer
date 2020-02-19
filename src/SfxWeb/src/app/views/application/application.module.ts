@@ -15,9 +15,10 @@ import { CreateServiceComponent } from './create-service/create-service.componen
 import { FormsModule } from '@angular/forms';
 import { NgbTypeaheadModule, NgbDropdownModule, NgbButtonsModule } from '@ng-bootstrap/ng-bootstrap';
 import { ActionRowComponent } from './action-row/action-row.component';
+import { BackupComponent } from './backup/backup.component';
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent, ActionRowComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent, ActionRowComponent, BackupComponent],
   imports: [
     CommonModule,
     ApplicationRoutingModule,

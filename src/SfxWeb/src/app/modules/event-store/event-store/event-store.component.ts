@@ -6,6 +6,7 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { DataService } from 'src/app/services/data.service';
 
 @Component({
   selector: 'app-event-store',
@@ -22,9 +23,10 @@ export class EventStoreComponent implements OnInit {
   @Input() eventsList: EventListBase<any>;
   @Input() timelineGenerator: TimeLineGeneratorBase<FabricEventBase>;
 
-  constructor() { }
+  constructor(public dataService: DataService) { }
 
   ngOnInit() {
+    //   this.dataService.isAdvancedModeEnabled()
     this._showAllEvents = !this.timelineGenerator;
     this.resetSelectionProperties();
     this.setTimelineData();

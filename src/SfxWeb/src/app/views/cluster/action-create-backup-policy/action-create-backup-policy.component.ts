@@ -4,6 +4,7 @@ import { Observable } from 'rxjs';
 import { IRawBackupPolicy, IRawRetentionPolicy } from 'src/app/Models/RawDataTypes';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
+import { IsolatedAction } from 'src/app/Models/Action';
 
 @Component({
   selector: 'app-action-create-backup-policy',
@@ -44,11 +45,9 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
   isUpdateOperation: boolean = false;
 
   constructor(public dialogRef: MatDialogRef<ActionCreateBackupPolicyComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IRawBackupPolicy,
+    @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
     private dataService: DataService,
-    private formBuilder: FormBuilder) {
-        this.isUpdateOperation = !!data;
-        
+    private formBuilder: FormBuilder) {        
     //   super(
     //       data.$uibModal,
     //       data.$q,
@@ -68,7 +67,7 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
   }
 
   public saveBackupPolicy() {
-    let data = this.form.value;
+    let data = this.form.getRawValue();
 
     console.log(data);
 
@@ -103,9 +102,11 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
     //         }
     //     }
     // }
-    (this.isUpdateOperation ? this.dataService.restClient.createBackupPolicy(data) : 
-                              this.dataService.restClient.updateBackupPolicy(data)  ).subscribe( () => {
+    console.log(this.isUpdateOperation);
+    (this.isUpdateOperation ? this.dataService.restClient.updateBackupPolicy(data) : 
+                              this.dataService.restClient.createBackupPolicy(data)  ).subscribe( () => {
                                 this.dialogRef.close();
+                                this.data.data = data;
                               },
                               err => {
                                 console.log(err)
@@ -141,10 +142,20 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
       RetentionPolicy: this.formBuilder.group({
         RetentionPolicyType: ["Basic"],
         MinimumNumberOfBackups: [0],
-        RetentionDuration: [""]
+        RetentionDuration: [null]
       })
-
     })
+
+    if(this.data.data) {
+        this.isUpdateOperation = true;
+        this.form.patchValue(this.data.data);
+        if(this.data.data.RetentionPolicy) {
+          this.form.patchValue({'retentionPolicyRequired' : true});
+        }
+
+        this.form.get('Name').disable();
+    }
+
     console.log(this.form)
     const storage = this.form.get('Storage');
     this.updateStorageKindValidators(storage, this.form.get('Storage').get('StorageKind').value);
@@ -156,7 +167,9 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
     })
 
     this.form.get('retentionPolicyRequired').valueChanges.subscribe(required => {
-      this.form.get('RetentionPolicy').get('RetentionDuration').setValidators(required ? [Validators.required] : null);
+      console.log(required)
+      this.form.get('RetentionPolicy').get('RetentionDuration').setValidators(required ? [Validators.required, Validators.minLength(1)] : null);
+      this.form.get('RetentionPolicy').get('RetentionDuration').updateValueAndValidity();
     })
 
     this.form.get('Schedule').get('ScheduleKind').valueChanges.subscribe(type => {
@@ -170,6 +183,9 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
   updateSchedule(state: string) {
     this.form.get('Schedule').get('ScheduleFrequencyType').setValidators(state === 'TimeBased' ? [Validators.required] : null);
     this.form.get('Schedule').get('Interval').setValidators(state === 'FrequencyBased' ? [Validators.required] : null);
+
+    this.form.get('Schedule').get('ScheduleFrequencyType').updateValueAndValidity();
+    this.form.get('Schedule').get('Interval').updateValueAndValidity();  
   }
 
   updateStorageKindValidators(storage: AbstractControl, storageKind: string) {
@@ -186,6 +202,10 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
 
       storage.get('Path').setValidators([Validators.required]);
     }
+
+    storage.get('ContainerName').updateValueAndValidity();
+    storage.get('ConnectionString').updateValueAndValidity();
+    storage.get('Path').updateValueAndValidity();
   }
 
   get RunTimes() {

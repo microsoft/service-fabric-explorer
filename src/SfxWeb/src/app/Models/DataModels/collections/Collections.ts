@@ -12,7 +12,7 @@ import { Utils } from 'src/app/Utils/Utils';
 import { BackupPolicy } from '../Cluster';
 import { ApplicationBackupConfigurationInfo, Application } from '../Application';
 import { ApplicationTypeGroup, ApplicationType } from '../ApplicationType';
-import { Service, ServiceType } from '../Service';
+import { Service, ServiceType, ServiceBackupConfigurationInfo } from '../Service';
 import { IdUtils } from 'src/app/Utils/IdUtils';
 import { Partition } from '../Partition';
 import { ReplicaOnPartition } from '../Replica';

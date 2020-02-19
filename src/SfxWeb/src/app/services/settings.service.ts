@@ -118,8 +118,8 @@ export class SettingsService {
   };
 
   public getNewOrExistingBackupPolicyListSettings(listKey: string = "backupPolicies") {
-      return this.getNewOrExistingListSettings(listKey, [null], [
-          new ListColumnSetting("raw.Name", "Name", ["raw.Name"], false, (item, property) => "<a href='#/tab/backupPolicies'>" + property + "</a>", 1, item => item.action.runWithCallbacks.apply(item.action)),
+      return this.getNewOrExistingListSettings(listKey, null, [
+          new ListColumnSetting("raw.Name", "Name", ["raw.Name"], false, (item, property) => property, 1, item => item.action.run()),
           new ListColumnSetting("raw.Schedule.ScheduleKind", "ScheduleKind"),
           new ListColumnSetting("raw.Storage.StorageKind", "StorageKind"),
           new ListColumnSetting("raw.AutoRestoreOnDataLoss", "AutoRestoreOnDataLoss"),

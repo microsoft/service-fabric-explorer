@@ -76,6 +76,10 @@ export class DataService {
       return this.actionsEnabled() && this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
   }
 
+  public isAdvancedModeEnabled(): boolean {
+    return this.storage.getValueBoolean(Constants.AdvancedModeKey, false)
+  }
+
   public getClusterHealth(
     eventsHealthStateFilter: HealthStateFilterFlags = HealthStateFilterFlags.Default,
     nodesHealthStateFilter: HealthStateFilterFlags = HealthStateFilterFlags.Default,

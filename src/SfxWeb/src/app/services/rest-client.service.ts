@@ -421,34 +421,34 @@ export class RestClientService {
       return this.post(this.getApiUrl(url), "Service update", updateServiceDescription, messageHandler);
   }
 
-  public enableApplicationBackup(application: Application, messageHandler?: IResponseMessageHandler): Observable<{}> {
+  public enableApplicationBackup(application: Application, policyName: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       let url = "Applications/" + encodeURIComponent(application.id) + "/$/EnableBackup";
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Enable Application Backup", { BackupPolicyName: application.backupPolicyName }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Enable Application Backup", { BackupPolicyName: policyName }, messageHandler);
   }
 
-  public disableApplicationBackup(application: Application, messageHandler?: IResponseMessageHandler): Observable<{}> {
+  public disableApplicationBackup(application: Application, cleanBackup: boolean, messageHandler?: IResponseMessageHandler): Observable<{}> {
       let url = "Applications/" + encodeURIComponent(application.id) + "/$/DisableBackup";
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Disable Application Backup", { CleanBackup: application.cleanBackup }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Disable Application Backup", { CleanBackup: cleanBackup }, messageHandler);
   }
 
-  public enableServiceBackup(service: Service, messageHandler?: IResponseMessageHandler): Observable<{}> {
+  public enableServiceBackup(service: Service, backupPolicyName: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       let url = "Services/" + encodeURIComponent(service.id) + "/$/EnableBackup";
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Enable Service Backup", { BackupPolicyName: service.backupPolicyName }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Enable Service Backup", { BackupPolicyName: backupPolicyName }, messageHandler);
   }
 
-  public disableServiceBackup(service: Service, messageHandler?: IResponseMessageHandler): Observable<{}> {
+  public disableServiceBackup(service: Service, cleanBackup: boolean, messageHandler?: IResponseMessageHandler): Observable<{}> {
       let url = "Services/" + encodeURIComponent(service.id) + "/$/DisableBackup";
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Disable Service Backup", { CleanBackup: service.cleanBackup }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Disable Service Backup", { CleanBackup: cleanBackup }, messageHandler);
   }
 
-  public enablePartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): Observable<{}> {
+  public enablePartitionBackup(partition: Partition, backupPolicyName: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/EnableBackup";
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Enable Service Backup", { BackupPolicyName: partition.partitionBackupInfo.backupPolicyName }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Enable Service Backup", { BackupPolicyName: backupPolicyName }, messageHandler);
   }
 
-  public disablePartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): Observable<{}> {
+  public disablePartitionBackup(partition: Partition, cleanBackup: boolean, messageHandler?: IResponseMessageHandler): Observable<{}> {
       let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/DisableBackup";
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Disable Service Backup", { CleanBackup: partition.partitionBackupInfo.cleanBackup }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Disable Service Backup", { CleanBackup: cleanBackup }, messageHandler);
   }
 
   public suspendApplicationBackup(applicationId: string, messageHandler?: IResponseMessageHandler): Observable<{}> {

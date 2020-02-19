@@ -16,9 +16,4 @@
         </h4>
         <detail-list [list]="service.health.healthEvents" [listSettings]="healthEventsListSettings"></detail-list>
     </div>
-    
-    <div class="detail-pane" *ngIf="service.isStatefulService && service.parent.raw.TypeName !== 'System'">
-        <h4>Service Backup Configuration</h4>
-        <detail-list [list]="service.serviceBackupConfigurationInfoCollection" [listSettings]="serviceBackupConfigurationInfoListSettings"></detail-list>
-    </div>
 </div>
