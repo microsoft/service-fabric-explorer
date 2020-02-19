@@ -1,0 +1,8 @@
+<div *ngIf="actions">
+    <app-action-collection-drop-down [actionCollection]="actions" style="float: right;"></app-action-collection-drop-down>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="app">
+    <h4>Application Backup Configuration</h4>
+    <detail-list [list]="app.applicationBackupConfigurationInfoCollection.collection" [listSettings]="applicationBackupConfigurationInfoListSettings"></detail-list>
+</div>

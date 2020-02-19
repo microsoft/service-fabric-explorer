@@ -1,0 +1,38 @@
+<form class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Disable Backup Policy</h4>
+    </div>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+            <dt>Clean Backup</dt>
+            <dd>
+                <input type="checkbox" [(ngModel)]="cleanBackup">
+            </dd>
+        </dl>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="solid-button bluey" (click)="ok()">Disable Backup</button>
+        <button type="button" class="flat-button" (click)="cancel()">Cancel</button>
+    </div>
+</form>
+
+
+<!-- <form class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Enable / Update Backup Policy</h4>
+    </div>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+            <dt>Backup Policy Name</dt>
+            <dd>
+                <select [(ngModel)]="backupPolicyName" class="input-flat" [ngModelOptions]="{standalone: true}">
+                    <option *ngFor="let backupPolicy of dataService.backupPolicies.collection" class="input-flat" [value]="backupPolicy.raw.Name">{{backupPolicy.raw.Name}}</option>
+                </select>
+            </dd>
+        </dl>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="solid-button bluey" [disabled]="backupPolicyName.length === 0" (click)="ok()">Enable Backup</button>
+        <button type="button" class="flat-button" (click)="cancel()">Cancel</button>
+    </div>
+</form> -->
