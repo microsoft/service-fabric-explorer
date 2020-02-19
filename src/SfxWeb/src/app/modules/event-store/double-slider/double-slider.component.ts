@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import * as noUiSlider from "nouislider";
 
@@ -9,7 +9,8 @@ export interface IOnDateChange {
 @Component({
   selector: 'app-double-slider',
   templateUrl: './double-slider.component.html',
-  styleUrls: ['./double-slider.component.scss']
+  styleUrls: ['./double-slider.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class DoubleSliderComponent implements OnInit, OnChanges, AfterViewInit {
 
@@ -35,7 +36,7 @@ export class DoubleSliderComponent implements OnInit, OnChanges, AfterViewInit {
         format: {
             to : num => {
                 const date = new Date(num);
-                return date.toLocaleString("en-us");
+                return date.toISOString() + '<br>' + date.toLocaleString("en-us");
             },
             from: Number
         },
@@ -53,8 +54,8 @@ export class DoubleSliderComponent implements OnInit, OnChanges, AfterViewInit {
     // note: when this updates the value it'll cycle back down and call this so making sure you have a check
     //for only updating on new values so it doesnt get stuck on an update loop.
     this.slider.on("set", (data) => {
-        const start = new Date(data[0]);
-        const end = new Date(data[1]);
+        const start = new Date(data[0].split('<br>')[1]);
+        const end = new Date(data[1].split('<br>')[1]);
 
         let changed = false;
         

@@ -1,16 +1,19 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy } from '@angular/core';
 // import * as vis from 'vis';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
-import { Timeline, DataItem, DataSet, DataGroup } from 'vis-timeline';
+import { Timeline, DataItem, DataSet, DataGroup, moment } from 'vis-timeline';
 
 @Component({
   selector: 'app-event-store-timeline',
   templateUrl: './event-store-timeline.component.html',
-  styleUrls: ['./event-store-timeline.component.scss']
+  styleUrls: ['./event-store-timeline.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
 
   @Input() events: ITimelineData;
+
+  public isUTC: boolean = false;
 
   private _timeline: Timeline;
   private _start: Date;
@@ -39,9 +42,17 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
     this.updateList(this.events);
   }
 
+  public flipTimeZone() {
+    this._timeline.setOptions({
+        moment: this.isUTC ? moment : moment.utc
+    })
+
+    this.isUTC = !this.isUTC;
+  }
+
   public fitData() {
     this._timeline.fit();
-}
+  }
 
   public fitWindow() {
       this._timeline.setWindow(this._start, this._end);

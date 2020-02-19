@@ -100,7 +100,7 @@ export class SettingsService {
               new ListColumnSettingWithCopyText("description", "Description", [], false, 7)
           ],
           false,
-          (item) => true
+          (item) => item.description.length > 0
           );
   }
 

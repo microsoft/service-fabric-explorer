@@ -1,5 +1,5 @@
-<div class="detail-pane essen-pane" *ngIf="replica">
-    <div class="table-responsive">
+<div *ngIf="replica">
+    <div class="table-responsive detail-pane essen-pane">
         <table class="essen-table" role="presentation">
             <tr>
                 <th>Id</th>
@@ -29,10 +29,9 @@
         <div *ngIf="nodeView"><a [routerLink]="nodeView">View on Node</a></div>
     </div>
 
-    <!-- TODO replica address -->
-<!-- <sfx-replica-address address="replica.address"></sfx-replica-address> -->
+    <app-replica-address [address]="replica.address"></app-replica-address>
 
-    <div class="detail-pane" *ngIf="replica.healthState.isInitialized">
+    <div class="detail-pane essen-pane" *ngIf="replica.health.isInitialized">
         <h4>Unhealthy Evaluations</h4>
         <detail-list [list]="replica.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
     </div>
