@@ -166,12 +166,6 @@ export class TreeNodeViewModel {
         }
     }
 
-    public contextMenuToggled(open: boolean) {
-        if (open) {
-            HtmlUtils.repositionContextMenu();
-        }
-    }
-
     public handleClick() {
         this.select();
     }

@@ -111,12 +111,6 @@ export class ListSettings {
         }
         return item;
     }
-
-    public filterContextMenuToggled(open: boolean) {
-        if (open) {
-            HtmlUtils.repositionContextMenu();
-        }
-    }
 }
 
 export class FilterValue {

@@ -30,7 +30,5 @@
             <div *ngIf="appView"><a [routerLink]="appView">View on Application</a></div>
         </div>
     </div>
-
-    <!-- TODO -->
-    <!-- <sfx-replica-address address="replica.address"></sfx-replica-address> -->
+    <app-replica-address [address]="replica.address"></app-replica-address>
 </div>

@@ -5,7 +5,6 @@
 
 module Sfx {
 
-    // TODO:
     //   1. Upgrade moment and remove this when issue https://github.com/moment/moment/issues/3763 gets resolved
     //   2. Import moment from tsconfig.json
     declare var moment: any;

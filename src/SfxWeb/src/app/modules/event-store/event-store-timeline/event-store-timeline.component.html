@@ -31,12 +31,12 @@
         </button>
 
         <button type="button" class="simple-button margined" (click)="flipTimeZone()"
-            title="Move to the newest event in the time range.">
+            title="Change the timezone.">
             Set to {{isUTC ? 'Local Time' : 'UTC'}}
         </button>
 
         <a class="link"> Why is data missing?
-            <span class="bowtie-icon bowtie-status-help-outline" title="This timeline may present incomplete information and not fully represent the cluster for this date range. Events may also be missing due to data loss and lead to incomplete states. E.g.: A cluster upgrade starting before or ending after this time range will not be shown."></span>
+            <span class="mif-info" title="This timeline may present incomplete information and not fully represent the cluster for this date range. Events may also be missing due to data loss and lead to incomplete states. E.g.: A cluster upgrade starting before or ending after this time range will not be shown."></span>
         </a>
     </div>
     <div #visualization></div>

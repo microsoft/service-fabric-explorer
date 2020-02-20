@@ -110,7 +110,6 @@ export class Application extends DataModelBase<IRawApplication> {
         this.actions.collection = this.actions.collection.filter(action => ["enableApplicationBackup", "disableApplicationBackup", "suspendApplicationBackup", "suspendApplicationBackup"].indexOf(action.name) === -1);
     }
 
-    // TODO FIX THESE
     private setUpActions(): void {
         if (this.raw.TypeName === Constants.SystemAppTypeName) {
             return;

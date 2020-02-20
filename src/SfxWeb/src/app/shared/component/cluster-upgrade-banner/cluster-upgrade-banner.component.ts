@@ -20,7 +20,7 @@ export class ClusterUpgradeBannerComponent extends BaseController {
   }
 
   ngOnInit() {
-    this.checkWidth(window.innerWidth); //TODO make sure window is there?
+    this.checkWidth(window.innerWidth);
   }
 
   public getUpgradeDomainProgress(): string {

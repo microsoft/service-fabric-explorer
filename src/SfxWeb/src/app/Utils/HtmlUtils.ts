@@ -121,19 +121,6 @@ export class HtmlUtils {
     // Utility to mark warning/error/resolved events in the detail list
     public static eventTypesUtil = new EventTypesUtil();
 
-    // Reposition the filter context menu if they are out of current view port
-    public static repositionContextMenu(): void {
-        // TODO fix this?
-        // _.forEach($(".uib-dropdown-open .dropdown-menu:visible"), el => {
-        //     if (el.offsetLeft + el.offsetWidth > window.innerWidth) {
-        //         $(el).css("left", window.innerWidth - el.offsetWidth);
-        //     }
-        //     if (el.offsetTop + el.offsetHeight > window.innerHeight) {
-        //         $(el).css("top", el.offsetTop - el.offsetHeight - 20);
-        //     }
-        // });
-    }
-
     public static isHtml(text: string): boolean {
         return /<\/[a-zA-Z]+>/.test(text);
     }
@@ -162,9 +149,9 @@ export class HtmlUtils {
         return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="assets/${badge.badgeClass}.svg" alt="${badge.text} badge"></img><span> ${badge.text}</span></div>`;
     }
 
-    public static getBadgeOnlyHtml(badge: ITextAndBadge): string {
-        return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="assets/${badge.badgeClass}.svg"></img></div>`;
-    }
+    // public static getBadgeOnlyHtml(badge: ITextAndBadge): string {
+    //     return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="assets/${badge.badgeClass}.svg"></img></div>`;
+    // }
 
 
     public static parseReplicaAddress(address: string): any {
