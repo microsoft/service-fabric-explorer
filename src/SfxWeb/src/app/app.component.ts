@@ -20,7 +20,7 @@ export class AppComponent implements OnInit{
   hideSFXTest: boolean = false;
   hideSFXLogo: boolean = false;
   constructor(public treeService: TreeService,
-              private refreshService: RefreshService,
+              public refreshService: RefreshService,
               public adalService: AdalService,
               private storageService: StorageService,
               public breakpointObserver: BreakpointObserver,

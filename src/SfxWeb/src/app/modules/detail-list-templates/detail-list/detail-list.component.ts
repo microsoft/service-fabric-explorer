@@ -13,7 +13,7 @@ export class DetailListComponent {
   @Input() listSettings: ListSettings;
   @Input() searchText = "Search list";
   private _list: any[];
-  private sortedFilteredList: any[] = []; //actual list displayed in html.
+  public sortedFilteredList: any[] = []; //actual list displayed in html.
 
   page = 1;
   pageSize = 10;
@@ -49,7 +49,7 @@ export class DetailListComponent {
   private getSortedFilteredList(): any[] {
     let list = this._list;
 
-    if (this.listSettings.hasEnabledFilters || this.listSettings.search) {
+    if (this.listSettings && (this.listSettings.hasEnabledFilters || this.listSettings.search)) {
 
         // Retrieve text values of all columns for searching and filtering
         let pluckedList = list.map(item => {
@@ -76,7 +76,7 @@ export class DetailListComponent {
     }
 
     // Sort
-    if (!_.isEmpty(this.listSettings.sortPropertyPaths)) {
+    if (this.listSettings && !_.isEmpty(this.listSettings.sortPropertyPaths)) {
         list = sortByProperty(list, 
                               this.listSettings.sortPropertyPaths,
                               this.listSettings.sortReverse)

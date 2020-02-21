@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DataService } from 'src/app/services/data.service';
+import { Partition } from 'src/app/Models/DataModels/Partition';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-partition-trigger-back-up',
@@ -10,11 +13,25 @@ export class PartitionTriggerBackUpComponent implements OnInit {
 
   form: FormGroup
 
-  constructor(private formBuilder: FormBuilder) { }
-
+  constructor(private formBuilder: FormBuilder,
+              private data: DataService,
+              @Inject(MAT_DIALOG_DATA) public partition: Partition,
+              public dialogRef: MatDialogRef<PartitionTriggerBackUpComponent>) { }
   ngOnInit() {
     this.form = this.formBuilder.group({
       BackupTimeout: ["", [Validators.required]]
     })
   }
+
+  ok() {
+    this.data.restClient.triggerPartitionBackup(this.partition).subscribe( () => {
+      this.cancel();
+    }, 
+    err => console.log(err));
+  }
+
+  cancel() {
+    this.dialogRef.close();
+  }
+
 }

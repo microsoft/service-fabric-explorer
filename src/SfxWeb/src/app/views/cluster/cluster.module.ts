@@ -13,7 +13,6 @@ import { ManifestComponent } from './manifest/manifest.component';
 import { EventsComponent } from './events/events.component';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { ImagestoreModule } from 'src/app/modules/imagestore/imagestore.module';
-import { ActionUpdateBackupPolicyComponent } from './action-update-backup-policy/action-update-backup-policy.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActionCreateBackupPolicyComponent } from './action-create-backup-policy/action-create-backup-policy.component';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
@@ -25,7 +24,7 @@ import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-resto
 
 
 @NgModule({
-  declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent, ImagestoreComponent, ManifestComponent, EventsComponent, ActionUpdateBackupPolicyComponent, ActionCreateBackupPolicyComponent, StatusWarningsComponent, BackupsComponent],
+  declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent, ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent, StatusWarningsComponent, BackupsComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,
@@ -38,7 +37,6 @@ import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-resto
     ChartsModule,
     NgbDropdownModule,
     BackupRestoreModule
-  ],
-  entryComponents: [ActionUpdateBackupPolicyComponent, ActionCreateBackupPolicyComponent]
+  ]
 })
 export class ClusterModule { }

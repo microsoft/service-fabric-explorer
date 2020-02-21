@@ -6,15 +6,15 @@
         <dl class="dl-horizontal">
             <dt>Service Kind</dt>
             <dd>
-                <input type="text" class="input-flat" readonly="readonly" [ngModelOptions]="{standalone: true}" [(ngModel)]="serviceType.serviceKind" name="serviceKind" aria-label="Service Kind">
+                {{serviceType.serviceKind}}
             </dd>
             <dt>Service Type Name</dt>
             <dd>
-                <input type="text" class="input-flat" readonly="readonly" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.ServiceTypeName" name="ServiceTypeName" aria-label="Service Type Name">
+                {{description.raw.ServiceTypeName}}
             </dd>
             <dt>Application Name</dt>
             <dd>
-                <input type="text" class="input-flat" readonly="readonly" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.ApplicationName" name="ApplicationName" aria-label="Application Name">
+                {{description.raw.ApplicationName}}
             </dd>
             <dt>Service Name</dt>
             <dd>
@@ -132,13 +132,13 @@
                                             </tr>
                                         </thead>
                                         <tbody>
-                                            <tr *ngFor="let name of description.raw.PartitionDescription.Names">
+                                            <tr *ngFor="let name of description.raw.PartitionDescription.Names; let outerIndex = index;">
                                                 <td>
-                                                    <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.Names[index]"
+                                                    <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.PartitionDescription.Names[outerIndex]"
                                                         required aria-label="Name">
                                                 </td>
                                                 <td>
-                                                    <button (click)="description.raw.PartitionDescription.Names.splice(index, 1)" class="flat-button" role="button">Remove</button>
+                                                    <button (click)="description.raw.PartitionDescription.Names.splice(outerIndex, 1)" class="flat-button" role="button">Remove</button>
                                                 </td>
                                             </tr>
                                             <tr *ngIf="description.raw.PartitionDescription.Names.length === 0">
@@ -166,7 +166,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let placementPolicy of description.raw.ServicePlacementPolicies">
+                                    <tr *ngFor="let placementPolicy of description.raw.ServicePlacementPolicies; let outerIndex = index;">
                                         <td>
                                             <div ngbDropdown container="body">
                                                 <button class="simple-button" ngbDropdownToggle>
@@ -185,7 +185,7 @@
                                             <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="placementPolicy.DomainName" required aria-label="Domain name">
                                         </td>
                                         <td>
-                                            <button (click)="description.raw.ServicePlacementPolicies.splice(index, 1)" role="button" class="flat-button">Remove</button>
+                                            <button (click)="description.raw.ServicePlacementPolicies.splice(outerIndex, 1)" role="button" class="flat-button">Remove</button>
                                         </td>
                                     </tr>
                                     <tr *ngIf="description.raw.ServicePlacementPolicies.length === 0">
@@ -209,7 +209,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let correlation of description.raw.CorrelationScheme">
+                                    <tr *ngFor="let correlation of description.raw.CorrelationScheme; let outerIndex = index;">
                                         <td>
                                             <div ngbDropdown container="body">
                                                 <button class="simple-button" ngbDropdownToggle>
@@ -239,7 +239,7 @@
                                             <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="correlation.ServiceName" required aria-label="Service name">
                                         </td>
                                         <td>
-                                            <button (click)="description.raw.CorrelationScheme.splice(index, 1)" class="flat-button">Remove</button>
+                                            <button (click)="description.raw.CorrelationScheme.splice(outerIndex, 1)" class="flat-button">Remove</button>
                                         </td>
                                     </tr>
                                     <tr *ngIf="description.raw.CorrelationScheme.length === 0">
@@ -265,7 +265,7 @@
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    <tr *ngFor="let loadMetric of description.raw.ServiceLoadMetrics">
+                                    <tr *ngFor="let loadMetric of description.raw.ServiceLoadMetrics; let outerIndex = index;">
                                         <td>
                                             <input type="text" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="loadMetric.Name" required aria-label="Metric name">
                                         </td>
@@ -301,7 +301,7 @@
                                             </div> -->
                                         </td>
                                         <td>
-                                            <button (click)="description.raw.ServiceLoadMetrics.splice(index, 1)" class="flat-button">Remove</button>
+                                            <button (click)="description.raw.ServiceLoadMetrics.splice(outerIndex, 1)" class="flat-button">Remove</button>
                                         </td>
                                     </tr>
                                     <tr *ngIf="description.raw.ServiceLoadMetrics.length === 0">

@@ -22,7 +22,7 @@
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "aot": false,
+            "aot": true,
             "assets": [
               "src/favicon.png",
               "src/assets"
@@ -36,14 +36,13 @@
               "src/modal.scss",
               "src/calender.scss",
               "src/Styles/modules/_candybar.scss"
-
             ],
             "scripts": [],
             "stylePreprocessorOptions": {
-							"includePaths": [
-								"src/styles"
-							]
-						}
+              "includePaths": [
+                "src/styles"
+              ]
+            }
           },
           "configurations": {
             "production": {
@@ -58,7 +57,6 @@
               "sourceMap": false,
               "extractCss": true,
               "namedChunks": false,
-              "aot": true,
               "extractLicenses": true,
               "vendorChunk": false,
               "buildOptimizer": true,
@@ -138,6 +136,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "SfxWeb"
+    }
+  },
+  "defaultProject": "SfxWeb",
+  "cli": {
+    "analytics": false
+  }
 }

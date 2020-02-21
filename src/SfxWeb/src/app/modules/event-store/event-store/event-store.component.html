@@ -22,7 +22,7 @@
             </div>
             <span class="mif-info mif-lg" style="vertical-align: middle; margin-left: 10px;" title="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
             <span *ngIf="dataService.isAdvancedModeEnabled() && showAllEvents">
-                <app-input [placeholder]="searchText" [model]="transformText" (onChange)="transformText = $event;"></app-input>
+                <app-input placeholder="query string" [model]="transformText" (onChange)="transformText = $event;"></app-input>
                 <button class="simple-button" (click)="setTimelineData()">filter</button>
             </span>
         </div>

@@ -21,8 +21,8 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
 
   hoveredDate: NgbDate;
 
-  fromDate: NgbDateStruct;
-  toDate: NgbDateStruct;
+  fromDate: NgbDate;
+  toDate: NgbDate;
 
   constructor(public calendar: NgbCalendar, public formatter: NgbDateParserFormatter) {
 
@@ -30,21 +30,21 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
 
   ngOnChanges(simple: SimpleChanges) {
     console.log(simple)
-    this.toDate = this.dateToNgbDateStruct(this.currentEndDate);
-    this.fromDate = this.dateToNgbDateStruct(this.currentStartDate);
+    this.toDate = this.dateToNgbDate(this.currentEndDate);
+    this.fromDate = this.dateToNgbDate(this.currentStartDate);
   }
 
   ngOnInit(){
-    this._maxDate = this.dateToNgbDateStruct(this.maxDate);
-    this._minDate = this.dateToNgbDateStruct(this.minDate);
+    this._maxDate = this.dateToNgbDate(this.maxDate);
+    this._minDate = this.dateToNgbDate(this.minDate);
   }
 
-  dateToNgbDateStruct(date: Date): NgbDateStruct {
-    return {
+  dateToNgbDate(date: Date): NgbDate {
+    return NgbDate.from({
       year: date.getFullYear(),
       month: date.getMonth() + 1,
       day: date.getDate()
-    }
+    })
   }
 
   onDateSelection(date: NgbDate) {

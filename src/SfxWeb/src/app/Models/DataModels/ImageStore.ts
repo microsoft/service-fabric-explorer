@@ -22,7 +22,7 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
     public currentFolder: ImageStoreFolder;
     public pathBreadcrumbItems: IStorePathBreadcrumbItem[] = [];
     public allChildren: ImageStoreItem[];
-    private isLoadingFolderContent: boolean = false;
+    public isLoadingFolderContent: boolean = false;
 
 
     //helper to determine which way for slashes to be added in.

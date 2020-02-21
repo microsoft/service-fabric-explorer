@@ -20,7 +20,7 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
   resolvedData: any;
   
   @Input() data: any;
-
+  @Input() title: string;
   //with parent added it will assume data is from data.raw and this allows to run change detection.
   @Input() parent: any;
   constructor() { }
@@ -166,7 +166,7 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
       return _.size(resolvedObject) > 0 ? resolvedObject : null;
   }
 
-  asIsOrder(a: string, b: string): number {
+  asIsOrder(a: any, b: any): number {
     return 1;
   }
 

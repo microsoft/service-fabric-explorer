@@ -13,7 +13,7 @@
                 <th>Health State</th>
                 <th>Status</th>
             </tr>
-            <tr *ngIf="replica.healthState.isInitialized">
+            <tr *ngIf="replica.healthState">
                 <td><app-health-badge [badgeClass]="replica.healthState.badgeClass" [text]="replica.healthState.text"></app-health-badge></td>
                 <td>{{replica.raw.ReplicaStatus}}</td>
             </tr>
