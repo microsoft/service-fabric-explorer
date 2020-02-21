@@ -943,3 +943,12 @@ app-navbar {
     background-color: transparent;
     color: white;
 }
+
+
+.input-flat.ng-valid[required], .input-flat.ng-valid.required  {
+    border-left: 5px solid #42A948; /* green */
+  }
+  
+  .input-flat.ng-invalid:not(form)  {
+    border-left: 5px solid #a94442; /* red */
+  }

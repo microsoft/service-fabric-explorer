@@ -21,6 +21,7 @@ import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { StatusWarningsComponent } from './status-warnings/status-warnings.component';
 import { BackupsComponent } from './backups/backups.component';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-restore.module';
 
 
 @NgModule({
@@ -35,7 +36,8 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
     ReactiveFormsModule,
     EventStoreModule,
     ChartsModule,
-    NgbDropdownModule
+    NgbDropdownModule,
+    BackupRestoreModule
   ],
   entryComponents: [ActionUpdateBackupPolicyComponent, ActionCreateBackupPolicyComponent]
 })

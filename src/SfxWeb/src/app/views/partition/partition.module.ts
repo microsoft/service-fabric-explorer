@@ -14,6 +14,7 @@ import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/p
 import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-restore.module';
 import { PartitionRestoreBackUpComponent } from './partition-restore-back-up/partition-restore-back-up.component';
 import { PartitionTriggerBackUpComponent } from './partition-trigger-back-up/partition-trigger-back-up.component';
+import { ReactiveFormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -24,8 +25,9 @@ import { PartitionTriggerBackUpComponent } from './partition-trigger-back-up/par
     SharedModule,
     DetailListTemplatesModule,
     EventStoreModule,
-    BackupRestoreModule
+    BackupRestoreModule,
+    ReactiveFormsModule
   ],
-  entryComponents: [PartitionEnableBackUpComponent]
+  entryComponents: [PartitionEnableBackUpComponent, PartitionRestoreBackUpComponent, PartitionTriggerBackUpComponent]
 })
 export class PartitionModule { }

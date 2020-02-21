@@ -340,6 +340,10 @@ export class ApplicationBackupConfigurationInfo extends DataModelBase<IRawApplic
             }))
             );
     }
+
+    public get uniqueId(): string {
+        return this.raw.PolicyName + '-' + this.raw.Kind;
+    }
 }
 
 

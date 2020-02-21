@@ -1,1 +1,26 @@
-<p>partition-restore-back-up works!</p>
+<form [formGroup]="form" class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Restore Partition Backup</h4>
+    </div>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+            <dt>BackupId</dt>
+            <dd>
+                <input type="text" class="input-flat" formControlName="BackupId">
+            </dd>
+            <dt>BackupLocation</dt>
+            <dd>
+                <input type="text" class="input-flat" formControlName="BackupLocation">
+            </dd>
+            <dt>RestoreTimeout</dt>
+            <dd>
+                <input type="number" class="input-flat" formControlName="RestoreTimeout" />
+            </dd>
+        </dl>
+        <app-storage-form [form]="form" ></app-storage-form>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="solid-button blue"  [disabled]="form.invalid" (click)="ok()">Restore Partition Backup</button>
+        <button type="button" class="flat-button" (click)="cancel()">Cancel</button>
+    </div>
+</form>

@@ -18,6 +18,8 @@ import { httpInterceptorProviders } from './http-interceptor';
 import { CreateServiceComponent } from './views/application/create-service/create-service.component';
 import { ApplicationModule } from './views/application/application.module';
 import { ServiceModule } from './views/service/service.module';
+import { PartitionModule } from './views/partition/partition.module';
+import { PartitionRestoreBackUpComponent } from './views/partition/partition-restore-back-up/partition-restore-back-up.component';
 
 @NgModule({
   declarations: [
@@ -36,7 +38,8 @@ import { ServiceModule } from './views/service/service.module';
     ApplicationModule,
     //test
     ClusterModule,
-    ServiceModule
+    ServiceModule,
+    PartitionModule
   ],
   
   providers: [
@@ -50,7 +53,7 @@ import { ServiceModule } from './views/service/service.module';
     },
     httpInterceptorProviders
   ],
-  entryComponents: [ActionCreateBackupPolicyComponent, CreateServiceComponent],
+  entryComponents: [ActionCreateBackupPolicyComponent, CreateServiceComponent, PartitionRestoreBackUpComponent],
   bootstrap: [AppComponent],
 })
 export class AppModule { } 

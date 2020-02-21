@@ -113,6 +113,10 @@ export class PartitionBackup extends DataModelBase<IRawPartitionBackup> {
             this.action = null;
         }
     }
+
+    public get uniqueId(): string {
+        return this.raw.BackupId;
+    }
 }
 
 

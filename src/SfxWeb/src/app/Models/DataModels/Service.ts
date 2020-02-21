@@ -495,6 +495,10 @@ export class ServiceBackupConfigurationInfo extends DataModelBase<IRawServiceBac
             }))
             );
     }
+
+    public get uniqueId(): string {
+        return this.raw.PolicyName + '-' + this.raw.Kind;
+    }
 }
 
 

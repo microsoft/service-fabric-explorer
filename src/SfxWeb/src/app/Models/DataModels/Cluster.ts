@@ -330,5 +330,9 @@ export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
             return response;
         }));
     }
+
+    public get uniqueId(): string {
+        return this.raw.Name;
+    }
 }
 

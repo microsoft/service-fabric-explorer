@@ -15,30 +15,6 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
 
   form: FormGroup
 
-  // public backupPolicy: IRawBackupPolicy = {
-  //     Name: "",
-  //     AutoRestoreOnDataLoss: false,
-  //     MaxIncrementalBackups: 0,
-  //     Schedule: {
-  //       ScheduleKind: "",
-  //       ScheduleFrequencyType: "",
-  //       RunDays: [],
-  //       RunTimes: [],
-  //       Interval: ""
-  //     },
-  //     Storage: {
-  //       StorageKind: "",
-  //       FriendlyName: "",
-  //       Path: "",
-  //       ConnectionString: "",
-  //       ContainerName: "",
-  //       PrimaryUserName: "",
-  //       PrimaryPassword: "",
-  //       SecondaryUserName: "",
-  //       SecondaryPassword: ""
-  //     }
-  // };
-
   public date: string = "";
   public weekDay: string[]  = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
 
@@ -48,22 +24,6 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
     private dataService: DataService,
     private formBuilder: FormBuilder) {        
-    //   super(
-    //       data.$uibModal,
-    //       data.$q,
-    //       "createBackupPolicy",
-    //       "Create Backup Policy",
-    //       "Creating",
-    //       () => this.createBackupPolicy(data),
-    //       () => true,
-    //       <angular.ui.bootstrap.IModalSettings>{
-    //           templateUrl: "partials/create-backup-policy-dialog.html",
-    //           controller: ActionController,
-    //           resolve: {
-    //               action: () => this
-    //           }
-    //       },
-    //       null);
   }
 
   public saveBackupPolicy() {
@@ -111,9 +71,7 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
                               err => {
                                 console.log(err)
                               });
-
-    // this.dialogRef.close();
-    }
+  }
 
   ngOnInit() {
     this.form = this.formBuilder.group({
@@ -126,17 +84,6 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
         RunDays: this.getRunDaysControl(),
         RunTimes: this.formBuilder.array([]),
         Interval: [""]
-      }),
-      Storage: this.formBuilder.group({
-        StorageKind: ["AzureBlobStore", [Validators.required]],
-        FriendlyName: [""],
-        Path: [""],
-        ConnectionString: [""],
-        ContainerName: [""],
-        PrimaryUserName: [""],
-        PrimaryPassword: [""],
-        SecondaryUserName: [""],
-        SecondaryPassword: [""]
       }),
       retentionPolicyRequired: [false],
       RetentionPolicy: this.formBuilder.group({
@@ -154,20 +101,12 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
         }
 
         this.form.get('Name').disable();
+        if(this.data.data.Schedule.ScheduleFrequencyType === 'Weekly') {
+          this.setDays(this.data.data.Schedule.RunDays);
+        }
     }
 
-    console.log(this.form)
-    const storage = this.form.get('Storage');
-    this.updateStorageKindValidators(storage, this.form.get('Storage').get('StorageKind').value);
-    this.updateSchedule(this.form.get('Schedule').get('ScheduleKind').value);
-
-    storage.get('StorageKind').valueChanges.subscribe(storageKind => {
-      console.log(storageKind)
-      this.updateStorageKindValidators(storage, storageKind);
-    })
-
     this.form.get('retentionPolicyRequired').valueChanges.subscribe(required => {
-      console.log(required)
       this.form.get('RetentionPolicy').get('RetentionDuration').setValidators(required ? [Validators.required, Validators.minLength(1)] : null);
       this.form.get('RetentionPolicy').get('RetentionDuration').updateValueAndValidity();
     })
@@ -176,7 +115,9 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
       this.updateSchedule(type);
     })
 
+    this.updateSchedule(this.form.get('Schedule').get('ScheduleKind').value);
 
+    //TODO remove when not needed for testing
     this.form.valueChanges.subscribe(data => console.log(data))
   }
 
@@ -186,26 +127,6 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
 
     this.form.get('Schedule').get('ScheduleFrequencyType').updateValueAndValidity();
     this.form.get('Schedule').get('Interval').updateValueAndValidity();  
-  }
-
-  updateStorageKindValidators(storage: AbstractControl, storageKind: string) {
-    if(storageKind === 'AzureBlobStore') {
-      storage.get('ContainerName').setValidators([Validators.required]);
-      storage.get('ConnectionString').setValidators([Validators.required]);
-
-      storage.get('Path').setValidators(null);
-    }
-
-    if(storageKind === 'FileShare') {
-      storage.get('ContainerName').setValidators(null);
-      storage.get('ConnectionString').setValidators(null);
-
-      storage.get('Path').setValidators([Validators.required]);
-    }
-
-    storage.get('ContainerName').updateValueAndValidity();
-    storage.get('ConnectionString').updateValueAndValidity();
-    storage.get('Path').updateValueAndValidity();
   }
 
   get RunTimes() {
@@ -224,6 +145,13 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
   getRunDaysControl() {
     const arr = this.weekDay.map(day => this.formBuilder.control(false)) // TODO set this with initial data
     return this.formBuilder.array(arr);
+  }
+
+  setDays(days: string[]) {
+    const runDays = this.form.get(['Schedule', 'RunDays']) as FormArray;
+    this.weekDay.forEach( (day, i) => {
+      runDays.at(i).setValue(days.includes(day));
+    })
   }
 
 }
