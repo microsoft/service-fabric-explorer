@@ -10,7 +10,7 @@ export class StorageFormComponent implements OnInit {
 
   @Input() form: FormGroup;
   @Input() data: any;
-  // @Input() storageKind: string = "AzureBlobStore";
+  @Input() required: boolean = true;
 
   localForm: FormGroup;
   constructor(private formBuilder: FormBuilder) { }
@@ -31,7 +31,9 @@ export class StorageFormComponent implements OnInit {
     this.form.addControl('Storage', this.localForm)
 
     this.localForm.get('StorageKind').valueChanges.subscribe(storageKind => {
-      this.updateStorageKindValidators(this.localForm, storageKind);
+      if(this.required) {
+        this.updateStorageKindValidators(this.localForm, storageKind);
+      }
     })
 
     //set default data or if none then give it a default state;
@@ -47,6 +49,12 @@ export class StorageFormComponent implements OnInit {
       SecondaryPassword: ""
     };
     this.localForm.patchValue(this.data)
+
+    if(this.required) {
+      this.localForm.get('ContainerName').setValidators(null);
+      this.localForm.get('ConnectionString').setValidators(null);
+      this.localForm.get('Path').setValidators(null);
+    }
   }
 
   updateStorageKindValidators(storage: AbstractControl, storageKind: string) {

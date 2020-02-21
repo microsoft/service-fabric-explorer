@@ -18,13 +18,14 @@ export class PartitionTriggerBackUpComponent implements OnInit {
               @Inject(MAT_DIALOG_DATA) public partition: Partition,
               public dialogRef: MatDialogRef<PartitionTriggerBackUpComponent>) { }
   ngOnInit() {
+    //storage gets set by nested component
     this.form = this.formBuilder.group({
       BackupTimeout: ["", [Validators.required]]
     })
   }
 
   ok() {
-    this.data.restClient.triggerPartitionBackup(this.partition).subscribe( () => {
+    this.data.restClient.triggerPartitionBackup(this.partition, this.form.value.BackupTimeout, this.form.value.Storage).subscribe( () => {
       this.cancel();
     }, 
     err => console.log(err));

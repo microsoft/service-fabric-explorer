@@ -20,14 +20,15 @@ export class PartitionRestoreBackUpComponent implements OnInit {
 
   ngOnInit() {
     this.form = this.formBuilder.group({
-      BackupId: [""],
-      BackupLocation: [""],
-      RestoreTimeout: ["", [Validators.required]]
+      BackupId: ["", [Validators.required]],
+      BackupLocation: ["", [Validators.required]],
+      RestoreTimeout: [""]
     })
   }
 
   ok() {
-    this.data.restClient.restorePartitionBackup(this.partition).subscribe( () => {
+    const values = this.form.value;
+    this.data.restClient.restorePartitionBackup(this.partition, values.Storage, values.RestoreTimeout, values.BackupId, values.BackupLocation).subscribe( () => {
       this.cancel();
     }, 
     err => console.log(err));

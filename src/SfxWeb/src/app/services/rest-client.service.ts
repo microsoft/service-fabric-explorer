@@ -11,7 +11,7 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawDeployedReplica, IRawServiceType, IRawDeployedCodePackage, IRawContainerLogs, IRawDeployedReplicaDetail, IRawApplicationType, IRawApplicationManifest, 
          IRawApplication, IRawService, IRawCreateServiceDescription, IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription, IRawServiceDescription, 
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation, 
-         IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadataMetadata, IRawAadMetadata } from '../Models/RawDataTypes';
+         IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadataMetadata, IRawAadMetadata, IRawStorage } from '../Models/RawDataTypes';
 import { mergeMap, map, catchError } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
@@ -497,20 +497,22 @@ export class RestClientService {
       return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Backup Policy creation", backupPolicy, messageHandler);
   }
 
-  public triggerPartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): Observable<{}> {
+  public triggerPartitionBackup(partition: Partition, timeOut: number, storage: IRawStorage,  messageHandler?: IResponseMessageHandler): Observable<{}> {
       let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/Backup";
-      if (partition.partitionBackupInfo.BackupTimeout) {
-          url += "?BackupTimeout=" + partition.partitionBackupInfo.BackupTimeout.toString();
+      if (timeOut) {
+          url += "?BackupTimeout=" + timeOut.toString();
       }
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Partition Backup trigger", { "BackupStorage": partition.partitionBackupInfo.storage }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Partition Backup trigger", { "BackupStorage": storage }, messageHandler);
   }
 
-  public restorePartitionBackup(partition: Partition, messageHandler?: IResponseMessageHandler): Observable<{}> {
+  public restorePartitionBackup(partition: Partition, storage: IRawStorage, timeOut: number, backupId: string, backupLocation: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       let url = "Partitions/" + encodeURIComponent(partition.id) + "/$/Restore";
-      if (partition.partitionBackupInfo.RestoreTimeout) {
-          url += "?RestoreTimeout=" + partition.partitionBackupInfo.RestoreTimeout.toString();
+      if (timeOut) {
+          url += "?RestoreTimeout=" + timeOut.toString();
       }
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Partition Backup restore", { "BackupId": partition.partitionBackupInfo.backupId, "BackupStorage": partition.partitionBackupInfo.storage, "BackupLocation": partition.partitionBackupInfo.backupLocation }, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), "Partition Backup restore", { "BackupId": backupId, 
+                                                                                                          "BackupStorage": storage,
+                                                                                                          "BackupLocation": backupLocation }, messageHandler);
   }
 
   public getServiceDescription(applicationId: string, serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawServiceDescription> {

@@ -17,7 +17,7 @@
                 <input type="number" class="input-flat" formControlName="RestoreTimeout" />
             </dd>
         </dl>
-        <app-storage-form [form]="form" ></app-storage-form>
+        <app-storage-form [form]="form" [required]="false" ></app-storage-form>
     </div>
     <div class="modal-footer">
         <button type="submit" class="solid-button blue"  [disabled]="form.invalid" (click)="ok()">Restore Partition Backup</button>
