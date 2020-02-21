@@ -36,14 +36,13 @@
               "src/modal.scss",
               "src/calender.scss",
               "src/Styles/modules/_candybar.scss"
-
             ],
             "scripts": [],
             "stylePreprocessorOptions": {
-							"includePaths": [
-								"src/styles"
-							]
-						}
+              "includePaths": [
+                "src/styles"
+              ]
+            }
           },
           "configurations": {
             "production": {
@@ -137,6 +136,10 @@
           }
         }
       }
-    }},
-  "defaultProject": "SfxWeb"
+    }
+  },
+  "defaultProject": "SfxWeb",
+  "cli": {
+    "analytics": false
+  }
 }

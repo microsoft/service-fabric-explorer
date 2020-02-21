@@ -92,7 +92,7 @@ export class EventStoreComponent implements OnInit {
       }
   }
 
-  private setTimelineData(): void {
+  public setTimelineData(): void {
     this.eventsList.ensureInitialized().subscribe( () => {
         try {
             if (this._showAllEvents) {

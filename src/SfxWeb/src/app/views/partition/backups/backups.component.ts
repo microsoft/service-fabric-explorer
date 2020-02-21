@@ -144,7 +144,7 @@ export class BackupsComponent extends PartitionBaseController {
           "triggerPartitionBackup",
           "Trigger Partition Backup",
           "Triggering Partition Backup",
-          {},
+          this.partition,
           PartitionTriggerBackUpComponent,
           () => true
           // () => this.data.restClient.triggerPartitionBackup(this),

@@ -55,7 +55,7 @@
                     <div [ngStyle]="{'display': ( form.value.Schedule.ScheduleFrequencyType === 'Weekly' ? 'initial' : 'none') }">
                         <dt>RunDays</dt>
                         <dd formArrayName="RunDays">
-                            <div *ngFor="let day of form.controls.Schedule.controls.RunDays.controls; let i = index">
+                            <div *ngFor="let day of form.get('Schedule').get('RunDays'); let i = index">
                                 <label>
                                     {{weekDay[i]}}
                                     <input type="checkbox" [formControlName]="i">

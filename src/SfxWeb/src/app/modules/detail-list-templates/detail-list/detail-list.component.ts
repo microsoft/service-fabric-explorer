@@ -13,7 +13,7 @@ export class DetailListComponent {
   @Input() listSettings: ListSettings;
   @Input() searchText = "Search list";
   private _list: any[];
-  private sortedFilteredList: any[] = []; //actual list displayed in html.
+  public sortedFilteredList: any[] = []; //actual list displayed in html.
 
   page = 1;
   pageSize = 10;

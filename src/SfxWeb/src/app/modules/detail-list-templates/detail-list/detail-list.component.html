@@ -3,7 +3,7 @@
         <button class="empty-button"><span class="link">Reset All</span></button>
         
         <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
-        <div class="table-responsive" [ngClass]="{'inner-scroll': innerScroll}">
+        <div class="table-responsive">
             <table class="table detail-list">
                 <thead>
                     <tr>
@@ -36,7 +36,7 @@
                             <!-- Use transparent color to hide the icon instead of using ng-show to avoid the table layout changes when the icon showed up -->
                             <div style="width: 20px; height: 19px; display: inline-block;">
                                 <span class="bowtie-icon sort-icon" *ngIf="columnSetting.sortable && listSettings.isSortedByColumn(columnSetting)" (click)="listSettings.sort(columnSetting.sortPropertyPaths); updateList()"
-                                    [ngClass]="{'mif-arrow-up': !listSettings.sortReverse, 'mif-arrow-down': listSettings.sortReverse}" [attr.aria-label]="Sort"
+                                    [ngClass]="{'mif-arrow-up': !listSettings.sortReverse, 'mif-arrow-down': listSettings.sortReverse}" [attr.aria-label]="'Sort'"
                                     [attr.tabIndex]="listSettings.isSortedByColumn(columnSetting) ? 0 : -1" [title]="'sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'"
                                     [attr.ariaHidden]="!listSettings.isSortedByColumn(columnSetting)">
                                 </span>
@@ -63,21 +63,21 @@
                         <tr *ngIf="listSettings.secondRowColumnSettings.length > 0 && listSettings.showSecondRow(item)">
                             <!-- TODO  track by columnSetting.propertyPath -->
                             <td class="no-border"
-                                *ngFor="let columnSetting of listSettings.secondRowColumnSettings; trackBy: trackByColumnSetting;"
+                                *ngFor="let columnSetting of listSettings.secondRowColumnSettings; trackBy: trackByColumnSetting; let i = index;"
                                 [colSpan]="columnSetting.colspan === -1 ? (listSettings.columnSettings.length - listSettings.secondRowColumnSettings.length + 1) : columnSetting.colspan"
                                 [ngClass]="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed}">
                                 <div *ngIf="!listSettings.secondRowCollapsible || (listSettings.secondRowCollapsible && !item.isSecondRowCollapsed)" 
-                                    [ngClass]="{'shift-expander-col': $index === 0 && listSettings.secondRowCollapsible}">
+                                    [ngClass]="{'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}">
                                     <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
                                     <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
                                 </div>
                             </td>
                         </tr>
                 </ng-container>
-                    <tr *ngIf="list && list.isRefreshing !== undefined && !list.isInitialized">
+                    <tr *ngIf="list">
                         <td colspan="100">Loading...</td>
                     </tr>
-                    <tr *ngIf="sortedFilteredList.length === 0 && (!list || list.isRefreshing === undefined || list.isInitialized)">
+                    <tr *ngIf="sortedFilteredList.length === 0 && !list">
                         <td colspan="100">No items to display.</td>
                     </tr>
                 </tbody>

@@ -1,5 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { DataService } from 'src/app/services/data.service';
+import { Partition } from 'src/app/Models/DataModels/Partition';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-partition-restore-back-up',
@@ -10,7 +13,10 @@ export class PartitionRestoreBackUpComponent implements OnInit {
 
   form: FormGroup
 
-  constructor(private formBuilder: FormBuilder) { }
+  constructor(private formBuilder: FormBuilder,
+              private data: DataService,
+              @Inject(MAT_DIALOG_DATA) public partition: Partition,
+              public dialogRef: MatDialogRef<PartitionRestoreBackUpComponent>) { }
 
   ngOnInit() {
 
@@ -20,6 +26,17 @@ export class PartitionRestoreBackUpComponent implements OnInit {
       RestoreTimeout: ["", [Validators.required]]
     })
 
+  }
+
+  ok() {
+    this.data.restClient.restorePartitionBackup(this.partition).subscribe( () => {
+      this.cancel();
+    }, 
+    err => console.log(err));
+  }
+
+  cancel() {
+    this.dialogRef.close();
   }
 
 }
