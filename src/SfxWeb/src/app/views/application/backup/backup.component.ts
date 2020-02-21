@@ -28,7 +28,7 @@ export class BackupComponent extends ApplicationBaseController  {
 
   setup() {
     this.applicationBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings("backupConfigurationInfoCollection", ["raw.PolicyName"], [
-      new ListColumnSetting("raw.PolicyName", "Policy Name", ["raw.PolicyName"], false, (item, property) => property, 1, item => item.action.run()), 
+      new ListColumnSetting("raw.PolicyName", "Policy Name", ["raw.PolicyName"], false, (item, property) =>  `<span class="link">${property}</span>`, 1, item => item.action.run()), 
       new ListColumnSetting("raw.Kind", "Kind"),
       new ListColumnSetting("raw.PolicyInheritedFrom", "Policy Inherited From"),
       new ListColumnSetting("raw.ServiceName", "Service Name"),
@@ -39,6 +39,14 @@ export class BackupComponent extends ApplicationBaseController  {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    if (this.data.actionsEnabled()) {
+      this.setUpActions();
+    }
+    return this.app.applicationBackupConfigurationInfoCollection.refresh(messageHandler);
+  }
+
+
+  setUpActions() {
     if(!this.actions) {
       this.actions = new ActionCollection(this.telemetry)
 
@@ -107,7 +115,6 @@ export class BackupComponent extends ApplicationBaseController  {
         `Resume application backup for ${this.app.name} ?`,
         this.app.name));
     }
-    return this.app.applicationBackupConfigurationInfoCollection.refresh(messageHandler);
   }
 
 }

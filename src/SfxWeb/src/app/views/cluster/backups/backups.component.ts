@@ -41,7 +41,6 @@ export class BackupsComponent extends BaseController {
   }
 
   private setupActions() {
-    // this.actions.add(new ActionCreateBackupPolicy(this.data));
     this.actions.add(new IsolatedAction(
       this.data.dialog,
       "createBackupPolicy",
@@ -50,18 +49,6 @@ export class BackupsComponent extends BaseController {
       null,
       ActionCreateBackupPolicyComponent,
       () => true
-      // () => this.data.restClient.disablePartitionBackup(this).subscribe(() => {
-      //     this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
-      // }),
-      // () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition",
-      // <angular.ui.bootstrap.IModalSettings>{
-      //     templateUrl: "partials/disableBackup.html",
-      //     controller: ActionController,
-      //     resolve: {
-      //         action: () => this
-      //     }
-      // },
-      // null
     ));
   }
 }

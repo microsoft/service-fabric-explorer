@@ -30,7 +30,7 @@ export class BackupsComponent extends PartitionBaseController {
 
   setup() {
     this.partitionBackupListSettings = this.settings.getNewOrExistingListSettings("partitionBackups", [null], [
-      new ListColumnSetting("raw.BackupId", "BackupId", ["raw.BackupId"], false, (item, property) => property, 1, item => item.action.run()),
+      new ListColumnSetting("raw.BackupId", "BackupId", ["raw.BackupId"], false, (item, property) =>  `<span class="link">${property}</span>`, 1, item => item.action.run()),
       new ListColumnSetting("raw.BackupType", "BackupType"),
       new ListColumnSetting("raw.EpochOfLastBackupRecord.DataLossVersion", "Data Loss Version"),
       new ListColumnSetting("raw.EpochOfLastBackupRecord.ConfigurationVersion", "Configuration Version"),
@@ -41,7 +41,10 @@ export class BackupsComponent extends PartitionBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    this.attemptSetActions();
+    if (this.data.actionsEnabled()) {
+      this.attemptSetActions();
+    }
+
     try {
       this.subscriptions.add(this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler).subscribe());
     } catch {}
@@ -147,16 +150,6 @@ export class BackupsComponent extends PartitionBaseController {
           this.partition,
           PartitionTriggerBackUpComponent,
           () => true
-          // () => this.data.restClient.triggerPartitionBackup(this),
-          // () => true,
-          // <angular.ui.bootstrap.IModalSettings>{
-          //     templateUrl: "partials/triggerPartitionBackup.html",
-          //     controller: ActionController,
-          //     resolve: {
-          //         action: () => this
-          //     }
-          // },
-          // null
       ));
     
       this.actions.add(new IsolatedAction(
@@ -164,19 +157,9 @@ export class BackupsComponent extends PartitionBaseController {
           "restorePartitionBackup",
           "Restore Partition Backup",
           "Restoring Partition Backup",
-          {},
+          this.partition,
           PartitionRestoreBackUpComponent,
           () => true
-          // () => this.data.restClient.restorePartitionBackup(this),
-          // () => true,
-          // <angular.ui.bootstrap.IModalSettings>{
-          //     templateUrl: "partials/restorePartitionBackup.html",
-          //     controller: ActionController,
-          //     resolve: {
-          //         action: () => this
-          //     }
-          // },
-          // null
       ));
       }
     

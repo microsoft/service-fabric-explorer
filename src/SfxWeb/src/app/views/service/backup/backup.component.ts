@@ -28,7 +28,7 @@ export class BackupComponent extends ServiceBaseController {
 
   setup() {
     this.serviceBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings("serviceBackupConfigurationInfoListSettings", ["raw.PolicyName"], [
-      new ListColumnSetting("raw.PolicyName", "Policy Name", ["raw.PolicyName"], false, (item, property) => property, 1, item => item.action.run()),
+      new ListColumnSetting("raw.PolicyName", "Policy Name", ["raw.PolicyName"], false, (item, property) =>  `<span class="link">${property}</span>`, 1, item => item.action.run()),
       new ListColumnSetting("raw.Kind", "Kind"),
       new ListColumnSetting("raw.PolicyInheritedFrom", "Policy Inherited From"),
       new ListColumnSetting("raw.PartitionId", "Partition Id"),
@@ -39,10 +39,18 @@ export class BackupComponent extends ServiceBaseController {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
 
+    if(this.data.actionsEnabled()) {
+      this.setupActions();
+    }
+
+
+    this.service.serviceBackupConfigurationInfoCollection.refresh(messageHandler);
+    return this.data.refreshBackupPolicies(messageHandler)
+  }
+
+  setupActions() {
     if(!this.actions) {
       this.actions = new ActionCollection(this.telemetry)
-
-
       this.actions.add(new IsolatedAction(
         this.data.dialog,
         "enableServiceBackup",
@@ -107,9 +115,6 @@ export class BackupComponent extends ServiceBaseController {
         `Resume Service backup for ${this.service.name} ?`,
         this.service.name));
     }
-
-    this.service.serviceBackupConfigurationInfoCollection.refresh(messageHandler);
-    return this.data.refreshBackupPolicies(messageHandler)
-
   }
+
 }
