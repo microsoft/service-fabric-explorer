@@ -12,7 +12,7 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
 
   @Input() data: IDashboardViewModel;
 
-  @ViewChild('chart', {static: false}) private chartContainer: ElementRef;
+  @ViewChild('chart') private chartContainer: ElementRef;
 
 
   constructor() { }

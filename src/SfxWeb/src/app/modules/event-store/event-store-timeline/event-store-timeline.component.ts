@@ -21,7 +21,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
   private _oldestEvent: DataItem;
   private _mostRecentEvent: DataItem;
 
-  @ViewChild('visualization', { static: false }) container: ElementRef;
+  @ViewChild('visualization') container: ElementRef;
 
 
   constructor() { }

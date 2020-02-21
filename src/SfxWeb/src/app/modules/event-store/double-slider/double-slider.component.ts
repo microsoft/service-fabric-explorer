@@ -21,7 +21,7 @@ export class DoubleSliderComponent implements OnInit, OnChanges, AfterViewInit {
 
   slider: noUiSlider.noUiSlider;
 
-  @ViewChild('slider', { static: false }) container: ElementRef;
+  @ViewChild('slider') container: ElementRef;
 
 
   constructor() { }
