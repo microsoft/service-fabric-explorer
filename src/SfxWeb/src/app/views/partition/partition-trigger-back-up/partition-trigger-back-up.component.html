@@ -1,1 +1,19 @@
-<p>partition-trigger-back-up works!</p>
+<form [formGroup]="form" class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Trigger Partition Backup</h4>
+    </div>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+            <dt>BackupTimeout</dt>
+            <dd>
+                <input type="number" class="input-flat" formControlName="BackupTimeout" />
+            </dd>
+        </dl>
+        <app-storage-form [form]="form" ></app-storage-form>
+
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="btn btn-primary" [disabled]="form.invalid" (click)="ok()">Trigger Partition Backup</button>
+        <button type="button" class="btn btn-default" (click)="cancel()">Cancel</button>
+    </div>
+</form>

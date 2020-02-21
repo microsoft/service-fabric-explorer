@@ -13,13 +13,11 @@ export class PartitionRestoreBackUpComponent implements OnInit {
   constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit() {
-
     this.form = this.formBuilder.group({
       BackupId: [""],
       BackupLocation: [""],
       RestoreTimeout: ["", [Validators.required]]
     })
-
   }
 
 }
