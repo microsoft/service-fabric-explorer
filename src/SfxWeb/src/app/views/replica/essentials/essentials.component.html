@@ -29,7 +29,9 @@
         <div *ngIf="nodeView"><a [routerLink]="nodeView">View on Node</a></div>
     </div>
 
-    <app-replica-address [address]="replica.address"></app-replica-address>
+    <div class="detail-pane">    
+        <app-replica-address [address]="replica.address"></app-replica-address>
+    </div>
 
     <div class="detail-pane essen-pane" *ngIf="replica.health.isInitialized">
         <h4>Unhealthy Evaluations</h4>

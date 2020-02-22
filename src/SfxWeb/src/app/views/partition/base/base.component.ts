@@ -6,6 +6,7 @@ import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, of } from 'rxjs';
+import { Constants } from 'src/app/Common/Constants';
 
 @Component({
   selector: 'app-base',
@@ -37,14 +38,24 @@ export class BaseComponent extends PartitionBaseController {
   }
 
   setup() {
-    this.tree.selectTreeNode([
-      IdGenerator.cluster(),
-      IdGenerator.appGroup(),
-      IdGenerator.appType(this.appTypeName),
-      IdGenerator.app(this.appId),
-      IdGenerator.service(this.serviceId),
-      IdGenerator.partition(this.partitionId),
-    ], true);
+
+    if (this.appTypeName === Constants.SystemAppTypeName) {
+      this.tree.selectTreeNode([
+          IdGenerator.cluster(),
+          IdGenerator.systemAppGroup(),
+          IdGenerator.service(this.serviceId),
+          IdGenerator.partition(this.partitionId)
+      ]);
+    } else {
+      this.tree.selectTreeNode([
+        IdGenerator.cluster(),
+        IdGenerator.appGroup(),
+        IdGenerator.appType(this.appTypeName),
+        IdGenerator.app(this.appId),
+        IdGenerator.service(this.serviceId),
+        IdGenerator.partition(this.partitionId),
+      ], true);
+    }
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

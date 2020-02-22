@@ -39,11 +39,23 @@
 </div>
 
 <div class="detail-pane essen-pane">
-    <h4>Unhealthy Evaluations</h4>
-    <detail-list *ngIf="node" [list]="node.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+    <app-collapse-container>
+        <div collapse-header>
+            <h4>Unhealthy Evaluations</h4>
+        </div>
+        <div collapse-body>
+            <detail-list *ngIf="node" [list]="node.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+        </div>
+    </app-collapse-container>
 </div>
 
 <div class="detail-pane essen-pane"  *ngIf="deployedApps">
-    <h4>Deployed Applications</h4>
-    <detail-list [list]="deployedApps.collection" [listSettings]="listSettings"></detail-list>
+    <app-collapse-container>
+        <div collapse-header>
+            <h4>Deployed Applications</h4>
+        </div>
+        <div collapse-body>
+            <detail-list [list]="deployedApps.collection" [listSettings]="listSettings"></detail-list>
+        </div>
+    </app-collapse-container>
 </div>

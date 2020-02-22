@@ -11,7 +11,8 @@
                 [dayTemplate]="t"
                 outsideDays="'collapsed'"
                 [markDisabled]="isDisabled" [navigation]="'arrows'"
-                [startDate]="fromDate">
+                [startDate]="fromDate"
+                aria-label="set dates">
         <ng-template #t let-date let-focused="focused">
             <div class="custom-day"
                 [class.focused]="focused"
@@ -30,9 +31,10 @@
                 class="input-flat" placeholder="yyyy-mm-dd"
                 name="dpFromDate"
                 [value]="formatter.format(fromDate)"
-                (input)="fromDate = validateInput(fromDate, dpFromDate.value)">
+                (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
+                aria-label="set start date">
         <div class="input-group-append">
-            <button class="mif-calendar simple-button" (click)="datepicker.toggle()" type="button"></button>
+            <button class="mif-calendar simple-button" (click)="datepicker.toggle()" type="button" aria-label="Toggle start date calender date picker"></button>
         </div>
         </div>
     </div>
@@ -42,9 +44,10 @@
                 class="input-flat" placeholder="yyyy-mm-dd"
                 name="dpToDate"
                 [value]="formatter.format(toDate)"
-                (input)="toDate = validateInput(toDate, dpToDate.value)">
+                (input)="toDate = validateInput(toDate, dpToDate.value)"
+                aria-label="set end date">
         <div class="input-group-append">
-            <button class="mif-calendar simple-button" (click)="datepicker.toggle()" type="button"></button>
+            <button class="mif-calendar simple-button" (click)="datepicker.toggle()" type="button" aria-label="Toggle end date calender date picker"></button>
         </div>
         </div>
     </div>

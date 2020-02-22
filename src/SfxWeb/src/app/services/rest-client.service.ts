@@ -19,6 +19,7 @@ import { Partition } from '../Models/DataModels/Partition';
 import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent, FabricEvent, EventsResponseAdapter, FabricEventBase } from '../Models/eventstore/Events';
 import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
+import { environment } from 'src/environments/environment';
 
 @Injectable({
   providedIn: 'root'
@@ -824,7 +825,7 @@ export class RestClientService {
   private static baseUrl = "api"
 
   private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = this.httpClient.get<T>(RestClientService.baseUrl + url);
+      let result = this.httpClient.get<T>(environment.baseUrl + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
       }
@@ -832,7 +833,7 @@ export class RestClientService {
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = this.httpClient.post<T>(RestClientService.baseUrl + url, data);
+      let result = this.httpClient.post<T>(environment.baseUrl  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
@@ -840,7 +841,7 @@ export class RestClientService {
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = this.httpClient.put<T>(RestClientService.baseUrl + url, data);
+      let result = this.httpClient.put<T>(environment.baseUrl  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
@@ -848,7 +849,7 @@ export class RestClientService {
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = this.httpClient.delete<T>(RestClientService.baseUrl + url);
+      let result = this.httpClient.delete<T>(environment.baseUrl  + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
       }

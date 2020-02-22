@@ -28,11 +28,23 @@
     </div>
     
     <div class="detail-pane essen-pane">
-        <h4>Unhealthy Evaluations</h4>
-        <detail-list [list]="deployedApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings" *ngIf="deployedApp && deployedApp.health"></detail-list>
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>Unhealthy Evaluations</h4>
+            </div>
+            <div collapse-body>
+                <detail-list [list]="deployedApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings" *ngIf="deployedApp && deployedApp.health"></detail-list>
+            </div>
+        </app-collapse-container>
     </div>
     
     <div class="detail-pane essen-pane">
-        <h4>Deployed Service Packages</h4>
-        <detail-list [list]="deployedServicePackages.collection" [listSettings]="listSettings" *ngIf="deployedServicePackages"></detail-list>
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>Deployed Service Packages</h4>
+            </div>
+            <div collapse-body>
+                <detail-list [list]="deployedServicePackages.collection" [listSettings]="listSettings" *ngIf="deployedServicePackages"></detail-list>
+            </div>
+        </app-collapse-container>
     </div>

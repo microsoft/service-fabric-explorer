@@ -43,12 +43,24 @@
     </div>
     
     <div class="detail-pane essen-pane">
-        <h4>Unhealthy Evaluations</h4>
-        <detail-list [list]="partition.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>Unhealthy Evaluations</h4>
+            </div>
+            <div collapse-body>
+                <detail-list [list]="partition.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+            </div>
+        </app-collapse-container>
     </div>
     
     <div class="detail-pane essen-pane">
-        <h4>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h4>
-        <detail-list [list]="partition.replicas" [listSettings]="listSettings" *ngIf="partition.replicas.isInitialized"></detail-list>
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h4>
+            </div>
+            <div collapse-body>
+                <detail-list [list]="partition.replicas" [listSettings]="listSettings" *ngIf="partition.replicas.isInitialized"></detail-list>
+            </div>
+        </app-collapse-container>
     </div>
 </div>

@@ -15,13 +15,25 @@
         </div>
     </div>
     
-    <div class="detail-pane" *ngIf="systemApp.health.isInitialized">
-        <h4>Unhealthy Evaluations</h4>
-        <detail-list [list]="systemApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+    <div class="detail-pane essen-pane" *ngIf="systemApp.health.isInitialized">
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>Unhealthy Evaluations</h4>
+            </div>
+            <div collapse-body>
+                <detail-list [list]="systemApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+            </div>
+        </app-collapse-container>
     </div>
     
-    <div class="detail-pane" *ngIf="systemApp.services.isInitialized">
-        <h4>System</h4>
-        <detail-list [list]="systemApp.services" [listSettings]="listSettings"></detail-list>
+    <div class="detail-pane essen-pane" *ngIf="systemApp.services">
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>System</h4>
+            </div>
+            <div collapse-body>
+                <detail-list [list]="systemApp.services.collection" [listSettings]="listSettings"></detail-list>
+            </div>
+        </app-collapse-container>
     </div>
 </div>

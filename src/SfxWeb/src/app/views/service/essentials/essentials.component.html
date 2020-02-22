@@ -66,11 +66,23 @@
 </div>
 
 <div class="detail-pane essen-pane">
-    <h4>Unhealthy Evaluations</h4>
-    <detail-list [list]="service.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings" *ngIf="service && service.health"></detail-list>
+    <app-collapse-container>
+        <div collapse-header>
+            <h4>Unhealthy Evaluations</h4>
+        </div>
+        <div collapse-body>
+            <detail-list [list]="service.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings" *ngIf="service && service.health"></detail-list>
+        </div>
+    </app-collapse-container>
 </div>
 
 <div class="detail-pane essen-pane">
-    <h4>Partitions</h4>
-    <detail-list [list]="service.partitions.collection" [listSettings]="listSettings" *ngIf="service && service.partitions.isInitialized"></detail-list>
+    <app-collapse-container>
+        <div collapse-header>
+            <h4>Partitions</h4>
+        </div>
+        <div collapse-body>
+            <detail-list [list]="service.partitions.collection" [listSettings]="listSettings" *ngIf="service && service.partitions.isInitialized"></detail-list>
+        </div>
+    </app-collapse-container>
 </div>

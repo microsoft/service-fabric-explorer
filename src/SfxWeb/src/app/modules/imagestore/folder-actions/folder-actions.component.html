@@ -3,7 +3,7 @@
         <span class="mif-lock mif-2x"></span>
     </div>
     <div ngbDropdown container="body" *ngIf="!item.isReserved">
-        <button class="simple-button" ngbDropdownToggle></button>
+        <button class="simple-button" ngbDropdownToggle aria-label="See image store item actions."></button>
         <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
             <button ngbDropdownItem (click)="deleteItem()">Delete</button>
         </div>

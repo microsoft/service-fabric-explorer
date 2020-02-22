@@ -1,23 +1,39 @@
 <div *ngIf="replica">
 
     <div class="detail-pane essen-pane">
-        <h4>
-            Details
-        </h4>
-        <app-detail-view-part [data]="replica"></app-detail-view-part>    
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>General</h4>
+            </div>
+            <div collapse-body>
+                <app-detail-view-part [data]="replica"></app-detail-view-part>    
+            </div>
+        </app-collapse-container>
     </div>
 
     <div class="detail-pane essen-pane">
-        <h4>
-            Details
-        </h4>
-        <app-detail-view-part [data]="replica.detail.raw" [parent]="replica.detail"></app-detail-view-part>    
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>
+                    Details
+                </h4>
+            </div>
+            <div collapse-body>
+                <app-detail-view-part [data]="replica.detail.raw" [parent]="replica.detail"></app-detail-view-part>    
+            </div>
+        </app-collapse-container>
     </div>
 
     <div class="detail-pane essen-pane">
-        <h4>
-            Health Events
-        </h4>
-        <detail-list [list]="replica.health.healthEvents" [listSettings]="healthEventsListSettings" *ngIf="replica.health"></detail-list>
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>
+                    Health Events
+                </h4>
+            </div>
+            <div collapse-body>
+                <detail-list [list]="replica.health.healthEvents" [listSettings]="healthEventsListSettings" *ngIf="replica.health"></detail-list>
+            </div>
+        </app-collapse-container>
     </div>
 </div>

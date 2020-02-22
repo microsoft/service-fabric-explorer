@@ -20,7 +20,7 @@
                 </div>
                 <span [innerHTML]="alert.message"></span>
                 <div *ngIf="alert.level !== 'error'">
-                    <span (click)="remove(alert, true)" class="mif-cancel mif-lg" style="float: right; cursor: pointer;" role="button"></span>
+                    <span (click)="remove(alert, true)" class="mif-cancel mif-lg" style="float: right; cursor: pointer;" role="button" aria-label="Remove warning"></span>
                 </div>        
             </div>
         </div>

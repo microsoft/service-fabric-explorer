@@ -25,15 +25,6 @@ export class EssentialsComponent extends PartitionBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    // this.data.backupPolicies.refresh(messageHandler);
-    this.data.clusterManifest.ensureInitialized().subscribe(() => {
-      if(this.data.clusterManifest.isBackupRestoreEnabled && this.partition.isStatefulService) {
-          this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler);
-          this.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler);
-      }
-    })
-
-
     if (!this.listSettings) {
         let defaultSortProperties = ["replicaRoleSortPriority", "raw.NodeName"];
         let columnSettings = [

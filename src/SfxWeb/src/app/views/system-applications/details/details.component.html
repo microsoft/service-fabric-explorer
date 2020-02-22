@@ -1,6 +1,9 @@
-<div class="detail-pane">
-    <h4>
-        Health Events
-    </h4>
-    <detail-list [list]="systemApp.health.healthEvents" [listSettings]="healthEventsListSettings"></detail-list>
+
+<div *ngIf="systemApp">
+    <div class="detail-pane essen-pane">
+        <h4>
+            Health Events
+        </h4>
+        <detail-list [list]="systemApp.health.healthEvents" [listSettings]="healthEventsListSettings"></detail-list>
+    </div>
 </div>

@@ -2,7 +2,7 @@ import { DataService } from 'src/app/services/data.service';
 import { Injector } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { IdUtils } from 'src/app/Utils/IdUtils';
 import { BaseController } from 'src/app/ViewModels/BaseController';
@@ -19,8 +19,9 @@ export class DeployedAppBaseController extends BaseController {
     }
   
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.data.getDeployedApplication(this.nodeName, this.appId, true, messageHandler).pipe(map( deployedApp => {
+    return this.data.getDeployedApplication(this.nodeName, this.appId, true, messageHandler).pipe(mergeMap( deployedApp => {
         this.deployedApp = deployedApp;
+        return this.deployedApp.health.refresh(messageHandler);
       }));
     }
     

@@ -1,6 +1,6 @@
 
 <div>
-  <div class="header-bar">
+  <header class="header-bar">
     <a href="https://aka.ms/portalsfx" target="_blank" tabindex="0" sfx-tree-set-focus selected="true" *ngIf="!hideAzure">
       <div class="navbar-brand navbar-brand-azure">
         <span>
@@ -41,20 +41,24 @@
           </button>
         </div>
     </div>
-  </div>
+  </header>
 
   <div>
       <div class="left-panel left-bar"  [ngStyle]="{'width': treeWidth }">
         <div class="tree-container">
-          <app-tree-view></app-tree-view>
+          <nav>
+            <app-tree-view></app-tree-view>
+          </nav>
         </div>
         <div class="slider-bar" appDrag (onDrag)="resize($event)">
       </div>
     </div>
     <div [ngStyle]="{'left': rightOffset }" class="right-panel main-content">
-      <div class="view-container">
+      <main>
+        <div class="view-container">
           <router-outlet id="view-container"></router-outlet>
-      </div>
+        </div>
+      </main>
     </div>
   </div>
   <app-toast-container aria-live="polite" aria-atomic="true"></app-toast-container>

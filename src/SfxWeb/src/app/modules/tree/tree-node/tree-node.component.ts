@@ -1,5 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TreeNodeGroupViewModel } from 'src/app/ViewModels/TreeNodeGroupViewModel';
+import { TreeNodeViewModel } from 'src/app/ViewModels/TreeNodeViewModel';
 
 @Component({
   selector: 'app-tree-node',
@@ -16,4 +17,7 @@ export class TreeNodeComponent implements OnInit {
 
   }
 
+  trackById(index: number, node: TreeNodeViewModel) {
+    return node.nodeId
+  }
 }
