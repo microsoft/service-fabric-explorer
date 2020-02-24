@@ -33,6 +33,7 @@ export class DisplaySizeColumnComponent implements OnChanges, OnInit, DetailBase
     let loading = sizeData.loading ? "rotate" : "";
     this.date = sizeData.date ? sizeData.date.toLocaleString(): "";
     this.loadButton = this.size.length === 0 && !loading;
+    this.loading = sizeData.loading;
   }
 
   loadFolderSize(item: ImageStoreItem) {

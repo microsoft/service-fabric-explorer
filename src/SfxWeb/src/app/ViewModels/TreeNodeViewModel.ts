@@ -5,7 +5,6 @@ import { BadgeConstants } from '../Common/Constants';
 import { IdGenerator } from '../Utils/IdGenerator';
 import { TreeViewModel } from './TreeViewModel';
 import { ITreeNode } from './TreeTypes';
-import { HtmlUtils } from '../Utils/HtmlUtils';
 import { TreeNodeGroupViewModel } from './TreeNodeGroupViewModel';
 import { Observable } from 'rxjs';
 import { ActionCollection } from '../Models/ActionCollection';

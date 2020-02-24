@@ -5,7 +5,6 @@ import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
 import { HealthStateConstants, StatusWarningLevel, BannerWarningID, UpgradeDomainStateRegexes, ClusterUpgradeStates, UpgradeDomainStateNames, CertExpiraryHealthEventProperty } from 'src/app/Common/Constants';
 import { HealthEvaluation, UpgradeDomain, UpgradeDescription, LoadMetricInformation } from './Shared';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
-import { Utils } from 'src/app/Utils/Utils';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Node } from './Node';
 import { HealthBase, HealthEvent } from './HealthEvent';
@@ -13,8 +12,8 @@ import { Observable, of } from 'rxjs';
 import { mergeMap, map } from 'rxjs/operators';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
-import { ActionWithDialog, IsolatedAction } from '../Action';
-import { IViewBackUpData, ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
+import { IsolatedAction } from '../Action';
+import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.

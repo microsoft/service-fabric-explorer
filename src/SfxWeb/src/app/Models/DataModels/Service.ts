@@ -12,9 +12,9 @@ import { Observable, of } from 'rxjs';
 import { HealthBase } from './HealthEvent';
 import { ApplicationType } from './ApplicationType';
 import { mergeMap, map } from 'rxjs/operators';
-import * as _ from 'lodash';
+import  cloneDeep  from 'lodash/cloneDeep';
+import  escapeRegExp  from 'lodash/escapeRegExp';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
-import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/partition-enable-back-up/partition-enable-back-up.component';
 import { ScaleServiceComponent } from 'src/app/views/service/scale-service/scale-service.component';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 //-----------------------------------------------------------------------------
@@ -331,7 +331,7 @@ export class CreateServiceDescription {
     public isAdvancedOptionCollapsed: boolean;
 
     public get createDescription(): IRawCreateServiceDescription {
-        let descriptionCloned = _.cloneDeep(this.raw);
+        let descriptionCloned = cloneDeep(this.raw);
         let flags = 0;
         if (this.raw.ReplicaRestartWaitDurationSeconds !== null) {
             flags ^= 0x01;
@@ -384,7 +384,7 @@ export class CreateServiceDescription {
     }
 
     public get serviceNamePattern(): string {
-        return `^${_.escapeRegExp(this.raw.ApplicationName)}.+`;
+        return `^${escapeRegExp(this.raw.ApplicationName)}.+`;
     }
 
     public constructor(public serviceType: ServiceType, public application: Application) {

@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, Output, EventEmitter, OnChanges, SimpleChanges, ViewChild, ElementRef, AfterViewInit, OnDestroy, ChangeDetectionStrategy } from '@angular/core';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
-import * as noUiSlider from "nouislider";
+import { create, noUiSlider } from "nouislider";
 
 export interface IOnDateChange {
   endDate: any,
@@ -19,7 +19,7 @@ export class DoubleSliderComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Output() onDateChange = new EventEmitter<IOnDateChange>();
 
-  slider: noUiSlider.noUiSlider;
+  slider: noUiSlider;
 
   @ViewChild('slider') container: ElementRef;
 
@@ -32,7 +32,7 @@ export class DoubleSliderComponent implements OnInit, OnChanges, AfterViewInit {
 
   ngAfterViewInit() {
     
-    this.slider = noUiSlider.create(this.container.nativeElement, {
+    this.slider = create(this.container.nativeElement, {
         format: {
             to : num => {
                 const date = new Date(num);

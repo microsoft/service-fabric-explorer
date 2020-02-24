@@ -953,3 +953,8 @@ app-navbar {
   .input-flat.ng-invalid:not(form)  {
     border-left: 5px solid #a94442; /* red */
   }
+
+  .search-match {
+    color: $tree-node-search-highlight-color;
+    background-color: $tree-node-search-highlight-background-color;
+}

@@ -2,7 +2,18 @@ import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Constants } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
-import _ from 'lodash';
+// import { startCase, camelCase, isNumber, isBoolean, isUndefined, isNull, isEmpty, isObject, first} from 'lodash';
+import  size from 'lodash/size';
+import  forOwn  from 'lodash/forOwn';
+import  startCase  from 'lodash/startCase';
+import  camelCase  from 'lodash/camelCase';
+import  isNumber  from 'lodash/isNumber';
+import  isBoolean  from 'lodash/isBoolean';
+import  isUndefined  from 'lodash/isUndefined';
+import  isNull  from 'lodash/isNull';
+import  isEmpty  from 'lodash/isEmpty';
+import  isObject  from 'lodash/isObject';
+import  first  from 'lodash/first';
 
 export class ResolvedObject {
   [index: string]: any;
@@ -37,7 +48,7 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
   }
 
   public getResolvedObjectSize(object: any): number {
-    return _.size(object);
+    return size(object);
     }
 
   public getResolvedPropertyType(value: any): string {
@@ -86,8 +97,8 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
     private getResolvedDataObjectInternal(data: any, parent: any, preserveEmptyProperties: boolean = false): ResolvedObject {
       let resolvedObject = new ResolvedObject();
 
-      _.forOwn(data, (value, name) => {
-          let resolvedName = _.startCase(name);
+      forOwn(data, (value, name) => {
+          let resolvedName = startCase(name);
           let resolvedValue = null;
 
           // Use decorator to resolve value if defined
@@ -114,7 +125,7 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
           if (!resolvedValue) {
               // Try to look for the same property defined in parent object
               if (parent) {
-                  resolvedValue = parent[name] || parent[_.camelCase(name)];
+                  resolvedValue = parent[name] || parent[camelCase(name)];
               }
 
               // Fall back to the original value
@@ -123,9 +134,9 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
               }
           }
 
-          if (_.isNumber(resolvedValue) || _.isBoolean(resolvedValue)) {
+          if (isNumber(resolvedValue) || isBoolean(resolvedValue)) {
               // Number and Boolean are always preserved
-          } else if (_.isUndefined(resolvedValue) || _.isNull(resolvedValue) || _.isEmpty(resolvedValue)) {
+          } else if (isUndefined(resolvedValue) || isNull(resolvedValue) || isEmpty(resolvedValue)) {
               if (preserveEmptyProperties) {
                   resolvedValue = Constants.Empty;
               } else {
@@ -133,14 +144,14 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
                   resolvedValue = null;
               }
           } else if (Array.isArray(resolvedValue)) {
-              if (!_.isObject(_.first(resolvedValue))) {
+              if (!isObject(first(resolvedValue))) {
                   // The first element in the array is not an object, assume all the elements are value types
                   resolvedValue = `[${resolvedValue.map(v => v.toString()).join(", ")}]`;
               } else {
                   // Resolve sub-array, for array, all properties are preserved unless filtered by showList/hideList
                   resolvedValue = resolvedValue.map(v => this.getResolvedDataObject(v, true));
               }
-          } else if (_.isObject(resolvedValue)) {
+          } else if (isObject(resolvedValue)) {
               // Deal with badge class as a special case
               if (Utils.isBadge(resolvedValue)) {
                   if (resolvedValue.text && resolvedValue.badgeClass) {
@@ -154,7 +165,7 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
               }
           }
 
-          if (_.isEmpty(resolvedName)) {
+          if (isEmpty(resolvedName)) {
               resolvedName = Constants.Empty;
           }
 
@@ -163,7 +174,7 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
           }
       });
 
-      return _.size(resolvedObject) > 0 ? resolvedObject : null;
+      return size(resolvedObject) > 0 ? resolvedObject : null;
   }
 
   asIsOrder(a: any, b: any): number {

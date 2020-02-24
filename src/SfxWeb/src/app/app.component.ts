@@ -29,8 +29,6 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit() {
-
-    
     this.treeService.init();
     this.treeService.refresh().subscribe();
     this.refreshService.init();

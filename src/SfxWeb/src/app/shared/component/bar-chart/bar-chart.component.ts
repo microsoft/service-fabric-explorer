@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
-import * as Highcharts from 'highcharts';
+import { Chart, Options, chart  } from 'highcharts';
 
 @Component({
   selector: 'app-bar-chart',
@@ -13,13 +13,13 @@ export class BarChartComponent implements OnInit, OnChanges {
   @Input() title: string = "";
   @Input() subtitle: string = "";
 
-  private chart: Highcharts.Chart;
+  private chart: Chart;
 
   fontColor = {
                 color: "#fff"
               }
 
-  public options: Highcharts.Options = {
+  public options: Options = {
     chart: {
       height: '50%',
       inverted: false,
@@ -85,7 +85,7 @@ export class BarChartComponent implements OnInit, OnChanges {
   }
 
   ngOnInit() {
-    this.chart = Highcharts.chart('container', this.options);
+    this.chart = chart('container', this.options);
   }
 
 }

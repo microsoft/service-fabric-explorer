@@ -8,18 +8,10 @@ import { TreeModule } from './modules/tree/tree.module';
 import { SharedModule } from './shared/shared.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
-import { BackupRestoreModule } from './modules/backup-restore/backup-restore.module';
-import { ActionCreateBackupPolicyComponent } from './views/cluster/action-create-backup-policy/action-create-backup-policy.component';
-import { ClusterModule } from './views/cluster/cluster.module';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { initApp } from './app-initializers';
 import { AdalService } from './services/adal.service';
 import { httpInterceptorProviders } from './http-interceptor';
-import { CreateServiceComponent } from './views/application/create-service/create-service.component';
-import { ApplicationModule } from './views/application/application.module';
-import { ServiceModule } from './views/service/service.module';
-import { PartitionModule } from './views/partition/partition.module';
-import { PartitionRestoreBackUpComponent } from './views/partition/partition-restore-back-up/partition-restore-back-up.component';
 
 @NgModule({
   declarations: [
@@ -33,13 +25,9 @@ import { PartitionRestoreBackUpComponent } from './views/partition/partition-res
     SharedModule,
     NoopAnimationsModule,
     MatDialogModule,
-    BackupRestoreModule,
+    // BackupRestoreModule,
     NgbDropdownModule,
-    ApplicationModule,
     //test
-    ClusterModule,
-    ServiceModule,
-    PartitionModule
   ],
   
   providers: [
@@ -53,7 +41,6 @@ import { PartitionRestoreBackUpComponent } from './views/partition/partition-res
     },
     httpInterceptorProviders
   ],
-  entryComponents: [ActionCreateBackupPolicyComponent, CreateServiceComponent, PartitionRestoreBackUpComponent],
   bootstrap: [AppComponent],
 })
 export class AppModule { } 

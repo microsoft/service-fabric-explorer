@@ -1,7 +1,16 @@
-import { Component, OnInit, Input, OnChanges, ChangeDetectorRef, SimpleChanges} from '@angular/core';
+import { Component, Input} from '@angular/core';
 import { ListSettings, ListColumnSetting, FilterValue } from 'src/app/Models/ListSettings';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
-import * as _ from 'lodash';
+import  fill  from 'lodash/fill';
+import  isEmpty  from 'lodash/isEmpty';
+import  sortBy  from 'lodash/sortBy';
+import  union  from 'lodash/union';
+import  map from 'lodash/map';
+import  filter from 'lodash/filter';
+import  uniq from 'lodash/uniq';
+import  includes from 'lodash/includes';
+import  every from 'lodash/every';
+
 import { Utils } from 'src/app/Utils/Utils';
 @Component({
   selector: 'detail-list',
@@ -76,7 +85,7 @@ export class DetailListComponent {
     }
 
     // Sort
-    if (this.listSettings && !_.isEmpty(this.listSettings.sortPropertyPaths)) {
+    if (this.listSettings && !isEmpty(this.listSettings.sortPropertyPaths)) {
         list = sortByProperty(list, 
                               this.listSettings.sortPropertyPaths,
                               this.listSettings.sortReverse)
@@ -89,41 +98,41 @@ export class DetailListComponent {
 
     // Initialize the filter array, false indicate filtered, true indicate not filtered
     let filterMark: boolean[] = new Array(pluckedList.length);
-    _.fill(filterMark, true);
+    fill(filterMark, true);
 
     // Update each column filter values by scanning through the list and found out all unique values exist in current column
-    _.forEach(listSettings.columnSettings, (columnSetting: ListColumnSetting) => {
+    listSettings.columnSettings.forEach((columnSetting: ListColumnSetting) => {
         if (!columnSetting.enableFilter) {
             return;
         }
 
         // If any filter value is unchecked, we need to filter on this column
-        let hasEffectiveFilters = _.some(columnSetting.filterValues, filterValue => !filterValue.isChecked);
-        let checkedValues = _.map(_.filter(columnSetting.filterValues, filterValue => filterValue.isChecked), "value");
+        let hasEffectiveFilters = columnSetting.filterValues.some(filterValue => !filterValue.isChecked);
+        let checkedValues = map(filter(columnSetting.filterValues, filterValue => filterValue.isChecked), "value");
 
         // Update filter values in each column and filter the list at the same time
         columnSetting.filterValues =
-            _.sortBy( // Sort alphabetically
-                _.union( // Union with original filters, user may already set filter on them, should not overwrite
-                    _.map( // Create new filters
-                        _.filter( // Get rid of those values already in the filters
-                            _.uniq( // Get all unique property values in current column
-                                _.filter( // Get rid of empty values
-                                    _.map( // Get all property values in current column
+            sortBy( // Sort alphabetically
+                union( // Union with original filters, user may already set filter on them, should not overwrite
+                    map( // Create new filters
+                        filter( // Get rid of those values already in the filters
+                            uniq( // Get all unique property values in current column
+                                filter( // Get rid of empty values
+                                    map( // Get all property values in current column
                                         pluckedList,
                                         (item, index) => {
                                             let targetPropertyTextValue = item[columnSetting.propertyPath];
                                             filterMark[index] = filterMark[index] // Not already filtered
                                                 && (!hasEffectiveFilters // No effective filters
                                                     || !targetPropertyTextValue // Target value is empty, no filters apply
-                                                    || _.includes(checkedValues, targetPropertyTextValue)); // The checked values include the target value
+                                                    || includes(checkedValues, targetPropertyTextValue)); // The checked values include the target value
                                             return targetPropertyTextValue;
                                         }
                                     ),
-                                    value => !_.isEmpty(value)
+                                    value => !isEmpty(value)
                                 )
                             ),
-                            value => _.every(columnSetting.filterValues, filterValue => filterValue.value !== value)
+                            value => every(columnSetting.filterValues, filterValue => filterValue.value !== value)
                         ),
                         value => new FilterValue(value)
                     ),
@@ -133,7 +142,7 @@ export class DetailListComponent {
             );
     });
 
-    pluckedList = _.filter(pluckedList, (item, index) => filterMark[index]);
+    pluckedList = filter(pluckedList, (item, index) => filterMark[index]);
     return pluckedList;
   }
 

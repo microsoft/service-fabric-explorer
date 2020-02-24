@@ -65,9 +65,6 @@
                                             <td *ngFor="let subItem of item | keyvalue" [ngSwitch]="getResolvedPropertyType(subItem.value)">
                                                 <span *ngSwitchCase="'Value'" [title]="subItem.value">{{subItem.value}}</span>
                                                 <span *ngSwitchCase="'Html'" [innerHtml]="subItem.value"></span>
-                                                <!-- <div *ngSwitchCase="'Array'" sfx-include src="'view-part-array-template'" ng-init="value = subValue"></div>
-                                                <sfx-detail-view-part *ngSwitchCase="Object" data="subValue" no-fixed-layout="$parent.noFixedLayout"></sfx-detail-view-part> -->
-
                                                 <app-detail-view-part *ngSwitchCase="'Array'" [data]="subItem.value"></app-detail-view-part>
                                                 <app-detail-view-part *ngSwitchCase="'Object'" [data]="subItem.value"></app-detail-view-part>
                                             </td>

@@ -1,8 +1,9 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit } from '@angular/core';
-import { pie, scaleOrdinal, arc, select, entries } from 'd3';
+import { scaleOrdinal } from 'd3-scale';
 import { IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
-
-
+import { pie, arc } from 'd3-shape';
+import { select } from 'd3-selection';
+import { entries } from 'd3-collection';
 @Component({
   selector: 'app-dashboard-tile',
   templateUrl: './dashboard-tile.component.html',

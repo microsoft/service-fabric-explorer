@@ -16,7 +16,7 @@ import { map } from 'rxjs/operators';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
 import { ServiceCollection } from './collections/ServiceCollection';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
-import * as _ from 'lodash';
+import   isEmpty from 'lodash/isEmpty';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -94,7 +94,7 @@ export class Application extends DataModelBase<IRawApplication> {
             };
             clusterHealthChunkQueryDescription.ApplicationFilters.push(appFilter);
         }
-        if (_.isEmpty(appFilter.ServiceFilters)) {
+        if (isEmpty(appFilter.ServiceFilters)) {
             appFilter.ServiceFilters = [{
                 HealthStateFilter: HealthStateFilterFlags.All
             }];

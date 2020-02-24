@@ -8,15 +8,9 @@
     <app-check-box [(state)]="treeService.tree.showErrorItems">
         <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
     </app-check-box>
-    <!-- <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showOkItems}" (click)="treeService.tree.showOkItems = !treeService.tree.showOkItems">
-        <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+    <div style="padding: 10px 10px 0px 0px; margin-left: -15px;">
+        <app-input (onChange)="treeService.tree.searchTerm = $event"></app-input>
     </div>
-    <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showWarningItems}" (click)="treeService.tree.showWarningItems = !treeService.tree.showWarningItems">
-        <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
-    </div>
-    <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showErrorItems}" (click)="treeService.tree.showErrorItems = !treeService.tree.showErrorItems">
-        <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
-    </div> -->
 </div>
 <div style="height: 100%; overflow: auto;">
     <div *ngIf="treeService.tree" class="tree-body">
@@ -27,33 +21,3 @@
         </div>
     </div>
 </div>
-
-
-<!-- <div class="tree-header">
-        <div class="toolbar container-fluid">
-            <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showOkItems}" ng-click="treeCtrl.tree.showOkItems = !treeCtrl.tree.showOkItems">
-                <sfx-badge badge-class="'badge-ok'" text="'OK'"></sfx-badge>
-            </div>
-            <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showWarningItems}" ng-click="treeCtrl.tree.showWarningItems = !treeCtrl.tree.showWarningItems">
-                <sfx-badge badge-class="'badge-warning'" text="'Warning'"></sfx-badge>
-            </div>
-            <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showErrorItems}" ng-click="treeCtrl.tree.showErrorItems = !treeCtrl.tree.showErrorItems">
-                <sfx-badge badge-class="'badge-error'" text="'Error'"></sfx-badge>
-            </div>
-        </div>
-        <sfx-search-bar class="tree-search-bar" custom-class="dark-bg" placeholder="Search Cluster" model="treeCtrl.tree.searchTerm"></sfx-search-bar>
-    </div>
-
-    <div class="tree-body">
-        <div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate" ng-show="treeCtrl.tree.isLoading">
-        </div>
-
-        <div ng-show="!treeCtrl.tree.isLoading && treeCtrl.tree.isEmpty" class="informative content">
-            <p>Nothing to display</p>
-        </div>
-
-        <div ng-show="!treeCtrl.tree.isLoading && !treeCtrl.tree.isEmpty"
-             ng-keydown="treeCtrl.tree.onKeyDown($event)" class="tree-view" tabindex="0">
-            <div sfx-tree-node node="treeCtrl.tree.childGroupViewModel"></div>
-        </div>
-    </div> -->

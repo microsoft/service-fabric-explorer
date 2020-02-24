@@ -4,7 +4,7 @@ import { TreeViewModel } from './TreeViewModel';
 import { IClusterHealthChunkQueryDescription, IClusterHealthChunk } from '../Models/HealthChunkRawDataTypes';
 import { Observable, of, forkJoin, Subject } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
-import * as _ from 'lodash';
+import sortedIndexBy from 'lodash/sortedIndexBy';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -184,7 +184,7 @@ export class TreeNodeGroupViewModel {
                     let newNode = new TreeNodeViewModel(this._tree, respNode, this.owningNode);
 
                     // Find the correct index in the sorted array
-                    let index = _.sortedIndexBy(children, newNode, (item) => item.sortBy());
+                    let index = sortedIndexBy(children, newNode, (item) => item.sortBy());
                     children.splice(index, 0, newNode);
                 }
             }

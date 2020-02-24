@@ -2,7 +2,6 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
-import * as _ from 'lodash';
 export class Utils {
     private static SingleUrlRegExp = new RegExp("^https?:\/\/[^;,]+");
 
@@ -125,7 +124,7 @@ export class Utils {
         let bytes = [];
         for (let c = 0; c < hex.length; c += 2) {
             let value = parseInt(hex.substr(c, 2), 16);
-            if (!_.isNaN(value) && value >= 0) {
+            if (!isNaN(value) && value >= 0) {
                 bytes.push(value);
             }
         }

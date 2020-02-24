@@ -1,6 +1,5 @@
 ﻿import { LoadMetricInformation } from "../Models/DataModels/Shared";
 import { NodeLoadInformation } from '../Models/DataModels/Node';
-import { ListSettings } from '../Models/ListSettings';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 import { scaleOrdinal } from 'd3';
 

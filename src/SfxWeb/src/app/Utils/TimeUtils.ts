@@ -1,6 +1,7 @@
 ﻿import { Constants } from '../Common/Constants';
 import { Utils } from './Utils';
-import * as moment from 'moment';
+import dayjs from 'dayjs';
+import Duration from 'luxon/src/duration'
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -38,13 +39,13 @@ export class TimeUtils {
         let momentDuration;
         if (Number.isFinite(duration)) {
             // Finite number in milliseconds
-            momentDuration = moment.duration(duration);
+            momentDuration = duration
         } else if (Utils.isNumeric(duration)) {
             // Numeric representation in string
-            momentDuration = moment.duration(parseFloat(<string>duration));
+            momentDuration = parseFloat(<string>duration);
         } else {
             // ISO 8601 format string
-            momentDuration = moment.duration(duration);
+            momentDuration = Duration.fromISO(duration).as('milliseconds');
         }
 
         return this.formatDurationAsAspNetTimespan(momentDuration);
@@ -63,7 +64,8 @@ export class TimeUtils {
      * @param datetime date formatted string.
      */
     public static datetimeToString(datetime: string): string {
-        return moment(datetime).format("MMM D, YYYY [at] h:mm:ss A (ZZ)");
+        const d = new Date(datetime);
+        return  d.toLocaleString() + `${d.getTimezoneOffset}` //moment(datetime).format("MMM D, YYYY [at] h:mm:ss A (ZZ)");
     }
 
     /**
@@ -71,24 +73,32 @@ export class TimeUtils {
      * @param timestamp in UTC datetime format e.g. "2017-04-28T02:30:38.307Z"
      */
     public static timestampToUTCString(timestamp: string): string {
-        let date = moment.utc(timestamp);
-        return !date.isValid() || date.year() === 1 ? Constants.InvalidTimestamp : date.toDate().toUTCString();
+        return dayjs(timestamp).toISOString();
+        //TODO test
+        // return !date.isValid() || date.year() === 1 ? Constants.InvalidTimestamp : date.toDate().toUTCString();
     }
 
     /**
      * Format the input duration as ASP.NET time span format: "[days].[hours]:[minutes]:[seconds].[milliseconds].
-     * @param duration moment.duration object
+     * @param duration number
      */
-    private static formatDurationAsAspNetTimespan(duration: any): string {
-        if (duration.asMilliseconds() >= TimeUtils.MaxDurationInMilliseconds) {
+    private static formatDurationAsAspNetTimespan(duration: number): string {
+        if (duration >= TimeUtils.MaxDurationInMilliseconds) {
             return Constants.DurationInfinity;
-        }
+        }  
 
-        return `${Math.floor(duration.asDays())}.`
-            + `${Math.floor(duration.hours()).toString().padStart(2, "0")}:`
-            + `${Math.floor(duration.minutes()).toString().padStart(2, "0")}:`
-            + `${Math.floor(duration.seconds()).toString().padStart(2, "0")}.`
-            + `${Math.ceil(duration.milliseconds())}`;
+        const milliseconds = duration % 1000;
+        const seconds = duration / 1000;
+        const minutes = seconds / 60;
+        const hours = minutes / 60
+        const days = hours / 24;
+
+
+        return `${Math.floor(days)}.`
+            + `${Math.floor(hours).toString().padStart(2, "0")}:`
+            + `${Math.floor(minutes).toString().padStart(2, "0")}:`
+            + `${Math.floor(seconds).toString().substring(0, 2).padStart(2, "0")}.`
+            + `${milliseconds}`;
     }
 }
 

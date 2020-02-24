@@ -2,7 +2,8 @@
 
 import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent } from './Events';
 import { DataSet, DataGroup, DataItem } from 'vis-timeline';
-import * as _ from 'lodash';
+import  padStart  from 'lodash/padStart';
+import  findIndex  from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 
 /*
@@ -452,9 +453,9 @@ function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: st
         if (prop in event.raw) {
             let currentPath = `${constructedPath} ${event.raw[prop]}`;
 
-            if (_.findIndex(groupIds, (g: DataGroup) => g.id === currentPath) === -1) {
+            if (findIndex(groupIds, (g: DataGroup) => g.id === currentPath) === -1) {
 
-                const content = _.padStart("", i * 3) + event.raw[prop].toString();
+                const content = padStart("", i * 3) + event.raw[prop].toString();
                 const childGroup = {id: currentPath, content, treeLevel: (i + 1) };
 
                 //"leaf" rows dont have nested rows
@@ -464,7 +465,7 @@ function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: st
 
                 //"root" rows dont have parents
                 if (i > 0) {
-                    const parentGroup = groupIds[_.findIndex(groupIds, (g: DataGroup) => g.id === constructedPath)];
+                    const parentGroup = groupIds[findIndex(groupIds, (g: DataGroup) => g.id === constructedPath)];
                     parentGroup.nestedGroups.push(childGroup.id);
                 }
 
