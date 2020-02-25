@@ -65,7 +65,7 @@ export class TimeUtils {
      */
     public static datetimeToString(datetime: string): string {
         const d = new Date(datetime);
-        return  d.toLocaleString() + `${d.getTimezoneOffset}` //moment(datetime).format("MMM D, YYYY [at] h:mm:ss A (ZZ)");
+        return  d.toLocaleString() + `(${-1 * (d.getTimezoneOffset() / 60)}00)` //moment(datetime).format("MMM D, YYYY [at] h:mm:ss A (ZZ)");
     }
 
     /**

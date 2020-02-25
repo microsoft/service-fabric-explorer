@@ -234,6 +234,12 @@ export class TreeNodeGroupViewModel {
                 this._currentGetChildrenPromise = null;
                 this.loadingChildren = false;
 
+            }, 
+            () => {
+                this._currentGetChildrenPromise.next();
+                this._currentGetChildrenPromise.complete();
+                this._currentGetChildrenPromise = null;
+                this.loadingChildren = false;
             });
         }
 

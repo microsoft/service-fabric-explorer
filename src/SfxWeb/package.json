@@ -34,6 +34,7 @@
     "highcharts": "^8.0.0",
     "iso8601-duration": "^1.2.0",
     "lodash": "^4.17.15",
+    "luxon": "^1.22.0",
     "metro4": "^4.3.5",
     "moment": "^2.24.0",
     "nouislider": "^14.1.1",
