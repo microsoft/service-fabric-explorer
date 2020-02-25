@@ -12,6 +12,10 @@ install:
   - npm install -g gulp-cli
   - pushd ./src/Sfx; npm install; popd
   - pushd ./src/Sfx-Standalone; npm install; popd
+  - pushd ./src/SfxWeb; npm install
 script:
+  - cd src/SfxWeb
+  - ng build --prod
+  - cd ../../
   - gulp -f ./src/Sfx/gulpfile.js clean-build
   - gulp -f ./src/Sfx-Standalone/gulpfile.js publish
