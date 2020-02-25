@@ -45,10 +45,8 @@ export class CollectionUtils {
             } else if (create) {
                 // add new item
                 collection.push(create(oldItem, newItem));
-                //console.log("add item")
             }
         });
-        //console.log(collection);
         return [].concat(collection);
     }
 

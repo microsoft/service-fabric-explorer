@@ -56,7 +56,6 @@ export class EssentialsComponent extends ApplicationBaseController {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     this.data.refreshBackupPolicies(messageHandler);
 
-    console.log(this.app)
     return forkJoin([
       this.clusterManifest.ensureInitialized(false),
       this.app.upgradeProgress.refresh(messageHandler).pipe(map(upgradeProgress => {

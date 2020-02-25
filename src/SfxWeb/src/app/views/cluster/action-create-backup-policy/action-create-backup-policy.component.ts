@@ -29,9 +29,6 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
   public saveBackupPolicy() {
     let data = this.form.getRawValue();
 
-    console.log(data);
-
-    // data.MaxIncrementalBackups = data.MaxIncrementalBackups.toString();
     data.RetentionPolicy.MinimumNumberOfBackups = data.RetentionPolicy.MinimumNumberOfBackups.toString();
 
     if(!data.retentionPolicyRequired) {
@@ -46,23 +43,6 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
       data.Schedule.RunDays = [];
     }
 
-    console.log(data);
-    // if (this.retentionPolicyRequired) {
-    //     this.RetentionPolicy.RetentionPolicyType = "Basic";
-    //     this.backupPolicy["RetentionPolicy"] = this.RetentionPolicy;
-    // } else {
-    //     this.backupPolicy["RetentionPolicy"] = null;
-    // }
-
-    // if (this.backupPolicy.Schedule.ScheduleKind === "TimeBased" && this.backupPolicy.Schedule.ScheduleFrequencyType === "Weekly") {
-    //     this.backupPolicy.Schedule.RunDays = [];
-    //     for (let day of this.weekDay) {
-    //         if (this.daySelectedMapping[day]) {
-    //             this.backupPolicy.Schedule.RunDays.push(day);
-    //         }
-    //     }
-    // }
-    console.log(this.isUpdateOperation);
     (this.isUpdateOperation ? this.dataService.restClient.updateBackupPolicy(data) : 
                               this.dataService.restClient.createBackupPolicy(data)  ).subscribe( () => {
                                 this.dialogRef.close();
@@ -118,7 +98,7 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
     this.updateSchedule(this.form.get('Schedule').get('ScheduleKind').value);
 
     //TODO remove when not needed for testing
-    this.form.valueChanges.subscribe(data => console.log(data))
+    // this.form.valueChanges.subscribe(data => console.log(data))
   }
 
   updateSchedule(state: string) {

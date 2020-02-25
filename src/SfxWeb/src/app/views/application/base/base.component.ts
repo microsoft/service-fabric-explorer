@@ -39,7 +39,6 @@ export class BaseComponent extends ApplicationBaseController {
   }
 
   setup() {
-    console.log(this)
     this.tree.selectTreeNode([
       IdGenerator.cluster(),
       IdGenerator.appGroup(),

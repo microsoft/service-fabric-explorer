@@ -113,7 +113,6 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
             });
         }else {
             this.data.warnings.removeNotificationById(BannerWarningID.ClusterDegradedState);
-            console.log("why")
         }
     }
 

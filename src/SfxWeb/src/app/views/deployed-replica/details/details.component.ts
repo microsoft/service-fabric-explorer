@@ -16,7 +16,6 @@ export class DetailsComponent extends DeployedReplicaBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    console.log(this.replica)
     return this.replica.detail.refresh(messageHandler);
   }
 }

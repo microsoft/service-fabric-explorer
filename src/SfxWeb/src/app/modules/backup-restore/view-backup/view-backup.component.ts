@@ -24,7 +24,6 @@ export class ViewBackupComponent implements OnInit {
   }
 
   ngOnInit() {
-    console.log(this.data);
     this.backUpData = this.data.data;
   }
 
@@ -37,18 +36,6 @@ export class ViewBackupComponent implements OnInit {
       this.backUpData.backup,
       ActionCreateBackupPolicyComponent,
       () => true
-      // () => this.data.restClient.disablePartitionBackup(this).subscribe(() => {
-      //     this.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
-      // }),
-      // () => this.partitionBackupInfo.partitionBackupConfigurationInfo.raw && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" && this.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition",
-      // <angular.ui.bootstrap.IModalSettings>{
-      //     templateUrl: "partials/disableBackup.html",
-      //     controller: ActionController,
-      //     resolve: {
-      //         action: () => this
-      //     }
-      // },
-      // null
     ).run();
   }
 

@@ -21,7 +21,6 @@ export class ImagestoreComponent extends BaseController {
 
   setup() {
     this.imageStore = new ImageStore(this.data);
-    console.log(this.imageStore)
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {

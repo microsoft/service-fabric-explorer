@@ -74,8 +74,6 @@ export class BarChartComponent implements OnInit, OnChanges {
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges) {
-    console.log(this);
-
     if(this.chart){
       this.chart.series[0].setData(this.dataSet);
       this.chart.title.update({text: this.title})

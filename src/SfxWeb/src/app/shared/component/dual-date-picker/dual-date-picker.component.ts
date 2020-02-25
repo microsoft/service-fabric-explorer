@@ -29,7 +29,6 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(simple: SimpleChanges) {
-    console.log(simple)
     this.toDate = this.dateToNgbDate(this.currentEndDate);
     this.fromDate = this.dateToNgbDate(this.currentStartDate);
   }
@@ -58,7 +57,6 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
     }
 
     if(this.fromDate && this.toDate){
-      console.log("check")
       this.currentStartDate.setFullYear(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day)
       this.currentEndDate.setFullYear(this.toDate.year, this.toDate.month - 1, this.toDate.day)
       this.onDateChange.emit({

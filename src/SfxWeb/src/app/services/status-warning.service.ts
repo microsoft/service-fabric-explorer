@@ -48,8 +48,6 @@ export class StatusWarningService {
           }
           this.notifications.sort((a, b) => a.priority > b.priority ? -1 : 1);
       }
-      console.log(this);
-
   }
 
   //hidePermanently will store the id in local storage so that it does not get put in the drop down again.
@@ -62,8 +60,6 @@ export class StatusWarningService {
       if (hidePermanently) {
           this.storage.setValue(this.getStorageId(notificationId), false);
       }
-      console.log(this);
-
   }
 
   private getStorageId(notificationId: string): string {

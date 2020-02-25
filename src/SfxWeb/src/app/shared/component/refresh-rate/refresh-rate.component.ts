@@ -33,7 +33,6 @@ export class RefreshRateComponent {
   }
 
   change(updatedValue: number, emitValue = true) {
-    console.log("update")
     this.displayRate = this._mapping[updatedValue];
     this.refreshRate = updatedValue;
     

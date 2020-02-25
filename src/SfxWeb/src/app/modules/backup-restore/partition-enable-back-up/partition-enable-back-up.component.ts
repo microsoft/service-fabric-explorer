@@ -16,7 +16,6 @@ export class PartitionEnableBackUpComponent implements OnInit {
     @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) { }
 
   ngOnInit() {
-    console.log(this.data)
     this.dataService.backupPolicies.ensureInitialized().subscribe();
   }
 

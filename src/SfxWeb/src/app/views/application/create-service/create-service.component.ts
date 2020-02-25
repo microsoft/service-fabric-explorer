@@ -19,9 +19,7 @@ export class CreateServiceComponent implements OnInit {
 
   ngOnInit() {
     this.serviceType = this.data.data;
-    console.log(this.serviceType)
     this.description = new CreateServiceDescription(this.serviceType, <Application>this.serviceType.parent);
-    console.log(this.description);
   }
 
   create() {

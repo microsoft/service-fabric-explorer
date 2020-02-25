@@ -40,7 +40,6 @@ export class MetricsComponent extends BaseController {
   setup(){
     this.clusterLoadInformation = this.data.clusterLoadInformation;
     this.nodes = this.data.nodes;
-    console.log(this.metricsViewModel)
   }
 
   updateSelectedMetric(metric: LoadMetricInformation) {

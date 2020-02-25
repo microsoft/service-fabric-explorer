@@ -28,7 +28,6 @@ export class BackupsComponent extends BaseController {
   setup(){
     this.backupPolicyListSettings = this.settings.getNewOrExistingBackupPolicyListSettings();
     this.backupPolicies = this.data.backupPolicies;
-    console.log(this.backupPolicies)
     this.actions = new ActionCollection(this.data.telemetry);
 
     if (this.data.actionsEnabled()) {

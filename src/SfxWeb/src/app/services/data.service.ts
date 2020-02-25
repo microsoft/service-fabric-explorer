@@ -176,7 +176,6 @@ export class DataService {
 
   public getServiceType(appTypeName: string, appTypeVersion: string, serviceTypeName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ServiceType> {
     return this.getServiceTypes(appTypeName, appTypeVersion, false, messageHandler).pipe(mergeMap(collection => {
-        console.log(collection)
         return this.tryGetValidItem(collection, serviceTypeName, forceRefresh, messageHandler);
     }));
   }

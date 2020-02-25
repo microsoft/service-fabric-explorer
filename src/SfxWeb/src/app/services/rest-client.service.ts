@@ -859,7 +859,6 @@ export class RestClientService {
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
         let message = messageHandler.getErrorMessage(apiDesc, err);
-            console.log(message)
             if (message) {
                 this.message.showMessage(message, MessageSeverity.Err);
             }

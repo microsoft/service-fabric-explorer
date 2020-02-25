@@ -37,7 +37,6 @@ export class EssentialsComponent extends NodeBaseController {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.node.deployedApps.refresh(messageHandler).pipe(map(deployedApps => {
         this.deployedApps = deployedApps;
-        console.log(this.deployedApps)
       }))
   }
 }

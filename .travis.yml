@@ -13,5 +13,4 @@ install:
   - npm install @angular/cli -g
   - pushd ./src/SfxWeb; npm install
 script:
-  - cd ./src/SfxWeb
-  - ng build --prod
+  - pushd ./src/SfxWeb; ng build --prod

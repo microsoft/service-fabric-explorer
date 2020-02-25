@@ -20,16 +20,7 @@ export class ApplicationBaseController extends BaseController {
   
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getApp(this.appId, true, messageHandler).pipe(map(data => {
-          console.log("test")
             this.app = data;
-
-            // return this.data.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
-            //   if(this.data.clusterManifest.isBackupRestoreEnabled) {
-            //     return this.app.applicationBackupConfigurationInfoCollection.refresh(messageHandler).pipe(catchError( () => of(null)));
-            //   }else{
-            //     return of(null);
-            //   }
-            // }));
         }));
     }
     

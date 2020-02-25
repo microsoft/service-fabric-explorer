@@ -61,9 +61,8 @@ export class BaseComponent implements OnInit {
     this.dataService.nodes.refresh().subscribe( () => {
       this.dataService.clusterManifest.ensureInitialized().subscribe( ()=> {
           //if < 5 seed nodes display warning for SFRP
-          console.log(this.dataService.clusterManifest.isSfrpCluster)
           if(this.dataService.clusterManifest.isSfrpCluster){
-              this.dataService.nodes.checkSeedNodeCount(6);
+              this.dataService.nodes.checkSeedNodeCount(5);
           }
       })
   })

@@ -18,7 +18,6 @@ export class TreeNodeGroupViewModel {
     public childrenQuery: () => Observable<ITreeNode[]>;
 
     public get displayedChildren(): TreeNodeViewModel[] {
-        // console.log(this.owningNode && this.owningNode.listSettings)
         let result = this.children;
         if (this.owningNode && this.owningNode.listSettings) {
             result = result.slice(this.owningNode.listSettings.begin, this.owningNode.listSettings.begin + this.owningNode.listSettings.limit);
@@ -31,7 +30,7 @@ export class TreeNodeGroupViewModel {
     }
 
     public get isExpanded(): boolean {
-        return this._isExpanded && this.hasChildren;
+        return this._isExpanded && !!this.childrenQuery;
     }
 
     public get isCollapsed(): boolean {
@@ -213,12 +212,7 @@ export class TreeNodeGroupViewModel {
             this.loadingChildren = true;
             this._currentGetChildrenPromise = new Subject();
             this.childrenQuery().subscribe(response => {
-                // console.log(response)
-                // let childrenViewModels: TreeNodeViewModel[] = [];
-                // for (let i = 0; i < response.length; i++) {
-                //     let node = response[i];
-                //     childrenViewModels.push(new TreeNodeViewModel(this._tree, node, this.owningNode));
-                // }
+
                 this.children = response.map(node => new TreeNodeViewModel(this._tree, node, this.owningNode))
                 // Sort the children
                 //this.children = childrenViewModels //.sort( (item1, item2) => <number>item1.sortBy() - <number>item2.sortBy()); TODO fix the sorting here
