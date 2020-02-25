@@ -15,7 +15,3 @@ install:
 script:
   - cd ./src/SfxWeb
   - ng build --prod
-  - cd ..
-  - cd ..
-  - gulp -f ./src/Sfx/gulpfile.js clean-build
-  - gulp -f ./src/Sfx-Standalone/gulpfile.js publish
