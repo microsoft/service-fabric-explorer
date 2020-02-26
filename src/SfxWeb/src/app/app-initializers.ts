@@ -3,16 +3,20 @@ import { of } from 'rxjs';
 
 export function initApp(aadService: AdalService) {
     return async () => {
-        await aadService.load().toPromise();
+        try {
+            await aadService.load().toPromise();
 
-        if(aadService.aadEnabled){
-            if(!aadService.isAuthenticated){
-                aadService.login();
+            if(aadService.aadEnabled){
+                if(!aadService.isAuthenticated){
+                    aadService.login();
+                }
+                aadService.handleWindowCallback()
+    
+                return of(null)
+            }else{
+                return of(null);
             }
-            aadService.handleWindowCallback()
-
-            return of(null)
-        }else{
+        } catch {
             return of(null);
         }
     };
