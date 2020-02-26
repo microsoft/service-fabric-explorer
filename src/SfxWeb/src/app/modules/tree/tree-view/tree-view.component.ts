@@ -13,4 +13,9 @@ export class TreeViewComponent implements OnInit {
   ngOnInit() {
   }
 
+  leaveBeta() {
+    const originalUrl = location.origin + '/Explorer/index.html' + location.hash;
+    window.location.assign(originalUrl);
+  }
+
 }

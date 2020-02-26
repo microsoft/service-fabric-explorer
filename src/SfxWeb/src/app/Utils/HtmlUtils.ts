@@ -2,6 +2,7 @@
 import { Constants } from '../Common/Constants';
 import { ITextAndBadge } from './ValueResolver';
 import { Utils } from './Utils';
+import { environment } from 'src/environments/environment';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -146,7 +147,7 @@ export class HtmlUtils {
             return this.getSpanWithTitleHtml(badge.text);
         }
         // Keep the template here in sync with badge.html
-        return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="assets/${badge.badgeClass}.svg" alt="${badge.text} badge"></img><span> ${badge.text}</span></div>`;
+        return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="${environment.assetBase}assets/${badge.badgeClass}.svg" alt="${badge.text} badge"></img><span> ${badge.text}</span></div>`;
     }
 
     // public static getBadgeOnlyHtml(badge: ITextAndBadge): string {

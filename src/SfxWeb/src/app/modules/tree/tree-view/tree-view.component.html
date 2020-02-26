@@ -1,4 +1,7 @@
 <div class="tree-header">
+    <div style="padding: 10px;">
+        <span style="vertical-align: middle; color: #0075c9;" (click)="leaveBeta();"> To leave beta (click here)</span>
+    </div>
     <app-check-box [(state)]="treeService.tree.showOkItems">
         <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
     </app-check-box>
