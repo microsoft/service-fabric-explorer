@@ -6,6 +6,7 @@ import { AdalService } from './services/adal.service';
 import { catchError, map } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
+import { environment } from 'src/environments/environment';
 
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
@@ -53,9 +54,24 @@ export class ReadOnlyHeaderInterceptor implements HttpInterceptor {
   }
 }
 
+@Injectable()
+export class GlobalHeaderInterceptor implements HttpInterceptor {
+  constructor() {}
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    // We retrieve the token, if any
+    let newHeaders = req.headers;
+    //ADD HEADERS HERE
+    newHeaders = newHeaders.append('x-servicefabricclienttype', 'SFX')
+                           .append('sfx-build', environment.version)
+
+    return next.handle(req.clone({headers: newHeaders}));
+ }
+}
+
 
 /** Http interceptor providers in outside-in order */
 export const httpInterceptorProviders = [
-    { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-    { provide: HTTP_INTERCEPTORS, useClass: ReadOnlyHeaderInterceptor, multi: true },
+  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  { provide: HTTP_INTERCEPTORS, useClass: GlobalHeaderInterceptor, multi: true },
 ];

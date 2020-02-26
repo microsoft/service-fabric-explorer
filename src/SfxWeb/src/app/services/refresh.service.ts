@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { StorageService } from './storage.service';
 import { Constants } from '../Common/Constants';
-import { Observable, interval, Subscription, forkJoin, timer } from 'rxjs';
+import { Observable, interval, Subscription, forkJoin, timer, of } from 'rxjs';
 import { catchError, tap, take, finalize } from 'rxjs/operators';
 import { MessageService } from './message.service';
 
@@ -55,17 +55,29 @@ export class RefreshService {
       this.isRefreshing = true;
       
       const subs =  this.refreshSubjects.map(observeFunction => {
-         return observeFunction().pipe(take(1), catchError(err => {console.log(err); return null}));  //TODO Figure out what we want to do here
+         return observeFunction().pipe(take(1), catchError(err => {console.log(err); return of(err)}));  //TODO Figure out what we want to do here
       })
 
-      forkJoin(subs).pipe(
-        finalize(() => {
+      try {
+        forkJoin(subs).pipe(
+          catchError(err => of(err)),
+          // finalize(() => {
+          //   console.log("done")
+          //   // Rotate the refreshing icon for at least 1 second
+          //   let remainingTime = Math.max(1000 - (Date.now() - refreshStartedTime), 0);
+          //   timer(remainingTime).subscribe( () => this.isRefreshing = false);
+          // })
+        ).subscribe(() => {
           console.log("done")
           // Rotate the refreshing icon for at least 1 second
           let remainingTime = Math.max(1000 - (Date.now() - refreshStartedTime), 0);
           timer(remainingTime).subscribe( () => this.isRefreshing = false);
         })
-      ).subscribe()
+      } catch {
+        console.log("weird")
+        this.isRefreshing = false;
+      }
+
   }
 
   public updateRefreshInterval(newValue: string, noRefresh: boolean = false): void {

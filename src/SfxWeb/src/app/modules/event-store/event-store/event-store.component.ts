@@ -105,7 +105,6 @@ export class EventStoreComponent implements OnInit {
                     end: this.endDate
                 };
 
-                console.log(this.timeLineEventsData)
             }else if (this.timelineGenerator) {
                 const d = this.timelineGenerator.generateTimeLineData(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
 

@@ -3,7 +3,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable, Subject, throwError, of, forkJoin, AsyncSubject } from 'rxjs';
 import { IClusterHealthChunk, IHealthStateChunk, IHealthStateChunkList } from '../../HealthChunkRawDataTypes';
 import { ValueResolver } from 'src/app/Utils/ValueResolver';
-import { mergeMap, map } from 'rxjs/operators';
+import { mergeMap, map, finalize, catchError } from 'rxjs/operators';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
 import { Utils } from 'src/app/Utils/Utils';
 import { DataService } from 'src/app/services/data.service';
@@ -77,7 +77,9 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
             
             this.retrieveNewCollection(messageHandler).pipe(mergeMap(collection => {
                 return this.update(collection)
-            })).subscribe( () => {
+            }),
+            catchError( err => of(err))
+            ).subscribe( () => {
                 this.refreshingPromise.next(this);
                 this.refreshingPromise.complete();
                 this.refreshingPromise = null;
