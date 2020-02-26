@@ -86,8 +86,11 @@ const port = 2500
 //this is mainly for SFRP clusters to test against.
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
-app.use(express.static(path.join('..', 'Sfx', 'wwwwroot')))
+app.use(express.static(__dirname + '/../Sfx/wwwroot/'))
 app.use(express.json())
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname + '/../Sfx/wwwroot/index.html'));
+});
 app.all('/*', async (req, res) => {
     let resp = null;
 
