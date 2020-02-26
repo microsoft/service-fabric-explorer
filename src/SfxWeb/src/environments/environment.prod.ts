@@ -1,5 +1,6 @@
 export const environment = {
   production: true,
   baseUrl: "",
-  version: "7.0"
+  version: "7.0",
+  assetBase: "Explorer/beta/"
 };

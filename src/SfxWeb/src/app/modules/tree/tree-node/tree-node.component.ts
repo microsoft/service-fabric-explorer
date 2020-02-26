@@ -1,6 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TreeNodeGroupViewModel } from 'src/app/ViewModels/TreeNodeGroupViewModel';
 import { TreeNodeViewModel } from 'src/app/ViewModels/TreeNodeViewModel';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-tree-node',
@@ -8,7 +9,8 @@ import { TreeNodeViewModel } from 'src/app/ViewModels/TreeNodeViewModel';
   styleUrls: ['./tree-node.component.scss']
 })
 export class TreeNodeComponent implements OnInit {
- 
+  public assetBase = environment.assetBase;
+
   @Input() node: TreeNodeGroupViewModel;
 
   constructor() { }

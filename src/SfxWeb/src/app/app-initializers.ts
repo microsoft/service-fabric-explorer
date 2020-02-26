@@ -5,9 +5,9 @@ export function initApp(aadService: AdalService) {
     return async () => {
         await aadService.load().toPromise();
 
-        aadService.handleWindowCallback()
-
         if(aadService.aadEnabled){
+            aadService.handleWindowCallback()
+
             if(!aadService.isAuthenticated){
                 aadService.login();
             }

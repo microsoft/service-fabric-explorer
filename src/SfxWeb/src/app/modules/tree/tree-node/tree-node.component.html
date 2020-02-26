@@ -31,7 +31,7 @@
 
             <img *ngIf="child.badge && child.badge() && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
                     class="tree-badge" [title]="child.badge().text" style="margin-right: 3px;"
-                    [src]="'assets/' + child.badge().badgeClass + '.svg'" role="presentation">
+                    [src]="assetBase + 'assets/' + child.badge().badgeClass + '.svg'" role="presentation">
             <div class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()" ></div>
             
             <div *ngIf="child.actions && child.actions.length > 0" class="hidden right-action">

@@ -5,6 +5,7 @@ import { AdalService } from './services/adal.service';
 import { StorageService } from './services/storage.service';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { DataService } from './services/data.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-root',
@@ -13,6 +14,7 @@ import { DataService } from './services/data.service';
 })
 export class AppComponent implements OnInit{
 
+  public assetBase = environment.assetBase;
   treeWidth: string = "450px";
   rightOffset: string = this.treeWidth;
 
