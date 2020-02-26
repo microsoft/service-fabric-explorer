@@ -160,6 +160,9 @@
 
     <script type="text/ng-template" id="treeViewPanel">
         <div class="tree-header">
+            <div style="padding: 10px;">
+                <span style="vertical-align: middle; color: #0075c9;" ng-click="treeCtrl.enterBeta();"> To enter beta (click here)</span>
+            </div>
             <div class="toolbar container-fluid">
                 <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showOkItems}" ng-click="treeCtrl.tree.showOkItems = !treeCtrl.tree.showOkItems">
                     <sfx-badge badge-class="'badge-ok'" text="'OK'"></sfx-badge>

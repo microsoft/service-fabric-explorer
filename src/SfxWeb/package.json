@@ -6,10 +6,11 @@
     "start": "ng serve",
     "start-local": "ng serve --proxy-config=proxy.conf.json --port 3000",
     "build": "ng build",
+    "build:prod": "ng build --prod  --base-href=/Explorer/beta.html",
+    "build:stats": "ng build --stats-json",
     "test": "ng test",
     "lint": "ng lint",
     "e2e": "ng e2e",
-    "build:stats": "ng build --stats-json",
     "analyze": "webpack-bundle-analyzer dist/sfxWeb/stats-es2015.json"
   },
   "private": true,

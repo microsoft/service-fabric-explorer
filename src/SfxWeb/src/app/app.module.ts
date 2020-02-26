@@ -12,6 +12,7 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { initApp } from './app-initializers';
 import { AdalService } from './services/adal.service';
 import { httpInterceptorProviders } from './http-interceptor';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 @NgModule({
   declarations: [
@@ -31,6 +32,7 @@ import { httpInterceptorProviders } from './http-interceptor';
   ],
   
   providers: [
+    {provide: LocationStrategy, useClass: HashLocationStrategy},
     AdalService,
     DataService,
     {
