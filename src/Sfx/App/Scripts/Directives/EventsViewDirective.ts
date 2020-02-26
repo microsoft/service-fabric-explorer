@@ -37,19 +37,24 @@ module Sfx {
         public isResetEnabled: boolean = false;
         public timeLineEventsData: ITimelineData;
 
+        public transformText: string = "Category,Kind";
+
         private eventsList: EventListBase<any>;
         private isStartSelected: boolean;
         private isEndSelected: boolean;
         private _startDate: Date = null;
         private _endDate: Date = null;
 
-        private _timelineGenerator: ITimelineDataGenerator<FabricEventBase>;
+        private _showAllEvents: boolean = false;
+        private _timelineGenerator: TimeLineGeneratorBase<FabricEventBase>;
 
-        public constructor(eventsList: EventListBase<any>, timelineGenerator?: ITimelineDataGenerator<FabricEventBase>) {
+        public constructor(eventsList: EventListBase<any>, timelineGenerator?: TimeLineGeneratorBase<FabricEventBase>) {
             this.eventsList = eventsList;
 
             if (timelineGenerator) {
                 this._timelineGenerator = timelineGenerator;
+            }else {
+                this._showAllEvents = true;
             }
             this.resetSelectionProperties();
             this.setTimelineData();
@@ -83,6 +88,12 @@ module Sfx {
                 this.isEndSelected = true;
             }
                 this.setNewDateWindow();
+        }
+
+        public get showAllEvents() { return this._showAllEvents; };
+        public set showAllEvents(state: boolean) {
+            this._showAllEvents = state;
+            this.setTimelineData();
         }
 
         public reset(): void {
@@ -119,21 +130,31 @@ module Sfx {
         }
 
         private setTimelineData(): void {
-            if (this._timelineGenerator) {
-                this.eventsList.ensureInitialized().then( () => {
-                    try {
-                        const d = this._timelineGenerator.consume(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
+            this.eventsList.ensureInitialized().then( () => {
+                try {
+                    if (this._showAllEvents) {
+                        const d = parseEventsGenerically(this.eventsList.collection.map(event => event.raw), this.transformText);
+
                         this.timeLineEventsData = {
                             groups: d.groups,
                             items: d.items,
                             start: this.startDate,
                             end: this.endDate
                         };
-                    }catch (e) {
-                        console.error(e);
+                    }else if (this._timelineGenerator) {
+                        const d = this._timelineGenerator.generateTimeLineData(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
+
+                        this.timeLineEventsData = {
+                            groups: d.groups,
+                            items: d.items,
+                            start: this.startDate,
+                            end: this.endDate
+                        };
                     }
-                });
-            }
+                }catch (e) {
+                    console.error(e);
+                }
+            });
         }
     }
 }

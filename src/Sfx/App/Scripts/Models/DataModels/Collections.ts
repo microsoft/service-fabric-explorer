@@ -320,23 +320,22 @@ module Sfx {
             this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
             this.seedNodeCount = seedNodes.length;
 
-            this.checkSeedNodeCount(this.seedNodeCount);
             this.checkOneNodeScenario();
 
             this.healthySeedNodes = seedNodes.length.toString() + " (" +
                 Math.round(healthyNodes.length / seedNodes.length * 100).toString() + "%)";
         }
 
-        private checkSeedNodeCount(count: number) {
-            //if < 5 seed nodes display warning
-            //if count is 1, it is one box/test only scenario
-            if (count < 5 && count !== 1) {
+        public checkSeedNodeCount(expected: number) {
+            if (this.seedNodeCount < expected && this.seedNodeCount !== 1) {
                 this.data.warnings.addOrUpdateNotification({
-                    message: "Cluster is degraded because it does not have 5 seed nodes. See link for more details",
-                    level: StatusWarningLevel.Error,
+                    message: `This cluster is currently running on the bronze reliability tier. For production workloads, only a reliability level of silver or greater is supported 
+                    <br>See <a href="https://aka.ms/servicefabric/reliability" target="_black">( link )</a> for more details`,
+                    level: StatusWarningLevel.Warning,
                     priority: 2,
                     id: BannerWarningID.ClusterDegradedState,
-                    link: "https://aka.ms/servicefabric/durability"
+                    confirmText: `This cluster is currently running on the bronze reliability tier which indicates a test/staging environment. For production workloads, only a reliability
+                    level of silver or greater is supported. For more information on the reliability characteristics of a cluster, please see https://aka.ms/sfreliabilitytiers`
                 });
             }else {
                 this.data.warnings.removeNotificationById(BannerWarningID.ClusterDegradedState);

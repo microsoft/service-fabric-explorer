@@ -14,7 +14,7 @@
     "@types/jquery": "2.0.41",
     "@types/lodash": "4.14.30",
     "del": "2.2.2",
-    "gulp": "^4.0.0",
+    "gulp": "^4.0.2",
     "gulp-angular-templatecache": "^2.2.1",
     "gulp-clean-css": "3.0.3",
     "gulp-concat": "2.6.1",
@@ -23,7 +23,7 @@
     "gulp-load-plugins": "1.5.0",
     "gulp-plumber": "1.1.0",
     "gulp-replace": "0.5.4",
-    "gulp-sass": "^4.0.1",
+    "gulp-sass": "^4.0.2",
     "gulp-sourcemaps": "^2.5.1",
     "gulp-tslint": "7.1.0",
     "gulp-typescript": "3.1.5",
@@ -48,11 +48,11 @@
     "d3": "3.5.17",
     "jquery": "^3.4.0",
     "jquery-ui": "^1.12.1",
-    "lodash": "^4.17.11",
+    "lodash": "^4.17.15",
     "moment": "^2.22.2",
     "nouislider": "^14.0.2",
     "path": "^0.12.7",
     "url": "^0.11.0",
-    "vis-timeline": "^5.1.0"
+    "vis-timeline": "^6.1.0"
   }
 }

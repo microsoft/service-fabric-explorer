@@ -17,6 +17,8 @@ module Sfx {
     }
 
     export abstract class FabricEventBase implements IFabricEventMetadata, IEventPropertiesCollection {
+        public raw: { [key: string]: any; } = {};
+
         private _kind: string;
         private _category?: string;
         private _eventInstanceId: string;
@@ -33,6 +35,7 @@ module Sfx {
         public get eventProperties() { return this._eventProperties; }
 
         public fillFromJSON(responseItem: any) {
+            this.raw = responseItem;
             for (const property in responseItem) {
                 if (!this.extractField(property, responseItem[property])) {
                     this.eventProperties[property] = responseItem[property];
@@ -203,7 +206,7 @@ module Sfx {
         public constructor(private eventType: new () => T) {
         }
 
-        public getEvents(responseItems: any[]): T[]  {
+        public getEvents(responseItems: any[]): T[] {
             return responseItems.map(item => {
                 const eventObj = new this.eventType();
                 eventObj.fillFromJSON(item);
