@@ -6,7 +6,7 @@
     "start": "ng serve",
     "start-local": "ng serve --proxy-config=proxy.conf.json --port 3000",
     "build": "ng build",
-    "build:prod": "ng build --prod  --base-href=/Explorer/beta.html",
+    "build:prod": "ng build --prod  --base-href=/Explorer/beta.html  --output-hashing=none",
     "build:stats": "ng build --stats-json",
     "test": "ng test",
     "lint": "ng lint",
