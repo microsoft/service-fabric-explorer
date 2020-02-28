@@ -15,10 +15,12 @@ import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-resto
 import { PartitionRestoreBackUpComponent } from './partition-restore-back-up/partition-restore-back-up.component';
 import { PartitionTriggerBackUpComponent } from './partition-trigger-back-up/partition-trigger-back-up.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
+import { ReplicatorStatusComponent } from './replicator-status/replicator-status.component';
 
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, BackupsComponent, PartitionRestoreBackUpComponent, PartitionTriggerBackUpComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, BackupsComponent, PartitionRestoreBackUpComponent, PartitionTriggerBackUpComponent, ReplicatorStatusComponent],
   imports: [
     CommonModule,
     PartitionRoutingModule,
@@ -26,7 +28,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     DetailListTemplatesModule,
     EventStoreModule,
     BackupRestoreModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    ChartsModule
   ],
   entryComponents: [PartitionEnableBackUpComponent, PartitionRestoreBackUpComponent, PartitionTriggerBackUpComponent]
 })

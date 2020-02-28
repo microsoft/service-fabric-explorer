@@ -5,6 +5,8 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin, of } from 'rxjs';
 import { PartitionBaseController } from '../PartitionBase';
+import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
+import { mergeMap, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-essentials',
@@ -14,6 +16,13 @@ import { PartitionBaseController } from '../PartitionBase';
 export class EssentialsComponent extends PartitionBaseController {
   unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
+
+  //replicator status
+  primaryReplica: ReplicaOnPartition;
+  replicaData: {
+    xAxisCategories: string[],
+    dataSet: number[];
+  } 
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
     super(data, injector);
@@ -43,9 +52,43 @@ export class EssentialsComponent extends PartitionBaseController {
         // Keep the sort properties in sync with the sortBy for ClusterTreeService.getDeployedReplicas
         this.listSettings = this.settings.getNewOrExistingListSettings("replicas", defaultSortProperties, columnSettings);
     }
+
     return forkJoin([
       this.partition.health.refresh(messageHandler),
-      this.partition.replicas.refresh(messageHandler),
+      this.partition.replicas.refresh(messageHandler).pipe(mergeMap( () => {
+          if(this.partition.isStatefulService) {
+            let primary: ReplicaOnPartition = null;
+            this.partition.replicas.collection.forEach(replica => {
+              if(replica.raw.ReplicaRole === "Primary") {
+                primary = replica;
+                this.primaryReplica = primary;
+              }
+            })
+
+            if(primary) {
+              return primary.detail.refresh(messageHandler).pipe(map( ()=> {
+                console.log(primary.detail.replicatorStatus)
+                let replicaData = {
+                  xAxisCategories: [],
+                  dataSet: []
+                }
+
+                replicaData.xAxisCategories.push("Primary")
+                replicaData.dataSet.push(+primary.detail.replicatorStatus.raw.ReplicationQueueStatus.LastSequenceNumber)
+
+                primary.detail.replicatorStatus.raw.RemoteReplicators.forEach(replicator => {
+                  replicaData.xAxisCategories.push(replicator.ReplicaId)
+                  replicaData.dataSet.push(+replicator.LastAppliedReplicationSequenceNumber)
+                })
+
+                this.replicaData = replicaData;
+                console.log(this.replicaData)
+              }))
+            }
+          }else{
+            return of(null);
+          }
+      }))
     ]);
   }
 }
