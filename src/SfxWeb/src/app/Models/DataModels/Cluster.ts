@@ -150,7 +150,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
 
     private _imageStoreConnectionString: string;
     private _isNetworkInventoryManagerEnabled: boolean = false;
-    private _isBackUpRestoreEnabled: boolean = true;
+    private _isBackUpRestoreEnabled: boolean = false;
     public constructor(data: DataService) {
         super(data);
     }
