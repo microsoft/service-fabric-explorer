@@ -1,0 +1,5 @@
+<h4>Replicas</h4>
+
+<div style="display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: flex-start; margin-bottom: 40px;">
+    <app-replica-status *ngFor="let replicator of replicatorData.RemoteReplicators" [replicator]="replicator"></app-replica-status>
+</div>

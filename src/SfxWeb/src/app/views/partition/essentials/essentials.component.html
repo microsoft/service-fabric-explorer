@@ -64,47 +64,45 @@
         </app-collapse-container>
     </div>
 
-    <div class="detail-pane essen-pane" *ngIf="partition.isStatefulService">
+    <div class="detail-pane" *ngIf="partition.isStatefulService">
         <app-collapse-container>
             <div collapse-header>
                 <h4>Replicator Status</h4>
             </div>
             <div collapse-body>
                 <div *ngIf="replicaData">
-                    <div style="display: flex;">
-                        <div style="width: 50%; height: 50%; max-width: 800px;">
+                    <div style="display: flex;" class="essen-pane">
+                        <!-- <div style="width: 50%; height: 50%; max-width: 800px;">
                             <app-bar-chart title="Last Sequence Number" [xAxisCategories]="replicaData.xAxisCategories" [dataSet]="replicaData.dataSet"></app-bar-chart>
-                        </div>
-                        <div style="width: 40%; padding: 20px;">
+                        </div> -->
+                        <!-- <div style="width: 40%; padding: 20px;"> -->
                             <div class="table-responsive">
                                 Replica Queue Status
                                 <table class="essen-table" role="presentation">
                                     <tr>
                                         <th>QueueUtilizationPercentage</th>
                                         <th>QueueMemorySize</th>
+                                        <th></th>
                                     </tr>
                                     <tr>
-                                        <td [title]="partitionId">{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.QueueUtilizationPercentage}}</td>
+                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.QueueUtilizationPercentage}}</td>
                                         <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.QueueMemorySize}}</td>
+                                        <td></td>
                                     </tr>
                                     <tr>
                                         <th>CompletedSequenceNumber</th>
                                         <th>CommittedSequenceNumber</th>
-                                    </tr>
-                                    <tr>
-                                        <td [title]="partitionId">{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CompletedSequenceNumber}}</td>
-                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CommittedSequenceNumber}}</td>
-                                    </tr>
-                                    <tr>
                                         <th>LastSequenceNumber</th>
                                     </tr>
                                     <tr>
+                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CompletedSequenceNumber}}</td>
+                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CommmittedSequenceNumber}}</td>
                                         <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.LastSequenceNumber}}</td>
                                     </tr>
                                 </table>
                             </div>
                         </div>
-                    </div>
+                    <!-- </div> -->
                     <div>
                         <app-replicator-status [replicatorData]="primaryReplica.detail.replicatorStatus.raw"></app-replicator-status>
                     </div>

@@ -1,1 +1,149 @@
-<detail-list [list]="replicatorData.RemoteReplicators" [listSettings]="listSettings"></detail-list>
+<!-- <detail-list [list]="replicatorData.RemoteReplicators" [listSettings]="listSettings"></detail-list> -->
+
+<!-- <div style="display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: flex-start; margin-bottom: 40px;">
+    <div *ngFor="let replicator of replicatorData.RemoteReplicators" class="replica-container essen-pane">
+        ID : {{replicator.ReplicaId}}
+        <div>
+            Status : {{currentStatus(replicator.RemoteReplicatorAcknowledgementStatus)}}
+            <div style="float: right;">
+                LSN : {{replicator.LastAppliedReplicationSequenceNumber}}
+            </div>
+        </div>
+    
+        <app-collapse-container [collapsed]="!inProgress(replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail)">
+            <div collapse-header>
+                <label>Copy Status : {{inProgress(replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail) ? '4.2 minutes' : 'Complete' }}</label>
+            </div>
+            <div collapse-body>
+                <div class="row-container">
+                    <div class="row-wrapper">
+                        <div>
+                            Average Receive Duration :
+                        </div>
+                        <div>
+                            {{replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.AverageReceiveDuration}}
+                        </div>
+                    </div>
+                    <div class="row-wrapper">
+                        <div>
+                            Average Apply Duration :
+                        </div>
+                        <div>
+                            {{replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.AverageApplyDuration}}
+                        </div>
+                    </div>
+                    <div class="row-wrapper">
+                        <div>
+                            Not Received Count :
+                        </div>
+                        <div>
+                            {{replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.NotReceivedCount}}
+                        </div>
+                    </div>
+                    <div class="row-wrapper">
+                        <div>
+                            Received And Not Applied Count :
+                        </div>
+                        <div>
+                            {{replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.ReceivedAndNotAppliedCount}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </app-collapse-container>
+    
+        <app-collapse-container [collapsed]="!inProgress(replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail)">
+            <div collapse-header>
+                <label>Replication Status : {{replicationStatus(replicator.RemoteReplicatorAcknowledgementStatus)}}</label>
+            </div>
+            <div collapse-body>
+                <div class="row-container">
+                    <div class="row-wrapper">
+                        <div>
+                            Average Receive Duration :
+                        </div>
+                        <div>
+                            {{replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.AverageReceiveDuration}}
+                        </div>
+                    </div>
+                    <div class="row-wrapper">
+                        <div>
+                            Average Apply Duration :
+                        </div>
+                        <div>
+                            {{replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.AverageApplyDuration}}
+                        </div>
+                    </div>
+                    <div class="row-wrapper">
+                        <div>
+                            Not Received Count :
+                        </div>
+                        <div>
+                            {{replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.NotReceivedCount}}
+                        </div>
+                    </div>
+                    <div class="row-wrapper">
+                        <div>
+                            Received And Not Applied Count :
+                        </div>
+                        <div>
+                            {{replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.ReceivedAndNotAppliedCount}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </app-collapse-container>
+    
+        <app-collapse-container [collapsed]="!inProgress(replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail)">
+            <div collapse-header>
+                <label>Active</label>
+            </div>
+            <div collapse-body>
+                <div class="row-container">
+                    <div class="row-wrapper">
+                        <div>
+                            Last Acked Processed Time : 
+                        </div>
+                        <div>
+                            {{replicator.LastAcknowledgementProcessedTimeUtc}}
+                        </div>
+                    </div>
+                    <div class="row-wrapper">
+                        <div>
+                            Last Received Replication LSN : 
+                        </div>
+                        <div>
+                            {{replicator.LastReceivedReplicationSequenceNumber}}
+                        </div>
+                    </div>
+                    <div class="row-wrapper">
+                        <div>
+                            Last Applied Replication LSN : 
+                        </div>
+                        <div>
+                            {{replicator.LastAppliedReplicationSequenceNumber}}
+                        </div>
+                    </div>
+                    <div class="row-wrapper">
+                        <div>
+                            Last Received CSN : 
+                        </div>
+                        <div>
+                            {{replicator.LastReceivedCopySequenceNumber}}
+                        </div>
+                    </div>
+                    <div class="row-wrapper">
+                        <div>
+                            Last Applied CSN : 
+                        </div>
+                        <div>
+                            {{replicator.LastAppliedCopySequenceNumber}}
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </app-collapse-container>
+    </div>
+</div> -->
+
+<app-replica-status-container [replicatorData]="replicatorData"></app-replica-status-container>

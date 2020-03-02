@@ -17,6 +17,7 @@ import { PartitionTriggerBackUpComponent } from './partition-trigger-back-up/par
 import { ReactiveFormsModule } from '@angular/forms';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { ReplicatorStatusComponent } from './replicator-status/replicator-status.component';
+import { PartitionReplicationModule } from 'src/app/modules/partition-replication/partition-replication.module';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { ReplicatorStatusComponent } from './replicator-status/replicator-status
     EventStoreModule,
     BackupRestoreModule,
     ReactiveFormsModule,
-    ChartsModule
+    ChartsModule,
+    PartitionReplicationModule
   ],
   entryComponents: [PartitionEnableBackUpComponent, PartitionRestoreBackUpComponent, PartitionTriggerBackUpComponent]
 })

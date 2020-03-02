@@ -1,0 +1,153 @@
+<div class="replica-container essen-pane" [ngClass]="leftBannerColor">
+    <div>
+        <span class="field">ID :</span> {{replicator.ReplicaId}}
+            <!-- <span class="field">Status :</span> {{overallStatus}} -->
+        <span *ngIf="!replicator.IsInBuild" style="float: right;">
+            <span class="field">LSN :</span>{{replicator.LastAppliedReplicationSequenceNumber}}
+        </span>
+        <div>
+            <span class="field">Role :</span>{{replicator.IsInBuild ? 'IdleSecondary' : 'ActiveSecondary'}}
+        </div>
+    </div>
+    
+    <app-collapse-container [collapsed]="!replicator.IsInBuild">
+        <div collapse-header>
+            <div>Build : {{ (isCopying || isReplicating) ? 'In Progress' : 'Done'}}
+                <span style="float: right;" class="mif-info mif-lg" title="Any time shown is only an estimate and is likely to change."></span>
+            </div>
+        </div>
+        <div collapse-body style="margin-left: 10px;">
+            <app-collapse-container [collapsed]="!isCopying">
+                <div collapse-header>
+                    <label>Copy Status : {{isCopying ? estimatedTime : 'Complete' }}</label>
+                </div>
+                <div collapse-body>
+                    <div class="row-container">
+                        <div class="row-wrapper">
+                            <div class="field">
+                                <span class="mif-info mif-lg" title="Average time it takes to get a CSN(Copy sequence number or some amount of state) from a primary or secondary replica. Higher is slower."></span>
+                                Average Receive Duration :
+                            </div>
+                            <div>
+                                {{replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.AverageReceiveDuration}}
+                            </div>
+                        </div>
+                        <div class="row-wrapper">
+                            <div class="field">
+                                <span class="mif-info mif-lg" title="Average time it takes to apply a CSN(Copy sequence number or some amount of state) to the replica. Higher is slower."></span>
+                                Average Apply Duration :
+                            </div>
+                            <div>
+                                {{replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.AverageApplyDuration}}
+                            </div>
+                        </div>
+                        <div class="row-wrapper">
+                            <div class="field">
+                                <span class="mif-info mif-lg" title="The amount of state left to be recieved and not applied yet. Lower is better."></span>
+                                Not Received Count :
+                            </div>
+                            <div>
+                                {{replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.NotReceivedCount}}
+                            </div>
+                        </div>
+                        <div class="row-wrapper">
+                            <div class="field">
+                                <span class="mif-info mif-lg" title="The amount of CSN(Copy sequence number or some amount of state) received and not added to the replica yet."></span>
+                                Received And Not Applied Count :
+                            </div>
+                            <div>
+                                {{replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.ReceivedAndNotAppliedCount}}
+                            </div>
+                        </div>
+                        <div class="row-wrapper">
+                            <div class="field">
+                                <span class="mif-info mif-lg" title="The last CSN(Copy sequence number or some amount of state) received from a primary or secondary replica."></span>
+                                Last Received CSN : 
+                            </div>
+                            <div>
+                                {{replicator.LastReceivedCopySequenceNumber}}
+                            </div>
+                        </div>
+                        <div class="row-wrapper">
+                            <div class="field">
+                                <span class="mif-info mif-lg" title="The last CSN(Copy sequence number or some amount of state) applied to this replica. Higher is better."></span>
+                                Last Applied CSN : 
+                            </div>
+                            <div>
+                                {{replicator.LastAppliedCopySequenceNumber}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </app-collapse-container>
+        
+            <app-collapse-container [collapsed]="!isReplicating">
+                <div collapse-header>
+                    <label>Replication Stream Status : {{replicationStatus}}</label>
+                </div>
+                <div collapse-body>
+                    <div class="row-container">
+                        <div class="row-wrapper">
+                            <div class="field">
+                                Average Receive Duration :
+                            </div>
+                            <div>
+                                {{replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.AverageReceiveDuration}}
+                            </div>
+                        </div>
+                        <div class="row-wrapper">
+                            <div class="field">
+                                Average Apply Duration :
+                            </div>
+                            <div>
+                                {{replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.AverageApplyDuration}}
+                            </div>
+                        </div>
+                        <div class="row-wrapper">
+                            <div class="field">
+                                Not Received Count :
+                            </div>
+                            <div>
+                                {{replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.NotReceivedCount}}
+                            </div>
+                        </div>
+                        <div class="row-wrapper">
+                            <div class="field">
+                                Received And Not Applied Count :
+                            </div>
+                            <div>
+                                {{replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.ReceivedAndNotAppliedCount}}
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </app-collapse-container>
+        </div>
+    </app-collapse-container>
+
+    <app-collapse-container *ngIf="!replicator.IsInBuild">
+        <div collapse-header>
+            <label>Active</label>
+        </div>
+        <div collapse-body>
+            <div class="row-container">
+                <div class="row-wrapper">
+                    <div>
+                        Last Received Replication LSN : 
+                    </div>
+                    <div>
+                        {{replicator.LastReceivedReplicationSequenceNumber}}
+                    </div>
+                </div>
+                <div class="row-wrapper">
+                    <div>
+                        Last Applied Replication LSN : 
+                    </div>
+                    <div>
+                        {{replicator.LastAppliedReplicationSequenceNumber}}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </app-collapse-container>
+</div>

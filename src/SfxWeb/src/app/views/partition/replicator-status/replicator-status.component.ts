@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
-import { ReplicatorStatus } from 'src/app/Models/DataModels/DeployedReplica';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSetting } from 'src/app/Models/ListSettings';
+import { IRawReplicatorStatus, IRemoteReplicatorAcknowledgementDetail, IRemoteReplicatorAcknowledgementStatus } from 'src/app/Models/RawDataTypes';
 
 @Component({
   selector: 'app-replicator-status',
@@ -10,22 +10,22 @@ import { ListSettings, ListColumnSetting } from 'src/app/Models/ListSettings';
 })
 export class ReplicatorStatusComponent implements OnInit {
 
-  @Input() replicatorData: ReplicatorStatus;
+  @Input() replicatorData: IRawReplicatorStatus;
 
   public listSettings: ListSettings;
 
   constructor(private settings: SettingsService) { }
 
   ngOnInit(): void {
-    this.replicatorData.remoteReplicators;
-
+    // this.replicatorData.remoteReplicators;
+    console.log(this.replicatorData)
     this.listSettings = this.settings.getNewOrExistingListSettings("ReplicatorStatus", [], [
       new ListColumnSetting("ReplicaId", "Id"),
       // new ListColumnSetting("LastReceivedReplicationSequenceNumber", "LastReceivedReplicationSequenceNumber"),
       new ListColumnSetting("LastAppliedReplicationSequenceNumber", "LSN"),
       // new ListColumnSetting("CommittedSequenceNumber", "CommittedSequenceNumber"),
-      new ListColumnSetting("RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.AverageApplyDuration", "AverageApplyDuration"),
-      new ListColumnSetting("LastAcknowledgementProcessedTimeUtc", "LastAcknowledgementProcessedTimeUtc"),
+      new ListColumnSetting("RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.AverageApplyDuration", "Average Apply Duration"),
+      new ListColumnSetting("LastAcknowledgementProcessedTimeUtc", "Last Acked Processed Time"),
       new ListColumnSetting("LastAcknowledgementProcessedTimeUtc", "LastAcknowledgementProcessedTimeUtc"),
     ]);
 
@@ -34,6 +34,35 @@ export class ReplicatorStatusComponent implements OnInit {
     // CompletedSequenceNumber
     // CommittedSequenceNumber
     // LastAcknowledgementProcessedTimeUtc
+  }
+
+  inProgress(details: IRemoteReplicatorAcknowledgementDetail): boolean {
+    return (+details.NotReceivedCount + +details.ReceivedAndNotAppliedCount) > 0;
+  }
+
+  replicationStatus(status: IRemoteReplicatorAcknowledgementStatus) {
+    if(this.inProgress(status.CopyStreamAcknowledgementDetail)) {
+      return 'Not Started';
+    }
+    
+    if(this.inProgress(status.ReplicationStreamAcknowledgementDetail)) {
+      return '4.2 minutes.';
+    }
+    return 'Complete';
+
+  }
+
+  currentStatus(status: IRemoteReplicatorAcknowledgementStatus) {
+    if(this.inProgress(status.CopyStreamAcknowledgementDetail)) {
+      return 'Copying';
+    }
+
+    if(this.inProgress(status.ReplicationStreamAcknowledgementDetail)) {
+      return 'Replicating';
+    }
+
+    return 'Complete';
+
   }
 
 }

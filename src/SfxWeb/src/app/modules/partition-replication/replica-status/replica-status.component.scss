@@ -1,5 +1,6 @@
 .row-container {
-    overflow-x: auto;;
+    border-bottom: solid 2px white;
+    border-top: solid 2px white;
 }
 
 .row-wrapper {
@@ -15,5 +16,18 @@
     display: inline-block;
     padding: 10px;
     margin: 5px;
-    border-radius: 5px;
+    border-radius: 3px;
+}
+
+.green {
+    border-left: 8px solid green;
+}
+
+
+.yellow {
+    border-left: 8px solid yellow;
+}
+
+.field {
+    color: #939393;
 }
