@@ -37,8 +37,8 @@ export class EssentialsComponent extends ServiceBaseController {
     this.service.description.refresh(messageHandler).subscribe();
 
     return forkJoin([
-      this.service.health.refresh(messageHandler),//.subscribe();
-      this.service.partitions.refresh(messageHandler) //.subscribe();
+      this.service.health.refresh(messageHandler),
+      this.service.partitions.refresh(messageHandler)
     ]);
   }
 

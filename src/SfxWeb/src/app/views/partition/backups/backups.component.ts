@@ -60,17 +60,6 @@ export class BackupsComponent extends PartitionBaseController {
     try {
       this.subscriptions.add(this.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler).subscribe());
     } catch {}
-    // this.subscriptions.add(this.data.backupPolicies.refresh(messageHandler).subscribe());
-    // this.subscriptions.add(this.partition.partitionBackupInfo.partitionBackupProgress.refresh(messageHandler).subscribe());
-    // this.subscriptions.add(this.partition.partitionBackupInfo.partitionRestoreProgress.refresh(messageHandler).subscribe());
-    // this.subscriptions.add(this.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler).subscribe());
-
-
-    //  this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler);
-    // this.data.backupPolicies.refresh(messageHandler);
-    // this.partition.partitionBackupInfo.partitionBackupProgress.refresh(messageHandler);
-    // this.partition.partitionBackupInfo.partitionRestoreProgress.refresh(messageHandler);
-    // this.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler);
 
     return this.partition.partitionBackupInfo.partitionBackupList.refresh(messageHandler);
   }

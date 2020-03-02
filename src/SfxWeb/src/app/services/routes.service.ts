@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -9,12 +9,8 @@ export class RoutesService {
 
   private _forceSingleEncode: boolean = true;
 
-  constructor(public location: Location, public routing: Router, private activatedRoute: ActivatedRoute) {
-    //   this.routing.events.subscribe( event => {
-    //       if(event instanceof NavigationEnd){
-    //           console.log(this.activatedRoute.snapshot);
-    //       }
-    //   })
+  constructor(public location: Location, public routing: Router) {
+
    }
 
   public navigate(pathGetter: () => string): void {
@@ -24,7 +20,6 @@ export class RoutesService {
           this.forceSingleEncode(true);
           path = pathGetter();
       } finally {
-        //   this.forceSingleEncode(false);
       }
 
       console.log(path);

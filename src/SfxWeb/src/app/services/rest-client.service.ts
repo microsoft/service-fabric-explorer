@@ -43,7 +43,6 @@ export class RestClientService {
   constructor(private httpClient: HttpClient, private message: MessageService) {
       this.registerRequestEndedCallback(requestCount => {
           if (requestCount === 0) {
-              //$.each(this.allRequestsComplete, (_, cb) => cb());
               this.allRequestsComplete = [];
           }
       });

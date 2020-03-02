@@ -7,13 +7,10 @@ import { DataService } from 'src/app/services/data.service';
   templateUrl: './action-collection-drop-down.component.html',
   styleUrls: ['./action-collection-drop-down.component.scss']
 })
-export class ActionCollectionDropDownComponent implements OnInit {
+export class ActionCollectionDropDownComponent {
   @Input() treeView: boolean = false;
   @Input() actionCollection: ActionCollection;
   @Input() displayText: string;
   constructor(public dataService: DataService) { }
-
-  ngOnInit() {
-  }
 
 }

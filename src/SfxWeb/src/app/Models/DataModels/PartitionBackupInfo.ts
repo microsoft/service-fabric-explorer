@@ -97,17 +97,6 @@ export class PartitionBackup extends DataModelBase<IRawPartitionBackup> {
                 {},
                 ViewBackupComponent,
                 () => true
-                // "Creating",
-                // null,
-                // () => true,
-                // <angular.ui.bootstrap.IModalSettings>{
-                //     templateUrl: "partials/partitionBackup.html",
-                //     controller: ActionController,
-                //     resolve: {
-                //         action: () => this
-                //     }
-                // },
-                // null);
             );
         } else {
             this.action = null;

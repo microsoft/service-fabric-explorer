@@ -58,6 +58,5 @@ export class HealthBase<T extends IRawHealth> extends DataModelBase<T> {
         return this.data.apps.ensureInitialized().pipe(map( () => {
             this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
         }))
-        // return of(null)
     }
 }

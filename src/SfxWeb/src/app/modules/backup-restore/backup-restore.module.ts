@@ -18,6 +18,5 @@ import { StorageFormComponent } from './storage-form/storage-form.component';
     ReactiveFormsModule
   ],
   exports: [PartitionEnableBackUpComponent, PartitionDisableBackUpComponent, ViewBackupComponent, StorageFormComponent],
-  entryComponents: [PartitionEnableBackUpComponent, PartitionDisableBackUpComponent, ViewBackupComponent]
 })
 export class BackupRestoreModule { }

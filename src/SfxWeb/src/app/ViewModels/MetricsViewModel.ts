@@ -7,12 +7,6 @@ import { scaleOrdinal } from 'd3';
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
-// export interface IMetricsViewScope extends angular.IScope { // TODO USE FOR METRIC VIEW COMPONENT
-//     metrics: IMetricsViewModel;
-//     listSettings: SettingsService;
-//     tableSettings: ListSettings;
-//     tableData: any[];
-// }
 
 export interface IMetricsViewModel {
     filteredNodeLoadInformation: NodeLoadInformation[];

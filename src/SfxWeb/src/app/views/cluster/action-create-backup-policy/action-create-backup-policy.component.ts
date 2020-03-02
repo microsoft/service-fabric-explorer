@@ -96,9 +96,6 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
     })
 
     this.updateSchedule(this.form.get('Schedule').get('ScheduleKind').value);
-
-    //TODO remove when not needed for testing
-    // this.form.valueChanges.subscribe(data => console.log(data))
   }
 
   updateSchedule(state: string) {

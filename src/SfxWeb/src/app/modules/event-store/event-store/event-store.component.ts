@@ -18,8 +18,6 @@ export class EventStoreComponent implements OnInit {
     debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
     debouncerHandlerSubscription: Subscription;
   
-  //TODO add a button that will set to current time
-
   @Input() eventsList: EventListBase<any>;
   @Input() timelineGenerator: TimeLineGeneratorBase<FabricEventBase>;
 

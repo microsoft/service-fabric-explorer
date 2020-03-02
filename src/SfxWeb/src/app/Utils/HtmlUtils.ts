@@ -150,11 +150,6 @@ export class HtmlUtils {
         return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="${environment.assetBase}assets/${badge.badgeClass}.svg" alt="${badge.text} badge"></img><span> ${badge.text}</span></div>`;
     }
 
-    // public static getBadgeOnlyHtml(badge: ITextAndBadge): string {
-    //     return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="assets/${badge.badgeClass}.svg"></img></div>`;
-    // }
-
-
     public static parseReplicaAddress(address: string): any {
         if (!address) {
             return null;

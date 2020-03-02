@@ -185,7 +185,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
             const item = management.item(i);
             if(item.getAttribute("Name") === "Management"){
                 this.getImageStoreConnectionString(item);
-            }else if (item.getAttribute("Name") === "BackUpRestoreService"){
+            }else if (item.getAttribute("Name") === "BackupRestoreService"){
                 this._isBackUpRestoreEnabled = true;
             }else if (item.getAttribute("Name") === "UpgradeService"){
                 this.isSfrpCluster = true;

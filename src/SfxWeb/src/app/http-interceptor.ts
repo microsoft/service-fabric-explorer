@@ -1,13 +1,16 @@
-import { HttpRequest, HttpInterceptor, HttpHandler, HttpEvent, HTTP_INTERCEPTORS, HttpErrorResponse, HttpResponse } from '@angular/common/http';
-import { Injectable, Inject } from '@angular/core';
+import { HttpRequest, HttpInterceptor, HttpHandler, HttpEvent, HTTP_INTERCEPTORS, HttpResponse } from '@angular/common/http';
+import { Injectable } from '@angular/core';
 import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { Observable } from 'rxjs';
 import { AdalService } from './services/adal.service';
-import { catchError, map } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
 import { environment } from 'src/environments/environment';
 
+/*
+The will intercept and allow the modification of every http request going in and out.
+*/
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
   constructor(private adalService: AdalService) {}
@@ -58,9 +61,8 @@ export class ReadOnlyHeaderInterceptor implements HttpInterceptor {
 export class GlobalHeaderInterceptor implements HttpInterceptor {
   constructor() {}
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    // We retrieve the token, if any
     let newHeaders = req.headers;
-    //ADD HEADERS HERE
+    //ADD ADDITIONAL HEADERS HERE
     newHeaders = newHeaders.append('x-servicefabricclienttype', 'SFX')
                            .append('sfx-build', environment.version)
 
