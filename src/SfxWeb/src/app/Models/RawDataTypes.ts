@@ -518,7 +518,7 @@ import { Node } from './DataModels/Node';
         QueueMemorySize: boolean;
         FirstSequenceNumber: string;
         CompletedSequenceNumber: string;
-        CommmittedSequenceNumber: string;
+        CommittedSequenceNumber: string;
         LastSequenceNumber: string;
     }
 
