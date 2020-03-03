@@ -38,12 +38,18 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
 
     // Create dummy data
     const data = this.data.dataPoints.map(p => p.count);
+
+    if(data.some(d => d > 0)) {
+      data.push(0);
+    }else{
+      data.push(1);
+    }
         // const data = this.data.dataPoints.reduce((data, p, i) => { data[i] = p.count; return data} , {});
 
     // set the color scale
     const color = scaleOrdinal()
-      .domain(["0","1","2"])
-      .range(["red", "yellow", "green"])
+      .domain(["0","1","2", "3"])
+      .range(["red", "yellow", "green", "gray"])
 
     // Compute the position of each group on the pie:
     const p = pie()
