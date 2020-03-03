@@ -820,6 +820,52 @@ import { Node } from './DataModels/Node';
         Version: string;
     }
 
+    export interface IRawNodeImpact {
+        NodeName : string;
+        ImpactLevel	?: string;
+    }
+
+    export interface IRawNodeRepairImpactDescription {
+        Kind : string;
+        NodeImpactList : IRawNodeImpact[]
+    }
+
+    export interface IRawRepairTaskHistory {
+        CreatedUtcTimestamp ?: string;
+        ClaimedUtcTimestamp ?: string;
+        PreparingUtcTimestamp ?: string; 
+        ApprovedUtcTimestamp ?: string;
+        ExecutingUtcTimestamp ?: string;
+        RestoringUtcTimestamp ?: string;
+        CompletedUtcTimestamp ?: string;
+        PreparingHealthCheckStartUtcTimestamp ?: string;
+        PreparingHealthCheckEndUtcTimestamp ?: string;
+        RestoringHealthCheckStartUtcTimestamp ?: string;
+        RestoringHealthCheckEndUtcTimestamp ?: string;
+    }
+
+    export interface IRawRepairTask {
+        TaskId: string;
+        Version?: string;
+        Description?: string;
+        State: string;
+        Flags?: number;
+        Action: string;
+        Target?: IRawNodeRepairImpactDescription; 
+        Executor?: string;
+        ExecutorData?: string;
+        Impact?: IRawNodeRepairImpactDescription; 
+        ResultStatus?: string;
+        ResultCode?: number;
+        ResultDetail?: string;
+        History?: IRawRepairTaskHistory;
+        PreparingHealthCheckState?: string;
+        RestoringHealthCheckState?: string;
+        PerformPreparingHealthCheck?: boolean;
+        PerformRestoringHealthCheck?: boolean;
+    }
+
+
     export interface INodesStatusDetails {
         nodeType: string;
         statusTypeCounts: Record<string, number>;

@@ -11,7 +11,7 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawDeployedReplica, IRawServiceType, IRawDeployedCodePackage, IRawContainerLogs, IRawDeployedReplicaDetail, IRawApplicationType, IRawApplicationManifest, 
          IRawApplication, IRawService, IRawCreateServiceDescription, IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription, IRawServiceDescription, 
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation, 
-         IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadataMetadata, IRawAadMetadata, IRawStorage } from '../Models/RawDataTypes';
+         IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadataMetadata, IRawAadMetadata, IRawStorage, IRawRepairTask } from '../Models/RawDataTypes';
 import { mergeMap, map, catchError } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
@@ -746,6 +746,12 @@ export class RestClientService {
           + "Events";
       return this.getEvents(FabricEvent, url, null, null, messageHandler);
   }
+
+  public getRepairTasks(taskIdFilter: string = "", stateFilter?: number, ExecutorFilter: string = "", messageHandler?: IResponseMessageHandler): Observable<IRawRepairTask[]> {
+        let url = `$/GetRepairTaskList`; //?StateFilter=${stateFilter}        &TaskIdFilter=${taskIdFilter}&ExecutorFilter=${ExecutorFilter}
+
+        return this.get(this.getApiUrl(url, RestClientService.apiVersion60), "Get repair tasks", messageHandler);
+    }
 
   public restartReplica(nodeName: string, partitionId: string, replicaId: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       let url = `Nodes/${nodeName}/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/Restart`;

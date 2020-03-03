@@ -21,10 +21,11 @@ import { StatusWarningsComponent } from './status-warnings/status-warnings.compo
 import { BackupsComponent } from './backups/backups.component';
 import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-restore.module';
+import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
 
 
 @NgModule({
-  declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent, ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent, StatusWarningsComponent, BackupsComponent],
+  declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent, ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent, StatusWarningsComponent, BackupsComponent, RepairTasksComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,
