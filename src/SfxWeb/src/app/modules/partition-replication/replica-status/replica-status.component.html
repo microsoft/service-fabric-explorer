@@ -13,13 +13,13 @@
     <app-collapse-container [collapsed]="!replicator.IsInBuild">
         <div collapse-header>
             <div>Build : {{ (isCopying || isReplicating) ? 'In Progress' : 'Done'}} ({{stepsFinished}}/2)
-                <span style="float: right; cursor: auto;" class="mif-info mif-lg" title="Any time shown is only an estimate and is likely to change."></span>
+                <span style="float: right; cursor: auto;" class="mif-info mif-lg" title="Any time shown is only an estimate and is likely to change." (click)="$event.stopPropagation()"></span>
             </div>
         </div>
         <div collapse-body style="margin-left: 10px;">
             <app-collapse-container collapsed="true">
                 <div collapse-header>
-                    <label>Copy Status : {{isCopying ? estimatedTime : 'Complete' }} <span class="mif-hour-glass" *ngIf="isCopying" title="Estimated time left for this step. This is very likely to change"></span></label>
+                    <label>Copy Status : {{isCopying ? estimatedTime : 'Complete' }} <span class="mif-hour-glass" *ngIf="isCopying" title="Estimated time left for this step. This is very likely to change" (click)="$event.stopPropagation()"></span></label>
                 </div>
                 <div collapse-body>
                     <div class="row-container">

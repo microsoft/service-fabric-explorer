@@ -17,7 +17,7 @@ export class ReplicaStatusContainerComponent implements OnChanges {
   }
 
 
-  trackBy(index, replicaStatus: IRawRemoteReplicatorStatus) {
+  trackByFn(index, replicaStatus: IRawRemoteReplicatorStatus) {
     return replicaStatus.ReplicaId;
   }
 }

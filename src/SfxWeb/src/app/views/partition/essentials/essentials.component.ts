@@ -7,6 +7,7 @@ import { Observable, forkJoin, of } from 'rxjs';
 import { PartitionBaseController } from '../PartitionBase';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { mergeMap, map } from 'rxjs/operators';
+import { Utils } from 'src/app/Utils/Utils';
 
 @Component({
   selector: 'app-essentials',
@@ -19,10 +20,7 @@ export class EssentialsComponent extends PartitionBaseController {
 
   //replicator status
   primaryReplica: ReplicaOnPartition;
-  replicaData: {
-    xAxisCategories: string[],
-    dataSet: number[];
-  } 
+  queueSize: string; 
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
     super(data, injector);
@@ -67,22 +65,24 @@ export class EssentialsComponent extends PartitionBaseController {
 
             if(primary) {
               return primary.detail.refresh(messageHandler).pipe(map( ()=> {
-                console.log(primary.detail.replicatorStatus)
-                let replicaData = {
-                  xAxisCategories: [],
-                  dataSet: []
-                }
+                console.log(this.primaryReplica.detail.raw)
+                this.queueSize = Utils.getFriendlyFileSize(+this.primaryReplica.detail.raw.ReplicatorStatus.ReplicationQueueStatus.QueueMemorySize)
+                // console.log(primary.detail.replicatorStatus)
+                // let replicaData = {
+                //   xAxisCategories: [],
+                //   dataSet: []
+                // }
 
-                replicaData.xAxisCategories.push("Primary")
-                replicaData.dataSet.push(+primary.detail.replicatorStatus.raw.ReplicationQueueStatus.LastSequenceNumber)
+                // replicaData.xAxisCategories.push("Primary")
+                // replicaData.dataSet.push(+primary.detail.replicatorStatus.raw.ReplicationQueueStatus.LastSequenceNumber)
 
-                primary.detail.replicatorStatus.raw.RemoteReplicators.forEach(replicator => {
-                  replicaData.xAxisCategories.push(replicator.ReplicaId)
-                  replicaData.dataSet.push(+replicator.LastAppliedReplicationSequenceNumber)
-                })
+                // primary.detail.replicatorStatus.raw.RemoteReplicators.forEach(replicator => {
+                //   replicaData.xAxisCategories.push(replicator.ReplicaId)
+                //   replicaData.dataSet.push(+replicator.LastAppliedReplicationSequenceNumber)
+                // })
 
-                this.replicaData = replicaData;
-                console.log(this.replicaData)
+                // this.replicaData = replicaData;
+                // console.log(this.replicaData)
               }))
             }
           }else{

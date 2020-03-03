@@ -1,7 +1,7 @@
 <div class="essen-pane">
-    <h4>Replicas</h4>
+    <h4>Replicas <span style="font-size: small;text-transform: initial;"> (Primary not shown)</span></h4>
 </div>
 
 <div style="display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: flex-start; margin-bottom: 40px;">
-    <app-replica-status *ngFor="let replicator of replicatorData.RemoteReplicators" [replicator]="replicator"></app-replica-status>
+    <app-replica-status *ngFor="let replicator of replicatorData.RemoteReplicators;trackBy: trackByFn" [replicator]="replicator"></app-replica-status>
 </div>

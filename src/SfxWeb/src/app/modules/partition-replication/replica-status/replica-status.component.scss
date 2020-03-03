@@ -3,14 +3,6 @@
     border-top: solid 2px white;
 }
 
-.row-wrapper {
-    display: flex;
-    flex-direction: row;
-    justify-content: space-between;
-    overflow-x: auto;
-    white-space: nowrap;
-}
-
 .replica-container {
     width: 300px;
     display: inline-block;

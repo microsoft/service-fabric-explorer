@@ -958,3 +958,11 @@ app-navbar {
     color: $tree-node-search-highlight-color;
     background-color: $tree-node-search-highlight-background-color;
 }
+
+.row-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    overflow-x: auto;
+    white-space: nowrap;
+}
