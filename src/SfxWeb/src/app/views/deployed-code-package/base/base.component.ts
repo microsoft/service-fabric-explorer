@@ -15,6 +15,8 @@ import { Observable, of } from 'rxjs';
 })
 export class BaseComponent extends DeployedCodePackageBaseController {
 
+  containerLogTabName = "container logs";
+
   tabs: ITab[] = [{
     name: "essentials",
     route: "./"
@@ -22,10 +24,6 @@ export class BaseComponent extends DeployedCodePackageBaseController {
     {
       name: "details",
       route: "./details"
-    },
-    {
-      name: "containerlogs",
-      route: "./containerlogs"
     }
   ];
 
@@ -46,9 +44,17 @@ export class BaseComponent extends DeployedCodePackageBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    if (this.deployedCodePackage.raw.HostType !== Constants.ContainerHostTypeName) {
-      // Remove containerLogs tab for non Container HostTypes
-      this.tabs = this.tabs.filter(tab => tab.name !== "containerlogs");
+    //make sure tab exists for containers otherwise make sure it doesnt display.
+    if (this.deployedCodePackage.raw.HostType === Constants.ContainerHostTypeName) {
+      // only add tab if it hasnt been added yet
+      if(!this.tabs.some(tab => tab.name === this.containerLogTabName)) {
+        this.tabs.push(    {
+          name: this.containerLogTabName,
+          route: "./containerlogs"
+        })
+      }
+    }else{
+      this.tabs = this.tabs.filter(tab => tab.name !== this.containerLogTabName);
     }
 
     return of(null);
