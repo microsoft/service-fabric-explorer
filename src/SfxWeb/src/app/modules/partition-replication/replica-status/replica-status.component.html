@@ -1,12 +1,11 @@
 <div class="replica-container essen-pane" [ngClass]="leftBannerColor">
-    <div>
-        <span class="field">ID :</span> {{replicator.ReplicaId}}
-            <!-- <span class="field">Status :</span> {{overallStatus}} -->
+    <div class="replica-header">
+        <div> <span class="field">ID : </span>{{replicator.ReplicaId}}</div>
         <span *ngIf="!replicator.IsInBuild" style="float: right;">
-            <span class="field">LSN :</span>{{replicator.LastAppliedReplicationSequenceNumber}}
+            <span class="field">LSN : </span>{{replicator.LastAppliedReplicationSequenceNumber}}
         </span>
         <div>
-            <span class="field">Role :</span>{{replicator.IsInBuild ? 'IdleSecondary' : 'ActiveSecondary'}}
+            <span class="field">Role : </span>{{replicator.IsInBuild ? 'IdleSecondary' : 'ActiveSecondary'}}
         </div>
     </div>
     
