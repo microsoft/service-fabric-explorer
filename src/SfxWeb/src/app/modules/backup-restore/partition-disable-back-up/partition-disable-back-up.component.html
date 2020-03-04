@@ -1,0 +1,17 @@
+<form class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Disable Backup Policy</h4>
+    </div>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+            <dt>Clean Backup</dt>
+            <dd>
+                <input type="checkbox" [(ngModel)]="cleanBackup" [ngModelOptions]="{standalone: true}">
+            </dd>
+        </dl>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="solid-button bluey" (click)="ok()">Disable Backup</button>
+        <button type="button" class="flat-button" (click)="cancel()">Cancel</button>
+    </div>
+</form>

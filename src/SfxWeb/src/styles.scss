@@ -1,0 +1,960 @@
+
+// Custom Theming for Angular Material
+// For more information: https://material.angular.io/guide/theming
+@import '~@angular/material/theming';
+// Plus imports for other components in your app.
+
+// Include the common styles for Angular Material. We include this here so that you only
+// have to load a single css file for Angular Material in your app.
+// Be sure that you only ever include this mixin once!
+@include mat-core();
+
+// Define the palettes for your theme using the Material Design palettes available in palette.scss
+// (imported above). For each palette, you can optionally specify a default, lighter, and darker
+// hue. Available color palettes: https://material.io/design/color/
+$SfxWeb-primary: mat-palette($mat-indigo);
+$SfxWeb-accent: mat-palette($mat-pink, A200, A100, A400);
+
+// The warn palette is optional (defaults to red).
+$SfxWeb-warn: mat-palette($mat-red);
+
+// Create the theme object (a Sass map containing all of the palettes).
+$SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
+
+// Include theme styles for core and each component used in your app.
+// Alternatively, you can import and @include the theme mixins for each component
+// that you are using.
+@include angular-material-theme($SfxWeb-theme);
+
+//--------------------------------------------------------------
+// Mixins
+//--------------------------------------------------------------
+
+@mixin transition($transition...) {
+    -webkit-transition: $transition;
+    -moz-transition: $transition;
+    -o-transition: $transition;
+    transition: $transition;
+}
+
+$global-transition-time: 0.15s !default;
+
+//--------------------------------------------------------------
+// Layouts
+//--------------------------------------------------------------
+$splitter-width: 5px !default;
+// Keep this in sync with value of DefaultSplitterLeftWidth in Constants.ts
+$left-panel-width: 400px !default;
+$right-panel-min-width: 200px !default;
+$page-padding-bottom: 20px !default;
+
+//--------------------------------------------------------------
+// Colors
+//--------------------------------------------------------------
+
+// common
+$font-color: white;
+$font-color-invert: black;
+$input-border-color: #727272;
+$input-border-color-dark-bg: $input-border-color;
+$dialog-input-bg-color: #242424;
+$azure-blue: #0075c9 !default;
+
+// badges
+$badge-ok-color: #7FBA00 !default;
+$badge-warning-color: #FCD116 !default;
+$badge-error-color: #E81123 !default;
+$badge-unknown-color: #3C3C3C !default;
+
+// navbar
+$navbar-color: white !default;
+$navbar-background-color: #000000;
+$navbar-brand-background-color: $azure-blue !default;
+$slider-background-color: #939393 !default;
+$slider-handler-color: #F1F1F1 !default;
+$slider-handler-active-color: #c6c6c6 !default;
+$slider-title-color: #B2B5B8 !default;
+$settings-theme-selected-border-color: $azure-blue !default;
+$settings-theme-hover-border-color: #3C3C3C !default;
+$settings-divider-color: darken($slider-title-color, 40%) !default;
+$navbar-dropdown-toggle-hover-background-color: #262626 !default;
+$navbar-dropdown-menu-background-color: #262626 !default;
+$navbar-dropdown-menu-item-hover-color: #3C3C3C !default;
+
+// tree
+$tree-background-color: #262626 !default;
+$tree-color: white !default;
+$tree-node-selected-background-color: $azure-blue !default;
+$tree-searchbox-border-color: $input-border-color !default;
+$tree-searchbox-background-color: $tree-background-color !default;
+$tree-node-search-highlight-background-color: #FDFBAC;
+$tree-node-search-highlight-color: black !default;
+$tree-background-color: #262626;
+$tree-node-hover-background-color: #3C3C3C;
+$tree-node-line-height: 23px;
+
+// detail view area
+$right-panel-background-color: #191919 !default;
+$action-hover-color: white !default;
+$action-hover-background-color: $azure-blue !default;
+$details-pane-table-sub-title-color: #939393 !default;
+$table-border-color: #4c4c4c;
+$table-vertical-group-left-border-color: #727272;
+$table-section-divider-color: #727272;
+$detail-tab-color: #D4D4D4;
+$detail-tab-active-color: #FFFFFF;
+$detail-tab-active-border-color: $azure-blue !default;
+$detail-pane-pre-background-color: #262626 !default;
+$detail-pane-pre-color: #d1d1d1 !default;
+$detail-pane-main-title-color: #FFFFFF;
+$details-pane-table-sub-title-color: #FFFFFF;
+$detail-table-header-color: #939393 !default;
+$detail-table-cell-color: #A6A6A6 !default;
+$essen-pane-background-color: #262626 !default;
+$upgrade-domain-progress-color: #59B4D9 !default;
+$detail-pane-sub-title-color: #DED9D9;
+
+// Candybar
+$candybar-ok-color: $badge-ok-color !default;
+$candybar-ok-color-hilight: #8dc100 !default;
+$candybar-warning-color: $badge-warning-color !default;
+$candybar-warning-color-hilight: #ffde23 !default;
+$candybar-error-color: $badge-error-color !default;
+$candybar-error-color-hilight: #f22c34 !default;
+$candybar-unknown-color: #dbdbdb !default;
+$candybar-unknown-color-hilight: #e3e3e3 !default;
+$candybar-background-color: #7d9494 !default;
+$candybar-inner-background-color: $candybar-unknown-color !default;
+$candybar-border-color: #252525 !default;
+$candybar-hover-border-color: $tree-node-selected-background-color !default;
+
+// Dashboard
+$dashboard-color: $font-color !default;
+$dashboard-background-color: $essen-pane-background-color !default;
+$dashboard-ok-color: #7FBA00 !default;
+$dashboard-warning-color: #FCD116 !default;
+$dashboard-error-color: #E81123 !default;
+$dashboard-unknown-color: $dashboard-color !default;
+$dashboard-upgrade-active-color: $azure-blue !default;
+$dashboard-upgrade-inactive-color: $right-panel-background-color !default;
+
+// Charts
+$chart-text-color: #6C7074 !default;
+$tooltip-background: rgba(black, 0.8) !default;
+
+//--------------------------------------------------------------
+// Fonts
+//--------------------------------------------------------------
+$font-family: "Segoe UI", -apple-system, "Helvetica Neue", "Lucida Grande", Trebuchet, Arial, sans-serif !default;
+$font-family-base: $font-family !default;
+
+$font-weight-light: 200 !default;
+$font-weight-semilight: 300 !default;
+$font-weight-normal: 400 !default;
+$font-weight-semibold: 600 !default;
+$font-weight-bold: 700 !default;
+
+$font-size-title: 18pt !default;
+$font-size-large: 14pt !default;
+$font-size-medium: 12pt !default;
+$font-size-default: 10pt !default;
+$font-size-small: 8pt !default;
+
+$detail-tab-title-font-size: $font-size-medium !default;
+$candybar-view-switcher-font-size: $font-size-medium !default;
+$navbar-font-size: $font-size-default !default;
+
+//--------------------------------------------------------------
+// Bootstrap variables overrides
+//--------------------------------------------------------------
+$body-bg: $right-panel-background-color !default;
+$text-color: $font-color !default;
+$link-color: #00BCF2 !default;
+$light-link-color: #70DAF8 !default;
+$link-hover-color: $link-color !default;
+$link-light-background-color: $link-color !default;
+$link-light-background-hover-color: $link-hover-color !default;
+$link-dark-background-color: $link-color !default;
+$link-dark-background-hover-color: $link-hover-color !default;
+$link-hover-decoration: none !default;
+$link-disabled-color: grey !default;
+
+$font-family-sans-serif: $font-family !default;
+$font-size-base: $font-size-default !default;
+
+$table-condensed-cell-padding: 5px 10px 5px 0 !default;
+
+// Input
+$input-color-disabled: darken($font-color, 50%) !default;
+$input-background-color-disabled: lighten($essen-pane-background-color, 8%) !default;
+$input-invalid-border-color: darken(red, 20%) !default;
+$cursor-disabled: default !default;
+
+// Modal dialogs
+$modal-content-bg: #4c4c4c !default;
+
+// Remove default radius
+$border-radius-base: 0 !default;
+$border-radius-small: 0 !default;
+$border-radius-large: 0 !default;
+
+// Pagination
+$cursor-disabled: default !default;
+$pagination-color: $link-color !default;
+$pagination-bg: $essen-pane-background-color !default;
+$pagination-border: transparent !default;
+
+$pagination-hover-color: $link-hover-color !default;
+$pagination-hover-bg: $tree-node-hover-background-color !default;
+$pagination-hover-border: transparent !default;
+
+$pagination-active-color: #fff !default;
+$pagination-active-bg: $azure-blue !default;
+$pagination-active-border: transparent !default;
+
+$pagination-disabled-bg: $essen-pane-background-color !default;
+$pagination-disabled-border: transparent !default;
+
+// Buttons
+$btn-primary-color: white !default;
+$btn-primary-bg: $azure-blue !default;
+$btn-primary-border: $azure-blue !default;
+$btn-default-color: white !default;
+$btn-default-bg: #3A3A3A !default;
+$btn-default-border: #3A3A3A !default;
+
+// Tooltips
+$tooltip-color: $font-color-invert !default;
+$tooltip-bg: $tooltip-background !default;
+$tooltip-opacity: 1 !default;
+$tooltip-max-width: 100% !default;
+
+
+
+.essen-pane {
+    background-color: $essen-pane-background-color;
+    padding: 5px 15px 10px 15px;
+
+    .essen-table {
+        width: 100%;
+        table-layout: fixed;
+
+        td {
+            vertical-align: middle;
+            padding: 0px 30px 0px 0px;
+            width: 50%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            vertical-align: top;
+        }
+
+        th {
+            color: $detail-pane-sub-title-color;
+            padding: 5px 30px 1px 0px;
+            width: 50%;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            font-size: $font-size-small;
+            font-weight: $font-weight-normal;
+        }
+    }
+}
+
+.detail-pane {
+    display: block;
+    margin-bottom: 35px;
+
+    &:last-of-type {
+        margin-bottom: 0;
+    }
+
+    h4 {
+        color: $detail-tab-color;
+        margin-left: 0;
+        text-transform: uppercase;
+        font-size: $detail-tab-title-font-size;
+        // set padding instead of margin to avoid jumping of collapsed section
+        margin-top: 0;
+        padding-top: 7px;
+        margin-bottom: 10px;
+    }
+
+    h4.no-uppercase {
+        text-transform: none;
+    }
+
+    pre {
+        color: $detail-pane-pre-color;
+        background-color: $detail-pane-pre-background-color;
+        border-width: 0;
+        margin: 0;
+    }
+}
+
+.right-panel {
+    // position: absolute;
+    // left: $left-panel-width;
+    // right: 20px;
+    // top: 50px;
+    // bottom: 20px;
+    padding-left: 20px;
+    overflow: hidden;
+    min-width: $right-panel-min-width;
+    background-color: $right-panel-background-color;
+}
+
+.left-panel {
+    overflow: hidden;
+    padding: 10px 0 20px 0;
+    background-color: $tree-background-color;
+}
+
+.view-container {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+}
+
+.main-view {
+    padding-right: 5px;
+    overflow: auto;
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    min-height: 0px; /* for non-chrome browsers */
+}
+
+body {
+    overflow: auto;
+    background-color: $right-panel-background-color;
+    margin: 0;
+    font-family: "Segoe UI",-apple-system,"Helvetica Neue","Lucida Grande",Trebuchet,Arial,sans-serif;
+    font-size: 10pt;
+    line-height: 1.42857;
+    color: #fff;
+}
+
+a, a:active, a:focus, a:hover {
+    text-decoration: none !important;
+}
+a {
+    color: #70DAF8;
+}
+a[disabled], a.disabled {
+    color: $link-disabled-color;
+    cursor: default;
+    pointer-events: none;
+}
+
+button[disabled], button.disabled {
+    cursor: default;
+    pointer-events: none;
+}
+
+a.dark-background-link {
+    color: $link-dark-background-color;
+
+    &:hover {
+        color: $link-dark-background-hover-color;
+    }
+}
+
+a.light-background-link {
+    color: $link-light-background-color;
+
+    &:hover {
+        color: $link-light-background-hover-color;
+    }
+}
+
+th {
+    text-align: left;
+}
+
+table.table.map-table {
+    width: auto;
+
+    tbody > tr:last-child > td.header {
+        border-bottom-color: $essen-pane-background-color;
+    }
+
+    tbody > tr > td {
+        padding: 3px;
+        border: 1px solid $table-border-color;
+
+        &.legend {
+            color: $detail-pane-sub-title-color;
+            font-weight: $font-weight-bold;
+            padding: 5px;
+            border: none;
+        }
+
+        &.header {
+            text-align: center;
+            vertical-align: middle;
+            padding: 5px;
+            color: $detail-table-header-color;
+            border-top-color: $essen-pane-background-color;
+            border-left-color: $essen-pane-background-color;
+            background-color: $essen-pane-background-color;
+
+            &:last-child {
+                border-right-color: $essen-pane-background-color;
+            }
+        }
+    }
+}
+
+table.detail-list {
+    width: 100%;
+    margin-bottom: 1px; // Setting this to 0 will cause IE to cut off table header when there is no contents
+    border-bottom: 1px solid $table-border-color;
+    color: white;
+    .no-border {
+        border-top: none;
+    }
+
+    td {
+        vertical-align: middle !important;
+        padding: 5px 30px 5px 0px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: normal;
+
+        // Add transition to padding when the line is collapsing
+        @include transition(padding $global-transition-time linear);
+    }
+
+    th {
+        padding: 5px 30px 1px 0px;
+        text-overflow: ellipsis;
+        overflow: hidden;
+        white-space: nowrap;
+        color: $detail-table-header-color;
+        border: 0px solid;
+        a {
+            color: $detail-table-header-color;
+        }
+    }
+
+    .shift-expander-col {
+        margin-left: 27px;
+    }
+
+    .row-expander {
+        display: inline-block;
+        margin-right: 10px;
+        cursor: pointer;
+    }
+
+    .sort-filter-th {
+        // To show filters dropdown
+        overflow: visible;
+
+        .active {
+            cursor: pointer;
+        }
+
+        .transparent-icon {
+            color: transparent;
+        }
+
+        .btn-group.dropdown {
+            vertical-align: baseline;
+
+            .dropdown-toggle[aria-expanded="true"] .filter-icon {
+                color: $link-hover-color;
+            }
+        }
+
+        .sort-icon {
+            position: relative;
+            top: 2px;
+            font-size: $font-size-large;
+            cursor: pointer;            
+
+            &.transparent-icon {
+                pointer-events: none;
+            }
+
+            &:hover {
+                color: $link-hover-color;
+            }
+        }
+
+        .filter-icon {
+            font-size: 8pt;
+            cursor: pointer;
+            padding: 0 3px;
+
+            &.active {
+                color: $link-hover-color;
+            }
+
+            &:hover {
+                color: $link-hover-color;
+            }
+        }
+
+        ul {
+            padding: 5px 10px;
+
+            li {
+                padding: 2px;
+            }
+        }
+    }
+}
+
+.nested-table-container {
+    border-left: 8px solid $table-section-divider-color;
+    padding-left: 8px;
+    margin-left: 4px;
+
+    .detail-table {
+        border-bottom: none;
+    }
+}
+
+.table-layout-fixed {
+    table-layout: fixed;
+}
+
+.detail-table {
+    font-size: $font-size-default;
+    // border-bottom: 1px solid $table-border-color;
+
+    th {
+        color: $detail-table-header-color;
+    }
+
+    td {
+        color: $detail-table-cell-color;
+    }
+
+    &.table {
+        margin-bottom: 0;
+    }
+
+    td, th {
+        text-overflow: ellipsis;
+        overflow: hidden;
+        border-bottom: 1px solid #4c4c4c;
+    }
+
+    // td:last-child, th :last-child {
+    //     border-bottom: 0px solid #4c4c4c;
+    // }
+
+    tbody > tr {
+        &:first-child {
+            th {
+                border-top: 0;
+            }
+
+            td {
+                border-top: 0;
+            }
+        }
+
+        th.sub-title {
+            color: $details-pane-table-sub-title-color;
+            border-bottom: 1px solid $table-section-divider-color;
+        }
+    }
+
+    .detail-param-table {
+        margin-bottom: 0;
+        font-size: $font-size-default;
+        font-weight: $font-weight-normal;
+
+        td, th {
+            text-overflow: ellipsis;
+            overflow: hidden;
+        }
+    }
+}
+
+.badge-container {
+    display: inline;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.badge-icon {
+    display: inline-block;
+    position: relative;
+    bottom: 1px;
+    width: 16px;
+    height: 16px;
+}
+
+.btn:disabled {
+    cursor: not-allowed;
+    opacity: .65;
+}
+
+.preserve-whitespace {
+    white-space: pre !important;
+}
+
+.preserve-whitespace-wrap {
+    white-space: pre-wrap !important;
+}
+
+
+html,body {
+    height: 100%;
+}
+
+.table-responsive {
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;    
+}
+
+.table>tbody>tr>td {
+        line-height: 1.42857;
+    vertical-align: top;
+    border-top: 1px solid #4c4c4c;
+}
+html, body { height: 100%; }
+body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
+
+app-navbar {
+    width: 100%;
+}
+
+.clear-button {
+    border-radius: 0px;
+    background-color: transparent;
+    border: 0px;
+    color: $link-color;
+    cursor: pointer;
+}
+
+.clear-button:disabled {
+    color: gray;
+}
+
+.simple-button {
+    border: $azure-blue 1px solid;
+    color: white;
+    padding: 4px 12px;
+    cursor: pointer;
+    background-color: $detail-pane-pre-background-color;
+
+    &:disabled {
+        border-color: #727272;
+    }
+}
+
+.solid-button {
+    border: $azure-blue 1px solid;
+    color: white;
+    padding: 4px 12px;
+    cursor: pointer;
+    background-color: $azure-blue;
+
+    &:disabled {
+        opacity: .65;
+    }
+}
+
+.blue {
+    background-color: $azure-blue;
+}
+
+.dropdown-menu {
+    background-color: black;
+}
+
+.dropdown-item {
+    color: white;
+    font-size: 14px;
+    padding: 2px 4px;
+}
+.dropdown-item:hover {
+    background-color: $azure-blue;
+    color: white;
+}
+
+.link {
+    color: #70DAF8;
+    cursor: pointer;
+}
+
+.page-link {
+    background-color: $detail-pane-pre-background-color;
+    color: #70DAF8;
+    border: 0px;
+    border-top-left-radius: 0px !important;
+    border-top-right-radius: 0px !important;
+    border-bottom-left-radius: 0px !important;
+    border-bottom-right-radius: 0px !important;
+}
+
+.page-link:active {
+    background-color: $azure-blue;
+    color: white;
+}
+
+.page-item.disabled .page-link{
+    background-color: #5a5a5a;
+    color: white;
+}
+
+.flat-button {
+    border: transparent 1px solid;
+    color: white;
+    padding: 4px 12px;
+    cursor: pointer;
+    background-color: transparent;
+    border-radius: 2px;
+
+    &:hover {
+        background-color: rgba(0, 0, 0, 0.25);
+        // border: $azure-blue 1px solid;
+    }
+}
+
+.empty-button {
+    border: $azure-blue 0px solid;
+    color: white;
+    padding: 4px 12px;
+    cursor: pointer;
+    background-color: transparent;
+}
+
+.empty-button:hover {
+    background-color: $detail-pane-pre-background-color;
+}
+
+// TODO consider hiding drop down?
+.hidden-toggle {
+    .dropdown-toggle::after {
+        display: none;
+    }
+}
+
+
+
+
+
+
+
+
+//needs to be placed in a globel css file due to how css in components work and vis timeline uses
+// global css names
+.vis-timeline {
+    font-size: $font-size-default;
+    background-color: $essen-pane-background-color;
+  }
+  
+  .vis-item {
+    background-color: $candybar-background-color;
+    font-size: $font-size-small;
+    color: $dashboard-color;
+  }
+  .vis-item,
+  .vis-item.vis-line {
+    border-width: 0px;
+    color: white;
+    font-family: monospace;
+  }
+  .vis-item.vis-dot {
+    border-width: 10px;
+    border-radius: 10px;
+  }
+  .vis-item.vis-selected {
+    border-color: green;
+    background-color: lightgreen;
+  }
+  .vis-time-axis .vis-text {
+    color: $dashboard-color;
+    padding-top: 10px;
+    padding-left: 10px;
+  }
+  .vis-time-axis .vis-text.vis-major {
+    font-weight: bold;
+  }
+  .vis-time-axis .vis-grid.vis-minor {
+    border-width: 2px;
+    border-color: $dashboard-color;
+  }
+  .vis-time-axis .vis-grid.vis-major {
+    border-width: 2px;
+    border-color: $dashboard-color;
+  }
+  
+  .vis-labelset .vis-label {
+    font-size: $font-size-medium;
+    color: $dashboard-color;
+  }
+  
+  .vis-panel.vis-left {
+    background-color: #0075c9;
+  }
+  .vis-ltr .vis-label.vis-nested-group .vis-inner {
+    padding-left: 0px;
+    white-space: pre;
+  }
+  
+  .vis-group-level-unknown-but-gte1 {
+    background-color: #0075c9 !important;
+    border: 1px solid white;
+  }
+
+  .vis-item.white {
+    background-color: #ffffff;
+    color: black;
+  }
+
+  .vis-item.red {
+    background-color: red;
+    border-color: darkred;
+  }
+  
+  .vis-item.green {
+    background-color: $dashboard-ok-color;
+    color: black;
+  }
+  
+  .vis-item.orange {
+    background-color: $dashboard-warning-color;
+    color: black;
+  }
+  
+  .vis-item.blue {
+    background-color: #0075c9;
+  }
+  
+  .vis-item.red-point {
+    border-color: red;
+    border-width: 5px;
+  }
+  
+  .vis-item.orange-point {
+    border-color: $dashboard-warning-color;
+    border-width: 5px;
+  }
+  
+  .vis-item.white-point {
+    border-color: #ffffff;
+    border-width: 5px;
+  }
+  
+  .vis-item.green-point {
+    border-color: $dashboard-ok-color;
+    border-width: 5px;
+  }
+
+  .tooltip-test{
+    padding: 5px;
+    border: solid;
+    border-width: 2px;
+    border-color: #0057c9;
+    background-color: $essen-pane-background-color;
+    font-size: $font-size-small;
+    color: $dashboard-color;
+    white-space: pre-wrap;
+    box-shadow: none;
+  }
+  
+  .vis-tooltip {
+    padding: 0px !important;
+    max-width: 50%;
+  }
+  
+  .vis-timeline {
+    overflow:visible !important;
+  }
+  
+  .timeline-button {
+    background-color: #262626;
+    border: 1px solid #0075c9;
+    margin-bottom: 10px;
+    margin-top: 10px;
+  }
+  
+  .vis-label{
+    background-color: #0075c9;
+    color: #dad7d7;
+  }
+  
+  .noUi-tooltip {
+    display: none;
+  }
+  .noUi-active .noUi-tooltip {
+    display: block;
+  }
+  
+  .noUi-target{
+    background-color: #bfbfbf;
+    box-shadow: none;
+    border: 0px;
+  }
+  
+  .noUi-connect{
+    background-color: #0075c9;
+  }
+  
+  .noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip { 
+    bottom:-32px 
+  }
+
+.rotate {
+    animation-name: rotate;
+    -webkit-animation-name: webkit-rotate;
+    animation-duration: 1s;
+    -webkit-animation-duration: 1s;
+    animation-iteration-count: infinite;
+    -webkit-animation-iteration-count: infinite;
+    animation-timing-function: linear;
+    -webkit-animation-timing-function: linear;
+}
+@keyframes rotate {
+    from {
+        transform: scale( 1 ) rotate( 0deg );
+    }
+
+    to {
+        transform: scale( 1 ) rotate( 360deg );
+    }
+}
+
+@-webkit-keyframes webkit-rotate {
+    from {
+        transform: scale( 1 ) rotate( 0deg );
+    }
+
+    to {
+        transform: scale( 1 ) rotate( 360deg );
+    }
+}
+
+.input-flat {
+    padding: 3px 6px;
+    font-size: 8pt;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #727272;
+    background-color: transparent;
+    color: white;
+}
+
+
+.input-flat.ng-valid[required], .input-flat.ng-valid.required  {
+    border-left: 5px solid #42A948; /* green */
+  }
+  
+  .input-flat.ng-invalid:not(form)  {
+    border-left: 5px solid #a94442; /* red */
+  }
+
+  .search-match {
+    color: $tree-node-search-highlight-color;
+    background-color: $tree-node-search-highlight-background-color;
+}

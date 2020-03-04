@@ -1,0 +1,30 @@
+<div *ngIf="metricsViewModel">
+    <div style="padding-bottom: 15px;">
+        <div ngbDropdown container="body">
+            <button class="simple-button" ngbDropdownToggle>{{metricsViewModel.selectedMetrics[0].displayName}} :
+                {{metricsViewModel.selectedMetrics[0].hasCapacity ?
+                  metricsViewModel.selectedMetrics[0].loadCapacityRatioString : "N/A"}}</button>
+            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+                <div *ngFor="let metric of metricsViewModel.metrics">
+                    <button *ngIf="metric.displayName !== metricsViewModel.selectedMetrics[0].displayName" ngbDropdownItem
+                    (click)="updateSelectedMetric(metric)" style="padding: 5px; ">
+                        {{metric.displayName}}
+                        <div style="float: right; margin-left: 5px;">
+                            {{metric.hasCapacity? metric.loadCapacityRatioString : "N/A"}}
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <app-bar-chart [xAxisCategories]="tableData.categories"
+                    [dataSet]="tableData.dataPoints"
+                    [title]="tableData.title"
+                    [subtitle]="tableData.subtitle"></app-bar-chart>
+    
+</div>
+
+<div *ngIf="!metricsViewModel" style="text-align: center;">
+    Loading Metrics
+</div>

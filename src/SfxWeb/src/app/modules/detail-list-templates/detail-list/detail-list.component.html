@@ -1,0 +1,94 @@
+<div class="detail-list-container flex-child" style="margin-top: 15px;">
+        <app-input [placeholder]="searchText" [model]="listSettings.search" (onChange)="listSettings.search = $event; updateList()"></app-input>
+        <button class="empty-button"><span class="link">Reset All</span></button>
+        
+        <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
+        <div class="table-responsive">
+            <table class="table detail-list">
+                <thead>
+                    <tr>
+                    <th class="sort-filter-th" *ngFor="let columnSetting of listSettings.columnSettings; let i = index"
+                        [ngStyle]="{'width': columnSetting.fixedWidthPx ? columnSetting.fixedWidthPx + 'px' : ''}" 
+                        [attr.aria-sort]="listSettings.isSortedByColumn(columnSetting) ? listSettings.sortReverse ? 'ascending' : 'descending' : 'none'">
+                        <!-- Header label -->
+                        <span [ngClass]="{'active': columnSetting.sortable, 'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}"
+                            (click)="listSettings.sort(columnSetting.sortPropertyPaths); updateList()" [attr.aria-label]="'Sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'">
+                            {{columnSetting.displayName}}
+                        </span>
+
+                        <div ngbDropdown container="body" *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle">
+                            <button class="flat-button" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" title="filter by columnSetting.displayName options">
+                                <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}"></span>
+                            </button>
+                            <div ngbDropdownMenu >
+                                <ul role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;"  >
+                                    <li role="menuitem" *ngFor="let filterValue of columnSetting.filterValues" >
+                                        <label style="margin-bottom: 0px; font-size: 15px;">
+                                            <input type="checkbox" [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList()" />
+                                            {{filterValue.value}}
+                                        </label>
+                                    </li>
+                                </ul>
+                            </div>
+                        </div>
+    
+                            <!-- Sort direction icon -->
+                            <!-- Use transparent color to hide the icon instead of using ng-show to avoid the table layout changes when the icon showed up -->
+                            <div style="width: 20px; height: 19px; display: inline-block;">
+                                <span class="bowtie-icon sort-icon" *ngIf="columnSetting.sortable && listSettings.isSortedByColumn(columnSetting)" (click)="listSettings.sort(columnSetting.sortPropertyPaths); updateList()"
+                                    [ngClass]="{'mif-arrow-up': !listSettings.sortReverse, 'mif-arrow-down': listSettings.sortReverse}" [attr.aria-label]="'Sort'"
+                                    [attr.tabIndex]="listSettings.isSortedByColumn(columnSetting) ? 0 : -1" [title]="'sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'"
+                                    [attr.ariaHidden]="!listSettings.isSortedByColumn(columnSetting)">
+                                </span>
+                            </div>
+                        </th>
+                    </tr>
+                </thead>
+                <tbody>
+                        <!-- track by (item.uniqueId || $id(item)) -->
+                        <!-- | slice: listSettings.limit: listSettings.begin; -->
+                <ng-container *ngFor="let item of sortedFilteredList.slice( (page - 1) * pageSize , page * pageSize); ">
+                    <tr>
+                            <!-- track by columnSetting.propertyPath -->
+                            <!-- ng-mousedown="handleClickRow(item, $event)" -->
+                        <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index; trackBy: trackByColumnSetting;">
+                            <span class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }}" (click)="handleClickRow(item, $event)"
+                                *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)"
+                                [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></span>
+                                <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
+                                <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
+                            </td>
+                        </tr>
+                        <!-- Optional second row -->
+                        <tr *ngIf="listSettings.secondRowColumnSettings.length > 0 && listSettings.showSecondRow(item)">
+                            <!-- TODO  track by columnSetting.propertyPath -->
+                            <td class="no-border"
+                                *ngFor="let columnSetting of listSettings.secondRowColumnSettings; trackBy: trackByColumnSetting; let i = index;"
+                                [colSpan]="columnSetting.colspan === -1 ? (listSettings.columnSettings.length - listSettings.secondRowColumnSettings.length + 1) : columnSetting.colspan"
+                                [ngClass]="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed}">
+                                <div *ngIf="!listSettings.secondRowCollapsible || (listSettings.secondRowCollapsible && !item.isSecondRowCollapsed)" 
+                                    [ngClass]="{'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}">
+                                    <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
+                                    <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
+                                </div>
+                            </td>
+                        </tr>
+                </ng-container>
+                    <tr *ngIf="list">
+                        <td colspan="100">Loading...</td>
+                    </tr>
+                    <tr *ngIf="sortedFilteredList.length === 0 && !list">
+                        <td colspan="100">No items to display.</td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        
+        <div style="margin-top: 10px;">
+            <ngb-pagination [collectionSize]="sortedFilteredList.length" [(page)]="page" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+                            (pageChange)="pageChange($event)" style="display: inline-block;"></ngb-pagination>
+            <div style="float: right; margin-top: 10px;">
+                Showing {{(page - 1) * pageSize + 1}} - {{page * pageSize}} of {{sortedFilteredList.length}} items 
+            </div>
+        </div>
+    </div>

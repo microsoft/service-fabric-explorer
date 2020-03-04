@@ -1,0 +1,17 @@
+.checkbox-push {
+    display: inline-block;
+    margin-right: 12px;
+    border-width: 1px;
+    border-color: transparent;
+    border-style: solid;
+    padding: 2px 12px;
+    cursor: pointer;
+}
+
+.checkbox-push.active {
+    border-color: #0075c9;
+}
+
+.checkbox-push:hover {
+    background-color: #3C3C3C;
+}

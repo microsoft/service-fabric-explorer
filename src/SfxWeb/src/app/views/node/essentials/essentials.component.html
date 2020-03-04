@@ -1,0 +1,61 @@
+<div class="detail-pane essen-pane">
+    <div class="table-responsive">
+        <table class="essen-table" role="presentation" *ngIf="node">
+            <tr>
+                <th>Name</th>
+                <th>Upgrade Domain</th>
+            </tr>
+            <tr>
+                <td>{{node.name}}<app-clip-board text="node.name"></app-clip-board></td>
+                <td>{{node.raw.UpgradeDomain}}</td>
+            </tr>
+            <tr>
+                <th>Health State</th>
+                <th>Fault Domain</th>
+            </tr>
+
+            <tr>
+                <td><app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge></td>
+                <td>{{node.raw.FaultDomain}}<app-clip-board text="node.raw.FaultDomain"></app-clip-board></td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <th>IP Address or Domain Name</th>
+            </tr>
+            <tr>                        
+                <td>{{node.nodeStatus}}</td>
+                <td>{{node.raw.IpAddressOrFQDN}}<app-clip-board text="node.raw.IpAddressOrFQDN"></app-clip-board></td>
+            </tr>
+            <tr>
+                <th>Type</th>
+                <th>Is Seed Node</th>
+            </tr>
+            <tr>
+                <td>{{node.raw.Type}}<app-clip-board text="node.raw.Type"></app-clip-board></td>
+                <td>{{node.raw.IsSeedNode}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="detail-pane essen-pane">
+    <app-collapse-container>
+        <div collapse-header>
+            <h4>Unhealthy Evaluations</h4>
+        </div>
+        <div collapse-body>
+            <detail-list *ngIf="node" [list]="node.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+        </div>
+    </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane"  *ngIf="deployedApps">
+    <app-collapse-container>
+        <div collapse-header>
+            <h4>Deployed Applications</h4>
+        </div>
+        <div collapse-body>
+            <detail-list [list]="deployedApps.collection" [listSettings]="listSettings"></detail-list>
+        </div>
+    </app-collapse-container>
+</div>

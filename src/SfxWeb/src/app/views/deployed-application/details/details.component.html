@@ -1,0 +1,27 @@
+<div *ngIf="deployedApp">
+    <div class="detail-pane essen-pane">
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>
+                    General
+                </h4>
+            </div>
+            <div collapse-body>
+                <app-detail-view-part [data]="deployedApp"></app-detail-view-part>    
+            </div>
+        </app-collapse-container>
+    </div>
+    
+    <div class="detail-pane essen-pane">
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>
+                    Health Events
+                </h4>
+            </div>
+            <div collapse-body>
+                <detail-list [list]="deployedApp.health.healthEvents" [listSettings]="healthEventsListSettings"></detail-list>
+            </div>
+        </app-collapse-container>
+    </div>
+</div>

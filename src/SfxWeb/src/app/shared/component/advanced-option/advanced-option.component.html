@@ -1,0 +1,13 @@
+<div ngbDropdown container="body">
+    <button class="simple-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
+        <span class="mif-tools"></span>
+    </button>
+    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+        <label ngbDropdownItem> 
+            <span class="mif-info" title="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly."
+            style="padding-right: 5px;"></span>
+            Advanced Mode
+            <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()">
+        </label>
+    </div>
+</div>

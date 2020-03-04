@@ -2,7 +2,6 @@ language: node_js
 node_js:
   - "12.13"
 os:
-  - linux
   - osx
 before_install:
   - npm install -g npm@latest
@@ -10,8 +9,7 @@ install:
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install fakeroot; fi
   - if [[ "$TRAVIS_OS_NAME" != "osx" ]]; then sudo apt-get install rpm; fi
   - npm install -g gulp-cli
-  - pushd ./src/Sfx; npm install; popd
-  - pushd ./src/Sfx-Standalone; npm install; popd
+  - npm install @angular/cli -g
+  - pushd ./src/SfxWeb; npm install
 script:
-  - gulp -f ./src/Sfx/gulpfile.js clean-build
-  - gulp -f ./src/Sfx-Standalone/gulpfile.js publish
+  - pushd ./src/SfxWeb; ng build --prod

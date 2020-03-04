@@ -1,0 +1,35 @@
+<div *ngIf="servicePackage">
+    <div class="detail-pane essen-pane">
+        <div class="table-responsive">
+            <table class="essen-table" role="presentation">
+                <tr>
+                    <th>Name</th>
+                    <th>Version</th>
+                </tr>
+                <tr>
+                    <td>{{servicePackage.raw.Name}}<app-clip-board text="servicePackage.raw.Name"></app-clip-board></td>
+                    <td>{{servicePackage.raw.Version}}<app-clip-board text="servicePackage.raw.Version"></app-clip-board></td>
+                </tr>
+                <tr>
+                    <th>Health State</th>
+                    <th>Status</th>
+                </tr>
+                <tr>
+                    <td><app-health-badge *ngIf="servicePackage.health" [badgeClass]="servicePackage.health.healthState.badgeClass" [text]="servicePackage.health.healthState.text"></app-health-badge></td>
+                    <td>{{servicePackage.raw.Status}}</td>
+                </tr>
+                <tr *ngIf="servicePackage.servicePackageActivationId">
+                    <th>Service Package Activation Id</th>
+                </tr>
+                <tr *ngIf="servicePackage.servicePackageActivationId">
+                    <td>{{servicePackage.servicePackageActivationId}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+
+    <div class="detail-pane essen-pane" *ngIf="servicePackage.health">
+        <h4>Unhealthy Evaluations</h4>
+        <detail-list [list]="servicePackage.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+    </div>
+</div>

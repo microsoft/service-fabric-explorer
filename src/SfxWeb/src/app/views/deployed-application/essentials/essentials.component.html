@@ -1,0 +1,50 @@
+<div class="detail-pane essen-pane">
+        <div class="table-responsive">
+            <table class="essen-table">
+                <tr>
+                    <th>Name</th>
+                    <th>Application Type</th>
+                </tr>
+                <tr *ngIf="deployedApp">
+                    <td title="{{deployedApp.name}}">{{deployedApp.name}}<app-clip-board [text]="deployedApp.name"></app-clip-board></td>
+                    <td><a [routerLink]="deployedApp.appTypeViewPath" [title]="deployedApp.raw.TypeName">{{deployedApp.raw.TypeName}}</a></td>
+                </tr>
+                <tr>
+                    <th>Health State</th>
+                    <th>Disk Location</th>
+                </tr>
+                <tr *ngIf="deployedApp && deployedApp.health">
+                    <td><app-health-badge [badgeClass]="deployedApp.health.healthState.badgeClass" [text]="deployedApp.health.healthState.text"></app-health-badge></td>
+                    <td>{{deployedApp.diskLocation}}</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                </tr>
+                <tr *ngIf="deployedApp">
+                    <td>{{deployedApp.raw.Status}}</td>
+                </tr>
+            </table>
+        </div>
+    </div>
+    
+    <div class="detail-pane essen-pane">
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>Unhealthy Evaluations</h4>
+            </div>
+            <div collapse-body>
+                <detail-list [list]="deployedApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings" *ngIf="deployedApp && deployedApp.health"></detail-list>
+            </div>
+        </app-collapse-container>
+    </div>
+    
+    <div class="detail-pane essen-pane">
+        <app-collapse-container>
+            <div collapse-header>
+                <h4>Deployed Service Packages</h4>
+            </div>
+            <div collapse-body>
+                <detail-list [list]="deployedServicePackages.collection" [listSettings]="listSettings" *ngIf="deployedServicePackages"></detail-list>
+            </div>
+        </app-collapse-container>
+    </div>

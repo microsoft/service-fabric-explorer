@@ -1,0 +1,15 @@
+<form class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Backup Policy : {{backUpData.backup.Name}}</h4> 
+    </div>
+    <div class="modal-body" style="max-width: 600px; padding: 15px;">
+        <div class="detail-pane">
+            <app-detail-view-part [data]="backUpData.backup"></app-detail-view-part>
+        </div>
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="solid-button" (click)="delete()">delete Backup Policy</button>
+        <button type="submit" class="solid-button" (click)="update();">Update Backup Policy</button>
+        <button type="button" class="flat-button" (click)="close()">Close</button>
+    </div>
+</form>

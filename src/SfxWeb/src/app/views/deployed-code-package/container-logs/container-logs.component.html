@@ -1,0 +1,11 @@
+<div class="detail-pane essen-pane" *ngIf="deployedCodePackage">
+    <div class="tail-bar">
+        <label>Tail: 
+            <app-input [model]="deployedCodePackage.containerLogsTail"></app-input>
+        </label>
+        <button class="simple-button" (click)="refresh()">Get Logs</button>
+    </div>
+    <div *ngIf="containerLogs">
+        <pre role="presentation" tabindex="0"><code aria-label="container logs">{{containerLogs}}</code></pre>
+    </div>
+ </div>
