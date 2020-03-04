@@ -1,8 +1,17 @@
-<div class="detail-pane">
-    <h4>Pending Repair Tasks</h4>
-    <detail-list [list]="repairTasks" [listSettings]="repairTaskListSettings"></detail-list>
+<div class="detail-pane essen-pane">
+    <app-collapse-container>
+        <h4 collapse-header>
+            Pending Repair Tasks
+        </h4>
+        <detail-list [list]="repairTasks" [listSettings]="repairTaskListSettings" collapse-body></detail-list>
+    </app-collapse-container>
 </div>
-<div class="detail-pane">
-    <h4>Completed Repair Tasks</h4>
-    <detail-list [list]="completedRepairTasks" [listSettings]="completedRepairTaskListSettings"></detail-list>
+
+<div class="detail-pane essen-pane">
+    <app-collapse-container>
+        <h4 collapse-header>
+            Completed Repair Tasks
+        </h4>
+        <detail-list [list]="completedRepairTasks" [listSettings]="completedRepairTaskListSettings" collapse-body></detail-list>
+    </app-collapse-container>
 </div>
