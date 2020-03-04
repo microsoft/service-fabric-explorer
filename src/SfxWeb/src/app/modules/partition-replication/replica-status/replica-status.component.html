@@ -10,15 +10,15 @@
         </div>
     </div>
     
-    <app-collapse-container [collapsed]="!replicator.IsInBuild">
+    <app-collapse-container [collapsed]="!replicator.IsInBuild" [disabled]="!replicator.IsInBuild">
         <div collapse-header>
-            <div>Build : {{ (isCopying || isReplicating) ? 'In Progress' : 'Done'}} ({{stepsFinished}}/2)
+            <div [ngStyle]="{'margin-top' : replicator.IsInBuild ? '' : '7px'}">Build : {{ (isCopying || isReplicating) ? ('In Progress (' + stepsFinished + '/2)' ): 'Done'}} 
                 <span style="float: right; cursor: auto;" class="mif-info mif-lg" title="Any time shown is only an estimate and is likely to change." (click)="$event.stopPropagation()"></span>
             </div>
         </div>
-        <div collapse-body style="margin-left: 10px;">
-            <app-collapse-container collapsed="true">
-                <div collapse-header>
+        <div collapse-body style="margin-left: 7px; border-left: 3px solid gray; padding-left: 4px;">
+            <app-collapse-container collapsed="true" [disabled]="!isCopying">
+                <div collapse-header >
                     <label>Copy Status : {{isCopying ? estimatedTime : 'Complete' }} <span class="mif-hour-glass" *ngIf="isCopying" title="Estimated time left for this step. This is very likely to change" (click)="$event.stopPropagation()"></span></label>
                 </div>
                 <div collapse-body>
@@ -81,9 +81,9 @@
                 </div>
             </app-collapse-container>
         
-            <app-collapse-container collapsed="true">
+            <app-collapse-container collapsed="true" [disabled]="isCopying">
                 <div collapse-header>
-                    <label>Replication Stream Status : {{replicationStatus}} <span class="mif-hour-glass" style="cursor: pointer;" *ngIf="isReplicating" title="Estimated time left for this step. This is very likely to change"></span></label>
+                    <label>Catch up Status : {{replicationStatus}} <span class="mif-hour-glass" style="cursor: pointer;" *ngIf="isReplicating" title="Estimated time left for this step. This is very likely to change"></span></label>
                 </div>
                 <div collapse-body>
                     <div class="row-container">

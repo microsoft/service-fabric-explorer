@@ -1,7 +1,7 @@
 <div>
-    <div (click)="changeCollapseState()" style="cursor: pointer;" class="base-header" >
-        <span class="mif-2x status-icon {{collapsed ? 'mif-arrow-drop-down' : 'mif-arrow-drop-up' }}"></span>
-        <div class="header-wrapper">
+    <div (click)="changeCollapseState()" [ngClass]="{'base-header': !disabled}" >
+        <span class="mif-2x status-icon {{collapsed ? 'mif-arrow-drop-down' : 'mif-arrow-drop-up' }}" *ngIf="!disabled"></span>
+        <div class="header-wrapper" [ngStyle]="{'margin-left': disabled ? '25px' : ''}">
             <ng-content select="[collapse-header]"></ng-content>
         </div>
     </div>

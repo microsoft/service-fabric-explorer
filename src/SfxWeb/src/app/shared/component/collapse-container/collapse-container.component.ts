@@ -8,9 +8,12 @@ import { Component, Input } from '@angular/core';
 export class CollapseContainerComponent {
 
   @Input() collapsed: boolean = false;
+  @Input() disabled: boolean = false;
 
   changeCollapseState() {
-    this.collapsed = !this.collapsed;
+    if(!this.disabled) {
+      this.collapsed = !this.collapsed;
+    }
   }
 
 }
