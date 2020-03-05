@@ -27,12 +27,12 @@ export class RepairTasksComponent extends BaseController {
   setup() {
     this.repairTaskListSettings = this.settings.getNewOrExistingListSettings("repair", null,
     [
-        new ListColumnSetting("raw.TaskId", "TaskId"),
-        new ListColumnSetting("raw.Action", "Action"),
-        new ListColumnSetting("raw.Target.NodeNames", "Target"),
-        new ListColumnSetting("raw.Impact.NodeImpactList", "Impact"),
-        new ListColumnSetting("raw.State", "State"),
-        new ListColumnSetting("raw.History.CreatedUtcTimestamp", "Created at"),
+        new ListColumnSetting("TaskId", "TaskId"),
+        new ListColumnSetting("Action", "Action"),
+        new ListColumnSetting("Target.NodeNames", "Target"),
+        new ListColumnSetting("Impact.NodeImpactList", "Impact"),
+        new ListColumnSetting("State", "State"),
+        new ListColumnSetting("History.CreatedUtcTimestamp", "Created at"),
     ],
     [new ListColumnSetting(
         "",
@@ -40,23 +40,23 @@ export class RepairTasksComponent extends BaseController {
         [],
         null,
         (item) => {
-            let json = `${JSON.stringify(item.raw, null, "&nbsp;")}`;
+            let json = `${JSON.stringify(item, null, "&nbsp;")}`;
         return `<div style="margin-left:20px">${json.replace(new RegExp("\\n", "g"), "<br/>")}</div>`;
         },
     -1)],  
     true,
-    (item) => (Object.keys(item.raw).length > 0),
+    (item) => (Object.keys(item).length > 0),
     true);
 
     this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings("completedRepair", null,
         [
-            new ListColumnSetting("raw.TaskId", "TaskId"),
-            new ListColumnSetting("raw.Action", "Action"),
-            new ListColumnSetting("raw.Target.NodeNames", "Target"),
-            new ListColumnSetting("raw.Impact.NodeImpactList", "Impact"),
-            new ListColumnSetting("raw.ResultStatus", "Result Status"),
-            new ListColumnSetting("duration", "Duration"),
-            new ListColumnSetting("raw.History.CreatedUtcTimestamp", "Created at"),
+            new ListColumnSetting("TaskId", "TaskId"),
+            new ListColumnSetting("Action", "Action"),
+            new ListColumnSetting("Target.NodeNames", "Target"),
+            new ListColumnSetting("Impact.NodeImpactList", "Impact"),
+            new ListColumnSetting("ResultStatus", "Result Status"),
+            // new ListColumnSetting("duration", "Duration"),
+            new ListColumnSetting("History.CreatedUtcTimestamp", "Created at"),
         ],
         [new ListColumnSetting(
             "",
@@ -64,20 +64,21 @@ export class RepairTasksComponent extends BaseController {
             [],
             null,
             (item) => {
-                let json = `${JSON.stringify(item.raw, null, "&nbsp;")}`;
+                let json = `${JSON.stringify(item, null, "&nbsp;")}`;
             return `<div style="margin-left:20px">${json.replace(new RegExp("\\n", "g"), "<br/>")}</div>`;
             },
         -1)],  
         true,
-        (item) => (Object.keys(item.raw).length > 0),
+        (item) => (Object.keys(item).length > 0),
         true);
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.data.restClient.getRepairTasks("", 127, "", messageHandler).pipe(map(data => {
+      console.log(data);
       // const repairTasks = data.data.map(item => new RepairTask(item));
-      this.completedRepairTasks = data.filter(task => task.State === "Completed");
-      this.repairTasks = data.filter(task => task.State !== "Completed")
+      this.completedRepairTasks = data.filter(task => task.State === 64);
+      this.repairTasks = data.filter(task => task.State !== 64)
     }))
   }
 }

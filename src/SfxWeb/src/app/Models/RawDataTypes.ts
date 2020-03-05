@@ -848,7 +848,7 @@ import { Node } from './DataModels/Node';
         TaskId: string;
         Version?: string;
         Description?: string;
-        State: string;
+        State: number;
         Flags?: number;
         Action: string;
         Target?: IRawNodeRepairImpactDescription; 
