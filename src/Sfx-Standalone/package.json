@@ -16,7 +16,7 @@
   "license": "MIT",
   "dependencies": {
     "@types/bootstrap": "^4.1.1",
-    "angular": "^1.7.2",
+    "angular": "^1.7.9",
     "applicationinsights": "^1.0.1",
     "bootstrap": "^4.1.1",
     "donuts.node": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-1.0.3.tgz",
