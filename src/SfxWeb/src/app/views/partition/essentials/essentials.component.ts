@@ -18,9 +18,6 @@ export class EssentialsComponent extends PartitionBaseController {
   unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
 
-  //replicator status
-  primaryReplica: ReplicaOnPartition;
-  queueSize: string; 
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
     super(data, injector);
@@ -53,42 +50,7 @@ export class EssentialsComponent extends PartitionBaseController {
 
     return forkJoin([
       this.partition.health.refresh(messageHandler),
-      this.partition.replicas.refresh(messageHandler).pipe(mergeMap( () => {
-          if(this.partition.isStatefulService) {
-            let primary: ReplicaOnPartition = null;
-            this.partition.replicas.collection.forEach(replica => {
-              if(replica.raw.ReplicaRole === "Primary") {
-                primary = replica;
-                this.primaryReplica = primary;
-              }
-            })
-
-            if(primary) {
-              return primary.detail.refresh(messageHandler).pipe(map( ()=> {
-                console.log(this.primaryReplica.detail.raw)
-                this.queueSize = Utils.getFriendlyFileSize(+this.primaryReplica.detail.raw.ReplicatorStatus.ReplicationQueueStatus.QueueMemorySize)
-                // console.log(primary.detail.replicatorStatus)
-                // let replicaData = {
-                //   xAxisCategories: [],
-                //   dataSet: []
-                // }
-
-                // replicaData.xAxisCategories.push("Primary")
-                // replicaData.dataSet.push(+primary.detail.replicatorStatus.raw.ReplicationQueueStatus.LastSequenceNumber)
-
-                // primary.detail.replicatorStatus.raw.RemoteReplicators.forEach(replicator => {
-                //   replicaData.xAxisCategories.push(replicator.ReplicaId)
-                //   replicaData.dataSet.push(+replicator.LastAppliedReplicationSequenceNumber)
-                // })
-
-                // this.replicaData = replicaData;
-                // console.log(this.replicaData)
-              }))
-            }
-          }else{
-            return of(null);
-          }
-      }))
+      this.partition.replicas.refresh(messageHandler)
     ]);
   }
 }

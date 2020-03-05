@@ -1,7 +1,62 @@
-<div class="essen-pane">
-    <h4>Replicas <span style="font-size: small;text-transform: initial;"> (Primary not shown)</span></h4>
-</div>
+<div *ngIf="primaryReplica && primaryReplica.detail.raw"
+    style="display: flex; flex-direction: row; align-content: flex-start;">
+    <div class="essen-pane">
+        <h4>Primary Replica Queue Status</h4>
+        <div style="display: flex; flex-direction: column; justify-content: space-evenly;">
+            <div class="row-wrapper cell-wrapper">
+                <div class="field">
+                    Queue Utilization Percentage :
+                </div>
+                <div>
+                    {{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.QueueUtilizationPercentage}} %
+                </div>
+            </div>
 
-<div style="display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: flex-start; margin-bottom: 40px;">
-    <app-replica-status *ngFor="let replicator of replicatorData.RemoteReplicators;trackBy: trackByFn" [replicator]="replicator"></app-replica-status>
+            <div class="row-wrapper cell-wrapper">
+                <div class="field">
+                    Queue Memory Size :
+                </div>
+                <div>
+                    {{queueSize}}
+                </div>
+            </div>
+
+            <div class="row-wrapper cell-wrapper">
+                <div class="field">
+                    Last Sequence Number(LSN) :
+                </div>
+                <div>
+                    {{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.LastSequenceNumber}}
+                </div>
+            </div>
+
+            <div class="row-wrapper cell-wrapper">
+                <div class="field">
+                    Completed Sequence Number :
+                </div>
+                <div>
+                    {{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CompletedSequenceNumber}}
+                </div>
+            </div>
+
+            <div class="row-wrapper cell-wrapper">
+                <div class="field">
+                    Committed Sequence Number :
+                </div>
+                <div>
+                    {{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CommittedSequenceNumber}}
+                </div>
+            </div>
+        </div>
+    </div>
+    <div style="flex: auto; margin-left: 20px;" *ngIf="replicatorData">
+        <div class="essen-pane">
+            <h4>Replicas <span style="font-size: small;text-transform: initial;"> (Primary not shown)</span></h4>
+        </div>
+        <div
+            style="display: flex; flex-wrap: wrap; justify-content: flex-start; align-items: flex-start; margin-bottom: 40px;">
+            <app-replica-status *ngFor="let replicator of replicatorData.RemoteReplicators;trackBy: trackByFn"
+                [replicator]="replicator" [replica]="replicaDict[replicator.ReplicaId]"></app-replica-status>
+        </div>
+    </div>
 </div>

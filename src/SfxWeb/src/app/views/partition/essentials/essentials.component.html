@@ -59,7 +59,7 @@
                 <h4>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h4>
             </div>
             <div collapse-body>
-                <detail-list [list]="partition.replicas" [listSettings]="listSettings" *ngIf="partition.replicas.isInitialized"></detail-list>
+                <detail-list [list]="partition.replicas.collection" [listSettings]="listSettings" *ngIf="partition.replicas.isInitialized"></detail-list>
             </div>
         </app-collapse-container>
     </div>
@@ -70,113 +70,7 @@
                 <h4>Replicator Status</h4>
             </div>
             <div collapse-body>
-                <div *ngIf="primaryReplica && primaryReplica.detail.raw" style="display: flex; flex-direction: row; align-content: flex-start;">
-                    <div class="essen-pane">
-                        <h4>Primary Replica Queue Status</h4>
-                                    
-                        <div style="display: flex; flex-direction: column; justify-content: space-evenly;">
-                                <!-- <table class="essen-table" role="presentation"> -->
-
-                                    <div class="row-wrapper cell-wrapper">
-                                        <div class="field">
-                                            Queue Utilization Percentage :
-                                        </div>
-                                        <div>
-                                            {{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.QueueUtilizationPercentage}} %
-                                        </div>
-                                    </div>
-
-                                    <div class="row-wrapper cell-wrapper">
-                                        <div class="field">
-                                            Queue Memory Size :
-                                        </div>
-                                        <div>
-                                            {{queueSize}}
-                                        </div>
-                                    </div>
-
-                                    <div class="row-wrapper cell-wrapper">
-                                        <div class="field">
-                                            Last Sequence Number(LSN) :
-                                        </div>
-                                        <div>
-                                            {{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.LastSequenceNumber}}
-                                        </div>
-                                    </div>
-
-                                    <div class="row-wrapper cell-wrapper">
-                                        <div class="field">
-                                            Completed Sequence Number :
-                                        </div>
-                                        <div>
-                                            {{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CompletedSequenceNumber}}
-                                        </div>
-                                    </div>
-
-                                    <div class="row-wrapper cell-wrapper">
-                                        <div class="field">
-                                            Committed Sequence Number :
-                                        </div>
-                                        <div>
-                                            {{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CommittedSequenceNumber}}
-                                        </div>
-                                    </div>
-
-
-                                    <!-- <div style="margin-bottom: 10px;">Queue Utilization Percentage : {{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.QueueUtilizationPercentage}} %</div>
-                                    <div style="margin-bottom: 10px;">Queue Memory Size : {{queueSize}} </div>
-                                    <div style="margin-bottom: 10px;">Last Sequence Number(LSN) : {{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.LastSequenceNumber}} </div>
-                                    <div style="margin-bottom: 10px;">Completed Sequence Number : {{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CompletedSequenceNumber}} </div>
-                                    <div style="margin-bottom: 10px;">Committed Sequence Number : {{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CommittedSequenceNumber}} </div> -->
-                                    <!-- <tr>
-                                        <th>Queue Utilization Percentage</th>
-                                        <th>Queue Memory Size</th>
-                                        <th></th>
-                                    </tr>
-                                    <tr>
-                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.QueueUtilizationPercentage}}</td>
-                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.QueueMemorySize}}</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Completed Sequence Number</th>
-                                        <th>Committed Sequence Number</th>
-                                        <th>Last Sequence Number(LSN)</th>
-                                    </tr>
-                                    <tr>
-                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CompletedSequenceNumber}}</td>
-                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CommittedSequenceNumber}}</td>
-                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.LastSequenceNumber}}</td>
-                                    </tr>
-                                </table> -->
-                                <!-- <table class="essen-table" role="presentation">
-                                    <tr>
-                                        <th>Queue Utilization Percentage</th>
-                                        <th>Queue Memory Size</th>
-                                        <th></th>
-                                    </tr>
-                                    <tr>
-                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.QueueUtilizationPercentage}}</td>
-                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.QueueMemorySize}}</td>
-                                        <td></td>
-                                    </tr>
-                                    <tr>
-                                        <th>Completed Sequence Number</th>
-                                        <th>Committed Sequence Number</th>
-                                        <th>Last Sequence Number(LSN)</th>
-                                    </tr>
-                                    <tr>
-                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CompletedSequenceNumber}}</td>
-                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.CommittedSequenceNumber}}</td>
-                                        <td>{{primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus.LastSequenceNumber}}</td>
-                                    </tr>
-                                </table> -->
-                            </div>
-                        </div>
-                    <div style="flex: auto; margin-left: 20px;">
-                        <app-replicator-status [replicatorData]="primaryReplica.detail.replicatorStatus.raw"></app-replicator-status>
-                    </div>
-                </div>
+                <app-replica-status-container [replicas]="partition.replicas.collection"></app-replica-status-container>
             </div>
         </app-collapse-container>
     </div>

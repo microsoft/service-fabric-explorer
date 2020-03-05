@@ -1,30 +1,42 @@
 <div class="replica-container essen-pane" [ngClass]="leftBannerColor">
+    <div style="float: right">
+        <app-clip-board [text]="copyText"></app-clip-board>
+    </div>
     <div class="replica-header">
         <div> <span class="field">ID : </span>{{replicator.ReplicaId}}</div>
         <span *ngIf="!replicator.IsInBuild" style="float: right;">
             <span class="field">LSN : </span>{{replicator.LastAppliedReplicationSequenceNumber}}
         </span>
         <div>
-            <span class="field">Role : </span>{{replicator.IsInBuild ? 'IdleSecondary' : 'ActiveSecondary'}}
+            <span class="field">Role : </span>{{replica.role}}
+        </div>
+        <div>
+            <span class="field">Node : </span>{{replica.raw.NodeName}}
         </div>
     </div>
-    
+
     <app-collapse-container [collapsed]="!replicator.IsInBuild" [disabled]="!replicator.IsInBuild">
         <div collapse-header>
-            <div [ngStyle]="{'margin-top' : replicator.IsInBuild ? '' : '7px'}">Build : {{ (isCopying || isReplicating) ? ('In Progress (' + stepsFinished + '/2)' ): 'Done'}} 
-                <span style="float: right; cursor: auto;" class="mif-info mif-lg" title="Any time shown is only an estimate and is likely to change." (click)="$event.stopPropagation()"></span>
+            <div [ngStyle]="{'margin-top' : replicator.IsInBuild ? '' : '7px'}">Build :
+                {{ (isCopying || isReplicating) ? ('In Progress (' + stepsFinished + '/2)' ): 'Done'}}
+                <span style="float: right; cursor: auto;" class="mif-info mif-lg"
+                    title="Any time shown is only an estimate and is likely to change."
+                    (click)="$event.stopPropagation()"></span>
             </div>
         </div>
         <div collapse-body style="margin-left: 7px; border-left: 3px solid gray; padding-left: 4px;">
             <app-collapse-container collapsed="true" [disabled]="!isCopying">
-                <div collapse-header >
-                    <label>Copy Status : {{isCopying ? estimatedTime : 'Complete' }} <span class="mif-hour-glass" *ngIf="isCopying" title="Estimated time left for this step. This is very likely to change" (click)="$event.stopPropagation()"></span></label>
+                <div collapse-header>
+                    <label>Copy Status : {{isCopying ? estimatedTime : 'Complete' }} <span class="mif-hour-glass"
+                            *ngIf="isCopying" title="Estimated time left for this step. This is very likely to change"
+                            (click)="$event.stopPropagation()"></span></label>
                 </div>
                 <div collapse-body>
                     <div class="row-container">
                         <div class="row-wrapper">
                             <div class="field">
-                                <span class="mif-info mif-lg" title="Average time it takes to get a CSN(Copy sequence number or some amount of state) from a primary or secondary replica. Higher is slower."></span>
+                                <span class="mif-info mif-lg"
+                                    title="Average time it takes to get a CSN(Copy sequence number or some amount of state) from a primary or secondary replica. Higher is slower."></span>
                                 Average Receive Duration :
                             </div>
                             <div>
@@ -33,7 +45,8 @@
                         </div>
                         <div class="row-wrapper">
                             <div class="field">
-                                <span class="mif-info mif-lg" title="Average time it takes to apply a CSN(Copy sequence number or some amount of state) to the replica. Higher is slower."></span>
+                                <span class="mif-info mif-lg"
+                                    title="Average time it takes to apply a CSN(Copy sequence number or some amount of state) to the replica. Higher is slower."></span>
                                 Average Apply Duration :
                             </div>
                             <div>
@@ -42,7 +55,8 @@
                         </div>
                         <div class="row-wrapper">
                             <div class="field">
-                                <span class="mif-info mif-lg" title="The amount of state left to be recieved and not applied yet. Lower is better."></span>
+                                <span class="mif-info mif-lg"
+                                    title="The amount of state left to be recieved and not applied yet. Lower is better."></span>
                                 Not Received Count :
                             </div>
                             <div>
@@ -51,7 +65,8 @@
                         </div>
                         <div class="row-wrapper">
                             <div class="field">
-                                <span class="mif-info mif-lg" title="The amount of CSN(Copy sequence number or some amount of state) received and not added to the replica yet."></span>
+                                <span class="mif-info mif-lg"
+                                    title="The amount of CSN(Copy sequence number or some amount of state) received and not added to the replica yet."></span>
                                 Received And Not Applied Count :
                             </div>
                             <div>
@@ -60,8 +75,9 @@
                         </div>
                         <div class="row-wrapper">
                             <div class="field">
-                                <span class="mif-info mif-lg" title="The last CSN(Copy sequence number or some amount of state) received from a primary or secondary replica."></span>
-                                Last Received CSN : 
+                                <span class="mif-info mif-lg"
+                                    title="The last CSN(Copy sequence number or some amount of state) received from a primary or secondary replica."></span>
+                                Last Received CSN :
                             </div>
                             <div>
                                 {{replicator.LastReceivedCopySequenceNumber}}
@@ -69,8 +85,9 @@
                         </div>
                         <div class="row-wrapper">
                             <div class="field">
-                                <span class="mif-info mif-lg" title="The last CSN(Copy sequence number or some amount of state) applied to this replica. Higher is better."></span>
-                                Last Applied CSN : 
+                                <span class="mif-info mif-lg"
+                                    title="The last CSN(Copy sequence number or some amount of state) applied to this replica. Higher is better."></span>
+                                Last Applied CSN :
                             </div>
                             <div>
                                 {{replicator.LastAppliedCopySequenceNumber}}
@@ -79,10 +96,12 @@
                     </div>
                 </div>
             </app-collapse-container>
-        
+
             <app-collapse-container collapsed="true" [disabled]="isCopying">
                 <div collapse-header>
-                    <label>Catch up Status : {{replicationStatus}} <span class="mif-hour-glass" style="cursor: pointer;" *ngIf="isReplicating" title="Estimated time left for this step. This is very likely to change"></span></label>
+                    <label>Catch up Status : {{replicationStatus}} <span class="mif-hour-glass" style="cursor: pointer;"
+                            *ngIf="isReplicating"
+                            title="Estimated time left for this step. This is very likely to change"></span></label>
                 </div>
                 <div collapse-body>
                     <div class="row-container">
@@ -132,7 +151,7 @@
             <div class="row-container">
                 <div class="row-wrapper">
                     <div>
-                        Last Received Replication LSN : 
+                        Last Received Replication LSN :
                     </div>
                     <div>
                         {{replicator.LastReceivedReplicationSequenceNumber}}
@@ -140,7 +159,7 @@
                 </div>
                 <div class="row-wrapper">
                     <div>
-                        Last Applied Replication LSN : 
+                        Last Applied Replication LSN :
                     </div>
                     <div>
                         {{replicator.LastAppliedReplicationSequenceNumber}}

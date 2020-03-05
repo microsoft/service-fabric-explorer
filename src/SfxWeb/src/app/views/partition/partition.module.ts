@@ -16,12 +16,11 @@ import { PartitionRestoreBackUpComponent } from './partition-restore-back-up/par
 import { PartitionTriggerBackUpComponent } from './partition-trigger-back-up/partition-trigger-back-up.component';
 import { ReactiveFormsModule } from '@angular/forms';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
-import { ReplicatorStatusComponent } from './replicator-status/replicator-status.component';
 import { PartitionReplicationModule } from 'src/app/modules/partition-replication/partition-replication.module';
 
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, BackupsComponent, PartitionRestoreBackUpComponent, PartitionTriggerBackUpComponent, ReplicatorStatusComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, BackupsComponent, PartitionRestoreBackUpComponent, PartitionTriggerBackUpComponent],
   imports: [
     CommonModule,
     PartitionRoutingModule,

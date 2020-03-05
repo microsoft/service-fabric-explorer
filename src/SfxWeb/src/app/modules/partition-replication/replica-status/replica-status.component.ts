@@ -1,6 +1,8 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { IRawReplicatorStatus, IRawRemoteReplicatorStatus, IRemoteReplicatorAcknowledgementDetail, IRemoteReplicatorAcknowledgementStatus } from 'src/app/Models/RawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { Utils } from 'src/app/Utils/Utils';
+import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 
 @Component({
   selector: 'app-replica-status',
@@ -10,6 +12,7 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 export class ReplicaStatusComponent implements OnInit, OnChanges {
 
   @Input() replicator: IRawRemoteReplicatorStatus;
+  @Input() replica: ReplicaOnPartition;
 
   isCopying: boolean = false;
   isReplicating: boolean = false;
@@ -23,17 +26,20 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
   
   estimatedTime: string;
 
+  copyText: string = "";
+
   constructor() { }
 
   ngOnInit(): void {
+    console.log(this.replica);
   }
 
   ngOnChanges() {
     this.isCopying = this.inProgress(this.replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail);
     this.isReplicating = this.inProgress(this.replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail);
     this.setCurrentStatus();
-
     this.replicationStatus = this.getReplicationStatus();
+    this.copyText = Utils.objectToFormattedText(this.replicator);
   }
 
   inProgress(details: IRemoteReplicatorAcknowledgementDetail): boolean {

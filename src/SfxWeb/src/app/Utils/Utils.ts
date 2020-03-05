@@ -162,5 +162,21 @@ export class Utils {
 
         return displayFileSize;
     }
+
+    public static objectToFormattedText(obj: any, depth: number = 0): string {
+        let text = "";
+        Object.keys(obj).forEach(key => {
+            const value = obj[key];
+            if(typeof value === "object") {
+                text += "".padStart(depth) + `${key} : \r\n`;
+
+                text += Utils.objectToFormattedText(value, depth + 4);
+            }else if(typeof value !== "function") {
+                text += "".padStart(depth) + `${key} : ${value}\r\n`;
+            }
+        })
+
+        return text;
+    }
 }
 
