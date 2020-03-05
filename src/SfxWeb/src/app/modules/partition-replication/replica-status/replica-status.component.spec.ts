@@ -1,7 +1,7 @@
 import { async, ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { ReplicaStatusComponent } from './replica-status.component';
-import { IRemoteReplicatorAcknowledgementStatus, IRemoteReplicatorAcknowledgementDetail } from 'src/app/Models/RawDataTypes';
+import { IRemoteReplicatorAcknowledgementDetail } from 'src/app/Models/RawDataTypes';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
 
 describe('ReplicaStatusComponent', () => {
@@ -19,6 +19,13 @@ describe('ReplicaStatusComponent', () => {
   beforeEach(() => {
     fixture = TestBed.createComponent(ReplicaStatusComponent);
     component = fixture.componentInstance;
+
+    component.replica = <any> {
+      role: "test",
+      raw : {
+        NodeName: "node_1"
+      }
+    }
     component.replicator = {
       "ReplicaId": "932150691833444541",
       "LastAcknowledgementProcessedTimeUtc": "2020-02-14T05:28:58.161Z",
@@ -93,7 +100,8 @@ describe('ReplicaStatusComponent', () => {
     const header = fixture.nativeElement.querySelector('.replica-header');
     expect(header.children.item(0).textContent).toBe("ID : 932150691833444541");
     expect(header.children.item(1).textContent).toBe("LSN : 80 ");
-    expect(header.children.item(2).textContent).toBe("Role : ActiveSecondary ");
+    expect(header.children.item(2).textContent).toBe("Role : test ");
+    expect(header.children.item(3).textContent).toBe("Node : node_1 ");
   });
 
   fit('estimate time', () => {
