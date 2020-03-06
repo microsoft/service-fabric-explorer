@@ -3,10 +3,11 @@ import { BaseController } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
-import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
+import { ListColumnSetting, ListSettings, ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { map } from 'rxjs/operators';
 import { IRawRepairTask } from 'src/app/Models/RawDataTypes';
+import { RepairTaskViewComponent } from '../repair-task-view/repair-task-view.component';
 
 @Component({
   selector: 'app-repair-tasks',
@@ -34,16 +35,22 @@ export class RepairTasksComponent extends BaseController {
         new ListColumnSetting("State", "State"),
         new ListColumnSetting("History.CreatedUtcTimestamp", "Created at"),
     ],
-    [new ListColumnSetting(
+    [
+      new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
         "",
-        "",
-        [],
-        null,
-        (item) => {
-            let json = `${JSON.stringify(item, null, "&nbsp;")}`;
-        return `<div style="margin-left:20px">${json.replace(new RegExp("\\n", "g"), "<br/>")}</div>`;
-        },
-    -1)],  
+        ""
+        )
+    //   new ListColumnSetting(
+    //     "",
+    //     "",
+    //     [],
+    //     null,
+    //     (item) => {
+    //         let json = `${JSON.stringify(item, null, "&nbsp;")}`;
+    //     return `<div style="margin-left:20px">${json.replace(new RegExp("\\n", "g"), "<br/>")}</div>`;
+    //     },
+    // -1)
+  ],  
     true,
     (item) => (Object.keys(item).length > 0),
     true);
@@ -58,16 +65,22 @@ export class RepairTasksComponent extends BaseController {
             // new ListColumnSetting("duration", "Duration"),
             new ListColumnSetting("History.CreatedUtcTimestamp", "Created at"),
         ],
-        [new ListColumnSetting(
+        [
+          new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
             "",
-            "",
-            [],
-            null,
-            (item) => {
-                let json = `${JSON.stringify(item, null, "&nbsp;")}`;
-            return `<div style="margin-left:20px">${json.replace(new RegExp("\\n", "g"), "<br/>")}</div>`;
-            },
-        -1)],  
+            ""
+            )
+        //   new ListColumnSetting(
+        //     "",
+        //     "",
+        //     [],
+        //     null,
+        //     (item) => {
+        //         let json = `${JSON.stringify(item, null, "&nbsp;")}`;
+        //     return `<div style="margin-left:20px">${json.replace(new RegExp("\\n", "g"), "<br/>")}</div>`;
+        //     },
+        // -1)
+      ],  
         true,
         (item) => (Object.keys(item).length > 0),
         true);

@@ -4,6 +4,8 @@ import { HyperLinkComponent } from '../modules/detail-list-templates/hyper-link/
 import { CopyTextComponent } from '../modules/detail-list-templates/copy-text/copy-text.component';
 import { RowDisplayComponent } from '../modules/event-store/row-display/row-display.component';
 import { FullDescriptionComponent } from '../modules/event-store/full-description/full-description.component';
+import { DetailBaseComponent } from '../ViewModels/detail-table-base.component';
+import { Type } from '@angular/core';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -263,5 +265,17 @@ export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSe
     template = FullDescriptionComponent;
     public constructor() {
         super("raw.eventInstanceId", "", [], false, () => "", -1);
+    }
+}
+
+
+export class ListColumnSettingWithCustomComponent extends ListColumnSetting {
+    public constructor(public template: Type<DetailBaseComponent>,
+                        public propertyPath: string = "",
+                        public displayName: string = "",
+                        public sortPropertyPaths: string[] = [propertyPath],
+                        public enableFilter?: boolean,
+                        public colspan: number = 1 ) {
+        super(propertyPath, displayName, sortPropertyPaths, enableFilter, () => "", colspan);
     }
 }

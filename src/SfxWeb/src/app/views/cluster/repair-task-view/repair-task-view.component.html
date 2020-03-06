@@ -1,0 +1,10 @@
+<div>
+
+    <div *ngIf="item.History">
+        <ul >
+            <li *ngFor="let point of history | keyvalue : asIsOrder">
+                {{point.key}} : {{point.value | epochFormatter}}
+            </li>
+        </ul >
+    </div>
+</div>
