@@ -2,6 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { IRawRepairTask } from 'src/app/Models/RawDataTypes';
+import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 
 @Component({
   selector: 'app-repair-task-view',
@@ -10,15 +11,15 @@ import { IRawRepairTask } from 'src/app/Models/RawDataTypes';
 })
 export class RepairTaskViewComponent implements OnInit, DetailBaseComponent {
   listSetting: ListColumnSetting;
-  item: IRawRepairTask;
+  item: RepairTask;
 
   history: any;
 
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.item.History);
-    this.history = this.item.History;
+    console.log(this.item);
+    this.history = this.item.raw.History;
   }
 
   asIsOrder(a: any, b: any): number {

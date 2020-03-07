@@ -24,9 +24,10 @@ import { DualDatePickerComponent } from './component/dual-date-picker/dual-date-
 import { AdvancedOptionComponent } from './component/advanced-option/advanced-option.component';
 import { ReplicaAddressComponent } from './component/replica-address/replica-address.component';
 import { EpochFormatterPipe } from './pipes/epoch-formatter.pipe';
+import { TicksFormatterPipe } from './pipes/ticks-formatter.pipe';
 
 @NgModule({
-  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, EpochFormatterPipe],
+  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, EpochFormatterPipe, TicksFormatterPipe],
   imports: [
     CommonModule,
     RouterModule,
@@ -35,6 +36,6 @@ import { EpochFormatterPipe } from './pipes/epoch-formatter.pipe';
     NgbToastModule,
     NgbDatepickerModule,
   ],
-  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, EpochFormatterPipe]
+  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, EpochFormatterPipe, TicksFormatterPipe]
 })
 export class SharedModule { }

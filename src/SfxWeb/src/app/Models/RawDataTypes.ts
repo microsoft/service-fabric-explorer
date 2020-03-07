@@ -830,6 +830,10 @@ import { Node } from './DataModels/Node';
         NodeImpactList : IRawNodeImpact[]
     }
 
+    export interface IRawNodeRepairTargetDescription {
+        Kind : string;
+        NodeNames : string[]
+    }
     export interface IRawRepairTaskHistory {
         CreatedUtcTimestamp ?: string;
         ClaimedUtcTimestamp ?: string;
@@ -851,7 +855,7 @@ import { Node } from './DataModels/Node';
         State: number;
         Flags?: number;
         Action: string;
-        Target?: IRawNodeRepairImpactDescription; 
+        Target?: IRawNodeRepairTargetDescription; 
         Executor?: string;
         ExecutorData?: string;
         Impact?: IRawNodeRepairImpactDescription; 

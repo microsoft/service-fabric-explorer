@@ -1,10 +1,77 @@
 <div>
-
-    <div *ngIf="item.History">
-        <ul >
-            <li *ngFor="let point of history | keyvalue : asIsOrder">
-                {{point.key}} : {{point.value | epochFormatter}}
-            </li>
-        </ul >
+    Copy raw repair Job <app-clip-board></app-clip-board>
+</div>
+<div style="display: flex;
+        flex-wrap: wrap;
+        flex-direction: row;">
+    <div *ngIf="item.raw.History">
+        <table style="border: 1px solid white; margin: 10px">
+            <tr *ngFor="let point of history | keyvalue : asIsOrder">
+                <td>
+                    {{point.key}}
+                </td>
+                <td>
+                    {{point.value | ticksFormatter}}
+                </td>
+            </tr>
+        </table>
+    </div>
+    <div>
+        <div style="border: 1px solid white; margin: 10px; padding: 5px;">
+            <h5 style="border-bottom: 1px solid white;">
+                Description
+            </h5>
+            <div style="margin-left: 15px;">
+                <div>
+                    Version: {{item.raw.Version}}
+                </div>
+                <div>
+                    Description: {{item.raw.Description}}
+                </div>
+                <div>
+                    State: {{item.raw.State}}
+                </div>
+                <div>
+                    Flags: {{item.raw.Flags}}
+                </div>
+            </div>
+        </div>
+        <div *ngIf="item.couldParseExecutorData">
+            <div style="border: 1px solid white; margin: 10px; padding: 5px;">
+                <h5 style="border-bottom: 1px solid white;">
+                    Job Info
+                </h5>
+                <div style="margin-left: 15px;">
+                    <div>
+                        Executor: {{item.raw.Executor}}
+                    </div>
+                    <div>
+                        Job Id: {{item.jobId}}
+                    </div>
+                    <div>
+                        Upgrade Domain: {{item.UD}}
+                    </div>
+                    <div>
+                        step Id: {{item.stepId}}
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div style="border: 1px solid white; margin: 10px; padding: 5px;">
+            <h5 style="border-bottom: 1px solid white;">
+                Results
+            </h5>
+            <div style="margin-left: 15px;">
+                <div>
+                    Result Status: {{item.raw.ResultStatus}}
+                </div>
+                <div>
+                    Result Code: {{item.raw.ResultCode}}
+                </div>
+                <div>
+                    Result Detail: {{item.raw.ResultDetail}}
+                </div>
+            </div>
+        </div>
     </div>
 </div>

@@ -15,3 +15,7 @@
         <detail-list [list]="completedRepairTasks" [listSettings]="completedRepairTaskListSettings" collapse-body></detail-list>
     </app-collapse-container>
 </div>
+
+<div *ngIf="timelineData" style="margin-bottom: 50px;">
+    <app-event-store-timeline [events]="timelineData"></app-event-store-timeline>
+</div>
