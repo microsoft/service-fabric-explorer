@@ -1,4 +1,5 @@
 import { IRawRepairTask } from '../RawDataTypes';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
 export enum RepairTaskStateFilter {
     Created = 1,
@@ -14,7 +15,7 @@ export class RepairTask {
     // Initially keep additional details collapsed.
     public isSecondRowCollapsed: boolean = true;
     public impactedNodes: string[] = [];
-
+    public createdAt: string = "";
     //following 3 properties are set if possible from parsing ExecutorData
     public jobId: string = "";
     public UD: string = "";
@@ -26,6 +27,8 @@ export class RepairTask {
         if(this.raw.Impact) {
             this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
         }
+
+        this.createdAt = TimeUtils.windowsFileTime(this.raw.History.CreatedUtcTimestamp)
 
         if(this.raw.Executor && this.raw.Executor.startsWith("fabric:/System/InfrastructureService")) {
             /*

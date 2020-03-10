@@ -78,6 +78,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
   }
 
   public updateList(events: ITimelineData) {
+      console.log(events.items.getDataSet())
       if (events) {
           this._timeline.setData({
               groups: events.groups,
@@ -85,8 +86,6 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
             });
           this._timeline.setOptions({
               selectable: false,
-              min: events.start,
-              max: events.end,
               margin: {
                   item : {
                       horizontal : -1 //this makes it so items dont stack up when zoomed out too far.,
@@ -102,8 +101,15 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
           });
           this._timeline.fit();
 
-          this._start = events.start;
-          this._end = events.end;
+          if(events.start){
+            this._start = events.start;
+          }
+          if(events.end){
+            this._end = events.end;
+            this._timeline.setOptions({
+                max: events.end,
+            });
+          }
 
           if (events.items.length > 0) {
               let oldest = null;

@@ -110,5 +110,9 @@ export class TimeUtils {
         var epochMicrotimeDiff = 2208988800000;
         return new Date(ticksToMicrotime - epochMicrotimeDiff).toISOString();
     }
+
+    public static windowsFileTime(fileTime : string | number){
+        return new Date ( +fileTime / 10000 - 11644473600000 ).toISOString();
+}
 }
 

@@ -5,6 +5,9 @@
         flex-wrap: wrap;
         flex-direction: row;">
     <div *ngIf="item.raw.History">
+        <h5 >
+            History
+        </h5>
         <table style="border: 1px solid white; margin: 10px">
             <tr *ngFor="let point of history | keyvalue : asIsOrder">
                 <td>

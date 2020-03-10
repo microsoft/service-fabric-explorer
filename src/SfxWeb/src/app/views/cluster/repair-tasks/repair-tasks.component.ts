@@ -80,32 +80,48 @@ export class RepairTasksComponent extends BaseController {
     let groupNames = new Set<string>();
 
     this.completedRepairTasks.forEach(task => {
-      console.log(task)
-      if(task.raw.Target.NodeNames) {
-        task.raw.Target.NodeNames.forEach(node => {
-          items.add({
-            id: task.raw.TaskId + node,
-            content: task.raw.TaskId,
-            start: TimeUtils.ticksToISO(task.raw.History.ExecutingUtcTimestamp),
-            end: TimeUtils.ticksToISO(task.raw.History.CompletedUtcTimestamp),
-            type: "range",
-            group: node,
-            subgroup: "stack",
-            title: EventStoreUtils.tooltipFormat(task.raw, TimeUtils.ticksToISO(task.raw.History.ExecutingUtcTimestamp)),
-          })
-          console.log(TimeUtils.ticksToISO(task.raw.History.ExecutingUtcTimestamp))
+      console.log(TimeUtils.windowsFileTime(task.raw.History.ExecutingUtcTimestamp).startsWith("1601") ? task: "")
+      if(task.jobId) { //task.raw.Target.NodeNames
+      //   task.raw.Target.NodeNames.forEach(node => {
+        const t= {
+          id: task.raw.TaskId +  task.jobId, //node,
+          content: task.raw.TaskId,
+          start: TimeUtils.windowsFileTime(task.raw.History.ExecutingUtcTimestamp === "0" ? task.raw.History.CreatedUtcTimestamp : task.raw.History.ExecutingUtcTimestamp) ,
+          end: TimeUtils.windowsFileTime(task.raw.History.CompletedUtcTimestamp),
+          type: "range",
+          group: "job", //task.jobId,   //node,
+          subgroup: "stack",
+          title: EventStoreUtils.tooltipFormat(task.raw, TimeUtils.windowsFileTime(task.raw.History.ExecutingUtcTimestamp), TimeUtils.windowsFileTime(task.raw.History.CompletedUtcTimestamp)),
+        }    
+        items.add(t)
+          console.log(t)
   
-          if(!groupNames.has(node)){
-            groups.add({
-              id: node,
-              content: node,
-              subgroupStack: {"stack": true}
-            })
-            groupNames.add(node)
-          }
-        })
+        //  if(!groupNames.has(task.jobId)){
+        //     groups.add({
+        //       id: task.jobId,
+        //       content: task.jobId,
+        //       subgroupStack: {"stack": true}
+        //     })
+        //     groupNames.add(task.jobId)
+        //   }
+
+        //   if(!groupNames.has(node)){
+        //     groups.add({
+        //       id: node,
+        //       content: node,
+        //       subgroupStack: {"stack": true}
+        //     })
+        //     groupNames.add(node)
+        //   }
+        // })
       }
     })
+
+            groups.add({
+              id: "job",
+              content: "Job History",
+              subgroupStack: {"stack": true}
+            })
 
     this.timelineData = {
       groups,
