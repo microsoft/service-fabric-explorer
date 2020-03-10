@@ -852,7 +852,7 @@ import { Node } from './DataModels/Node';
         TaskId: string;
         Version?: string;
         Description?: string;
-        State: number;
+        State: string;
         Flags?: number;
         Action: string;
         Target?: IRawNodeRepairTargetDescription; 

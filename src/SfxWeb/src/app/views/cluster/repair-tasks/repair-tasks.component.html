@@ -3,7 +3,7 @@
         <h4 collapse-header>
             Pending Repair Tasks
         </h4>
-        <detail-list [list]="repairTasks" [listSettings]="repairTaskListSettings" collapse-body></detail-list>
+        <detail-list [list]="repairTasks" [listSettings]="repairTaskListSettings" collapse-body (onSort)="sorted($event, false)"></detail-list>
     </app-collapse-container>
 </div>
 
@@ -16,6 +16,6 @@
         <h4 collapse-header>
             Completed Repair Tasks
         </h4>
-        <detail-list [list]="completedRepairTasks" [listSettings]="completedRepairTaskListSettings" collapse-body></detail-list>
+        <detail-list [list]="completedRepairTasks" [listSettings]="completedRepairTaskListSettings" collapse-body (onSort)="sorted($event)"></detail-list>
     </app-collapse-container>
 </div>

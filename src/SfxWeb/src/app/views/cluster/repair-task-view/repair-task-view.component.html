@@ -11,7 +11,7 @@
     </ng-template>
       <ng-template ngbTabContent>
           <div style="display: flex;
-          flex-wrap: wrap;
+          
           flex-direction: row;">
           <div *ngIf="item.raw.History">
             <h5 >
@@ -21,7 +21,7 @@
                 <tbody>
                     <tr *ngFor="let point of history">
                         <th>{{point.key}}</th>
-                        <td>{{point.value | ticksFormatter}}</td>
+                        <td style="white-space: nowrap;">{{point.value}}</td>
                     </tr>
                 </tbody>
             </table>
@@ -32,7 +32,30 @@
                     <h5>
                         Job Info
                     </h5>
-                    <table class="table detail-table">
+                    <table class="table detail-table" style="margin-bottom: 14px; width: 100%">
+                        <tbody>
+                            <tr>
+                                <th>Executor</th>
+                                <td>{{item.raw.Executor}}</td>
+                            </tr>
+                            <tr>
+                                <th>Description</th>
+                                <td>{{item.raw.Description}}</td>
+                            </tr>
+                            <!-- <tr>
+                                <th>step Id</th>
+                                <td>{{item.stepId}}</td>
+                            </tr>
+                            <tr>
+                                <th>Job Id</th>
+                                <td>{{item.jobId}}</td>
+                            </tr> -->
+                        </tbody>
+                    </table>
+
+                    <app-detail-view-part [data]="item.executorData"></app-detail-view-part>
+
+                    <!-- <table class="table detail-table">
                         <tbody>
                             <tr>
                                 <th>Executor</th>
@@ -51,7 +74,7 @@
                                 <td>{{item.jobId}}</td>
                             </tr>
                         </tbody>
-                    </table>
+                    </table> -->
                     <!-- <div style="margin-left: 15px;">
                         <div>
                             Executor: {{item.raw.Executor}}

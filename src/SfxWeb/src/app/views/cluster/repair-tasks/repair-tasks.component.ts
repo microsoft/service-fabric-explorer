@@ -7,10 +7,9 @@ import { ListColumnSetting, ListSettings, ListColumnSettingWithCustomComponent }
 import { SettingsService } from 'src/app/services/settings.service';
 import { map } from 'rxjs/operators';
 import { RepairTaskViewComponent } from '../repair-task-view/repair-task-view.component';
-import { RepairTask, RepairTaskStateFilter } from 'src/app/Models/DataModels/repairTask';
+import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { ITimelineData, EventStoreUtils } from 'src/app/Models/eventstore/timelineGenerators';
 import { DataSet, DataGroup, DataItem } from 'vis-timeline';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
 @Component({
   selector: 'app-repair-tasks',
@@ -21,7 +20,11 @@ export class RepairTasksComponent extends BaseController {
 
   repairTasks: RepairTask[];
   completedRepairTasks: RepairTask[];
-  allRepairTasks: RepairTask[];
+
+  //used for timeline
+  sortedRepairTasks: RepairTask[] = [];
+  sortedCompletedRepairTasks: RepairTask[] = [];
+
   repairTaskListSettings: ListSettings;
   completedRepairTaskListSettings: ListSettings;
 
@@ -35,10 +38,10 @@ export class RepairTasksComponent extends BaseController {
     this.repairTaskListSettings = this.settings.getNewOrExistingListSettings("repair", null,
     [
         new ListColumnSetting("raw.TaskId", "TaskId"),
-        new ListColumnSetting("raw.Action", "Action"),
+        new ListColumnSetting("raw.Action", "Action", ["raw.Action"], true),
         new ListColumnSetting("raw.Target.NodeNames", "Target"),
         new ListColumnSetting("raw.Impact.NodeImpactList", "Impact"),
-        new ListColumnSetting("state", "State"),
+        new ListColumnSetting("raw.State", "State", ["raw.State"], true),
         new ListColumnSetting("createdAt", "Created at"),
     ],
     [
@@ -57,10 +60,10 @@ export class RepairTasksComponent extends BaseController {
     this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings("completedRepair", null,
         [
             new ListColumnSetting("raw.TaskId", "TaskId"),
-            new ListColumnSetting("raw.Action", "Action"),
+            new ListColumnSetting("raw.Action", "Action", ["raw.Action"], true),
             new ListColumnSetting("raw.Target.NodeNames", "Target"),
             new ListColumnSetting("impactedNodes", "Impact"),
-            new ListColumnSetting("raw.ResultStatus", "Result Status"),
+            new ListColumnSetting("raw.ResultStatus", "Result Status", ["raw.ResultStatus"], true),
             // new ListColumnSetting("duration", "Duration"),
             new ListColumnSetting("createdAt", "Created at"),
         ],
@@ -78,56 +81,40 @@ export class RepairTasksComponent extends BaseController {
         true);
   }
 
-  generateTimeLineData() {
+  /*
+  use boolean to share this function with both tables
+  */
+  sorted(items: RepairTask[], isCompletedSet: boolean = true) {
+    console.log(items)
+    isCompletedSet ? this.sortedCompletedRepairTasks = items : this.sortedRepairTasks = items;
+    this.generateTimeLineData(this.sortedCompletedRepairTasks.concat(this.sortedRepairTasks));
+  }
+
+  generateTimeLineData(tasks: RepairTask[]) {
     let items = new DataSet<DataItem>();
     let groups = new DataSet<DataGroup>();
-    let groupNames = new Set<string>();
 
-    this.allRepairTasks.forEach(task => {
-      if(task.jobId) { //task.raw.Target.NodeNames
-      //   task.raw.Target.NodeNames.forEach(node => {
+    tasks.forEach(task => {
+
         const t= {
           id: task.raw.TaskId, //node,
           content: task.raw.TaskId,
           start: task.startTime ,
-          end: task.inProgress ? new Date() : TimeUtils.windowsFileTime(task.raw.History.CompletedUtcTimestamp),
+          end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
           type: "range",
           group: "job", //task.jobId,   //node,
           subgroup: "stack",
-          className: task.inProgress ? 'blue' : +task.raw.ResultStatus === 1 ? 'green' : 'red',
-          title: EventStoreUtils.tooltipFormat(task.raw, TimeUtils.windowsFileTime(task.raw.History.ExecutingUtcTimestamp).toLocaleString(), TimeUtils.windowsFileTime(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
+          className: task.inProgress ? 'blue' : task.raw.ResultStatus === "Succeeded" ? 'green' : 'red',
+          title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(), new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
         }    
         items.add(t)
-        if(task.inProgress) {
-          console.log(t)
-        }
-  
-        //  if(!groupNames.has(task.jobId)){
-        //     groups.add({
-        //       id: task.jobId,
-        //       content: task.jobId,
-        //       subgroupStack: {"stack": true}
-        //     })
-        //     groupNames.add(task.jobId)
-        //   }
-
-        //   if(!groupNames.has(node)){
-        //     groups.add({
-        //       id: node,
-        //       content: node,
-        //       subgroupStack: {"stack": true}
-        //     })
-        //     groupNames.add(node)
-        //   }
-        // })
-      }
     })
 
-            groups.add({
-              id: "job",
-              content: "Job History",
-              subgroupStack: {"stack": true}
-            })
+    groups.add({
+      id: "job",
+      content: "Job History",
+      subgroupStack: {"stack": true}
+    })
 
     this.timelineData = {
       groups,
@@ -137,7 +124,6 @@ export class RepairTasksComponent extends BaseController {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.data.restClient.getRepairTasks("", 127, "", messageHandler).pipe(map(data => {
-      this.allRepairTasks = [];
       this.completedRepairTasks = [];
       this.repairTasks = [];
       data.map(json => new RepairTask(json)).forEach(task => {
@@ -146,11 +132,7 @@ export class RepairTasksComponent extends BaseController {
         }else {
           this.completedRepairTasks.push(task);
         }
-
-        this.allRepairTasks.push(task);
       })
-      console.log(this.completedRepairTasks);
-      this.generateTimeLineData();
     }))
   }
 }
