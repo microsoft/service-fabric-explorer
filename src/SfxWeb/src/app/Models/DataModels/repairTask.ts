@@ -22,13 +22,24 @@ export class RepairTask {
     public stepId: string = "";
 
     public couldParseExecutorData: boolean = false;
+    public inProgress: boolean = true;
+
+    public duration: number;
 
     constructor(public raw: IRawRepairTask) {
         if(this.raw.Impact) {
             this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
         }
 
-        this.createdAt = TimeUtils.windowsFileTime(this.raw.History.CreatedUtcTimestamp)
+        this.createdAt = TimeUtils.windowsFileTime(this.raw.History.CreatedUtcTimestamp).toLocaleString();
+        this.inProgress = this.raw.State !== RepairTaskStateFilter.Completed;
+        
+        const start = new Date(this.createdAt).getTime();
+        if(this.inProgress) {
+            this.duration = new Date().getTime(); - start; 
+        }else{
+            this.duration = TimeUtils.windowsFileTime(this.raw.History.CompletedUtcTimestamp).getTime() - start;
+        }
 
         if(this.raw.Executor && this.raw.Executor.startsWith("fabric:/System/InfrastructureService")) {
             /*
@@ -53,6 +64,14 @@ export class RepairTask {
 
     public get state(): string {
         return RepairTaskStateFilter[this.raw.State];
+    }
+
+    /*
+    WIll use created at timestamp instead of 
+    */
+    public get startTime(): Date {
+        return TimeUtils.windowsFileTime(this.raw.History.ExecutingUtcTimestamp === "0" ? this.raw.History.CreatedUtcTimestamp : 
+                                                                                          this.raw.History.ExecutingUtcTimestamp)
     }
 
 }

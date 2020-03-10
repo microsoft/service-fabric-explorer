@@ -21,6 +21,7 @@ export class RepairTasksComponent extends BaseController {
 
   repairTasks: RepairTask[];
   completedRepairTasks: RepairTask[];
+  allRepairTasks: RepairTask[];
   repairTaskListSettings: ListSettings;
   completedRepairTaskListSettings: ListSettings;
 
@@ -38,12 +39,15 @@ export class RepairTasksComponent extends BaseController {
         new ListColumnSetting("raw.Target.NodeNames", "Target"),
         new ListColumnSetting("raw.Impact.NodeImpactList", "Impact"),
         new ListColumnSetting("state", "State"),
-        new ListColumnSetting("raw.History.CreatedUtcTimestamp", "Created at"),
+        new ListColumnSetting("createdAt", "Created at"),
     ],
     [
       new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
         "",
-        ""
+        "",
+        [],
+        false,
+        -1
         )
   ],  
     true,
@@ -58,7 +62,7 @@ export class RepairTasksComponent extends BaseController {
             new ListColumnSetting("impactedNodes", "Impact"),
             new ListColumnSetting("raw.ResultStatus", "Result Status"),
             // new ListColumnSetting("duration", "Duration"),
-            new ListColumnSetting("raw.History.CreatedUtcTimestamp", "Created at"),
+            new ListColumnSetting("createdAt", "Created at"),
         ],
         [
           new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
@@ -79,22 +83,24 @@ export class RepairTasksComponent extends BaseController {
     let groups = new DataSet<DataGroup>();
     let groupNames = new Set<string>();
 
-    this.completedRepairTasks.forEach(task => {
-      console.log(TimeUtils.windowsFileTime(task.raw.History.ExecutingUtcTimestamp).startsWith("1601") ? task: "")
+    this.allRepairTasks.forEach(task => {
       if(task.jobId) { //task.raw.Target.NodeNames
       //   task.raw.Target.NodeNames.forEach(node => {
         const t= {
-          id: task.raw.TaskId +  task.jobId, //node,
+          id: task.raw.TaskId, //node,
           content: task.raw.TaskId,
-          start: TimeUtils.windowsFileTime(task.raw.History.ExecutingUtcTimestamp === "0" ? task.raw.History.CreatedUtcTimestamp : task.raw.History.ExecutingUtcTimestamp) ,
-          end: TimeUtils.windowsFileTime(task.raw.History.CompletedUtcTimestamp),
+          start: task.startTime ,
+          end: task.inProgress ? new Date() : TimeUtils.windowsFileTime(task.raw.History.CompletedUtcTimestamp),
           type: "range",
           group: "job", //task.jobId,   //node,
           subgroup: "stack",
-          title: EventStoreUtils.tooltipFormat(task.raw, TimeUtils.windowsFileTime(task.raw.History.ExecutingUtcTimestamp), TimeUtils.windowsFileTime(task.raw.History.CompletedUtcTimestamp)),
+          className: task.inProgress ? 'blue' : +task.raw.ResultStatus === 1 ? 'green' : 'red',
+          title: EventStoreUtils.tooltipFormat(task.raw, TimeUtils.windowsFileTime(task.raw.History.ExecutingUtcTimestamp).toLocaleString(), TimeUtils.windowsFileTime(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
         }    
         items.add(t)
+        if(task.inProgress) {
           console.log(t)
+        }
   
         //  if(!groupNames.has(task.jobId)){
         //     groups.add({
@@ -131,14 +137,17 @@ export class RepairTasksComponent extends BaseController {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.data.restClient.getRepairTasks("", 127, "", messageHandler).pipe(map(data => {
+      this.allRepairTasks = [];
       this.completedRepairTasks = [];
       this.repairTasks = [];
       data.map(json => new RepairTask(json)).forEach(task => {
-        if(task.raw.State === RepairTaskStateFilter.Completed) {
-          this.completedRepairTasks.push(task);
-        }else {
+        if(task.inProgress) {
           this.repairTasks.push(task);
+        }else {
+          this.completedRepairTasks.push(task);
         }
+
+        this.allRepairTasks.push(task);
       })
       console.log(this.completedRepairTasks);
       this.generateTimeLineData();

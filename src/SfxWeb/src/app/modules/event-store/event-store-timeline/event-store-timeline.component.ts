@@ -14,6 +14,8 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
   @Input() events: ITimelineData;
 
   public isUTC: boolean = false;
+  public displayMoveToStart: boolean = false;
+  public displayMoveToEnd: boolean = false;
 
   private _timeline: Timeline;
   private _start: Date;
@@ -103,13 +105,16 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
 
           if(events.start){
             this._start = events.start;
-          }
+          }          
           if(events.end){
             this._end = events.end;
             this._timeline.setOptions({
                 max: events.end,
             });
           }
+
+          this.displayMoveToStart = !!events.start;
+          this.displayMoveToEnd = !!events.end;
 
           if (events.items.length > 0) {
               let oldest = null;

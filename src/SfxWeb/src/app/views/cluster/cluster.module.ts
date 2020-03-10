@@ -19,7 +19,7 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { StatusWarningsComponent } from './status-warnings/status-warnings.component';
 import { BackupsComponent } from './backups/backups.component';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbTabsetModule } from '@ng-bootstrap/ng-bootstrap';
 import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-restore.module';
 import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
 import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.component';
@@ -38,7 +38,8 @@ import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.com
     EventStoreModule,
     ChartsModule,
     NgbDropdownModule,
-    BackupRestoreModule
+    BackupRestoreModule,
+    NgbTabsetModule
   ]
 })
 export class ClusterModule { }

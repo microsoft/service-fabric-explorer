@@ -1,7 +1,92 @@
-<div>
-    Copy raw repair Job <app-clip-board></app-clip-board>
+<div style="float: right">
+    Copy raw repair Job <app-clip-board [text]="copyText"></app-clip-board>
 </div>
-<div style="display: flex;
+
+<ngb-tabset >
+    <ngb-tab>
+    <ng-template ngbTabTitle>
+        <div style="font-size: 12pt;">
+            Condensed
+        </div>
+    </ng-template>
+      <ng-template ngbTabContent>
+          <div style="display: flex;
+          flex-wrap: wrap;
+          flex-direction: row;">
+          <div *ngIf="item.raw.History">
+            <h5 >
+                History
+            </h5>
+            <table class="table detail-table">
+                <tbody>
+                    <tr *ngFor="let point of history">
+                        <th>{{point.key}}</th>
+                        <td>{{point.value | ticksFormatter}}</td>
+                    </tr>
+                </tbody>
+            </table>
+
+            </div>
+            <div *ngIf="item.couldParseExecutorData"  style="margin-left: 15px;">
+                <div>
+                    <h5>
+                        Job Info
+                    </h5>
+                    <table class="table detail-table">
+                        <tbody>
+                            <tr>
+                                <th>Executor</th>
+                                <td>{{item.raw.Executor}}</td>
+                            </tr>
+                            <tr>
+                                <th>Upgrade Domain</th>
+                                <td>{{item.UD}}</td>
+                            </tr>
+                            <tr>
+                                <th>step Id</th>
+                                <td>{{item.stepId}}</td>
+                            </tr>
+                            <tr>
+                                <th>Job Id</th>
+                                <td>{{item.jobId}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <!-- <div style="margin-left: 15px;">
+                        <div>
+                            Executor: {{item.raw.Executor}}
+                        </div>
+                        <div>
+                            Job Id: {{item.jobId}}
+                        </div>
+                        <div>
+                            Upgrade Domain: {{item.UD}}
+                        </div>
+                        <div>
+                            step Id: {{item.stepId}}
+                        </div>
+                    </div> -->
+                </div>
+            </div>
+          </div>
+
+      </ng-template>
+    </ngb-tab>
+    <ngb-tab >
+      <ng-template ngbTabTitle>
+          <div style="font-size: 12pt;">
+            Full Description
+          </div>
+      </ng-template>
+      <ng-template ngbTabContent>
+          <div style="width: 80%">
+            <app-detail-view-part [data]="item.raw"></app-detail-view-part>
+          </div>
+      </ng-template>
+    </ngb-tab>
+  </ngb-tabset>
+
+<!-- <div style="display: flex;
         flex-wrap: wrap;
         flex-direction: row;">
     <div *ngIf="item.raw.History">
@@ -77,4 +162,4 @@
             </div>
         </div>
     </div>
-</div>
+</div> -->

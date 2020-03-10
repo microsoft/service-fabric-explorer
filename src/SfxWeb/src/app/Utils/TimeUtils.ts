@@ -112,7 +112,7 @@ export class TimeUtils {
     }
 
     public static windowsFileTime(fileTime : string | number){
-        return new Date ( +fileTime / 10000 - 11644473600000 ).toISOString();
+        return new Date ( +fileTime / 10000 - 11644473600000 );
 }
 }
 

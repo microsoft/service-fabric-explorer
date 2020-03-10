@@ -7,6 +7,10 @@
     </app-collapse-container>
 </div>
 
+<div *ngIf="timelineData" style="margin-bottom: 20px; margin-left: 15px;">
+    <app-event-store-timeline [events]="timelineData"></app-event-store-timeline>
+</div>
+
 <div class="detail-pane essen-pane">
     <app-collapse-container>
         <h4 collapse-header>
@@ -14,8 +18,4 @@
         </h4>
         <detail-list [list]="completedRepairTasks" [listSettings]="completedRepairTaskListSettings" collapse-body></detail-list>
     </app-collapse-container>
-</div>
-
-<div *ngIf="timelineData" style="margin-bottom: 50px;">
-    <app-event-store-timeline [events]="timelineData"></app-event-store-timeline>
 </div>
