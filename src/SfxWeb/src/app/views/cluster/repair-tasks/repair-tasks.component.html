@@ -8,7 +8,8 @@
 </div>
 
 <div *ngIf="timelineData" style="margin-bottom: 20px; margin-left: 15px;">
-    <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false"></app-event-store-timeline>
+    <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" 
+                              [displayMoveToStart]="false" [displayMoveToEnd]="false"></app-event-store-timeline>
 </div>
 
 <div class="detail-pane essen-pane">

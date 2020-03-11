@@ -12,11 +12,12 @@ import { Timeline, DataItem, DataSet, DataGroup, moment } from 'vis-timeline/sta
 export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
 
   @Input() events: ITimelineData;
-  @Input() fitOnDataChange: boolean = true;
 
+  @Input() fitOnDataChange: boolean = true;
+  @Input() displayMoveToStart: boolean = true;
+  @Input() displayMoveToEnd: boolean = true;
+  
   public isUTC: boolean = false;
-  public displayMoveToStart: boolean = false;
-  public displayMoveToEnd: boolean = false;
 
   private _timeline: Timeline;
   private _start: Date;
@@ -81,7 +82,6 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
   }
 
   public updateList(events: ITimelineData) {
-      console.log(events.items.getDataSet())
       if (events) {
           this._timeline.setData({
               groups: events.groups,
@@ -116,9 +116,6 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
                 max: events.end,
             });
           }
-
-          this.displayMoveToStart = !!events.start;
-          this.displayMoveToEnd = !!events.end;
 
           if (events.items.length > 0) {
               let oldest = null;
