@@ -12,6 +12,7 @@ import { Timeline, DataItem, DataSet, DataGroup, moment } from 'vis-timeline/sta
 export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
 
   @Input() events: ITimelineData;
+  @Input() fitOnDataChange: boolean = true;
 
   public isUTC: boolean = false;
   public displayMoveToStart: boolean = false;
@@ -101,7 +102,10 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
               verticalScroll: true,
               width: "95%"
           });
-          this._timeline.fit();
+
+          if(this.fitOnDataChange){
+            this._timeline.fit();
+          }
 
           if(events.start){
             this._start = events.start;

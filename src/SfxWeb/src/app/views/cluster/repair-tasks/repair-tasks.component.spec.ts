@@ -80,7 +80,7 @@ describe('RepairTasksComponent', () => {
 
     dataServiceStub = { }
     dataServiceStub.restClient = <any>{
-      getRepairTasks(taskIdFilter: string = "", stateFilter?: number, ExecutorFilter: string = "", messageHandler?: IResponseMessageHandler): Observable<IRawRepairTask[]> {
+      getRepairTasks(messageHandler?: IResponseMessageHandler): Observable<IRawRepairTask[]> {
         return of([
         task,
         {
@@ -164,7 +164,7 @@ describe('RepairTasksComponent', () => {
     expect(component.sortedCompletedRepairTasks.length).toBe(1);
     expect(component.sortedRepairTasks.length).toBe(0);
 
-    let newTask2 = new RepairTask(task);
+    let newTask2 = new RepairTask({...task});
     newTask2.raw.TaskId = "test";
 
     component.sorted([newTask2], false);

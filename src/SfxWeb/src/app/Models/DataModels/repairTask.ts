@@ -29,7 +29,7 @@ export class RepairTask {
             this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
         }
 
-        this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString(); //TimeUtils.windowsFileTime(this.raw.History.CreatedUtcTimestamp).toLocaleString();
+        this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString();
         this.inProgress = this.raw.State !== "Completed";
         
         const start = new Date(this.createdAt).getTime();

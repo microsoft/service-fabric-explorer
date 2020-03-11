@@ -822,7 +822,7 @@ import { Node } from './DataModels/Node';
 
     export interface IRawNodeImpact {
         NodeName : string;
-        ImpactLevel	?: string;
+        ImpactLevel	?: number;
     }
 
     export interface IRawNodeRepairImpactDescription {
@@ -867,6 +867,8 @@ import { Node } from './DataModels/Node';
         RestoringHealthCheckState?: string;
         PerformPreparingHealthCheck?: boolean;
         PerformRestoringHealthCheck?: boolean;
+        scope?: any;
+        ResultDetails?: string;
     }
 
 

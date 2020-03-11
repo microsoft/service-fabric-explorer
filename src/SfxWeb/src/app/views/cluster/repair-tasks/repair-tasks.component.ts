@@ -84,7 +84,6 @@ export class RepairTasksComponent extends BaseController {
   use boolean to share this function with both tables
   */
   sorted(items: RepairTask[], isCompletedSet: boolean = true) {
-    console.log(items)
     isCompletedSet ? this.sortedCompletedRepairTasks = items : this.sortedRepairTasks = items;
     this.generateTimeLineData(this.sortedCompletedRepairTasks.concat(this.sortedRepairTasks));
   }
@@ -94,8 +93,7 @@ export class RepairTasksComponent extends BaseController {
     let groups = new DataSet<DataGroup>();
 
     tasks.forEach(task => {
-
-        const t= {
+        items.add({
           id: task.raw.TaskId,
           content: task.raw.TaskId,
           start: task.startTime ,
@@ -104,9 +102,9 @@ export class RepairTasksComponent extends BaseController {
           group: "job",
           subgroup: "stack",
           className: task.inProgress ? 'blue' : task.raw.ResultStatus === "Succeeded" ? 'green' : 'red',
-          title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(), new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
-        }    
-        items.add(t)
+          title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(),
+                                                         new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
+        })
     })
 
     groups.add({
@@ -122,7 +120,7 @@ export class RepairTasksComponent extends BaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.data.restClient.getRepairTasks("", 127, "", messageHandler).pipe(map(data => {
+    return this.data.restClient.getRepairTasks(messageHandler).pipe(map(data => {
       this.completedRepairTasks = [];
       this.repairTasks = [];
       data.map(json => new RepairTask(json)).forEach(task => {

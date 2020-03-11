@@ -747,8 +747,8 @@ export class RestClientService {
       return this.getEvents(FabricEvent, url, null, null, messageHandler);
   }
 
-  public getRepairTasks(taskIdFilter: string = "", stateFilter?: number, ExecutorFilter: string = "", messageHandler?: IResponseMessageHandler): Observable<IRawRepairTask[]> {
-        let url = `$/GetRepairTaskList`; //?StateFilter=${stateFilter}        &TaskIdFilter=${taskIdFilter}&ExecutorFilter=${ExecutorFilter}
+  public getRepairTasks(messageHandler?: IResponseMessageHandler): Observable<IRawRepairTask[]> {
+        let url = `$/GetRepairTaskList`; //additional filters available but not in use. keeping here incase they are needed ?StateFilter=${stateFilter}&TaskIdFilter=${taskIdFilter}&ExecutorFilter=${ExecutorFilter}
 
         return this.get(this.getApiUrl(url, RestClientService.apiVersion60), "Get repair tasks", messageHandler);
     }
