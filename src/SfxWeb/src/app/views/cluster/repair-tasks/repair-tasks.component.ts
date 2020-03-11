@@ -64,7 +64,6 @@ export class RepairTasksComponent extends BaseController {
             new ListColumnSetting("raw.Target.NodeNames", "Target"),
             new ListColumnSetting("impactedNodes", "Impact"),
             new ListColumnSetting("raw.ResultStatus", "Result Status", ["raw.ResultStatus"], true),
-            // new ListColumnSetting("duration", "Duration"),
             new ListColumnSetting("createdAt", "Created at"),
         ],
         [
@@ -97,12 +96,12 @@ export class RepairTasksComponent extends BaseController {
     tasks.forEach(task => {
 
         const t= {
-          id: task.raw.TaskId, //node,
+          id: task.raw.TaskId,
           content: task.raw.TaskId,
           start: task.startTime ,
           end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
           type: "range",
-          group: "job", //task.jobId,   //node,
+          group: "job",
           subgroup: "stack",
           className: task.inProgress ? 'blue' : task.raw.ResultStatus === "Succeeded" ? 'green' : 'red',
           title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(), new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
