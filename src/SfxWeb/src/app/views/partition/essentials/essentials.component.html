@@ -65,14 +65,15 @@
     </div>
 
     <div class="detail-pane" *ngIf="partition.isStatefulService" >
-        <app-collapse-container>
+        <app-collapse-container [(collapsed)]="hideReplicator">
             <div collapse-header>
                 <h4>Replicator Status</h4>
             </div>
             <div collapse-body>
-                <app-replica-status-container [replicas]="partition.replicas.collection"></app-replica-status-container>
+                <div *ngIf="!hideReplicator">
+                    <app-replica-status-container [replicas]="partition.replicas.collection"></app-replica-status-container>
+                </div>
             </div>
         </app-collapse-container>
     </div>
-
 </div>

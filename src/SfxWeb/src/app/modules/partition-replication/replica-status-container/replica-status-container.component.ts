@@ -28,7 +28,6 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
         this.primaryReplica = replica;
       }
     })
-
     //wrap check given primary starts as null
     if(this.primaryReplica) {
       this.sub.add(this.primaryReplica.detail.refresh().subscribe(()=> {

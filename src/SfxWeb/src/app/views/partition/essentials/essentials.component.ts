@@ -5,9 +5,6 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin, of } from 'rxjs';
 import { PartitionBaseController } from '../PartitionBase';
-import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
-import { mergeMap, map } from 'rxjs/operators';
-import { Utils } from 'src/app/Utils/Utils';
 
 @Component({
   selector: 'app-essentials',
@@ -15,6 +12,9 @@ import { Utils } from 'src/app/Utils/Utils';
   styleUrls: ['./essentials.component.scss']
 })
 export class EssentialsComponent extends PartitionBaseController {
+
+  public hideReplicator: boolean = true;
+
   unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
 
