@@ -58,3 +58,19 @@
         }
     }
 }
+
+
+.expand-panel-button {
+    padding: 0px;
+    background-color: black;
+    border: 0px;
+    border-radius: 8px 0px 0px 8px;
+    color: white;
+}
+
+.expand-panel-wrapper {
+    position: absolute;
+    right: 10px;
+    z-index: 2;
+    bottom: 50%;
+}

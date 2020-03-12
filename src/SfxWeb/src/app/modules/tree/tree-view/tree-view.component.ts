@@ -16,7 +16,7 @@ export class TreeViewComponent implements DoCheck {
 
   ngDoCheck(): void {
     if(this.tree) {
-      this.canExpand = this.tree.nativeElement.scrollWidth > this.tree.nativeElement.clientWidth
+      this.canExpand = this.tree.nativeElement.scrollWidth > this.tree.nativeElement.clientWidth;
     }
   }
 

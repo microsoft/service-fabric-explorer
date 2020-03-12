@@ -22,11 +22,13 @@
         </div>
     </div>
     <div style="flex: 1; overflow: auto;">
-        <div class="tree-body" #tree>
-            <span style="float:right;" *ngIf="canExpand">
-                <button class="simple-button" (click)="setWidth()" title="Expand view to match width of tree"><span class="mif-keyboard-tab"></span></button> 
-            </span>
-            <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view">
+        <span class="expand-panel-wrapper" *ngIf="canExpand">
+            <button class="expand-panel-button" (click)="setWidth()" title="Expand view to match width of tree">
+                <span class=" mif-chevron-right mif-3x"></span>
+            </button> 
+        </span>
+        <div class="tree-body" #tree style="height: 100%" >
+            <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view" style="position: relative; height: 100%">
                 <div class="tree" style="list-style: none">
                     <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
                 </div>
