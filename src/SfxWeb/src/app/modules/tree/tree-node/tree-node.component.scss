@@ -11,9 +11,6 @@
     }
 
     > .self {
-        // padding-right: 24px;
-        overflow: hidden;
-        text-overflow: ellipsis;
         white-space: nowrap;
         cursor: pointer;
         width: 100%;
@@ -53,9 +50,6 @@
         }
 
         .tree-label {
-            overflow: hidden;
-            text-overflow: ellipsis;
-
             .search-match {
                 color: $tree-node-search-highlight-color;
                 background-color: $tree-node-search-highlight-background-color;
@@ -89,7 +83,6 @@
 .right-action {
     position: absolute;
     right: 0;
-    // float:  right;
     padding: 1px;
 }
 
