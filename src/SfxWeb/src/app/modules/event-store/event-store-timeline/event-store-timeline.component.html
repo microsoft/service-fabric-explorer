@@ -11,12 +11,12 @@
         </button>
 
         <button type="button" class="simple-button margined" (click)="moveStart()"
-            title="Move to the start of the timeline.">
+            title="Move to the start of the timeline." *ngIf="displayMoveToStart">
             Move to start
         </button>
         
         <button type="button" class="simple-button margined" (click)="moveEnd()"
-            title="Move to the end of the timeline.">
+            title="Move to the end of the timeline." *ngIf="displayMoveToEnd">
             Move to end
         </button>
 

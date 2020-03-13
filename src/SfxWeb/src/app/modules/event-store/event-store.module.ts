@@ -20,6 +20,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
     NgbButtonsModule,
     SharedModule
   ],
-  exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent],
+  exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, EventStoreTimelineComponent],
 })
 export class EventStoreModule { }

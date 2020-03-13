@@ -432,6 +432,7 @@ table.detail-list {
         white-space: nowrap;
         color: $detail-table-header-color;
         border: 0px solid;
+        border-bottom: 1px solid #4c4c4c;
         a {
             color: $detail-table-header-color;
         }
@@ -957,4 +958,28 @@ app-navbar {
   .search-match {
     color: $tree-node-search-highlight-color;
     background-color: $tree-node-search-highlight-background-color;
+}
+
+
+.nav-tabs, .nav-link {
+    border-bottom-width: 0px;
+    color: #FFFFFF !important;
+    border-bottom-color: inherit;
+}
+
+.nav-tabs .nav-link.active {
+    border-bottom-color: #0075c9;
+    border-bottom-style: solid;
+    color: #FFFFFF;
+    padding-bottom: 2px;
+    background-color: inherit;
+    border-width: 0px;
+    border-bottom-width: 4px !important;
+}
+
+.nav-link:hover {
+    border-left-color: transparent !important;
+    border-right-color: transparent !important;
+    border-top-color: transparent !important;
+
 }

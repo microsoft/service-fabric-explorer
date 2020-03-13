@@ -13,6 +13,10 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
 
   @Input() events: ITimelineData;
 
+  @Input() fitOnDataChange: boolean = true;
+  @Input() displayMoveToStart: boolean = true;
+  @Input() displayMoveToEnd: boolean = true;
+  
   public isUTC: boolean = false;
 
   private _timeline: Timeline;
@@ -85,8 +89,6 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
             });
           this._timeline.setOptions({
               selectable: false,
-              min: events.start,
-              max: events.end,
               margin: {
                   item : {
                       horizontal : -1 //this makes it so items dont stack up when zoomed out too far.,
@@ -100,10 +102,20 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
               verticalScroll: true,
               width: "95%"
           });
-          this._timeline.fit();
 
-          this._start = events.start;
-          this._end = events.end;
+          if(this.fitOnDataChange){
+            this._timeline.fit();
+          }
+
+          if(events.start){
+            this._start = events.start;
+          }          
+          if(events.end){
+            this._end = events.end;
+            this._timeline.setOptions({
+                max: events.end,
+            });
+          }
 
           if (events.items.length > 0) {
               let oldest = null;

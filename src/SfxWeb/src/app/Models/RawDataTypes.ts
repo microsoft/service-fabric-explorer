@@ -820,6 +820,58 @@ import { Node } from './DataModels/Node';
         Version: string;
     }
 
+    export interface IRawNodeImpact {
+        NodeName : string;
+        ImpactLevel	?: number;
+    }
+
+    export interface IRawNodeRepairImpactDescription {
+        Kind : string;
+        NodeImpactList : IRawNodeImpact[]
+    }
+
+    export interface IRawNodeRepairTargetDescription {
+        Kind : string;
+        NodeNames : string[]
+    }
+    export interface IRawRepairTaskHistory {
+        CreatedUtcTimestamp ?: string;
+        ClaimedUtcTimestamp ?: string;
+        PreparingUtcTimestamp ?: string; 
+        ApprovedUtcTimestamp ?: string;
+        ExecutingUtcTimestamp ?: string;
+        RestoringUtcTimestamp ?: string;
+        CompletedUtcTimestamp ?: string;
+        PreparingHealthCheckStartUtcTimestamp ?: string;
+        PreparingHealthCheckEndUtcTimestamp ?: string;
+        RestoringHealthCheckStartUtcTimestamp ?: string;
+        RestoringHealthCheckEndUtcTimestamp ?: string;
+    }
+
+    export interface IRawRepairTask {
+        TaskId: string;
+        Version?: string;
+        Description?: string;
+        State: string;
+        Flags?: number;
+        Action: string;
+        Target?: IRawNodeRepairTargetDescription; 
+        Executor?: string;
+        ExecutorData?: string;
+        Impact?: IRawNodeRepairImpactDescription; 
+        ResultStatus?: string;
+        ResultCode?: number;
+        ResultDetail?: string;
+        History?: IRawRepairTaskHistory;
+        PreparingHealthCheckState?: string;
+        RestoringHealthCheckState?: string;
+        PerformPreparingHealthCheck?: boolean;
+        PerformRestoringHealthCheck?: boolean;
+        scope?: any;
+        ResultDetails?: string;
+    }
+
+
     export interface INodesStatusDetails {
         nodeType: string;
         statusTypeCounts: Record<string, number>;

@@ -211,7 +211,7 @@ export class NodeLoadInformation extends DataModelBase<IRawNodeLoadInformation> 
     public metrics: Record<string, number>;
     public decorators: IDecorators = {
         hideList: [
-            "NodeName",
+            "NodeName"
         ]
     };
 
