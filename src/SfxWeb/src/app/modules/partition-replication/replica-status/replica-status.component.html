@@ -36,7 +36,7 @@
                         <div class="row-wrapper">
                             <div class="field">
                                 <span class="mif-info mif-lg"
-                                    title="Average time it takes to get a CSN(Copy sequence number or some amount of state) from a primary or secondary replica. Higher is slower."></span>
+                                    title="Represents the average duration it takes for the remote replicator to receive an operation. Higher is slower."></span>
                                 Average Receive Duration :
                             </div>
                             <div>
@@ -46,7 +46,7 @@
                         <div class="row-wrapper">
                             <div class="field">
                                 <span class="mif-info mif-lg"
-                                    title="Average time it takes to apply a CSN(Copy sequence number or some amount of state) to the replica. Higher is slower."></span>
+                                    title="Represents the average duration it takes for the replica to apply an operation. This usually entails writing the operation to disk. Higher is slower."></span>
                                 Average Apply Duration :
                             </div>
                             <div>
@@ -56,7 +56,7 @@
                         <div class="row-wrapper">
                             <div class="field">
                                 <span class="mif-info mif-lg"
-                                    title="The amount of state left to be recieved and not applied yet. Lower is better."></span>
+                                    title="Represents the number of operations not yet received by a remote replicator. Lower is better."></span>
                                 Not Received Count :
                             </div>
                             <div>
@@ -66,7 +66,7 @@
                         <div class="row-wrapper">
                             <div class="field">
                                 <span class="mif-info mif-lg"
-                                    title="The amount of CSN(Copy sequence number or some amount of state) received and not added to the replica yet."></span>
+                                    title="Represents the number of operations received and not yet applied by the replica yet."></span>
                                 Received And Not Applied Count :
                             </div>
                             <div>
@@ -76,7 +76,7 @@
                         <div class="row-wrapper">
                             <div class="field">
                                 <span class="mif-info mif-lg"
-                                    title="The last CSN(Copy sequence number or some amount of state) received from a primary or secondary replica."></span>
+                                    title="The highest copy operation sequence number that the secondary has received from the primary. A value of -1 implies that the secondary has received all copy operations."></span>
                                 Last Received CSN :
                             </div>
                             <div>
@@ -86,7 +86,7 @@
                         <div class="row-wrapper">
                             <div class="field">
                                 <span class="mif-info mif-lg"
-                                    title="The last CSN(Copy sequence number or some amount of state) applied to this replica. Higher is better."></span>
+                                    title="The highest copy operation sequence number that the secondary has applied to its state. A value of -1 implies that the secondary has applied all copy operations and the copy process is complete. Higher is better."></span>
                                 Last Applied CSN :
                             </div>
                             <div>
@@ -107,6 +107,8 @@
                     <div class="row-container">
                         <div class="row-wrapper">
                             <div class="field">
+                                <span class="mif-info mif-lg"
+                                    title="Represents the average duration it takes for the remote replicator to receive an operation. Higher is slower."></span>
                                 Average Receive Duration :
                             </div>
                             <div>
@@ -115,6 +117,8 @@
                         </div>
                         <div class="row-wrapper">
                             <div class="field">
+                                <span class="mif-info mif-lg"
+                                    title="Represents the average duration it takes for the replica to apply an operation. This usually entails writing the operation to disk. Higher is slower."></span>
                                 Average Apply Duration :
                             </div>
                             <div>
@@ -123,6 +127,8 @@
                         </div>
                         <div class="row-wrapper">
                             <div class="field">
+                                <span class="mif-info mif-lg"
+                                    title="Represents the number of operations not yet received by a remote replicator. Lower is better."></span>
                                 Not Received Count :
                             </div>
                             <div>
@@ -131,6 +137,8 @@
                         </div>
                         <div class="row-wrapper">
                             <div class="field">
+                                <span class="mif-info mif-lg"
+                                    title="Represents the number of operations received and not yet applied by the replica yet."></span>
                                 Received And Not Applied Count :
                             </div>
                             <div>
