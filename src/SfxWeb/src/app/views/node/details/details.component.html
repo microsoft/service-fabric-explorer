@@ -17,10 +17,5 @@
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="node && node.loadInformation.isInitialized">
-    <app-collapse-container>
-        <h4 collapse-header>
-            Load Metric Information
-        </h4>
-        <app-detail-view-part [data]="node.loadInformation.raw" [parent]="node.loadInformation" collapse-body></app-detail-view-part>
-    </app-collapse-container>
+    <app-detail-view-part [data]="node.loadInformation.raw" [parent]="node.loadInformation" collapse-body></app-detail-view-part>
 </div>

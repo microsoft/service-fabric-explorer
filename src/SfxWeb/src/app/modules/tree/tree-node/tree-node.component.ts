@@ -8,16 +8,12 @@ import { environment } from 'src/environments/environment';
   templateUrl: './tree-node.component.html',
   styleUrls: ['./tree-node.component.scss']
 })
-export class TreeNodeComponent implements OnInit {
+export class TreeNodeComponent {
   public assetBase = environment.assetBase;
 
   @Input() node: TreeNodeGroupViewModel;
 
   constructor() { }
-
-  ngOnInit() {
-
-  }
 
   trackById(index: number, node: TreeNodeViewModel) {
     return node.nodeId

@@ -46,11 +46,9 @@
 
   <div>
       <div class="left-panel left-bar"  [ngStyle]="{'width': treeWidth }">
-        <div class="tree-container">
-          <nav>
-            <app-tree-view></app-tree-view>
+          <nav class="tree-container">
+            <app-tree-view (onTreeSize)="resize($event)"></app-tree-view>
           </nav>
-        </div>
         <div class="slider-bar" appDrag (onDrag)="resize($event)">
       </div>
     </div>

@@ -1,7 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
-import { Observable } from 'rxjs';
-import { IRawBackupPolicy, IRawRetentionPolicy } from 'src/app/Models/RawDataTypes';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
 import { IsolatedAction } from 'src/app/Models/Action';
@@ -96,9 +94,6 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
     })
 
     this.updateSchedule(this.form.get('Schedule').get('ScheduleKind').value);
-
-    //TODO remove when not needed for testing
-    // this.form.valueChanges.subscribe(data => console.log(data))
   }
 
   updateSchedule(state: string) {

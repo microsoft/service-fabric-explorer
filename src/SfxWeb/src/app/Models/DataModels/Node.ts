@@ -240,6 +240,13 @@ export class NodeLoadInformation extends DataModelBase<IRawNodeLoadInformation> 
 }
 
 export class NodeLoadMetricInformation extends DataModelBase<IRawNodeLoadMetricInformation> {
+    public decorators: IDecorators = {
+        hideList: [
+            "NodeLoad",
+            "NodeRemainingCapacity",
+            "NodeRemainingBufferedCapacity"
+        ]
+    };
     public get hasCapacity(): boolean {
         return this.raw.NodeCapacity && +this.raw.NodeCapacity > 0;
     }

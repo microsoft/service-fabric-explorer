@@ -19,11 +19,4 @@ export class DetailsComponent extends DeployedServicePackageBaseController {
   setup() {
     this.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
   }
-
-  // refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-  //   return forkJoin([
-  //     this.node.loadInformation.refresh(messageHandler),
-  //     this.node.health.refresh(messageHandler)
-  //   ]);
-  // }
 }

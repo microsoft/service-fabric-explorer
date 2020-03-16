@@ -1,4 +1,4 @@
-import { Component, Input} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy} from '@angular/core';
 import { ListSettings, ListColumnSetting, FilterValue } from 'src/app/Models/ListSettings';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import  fill  from 'lodash/fill';
@@ -12,12 +12,14 @@ import  includes from 'lodash/includes';
 import  every from 'lodash/every';
 
 import { Utils } from 'src/app/Utils/Utils';
+import { Subject, Subscription } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 @Component({
   selector: 'detail-list',
   templateUrl: './detail-list.component.html',
   styleUrls: ['./detail-list.component.scss']
 })
-export class DetailListComponent {
+export class DetailListComponent implements OnInit, OnDestroy {
 
   @Input() listSettings: ListSettings;
   @Input() searchText = "Search list";
@@ -27,6 +29,10 @@ export class DetailListComponent {
   page = 1;
   pageSize = 10;
   totalListSize = 0;
+
+  debounceHandler: Subject<any[]> = new Subject<any[]>();
+  debouncerHandlerSubscription: Subscription;
+
   constructor() { }
 
   @Input() 
@@ -42,6 +48,22 @@ export class DetailListComponent {
 
     this._list = this._list || [];
     this.updateList();
+  }
+
+  @Output() onSort = new EventEmitter<any[]>();
+
+  ngOnInit() {
+    this.debouncerHandlerSubscription = this.debounceHandler
+   .pipe(debounceTime(1000), distinctUntilChanged())
+   .subscribe(val => {
+      this.onSort.emit(val);
+   });
+  }
+
+  ngOnDestroy() {
+    if(this.debouncerHandlerSubscription){
+      this.debouncerHandlerSubscription.unsubscribe();
+    }
   }
 
   public handleClickRow(item: any, event: any): void {
@@ -152,6 +174,7 @@ export class DetailListComponent {
 
   updateList() {
     this.sortedFilteredList = this.getSortedFilteredList();
+    this.debounceHandler.next(this.sortedFilteredList);
   }
 
 }

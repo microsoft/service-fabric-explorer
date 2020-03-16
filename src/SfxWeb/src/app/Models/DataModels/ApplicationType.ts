@@ -70,12 +70,6 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
             `Supply the full application name to create an application instance of ${this.name}@${this.raw.Version} :`,
             `${this.name}@${this.raw.Version}`
         ));
-
-        // TODO
-        // this.actions.add(new ActionCreateAppInstance(
-        //     this.data.$uibModal,
-        //     this.data.$q,
-        //     this));
     }
 }
 
@@ -146,38 +140,3 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
         }));
     }
 }
-
-// export class ActionCreateAppInstance extends ActionWithDialog {
-//     public get typeName(): string {
-//         return this.appType.raw.Name;
-//     }
-
-//     public get typeVersion(): string {
-//         return this.appType.raw.Version;
-//     }
-
-//     public newInstanceUri: string;
-
-//     constructor($uibModal: ng.ui.bootstrap.IModalService, $q: ng.IQService, private appType: ApplicationType) {
-//         super(
-//             $uibModal,
-//             $q,
-//             "createAppInstance",
-//             "Create app instance",
-//             "Creating",
-//             () => appType.createInstance(this.newInstanceUri),
-//             () => true,
-//             <angular.ui.bootstrap.IModalSettings>{
-//                 templateUrl: "partials/create-application-dialog.html",
-//                 controller: ActionController,
-//                 resolve: {
-//                     action: () => this
-//                 }
-//             },
-//             () => {
-//                 this.newInstanceUri = Constants.FabricPrefix + appType.name;
-//                 return $q.when(true);
-//             });
-//     }
-// }
-

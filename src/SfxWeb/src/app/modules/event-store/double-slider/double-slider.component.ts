@@ -12,7 +12,7 @@ export interface IOnDateChange {
   styleUrls: ['./double-slider.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class DoubleSliderComponent implements OnInit, OnChanges, AfterViewInit {
+export class DoubleSliderComponent implements OnChanges, AfterViewInit {
 
   @Input() startDate: any;
   @Input() endDate: any;
@@ -25,10 +25,6 @@ export class DoubleSliderComponent implements OnInit, OnChanges, AfterViewInit {
 
 
   constructor() { }
-
-  ngOnInit() {
-
-  }
 
   ngAfterViewInit() {
     

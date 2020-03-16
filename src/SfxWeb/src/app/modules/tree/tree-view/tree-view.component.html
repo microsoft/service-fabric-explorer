@@ -1,30 +1,37 @@
-<div class="tree-header">
-    <div style="padding: 10px;background-color: #fcf8e3; border-left: #FFC646 solid 8px; margin: 8px; min-width: 330px;">
-        <div style="vertical-align: middle; padding: 4px; color: black; padding-bottom: 8px;" (click)="leaveBeta();">
-            To leave beta <span style="cursor: pointer;">(Click here)</span>
+<div class="tree-wrapper">
+    <div class="tree-header">
+        <div style="padding: 10px;background-color: #fcf8e3; border-left: #FFC646 solid 8px; margin: 8px; min-width: 330px;">
+            <div style="vertical-align: middle; padding: 4px; color: black; padding-bottom: 8px;" (click)="leaveBeta();">
+                To leave beta <span style="cursor: pointer;">(Click here)</span>
+            </div>
+            <div style="border-top: 2px solid #b7b1b1; padding: 4px;">
+                <a href="https://aka.ms/sfxrepo" target="_blank" style="color: black;">You can report any issues you run into (Click here)</a>
+            </div>
         </div>
-        <div style="border-top: 2px solid #b7b1b1; padding: 4px;">
-            <a href="https://aka.ms/sfxrepo" target="_blank" style="color: black;">You can report any issues you run into (Click here)</a>
+        <app-check-box [(state)]="treeService.tree.showOkItems">
+            <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+        </app-check-box>
+        <app-check-box [(state)]="treeService.tree.showWarningItems">
+            <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+        </app-check-box>
+        <app-check-box [(state)]="treeService.tree.showErrorItems">
+            <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+        </app-check-box>
+        <div style="padding: 10px 10px 0px 0px; margin-left: -15px;">
+            <app-input (onChange)="treeService.tree.searchTerm = $event"></app-input>
         </div>
     </div>
-    <app-check-box [(state)]="treeService.tree.showOkItems">
-        <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
-    </app-check-box>
-    <app-check-box [(state)]="treeService.tree.showWarningItems">
-        <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
-    </app-check-box>
-    <app-check-box [(state)]="treeService.tree.showErrorItems">
-        <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
-    </app-check-box>
-    <div style="padding: 10px 10px 0px 0px; margin-left: -15px;">
-        <app-input (onChange)="treeService.tree.searchTerm = $event"></app-input>
-    </div>
-</div>
-<div style="height: 100%; overflow: auto;">
-    <div *ngIf="treeService.tree" class="tree-body">
-        <div *ngIf="!treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view">
-            <div class="tree" style="list-style: none">
-                <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
+    <div style="flex: 1; overflow: auto;">
+        <span class="expand-panel-wrapper" *ngIf="canExpand">
+            <button class="expand-panel-button" (click)="setWidth()" title="Expand view to match width of tree">
+                <span class=" mif-chevron-right mif-3x"></span>
+            </button> 
+        </span>
+        <div class="tree-body" #tree style="height: 100%" >
+            <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view" style="position: relative; height: 100%">
+                <div class="tree" style="list-style: none">
+                    <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
+                </div>
             </div>
         </div>
     </div>

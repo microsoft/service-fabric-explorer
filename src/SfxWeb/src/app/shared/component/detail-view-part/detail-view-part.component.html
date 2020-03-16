@@ -1,9 +1,6 @@
 <div class="table-responsive">
     <div *ngIf="resolvedData">
-        <!-- {{resolvedData | json}} -->
         <table class="table detail-table detail-list" [ngClass]="{ 'table-layout-fixed': !noFixedLayout }" role="presentation">
-<!-- 
-            <tbody *ngFor="(name, value) in resolvedData | keyvalue" -->
             <tbody *ngFor="let item of resolvedData | keyvalue : asIsOrder"
                 [ngSwitch]="getResolvedPropertyType(item.value)" style="border-top: 0px solid;">
                 <!-- Render simple property (one row) -->

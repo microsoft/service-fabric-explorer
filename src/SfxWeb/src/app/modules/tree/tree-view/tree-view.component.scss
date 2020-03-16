@@ -1,5 +1,10 @@
 @import "src/styles.scss";
 
+.tree-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
 
 .tree-header {
     white-space: nowrap;
@@ -21,8 +26,6 @@
 }
 
 .tree-body {
-    overflow-x: auto;
-    overflow-y: auto;
     bottom: $page-padding-bottom;
     color: $tree-color;
 
@@ -52,4 +55,20 @@
             background-color: $tree-node-selected-background-color;
         }
     }
+}
+
+
+.expand-panel-button {
+    padding: 0px;
+    background-color: black;
+    border: 0px;
+    border-radius: 8px 0px 0px 8px;
+    color: white;
+}
+
+.expand-panel-wrapper {
+    position: absolute;
+    right: 10px;
+    z-index: 2;
+    bottom: 50%;
 }

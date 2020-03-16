@@ -272,7 +272,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                         group: NodeTimelineGenerator.NodesDownLabel,
                         type: "range",
                         title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
-                        className: "red"
+                        className: "red",
+                        subgroup: "stack"
                     });
                 }
 
@@ -283,7 +284,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         });
 
         let groups = new DataSet<DataGroup>([
-            {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel},
+            {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {"stack": true}},
         ]);
 
         return {

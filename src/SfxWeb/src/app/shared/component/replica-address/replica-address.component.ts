@@ -14,7 +14,6 @@ export class ReplicaAddressComponent implements OnChanges {
   constructor() { }
 
   ngOnChanges() {
-    console.log(this.address)
     this.isString = (typeof this.address === "string");
   }
 

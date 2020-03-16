@@ -45,36 +45,27 @@ export class RefreshService {
   }
 
   public refreshAll(): void {
-    // console.log(this.isRefreshing);
       if (this.isRefreshing) {
           return;
       }
-      // console.log(new Date().toLocaleTimeString());
 
       let refreshStartedTime = Date.now();
       this.isRefreshing = true;
       
       const subs =  this.refreshSubjects.map(observeFunction => {
-         return observeFunction().pipe(take(1), catchError(err => {console.log(err); return of(err)}));  //TODO Figure out what we want to do here
+         return observeFunction().pipe(take(1), catchError(err => {console.log(err); return of(err)})); 
       })
 
       try {
         forkJoin(subs).pipe(
           catchError(err => of(err)),
-          // finalize(() => {
-          //   console.log("done")
-          //   // Rotate the refreshing icon for at least 1 second
-          //   let remainingTime = Math.max(1000 - (Date.now() - refreshStartedTime), 0);
-          //   timer(remainingTime).subscribe( () => this.isRefreshing = false);
-          // })
+
         ).subscribe(() => {
-          console.log("done")
           // Rotate the refreshing icon for at least 1 second
           let remainingTime = Math.max(1000 - (Date.now() - refreshStartedTime), 0);
           timer(remainingTime).subscribe( () => this.isRefreshing = false);
         })
       } catch {
-        console.log("weird")
         this.isRefreshing = false;
       }
 
@@ -105,9 +96,3 @@ export class RefreshService {
       this.previousRefreshSetting = newInterval;
   }
 }
-
-/*
-get 
-
-
-*/

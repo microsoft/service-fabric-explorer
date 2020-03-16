@@ -151,6 +151,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     private _imageStoreConnectionString: string;
     private _isNetworkInventoryManagerEnabled: boolean = false;
     private _isBackUpRestoreEnabled: boolean = false;
+    public isRepairManagerEnabled: boolean = false;
     public constructor(data: DataService) {
         super(data);
     }
@@ -185,10 +186,12 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
             const item = management.item(i);
             if(item.getAttribute("Name") === "Management"){
                 this.getImageStoreConnectionString(item);
-            }else if (item.getAttribute("Name") === "BackUpRestoreService"){
+            }else if (item.getAttribute("Name") === "BackupRestoreService"){
                 this._isBackUpRestoreEnabled = true;
             }else if (item.getAttribute("Name") === "UpgradeService"){
                 this.isSfrpCluster = true;
+            }else if (item.getAttribute("Name") === "RepairManager"){
+                this.isRepairManagerEnabled = true;
             }
         }
     }

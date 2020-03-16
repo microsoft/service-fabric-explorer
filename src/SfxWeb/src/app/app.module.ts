@@ -26,9 +26,7 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
     SharedModule,
     NoopAnimationsModule,
     MatDialogModule,
-    // BackupRestoreModule,
     NgbDropdownModule,
-    //test
   ],
   
   providers: [

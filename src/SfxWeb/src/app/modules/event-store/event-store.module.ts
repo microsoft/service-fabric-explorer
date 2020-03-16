@@ -2,7 +2,6 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { EventStoreComponent } from './event-store/event-store.component';
 import { EventStoreTimelineComponent } from './event-store-timeline/event-store-timeline.component';
-import { EventStoreTableComponent } from './event-store-table/event-store-table.component';
 import { DoubleSliderComponent } from './double-slider/double-slider.component';
 import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
 import { FullDescriptionComponent } from './full-description/full-description.component';
@@ -13,7 +12,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 
 
 @NgModule({
-  declarations: [EventStoreComponent, EventStoreTimelineComponent, EventStoreTableComponent, DoubleSliderComponent, FullDescriptionComponent, RowDisplayComponent],
+  declarations: [EventStoreComponent, EventStoreTimelineComponent, DoubleSliderComponent, FullDescriptionComponent, RowDisplayComponent],
   imports: [
     CommonModule,
     DetailListTemplatesModule,
@@ -21,7 +20,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
     NgbButtonsModule,
     SharedModule
   ],
-  exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent],
-  entryComponents: [FullDescriptionComponent, RowDisplayComponent]
+  exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, EventStoreTimelineComponent],
 })
 export class EventStoreModule { }

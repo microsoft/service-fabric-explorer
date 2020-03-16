@@ -18,7 +18,6 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
     FormsModule,
     NgbDropdownModule
   ],
-  exports: [ImagestoreViewerComponent, FolderActionsComponent],
-  entryComponents: [DisplaySizeColumnComponent, DisplayNameColumnComponent, FolderActionsComponent]
+  exports: [ImagestoreViewerComponent, FolderActionsComponent]
 })
 export class ImagestoreModule { }

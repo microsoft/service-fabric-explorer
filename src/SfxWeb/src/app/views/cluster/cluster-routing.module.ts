@@ -9,6 +9,7 @@ import { ImagestoreComponent } from './imagestore/imagestore.component';
 import { ManifestComponent } from './manifest/manifest.component';
 import { EventsComponent } from './events/events.component';
 import { BackupsComponent } from './backups/backups.component';
+import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
 
 
 const routes: Routes = [{
@@ -20,6 +21,7 @@ const routes: Routes = [{
     { path: 'manifest', component: ManifestComponent },
     { path: 'events', component: EventsComponent },
     { path: 'backups', component: BackupsComponent },
+    { path: 'repairtasks', component: RepairTasksComponent },
     { path: '', component: EssentialsComponent },
   ]
   }

@@ -20,11 +20,4 @@ export class EssentialsComponent extends DeployedServicePackageBaseController {
   setup() {
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
   }
-
-  // refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-  //   return forkJoin([
-  //     this.node.loadInformation.refresh(messageHandler),
-  //     this.node.health.refresh(messageHandler)
-  //   ]);
-  // }
 }

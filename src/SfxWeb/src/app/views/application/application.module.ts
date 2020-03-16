@@ -29,10 +29,6 @@ import { BackupComponent } from './backup/backup.component';
     NgbTypeaheadModule,
     NgbDropdownModule,
     NgbButtonsModule
-  ],
-  entryComponents: [
-    ActionRowComponent,
-    CreateServiceComponent
   ]
 })
 export class ApplicationModule { }

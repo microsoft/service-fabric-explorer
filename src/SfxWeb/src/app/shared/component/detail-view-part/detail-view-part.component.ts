@@ -2,7 +2,6 @@ import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Constants } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
-// import { startCase, camelCase, isNumber, isBoolean, isUndefined, isNull, isEmpty, isObject, first} from 'lodash';
 import  size from 'lodash/size';
 import  forOwn  from 'lodash/forOwn';
 import  startCase  from 'lodash/startCase';

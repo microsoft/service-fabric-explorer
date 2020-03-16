@@ -1,7 +1,6 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { HyperLinkComponent } from './hyper-link/hyper-link.component';
-import { PlainTextComponent } from './plain-text/plain-text.component';
 import { ResolverDirective } from 'src/app/modules/detail-list-templates/resolver.directive';
 import { DetailTableResolverComponent } from './detail-table-resolver/detail-table-resolver.component';
 import { RouterModule } from '@angular/router';
@@ -15,7 +14,7 @@ import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
-  declarations: [HyperLinkComponent, PlainTextComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective, DetailListComponent, PagerComponent],
+  declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective, DetailListComponent, PagerComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -24,7 +23,6 @@ import { FormsModule } from '@angular/forms';
     NgbDropdownModule,
     FormsModule
   ],
-  exports: [PlainTextComponent, DetailTableResolverComponent, HyperLinkComponent, CopyTextComponent, DetailListComponent],
-  entryComponents: [PlainTextComponent, HyperLinkComponent, CopyTextComponent]
+  exports: [DetailTableResolverComponent, HyperLinkComponent, CopyTextComponent, DetailListComponent]
 })
 export class DetailListTemplatesModule { }

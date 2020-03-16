@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges, OnChanges, AfterViewInit } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
 import { Chart, Options, chart  } from 'highcharts';
 
 @Component({
@@ -6,7 +6,7 @@ import { Chart, Options, chart  } from 'highcharts';
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss']
 })
-export class BarChartComponent implements AfterViewInit, OnChanges {
+export class BarChartComponent implements OnInit, OnChanges {
 
   @Input() xAxisCategories: string[];
   @Input() dataSet: any[] = [];
@@ -75,21 +75,15 @@ export class BarChartComponent implements AfterViewInit, OnChanges {
 
   ngOnChanges(changes: SimpleChanges) {
     if(this.chart){
-      this.setData();
+      this.chart.series[0].setData(this.dataSet);
+      this.chart.title.update({text: this.title})
+      this.chart.subtitle.update({text: this.subtitle})
+      this.chart.xAxis[0].update({categories: this.xAxisCategories})  
     }
   }
 
-  ngAfterViewInit(): void {
-    //Called after ngAfterContentInit when the component's view has been initialized. Applies to components only.
-    //Add 'implements AfterViewInit' to the class.
+  ngOnInit() {
     this.chart = chart('container', this.options);
-    this.setData();
   }
 
-  setData() {
-    this.chart.series[0].setData(this.dataSet);
-    this.chart.title.update({text: this.title})
-    this.chart.subtitle.update({text: this.subtitle})
-    this.chart.xAxis[0].update({categories: this.xAxisCategories})  
-  }
 }

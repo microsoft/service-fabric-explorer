@@ -43,6 +43,10 @@ export abstract class BaseController implements  OnInit, OnDestroy {
         return this.constructor.name;
       }
 
+    /*
+      Optional to override to implement one time set up logic.
+
+    */
     setup(){
 
     }
@@ -52,6 +56,10 @@ export abstract class BaseController implements  OnInit, OnDestroy {
         this.refreshService.removeRefreshSubject("current controller" + this.getClassName());
     }
 
+
+    /*
+     Optional to get and set params from URL. called before common
+    */
     getParams(route: ActivatedRouteSnapshot): void {
 
     }

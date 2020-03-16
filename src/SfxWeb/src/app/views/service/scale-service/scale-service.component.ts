@@ -43,21 +43,4 @@ export class ScaleServiceComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  //             () => service.updateService(this.updateServiceDescription),
-//             () => service.isStatelessService,
-//             <angular.ui.bootstrap.IModalSettings>{
-//                 templateUrl: "partials/scale-service-dialog.html",
-//                 controller: ActionController,
-//                 resolve: {
-//                     action: () => this
-//                 }
-//             },
-//             () => {
-//                 // Before opening the dialog, refresh service description to get its updated instance count
-//                 return service.description.ensureInitialized().then(() => {
-//                     this.updateServiceDescription.InstanceCount = service.description.raw.InstanceCount;
-//                 });
-//             }
-//         );
-
 }

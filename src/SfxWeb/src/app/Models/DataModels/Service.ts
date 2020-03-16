@@ -48,9 +48,6 @@ export class Service extends DataModelBase<IRawService> {
             this.setUpActions();
         }
 
-        if (this.data.actionsAdvancedEnabled()) {
-            this.setAdvancedActions();
-        }
 
         this.cleanBackup = false;
     }
@@ -97,9 +94,6 @@ export class Service extends DataModelBase<IRawService> {
         return this.data.restClient.getService(this.parent.id, this.id, messageHandler);
     }
 
-    public removeAdvancedActions(): void {
-        this.actions.collection = this.actions.collection.filter(action => ["enableServiceBackup", "disableServiceBackup", "suspendServiceBackup", "resumeServiceBackup"].indexOf(action.name) === -1);
-    }
 
     private setUpActions(): void {
         if (this.parent.raw.TypeName === Constants.SystemAppTypeName) {
@@ -132,12 +126,6 @@ export class Service extends DataModelBase<IRawService> {
             ));
         }
 
-    }
-
-    private setAdvancedActions(): void {
-        if (this.parent.raw.TypeName === Constants.SystemAppTypeName || this.isStatelessService) {
-            return;
-        }
     }
 
     private delete(): Observable<any> {
@@ -290,38 +278,6 @@ export class ServiceTypePackage extends DataModelBase<any> {
         return this.Type + " " + this.Name + " " + this.Version;
     }
 }
-
-//TODO
-// export class ActionCreateService extends ActionWithDialog {
-//     public description: CreateServiceDescription;
-
-//     constructor($uibModal: ng.ui.bootstrap.IModalService, $q: ng.IQService, public serviceType: ServiceType) {
-//         super($uibModal,
-//             $q,
-//             "createService",
-//             "Create",
-//             "Creating",
-//             () => serviceType.createService(this.description).then(() => {
-//                 if (this.description) {
-//                     // when success, reset the dialog
-//                     this.description.reset();
-//                 }
-//             }),
-//             () => true,
-//             <angular.ui.bootstrap.IModalSettings>{
-//                 templateUrl: "partials/create-service-dialog.html",
-//                 controller: ActionController,
-//                 size: "lg",
-//                 backdrop: "static", // Clicking outside of the dialog does not close it
-//                 resolve: {
-//                     action: () => this
-//                 }
-//             }
-//         );
-
-//         this.description = new CreateServiceDescription(serviceType, <Application>serviceType.parent);
-//     }
-// }
 
 export class CreateServiceDescription {
     public raw: IRawCreateServiceDescription;

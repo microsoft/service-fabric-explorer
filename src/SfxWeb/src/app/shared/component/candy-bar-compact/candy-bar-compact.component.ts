@@ -5,14 +5,11 @@ import { Component, OnInit, Input } from '@angular/core';
   templateUrl: './candy-bar-compact.component.html',
   styleUrls: ['./candy-bar-compact.component.scss']
 })
-export class CandyBarCompactComponent implements OnInit {
+export class CandyBarCompactComponent {
 
   @Input() item: any;
   @Input() viewPath: string = "";
 
   constructor() { }
-
-  ngOnInit() {
-  }
 
 }
