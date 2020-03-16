@@ -10,21 +10,20 @@
         [ngClass]="{'disabled': node.owningNode.listSettings && node.owningNode.listSettings.currentPage === 1}" >
         <div style="padding-left: 54px;">
             <span  [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }"></span>
-            <div (click)="node.pageUp()" class=" expander icon mif-chevron-thin-up" [title]="'Previous ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></div>
-            <div (click)="node.pageFirst()" style="padding-left: 10px;" class="expander icon mif-vertical-align-top" [title]="'First ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></div>
+            <div (click)="node.pageUp()" class=" expander icon mif-chevron-thin-up link" [title]="'Previous ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></div>
+            <div (click)="node.pageFirst()" style="padding-left: 10px;" class="expander icon mif-vertical-align-top link" [title]="'First ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></div>
         </div>
     </li>
     <li *ngFor="let child of node.displayedChildren; trackBy: trackById" class="node" [ngClass]="{ 'selected': child.selected }" >
         <div class="self hide-nested" (click)="child.handleClick()" style="width: 100%; display: flex; align-items: center;" 
-             [attr.aria-label]="child.displayName()" *ngIf="child.isVisibleByBadge">
+             [attr.aria-label]="child.displayName()">
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
-            <!-- , 'width': ('calc(100% - ' + child.paddingLeftPx.toString() + ')') -->
             <div tabindex="-1" class="expander icon " aria-hidden="true"
                     (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
                     [ngClass]="{ 'mif-chevron-thin-up': child.isCollapsed, 'mif-chevron-thin-down': child.isExpanded }"
                     style="display: inline-block;">
             </div>
-            <span tabindex="-1" class="icon" aria-hidden="true" *ngIf="child.canExpandAll"
+            <span tabindex="-1" class="icon" aria-hidden="true" *ngIf="child.canExpandAll && child.hasExpander"
             (click)="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()"
             [ngClass]="{ 'mif-unfold-more': child.isCollapsed, 'mif-unfold-less': child.isExpanded }"
             [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'" style="font-size: large;"></span>
@@ -46,8 +45,8 @@
         [ngClass]="{'disabled': node.owningNode.listSettings && node.owningNode.listSettings.currentPage === node.owningNode.listSettings.pageCount}">
         <div style="padding-left: 54px;">
             <span  [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }"></span>
-            <span (click)="node.pageDown()" class="icon pagedown-icon mif-chevron-thin-down" [title]="'Next ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></span>
-            <span style="padding-left: 10px;" (click)="node.pageLast()" class="icon pagedown-icon mif-vertical-align-bottom" [title]="'Last ' + node.owningNode.listSettings.limit +  ' items'" aria-hidden="true"></span>
+            <span (click)="node.pageDown()" class="icon pagedown-icon mif-chevron-thin-down link" [title]="'Next ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></span>
+            <span style="padding-left: 10px;" (click)="node.pageLast()" class="icon pagedown-icon mif-vertical-align-bottom link" [title]="'Last ' + node.owningNode.listSettings.limit +  ' items'" aria-hidden="true"></span>
         </div>
     </li>
 </div>
