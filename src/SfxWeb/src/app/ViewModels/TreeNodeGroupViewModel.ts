@@ -18,8 +18,10 @@ export class TreeNodeGroupViewModel {
     public childrenQuery: () => Observable<ITreeNode[]>;
 
     public get displayedChildren(): TreeNodeViewModel[] {
-        let result = this.children;
+        let result = this.children.filter(node => node.isVisibleByBadge);
+
         if (this.owningNode && this.owningNode.listSettings) {
+            this.owningNode.listSettings.count = result.length;
             result = result.slice(this.owningNode.listSettings.begin, this.owningNode.listSettings.begin + this.owningNode.listSettings.limit);
         }
         return result;
@@ -193,11 +195,6 @@ export class TreeNodeGroupViewModel {
             childrenToRefresh.forEach(child => {
                 promises.push(child.childGroupViewModel.refreshExpandedChildrenRecursively());
             });
-
-            // Update paging settings
-            if (this.owningNode && this.owningNode.listSettings) {
-                this.owningNode.listSettings.count = this.children.length;
-            }
 
             return forkJoin(promises);
         }));
