@@ -664,6 +664,11 @@ app-navbar {
     }
 }
 
+.solid-grey {
+    border-color: $right-panel-background-color;
+    background-color: $right-panel-background-color;
+}
+
 .blue {
     background-color: $azure-blue;
 }

@@ -269,7 +269,7 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
     }
 
     protected updateInternal():Observable<any> | void {
-        this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
+        this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);
         let domains = this.raw.UpgradeDomains.map(ud => new UpgradeDomain(this.data, ud));
         let groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
             .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.InProgress))

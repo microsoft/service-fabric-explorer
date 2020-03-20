@@ -13,6 +13,7 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
     public viewPathUrl: string = "";
     public children: any[];
     public displayName: string;
+    public treeName: string;
     public constructor(raw: IRawHealthEvaluation, public level: number = 0, parent: HealthEvaluation = null, viewPathUrl: string = "") {
         super(null, raw, parent);
         this.viewPathUrl = viewPathUrl;

@@ -1,0 +1,18 @@
+ul {
+    padding: 0px;
+    list-style-type: none;
+    position: relative;
+  }
+
+
+  .container {
+    font-size: 16px;
+    line-height: 16px;
+    height: 32px;
+    overflow: hidden;
+  }
+  
+  .show {
+    overflow: visible;
+    height: auto;
+  }

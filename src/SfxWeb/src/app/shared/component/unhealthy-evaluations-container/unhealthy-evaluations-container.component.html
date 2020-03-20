@@ -1,0 +1,42 @@
+<div style="float: right;">
+    <button type="button" class="simple-button" (click)="setCondenseStatus()"
+        title="Show descriptions at every node or ">
+        Show {{condensed ? 'Verbose' : 'condensed'}} text
+    </button>
+
+    <button type="button" class="simple-button" (click)="setErrorOnlyStatus()"
+        title="Only display subtrees which contain error events." style="margin-left: 15px;">
+        {{errorOnly ? 'Show' : 'Hide'}} warnings
+    </button>
+
+    <button type="button" class="simple-button" (click)="setfullDescriptions()"
+    title="Only display subtrees which contain error events." style="margin-left: 15px;">
+    auto expand descriptions : {{fullDescriptions ? 'On' : 'Off'}} 
+    </button>
+
+    
+    <button type="button" class="simple-button" (click)="getEvents()"
+    title="Only display subtrees which contain error events." style="margin-left: 15px;">
+    Get Events
+    </button>
+</div>
+<span *ngIf="!usingOriginalRoot">
+    <div>
+        <!-- solid-button solid-grey -->
+        <button (click)="goBackOneLevel()" *ngIf="this.root.parent" class="simple-button">
+            Go back one level
+        </button>
+        <button (click)="resetAnchor()" class="flat-button">
+            Reset view
+        </button>        
+    </div>
+    <div>
+        <div>
+            Parent path :
+            <span *ngFor="let node of parentPath" (click)="setNewRootNode(node)" class="link">/ {{node?.healthEvaluation?.treeName || 'root'}} </span>
+        </div>
+        events hidden : {{hiddenNodes}}
+    </div>
+</span>
+
+<app-unhealthy-evaluation [node]="root" [condensed]="condensed" (onAnchor)="setNewRootNode($event)" isAnchor="True" [containsErrorInPath]="errorOnly" [fullDescription]="fullDescriptions"></app-unhealthy-evaluation>

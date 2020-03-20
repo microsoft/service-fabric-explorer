@@ -1,0 +1,47 @@
+<div style="display: flex;flex-direction: row;">
+    <div tabindex="-1" class="expander icon " aria-hidden="true"
+    (click)="toggleShow(); $event.stopPropagation()" *ngIf="node.children.length > 0"
+    [ngClass]="{ 'mif-chevron-thin-up': !showChildren, 'mif-chevron-thin-down': showChildren }"></div>
+    <div *ngIf="node.healthEvaluation">
+        <div>
+            <app-health-badge [badgeClass]="node.healthEvaluation.healthState.badgeClass"></app-health-badge> 
+            <a [routerLink]="node.healthEvaluation.viewPath">{{node.healthEvaluation.treeName}}</a> 
+            <span *ngIf="!showChildren">({{node.totalChildCount}}) </span> 
+            <span (click)="onAnchorSet(node)" *ngIf="!isAnchor" style="margin-left: 10px; cursor: pointer;" class="mif-anchor link" title="Only view this sub tree." ></span>
+<!--                        
+            <span style="margin-left: 4px;">
+                copy all
+                <app-clip-board></app-clip-board>
+            </span> -->
+        </div>
+    </div>
+    <div>
+
+    </div>
+</div>
+
+<div *ngIf="node.healthEvaluation && (!condensed || node.healthEvaluation.raw.Kind === 'Event')" style="padding-left: 20px;" [ngStyle]="{'border-left' : node.children.length > 0 ? '2px solid gray' : 'initial'}">
+    <span>
+        <app-clip-board></app-clip-board>
+    </span>
+    {{displayText}}<span *ngIf="displayTextIsLong && !showFullText">...</span>
+    <div *ngIf="displayTextIsLong" style="display: flex;">
+        <button (click)="toggleShowText()" style="margin: auto;" class="flat-button link" >show {{ showFullText ? 'less' : 'all' }}</button>
+    </div>
+</div>
+
+<ul  *ngIf="showChildren" >
+    <li *ngFor="let child of (node.children | unhealtyEvaluationChildFilter:containsErrorInPath ) ; let i = index; let l = last;" [ngStyle]="{'padding-left': node.children.length > 0 ? '20px' : '11px', 'border-left' : node.children.length > 1 &&  !l ? '2px solid gray' : 'initial'}" style="position: relative;">
+        <div style="height: 11px;
+        border: 1px solid gray;
+        position: absolute;
+        left: 0px;
+        top: 0px;" *ngIf="l"></div>
+        <div style="width: 15px;
+        border: 1px solid gray;
+        position: absolute;
+        left: 0px;
+        top: 10px;"></div>
+        <app-unhealthy-evaluation [node]="child" [condensed]="condensed" [containsErrorInPath]="containsErrorInPath" [fullDescription]="fullDescription" (onAnchor)="onAnchorSet($event);"></app-unhealthy-evaluation>
+    </li>
+</ul>
