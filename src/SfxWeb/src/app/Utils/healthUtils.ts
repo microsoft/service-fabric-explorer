@@ -177,3 +177,92 @@ export class HealthUtils {
                };
     }
 }
+
+
+export interface IUnhealthyEvaluationNode {
+    healthEvaluation: HealthEvaluation;
+    children: IUnhealthyEvaluationNode[];
+    totalChildCount: number;
+    parent: IUnhealthyEvaluationNode;
+    containsErrorInPath: boolean;
+  }
+  
+  
+export const getNestedNode = (path: string[], root: IUnhealthyEvaluationNode) => {
+    if (path.length >= 1) {
+        const id = path.shift();
+        const pathNode = root.children.find(node => node.healthEvaluation.uniqueId === id);
+        if (pathNode) {
+
+            if (path.length === 0) {
+                return pathNode
+            } else {
+                return this.getNestedNode(path, pathNode);
+            }
+        } else {
+            return null;
+        }
+
+    } else if (path.length === 0) {
+        return root;
+    }
+}
+
+export const getParentPath = (node: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode[] => {
+    let parents = [];
+
+    let nodeRef = node;
+    while (nodeRef.parent !== null) {
+        parents.push(nodeRef.parent);
+        nodeRef = nodeRef.parent;
+    }
+    console.log(parents)
+    return parents.reverse();
+}
+
+export const getLeafNodes = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode[] => {
+    if (root.children.length == 0) {
+        return [root];
+    } else {
+        let nodes = [];
+        root.children.forEach(node => { nodes = nodes.concat(getLeafNodes(node)) });
+        return nodes;
+    }
+}
+
+export const skipTreeDepthParentNode = (root: IUnhealthyEvaluationNode, depth: number = 1): IUnhealthyEvaluationNode[] => {
+    if (depth <= 0) {
+        console.log("test")
+        return [root];
+    } else {
+        let nodes = [];
+        root.children.forEach(node => { nodes = nodes.concat(skipTreeDepthParentNode(node, depth - 1)) });
+        console.log(nodes)
+        return nodes;
+    }
+}
+
+export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent: IUnhealthyEvaluationNode = null): IUnhealthyEvaluationNode => {
+    let curretNode: any = {};
+    const children = [];
+    let totalChildCount = 1;
+    let containsErrorInPath = healthEvaluation.healthState.text === "Error";
+    healthEvaluation.children.forEach(child => {
+        const newNode = recursivelyBuildTree(child, curretNode);
+        totalChildCount += newNode.totalChildCount;
+        children.push(newNode)
+        if (newNode.containsErrorInPath) {
+            containsErrorInPath = true;
+        }
+    })
+
+    //we use assign here so that we can pass the right reference above and then update the object back and still get proper type checking
+    Object.assign(curretNode, <IUnhealthyEvaluationNode>{
+        healthEvaluation,
+        children,
+        totalChildCount,
+        parent,
+        containsErrorInPath
+    })
+    return curretNode
+}

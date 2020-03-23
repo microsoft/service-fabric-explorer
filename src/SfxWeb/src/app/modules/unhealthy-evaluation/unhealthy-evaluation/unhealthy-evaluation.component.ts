@@ -1,12 +1,12 @@
 import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
-import { IUnhealthyEvaluationNode } from '../unhealthy-evaluations-container/unhealthy-evaluations-container.component';
+import { IUnhealthyEvaluationNode } from 'src/app/Utils/healthUtils';
 
 @Component({
   selector: 'app-unhealthy-evaluation',
   templateUrl: './unhealthy-evaluation.component.html',
   styleUrls: ['./unhealthy-evaluation.component.scss']
 })
-export class UnhealthyEvaluationComponent implements OnInit, OnChanges {
+export class UnhealthyEvaluationComponent implements OnChanges {
 
   public CUTOFFLENGTH = 200;
 
@@ -29,10 +29,6 @@ export class UnhealthyEvaluationComponent implements OnInit, OnChanges {
   displayTextIsLong: boolean = false;
   constructor() { }
 
-  ngOnInit(): void {
-    // this.node.healthEvaluation
-  }
-
   ngOnChanges(): void {
     if(this.node.healthEvaluation){
       this.displayTextIsLong = this.node.healthEvaluation.description.length > this.CUTOFFLENGTH || this.fullDescription;
@@ -41,8 +37,6 @@ export class UnhealthyEvaluationComponent implements OnInit, OnChanges {
         this.displayTextIsLong = false;
       }
     }
-
-    // console.log(this.condensed)
   }
 
   toggleShow() {
@@ -61,6 +55,10 @@ export class UnhealthyEvaluationComponent implements OnInit, OnChanges {
   onAnchorSet(node: IUnhealthyEvaluationNode) {
     console.log(node)
     this.onAnchor.emit(node);
+  }
+
+  trackById(index: number, node: IUnhealthyEvaluationNode) {
+    return node.healthEvaluation.uniqueId;
   }
 
 }

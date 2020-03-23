@@ -21,8 +21,7 @@
     </button>
 </div>
 <span *ngIf="!usingOriginalRoot">
-    <div>
-        <!-- solid-button solid-grey -->
+    <div style="min-height: 40px;">
         <button (click)="goBackOneLevel()" *ngIf="this.root.parent" class="simple-button">
             Go back one level
         </button>

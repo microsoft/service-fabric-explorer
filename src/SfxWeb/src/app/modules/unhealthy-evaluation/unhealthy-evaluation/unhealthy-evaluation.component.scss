@@ -5,14 +5,30 @@ ul {
   }
 
 
-  .container {
-    font-size: 16px;
-    line-height: 16px;
-    height: 32px;
-    overflow: hidden;
-  }
-  
-  .show {
-    overflow: visible;
-    height: auto;
-  }
+.container {
+  font-size: 16px;
+  line-height: 16px;
+  height: 32px;
+  overflow: hidden;
+}
+
+.show {
+  overflow: visible;
+  height: auto;
+}
+
+.left-bar {
+  width: 15px;
+  border: 1px solid gray;
+  position: absolute;
+  left: 0px;
+  top: 10px;
+}
+
+.up-bar {
+  height: 11px;
+  border: 1px solid gray;
+  position: absolute;
+  left: 0px;
+  top: 0px;
+}
