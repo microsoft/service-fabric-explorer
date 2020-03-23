@@ -14,6 +14,7 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
     public children: any[];
     public displayName: string;
     public treeName: string;
+    private _unique: string;
     public constructor(raw: IRawHealthEvaluation, public level: number = 0, parent: HealthEvaluation = null, viewPathUrl: string = "") {
         super(null, raw, parent);
         this.viewPathUrl = viewPathUrl;
@@ -32,8 +33,11 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
     }
 
     public get uniqueId(): string {
-        // Explicitly set this to null to allow detail-list directive to use angular build-in parameter $id to track the list.
-        return null;
+        return this._unique;
+    }
+
+    public set uniqueId(l: string) {
+        this._unique = l;
     }
 
     public get description(): string {

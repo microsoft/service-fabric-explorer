@@ -23,6 +23,7 @@ export class HealthUtils {
                     health.viewPathUrl = pathData.viewPathUrl;
                     health.displayName =  pathData.displayName;
                     health.treeName = pathData.name;
+                    health.uniqueId = pathData.uniqueId;
                     healthEvals.push(health);
                     healthEvals = healthEvals.concat(HealthUtils.getParsedHealthEvaluations(healthEval.UnhealthyEvaluations, level + 1, health, data));
                     children.push(health);
@@ -42,31 +43,36 @@ export class HealthUtils {
      * @param data
      * @param parentUrl
      */
-    public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): {viewPathUrl: string, displayName: string, name: string } {
+    public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): {viewPathUrl: string, displayName: string, name: string, uniqueId: string } {
         let viewPathUrl = "";
         let name = "";
+        let uniqueId = "";
         switch (healthEval.Kind) {
             case "Nodes" : {
                 viewPathUrl = data.routes.getNodesViewPath();
                 name = "Nodes";
+                uniqueId = name;
                 break;
             }
             case "Node" : {
                 let nodeName = healthEval["NodeName"];
                 name = nodeName;
+                uniqueId = name;
                 viewPathUrl = data.routes.getNodeViewPath(nodeName);
                 break;
             }
             case "Applications" : {
                 viewPathUrl = data.routes.getAppsViewPath();
                 name = "applications"
+                uniqueId = name;
                 break;
             }
             case "Application" : {
                 let applicationName = healthEval["ApplicationName"];
                 let appName = applicationName.replace("fabric:/", ""); //remove fabric:/
                 name = appName;
-                
+                uniqueId = applicationName;
+
                 let app = data.apps.find(appName);
                 if (app) {
                     let appType = app.raw.TypeName;
@@ -78,6 +84,7 @@ export class HealthUtils {
                 let exactServiceName = healthEval["ServiceName"].replace("fabric:/", "");
 
                 name = exactServiceName;
+                uniqueId = exactServiceName;
 
                 //Handle system services slightly different by setting their exact path
                 if (healthEval["ServiceName"].startsWith("fabric:/System")) {
@@ -92,6 +99,7 @@ export class HealthUtils {
                 let partitionId = healthEval["PartitionId"];
 
                 name = partitionId;
+                uniqueId = partitionId;
 
                 parentUrl += `/partition/${data.routes.doubleEncode(partitionId)}`;
                 viewPathUrl = parentUrl;
@@ -100,24 +108,32 @@ export class HealthUtils {
             case "Replica" : {
                 let replicaId = healthEval["ReplicaOrInstanceId"];
                 name = replicaId;
+                uniqueId = replicaId;
 
                 parentUrl += `/replica/${data.routes.doubleEncode(replicaId)}`;
                 viewPathUrl = parentUrl;
                 break;
             }
             case "Event" : {
+                const source = healthEval['SourceId'];
+                const property = healthEval['Property'];
+                uniqueId = source + property;
+
                 if (parentUrl) {
                     viewPathUrl = parentUrl;
+                    uniqueId += parentUrl;
                 }
-                name = "Event"
+                name = "Event";
+
                 break;
             }
 
             case "DeployedApplication" : {
-                const nodeName = healthEval["NodeName"];
-                const applicationName = healthEval["Name"];
+                const nodeName = healthEval["UnhealthyEvent"]["NodeName"];
+                const applicationName = healthEval["UnhealthyEvent"]["Name"];
                 const appName = applicationName.replace("fabric:/", "");
                 name = appName;
+                uniqueId = name;
                 viewPathUrl += `/node/${data.routes.doubleEncode(nodeName)}/deployedapp/${data.routes.doubleEncode(appName)}`;
                 break;
             }
@@ -128,13 +144,23 @@ export class HealthUtils {
                 const activationId = healthEval["ServicePackageActivationId"];
                 const activationIdUrlInfo =  activationId ? "activationid/" + data.routes.doubleEncode(activationId) : "";
                 viewPathUrl = parentUrl + `/deployedservice/${activationIdUrlInfo}${serviceManifestName}`;
+                name = serviceManifestName;
                 break;
             }
 
-            // case: "DeployedServicePackages"
-            // case: "Services"
-            // case: "Partitions"
-            // case: "Replicas"
+            case "DeployedServicePackages" : {
+                uniqueId = "DSP" + parentUrl;
+            }
+            case "Services" : {
+                uniqueId = "SS" + healthEval["ServiceTypeName"]
+            }
+            case "Partitions" : {
+                uniqueId = "PP" + parentUrl;
+            }
+            case "Replicas" : {
+                uniqueId = "RR" + parentUrl;
+            }
+
             default: {
                 viewPathUrl = parentUrl;
                 name = healthEval.Kind;
@@ -144,6 +170,10 @@ export class HealthUtils {
         // if (replaceText.length > 0) {
         //     healthEval.Description = Utils.injectLink(healthEval.Description, replaceText, viewPathUrl, replaceText);
         // }
-        return {viewPathUrl: viewPathUrl, displayName: "", name };
+        return {viewPathUrl, 
+                displayName: "",
+                name,
+                uniqueId
+               };
     }
 }

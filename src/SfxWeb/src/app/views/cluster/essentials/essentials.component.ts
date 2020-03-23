@@ -25,7 +25,6 @@ export class EssentialsComponent extends BaseController {
   nodes: NodeCollection;
   clusterHealth: ClusterHealth;
   systemApp: SystemApplication;
-  unhealthyEvaluationsListSettings: ListSettings;
 
   nodesDashboard: IDashboardViewModel;
   appsDashboard: IDashboardViewModel;
@@ -36,8 +35,7 @@ export class EssentialsComponent extends BaseController {
   upgradeAppsCount: number = 0;
 
   constructor(public data: DataService, 
-              public injector: Injector, 
-              public settings: SettingsService,
+              public injector: Injector,
               private routes: RoutesService) {
     super(injector);
   }
@@ -47,7 +45,6 @@ export class EssentialsComponent extends BaseController {
     this.clusterUpgradeProgress = this.data.clusterUpgradeProgress;
     this.nodes = this.data.nodes;
     this.systemApp = this.data.systemApp;
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {

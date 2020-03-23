@@ -1,5 +1,5 @@
 import { Pipe, PipeTransform } from '@angular/core';
-import { IUnhealthyEvaluationNode } from '../component/unhealthy-evaluations-container/unhealthy-evaluations-container.component';
+import { IUnhealthyEvaluationNode } from './unhealthy-evaluations-container/unhealthy-evaluations-container.component';
 
 @Pipe({
   name: 'unhealtyEvaluationChildFilter'

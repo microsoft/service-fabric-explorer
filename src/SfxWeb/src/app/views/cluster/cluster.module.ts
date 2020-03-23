@@ -23,6 +23,7 @@ import { NgbDropdownModule, NgbTabsetModule } from '@ng-bootstrap/ng-bootstrap';
 import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-restore.module';
 import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
 import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.component';
+import { UnhealthyEvaluationModule } from 'src/app/modules/unhealthy-evaluation/unhealthy-evaluation.module';
 
 
 @NgModule({
@@ -39,7 +40,8 @@ import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.com
     ChartsModule,
     NgbDropdownModule,
     BackupRestoreModule,
-    NgbTabsetModule
+    NgbTabsetModule,
+    UnhealthyEvaluationModule
   ]
 })
 export class ClusterModule { }

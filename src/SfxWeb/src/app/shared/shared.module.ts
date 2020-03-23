@@ -23,12 +23,9 @@ import { ClusterUpgradeBannerComponent } from './component/cluster-upgrade-banne
 import { DualDatePickerComponent } from './component/dual-date-picker/dual-date-picker.component';
 import { AdvancedOptionComponent } from './component/advanced-option/advanced-option.component';
 import { ReplicaAddressComponent } from './component/replica-address/replica-address.component';
-import { UnhealthyEvaluationsContainerComponent } from './component/unhealthy-evaluations-container/unhealthy-evaluations-container.component';
-import { UnhealthyEvaluationComponent } from './component/unhealthy-evaluation/unhealthy-evaluation.component';
-import { UnhealtyEvaluationChildFilterPipe } from './pipes/unhealty-evaluation-child-filter.pipe';
 
 @NgModule({
-  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, UnhealthyEvaluationsContainerComponent, UnhealthyEvaluationComponent, UnhealtyEvaluationChildFilterPipe],
+  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -37,6 +34,6 @@ import { UnhealtyEvaluationChildFilterPipe } from './pipes/unhealty-evaluation-c
     NgbToastModule,
     NgbDatepickerModule,
   ],
-  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, UnhealthyEvaluationsContainerComponent, UnhealthyEvaluationComponent]
+  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent]
 })
 export class SharedModule { }
