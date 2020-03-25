@@ -24,7 +24,6 @@ import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-resto
 import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
 import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.component';
 
-
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent, ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent, StatusWarningsComponent, BackupsComponent, RepairTasksComponent, RepairTaskViewComponent],
   imports: [

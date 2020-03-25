@@ -518,7 +518,7 @@ import { Node } from './DataModels/Node';
         QueueMemorySize: boolean;
         FirstSequenceNumber: string;
         CompletedSequenceNumber: string;
-        CommmittedSequenceNumber: string;
+        CommittedSequenceNumber: string;
         LastSequenceNumber: string;
     }
 
@@ -530,6 +530,19 @@ import { Node } from './DataModels/Node';
         LastAppliedReplicationSequenceNumber: string;
         LastReceivedCopySequenceNumber: string;
         LastAppliedCopySequenceNumber: string;
+        RemoteReplicatorAcknowledgementStatus: IRemoteReplicatorAcknowledgementStatus;
+    }
+
+    export interface IRemoteReplicatorAcknowledgementStatus {
+        ReplicationStreamAcknowledgementDetail: IRemoteReplicatorAcknowledgementDetail;
+        CopyStreamAcknowledgementDetail: IRemoteReplicatorAcknowledgementDetail;
+    }
+
+    export interface IRemoteReplicatorAcknowledgementDetail {
+        AverageReceiveDuration: string;
+        AverageApplyDuration: string;
+        NotReceivedCount: string;
+        ReceivedAndNotAppliedCount: string;
     }
 
     export interface IRawReplicaOnPartition {

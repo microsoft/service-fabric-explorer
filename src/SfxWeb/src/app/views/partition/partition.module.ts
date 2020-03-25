@@ -11,6 +11,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-restore.module';
+import { PartitionReplicationModule } from 'src/app/modules/partition-replication/partition-replication.module';
 import { PartitionRestoreBackUpComponent } from './partition-restore-back-up/partition-restore-back-up.component';
 import { PartitionTriggerBackUpComponent } from './partition-trigger-back-up/partition-trigger-back-up.component';
 import { ReactiveFormsModule } from '@angular/forms';
@@ -25,7 +26,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     DetailListTemplatesModule,
     EventStoreModule,
     BackupRestoreModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    PartitionReplicationModule
   ]
 })
 export class PartitionModule { }
