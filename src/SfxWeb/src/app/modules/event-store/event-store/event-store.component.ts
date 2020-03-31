@@ -38,7 +38,7 @@ export class EventStoreComponent implements OnInit {
   }
 
   public static MaxWindowInDays: number = 7;
-  public startDateMin: Date;
+  public startDateMin: Date = this.eventsList.startDate;
   public endDateMin: Date;
   public startDateMax: Date;
   public endDateMax: Date;

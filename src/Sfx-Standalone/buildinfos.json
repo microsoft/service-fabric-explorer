@@ -28,7 +28,7 @@
         "compile@license": {
             "sources": [
                 "**/package.json",
-                "../Sfx/package.json",
+                "../SfxWeb/package.json",
                 "!<buildRootDir>/**/*",
                 "!<publishDir>/**/*"
             ],
@@ -56,14 +56,14 @@
         },
         "copy@sfx": {
             "sources": [
-                "../Sfx/wwwroot/**/*"
+                "../SfxWeb/dist/**/*"
             ],
             "dest": "<sfxDir>",
             "ignore-target": true,
             "processors": [
                 {
                     "name": "pass",
-                    "baseDir": "../Sfx/wwwroot"
+                    "baseDir": "../SfxWeb/dist"
                 }
             ]
         },

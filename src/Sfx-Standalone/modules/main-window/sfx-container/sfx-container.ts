@@ -58,7 +58,7 @@ export class SfxContainer implements ISfxContainer {
             return Promise.resolve();
         }
                 
-        const sfxUrl = resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint });
+        const sfxUrl = resolve({ path: "../../../sfx/beta.html", search: "?targetcluster=" + targetServiceEndpoint });
 
         this.endpoints.push({ endpoint: targetServiceEndpoint, id: id });
         container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
@@ -67,7 +67,14 @@ export class SfxContainer implements ISfxContainer {
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
         sfxWebView.addEventListener("dom-ready", async () => {
             container.children("#treeview-loading-glyph").remove();
+            sfxWebView.loadURL("../../../sfx/beta.html");
+
             //sfxWebView.executeJavaScript(" angular.bootstrap(document, [Sfx.Constants.sfxAppName], { strictDi: true });");
+        });
+
+        console.log("test");
+        sfxWebView.addEventListener("console-message", (e) => {
+            console.log(`${sfxUrl} : `, e);
         });
 
         sfxWebView.addEventListener("new-window",
@@ -75,6 +82,7 @@ export class SfxContainer implements ISfxContainer {
             event.preventDefault();
             shell.start(event.url);
         });
+
 
         return Promise.resolve();
     }

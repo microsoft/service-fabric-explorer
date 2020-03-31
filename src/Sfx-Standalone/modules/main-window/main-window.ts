@@ -18,7 +18,9 @@ export class MainWindow implements IMainWindow {
         this.browserWindow = browserWindow;
         browserWindow.setPosition(100, 100);
         browserWindow.setSize(1500, 1200);
-        browserWindow.setMenuBarVisibility(false);
+        // browserWindow.setMenuBarVisibility(true);
+        browserWindow.webContents.openDevTools();
+
     }
 
     async registerAsync(navComponent: IComponentConfiguration): Promise<void> {
