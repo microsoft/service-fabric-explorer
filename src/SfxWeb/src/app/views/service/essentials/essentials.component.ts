@@ -14,8 +14,6 @@ import { ServiceBaseController } from '../ServiceBase';
 export class EssentialsComponent extends ServiceBaseController {
 
   listSettings: ListSettings;
-  unhealthyEvaluationsListSettings: ListSettings;
-
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
     super(data, injector);
@@ -28,9 +26,6 @@ export class EssentialsComponent extends ServiceBaseController {
       new ListColumnSettingForBadge("healthState", "Health State"),
       new ListColumnSettingWithFilter("raw.PartitionStatus", "Status"),
     ]);
-
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

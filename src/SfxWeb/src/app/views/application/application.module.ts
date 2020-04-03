@@ -16,6 +16,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbTypeaheadModule, NgbDropdownModule, NgbButtonsModule } from '@ng-bootstrap/ng-bootstrap';
 import { ActionRowComponent } from './action-row/action-row.component';
 import { BackupComponent } from './backup/backup.component';
+import { UnhealthyEvaluationModule } from 'src/app/modules/unhealthy-evaluation/unhealthy-evaluation.module';
 
 @NgModule({
   declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent, ActionRowComponent, BackupComponent],
@@ -28,7 +29,8 @@ import { BackupComponent } from './backup/backup.component';
     FormsModule,
     NgbTypeaheadModule,
     NgbDropdownModule,
-    NgbButtonsModule
+    NgbButtonsModule,
+    UnhealthyEvaluationModule
   ]
 })
 export class ApplicationModule { }

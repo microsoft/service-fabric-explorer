@@ -10,14 +10,11 @@ import { ListSettings } from 'src/app/Models/ListSettings';
   styleUrls: ['./essentials.component.scss']
 })
 export class EssentialsComponent extends DeployedServicePackageBaseController {
-  unhealthyEvaluationsListSettings: ListSettings;
 
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector) { 
     super(data, injector);
   }
 
   setup() {
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
   }
 }

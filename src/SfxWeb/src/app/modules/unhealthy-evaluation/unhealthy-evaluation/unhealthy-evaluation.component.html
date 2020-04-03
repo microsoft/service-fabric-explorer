@@ -1,8 +1,8 @@
-<div style="display: flex;flex-direction: row;">
+<div style="display: flex;flex-direction: row; flex-wrap: wrap;">
     <div tabindex="-1" class="expander icon " aria-hidden="true" (click)="toggleShow(); $event.stopPropagation()"
         *ngIf="node.children.length > 0"
         [ngClass]="{ 'mif-chevron-thin-up': !showChildren, 'mif-chevron-thin-down': showChildren }"></div>
-    <div *ngIf="node.healthEvaluation">
+    <!-- <div *ngIf="node.healthEvaluation">
         <div>
             <app-health-badge [badgeClass]="node.healthEvaluation.healthState.badgeClass"></app-health-badge>
             <a [routerLink]="node.healthEvaluation.viewPath">{{node.healthEvaluation.treeName}}</a>
@@ -10,7 +10,27 @@
             <span (click)="onAnchorSet(node)" *ngIf="!isAnchor" style="margin-left: 10px; cursor: pointer;"
                 class="mif-anchor link" title="Only view this sub tree."></span>
         </div>
+    </div> -->
+    
+    <div *ngFor="let display of node.displayNames; let i = index" style="display: flex; flex-direction: row; flex-wrap: wrap;">
+        <div style="margin-right: 5px;
+        display: flex;
+        flex-direction: row;
+        flex-wrap: nowrap;
+        white-space: nowrap;
+    ">
+            <div *ngIf="i > 0" style="margin-right: 5px;">/</div>
+            <app-health-badge [badgeClass]="display.badge"></app-health-badge>
+            <a [routerLink]="display.viewPath">{{display.text}}</a>
+            <span (click)="onAnchorSet(node)" *ngIf="!isAnchor" style="cursor: pointer; margin-left: 5px"
+            class="mif-anchor link" title="Only view this sub tree."></span>
+
+        </div>
     </div>
+
+    <!-- <span *ngIf="!showChildren">({{node.totalChildCount}}) </span>
+    <span (click)="onAnchorSet(node)" *ngIf="!isAnchor" style="margin-left: 10px; cursor: pointer;"
+        class="mif-anchor link" title="Only view this sub tree."></span> -->
     <div>
 
     </div>
@@ -22,7 +42,7 @@
         <app-clip-board></app-clip-board>
     </span>
     {{displayText}}<span *ngIf="displayTextIsLong && !showFullText">...</span>
-    <div *ngIf="displayTextIsLong" style="display: flex;">
+    <div *ngIf="displayTextIsLong" style="display: flex;">  
         <button (click)="toggleShowText()" style="margin: auto;" class="flat-button link">show
             {{ showFullText ? 'less' : 'all' }}</button>
     </div>

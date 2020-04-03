@@ -14,6 +14,7 @@ import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-resto
 import { PartitionRestoreBackUpComponent } from './partition-restore-back-up/partition-restore-back-up.component';
 import { PartitionTriggerBackUpComponent } from './partition-trigger-back-up/partition-trigger-back-up.component';
 import { ReactiveFormsModule } from '@angular/forms';
+import { UnhealthyEvaluationModule } from 'src/app/modules/unhealthy-evaluation/unhealthy-evaluation.module';
 
 
 @NgModule({
@@ -25,7 +26,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     DetailListTemplatesModule,
     EventStoreModule,
     BackupRestoreModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    UnhealthyEvaluationModule
   ]
 })
 export class PartitionModule { }

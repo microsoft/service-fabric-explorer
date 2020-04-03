@@ -30,6 +30,6 @@
 
     <div class="detail-pane essen-pane" *ngIf="servicePackage.health">
         <h4>Unhealthy Evaluations</h4>
-        <detail-list [list]="servicePackage.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+        <app-health-viewer [unhealthyEvaluations]="servicePackage.health.unhealthyEvaluations" ></app-health-viewer>
     </div>
 </div>

@@ -17,7 +17,6 @@ import { DeployedAppBaseController } from '../DeployedApplicationBase';
 export class EssentialsComponent extends DeployedAppBaseController {
   deployedServicePackages: DeployedServicePackageCollection;
 
-  unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
@@ -36,7 +35,6 @@ export class EssentialsComponent extends DeployedAppBaseController {
 
 
   setup(){
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
     this.listSettings = this.settings.getNewOrExistingListSettings("servicePackages", ["name"], [
       new ListColumnSettingForLink("uniqueId", "Name", item => item.viewPath),
       new ListColumnSetting("raw.Version", "Version"),

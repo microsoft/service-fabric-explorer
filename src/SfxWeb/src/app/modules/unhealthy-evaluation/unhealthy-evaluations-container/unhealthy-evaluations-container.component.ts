@@ -18,7 +18,8 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     healthEvaluation: null,
     children: [],
     parent: null,
-    containsErrorInPath: false
+    containsErrorInPath: false,
+    displayNames: []
   };
   parentPath: IUnhealthyEvaluationNode[] = [];
 
@@ -102,7 +103,8 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
       healthEvaluation: null,
       children,
       parent: null,
-      containsErrorInPath: false
+      containsErrorInPath: false,
+      displayNames: []
     }
     this.setNewRootNode(newRoot)
   }

@@ -16,12 +16,12 @@ export class HealthUtils {
                     let parentUrl = "";
                     if (parent) {
                         parentUrl = parent.viewPathUrl;
-                    }else {
+                    } else {
                         parentUrl = `${location.pathname}`; // TODO CHECK THIS works?
                     }
                     const pathData = HealthUtils.getViewPathUrl(healthEval, data, parentUrl);
                     health.viewPathUrl = pathData.viewPathUrl;
-                    health.displayName =  pathData.displayName;
+                    health.displayName = pathData.displayName;
                     health.treeName = pathData.name;
                     health.uniqueId = pathData.uniqueId;
                     healthEvals.push(health);
@@ -43,31 +43,31 @@ export class HealthUtils {
      * @param data
      * @param parentUrl
      */
-    public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): {viewPathUrl: string, displayName: string, name: string, uniqueId: string } {
+    public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): { viewPathUrl: string, displayName: string, name: string, uniqueId: string } {
         let viewPathUrl = "";
         let name = "";
         let uniqueId = "";
         switch (healthEval.Kind) {
-            case "Nodes" : {
+            case "Nodes": {
                 viewPathUrl = data.routes.getNodesViewPath();
                 name = "Nodes";
                 uniqueId = name;
                 break;
             }
-            case "Node" : {
+            case "Node": {
                 let nodeName = healthEval["NodeName"];
                 name = nodeName;
                 uniqueId = name;
                 viewPathUrl = data.routes.getNodeViewPath(nodeName);
                 break;
             }
-            case "Applications" : {
+            case "Applications": {
                 viewPathUrl = data.routes.getAppsViewPath();
                 name = "applications"
                 uniqueId = name;
                 break;
             }
-            case "Application" : {
+            case "Application": {
                 let applicationName = healthEval["ApplicationName"];
                 let appName = applicationName.replace("fabric:/", ""); //remove fabric:/
                 name = appName;
@@ -80,7 +80,7 @@ export class HealthUtils {
                 }
                 break;
             }
-            case "Service" : {
+            case "Service": {
                 let exactServiceName = healthEval["ServiceName"].replace("fabric:/", "");
 
                 name = exactServiceName;
@@ -89,13 +89,13 @@ export class HealthUtils {
                 //Handle system services slightly different by setting their exact path
                 if (healthEval["ServiceName"].startsWith("fabric:/System")) {
                     viewPathUrl = `/apptype/System/app/System/service/${data.routes.doubleEncode(exactServiceName)}`;
-                }else {
+                } else {
                     parentUrl += `/service/${data.routes.doubleEncode(exactServiceName)}`;
                     viewPathUrl = parentUrl;
                 }
                 break;
             }
-            case "Partition" : {
+            case "Partition": {
                 let partitionId = healthEval["PartitionId"];
 
                 name = partitionId;
@@ -105,7 +105,7 @@ export class HealthUtils {
                 viewPathUrl = parentUrl;
                 break;
             }
-            case "Replica" : {
+            case "Replica": {
                 let replicaId = healthEval["ReplicaOrInstanceId"];
                 name = replicaId;
                 uniqueId = replicaId;
@@ -114,7 +114,7 @@ export class HealthUtils {
                 viewPathUrl = parentUrl;
                 break;
             }
-            case "Event" : {
+            case "Event": {
                 const source = healthEval['SourceId'];
                 const property = healthEval['Property'];
                 uniqueId = source + property;
@@ -128,7 +128,7 @@ export class HealthUtils {
                 break;
             }
 
-            case "DeployedApplication" : {
+            case "DeployedApplication": {
                 const nodeName = healthEval["UnhealthyEvent"]["NodeName"];
                 const applicationName = healthEval["UnhealthyEvent"]["Name"];
                 const appName = applicationName.replace("fabric:/", "");
@@ -138,26 +138,26 @@ export class HealthUtils {
                 break;
             }
 
-            case "DeployedServicePackage" : {
+            case "DeployedServicePackage": {
                 const serviceManifestName = healthEval["ServiceManifestName"];
                 name = serviceManifestName;
                 const activationId = healthEval["ServicePackageActivationId"];
-                const activationIdUrlInfo =  activationId ? "activationid/" + data.routes.doubleEncode(activationId) : "";
+                const activationIdUrlInfo = activationId ? "activationid/" + data.routes.doubleEncode(activationId) : "";
                 viewPathUrl = parentUrl + `/deployedservice/${activationIdUrlInfo}${serviceManifestName}`;
                 name = serviceManifestName;
                 break;
             }
 
-            case "DeployedServicePackages" : {
+            case "DeployedServicePackages": {
                 uniqueId = "DSP" + parentUrl;
             }
-            case "Services" : {
+            case "Services": {
                 uniqueId = "SS" + healthEval["ServiceTypeName"]
             }
-            case "Partitions" : {
+            case "Partitions": {
                 uniqueId = "PP" + parentUrl;
             }
-            case "Replicas" : {
+            case "Replicas": {
                 uniqueId = "RR" + parentUrl;
             }
 
@@ -170,14 +170,20 @@ export class HealthUtils {
         // if (replaceText.length > 0) {
         //     healthEval.Description = Utils.injectLink(healthEval.Description, replaceText, viewPathUrl, replaceText);
         // }
-        return {viewPathUrl, 
-                displayName: "",
-                name,
-                uniqueId
-               };
+        return {
+            viewPathUrl,
+            displayName: "",
+            name,
+            uniqueId
+        };
     }
 }
 
+export interface IDisplayname {
+    text: string;
+    link: string;
+    badge: string;
+}
 
 export interface IUnhealthyEvaluationNode {
     healthEvaluation: HealthEvaluation;
@@ -185,9 +191,10 @@ export interface IUnhealthyEvaluationNode {
     totalChildCount: number;
     parent: IUnhealthyEvaluationNode;
     containsErrorInPath: boolean;
-  }
-  
-  
+    displayNames: IDisplayname[];
+}
+
+
 export const getNestedNode = (path: string[], root: IUnhealthyEvaluationNode) => {
     if (path.length >= 1) {
         const id = path.shift();
@@ -222,7 +229,13 @@ export const getParentPath = (node: IUnhealthyEvaluationNode): IUnhealthyEvaluat
 
 export const getLeafNodes = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode[] => {
     if (root.children.length == 0) {
-        return [root];
+        const parent = getParentPath(root).slice(1).map(node => { return {text : node.healthEvaluation.treeName, 
+                                                                 link: node.healthEvaluation.viewPathUrl,
+                                                                 badge: node.healthEvaluation.healthState.badgeClass }
+                                                                });
+        let copy = Object.assign(root, {}); //make copy to not mutate original
+        copy.displayNames = parent;
+        return [copy];
     } else {
         let nodes = [];
         root.children.forEach(node => { nodes = nodes.concat(getLeafNodes(node)) });
@@ -230,31 +243,64 @@ export const getLeafNodes = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluati
     }
 }
 
-export const skipTreeDepthParentNode = (root: IUnhealthyEvaluationNode, depth: number = 1): IUnhealthyEvaluationNode[] => {
-    if (depth <= 0) {
-        console.log("test")
-        return [root];
-    } else {
-        let nodes = [];
-        root.children.forEach(node => { nodes = nodes.concat(skipTreeDepthParentNode(node, depth - 1)) });
-        console.log(nodes)
-        return nodes;
-    }
-}
+// export const skipTreeDepthParentNode = (root: IUnhealthyEvaluationNode, depth: number = 1): IUnhealthyEvaluationNode[] => {
+//     if (depth <= 0) {
+//         console.log("test")
+//         return [root];
+//     } else {
+//         let nodes = [];
+//         root.children.forEach(node => { nodes = nodes.concat(skipTreeDepthParentNode(node, depth - 1)) });
+//         console.log(nodes)
+//         return nodes;
+//     }
+// }
 
 export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent: IUnhealthyEvaluationNode = null): IUnhealthyEvaluationNode => {
     let curretNode: any = {};
     const children = [];
     let totalChildCount = 1;
     let containsErrorInPath = healthEvaluation.healthState.text === "Error";
-    healthEvaluation.children.forEach(child => {
-        const newNode = recursivelyBuildTree(child, curretNode);
-        totalChildCount += newNode.totalChildCount;
-        children.push(newNode)
-        if (newNode.containsErrorInPath) {
-            containsErrorInPath = true;
+    let displayNames = [{
+        text: healthEvaluation.treeName,
+        link: healthEvaluation.viewPathUrl,
+        badge: healthEvaluation.healthState.badgeClass
+    }]
+
+    if(healthEvaluation.children.length === 1) {
+
+        let current =  healthEvaluation;
+        while(current.children.length === 1 && current.children[0].raw.Kind !== "Event") {
+            current = current.children[0];
+            console.log(current.kind)
+
+            displayNames.push({
+                text: current.treeName,
+                link: current.viewPathUrl,
+                badge: current.healthState.badgeClass
+            })
+
         }
-    })
+
+        current.children.forEach(child => {
+            const newNode = recursivelyBuildTree(child, curretNode);
+            totalChildCount += newNode.totalChildCount;
+            children.push(newNode)
+            if (newNode.containsErrorInPath) {
+                containsErrorInPath = true;
+            }
+        })
+
+    }else{
+
+        healthEvaluation.children.forEach(child => {
+            const newNode = recursivelyBuildTree(child, curretNode);
+            totalChildCount += newNode.totalChildCount;
+            children.push(newNode)
+            if (newNode.containsErrorInPath) {
+                containsErrorInPath = true;
+            }
+        })
+    }
 
     //we use assign here so that we can pass the right reference above and then update the object back and still get proper type checking
     Object.assign(curretNode, <IUnhealthyEvaluationNode>{
@@ -262,7 +308,8 @@ export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent:
         children,
         totalChildCount,
         parent,
-        containsErrorInPath
+        containsErrorInPath,
+        displayNames
     })
     return curretNode
 }

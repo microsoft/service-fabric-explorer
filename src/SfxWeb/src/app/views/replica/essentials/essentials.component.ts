@@ -13,16 +13,10 @@ import { ReplicaBaseController } from '../ReplicaBase';
   styleUrls: ['./essentials.component.scss']
 })
 export class EssentialsComponent extends ReplicaBaseController {
-  unhealthyEvaluationsListSettings: ListSettings;
   nodeView: string;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector) { 
     super(data, injector);
-  }
-
-  setup() {
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

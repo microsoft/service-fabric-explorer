@@ -12,7 +12,6 @@ import { PartitionBaseController } from '../PartitionBase';
   styleUrls: ['./essentials.component.scss']
 })
 export class EssentialsComponent extends PartitionBaseController {
-  unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
@@ -20,7 +19,6 @@ export class EssentialsComponent extends PartitionBaseController {
   }
 
   setup() {
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
 
   }
 

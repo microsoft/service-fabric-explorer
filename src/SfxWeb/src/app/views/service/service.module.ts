@@ -13,6 +13,7 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
 import { ScaleServiceComponent } from './scale-service/scale-service.component';
 import { BackupComponent } from './backup/backup.component';
 import { FormsModule } from '@angular/forms';
+import { UnhealthyEvaluationModule } from 'src/app/modules/unhealthy-evaluation/unhealthy-evaluation.module';
 
 
 @NgModule({
@@ -23,7 +24,8 @@ import { FormsModule } from '@angular/forms';
     SharedModule,
     DetailListTemplatesModule,
     EventStoreModule,
-    FormsModule
+    FormsModule,
+    UnhealthyEvaluationModule
   ],
   entryComponents: [ScaleServiceComponent]
 })
