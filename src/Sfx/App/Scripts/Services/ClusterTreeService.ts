@@ -78,6 +78,7 @@ module Sfx {
                         childrenQuery: () => this.getGroupNodes(),
                         selectAction: () => this.routes.navigate(() => this.routes.getClusterViewPath()),
                         badge: () => clusterHealth.healthState,
+                        canExpandAll: true,
                         alwaysVisible: true,
                         startExpanded: true,
                         mergeClusterHealthStateChunk: (clusterHealthChunk: IClusterHealthChunk) => {
@@ -107,6 +108,7 @@ module Sfx {
                     childrenQuery: () => this.getApplicationTypes(),
                     badge: () => apps.healthState,
                     selectAction: () => this.routes.navigate(() => apps.viewPath),
+                    canExpandAll: true,
                     alwaysVisible: true
                 };
             });
@@ -120,6 +122,7 @@ module Sfx {
                     childrenQuery: () => this.getNodes(),
                     badge: () => nodes.healthState,
                     listSettings: this.settings.getNewOrExistingTreeNodeListSettings(nodes.viewPath),
+                    canExpandAll: true,
                     alwaysVisible: true
                 };
             });
@@ -132,6 +135,7 @@ module Sfx {
                     selectAction: () => this.routes.navigate(() => systemApp.viewPath),
                     childrenQuery: () => this.getServices(Constants.SystemAppId),
                     badge: () => systemApp.healthState,
+                    canExpandAll: true,
                     alwaysVisible: true,
                     addHealthStateFiltersForChildren: (clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription) => {
                         // System app node is expanded, modify health filters to include system services
@@ -155,6 +159,7 @@ module Sfx {
                             displayName: () => "Networks",
                             childrenQuery: () => this.getNetworks(),
                             selectAction: () => this.routes.navigate(() => net.viewPath),
+                            canExpandAll: true,
                             alwaysVisible: true
                         };
                     });
