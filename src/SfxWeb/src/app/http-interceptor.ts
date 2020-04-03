@@ -7,6 +7,7 @@ import { map } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
 import { environment } from 'src/environments/environment';
+import { StandaloneIntegration } from './Common/StandaloneIntegration';
 
 /*
 The will intercept and allow the modification of every http request going in and out.
@@ -70,10 +71,23 @@ export class GlobalHeaderInterceptor implements HttpInterceptor {
  }
 }
 
+@Injectable()
+export class StandAloneInterceptor implements HttpInterceptor {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    const url = StandaloneIntegration.clusterUrl;
+    
+    console.log( req.url, url);
+    req = req.clone({
+      url: url + req.url
+    });
+    return next.handle(req);
+  }
+}
 
 /** Http interceptor providers in outside-in order */
 export const httpInterceptorProviders = [
   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  { provide: HTTP_INTERCEPTORS, useClass: ReadOnlyHeaderInterceptor, multi: true },
+  { provide: HTTP_INTERCEPTORS, useClass: StandAloneInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: GlobalHeaderInterceptor, multi: true },
 ];
