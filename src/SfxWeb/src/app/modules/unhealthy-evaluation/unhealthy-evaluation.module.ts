@@ -6,9 +6,10 @@ import { UnhealthyEvaluationComponent } from './unhealthy-evaluation/unhealthy-e
 import { UnhealtyEvaluationChildFilterPipe } from './unhealty-evaluation-child-filter.pipe';
 import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
 import { ListViewComponent } from './list-view/list-view.component';
-import { NgbTabsetModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbTabsetModule, NgbNavModule, NgbButtonsModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { RouterModule } from '@angular/router';
+import { FormsModule } from '@angular/forms';
 
 
 @NgModule({
@@ -20,7 +21,9 @@ import { RouterModule } from '@angular/router';
     NgbTabsetModule,
     NgbNavModule,
     SharedModule,
-    RouterModule
+    RouterModule,
+    NgbButtonsModule,
+    FormsModule
   ]
 })
 export class UnhealthyEvaluationModule { }

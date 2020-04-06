@@ -19,13 +19,15 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     children: [],
     parent: null,
     containsErrorInPath: false,
-    displayNames: []
+    displayNames: [],
+    id: "tree"
   };
   parentPath: IUnhealthyEvaluationNode[] = [];
 
   usingOriginalRoot: boolean = true; 
   hiddenNodes: number = 0;
 
+  view: string = "";
 
   condensed: boolean = true;
   errorOnly: boolean = false;
@@ -58,6 +60,26 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     this.root = this.originalRoot;
   }
 
+  updateTree() {
+    switch (this.view) {
+      case 'Verbose':
+        this.condensed = false;
+        break;
+      case 'Quiet':
+        this.condensed = false;
+        break;
+      case 'Condensed':
+        // this.
+        break;
+      case 'Events':
+        this.getEvents();
+        break;        
+      default:
+        break;
+    }
+    console.log(this.view);
+  }
+
   setfullDescriptions() {
     this.fullDescriptions = !this.fullDescriptions;
   }
@@ -74,10 +96,10 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     console.log(node);
     this.root = node;
     this.parentPath = getParentPath(node);
-    this.rootPath = this.parentPath.slice(1).map(node => node.healthEvaluation.uniqueId);
+    this.rootPath = this.parentPath.slice(1).map(node => node.id);
     this.usingOriginalRoot = node === this.originalRoot;
     if(!this.usingOriginalRoot) {
-      this.rootPath.push(this.root.healthEvaluation.uniqueId)
+      this.rootPath.push(this.root.id)
     }
     
     console.log(this.rootPath)
@@ -104,7 +126,8 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
       children,
       parent: null,
       containsErrorInPath: false,
-      displayNames: []
+      displayNames: [],
+      id: "all events"
     }
     this.setNewRootNode(newRoot)
   }

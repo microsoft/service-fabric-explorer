@@ -192,19 +192,23 @@ export interface IUnhealthyEvaluationNode {
     parent: IUnhealthyEvaluationNode;
     containsErrorInPath: boolean;
     displayNames: IDisplayname[];
+    id: string;
 }
 
+/*
 
+
+*/
 export const getNestedNode = (path: string[], root: IUnhealthyEvaluationNode) => {
     if (path.length >= 1) {
         const id = path.shift();
-        const pathNode = root.children.find(node => node.healthEvaluation.uniqueId === id);
+        const pathNode = root.children.find(node => node.healthEvaluation.id === id);
         if (pathNode) {
 
             if (path.length === 0) {
                 return pathNode
             } else {
-                return this.getNestedNode(path, pathNode);
+                return getNestedNode(path, pathNode);
             }
         } else {
             return null;
@@ -243,19 +247,36 @@ export const getLeafNodes = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluati
     }
 }
 
-// export const skipTreeDepthParentNode = (root: IUnhealthyEvaluationNode, depth: number = 1): IUnhealthyEvaluationNode[] => {
-//     if (depth <= 0) {
-//         console.log("test")
-//         return [root];
-//     } else {
-//         let nodes = [];
-//         root.children.forEach(node => { nodes = nodes.concat(skipTreeDepthParentNode(node, depth - 1)) });
-//         console.log(nodes)
-//         return nodes;
+// export const condenseTree = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode => {
+//     let curretNode: any = root;
+//     let displayNames = [];
+//     if(root.children.length === 1) {
+//         let current =  root;
+//         while(current.children.length === 1 && current.children[0].healthEvaluation.raw.Kind !== "Event") {
+//             current = current.children[0];
+
+//             displayNames.push({
+//                 text: current.healthEvaluation.treeName,
+//                 link: current.healthEvaluation.viewPathUrl,
+//                 badge: current.healthEvaluation.healthState.badgeClass
+//             })
+
+//         }
+
+//         current.children.forEach(child => {
+//             const newNode = recursivelyBuildTree(child, curretNode, condense);
+//             totalChildCount += newNode.totalChildCount;
+//             children.push(newNode)
+//             if (newNode.containsErrorInPath) {
+//                 containsErrorInPath = true;
+//             }
+//         })
 //     }
+
+//     return 
 // }
 
-export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent: IUnhealthyEvaluationNode = null): IUnhealthyEvaluationNode => {
+export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent: IUnhealthyEvaluationNode = null, condense: boolean = false): IUnhealthyEvaluationNode => {
     let curretNode: any = {};
     const children = [];
     let totalChildCount = 1;
@@ -266,7 +287,7 @@ export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent:
         badge: healthEvaluation.healthState.badgeClass
     }]
 
-    if(healthEvaluation.children.length === 1) {
+    if(healthEvaluation.children.length === 1 && condense) {
 
         let current =  healthEvaluation;
         while(current.children.length === 1 && current.children[0].raw.Kind !== "Event") {
@@ -282,7 +303,7 @@ export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent:
         }
 
         current.children.forEach(child => {
-            const newNode = recursivelyBuildTree(child, curretNode);
+            const newNode = recursivelyBuildTree(child, curretNode, condense);
             totalChildCount += newNode.totalChildCount;
             children.push(newNode)
             if (newNode.containsErrorInPath) {
@@ -293,7 +314,7 @@ export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent:
     }else{
 
         healthEvaluation.children.forEach(child => {
-            const newNode = recursivelyBuildTree(child, curretNode);
+            const newNode = recursivelyBuildTree(child, curretNode, condense);
             totalChildCount += newNode.totalChildCount;
             children.push(newNode)
             if (newNode.containsErrorInPath) {
@@ -309,7 +330,8 @@ export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent:
         totalChildCount,
         parent,
         containsErrorInPath,
-        displayNames
+        displayNames,
+        id: healthEvaluation.uniqueId
     })
     return curretNode
 }

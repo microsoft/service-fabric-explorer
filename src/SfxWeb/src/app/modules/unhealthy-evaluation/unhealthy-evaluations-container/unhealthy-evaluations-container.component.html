@@ -1,5 +1,5 @@
-<div style="float: right;">
-    <button type="button" class="simple-button" (click)="setCondenseStatus()"
+<div style="float: right; display: flex; flex-direction: column;">
+    <!-- <button type="button" class="simple-button" (click)="setCondenseStatus()"
         title="Show descriptions at every node or ">
         Show {{condensed ? 'Verbose' : 'condensed'}} text
     </button>
@@ -18,8 +18,40 @@
     <button type="button" class="simple-button" (click)="getEvents()"
     title="Only display subtrees which contain error events." style="margin-left: 15px;">
     Get Events
-    </button>
+    </button> -->
+
+    <div>
+        <label>
+            Errors Only
+            <app-toggle></app-toggle>
+        </label>
+
+        
+        <label style="margin-left: 10px; margin-right: 10px;">
+            Long Descriptions
+            <app-toggle></app-toggle>
+        </label>
+    </div>
+
+    <div>
+        Layout
+        <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="view" style="z-index: 1;" (ngModelChange)="updateTree()" >
+            <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
+                <input ngbButton type="radio" value="Verbose"> Verbose
+            </label>
+            <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
+                <input ngbButton type="radio" value="Quiet"> Quiet
+            </label>
+            <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
+                <input ngbButton type="radio" value="Condensed"> Condensed
+            </label>
+            <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
+                <input ngbButton type="radio" value="Events"> Events
+            </label>
+            </div>
+    </div>
 </div>
+
 <span *ngIf="!usingOriginalRoot">
     <div style="min-height: 40px;">
         <button (click)="goBackOneLevel()" *ngIf="this.root.parent" class="simple-button">
