@@ -247,34 +247,31 @@ export const getLeafNodes = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluati
     }
 }
 
-// export const condenseTree = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode => {
-//     let curretNode: any = root;
-//     let displayNames = [];
-//     if(root.children.length === 1) {
-//         let current =  root;
-//         while(current.children.length === 1 && current.children[0].healthEvaluation.raw.Kind !== "Event") {
-//             current = current.children[0];
+export const condenseTree = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode => {
+    let displayNames = [];
+    let current =  root;
+    let children = root.children;
+    if(root.children.length === 1) {
+        while(current.children.length === 1 && current.children[0].healthEvaluation.raw.Kind !== "Event") {
+            current = current.children[0];
 
-//             displayNames.push({
-//                 text: current.healthEvaluation.treeName,
-//                 link: current.healthEvaluation.viewPathUrl,
-//                 badge: current.healthEvaluation.healthState.badgeClass
-//             })
+            displayNames.push({
+                text: current.healthEvaluation.treeName,
+                link: current.healthEvaluation.viewPathUrl,
+                badge: current.healthEvaluation.healthState.badgeClass
+            })
 
-//         }
+        }
 
-//         current.children.forEach(child => {
-//             const newNode = recursivelyBuildTree(child, curretNode, condense);
-//             totalChildCount += newNode.totalChildCount;
-//             children.push(newNode)
-//             if (newNode.containsErrorInPath) {
-//                 containsErrorInPath = true;
-//             }
-//         })
-//     }
-
-//     return 
-// }
+        children = current.children;
+    }else{
+        children = root.children.map(child => condenseTree(child));
+    }
+    const d = Object.assign({}, root);
+    d.displayNames = d.displayNames.concat(displayNames);
+    d.children = children;
+    return d
+}
 
 export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent: IUnhealthyEvaluationNode = null, condense: boolean = false): IUnhealthyEvaluationNode => {
     let curretNode: any = {};

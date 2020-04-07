@@ -38,10 +38,13 @@
 
 <div *ngIf="node.healthEvaluation && (!condensed || node.healthEvaluation.raw.Kind === 'Event')"
     style="padding-left: 20px;" [ngStyle]="{'border-left' : node.children.length > 0 ? '2px solid gray' : 'initial'}">
-    <span>
-        <app-clip-board></app-clip-board>
-    </span>
-    {{displayText}}<span *ngIf="displayTextIsLong && !showFullText">...</span>
+    <div style="white-space: pre-wrap; overflow: auto; width: 100%;">
+        <span>
+            <app-clip-board></app-clip-board>
+        </span>
+        {{displayText}}
+    </div>
+    <span *ngIf="displayTextIsLong && !showFullText">...</span>
     <div *ngIf="displayTextIsLong" style="display: flex;">  
         <button (click)="toggleShowText()" style="margin: auto;" class="flat-button link">show
             {{ showFullText ? 'less' : 'all' }}</button>

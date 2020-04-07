@@ -1,6 +1,7 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { HealthEvaluation } from 'src/app/Models/DataModels/Shared';
-import { IUnhealthyEvaluationNode, recursivelyBuildTree, getNestedNode, getParentPath, getLeafNodes } from 'src/app/Utils/healthUtils';
+import { IUnhealthyEvaluationNode, recursivelyBuildTree, getNestedNode, getParentPath, getLeafNodes, condenseTree } from 'src/app/Utils/healthUtils';
+import { StorageService } from 'src/app/services/storage.service';
 
 @Component({
   selector: 'app-unhealthy-evaluations-container',
@@ -9,10 +10,17 @@ import { IUnhealthyEvaluationNode, recursivelyBuildTree, getNestedNode, getParen
 })
 export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges {
  
+  static readonly STORAGE_LAYOUT_SETTING = "UNHEALTHY-STORAGE_LAYOUT_SETTING-LAYOUT";
+  static readonly STORAGE_ERRORS_ONLY_SETTING = "STORAGE_ERRORS_ONLY_SETTING-EVALUATION-LAYOUT";
+  static readonly STORAGE_LONG_DESCRIPTION_SETTING = "STORAGE_LONG_DESCRIPTION_SETTING-EVALUATION-LAYOUT";
+
   @Input() healthEvaluations: HealthEvaluation[];
 
   rootPath: string[] = [];
+  parentPath: IUnhealthyEvaluationNode[] = [];
+
   root: IUnhealthyEvaluationNode;
+  viewNode: IUnhealthyEvaluationNode;
   originalRoot: IUnhealthyEvaluationNode= {
     totalChildCount: 0,
     healthEvaluation: null,
@@ -22,8 +30,7 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     displayNames: [],
     id: "tree"
   };
-  parentPath: IUnhealthyEvaluationNode[] = [];
-
+  
   usingOriginalRoot: boolean = true; 
   hiddenNodes: number = 0;
 
@@ -32,7 +39,7 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
   condensed: boolean = true;
   errorOnly: boolean = false;
   fullDescriptions: boolean = false;
-  constructor() { }
+  constructor(private storageService: StorageService) { }
 
   ngOnChanges(): void {
     let roots = [];
@@ -53,44 +60,63 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     }else{
       this.setNewRootNode(this.originalRoot);
     }
+    this.updateTree();
     console.log(this.root)
   }
 
   ngOnInit(): void {
     this.root = this.originalRoot;
+    this.viewNode = this.root;
+
+    this.view = this.storageService.getValueString(UnhealthyEvaluationsContainerComponent.STORAGE_LAYOUT_SETTING, "");
+    this.errorOnly = this.storageService.getValueBoolean(UnhealthyEvaluationsContainerComponent.STORAGE_ERRORS_ONLY_SETTING, false);
+    this.fullDescriptions= this.storageService.getValueBoolean(UnhealthyEvaluationsContainerComponent.STORAGE_LONG_DESCRIPTION_SETTING, false);
   }
 
   updateTree() {
     switch (this.view) {
       case 'Verbose':
         this.condensed = false;
+        this.viewNode = this.root;
         break;
       case 'Quiet':
-        this.condensed = false;
+        this.condensed = true;
+        this.viewNode = this.root;
         break;
       case 'Condensed':
-        // this.
+        this.condensed = true;
+        this.viewNode = condenseTree(this.root);
         break;
       case 'Events':
-        this.getEvents();
+        const children = getLeafNodes(this.root);
+        this.viewNode = {
+          totalChildCount: children.length,
+          healthEvaluation: null,
+          children,
+          parent: null,
+          containsErrorInPath: false,
+          displayNames: [],
+          id: "all events"
+        }
+
         break;        
       default:
         break;
     }
-    console.log(this.view);
+
+    if(this.view) {
+      this.storageService.setValue(UnhealthyEvaluationsContainerComponent.STORAGE_LAYOUT_SETTING, this.view);
+    }
   }
 
   setfullDescriptions() {
-    this.fullDescriptions = !this.fullDescriptions;
+    this.storageService.setValue(UnhealthyEvaluationsContainerComponent.STORAGE_LONG_DESCRIPTION_SETTING, this.fullDescriptions);
   }
 
   setErrorOnlyStatus() {
-    this.errorOnly = !this.errorOnly;
+    this.storageService.setValue(UnhealthyEvaluationsContainerComponent.STORAGE_ERRORS_ONLY_SETTING, this.errorOnly);
   }
 
-  setCondenseStatus() {
-    this.condensed = !this.condensed;
-  }
 
   setNewRootNode(node: IUnhealthyEvaluationNode) {
     console.log(node);

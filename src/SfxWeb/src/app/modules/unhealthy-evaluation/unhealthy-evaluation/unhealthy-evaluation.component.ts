@@ -8,7 +8,7 @@ import { IUnhealthyEvaluationNode } from 'src/app/Utils/healthUtils';
 })
 export class UnhealthyEvaluationComponent implements OnChanges {
 
-  public CUTOFFLENGTH = 200;
+  public CUTOFFLENGTH = 500;
 
   @Input() isAnchor: boolean = false;
 

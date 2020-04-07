@@ -1,35 +1,14 @@
 <div style="float: right; display: flex; flex-direction: column;">
-    <!-- <button type="button" class="simple-button" (click)="setCondenseStatus()"
-        title="Show descriptions at every node or ">
-        Show {{condensed ? 'Verbose' : 'condensed'}} text
-    </button>
-
-    <button type="button" class="simple-button" (click)="setErrorOnlyStatus()"
-        title="Only display subtrees which contain error events." style="margin-left: 15px;">
-        {{errorOnly ? 'Show' : 'Hide'}} warnings
-    </button>
-
-    <button type="button" class="simple-button" (click)="setfullDescriptions()"
-    title="Only display subtrees which contain error events." style="margin-left: 15px;">
-    auto expand descriptions : {{fullDescriptions ? 'On' : 'Off'}} 
-    </button>
-
-    
-    <button type="button" class="simple-button" (click)="getEvents()"
-    title="Only display subtrees which contain error events." style="margin-left: 15px;">
-    Get Events
-    </button> -->
-
     <div>
         <label>
             Errors Only
-            <app-toggle></app-toggle>
+            <app-toggle [(state)]="errorOnly" (stateChange)="setErrorOnlyStatus()"></app-toggle>
         </label>
 
         
         <label style="margin-left: 10px; margin-right: 10px;">
             Long Descriptions
-            <app-toggle></app-toggle>
+            <app-toggle [(state)]="fullDescriptions" (stateChange)="setfullDescriptions()"></app-toggle>
         </label>
     </div>
 
@@ -70,4 +49,4 @@
     </div>
 </span>
 
-<app-unhealthy-evaluation [node]="root" [condensed]="condensed" (onAnchor)="setNewRootNode($event)" isAnchor="True" [containsErrorInPath]="errorOnly" [fullDescription]="fullDescriptions"></app-unhealthy-evaluation>
+<app-unhealthy-evaluation [node]="viewNode" [condensed]="condensed" (onAnchor)="setNewRootNode($event)" isAnchor="True" [containsErrorInPath]="errorOnly" [fullDescription]="fullDescriptions"></app-unhealthy-evaluation>

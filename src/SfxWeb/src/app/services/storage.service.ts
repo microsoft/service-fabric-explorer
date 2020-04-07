@@ -22,7 +22,8 @@ export class StorageService {
 
   public getValueT<T>(key: string, convert: (item) => T, defaultValue: T): T {
       let value = localStorage.getItem(key);
-      if (value) {
+      console.log(key, value)
+      if (value !== null) {
           return convert(value);
       }
       return defaultValue;
