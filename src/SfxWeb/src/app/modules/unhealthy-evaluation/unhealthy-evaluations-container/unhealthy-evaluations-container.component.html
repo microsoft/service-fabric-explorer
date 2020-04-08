@@ -16,7 +16,7 @@
         Layout
         <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="view" style="z-index: 1;" (ngModelChange)="updateTree()" >
             <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
-                <input ngbButton type="radio" value="Verbose"> Verbose
+                <input ngbButton type="radio" value="Verbose"> Show all
             </label>
             <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
                 <input ngbButton type="radio" value="Quiet"> Quiet
@@ -25,7 +25,7 @@
                 <input ngbButton type="radio" value="Condensed"> Condensed
             </label>
             <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
-                <input ngbButton type="radio" value="Events"> Events
+                <input ngbButton type="radio" value="Events"> Events Only
             </label>
             </div>
     </div>
@@ -45,7 +45,7 @@
             Parent path :
             <span *ngFor="let node of parentPath" (click)="setNewRootNode(node)" class="link">/ {{node?.healthEvaluation?.treeName || 'root'}} </span>
         </div>
-        events hidden : {{hiddenNodes}}
+        <!-- events hidden : {{hiddenNodes}} -->
     </div>
 </span>
 

@@ -1,14 +1,13 @@
-import { Component, OnInit, Input, OnChanges, Output, EventEmitter } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { IUnhealthyEvaluationNode } from 'src/app/Utils/healthUtils';
 
 @Component({
   selector: 'app-unhealthy-evaluation',
   templateUrl: './unhealthy-evaluation.component.html',
-  styleUrls: ['./unhealthy-evaluation.component.scss']
+  styleUrls: ['./unhealthy-evaluation.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UnhealthyEvaluationComponent implements OnChanges {
-
-  public CUTOFFLENGTH = 500;
+export class UnhealthyEvaluationComponent implements OnChanges, OnInit, AfterViewInit {
 
   @Input() isAnchor: boolean = false;
 
@@ -22,21 +21,38 @@ export class UnhealthyEvaluationComponent implements OnChanges {
   @Output() onAnchor = new EventEmitter<IUnhealthyEvaluationNode>();
 
   showChildren: boolean = true;
-
-  displayText: string = "";
   
   showFullText: boolean = false;
   displayTextIsLong: boolean = false;
-  constructor() { }
+
+  @ViewChild("tref", {read: ElementRef}) tref: ElementRef;
+
+  constructor(private cdr: ChangeDetectorRef) { }
+  ngAfterViewInit(): void {
+    if(this.tref) {
+      this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
+      this.cdr.detectChanges()
+      console.log("long")
+      console.log(this);
+    }
+  }
+
+  ngOnInit(): void {
+    if(this.tref) {
+      this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
+
+      console.log("long")
+    }
+  }
 
   ngOnChanges(): void {
-    if(this.node.healthEvaluation){
-      this.displayTextIsLong = this.node.healthEvaluation.description.length > this.CUTOFFLENGTH || this.fullDescription;
-      this.setDisplayText();
-      if(this.fullDescription) {
-        this.displayTextIsLong = false;
+      if(this.tref) {
+        this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
+        console.log("test");
+      }else{
+        // console.log("well")
       }
-    }
+      // console.log(this.tref.nativeElement.clientHeight)
   }
 
   toggleShow() {
@@ -45,11 +61,9 @@ export class UnhealthyEvaluationComponent implements OnChanges {
 
   toggleShowText() {
     this.showFullText = !this.showFullText;
-    this.setDisplayText();
-  }
-
-  setDisplayText() {
-    this.displayText = this.showFullText || this.fullDescription? this.node.healthEvaluation.description : this.node.healthEvaluation.description.substring(0, this.CUTOFFLENGTH);
+    this.cdr.detectChanges();
+    console.log(this.fullDescription || (this.displayTextIsLong && this.showFullText))
+    console.log(this)
   }
 
   onAnchorSet(node: IUnhealthyEvaluationNode) {

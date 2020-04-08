@@ -68,9 +68,11 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     this.root = this.originalRoot;
     this.viewNode = this.root;
 
-    this.view = this.storageService.getValueString(UnhealthyEvaluationsContainerComponent.STORAGE_LAYOUT_SETTING, "");
+    this.view = this.storageService.getValueString(UnhealthyEvaluationsContainerComponent.STORAGE_LAYOUT_SETTING, "Quiet");
     this.errorOnly = this.storageService.getValueBoolean(UnhealthyEvaluationsContainerComponent.STORAGE_ERRORS_ONLY_SETTING, false);
     this.fullDescriptions= this.storageService.getValueBoolean(UnhealthyEvaluationsContainerComponent.STORAGE_LONG_DESCRIPTION_SETTING, false);
+
+    this.updateTree();
   }
 
   updateTree() {
@@ -133,6 +135,7 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
       this.hiddenNodes = this.originalRoot.totalChildCount - this.root.totalChildCount;
     }
   
+    this.updateTree();
   }
   
   resetAnchor() {

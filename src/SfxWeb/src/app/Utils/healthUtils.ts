@@ -257,7 +257,7 @@ export const condenseTree = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluati
 
             displayNames.push({
                 text: current.healthEvaluation.treeName,
-                link: current.healthEvaluation.viewPathUrl,
+                link: current.healthEvaluation.viewPath,
                 badge: current.healthEvaluation.healthState.badgeClass
             })
 
