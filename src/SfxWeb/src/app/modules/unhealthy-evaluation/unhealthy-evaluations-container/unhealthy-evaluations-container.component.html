@@ -1,34 +1,33 @@
-<div style="float: right; display: flex; flex-direction: column;">
-    <div>
-        <label>
-            Errors Only
-            <app-toggle [(state)]="errorOnly" (stateChange)="setErrorOnlyStatus()"></app-toggle>
-        </label>
-
-        
-        <label style="margin-left: 10px; margin-right: 10px;">
-            Long Descriptions
-            <app-toggle [(state)]="fullDescriptions" (stateChange)="setfullDescriptions()"></app-toggle>
-        </label>
-    </div>
-
-    <div>
-        Layout
-        <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="view" style="z-index: 1;" (ngModelChange)="updateTree()" >
-            <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
-                <input ngbButton type="radio" value="Verbose"> Show all
+<div style="display: flex; flex-direction: row-reverse;">
+    <div style="display: flex; flex-direction: column;">
+        <div>
+            <label>
+                Errors Only
+                <app-toggle [(state)]="errorOnly" (stateChange)="setErrorOnlyStatus()"></app-toggle>
             </label>
-            <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
-                <input ngbButton type="radio" value="Quiet"> Quiet
+    
+            
+            <label style="margin-left: 10px; margin-right: 10px;">
+                Long Descriptions
+                <app-toggle [(state)]="fullDescriptions" (stateChange)="setfullDescriptions()"></app-toggle>
             </label>
-            <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
-                <input ngbButton type="radio" value="Condensed"> Condensed
-            </label>
-            <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
-                <input ngbButton type="radio" value="Events"> Events Only
-            </label>
-            </div>
-    </div>
+        </div>
+    
+        <div>
+            Layout
+            <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="view" style="z-index: 1;" (ngModelChange)="updateTree()" >
+                <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
+                    <input ngbButton type="radio" value="Verbose"> Show all
+                </label>
+                <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
+                    <input ngbButton type="radio" value="Condensed"> Quick view
+                </label>
+                <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
+                    <input ngbButton type="radio" value="Events"> Events Only
+                </label>
+                </div>
+        </div>
+    </div>    
 </div>
 
 <span *ngIf="!usingOriginalRoot">
@@ -45,7 +44,6 @@
             Parent path :
             <span *ngFor="let node of parentPath" (click)="setNewRootNode(node)" class="link">/ {{node?.healthEvaluation?.treeName || 'root'}} </span>
         </div>
-        <!-- events hidden : {{hiddenNodes}} -->
     </div>
 </span>
 

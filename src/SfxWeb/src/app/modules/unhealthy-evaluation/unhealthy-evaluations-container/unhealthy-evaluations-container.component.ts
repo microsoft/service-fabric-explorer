@@ -68,7 +68,7 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     this.root = this.originalRoot;
     this.viewNode = this.root;
 
-    this.view = this.storageService.getValueString(UnhealthyEvaluationsContainerComponent.STORAGE_LAYOUT_SETTING, "Quiet");
+    this.view = this.storageService.getValueString(UnhealthyEvaluationsContainerComponent.STORAGE_LAYOUT_SETTING, "Verbose");
     this.errorOnly = this.storageService.getValueBoolean(UnhealthyEvaluationsContainerComponent.STORAGE_ERRORS_ONLY_SETTING, false);
     this.fullDescriptions= this.storageService.getValueBoolean(UnhealthyEvaluationsContainerComponent.STORAGE_LONG_DESCRIPTION_SETTING, false);
 
@@ -79,10 +79,6 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     switch (this.view) {
       case 'Verbose':
         this.condensed = false;
-        this.viewNode = this.root;
-        break;
-      case 'Quiet':
-        this.condensed = true;
         this.viewNode = this.root;
         break;
       case 'Condensed':

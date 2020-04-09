@@ -40,3 +40,36 @@ ul {
 .nested-hover:hover .nested {
   display: initial;
 }
+
+.display-row-item {
+  margin-right: 5px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  white-space: nowrap;
+}
+
+.display-row-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.show-more-container {
+  position: absolute; 
+  bottom: 2px; width: 100%; 
+  border-bottom: 1px solid gray;
+
+  button {
+    margin: auto;
+    background-color: grey;
+    border-color: grey;
+  }
+}
+
+.text-container {
+  white-space: pre-wrap;
+  overflow: auto;
+  width: 100%;
+  position: relative;
+}

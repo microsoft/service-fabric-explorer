@@ -237,7 +237,7 @@ export const getLeafNodes = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluati
                                                                  link: node.healthEvaluation.viewPathUrl,
                                                                  badge: node.healthEvaluation.healthState.badgeClass }
                                                                 });
-        let copy = Object.assign(root, {}); //make copy to not mutate original
+        let copy = Object.assign({}, root); //make copy to not mutate original
         copy.displayNames = parent;
         return [copy];
     } else {

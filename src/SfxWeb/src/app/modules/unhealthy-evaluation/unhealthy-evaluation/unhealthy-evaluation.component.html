@@ -12,13 +12,8 @@
         </div>
     </div> -->
     
-    <div *ngFor="let display of node.displayNames; let i = index" style="display: flex; flex-direction: row; flex-wrap: wrap;">
-        <div style="margin-right: 5px;
-        display: flex;
-        flex-direction: row;
-        flex-wrap: nowrap;
-        white-space: nowrap;
-    ">
+    <div *ngFor="let display of node.displayNames; let i = index" class="display-row-container">
+        <div class="display-row-item">
             <div *ngIf="i > 0" style="margin-right: 5px;">/</div>
             <app-health-badge [badgeClass]="display.badge"></app-health-badge>
             <a [routerLink]="display.link">{{display.text}}</a>
@@ -31,24 +26,21 @@
     <!-- <span *ngIf="!showChildren">({{node.totalChildCount}}) </span>
     <span (click)="onAnchorSet(node)" *ngIf="!isAnchor" style="margin-left: 10px; cursor: pointer;"
         class="mif-anchor link" title="Only view this sub tree."></span> -->
-    <div>
-
-    </div>
 </div>
 
 <div *ngIf="node.healthEvaluation && (!condensed || node.healthEvaluation.raw.Kind === 'Event')" class="nested-hover"
     style="padding-left: 20px; padding-bottom: 10px;" [ngStyle]="{'border-left' : node.children.length > 0 ? '2px solid gray' : 'initial'}">
-    <div style="white-space: pre-wrap; overflow: auto; width: 100%; position: relative;">
-        <div #tref style=" overflow: hidden; " [ngStyle]="{'max-height': fullDescription || (displayTextIsLong && showFullText) ? 'none' : '61px'}">
+    <div class="text-container">
+        <div #tref style="overflow: hidden; " [ngStyle]="{'max-height': fullDescription || (displayTextIsLong && showFullText) ? 'none' : '61px'}">
             <span>
                 <app-clip-board></app-clip-board>
             </span>
             {{node.healthEvaluation.description}}
         </div>
-        <div style="position: absolute; bottom: 0px; width: 100%; border-bottom: 1px solid gray;" *ngIf="displayTextIsLong && !fullDescription" class="nested">
-            <div style="display: flex;">
-                <button (click)="toggleShowText()" style="margin: auto; background-color: grey; border-color: grey;" class="solid-button">show {{ showFullText ? 'less' : 'all' }}</button>
-            </div>
+    </div>
+    <div *ngIf="displayTextIsLong && !fullDescription" class="nested show-more-container">
+        <div style="display: flex;">
+            <button (click)="toggleShowText()" class="solid-button">show {{ showFullText ? 'less' : 'all' }}</button>
         </div>
     </div>
     <span *ngIf="displayTextIsLong && !showFullText" style="height: 5px;top: 68px;position: absolute;">...</span>

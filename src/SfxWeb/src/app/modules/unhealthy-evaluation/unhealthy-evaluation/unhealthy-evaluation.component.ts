@@ -32,27 +32,19 @@ export class UnhealthyEvaluationComponent implements OnChanges, OnInit, AfterVie
     if(this.tref) {
       this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
       this.cdr.detectChanges()
-      console.log("long")
-      console.log(this);
     }
   }
 
   ngOnInit(): void {
     if(this.tref) {
       this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
-
-      console.log("long")
     }
   }
 
   ngOnChanges(): void {
       if(this.tref) {
         this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
-        console.log("test");
-      }else{
-        // console.log("well")
       }
-      // console.log(this.tref.nativeElement.clientHeight)
   }
 
   toggleShow() {
