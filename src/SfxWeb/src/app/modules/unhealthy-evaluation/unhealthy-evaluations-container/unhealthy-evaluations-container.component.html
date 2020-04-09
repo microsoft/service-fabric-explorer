@@ -5,17 +5,15 @@
                 Errors Only
                 <app-toggle [(state)]="errorOnly" (stateChange)="setErrorOnlyStatus()"></app-toggle>
             </label>
-    
-            
             <label style="margin-left: 10px; margin-right: 10px;">
                 Long Descriptions
                 <app-toggle [(state)]="fullDescriptions" (stateChange)="setfullDescriptions()"></app-toggle>
             </label>
         </div>
-    
         <div>
             Layout
-            <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="view" style="z-index: 1;" (ngModelChange)="updateTree()" >
+            <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="view"
+                style="z-index: 1;" (ngModelChange)="updateTree()">
                 <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
                     <input ngbButton type="radio" value="Verbose"> Show all
                 </label>
@@ -25,11 +23,10 @@
                 <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
                     <input ngbButton type="radio" value="Events"> Events Only
                 </label>
-                </div>
+            </div>
         </div>
-    </div>    
+    </div>
 </div>
-
 <span *ngIf="!usingOriginalRoot">
     <div style="min-height: 40px;">
         <button (click)="goBackOneLevel()" *ngIf="this.root.parent" class="simple-button">
@@ -37,14 +34,15 @@
         </button>
         <button (click)="resetAnchor()" class="flat-button">
             Reset view
-        </button>        
+        </button>
     </div>
     <div>
         <div>
             Parent path :
-            <span *ngFor="let node of parentPath" (click)="setNewRootNode(node)" class="link">/ {{node?.healthEvaluation?.treeName || 'root'}} </span>
+            <span *ngFor="let node of parentPath" (click)="setNewRootNode(node)" class="link">/
+                {{node?.healthEvaluation?.treeName || 'root'}} </span>
         </div>
     </div>
 </span>
-
-<app-unhealthy-evaluation [node]="viewNode" [condensed]="condensed" (onAnchor)="setNewRootNode($event)" isAnchor="True" [containsErrorInPath]="errorOnly" [fullDescription]="fullDescriptions"></app-unhealthy-evaluation>
+<app-unhealthy-evaluation [node]="viewNode" [condensed]="condensed" (onAnchor)="setNewRootNode($event)" isAnchor="True"
+    [containsErrorInPath]="errorOnly" [fullDescription]="fullDescriptions"></app-unhealthy-evaluation>

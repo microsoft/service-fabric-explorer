@@ -16,35 +16,35 @@ export class UnhealthyEvaluationComponent implements OnChanges, OnInit, AfterVie
   @Input() condensed: boolean = true;
   @Input() containsErrorInPath: boolean = false;
   @Input() fullDescription: boolean = false;
-  
-  
+
+
   @Output() onAnchor = new EventEmitter<IUnhealthyEvaluationNode>();
 
   showChildren: boolean = true;
-  
+
   showFullText: boolean = false;
   displayTextIsLong: boolean = false;
 
-  @ViewChild("tref", {read: ElementRef}) tref: ElementRef;
+  @ViewChild("tref", { read: ElementRef }) tref: ElementRef;
 
   constructor(private cdr: ChangeDetectorRef) { }
   ngAfterViewInit(): void {
-    if(this.tref) {
+    if (this.tref) {
       this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
       this.cdr.detectChanges()
     }
   }
 
   ngOnInit(): void {
-    if(this.tref) {
+    if (this.tref) {
       this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
     }
   }
 
   ngOnChanges(): void {
-      if(this.tref) {
-        this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
-      }
+    if (this.tref) {
+      this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
+    }
   }
 
   toggleShow() {

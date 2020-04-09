@@ -9,7 +9,7 @@ import { StorageService } from 'src/app/services/storage.service';
   styleUrls: ['./unhealthy-evaluations-container.component.scss']
 })
 export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges {
- 
+
   static readonly STORAGE_LAYOUT_SETTING = "UNHEALTHY-STORAGE_LAYOUT_SETTING-LAYOUT";
   static readonly STORAGE_ERRORS_ONLY_SETTING = "STORAGE_ERRORS_ONLY_SETTING-EVALUATION-LAYOUT";
   static readonly STORAGE_LONG_DESCRIPTION_SETTING = "STORAGE_LONG_DESCRIPTION_SETTING-EVALUATION-LAYOUT";
@@ -21,7 +21,7 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
 
   root: IUnhealthyEvaluationNode;
   viewNode: IUnhealthyEvaluationNode;
-  originalRoot: IUnhealthyEvaluationNode= {
+  originalRoot: IUnhealthyEvaluationNode = {
     totalChildCount: 0,
     healthEvaluation: null,
     children: [],
@@ -30,8 +30,8 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     displayNames: [],
     id: "tree"
   };
-  
-  usingOriginalRoot: boolean = true; 
+
+  usingOriginalRoot: boolean = true;
   hiddenNodes: number = 0;
 
   view: string = "";
@@ -51,13 +51,13 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     })
 
     this.originalRoot.totalChildCount = childCount,
-    this.originalRoot.children = roots;
+      this.originalRoot.children = roots;
 
-    
+
     const updatedNode = getNestedNode(this.rootPath, this.originalRoot);
-    if(updatedNode) {
+    if (updatedNode) {
       this.setNewRootNode(updatedNode);
-    }else{
+    } else {
       this.setNewRootNode(this.originalRoot);
     }
     this.updateTree();
@@ -70,7 +70,7 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
 
     this.view = this.storageService.getValueString(UnhealthyEvaluationsContainerComponent.STORAGE_LAYOUT_SETTING, "Verbose");
     this.errorOnly = this.storageService.getValueBoolean(UnhealthyEvaluationsContainerComponent.STORAGE_ERRORS_ONLY_SETTING, false);
-    this.fullDescriptions= this.storageService.getValueBoolean(UnhealthyEvaluationsContainerComponent.STORAGE_LONG_DESCRIPTION_SETTING, false);
+    this.fullDescriptions = this.storageService.getValueBoolean(UnhealthyEvaluationsContainerComponent.STORAGE_LONG_DESCRIPTION_SETTING, false);
 
     this.updateTree();
   }
@@ -97,12 +97,12 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
           id: "all events"
         }
 
-        break;        
+        break;
       default:
         break;
     }
 
-    if(this.view) {
+    if (this.view) {
       this.storageService.setValue(UnhealthyEvaluationsContainerComponent.STORAGE_LAYOUT_SETTING, this.view);
     }
   }
@@ -122,18 +122,18 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     this.parentPath = getParentPath(node);
     this.rootPath = this.parentPath.slice(1).map(node => node.id);
     this.usingOriginalRoot = node === this.originalRoot;
-    if(!this.usingOriginalRoot) {
+    if (!this.usingOriginalRoot) {
       this.rootPath.push(this.root.id)
     }
-    
+
     console.log(this.rootPath)
-    if(!this.usingOriginalRoot) {
+    if (!this.usingOriginalRoot) {
       this.hiddenNodes = this.originalRoot.totalChildCount - this.root.totalChildCount;
     }
-  
+
     this.updateTree();
   }
-  
+
   resetAnchor() {
     this.setNewRootNode(this.originalRoot);
   }

@@ -233,10 +233,13 @@ export const getParentPath = (node: IUnhealthyEvaluationNode): IUnhealthyEvaluat
 
 export const getLeafNodes = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode[] => {
     if (root.children.length == 0) {
-        const parent = getParentPath(root).slice(1).map(node => { return {text : node.healthEvaluation.treeName, 
-                                                                 link: node.healthEvaluation.viewPathUrl,
-                                                                 badge: node.healthEvaluation.healthState.badgeClass }
-                                                                });
+        const parent = getParentPath(root).slice(1).map(node => {
+            return {
+                text: node.healthEvaluation.treeName,
+                link: node.healthEvaluation.viewPathUrl,
+                badge: node.healthEvaluation.healthState.badgeClass
+            }
+        });
         let copy = Object.assign({}, root); //make copy to not mutate original
         copy.displayNames = parent;
         return [copy];
@@ -249,10 +252,10 @@ export const getLeafNodes = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluati
 
 export const condenseTree = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode => {
     let displayNames = [];
-    let current =  root;
+    let current = root;
     let children = root.children;
-    if(root.children.length === 1) {
-        while(current.children.length === 1 && current.children[0].healthEvaluation.raw.Kind !== "Event") {
+    if (root.children.length === 1) {
+        while (current.children.length === 1 && current.children[0].healthEvaluation.raw.Kind !== "Event") {
             current = current.children[0];
 
             displayNames.push({
@@ -260,11 +263,10 @@ export const condenseTree = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluati
                 link: current.healthEvaluation.viewPath,
                 badge: current.healthEvaluation.healthState.badgeClass
             })
-
         }
 
         children = current.children;
-    }else{
+    } else {
         children = root.children.map(child => condenseTree(child));
     }
     const d = Object.assign({}, root);
@@ -284,10 +286,10 @@ export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent:
         badge: healthEvaluation.healthState.badgeClass
     }]
 
-    if(healthEvaluation.children.length === 1 && condense) {
+    if (healthEvaluation.children.length === 1 && condense) {
 
-        let current =  healthEvaluation;
-        while(current.children.length === 1 && current.children[0].raw.Kind !== "Event") {
+        let current = healthEvaluation;
+        while (current.children.length === 1 && current.children[0].raw.Kind !== "Event") {
             current = current.children[0];
             console.log(current.kind)
 
@@ -296,7 +298,6 @@ export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent:
                 link: current.viewPathUrl,
                 badge: current.healthState.badgeClass
             })
-
         }
 
         current.children.forEach(child => {
@@ -308,7 +309,7 @@ export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent:
             }
         })
 
-    }else{
+    } else {
 
         healthEvaluation.children.forEach(child => {
             const newNode = recursivelyBuildTree(child, curretNode, condense);
