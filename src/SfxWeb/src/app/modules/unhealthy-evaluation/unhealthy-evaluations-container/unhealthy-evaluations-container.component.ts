@@ -22,7 +22,6 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
   root: IUnhealthyEvaluationNode;
   viewNode: IUnhealthyEvaluationNode;
   originalRoot: IUnhealthyEvaluationNode = {
-    totalChildCount: 0,
     healthEvaluation: null,
     children: [],
     parent: null,
@@ -43,16 +42,12 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
 
   ngOnChanges(): void {
     let roots = [];
-    let childCount = 0;
     this.healthEvaluations.filter(node => node.parent === null).forEach(root => {
       const newNode = recursivelyBuildTree(root, this.originalRoot);
       roots.push(newNode);
-      childCount += newNode.totalChildCount;
     })
 
-    this.originalRoot.totalChildCount = childCount,
-      this.originalRoot.children = roots;
-
+    this.originalRoot.children = roots;
 
     const updatedNode = getNestedNode(this.rootPath, this.originalRoot);
     if (updatedNode) {
@@ -88,7 +83,6 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
       case 'Events':
         const children = getLeafNodes(this.root);
         this.viewNode = {
-          totalChildCount: children.length,
           healthEvaluation: null,
           children,
           parent: null,
@@ -125,12 +119,6 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     if (!this.usingOriginalRoot) {
       this.rootPath.push(this.root.id)
     }
-
-    console.log(this.rootPath)
-    if (!this.usingOriginalRoot) {
-      this.hiddenNodes = this.originalRoot.totalChildCount - this.root.totalChildCount;
-    }
-
     this.updateTree();
   }
 
@@ -146,7 +134,6 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     const children = getLeafNodes(this.root);
     console.log(children)
     let newRoot: IUnhealthyEvaluationNode = {
-      totalChildCount: children.length,
       healthEvaluation: null,
       children,
       parent: null,

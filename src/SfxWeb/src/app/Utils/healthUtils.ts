@@ -183,12 +183,12 @@ export interface IDisplayname {
     text: string;
     link: string;
     badge: string;
+    node: IUnhealthyEvaluationNode //used to set an anchor, the "current" node will have a circular relationship
 }
 
 export interface IUnhealthyEvaluationNode {
     healthEvaluation: HealthEvaluation;
     children: IUnhealthyEvaluationNode[];
-    totalChildCount: number;
     parent: IUnhealthyEvaluationNode;
     containsErrorInPath: boolean;
     displayNames: IDisplayname[];
@@ -196,16 +196,17 @@ export interface IUnhealthyEvaluationNode {
 }
 
 /*
-
+Get a specific node by iterating over children at each node to find one that matches
+that index of the array and if at any point it can not find that id returns back null.
 
 */
 export const getNestedNode = (path: string[], root: IUnhealthyEvaluationNode) => {
     if (path.length >= 1) {
         const id = path.shift();
         const pathNode = root.children.find(node => node.healthEvaluation.id === id);
-        if (pathNode) {
+        if (pathNode) { //having found a matching child node we can continue down.
 
-            if (path.length === 0) {
+            if (path.length === 0) { //we find the node we're looking for
                 return pathNode
             } else {
                 return getNestedNode(path, pathNode);
@@ -227,17 +228,20 @@ export const getParentPath = (node: IUnhealthyEvaluationNode): IUnhealthyEvaluat
         parents.push(nodeRef.parent);
         nodeRef = nodeRef.parent;
     }
-    console.log(parents)
     return parents.reverse();
 }
 
+/*
+Get leaf nodes, which should only end up being event health events.
+*/
 export const getLeafNodes = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode[] => {
     if (root.children.length == 0) {
         const parent = getParentPath(root).slice(1).map(node => {
             return {
                 text: node.healthEvaluation.treeName,
                 link: node.healthEvaluation.viewPathUrl,
-                badge: node.healthEvaluation.healthState.badgeClass
+                badge: node.healthEvaluation.healthState.badgeClass,
+                node
             }
         });
         let copy = Object.assign({}, root); //make copy to not mutate original
@@ -250,6 +254,10 @@ export const getLeafNodes = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluati
     }
 }
 
+/*
+This will attempt to join any nodes that only have 1 child into a single node, except for the
+condition when one child is an event. That will always be treated as a seperate node.
+*/
 export const condenseTree = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode => {
     let displayNames = [];
     let current = root;
@@ -275,57 +283,29 @@ export const condenseTree = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluati
     return d
 }
 
-export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent: IUnhealthyEvaluationNode = null, condense: boolean = false): IUnhealthyEvaluationNode => {
+export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent: IUnhealthyEvaluationNode = null): IUnhealthyEvaluationNode => {
     let curretNode: any = {};
     const children = [];
-    let totalChildCount = 1;
     let containsErrorInPath = healthEvaluation.healthState.text === "Error";
     let displayNames = [{
         text: healthEvaluation.treeName,
         link: healthEvaluation.viewPathUrl,
-        badge: healthEvaluation.healthState.badgeClass
+        badge: healthEvaluation.healthState.badgeClass,
+        node: curretNode
     }]
 
-    if (healthEvaluation.children.length === 1 && condense) {
-
-        let current = healthEvaluation;
-        while (current.children.length === 1 && current.children[0].raw.Kind !== "Event") {
-            current = current.children[0];
-            console.log(current.kind)
-
-            displayNames.push({
-                text: current.treeName,
-                link: current.viewPathUrl,
-                badge: current.healthState.badgeClass
-            })
+    healthEvaluation.children.forEach(child => {
+        const newNode = recursivelyBuildTree(child, curretNode);
+        children.push(newNode)
+        if (newNode.containsErrorInPath) {
+            containsErrorInPath = true;
         }
-
-        current.children.forEach(child => {
-            const newNode = recursivelyBuildTree(child, curretNode, condense);
-            totalChildCount += newNode.totalChildCount;
-            children.push(newNode)
-            if (newNode.containsErrorInPath) {
-                containsErrorInPath = true;
-            }
-        })
-
-    } else {
-
-        healthEvaluation.children.forEach(child => {
-            const newNode = recursivelyBuildTree(child, curretNode, condense);
-            totalChildCount += newNode.totalChildCount;
-            children.push(newNode)
-            if (newNode.containsErrorInPath) {
-                containsErrorInPath = true;
-            }
-        })
-    }
+    })
 
     //we use assign here so that we can pass the right reference above and then update the object back and still get proper type checking
     Object.assign(curretNode, <IUnhealthyEvaluationNode>{
         healthEvaluation,
         children,
-        totalChildCount,
         parent,
         containsErrorInPath,
         displayNames,
