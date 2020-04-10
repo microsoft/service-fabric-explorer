@@ -203,7 +203,7 @@ that index of the array and if at any point it can not find that id returns back
 export const getNestedNode = (path: string[], root: IUnhealthyEvaluationNode) => {
     if (path.length >= 1) {
         const id = path.shift();
-        const pathNode = root.children.find(node => node.healthEvaluation.id === id);
+        const pathNode = root.children.find(node => node.id === id);
         if (pathNode) { //having found a matching child node we can continue down.
 
             if (path.length === 0) { //we find the node we're looking for
@@ -211,7 +211,7 @@ export const getNestedNode = (path: string[], root: IUnhealthyEvaluationNode) =>
             } else {
                 return getNestedNode(path, pathNode);
             }
-        } else {
+        } else { //there isnt any valid node at this depth.
             return null;
         }
 
@@ -269,7 +269,8 @@ export const condenseTree = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluati
             displayNames.push({
                 text: current.healthEvaluation.treeName,
                 link: current.healthEvaluation.viewPath,
-                badge: current.healthEvaluation.healthState.badgeClass
+                badge: current.healthEvaluation.healthState.badgeClass,
+                node: current
             })
         }
 

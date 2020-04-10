@@ -50,7 +50,6 @@ export class EssentialsComponent extends BaseController {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
       this.clusterHealth.refresh(messageHandler).pipe(map((clusterHealth: ClusterHealth) => {
-        console.log(this.clusterHealth.unhealthyEvaluations)
         let nodesHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Node);
         this.nodesDashboard = DashboardViewModel.fromHealthStateCount("Nodes", "Node", true, nodesHealthStateCount, this.data.routes, this.routes.getNodesViewPath());
 

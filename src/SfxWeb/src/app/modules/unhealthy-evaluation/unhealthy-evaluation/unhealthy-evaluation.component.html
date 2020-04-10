@@ -17,7 +17,7 @@
             <div *ngIf="i > 0" style="margin-right: 5px;">/</div>
             <app-health-badge [badgeClass]="display.badge"></app-health-badge>
             <a [routerLink]="display.link">{{display.text}}</a>
-            <span (click)="onAnchorSet(node)" *ngIf="!isAnchor" style="cursor: pointer; margin-left: 5px"
+            <span (click)="onAnchorSet(display.node)" *ngIf="!isAnchor" style="cursor: pointer; margin-left: 5px"
                 class="mif-anchor link" title="Only view this sub tree."></span>
         </div>
     </div>

@@ -56,7 +56,6 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
       this.setNewRootNode(this.originalRoot);
     }
     this.updateTree();
-    console.log(this.root)
   }
 
   ngOnInit(): void {
@@ -111,7 +110,6 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
 
 
   setNewRootNode(node: IUnhealthyEvaluationNode) {
-    console.log(node);
     this.root = node;
     this.parentPath = getParentPath(node);
     this.rootPath = this.parentPath.slice(1).map(node => node.id);

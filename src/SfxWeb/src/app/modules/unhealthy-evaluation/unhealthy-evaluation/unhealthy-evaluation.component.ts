@@ -54,12 +54,9 @@ export class UnhealthyEvaluationComponent implements OnChanges, OnInit, AfterVie
   toggleShowText() {
     this.showFullText = !this.showFullText;
     this.cdr.detectChanges();
-    console.log(this.fullDescription || (this.displayTextIsLong && this.showFullText))
-    console.log(this)
   }
 
   onAnchorSet(node: IUnhealthyEvaluationNode) {
-    console.log(node)
     this.onAnchor.emit(node);
   }
 
