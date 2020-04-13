@@ -3,7 +3,7 @@ import { MessageService, MessageSeverity } from './message.service';
 import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription } from '../Models/HealthChunkRawDataTypes';
 import { IResponseMessageHandler, ResponseMessageHandlers } from '../Common/ResponseMessageHandlers';
-import { Observable, of, Observer, throwError } from 'rxjs';
+import { Observable, of, Observer, throwError, from } from 'rxjs';
 import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgradeProgress, IRawClusterLoadInformation, IRawNetwork, IRawNetworkOnApp, 
          IRawNetworkOnNode, IRawAppOnNetwork, IRawNodeOnNetwork, IRawDeployedContainerOnNetwork, IRawNode, IRawBackupPolicy, IRawApplicationBackupConfigurationInfo, 
          IRawServiceBackupConfigurationInfo, IRawBackupProgressInfo, IRawRestoreProgressInfo, IRawPartitionBackupConfigurationInfo, IRawPartitionBackup, IRawNodeHealth, 
@@ -17,7 +17,7 @@ import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
 import { Partition } from '../Models/DataModels/Partition';
 import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent, FabricEvent, EventsResponseAdapter, FabricEventBase } from '../Models/eventstore/Events';
-import { StandaloneIntegration } from '../Common/StandaloneIntegration';
+import { StandaloneIntegration, IHttpRequest, IHttpResponse } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
 
@@ -830,7 +830,7 @@ export class RestClientService {
   private static baseUrl = "api"
 
   private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = this.httpClient.get<T>(environment.baseUrl + url);
+      let result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: "GET", url: url }) : this.httpClient.get<T>(environment.baseUrl + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
       }
@@ -838,7 +838,7 @@ export class RestClientService {
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = this.httpClient.post<T>(environment.baseUrl  + url, data);
+      let result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: "POST", url: url }) : this.httpClient.post<T>(environment.baseUrl  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
@@ -846,7 +846,7 @@ export class RestClientService {
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = this.httpClient.put<T>(environment.baseUrl  + url, data);
+      let result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: "PUT", url: url }) : this.httpClient.put<T>(environment.baseUrl  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
@@ -854,26 +854,53 @@ export class RestClientService {
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = this.httpClient.delete<T>(environment.baseUrl  + url);
+      let result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: "DELETE", url: url }) : this.httpClient.delete<T>(environment.baseUrl  + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
       }
       return this.handleResponse<T>(apiDesc, <any>result, messageHandler);
   }
 
+    public requestAsync<T>(request: IHttpRequest): Observable<T> {
+        return from(<Promise<T>>new Promise( (resolve, reject) => {
+            StandaloneIntegration.getHttpClient()
+                .then((client) => client.requestAsync(request))
+                .then((response) => {
+                    console.log(JSON.stringify(response))
+
+                    //only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>> 
+                    resolve(response.data);
+                    }
+                ,(err: IHttpResponse) => 
+                {
+                    let r = new HttpErrorResponse({
+                        status: err.statusCode,
+                        statusText: err.statusMessage,
+                    })
+                    reject(err) }
+                );
+        }));
+}
+
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
+        console.log(JSON.stringify(err))
+        const header = `${err.status.toString()} : ${apiDesc}`;
         let message = messageHandler.getErrorMessage(apiDesc, err);
             if (message) {
-                this.message.showMessage(message, MessageSeverity.Err);
+                this.message.showMessage(message, MessageSeverity.Err, header);
             }
     
         if (err.error instanceof Error) {
         // A client-side or network error occurred. Handle it accordingly.
         console.error('An error occurred:', err.error.message);
+        this.message.showMessage(err.error.message, MessageSeverity.Err, header);
+
         } else {
         // The backend returned an unsuccessful response code.
         // The response body may contain clues as to what went wrong,
+        this.message.showMessage(JSON.stringify(err.error), MessageSeverity.Err, header);
+
         console.error(`Backend returned code ${err.status}, body was: ${err.error}`);
         }
     

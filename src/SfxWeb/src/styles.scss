@@ -990,3 +990,13 @@ app-navbar {
     border-top-color: transparent !important;
 
 }
+
+.toast {
+    border-radius: 0px;
+
+    .toast-header {
+        color: #ffffff;
+        background-color: rgb(90, 90, 90);
+        font-weight: 200;
+    }
+}

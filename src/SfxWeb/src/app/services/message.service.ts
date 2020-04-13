@@ -35,9 +35,9 @@ export class MessageService {
     return colors[severity];
   }
 
-  public showMessage(message: string, severity: MessageSeverity, duration: number = 5000) {
+  public showMessage(message: string, severity: MessageSeverity, header: string = "", duration: number = 50000) {
     this.toasts.push({
-      header: severity,
+      header: `${severity} ${header}`,
       body: message,
       duration,
       class: this.getClass(severity)

@@ -103,9 +103,14 @@ app.all('/*', async (req, res) => {
 
     console.log(`${req.url} ${req.method}`);
 
-    res.status(resp.status);
-    res.header(resp.headers);
-    res.send(resp.data);
+    if(resp) {
+        res.status(resp.status);    
+        res.header(resp.headers);
+        res.send(resp.data);
+    }else{
+        res.status(404);
+        res.send({message: "error"})
+    }
 
     if(recordRequest){
         await writeRequest(req, resp);

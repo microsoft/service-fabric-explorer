@@ -76,7 +76,7 @@ export class StandAloneInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const url = StandaloneIntegration.clusterUrl;
     
-    console.log( req.url, url);
+    // console.log(`INTERCEPTOR ${req.url} ${url}`);
     req = req.clone({
       url: url + req.url
     });
