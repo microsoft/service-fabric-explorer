@@ -877,14 +877,14 @@ export class RestClientService {
                         status: err.statusCode,
                         statusText: err.statusMessage,
                     })
-                    reject(err) }
+                    reject(r) }
                 );
         }));
 }
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
-        console.log(JSON.stringify(err))
+        console.log(err)
         const header = `${err.status.toString()} : ${apiDesc}`;
         let message = messageHandler.getErrorMessage(apiDesc, err);
             if (message) {

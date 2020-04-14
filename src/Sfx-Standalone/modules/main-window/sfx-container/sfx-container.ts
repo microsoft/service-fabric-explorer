@@ -10,7 +10,7 @@ import { WebviewTag } from "electron";
 import { electron } from "../../../utilities/electron-adapter";
 import { ISfxContainer } from "sfx.sfx-view-container";
 import { resolve } from "donuts.node/path";
-import * as shell from "donuts.node/shell";
+// import * as shell from "donuts.node/shell";
 
 export class SfxContainer implements ISfxContainer {
     static UrlUuidNameSpace: string = "6ba7b811-9dad-11d1-80b4-00c04fd430c8";
@@ -58,7 +58,7 @@ export class SfxContainer implements ISfxContainer {
             return Promise.resolve();
         }
                 
-        const sfxUrl = resolve({ path: "../../../sfx/beta.html", search: "?targetcluster=" + targetServiceEndpoint });
+        const sfxUrl = resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + targetServiceEndpoint });
 
         this.endpoints.push({ endpoint: targetServiceEndpoint, id: id });
         container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
@@ -67,7 +67,7 @@ export class SfxContainer implements ISfxContainer {
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
         sfxWebView.addEventListener("dom-ready", async () => {
             container.children("#treeview-loading-glyph").remove();
-            sfxWebView.loadURL("../../../sfx/beta.html");
+            // sfxWebView.loadURL("../../../sfx/beta.html");
 
             //sfxWebView.executeJavaScript(" angular.bootstrap(document, [Sfx.Constants.sfxAppName], { strictDi: true });");
         });
@@ -77,11 +77,11 @@ export class SfxContainer implements ISfxContainer {
             console.log(`${sfxUrl} : `, e);
         });
 
-        sfxWebView.addEventListener("new-window",
-            (event) => {
-            event.preventDefault();
-            shell.start(event.url);
-        });
+        // sfxWebView.addEventListener("new-window",
+        //     (event) => {
+        //     event.preventDefault();
+        //     shell.start(event.url);
+        // });
 
 
         return Promise.resolve();

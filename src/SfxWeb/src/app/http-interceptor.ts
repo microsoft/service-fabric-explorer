@@ -20,6 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
     if(this.adalService.aadEnabled){
         return this.adalService.acquireTokenResilient(this.adalService.config.raw.metadata.cluster)
         .pipe(mergeMap((token) => {
+          console.log(token)
             if (token) {
             req = req.clone({
                 setHeaders: {
