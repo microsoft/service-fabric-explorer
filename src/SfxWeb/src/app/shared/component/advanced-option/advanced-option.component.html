@@ -9,5 +9,11 @@
             Advanced Mode
             <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()">
         </label>
+        <label ngbDropdownItem> 
+            <span class="mif-info" title="Hide all messages in the bottom right"
+            style="padding-right: 5px;"></span>
+                Suppress message
+            <input type="checkbox" [(ngModel)]="messageService.suppressMessage">
+        </label>
     </div>
 </div>
