@@ -13,6 +13,7 @@ import { initApp } from './app-initializers';
 import { AdalService } from './services/adal.service';
 import { httpInterceptorProviders } from './http-interceptor';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
+import { ReactiveFormsModule } from '@angular/forms';
 
 @NgModule({
   declarations: [
@@ -27,6 +28,7 @@ import { HashLocationStrategy, LocationStrategy } from '@angular/common';
     NoopAnimationsModule,
     MatDialogModule,
     NgbDropdownModule,
+    ReactiveFormsModule
   ],
   
   providers: [

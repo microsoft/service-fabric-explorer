@@ -12,6 +12,8 @@ import { PartitionBaseController } from '../PartitionBase';
   styleUrls: ['./essentials.component.scss']
 })
 export class EssentialsComponent extends PartitionBaseController {
+
+  public hideReplicator: boolean = true;
   listSettings: ListSettings;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
@@ -41,9 +43,10 @@ export class EssentialsComponent extends PartitionBaseController {
         // Keep the sort properties in sync with the sortBy for ClusterTreeService.getDeployedReplicas
         this.listSettings = this.settings.getNewOrExistingListSettings("replicas", defaultSortProperties, columnSettings);
     }
+
     return forkJoin([
       this.partition.health.refresh(messageHandler),
-      this.partition.replicas.refresh(messageHandler),
+      this.partition.replicas.refresh(messageHandler)
     ]);
   }
 }

@@ -965,6 +965,13 @@ app-navbar {
     background-color: $tree-node-search-highlight-background-color;
 }
 
+.row-wrapper {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    overflow-x: auto;
+    white-space: nowrap;
+}
 
 .nav-tabs, .nav-link {
     border-bottom-width: 0px;
@@ -1008,3 +1015,13 @@ app-navbar {
         border-width: 2px;
     }
 }
+
+.toast {
+    border-radius: 0px;
+
+    .toast-header {
+        color: #ffffff;
+        background-color: rgb(90, 90, 90);
+        font-weight: 200;
+    }
+} 

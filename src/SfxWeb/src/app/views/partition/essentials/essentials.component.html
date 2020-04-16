@@ -59,7 +59,20 @@
                 <h4>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h4>
             </div>
             <div collapse-body>
-                <detail-list [list]="partition.replicas" [listSettings]="listSettings" *ngIf="partition.replicas.isInitialized"></detail-list>
+                <detail-list [list]="partition.replicas.collection" [listSettings]="listSettings" *ngIf="partition.replicas.isInitialized"></detail-list>
+            </div>
+        </app-collapse-container>
+    </div>
+
+    <div class="detail-pane" *ngIf="partition.isStatefulService" >
+        <app-collapse-container [(collapsed)]="hideReplicator">
+            <div collapse-header>
+                <h4>Replicator Status</h4>
+            </div>
+            <div collapse-body>
+                <div *ngIf="!hideReplicator">
+                    <app-replica-status-container [replicas]="partition.replicas.collection"></app-replica-status-container>
+                </div>
             </div>
         </app-collapse-container>
     </div>
