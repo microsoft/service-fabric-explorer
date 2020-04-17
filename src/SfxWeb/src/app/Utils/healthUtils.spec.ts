@@ -1,8 +1,15 @@
-import { IUnhealthyEvaluationNode, getNestedNode, getParentPath, getLeafNodes } from "./healthUtils";
+import { IUnhealthyEvaluationNode, getNestedNode, getParentPath, getLeafNodes, HealthUtils } from "./healthUtils";
 import { HealthEvaluation } from '../Models/DataModels/Shared';
+import { IRawHealthEvaluation } from "../Models/RawDataTypes";
+import { DataService } from "../services/data.service";
+import { ApplicationCollection } from "../Models/DataModels/collections/Collections";
 
     
 describe('Health Utils', () => {
+
+
+    describe('unhealthy tree', () => {
+    
     let parent: IUnhealthyEvaluationNode 
     let child1: IUnhealthyEvaluationNode 
     let child2: IUnhealthyEvaluationNode 
@@ -152,3 +159,80 @@ describe('Health Utils', () => {
     })
   });
 
+    describe('parsing health events', () => {
+
+        let dataService: DataService;
+
+        beforeEach((() => {
+            dataService = {} as DataService;
+        }))
+
+        describe('getViewPathUrl', () => {
+            fit('Nodes', () => {
+                let health = {
+                    Kind: "Nodes"
+                } as IRawHealthEvaluation;
+
+                let data = HealthUtils.getViewPathUrl(health, dataService);
+                
+                expect(data).toEqual({
+                    viewPathUrl: "/nodes",
+                    name: "Nodes",
+                    uniqueId: "Nodes"
+                });
+            });
+
+            fit('Node', () => {
+                let health = {
+                    Kind: "Node",
+                } as IRawHealthEvaluation;
+                health["NodeName"] = "test"
+                let data = HealthUtils.getViewPathUrl(health, dataService);
+                
+                expect(data).toEqual({
+                    viewPathUrl: "/nodes/test",
+                    name: "test",
+                    uniqueId: "test"
+                });
+            });
+
+            fit('Service user app', () => {
+                let health = {
+                    Kind: "Service",
+                } as IRawHealthEvaluation;
+
+                let data = HealthUtils.getViewPathUrl(health, dataService);
+                
+                expect(data).toEqual({
+                    viewPathUrl: "/applications",
+                    name: "applications",
+                    uniqueId: "applications"
+                });
+            });
+
+            fit('Application', () => {
+                let health = {
+                    Kind: "Application",
+                } as IRawHealthEvaluation;
+
+                let apps = {
+                    find: (name: string) => {
+                        return {
+                            raw: {TypeName: "someType"}
+                        }
+                    }
+                }
+                dataService.apps = apps as ApplicationCollection;
+
+                health["ApplicationName"] = "fabric:/test"
+                let data = HealthUtils.getViewPathUrl(health, dataService);
+                
+                expect(data).toEqual({
+                    viewPathUrl: "/apptype/someType/app/test",
+                    name: "test",
+                    uniqueId: "fabric:/test"
+                });
+            });
+        })
+    });
+})

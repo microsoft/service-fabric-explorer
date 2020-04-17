@@ -22,7 +22,6 @@ export class HealthUtils {
                     }
                     const pathData = HealthUtils.getViewPathUrl(healthEval, data, parentUrl);
                     health.viewPathUrl = pathData.viewPathUrl;
-                    health.displayName = pathData.displayName;
                     health.treeName = pathData.name;
                     health.uniqueId = pathData.uniqueId;
                     healthEvals.push(health);
@@ -44,7 +43,7 @@ export class HealthUtils {
      * @param data
      * @param parentUrl
      */
-    public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): { viewPathUrl: string, displayName: string, name: string, uniqueId: string } {
+    public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): { viewPathUrl: string, name: string, uniqueId: string } {
         let viewPathUrl = "";
         let name = "";
         let uniqueId = "";
@@ -171,7 +170,6 @@ export class HealthUtils {
 
         return {
             viewPathUrl,
-            displayName: "",
             name,
             uniqueId
         };
