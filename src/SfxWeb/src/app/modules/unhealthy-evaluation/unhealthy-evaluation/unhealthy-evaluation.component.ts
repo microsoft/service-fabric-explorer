@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, OnChanges, Output, EventEmitter, ViewChild, ElementRef, AfterViewInit, AfterContentInit, ChangeDetectionStrategy, ChangeDetectorRef, HostListener } from '@angular/core';
 import { IUnhealthyEvaluationNode } from 'src/app/Utils/healthUtils';
 
 @Component({
@@ -29,22 +29,29 @@ export class UnhealthyEvaluationComponent implements OnChanges, OnInit, AfterVie
 
   constructor(private cdr: ChangeDetectorRef) { }
   ngAfterViewInit(): void {
-    if (this.tref) {
-      this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
-      this.cdr.detectChanges()
-    }
+    this.checkText(true);
   }
 
   ngOnInit(): void {
-    if (this.tref) {
-      this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
-    }
+    this.checkText();
   }
 
   ngOnChanges(): void {
+    this.checkText();
+  }
+
+  checkText(runCdr: boolean = false) {
     if (this.tref) {
       this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
+      if(runCdr) {
+        this.cdr.detectChanges()
+      }
     }
+  }
+
+  @HostListener('window:resize', ['$event'])
+  checkTextOnResize() {
+    this.checkText(true);
   }
 
   toggleShow() {
