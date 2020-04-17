@@ -190,21 +190,21 @@ describe('Health Utils', () => {
                 let data = HealthUtils.getViewPathUrl(health, dataService);
                 
                 expect(data).toEqual({
-                    viewPathUrl: "/nodes/test",
+                    viewPathUrl: "/node/test",
                     name: "test",
                     uniqueId: "test"
                 });
             });
 
-            fit('Service user app', () => {
+            fit('Applications', () => {
                 let health = {
-                    Kind: "Service",
+                    Kind: "Applications",
                 } as IRawHealthEvaluation;
 
                 let data = HealthUtils.getViewPathUrl(health, dataService);
                 
                 expect(data).toEqual({
-                    viewPathUrl: "/applications",
+                    viewPathUrl: "/apps",
                     name: "applications",
                     uniqueId: "applications"
                 });
@@ -233,6 +233,170 @@ describe('Health Utils', () => {
                     uniqueId: "fabric:/test"
                 });
             });
+
+            fit('Service user app', () => {
+                let health = {
+                    Kind: "Service",
+                    Description: "Service 'fabric:/WordCountV1/WordCountWebService' is in Warning.",
+                    AggregatedHealthState: "Warning",
+                } as IRawHealthEvaluation;
+                health["ServiceName"] = "fabric:/WordCountV1/WordCountWebService"
+                let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
+                
+                expect(data).toEqual({
+                    viewPathUrl: "/parent/service/WordCountV1%2FWordCountWebService",
+                    name: "WordCountV1/WordCountWebService",
+                    uniqueId: "WordCountV1/WordCountWebService"
+                });
+            });
+
+            fit('Service system app', () => {
+                let health = {
+                    Kind: "Service",
+                    AggregatedHealthState: "Warning",
+                } as IRawHealthEvaluation;
+                health["ServiceName"] = "fabric:/System%2FClusterManagerService"
+                let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
+                
+                expect(data).toEqual({
+                    viewPathUrl: "/apptype/System/app/System/service/System%252FClusterManagerService",
+                    name: "System%2FClusterManagerService",
+                    uniqueId: "System%2FClusterManagerService"
+                });
+            });
+
+            fit('Partition', () => {
+                let health = {
+                    Kind: "Partition",
+                } as IRawHealthEvaluation;
+                health["PartitionId"] = "512361234123465"
+                let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
+                
+                expect(data).toEqual({
+                    viewPathUrl: "/parent/partition/512361234123465",
+                    name: "512361234123465",
+                    uniqueId: "512361234123465"
+                });
+            });
+
+            fit('Replica', () => {
+                let health = {
+                    Kind: "Replica",
+                } as IRawHealthEvaluation;
+                health["ReplicaOrInstanceId"] = "512361234123465"
+                let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
+                
+                expect(data).toEqual({
+                    viewPathUrl: "/parent/replica/512361234123465",
+                    name: "512361234123465",
+                    uniqueId: "512361234123465"
+                });
+            });
+
+            fit('Event', () => {
+                let health = {
+                    Kind: "Event",
+                } as IRawHealthEvaluation;
+                health["SourceId"] = "someId"
+                health["Property"] = "Ok"
+                let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
+                
+                expect(data).toEqual({
+                    viewPathUrl: "/parent",
+                    name: "Event",
+                    uniqueId: "someIdOk/parent"
+                });
+            });
+
+            fit('DeployedServicePackage', () => {
+                let health = {
+                    Kind: "DeployedServicePackage",
+                } as IRawHealthEvaluation;
+
+                health["ServiceManifestName"] = "manifest"
+                let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
+                
+                expect(data).toEqual({
+                    viewPathUrl: "/parent/deployedservice/manifest",
+                    name: "manifest",
+                    uniqueId: "manifest"
+                });
+
+                health["ServicePackageActivationId"] = "1234"
+                data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
+                
+                expect(data).toEqual({
+                    viewPathUrl: "/parent/deployedservice/activationid/1234manifest",
+                    name: "manifest",
+                    uniqueId: "manifest"
+                });
+
+            });
+
+            fit('DeployedServicePackages', () => {
+                let health = {
+                    Kind: "DeployedServicePackages",
+                } as IRawHealthEvaluation;
+
+                let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
+                expect(data).toEqual({
+                    viewPathUrl: "/parent",
+                    name: "DeployedServicePackages",
+                    uniqueId: "DSP/parent"
+                });
+            });
+            fit('Partitions', () => {
+                let health = {
+                    Kind: "Partitions",
+                } as IRawHealthEvaluation;
+
+                let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
+                expect(data).toEqual({
+                    viewPathUrl: "/parent",
+                    name: "Partitions",
+                    uniqueId: "PP/parent"
+                });
+            });
+
+            fit('Replicas', () => {
+                let health = {
+                    Kind: "Replicas",
+                } as IRawHealthEvaluation;
+
+                let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
+                expect(data).toEqual({
+                    viewPathUrl: "/parent",
+                    name: "Replicas",
+                    uniqueId: "RR/parent"
+                });
+            });
+
+            fit('Services', () => {
+                let health = {
+                    Kind: "Services",
+                } as IRawHealthEvaluation;
+
+                health['ServiceTypeName'] = "testService"
+                let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
+                expect(data).toEqual({
+                    viewPathUrl: "/parent",
+                    name: "Services",
+                    uniqueId: "SStestService"
+                });
+            });
         })
     });
 })
+
+
+/*
+Kind: "Services"
+Description: "100% (1/1) services of service type 'WordCountWebServiceType' are unhealthy. The evaluation tolerates 0% unhealthy services for the service type."
+AggregatedHealthState: "Warning"
+ServiceTypeName: "WordCountWebServiceType"
+UnhealthyEvaluations: [{,…}]
+MaxPercentUnhealthyServices: 0
+TotalCount: 1
+
+
+*/

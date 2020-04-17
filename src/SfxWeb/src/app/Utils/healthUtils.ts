@@ -145,20 +145,33 @@ export class HealthUtils {
                 const activationIdUrlInfo = activationId ? "activationid/" + RoutesService.doubleEncode(activationId) : "";
                 viewPathUrl = parentUrl + `/deployedservice/${activationIdUrlInfo}${serviceManifestName}`;
                 name = serviceManifestName;
+                uniqueId = name;
                 break;
             }
 
             case "DeployedServicePackages": {
                 uniqueId = "DSP" + parentUrl;
+                viewPathUrl = parentUrl;
+                name = healthEval.Kind;
+                break;
             }
             case "Services": {
-                uniqueId = "SS" + healthEval["ServiceTypeName"]
+                uniqueId = "SS" + healthEval["ServiceTypeName"];
+                viewPathUrl = parentUrl;
+                name = healthEval.Kind;
+                break;
             }
             case "Partitions": {
                 uniqueId = "PP" + parentUrl;
+                viewPathUrl = parentUrl;
+                name = healthEval.Kind;
+                break;
             }
             case "Replicas": {
                 uniqueId = "RR" + parentUrl;
+                viewPathUrl = parentUrl;
+                name = healthEval.Kind;
+                break;
             }
 
             default: {
