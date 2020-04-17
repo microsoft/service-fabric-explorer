@@ -2,15 +2,6 @@
     <div tabindex="-1" class="expander icon " aria-hidden="true" (click)="toggleShow(); $event.stopPropagation()"
         *ngIf="node.children.length > 0"
         [ngClass]="{ 'mif-chevron-thin-up': !showChildren, 'mif-chevron-thin-down': showChildren }"></div>
-    <!-- <div *ngIf="node.healthEvaluation">
-        <div>
-            <app-health-badge [badgeClass]="node.healthEvaluation.healthState.badgeClass"></app-health-badge>
-            <a [routerLink]="node.healthEvaluation.viewPath">{{node.healthEvaluation.treeName}}</a>
-            <span *ngIf="!showChildren">({{node.totalChildCount}}) </span>
-            <span (click)="onAnchorSet(node)" *ngIf="!isAnchor" style="margin-left: 10px; cursor: pointer;"
-                class="mif-anchor link" title="Only view this sub tree."></span>
-        </div>
-    </div> -->
 
     <div *ngFor="let display of node.displayNames; let i = index" class="display-row-container">
         <div class="display-row-item">
