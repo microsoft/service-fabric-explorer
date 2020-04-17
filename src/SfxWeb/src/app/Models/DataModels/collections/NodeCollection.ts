@@ -10,6 +10,7 @@ import { Observable, of } from 'rxjs';
 import { Utils } from 'src/app/Utils/Utils';
 import { HealthStateConstants, NodeStatusConstants, StatusWarningLevel, BannerWarningID } from 'src/app/Common/Constants';
 import { DataModelCollectionBase } from './CollectionBase';
+import { RoutesService } from 'src/app/services/routes.service';
 
 export class NodeCollection extends DataModelCollectionBase<Node> {
     //make sure we only check once per session and this object will get destroyed/recreated
@@ -26,7 +27,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getNodesViewPath();
+        return RoutesService.getNodesViewPath();
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {

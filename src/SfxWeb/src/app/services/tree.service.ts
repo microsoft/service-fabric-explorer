@@ -87,7 +87,7 @@ export class TreeService {
                         nodeId: IdGenerator.cluster(),
                         displayName: () => "Cluster",
                         childrenQuery: () => this.getGroupNodes(),
-                        selectAction: () => this.routes.navigate(() => this.routes.getClusterViewPath()),
+                        selectAction: () => this.routes.navigate(() => RoutesService.getClusterViewPath()),
                         badge: () => clusterHealth.healthState,
                         alwaysVisible: true,
                         startExpanded: true,

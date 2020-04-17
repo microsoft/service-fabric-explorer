@@ -11,6 +11,7 @@ import { HealthBase } from './HealthEvent';
 import { DeployedApplicationCollection } from './collections/DeployedApplicationCollection';
 import { ActionWithConfirmationDialog, Action } from '../Action';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
+import { RoutesService } from 'src/app/services/routes.service';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -61,7 +62,7 @@ export class Node extends DataModelBase<IRawNode> {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getNodeViewPath(this.name);
+        return RoutesService.getNodeViewPath(this.name);
     }
 
     public get tooltip(): string {

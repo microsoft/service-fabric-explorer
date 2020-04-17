@@ -1,6 +1,7 @@
 import { IRawUnhealthyEvaluation, IRawHealthEvaluation } from '../Models/RawDataTypes';
 import { HealthEvaluation } from '../Models/DataModels/Shared';
 import { DataService } from '../services/data.service';
+import { RoutesService } from '../services/routes.service';
 
 export class HealthUtils {
     public static getParsedHealthEvaluations(rawUnhealthyEvals: IRawUnhealthyEvaluation[], level: number = 0, parent: HealthEvaluation = null, data: DataService): HealthEvaluation[] {
@@ -49,7 +50,7 @@ export class HealthUtils {
         let uniqueId = "";
         switch (healthEval.Kind) {
             case "Nodes": {
-                viewPathUrl = data.routes.getNodesViewPath();
+                viewPathUrl = RoutesService.getNodesViewPath();
                 name = "Nodes";
                 uniqueId = name;
                 break;
@@ -58,11 +59,11 @@ export class HealthUtils {
                 let nodeName = healthEval["NodeName"];
                 name = nodeName;
                 uniqueId = name;
-                viewPathUrl = data.routes.getNodeViewPath(nodeName);
+                viewPathUrl = RoutesService.getNodeViewPath(nodeName);
                 break;
             }
             case "Applications": {
-                viewPathUrl = data.routes.getAppsViewPath();
+                viewPathUrl = RoutesService.getAppsViewPath();
                 name = "applications"
                 uniqueId = name;
                 break;
@@ -76,7 +77,7 @@ export class HealthUtils {
                 let app = data.apps.find(appName);
                 if (app) {
                     let appType = app.raw.TypeName;
-                    viewPathUrl += `/apptype/${data.routes.doubleEncode(appType)}/app/${data.routes.doubleEncode(appName)}`;
+                    viewPathUrl += `/apptype/${RoutesService.doubleEncode(appType)}/app/${RoutesService.doubleEncode(appName)}`;
                 }
                 break;
             }
@@ -88,9 +89,9 @@ export class HealthUtils {
 
                 //Handle system services slightly different by setting their exact path
                 if (healthEval["ServiceName"].startsWith("fabric:/System")) {
-                    viewPathUrl = `/apptype/System/app/System/service/${data.routes.doubleEncode(exactServiceName)}`;
+                    viewPathUrl = `/apptype/System/app/System/service/${RoutesService.doubleEncode(exactServiceName)}`;
                 } else {
-                    parentUrl += `/service/${data.routes.doubleEncode(exactServiceName)}`;
+                    parentUrl += `/service/${RoutesService.doubleEncode(exactServiceName)}`;
                     viewPathUrl = parentUrl;
                 }
                 break;
@@ -101,7 +102,7 @@ export class HealthUtils {
                 name = partitionId;
                 uniqueId = partitionId;
 
-                parentUrl += `/partition/${data.routes.doubleEncode(partitionId)}`;
+                parentUrl += `/partition/${RoutesService.doubleEncode(partitionId)}`;
                 viewPathUrl = parentUrl;
                 break;
             }
@@ -110,7 +111,7 @@ export class HealthUtils {
                 name = replicaId;
                 uniqueId = replicaId;
 
-                parentUrl += `/replica/${data.routes.doubleEncode(replicaId)}`;
+                parentUrl += `/replica/${RoutesService.doubleEncode(replicaId)}`;
                 viewPathUrl = parentUrl;
                 break;
             }
@@ -134,7 +135,7 @@ export class HealthUtils {
                 const appName = applicationName.replace("fabric:/", "");
                 name = appName;
                 uniqueId = name;
-                viewPathUrl += `/node/${data.routes.doubleEncode(nodeName)}/deployedapp/${data.routes.doubleEncode(appName)}`;
+                viewPathUrl += `/node/${RoutesService.doubleEncode(nodeName)}/deployedapp/${RoutesService.doubleEncode(appName)}`;
                 break;
             }
 
@@ -142,7 +143,7 @@ export class HealthUtils {
                 const serviceManifestName = healthEval["ServiceManifestName"];
                 name = serviceManifestName;
                 const activationId = healthEval["ServicePackageActivationId"];
-                const activationIdUrlInfo = activationId ? "activationid/" + data.routes.doubleEncode(activationId) : "";
+                const activationIdUrlInfo = activationId ? "activationid/" + RoutesService.doubleEncode(activationId) : "";
                 viewPathUrl = parentUrl + `/deployedservice/${activationIdUrlInfo}${serviceManifestName}`;
                 name = serviceManifestName;
                 break;
@@ -167,9 +168,7 @@ export class HealthUtils {
                 break;
             }
         }
-        // if (replaceText.length > 0) {
-        //     healthEval.Description = Utils.injectLink(healthEval.Description, replaceText, viewPathUrl, replaceText);
-        // }
+
         return {
             viewPathUrl,
             displayName: "",
@@ -196,11 +195,11 @@ export interface IUnhealthyEvaluationNode {
 }
 
 /*
-Get a specific node by iterating over children at each node to find one that matches
+Get a specific node by iterating over children at each node to find one that matches the id at
 that index of the array and if at any point it can not find that id returns back null.
-
+path does not include the id of the starting node.
 */
-export const getNestedNode = (path: string[], root: IUnhealthyEvaluationNode) => {
+export const getNestedNode = (path: string[], root: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode => {
     if (path.length >= 1) {
         const id = path.shift();
         const pathNode = root.children.find(node => node.id === id);
@@ -220,6 +219,9 @@ export const getNestedNode = (path: string[], root: IUnhealthyEvaluationNode) =>
     }
 }
 
+/*
+return a list of the parents in the order of farthest parent back to the parent of the node.
+*/
 export const getParentPath = (node: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode[] => {
     let parents = [];
 
@@ -234,9 +236,9 @@ export const getParentPath = (node: IUnhealthyEvaluationNode): IUnhealthyEvaluat
 /*
 Get leaf nodes, which should only end up being event health events.
 */
-export const getLeafNodes = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluationNode[] => {
+export const getLeafNodes = (root: IUnhealthyEvaluationNode, skipRootPath: boolean = true): IUnhealthyEvaluationNode[] => {
     if (root.children.length == 0) {
-        const parent = getParentPath(root).slice(1).map(node => {
+        const parent = getParentPath(root).slice(skipRootPath ? 1 : 0).map(node => {
             return {
                 text: node.healthEvaluation.treeName,
                 link: node.healthEvaluation.viewPathUrl,
@@ -249,7 +251,7 @@ export const getLeafNodes = (root: IUnhealthyEvaluationNode): IUnhealthyEvaluati
         return [copy];
     } else {
         let nodes = [];
-        root.children.forEach(node => { nodes = nodes.concat(getLeafNodes(node)) });
+        root.children.forEach(node => { nodes = nodes.concat(getLeafNodes(node, skipRootPath)) });
         return nodes;
     }
 }

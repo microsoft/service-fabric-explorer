@@ -3,6 +3,7 @@ import { DataService } from 'src/app/services/data.service';
 import { DeployedReplicaBaseController } from '../DeployedReplicaBase';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, of } from 'rxjs';
+import { RoutesService } from 'src/app/services/routes.service';
 
 @Component({
   selector: 'app-essentials',
@@ -20,7 +21,7 @@ export class EssentialsComponent extends DeployedReplicaBaseController {
     const deployedService = this.replica.parent;
     const deployedApplication = deployedService.parent;
     const serviceName = encodeURI(this.replica.raw.ServiceName.replace("fabric:/", ""));
-    this.appView = this.data.routes.getReplicaViewPath(deployedApplication.raw.TypeName, deployedApplication.raw.Id, serviceName,
+    this.appView = RoutesService.getReplicaViewPath(deployedApplication.raw.TypeName, deployedApplication.raw.Id, serviceName,
                                                        this.replica.raw.PartitionId, this.replica.id);
     return of(null);
   }
