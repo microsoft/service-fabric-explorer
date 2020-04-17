@@ -1,38 +1,16 @@
-<!-- <ngb-tabset>
-    <ngb-tab>
-        <ng-template ngbTabTitle>
-            <div style="font-size: 12pt;">
-                List
-            </div>
-        </ng-template>
-        <ng-template ngbTabContent>
+<ul ngbNav #nav="ngbNav" class="nav-tabs">
+    <li ngbNavItem>
+        <a ngbNavLink>List</a>
+        <ng-template ngbNavContent>
             <app-list-view [unhealthyEvaluations]="unhealthyEvaluations"></app-list-view>
         </ng-template>
-    </ngb-tab>
-    <ngb-tab>
-        <ng-template ngbTabTitle>
-            <div style="font-size: 12pt;">
-                Tree
-            </div>
+    </li>
+    <li ngbNavItem>
+        <a ngbNavLink>Tree</a>
+        <ng-template ngbNavContent>
+            <app-unhealthy-evaluations-container [healthEvaluations]="unhealthyEvaluations">
+            </app-unhealthy-evaluations-container>
         </ng-template>
-        <ng-template ngbTabContent>
-            <app-unhealthy-evaluations-container [healthEvaluations]="unhealthyEvaluations"></app-unhealthy-evaluations-container>
-        </ng-template>
-    </ngb-tab>
-</ngb-tabset> -->
-
-<ul ngbNav #nav="ngbNav" class="nav-tabs">
-<li ngbNavItem>
-    <a ngbNavLink>List</a>
-    <ng-template ngbNavContent>
-        <app-list-view [unhealthyEvaluations]="unhealthyEvaluations"></app-list-view>
-    </ng-template>
-</li>
-<li ngbNavItem>
-    <a ngbNavLink>Tree</a>
-    <ng-template ngbNavContent>
-        <app-unhealthy-evaluations-container [healthEvaluations]="unhealthyEvaluations"></app-unhealthy-evaluations-container>
-    </ng-template>
-</li>
+    </li>
 </ul>
 <div [ngbNavOutlet]="nav"></div>
