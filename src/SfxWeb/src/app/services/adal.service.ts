@@ -40,12 +40,12 @@ export class AdalService {
           const hostname = window.location.hostname;
           const port = window.location.port ? ":" + window.location.port :"";
 
-          const location = `${protocol}//${hostname}${port}`;
+          const location = window.location.href; //`${protocol}//${hostname}${port}`;
 
           const config = {
             tenant: data.raw.metadata.tenant,
             clientId: data.raw.metadata.client,
-            redirectUri: location,
+            // redirectUri: location,
             cacheLocation: 'localStorage',
         }
         this.context = new createAuthContextFn(config);
