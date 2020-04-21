@@ -95,6 +95,7 @@ export class AdalService {
                   console.error(message)
                   subscriber.error(message);
               }
+              subscriber.complete();
           })
           }
       ).pipe(retry(3));
