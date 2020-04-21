@@ -36,16 +36,9 @@ export class AdalService {
         this.config = data;
         if(data.isAadAuthType){
 
-          const protocol = window.location.protocol;
-          const hostname = window.location.hostname;
-          const port = window.location.port ? ":" + window.location.port :"";
-
-          const location = window.location.href; //`${protocol}//${hostname}${port}`;
-
           const config = {
             tenant: data.raw.metadata.tenant,
             clientId: data.raw.metadata.cluster,
-            // redirectUri: location,
             cacheLocation: 'localStorage',
         }
 
