@@ -36,18 +36,12 @@ export class AdalService {
         this.config = data;
         if(data.isAadAuthType){
 
-          const protocol = window.location.protocol;
-          const hostname = window.location.hostname;
-          const port = window.location.port ? ":" + window.location.port :"";
-
-          const location = `${protocol}//${hostname}${port}`;
-
           const config = {
             tenant: data.raw.metadata.tenant,
-            clientId: data.raw.metadata.client,
-            redirectUri: location,
+            clientId: data.raw.metadata.cluster,
             cacheLocation: 'localStorage',
         }
+
         this.context = new createAuthContextFn(config);
           this.aadEnabled = true;
         }
@@ -72,7 +66,7 @@ export class AdalService {
       return this.context.getCachedUser();
   }
   public get accessToken() {
-      return this.context.getCachedToken(this.config.raw.metadata.client);
+      return this.context.getCachedToken(this.config.raw.metadata.cluster);
   }
   public get isAuthenticated(): boolean {
       return this.userInfo && this.accessToken;
@@ -101,6 +95,7 @@ export class AdalService {
                   console.error(message)
                   subscriber.error(message);
               }
+              subscriber.complete();
           })
           }
       ).pipe(retry(3));
