@@ -44,10 +44,11 @@ export class AdalService {
 
           const config = {
             tenant: data.raw.metadata.tenant,
-            clientId: data.raw.metadata.client,
+            clientId: data.raw.metadata.cluster,
             // redirectUri: location,
             cacheLocation: 'localStorage',
         }
+
         this.context = new createAuthContextFn(config);
           this.aadEnabled = true;
         }
@@ -72,7 +73,7 @@ export class AdalService {
       return this.context.getCachedUser();
   }
   public get accessToken() {
-      return this.context.getCachedToken(this.config.raw.metadata.client);
+      return this.context.getCachedToken(this.config.raw.metadata.cluster);
   }
   public get isAuthenticated(): boolean {
       return this.userInfo && this.accessToken;
