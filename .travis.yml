@@ -2,18 +2,8 @@ language: node_js
 node_js:
   - "12.13"
 dist: trusty
-sudo: false
-addons:
-  apt:
-    sources:
-      - google-chrome
-    packages:
-      - google-chrome-stable
+sudo: required
 
-cache:
-  directories:
-    - ./node_modules
-  
 before_install:
   - npm install -g npm@latest
 install:
