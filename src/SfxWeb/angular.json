@@ -35,7 +35,7 @@
               "src/styles.scss",
               "src/modal.scss",
               "src/calender.scss",
-              "src/Styles/modules/_candybar.scss"
+              "src/_candybar.scss"
             ],
             "scripts": [],
             "stylePreprocessorOptions": {
