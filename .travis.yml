@@ -1,8 +1,18 @@
 language: node_js
 node_js:
   - "12.13"
-os:
-  - osx
+
+addons:
+  apt:
+    sources:
+      - google-chrome
+    packages:
+      - google-chrome-stable
+
+cache:
+  directories:
+    - ./node_modules
+  
 before_install:
   - npm install -g npm@latest
 install:
@@ -13,4 +23,4 @@ install:
   - pushd ./src/SfxWeb; npm install
 script:
   - pushd ./src/SfxWeb; ng test --watch=false --browsers=ChromeHeadless
-  - pushd ./src/SfxWeb; ng build --prod
+  - ng build --prod
