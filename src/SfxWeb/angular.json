@@ -40,7 +40,6 @@
             "scripts": [],
             "stylePreprocessorOptions": {
               "includePaths": [
-                "src/styles"
               ]
             }
           },
