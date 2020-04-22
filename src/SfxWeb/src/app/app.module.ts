@@ -14,10 +14,13 @@ import { AdalService } from './services/adal.service';
 import { httpInterceptorProviders } from './http-interceptor';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    TelemetrySnackBarComponent
   ],
   imports: [
     BrowserModule,
@@ -28,7 +31,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     NoopAnimationsModule,
     MatDialogModule,
     NgbDropdownModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    MatSnackBarModule
   ],
   
   providers: [
