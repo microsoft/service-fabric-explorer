@@ -12,5 +12,5 @@ install:
   - npm install @angular/cli -g
   - pushd ./src/SfxWeb; npm install
 script:
-  - ng test --watch=false --browsers=ChromeHeadless
+  - pushd ./src/SfxWeb; ng test --watch=false --browsers=ChromeHeadless
   - pushd ./src/SfxWeb; ng build --prod
