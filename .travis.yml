@@ -3,6 +3,9 @@ node_js:
   - "12.13"
 dist: trusty
 sudo: required
+cache:
+  directories:
+    - ./src/SfxWeb/node_modules
 
 before_install:
   - npm install -g npm@latest
