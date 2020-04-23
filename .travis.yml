@@ -1,8 +1,12 @@
 language: node_js
 node_js:
   - "12.13"
-os:
-  - osx
+dist: trusty
+sudo: required
+cache:
+  directories:
+    - ./src/SfxWeb/node_modules
+
 before_install:
   - npm install -g npm@latest
 install:
@@ -12,4 +16,5 @@ install:
   - npm install @angular/cli -g
   - pushd ./src/SfxWeb; npm install
 script:
-  - pushd ./src/SfxWeb; ng build --prod
+  - pushd ./src/SfxWeb; ng test --watch=false --browsers=ChromeHeadless
+  - ng build --prod
