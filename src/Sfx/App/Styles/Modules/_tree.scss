@@ -75,7 +75,7 @@ $tree-node-line-height: 23px;
             position: relative;
             height: $tree-node-line-height;
 
-            &:hover {
+            &:hover, &:focus {
                 background-color: $tree-node-hover-background-color;
 
                 .actions-menu .actions-expander {

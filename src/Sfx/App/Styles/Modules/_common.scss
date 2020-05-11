@@ -17,6 +17,9 @@ a, a:active, a:focus, a:hover {
     text-decoration: none !important;
 }
 
+a, a:focus {
+    outline: 2px solid -webkit-focus-ring-color;
+}
 a[disabled], a.disabled {
     color: $link-disabled-color;
     cursor: default;
