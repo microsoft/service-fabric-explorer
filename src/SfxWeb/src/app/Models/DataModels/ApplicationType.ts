@@ -4,13 +4,14 @@ import { ServiceTypeCollection, ApplicationCollection } from './collections/Coll
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateConstants, Constants } from 'src/app/Common/Constants';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin} from 'rxjs';
 import { Application } from './Application';
 import { ITextAndBadge, ValueResolver } from 'src/app/Utils/ValueResolver';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { map } from 'rxjs/operators';
 import { Utils } from 'src/app/Utils/Utils';
-import { ActionWithConfirmationDialog } from '../Action';
+import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
+import { CreateApplicationComponent } from 'src/app/views/application-type/create-application/create-application.component';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -59,17 +60,17 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
             `${this.name}@${this.raw.Version}`
         ));
 
-        this.actions.add(new ActionWithConfirmationDialog(
+        this.actions.add(new IsolatedAction(
             this.data.dialog,
             "createAppInstance",
             "create",
             "Creating",
-            (data) => this.createInstance(data),
-            () => true,
-            "Create app instance",
-            `Supply the full application name to create an application instance of ${this.name}@${this.raw.Version} :`,
-            `${this.name}@${this.raw.Version}`
-        ));
+            {
+                appType: this,
+            },
+            CreateApplicationComponent,
+            () => true)
+            )
     }
 }
 

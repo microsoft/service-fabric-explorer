@@ -3,14 +3,14 @@
         <div ngbDropdown container="body">
             <button class="simple-button" ngbDropdownToggle>{{metricsViewModel.selectedMetrics[0].displayName}} :
                 {{metricsViewModel.selectedMetrics[0].hasCapacity ?
-                  metricsViewModel.selectedMetrics[0].loadCapacityRatioString : "N/A"}}</button>
+                  metricsViewModel.selectedMetrics[0].loadCapacityRatioString : ""}}</button>
             <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                <div *ngFor="let metric of metricsViewModel.metrics">
+                <div *ngFor="let metric of metricsViewModel.metrics" style="border-bottom: 1px solid gray;">
                     <button *ngIf="metric.displayName !== metricsViewModel.selectedMetrics[0].displayName" ngbDropdownItem
                     (click)="updateSelectedMetric(metric)" style="padding: 5px; ">
                         {{metric.displayName}}
-                        <div style="float: right; margin-left: 5px;">
-                            {{metric.hasCapacity? metric.loadCapacityRatioString : "N/A"}}
+                        <div style="float: right; margin-left: 5px;" *ngIf="metric.hasCapacity">
+                            {{metric.loadCapacityRatioString}}
                         </div>
                     </button>
                 </div>

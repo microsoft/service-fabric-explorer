@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { StorageService } from './storage.service';
 
 export enum MessageSeverity {
   Info = "Info", 
@@ -18,9 +19,14 @@ export interface IToast {
   providedIn: 'root'
 })
 export class MessageService {
-  toasts: IToast[] = [];
 
-  constructor() { }
+  static readonly LOCALSTORAGE_KEY_SUPPRES = "SFX-supress-message";
+
+  toasts: IToast[] = [];
+  _suppressMessages: boolean = false;
+  constructor(private storageService: StorageService) { 
+    this.suppressMessage = this.storageService.getValueBoolean(MessageService.LOCALSTORAGE_KEY_SUPPRES, false);
+  }
 
   remove(toast: IToast) {
     this.toasts = this.toasts.filter(t => t != toast);
@@ -35,13 +41,24 @@ export class MessageService {
     return colors[severity];
   }
 
-  public showMessage(message: string, severity: MessageSeverity, duration: number = 5000) {
-    this.toasts.push({
-      header: severity,
-      body: message,
-      duration,
-      class: this.getClass(severity)
-    })
+  public get suppressMessage() {
+    return this._suppressMessages;
+  }
+
+  public set suppressMessage(b: boolean) {
+    this.storageService.setValue(MessageService.LOCALSTORAGE_KEY_SUPPRES, b);
+    this._suppressMessages = b;
+  }
+
+  public showMessage(message: string, severity: MessageSeverity, header: string = "", duration: number = 5000) {
+    if(!this.suppressMessage) {
+      this.toasts.push({
+        header: `${severity} ${header}`,
+        body: message,
+        duration,
+        class: this.getClass(severity)
+      })
+    }
   }
 
   public getSuccessMessage(apiDesc: string, response: HttpResponse<any>): string {

@@ -863,18 +863,22 @@ export class RestClientService {
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
+        const header = `${err.status.toString()} : ${apiDesc}`;
+        console.log(err);
+
         let message = messageHandler.getErrorMessage(apiDesc, err);
             if (message) {
-                this.message.showMessage(message, MessageSeverity.Err);
+                this.message.showMessage(message, MessageSeverity.Err, header);
             }
     
         if (err.error instanceof Error) {
-        // A client-side or network error occurred. Handle it accordingly.
-        console.error('An error occurred:', err.error.message);
+            // A client-side or network error occurred. Handle it accordingly.
+        this.message.showMessage(err.error.message, MessageSeverity.Err, header);
+
         } else {
-        // The backend returned an unsuccessful response code.
-        // The response body may contain clues as to what went wrong,
-        console.error(`Backend returned code ${err.status}, body was: ${err.error}`);
+            // The backend returned an unsuccessful response code.
+            // The response body may contain clues as to what went wrong,
+            this.message.showMessage(err.message, MessageSeverity.Err, header);
         }
     
         // ...optionally return a default fallback value so app can continue (pick one)
