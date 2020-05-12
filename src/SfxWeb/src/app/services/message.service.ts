@@ -3,8 +3,8 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { StorageService } from './storage.service';
 
 export enum MessageSeverity {
-  Info = "Info", 
-  Warn = "Warning", 
+  Info = "Info",
+  Warn = "Warning",
   Err = "Error"
 }
 
@@ -24,7 +24,7 @@ export class MessageService {
 
   toasts: IToast[] = [];
   _suppressMessages: boolean = false;
-  constructor(private storageService: StorageService) { 
+  constructor(private storageService: StorageService) {
     this.suppressMessage = this.storageService.getValueBoolean(MessageService.LOCALSTORAGE_KEY_SUPPRES, false);
   }
 

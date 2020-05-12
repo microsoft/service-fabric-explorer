@@ -20,6 +20,7 @@ export class AuthInterceptor implements HttpInterceptor {
     if(this.adalService.aadEnabled){
         return this.adalService.acquireTokenResilient(this.adalService.config.raw.metadata.cluster)
         .pipe(mergeMap((token) => {
+          console.log(token)
             if (token) {
             req = req.clone({
                 setHeaders: {
@@ -76,7 +77,7 @@ export class StandAloneInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     const url = StandaloneIntegration.clusterUrl;
     
-    console.log( req.url, url);
+    // console.log(`INTERCEPTOR ${req.url} ${url}`);
     req = req.clone({
       url: url + req.url
     });

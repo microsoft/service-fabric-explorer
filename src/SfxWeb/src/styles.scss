@@ -472,7 +472,7 @@ table.detail-list {
             position: relative;
             top: 2px;
             font-size: $font-size-large;
-            cursor: pointer;            
+            cursor: pointer;
 
             &.transparent-icon {
                 pointer-events: none;
@@ -613,7 +613,7 @@ html,body {
     display: block;
     width: 100%;
     overflow-x: auto;
-    -webkit-overflow-scrolling: touch;    
+    -webkit-overflow-scrolling: touch;
 }
 
 .table>tbody>tr>td {
@@ -753,7 +753,7 @@ app-navbar {
     font-size: $font-size-default;
     background-color: $essen-pane-background-color;
   }
-  
+
   .vis-item {
     background-color: $candybar-background-color;
     font-size: $font-size-small;
@@ -789,12 +789,12 @@ app-navbar {
     border-width: 2px;
     border-color: $dashboard-color;
   }
-  
+
   .vis-labelset .vis-label {
     font-size: $font-size-medium;
     color: $dashboard-color;
   }
-  
+
   .vis-panel.vis-left {
     background-color: #0075c9;
   }
@@ -802,7 +802,7 @@ app-navbar {
     padding-left: 0px;
     white-space: pre;
   }
-  
+
   .vis-group-level-unknown-but-gte1 {
     background-color: #0075c9 !important;
     border: 1px solid white;
@@ -817,36 +817,36 @@ app-navbar {
     background-color: red;
     border-color: darkred;
   }
-  
+
   .vis-item.green {
     background-color: $dashboard-ok-color;
     color: black;
   }
-  
+
   .vis-item.orange {
     background-color: $dashboard-warning-color;
     color: black;
   }
-  
+
   .vis-item.blue {
     background-color: #0075c9;
   }
-  
+
   .vis-item.red-point {
     border-color: red;
     border-width: 5px;
   }
-  
+
   .vis-item.orange-point {
     border-color: $dashboard-warning-color;
     border-width: 5px;
   }
-  
+
   .vis-item.white-point {
     border-color: #ffffff;
     border-width: 5px;
   }
-  
+
   .vis-item.green-point {
     border-color: $dashboard-ok-color;
     border-width: 5px;
@@ -863,47 +863,47 @@ app-navbar {
     white-space: pre-wrap;
     box-shadow: none;
   }
-  
+
   .vis-tooltip {
     padding: 0px !important;
     max-width: 50%;
   }
-  
+
   .vis-timeline {
     overflow:visible !important;
   }
-  
+
   .timeline-button {
     background-color: #262626;
     border: 1px solid #0075c9;
     margin-bottom: 10px;
     margin-top: 10px;
   }
-  
+
   .vis-label{
     background-color: #0075c9;
     color: #dad7d7;
   }
-  
+
   .noUi-tooltip {
     display: none;
   }
   .noUi-active .noUi-tooltip {
     display: block;
   }
-  
+
   .noUi-target{
     background-color: #bfbfbf;
     box-shadow: none;
     border: 0px;
   }
-  
+
   .noUi-connect{
     background-color: #0075c9;
   }
-  
-  .noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip { 
-    bottom:-32px 
+
+  .noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip {
+    bottom:-32px
   }
 
 .rotate {
@@ -950,7 +950,7 @@ app-navbar {
 .input-flat.ng-valid[required], .input-flat.ng-valid.required  {
     border-left: 5px solid #42A948; /* green */
   }
-  
+
   .input-flat.ng-invalid:not(form)  {
     border-left: 5px solid #a94442; /* red */
   }
@@ -1000,4 +1000,5 @@ app-navbar {
         background-color: rgb(90, 90, 90);
         font-weight: 200;
     }
-} 
+}
+
