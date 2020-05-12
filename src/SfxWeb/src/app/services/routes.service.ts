@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router } from '@angular/router';
+import { Router, ActivationEnd, NavigationEnd, ActivatedRoute } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -9,8 +9,27 @@ export class RoutesService {
 
   private _forceSingleEncode: boolean = true;
 
-  constructor(public location: Location, public routing: Router) {
+  constructor(public location: Location, public routing: Router, private activedRoute: ActivatedRoute) {
+    //there can be multiple activationEnd events so we want to grab the last one.
+    let lastActivationEnd = null;
+    this.routing.events.subscribe( event => {
+        // console.log(event)
+      if(event instanceof ActivationEnd) {
+        lastActivationEnd = event;
+        console.log(lastActivationEnd);
+        console.log(this.activedRoute)
+      }
+        if(event instanceof NavigationEnd){
+          try {
+            const name = lastActivationEnd.snapshot.routeConfig.path;
+            console.log(lastActivationEnd);
+            console.log(this.activedRoute)
+          }catch {
 
+          }
+            lastActivationEnd = null;
+        }
+    })
    }
 
   public navigate(pathGetter: () => string): void {
