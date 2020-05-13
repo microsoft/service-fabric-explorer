@@ -866,7 +866,7 @@ export class RestClientService {
             StandaloneIntegration.getHttpClient()
                 .then((client) => client.requestAsync(request))
                 .then((response) => {
-                    console.log(JSON.stringify(response))
+                    console.log("look here", JSON.stringify(response))
 
                     //only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
                     resolve(response.data);
@@ -884,7 +884,7 @@ export class RestClientService {
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
-        console.log(err)
+        console.log(JSON.stringify(err))
         const header = `${err.status.toString()} : ${apiDesc}`;
         let message = messageHandler.getErrorMessage(apiDesc, err);
             if (message) {
@@ -893,15 +893,12 @@ export class RestClientService {
 
         if (err.error instanceof Error) {
         // A client-side or network error occurred. Handle it accordingly.
-        console.error('An error occurred:', err.error.message);
         this.message.showMessage(err.error.message, MessageSeverity.Err, header);
 
         } else {
         // The backend returned an unsuccessful response code.
         // The response body may contain clues as to what went wrong,
         this.message.showMessage(JSON.stringify(err.error), MessageSeverity.Err, header);
-
-        console.error(`Backend returned code ${err.status}, body was: ${err.error}`);
         }
 
         // ...optionally return a default fallback value so app can continue (pick one)
