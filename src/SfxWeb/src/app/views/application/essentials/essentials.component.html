@@ -1,0 +1,138 @@
+<div class="detail-pane essen-pane">
+    <div class="table-responsive" *ngIf="app && app.isInitialized">
+        <table class="essen-table" role="presentation">
+            <tr>
+                <th>Name</th>
+                <th>Application Type</th>
+            </tr>
+            <tr>
+                <td title="{{app?.name}}">{{app?.name}}<app-clip-board [text]="app?.name"></app-clip-board></td>
+                <td><a href="{{app?.appTypeViewPath}}" title="{{app?.raw.TypeName}}">{{app?.raw.TypeName}}</a><app-clip-board [text]="app?.raw.TypeName"></app-clip-board></td>
+            </tr>
+            <tr>
+                <th>Health State</th>
+                <th>Version</th>
+            </tr>
+
+            <tr>
+                <td><app-health-badge [badgeClass]="app?.healthState.badgeClass" [text]="app?.healthState.text"></app-health-badge></td>
+                <td>{{app?.raw.TypeVersion}}<app-clip-board [text]="app?.raw.TypeVersion"></app-clip-board></td>
+            </tr>
+            <tr>
+                <th>Status</th>
+                <th *ngIf="app && app.isUpgrading">Upgrade status Details</th>
+            </tr>
+            <tr>
+                <td>{{app.raw.Status}}</td>
+                <td *ngIf="app && app.isUpgrading && upgradeProgress && upgradeProgress.isInitialized">{{upgradeProgress.raw.UpgradeStatusDetails}}</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div id="upgradeDetailsSection" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
+    <app-collapse-container>
+        <div collapse-header>
+            <h4 *ngIf="app.isUpgrading">Upgrade In Progress</h4>
+            <h4 *ngIf="!app.isUpgrading">Latest Upgrade State</h4>
+        </div>
+        <div collapse-body>
+            <div class="table-responsive">
+                <table class="table detail-list">
+                    <thead>
+                        <tr>
+                            <th>Target Version</th>
+                            <th>Start Timestamp Utc</th>
+                            <th title="Upgrade Duration">Upgrade Duration</th>
+                            <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>
+                            <th>Upgrade Mode</th>
+                            <th>Upgrade State</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td title="{{upgradeProgress.raw.TargetApplicationTypeVersion}}">{{upgradeProgress.raw.TargetApplicationTypeVersion}}</td>
+                            <td>{{upgradeProgress.startTimestampUtc}}</td>
+                            <td>{{upgradeProgress.upgradeDuration}}</td>
+                            <td>{{upgradeProgress.upgradeDomainDuration}}</td>
+                            <td>{{upgradeProgress.raw.RollingUpgradeMode}}</td>
+                            <td>{{upgradeProgress.raw.UpgradeState}}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        
+            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDomains.length > 0">
+                <h4>Progress by Upgrade Domain</h4>
+                <upgrade-progress [upgradeDomains]="upgradeProgress.upgradeDomains"></upgrade-progress>
+            </div>
+        
+            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.raw.FailureReason !== 'None'">
+                <h4>Upgrade Failure</h4>
+                <div class="table-responsive">
+                    <table class="table detail-table">
+                        <tbody>
+                            <tr>
+                                <th>Failure Reason</th>
+                                <td><img class="badge-icon" src="images/badge-error.svg"><span> {{upgradeProgress.raw.FailureReason}}</span></td>
+                            </tr>
+                            <tr>
+                                <th>Failure Timestamp Utc</th>
+                                <td>{{upgradeProgress.failureTimestampUtc}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <h5>Upgrade Domain Progress At Failure</h5>
+                <app-detail-view-part [data]="upgradeProgress.raw.UpgradeDomainProgressAtFailure"></app-detail-view-part>
+            </div>
+            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.unhealthyEvaluations.length > 0">
+                <h4>Unhealthy Evaluations (Upgrade)</h4>
+                <detail-list [list]="upgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></detail-list>
+            </div>
+        
+            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDescription">
+                <h4>Upgrade Parameters</h4>
+                <app-detail-view-part [data]="upgradeProgress.upgradeDescription"></app-detail-view-part>
+            </div>
+        </div>
+    </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="app && app.health">
+    <app-collapse-container>
+        <div collapse-header>
+            <h4>Unhealthy Evaluations</h4>
+        </div>
+        <div collapse-body>
+            <detail-list [list]="app.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+        </div>
+    </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="app && app.services">
+    <app-collapse-container>
+        <div collapse-header>
+            <h4>Services</h4>
+        </div>
+        <div collapse-body>
+            <detail-list [list]="app.services.collection" [listSettings]="listSettings"></detail-list>
+        </div>
+    </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="app && app.serviceTypes">
+    <app-collapse-container>
+        <div collapse-header>
+            <h4>Service Types</h4>
+        </div>
+        <div collapse-body>
+            <detail-list [list]="app.serviceTypes.collection" [listSettings]="serviceTypesListSettings"></detail-list>
+        </div>
+    </app-collapse-container>
+</div>
+
+<!-- <div class="detail-pane essen-pane" *ngIf="clusterManifest && clusterManifest.isNetworkInventoryManagerEnabled">
+    <h4>Networks</h4>
+    <detail-list [list]="networks" [listSettings]="networkListSettings"></detail-list>
+</div> -->

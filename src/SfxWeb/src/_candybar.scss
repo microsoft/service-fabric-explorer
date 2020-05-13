@@ -1,0 +1,143 @@
+﻿@import "styles.scss";
+
+$candybar-margin: 20px;
+$candybar-width: 70px;
+$candybar-height: 38px;
+$candybar-border-width: 2px;
+$candybar-padding: 3px;
+$candybar-wrapper-width: $candybar-width + 20px;
+$candybar-compact-color-height: 16px;
+
+.candybar-container {
+
+    .candybar-wrapper {
+        display: inline-block;
+        vertical-align: top;
+        margin-right: $candybar-margin;
+        margin-bottom: $candybar-margin;
+        width: $candybar-wrapper-width;
+
+        &.compact {
+            margin-right: 0;
+            margin-bottom: 0;
+            width: 100%;
+            float: left;
+            clear: both;
+        }
+
+        .candybar-name {
+            margin-top: 2px;
+            text-align: center;
+            text-overflow: ellipsis;
+            overflow: hidden;
+            white-space: nowrap;
+
+            span {
+                margin: 0 auto;
+            }
+        }
+
+        &:last-child {
+            margin-right: 0;
+        }
+
+        .candybar {
+            margin: 0 auto;
+            width: $candybar-width;
+            height: $candybar-height;
+            padding: $candybar-padding;
+            border-style: solid;
+            border-width: $candybar-border-width;
+            border-color: $candybar-border-color;
+            color: $light-link-color;
+            &.compact {
+                width: auto;
+                min-width: $candybar-width;
+                height: auto;
+
+                .candybar-color-hilight {
+                    height: $candybar-compact-color-height / 2;
+                }
+
+                .candybar-color {
+                    height: $candybar-compact-color-height / 2 + $candybar-border-width;
+                }
+            }
+
+            .candybar-inner-title {
+                min-height: 21px;
+                background-color: $essen-pane-background-color;
+                padding: $candybar-border-width;
+                padding-top: 0;
+            }
+
+            .candybar-color-hilight {
+                border-style: solid;
+                border-width: $candybar-border-width;
+                border-color: $candybar-border-color;
+                border-bottom: none;
+                width: 100%;
+                height: 50%;
+            }
+
+            .candybar-color {
+                border-style: solid;
+                border-width: $candybar-border-width;
+                border-color: $candybar-border-color;
+                border-top: none;
+                width: 100%;
+                height: 50%;
+            }
+
+            &.badge-ok {
+                .candybar-color {
+                    background-color: $candybar-ok-color;
+                }
+
+                .candybar-color-hilight {
+                    background-color: $candybar-ok-color-hilight;
+                }
+            }
+
+            &.badge-warning {
+                .candybar-color {
+                    background-color: $candybar-warning-color;
+                }
+
+                .candybar-color-hilight {
+                    background-color: $candybar-warning-color-hilight;
+                }
+            }
+
+            &.badge-error {
+                .candybar-color {
+                    background-color: $candybar-error-color;
+                }
+
+                .candybar-color-hilight {
+                    background-color: $candybar-error-color-hilight;
+                }
+            }
+
+            &.badge-unknown {
+                .candybar-color {
+                    background-color: $candybar-unknown-color;
+                }
+
+                .candybar-color-hilight {
+                    background-color: $candybar-unknown-color-hilight;
+                }
+            }
+
+            &:focus-within, &:hover {
+                border-color: $candybar-hover-border-color;
+            }
+            &:focus-within {
+                border-color: $candybar-hover-border-color;
+            }
+            &:focus {
+                border-color: $candybar-hover-border-color;
+            }
+        }
+    }
+}

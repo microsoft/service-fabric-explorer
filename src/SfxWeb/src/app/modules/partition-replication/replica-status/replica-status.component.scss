@@ -1,0 +1,28 @@
+.row-container {
+    border-bottom: solid 2px white;
+    border-top: solid 2px white;
+}
+
+.replica-container {
+    width: 300px;
+    display: inline-block;
+    padding: 10px;
+    margin: 5px;
+}
+
+.green-border {
+    border-left: 8px solid green;
+}
+
+.blue-border {
+    border-left: 8px solid #0075c9;
+    background-color: #202c34;
+}
+
+.yellow {
+    border-left: 8px solid yellow;
+}
+
+.field {
+    color: #939393;
+}

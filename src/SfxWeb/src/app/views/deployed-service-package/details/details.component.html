@@ -1,0 +1,12 @@
+<div *ngIf="servicePackage"> 
+    <div class="detail-pane essen-pane">
+        <app-detail-view-part [data]="servicePackage"></app-detail-view-part>
+    </div>
+
+    <div class="detail-pane essen-pane" *ngIf="servicePackage.health">
+        <h4>
+            Health Events
+        </h4>
+        <detail-list [list]="servicePackage.health.healthEvents" [listSettings]="healthEventsListSettings"></detail-list>
+    </div>
+</div>

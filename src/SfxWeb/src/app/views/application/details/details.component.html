@@ -1,0 +1,8 @@
+<div class="detail-pane essen-pane">
+    <app-detail-view-part [data]="app"></app-detail-view-part>
+</div>
+
+<div class="detail-pane essen-pane">
+    <h4>Health Events</h4>
+    <detail-list [list]="app?.health.healthEvents" [listSettings]="healthEventsListSettings"></detail-list>
+</div>

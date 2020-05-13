@@ -1,0 +1,64 @@
+
+<div>
+  <header class="header-bar">
+    <a href="https://aka.ms/portalsfx" target="_blank" tabindex="0" sfx-tree-set-focus selected="true" *ngIf="!hideAzure">
+      <div class="navbar-brand navbar-brand-azure">
+        <span>
+            Microsoft Azure
+        </span>
+      </div>
+      </a>
+    <!-- Use inline style to limit the icon size to prevent a huge icon show up in browser before css is downloaded -->
+    <!-- TODO ADD LINK TO GO TO CLUSTER MAIN PAGE -->
+    <a class="navbar-brand navbar-brand-title" [routerLink]="['/']" *ngIf="!hideSFXLogo" >
+      <img style="width: 32px" [src]="assetBase + 'assets/favicon.svg'" title="Service Fabric Explorer" class="navbar-brand-icon"/>
+      <span style="vertical-align: middle;" *ngIf="!hideSFXTest">
+        Service Fabric Explorer
+      </span>
+      <span style="vertical-align: middle;color: #60b2ec; font-size: x-large;"> Beta</span>
+    </a>
+
+    <app-cluster-upgrade-banner style="margin: auto;" [clusterUpgradeProgress]="dataService.clusterUpgradeProgress"></app-cluster-upgrade-banner>
+
+    <!-- push stuff to align right -->
+    <div style="margin-left: auto;"></div>
+
+    <div>
+      <app-refresh-rate [value]="refreshService.refreshRate" (onChange)="refreshService.updateRefreshInterval($event)" 
+                        [refresh]="refreshService.isRefreshing" (onForceRefresh)="attemptForceRefresh()"></app-refresh-rate>
+    </div>
+    <app-advanced-option></app-advanced-option>
+
+    <div ngbDropdown *ngIf="adalService.aadEnabled" display="'static'" placement="'bottom-left'">
+        <button class="simple-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
+            <span class="mif-user"></span>
+        </button>
+        <div ngbDropdownMenu style="padding: 10px;" *ngIf="dataService.actionsEnabled()">
+          <div ngbDropdownItem style="padding-bottom: 10px;" class="repress-highlight">
+            {{adalService.userInfo.profile.name}}
+          </div>
+          <button class="simple-button" (click)="adalService.logout()" ngbDropdownItem>
+            Log Out
+          </button>
+        </div>
+    </div>
+  </header>
+
+  <div>
+      <div class="left-panel left-bar"  [ngStyle]="{'width': treeWidth }">
+          <nav class="tree-container">
+            <app-tree-view (onTreeSize)="resize($event)"></app-tree-view>
+          </nav>
+        <div class="slider-bar" appDrag (onDrag)="resize($event)">
+      </div>
+    </div>
+    <div [ngStyle]="{'left': rightOffset }" class="right-panel main-content">
+      <main>
+        <div class="view-container">
+          <router-outlet id="view-container"></router-outlet>
+        </div>
+      </main>
+    </div>
+  </div>
+  <app-toast-container aria-live="polite" aria-atomic="true"></app-toast-container>
+</div>

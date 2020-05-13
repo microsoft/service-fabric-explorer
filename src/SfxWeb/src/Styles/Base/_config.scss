@@ -1,0 +1,205 @@
+﻿//--------------------------------------------------------------
+// Base theme config file. If you change anything in this file,
+// make sure you change all the theme files in Themes folder.
+//--------------------------------------------------------------
+
+//--------------------------------------------------------------
+// Mixins
+//--------------------------------------------------------------
+
+@mixin transition($transition...) {
+    -webkit-transition: $transition;
+    -moz-transition: $transition;
+    -o-transition: $transition;
+    transition: $transition;
+}
+
+$global-transition-time: 0.15s !default;
+
+//--------------------------------------------------------------
+// Layouts
+//--------------------------------------------------------------
+$splitter-width: 5px !default;
+// Keep this in sync with value of DefaultSplitterLeftWidth in Constants.ts
+$left-panel-width: 400px !default;
+$right-panel-min-width: 200px !default;
+$page-padding-bottom: 20px !default;
+
+//--------------------------------------------------------------
+// Colors
+//--------------------------------------------------------------
+
+// common
+$font-color: white !default;
+$font-color-invert: black !default;
+$input-border-color: #727272 !default;
+$input-border-color-dark-bg: $input-border-color !default;
+$azure-blue: #0075c9 !default;
+$dialog-input-bg-color: #242424 !default;
+
+// badges
+$badge-ok-color: #7FBA00 !default;
+$badge-warning-color: #FCD116 !default;
+$badge-error-color: #E81123 !default;
+$badge-unknown-color: #3C3C3C !default;
+
+// navbar
+$navbar-color: white !default;
+$navbar-background-color: #000000 !default;
+$navbar-brand-background-color: $azure-blue !default;
+$slider-background-color: #939393 !default;
+$slider-handler-color: #F1F1F1 !default;
+$slider-handler-active-color: #c6c6c6 !default;
+$slider-title-color: #B2B5B8 !default;
+$settings-theme-selected-border-color: $azure-blue !default;
+$settings-theme-hover-border-color: #3C3C3C !default;
+$settings-divider-color: darken($slider-title-color, 40%) !default;
+$navbar-dropdown-toggle-hover-background-color: #262626 !default;
+$navbar-dropdown-menu-background-color: #262626 !default;
+$navbar-dropdown-menu-item-hover-color: #3C3C3C !default;
+
+// tree
+$tree-color: white !default;
+$tree-background-color: #262626 !default;
+$tree-node-selected-background-color: $azure-blue !default;
+$tree-node-hover-background-color: #3C3C3C !default;
+$tree-searchbox-border-color: $input-border-color !default;
+$tree-searchbox-background-color: $tree-background-color !default;
+$tree-node-search-highlight-background-color: #FDFBAC;
+$tree-node-search-highlight-color: black !default;
+
+// detail view area
+$right-panel-background-color: #191919 !default;
+$action-hover-color: white !default;
+$action-hover-background-color: $azure-blue !default;
+$details-pane-table-sub-title-color: #939393 !default;
+$table-border-color: #4c4c4c !default;
+$table-vertical-group-left-border-color: #727272 !default;
+$table-section-divider-color: #727272 !default;
+$detail-tab-color: #D4D4D4 !default;
+$detail-tab-active-color: #FFFFFF !default;
+$detail-tab-active-border-color: $azure-blue !default;
+$detail-pane-pre-background-color: #262626 !default;
+$detail-pane-pre-color: #d1d1d1 !default;
+$detail-pane-main-title-color: #FFFFFF !default;
+$detail-pane-sub-title-color: #808080 !default;
+$detail-table-header-color: #FFFFFF !default;
+$detail-table-cell-color: #A6A6A6 !default;
+$essen-pane-background-color: #262626 !default;
+$upgrade-domain-progress-color: #59B4D9 !default;
+
+// Candybar
+$candybar-ok-color: $badge-ok-color !default;
+$candybar-ok-color-hilight: #8dc100 !default;
+$candybar-warning-color: $badge-warning-color !default;
+$candybar-warning-color-hilight: #ffde23 !default;
+$candybar-error-color: $badge-error-color !default;
+$candybar-error-color-hilight: #f22c34 !default;
+$candybar-unknown-color: #dbdbdb !default;
+$candybar-unknown-color-hilight: #e3e3e3 !default;
+$candybar-background-color: #7d9494 !default;
+$candybar-inner-background-color: $candybar-unknown-color !default;
+$candybar-border-color: #252525 !default;
+$candybar-hover-border-color: $tree-node-selected-background-color !default;
+
+// Dashboard
+$dashboard-color: $font-color !default;
+$dashboard-background-color: $essen-pane-background-color !default;
+$dashboard-ok-color: #7FBA00 !default;
+$dashboard-warning-color: #FCD116 !default;
+$dashboard-error-color: #E81123 !default;
+$dashboard-unknown-color: $dashboard-color !default;
+$dashboard-upgrade-active-color: $azure-blue !default;
+$dashboard-upgrade-inactive-color: $right-panel-background-color !default;
+
+// Charts
+$chart-text-color: #6C7074 !default;
+$tooltip-background: rgba(black, 0.8) !default;
+
+//--------------------------------------------------------------
+// Fonts
+//--------------------------------------------------------------
+$font-family: "Segoe UI", -apple-system, "Helvetica Neue", "Lucida Grande", Trebuchet, Arial, sans-serif !default;
+$font-family-base: $font-family !default;
+
+$font-weight-light: 200 !default;
+$font-weight-semilight: 300 !default;
+$font-weight-normal: 400 !default;
+$font-weight-semibold: 600 !default;
+$font-weight-bold: 700 !default;
+
+$font-size-title: 18pt !default;
+$font-size-large: 14pt !default;
+$font-size-medium: 12pt !default;
+$font-size-default: 10pt !default;
+$font-size-small: 8pt !default;
+
+$detail-tab-title-font-size: $font-size-medium !default;
+$candybar-view-switcher-font-size: $font-size-medium !default;
+$navbar-font-size: $font-size-default !default;
+
+//--------------------------------------------------------------
+// Bootstrap variables overrides
+//--------------------------------------------------------------
+$body-bg: $right-panel-background-color !default;
+$text-color: $font-color !default;
+$link-color: #00BCF2 !default;
+$link-hover-color: $link-color !default;
+$link-light-background-color: $link-color !default;
+$link-light-background-hover-color: $link-hover-color !default;
+$link-dark-background-color: $link-color !default;
+$link-dark-background-hover-color: $link-hover-color !default;
+$link-hover-decoration: none !default;
+$link-disabled-color: grey !default;
+
+$font-family-sans-serif: $font-family !default;
+$font-size-base: $font-size-default !default;
+
+$table-condensed-cell-padding: 5px 10px 5px 0 !default;
+
+// Input
+$input-color-disabled: darken($font-color, 50%) !default;
+$input-background-color-disabled: lighten($essen-pane-background-color, 8%) !default;
+$input-invalid-border-color: darken(red, 20%) !default;
+$cursor-disabled: default !default;
+
+// Modal dialogs
+$modal-content-bg: #4c4c4c !default;
+
+// Remove default radius
+$border-radius-base: 0 !default;
+$border-radius-small: 0 !default;
+$border-radius-large: 0 !default;
+
+// Pagination
+$cursor-disabled: default !default;
+$pagination-color: $link-color !default;
+$pagination-bg: $essen-pane-background-color !default;
+$pagination-border: transparent !default;
+
+$pagination-hover-color: $link-hover-color !default;
+$pagination-hover-bg: $tree-node-hover-background-color !default;
+$pagination-hover-border: transparent !default;
+
+$pagination-active-color: #fff !default;
+$pagination-active-bg: $azure-blue !default;
+$pagination-active-border: transparent !default;
+
+$pagination-disabled-bg: $essen-pane-background-color !default;
+$pagination-disabled-border: transparent !default;
+
+// Buttons
+$btn-primary-color: white !default;
+$btn-primary-bg: $azure-blue !default;
+$btn-primary-border: $azure-blue !default;
+$btn-default-color: white !default;
+$btn-default-bg: #3A3A3A !default;
+$btn-default-border: #3A3A3A !default;
+
+// Tooltips
+$tooltip-color: $font-color-invert !default;
+$tooltip-bg: $tooltip-background !default;
+$tooltip-opacity: 1 !default;
+$tooltip-max-width: 100% !default;
+
+@import "../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/variables";

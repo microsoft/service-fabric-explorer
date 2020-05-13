@@ -1,0 +1,63 @@
+<h4>
+    Package Versions
+</h4>
+<div class="detail-pane">
+    <div class="table-responsive" *ngIf="appTypeGroup">
+        <table class="table detail-table" style="width: 100%;">
+            <tr>
+                <th>Name</th>
+                <th>Version</th>
+                <th>Packages</th>
+            </tr>
+            <tr *ngFor="let appType of appTypeGroup.appTypes">
+                <td>
+                    {{appType.raw.Name}}
+                </td>
+                <td>
+                    {{appType.raw.Version}}
+                </td>
+                <td>
+                    <div class="table-responsive">
+                        <table class="table detail-param-table">
+                            <tr>
+                                <th>Package Name</th>
+                                <th>Version</th>
+                                <th>Packages</th>
+                            </tr>
+                            <tr *ngFor="let service of appType.serviceTypes.collection">
+                                <td>
+                                    {{service.raw.ServiceManifestName}}
+                                </td>
+                                <td>
+                                    {{service.raw.ServiceManifestVersion}}
+                                </td>
+                                <td>
+                                    <div class="table-responsive">
+                                        <table class="table detail-param-table">
+                                            <tr>
+                                                <th>Type</th>
+                                                <th>Name</th>
+                                                <th>Version</th>
+                                            </tr>
+                                            <tr *ngFor="let package of service.manifest.packages">
+                                                <td>
+                                                    {{package.Type}}
+                                                </td>
+                                                <td>
+                                                    {{package.Name}}
+                                                </td>
+                                                <td>
+                                                    {{package.Version}}
+                                                </td>
+                                            </tr>
+                                        </table>
+                                    </div>
+                                </td>
+                            </tr>
+                        </table>
+                    </div>
+                </td>
+            </tr>
+        </table>
+    </div>
+</div>

@@ -895,13 +895,11 @@ module Sfx {
 
         private wrapInCallbacks<T>(operation: () => angular.IHttpPromise<T>): angular.IHttpPromise<T> {
             this.requestCount++;
-            $.each(this.requestStarted, (_, cb) => cb(this.requestCount));
 
             let promise = operation();
 
             promise.finally(() => {
                 this.requestCount--;
-                $.each(this.requestEnded, (_, cb) => cb(this.requestCount));
             });
 
             return promise;

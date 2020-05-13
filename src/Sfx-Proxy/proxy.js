@@ -1,7 +1,8 @@
 
 const config = require("./appsettings.json");
 const axios = require('axios');
-const fs = require("fs");
+const { promises: fs } = require("fs");
+
 const https = require("https");
 const express = require('express');
 const path = require('path');
@@ -22,6 +23,8 @@ if(config.TargetCluster.PFXLocation){
       })
 }
 
+const fileExists = async path => !!(await fs.stat(path).catch(e => false));
+
 const reformatUrl = (req) => {
     const copy = JSON.parse(JSON.stringify(req.query)); //make a deep copy to remove _cacheToken since it isnt necessary
     delete copy._cacheToken;
@@ -29,25 +32,25 @@ const reformatUrl = (req) => {
     return config.recordFileBase +  `${req.method.toLowerCase()}${req.path}${params}.json`.split('/').join('-').replace(/:/g, "-");
 }
 
-const writeRequest = (req, resp) => {
+const writeRequest = async (req, resp) => {
     //need to delete these properties to remove circular dependency 
     delete resp.request;
     delete resp.config;
     const replacedFile = reformatUrl(req);
 
     //confirm base folder exists
-    if (!fs.existsSync(config.recordFileBase)){
-        fs.mkdirSync(config.recordFileBase);
+    if (!(await fileExists(config.recordFileBase))){
+        await fs.mkdir(config.recordFileBase);
     }
-    fs.writeFileSync(replacedFile, JSON.stringify(resp, null, 4));
+    await fs.writeFile(replacedFile, JSON.stringify(resp, null, 4));
 }
 
-const loadRequest = (req) => {
-    return JSON.parse(fs.readFileSync(reformatUrl(req)));
+const loadRequest = async (req) => {
+    return JSON.parse(await fs.readFile(reformatUrl(req)));
 }
 
-const checkFile = (req) => {
-    return fs.existsSync(reformatUrl(req))
+const checkFile = async (req) => {
+    return await fileExists(reformatUrl(req))
 }
 
 const proxyRequest = async (req) => {
@@ -85,11 +88,14 @@ process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
 app.use(express.static(path.join('wwwroot')))
 app.use(express.json())
+app.get('/', function(req, res) {
+    res.sendFile(path.join(__dirname + '/../Sfx/wwwroot/index.html'));
+});
 app.all('/*', async (req, res) => {
     let resp = null;
 
-    if(replayRequest && checkFile(req)){
-        resp = loadRequest(req);
+    if(replayRequest && await checkFile(req)){
+        resp =  await loadRequest(req);
         process.stdout.write("Playback: ");
     }else{
         resp = await proxyRequest(req);
@@ -102,7 +108,7 @@ app.all('/*', async (req, res) => {
     res.send(resp.data);
 
     if(recordRequest){
-        writeRequest(req, resp);
+        await writeRequest(req, resp);
     }
 
 })

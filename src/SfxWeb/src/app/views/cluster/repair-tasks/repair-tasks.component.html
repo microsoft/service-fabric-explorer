@@ -1,0 +1,22 @@
+<div class="detail-pane essen-pane">
+    <app-collapse-container>
+        <h4 collapse-header>
+            Pending Repair Tasks
+        </h4>
+        <detail-list [list]="repairTasks" [listSettings]="repairTaskListSettings" collapse-body (onSort)="sorted($event, false)"></detail-list>
+    </app-collapse-container>
+</div>
+
+<div *ngIf="timelineData" style="margin-bottom: 20px; margin-left: 15px;">
+    <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" 
+                              [displayMoveToStart]="false" [displayMoveToEnd]="false"></app-event-store-timeline>
+</div>
+
+<div class="detail-pane essen-pane">
+    <app-collapse-container>
+        <h4 collapse-header>
+            Completed Repair Tasks
+        </h4>
+        <detail-list [list]="completedRepairTasks" [listSettings]="completedRepairTaskListSettings" collapse-body (onSort)="sorted($event)"></detail-list>
+    </app-collapse-container>
+</div>

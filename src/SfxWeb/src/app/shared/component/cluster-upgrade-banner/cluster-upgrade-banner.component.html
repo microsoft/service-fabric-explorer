@@ -1,0 +1,16 @@
+<span *ngIf="clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading">
+    <div style="display: inline-flex; height: 50px;" >
+        <a routerLink="/details" style="margin: auto;" class="essen-pane" >
+            <span class="dark-background-link mif-info"></span>
+            <span *ngIf="displayAllText">
+                <span> Cluster Upgrade </span>
+                <span *ngIf="displayMiddleText">
+                    in Progress since {{clusterUpgradeProgress.startTimestampUtc}}
+                </span>
+                <span>
+                    ({{clusterUpgradeProgress.getCompletedUpgradeDomains()}} / {{clusterUpgradeProgress.upgradeDomains.length}} UDs completed)
+                </span>
+            </span>
+        </a>
+    </div>
+</span>

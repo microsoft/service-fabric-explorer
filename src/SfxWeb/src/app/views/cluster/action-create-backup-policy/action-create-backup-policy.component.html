@@ -1,0 +1,107 @@
+<form [formGroup]="form" class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">{{isUpdateOperation ? 'Update' : 'Create' }} Backup Policy</h4>
+    </div>
+    <div class="modal-body">
+        <dl class="dl-horizontal">
+            <dt>Name</dt>
+            <dd>
+                <input type="text" class="input-flat" formControlName="Name" required aria-label="Backup Policy name"
+                    name="name">
+            </dd>
+            <dt>AutoRestoreOnDataLoss</dt>
+            <dd class="checkbox-container-default">
+                <input type="checkbox" formControlName="AutoRestoreOnDataLoss" name="AutoRestoreOnDataLoss" />
+            </dd>
+            <dt>MaxIncrementalBackups</dt>
+            <dd>
+                <input type="number" class="input-flat" formControlName="MaxIncrementalBackups" required
+                    name="MaxIncrementalBackups" />
+            </dd>
+            <dt>ScheduleKind</dt>
+            <div formGroupName="Schedule">
+                <dl>
+                    <dd>
+                        <label>
+                            <input type="radio" formControlName="ScheduleKind" value="FrequencyBased">
+                            FrequencyBased
+                        </label>
+                        <label>
+                            <input type="radio" formControlName="ScheduleKind" value="TimeBased">
+                            TimeBased
+                        </label><br />
+                    </dd>
+                </dl>
+                <dl class="dl-horizontal" *ngIf="form.value.Schedule.ScheduleKind === 'FrequencyBased'">
+                    <dt>Interval</dt>
+                    <dd>
+                        <input type="text" class="input-flat" formControlName="Interval" name="Interval" />
+                    </dd>
+                </dl>
+                <dl class="dl-horizontal" *ngIf="form.value.Schedule.ScheduleKind === 'TimeBased'">
+                    <dt>ScheduleFrequencyType *</dt>
+                    <dd>
+                        <label>
+                            <input type="radio" formControlName="ScheduleFrequencyType" value="Daily">
+                            Daily
+                        </label>
+                        <label>
+                            <input type="radio" formControlName="ScheduleFrequencyType" value="Weekly">
+                            Weekly
+                        </label><br />
+                    </dd>
+                </dl>
+                <dl class="dl-horizontal" [ngStyle]="{'display': ( form.value.Schedule.ScheduleKind === 'TimeBased' ? 'initial' : 'none') }">
+                    <div [ngStyle]="{'display': ( form.value.Schedule.ScheduleFrequencyType === 'Weekly' ? 'initial' : 'none') }">
+                        <dt>RunDays</dt>
+                        <dd formArrayName="RunDays">
+                            <div *ngFor="let day of form.get('Schedule').get('RunDays'); let i = index">
+                                <label>
+                                    {{weekDay[i]}}
+                                    <input type="checkbox" [formControlName]="i">
+                                </label><br />
+                            </div>
+                        </dd>
+                    </div>
+                    <dt>RunTimes</dt>
+                    <dd formArrayName="RunTimes">
+                        <div *ngFor="let r of RunTimes.controls; let i = index; ">
+                            <input type="text" style="width: 80%;" class="input-flat" [formControlName]="i" />
+                            <button type="button" class="flat-button" (click)="removeRunTime(i)">Delete</button>
+                        </div>
+                        <div>
+                            <input type="text" style="width: 80%;" class="input-flat" [(ngModel)]="date" name="date" [ngModelOptions]="{standalone: true}" />
+                            <button type="button" class="flat-button" (click)="addRunTime()" [disabled]="date===''">Add</button>
+                        </div>
+                    </dd>
+                </dl>
+            </div>
+
+            <app-storage-form [form]="form" [data]="data?.data?.Storage" ></app-storage-form>
+            <dl class="dl-horizontal">
+                <dt>RetentionPolicy</dt>
+                <dd class="checkbox-container-default">
+                    <input type="checkbox" formControlName="retentionPolicyRequired"/>
+                </dd>
+            </dl>
+            <dl class="dl-horizontal" [ngStyle]="{'display': ( form.get('retentionPolicyRequired').value ? 'initial' : 'none') }" formGroupName="RetentionPolicy">
+                <dt>MinNumberOfBackups</dt>
+                <dd>
+                    <input type="number" class="input-flat" formControlName="MinimumNumberOfBackups">
+                </dd>
+                <dt>RetentionDuration</dt>
+                <dd>
+                    <input type="text" class="input-flat" formControlName="RetentionDuration">
+                </dd>
+            </dl>
+        </dl>
+    </div>
+    <div class="modal-footer">
+        <!-- TODO handle all of the validation somewhere -->
+        <button class="solid-button blue" [disabled]="!form.valid"
+            (click)="saveBackupPolicy()">{{isUpdateOperation ? 'Update backup policy' : 'Create backup policy'}}</button>
+        <button class="flat-button" (click)="dialogRef.close()">Cancel</button>
+    </div>
+</form>
+
+<!-- {{backupPolicy | json}} -->

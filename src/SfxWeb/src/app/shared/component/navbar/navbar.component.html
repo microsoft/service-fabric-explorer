@@ -1,0 +1,16 @@
+<div class="main-header" style="padding-top: 20px;">
+    <div class="detail-view-title-bar">
+        <div *ngIf="actions && actions.length > 0" class="actions">
+            <app-action-collection-drop-down [actionCollection]="actions"></app-action-collection-drop-down>
+        </div>
+        <div class="detail-view-title" [title]="name" *ngIf="type">
+            {{type}} <span *ngIf="name">: {{name}}</span>
+        </div>
+    <div class="detail-view-navbar" role="tablist" [attr.aria-label]="name">
+        <div class="detail-view-navbar-tab" *ngFor="let tab of tabs">
+            <a [routerLink]="tab.route" [title]="tab.name" role="tab" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }">{{tab.name}}</a>
+            <!-- <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div> -->
+        </div>
+    </div>
+    <ng-content></ng-content>
+</div>
