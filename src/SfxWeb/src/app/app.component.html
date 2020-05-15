@@ -24,7 +24,7 @@
     <div style="margin-left: auto;"></div>
 
     <div>
-      <app-refresh-rate [value]="refreshService.refreshRate" (onChange)="refreshService.updateRefreshInterval($event)" 
+      <app-refresh-rate [value]="refreshService.refreshRate" (onChange)="refreshService.updateRefreshInterval($event)"
                         [refresh]="refreshService.isRefreshing" (onForceRefresh)="attemptForceRefresh()"></app-refresh-rate>
     </div>
     <app-advanced-option></app-advanced-option>
@@ -46,7 +46,7 @@
 
   <div>
       <div class="left-panel left-bar"  [ngStyle]="{'width': treeWidth }">
-          <nav class="tree-container">
+          <nav class="tree-container" aria-hidden="false" role="navigation">
             <app-tree-view (onTreeSize)="resize($event)"></app-tree-view>
           </nav>
         <div class="slider-bar" appDrag (onDrag)="resize($event)">

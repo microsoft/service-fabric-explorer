@@ -40,7 +40,7 @@ export class AppComponent implements OnInit{
 
     this.checkWidth(window.innerWidth)
   }
-  
+
   @HostListener('window:resize', ['$event.target'])
   onResize(event: Window) {
     this.checkWidth(event.innerWidth)

@@ -1,6 +1,6 @@
 <div class="tree-wrapper">
     <div class="tree-header">
-        <div style="padding: 10px;background-color: #fcf8e3; border-left: #FFC646 solid 8px; margin: 8px; min-width: 330px;">
+        <div *ngIf="showBeta" style="padding: 10px;background-color: #fcf8e3; border-left: #FFC646 solid 8px; margin: 8px; min-width: 330px;">
             <div style="vertical-align: middle; padding: 4px; color: black; padding-bottom: 8px;" (click)="leaveBeta();">
                 To leave beta <span style="cursor: pointer;">(Click here)</span>
             </div>
@@ -25,7 +25,7 @@
         <span class="expand-panel-wrapper" *ngIf="canExpand">
             <button class="expand-panel-button" (click)="setWidth()" title="Expand view to match width of tree">
                 <span class=" mif-chevron-right mif-3x"></span>
-            </button> 
+            </button>
         </span>
         <div class="tree-body" #tree style="height: 100%" >
             <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view" style="position: relative; height: 100%">

@@ -15,29 +15,29 @@
         </div>
     </li>
     <li *ngFor="let child of node.displayedChildren; trackBy: trackById" class="node" [ngClass]="{ 'selected': child.selected }" >
-        <div class="self hide-nested" (click)="child.handleClick()" style="width: 100%; display: flex; align-items: center;" 
+        <button class="self hide-nested" (click)="child.handleClick()" role="button" tabindex="0"  aria-pressed="false" style="width: 100%; display: flex; align-items: center;"
              [attr.aria-label]="child.displayName()">
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
-            <div tabindex="-1" class="expander icon " aria-hidden="true"
+            <button tabindex="0" class="expander icon " aria-hidden="false" role="button"
                     (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
                     [ngClass]="{ 'mif-chevron-thin-up': child.isCollapsed, 'mif-chevron-thin-down': child.isExpanded }"
-                    style="display: inline-block;">
-            </div>
-            <span tabindex="-1" class="icon" aria-hidden="true" *ngIf="child.canExpandAll && child.hasExpander"
-            (click)="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()"
+                    style="display: inline-block;" [title]="child.isCollapsed ? 'Expand Children' : 'Collapse Children'">
+            </button>
+            <button tabindex="0" class="icon" aria-hidden="false" *ngIf="child.canExpandAll && child.hasExpander"
+            (click)="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()" role="button"
             [ngClass]="{ 'mif-unfold-more': child.isCollapsed, 'mif-unfold-less': child.isExpanded }"
-            [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'" style="font-size: large;"></span>
+            [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'" style="font-size: large; padding: 0px;"></button>
 
             <img *ngIf="child.badge && child.badge() && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
                     class="tree-badge" [title]="child.badge().text" style="margin-right: 3px;"
                     [src]="assetBase + 'assets/' + child.badge().badgeClass + '.svg'" role="presentation">
             <div class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()" ></div>
-            
+
             <div *ngIf="child.actions && child.actions.length > 0" class="hidden right-action">
                 <app-action-collection-drop-down [actionCollection]="child.actions" [treeView]="true"></app-action-collection-drop-down>
             </div>
-        </div>
-        
+          </button>
+
         <app-tree-node [node]="child.childGroupViewModel" *ngIf="child.isVisibleByBadge"></app-tree-node>
     </li>
     <li class="pager-control"

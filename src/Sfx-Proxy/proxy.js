@@ -2,6 +2,7 @@
 const config = require("./appsettings.json");
 const axios = require('axios');
 const { promises: fs } = require("fs");
+const fsBase = require("fs");
 
 const https = require("https");
 const express = require('express');
@@ -18,7 +19,7 @@ httpsAgent = null;
 if(config.TargetCluster.PFXLocation){
     httpsAgent = new https.Agent({
         rejectUnauthorized: false,
-        pfx: fs.readFileSync(config.TargetCluster.PFXLocation),
+        pfx: fsBase.readFileSync(config.TargetCluster.PFXLocation),
         passphrase: config.TargetCluster.PFXPassPhrase
       })
 }
@@ -80,16 +81,16 @@ const proxyRequest = async (req) => {
 }
 
 const app = express()
-const port = process.env.PORT || 3000
+const port = process.env.PORT || 2500;
 
 //need to be set to accept certs from secure clusters when certs cant be trusted
 //this is mainly for SFRP clusters to test against.
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
-app.use(express.static(path.join('wwwroot')))
+app.use(express.static(__dirname + '/wwwroot/'))
 app.use(express.json())
 app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + '/../Sfx/wwwroot/index.html'));
+    res.sendFile(path.join(__dirname + 'wwwroot/index.html'));
 });
 app.all('/*', async (req, res) => {
     let resp = null;

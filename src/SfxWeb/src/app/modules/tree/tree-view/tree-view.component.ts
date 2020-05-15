@@ -1,5 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, OnChanges, AfterViewInit, Output, EventEmitter, DoCheck } from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-tree-view',
@@ -7,6 +8,8 @@ import { TreeService } from 'src/app/services/tree.service';
   styleUrls: ['./tree-view.component.scss']
 })
 export class TreeViewComponent implements DoCheck {
+
+  public showBeta = environment.showBeta;
 
   @Output() onTreeSize = new EventEmitter<number>();
 
@@ -23,7 +26,7 @@ export class TreeViewComponent implements DoCheck {
   leaveBeta() {
     const originalUrl = location.origin + '/Explorer/index.html' + location.hash;
     window.location.assign(originalUrl);
-    
+
   }
 
   setWidth() {
