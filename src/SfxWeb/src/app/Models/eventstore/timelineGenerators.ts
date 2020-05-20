@@ -24,6 +24,7 @@ export interface ITimelineData {
     items: DataSet<DataItem>;
     start?: Date;
     end?: Date;
+    potentiallyMissingEvents?: boolean;
 }
 
 export interface ITimelineDataGenerator<T extends FabricEventBase>{
@@ -251,17 +252,23 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
 }
 export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     static readonly NodesDownLabel = "Node Down";
+    static readonly transitions = ["NodeDeactivateStarted", "NodeDeactivateCompleted", "NodeOpenSucceeded"];
 
     consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
         let items = new DataSet<DataItem>();
 
         let previousTransitions: Record<string, NodeEvent> = {};
+        let potentiallyMissingEvents = false;
 
         events.forEach( event => {
             if (event.category === "StateTransition") {
                 //check for current state
                 if (event.kind === "NodeDown") {
-                    const end = previousTransitions[event.nodeName] ? previousTransitions[event.nodeName].timeStamp : endOfRange.toISOString();
+                    const previousTransition = previousTransitions[event.nodeName];
+                    if(previousTransition.kind !== "NodeUp") {
+                        potentiallyMissingEvents = true;
+                    }
+                    const end = previousTransition ? previousTransition.timeStamp : endOfRange.toISOString();
                     const start = event.timeStamp;
                     const label = "Node " + event.nodeName + " down";
                     items.add({
@@ -280,6 +287,10 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                 if (event.kind === "NodeUp") {
                     previousTransitions[event.nodeName] = event;
                 }
+
+                if(NodeTimelineGenerator.transitions.includes(event.kind) ) {
+                    previousTransitions[event.nodeName] = event;
+                }
             };
         });
 
@@ -289,7 +300,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
 
         return {
             groups,
-            items
+            items,
+            potentiallyMissingEvents
         };
     }
 }
