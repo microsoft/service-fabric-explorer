@@ -23,6 +23,12 @@ export class TimeUtils {
         return date;
     }
 
+    public static AddHours(toDate: Date, hours: number): Date {
+        let date = new Date(toDate.valueOf());
+        date.setTime(date.getTime() + (hours * 1000 * 60 * 60));
+        return date;
+    }
+
     public static AddDays(toDate: Date, days: number): Date {
         let date = new Date(toDate.valueOf());
         date.setDate(date.getDate() + days);

@@ -1,5 +1,5 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ITimelineData, ITimelineDataGenerator, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
 import { EventListBase } from 'src/app/Models/DataModels/collections/Collections';
 import { FabricEventBase } from 'src/app/Models/eventstore/Events';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
@@ -8,16 +8,26 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
 
+export interface IQuickDates {
+    display: string;
+    hours: number;
+}
 @Component({
   selector: 'app-event-store',
   templateUrl: './event-store.component.html',
   styleUrls: ['./event-store.component.scss']
 })
-export class EventStoreComponent implements OnInit {
+export class EventStoreComponent implements OnInit, OnDestroy {
 
-    debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
-    debouncerHandlerSubscription: Subscription;
+  private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
+  private debouncerHandlerSubscription: Subscription;
   
+  public quickDates = [
+    { display: "6 hours", hours: 6},
+    { display: "24 hours", hours: 24},
+    { display: "7 days", hours: 168 }
+  ]
+
   @Input() eventsList: EventListBase<any>;
   @Input() timelineGenerator: TimeLineGeneratorBase<FabricEventBase>;
 
@@ -35,6 +45,10 @@ export class EventStoreComponent implements OnInit {
         this.endDate = dates.endDate;
         this.setNewDateWindow();
      });
+  }
+
+  ngOnDestroy() {
+      this.debouncerHandlerSubscription.unsubscribe();
   }
 
   public static MaxWindowInDays: number = 7;
@@ -76,6 +90,13 @@ export class EventStoreComponent implements OnInit {
       this.endDate = this.eventsList.endDate;
       this.startDateMin = this.endDateMin = TimeUtils.AddDays(new Date(), -30);
       this.startDateMax = this.endDateMax = new Date(); //Today
+  }
+
+  public setDate(date: IQuickDates) {
+      this.setNewDates({
+        endDate: new Date(this.eventsList.endDate),
+        startDate: TimeUtils.AddHours(this.endDate, -1 * date.hours)
+      })
   }
 
   private setNewDateWindow(): void {
