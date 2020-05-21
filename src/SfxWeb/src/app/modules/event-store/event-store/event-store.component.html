@@ -1,23 +1,21 @@
 <div class="detail-pane">
-        <div class="container">
-            <div class="row">
-                <div ngbDropdown>
-                    <button class="simple-button" ngbDropdownToggle>View </button>
+        <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+            <div style="display: flex; flex-direction: row; align-items: center;">
+                <div ngbDropdown style="margin-right: 10px;">
+                    <button class="simple-button" ngbDropdownToggle>View Last </button>
                     <div ngbDropdownMenu>
                             <button *ngFor="let date of quickDates" style="border-bottom: 1px solid gray;" ngbDropdownItem (click)="setDate(date)" style="padding: 5px; ">
                                 {{date.display}}
                             </button>
                     </div>
                 </div>
-            </div>
-            <div class="row">
-                <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (onDateChange)="setNewDates($event)"
-                [currentStartDate]="startDate" [currentEndDate]="endDate" class="col-md-6 col-sm-12 col-lg-4"></app-dual-date-picker>
 
-                <div class="col-md-6 col-sm-12 col-lg-8">
-                    <div style="width: 90%; margin-top: 15px; margin-bottom: 15px;">
-                        <app-double-slider [startDate]="startDate" [endDate]="endDate" (onDateChange)="setNewDates($event)"></app-double-slider>
-                    </div>
+                <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (onDateChange)="setNewDates($event)"
+                [currentStartDate]="startDate" [currentEndDate]="endDate" ></app-dual-date-picker>    
+            </div>
+            <div style="min-width: 400px; flex: 1; padding-left: 15px;" >
+                <div style="width: 90%; margin-top: 15px; margin-bottom: 15px;">
+                    <app-double-slider [startDate]="startDate" [endDate]="endDate" (onDateChange)="setNewDates($event)"></app-double-slider>
                 </div>
             </div>
         </div>
@@ -38,7 +36,8 @@
         </div>
 
         <div *ngIf="timeLineEventsData">
-            <div *ngIf="timeLineEventsData.potentiallyMissingEvents">
+            <div *ngIf="true || timeLineEventsData.potentiallyMissingEvents">
+                <app-health-badge badgeClass="badge-warning"></app-health-badge>
                 Potentially missing events!
             </div>
             <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>            
