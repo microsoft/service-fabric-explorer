@@ -23,6 +23,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   private debouncerHandlerSubscription: Subscription;
   
   public quickDates = [
+    { display: "1 hours", hours: 6},
     { display: "6 hours", hours: 6},
     { display: "24 hours", hours: 24},
     { display: "7 days", hours: 168 }
@@ -34,7 +35,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   constructor(public dataService: DataService) { }
 
   ngOnInit() {
-    //   this.dataService.isAdvancedModeEnabled()
     this._showAllEvents = !this.timelineGenerator;
     this.resetSelectionProperties();
     this.setTimelineData();
@@ -121,7 +121,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                     groups: d.groups,
                     items: d.items,
                     start: this.startDate,
-                    end: this.endDate
+                    end: this.endDate,
+                    potentiallyMissingEvents: d.potentiallyMissingEvents
                 };
 
             }else if (this.timelineGenerator) {
@@ -131,7 +132,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                     groups: d.groups,
                     items: d.items,
                     start: this.startDate,
-                    end: this.endDate
+                    end: this.endDate,
+                    potentiallyMissingEvents: d.potentiallyMissingEvents
                 };
             }
         }catch (e) {

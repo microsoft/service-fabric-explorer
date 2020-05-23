@@ -33,13 +33,13 @@
                 <app-input placeholder="query string" [model]="transformText" (onChange)="transformText = $event;"></app-input>
                 <button class="simple-button" (click)="setTimelineData()">filter</button>
             </span>
+            <p *ngIf="timeLineEventsData?.potentiallyMissingEvents" style="display: inline-block; margin-left: 10px;">
+                <app-health-badge badgeClass="badge-warning"></app-health-badge>
+                Potentially missing events!
+            </p>
         </div>
 
         <div *ngIf="timeLineEventsData">
-            <div *ngIf="true || timeLineEventsData.potentiallyMissingEvents">
-                <app-health-badge badgeClass="badge-warning"></app-health-badge>
-                Potentially missing events!
-            </div>
             <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>            
         </div>
 

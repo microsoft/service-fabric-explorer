@@ -29,10 +29,16 @@ export interface ITimelineData {
 
 export interface ITimelineDataGenerator<T extends FabricEventBase>{
 
+    /*
+    Take a list of events, assuming events are sorted most recent to oldest and creates and produces timeline formatted events.
+    */
     consume(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData;
 }
 
 export class EventStoreUtils {
+    /*
+    Produces an html string used for vis.js timeline tooltips.
+    */
     public static tooltipFormat = (data: Record<string, any> , start: string, end: string = "", title: string= ""): string => {
 
         const rows = Object.keys(data).map(key => `<tr><td style="word-break: keep-all;">${key}</td><td> : ${data[key]}</td></tr>`).join("");
@@ -257,6 +263,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
         let items = new DataSet<DataItem>();
 
+        let nodeUpEvents: Record<string, NodeEvent> = {};
         let previousTransitions: Record<string, NodeEvent> = {};
         let potentiallyMissingEvents = false;
 
@@ -265,17 +272,21 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                 //check for current state
                 if (event.kind === "NodeDown") {
                     const previousTransition = previousTransitions[event.nodeName];
-                    if(previousTransition.kind !== "NodeUp") {
+                    if(previousTransition && previousTransition.kind !== "NodeUp") {
                         potentiallyMissingEvents = true;
                     }
+
+                    if(event.nodeName in nodeUpEvents) {
+                        delete nodeUpEvents[event.nodeName];
+                    }
                     const end = previousTransition ? previousTransition.timeStamp : endOfRange.toISOString();
-                    const start = event.timeStamp;
-                    const label = "Node " + event.nodeName + " down";
+                    const start = event.eventProperties["LastNodeUpAt"];
+                    const label = `Node ${event.nodeName} down`;
                     items.add({
                         id: event.eventInstanceId + label,
                         content: label,
-                        start: start,
-                        end: end,
+                        start,
+                        end,
                         group: NodeTimelineGenerator.NodesDownLabel,
                         type: "range",
                         title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
@@ -286,13 +297,33 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
 
                 if (event.kind === "NodeUp") {
                     previousTransitions[event.nodeName] = event;
-                }
-
-                if(NodeTimelineGenerator.transitions.includes(event.kind) ) {
-                    previousTransitions[event.nodeName] = event;
+                    if(event.nodeName in nodeUpEvents) {
+                        potentiallyMissingEvents = true;
+                    }
+                    nodeUpEvents[event.nodeName] = event;
                 }
             };
+
+            if(NodeTimelineGenerator.transitions.includes(event.kind) ) {
+                previousTransitions[event.nodeName] = event;
+            }
         });
+
+        Object.keys(nodeUpEvents).forEach(key => {
+            const event = nodeUpEvents[key];
+            const label = `Node ${event.nodeName} down`;
+            items.add({
+                id: event.eventInstanceId + label,
+                content: label,
+                start: event.eventProperties["LastNodeDownAt"],
+                end: event.timeStamp,
+                group: NodeTimelineGenerator.NodesDownLabel,
+                type: "range",
+                title: EventStoreUtils.tooltipFormat(event.eventProperties, event.eventProperties["LastNodeDownAt"], event.timeStamp, label),
+                className: "red",
+                subgroup: "stack"
+            });
+        })
 
         let groups = new DataSet<DataGroup>([
             {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {"stack": true}},
