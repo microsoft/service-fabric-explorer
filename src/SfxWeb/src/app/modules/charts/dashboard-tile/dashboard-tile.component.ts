@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit } from '@angular/core';
 import { IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
-import { Chart, Options, chart  } from 'highcharts';
+import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
 
 @Component({
   selector: 'app-dashboard-tile',
@@ -13,8 +13,6 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
 
   @ViewChild('chart') private chartContainer: ElementRef;
 
-  public dimension: number = 200;
-
   private chart: Chart;
 
   fontColor = {
@@ -23,22 +21,21 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
 
   public options: Options = {
     chart: {
-        type: 'pie',
-        backgroundColor: null,
-        borderRadius: 0,
-        // animation: false
+      type: 'pie',
+      backgroundColor: null,
+      borderRadius: 0,
     },
     title: {
-        text: 'test',
-        align: 'left',
-        verticalAlign: 'middle',
-        y: 0,
-        x: 10,
-        style: {
-          color: "#fff",
-          fontSize: "15pt"
-        }
-      },
+      text: 'test',
+      align: 'left',
+      verticalAlign: 'middle',
+      y: 0,
+      x: 10,
+      style: {
+        color: "#fff",
+        fontSize: "15pt"
+      }
+    },
     subtitle: {
       text: "5",
       align: 'left',
@@ -50,25 +47,31 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
         fontSize: "28pt"
       }
     },
-    tooltip:{ enabled: false, animation: false },
+    tooltip: {
+      enabled: false,
+      animation: false,
+      formatter: function () {
+        return `${this.point.name} : ${this.y}`;
+      }
+    },
     credits: { enabled: false },
     loading: {
       showDuration: 0
     },
     plotOptions: {
-        pie: {
-                    dataLabels: {
-                enabled: false,
-                distance: -50,
-                style: {
-                    fontWeight: 'bold',
-                    color: 'white'
-                }
-            },
-            innerSize: '90%',
-          startAngle: -50,
-            endAngle: 230,
-        }
+      pie: {
+        dataLabels: {
+          enabled: false,
+          distance: -50,
+          style: {
+            fontWeight: 'bold',
+            color: 'white'
+          }
+        },
+        innerSize: '90%',
+        startAngle: -50,
+        endAngle: 230,
+      }
     },
     series: [{
       type: "pie",
@@ -80,15 +83,15 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
             color: "gray"
           }
         ],
-        states: {
-          inactive: {
-            opacity: 1
-          },
-          hover: {
-            opacity: 1
-          }
+      states: {
+        inactive: {
+          opacity: 1
+        },
+        hover: {
+          opacity: 1
         }
-  }]
+      }
+    }]
   };
 
   constructor() { }
@@ -96,39 +99,36 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
   ngOnInit() {
     let margin = 3;
     let width = (this.data.largeTile ? 200 : 140) + margin * 2;
-    this.dimension = width;
-    this.options.chart.height = this.dimension;
-    this.options.chart.width = this.dimension;
+    this.options.chart.height = width;
+    this.options.chart.width = width;
 
-    if(!this.data.largeTile) {
+    this.options.title.text = this.data.displayTitle;
+    this.options.subtitle.text = this.data.count.toString();
+
+    const data = this.getDataSet();
+    this.options.tooltip.enabled = data.length === 3;
+    this.options.series[0]['data'] = data;
+
+    if (!this.data.largeTile) {
       this.options.title.style.fontSize = '13pt';
-      this.options.subtitle.style.fontSize = '13pt';
       this.options.title.y = 9;
-      // this.options.title.x = -2;
+      this.options.subtitle.style.fontSize = '13pt';
       this.options.subtitle.y = 30;
-
     }
-    this.ngOnChanges();
-  }
-  
-  ngAfterViewInit(){
-    this.chart = chart(this.chartContainer.nativeElement, this.options);
-    console.log(this.data)
   }
 
-  ngOnChanges() {
-    // const series = 
-    //       [{name:'Ok', y: 5, color: "green"},
-    //       {name:'Warning', y: 4, color: "yellow"},
-    //       {name:'Error', y: 3, color: "red"}]
-    
+  ngAfterViewInit() {
+    this.chart = chart(this.chartContainer.nativeElement, this.options);
+  }
+
+  getDataSet(): PointOptionsObject[] {
     const colors = {
-      'Ok': "green",
+      'Healthy': "green",
       'Warning': 'yellow',
       'Error': 'red'
     }
 
-    const data = this.data.dataPoints.map(p => {
+    let data = this.data.dataPoints.map(p => {
       return {
         name: p.title,
         y: p.count,
@@ -136,20 +136,24 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
       }
     });
 
-    if(data.every(d => d.y  === 0)) {
+    //if there is no data we want gray rings.
+    // so we need to push a gray entry
+    if (data.every(d => d.y === 0)) {
       data.push({
         name: "",
         y: 1,
         color: "gray"
       });
     }
+    return data;
+  }
 
-    if(this.chart){
-      // this.chart.update({chart: {animation: true }});
+  ngOnChanges() {
+    if (this.chart) {
+      const data = this.getDataSet();
+      this.chart.tooltip.update({ enabled: data.length === 3 });
       this.chart.series[0].setData(data);
-      this.chart.title.update({text: `${this.data.displayTitle}`}) //${this.data.count}
-      // this.chart.subtitle.update({text: this.subtitle})
-      // this.chart.xAxis[0].update({categories: this.xAxisCategories})  
+      this.chart.title.update({ text: `${this.data.displayTitle}` }) //${this.data.count}
     }
   }
 
