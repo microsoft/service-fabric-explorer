@@ -33,6 +33,12 @@ $dashboard-small-padding-horizontal: 20px;
     width: 270px;
 }
 
+.chart-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
+}
+
 .dashboard-wrapper {
     display: inline-block;
     vertical-align: top;
@@ -54,32 +60,32 @@ $dashboard-small-padding-horizontal: 20px;
             cursor: pointer;
         }
 
-        .dashboard-donut-chart {
-            display: inline-block;
-            position: relative;
+        // .dashboard-donut-chart {
+        //     display: inline-block;
+        //     position: relative;
 
-            .dashboard-arc-bg {
-                fill: $right-panel-background-color;
-            }
+        //     .dashboard-arc-bg {
+        //         fill: $right-panel-background-color;
+        //     }
 
-            .dashboard-arc {
-                &.badge-ok {
-                    fill: $dashboard-ok-color;
-                }
+        //     .dashboard-arc {
+        //         &.badge-ok {
+        //             fill: $dashboard-ok-color;
+        //         }
 
-                &.badge-warning {
-                    fill: $dashboard-warning-color;
-                }
+        //         &.badge-warning {
+        //             fill: $dashboard-warning-color;
+        //         }
 
-                &.badge-error {
-                    fill: $dashboard-error-color;
-                }
+        //         &.badge-error {
+        //             fill: $dashboard-error-color;
+        //         }
 
-                &.badge-unknown {
-                    fill: $dashboard-unknown-color;
-                }
-            }
-        }
+        //         &.badge-unknown {
+        //             fill: $dashboard-unknown-color;
+        //         }
+        //     }
+        // }
 
         .dashboard-datapoints {
             vertical-align: top;
@@ -173,6 +179,10 @@ $dashboard-small-padding-horizontal: 20px;
 
     .dashboard-large {
         padding: $dashboard-large-padding-vertical $dashboard-padding;
+        position: relative;
+        height: 286px;
+        display: flex;
+        flex-direction: column-reverse;
 
         .dashboard-title {
             font-size: $dashboard-title-font-size;
@@ -202,6 +212,10 @@ $dashboard-small-padding-horizontal: 20px;
 
     .dashboard-small {
         padding: $dashboard-padding $dashboard-small-padding-horizontal;
+        position: relative;
+        width: 230px;
+        height: 137px;
+        overflow: hidden;
 
         .dashboard-title {
             font-size: $dashboard-small-title-font-size;
@@ -212,8 +226,8 @@ $dashboard-small-padding-horizontal: 20px;
         }
 
         .dashboard-datapoints {
-            display: inline-block;
             margin: 0 0 0 20px;
+            float: right;
 
             .dashboard-datapoint {
                 height: 36px;
