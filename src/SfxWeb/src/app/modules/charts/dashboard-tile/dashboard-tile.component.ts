@@ -153,7 +153,8 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
       const data = this.getDataSet();
       this.chart.tooltip.update({ enabled: data.length === 3 });
       this.chart.series[0].setData(data);
-      this.chart.title.update({ text: `${this.data.displayTitle}` }) //${this.data.count}
+      this.chart.title.update({ text: this.data.displayTitle })
+      this.chart.subtitle.update({text: this.data.count.toString()})
     }
   }
 
