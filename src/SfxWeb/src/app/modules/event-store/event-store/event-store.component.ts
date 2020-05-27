@@ -23,9 +23,10 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   private debouncerHandlerSubscription: Subscription;
   
   public quickDates = [
-    { display: "1 hours", hours: 6},
+    { display: "1 hours", hours: 1},
+    { display: "3 hours", hours: 3},
     { display: "6 hours", hours: 6},
-    { display: "24 hours", hours: 24},
+    { display: "1 day", hours: 24},
     { display: "7 days", hours: 168 }
   ]
 
