@@ -24,6 +24,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
   private _end: Date;
   private _oldestEvent: DataItem;
   private _mostRecentEvent: DataItem;
+  private _firstEventsSet: boolean = true;
 
   @ViewChild('visualization') container: ElementRef;
 
@@ -31,8 +32,10 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
   constructor() { }
 
   ngOnChanges() {
-    if(this._timeline)
-    this.updateList(this.events);
+    if(this._timeline) {
+        this.updateList(this.events);
+        this._firstEventsSet = false;
+    }
   }
 
   ngAfterViewInit() {
@@ -100,7 +103,8 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
               stackSubgroups: true,
               maxHeight: "700px",
               verticalScroll: true,
-              width: "95%"
+              width: "95%",
+              zoomMin: this._firstEventsSet ? 10800000 : 10
           });
 
           if(this.fitOnDataChange){

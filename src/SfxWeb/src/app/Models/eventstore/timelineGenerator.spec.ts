@@ -111,6 +111,27 @@ describe('TimelineGenerators', () => {
 
         })
 
+        fit('node goes down (5 total events)', () => {
+            const down1 = new NodeEvent();
+            down1.fillFromJSON({...upEvent.raw, "EventInstanceId": "1", "NodeName":"1", "NodeInstance": 1});
+            const down2 = new NodeEvent();
+            down2.fillFromJSON({...upEvent.raw, "EventInstanceId": "2", "NodeName":"2", "NodeInstance": 2});
+            const down3 = new NodeEvent();
+            down3.fillFromJSON({...upEvent.raw, "EventInstanceId": "3", "NodeName":"3", "NodeInstance": 3});
+            const down4 = new NodeEvent();
+            down4.fillFromJSON({...upEvent.raw, "EventInstanceId": "4", "NodeName":"4", "NodeInstance": 4});
+            const data = [downEvent, down1, down2, down3, down4]
+
+            const events = generator.consume(data, startDate, endDate);
+            expect(events.items.length).toBe(5);
+
+            expect(events.groups.length).toBe(1);
+            expect(events.groups.get(groupId)).toEqual(nodeDownGroups);
+
+            expect(events.potentiallyMissingEvents).toBeFalsy();
+
+        })
+
         fit('potentiallyMissingEvents', () => {
             const timeStamp = "2020-05-09T17:43:36.0823982Z";
             const deactivateEvent = new NodeEvent();
@@ -148,6 +169,56 @@ describe('TimelineGenerators', () => {
             expect(events.potentiallyMissingEvents).toBeTruthy();
 
         })
+
+        fit('node goes down, up, and down (2 total events)', () => {
+            const secondUpEvent = new NodeEvent();
+
+            let instanceId = "test";
+            let lastNodeUpAt2 = "2020-04-09T17:46:39.2458955Z";
+            let timeStamp = "2020-05-01T16:46:39.2458955Z";
+
+            let raw = {...upEvent.raw};
+            raw["EventInstanceId"] = instanceId;
+            raw["TimeStamp"] = timeStamp;
+            raw["LastNodeDownAt"] = lastNodeUpAt2;
+            
+            secondUpEvent.fillFromJSON(raw);
+
+            const data = [upEvent, downEvent, secondUpEvent]
+            const events = generator.consume(data, startDate, endDate);
+
+            expect(events.items.length).toBe(2);
+            expect(events.items.get(id)).toEqual({
+                id,
+                content: "Node _dis-svc-test-BackEnd-vmss_2 down",
+                start: lastNodeUpAt,
+                end: "2020-05-09T17:46:39.2458955Z",
+                group: NodeTimelineGenerator.NodesDownLabel,
+                type: "range",
+                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, lastNodeUpAt, "2020-05-09T17:46:39.2458955Z", "Node _dis-svc-test-BackEnd-vmss_2 down"),
+                className: "red",
+                subgroup: "stack"
+            });
+
+            expect(events.items.get(instanceId + "Node _dis-svc-test-BackEnd-vmss_2 down")).toEqual({
+                id: instanceId + "Node _dis-svc-test-BackEnd-vmss_2 down",
+                content: "Node _dis-svc-test-BackEnd-vmss_2 down",
+                start: lastNodeUpAt2,
+                end: timeStamp,
+                group: NodeTimelineGenerator.NodesDownLabel,
+                type: "range",
+                title: EventStoreUtils.tooltipFormat(secondUpEvent.eventProperties, lastNodeUpAt2, timeStamp, "Node _dis-svc-test-BackEnd-vmss_2 down"),
+                className: "red",
+                subgroup: "stack"
+            });
+
+            expect(events.groups.length).toBe(1);
+            expect(events.groups.get(groupId)).toEqual(nodeDownGroups);
+
+            expect(events.potentiallyMissingEvents).toBeFalsy();
+
+        })
+
     })
   });
 

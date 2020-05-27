@@ -23,7 +23,6 @@ module Sfx {
         items: vis.DataSet<vis.DataItem>;
         start?: Date;
         end?: Date;
-        potentiallyMissingEvents?: boolean;
     }
 
     export interface ITimelineDataGenerator<T extends FabricEventBase>{
@@ -251,20 +250,15 @@ module Sfx {
     }
     export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         static readonly NodesDownLabel = "Node Down";
-        static readonly suspiciousTransitions = ["NodeDeactivateCompleted", "NodeAddedToCluster", "NodeDeactivateStarted", "NodeClosed"];
         consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
             let items = new vis.DataSet<vis.DataItem>();
 
             let previousTransitions: Record<string, NodeEvent> = {};
 
-            let potentiallyMissingEvents = false;
-
             events.forEach( event => {
                 if (event.category === "StateTransition") {
                     //check for current state
                     if (event.kind === "NodeDown") {
-                        const previousEvent = previousTransitions[event.nodeName];
-
                         const end = previousTransitions[event.nodeName] ? previousTransitions[event.nodeName].timeStamp : endOfRange.toISOString();
                         const start = event.timeStamp;
                         const label = "Node " + event.nodeName + " down";
@@ -282,9 +276,6 @@ module Sfx {
 
                     if (event.kind === "NodeUp") {
                         previousTransitions[event.nodeName] = event;
-                    } else if(NodeTimelineGenerator.suspiciousTransitions.indexOf(event.kind) > -1 ) {
-                        potentiallyMissingEvents = true;
-                        previousTransitions[event.nodeName] = event;
                     }
                 };
             });
@@ -295,8 +286,7 @@ module Sfx {
 
             return {
                 groups,
-                items,
-                potentiallyMissingEvents
+                items
             };
         }
     }

@@ -258,11 +258,13 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
 }
 export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     static readonly NodesDownLabel = "Node Down";
-    static readonly transitions = ["NodeDeactivateStarted", "NodeDeactivateCompleted", "NodeOpenSucceeded"];
+    static readonly transitions = ["NodeDeactivateStarted"];
 
     consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
         let items = new DataSet<DataItem>();
 
+        //keep track of node up events incase we have nodes where they started in a down state before the selected time
+        //so that we know we need to chart a down node from the start of the timeline.
         let nodeUpEvents: Record<string, NodeEvent> = {};
         let previousTransitions: Record<string, NodeEvent> = {};
         let potentiallyMissingEvents = false;
@@ -271,11 +273,13 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
             if (event.category === "StateTransition") {
                 //check for current state
                 if (event.kind === "NodeDown") {
+                    // we need to track for events that should not show up between node down and up events to know if data is missing
                     const previousTransition = previousTransitions[event.nodeName];
                     if(previousTransition && previousTransition.kind !== "NodeUp") {
                         potentiallyMissingEvents = true;
                     }
 
+                    //remove node up events if we find a node down event.
                     if(event.nodeName in nodeUpEvents) {
                         delete nodeUpEvents[event.nodeName];
                     }
@@ -308,7 +312,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                 previousTransitions[event.nodeName] = event;
             }
         });
-
+        
+        //add any left over node up events to the chart.
         Object.keys(nodeUpEvents).forEach(key => {
             const event = nodeUpEvents[key];
             const label = `Node ${event.nodeName} down`;
