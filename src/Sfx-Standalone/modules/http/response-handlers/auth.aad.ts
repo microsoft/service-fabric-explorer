@@ -37,7 +37,7 @@ function acquireAuthzToken(aadMetadata: IAadMetadata, authzEndpoint: string): Pr
         const authzUrl = generateAuthzUrl(aadMetadata, authzEndpoint);
 
         const authzWnd = new BrowserWindow({
-            title: `Azure Active Directory Authentication: ${url.parse(aadMetadata.redirectUri).host}`,
+            title: `TEST Azure Active Directory Authentication: ${url.parse(aadMetadata.redirectUri).host}`,
             width: 800,
             height: 600,
             minimizable: false,

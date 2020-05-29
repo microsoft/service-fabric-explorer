@@ -45,7 +45,7 @@ export class AdalService {
             clientId: data.raw.metadata.client,
             redirectUri: data.raw.metadata.redirect, //location,
             cacheLocation: 'localStorage',
-            // popUp: true
+            popUp: true
         }
 
         if (data.raw.metadata.login) {
@@ -54,10 +54,10 @@ export class AdalService {
           config['instance'] = StringUtils.EnsureEndsWith(data.raw.metadata.login, "/");
       }
 
-        if (StandaloneIntegration.clusterUrl !== "") {
-          config.redirectUri = StandaloneIntegration.clusterUrl + "/Explorer/index.html";
-          config['postLogoutRedirectUri'] = StandaloneIntegration.clusterUrl + "/Explorer/index.html";
-        }
+        // if (StandaloneIntegration.clusterUrl !== "") {
+        //   // config.redirectUri = StandaloneIntegration.clusterUrl + "/Explorer/index.html";
+        //   config['postLogoutRedirectUri'] = StandaloneIntegration.clusterUrl + "/Explorer/index.html";
+        // }
         console.log(config)
         this.context = new createAuthContextFn(config);
           this.aadEnabled = true;

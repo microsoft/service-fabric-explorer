@@ -866,8 +866,6 @@ export class RestClientService {
             StandaloneIntegration.getHttpClient()
                 .then((client) => client.requestAsync(request))
                 .then((response) => {
-                    console.log("look here", JSON.stringify(response))
-
                     //only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
                     resolve(response.data);
                     }

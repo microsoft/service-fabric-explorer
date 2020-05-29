@@ -5,10 +5,13 @@ import { StandaloneIntegration } from './Common/StandaloneIntegration';
 export function initApp(aadService: AdalService) {
     return async () => {
         try {
-
             console.log(StandaloneIntegration.isStandalone())
 
             console.log(StandaloneIntegration.clusterUrl)
+
+            if(StandaloneIntegration.isStandalone()) {
+              return of(null);
+            }
 
             await aadService.load().toPromise();
 
@@ -17,7 +20,7 @@ export function initApp(aadService: AdalService) {
                     aadService.login();
                 }
                 aadService.handleWindowCallback()
-    
+
                 return of(null)
             }else{
                 return of(null);
