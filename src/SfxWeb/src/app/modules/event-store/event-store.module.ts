@@ -7,7 +7,7 @@ import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-
 import { FullDescriptionComponent } from './full-description/full-description.component';
 import { RowDisplayComponent } from './row-display/row-display.component';
 import { FormsModule } from '@angular/forms';
-import { NgbButtonsModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbButtonsModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/shared/shared.module';
 
 
@@ -18,6 +18,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
     DetailListTemplatesModule,
     FormsModule,
     NgbButtonsModule,
+    NgbDropdownModule,
     SharedModule
   ],
   exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, EventStoreTimelineComponent],

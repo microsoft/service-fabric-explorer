@@ -52,11 +52,13 @@
                             <!-- track by columnSetting.propertyPath -->
                             <!-- ng-mousedown="handleClickRow(item, $event)" -->
                         <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index; trackBy: trackByColumnSetting;">
-                            <span class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }}" (click)="handleClickRow(item, $event)"
+                            <div style="display: flex; flex-direction: row">
+                                <span class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }}" (click)="handleClickRow(item, $event)"
                                 *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)"
                                 [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></span>
                                 <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
-                                <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
+                                <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>                                
+                            </div>
                             </td>
                         </tr>
                         <!-- Optional second row -->

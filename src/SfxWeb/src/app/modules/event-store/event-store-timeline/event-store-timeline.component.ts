@@ -24,6 +24,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
   private _end: Date;
   private _oldestEvent: DataItem;
   private _mostRecentEvent: DataItem;
+  private _firstEventsSet: boolean = true;
 
   @ViewChild('visualization') container: ElementRef;
 
@@ -31,8 +32,10 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
   constructor() { }
 
   ngOnChanges() {
-    if(this._timeline)
-    this.updateList(this.events);
+    if(this._timeline) {
+        this.updateList(this.events);
+        this._firstEventsSet = false;
+    }
   }
 
   ngAfterViewInit() {
@@ -81,65 +84,72 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
       }
   }
 
-  public updateList(events: ITimelineData) {
-      if (events) {
-          this._timeline.setData({
-              groups: events.groups,
-              items: events.items
+    public updateList(events: ITimelineData) {
+        if (events.start) {
+            this._timeline.setOptions({
+                min: events.start,
             });
-          this._timeline.setOptions({
-              selectable: false,
-              margin: {
-                  item : {
-                      horizontal : -1 //this makes it so items dont stack up when zoomed out too far.,
-                  }
-              },
-              tooltip: {
-                  overflowMethod: "flip"
-              }, stack: true,
-              stackSubgroups: true,
-              maxHeight: "700px",
-              verticalScroll: true,
-              width: "95%"
-          });
-
-          if(this.fitOnDataChange){
-            this._timeline.fit();
-          }
-
-          if(events.start){
             this._start = events.start;
-          }          
-          if(events.end){
+        }
+        if (events.end) {
             this._end = events.end;
             this._timeline.setOptions({
                 max: events.end,
             });
-          }
+        }
 
-          if (events.items.length > 0) {
-              let oldest = null;
-              let newest = null;
+        if (events) {
+            this._timeline.setData({
+                groups: events.groups,
+                items: events.items
+            });
 
-              events.items.forEach(item => {
-                  //cant easily grab the first elements of the collection, easier to set here
-                  if (!oldest  && !newest) {
-                      oldest = item;
-                      newest = item;
-                  }
-                  if (oldest.start > item.start) {
-                      oldest = item;
-                  }
-                  if (newest.end < item.end) {
-                      newest = item;
-                  }
-              });
-              this._mostRecentEvent = newest;
-              this._oldestEvent = oldest;
-          }
-      }else {
-          this._mostRecentEvent = null;
-          this._oldestEvent = null;
-      }
-  }
+            this._timeline.setOptions({
+                selectable: false,
+                margin: {
+                    item: {
+                        horizontal: -1 //this makes it so items dont stack up when zoomed out too far.,
+                    }
+                },
+                tooltip: {
+                    overflowMethod: "flip"
+                }, stack: true,
+                stackSubgroups: true,
+                maxHeight: "700px",
+                verticalScroll: true,
+                width: "95%",
+                zoomMin: this._firstEventsSet ? 10800000 : 10
+            });
+
+            if (this.fitOnDataChange) {
+                this._timeline.fit();
+            }
+
+            if (events.items.length > 0) {
+                let oldest = null;
+                let newest = null;
+
+                events.items.forEach(item => {
+                    //cant easily grab the first elements of the collection, easier to set here
+                    if (!oldest && !newest) {
+                        oldest = item;
+                        newest = item;
+                    }
+                    if (oldest.start > item.start) {
+                        oldest = item;
+                    }
+                    if (newest.end < item.end) {
+                        newest = item;
+                    }
+                });
+                this._mostRecentEvent = newest;
+                this._oldestEvent = oldest;
+            }
+        } else {
+            this._mostRecentEvent = null;
+            this._oldestEvent = null;
+            this._timeline.zoomOut(1);
+        }
+    }
+
 }
