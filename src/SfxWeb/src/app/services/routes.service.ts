@@ -1,7 +1,23 @@
-import { Injectable } from '@angular/core';
+import { Injectable, Component } from '@angular/core';
 import { Location } from '@angular/common';
-import { Router, ActivationEnd, NavigationEnd, ActivatedRoute } from '@angular/router';
+import { Router, ActivationEnd, NavigationEnd, ActivatedRoute, ActivatedRouteSnapshot } from '@angular/router';
 
+const areEqualArrays = (a: any[], b: any[]) => (
+    (a.length === b.length) ? 
+    a.every( value => b.includes(value) ) : false
+);
+
+const objectKeyValuesToList = (obj: any): any[] => {
+    return Object.keys(obj).map(key => obj[key])
+}
+/*
+Routing Service additionally will redirect under certain conditions to continue how the previous SFX experienced worked when viewing similar pages.
+
+i.e if viewing a node and are on the details page and you go to view another node, the expectation is it would redirect to the node details page instead of essentials
+
+This is considered reset when viewing a different entity so viewing node/details then applications then back to node would go to the node default page essentials.
+
+*/
 @Injectable({
   providedIn: 'root'
 })
@@ -9,27 +25,64 @@ export class RoutesService {
 
   private _forceSingleEncode: boolean = true;
 
-  constructor(public location: Location, public routing: Router, private activedRoute: ActivatedRoute) {
-    //there can be multiple activationEnd events so we want to grab the last one.
-    let lastActivationEnd = null;
-    this.routing.events.subscribe( event => {
-        // console.log(event)
-      if(event instanceof ActivationEnd) {
-        lastActivationEnd = event;
-        console.log(lastActivationEnd);
-        console.log(this.activedRoute)
-      }
-        if(event instanceof NavigationEnd){
-          try {
-            const name = lastActivationEnd.snapshot.routeConfig.path;
-            console.log(lastActivationEnd);
-            console.log(this.activedRoute)
-          }catch {
+// keep track of previous states to know when we changed
+  private previouslastPaths = [];
+  private previousParams = {};
+  private previousPathPostFix = "";
 
-          }
-            lastActivationEnd = null;
+  constructor(public location: Location, public routing: Router, private activedRoute: ActivatedRoute) {
+    
+    //there can be multiple activationEnd events so we want to grab the last one.
+    let lastActivationEnd: ActivationEnd = null;
+
+    this.routing.events.subscribe( event => {
+        //given there are multiple activation events we want to get the last one because it will have the activation data for the last child route.
+        if(event instanceof ActivationEnd) {
+            lastActivationEnd = event;
+        }
+        
+        //this event signifies the end of finding the right route.
+        if(event instanceof NavigationEnd){
+            const data = this.getPathData(lastActivationEnd.snapshot);
+ 
+            //check first if same entity views by comparing first component
+            //given all routes are lazy loaded we check if the child routing components are the same.
+            if(this.previouslastPaths[0] === data.lastPaths[0]) {
+                //check if they are the same entities by comparing url params
+                if(!areEqualArrays(objectKeyValuesToList(this.previousParams), objectKeyValuesToList(data.params)) ) {
+                    //redirect if the "sub" pages are different
+                    if(this.previousPathPostFix !== data.pathPostFix) {
+                        if(this.previousPathPostFix.length > 0) {
+                            setTimeout( () => { this.routing.navigate([`${decodeURIComponent(event.url)}/${this.previousPathPostFix}`])}, 1)
+                        } 
+                    }
+                }else{
+                    this.previousPathPostFix = data.pathPostFix;
+                }
+            }else {
+                this.previousPathPostFix = data.pathPostFix;
+            }
+            this.previouslastPaths =  data.lastPaths;
+            this.previousParams = data.params;
         }
     })
+   }
+
+   getPathData(snapshot: ActivatedRouteSnapshot): { params: {}, pathPostFix: string, lastPaths: Component[] } {
+    let data = {
+        params: snapshot.params,
+        pathPostFix: "",
+        lastPaths: []
+    }
+
+    while(snapshot !== null) {
+        data.pathPostFix = snapshot.routeConfig.path;
+        if(snapshot.component) {
+            data.lastPaths.push(snapshot.component);
+        }
+        snapshot = snapshot.firstChild;
+    }
+    return data;
    }
 
   public navigate(pathGetter: () => string): void {
@@ -40,9 +93,7 @@ export class RoutesService {
           path = pathGetter();
       } finally {
       }
-
-      console.log(path);
-      this.routing.navigate([path]).then(r => console.log(r));
+      this.routing.navigate([path]);
   }
 
   public getClusterViewPath(): string {
