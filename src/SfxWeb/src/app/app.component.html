@@ -1,5 +1,8 @@
 
 <div>
+  <button class="skip-to-content-link" click="setMainFocus()" (keyup.enter)="setMainFocus()" role="button">
+    Skip to content
+  </button>
   <header class="header-bar">
     <a href="https://aka.ms/portalsfx" target="_blank" tabindex="0" sfx-tree-set-focus selected="true" *ngIf="!hideAzure">
       <div class="navbar-brand navbar-brand-azure">
@@ -8,8 +11,6 @@
         </span>
       </div>
       </a>
-    <!-- Use inline style to limit the icon size to prevent a huge icon show up in browser before css is downloaded -->
-    <!-- TODO ADD LINK TO GO TO CLUSTER MAIN PAGE -->
     <a class="navbar-brand navbar-brand-title" [routerLink]="['/']" *ngIf="!hideSFXLogo" >
       <img style="width: 32px" [src]="assetBase + 'assets/favicon.svg'" title="Service Fabric Explorer" class="navbar-brand-icon"/>
       <span style="vertical-align: middle;" *ngIf="!hideSFXTest">
@@ -54,8 +55,8 @@
     </div>
     <div [ngStyle]="{'left': rightOffset }" class="right-panel main-content">
       <main>
-        <div class="view-container">
-          <router-outlet id="view-container"></router-outlet>
+        <div class="view-container" #main tabindex="-1">
+          <router-outlet id="view-container" ></router-outlet>
         </div>
       </main>
     </div>

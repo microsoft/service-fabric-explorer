@@ -5,13 +5,13 @@
     <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
         <label ngbDropdownItem>
             <span class="mif-info" title="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly."
-            style="padding-right: 5px;"></span>
+            style="padding-right: 5px;" tabindex="0"></span>
             Advanced Mode
             <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()">
         </label>
         <label ngbDropdownItem>
             <span class="mif-info" title="Hide all messages in the bottom right"
-            style="padding-right: 5px;"></span>
+            style="padding-right: 5px;" tabindex="0" ></span>
                 Suppress message
             <input type="checkbox" [(ngModel)]="messageService.suppressMessage">
         </label>

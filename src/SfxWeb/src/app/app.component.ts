@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef } from '@angular/core';
 import { TreeService } from './services/tree.service';
 import { RefreshService } from './services/refresh.service';
 import { AdalService } from './services/adal.service';
@@ -13,6 +13,8 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./app.component.scss']
 })
 export class AppComponent implements OnInit{
+
+  @ViewChild('main') main:ElementRef;
 
   public assetBase = environment.assetBase;
   treeWidth: string = "450px";
@@ -63,5 +65,9 @@ export class AppComponent implements OnInit{
 
   attemptForceRefresh() {
     this.refreshService.refreshAll();
+  }
+
+  setMainFocus() {
+    setTimeout(() => this.main.nativeElement.focus(), 0);
   }
 }
