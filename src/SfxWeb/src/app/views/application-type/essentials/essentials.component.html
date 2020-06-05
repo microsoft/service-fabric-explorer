@@ -1,0 +1,17 @@
+<div class="detail-pane essen-pane" *ngIf="appTypeGroup">
+    <app-collapse-container>
+        <h4 collapse-header>
+            Application Type versions
+        </h4>    
+        <detail-list [list]="appTypeGroup.appTypes" [listSettings]="appTypesListSettings" collapse-body></detail-list>
+    </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="appTypeGroup">
+    <app-collapse-container>
+        <h4 collapse-header>
+            Applications
+        </h4>    
+        <detail-list [list]="appTypeGroup.apps" [listSettings]="appsListSettings" collapse-body></detail-list>
+    </app-collapse-container>
+</div>

@@ -1,0 +1,45 @@
+<div class="detail-pane">
+        <div class="container">
+            <div class="row">
+                <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (onDateChange)="setNewDates($event)"
+                [currentStartDate]="startDate" [currentEndDate]="endDate" class="col-md-6 col-sm-12 col-lg-4"></app-dual-date-picker>
+
+                <div class="col-md-6 col-sm-12 col-lg-8">
+                    <div style="width: 90%; margin-top: 15px; margin-bottom: 15px;">
+                        <app-double-slider [startDate]="startDate" [endDate]="endDate" (onDateChange)="setNewDates($event)"></app-double-slider>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div>
+            <div class="btn-group btn-group-toggle" ngbRadioGroup [(ngModel)]="showAllEvents" name="radioBasic">
+                <label class="flat-button checkbox-push solid-grey" ngbButtonLabel *ngIf="timelineGenerator">
+                    <input ngbButton type="radio" [value]="false"> Correlated
+                </label>
+                <label class="flat-button checkbox-push solid-grey" ngbButtonLabel>
+                    <input ngbButton type="radio" [value]="true"> All
+                </label>
+            </div>
+            <span class="mif-info mif-lg" style="vertical-align: middle; margin-left: 10px;" title="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
+            <span *ngIf="dataService.isAdvancedModeEnabled() && showAllEvents">
+                <app-input placeholder="query string" [model]="transformText" (onChange)="transformText = $event;"></app-input>
+                <button class="simple-button" (click)="setTimelineData()">filter</button>
+            </span>
+        </div>
+
+        <div *ngIf="timeLineEventsData">
+            <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>            
+        </div>
+
+        <detail-list [list]="eventsList.collection" [listSettings]="eventsList.settings"></detail-list>
+    
+        <div>
+            <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
+                <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error" 
+                style="margin-right: 2px; vertical-align: top;"></span>
+                <div style="display: inline-block;">
+                    There is a limit of up to 500 events for a given range.
+                </div>
+            </div>
+        </div>
+    </div>

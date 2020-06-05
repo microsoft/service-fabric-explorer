@@ -1,0 +1,3 @@
+<div *ngIf="clusterManifest && clusterManifest.raw">
+    <app-manifest-viewer [manifestName]="clusterManifest.clusterManifestName" [manifest]="clusterManifest.raw.Manifest"></app-manifest-viewer>
+</div>

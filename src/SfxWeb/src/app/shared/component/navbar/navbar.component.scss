@@ -1,0 +1,119 @@
+@import "src/styles.scss";
+
+.main-header {
+    position: sticky;
+    background-color: #191919;
+    width: inherit;
+    top: 0px;
+    z-index: 10;
+    ul {
+        list-style: none;
+    }
+
+    .detail-view-title-bar {
+        margin-bottom: 18px;
+        position: relative;
+
+        .detail-view-title {
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+            font-size: $font-size-title;
+            font-weight: $font-weight-semilight;
+            color: $detail-pane-main-title-color;
+
+            b {
+                font-weight: $font-weight-semibold;
+                color: $detail-pane-sub-title-color;
+                font-size: $font-size-title;
+            }
+        }
+
+        .detail-view-actions {
+            position: absolute;
+            right : 0;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+    }
+
+    .detail-view-navbar {
+        clear: left;
+        margin-top: 4px;
+        margin-bottom: 6px;
+        display: flex;
+        flex-direction: row;
+        white-space: nowrap;
+        justify-content: flex-start;
+
+        .spacer {
+            max-width: 50px;
+            width: 5%;
+            display: inline-block;
+        }
+
+        .detail-view-navbar-tab {
+            display: inline-block;
+            padding-top: 2px;
+            padding-bottom: 6px;
+            margin-top: 8px;
+            margin-right: 15px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            min-width: 0;
+
+            a {
+                text-align: right;
+                text-decoration: none;
+                text-transform: uppercase;                
+                padding-bottom: 6px;
+                color: $detail-tab-color;
+                font-size: $detail-tab-title-font-size;
+
+                &.active {
+                    border-bottom-color: $detail-tab-active-border-color;
+                    color: $detail-tab-active-color;
+                    padding-bottom: 2px;
+                    border-bottom-width: 4px;                    
+                    border-bottom-style: solid;
+                }
+            }
+
+            .tab-superscript {
+                display: inline-block;
+                position: absolute;
+                padding: 0px;
+                margin-left: 3px;
+            }
+
+            .tab-superscript-number {
+                border-radius: 50% !important;
+                background-color: $azure-blue;
+                font-size: $font-size-small;
+                font-weight: $font-weight-semibold;
+                text-align: center;
+                height: 16px;
+                min-width: 16px;
+                color: white;
+                padding: 0 1px;
+            }
+
+            .tab-superscript-badge-container {
+                height: 14px;
+                width: 14px;
+
+                .tab-superscript-badge {
+                    margin-bottom: 8px;
+                }
+            }
+        }
+    }
+}
+
+.actions {
+    float: right; 
+    height: 40px;
+    margin-top: 20px;
+    margin-right: 20px;
+}

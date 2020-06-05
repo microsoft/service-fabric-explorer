@@ -17,6 +17,11 @@ module Sfx {
 
             this.treeService = $injector.get<ClusterTreeService>("clusterTree");
         }
+
+        public enterBeta() {
+            const originalUrl = location.origin + '/Explorer/beta.html' + location.hash;
+            window.location.assign(originalUrl);
+        }
     }
 
     (function () {

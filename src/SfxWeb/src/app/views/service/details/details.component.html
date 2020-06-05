@@ -1,0 +1,19 @@
+<div class="detail-pane essen-pane">
+    <app-detail-view-part [data]="service"></app-detail-view-part>
+</div>
+
+<div *ngIf="service">
+    <div class="detail-pane essen-pane">
+        <h4>
+            Service Description
+        </h4>
+        <app-detail-view-part [data]="service.description.raw" [parent]="service.description"></app-detail-view-part>
+    </div>
+    
+    <div class="detail-pane essen-pane">
+        <h4>
+            Health Events
+        </h4>
+        <detail-list [list]="service.health.healthEvents" [listSettings]="healthEventsListSettings"></detail-list>
+    </div>
+</div>

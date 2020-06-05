@@ -1,0 +1,12 @@
+<div>
+    <div (click)="changeCollapseState()" [ngClass]="{'base-header': !disabled}" >
+        <button class="mif-2x status-icon {{collapsed ? 'mif-arrow-drop-down' : 'mif-arrow-drop-up' }}" *ngIf="!disabled" tabindex="0" [title]=" collapsed ? 'open this section': 'close this section' "></button>
+        <div class="header-wrapper" [ngStyle]="{'margin-left': disabled ? '25px' : ''}">
+            <ng-content select="[collapse-header]"></ng-content>
+        </div>
+    </div>
+
+    <div *ngIf="!collapsed">
+        <ng-content select="[collapse-body]"></ng-content>
+    </div>
+</div>

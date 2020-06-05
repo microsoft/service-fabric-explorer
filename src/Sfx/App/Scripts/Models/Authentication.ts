@@ -17,7 +17,6 @@ module Sfx {
         profile: IUserProfile;
     }
 
-    // TODO:
     // Should replace the following with the official version of
     // definition file when the following issue is resolved.
     // https://github.com/DefinitelyTyped/DefinitelyTyped/issues/3175

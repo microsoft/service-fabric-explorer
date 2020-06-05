@@ -1,0 +1,34 @@
+<div *ngIf="replica">
+    <div class="detail-pane essen-pane">
+        <div class="table-responsive">
+            <table class="essen-table" role="presentation">
+                <tr>
+                    <th>Id</th>
+                    <th>Service Kind</th>
+                </tr>
+                <tr>
+                    <td>{{replica.id}}</td>
+                    <td>{{replica.raw.ServiceKind}}</td>
+                </tr>
+                <tr>
+                    <th>Status</th>
+                    <th>Service Name</th>
+                </tr>
+                <tr>
+                    <td>{{replica.raw.ReplicaStatus}}</td>
+                    <td><a [routerLink]="replica.serviceViewPath">{{replica.raw.ServiceName}}</a><app-clip-board [text]="replica.raw.ServiceName"></app-clip-board></td>
+                </tr>
+                <tr>
+                    <th *ngIf="replica.isStatefulService">Replica Role</th>
+                    <th *ngIf="replica.servicePackageActivationId">Service Package Activation Id</th>
+                </tr>
+                <tr>
+                    <td *ngIf="replica.isStatefulService">{{replica.role}}</td>
+                    <td *ngIf="replica.servicePackageActivationId">{{replica.servicePackageActivationId}}</td>
+                </tr>
+            </table>
+            <div *ngIf="appView"><a [routerLink]="appView">View on Application</a></div>
+        </div>
+    </div>
+    <app-replica-address [address]="replica.address"></app-replica-address>
+</div>

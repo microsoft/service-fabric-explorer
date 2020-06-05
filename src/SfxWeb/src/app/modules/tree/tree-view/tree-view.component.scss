@@ -1,0 +1,74 @@
+@import "src/styles.scss";
+
+.tree-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+.tree-header {
+    white-space: nowrap;
+    color: $tree-color;
+    position: sticky;
+    padding: 15px;
+
+    .toolbar {
+        margin-top: 16px;
+        padding: 0;
+        position: relative;
+    }
+
+    .tree-search-bar {
+        margin-top: 16px;
+        padding: 0;
+        width: 100%;
+    }
+}
+
+.tree-body {
+    bottom: $page-padding-bottom;
+    color: $tree-color;
+
+    .informative {
+        margin-left: 20px;
+    }
+
+    #treeview-loading-glyph {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 40px;
+    }
+}
+
+.tree {
+    margin: 0;
+    padding: 0;
+}
+
+.tree-view {
+    &:focus {
+        outline: 0;
+
+        .tree .node.selected > .self {
+            background-color: $tree-node-selected-background-color;
+        }
+    }
+}
+
+
+.expand-panel-button {
+    padding: 0px;
+    background-color: black;
+    border: 0px;
+    border-radius: 8px 0px 0px 8px;
+    color: white;
+}
+
+.expand-panel-wrapper {
+    position: absolute;
+    right: 10px;
+    z-index: 2;
+    bottom: 50%;
+}

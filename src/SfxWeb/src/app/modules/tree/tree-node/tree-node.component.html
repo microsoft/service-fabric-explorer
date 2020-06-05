@@ -1,0 +1,52 @@
+<div *ngIf="node.isExpanded"  role="list">
+    <li class="more-children"
+        *ngIf="node.loadingChildren"
+        [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }">
+        <span style="padding-left: 18px;"></span>
+        <span class="mif-loop2 rotate" ></span>
+        <span>Loading...</span>
+    </li>
+    <li class="pager-control" *ngIf="node.owningNode && node.owningNode.listSettings && node.owningNode.listSettings.pageCount > 1"
+        [ngClass]="{'disabled': node.owningNode.listSettings && node.owningNode.listSettings.currentPage === 1}" >
+        <div style="padding-left: 54px;">
+            <span  [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }"></span>
+            <div (click)="node.pageUp()" class=" expander icon mif-chevron-thin-up link" [title]="'Previous ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></div>
+            <div (click)="node.pageFirst()" style="padding-left: 10px;" class="expander icon mif-vertical-align-top link" [title]="'First ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></div>
+        </div>
+    </li>
+    <li *ngFor="let child of node.displayedChildren; trackBy: trackById" class="node" [ngClass]="{ 'selected': child.selected }" >
+        <button class="self hide-nested" (click)="child.handleClick()" role="button" tabindex="0"  aria-pressed="false" style="width: 100%; display: flex; align-items: center;"
+             [attr.aria-label]="child.displayName()">
+            <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
+            <button tabindex="0" class="expander icon " aria-hidden="false" role="button"
+                    (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
+                    [ngClass]="{ 'mif-chevron-thin-up': child.isCollapsed, 'mif-chevron-thin-down': child.isExpanded }"
+                    style="display: inline-block;" [title]="child.isCollapsed ? 'Expand Children' : 'Collapse Children'">
+            </button>
+            <button tabindex="0" class="icon" aria-hidden="false" *ngIf="child.canExpandAll && child.hasExpander"
+            (click)="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()" role="button"
+            [ngClass]="{ 'mif-unfold-more': child.isCollapsed, 'mif-unfold-less': child.isExpanded }"
+            [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'" style="font-size: large; padding: 0px;"></button>
+
+            <img *ngIf="child.badge && child.badge() && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
+                    class="tree-badge" [title]="child.badge().text" style="margin-right: 3px;"
+                    [src]="assetBase + 'assets/' + child.badge().badgeClass + '.svg'" role="presentation">
+            <div class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()" ></div>
+
+            <div *ngIf="child.actions && child.actions.length > 0" class="hidden right-action">
+                <app-action-collection-drop-down [actionCollection]="child.actions" [treeView]="true"></app-action-collection-drop-down>
+            </div>
+          </button>
+
+        <app-tree-node [node]="child.childGroupViewModel" *ngIf="child.isVisibleByBadge"></app-tree-node>
+    </li>
+    <li class="pager-control"
+        *ngIf="node.owningNode && node.owningNode.listSettings && node.owningNode.listSettings.pageCount > 1"
+        [ngClass]="{'disabled': node.owningNode.listSettings && node.owningNode.listSettings.currentPage === node.owningNode.listSettings.pageCount}">
+        <div style="padding-left: 54px;">
+            <span  [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }"></span>
+            <span (click)="node.pageDown()" class="icon pagedown-icon mif-chevron-thin-down link" [title]="'Next ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></span>
+            <span style="padding-left: 10px;" (click)="node.pageLast()" class="icon pagedown-icon mif-vertical-align-bottom link" [title]="'Last ' + node.owningNode.listSettings.limit +  ' items'" aria-hidden="true"></span>
+        </div>
+    </li>
+</div>

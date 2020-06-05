@@ -1,0 +1,13 @@
+<div ngbDropdown placement="left">
+    <button class="simple-button" ngbDropdownToggle [ngClass]="{'tree-view': treeView}" (click)="$event.stopPropagation()" tabindex="0" aria-label="Click to open context menu"
+    id="dropdownBasic1" aria-label="Possible commands to perform">{{treeView ? '' : ( (displayText || actionCollection.title) | uppercase)}}</button>
+    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
+        <div *ngFor="let action of actionCollection.collection">
+            <button *ngIf="!action.isAdvanced || dataService.actionsAdvancedEnabled()" ngbDropdownItem
+                (click)="actionCollection.runWithTelemetry(action, 'ActionsButton')"
+                [disabled]="!action.canRun()">
+                {{action.title}}
+            </button>
+        </div>
+    </div>
+</div>

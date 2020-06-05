@@ -1,0 +1,64 @@
+<div style="float: right">
+    Copy raw repair Job <app-clip-board [text]="copyText"></app-clip-board>
+</div>
+
+<ngb-tabset>
+    <ngb-tab>
+        <ng-template ngbTabTitle>
+            <div style="font-size: 12pt;">
+                Condensed
+            </div>
+        </ng-template>
+        <ng-template ngbTabContent>
+            <div style="display: flex;flex-direction: row;">
+                <div *ngIf="item.raw.History">
+                    <h5>
+                        History
+                    </h5>
+                    <table class="table detail-table">
+                        <tbody>
+                            <tr *ngFor="let point of history">
+                                <th>{{point.key}}</th>
+                                <td style="white-space: nowrap;">{{point.value}}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                <div *ngIf="item.couldParseExecutorData" style="margin-left: 15px;">
+                    <div>
+                        <h5>
+                            Job Info
+                        </h5>
+                        <table class="table detail-table" style="margin-bottom: 14px; width: 100%">
+                            <tbody>
+                                <tr>
+                                    <th>Executor</th>
+                                    <td>{{item.raw.Executor}}</td>
+                                </tr>
+                                <tr>
+                                    <th>Description</th>
+                                    <td>{{item.raw.Description}}</td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+                        <app-detail-view-part [data]="item.executorData"></app-detail-view-part>
+                    </div>
+                </div>
+            </div>
+
+        </ng-template>
+    </ngb-tab>
+    <ngb-tab>
+        <ng-template ngbTabTitle>
+            <div style="font-size: 12pt;">
+                Full Description
+            </div>
+        </ng-template>
+        <ng-template ngbTabContent>
+            <div style="width: 80%">
+                <app-detail-view-part [data]="item.raw"></app-detail-view-part>
+            </div>
+        </ng-template>
+    </ngb-tab>
+</ngb-tabset>

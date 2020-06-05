@@ -1,0 +1,65 @@
+.ngb-dp-week{
+    font-size: .75rem;
+    color: white;
+}
+
+.ngb-dp-day {
+    width: 1.5rem;
+    height: 1.5rem;
+    border: 1px solid gray;
+    background: black;
+}
+
+
+.custom-day {
+    width: 100%;
+    height: 100%;
+    justify-content: center;
+    display: flex;
+    align-items: center;
+}
+
+.ngb-dp-day.hidden{
+    border: 0px;
+}
+
+
+.disabled {
+    .custom-day {
+        color: gray;
+    }
+    color: gray;
+}
+
+.ngb-dp-day.hidden {
+    border: 0px;
+}
+
+.custom-day.focused {
+    background-color: #e6e6e6;
+}
+.custom-day.range, .custom-day:hover {
+background-color: rgb(2, 117, 216);
+color: white;
+}
+.custom-day.faded {
+background-color: rgba(2, 117, 216, 0.5);
+}
+
+.ngb-dp-month-name {
+    background: black !important;
+    color: white;
+}
+
+.ngb-dp-month{
+    background: black !important;
+    color: white;
+}
+
+.ngb-dp-weekdays, .ngb-dp-weekday {
+    background: black !important;
+}
+
+.ngb-dp-header {
+    background: black !important;
+}

@@ -227,6 +227,9 @@ module Sfx {
             this.date = "";
             this.weekDay = ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"];
             this.daySelectedMapping = {};
+            setInterval( () => {
+                console.log(this.backupPolicy);
+            }, 2000)
         }
 
         public add(): void {

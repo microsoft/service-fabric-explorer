@@ -8,6 +8,9 @@
 		},
 		{
 			"path": "src\\Sfx"
+		},
+		{
+			"path": "src\\SfxWeb"
 		}
 	],
 	"settings": {}
