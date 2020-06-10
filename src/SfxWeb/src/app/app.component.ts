@@ -16,6 +16,9 @@ export class AppComponent implements OnInit{
 
   @ViewChild('main') main:ElementRef;
 
+  smallScreenSize: boolean = false;
+  smallScreenLeftPanelWidth: string = '0px';
+
   public assetBase = environment.assetBase;
   treeWidth: string = "450px";
   rightOffset: string = this.treeWidth;
@@ -46,10 +49,13 @@ export class AppComponent implements OnInit{
   @HostListener('window:resize', ['$event.target'])
   onResize(event: Window) {
     this.checkWidth(event.innerWidth)
+    console.log(this.smallScreenSize)
   }
 
   checkWidth(width: number) {
     const widthReduction = this.dataService.clusterUpgradeProgress.isInitialized && this.dataService.clusterUpgradeProgress.isUpgrading ? 300 : 0;
+    this.smallScreenSize = width < 720;
+
     this.hideAzure = width < (980 + widthReduction);
     this.hideSFXTest = width < (787 + widthReduction);
     this.hideSFXLogo = width < (600 + widthReduction);
@@ -61,6 +67,10 @@ export class AppComponent implements OnInit{
     this.treeWidth = offsetWidth.toString() + 'px';
     this.rightOffset = this.treeWidth;
     this.storageService.setValue("treeWidth", this.treeWidth);
+  }
+
+  changeSmallScreenSizePanelState() {
+    this.smallScreenLeftPanelWidth = this.smallScreenLeftPanelWidth === '0px' ? '300px' : '0px';
   }
 
   attemptForceRefresh() {

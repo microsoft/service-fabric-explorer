@@ -68,6 +68,10 @@ export class DetailListComponent implements OnInit, OnDestroy {
     }
   }
 
+  resetAll() {
+    this.listSettings.reset();
+  }
+
   public handleClickRow(item: any, event: any): void {
       if (event && event.target !== event.currentTarget) { return; }
       if (this.listSettings.secondRowCollapsible && this.listSettings.showSecondRow(item)) {
