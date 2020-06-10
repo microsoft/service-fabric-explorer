@@ -55,7 +55,7 @@
     </div>
     <div [ngStyle]="{'left': rightOffset }" class="right-panel main-content">
       <main>
-        <div class="view-container" #main tabindex="-1">
+        <div class="view-container" #main [tabIndex]="tabIndex">
           <router-outlet id="view-container" ></router-outlet>
         </div>
       </main>

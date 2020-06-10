@@ -19,7 +19,7 @@ export class AppComponent implements OnInit{
   public assetBase = environment.assetBase;
   treeWidth: string = "450px";
   rightOffset: string = this.treeWidth;
-
+  tabIndex: number = -1;
   hideAzure: boolean = false;
   hideSFXTest: boolean = false;
   hideSFXLogo: boolean = false;
@@ -68,6 +68,8 @@ export class AppComponent implements OnInit{
   }
 
   setMainFocus() {
-    setTimeout(() => this.main.nativeElement.focus(), 0);
+    this.tabIndex = -1;
+    console.log(this.main)
+    setTimeout(() => {this.main.nativeElement.focus(); this.tabIndex = null;}, 0);
   }
 }
