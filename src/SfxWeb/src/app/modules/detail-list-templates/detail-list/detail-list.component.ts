@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChildren, QueryList} from '@angular/core';
 import { ListSettings, ListColumnSetting, FilterValue } from 'src/app/Models/ListSettings';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import  fill  from 'lodash/fill';
@@ -14,6 +14,7 @@ import  every from 'lodash/every';
 import { Utils } from 'src/app/Utils/Utils';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 @Component({
   selector: 'detail-list',
   templateUrl: './detail-list.component.html',
@@ -32,6 +33,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
   debounceHandler: Subject<any[]> = new Subject<any[]>();
   debouncerHandlerSubscription: Subscription;
+  @ViewChildren(NgbDropdown) dropdowns: QueryList<NgbDropdown>;
 
   constructor() { }
 
@@ -175,6 +177,12 @@ export class DetailListComponent implements OnInit, OnDestroy {
   updateList() {
     this.sortedFilteredList = this.getSortedFilteredList();
     this.debounceHandler.next(this.sortedFilteredList);
+  }
+
+  closeDropDown() {
+    this.dropdowns.toArray().forEach(el => {
+      el.close();
+  });
   }
 
 }

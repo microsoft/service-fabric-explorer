@@ -2,10 +2,10 @@
   <div>
     REFRESH RATE {{displayRate === "0" ? 'OFF' : displayRate}} 
   </div>
-  <button (click)="change(0)"> OFF </button>
+  <button (click)="change(0)" class="flat-button rounded-button"> OFF </button>
   <input [(ngModel)]="refreshRate" type="range" list="tickmarks" step="1" min="0" max="6" (click)="changed()" aria-label="Set the refresh rate">
-  <button (click)="change(6)"> FAST </button>
-  <button (click)="forceRefresh()" class="mif-refresh mif-2x" [ngClass]="{'rotate': refresh}" aria-label="Force a refresh" title="Force a refresh"> </button>  
+  <button (click)="change(6)" class="flat-button rounded-button"> FAST </button>
+  <button (click)="forceRefresh()" class="mif-refresh mif-2x flat-button" [ngClass]="{'rotate': refresh}" aria-label="Force a refresh" title="Force a refresh"> </button>  
 </div>
 
 <datalist id="tickmarks">

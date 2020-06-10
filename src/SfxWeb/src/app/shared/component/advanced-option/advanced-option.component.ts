@@ -11,7 +11,8 @@ import { MessageService } from 'src/app/services/message.service';
 export class AdvancedOptionComponent implements OnInit {
 
   status: boolean = false;
-
+  open: boolean = false;
+  
   constructor(public storage: StorageService, public messageService: MessageService) { }
 
   ngOnInit() {

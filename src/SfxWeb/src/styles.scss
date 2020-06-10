@@ -410,13 +410,14 @@ table.detail-list {
     margin-bottom: 1px; // Setting this to 0 will cause IE to cut off table header when there is no contents
     border-bottom: 1px solid $table-border-color;
     color: white;
+    overflow-x: inherit;
     .no-border {
         border-top: none;
     }
 
     td {
         vertical-align: middle !important;
-        padding: 5px 30px 5px 0px;
+        padding: 5px;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: normal;
@@ -426,9 +427,8 @@ table.detail-list {
     }
 
     th {
-        padding: 5px 30px 1px 0px;
+        padding: 5px;
         text-overflow: ellipsis;
-        overflow: hidden;
         white-space: nowrap;
         color: $detail-table-header-color;
         border: 0px solid;

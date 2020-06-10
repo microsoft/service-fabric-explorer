@@ -1,8 +1,11 @@
-button {
-    background-color: transparent;
+.rounded-button {
+    border: #202223 1px solid;
     color: white;
-    border-color: transparent;
+    padding: 4px 4px;
     cursor: pointer;
+    background-color: #3b4044;
+    border-radius: 5px;
+    margin: 2px;
 }
 
 input {
