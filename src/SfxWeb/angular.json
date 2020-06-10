@@ -50,7 +50,8 @@
                   "replace": "src/environments/environment.ts",
                   "with": "src/environments/environment.accesstesting.ts"
                 }
-              ]
+              ],
+              "index": "src/index.html"
             },
             "production": {
               "fileReplacements": [

@@ -1,11 +1,11 @@
 <div class="refresh-container">
   <div>
-    REFRESH RATE {{displayRate === "0" ? 'OFF' : displayRate}} 
+    REFRESH RATE {{displayRate === "0" ? 'OFF' : displayRate}}
   </div>
   <button (click)="change(0)"> OFF </button>
-  <input [(ngModel)]="refreshRate" type="range" list="tickmarks" step="1" min="0" max="6" (click)="changed()" aria-label="Set the refresh rate">
+  <input [(ngModel)]="refreshRate" type="range" list="tickmarks" step="1" min="0" max="6" (click)="changed()" aria-label="Set the refresh rate" title="Set the refresh rate">
   <button (click)="change(6)"> FAST </button>
-  <button (click)="forceRefresh()" class="mif-refresh mif-2x" [ngClass]="{'rotate': refresh}" aria-label="Force a refresh" title="Force a refresh"> </button>  
+  <button (click)="forceRefresh()" class="mif-refresh mif-2x" [ngClass]="{'rotate': refresh}" aria-label="Force a refresh" title="Force a refresh"> </button>
 </div>
 
 <datalist id="tickmarks">
@@ -16,4 +16,4 @@
   <option value="4"></option>
   <option value="5"></option>
   <option value="6"></option>
-</datalist> 
+</datalist>
