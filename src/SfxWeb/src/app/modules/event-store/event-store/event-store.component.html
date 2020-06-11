@@ -27,7 +27,7 @@
             </span>
         </div>
 
-        <div *ngIf="timeLineEventsData">
+        <div *ngIf="timeLineEventsData" aria-hidden="true">
             <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>            
         </div>
 

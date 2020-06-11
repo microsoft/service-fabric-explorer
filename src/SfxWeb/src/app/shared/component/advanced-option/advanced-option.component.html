@@ -1,18 +1,16 @@
 <!-- the last tabbed element needs to close the drop down for accessability compliance -->
-<div ngbDropdown #myDrop="ngbDropdown">
+<div ngbDropdown #myDrop="ngbDropdown" placement="bottom-right">
     <button class="simple-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
         <span class="mif-tools"></span>
     </button>
     <div ngbDropdownMenu>
-        <label ngbDropdownItem>
-            <span class="mif-info" title="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly."
-            style="padding-right: 5px;" tabindex="0"></span>
+        <label ngbDropdownItem title="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly.">
+            <span class="mif-info" style="padding-right: 5px;" ></span>
             Advanced Mode
             <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()">
         </label>
-        <label ngbDropdownItem>
-            <span class="mif-info" title="Hide all messages in the bottom right"
-            style="padding-right: 5px;" tabindex="0" ></span>
+        <label ngbDropdownItem title="Hide all messages in the bottom right">
+            <span class="mif-info" style="padding-right: 5px;" ></span>
                 Suppress message
             <input type="checkbox" [(ngModel)]="messageService.suppressMessage" (keydown.tab)="myDrop.close();">
         </label>

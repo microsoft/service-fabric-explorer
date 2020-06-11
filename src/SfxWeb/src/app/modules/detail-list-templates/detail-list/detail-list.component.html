@@ -5,7 +5,7 @@
         <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
         <div class="table-responsive">
             <table class="table detail-list">
-                <thead>
+                <thead aria-live="polite">
                     <tr>
                     <th class="sort-filter-th" *ngFor="let columnSetting of listSettings.columnSettings; let i = index"
                         [ngStyle]="{'width': columnSetting.fixedWidthPx ? columnSetting.fixedWidthPx + 'px' : ''}"
@@ -20,16 +20,14 @@
                             <button class="flat-button" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" title="filter by columnSetting.displayName options">
                                 <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}"></span>
                             </button>
-                            <div ngbDropdownMenu >
-                                <ul role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;"  >
-                                    <li role="menuitem" *ngFor="let filterValue of columnSetting.filterValues; let last = last;" >
-                                        <label style="margin-bottom: 0px; font-size: 15px;">
-                                            <input type="checkbox" [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList()"  (keydown.tab)="last ? closeDropDown() : null"/>
-                                            {{filterValue.value}}
-                                        </label>
-                                    </li>
-                                </ul>
-                            </div>
+                            <ul ngbDropdownMenu role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;"  >
+                                <li role="menuitem"  *ngFor="let filterValue of columnSetting.filterValues; let last = last;">
+                                    <label style="margin-bottom: 0px; font-size: 15px;" >
+                                        <input type="checkbox" [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList();" (click)=" $event.stopPropagation()"   (keydown.tab)="last ? closeDropDown() : null"/>
+                                        {{filterValue.value}}
+                                    </label>
+                                </li>
+                            </ul>
                         </div>
 
                             <!-- Sort direction icon -->

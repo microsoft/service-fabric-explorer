@@ -83,12 +83,12 @@ button {
 
     &:hover, &:focus-within {
         .hidden {
-            z-index: 1;
+            visibility: visible;
         }
     }
 
     .hidden {
-        z-index: -1;
+        visibility: hidden;
     }
 }
 
@@ -107,4 +107,10 @@ button {
         cursor: auto;
         color: gray;
     }
+}
+
+ul {
+    margin: 0px;
+    list-style: none;
+    padding: 0px;
 }

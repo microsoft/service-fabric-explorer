@@ -1,4 +1,4 @@
-<div *ngIf="node.isExpanded"  role="list">
+<ul *ngIf="node.isExpanded"  [attr.role]="node?.owningNode?.depth === 0 ? 'group' : 'tree'" [attr.aria-expanded]="node.isExpanded">
     <li class="more-children"
         *ngIf="node.loadingChildren"
         [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }">
@@ -7,14 +7,14 @@
         <span>Loading...</span>
     </li>
     <li class="pager-control" *ngIf="node.owningNode && node.owningNode.listSettings && node.owningNode.listSettings.pageCount > 1"
-        [ngClass]="{'disabled': node.owningNode.listSettings && node.owningNode.listSettings.currentPage === 1}" >
+        [ngClass]="{'disabled': node.owningNode.listSettings && node.owningNode.listSettings.currentPage === 1}"]>
         <div style="padding-left: 54px;">
             <span  [ngStyle]="{ 'paddingLeft': node.paddingLeftPx }"></span>
             <div (click)="node.pageUp()" class=" expander icon mif-chevron-thin-up link" [title]="'Previous ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></div>
             <div (click)="node.pageFirst()" style="padding-left: 10px;" class="expander icon mif-vertical-align-top link" [title]="'First ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></div>
         </div>
     </li>
-    <li *ngFor="let child of node.displayedChildren; trackBy: trackById" class="node" [ngClass]="{ 'selected': child.selected }" >
+    <li *ngFor="let child of node.displayedChildren; trackBy: trackById" class="node" [ngClass]="{ 'selected': child.selected }" role="treeitem" [attr.aria-level]="child.depth" >
         <button class="self hide-nested" (click)="child.handleClick()" role="button" tabindex="0"  aria-pressed="false" style="width: 100%; display: flex; align-items: center;"
              [attr.aria-label]="child.displayName()">
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
@@ -49,4 +49,4 @@
             <span style="padding-left: 10px;" (click)="node.pageLast()" class="icon pagedown-icon mif-vertical-align-bottom link" [title]="'Last ' + node.owningNode.listSettings.limit +  ' items'" aria-hidden="true"></span>
         </div>
     </li>
-</div>
+</ul>

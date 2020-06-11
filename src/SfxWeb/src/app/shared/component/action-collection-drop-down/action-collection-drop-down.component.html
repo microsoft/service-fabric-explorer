@@ -1,11 +1,11 @@
-<div ngbDropdown placement="left">
+<div ngbDropdown [placement]="treeView ? 'left' : 'bottom-right' " #myDrop="ngbDropdown" >
     <button class="simple-button" ngbDropdownToggle [ngClass]="{'tree-view': treeView}" (click)="$event.stopPropagation()" tabindex="0"
         aria-label="Actions" title="Possible commands to perform">{{treeView ? '' : ( (displayText || actionCollection.title) | uppercase)}}</button>
     <div ngbDropdownMenu>
-        <div *ngFor="let action of actionCollection.collection">
+        <div *ngFor="let action of actionCollection.collection; let last = last;">
             <button *ngIf="!action.isAdvanced || dataService.actionsAdvancedEnabled()" ngbDropdownItem
                 (click)="actionCollection.runWithTelemetry(action, 'ActionsButton')"
-                [disabled]="!action.canRun()">
+                [disabled]="!action.canRun()" (keydown.tab)="last ? myDrop.close() : null" >
                 {{action.title}}
             </button>
         </div>
