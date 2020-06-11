@@ -19,16 +19,16 @@
 }
 
 .header-bar {
-    height: 50px; 
+    height: 50px;
     background-color: black;
     color: white;
     position: fixed;
     right: 0;
-    left: 0; 
+    left: 0;
     z-index: 100;
 
-    display: flex; 
-    flex-direction: row; 
+    display: flex;
+    flex-direction: row;
     align-items: center;
 
 }
