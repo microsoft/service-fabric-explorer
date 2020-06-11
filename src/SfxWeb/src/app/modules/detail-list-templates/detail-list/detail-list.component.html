@@ -1,6 +1,6 @@
 <div class="detail-list-container flex-child" style="margin-top: 15px;">
-        <app-input [placeholder]="searchText" [model]="listSettings.search" (onChange)="listSettings.search = $event; updateList()"></app-input>
-        <button class="empty-button"><span class="link">Reset All</span></button>
+        <app-input [placeholder]="searchText" [(model)]="listSettings.search" (onChange)="listSettings.search = $event; updateList()"></app-input>
+        <button class=" flat-button"><span class="link" (click)="resetAll()">Reset All</span></button>
 
         <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
         <div class="table-responsive">
@@ -52,9 +52,9 @@
                             <!-- track by columnSetting.propertyPath -->
                             <!-- ng-mousedown="handleClickRow(item, $event)" -->
                         <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index; trackBy: trackByColumnSetting;">
-                            <span class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }}" (click)="handleClickRow(item, $event)"
-                                *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)"
-                                [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></span>
+                            <button class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button" (click)="handleClickRow(item, $event)"
+                                *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)" [attr.aria-expanded]="item.isSecondRowCollapsed"
+                                [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></button>
                                 <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
                                 <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
                             </td>
