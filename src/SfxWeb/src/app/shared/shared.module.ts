@@ -22,9 +22,10 @@ import { ClusterUpgradeBannerComponent } from './component/cluster-upgrade-banne
 import { DualDatePickerComponent } from './component/dual-date-picker/dual-date-picker.component';
 import { AdvancedOptionComponent } from './component/advanced-option/advanced-option.component';
 import { ReplicaAddressComponent } from './component/replica-address/replica-address.component';
+import { BugReportDialogComponent } from './component/bug-report-dialog/bug-report-dialog.component';
 
 @NgModule({
-  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent],
+  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, BugReportDialogComponent],
   imports: [
     CommonModule,
     RouterModule,

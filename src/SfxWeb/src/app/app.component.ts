@@ -6,6 +6,8 @@ import { StorageService } from './services/storage.service';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { DataService } from './services/data.service';
 import { environment } from 'src/environments/environment';
+import { MatDialog } from '@angular/material/dialog';
+import { BugReportDialogComponent } from './shared/component/bug-report-dialog/bug-report-dialog.component';
 
 @Component({
   selector: 'app-root',
@@ -26,7 +28,8 @@ export class AppComponent implements OnInit{
               public adalService: AdalService,
               private storageService: StorageService,
               public breakpointObserver: BreakpointObserver,
-              public dataService: DataService) {
+              public dataService: DataService,
+              public matDialog: MatDialog) {
 
   }
 
@@ -63,5 +66,9 @@ export class AppComponent implements OnInit{
 
   attemptForceRefresh() {
     this.refreshService.refreshAll();
+  }
+
+  openBugReporter() {
+    this.matDialog.open(BugReportDialogComponent, {panelClass: "mat-dialog-container-wrapper"})
   }
 }
