@@ -22,7 +22,7 @@
         </div>
     </div>
     <div style="flex: 1; overflow: auto;">
-        <span class="expand-panel-wrapper" *ngIf="canExpand">
+        <span class="expand-panel-wrapper" *ngIf="canExpand && !smallWindowSize">
             <button class="expand-panel-button" (click)="setWidth()" title="Expand view to match width of tree">
                 <span class=" mif-chevron-right mif-3x"></span>
             </button>

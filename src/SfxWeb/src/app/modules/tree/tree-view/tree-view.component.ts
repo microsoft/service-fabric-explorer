@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, OnChanges, AfterViewInit, Output, EventEmitter, DoCheck } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, OnChanges, AfterViewInit, Output, EventEmitter, DoCheck, Input } from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
 import { environment } from 'src/environments/environment';
 
@@ -9,9 +9,10 @@ import { environment } from 'src/environments/environment';
 })
 export class TreeViewComponent implements DoCheck {
 
-  public showBeta = environment.showBeta;
-
+  @Input() smallWindowSize: boolean = false;
   @Output() onTreeSize = new EventEmitter<number>();
+
+  public showBeta = environment.showBeta;
 
   public canExpand = false;
   @ViewChild("tree") tree: ElementRef;

@@ -62,6 +62,10 @@ export class AppComponent implements OnInit{
   }
 
   resize($event: number): void {
+    if(this.smallScreenSize) {
+      this.smallScreenLeftPanelWidth = `${$event}px`;
+      return;
+    }
     //have to subtract the offset
     const offsetWidth = $event + 8;
     this.treeWidth = offsetWidth.toString() + 'px';
@@ -70,7 +74,7 @@ export class AppComponent implements OnInit{
   }
 
   changeSmallScreenSizePanelState() {
-    this.smallScreenLeftPanelWidth = this.smallScreenLeftPanelWidth === '0px' ? '300px' : '0px';
+    this.smallScreenLeftPanelWidth = this.smallScreenLeftPanelWidth === '0px' ? '60%' : '0px';
   }
 
   attemptForceRefresh() {

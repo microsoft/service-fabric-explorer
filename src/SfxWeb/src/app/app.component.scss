@@ -94,3 +94,14 @@
   .skip-to-content-link:focus {
     transform: translateY(0%);
   }
+
+.sidenav-button {
+    position: absolute;
+    left: 10px;
+    top: 50px;
+    z-index: 12;
+    padding: 0px;
+    border: 0px;
+    background-color: transparent;
+    color: white;
+}

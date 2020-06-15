@@ -46,25 +46,18 @@
   </header>
 
   <div>
-    <button *ngIf="smallScreenSize" class="material-icons" (click)="changeSmallScreenSizePanelState()" style="position: absolute;
-    left: 10px;
-    top: 50px;
-    /* padding: 1px 10px; */
-    z-index: 12;
-    padding: 0px;
-    border: 0px;
-    background-color: transparent;
-    color: white;">
+    <button *ngIf="smallScreenSize" class="material-icons sidenav-button" 
+            (click)="changeSmallScreenSizePanelState()" tabindex="0" [title]="smallScreenLeftPanelWidth === '0px' ? 'Open navigation tree panel' : 'Close navigation tree panel'">
       menu
-      </button>
+    </button>
       <div class="left-panel left-bar"  [ngStyle]="{'width': smallScreenSize ? smallScreenLeftPanelWidth : treeWidth }">
           <nav class="tree-container" aria-hidden="false" role="navigation">
-            <app-tree-view (onTreeSize)="resize($event)"></app-tree-view>
+            <app-tree-view (onTreeSize)="resize($event)" [smallWindowSize]="smallScreenSize"></app-tree-view>
           </nav>
-        <div class="slider-bar" appDrag (onDrag)="resize($event)">
-      </div>
+        <div class="slider-bar" appDrag (onDrag)="resize($event)" *ngIf="!smallScreenSize"></div>
+        <div class="slider-bar" style="cursor: initial;" *ngIf="smallScreenSize"></div>
     </div>
-    <div [ngStyle]="{'left': smallScreenSize ? '0px' : rightOffset }" class="right-panel main-content">
+    <div [ngStyle]="{'left': smallScreenSize ? '0px' : rightOffset }" class="right-panel main-content" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
       <main>
         <div class="view-container" #main [tabIndex]="tabIndex">
           <router-outlet id="view-container" ></router-outlet>
