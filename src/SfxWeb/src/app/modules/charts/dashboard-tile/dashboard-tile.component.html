@@ -1,4 +1,4 @@
-<div class="dashboard-wrapper">
+<a class="dashboard-wrapper" [routerLink]="data.viewPath ? data.viewPath : []">
     <div class="dashboard" [ngClass]="{'has-view-path' : data.viewPath, 'dashboard-large': data.largeTile,  'dashboard-small': !data.largeTile}"  role="group">
         <div class="dashboard-donut-chart chart-wrapper">
             <div #chart></div>            
@@ -11,5 +11,5 @@
             </div>
         </div>
     </div>
-</div>
+</a>
 
