@@ -895,7 +895,11 @@ app-navbar {
   .noUi-target{
     background-color: #bfbfbf;
     box-shadow: none;
-    border: 0px;
+    border: 1px solid black;
+  }
+
+  .noUi-touch-area {
+    border: 1px solid $chart-text-color;
   }
 
   .noUi-connect{
