@@ -78,3 +78,14 @@
         background-color: inherit;
     }
 }
+
+.report {
+    li {
+        border-bottom: 1px solid white;
+        padding: 5px;
+    
+        &:last-child{
+            border: 0;
+        }
+    }
+}
