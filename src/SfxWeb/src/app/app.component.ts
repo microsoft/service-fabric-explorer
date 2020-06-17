@@ -6,7 +6,6 @@ import { StorageService } from './services/storage.service';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { DataService } from './services/data.service';
 import { environment } from 'src/environments/environment';
-import { MatDialog } from '@angular/material/dialog';
 
 @Component({
   selector: 'app-root',
@@ -27,8 +26,7 @@ export class AppComponent implements OnInit{
               public adalService: AdalService,
               private storageService: StorageService,
               public breakpointObserver: BreakpointObserver,
-              public dataService: DataService,
-              public matDialog: MatDialog) {
+              public dataService: DataService) {
 
   }
 
