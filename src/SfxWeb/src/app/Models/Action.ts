@@ -1,5 +1,5 @@
 ﻿import { Observable, of } from 'rxjs';
-import { mergeMap, map } from 'rxjs/operators';
+import { mergeMap, finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ActionDialogComponent } from '../shared/component/action-dialog/action-dialog.component';
 import { ComponentType } from '@angular/cdk/portal';
@@ -44,11 +44,9 @@ export class Action {
         if (this.canRun()) {
             this._running = true;
             const executing = this.execute();
-            executing.pipe(map( ()=> {
+            return executing.pipe(finalize( ()=> {
                 this._running = false;
-            })).subscribe();
-            return executing;
-
+            }))
         }
     }
 }
