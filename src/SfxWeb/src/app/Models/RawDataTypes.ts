@@ -128,6 +128,25 @@ import { Node } from './DataModels/Node';
         UpgradeDomainTimeoutInMilliseconds: string;
     }
 
+    export interface IRawClusterHealthPolicy {
+        ConsiderWarningAsError: boolean;
+        MaxPercentUnhealthyNodes: number;
+        MaxPercentUnhealthyApplications: number;
+    }
+
+    export interface IRawClusterUpgradeDescription {
+        CodeVersion: string;
+        ConfigVersion: string;
+        UpgradeKind: string;
+        RollingUpgradeMode: string;
+        UpgradeReplicaSetCheckTimeoutInSeconds: number;
+        ForceRestart: boolean;
+        MonitoringPolicy: IRawMonitoringPolicy;
+        ClusterHealthPolicy: IRawClusterHealthPolicy;
+        EnableDeltaHealthEvaluation: boolean;
+        SortOrder: string;
+    }
+
     export interface IRawUpgradeDescription {
         Name: string;
         TargetApplicationTypeVersion: string;
@@ -202,7 +221,7 @@ import { Node } from './DataModels/Node';
         UpgradeState: string;
         NextUpgradeDomain: string;
         RollingUpgradeMode: string;
-        UpgradeDescription: IRawUpgradeDescription;
+        UpgradeDescription: IRawClusterUpgradeDescription;
         UpgradeDurationInMilliseconds: string;
         UpgradeDomainDurationInMilliseconds: string;
         UnhealthyEvaluations: IRawUnhealthyEvaluation[];

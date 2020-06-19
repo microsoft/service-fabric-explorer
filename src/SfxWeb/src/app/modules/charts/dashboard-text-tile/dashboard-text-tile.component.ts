@@ -10,7 +10,7 @@ export class DashboardTextTileComponent {
   @Input() barClass: string = "";
   @Input() title: string;
   @Input() count: string | number;
-
+  @Input() link: string;
   constructor() { }
 
 }

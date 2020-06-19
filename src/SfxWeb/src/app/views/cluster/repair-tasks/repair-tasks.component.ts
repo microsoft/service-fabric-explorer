@@ -40,7 +40,7 @@ export class RepairTasksComponent extends BaseController {
         new ListColumnSetting("raw.TaskId", "TaskId"),
         new ListColumnSetting("raw.Action", "Action", ["raw.Action"], true),
         new ListColumnSetting("raw.Target.NodeNames", "Target"),
-        new ListColumnSetting("raw.Impact.NodeImpactList", "Impact"),
+        new ListColumnSetting("impactedNodes", "Impact"),
         new ListColumnSetting("raw.State", "State", ["raw.State"], true),
         new ListColumnSetting("createdAt", "Created at"),
     ],

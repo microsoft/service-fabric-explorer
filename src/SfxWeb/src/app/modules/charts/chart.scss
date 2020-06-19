@@ -1,8 +1,6 @@
 @import "src/styles.scss";
 
-$dashboard-chart-margin: 3px;
 $dashboard-margin: 12px;
-$dashboard-donut-size: 206px;
 $dashboard-padding: 7px;
 $dashboard-datapoint-leftbar-width: 3px;
 $dashboard-title-font-size: $font-size-medium;
@@ -22,15 +20,16 @@ $dashboard-small-datapoint-number-font-size: 18pt;
 $dashboard-small-datapoint-title-font-size: 8pt;
 $dashboard-small-padding-horizontal: 20px;
 
-.container-fluid {
-    padding-left: 0;
-    padding-right: 0;
-}
-
 .dashboard-container-small {
     display: inline-block;
     vertical-align: middle;
     width: 270px;
+}
+
+.chart-wrapper {
+    position: absolute;
+    top: 0;
+    left: 0;
 }
 
 .dashboard-wrapper {
@@ -52,33 +51,6 @@ $dashboard-small-padding-horizontal: 20px;
 
         &.has-view-path {
             cursor: pointer;
-        }
-
-        .dashboard-donut-chart {
-            display: inline-block;
-            position: relative;
-
-            .dashboard-arc-bg {
-                fill: $right-panel-background-color;
-            }
-
-            .dashboard-arc {
-                &.badge-ok {
-                    fill: $dashboard-ok-color;
-                }
-
-                &.badge-warning {
-                    fill: $dashboard-warning-color;
-                }
-
-                &.badge-error {
-                    fill: $dashboard-error-color;
-                }
-
-                &.badge-unknown {
-                    fill: $dashboard-unknown-color;
-                }
-            }
         }
 
         .dashboard-datapoints {
@@ -173,14 +145,10 @@ $dashboard-small-padding-horizontal: 20px;
 
     .dashboard-large {
         padding: $dashboard-large-padding-vertical $dashboard-padding;
-
-        .dashboard-title {
-            font-size: $dashboard-title-font-size;
-        }
-
-        .dashboard-number {
-            font-size: $dashboard-number-font-size;
-        }
+        position: relative;
+        height: 286px;
+        display: flex;
+        flex-direction: column-reverse;
 
         .dashboard-datapoints {
             margin: 20px 0 0 0;
@@ -202,18 +170,14 @@ $dashboard-small-padding-horizontal: 20px;
 
     .dashboard-small {
         padding: $dashboard-padding $dashboard-small-padding-horizontal;
-
-        .dashboard-title {
-            font-size: $dashboard-small-title-font-size;
-        }
-
-        .dashboard-number {
-            font-size: $dashboard-small-number-font-size;
-        }
+        position: relative;
+        width: 230px;
+        height: 137px;
+        overflow: hidden;
 
         .dashboard-datapoints {
-            display: inline-block;
             margin: 0 0 0 20px;
+            float: right;
 
             .dashboard-datapoint {
                 height: 36px;
@@ -227,47 +191,6 @@ $dashboard-small-padding-horizontal: 20px;
                 .dashboard-datapoint-number {
                     font-size: $dashboard-small-datapoint-number-font-size;
                     width: 54px;
-                }
-            }
-        }
-    }
-}
-
-
-.dashboard-title {
-    fill: $dashboard-color;
-}
-
-.dashboard-number {
-    fill: $dashboard-color;
-}
-
-@media screen and (-ms-high-contrast: white-on-black) {
-    .dashboard-container {    
-        .dashboard-wrapper {        
-            .dashboard {            
-                .dashboard-title {
-                    fill: white;
-                }
-    
-                .dashboard-number {
-                    fill: white;
-                }
-            }
-        }
-    }
-}
-
-@media screen and (-ms-high-contrast: black-on-white) {
-    .dashboard-container {    
-        .dashboard-wrapper {        
-            .dashboard {            
-                .dashboard-title {
-                    fill: black;
-                }
-    
-                .dashboard-number {
-                    fill: black;
                 }
             }
         }

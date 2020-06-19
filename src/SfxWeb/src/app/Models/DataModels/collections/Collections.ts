@@ -425,8 +425,6 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
             (item) => (Object.keys(item.raw.eventProperties).length > 0),
             true);
 
-        listSettings.columnSettings[0].fixedWidthPx = 320;
-        listSettings.columnSettings[1].fixedWidthPx = 200;
         listSettings.sortReverse = true;
 
         return listSettings;

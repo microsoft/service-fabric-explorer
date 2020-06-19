@@ -27,7 +27,7 @@ export enum HealthStatisticsEntityKind {
     Partition,
     Replica,
     DeployedApplication,
-    DepoyedServicePackage
+    DeployedServicePackage
 }
 
 export class ClusterHealth extends HealthBase<IRawClusterHealth> {
@@ -72,7 +72,7 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
     }
 
     public getHealthStateCount(entityKind: HealthStatisticsEntityKind): IRawHealthStateCount {
-        if (this.raw) {
+        if (this.raw && this.raw.HealthStatistics) {
             let entityHealthCount = this.raw.HealthStatistics.HealthStateCountList.find(item => item.EntityKind === HealthStatisticsEntityKind[entityKind]);
             if (entityHealthCount) {
                 return entityHealthCount.HealthStateCount;
@@ -148,7 +148,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
 
     public isSfrpCluster: boolean = false;
 
-    private _imageStoreConnectionString: string;
+    private _imageStoreConnectionString: string = "";
     private _isNetworkInventoryManagerEnabled: boolean = false;
     private _isBackUpRestoreEnabled: boolean = false;
     public isRepairManagerEnabled: boolean = false;
