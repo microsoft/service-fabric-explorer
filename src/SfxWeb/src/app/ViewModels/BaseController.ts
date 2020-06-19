@@ -32,6 +32,9 @@ export abstract class BaseController implements  OnInit, OnDestroy {
              this.subscriptions.add(this.common().pipe(mergeMap( () => this.refresh())).subscribe(
                  () => {
                     this.refreshService.insertRefreshSubject("current controller" + this.getClassName(), this.refresh.bind(this, this.messageService));
+                 },
+                 () => {
+                     this.router.navigate(["/"]);
                  }
              ));
         }))
