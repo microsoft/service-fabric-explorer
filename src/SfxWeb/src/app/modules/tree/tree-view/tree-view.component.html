@@ -18,7 +18,7 @@
             <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
         </app-check-box>
         <div style="padding: 10px 10px 0px 0px; margin-left: -15px;">
-            <app-input (onChange)="treeService.tree.searchTerm = $event"></app-input>
+            <app-input (onChange)="setSearchText($event)"></app-input>
         </div>
     </div>
     <div style="flex: 1; overflow: auto;">

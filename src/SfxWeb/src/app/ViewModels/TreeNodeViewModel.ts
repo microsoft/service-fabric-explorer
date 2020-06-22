@@ -100,6 +100,19 @@ export class TreeNodeViewModel {
         return name;
     }
 
+    public get filtered(): number {
+        if(this._tree.searchTerm.length === 0) {
+            return 0;
+        }else {
+            let count = 0;
+            if(this.displayName().indexOf(this._tree.searchTerm) > -1) {
+                count ++;
+            }
+            this.childGroupViewModel.children.forEach(child => count += child.filtered );
+            return count;
+        }
+    }
+
     private _tree: TreeViewModel;
     private _node: ITreeNode;
     private _keyboardSelectActionDelayInMilliseconds: number = 200;

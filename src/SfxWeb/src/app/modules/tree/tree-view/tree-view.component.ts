@@ -14,6 +14,7 @@ export class TreeViewComponent implements DoCheck {
 
   public showBeta = environment.showBeta;
 
+  public searchResults: string = "No search results";
   public canExpand = false;
   @ViewChild("tree") tree: ElementRef;
   constructor(public treeService: TreeService) { }
@@ -32,5 +33,10 @@ export class TreeViewComponent implements DoCheck {
 
   setWidth() {
     this.onTreeSize.emit(this.tree.nativeElement.scrollWidth + 20)
+  }
+
+  setSearchText(text: string) {
+    this.treeService.tree.searchTerm = text;
+    this.searchResults = this.treeService.tree.childGroupViewModel.owningNode.filtered.toString();
   }
 }
