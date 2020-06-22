@@ -321,7 +321,7 @@ export const recursivelyBuildTree = (healthEvaluation: HealthEvaluation, parent:
         healthEvaluation,
         children,
         parent,
-        containsErrorInPath,
+        containsErrorInPath : containsErrorInPath,
         displayNames,
         id: healthEvaluation.uniqueId
     })

@@ -57,7 +57,8 @@ ul {
 
 .show-more-container {
   position: absolute; 
-  bottom: 2px; width: 100%; 
+  bottom: 2px; 
+  width: calc(100% - 40px); 
   border-bottom: 1px solid gray;
 
   button {

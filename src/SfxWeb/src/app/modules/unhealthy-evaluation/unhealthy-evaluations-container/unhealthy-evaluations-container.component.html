@@ -14,13 +14,13 @@
             Layout
             <div class="btn-group btn-group-toggle" ngbRadioGroup name="radioBasic" [(ngModel)]="view"
                 style="z-index: 1;" (ngModelChange)="updateTree()">
-                <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
-                    <input ngbButton type="radio" value="Verbose"> Show all
+                <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel title="Show all information about the health events">
+                    <input ngbButton type="radio" value="Verbose" > Show all
                 </label>
-                <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
-                    <input ngbButton type="radio" value="Condensed"> Quick view
+                <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel title="Attempt to combine as many middle health events as possible and hide middle health events descriptions.">
+                    <input ngbButton type="radio" value="Condensed" > Quick view
                 </label>
-                <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel>
+                <label class=" flat-button checkbox-push solid-grey" ngbButtonLabel title="Display all health reports with a condensed path.">
                     <input ngbButton type="radio" value="Events"> Events Only
                 </label>
             </div>
@@ -45,4 +45,4 @@
     </div>
 </span>
 <app-unhealthy-evaluation [node]="viewNode" [condensed]="condensed" (onAnchor)="setNewRootNode($event)" isAnchor="True"
-    [containsErrorInPath]="errorOnly" [fullDescription]="fullDescriptions"></app-unhealthy-evaluation>
+    [containsErrorInPath]="errorOnly" [fullDescription]="fullDescriptions" *ngIf="!errorOnly || viewNode.containsErrorInPath"></app-unhealthy-evaluation>
