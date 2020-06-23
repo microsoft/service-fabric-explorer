@@ -1,6 +1,7 @@
 import { Component, OnInit, ViewChild, ElementRef, OnChanges, AfterViewInit, Output, EventEmitter, DoCheck, Input } from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
 import { environment } from 'src/environments/environment';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-tree-view',
@@ -13,11 +14,9 @@ export class TreeViewComponent implements DoCheck {
   @Output() onTreeSize = new EventEmitter<number>();
 
   public showBeta = environment.showBeta;
-
-  public searchResults: string = "No search results";
   public canExpand = false;
   @ViewChild("tree") tree: ElementRef;
-  constructor(public treeService: TreeService) { }
+  constructor(public treeService: TreeService, private liveAnnouncer: LiveAnnouncer) { }
 
   ngDoCheck(): void {
     if(this.tree) {
@@ -37,6 +36,6 @@ export class TreeViewComponent implements DoCheck {
 
   setSearchText(text: string) {
     this.treeService.tree.searchTerm = text;
-    this.searchResults = this.treeService.tree.childGroupViewModel.owningNode.filtered.toString();
+    this.liveAnnouncer.announce(`${this.treeService.tree.childGroupViewModel.owningNode.filtered} search results`);
   }
 }
