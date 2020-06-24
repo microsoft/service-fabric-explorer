@@ -16,7 +16,7 @@
 
 <div *ngIf="node.healthEvaluation && (!condensed || node.healthEvaluation.raw.Kind === 'Event')" class="nested-hover"
     style="padding-left: 20px; padding-bottom: 10px;"
-    [ngStyle]="{'border-left' : node.children.length > 0 ? '2px solid gray' : 'initial'}">
+    [ngStyle]="{'border-left' : node.children.length > 0  && showChildren ? '2px solid gray' : 'initial'}">
     <div class="text-container">
         <div #tref style="overflow: hidden; "
             [ngStyle]="{'max-height': fullDescription || (displayTextIsLong && showFullText) ? 'none' : '61px'}">
