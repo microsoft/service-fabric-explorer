@@ -15,6 +15,7 @@ import { Utils } from 'src/app/Utils/Utils';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 @Component({
   selector: 'detail-list',
   templateUrl: './detail-list.component.html',
@@ -35,7 +36,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   debouncerHandlerSubscription: Subscription;
   @ViewChildren(NgbDropdown) dropdowns: QueryList<NgbDropdown>;
 
-  constructor() { }
+  constructor(private liveAnnouncer: LiveAnnouncer) { }
 
   @Input() 
   set list(data:  any[] | DataModelCollectionBase<any>) {
@@ -81,6 +82,14 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
   trackByColumnSetting(columnSetting: ListColumnSetting) {
     return columnSetting.propertyPath
+  }
+
+  sort(columnSetting: ListColumnSetting) {
+    this.listSettings.sort(columnSetting.sortPropertyPaths);
+    console.log(columnSetting)
+    this.updateList();
+
+    this.liveAnnouncer.announce(`Table is sorted by ${columnSetting.displayName} and is ${this.listSettings.sortReverse ? 'ascending' : 'descending'}`)
   }
 
   private getSortedFilteredList(): any[] {

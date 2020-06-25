@@ -6,6 +6,7 @@ import { StorageService } from './services/storage.service';
 import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { DataService } from './services/data.service';
 import { environment } from 'src/environments/environment';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 
 @Component({
   selector: 'app-root',
@@ -31,7 +32,8 @@ export class AppComponent implements OnInit{
               public adalService: AdalService,
               private storageService: StorageService,
               public breakpointObserver: BreakpointObserver,
-              public dataService: DataService) {
+              public dataService: DataService,
+              public liveAnnouncer: LiveAnnouncer) {
 
   }
 
@@ -79,6 +81,10 @@ export class AppComponent implements OnInit{
 
   attemptForceRefresh() {
     this.refreshService.refreshAll();
+    this.liveAnnouncer.announce("Started refreshing data");
+    setTimeout( () => {
+      this.liveAnnouncer.announce("Data has been refreshed.");  
+    }, 2000)
   }
 
   setMainFocus() {

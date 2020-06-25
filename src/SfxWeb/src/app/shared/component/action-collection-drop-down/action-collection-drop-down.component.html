@@ -1,4 +1,4 @@
-<div ngbDropdown [placement]="treeView ? 'left' : 'bottom-right' " #myDrop="ngbDropdown" >
+<div ngbDropdown [placement]="treeView ? 'left' : 'bottom-right' " #myDrop="ngbDropdown" (openChange)="closeChange($event)">
     <button class="simple-button" ngbDropdownToggle [ngClass]="{'tree-view': treeView}" (click)="$event.stopPropagation()" tabindex="0"
         aria-label="Actions" title="Possible commands to perform">{{treeView ? '' : ( (displayText || actionCollection.title) | uppercase)}}</button>
     <div ngbDropdownMenu>

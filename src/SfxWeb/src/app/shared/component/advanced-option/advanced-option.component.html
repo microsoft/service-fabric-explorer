@@ -7,12 +7,13 @@
         <label ngbDropdownItem title="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly.">
             <span class="mif-info" style="padding-right: 5px;" ></span>
             Advanced Mode
-            <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()">
+            <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()" [attr.aria-checked]="status" title="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly."
+                    aria-label="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly.">
         </label>
         <label ngbDropdownItem title="Hide all messages in the bottom right">
             <span class="mif-info" style="padding-right: 5px;" ></span>
                 Suppress message
-            <input type="checkbox" [(ngModel)]="messageService.suppressMessage" (keydown.tab)="myDrop.close();">
+            <input type="checkbox" [(ngModel)]="messageService.suppressMessage" (keydown.tab)="myDrop.close();" [attr.aria-checked]="messageService.suppressMessage" aria-label="Hide all messages in the bottom right" title="Hide all messages in the bottom right">
         </label>
     </div>
 </div>

@@ -105,7 +105,7 @@ export class TreeNodeViewModel {
             return 0;
         }else {
             let count = 0;
-            if(this.displayName().indexOf(this._tree.searchTerm) > -1) {
+            if(this.displayName().toLowerCase().indexOf(this._tree.searchTerm.toLowerCase()) > -1) {
                 count ++;
             }
             this.childGroupViewModel.children.forEach(child => count += child.filtered );

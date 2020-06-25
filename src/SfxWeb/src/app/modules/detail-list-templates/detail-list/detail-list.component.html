@@ -12,7 +12,7 @@
                         [attr.aria-sort]="listSettings.isSortedByColumn(columnSetting) ? listSettings.sortReverse ? 'ascending' : 'descending' : 'none'">
                         <!-- Header label -->
                         <button  class="flat-button" [ngClass]="{'active': columnSetting.sortable, 'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}" tabindex="0"
-                            (click)="listSettings.sort(columnSetting.sortPropertyPaths); updateList()" [title]="'Sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'">
+                            (click)="sort(columnSetting);" [title]="'Sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'">
                             {{columnSetting.displayName}}
                       </button>
 
@@ -32,7 +32,7 @@
 
                             <!-- Sort direction icon -->
                             <!-- Use transparent color to hide the icon instead of using ng-show to avoid the table layout changes when the icon showed up -->
-                            <button class="flat-button" (click)="listSettings.sort(columnSetting.sortPropertyPaths); updateList()"
+                            <button class="flat-button" (click)="sort(columnSetting);"
                             *ngIf="columnSetting.sortable && listSettings.isSortedByColumn(columnSetting)" style="font-size: 12pt;"
                                     [attr.tabIndex]="listSettings.isSortedByColumn(columnSetting) ? 0 : -1" [title]="'sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'"
                                     [attr.ariaHidden]="!listSettings.isSortedByColumn(columnSetting)">
@@ -51,7 +51,7 @@
                             <!-- ng-mousedown="handleClickRow(item, $event)" -->
                         <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index; trackBy: trackByColumnSetting;">
                             <button class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button" (click)="handleClickRow(item, $event)"
-                                *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)" [attr.aria-expanded]="item.isSecondRowCollapsed"
+                                *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)" [attr.aria-expanded]="!item.isSecondRowCollapsed"
                                 [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></button>
                                 <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
                                 <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
