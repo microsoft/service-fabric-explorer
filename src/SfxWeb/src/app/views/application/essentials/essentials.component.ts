@@ -54,7 +54,11 @@ export class EssentialsComponent extends ApplicationBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    this.data.refreshBackupPolicies(messageHandler);
+    this.data.clusterManifest.ensureInitialized().subscribe(() => {
+      if(this.data.clusterManifest.isBackupRestoreEnabled) {
+        this.data.refreshBackupPolicies(messageHandler);
+      }
+    });
 
     return forkJoin([
       this.clusterManifest.ensureInitialized(false),
