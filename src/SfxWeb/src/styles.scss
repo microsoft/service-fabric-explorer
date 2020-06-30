@@ -416,7 +416,7 @@ table.detail-list {
 
     td {
         vertical-align: middle !important;
-        padding: 5px 30px 5px 0px;
+        padding: 5px 10px 5px 0px;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: normal;
@@ -426,7 +426,7 @@ table.detail-list {
     }
 
     th {
-        padding: 5px 30px 1px 0px;
+        padding: 5px 10px 1px 0px;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: nowrap;
@@ -670,6 +670,8 @@ app-navbar {
 
 .dropdown-menu {
     background-color: black;
+    border-radius: 5px;
+    border: 1px solid gray;
 }
 
 .dropdown-item {
