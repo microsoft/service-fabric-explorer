@@ -39,7 +39,7 @@
     "luxon": "^1.22.0",
     "metro4": "^4.3.5",
     "moment": "^2.24.0",
-    "nouislider": "^14.1.1",
+    "nouislider": "^14.6.0",
     "rxjs": "~6.5.4",
     "tslib": "^1.10.0",
     "vis-data": "^6.4.1",
