@@ -2,10 +2,13 @@
   <div style="overflow: hidden;">
     REFRESH RATE {{displayRate === "0" ? 'OFF' : displayRate}}
   </div>
-  <button (click)="change(0)" class="flat-button rounded-button" title="Turn off refresh rate"> OFF </button>
-  <input [(ngModel)]="refreshRate" type="range" list="tickmarks" step="1" min="0" max="6" (click)="changed()" title="Set the refresh rate">
-  <button (click)="change(6)" class="flat-button rounded-button" title="Set refresh rate to 2 seconds."> FAST </button>
-  <button (click)="forceRefresh()" class="mif-refresh mif-2x flat-button" [ngClass]="{'rotate': refresh}" [attr.aria-polite]="refresh ? 'polite' : 'off'" aria-label="Force a refresh" [title]="refresh ? 'Refreshing' : 'Force a refresh'"> </button>  
+  <button (click)="change(0)" class="flat-button rounded-button" ngbTooltip="Turn off refresh rate"> OFF </button>
+  <input [(ngModel)]="refreshRate" type="range" list="tickmarks" step="1" min="0" max="6" (click)="changed()"
+    ngbTooltip="Set the refresh rate">
+  <button (click)="change(6)" class="flat-button rounded-button" ngbTooltip="Set refresh rate to 2 seconds."> FAST </button>
+  <button (click)="forceRefresh()" class="mif-refresh mif-2x flat-button" [ngClass]="{'rotate': refresh}"
+    [attr.aria-polite]="refresh ? 'polite' : 'off'" aria-label="Force a refresh"
+    [ngbTooltip]="refresh ? 'Refreshing' : 'Force a refresh'"> </button>
 </div>
 
 <datalist id="tickmarks">
