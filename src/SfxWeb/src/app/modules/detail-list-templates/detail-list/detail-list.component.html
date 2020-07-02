@@ -16,7 +16,8 @@
                             {{columnSetting.displayName}}
                       </button>
 
-                        <div ngbDropdown *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle">
+                        <div ngbDropdown *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle"
+                            (openChange)="closeChange($event)">
                             <button class="flat-button" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" title="filter by columnSetting.displayName options">
                                 <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}"></span>
                             </button>

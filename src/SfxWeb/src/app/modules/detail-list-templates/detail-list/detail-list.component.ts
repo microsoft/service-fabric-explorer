@@ -92,6 +92,10 @@ export class DetailListComponent implements OnInit, OnDestroy {
     this.liveAnnouncer.announce(`Table is sorted by ${columnSetting.displayName} and is ${this.listSettings.sortReverse ? 'ascending' : 'descending'}`)
   }
 
+  closeChange(state: boolean) {
+    this.liveAnnouncer.announce(`dropdown is now ${state ? 'Open' : 'Closed'}`)
+  }
+
   private getSortedFilteredList(): any[] {
     let list = this._list;
 
