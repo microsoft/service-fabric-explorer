@@ -38,7 +38,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
   constructor(private liveAnnouncer: LiveAnnouncer) { }
 
-  @Input() 
+  @Input()
   set list(data:  any[] | DataModelCollectionBase<any>) {
     if(data instanceof DataModelCollectionBase){
       data.ensureInitialized().subscribe(data => {
@@ -89,7 +89,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
     console.log(columnSetting)
     this.updateList();
 
-    this.liveAnnouncer.announce(`Table is sorted by ${columnSetting.displayName} and is ${this.listSettings.sortReverse ? 'ascending' : 'descending'}`)
+    this.liveAnnouncer.announce(`Table is sorted by ${columnSetting.displayName} and is ${this.listSettings.sortReverse ? 'descending' : 'ascending'}`)
   }
 
   closeChange(state: boolean) {
@@ -127,7 +127,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
     // Sort
     if (this.listSettings && !isEmpty(this.listSettings.sortPropertyPaths)) {
-        list = sortByProperty(list, 
+        list = sortByProperty(list,
                               this.listSettings.sortPropertyPaths,
                               this.listSettings.sortReverse)
     }
@@ -214,7 +214,7 @@ const sortByProperty = (items: any[], propertyPath: string[], sortReverse: boole
     while(i < propertyPath.length) {
       const aResult = Utils.result(a, propertyPath[i]);
       const bResult = Utils.result(b, propertyPath[i]);
-      
+
       if(aResult !== bResult){
         return direction * ( aResult > bResult ? 1 : -1 );
       }
