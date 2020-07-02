@@ -1,6 +1,7 @@
 @import "src/styles.scss";
 
 .main-header {
+    padding-top: 20px;
     position: sticky;
     background-color: #191919;
     width: inherit;
@@ -116,4 +117,30 @@
     height: 40px;
     margin-top: 20px;
     margin-right: 20px;
+}
+
+@media (max-width: 500px) {
+  .main-header {
+    padding-top: 0px;
+
+    .detail-view-title-bar {
+        .detail-view-title {
+            padding-left: 10px;
+            overflow-x: auto;
+            margin-bottom: 0px;
+        }
+    }
+
+    .detail-view-navbar {
+            overflow-x: scroll;
+            margin: 0px;
+            .detail-view-navbar-tab {
+                min-width: initial;
+                overflow: initial;
+                text-overflow: initial;
+                margin-top: 0px;
+            }
+        
+        }
+    }
 }
