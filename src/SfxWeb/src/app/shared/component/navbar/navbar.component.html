@@ -7,8 +7,8 @@
             {{type}} <span *ngIf="name">: {{name}}</span>
         </h1>
     <div class="detail-view-navbar" role="tablist" [attr.aria-label]="name">
-        <div class="detail-view-navbar-tab" *ngFor="let tab of tabs">
-            <a [routerLink]="tab.route" [title]="tab.name" role="tab" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" >{{tab.name}}</a>
+        <div class="detail-view-navbar-tab" *ngFor="let tab of tabs; let i = index">
+            <a [routerLink]="tab.route" [title]="tab.name" role="tab" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" [id]="i">{{tab.name}}</a>
             <!-- <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div> -->
         </div>
     </div>

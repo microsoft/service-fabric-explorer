@@ -1,22 +1,53 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, AfterViewInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
+import { Router } from '@angular/router';
+import { Subscription, of } from 'rxjs';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   @Input() type: string = "";
   @Input() name: string = "";
   @Input() tabs: ITab[] = [];
   @Input() actions: ActionCollection;
-  constructor() { }
+
+  sub: Subscription;
+
+  constructor(private router: Router) { }
 
   ngOnInit() {
+
   }
 
+  ngAfterViewInit() {
+    this.setFocus();      
+
+    this.sub = this.router.events.subscribe(event => {
+      this.setFocus();      
+    });
+  }
+
+  ngOnDestroy() {
+    if(this.sub) {
+      this.sub.unsubscribe();
+    }
+  }
+
+  setFocus() {
+    try {
+      setTimeout( () => {
+        document.getElementById("0").focus()
+      }, 1)
+    } catch (e) {
+
+    }
+    
+  }
 }
 
 export interface ITab {
