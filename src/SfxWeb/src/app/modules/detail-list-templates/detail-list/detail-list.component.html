@@ -74,10 +74,10 @@
                         </tr>
                 </ng-container>
                     <tr *ngIf="list">
-                        <td colspan="100">Loading...</td>
+                        <td >Loading...</td>
                     </tr>
                     <tr *ngIf="sortedFilteredList.length === 0 && !list">
-                        <td colspan="100">No items to display.</td>
+                        <td [attr.colspan]="listSettings.columnSettings.length">No items to display.</td>
                     </tr>
                 </tbody>
             </table>

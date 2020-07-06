@@ -51,8 +51,8 @@
       menu
     </button>
       <div class="left-panel left-bar"  [ngStyle]="{'width': smallScreenSize ? smallScreenLeftPanelWidth : treeWidth }">
-          <nav class="tree-container" aria-hidden="false" role="navigation">
-            <app-tree-view (onTreeSize)="resize($event)" [smallWindowSize]="smallScreenSize"></app-tree-view>
+          <nav class="tree-container" [attr.aria-hidden]="smallScreenSize ? smallScreenLeftPanelWidth === '0px' : false" role="navigation">
+            <app-tree-view (onTreeSize)="resize($event)" [smallWindowSize]="smallScreenSize" *ngIf="smallScreenSize ? smallScreenLeftPanelWidth !== '0px' : true"></app-tree-view>
           </nav>
         <div class="slider-bar" appDrag (onDrag)="resize($event)" *ngIf="!smallScreenSize"></div>
         <div class="slider-bar" style="cursor: initial;" *ngIf="smallScreenSize"></div>

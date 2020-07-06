@@ -93,7 +93,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   }
 
   closeChange(state: boolean) {
-    this.liveAnnouncer.announce(`dropdown is now ${state ? 'Open' : 'Closed'}`)
+    this.liveAnnouncer.announce(`dropdown is now ${state ? 'Expanded' : 'Closed'}`)
   }
 
   private getSortedFilteredList(): any[] {
