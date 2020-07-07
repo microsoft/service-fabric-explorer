@@ -888,6 +888,16 @@ app-navbar {
   .noUi-tooltip {
     display: none;
   }
+  .noUi-handle {
+      &:focus {
+        .noUi-tooltip {
+            display: initial;
+          }
+
+      }
+  }
+
+
   .noUi-active .noUi-tooltip {
     display: block;
   }

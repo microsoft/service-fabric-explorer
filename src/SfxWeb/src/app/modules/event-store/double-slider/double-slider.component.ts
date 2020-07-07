@@ -45,8 +45,8 @@ export class DoubleSliderComponent implements OnChanges, AfterViewInit {
         start: [new Date(this.startDate).getTime(), new Date(this.endDate).getTime()],
     });
 
-    document.getElementsByClassName("noUi-handle-lower")[0].setAttribute('title', "set the time range start")
-    document.getElementsByClassName("noUi-handle-upper")[0].setAttribute('title', "set the time range end")
+    // document.getElementsByClassName("noUi-handle-lower")[0].setAttribute('title', "set the time range start")
+    // document.getElementsByClassName("noUi-handle-upper")[0].setAttribute('title', "set the time range end")
 
     //watch for changes to dates to know when to attempt to update the scroll bar
     // note: when this updates the value it'll cycle back down and call this so making sure you have a check
