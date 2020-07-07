@@ -43,7 +43,7 @@
     </div>
     
     <div class="detail-pane essen-pane">
-        <app-collapse-container>
+        <app-collapse-container sectionName="Unhealthy Evaluations">
             <div collapse-header>
                 <h4>Unhealthy Evaluations</h4>
             </div>
@@ -54,7 +54,7 @@
     </div>
     
     <div class="detail-pane essen-pane">
-        <app-collapse-container>
+        <app-collapse-container [sectionName]="partition.isStatelessService ? 'Instances' : 'Replicas'">
             <div collapse-header>
                 <h4>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h4>
             </div>
@@ -65,7 +65,7 @@
     </div>
 
     <div class="detail-pane" *ngIf="partition.isStatefulService" >
-        <app-collapse-container [(collapsed)]="hideReplicator">
+        <app-collapse-container [(collapsed)]="hideReplicator" sectionName="Replicator Status">
             <div collapse-header>
                 <h4>Replicator Status</h4>
             </div>

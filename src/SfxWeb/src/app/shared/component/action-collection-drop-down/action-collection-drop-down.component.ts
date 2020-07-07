@@ -15,7 +15,7 @@ export class ActionCollectionDropDownComponent {
   constructor(public dataService: DataService, private liveAnnouncer: LiveAnnouncer) { }
 
   closeChange(state: boolean) {
-    this.liveAnnouncer.announce(`Actions dropdown is now ${state ? 'Expanded' : 'collapsed'}`)
+    this.liveAnnouncer.announce(`Actions dropdown is now ${state ? 'Expanded' : 'Collapsed'}`)
   }
 
 }
