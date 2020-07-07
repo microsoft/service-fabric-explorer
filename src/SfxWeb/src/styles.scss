@@ -1005,3 +1005,36 @@ app-navbar {
         font-weight: 200;
     }
 }
+
+.essential-head {
+    color: #DED9D9;
+    padding: 5px 5px 1px 0px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 8pt;
+    font-weight: 400;
+}
+
+.essential-body {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.essential-item {
+    padding-right: 5px;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    min-width: 150px;
+}
+
+.essential-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    flex-wrap: wrap;
+}
+
+.essential-fourth {
+    width: 25%;
+}

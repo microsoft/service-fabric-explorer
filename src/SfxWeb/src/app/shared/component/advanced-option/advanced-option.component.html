@@ -1,20 +1,22 @@
 <!-- the last tabbed element needs to close the drop down for accessability compliance -->
-<div ngbDropdown #myDrop="ngbDropdown" placement="bottom-right" (openChange)="closeChange($event)">
-    <button class="simple-button" ngbDropdownToggle ngbTooltip="Contains the toggle for setting advanced mode">
-        <span class="mif-tools"></span>
-    </button>
-    <div ngbDropdownMenu>
-        <label ngbDropdownItem>
-            Advanced Mode
-            <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()" [attr.aria-checked]="status"
-                aria-label="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly"
-                ngbTooltip="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly">
-        </label>
-        <label ngbDropdownItem title="Hide all messages in the bottom right">
-            Suppress message
-            <input type="checkbox" [(ngModel)]="messageService.suppressMessage" (keydown.tab)="myDrop.close();"
-                [attr.aria-checked]="messageService.suppressMessage" ngbTooltip="Hide all messages in the bottom right"
-                aria-label="Hide all messages in the bottom right">
-        </label>
-    </div>
+<div  ngbTooltip="Settings" >
+    <div ngbDropdown #myDrop="ngbDropdown" placement="bottom-right" (openChange)="closeChange($event)">
+        <button class="simple-button" ngbDropdownToggle aria-label="settings drop down">
+            <span class="mif-tools"></span>
+        </button>
+        <div ngbDropdownMenu>
+            <label ngbDropdownItem>
+                Advanced Mode
+                <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()" [attr.aria-checked]="status"
+                    aria-label="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly"
+                    ngbTooltip="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly">
+            </label>
+            <label ngbDropdownItem title="Hide all messages in the bottom right">
+                Suppress message
+                <input type="checkbox" [(ngModel)]="messageService.suppressMessage" (keydown.tab)="myDrop.close();"
+                    [attr.aria-checked]="messageService.suppressMessage" ngbTooltip="Hide all messages in the bottom right"
+                    aria-label="Hide all messages in the bottom right">
+            </label>
+        </div>
+    </div>    
 </div>

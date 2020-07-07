@@ -31,7 +31,7 @@
 </div>
 
 <div id="upgradeDetailsSection" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
-    <app-collapse-container>
+    <app-collapse-container [sectionName]="app.isUpgrading ? 'Upgrade In Progress' : 'Latest Upgrade State'">
         <div collapse-header>
             <h4 *ngIf="app.isUpgrading">Upgrade In Progress</h4>
             <h4 *ngIf="!app.isUpgrading">Latest Upgrade State</h4>
@@ -100,7 +100,7 @@
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="app && app.health">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Unhealthy Evaluations">
         <div collapse-header>
             <h4>Unhealthy Evaluations</h4>
         </div>
@@ -111,7 +111,7 @@
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="app && app.services">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Services">
         <div collapse-header>
             <h4>Services</h4>
         </div>
@@ -122,7 +122,7 @@
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="app && app.serviceTypes">
-    <app-collapse-container>
+    <app-collapse-container section="Service Types">
         <div collapse-header>
             <h4>Service Types</h4>
         </div>

@@ -2,6 +2,7 @@ import { Component, OnInit, Input, AfterViewInit, ChangeDetectionStrategy, OnDes
 import { ActionCollection } from 'src/app/Models/ActionCollection';
 import { Router } from '@angular/router';
 import { Subscription, of } from 'rxjs';
+import { RoutesService } from 'src/app/services/routes.service';
 
 @Component({
   selector: 'app-navbar',
@@ -38,6 +39,8 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
     }
   }
 
+
+  //specifically built for accessibility
   setFocus() {
     try {
       setTimeout( () => {
@@ -46,8 +49,12 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
     } catch (e) {
 
     }
-    
   }
+
+  navigateBySpaceBar(route: string) {
+    this.router.navigate([route])
+  }
+
 }
 
 export interface ITab {
