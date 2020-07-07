@@ -25,7 +25,7 @@ export class AdvancedOptionComponent implements OnInit {
   }
 
   closeChange(state: boolean) {
-    this.liveAnnouncer.announce(`Options dropdown is now ${state ? 'Expanded' : 'Closed'}`)
+    this.liveAnnouncer.announce(`Options dropdown is now ${state ? 'Expanded' : 'Collapsed'}`)
   }
 
 }
