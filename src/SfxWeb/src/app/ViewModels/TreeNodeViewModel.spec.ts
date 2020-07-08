@@ -62,15 +62,11 @@ describe('Tree Node', () => {
 
         fit('always visible', () => {
             expect(testNode.isVisibleByBadge).toBeTruthy();
-
-            node.alwaysVisible = false;
-            expect(testNode.isVisibleByBadge).toBeTruthy();
         })
 
         fit('always visible', () => {
-            expect(testNode.isVisibleByBadge).toBeTruthy();
-
             node.alwaysVisible = false;
+            testNode.update(node);
             expect(testNode.isVisibleByBadge).toBeTruthy();
         })
 
