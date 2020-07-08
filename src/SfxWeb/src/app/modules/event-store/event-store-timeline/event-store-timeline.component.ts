@@ -44,7 +44,9 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
     let items = new DataSet<DataItem>();
   
     // create visualization
-    this._timeline = new Timeline(this.container.nativeElement, items, groups);
+    this._timeline = new Timeline(this.container.nativeElement, items, groups, {
+        locale: 'en_US'
+    });
     this.updateList(this.events);
   }
 
