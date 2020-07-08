@@ -100,6 +100,10 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     }
 
     public checkSeedNodeCount(expected: number) {
+        //if there are no seed nodes, then something would have gone wrong loading the node data
+        if(this.seedNodeCount === 0) {
+            return;
+        }
         if (this.seedNodeCount < expected && this.seedNodeCount !== 1) {
             this.data.warnings.addOrUpdateNotification({
                 message: `This cluster is currently running on the bronze reliability tier. For production workloads, only a reliability level of silver or greater is supported `,
