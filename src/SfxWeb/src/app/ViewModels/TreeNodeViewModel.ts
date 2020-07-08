@@ -36,7 +36,8 @@ export class TreeNodeViewModel {
     }
 
     public get paddingLeftPx(): string {
-        return this.paddingLeft + "px";
+         // 18px is the total width of the expander icon
+        return (18 * (this.depth + 1)) + "px";
     }
 
     public get hasChildren(): boolean {
@@ -52,14 +53,28 @@ export class TreeNodeViewModel {
     }
 
     public get isVisibleByBadge(): boolean {
-        let isVisible = this._node.alwaysVisible ||
-            this.badge === undefined ||
-            this.badge() === undefined ||
-            !this.badge().badgeClass ||
-            (this.badge().badgeClass !== BadgeConstants.BadgeUnknown || this._tree.showOkItems) &&
-            (this.badge().badgeClass !== BadgeConstants.BadgeOK || this._tree.showOkItems) &&
-            (this.badge().badgeClass !== BadgeConstants.BadgeWarning || this._tree.showWarningItems) &&
-            (this.badge().badgeClass !== BadgeConstants.BadgeError || this._tree.showErrorItems);
+        const badgeState = this.badge();
+        let isVisible = this._node.alwaysVisible || 
+                        badgeState === null ||
+                        !badgeState.badgeClass;
+
+        if (!isVisible) {
+            switch (badgeState.badgeClass) {
+                case BadgeConstants.BadgeUnknown:
+                case BadgeConstants.BadgeOK:
+                    isVisible = this._tree.showOkItems;
+                    break;
+                case BadgeConstants.BadgeWarning:
+                    isVisible = this._tree.showWarningItems;
+                    break;
+                case BadgeConstants.BadgeError:
+                    isVisible = this._tree.showErrorItems;
+                    break;
+                default:
+                    break;
+            }
+        }
+
         if (this.selected && !isVisible) {
             this._tree.selectTreeNode([IdGenerator.cluster()]);
         }
@@ -68,18 +83,7 @@ export class TreeNodeViewModel {
     }
 
     public get allChildrenInvisibleByBadge(): boolean {
-        let children = this.childGroupViewModel.children;
-        if (children.length === 0) {
-            return false;
-        }
-
-        for (let i = 0; i < children.length; i++) {
-            if (children[i].isVisibleByBadge) {
-                return false;
-            }
-        }
-
-        return true;
+        return this.childGroupViewModel.children.every(child => child.isVisibleByBadge);
     }
 
     public get hasExpander(): boolean {
@@ -108,11 +112,6 @@ export class TreeNodeViewModel {
         return this.hasChildren && this.isExpanded && this.childGroupViewModel.children.length !== 0;
     }
 
-    private get paddingLeft(): number {
-        // 18px is the total width of the expander icon
-        return (18 * (this.depth + 1));
-    }
-
     constructor(tree: TreeViewModel, node: ITreeNode, parent: TreeNodeViewModel) {
         this.parent = parent;
         this._tree = tree;
@@ -130,7 +129,7 @@ export class TreeNodeViewModel {
         this.sortBy = node.sortBy ? node.sortBy : () => [];
         this.listSettings = this._node.listSettings;
         this.actions = this._node.actions;
-        this.badge = this._node.badge;
+        this.badge = this._node.badge ?  this._node.badge : () => null;
         this.updateHealthChunkQueryDescription = this._node.addHealthStateFiltersForChildren;
         this.mergeClusterHealthStateChunk = this._node.mergeClusterHealthStateChunk;
         if (this.childGroupViewModel) {
