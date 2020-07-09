@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { TreeNodeGroupViewModel } from 'src/app/ViewModels/TreeNodeGroupViewModel';
-import { TreeNodeViewModel } from 'src/app/ViewModels/TreeNodeViewModel';
+// import { TreeNodeViewModel } from 'src/app/ViewModels/TreeNodeViewModel';
 import { environment } from 'src/environments/environment';
 
 @Component({
@@ -8,14 +8,18 @@ import { environment } from 'src/environments/environment';
   templateUrl: './tree-node.component.html',
   styleUrls: ['./tree-node.component.scss']
 })
-export class TreeNodeComponent {
+export class TreeNodeComponent implements OnInit {
   public assetBase = environment.assetBase;
 
   @Input() node: TreeNodeGroupViewModel;
 
   constructor() { }
 
-  trackById(index: number, node: TreeNodeViewModel) {
+  ngOnInit() {
+    // console.log(this.node);
+  }
+
+  trackById(index: number, node: TreeNodeGroupViewModel) {
     return node.nodeId
   }
 }
