@@ -46,7 +46,9 @@ export class TreeViewModel {
         this.childGroupViewModel = new TreeNodeGroupViewModel(this, baseNode, null);
         if (this.childGroupViewModel.isCollapsed) {
             this.childGroupViewModel.toggle().subscribe(() => {
-                this.childGroupViewModel.children[0].toggle();
+                if(this.childGroupViewModel.children.length > 0) {
+                    this.childGroupViewModel.children[0].toggle();
+                }
             });
         }
     }

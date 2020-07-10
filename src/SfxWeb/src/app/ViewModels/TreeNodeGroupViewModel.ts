@@ -348,7 +348,7 @@ export class TreeNodeGroupViewModel {
     }
 
 
-        public update(node: ITreeNode) {
+    public update(node: ITreeNode) {
         this.node = node;
         this.displayName = this.node.displayName;
         this.leafNode = !this.node.childrenQuery;
@@ -356,9 +356,6 @@ export class TreeNodeGroupViewModel {
         this.listSettings = this.node.listSettings;
         this.actions = this.node.actions;
         this.badge = this.node.badge || null;
-        // this.updateHealthChunkQueryDescription = this.node.addHealthStateFiltersForChildren;
-        // this.mergeClusterHealthStateChunk = this.node.mergeClusterHealthStateChunk;
-
         this.canExpandAll = node.canExpandAll;
     }
 
