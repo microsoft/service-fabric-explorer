@@ -6,6 +6,8 @@ import { Node } from 'src/app/Models/DataModels/Node';
 import { BaseController } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 
+
+
 @Component({
   selector: 'app-clustermap',
   templateUrl: './clustermap.component.html',
@@ -14,7 +16,14 @@ import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollec
 export class ClustermapComponent extends BaseController {
 
   nodes: NodeCollection;
-  
+  filter: string = "";
+  healthFilter = {
+    Ok: true,
+    Warning: true,
+    Error: true
+  }
+
+
   constructor(private data: DataService, injector: Injector) {
     super(injector);
    }
@@ -30,6 +39,9 @@ export class ClustermapComponent extends BaseController {
     }
 
   public getNodesForDomains(upgradeDomain: string, faultDomain: string): Node[] {
-    return this.nodes.collection.filter((node) => node.upgradeDomain === upgradeDomain && node.faultDomain === faultDomain);
+    return this.nodes.collection.filter((node) => node.upgradeDomain === upgradeDomain && 
+                                                  node.faultDomain === faultDomain && 
+                                                  (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter): true) &&
+                                                  (node.healthState.badgeId in this.healthFilter ? this.healthFilter[node.healthState.badgeId] : true));
   }
 }

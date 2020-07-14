@@ -1,26 +1,42 @@
 <div class="detail-pane">
-        <div class="table-responsive">
-            <table class="table map-table" role="presentation">
-                <tbody>
-                    <tr>
-                        <td class="legend" colspan="2" rowspan="2"></td>
-                        <td [colSpan]="nodes.faultDomains.length" class="legend">Fault Domain</td>
-                    </tr>
-                    <tr>
-                        <td *ngFor="let faultDomain of nodes.faultDomains" class="header">{{faultDomain}}</td>
-                    </tr>
-                    <tr *ngFor="let upgradeDomain of nodes.upgradeDomains; first as isFirst">
-                        <td class="legend" [rowSpan]="nodes.upgradeDomains.length" *ngIf="isFirst">Upgrade<br />Domain</td>
-                        <td class="header">{{upgradeDomain}}</td>
-                        <td *ngFor="let faultDomain of nodes.faultDomains">
-                            <div class="candybar-container">
-                                <div class="candybar-wrapper compact" *ngFor="let node of getNodesForDomains(upgradeDomain, faultDomain)">
-                                    <app-candybar-compact [item]="node" [viewPath]="node.viewPath"></app-candybar-compact>
-                                </div>
-                            </div>
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
+    <div>
+        <app-input placeholder="Filter nodes" [model]="filter" (onChange)="filter = $event;" ></app-input>
+
+        <div style="margin: 15px; display: block;">
+            <app-check-box [(state)]="healthFilter.Ok">
+                <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+            </app-check-box>
+            <app-check-box [(state)]="healthFilter.Warning">
+                <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+            </app-check-box>
+            <app-check-box [(state)]="healthFilter.Error">
+                <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+            </app-check-box>
         </div>
     </div>
+    <div class="table-responsive">
+        <table class="table map-table" role="presentation">
+            <tbody>
+                <tr>
+                    <td class="legend" colspan="2" rowspan="2"></td>
+                    <td [colSpan]="nodes.faultDomains.length" class="legend">Fault Domain</td>
+                </tr>
+                <tr>
+                    <td *ngFor="let faultDomain of nodes.faultDomains" class="header">{{faultDomain}}</td>
+                </tr>
+                <tr *ngFor="let upgradeDomain of nodes.upgradeDomains; first as isFirst">
+                    <td class="legend" [rowSpan]="nodes.upgradeDomains.length" *ngIf="isFirst">Upgrade<br />Domain</td>
+                    <td class="header">{{upgradeDomain}}</td>
+                    <td *ngFor="let faultDomain of nodes.faultDomains">
+                        <div class="candybar-container">
+                            <div class="candybar-wrapper compact"
+                                *ngFor="let node of getNodesForDomains(upgradeDomain, faultDomain)">
+                                <app-candybar-compact [item]="node" [viewPath]="node.viewPath"></app-candybar-compact>
+                            </div>
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
