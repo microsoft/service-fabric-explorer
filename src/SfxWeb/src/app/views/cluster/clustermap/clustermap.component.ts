@@ -6,8 +6,6 @@ import { Node } from 'src/app/Models/DataModels/Node';
 import { BaseController } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 
-
-
 @Component({
   selector: 'app-clustermap',
   templateUrl: './clustermap.component.html',
@@ -22,7 +20,6 @@ export class ClustermapComponent extends BaseController {
     Warning: true,
     Error: true
   }
-
 
   constructor(private data: DataService, injector: Injector) {
     super(injector);
