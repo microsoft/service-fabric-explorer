@@ -3,7 +3,7 @@
         <app-input placeholder="Filter nodes" [model]="filter" (onChange)="filter = $event;" ></app-input>
 
         <div style="margin: 15px; display: block;">
-            <app-check-box [(state)]="healthFilter.Ok">
+            <app-check-box [(state)]="healthFilter.OK">
                 <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
             </app-check-box>
             <app-check-box [(state)]="healthFilter.Warning">
