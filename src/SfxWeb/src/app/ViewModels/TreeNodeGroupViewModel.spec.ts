@@ -81,7 +81,6 @@ describe('Tree Node', () => {
         fit('Healthy', () => {
             node.alwaysVisible = false;
 
-            //healthy
             node.badge = () => vr.resolveHealthStatus("OK");
             testNode.update(node);
             expect(testNode.isVisibleByBadge).toBeFalsy();
@@ -137,7 +136,6 @@ describe('Tree Node', () => {
         })
 
         fit('refresh updating a child', () => {
-            console.log(childQuery)
             expect(testNode.displayedChildren.length).toBe(0);
             testNode.toggle();
 
@@ -155,6 +153,24 @@ describe('Tree Node', () => {
             expect(testNode.displayedChildren[0].displayHtml).toBe("child2");
         })
 
+        fit('sort children', () => {
+            const child2 = {
+                displayName: () => "child2",
+                nodeId: "child2",
+                sortBy: () => [-1]
+            }
+
+            const child3 = {
+                displayName: () => "child3",
+                nodeId: "child3",
+                sortBy: () => [1]
+            }
+
+            childQuery = [child3, child2];
+            testNode.toggle();
+            expect(testNode.displayedChildren.length).toBe(2);
+            expect(testNode.displayedChildren[0].nodeId).toBe("child2");
+        })
 
     })
 

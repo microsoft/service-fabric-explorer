@@ -8,6 +8,7 @@ import { IdGenerator } from '../Utils/IdGenerator';
 import { ListSettings } from '../Models/ListSettings';
 import { ActionCollection } from '../Models/ActionCollection';
 import { ITextAndBadge } from '../Utils/ValueResolver';
+import orderBy from 'lodash/orderBy';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -167,7 +168,7 @@ export class TreeNodeGroupViewModel {
 
                 this.children = response.map(node => new TreeNodeGroupViewModel(this._tree, node, this))
                 // Sort the children
-                //this.children = childrenViewModels //.sort( (item1, item2) => <number>item1.sortBy() - <number>item2.sortBy()); TODO fix the sorting here
+                this.children = orderBy(this.children, item => item.sortBy ? item.sortBy() : [])
 
                 this.childrenLoaded = true;
 
