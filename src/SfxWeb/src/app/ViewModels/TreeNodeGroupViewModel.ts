@@ -193,7 +193,6 @@ export class TreeNodeGroupViewModel {
         return this._currentGetChildrenPromise ? this._currentGetChildrenPromise.asObservable() : of(null);
     }
 
-    //TODO CHECK ON THIS?
     public get nonRootpaddingLeftPx(): string {
         // 18px is the total width of the expander icon
        return (18 * (this.depth + 1)) + "px";

@@ -1,5 +1,4 @@
 ﻿import { IClusterHealthChunkQueryDescription, IClusterHealthChunk } from '../Models/HealthChunkRawDataTypes';
-// import { TreeNodeViewModel } from './TreeNodeViewModel';
 import { TreeNodeGroupViewModel } from './TreeNodeGroupViewModel';
 import { ITreeNode } from './TreeTypes';
 import { Observable } from 'rxjs';
