@@ -15,13 +15,13 @@
         </div>
     </li>
     <li *ngFor="let child of node.displayedChildren; trackBy: trackById" class="node" [ngClass]="{ 'selected': child.selected }" >
-        <div class="self hide-nested" (click)="child.select()" style="width: 100%; display: flex; align-items: center;" 
+        <div class="self hide-nested" (click)="child.select()" style="width: 100%; display: flex; align-items: center;" tabindex="0"  (keyup)="node._tree.onKeyDown($event)"
              [attr.aria-label]="child.displayName()">
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
             <div class="expander" *ngIf="!child.hasExpander"></div>
             <div tabindex="-1" class="expander icon " aria-hidden="true"
                     (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
-                    [ngClass]="{ 'mif-chevron-thin-down': child.isCollapsed, 'mif-chevron-thin-up': child.isExpanded }"
+                    [ngClass]="{ 'mif-chevron-thin-right': child.isCollapsed, 'mif-chevron-thin-down': child.isExpanded }"
                     style="display: inline-block;">
             </div>
             <span tabindex="-1" class="icon" aria-hidden="true" *ngIf="child.node.canExpandAll && child.hasExpander"

@@ -30,7 +30,9 @@ export class TreeNodeGroupViewModel {
         } else {
             return 0;
         }
-    }    private _tree: TreeViewModel;
+    }    
+    
+    public _tree: TreeViewModel;
     public node: ITreeNode;
     private _keyboardSelectActionDelayInMilliseconds: number = 200;
 
