@@ -29,7 +29,7 @@
             [ngClass]="{ 'mif-unfold-less': child.isCollapsed, 'mif-unfold-more': child.isExpanded }"
             [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'" style="font-size: large;"></span>
 
-            <img *ngIf="child.badge && child.badge().badgeClass !== 'badge-ok'"
+            <img *ngIf="child.badge && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
                     class="tree-badge" [title]="child.badge().text" style="margin-right: 3px;"
                     [src]="assetBase + 'assets/' + child.badge().badgeClass + '.svg'" role="presentation">
             <div class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()" ></div>
