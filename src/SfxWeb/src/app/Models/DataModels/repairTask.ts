@@ -28,7 +28,7 @@ export class RepairTask {
         if(this.raw.Impact) {
             this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
         }
-
+        this.raw.History.PreparingHealthCheckEndUtcTimestamp = "0001-01-01T00:00:00.000Z";
         this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString();
         this.inProgress = this.raw.State !== "Completed";
         
