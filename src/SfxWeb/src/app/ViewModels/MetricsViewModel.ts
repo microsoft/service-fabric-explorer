@@ -1,7 +1,6 @@
 ﻿import { LoadMetricInformation } from "../Models/DataModels/Shared";
 import { NodeLoadInformation } from '../Models/DataModels/Node';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
-import { scaleOrdinal } from 'd3';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -24,7 +23,6 @@ export interface IMetricsViewModel {
     isExpanderEnabled: boolean;
     isFullScreen: boolean;
     refresh(): void;
-    getLegendColor(value: string): string;
 }
 
 export class MetricsViewModel implements IMetricsViewModel {
@@ -37,8 +35,6 @@ export class MetricsViewModel implements IMetricsViewModel {
     public isFullScreen: boolean = false;
 
     private _metrics: LoadMetricInformation[] = null;
-    private legendColorPalette = scaleOrdinal<string>()
-        .range(["#71b252", "#ff8418", "#FCB714", "#903F8B", "#3f5fb6", "#79D7F2", "#B5B5B5", "#8c564b"]);
 
     private static ensureResourceGovernanceMetrics(metrics: LoadMetricInformation[]): LoadMetricInformation[] {
         let cpuCapacityAvailable: boolean = false;
@@ -206,10 +202,6 @@ export class MetricsViewModel implements IMetricsViewModel {
         this.refreshToken = (this.refreshToken + 1) % 10000;
         // Clear copied list of metrics
         this._metrics = null;
-    }
-
-    public getLegendColor(value: string): string {
-        return this.legendColorPalette(value);
     }
 
     public toggleMetric(metric: LoadMetricInformation) {

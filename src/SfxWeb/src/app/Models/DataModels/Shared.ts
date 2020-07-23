@@ -1,5 +1,5 @@
 ﻿import { DataModelBase, IDecorators } from './Base';
-import { IRawHealthEvaluation, IRawLoadMetricInformation, IRawUpgradeDescription, IRawMonitoringPolicy, IRawUpgradeDomain } from '../RawDataTypes';
+import { IRawHealthEvaluation, IRawLoadMetricInformation, IRawUpgradeDescription, IRawMonitoringPolicy, IRawUpgradeDomain, IRawClusterUpgradeDescription } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { UpgradeDomainStateRegexes, UpgradeDomainStateNames, BadgeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
@@ -105,14 +105,14 @@ export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformati
     }
 }
 
-export class UpgradeDescription extends DataModelBase<IRawUpgradeDescription> {
+export class UpgradeDescription extends DataModelBase<IRawUpgradeDescription | IRawClusterUpgradeDescription> {
     public decorators: IDecorators = {
         hideList: ["Name", "TargetApplicationTypeVersion", "UpgradeKind", "RollingUpgradeMode"]
     };
 
     public monitoringPolicy: MonitoringPolicy;
 
-    public constructor(data: DataService, raw: IRawUpgradeDescription) {
+    public constructor(data: DataService, raw: IRawUpgradeDescription | IRawClusterUpgradeDescription) {
         super(data, raw);
 
         this.monitoringPolicy = new MonitoringPolicy(this.data, raw.MonitoringPolicy);

@@ -1,7 +1,7 @@
-
 const config = require("./appsettings.json");
 const axios = require('axios');
 const { promises: fs } = require("fs");
+const fsBase = require("fs");
 
 const https = require("https");
 const express = require('express');
@@ -18,7 +18,7 @@ httpsAgent = null;
 if(config.TargetCluster.PFXLocation){
     httpsAgent = new https.Agent({
         rejectUnauthorized: false,
-        pfx: fs.readFileSync(config.TargetCluster.PFXLocation),
+        pfx: fsBase.readFileSync(config.TargetCluster.PFXLocation),
         passphrase: config.TargetCluster.PFXPassPhrase
       })
 }

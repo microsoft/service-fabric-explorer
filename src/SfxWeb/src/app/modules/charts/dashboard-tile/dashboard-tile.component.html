@@ -1,6 +1,8 @@
-<div class="dashboard-wrapper">
+<a class="dashboard-wrapper" [routerLink]="data.viewPath ? data.viewPath : []">
     <div class="dashboard" [ngClass]="{'has-view-path' : data.viewPath, 'dashboard-large': data.largeTile,  'dashboard-small': !data.largeTile}"  role="group">
-        <div #chart class="dashboard-donut-chart"></div>
+        <div class="dashboard-donut-chart chart-wrapper">
+            <div #chart></div>            
+        </div>
         <div class="dashboard-datapoints">
             <div class="dashboard-datapoint" *ngFor="let dataPoint of data.dataPoints; let i = index">
                 <div class="dashboard-datapoint-leftbar" [ngClass]="dataPoint.state.badgeClass"></div>
@@ -9,4 +11,5 @@
             </div>
         </div>
     </div>
-</div>
+</a>
+

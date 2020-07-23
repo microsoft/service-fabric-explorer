@@ -20,12 +20,12 @@
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
             <div tabindex="-1" class="expander icon " aria-hidden="true"
                     (click)="child.toggle(); $event.stopPropagation()" *ngIf="child.hasExpander"
-                    [ngClass]="{ 'mif-chevron-thin-up': child.isCollapsed, 'mif-chevron-thin-down': child.isExpanded }"
+                    [ngClass]="{ 'mif-chevron-thin-down': child.isCollapsed, 'mif-chevron-thin-up': child.isExpanded }"
                     style="display: inline-block;">
             </div>
             <span tabindex="-1" class="icon" aria-hidden="true" *ngIf="child.canExpandAll && child.hasExpander"
             (click)="child.isExpanded? child.closeAll() : child.toggleAll(); $event.stopPropagation()"
-            [ngClass]="{ 'mif-unfold-more': child.isCollapsed, 'mif-unfold-less': child.isExpanded }"
+            [ngClass]="{ 'mif-unfold-less': child.isCollapsed, 'mif-unfold-more': child.isExpanded }"
             [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'" style="font-size: large;"></span>
 
             <img *ngIf="child.badge && child.badge() && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
