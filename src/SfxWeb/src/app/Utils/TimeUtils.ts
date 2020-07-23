@@ -88,7 +88,7 @@ export class TimeUtils {
      * Format the input duration as ASP.NET time span format: "[days].[hours]:[minutes]:[seconds].[milliseconds].
      * @param duration number
      */
-    private static formatDurationAsAspNetTimespan(duration: number): string {
+    public static formatDurationAsAspNetTimespan(duration: number): string {
         if (duration >= TimeUtils.MaxDurationInMilliseconds) {
             return Constants.DurationInfinity;
         }  

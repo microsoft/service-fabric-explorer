@@ -1,20 +1,18 @@
 import { IRawRepairTask } from '../RawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
-export enum RepairTaskStateFilter {
-    Created = 1,
-    Claimed = 2,
-    Preparing = 4,
-    Approved = 8,
-    Executing = 16,
-    Restoring = 32,
-    Completed = 64
+export interface IRepairTaskHistoryPhase {
+    timestamp: string; 
+    phase: string;
+    duration: string;
 }
-
 export class RepairTask {
+    public static NonStartedTimeStamp = "0001-01-01T00:00:00.000Z";
+
     // Initially keep additional details collapsed.
     public isSecondRowCollapsed: boolean = true;
     public impactedNodes: string[] = [];
+    public history: IRepairTaskHistoryPhase[] = [];
     public createdAt: string = "";
 
     public couldParseExecutorData: boolean = false;
@@ -28,7 +26,6 @@ export class RepairTask {
         if(this.raw.Impact) {
             this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
         }
-        this.raw.History.PreparingHealthCheckEndUtcTimestamp = "0001-01-01T00:00:00.000Z";
         this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString();
         this.inProgress = this.raw.State !== "Completed";
         
@@ -47,26 +44,44 @@ export class RepairTask {
             console.log(e)
             this.couldParseExecutorData = false;
         }
+
+        const sortedHistory = [
+            { timestamp: this.raw.History.PreparingUtcTimestamp, phase: "Preparing" },
+            { timestamp: this.raw.History.ClaimedUtcTimestamp, phase: "Claimed" },
+            { timestamp: this.raw.History.CreatedUtcTimestamp, phase: "Created" },
+            { timestamp: this.raw.History.PreparingHealthCheckStartUtcTimestamp, phase: "Preparing Health Check start" },
+            { timestamp: this.raw.History.PreparingHealthCheckEndUtcTimestamp, phase: "Preparing Health check End" },
+            { timestamp: this.raw.History.ApprovedUtcTimestamp, phase: "Approved" },
+            { timestamp: this.raw.History.ExecutingUtcTimestamp, phase: "Executing" },
+            { timestamp: this.raw.History.RestoringUtcTimestamp, phase: "Restoing" },
+            { timestamp: this.raw.History.RestoringHealthCheckStartUtcTimestamp, phase: "Restoring health check start" },
+            { timestamp: this.raw.History.RestoringHealthCheckEndUtcTimestamp, phase: "Restoring Health check end" },
+            { timestamp: this.raw.History.CompletedUtcTimestamp, phase: "Completed" },
+        ]
+        this.history = sortedHistory.map( (phase, index, arr) => {
+            let duration = "not started";
+            if(index < (arr.length-1 ) && arr[index + 1].timestamp !== RepairTask.NonStartedTimeStamp) {
+                const phaseDuration = new Date(arr[index + 1].timestamp).getTime() - new Date(phase.timestamp).getTime()
+                duration = TimeUtils.formatDurationAsAspNetTimespan(phaseDuration)
+            }
+
+            if(index === (arr.length - 1)) {
+                duration = ""
+            }
+
+            return {
+                ...phase,
+                duration
+            }
+        })
     }
 
     /*
     WIll use created at timestamp instead of 
     */
     public get startTime(): Date {
-        return new Date(this.raw.History.ExecutingUtcTimestamp === "0001-01-01T00:00:00.000Z" ? this.raw.History.CreatedUtcTimestamp : 
+        return new Date(this.raw.History.ExecutingUtcTimestamp === RepairTask.NonStartedTimeStamp ? this.raw.History.CreatedUtcTimestamp : 
                                                                                           this.raw.History.ExecutingUtcTimestamp)
     }
 
 }
-
-
-/*
-state filter
-1 - Created
-2 - Claimed
-4 - Preparing
-8 - Approved
-16 - Executing
-32 - Restoring
-64 - Completed
-*/

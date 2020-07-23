@@ -15,11 +15,19 @@
                     <h5>
                         History
                     </h5>
-                    <table class="table detail-table">
+                    <table class="table detail-table" style="color: white;">
+                        <thead>
+                            <tr>
+                                <th>Phase</th>
+                                <th>Start (UTC)</th>
+                                <th>Duration</th>
+                            </tr>
+                        </thead>
                         <tbody>
-                            <tr *ngFor="let point of history">
-                                <th>{{point.key}}</th>
-                                <td style="white-space: nowrap;">{{point.value}}</td>
+                            <tr *ngFor="let point of item.history">
+                                <th>{{point.phase}}</th>
+                                <td style="white-space: nowrap;">{{point.timestamp}}</td>
+                                <td style="white-space: nowrap;">{{point.duration}}</td>
                             </tr>
                         </tbody>
                     </table>
