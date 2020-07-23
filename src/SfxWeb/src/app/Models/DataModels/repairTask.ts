@@ -32,7 +32,8 @@ export class RepairTask {
         
         const start = new Date(this.createdAt).getTime();
         if(this.inProgress) {
-            this.duration = new Date().getTime(); - start; 
+            const now = new Date().getTime();
+            this.duration = now - start; 
         }else{
             this.duration = new Date(this.raw.History.CompletedUtcTimestamp).getTime() - start;
         }
