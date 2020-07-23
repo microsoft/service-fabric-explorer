@@ -19,6 +19,7 @@ export class RepairTask {
     public inProgress: boolean = true;
 
     public duration: number;
+    public displayDuration: string;
 
     public executorData: any;
 
@@ -35,6 +36,7 @@ export class RepairTask {
         }else{
             this.duration = new Date(this.raw.History.CompletedUtcTimestamp).getTime() - start;
         }
+        this.displayDuration = TimeUtils.formatDurationAsAspNetTimespan(this.duration);
 
         try {
             this.executorData = JSON.parse(this.raw.ExecutorData);
@@ -65,6 +67,7 @@ export class RepairTask {
                 duration = TimeUtils.formatDurationAsAspNetTimespan(phaseDuration)
             }
 
+            //handle completed phase which does not have a duration
             if(index === (arr.length - 1)) {
                 duration = ""
             }
