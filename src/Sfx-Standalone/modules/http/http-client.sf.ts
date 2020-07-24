@@ -51,7 +51,7 @@ export default class ServiceFabricHttpClient extends HttpClient {
             createJsonFileResponseHandler());
     }
 
-    private checkServerCert = (serverName: string, cert: ICertificateInfo): boolean => {
+    private checkServerCert = async (serverName: string, cert: ICertificateInfo): Promise<boolean> => {
         const record = this.trustedCerts[cert.thumbprint];
 
         if (typeof record === "boolean") {
@@ -77,8 +77,10 @@ export default class ServiceFabricHttpClient extends HttpClient {
                 defaultId: 0,
                 noLink: true,
             });
+        
+        let responseData = await response;
 
-        return this.trustedCerts[cert.thumbprint] = response === 0;
+        return this.trustedCerts[cert.thumbprint] = responseData.response === 0;
     }
 
     private selectClientCertAsync =

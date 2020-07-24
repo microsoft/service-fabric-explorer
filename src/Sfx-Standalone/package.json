@@ -15,10 +15,10 @@
   "author": "Microsoft Corporation",
   "license": "MIT",
   "dependencies": {
-    "@types/bootstrap": "^4.1.1",
+    "@types/bootstrap": "^4.5.0",
     "angular": "^1.7.2",
     "applicationinsights": "^1.0.1",
-    "bootstrap": "^4.1.1",
+    "bootstrap": "^4.5.0",
     "donuts.node": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-1.0.3.tgz",
     "donuts.node-ipc": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-ipc-1.0.3.tgz",
     "donuts.node-modularity": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-modularity-1.0.3.tgz",
@@ -41,8 +41,8 @@
     "cookie.gulp-tsc": "https://github.com/microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.3/cookie.gulp-tsc-1.0.3.tgz",
     "cookie.gulp-tslint": "https://github.com/microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.3/cookie.gulp-tslint-1.0.3.tgz",
     "cookie.gulp-wix": "https://github.com/microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.3/cookie.gulp-wix-1.0.3.tgz",
-    "electron": "3.0.10",
+    "electron": "^9.1.1",
     "gulp": "^4.0.0",
-    "typescript": "^3.1.3"
+    "typescript": "^3.9.7"
   }
 }

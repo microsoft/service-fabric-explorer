@@ -97,9 +97,9 @@ class Prompt<TResult> implements IPrompt<TResult> {
             utils.string.format(ChannelNameFormat, this.promptWindow.id, EventNames.Finished),
             (event: Electron.Event, result: any) => this.promptResult = result);
 
-        ipcMain.once(
-            utils.string.format(ChannelNameFormat, this.promptWindow.id, EventNames.RequestPromptOptions),
-            (event: Electron.Event) => event.returnValue = this.promptOptions);
+        // ipcMain.once(
+        //     utils.string.format(ChannelNameFormat, this.promptWindow.id, EventNames.RequestPromptOptions),
+        //     (event: Electron.Event) => event.returnValue = this.promptOptions);
     }
 
     public openAsync(): Promise<TResult> {

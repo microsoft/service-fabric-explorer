@@ -6,7 +6,6 @@
 import {
     IPkiCertificateService,
     ICertificateInfo,
-    StoreName,
     IPfxCertificate
 } from "sfx.cert";
 
@@ -22,7 +21,7 @@ enum StoreNames {
 }
 
 export class PkiService implements IPkiCertificateService {
-    public async getCertificateInfosAsync(storeName: StoreName): Promise<Array<ICertificateInfo>> {
+    public async getCertificateInfosAsync(storeName: StoreNames): Promise<Array<ICertificateInfo>> {
         if (process.platform !== "win32") {
             return undefined;
         }

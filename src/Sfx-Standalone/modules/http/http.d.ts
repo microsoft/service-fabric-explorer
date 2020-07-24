@@ -82,7 +82,7 @@ declare module "sfx.http" {
 
     export type HttpResponseHandler = (pipleline: IHttpPipeline, request: IHttpRequest, response: IHttpResponse) => Promise<IHttpResponse>;
 
-    export type ServerCertValidator = (serverName: string, cert: ICertificateInfo) => boolean;
+    export type ServerCertValidator = (serverName: string, cert: ICertificateInfo) => Promise<boolean>;
 
     export type ClientCertSelector = (url: string, certInfos: Array<ICertificateInfo>) => Promise<ICertificate | ICertificateInfo>;
 }
