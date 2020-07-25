@@ -25,9 +25,9 @@
                         </thead>
                         <tbody>
                             <tr *ngFor="let point of item.history">
-                                <th>{{point.phase}}</th>
+                                <td style="white-space: nowrap;" [ngClass]='point.cssClass'>{{point.phase}}</td>
                                 <td style="white-space: nowrap;">{{point.timestamp}}</td>
-                                <td style="white-space: nowrap;">{{point.duration}}</td>
+                                <td style="white-space: pre-line; text-align: center;">{{point.duration}}</td>
                             </tr>
                         </tbody>
                     </table>

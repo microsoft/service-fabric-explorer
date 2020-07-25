@@ -1,14 +1,14 @@
 import { RepairTask } from "./repairTask";
 import { IRawRepairTask } from '../RawDataTypes';
 
-    
+
 describe('RepairTask', () => {
 
 
     let testData: IRawRepairTask;
-  
+
     beforeEach((() => {
-        testData =   {
+        testData = {
             "TaskId": "Azure/PlatformUpdate/21996579-9f27-4fd9-bfab-2ace650d9997/2/4153",
             "Version": "132281309100816959",
             "Description": "",
@@ -47,15 +47,15 @@ describe('RepairTask', () => {
             "RestoringHealthCheckState": "Skipped",
             "PerformPreparingHealthCheck": false,
             "PerformRestoringHealthCheck": false
-          }
+        }
     }));
 
     fit('validate complete repairTask', () => {
-      const task = new RepairTask(testData)
+        const task = new RepairTask(testData)
 
-      expect(task.couldParseExecutorData).toBe(true);
-      expect(task.impactedNodes.length).toBe(0);
-      expect(task.inProgress).toBe(false);
+        expect(task.couldParseExecutorData).toBe(true);
+        expect(task.impactedNodes.length).toBe(0);
+        expect(task.inProgress).toBe(false);
     });
 
     fit('validate in progress repairTask', () => {
@@ -67,10 +67,38 @@ describe('RepairTask', () => {
             }
         ]
         const task = new RepairTask(testData)
-  
+
         expect(task.couldParseExecutorData).toBe(true);
         expect(task.impactedNodes).toEqual(["_NodeType0_6"]);
         expect(task.inProgress).toBe(true);
-      });
-  });
+    });
+
+    fit('validate repairTask history', () => {
+        testData.State = "Executing";
+        testData.History = {
+            "CreatedUtcTimestamp": "2020-07-17T03:17:33.342Z",
+            "ClaimedUtcTimestamp": "2020-07-17T03:17:33.342Z",
+            "PreparingUtcTimestamp": "2020-07-17T03:17:33.342Z",
+            "ApprovedUtcTimestamp": "2020-07-17T03:17:33.530Z",
+            "ExecutingUtcTimestamp": "2020-07-17T03:17:48.437Z",
+            "RestoringUtcTimestamp": "0001-01-01T00:00:00.000Z",
+            "CompletedUtcTimestamp": "0001-01-01T00:00:00.000Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-07-17T03:17:33.420Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-07-17T03:17:33.467Z",
+            "RestoringHealthCheckStartUtcTimestamp": "0001-01-01T00:00:00.000Z",
+            "RestoringHealthCheckEndUtcTimestamp": "0001-01-01T00:00:00.000Z"
+        }
+        const dateRef = new Date("2020-07-17T04:17:48.437Z");
+        const task = new RepairTask(testData, dateRef);
+
+        expect(task.inProgress).toBe(true);
+        expect(task.history).toContain({
+            timestamp: "2020-07-17T03:17:48.437Z",
+            phase: "Executing",
+            duration: "In Progress \n (0.01:00:00.0)",
+            cssClass: "repair-blue"
+        })
+    });
+
+});
 

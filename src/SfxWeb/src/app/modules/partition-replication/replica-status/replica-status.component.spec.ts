@@ -119,7 +119,7 @@ describe('ReplicaStatusComponent', () => {
       NotReceivedCount: "200",
       ReceivedAndNotAppliedCount: "100"
     }
-    expect(component.getEstimatedDuration(details2)).toEqual("0.00:07:47.0");
+    expect(component.getEstimatedDuration(details2)).toEqual("0.00:07:50.0");
   });
 
 });
