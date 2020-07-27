@@ -99,6 +99,7 @@ export class RepairTask {
 
             return {
                 ...phase,
+                timestamp: phase.timestamp === RepairTask.NonStartedTimeStamp ? "" : phase.timestamp,
                 duration,
                 cssClass: "repair-" + cssClass
 

@@ -80,8 +80,6 @@ export class TimeUtils {
      */
     public static timestampToUTCString(timestamp: string): string {
         return dayjs(timestamp).toISOString();
-        //TODO test
-        // return !date.isValid() || date.year() === 1 ? Constants.InvalidTimestamp : date.toDate().toUTCString();
     }
 
     /**
@@ -104,7 +102,7 @@ export class TimeUtils {
             + `${Math.floor(hours % 24).toString().padStart(2, "0")}:`
             + `${Math.floor(minutes % 60).toString().padStart(2, "0")}:`
             + `${Math.floor(seconds % 60).toString().substring(0, 2).padStart(2, "0")}.`
-            + `${milliseconds}`;
+            + `${milliseconds.toString().padStart(3, "0")}`;
     }
 }
 
