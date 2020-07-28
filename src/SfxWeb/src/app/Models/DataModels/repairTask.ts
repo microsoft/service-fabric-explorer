@@ -1,16 +1,28 @@
 import { IRawRepairTask } from '../RawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
-import { css } from 'highcharts';
 
 export interface IRepairTaskHistoryPhase {
-    timestamp: string; 
+    timestamp: string;
+    status: string;
     phase: string;
     duration: string;
     cssClass: string;
+    durationMilliseconds: number;
 }
+
+export interface IRepairTaskPhase {
+    name: string;
+    status: string;
+    statusCss: string;
+    duration: string;
+    durationMilliseconds: number;
+    phases: IRepairTaskHistoryPhase[];
+    startCollapsed: number;
+}
+
 export class RepairTask {
     public static NonStartedTimeStamp = "0001-01-01T00:00:00.000Z";
-
+    
     // Initially keep additional details collapsed.
     public isSecondRowCollapsed: boolean = true;
     public impactedNodes: string[] = [];
@@ -22,6 +34,8 @@ export class RepairTask {
 
     public duration: number;
     public displayDuration: string;
+
+    public HistoryPhases: IRepairTaskPhase[];
 
     public executorData: any;
 
@@ -64,23 +78,25 @@ export class RepairTask {
             { timestamp: this.raw.History.CompletedUtcTimestamp, phase: "Completed" },
         ]
         this.history = sortedHistory.map( (phase, index, arr) => {
-            let duration = "not started";
+            let duration = "";
+            let status = "Not Started";
             let cssClass = "gray";
+            let phaseDuration = 0;
             if(index < (arr.length-1 )) {
                 const nextPhase = arr[index + 1];
 
                 //if the next phase has a timestamp then this phase is finished
                 //otherwise if this phase has a timestamp it would be the active one 
                 if(nextPhase.timestamp !== RepairTask.NonStartedTimeStamp){
-                    const phaseDuration = new Date(nextPhase.timestamp).getTime() - new Date(phase.timestamp).getTime();
+                    phaseDuration = new Date(nextPhase.timestamp).getTime() - new Date(phase.timestamp).getTime();
                     duration = TimeUtils.formatDurationAsAspNetTimespan(phaseDuration);
                     cssClass = "green";
-
+                    status = "Done";
                 }else if(phase.timestamp !== RepairTask.NonStartedTimeStamp ){
-                    const phaseDuration = dateRef.getTime() - new Date(phase.timestamp).getTime();
+                    phaseDuration = dateRef.getTime() - new Date(phase.timestamp).getTime();
                     duration = TimeUtils.formatDurationAsAspNetTimespan(phaseDuration);
-                    duration = `In Progress \n (${duration})`;
                     cssClass = "blue";
+                    status = "In Progress"
                 }
 
             }
@@ -90,7 +106,8 @@ export class RepairTask {
                 duration = "";
             
                 if(phase.timestamp !== RepairTask.NonStartedTimeStamp) {
-                    cssClass = "green";
+                    cssClass = "done";
+                    status = "Done";
                 }
             }
 
@@ -101,10 +118,18 @@ export class RepairTask {
                 ...phase,
                 timestamp: phase.timestamp === RepairTask.NonStartedTimeStamp ? "" : phase.timestamp,
                 duration,
-                cssClass: "repair-" + cssClass
-
+                cssClass: 'repair-' + cssClass,
+                durationMilliseconds: phaseDuration,
+                status
             }
-        })
+        });
+
+        this.HistoryPhases = [
+            this.GenerateHistoryPhase("Preparing", this.history.slice(0, 5)),
+            this.GenerateHistoryPhase("Executing", [this.history[6]]),
+            this.GenerateHistoryPhase("Restoring", this.history.slice(7))
+        ]
+
     }
 
     /*
@@ -113,6 +138,60 @@ export class RepairTask {
     public get startTime(): Date {
         return new Date(this.raw.History.ExecutingUtcTimestamp === RepairTask.NonStartedTimeStamp ? this.raw.History.CreatedUtcTimestamp : 
                                                                                           this.raw.History.ExecutingUtcTimestamp)
+    }
+
+
+    private GenerateHistoryPhase(name: string, phases: IRepairTaskHistoryPhase[]): IRepairTaskPhase {
+
+        let duration = 0;
+        let status =  -1;
+
+        phases.forEach( (phase, index) => {
+            duration += phase.durationMilliseconds;
+
+            if( phase.cssClass === "repair-blue") {
+                status = 0;
+            }
+
+            if( (index + 1) === phases.length) {
+                if(phase.cssClass === "repair-green") {
+                    status = 1;
+                    console.log("test")
+                } 
+            }
+        })
+
+        let statusText;
+        let statusCss;
+        let startCollapsed;
+        switch (status) {
+            case 1:
+                statusCss = "repair-green";
+                statusText = "Done";
+                startCollapsed = true;
+                break;
+            case 0:
+                statusCss = "repair-blue";
+                statusText = "In Progress";
+                startCollapsed = false;
+                break;
+    
+            default:
+                statusCss = "repair-gray";
+                statusText = "Not started";
+                startCollapsed = true;
+                break;
+        }
+
+        return {
+            name,
+            status: statusText,
+            statusCss,
+            duration : TimeUtils.formatDurationAsAspNetTimespan(duration),
+            durationMilliseconds: duration,
+            phases,
+            startCollapsed
+        }
     }
 
 }

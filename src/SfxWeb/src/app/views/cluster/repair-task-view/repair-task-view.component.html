@@ -12,9 +12,40 @@
         <ng-template ngbTabContent>
             <div style="display: flex;flex-direction: row;">
                 <div *ngIf="item.raw.History">
-                    <h5>
+                    <h5 style="border-bottom: 1px solid gray; padding-bottom: 5px">
                         History
                     </h5>
+                    <div style="font-size: larger;">
+                        Phase <div style="float: right">Duration</div>
+                    </div>
+                    <app-collapse-container *ngFor="let phase of item.HistoryPhases" [collapsed]="phase.startCollapsed">
+                        <div style="margin-bottom: .5em;" collapse-header [ngClass]='phase.statusCss'>
+                            {{phase.name}} : {{phase.status}} <span *ngIf="phase.durationMilliseconds > 0" style="float: right;">{{phase.duration}}</span>
+                        </div>
+                        <div collapse-body class="collapse-inner-bar">
+                            <div *ngFor="let point of phase.phases">
+                                <app-collapse-container [disabled]="point.timestamp.length === 0" collapsed="true">
+                                    <div collapse-header [ngClass]='point.cssClass' style="margin-bottom: .5em;">
+                                        {{point.phase}} : {{point.status}} <span style="float: right">{{point.duration}}</span>
+                                    </div>
+                                    <div collapse-body style="margin-left: 30px;">
+                                        Start (UTC) : {{point.timestamp}}
+                                    </div>
+                                </app-collapse-container>
+                            </div>
+                            <table class="" style="color: white;">
+
+                                <tbody>
+                                    <tr *ngFor="let point of phase.phases">
+                                        <td style="white-space: nowrap;" [ngClass]='point.cssClass'>{{point.phase}}</td>
+                                        <td style="white-space: nowrap;">{{point.timestamp}}</td>
+                                        <td style="white-space: pre-line; text-align: center;">{{point.duration}}</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </app-collapse-container>
+
                     <table class="table detail-table" style="color: white;">
                         <thead>
                             <tr>
