@@ -26,10 +26,10 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngAfterViewInit() {
-    this.setFocus();      
+    this.setFocus();
 
     this.sub = this.router.events.subscribe(event => {
-      this.setFocus();      
+      this.setFocus();
     });
   }
 
@@ -44,7 +44,7 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
   setFocus() {
     try {
       setTimeout( () => {
-        document.getElementById("0").focus()
+        document.getElementById((this.tabs.length - 1).toString()).focus()
       }, 1)
     } catch (e) {
 

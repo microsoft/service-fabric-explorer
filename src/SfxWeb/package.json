@@ -7,7 +7,7 @@
     "start-local": "ng serve --proxy-config=proxy.conf.json --port 3000",
     "build": "ng build",
     "build:prod": "ng build --prod  --base-href=/Explorer/beta.html  --output-hashing=none",
-    "build:accesstesting": "ng build --prod --outputPath=../Sfx-Proxy/wwwroot --configuration=accesstesting --output-hashing=none",
+    "build:accesstesting": "ng build --prod --outputPath=../Sfx-Proxy/wwwroot --configuration=accesstesting ",
     "build:stats": "ng build --stats-json",
     "test": "ng test",
     "lint": "ng lint",

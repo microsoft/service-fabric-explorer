@@ -1,6 +1,6 @@
 <div class="detail-list-container flex-child" style="margin-top: 15px;">
         <app-input [placeholder]="searchText" [model]="listSettings.search" (onChange)="listSettings.search = $event; updateList()"></app-input>
-        <button class=" flat-button"  (click)="resetAll()"><span class="link">Reset All</span></button>
+        <button class="simple-button"  (click)="resetAll()">Reset All</button>
 
         <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
         <div class="table-responsive">

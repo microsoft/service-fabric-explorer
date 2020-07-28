@@ -1,33 +1,60 @@
 <div class="detail-pane essen-pane">
-    <div class="table-responsive" *ngIf="app && app.isInitialized">
-        <table class="essen-table" role="presentation">
-            <tr>
-                <th>Name</th>
-                <th>Application Type</th>
-            </tr>
-            <tr>
-                <td title="{{app?.name}}">{{app?.name}}<app-clip-board [text]="app?.name"></app-clip-board></td>
-                <td><a href="{{app?.appTypeViewPath}}" title="{{app?.raw.TypeName}}">{{app?.raw.TypeName}}</a><app-clip-board [text]="app?.raw.TypeName"></app-clip-board></td>
-            </tr>
-            <tr>
-                <th>Health State</th>
-                <th>Version</th>
-            </tr>
-
-            <tr>
-                <td><app-health-badge [badgeClass]="app?.healthState.badgeClass" [text]="app?.healthState.text"></app-health-badge></td>
-                <td>{{app?.raw.TypeVersion}}<app-clip-board [text]="app?.raw.TypeVersion"></app-clip-board></td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <th *ngIf="app && app.isUpgrading" ]>Upgrade status Details</th>
-            </tr>
-            <tr>
-                <td>{{app.raw.Status}}</td>
-                <td *ngIf="app && app.isUpgrading && upgradeProgress && upgradeProgress.isInitialized">{{upgradeProgress.raw.UpgradeStatusDetails}}</td>
-            </tr>
-        </table>
+  <div class="essential-container" *ngIf="app && app.isInitialized">
+    <div class="essential-item essential-fourth">
+      <div class="essential-head">
+        Name
+      </div>
+      <div class="essential-body">
+        {{app?.name}}<app-clip-board [text]="app?.name"></app-clip-board>
+      </div>
     </div>
+
+    <div class="essential-item essential-fourth">
+      <div class="essential-head">
+        Application Type
+      </div>
+      <div class="essential-body">
+        <a href="{{app?.appTypeViewPath}}" title="{{app?.raw.TypeName}}">{{app?.raw.TypeName}}</a>
+        <app-clip-board [text]="app?.raw.TypeName"></app-clip-board>
+      </div>
+    </div>
+
+    <div class="essential-item essential-fourth">
+      <div class="essential-head">
+        Health State
+      </div>
+      <div class="essential-body">
+        <app-health-badge [badgeClass]="app?.healthState.badgeClass" [text]="app?.healthState.text"></app-health-badge>
+      </div>
+    </div>
+
+    <div class="essential-item essential-fourth">
+      <div class="essential-head">
+        Version
+      </div>
+      <div class="essential-body">
+        {{app?.raw.TypeVersion}}<app-clip-board [text]="app?.raw.TypeVersion"></app-clip-board>
+      </div>
+    </div>
+
+    <div class="essential-item essential-fourth">
+      <div class="essential-head">
+        Status
+      </div>
+      <div class="essential-body">
+        {{app.raw.Status}}
+      </div>
+    </div>
+
+    <div class="essential-item essential-fourth" *ngIf="app && app.isUpgrading">
+      <div class="essential-head">
+        Upgrade status Details
+      </div>
+      <div class="essential-body" *ngIf="upgradeProgress && upgradeProgress.isInitialized">
+        {{upgradeProgress.raw.UpgradeStatusDetails}}
+      </div>
+    </div>
+  </div>
 </div>
 
 <div id="upgradeDetailsSection" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
@@ -61,12 +88,12 @@
                     </tbody>
                 </table>
             </div>
-        
+
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDomains.length > 0">
                 <h4>Progress by Upgrade Domain</h4>
                 <upgrade-progress [upgradeDomains]="upgradeProgress.upgradeDomains"></upgrade-progress>
             </div>
-        
+
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.raw.FailureReason !== 'None'">
                 <h4>Upgrade Failure</h4>
                 <div class="table-responsive">
@@ -90,7 +117,7 @@
                 <h4>Unhealthy Evaluations (Upgrade)</h4>
                 <detail-list [list]="upgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></detail-list>
             </div>
-        
+
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDescription">
                 <h4>Upgrade Parameters</h4>
                 <app-detail-view-part [data]="upgradeProgress.upgradeDescription"></app-detail-view-part>

@@ -1,79 +1,139 @@
 <div *ngIf="partition">
-    <div class="detail-pane essen-pane">
-        <div class="table-responsive">
-            <table class="essen-table" role="presentation">
-                <tr>
-                    <th>Id</th>
-                    <th>Partition Kind</th>
-                </tr>
-                <tr>
-                    <td [title]="partitionId">{{partitionId}}<app-clip-board [text]="partitionId"></app-clip-board></td>
-                    <td>{{partition.partitionInformation.raw.ServicePartitionKind}}</td>
-                </tr>
-                <tr>
-                    <th>Health State</th>
-                    <th *ngIf="partition.isStatelessService">Instance Count</th>
-                    <th *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">Low Key</th>
-                    <th *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindNamed">Name</th>
-                </tr>
-                <tr>
-                    <td><app-health-badge [badgeClass]="partition.healthState.badgeClass" [text]="partition.healthState.text"></app-health-badge></td>
-                    <td *ngIf="partition.isStatelessService">{{partition.raw.InstanceCount}}</td>
-                    <td *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">{{partition.partitionInformation.raw.LowKey}}</td>
-                    <td *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindNamed">{{partition.partitionInformation.raw.Name}}</td>
-                </tr>
-                <tr>
-                    <th>Status</th>
-                    <th *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">High Key</th>
-                </tr>
-                <tr>
-                    <td>{{partition.raw.PartitionStatus}}</td>
-                    <td *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">{{partition.partitionInformation.raw.HighKey}}</td>
-                </tr>
-                <tr *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">
-                    <th>Minimum Replica Set Size</th>
-                    <th>Target Replica Set Size</th>
-                </tr>
-                <tr *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">
-                    <td>{{partition.raw.MinReplicaSetSize}}</td>
-                    <td>{{partition.raw.TargetReplicaSetSize}}</td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    
-    <div class="detail-pane essen-pane">
-        <app-collapse-container sectionName="Unhealthy Evaluations">
-            <div collapse-header>
-                <h4>Unhealthy Evaluations</h4>
-            </div>
-            <div collapse-body>
-                <detail-list [list]="partition.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
-            </div>
-        </app-collapse-container>
-    </div>
-    
-    <div class="detail-pane essen-pane">
-        <app-collapse-container [sectionName]="partition.isStatelessService ? 'Instances' : 'Replicas'">
-            <div collapse-header>
-                <h4>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h4>
-            </div>
-            <div collapse-body>
-                <detail-list [list]="partition.replicas.collection" [listSettings]="listSettings" *ngIf="partition.replicas.isInitialized"></detail-list>
-            </div>
-        </app-collapse-container>
-    </div>
+  <div class="detail-pane essen-pane">
+    <div class="essential-container">
 
-    <div class="detail-pane" *ngIf="partition.isStatefulService" >
-        <app-collapse-container [(collapsed)]="hideReplicator" sectionName="Replicator Status">
-            <div collapse-header>
-                <h4>Replicator Status</h4>
-            </div>
-            <div collapse-body>
-                <div *ngIf="!hideReplicator">
-                    <app-replica-status-container [replicas]="partition.replicas.collection"></app-replica-status-container>
-                </div>
-            </div>
-        </app-collapse-container>
+      <div class="essential-item essential-half">
+        <div class="essential-head">
+          Id
+        </div>
+        <div class="essential-body">
+          {{partitionId}}<app-clip-board [text]="partitionId"></app-clip-board>
+        </div>
+      </div>
+
+      <div class="essential-item essential-half">
+        <div class="essential-head">
+          Partition Kind
+        </div>
+        <div class="essential-body">
+          {{partition.partitionInformation.raw.ServicePartitionKind}}
+        </div>
+      </div>
+
+      <div class="essential-item essential-half">
+        <div class="essential-head">
+          Health State
+        </div>
+        <div class="essential-body">
+          <app-health-badge [badgeClass]="partition.healthState.badgeClass" [text]="partition.healthState.text">
+          </app-health-badge>
+        </div>
+      </div>
+
+      <div class="essential-item essential-half" *ngIf="partition.isStatelessService">
+        <div class="essential-head">
+          Instance Count
+        </div>
+        <div class="essential-body">
+          {{partition.raw.InstanceCount}}
+        </div>
+      </div>
+
+      <div class="essential-item essential-half"
+        *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">
+        <div class="essential-head">
+          Low Key
+        </div>
+        <div class="essential-body">
+          {{partition.partitionInformation.raw.LowKey}}
+        </div>
+      </div>
+
+      <div class="essential-item essential-half"
+        *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindNamed">
+        <div class="essential-head">
+          Name
+        </div>
+        <div class="essential-body">
+          {{partition.partitionInformation.raw.Name}}
+        </div>
+      </div>
+
+      <div class="essential-item essential-half">
+        <div class="essential-head">
+          Status
+        </div>
+        <div class="essential-body">
+          {{partition.raw.PartitionStatus}}
+        </div>
+      </div>
+
+      <div class="essential-item essential-half"
+        *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">
+        <div class="essential-head">
+          High Key
+        </div>
+        <div class="essential-body">
+          {{partition.partitionInformation.raw.HighKey}}
+        </div>
+      </div>
+
+      <div class="essential-item essential-half">
+        <div class="essential-head">
+          Minimum Replica Set Size
+        </div>
+        <div class="essential-body">
+          {{partition.raw.MinReplicaSetSize}}
+        </div>
+      </div>
+
+      <div class="essential-item essential-half">
+        <div class="essential-head">
+          Target Replica Set Size
+        </div>
+        <div class="essential-body">
+          {{partition.raw.TargetReplicaSetSize}}
+        </div>
+      </div>
+
     </div>
+  </div>
+
+
+  <div class="detail-pane essen-pane">
+    <app-collapse-container sectionName="Unhealthy Evaluations">
+      <div collapse-header>
+        <h4>Unhealthy Evaluations</h4>
+      </div>
+      <div collapse-body>
+        <detail-list [list]="partition.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings">
+        </detail-list>
+      </div>
+    </app-collapse-container>
+  </div>
+
+  <div class="detail-pane essen-pane">
+    <app-collapse-container [sectionName]="partition.isStatelessService ? 'Instances' : 'Replicas'">
+      <div collapse-header>
+        <h4>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h4>
+      </div>
+      <div collapse-body>
+        <detail-list [list]="partition.replicas.collection" [listSettings]="listSettings"
+          *ngIf="partition.replicas.isInitialized"></detail-list>
+      </div>
+    </app-collapse-container>
+  </div>
+
+  <div class="detail-pane" *ngIf="partition.isStatefulService">
+    <app-collapse-container [(collapsed)]="hideReplicator" sectionName="Replicator Status">
+      <div collapse-header>
+        <h4>Replicator Status</h4>
+      </div>
+      <div collapse-body>
+        <div *ngIf="!hideReplicator">
+          <app-replica-status-container [replicas]="partition.replicas.collection"></app-replica-status-container>
+        </div>
+      </div>
+    </app-collapse-container>
+  </div>
 </div>

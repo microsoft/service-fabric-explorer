@@ -14,8 +14,8 @@
             <div (click)="node.pageFirst()" style="padding-left: 10px;" class="expander icon mif-vertical-align-top link" [title]="'First ' + node.owningNode.listSettings.limit + ' items'" aria-hidden="true"></div>
         </div>
     </li>
-    <li *ngFor="let child of node.displayedChildren; trackBy: trackById" class="node" [ngClass]="{ 'selected': child.selected }" role="treeitem" [attr.aria-level]="child.depth" >
-        <button class="self hide-nested" (click)="child.handleClick()" role="button" tabindex="0"  style="width: 100%; display: flex; align-items: center;"
+    <li *ngFor="let child of node.displayedChildren; trackBy: trackById" class="node" [ngClass]="{ 'selected': child.selected }" >
+        <button class="self hide-nested" (click)="child.handleClick()" role="button" tabindex="0" role="treeitem" [attr.aria-level]="child.depth" style="width: 100%; display: flex; align-items: center;"
              [attr.aria-label]="child.displayName()">
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
             <button tabindex="0" class="expander icon " aria-hidden="false" role="button"

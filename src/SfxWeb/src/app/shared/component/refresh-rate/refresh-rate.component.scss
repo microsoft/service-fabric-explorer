@@ -16,3 +16,9 @@ input {
     display: flex;
     align-items: center;
 }
+
+@media (max-width: 500px) {
+  input {
+    width: 30%;
+  }
+}

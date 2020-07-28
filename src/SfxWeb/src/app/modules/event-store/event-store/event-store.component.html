@@ -27,15 +27,15 @@
             </span>
         </div>
 
-        <div *ngIf="timeLineEventsData" aria-hidden="true">
-            <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>            
+        <div *ngIf="timeLineEventsData">
+            <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>
         </div>
 
         <detail-list [list]="eventsList.collection" [listSettings]="eventsList.settings"></detail-list>
-    
+
         <div>
             <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
-                <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error" 
+                <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error"
                 style="margin-right: 2px; vertical-align: top;"></span>
                 <div style="display: inline-block;">
                     There is a limit of up to 500 events for a given range.
