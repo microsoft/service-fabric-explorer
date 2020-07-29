@@ -156,7 +156,6 @@ export class RepairTask {
             if( (index + 1) === phases.length) {
                 if(phase.cssClass === "repair-green") {
                     status = 1;
-                    console.log("test")
                 } 
             }
         })
