@@ -29,7 +29,7 @@
         </span>
         <div class="tree-body" #tree style="height: 100%" >
             <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view" style="position: relative; height: 100%">
-                <div class="tree" style="list-style: none">
+                <div class="tree" style="list-style: none" *ngIf="treeService.tree.childGroupViewModel">
                     <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
                 </div>
             </div>
