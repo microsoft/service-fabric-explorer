@@ -111,7 +111,7 @@ describe('ReplicaStatusComponent', () => {
       NotReceivedCount: "100",
       ReceivedAndNotAppliedCount: "100"
     }
-    expect(component.getEstimatedDuration(details)).toEqual("0.00:00:30.0");
+    expect(component.getEstimatedDuration(details)).toEqual("0.00:00:30.000");
 
     const details2: IRemoteReplicatorAcknowledgementDetail = {
       AverageApplyDuration: "1500",
@@ -119,7 +119,7 @@ describe('ReplicaStatusComponent', () => {
       NotReceivedCount: "200",
       ReceivedAndNotAppliedCount: "100"
     }
-    expect(component.getEstimatedDuration(details2)).toEqual("0.00:07:50.0");
+    expect(component.getEstimatedDuration(details2)).toEqual("0.00:07:50.000");
   });
 
 });

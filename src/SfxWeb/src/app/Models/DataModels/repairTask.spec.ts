@@ -1,4 +1,4 @@
-import { RepairTask } from "./repairTask";
+import { RepairTask, InProgressStatus } from "./repairTask";
 import { IRawRepairTask } from '../RawDataTypes';
 
 
@@ -56,6 +56,7 @@ describe('RepairTask', () => {
         expect(task.couldParseExecutorData).toBe(true);
         expect(task.impactedNodes.length).toBe(0);
         expect(task.inProgress).toBe(false);
+        expect(task.historyPhases.length).toBe(3);
     });
 
     fit('validate in progress repairTask', () => {
@@ -73,7 +74,7 @@ describe('RepairTask', () => {
         expect(task.inProgress).toBe(true);
     });
 
-    fit('validate repairTask history', () => {
+    fit('validate repairTask history in executing', () => {
         testData.State = "Executing";
         testData.History = {
             "CreatedUtcTimestamp": "2020-07-17T03:17:33.342Z",
@@ -95,9 +96,15 @@ describe('RepairTask', () => {
         expect(task.history).toContain({
             timestamp: "2020-07-17T03:17:48.437Z",
             phase: "Executing",
-            duration: "In Progress \n (0.01:00:00.0)",
-            cssClass: "repair-blue"
+            duration: "0.01:00:00.000",
+            durationMilliseconds: 60 * 60 * 1000,
+            displayInfo: InProgressStatus,
         })
+
+        
+        expect(task.historyPhases[2].durationMilliseconds).toBe(0);
+        expect(task.historyPhases[2].status).toBe("Not started");
+        expect(task.historyPhases[0].status).toBe("Done");
     });
 
 });

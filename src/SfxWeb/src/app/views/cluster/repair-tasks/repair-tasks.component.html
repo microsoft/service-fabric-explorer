@@ -1,3 +1,8 @@
+<div *ngIf="timelineData" style="margin-bottom: 20px; margin-left: 15px;">
+    <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" 
+                              [displayMoveToStart]="false" [displayMoveToEnd]="false"></app-event-store-timeline>
+</div>
+
 <div class="detail-pane essen-pane">
     <app-collapse-container>
         <h4 collapse-header>
@@ -7,13 +12,8 @@
     </app-collapse-container>
 </div>
 
-<div *ngIf="timelineData" style="margin-bottom: 20px; margin-left: 15px;">
-    <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" 
-                              [displayMoveToStart]="false" [displayMoveToEnd]="false"></app-event-store-timeline>
-</div>
-
 <div class="detail-pane essen-pane">
-    <app-collapse-container>
+    <app-collapse-container collapsed=true >
         <h4 collapse-header>
             Completed Repair Tasks
         </h4>
