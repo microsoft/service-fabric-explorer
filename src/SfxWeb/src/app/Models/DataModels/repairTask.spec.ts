@@ -101,10 +101,16 @@ describe('RepairTask', () => {
             displayInfo: InProgressStatus,
         })
 
-        
-        expect(task.historyPhases[2].durationMilliseconds).toBe(0);
-        expect(task.historyPhases[2].status).toBe("Not started");
+        expect(task.historyPhases[0].startCollapsed).toBeTruthy();
         expect(task.historyPhases[0].status).toBe("Done");
+
+        expect(task.historyPhases[1].startCollapsed).toBeFalsy();
+        expect(task.historyPhases[1].status).toBe("In Progress");
+
+
+        expect(task.historyPhases[2].durationMilliseconds).toBe(0);
+        expect(task.historyPhases[2].status).toBe("Not Started");
+        expect(task.historyPhases[2].startCollapsed).toBeTruthy();
     });
 
 });

@@ -197,7 +197,7 @@ export class RepairTask {
 
             default:
                 statusCss = "repair-gray";
-                statusText = "Not started";
+                statusText = "Not Started";
                 startCollapsed = true;
                 break;
         }
