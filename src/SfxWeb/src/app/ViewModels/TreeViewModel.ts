@@ -1,5 +1,4 @@
 ﻿import { IClusterHealthChunkQueryDescription, IClusterHealthChunk } from '../Models/HealthChunkRawDataTypes';
-import { TreeNodeViewModel } from './TreeNodeViewModel';
 import { TreeNodeGroupViewModel } from './TreeNodeGroupViewModel';
 import { ITreeNode } from './TreeTypes';
 import { Observable } from 'rxjs';
@@ -11,7 +10,7 @@ import { Observable } from 'rxjs';
 
 export class TreeViewModel {
     public childGroupViewModel: TreeNodeGroupViewModel;
-    public selectedNode: TreeNodeViewModel;
+    public selectedNode: TreeNodeGroupViewModel;
 
     public showOkItems: boolean = true;
     public showWarningItems: boolean = true;
@@ -40,13 +39,20 @@ export class TreeViewModel {
     }
 
     public refreshChildren() {
-        this.childGroupViewModel = new TreeNodeGroupViewModel(this, null, this._childrenQuery);
+        const baseNode: ITreeNode = {childrenQuery: this._childrenQuery, 
+                                     displayName: () => "",
+                                    nodeId: "base"};
+        this.childGroupViewModel = new TreeNodeGroupViewModel(this, baseNode, null);
         if (this.childGroupViewModel.isCollapsed) {
-            this.childGroupViewModel.toggle();
+            this.childGroupViewModel.toggle().subscribe(() => {
+                if(this.childGroupViewModel.children.length > 0) {
+                    this.childGroupViewModel.children[0].toggle();
+                }
+            });
         }
     }
 
-    public selectNode(node: TreeNodeViewModel): boolean {
+    public selectNode(node: TreeNodeGroupViewModel): boolean {
         if (this.selectedNode === node) {
             return false;
         }
@@ -112,7 +118,7 @@ export class TreeViewModel {
                 return;
             }
 
-            let node: TreeNodeViewModel = null;
+            let node: TreeNodeGroupViewModel = null;
             let nodes = group.children;
             for (let i = 0; i < nodes.length; i++) {
                 if (nodes[i].nodeId === path[currIndex]) {
@@ -137,7 +143,7 @@ export class TreeViewModel {
                         node.select(0, skipSelectAction);
                     }
                 } else {
-                    this.selectTreeNodeInternal(path, currIndex + 1, node.childGroupViewModel, opId, skipSelectAction).subscribe();
+                    this.selectTreeNodeInternal(path, currIndex + 1, node, opId, skipSelectAction).subscribe();
                 }
             }
         });
