@@ -436,7 +436,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
 }
 
 export class PartitionTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
-    static readonly swapPrimaryLabel = "Primay Swap";
+    static readonly swapPrimaryLabel = "Primary Swap";
     static readonly swapPrimaryDurations = "Swap Primary phases";
 
     consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
