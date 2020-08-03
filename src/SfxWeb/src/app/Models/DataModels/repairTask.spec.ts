@@ -57,6 +57,15 @@ describe('RepairTask', () => {
         expect(task.impactedNodes.length).toBe(0);
         expect(task.inProgress).toBe(false);
         expect(task.historyPhases.length).toBe(3);
+
+        expect(task.historyPhases[0].startCollapsed).toBeTruthy();
+        expect(task.historyPhases[0].status).toBe("Done");
+
+        expect(task.historyPhases[1].startCollapsed).toBeTruthy();
+        expect(task.historyPhases[1].status).toBe("Done");
+
+        expect(task.historyPhases[2].status).toBe("Done");
+        expect(task.historyPhases[2].startCollapsed).toBeTruthy();
     });
 
     fit('validate in progress repairTask', () => {

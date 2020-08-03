@@ -19,30 +19,39 @@ export interface IRepairTaskPhase {
     duration: string;
     durationMilliseconds: number;
     phases: IRepairTaskHistoryPhase[];
-    startCollapsed: number;
+    startCollapsed: boolean;
     status: string;
     statusCss: string;
 }
 
+export enum StatusCSS {
+    Finished = "repair-green",
+    InProgress = "repair-blue",
+    NotStarted = "repair-gray"
+}
+
+//TEMPLATES FOR DISPLAYING STATUS
 export const FinishedStatus: IDisplayStatus = {
     badgeIcon: "mif-done",
     status: "This step is Finished",
-    statusCss: "repair-green"
+    statusCss: StatusCSS.Finished
 }
 
 
 export const InProgressStatus: IDisplayStatus = {
     badgeIcon: "mif-spinner4",
     status: "This step is in progress",
-    statusCss: "repair-blue"
+    statusCss: StatusCSS.InProgress
 }
 
 
 export const NotStartedStatus: IDisplayStatus = {
     badgeIcon: "",
     status: "This step is not started",
-    statusCss: "repair-gray"
+    statusCss: StatusCSS.NotStarted
 }
+
+
 
 export class RepairTask {
     public static NonStartedTimeStamp = "0001-01-01T00:00:00.000Z";
@@ -166,6 +175,9 @@ export class RepairTask {
         let duration = 0;
         let status = -1;
 
+        //check all of the phases and if any are in progress, default to not started
+        //set the phase to at least 0 saying in progress
+        //if last phase is finished, set overall to finished status.
         phases.forEach((phase, index) => {
             duration += phase.durationMilliseconds;
 
@@ -180,23 +192,23 @@ export class RepairTask {
             }
         })
 
-        let statusText;
-        let statusCss;
-        let startCollapsed;
+        let statusText: string;
+        let statusCss: StatusCSS;
+        let startCollapsed: boolean;
         switch (status) {
             case 1:
-                statusCss = "repair-green";
+                statusCss = StatusCSS.Finished;
                 statusText = "Done";
                 startCollapsed = true;
                 break;
             case 0:
-                statusCss = "repair-blue";
+                statusCss = StatusCSS.InProgress;
                 statusText = "In Progress";
                 startCollapsed = false;
                 break;
 
             default:
-                statusCss = "repair-gray";
+                statusCss = StatusCSS.NotStarted;
                 statusText = "Not Started";
                 startCollapsed = true;
                 break;
