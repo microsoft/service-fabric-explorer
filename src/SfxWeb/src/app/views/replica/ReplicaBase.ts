@@ -1,5 +1,5 @@
 import { DataService } from 'src/app/services/data.service';
-import { Injector } from '@angular/core';
+import { Injector, Directive } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -9,6 +9,7 @@ import { BaseController } from 'src/app/ViewModels/BaseController';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { Constants } from 'src/app/Common/Constants';
 
+@Directive()
 export class ReplicaBaseController extends BaseController {
     public appId: string;
     public serviceId: string;

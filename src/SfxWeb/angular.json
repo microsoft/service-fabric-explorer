@@ -37,6 +37,9 @@
               "src/calender.scss",
               "src/_candybar.scss"
             ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ],
             "scripts": [],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -84,7 +87,10 @@
             "production": {
               "browserTarget": "SfxWeb:build:production"
             }
-          }
+          },
+          "allowedCommonJsDependencies": [
+            "lodash"
+          ]
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",
