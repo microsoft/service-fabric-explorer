@@ -23,6 +23,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
   @Input() listSettings: ListSettings;
   @Input() searchText = "Search list";
+  @Input() isLoading: boolean = false;
   private _list: any[];
   public sortedFilteredList: any[] = []; //actual list displayed in html.
 

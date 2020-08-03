@@ -2,8 +2,7 @@ import { Injectable } from '@angular/core';
 import { StorageService } from './storage.service';
 import { Constants } from '../Common/Constants';
 import { Observable, interval, Subscription, forkJoin, timer, of } from 'rxjs';
-import { catchError, tap, take, finalize } from 'rxjs/operators';
-import { MessageService } from './message.service';
+import { catchError, take, finalize } from 'rxjs/operators';
 
 @Injectable({
   providedIn: 'root'
@@ -18,8 +17,7 @@ export class RefreshService {
   private refreshSubjects: { (): Observable<any>; } [] = [];
   private _refreshSubjectsMap: Record<string, { (): Observable<any>; }> = {}; 
 
-  constructor(private storage: StorageService,
-              private toastService: MessageService) { }
+  constructor(private storage: StorageService) { }
 
   public init(): void {
     let defaultRefreshInterval = this.storage.getValueNumber(
@@ -45,26 +43,22 @@ export class RefreshService {
   }
 
   public refreshAll(): void {
-      if (this.isRefreshing) {
-          return;
-      }
 
       let refreshStartedTime = Date.now();
       this.isRefreshing = true;
       
-      const subs =  this.refreshSubjects.map(observeFunction => {
-         return observeFunction().pipe(take(1), catchError(err => {console.log(err); return of(err)})); 
+      const subs = this.refreshSubjects.map(observeFunction => {
+         return observeFunction().pipe(take(1), catchError(err => {return of(null)})); 
       })
 
       try {
         forkJoin(subs).pipe(
-          catchError(err => of(err)),
-
-        ).subscribe(() => {
-          // Rotate the refreshing icon for at least 1 second
-          let remainingTime = Math.max(1000 - (Date.now() - refreshStartedTime), 0);
-          timer(remainingTime).subscribe( () => this.isRefreshing = false);
-        })
+          finalize(() => {
+            // Rotate the refreshing icon for at least 1 second
+            let remainingTime = Math.max(1000 - (Date.now() - refreshStartedTime), 0);
+            timer(remainingTime).subscribe( () => this.isRefreshing = false);
+          })
+        ).subscribe()
       } catch {
         this.isRefreshing = false;
       }
@@ -74,6 +68,7 @@ export class RefreshService {
   public updateRefreshInterval(newValue: string, noRefresh: boolean = false): void {
       this.storage.setValue(Constants.AutoRefreshIntervalStorageKey, newValue)
 
+      //remove existing auto refresh observable
       if (this.autoRefreshInterval) {
           this.currentSync.unsubscribe();
           this.autoRefreshInterval = null;
@@ -82,11 +77,9 @@ export class RefreshService {
       let newInterval: number = parseInt(newValue, 10);
       this.refreshRate = newValue;
 
-      if (newInterval === 0) {
-          console.log("Turned off auto refresh");
-      } else {
+      if (newInterval > 0 ) {
           console.log("Auto refresh interval = " + newInterval + " seconds");
-          this.autoRefreshInterval =  interval(newInterval * 1000)  //this.$interval(() => this.refreshAll(), newInterval * 1000);
+          this.autoRefreshInterval =  interval(newInterval * 1000) 
           this.currentSync = this.autoRefreshInterval.subscribe( () => this.refreshAll());
           if (!noRefresh && (this.previousRefreshSetting === 0 || newInterval < this.previousRefreshSetting)) {
               this.refreshAll();

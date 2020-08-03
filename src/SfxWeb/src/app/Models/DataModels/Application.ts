@@ -11,8 +11,8 @@ import { HealthBase } from './HealthEvent';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HealthEvaluation, UpgradeDescription, UpgradeDomain } from './Shared';
 import { Utils } from 'src/app/Utils/Utils';
-import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
 import { ServiceCollection } from './collections/ServiceCollection';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
@@ -141,12 +141,15 @@ export class Application extends DataModelBase<IRawApplication> {
 
                 let replicaQueries = nodes.collection.map((node) =>
                     this.data.restClient.getReplicasOnNode(node.name, this.id)
-                        .subscribe((response) => response.forEach((replica) => {
-                            replicas.push({
-                                Replica: replica,
-                                NodeName: node.name
-                            });
-                        })));
+                        .pipe(catchError(err => of([])), 
+                            map((response) => (response || []).forEach((replica) => {
+                                replicas.push({
+                                    Replica: replica,
+                                    NodeName: node.name
+                                });
+                            }))
+                        )
+                    );
 
                 forkJoin(replicaQueries).pipe(map(() => {
                     replicas.forEach(replicaInfo =>

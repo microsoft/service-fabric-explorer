@@ -11,7 +11,7 @@ export class Constants {
     public static FabricPrefix: string = "fabric:/";
 
     // Storage key names
-    public static AutoRefreshIntervalStorageKey: string = "sfxAutoRefreshInterval";
+    public static AutoRefreshIntervalStorageKey: string = "sfxAutoRefreshIntervalV2";
     public static SplitterLeftWidth: string = "sfxSplitterleftWidth";
     public static ThemeNameStorageKey: string = "sfxThemeName";
     public static PaginationLimitStorageKey: string = "sfxPaginationLimit";

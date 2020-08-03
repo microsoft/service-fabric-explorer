@@ -131,9 +131,13 @@ export class TreeService {
                 };
             }));
 
-            let systemNodePromise = this.data.getSystemApp().pipe(map(systemApp => {
-
-              return {
+            let systemNodePromise = this.data.getSystemApp().pipe(
+                            catchError(err => {
+                return of(null);
+            }),
+            map(systemApp => {
+              if(systemApp) {
+                return {
                     nodeId: IdGenerator.systemAppGroup(),
                     displayName: () => Constants.SystemAppTypeName,
                     selectAction: () => this.routes.navigate(() => systemApp.viewPath),
@@ -148,10 +152,21 @@ export class TreeService {
                         return systemApp.services.mergeClusterHealthStateChunk(clusterHealthChunk);
                     }
                 };
+              }else{
+                  return null;
+              }
+            }),
+
+            );
+
+
+            return forkJoin([getAppsPromise, getNodesPromise, systemNodePromise]).pipe(map(resp => {
+                if(resp[2] === null) {
+                    resp.splice(2);
+                    return resp;
+                }
+                return resp;
             }));
-
-
-            return forkJoin([getAppsPromise, getNodesPromise, systemNodePromise]);
         }
 
         private getNodes(): Observable<ITreeNode[]> {

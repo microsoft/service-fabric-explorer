@@ -25,7 +25,6 @@ export class RefreshRateComponent {
     3: "30",
     4: "10",
     5: "5",
-    6: "2"
   }
 
   changed() {

@@ -11,7 +11,7 @@ import { ActionCollection } from '../Models/ActionCollection';
 
 export interface ITreeNode {
     displayName: () => string;
-    nodeId?: string;
+    nodeId: string;
     childrenQuery?: () => Observable<ITreeNode[]>;
     selectAction?: () => void;
     badge?: () => ITextAndBadge;

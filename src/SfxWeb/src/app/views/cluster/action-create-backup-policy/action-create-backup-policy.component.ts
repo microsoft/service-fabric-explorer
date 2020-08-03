@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 import { FormGroup, FormBuilder, Validators, FormArray, AbstractControl } from '@angular/forms';
@@ -7,7 +7,8 @@ import { IsolatedAction } from 'src/app/Models/Action';
 @Component({
   selector: 'app-action-create-backup-policy',
   templateUrl: './action-create-backup-policy.component.html',
-  styleUrls: ['./action-create-backup-policy.component.scss']
+  styleUrls: ['./action-create-backup-policy.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ActionCreateBackupPolicyComponent implements OnInit {
 
@@ -21,7 +22,8 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
   constructor(public dialogRef: MatDialogRef<ActionCreateBackupPolicyComponent>,
     @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
     private dataService: DataService,
-    private formBuilder: FormBuilder) {        
+    private formBuilder: FormBuilder,
+    private cdr: ChangeDetectorRef) {        
   }
 
   public saveBackupPolicy() {
@@ -71,6 +73,16 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
       })
     })
 
+    this.form.get('retentionPolicyRequired').valueChanges.subscribe(required => {
+      this.form.get('RetentionPolicy').get('RetentionDuration').setValidators(required ? [Validators.required, Validators.minLength(1)] : null);
+      this.form.get('RetentionPolicy').get('RetentionDuration').updateValueAndValidity();
+      this.cdr.detectChanges();
+    })
+
+    this.form.get('Schedule').get('ScheduleKind').valueChanges.subscribe(type => {
+      this.updateSchedule(type);
+    })
+
     if(this.data.data) {
         this.isUpdateOperation = true;
         this.form.patchValue(this.data.data);
@@ -82,18 +94,13 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
         if(this.data.data.Schedule.ScheduleFrequencyType === 'Weekly') {
           this.setDays(this.data.data.Schedule.RunDays);
         }
+    }else {
+      this.setDays([])
     }
 
-    this.form.get('retentionPolicyRequired').valueChanges.subscribe(required => {
-      this.form.get('RetentionPolicy').get('RetentionDuration').setValidators(required ? [Validators.required, Validators.minLength(1)] : null);
-      this.form.get('RetentionPolicy').get('RetentionDuration').updateValueAndValidity();
-    })
-
-    this.form.get('Schedule').get('ScheduleKind').valueChanges.subscribe(type => {
-      this.updateSchedule(type);
-    })
-
     this.updateSchedule(this.form.get('Schedule').get('ScheduleKind').value);
+
+    this.cdr.detectChanges();
   }
 
   updateSchedule(state: string) {
@@ -102,19 +109,29 @@ export class ActionCreateBackupPolicyComponent implements OnInit {
 
     this.form.get('Schedule').get('ScheduleFrequencyType').updateValueAndValidity();
     this.form.get('Schedule').get('Interval').updateValueAndValidity();  
+    this.cdr.detectChanges();
+
   }
 
   get RunTimes() {
-    return this.form.get(['Schedule', 'RunTimes']) as FormArray;
+    return this.form.get('Schedule').get('RunTimes') as FormArray;
+  }
+
+  get RunDays() {
+    return this.form.get('Schedule').get('RunDays') as FormArray;
   }
 
   addRunTime() {
     this.RunTimes.push(this.formBuilder.control([this.date]))
     this.date = "";
+    this.cdr.detectChanges();
+
   }
 
   removeRunTime(index: number) {
     this.RunTimes.removeAt(index);
+    this.cdr.detectChanges();
+
   }
 
   getRunDaysControl() {
