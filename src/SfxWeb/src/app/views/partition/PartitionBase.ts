@@ -1,5 +1,5 @@
 import { DataService } from 'src/app/services/data.service';
-import { Injector } from '@angular/core';
+import { Injector, Directive } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { IdUtils } from 'src/app/Utils/IdUtils';
 import { BaseController } from 'src/app/ViewModels/BaseController';
 import { Partition } from 'src/app/Models/DataModels/Partition';
 
+@Directive()
 export class PartitionBaseController extends BaseController {
     public appId: string;
     public serviceId: string;
