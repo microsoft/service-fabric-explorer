@@ -43,6 +43,7 @@ export class RepairTasksComponent extends BaseController {
         new ListColumnSetting("impactedNodes", "Impact"),
         new ListColumnSetting("raw.State", "State", ["raw.State"], true),
         new ListColumnSetting("createdAt", "Created at"),
+        new ListColumnSetting("displayDuration", "Duration"),
     ],
     [
       new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
@@ -65,6 +66,7 @@ export class RepairTasksComponent extends BaseController {
             new ListColumnSetting("impactedNodes", "Impact"),
             new ListColumnSetting("raw.ResultStatus", "Result Status", ["raw.ResultStatus"], true),
             new ListColumnSetting("createdAt", "Created at"),
+            new ListColumnSetting("displayDuration", "Duration"),
         ],
         [
           new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
