@@ -69,7 +69,7 @@ export class TreeNodeGroupViewModel {
         if (this.parent) {
             return this.nonRootpaddingLeftPx;
         } else {
-            return "45px";
+            return "10px";
         }
     }
 
@@ -197,7 +197,7 @@ export class TreeNodeGroupViewModel {
 
     public get nonRootpaddingLeftPx(): string {
         // 18px is the total width of the expander icon
-       return (18 * (this.depth + 1)) + "px";
+       return (18 * (this.depth - .5)) + "px";
    }
 
    public get isVisibleByBadge(): boolean {
@@ -412,6 +412,19 @@ export class TreeNodeGroupViewModel {
             parentsChildren[myIndex + 1].select(this._keyboardSelectActionDelayInMilliseconds);
         }
         return myIndex;
+    }
+
+    public get filtered(): number {
+        if(this._tree.searchTerm.length === 0) {
+            return 0;
+        }else {
+            let count = 0;
+            if(this.displayName().toLowerCase().indexOf(this._tree.searchTerm.toLowerCase()) > -1) {
+                count ++;
+            }
+            this.children.forEach(child => count += child.filtered );
+            return count;
+        }
     }
 }
 

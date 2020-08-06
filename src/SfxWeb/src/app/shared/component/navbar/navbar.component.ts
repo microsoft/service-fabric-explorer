@@ -1,8 +1,7 @@
-import { Component, OnInit, Input, AfterViewInit, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, OnDestroy } from '@angular/core';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
 import { Router } from '@angular/router';
 import { Subscription, of } from 'rxjs';
-import { RoutesService } from 'src/app/services/routes.service';
 
 @Component({
   selector: 'app-navbar',
@@ -10,7 +9,7 @@ import { RoutesService } from 'src/app/services/routes.service';
   styleUrls: ['./navbar.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
+export class NavbarComponent implements OnDestroy {
 
   @Input() type: string = "";
   @Input() name: string = "";
@@ -21,33 +20,9 @@ export class NavbarComponent implements OnInit, AfterViewInit, OnDestroy {
 
   constructor(private router: Router) { }
 
-  ngOnInit() {
-
-  }
-
-  ngAfterViewInit() {
-    this.setFocus();      
-
-    this.sub = this.router.events.subscribe(event => {
-      this.setFocus();      
-    });
-  }
-
   ngOnDestroy() {
     if(this.sub) {
       this.sub.unsubscribe();
-    }
-  }
-
-
-  //specifically built for accessibility
-  setFocus() {
-    try {
-      setTimeout( () => {
-        document.getElementById("0").focus()
-      }, 1)
-    } catch (e) {
-
     }
   }
 
