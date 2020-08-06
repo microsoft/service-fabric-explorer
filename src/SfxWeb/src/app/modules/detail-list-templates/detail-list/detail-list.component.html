@@ -18,7 +18,7 @@
 
                         <div ngbDropdown *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle"
                             (openChange)="closeChange($event)">
-                            <button class="flat-button" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" title="filter by columnSetting.displayName options">
+                            <button class="flat-button" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" [title]="'filter by ' + columnSetting.displayName + ' options'" [attr.aria-haspopup]="false">
                                 <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}"></span>
                             </button>
                             <ul ngbDropdownMenu role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;"  >

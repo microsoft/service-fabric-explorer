@@ -15,7 +15,11 @@ export class ActionCollectionDropDownComponent {
   constructor(public dataService: DataService, private liveAnnouncer: LiveAnnouncer) { }
 
   closeChange(state: boolean) {
-    this.liveAnnouncer.announce(`Actions dropdown is now ${state ? 'Expanded' : 'Collapsed'}`)
+    const isIEOrEdge = /msie\s|trident\/|edg\//i.test(window.navigator.userAgent)
+
+    if(!isIEOrEdge) {
+      this.liveAnnouncer.announce(`Actions dropdown button is now ${state ? 'Expanded' : 'Collapsed'}`)
+    }
   }
 
 }

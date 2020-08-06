@@ -411,6 +411,8 @@ table.detail-list {
     border-bottom: 1px solid $table-border-color;
     color: white;
     overflow-x: inherit;
+    min-height: 72px;
+
     .no-border {
         border-top: none;
     }
@@ -612,7 +614,7 @@ html,body {
 .table-responsive {
     display: block;
     width: 100%;
-    overflow-x: auto;
+    overflow-x: visible;
     -webkit-overflow-scrolling: touch;
 }
 
