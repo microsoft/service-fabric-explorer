@@ -218,6 +218,8 @@ table.detail-list {
     border-bottom: 1px solid $table-border-color;
     color: white;
     overflow-x: inherit;
+    min-height: 72px;
+
     .no-border {
         border-top: none;
     }
@@ -419,7 +421,7 @@ html,body {
 .table-responsive {
     display: block;
     width: 100%;
-    overflow-x: auto;
+    overflow-y: visible;
     -webkit-overflow-scrolling: touch;
 }
 
@@ -862,4 +864,7 @@ app-navbar {
     margin-left: 7px;
     border-left: 3px solid gray;
     padding-left: 4px;
+}
+.essential-half {
+  width: 50%;
 }
