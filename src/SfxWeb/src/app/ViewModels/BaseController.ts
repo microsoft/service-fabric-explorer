@@ -1,4 +1,4 @@
-import { OnDestroy, OnInit, Injector } from '@angular/core';
+import { OnDestroy, OnInit, Injector, Directive } from '@angular/core';
 import { Observable, Subscription, of } from 'rxjs';
 import { IResponseMessageHandler } from '../Common/ResponseMessageHandlers';
 import { ActivatedRoute, Router, ActivatedRouteSnapshot } from '@angular/router';
@@ -6,6 +6,7 @@ import { mergeMap } from 'rxjs/operators';
 import { RefreshService } from '../services/refresh.service';
 import { MessageService } from '../services/message.service';
 
+@Directive()
 export abstract class BaseController implements  OnInit, OnDestroy {
 
     subscriptions: Subscription = new Subscription();
@@ -32,6 +33,9 @@ export abstract class BaseController implements  OnInit, OnDestroy {
              this.subscriptions.add(this.common().pipe(mergeMap( () => this.refresh())).subscribe(
                  () => {
                     this.refreshService.insertRefreshSubject("current controller" + this.getClassName(), this.refresh.bind(this, this.messageService));
+                 },
+                 () => {
+                     this.router.navigate(["/"]);
                  }
              ));
         }))

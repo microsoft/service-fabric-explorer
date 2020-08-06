@@ -1,5 +1,5 @@
 import { DataService } from 'src/app/services/data.service';
-import { Injector } from '@angular/core';
+import { Injector, Directive } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
@@ -8,6 +8,7 @@ import { IdUtils } from 'src/app/Utils/IdUtils';
 import { BaseController } from 'src/app/ViewModels/BaseController';
 import { Service } from 'src/app/Models/DataModels/Service';
 
+@Directive()
 export class ServiceBaseController extends BaseController {
     appId: string;
     serviceId: string;

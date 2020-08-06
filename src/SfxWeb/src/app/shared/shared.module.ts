@@ -17,7 +17,6 @@ import { ActionCollectionDropDownComponent } from './component/action-collection
 import { NgbDropdownModule, NgbToastModule, NgbDatepickerModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { InputComponent } from './component/input/input.component';
 import { ToastContainerComponent } from './component/toast-container/toast-container.component';
-import { BarChartComponent } from './component/bar-chart/bar-chart.component';
 import { CheckBoxComponent } from './component/check-box/check-box.component';
 import { ClusterUpgradeBannerComponent } from './component/cluster-upgrade-banner/cluster-upgrade-banner.component';
 import { DualDatePickerComponent } from './component/dual-date-picker/dual-date-picker.component';
@@ -25,7 +24,7 @@ import { AdvancedOptionComponent } from './component/advanced-option/advanced-op
 import { ReplicaAddressComponent } from './component/replica-address/replica-address.component';
 
 @NgModule({
-  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent],
+  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -35,6 +34,6 @@ import { ReplicaAddressComponent } from './component/replica-address/replica-add
     NgbDatepickerModule,
     NgbTooltipModule
   ],
-  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, BarChartComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent]
+  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent]
 })
 export class SharedModule { }

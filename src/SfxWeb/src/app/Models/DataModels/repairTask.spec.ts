@@ -1,14 +1,14 @@
-import { RepairTask } from "./repairTask";
+import { RepairTask, InProgressStatus } from "./repairTask";
 import { IRawRepairTask } from '../RawDataTypes';
 
-    
+
 describe('RepairTask', () => {
 
 
     let testData: IRawRepairTask;
-  
+
     beforeEach((() => {
-        testData =   {
+        testData = {
             "TaskId": "Azure/PlatformUpdate/21996579-9f27-4fd9-bfab-2ace650d9997/2/4153",
             "Version": "132281309100816959",
             "Description": "",
@@ -47,15 +47,25 @@ describe('RepairTask', () => {
             "RestoringHealthCheckState": "Skipped",
             "PerformPreparingHealthCheck": false,
             "PerformRestoringHealthCheck": false
-          }
+        }
     }));
 
     fit('validate complete repairTask', () => {
-      const task = new RepairTask(testData)
+        const task = new RepairTask(testData)
 
-      expect(task.couldParseExecutorData).toBe(true);
-      expect(task.impactedNodes.length).toBe(0);
-      expect(task.inProgress).toBe(false);
+        expect(task.couldParseExecutorData).toBe(true);
+        expect(task.impactedNodes.length).toBe(0);
+        expect(task.inProgress).toBe(false);
+        expect(task.historyPhases.length).toBe(3);
+
+        expect(task.historyPhases[0].startCollapsed).toBeTruthy();
+        expect(task.historyPhases[0].status).toBe("Done");
+
+        expect(task.historyPhases[1].startCollapsed).toBeTruthy();
+        expect(task.historyPhases[1].status).toBe("Done");
+
+        expect(task.historyPhases[2].status).toBe("Done");
+        expect(task.historyPhases[2].startCollapsed).toBeTruthy();
     });
 
     fit('validate in progress repairTask', () => {
@@ -67,10 +77,50 @@ describe('RepairTask', () => {
             }
         ]
         const task = new RepairTask(testData)
-  
+
         expect(task.couldParseExecutorData).toBe(true);
         expect(task.impactedNodes).toEqual(["_NodeType0_6"]);
         expect(task.inProgress).toBe(true);
-      });
-  });
+    });
+
+    fit('validate repairTask history in executing', () => {
+        testData.State = "Executing";
+        testData.History = {
+            "CreatedUtcTimestamp": "2020-07-17T03:17:33.342Z",
+            "ClaimedUtcTimestamp": "2020-07-17T03:17:33.342Z",
+            "PreparingUtcTimestamp": "2020-07-17T03:17:33.342Z",
+            "ApprovedUtcTimestamp": "2020-07-17T03:17:33.530Z",
+            "ExecutingUtcTimestamp": "2020-07-17T03:17:48.437Z",
+            "RestoringUtcTimestamp": "0001-01-01T00:00:00.000Z",
+            "CompletedUtcTimestamp": "0001-01-01T00:00:00.000Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-07-17T03:17:33.420Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-07-17T03:17:33.467Z",
+            "RestoringHealthCheckStartUtcTimestamp": "0001-01-01T00:00:00.000Z",
+            "RestoringHealthCheckEndUtcTimestamp": "0001-01-01T00:00:00.000Z"
+        }
+        const dateRef = new Date("2020-07-17T04:17:48.437Z");
+        const task = new RepairTask(testData, dateRef);
+
+        expect(task.inProgress).toBe(true);
+        expect(task.history).toContain({
+            timestamp: "2020-07-17T03:17:48.437Z",
+            phase: "Executing",
+            duration: "0.01:00:00.000",
+            durationMilliseconds: 60 * 60 * 1000,
+            displayInfo: InProgressStatus,
+        })
+
+        expect(task.historyPhases[0].startCollapsed).toBeTruthy();
+        expect(task.historyPhases[0].status).toBe("Done");
+
+        expect(task.historyPhases[1].startCollapsed).toBeFalsy();
+        expect(task.historyPhases[1].status).toBe("In Progress");
+
+
+        expect(task.historyPhases[2].durationMilliseconds).toBe(0);
+        expect(task.historyPhases[2].status).toBe("Not Started");
+        expect(task.historyPhases[2].startCollapsed).toBeTruthy();
+    });
+
+});
 

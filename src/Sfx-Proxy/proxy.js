@@ -1,4 +1,3 @@
-
 const config = require("./appsettings.json");
 const axios = require('axios');
 const { promises: fs } = require("fs");

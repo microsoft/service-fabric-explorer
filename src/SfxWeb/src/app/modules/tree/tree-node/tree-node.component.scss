@@ -1,4 +1,4 @@
-@import "src/styles.scss";
+@import "src/vars.scss";
 
 button {
   background-color: transparent;
@@ -37,8 +37,8 @@ button {
 
         .expander {
             cursor: default;
-            // padding: 3px 3px;
-            padding: 2px 2px;;
+            padding: 2px 2px;
+            min-width: 20px;
         }
 
         .actions-menu {

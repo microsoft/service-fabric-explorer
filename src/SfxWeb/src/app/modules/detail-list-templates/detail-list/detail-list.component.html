@@ -51,11 +51,13 @@
                             <!-- track by columnSetting.propertyPath -->
                             <!-- ng-mousedown="handleClickRow(item, $event)" -->
                         <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index; trackBy: trackByColumnSetting;">
-                            <button class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button" (click)="handleClickRow(item, $event)"
+                            <div style="display: flex; flex-direction: row">
+                                <button class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button" (click)="handleClickRow(item, $event)"
                                 *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)" [attr.aria-expanded]="!item.isSecondRowCollapsed"
                                 [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></button>
                                 <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
-                                <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
+                                <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>                                
+                            </div>
                             </td>
                         </tr>
                         <!-- Optional second row -->
@@ -73,11 +75,11 @@
                             </td>
                         </tr>
                 </ng-container>
-                    <tr *ngIf="list">
+                    <tr *ngIf="isLoading">
                         <td >Loading...</td>
                     </tr>
-                    <tr *ngIf="sortedFilteredList.length === 0 && !list">
-                        <td [attr.colspan]="listSettings.columnSettings.length">No items to display.</td>
+                    <tr *ngIf="sortedFilteredList.length === 0 && !list && !isLoading">
+                        <td >No items to display.</td>
                     </tr>
                 </tbody>
             </table>
@@ -87,7 +89,9 @@
             <ngb-pagination [collectionSize]="sortedFilteredList.length" [(page)]="page" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
                             (pageChange)="pageChange($event)" style="display: inline-block;"></ngb-pagination>
             <div style="float: right; margin-top: 10px;">
-                Showing {{(page - 1) * pageSize + 1}} - {{page * pageSize}} of {{sortedFilteredList.length}} items
+                <span *ngIf="sortedFilteredList.length > pageSize">
+                    Showing {{(page - 1) * pageSize + 1}} - {{page * pageSize}} of {{sortedFilteredList.length}} items 
+                </span>
             </div>
         </div>
     </div>

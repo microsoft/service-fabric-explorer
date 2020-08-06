@@ -83,8 +83,8 @@
     </div>
     <div style="display: inline-block">
         <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard" style="display: block"></app-dashboard-tile>    
-        <app-dashboard-text-tile [barClass]="upgradeAppsCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" 
-            [count]="upgradeAppsCount" [title]="upgradeAppsCount === 1 ? 'APPLICATION UPGRADE IN PROGRESS' : 'APPLICATION UPGRADES IN PROGRESS'" style="display: block"></app-dashboard-text-tile>    
+        <app-dashboard-text-tile [barClass]="upgradeAppsCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" link="apps/upgrades" [count]="upgradeAppsCount"
+                                 [title]="upgradeAppsCount === 1 ? 'APPLICATION UPGRADE IN PROGRESS' : 'APPLICATION UPGRADES IN PROGRESS'" style="display: block"></app-dashboard-text-tile>    
     </div>
 </div>
 

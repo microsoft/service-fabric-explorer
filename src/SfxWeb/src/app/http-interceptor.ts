@@ -43,12 +43,12 @@ export class ReadOnlyHeaderInterceptor implements HttpInterceptor {
         return next.handle(req).pipe(map(res => {
             if (event instanceof HttpResponse) {
 
-                if(event.headers.get(Constants.SfxReadonlyHeaderName)) {
-                    this.dataService.readOnlyHeader = event.headers.get(Constants.SfxReadonlyHeaderName) === "1";
+                if( (event as HttpResponse<any>).headers.get(Constants.SfxReadonlyHeaderName)) {
+                    this.dataService.readOnlyHeader = (event as HttpResponse<any>).headers.get(Constants.SfxReadonlyHeaderName) === "1";
                 }
 
-                if(event.headers.get(Constants.SfxClusterNameMetadataName)) {
-                    this.dataService.clusterNameMetadata = event.headers.get(Constants.SfxClusterNameMetadataName);
+                if((event as HttpResponse<any>).headers.get(Constants.SfxClusterNameMetadataName)) {
+                    this.dataService.clusterNameMetadata = (event as HttpResponse<any>).headers.get(Constants.SfxClusterNameMetadataName);
                 }
 
               }

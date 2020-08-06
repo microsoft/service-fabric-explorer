@@ -1,13 +1,21 @@
 <div class="detail-pane">
-        <div class="container">
-            <div class="row">
-                <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (onDateChange)="setNewDates($event)"
-                [currentStartDate]="startDate" [currentEndDate]="endDate" class="col-md-6 col-sm-12 col-lg-4"></app-dual-date-picker>
-
-                <div class="col-md-6 col-sm-12 col-lg-8">
-                    <div style="width: 90%; margin-top: 15px; margin-bottom: 15px;">
-                        <app-double-slider [startDate]="startDate" [endDate]="endDate" (onDateChange)="setNewDates($event)"></app-double-slider>
+        <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
+            <div style="display: flex; flex-direction: row; align-items: center;">
+                <div ngbDropdown style="margin-right: 10px;">
+                    <button class="simple-button" ngbDropdownToggle>View Last </button>
+                    <div ngbDropdownMenu>
+                            <button *ngFor="let date of quickDates" style="border-bottom: 1px solid gray;" ngbDropdownItem (click)="setDate(date)" style="padding: 5px; ">
+                                {{date.display}}
+                            </button>
                     </div>
+                </div>
+
+                <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (onDateChange)="setNewDates($event)"
+                [currentStartDate]="startDate" [currentEndDate]="endDate" ></app-dual-date-picker>    
+            </div>
+            <div style="min-width: 400px; flex: 1; padding-left: 15px;" >
+                <div style="width: 90%; margin-top: 15px; margin-bottom: 15px;">
+                    <app-double-slider [startDate]="startDate" [endDate]="endDate" (onDateChange)="setNewDates($event)"></app-double-slider>
                 </div>
             </div>
         </div>
@@ -25,13 +33,17 @@
                 <app-input placeholder="query string" [model]="transformText" (onChange)="transformText = $event;"></app-input>
                 <button class="simple-button" (click)="setTimelineData()">filter</button>
             </span>
+            <p *ngIf="timeLineEventsData?.potentiallyMissingEvents" style="display: inline-block; margin-left: 10px;">
+                <app-health-badge badgeClass="badge-warning"></app-health-badge>
+                Potentially missing events!
+            </p>
         </div>
 
         <div *ngIf="timeLineEventsData" aria-hidden="true">
             <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>            
         </div>
 
-        <detail-list [list]="eventsList.collection" [listSettings]="eventsList.settings"></detail-list>
+        <detail-list [list]="eventsList.collection" [listSettings]="eventsList.settings" [isLoading]="!eventsList.isInitialized"></detail-list>
     
         <div>
             <div style="float: right; padding: 15px 0 0 0; margin: 0px;">

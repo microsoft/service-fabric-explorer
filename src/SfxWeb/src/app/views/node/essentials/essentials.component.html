@@ -6,7 +6,7 @@
                 <th>Upgrade Domain</th>
             </tr>
             <tr>
-                <td>{{node.name}}<app-clip-board text="node.name"></app-clip-board></td>
+                <td>{{node.name}}<app-clip-board [text]="node.name"></app-clip-board></td>
                 <td>{{node.raw.UpgradeDomain}}</td>
             </tr>
             <tr>
@@ -16,7 +16,7 @@
 
             <tr>
                 <td><app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge></td>
-                <td>{{node.raw.FaultDomain}}<app-clip-board text="node.raw.FaultDomain"></app-clip-board></td>
+                <td>{{node.raw.FaultDomain}}<app-clip-board [text]="node.raw.FaultDomain"></app-clip-board></td>
             </tr>
             <tr>
                 <th>Status</th>
@@ -24,14 +24,14 @@
             </tr>
             <tr>                        
                 <td>{{node.nodeStatus}}</td>
-                <td>{{node.raw.IpAddressOrFQDN}}<app-clip-board text="node.raw.IpAddressOrFQDN"></app-clip-board></td>
+                <td>{{node.raw.IpAddressOrFQDN}}<app-clip-board [text]="node.raw.IpAddressOrFQDN"></app-clip-board></td>
             </tr>
             <tr>
                 <th>Type</th>
                 <th>Is Seed Node</th>
             </tr>
             <tr>
-                <td>{{node.raw.Type}}<app-clip-board text="node.raw.Type"></app-clip-board></td>
+                <td>{{node.raw.Type}}<app-clip-board [text]="node.raw.Type"></app-clip-board></td>
                 <td>{{node.raw.IsSeedNode}}</td>
             </tr>
         </table>

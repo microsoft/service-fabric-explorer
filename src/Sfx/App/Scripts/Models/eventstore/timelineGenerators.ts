@@ -250,7 +250,6 @@ module Sfx {
     }
     export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         static readonly NodesDownLabel = "Node Down";
-
         consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
             let items = new vis.DataSet<vis.DataItem>();
 

@@ -17,14 +17,6 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent {
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.item);
-    this.history = Object.keys(this.item.raw.History).map(key => {
-      return {
-        key: key.replace("UtcTimestamp", ""),
-        value: this.item.raw.History[key]
-      }
-    });
-
     this.copyText = JSON.stringify(this.item.raw, null, "\t");
   }
 

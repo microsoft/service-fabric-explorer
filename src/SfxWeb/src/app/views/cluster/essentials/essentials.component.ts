@@ -3,13 +3,13 @@ import { DataService } from 'src/app/services/data.service';
 import { ClusterUpgradeProgress, ClusterHealth, HealthStatisticsEntityKind } from '../../../Models/DataModels/Cluster';
 import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
 import { SystemApplication } from 'src/app/Models/DataModels/Application';
-import { Observable, forkJoin } from 'rxjs';
+import { Observable, forkJoin, of } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { BaseController } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
-import { map } from 'rxjs/operators';
+import { map, catchError } from 'rxjs/operators';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { RoutesService } from 'src/app/services/routes.service';
 
@@ -74,7 +74,7 @@ export class EssentialsComponent extends BaseController {
                     this.upgradeAppsCount = apps.collection.filter(app => app.isUpgrading).length;
                 })),
       this.nodes.refresh(messageHandler),
-      this.systemApp.refresh(messageHandler),
+      this.systemApp.refresh(messageHandler).pipe(catchError(err => of(null))),
       this.clusterUpgradeProgress.refresh(messageHandler)
     ]);
   }

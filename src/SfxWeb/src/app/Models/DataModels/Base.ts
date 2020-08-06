@@ -132,18 +132,15 @@ export class DataModelBase<T> implements IDataModel<T> {
             this.retrieveNewData(messageHandler).pipe(mergeMap((raw: T) => {
                 return this.update(raw);
             })).subscribe( data => {
-
                 this.refreshingPromise.next(this);
                 this.refreshingPromise.complete();
                 this.refreshingPromise = null
+            },
+            err => {
+                this.refreshingPromise.error(this);
+                this.refreshingPromise = null
             })
 
-            // this.refreshingPromise.pipe(mergeMap((raw: T) => {
-            //     this.refreshingPromise = null
-            //     return this.update(raw);
-            // }))
-            //console.log(this.refreshingPromise)
-            // return this.refreshingPromise? this.refreshingPromise.asObservable() : of(null);
         }
         return this.refreshingPromise? this.refreshingPromise.asObservable() : of(null);
     }
