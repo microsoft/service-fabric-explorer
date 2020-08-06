@@ -124,6 +124,11 @@
 }
 
 @media (max-width: 500px) {
+
+  .actions {
+    float: initial;
+  }
+
   .main-header {
     padding-top: 0px;
     position: initial;
@@ -134,7 +139,10 @@
         .detail-view-title {
             padding-left: 10px;
             margin-bottom: 0px;
-            line-break: loose;
+            line-break: anywhere;
+            text-overflow: initial;
+            overflow: initial;
+            white-space: initial;
           }
     }
 
