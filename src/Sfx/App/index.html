@@ -65,7 +65,7 @@
                         <a href="" class="slider-label" id="slider-min-label" role="button" aria-label="Turn off refresh">OFF</a>
                         <sfx-slider min-label-id="slider-min-label" max-label-id="slider-max-label" class="slider" title="Change how often content is updated by clicking or using arrow keys"
                             aria-label="Change how often content is updated" role="slider" aria-valuenow="{{refreshCtrl.refreshRate}}" aria-valuemax="{{refreshCtrl.max}}" aria-valuemin="{{refreshCtrl.min}}" ></sfx-slider>
-                        <a href="" class="slider-label" id="slider-max-label" role="button" aria-label="Set the refresh rate to the fastest" title="Set the refresh rate to the fastest">FAST</a>
+                        <a href="" class="slider-label" id="slider-max-label" role="button" aria-label="Set the refresh rate to the fastest">FAST</a>
                         <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-navigate-refresh" ng-class="{'disabled rotate': navbarCtrl.isRefreshing}"
                             ng-click="navbarCtrl.refreshAll()" role="button" aria-label="refresh" title="refresh"></a>
                     </div>
@@ -77,11 +77,11 @@
                         <ul class="dropdown-menu dropdown-menu-right" style="list-style: none" ng-controller="SettingsController as settingsCtrl">
                             <li ng-controller="ThemeController as themeCtrl">
                                 <div class="settings-item-title">Choose a theme</div>
-                                <div class="choose-theme-container" role="radiogroup">
+                                <div class="choose-theme-container" role="menu">
                                     <img ng-class="{'selected': themeCtrl.getActiveThemeName() === 'dark'}" ng-click="themeCtrl.changeToTheme('dark'); $event.stopPropagation()"
-                                        title="Use the dark theme" src="images/dark-theme.png" role="radio" />
+                                        title="Use the dark theme" src="images/dark-theme.png" role="menuitemradio" />
                                     <img ng-class="{'selected': themeCtrl.getActiveThemeName() === 'light'}" ng-click="themeCtrl.changeToTheme('light'); $event.stopPropagation()"
-                                        title="Use the light theme" src="images/light-theme.png" role="radio" />
+                                        title="Use the light theme" src="images/light-theme.png" role="menuitemradio" />
                                 </div>
                             </li>
                             <li role="separator" class="divider"></li>
@@ -188,7 +188,7 @@
             </div>
 
             <div ng-show="!treeCtrl.tree.isLoading && !treeCtrl.tree.isEmpty"
-                 ng-keydown="treeCtrl.tree.onKeyDown($event)" class="tree-view">
+                 ng-keydown="treeCtrl.tree.onKeyDown($event)" class="tree-view" tabindex="0">
                 <div sfx-tree-node node="treeCtrl.tree.childGroupViewModel"></div>
             </div>
         </div>

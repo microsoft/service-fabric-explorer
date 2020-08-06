@@ -882,15 +882,15 @@ module Sfx {
             this.settings = this.createListSettings();
             this.detailsSettings = this.createListSettings();
 
-            // // Add correlated event col.
-            // let correlatedEventsCol = new ListColumnSetting(
-            //     "#CorrelatedEvents",
-            //     "",
-            //     [],
-            //     null,
-            //     (item) => HtmlUtils.getEventDetailsViewLinkHtml(item.raw));
-            // correlatedEventsCol.fixedWidthPx = 40;
-            // this.settings.columnSettings.splice(1, 0, correlatedEventsCol);
+            // Add correlated event col.
+            let correlatedEventsCol = new ListColumnSetting(
+                "#CorrelatedEvents",
+                "",
+                [],
+                null,
+                (item) => HtmlUtils.getEventDetailsViewLinkHtml(item.raw));
+            correlatedEventsCol.fixedWidthPx = 40;
+            this.settings.columnSettings.splice(1, 0, correlatedEventsCol);
 
             this.setNewDateWindowInternal(startDate, endDate);
         }

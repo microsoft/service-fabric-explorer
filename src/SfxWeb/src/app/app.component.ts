@@ -51,7 +51,6 @@ export class AppComponent implements OnInit{
   @HostListener('window:resize', ['$event.target'])
   onResize(event: Window) {
     this.checkWidth(event.innerWidth)
-    console.log(this.smallScreenSize)
   }
 
   checkWidth(width: number) {
@@ -89,7 +88,6 @@ export class AppComponent implements OnInit{
 
   setMainFocus() {
     this.tabIndex = -1;
-    console.log(this.main)
     setTimeout(() => {this.main.nativeElement.focus(); this.tabIndex = null;}, 0);
   }
 }
