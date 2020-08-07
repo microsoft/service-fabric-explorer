@@ -5,6 +5,7 @@ import { MessageService } from 'src/app/services/message.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { Platform } from '@angular/cdk/platform';
+import { Utils } from 'src/app/Utils/Utils';
 
 @Component({
   selector: 'app-advanced-option',
@@ -27,9 +28,7 @@ export class AdvancedOptionComponent implements OnInit {
   }
 
   closeChange(state: boolean) {
-    const isIEOrEdge = /msie\s|trident\/|edg\//i.test(window.navigator.userAgent)
-
-    if(!isIEOrEdge) {
+    if(!Utils.isIEOrEdge) {
       this.liveAnnouncer.announce(`Settings dropdown button is now ${state ? 'Expanded' : 'Collapsed'}`)
     }
   }

@@ -24,7 +24,7 @@
     <!-- push stuff to align right -->
     <div style="margin-left: auto;"></div>
 
-    <div style="overflow: auto;">
+    <div>
       <app-refresh-rate [value]="refreshService.refreshRate" (onChange)="refreshService.updateRefreshInterval($event)"
                         [refresh]="refreshService.isRefreshing" (onForceRefresh)="attemptForceRefresh()"></app-refresh-rate>
     </div>
@@ -75,7 +75,7 @@
     </div>
     <div [ngStyle]="{'left': smallScreenSize ? '0px' : rightOffset }" class="right-panel main-content" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
       <main>
-        <div class="view-container" #main [tabIndex]="tabIndex">
+        <div class="view-container" #main>
           <router-outlet id="view-container" ></router-outlet>
         </div>
       </main>

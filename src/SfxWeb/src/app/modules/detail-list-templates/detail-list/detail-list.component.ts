@@ -87,12 +87,9 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
   sort(columnSetting: ListColumnSetting) {
     this.listSettings.sort(columnSetting.sortPropertyPaths);
-    console.log(columnSetting)
     this.updateList();
 
-    const isIEOrEdge = /msie\s|trident\/|edg\//i.test(window.navigator.userAgent)
-
-    if(!isIEOrEdge) {
+    if(!Utils.isIEOrEdge) {
       this.liveAnnouncer.announce(`Table is sorted by ${columnSetting.displayName} and is ${this.listSettings.sortReverse ? 'descending' : 'ascending'}`)
     }
   }
