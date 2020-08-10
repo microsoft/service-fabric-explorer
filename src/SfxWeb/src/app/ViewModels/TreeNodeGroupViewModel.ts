@@ -30,8 +30,8 @@ export class TreeNodeGroupViewModel {
         } else {
             return 0;
         }
-    }    
-    
+    }
+
     public _tree: TreeViewModel;
     public node: ITreeNode;
     private _keyboardSelectActionDelayInMilliseconds: number = 200;
@@ -134,7 +134,7 @@ export class TreeNodeGroupViewModel {
             const filteredChildren = [];
             this.children.forEach(child => {
                 if(response.some(newChild => newChild.nodeId === child.nodeId) ) {
-                    filteredChildren.push(child);   
+                    filteredChildren.push(child);
                 }else {
                     if (this._tree.selectedNode && (child === this._tree.selectedNode || child.isParentOf(this._tree.selectedNode))) {
                         // Select the parent node instead
@@ -183,7 +183,7 @@ export class TreeNodeGroupViewModel {
                 this._currentGetChildrenPromise = null;
                 this.loadingChildren = false;
 
-            }, 
+            },
             () => {
                 this._currentGetChildrenPromise.next();
                 this._currentGetChildrenPromise.complete();
@@ -202,9 +202,9 @@ export class TreeNodeGroupViewModel {
 
    public get isVisibleByBadge(): boolean {
        const badgeState = this.node.badge ? this.node.badge(): null;
-       let isVisible = this.node.alwaysVisible || 
+       let isVisible = this.node.alwaysVisible ||
                        badgeState === null ||
-                       !badgeState.badgeClass;
+                       !badgeState?.badgeClass;
 
        if (!isVisible) {
            switch (badgeState.badgeClass) {
