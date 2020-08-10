@@ -27,8 +27,8 @@
     </div>
 
     <div class="chart-column">
-        <div class="checkbox-container-default">	
-            <label ng-if="metrics.selectedMetrics.length > 0 && metrics.selectedMetrics[0].hasCapacity"><input type="checkbox" ng-model="metrics.normalizeMetricsData" /><label>Normalize metric data</label></label>	
+        <div class="checkbox-container-default">
+            <label ng-if="metrics.selectedMetrics.length > 0 && metrics.selectedMetrics[0].hasCapacity"><input type="checkbox" ng-model="metrics.normalizeMetricsData" /><label>Normalize metric data</label></label>
         </div>
         <div class="metrics-view-expander" ng-if="metrics.isExpanderEnabled">
             <a class="bowtie-icon bowtie-view-full-screen-exit" title="Collapse the chart" ng-if="metrics.isFullScreen" ng-click="metrics.toggleFullScreen(false)"></a>
