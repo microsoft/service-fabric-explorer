@@ -28,7 +28,6 @@ export class DetailListComponent implements OnInit, OnDestroy {
   public sortedFilteredList: any[] = []; //actual list displayed in html.
 
   page = 1;
-  pageSize = 10;
   totalListSize = 0;
 
   debounceHandler: Subject<any[]> = new Subject<any[]>();
