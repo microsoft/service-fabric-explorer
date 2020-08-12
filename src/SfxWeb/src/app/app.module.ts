@@ -8,7 +8,7 @@ import { TreeModule } from './modules/tree/tree.module';
 import { SharedModule } from './shared/shared.module';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatDialogModule } from '@angular/material/dialog';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { initApp } from './app-initializers';
 import { AdalService } from './services/adal.service';
 import { httpInterceptorProviders } from './http-interceptor';
@@ -28,7 +28,8 @@ import { ReactiveFormsModule } from '@angular/forms';
     NoopAnimationsModule,
     MatDialogModule,
     NgbDropdownModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    NgbTooltipModule
   ],
   
   providers: [

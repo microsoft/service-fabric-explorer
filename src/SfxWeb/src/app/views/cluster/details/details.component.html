@@ -1,5 +1,5 @@
 <div class="detail-pane essen-pane" *ngIf="clusterHealth.isInitialized">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Health Events">
         <h4 collapse-header>
             Health Events
         </h4>
@@ -8,7 +8,7 @@
 </div>
 
 <div id="upgradeDetailsSection" *ngIf="clusterUpgradeProgress.isInitialized" class="detail-pane essen-pane">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Upgrade Status">
         <div collapse-header>
                 <h4 *ngIf="clusterUpgradeProgress.isUpgrading">Cluster Upgrade In Progress</h4>
                 <h4 *ngIf="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h4>
@@ -72,7 +72,7 @@
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="clusterUpgradeProgress">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Upgrade Description">
         <h4 collapse-header>Upgrade Description</h4>        
         <div class="detail-pane" *ngIf="clusterUpgradeProgress.upgradeDescription" collapse-body>
             <app-detail-view-part [data]="clusterUpgradeProgress.upgradeDescription"></app-detail-view-part>
@@ -81,14 +81,14 @@
 </div> 
 
 <div *ngIf="nodesStatuses" class="detail-pane essen-pane">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Node States">
         <h4 collapse-header>Node States</h4>        
         <detail-list [list]="nodesStatuses" [listSettings]="nodeStatusListSettings" collapse-body></detail-list>
     </app-collapse-container>
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="clusterLoadInformation && clusterLoadInformation.isInitialized">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Load Information">
         <h4 collapse-header>Load Information</h4>
         <app-detail-view-part [data]="clusterLoadInformation.raw" [parent]="clusterLoadInformation" collapse-body></app-detail-view-part>
     </app-collapse-container>

@@ -4,7 +4,7 @@
             title="Fit the timeline to only display the time range that has events.">
             Fit events
         </button>
-        
+
         <button type="button" class="simple-button margined" (click)="fitWindow()"
             title="Fit the timeline to display the whole time range.">
             Fit range
@@ -14,7 +14,7 @@
             title="Move to the start of the timeline." *ngIf="displayMoveToStart">
             Move to start
         </button>
-        
+
         <button type="button" class="simple-button margined" (click)="moveEnd()"
             title="Move to the end of the timeline." *ngIf="displayMoveToEnd">
             Move to end
@@ -24,7 +24,7 @@
             title="Move to the oldest event in the time range.">
             Move to oldest event
         </button>
-        
+
         <button type="button" class="simple-button margined" (click)="moveToNewestEvent()"
             title="Move to the newest event in the time range.">
             Move to newest event
@@ -39,5 +39,8 @@
             <span class="mif-info" title="This timeline may present incomplete information and not fully represent the cluster for this date range. Events may also be missing due to data loss and lead to incomplete states. E.g.: A cluster upgrade starting before or ending after this time range will not be shown."></span>
         </a>
     </div>
-    <div #visualization></div>
+    <div role="img" alt="timeline visualization for the next table." aria-label="timeline visualization for the next table." >
+      <div #visualization ></div>
+
+    </div>
 </div>

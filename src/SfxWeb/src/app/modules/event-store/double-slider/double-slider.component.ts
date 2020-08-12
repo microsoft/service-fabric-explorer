@@ -42,8 +42,7 @@ export class DoubleSliderComponent implements OnChanges, AfterViewInit {
             min: TimeUtils.AddDays(new Date(), -30).getTime(),
             max: new Date().getTime(),
         },
-        step: 60 * 1000, //let the steps be as granular as a minute.
-        start: [new Date(this.startDate).getTime(), new Date(this.endDate).getTime()]
+        start: [new Date(this.startDate).getTime(), new Date(this.endDate).getTime()],
     });
 
     //watch for changes to dates to know when to attempt to update the scroll bar

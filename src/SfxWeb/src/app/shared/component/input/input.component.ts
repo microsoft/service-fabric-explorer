@@ -22,7 +22,7 @@ export class InputComponent implements OnInit, OnDestroy {
 
   set model(val: string) {
     this.modelValue = val;
-    this.onChange.emit(this.modelValue);
+    this.onValueChange(val);
   }
 
 
@@ -32,9 +32,9 @@ export class InputComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.debouncerHandlerSubscription = this.debounceHandler
-   .pipe(debounceTime(1000), distinctUntilChanged())
+   .pipe(debounceTime(200), distinctUntilChanged())
    .subscribe(val => {
-        this.modelValue = val;
+      this.onChange.emit(val);
    });
   }
 

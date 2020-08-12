@@ -2,3 +2,9 @@
   padding-top: 0px;
   padding-bottom: 0px;
 }
+
+button {
+  &:focus {
+    z-index: 1;
+  }
+}
