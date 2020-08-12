@@ -20,6 +20,7 @@ export class LocalTimeComponent implements OnInit {
 
   setTime() {
     const currentDate = new Date();
+    currentDate.setMilliseconds(0);
     this.localTime = currentDate.toLocaleString();
     this.utcTime = currentDate.toISOString();
     console.log("test")
