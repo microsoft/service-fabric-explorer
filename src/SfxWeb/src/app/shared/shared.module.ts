@@ -14,7 +14,7 @@ import { DragDirective } from './directive/drag.directive';
 import { ActionDialogComponent } from './component/action-dialog/action-dialog.component';
 import { ManifestComponent } from './component/manifest/manifest.component';
 import { ActionCollectionDropDownComponent } from './component/action-collection-drop-down/action-collection-drop-down.component';
-import { NgbDropdownModule, NgbToastModule, NgbDatepickerModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbToastModule, NgbDatepickerModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { InputComponent } from './component/input/input.component';
 import { ToastContainerComponent } from './component/toast-container/toast-container.component';
 import { CheckBoxComponent } from './component/check-box/check-box.component';
@@ -32,6 +32,7 @@ import { ReplicaAddressComponent } from './component/replica-address/replica-add
     NgbDropdownModule,
     NgbToastModule,
     NgbDatepickerModule,
+    NgbTooltipModule
   ],
   exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent]
 })

@@ -51,7 +51,7 @@ describe('Tree Node', () => {
         expect(testNode.hasChildren).toBeTruthy();
         expect(testNode.isCollapsed).toBeFalsy();
 
-        expect(testNode.paddingLeftPx).toBe("45px");
+        expect(testNode.paddingLeftPx).toBe("10px");
     });
 
     describe('validate tree Node - IsVisibleBadge', () => {
