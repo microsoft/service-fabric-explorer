@@ -57,7 +57,7 @@ $SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
 
         th {
             color: $detail-pane-sub-title-color;
-            padding: 5px 30px 1px 0px;
+            padding: 5px 5px 1px 0px;
             width: 50%;
             text-overflow: ellipsis;
             overflow: hidden;
@@ -217,13 +217,16 @@ table.detail-list {
     margin-bottom: 1px; // Setting this to 0 will cause IE to cut off table header when there is no contents
     border-bottom: 1px solid $table-border-color;
     color: white;
+    overflow-x: inherit;
+    min-height: 72px;
+
     .no-border {
         border-top: none;
     }
 
     td {
         vertical-align: middle !important;
-        padding: 5px 10px 5px 0px;
+        padding: 5px;
         text-overflow: ellipsis;
         overflow: hidden;
         white-space: normal;
@@ -233,9 +236,8 @@ table.detail-list {
     }
 
     th {
-        padding: 5px 10px 1px 0px;
+        padding: 5px;
         text-overflow: ellipsis;
-        overflow: hidden;
         white-space: nowrap;
         color: $detail-table-header-color;
         border: 0px solid;
@@ -279,7 +281,7 @@ table.detail-list {
             position: relative;
             top: 2px;
             font-size: $font-size-large;
-            cursor: pointer;            
+            cursor: pointer;
 
             &.transparent-icon {
                 pointer-events: none;
@@ -419,8 +421,8 @@ html,body {
 .table-responsive {
     display: block;
     width: 100%;
-    overflow-x: auto;
-    -webkit-overflow-scrolling: touch;    
+    overflow-y: visible;
+    -webkit-overflow-scrolling: touch;
 }
 
 .table>tbody>tr>td {
@@ -562,7 +564,7 @@ app-navbar {
     font-size: $font-size-default;
     background-color: $essen-pane-background-color;
   }
-  
+
   .vis-item {
     background-color: $candybar-background-color;
     font-size: $font-size-small;
@@ -598,12 +600,12 @@ app-navbar {
     border-width: 2px;
     border-color: $dashboard-color;
   }
-  
+
   .vis-labelset .vis-label {
     font-size: $font-size-medium;
     color: $dashboard-color;
   }
-  
+
   .vis-panel.vis-left {
     background-color: #0075c9;
   }
@@ -611,7 +613,7 @@ app-navbar {
     padding-left: 0px;
     white-space: pre;
   }
-  
+
   .vis-group-level-unknown-but-gte1 {
     background-color: #0075c9 !important;
     border: 1px solid white;
@@ -626,36 +628,36 @@ app-navbar {
     background-color: red;
     border-color: darkred;
   }
-  
+
   .vis-item.green {
     background-color: $dashboard-ok-color;
     color: black;
   }
-  
+
   .vis-item.orange {
     background-color: $dashboard-warning-color;
     color: black;
   }
-  
+
   .vis-item.blue {
     background-color: #0075c9;
   }
-  
+
   .vis-item.red-point {
     border-color: red;
     border-width: 5px;
   }
-  
+
   .vis-item.orange-point {
     border-color: $dashboard-warning-color;
     border-width: 5px;
   }
-  
+
   .vis-item.white-point {
     border-color: #ffffff;
     border-width: 5px;
   }
-  
+
   .vis-item.green-point {
     border-color: $dashboard-ok-color;
     border-width: 5px;
@@ -672,47 +674,61 @@ app-navbar {
     white-space: pre-wrap;
     box-shadow: none;
   }
-  
+
   .vis-tooltip {
     padding: 0px !important;
     max-width: 50%;
   }
-  
+
   .vis-timeline {
     overflow:visible !important;
   }
-  
+
   .timeline-button {
     background-color: #262626;
     border: 1px solid #0075c9;
     margin-bottom: 10px;
     margin-top: 10px;
   }
-  
+
   .vis-label{
     background-color: #0075c9;
     color: #dad7d7;
   }
-  
+
   .noUi-tooltip {
     display: none;
   }
+  .noUi-handle {
+      &:focus {
+        .noUi-tooltip {
+            display: initial;
+          }
+
+      }
+  }
+
+
   .noUi-active .noUi-tooltip {
     display: block;
   }
-  
+
   .noUi-target{
     background-color: #bfbfbf;
     box-shadow: none;
-    border: 0px;
+    border: 1px solid black;
   }
-  
+
+  .noUi-touch-area {
+    border: 1px solid $chart-text-color;
+  }
+
   .noUi-connect{
     background-color: #0075c9;
   }
-  
-  .noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip { 
-    bottom:-32px 
+
+  .noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip {
+    bottom:-32px
   }
 
 .rotate {
@@ -759,7 +775,7 @@ app-navbar {
 .input-flat.ng-valid[required], .input-flat.ng-valid.required  {
     border-left: 5px solid #42A948; /* green */
   }
-  
+
   .input-flat.ng-invalid:not(form)  {
     border-left: 5px solid #a94442; /* red */
   }
@@ -811,9 +827,44 @@ app-navbar {
     }
 }
 
+.essential-head {
+    color: #DED9D9;
+    padding: 5px 5px 1px 0px;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    font-size: 8pt;
+    font-weight: 400;
+}
+
+.essential-body {
+    text-overflow: ellipsis;
+    overflow: hidden;
+}
+
+.essential-item {
+    padding-right: 5px;
+    text-align: left;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    min-width: 150px;
+}
+
+.essential-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    flex-wrap: wrap;
+}
+
+.essential-fourth {
+    width: 25%;
+}
 
 .collapse-inner-bar {
     margin-left: 7px;
     border-left: 3px solid gray;
     padding-left: 4px;
+}
+.essential-half {
+  width: 50%;
 }

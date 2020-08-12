@@ -1,19 +1,22 @@
-<div ngbDropdown container="body">
-    <button class="simple-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
-        <span class="mif-tools"></span>
-    </button>
-    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-        <label ngbDropdownItem> 
-            <span class="mif-info" title="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly."
-            style="padding-right: 5px;"></span>
-            Advanced Mode
-            <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()">
-        </label>
-        <label ngbDropdownItem> 
-            <span class="mif-info" title="Hide all messages in the bottom right"
-            style="padding-right: 5px;"></span>
+<!-- the last tabbed element needs to close the drop down for accessability compliance -->
+<div>
+    <div ngbDropdown #myDrop="ngbDropdown" placement="bottom-right" (openChange)="closeChange($event)" >
+        <button class="simple-button" aria-label="settings drop down" ngbDropdownToggle [attr.aria-haspopup]="false">
+            <span class="mif-tools"></span>
+        </button>
+        <div ngbDropdownMenu>
+            <label ngbDropdownItem>
+                Advanced Mode
+                <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()" [attr.aria-checked]="status"
+                    aria-label="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly"
+                    ngbTooltip="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly">
+            </label>
+            <label ngbDropdownItem title="Hide all messages in the bottom right">
                 Suppress message
-            <input type="checkbox" [(ngModel)]="messageService.suppressMessage">
-        </label>
+                <input type="checkbox" [(ngModel)]="messageService.suppressMessage" (keydown.tab)="myDrop.close();"
+                    [attr.aria-checked]="messageService.suppressMessage" ngbTooltip="Hide all messages in the bottom right"
+                    aria-label="Hide all messages in the bottom right">
+            </label>
+        </div>
     </div>
 </div>

@@ -1,4 +1,4 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChildren, QueryList} from '@angular/core';
 import { ListSettings, ListColumnSetting, FilterValue } from 'src/app/Models/ListSettings';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import  fill  from 'lodash/fill';
@@ -14,6 +14,8 @@ import  every from 'lodash/every';
 import { Utils } from 'src/app/Utils/Utils';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 @Component({
   selector: 'detail-list',
   templateUrl: './detail-list.component.html',
@@ -33,10 +35,11 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
   debounceHandler: Subject<any[]> = new Subject<any[]>();
   debouncerHandlerSubscription: Subscription;
+  @ViewChildren(NgbDropdown) dropdowns: QueryList<NgbDropdown>;
 
-  constructor() { }
+  constructor(private liveAnnouncer: LiveAnnouncer) { }
 
-  @Input() 
+  @Input()
   set list(data:  any[] | DataModelCollectionBase<any>) {
     if(data instanceof DataModelCollectionBase){
       data.ensureInitialized().subscribe(data => {
@@ -67,6 +70,10 @@ export class DetailListComponent implements OnInit, OnDestroy {
     }
   }
 
+  resetAll() {
+    this.listSettings.reset();
+  }
+
   public handleClickRow(item: any, event: any): void {
       if (event && event.target !== event.currentTarget) { return; }
       if (this.listSettings.secondRowCollapsible && this.listSettings.showSecondRow(item)) {
@@ -76,6 +83,19 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
   trackByColumnSetting(columnSetting: ListColumnSetting) {
     return columnSetting.propertyPath
+  }
+
+  sort(columnSetting: ListColumnSetting) {
+    this.listSettings.sort(columnSetting.sortPropertyPaths);
+    this.updateList();
+
+    if(!Utils.isIEOrEdge) {
+      this.liveAnnouncer.announce(`Table is sorted by ${columnSetting.displayName} and is ${this.listSettings.sortReverse ? 'descending' : 'ascending'}`)
+    }
+  }
+
+  closeChange(state: boolean) {
+    this.liveAnnouncer.announce(`dropdown is now ${state ? 'Expanded' : 'Collapsed'}`)
   }
 
   private getSortedFilteredList(): any[] {
@@ -109,7 +129,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
     // Sort
     if (this.listSettings && !isEmpty(this.listSettings.sortPropertyPaths)) {
-        list = sortByProperty(list, 
+        list = sortByProperty(list,
                               this.listSettings.sortPropertyPaths,
                               this.listSettings.sortReverse)
     }
@@ -178,6 +198,12 @@ export class DetailListComponent implements OnInit, OnDestroy {
     this.debounceHandler.next(this.sortedFilteredList);
   }
 
+  closeDropDown() {
+    this.dropdowns.toArray().forEach(el => {
+      el.close();
+  });
+  }
+
 }
 
 //TODO verify this works
@@ -190,7 +216,7 @@ const sortByProperty = (items: any[], propertyPath: string[], sortReverse: boole
     while(i < propertyPath.length) {
       const aResult = Utils.result(a, propertyPath[i]);
       const bResult = Utils.result(b, propertyPath[i]);
-      
+
       if(aResult !== bResult){
         return direction * ( aResult > bResult ? 1 : -1 );
       }

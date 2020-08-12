@@ -1,6 +1,7 @@
 @import "src/vars.scss";
 
 .main-header {
+    padding-top: 20px;
     position: sticky;
     background-color: #191919;
     width: inherit;
@@ -66,18 +67,22 @@
             a {
                 text-align: right;
                 text-decoration: none;
-                text-transform: uppercase;                
+                text-transform: uppercase;
                 padding-bottom: 6px;
                 color: $detail-tab-color;
                 font-size: $detail-tab-title-font-size;
 
                 &.active {
-                    border-bottom-color: $detail-tab-active-border-color;
+                    border-bottom-color: $detail-tab-active-border-color !important;
                     color: $detail-tab-active-color;
                     padding-bottom: 2px;
-                    border-bottom-width: 4px;                    
-                    border-bottom-style: solid;
+                    border-bottom-width: 4px !important;
+                    border-bottom-style: solid !important;
                 }
+            }
+
+            &:focus-within {
+              border: white 1px solid;
             }
 
             .tab-superscript {
@@ -112,8 +117,47 @@
 }
 
 .actions {
-    float: right; 
+    float: right;
     height: 40px;
     margin-top: 20px;
     margin-right: 20px;
+}
+
+@media (max-width: 500px) {
+
+  .actions {
+    float: initial;
+  }
+
+  .main-header {
+    padding-top: 0px;
+    position: initial;
+
+    .detail-view-title-bar {
+        margin-bottom: 0px;
+
+        .detail-view-title {
+            padding-left: 10px;
+            margin-bottom: 0px;
+            line-break: anywhere;
+            text-overflow: initial;
+            overflow: initial;
+            white-space: initial;
+          }
+    }
+
+    .detail-view-navbar {
+            white-space: initial;
+            margin: 0px;
+            display: block;
+            flex-wrap: nowrap;
+            .detail-view-navbar-tab {
+                min-width: initial;
+                overflow: initial;
+                text-overflow: initial;
+                margin-top: 0px;
+            }
+
+        }
+    }
 }

@@ -1,7 +1,7 @@
 export const environment = {
-  production: true,
+  production: false,
   baseUrl: "",
-  version: "7.0",
+  version: "test",
   assetBase: "",
-  showBeta: true
+  showBeta: false
 };
