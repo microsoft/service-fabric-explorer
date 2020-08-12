@@ -46,7 +46,7 @@
                 <tbody>
                         <!-- track by (item.uniqueId || $id(item)) -->
                         <!-- | slice: listSettings.limit: listSettings.begin; -->
-                <ng-container *ngFor="let item of sortedFilteredList.slice( (page - 1) * pageSize , page * pageSize); ">
+                <ng-container *ngFor="let item of sortedFilteredList.slice( (page - 1) * listSettings.limit , page * listSettings.limit); ">
                     <tr>
                             <!-- track by columnSetting.propertyPath -->
                             <!-- ng-mousedown="handleClickRow(item, $event)" -->
@@ -87,10 +87,10 @@
 
         <div style="margin-top: 10px;">
             <ngb-pagination [collectionSize]="sortedFilteredList.length" [(page)]="page" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
-                            (pageChange)="pageChange($event)" style="display: inline-block;"></ngb-pagination>
+                            (pageChange)="pageChange($event)" style="display: inline-block;" [pageSize]="listSettings.limit"></ngb-pagination>
             <div style="float: right; margin-top: 10px;">
-                <span *ngIf="sortedFilteredList.length > pageSize">
-                    Showing {{(page - 1) * pageSize + 1}} - {{page * pageSize}} of {{sortedFilteredList.length}} items 
+                <span *ngIf="sortedFilteredList.length > listSettings.limit">
+                    Showing {{(page - 1) * listSettings.limit + 1}} - {{page * listSettings.limit}} of {{sortedFilteredList.length}} items 
                 </span>
             </div>
         </div>

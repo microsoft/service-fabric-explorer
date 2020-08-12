@@ -115,6 +115,7 @@ export class TreeService {
                     childrenQuery: () => this.getApplicationTypes(),
                     badge: () => apps.healthState,
                     selectAction: () => this.routes.navigate(() => apps.viewPath),
+                    listSettings: this.settings.getNewOrExistingTreeNodeListSettings(apps.viewPath),
                     alwaysVisible: true
                 };
             }));
@@ -143,6 +144,7 @@ export class TreeService {
                     selectAction: () => this.routes.navigate(() => systemApp.viewPath),
                     childrenQuery: () => this.getServices(Constants.SystemAppId),
                     badge: () => systemApp.healthState,
+                    listSettings: this.settings.getNewOrExistingTreeNodeListSettings(systemApp.viewPath),
                     alwaysVisible: true,
                     addHealthStateFiltersForChildren: (clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription) => {
                         // System app node is expanded, modify health filters to include system services
@@ -206,7 +208,8 @@ export class TreeService {
                         },
                         mergeClusterHealthStateChunk: (clusterHealthChunk: IClusterHealthChunk) => {
                             return node.deployedApps.mergeClusterHealthStateChunk(clusterHealthChunk);
-                        }
+                        },
+                        listSettings: this.settings.getNewOrExistingTreeNodeListSettings(node.viewPath),
                     };
                 });
             }));
@@ -224,7 +227,8 @@ export class TreeService {
                         childrenQuery: () => this.getApplicationsForType(appTypeGroup.name),
                         badge: () => appTypeGroup.appsHealthState,
                         sortBy: () => [appTypeGroup.name],
-                        actions: appTypeGroup.actions
+                        actions: appTypeGroup.actions,
+                        listSettings: this.settings.getNewOrExistingTreeNodeListSettings(appGroups.viewPath),
                     };
                 });
             }));
