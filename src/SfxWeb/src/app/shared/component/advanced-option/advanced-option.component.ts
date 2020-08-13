@@ -2,6 +2,7 @@ import { Component, OnInit, ViewChild } from '@angular/core';
 import { StorageService } from 'src/app/services/storage.service';
 import { Constants } from 'src/app/Common/Constants';
 import { MessageService } from 'src/app/services/message.service';
+import { SettingsService } from 'src/app/services/settings.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { Platform } from '@angular/cdk/platform';
@@ -17,7 +18,11 @@ export class AdvancedOptionComponent implements OnInit {
   status: boolean = false;
   @ViewChild(NgbDropdown, {static: true}) dropdown: NgbDropdown;
 
-  constructor(public storage: StorageService, public messageService: MessageService, private liveAnnouncer: LiveAnnouncer, public platform: Platform) { }
+  constructor(public storage: StorageService,
+              public messageService: MessageService,
+              public settingsService: SettingsService,
+              private liveAnnouncer: LiveAnnouncer,
+              public platform: Platform) { }
 
   ngOnInit() {
     this.status = this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
