@@ -82,10 +82,16 @@ module Sfx {
             return this.data.getService(this.appId, this.serviceId, true, messageHandler)
                 .then(service => {
                     this.$scope.service = service;
-                    if (this.$scope.service.isStatefulService) {
-                        this.$scope.service.serviceBackupConfigurationInfoCollection.refresh(messageHandler);
-                    }
-                    this.data.backupPolicies.refresh(messageHandler);
+
+                    this.data.clusterManifest.ensureInitialized().then( () => {
+                        if(this.data.clusterManifest.isBRSEnabled) {
+                            this.data.backupPolicies.refresh(messageHandler);
+
+                            if (this.$scope.service.isStatefulService) {
+                                this.$scope.service.serviceBackupConfigurationInfoCollection.refresh(messageHandler);
+                            }
+                        }
+                    })
 
                     return this.$q.all([
                         this.$scope.service.health.refresh(messageHandler),
