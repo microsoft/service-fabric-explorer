@@ -42,6 +42,14 @@ export class RefreshService {
     }
   }
 
+  public hasRefreshSubject(key: string): boolean {
+    return key in this._refreshSubjectsMap;
+  }
+
+  public refreshSubjectCount(): number{
+    return this.refreshSubjects.length;
+  }
+
   public refreshAll(): void {
 
       let refreshStartedTime = Date.now();
