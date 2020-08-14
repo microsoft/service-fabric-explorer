@@ -18,8 +18,8 @@ import { DataSet, DataGroup, DataItem } from 'vis-timeline';
 })
 export class RepairTasksComponent extends BaseController {
 
-  repairTasks: RepairTask[];
-  completedRepairTasks: RepairTask[];
+  repairTasks: RepairTask[] = [];
+  completedRepairTasks: RepairTask[] = [];
 
   //used for timeline
   sortedRepairTasks: RepairTask[] = [];
@@ -123,9 +123,17 @@ export class RepairTasksComponent extends BaseController {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.data.restClient.getRepairTasks(messageHandler).pipe(map(data => {
+      const expandedDict = {};
+       this.completedRepairTasks.concat(this.repairTasks).forEach( (repairTask) => { 
+          expandedDict[repairTask.raw.TaskId] = repairTask.isSecondRowCollapsed;
+      })
       this.completedRepairTasks = [];
       this.repairTasks = [];
       data.map(json => new RepairTask(json)).forEach(task => {
+        if(task.raw.TaskId in expandedDict) {
+          task.isSecondRowCollapsed = expandedDict[task.raw.TaskId]
+        }
+        
         if(task.inProgress) {
           this.repairTasks.push(task);
         }else {

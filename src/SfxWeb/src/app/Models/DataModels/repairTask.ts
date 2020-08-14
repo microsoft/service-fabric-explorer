@@ -153,7 +153,6 @@ export class RepairTask {
 
             //handle completed phase which does not have a duration
             if (index === (history.length - 1)) {
-                console.log(phase, phase.timestamp !== RepairTask.NonStartedTimeStamp)
                 if (phase.timestamp !== RepairTask.NonStartedTimeStamp) {
                     displayInfo = FinishedStatus;
                 }
