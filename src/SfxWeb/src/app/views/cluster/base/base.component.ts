@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectorRef } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
@@ -51,13 +51,13 @@ export class BaseComponent implements OnInit {
 
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
       if(this.dataService.clusterManifest.isBackupRestoreEnabled) {
-        this.tabs.push({
+        this.tabs = this.tabs.concat({
           name: "backups",
           route: "/backups"
         })
       }
       if(this.dataService.clusterManifest.isRepairManagerEnabled) {
-        this.tabs.push({
+        this.tabs = this.tabs.concat({
           name: "repair jobs",
           route: "/repairtasks"
         })
