@@ -6,6 +6,10 @@ on:
   schedule:
     - cron: '0 0 * * 0' # weekly
 
+defaults:
+  run:
+    working-directory: src/SfxWeb
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -21,7 +25,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: '12.x'
-
       - name: Cache node modules
         uses: actions/cache@v2
         env:
@@ -42,5 +45,5 @@ jobs:
         run: npm run build:prod
 
       - name: Test
-        run: ng test --watch=false --browsers=ChromeHeadless
+        run: npm run test:ci
 
