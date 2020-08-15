@@ -22,6 +22,8 @@ jobs:
         with:
           node-version: '12.x'
 
+      - name: Change working directory
+        run: cd SfxWeb
       - name: Cache node modules
         uses: actions/cache@v2
         env:
