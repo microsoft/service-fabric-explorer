@@ -60,6 +60,7 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
     },
     plotOptions: {
       pie: {
+        borderWidth: 0,
         dataLabels: {
           enabled: false,
           distance: -50,
@@ -68,12 +69,13 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
             color: 'white'
           }
         },
-        innerSize: '90%',
+        innerSize: '88%',
         startAngle: -50,
         endAngle: 230,
       }
     },
     series: [{
+      animation: false,
       type: "pie",
       data:
         [
@@ -123,9 +125,9 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
 
   getDataSet(): PointOptionsObject[] {
     const colors = {
-      'Healthy': "green",
-      'Warning': 'yellow',
-      'Error': 'red'
+      'Healthy': "#7FBA00",
+      'Warning': '#FCD116',
+      'Error': '#E81123'
     }
 
     let data = this.data.dataPoints.map(p => {
