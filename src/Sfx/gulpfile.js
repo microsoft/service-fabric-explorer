@@ -19,7 +19,7 @@ let isProductionEnv = plugins.yargs.argv.production === undefined ? false : true
 
 // Base paths
 let paths = {
-    webroot: "wwwroot/"
+    webroot: "../Sfx-Proxy/wwwroot/"
 };
 
 // Static files like html, images and fonts
