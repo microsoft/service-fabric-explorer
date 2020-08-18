@@ -60,7 +60,8 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
     },
     plotOptions: {
       pie: {
-        borderWidth: 0,
+        borderColor: '#191919',
+        borderWidth: 2,
         dataLabels: {
           enabled: false,
           distance: -50,
@@ -69,7 +70,7 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
             color: 'white'
           }
         },
-        innerSize: '88%',
+        innerSize: '85%',
         startAngle: -50,
         endAngle: 230,
       }
