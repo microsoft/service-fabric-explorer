@@ -951,3 +951,13 @@ import { Node } from './DataModels/Node';
         Disabling = 4,
         Disabled = 5
     }
+
+
+    export interface IRawApplicationNameInfo{
+        Id: string;
+        Name: string;
+    }
+    export interface IRawServiceNameInfo{
+        Id: string;
+        Name: string;
+    }

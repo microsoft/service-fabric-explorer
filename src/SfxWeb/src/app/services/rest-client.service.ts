@@ -11,7 +11,7 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawDeployedReplica, IRawServiceType, IRawDeployedCodePackage, IRawContainerLogs, IRawDeployedReplicaDetail, IRawApplicationType, IRawApplicationManifest, 
          IRawApplication, IRawService, IRawCreateServiceDescription, IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription, IRawServiceDescription, 
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation, 
-         IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadataMetadata, IRawAadMetadata, IRawStorage, IRawRepairTask } from '../Models/RawDataTypes';
+         IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadataMetadata, IRawAadMetadata, IRawStorage, IRawRepairTask, IRawServiceNameInfo, IRawApplicationNameInfo } from '../Models/RawDataTypes';
 import { mergeMap, map, catchError } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
@@ -608,6 +608,19 @@ export class RestClientService {
 
       return this.get(this.getApiUrl(url, RestClientService.apiVersion60), "Get partition by id", messageHandler);
   }
+
+  public getServiceNameInfo(partitionId: string, messageHandler?: IResponseMessageHandler): Observable<IRawServiceNameInfo> {
+    let url = `Partitions/${partitionId}/$/GetServiceName`;
+
+    return this.get(this.getApiUrl(url), "Get service", messageHandler);
+}
+
+public getApplicationNameInfo(serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawApplicationNameInfo> {
+    let url = `Services/${serviceId}/$/GetApplicationName`;
+
+    return this.get(this.getApiUrl(url), "Get service", messageHandler);
+}
+
 
   public getPartitionHealth(applicationId: string, serviceId: string, partitionId: string,
       eventsHealthStateFilter: number = HealthStateFilterFlags.Default,

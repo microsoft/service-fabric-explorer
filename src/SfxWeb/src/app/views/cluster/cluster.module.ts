@@ -16,6 +16,7 @@ import { ImagestoreModule } from 'src/app/modules/imagestore/imagestore.module';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ActionCreateBackupPolicyComponent } from './action-create-backup-policy/action-create-backup-policy.component';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
+import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-progress.module';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { StatusWarningsComponent } from './status-warnings/status-warnings.component';
 import { BackupsComponent } from './backups/backups.component';
@@ -38,7 +39,8 @@ import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.com
     ChartsModule,
     NgbDropdownModule,
     BackupRestoreModule,
-    NgbTabsetModule
+    NgbTabsetModule,
+    UpgradeProgressModule
   ]
 })
 export class ClusterModule { }

@@ -40,6 +40,12 @@
                         </tr>
                     </table>
                 </div>
+
+                <div>
+                    <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress"></app-upgrade-domain-progress>
+                </div>
+
+
             <div class="detail-pane" *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
                 <h5>Progress by Upgrade Domain</h5>
                 <upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></upgrade-progress>
