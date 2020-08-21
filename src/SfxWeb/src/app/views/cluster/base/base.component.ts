@@ -36,10 +36,6 @@ export class BaseComponent implements OnInit {
     {
       name: "manifest",
       route: "/manifest"
-    },
-    {
-      name: "events",
-      route: "/events"
     }
   ];
   constructor(public tree: TreeService, public dataService: DataService) { }
@@ -50,6 +46,12 @@ export class BaseComponent implements OnInit {
     ], true);
 
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
+      if(this.dataService.clusterManifest.isEventStoreEnabled) {
+        this.tabs = this.tabs.concat({
+          name: "events",
+          route: "/events"
+        })
+      }
       if(this.dataService.clusterManifest.isBackupRestoreEnabled) {
         this.tabs = this.tabs.concat({
           name: "backups",
