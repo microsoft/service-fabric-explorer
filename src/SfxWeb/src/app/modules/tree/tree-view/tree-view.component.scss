@@ -1,4 +1,4 @@
-@import "src/styles.scss";
+@import "src/vars.scss";
 
 .tree-wrapper {
     display: flex;
@@ -6,8 +6,12 @@
     height: 100%;
 }
 
+.tree-list {
+  flex: 1;
+  overflow: auto;
+}
+
 .tree-header {
-    white-space: nowrap;
     color: $tree-color;
     position: sticky;
     padding: 15px;
@@ -71,4 +75,15 @@
     right: 10px;
     z-index: 2;
     bottom: 50%;
+}
+
+@media (max-height: 500px) {
+  .tree-list {
+    flex: initial;
+    overflow: initial;
+  }
+
+  .tree-wrapper {
+    overflow: auto;
+  }
 }

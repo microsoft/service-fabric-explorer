@@ -1,4 +1,14 @@
-@import "src/styles.scss";
+@import "src/vars.scss";
+
+button {
+  background-color: transparent;
+  border: 0px;
+  color: white;
+
+  &:focus {
+    border: 1px solid white;
+  }
+}
 
 .node {
     color: $tree-color;
@@ -17,7 +27,7 @@
         position: relative;
         height: $tree-node-line-height;
 
-        &:hover {
+        &:hover, &:focus {
             background-color: $tree-node-hover-background-color;
 
             .actions-menu .actions-expander {
@@ -27,7 +37,7 @@
 
         .expander {
             cursor: default;
-            padding: 3px 3px;
+            padding: 2px 2px;
             min-width: 20px;
         }
 
@@ -70,14 +80,14 @@
 
 .hide-nested{
 
-    &:hover {
+    &:hover, &:focus-within {
         .hidden {
-            z-index: 1;
+            visibility: visible;
         }
     }
 
     .hidden {
-        z-index: -1;
+        visibility: hidden;
     }
 }
 
@@ -96,4 +106,10 @@
         cursor: auto;
         color: gray;
     }
+}
+
+ul {
+    margin: 0px;
+    list-style: none;
+    padding: 0px;
 }

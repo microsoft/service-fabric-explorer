@@ -1,6 +1,6 @@
 <div class="tree-wrapper">
     <div class="tree-header">
-        <div style="padding: 10px;background-color: #fcf8e3; border-left: #FFC646 solid 8px; margin: 8px; min-width: 330px;">
+        <div *ngIf="showBeta" style="padding: 10px;background-color: #fcf8e3; border-left: #FFC646 solid 8px; margin: 8px; min-width: 330px;">
             <div style="vertical-align: middle; padding: 4px; color: black; padding-bottom: 8px;" (click)="leaveBeta();">
                 To leave beta <span style="cursor: pointer;">(Click here)</span>
             </div>
@@ -18,14 +18,14 @@
             <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
         </app-check-box>
         <div style="padding: 10px 10px 0px 0px; margin-left: -15px;">
-            <app-input (onChange)="treeService.tree.searchTerm = $event"></app-input>
+            <app-input (onChange)="setSearchText($event)"></app-input>
         </div>
     </div>
-    <div style="flex: 1; overflow: auto;">
-        <span class="expand-panel-wrapper" *ngIf="canExpand">
+    <div class="tree-list">
+        <span class="expand-panel-wrapper" *ngIf="canExpand && !smallWindowSize">
             <button class="expand-panel-button" (click)="setWidth()" title="Expand view to match width of tree">
                 <span class=" mif-chevron-right mif-3x"></span>
-            </button> 
+            </button>
         </span>
         <div class="tree-body" #tree style="height: 100%" >
             <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view" style="position: relative; height: 100%">

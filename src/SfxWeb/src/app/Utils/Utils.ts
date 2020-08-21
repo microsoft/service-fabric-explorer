@@ -178,5 +178,8 @@ export class Utils {
 
         return text;
     }
+
+    public static isIEOrEdge = /msie\s|trident\/|edg\//i.test(window.navigator.userAgent);
+
 }
 

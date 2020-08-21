@@ -80,7 +80,7 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
 export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
     public apps: Application[] = [];
     public appTypes: ApplicationType[] = [];
-    public appsHealthState: ITextAndBadge;
+    public appsHealthState: ITextAndBadge = ValueResolver.healthStatuses[4];
 
     public constructor(data: DataService, appTypes: ApplicationType[]) {
         super(data, appTypes[0].raw);

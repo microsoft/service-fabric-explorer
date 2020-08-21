@@ -37,6 +37,9 @@
               "src/calender.scss",
               "src/_candybar.scss"
             ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ],
             "scripts": [],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -44,6 +47,15 @@
             }
           },
           "configurations": {
+            "accesstesting": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.accesstesting.ts"
+                }
+              ],
+              "index": "src/index.html"
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -84,7 +96,10 @@
             "production": {
               "browserTarget": "SfxWeb:build:production"
             }
-          }
+          },
+          "allowedCommonJsDependencies": [
+            "lodash"
+          ]
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",

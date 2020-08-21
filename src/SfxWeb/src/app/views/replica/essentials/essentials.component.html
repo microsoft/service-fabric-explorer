@@ -1,40 +1,62 @@
 <div *ngIf="replica">
-    <div class="table-responsive detail-pane essen-pane">
-        <table class="essen-table" role="presentation">
-            <tr>
-                <th>Id</th>
-                <th>Node Name</th>
-            </tr>
-            <tr>
-                <td [title]="replica.id">{{replica.id}}<app-clip-board text="replica.id"></app-clip-board></td>
-                <td><a [routerLink]="replica.nodeViewPath">{{replica.raw.NodeName}}</a><app-clip-board text="replica.raw.NodeName"></app-clip-board></td>
-            </tr>
-            <tr>
-                <th>Health State</th>
-                <th>Status</th>
-            </tr>
-            <tr *ngIf="replica.healthState">
-                <td><app-health-badge [badgeClass]="replica.healthState.badgeClass" [text]="replica.healthState.text"></app-health-badge></td>
-                <td>{{replica.raw.ReplicaStatus}}</td>
-            </tr>
-            <tr>
-                <th *ngIf="replica.isStatefulService">Role</th>
-                <th></th>
-            </tr>
-            <tr>
-                <td *ngIf="replica.isStatefulService">{{replica.role}}</td>
-                <td></td>
-            </tr>
-        </table>
-        <div *ngIf="nodeView"><a [routerLink]="nodeView">View on Node</a></div>
-    </div>
+  <div class="detail-pane essen-pane">
+    <div class="essential-container">
+      <div class="essential-item essential-half">
+        <div class="essential-head">
+          Id
+        </div>
+        <div class="essential-body">
+          {{replica.id}}<app-clip-board text="replica.id"></app-clip-board>
+        </div>
+      </div>
 
-    <div class="detail-pane">    
-        <app-replica-address [address]="replica.address"></app-replica-address>
-    </div>
+      <div class="essential-item essential-half">
+        <div class="essential-head">
+          Node Name
+        </div>
+        <div class="essential-body">
+          <a [routerLink]="replica.nodeViewPath">{{replica.raw.NodeName}}</a>
+          <app-clip-board text="replica.raw.NodeName"></app-clip-board>
+        </div>
+      </div>
 
-    <div class="detail-pane essen-pane" *ngIf="replica.health.isInitialized">
-        <h4>Unhealthy Evaluations</h4>
-        <app-health-viewer [unhealthyEvaluations]="replica.health.unhealthyEvaluations" ></app-health-viewer>
+      <div class="essential-item essential-half">
+        <div class="essential-head">
+          Health State
+        </div>
+        <div class="essential-body" *ngIf="replica.healthState">
+          <app-health-badge [badgeClass]="replica.healthState.badgeClass" [text]="replica.healthState.text">
+          </app-health-badge>
+        </div>
+      </div>
+
+      <div class="essential-item essential-half">
+        <div class="essential-head">
+          Status
+        </div>
+        <div class="essential-body">
+          {{replica.raw.ReplicaStatus}}
+        </div>
+      </div>
+
+      <div class="essential-item essential-half" *ngIf="replica.isStatefulService">
+        <div class="essential-head">
+          Role
+        </div>
+        <div class="essential-body">
+          {{replica.role}}
+        </div>
+      </div>
     </div>
+    <div *ngIf="nodeView"><a [routerLink]="nodeView">View on Node</a></div>
+  </div>
+  <div class="detail-pane">
+    <app-replica-address [address]="replica.address"></app-replica-address>
+  </div>
+
+  <div class="detail-pane essen-pane" *ngIf="replica.health.isInitialized">
+    <h4>Unhealthy Evaluations</h4>
+    <app-health-viewer [unhealthyEvaluations]="replica.health.unhealthyEvaluations" ></app-health-viewer>
+
+  </div>
 </div>

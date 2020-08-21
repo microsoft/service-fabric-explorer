@@ -89,8 +89,7 @@ export class RoutesService {
       let path: string;
 
       try {
-        RoutesService
-        .forceSingleEncode(true);
+          RoutesService.forceSingleEncode(true);
           path = pathGetter();
       } finally {
       }

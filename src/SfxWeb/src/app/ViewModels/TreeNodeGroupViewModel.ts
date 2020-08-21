@@ -30,8 +30,8 @@ export class TreeNodeGroupViewModel {
         } else {
             return 0;
         }
-    }    
-    
+    }
+
     public _tree: TreeViewModel;
     public node: ITreeNode;
     private _keyboardSelectActionDelayInMilliseconds: number = 200;
@@ -69,7 +69,7 @@ export class TreeNodeGroupViewModel {
         if (this.parent) {
             return this.nonRootpaddingLeftPx;
         } else {
-            return "45px";
+            return "10px";
         }
     }
 
@@ -134,7 +134,7 @@ export class TreeNodeGroupViewModel {
             const filteredChildren = [];
             this.children.forEach(child => {
                 if(response.some(newChild => newChild.nodeId === child.nodeId) ) {
-                    filteredChildren.push(child);   
+                    filteredChildren.push(child);
                 }else {
                     if (this._tree.selectedNode && (child === this._tree.selectedNode || child.isParentOf(this._tree.selectedNode))) {
                         // Select the parent node instead
@@ -183,7 +183,7 @@ export class TreeNodeGroupViewModel {
                 this._currentGetChildrenPromise = null;
                 this.loadingChildren = false;
 
-            }, 
+            },
             () => {
                 this._currentGetChildrenPromise.next();
                 this._currentGetChildrenPromise.complete();
@@ -197,14 +197,14 @@ export class TreeNodeGroupViewModel {
 
     public get nonRootpaddingLeftPx(): string {
         // 18px is the total width of the expander icon
-       return (18 * (this.depth + 1)) + "px";
+       return (18 * (this.depth - .5)) + "px";
    }
 
    public get isVisibleByBadge(): boolean {
        const badgeState = this.node.badge ? this.node.badge(): null;
-       let isVisible = this.node.alwaysVisible || 
+       let isVisible = this.node.alwaysVisible ||
                        badgeState === null ||
-                       !badgeState.badgeClass;
+                       !badgeState?.badgeClass;
 
        if (!isVisible) {
            switch (badgeState.badgeClass) {
@@ -412,6 +412,19 @@ export class TreeNodeGroupViewModel {
             parentsChildren[myIndex + 1].select(this._keyboardSelectActionDelayInMilliseconds);
         }
         return myIndex;
+    }
+
+    public get filtered(): number {
+        if(this._tree.searchTerm.length === 0) {
+            return 0;
+        }else {
+            let count = 0;
+            if(this.displayName().toLowerCase().indexOf(this._tree.searchTerm.toLowerCase()) > -1) {
+                count ++;
+            }
+            this.children.forEach(child => count += child.filtered );
+            return count;
+        }
     }
 }
 

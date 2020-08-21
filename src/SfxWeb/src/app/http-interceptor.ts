@@ -41,14 +41,13 @@ export class ReadOnlyHeaderInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
         return next.handle(req).pipe(map(res => {
-            if (event instanceof HttpResponse) {
-
-                if(event.headers.get(Constants.SfxReadonlyHeaderName)) {
-                    this.dataService.readOnlyHeader = event.headers.get(Constants.SfxReadonlyHeaderName) === "1";
+            if (res instanceof HttpResponse) {
+                if( res.headers.has(Constants.SfxReadonlyHeaderName)) {
+                    this.dataService.readOnlyHeader = res.headers.get(Constants.SfxReadonlyHeaderName) === "1";
                 }
 
-                if(event.headers.get(Constants.SfxClusterNameMetadataName)) {
-                    this.dataService.clusterNameMetadata = event.headers.get(Constants.SfxClusterNameMetadataName);
+                if(res.headers.has(Constants.SfxClusterNameHeaderName)) {
+                    this.dataService.clusterNameMetadata = res.headers.get(Constants.SfxClusterNameHeaderName);
                 }
 
               }
@@ -74,6 +73,6 @@ export class GlobalHeaderInterceptor implements HttpInterceptor {
 /** Http interceptor providers in outside-in order */
 export const httpInterceptorProviders = [
   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
-  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
+  { provide: HTTP_INTERCEPTORS, useClass: ReadOnlyHeaderInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: GlobalHeaderInterceptor, multi: true },
 ];

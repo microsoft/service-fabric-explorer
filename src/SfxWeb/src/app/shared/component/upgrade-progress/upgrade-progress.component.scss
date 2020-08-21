@@ -1,4 +1,4 @@
-@import "src/styles.scss";
+@import "src/vars.scss";
 
 .upgrade-progress {
     width: 98%;
@@ -34,7 +34,7 @@
             }
 
             &.badge-ok {
-                background-color: $badge-ok-color;
+                background-color: #088105;
             }
 
             &.badge-warning {

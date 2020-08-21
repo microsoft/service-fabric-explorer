@@ -1,45 +1,81 @@
-<div class="detail-pane essen-pane">
-    <div class="table-responsive">
-        <table class="essen-table" role="presentation" *ngIf="node">
-            <tr>
-                <th>Name</th>
-                <th>Upgrade Domain</th>
-            </tr>
-            <tr>
-                <td>{{node.name}}<app-clip-board [text]="node.name"></app-clip-board></td>
-                <td>{{node.raw.UpgradeDomain}}</td>
-            </tr>
-            <tr>
-                <th>Health State</th>
-                <th>Fault Domain</th>
-            </tr>
-
-            <tr>
-                <td><app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge></td>
-                <td>{{node.raw.FaultDomain}}<app-clip-board [text]="node.raw.FaultDomain"></app-clip-board></td>
-            </tr>
-            <tr>
-                <th>Status</th>
-                <th>IP Address or Domain Name</th>
-            </tr>
-            <tr>                        
-                <td>{{node.nodeStatus}}</td>
-                <td>{{node.raw.IpAddressOrFQDN}}<app-clip-board [text]="node.raw.IpAddressOrFQDN"></app-clip-board></td>
-            </tr>
-            <tr>
-                <th>Type</th>
-                <th>Is Seed Node</th>
-            </tr>
-            <tr>
-                <td>{{node.raw.Type}}<app-clip-board [text]="node.raw.Type"></app-clip-board></td>
-                <td>{{node.raw.IsSeedNode}}</td>
-            </tr>
-        </table>
+<div class="detail-pane essen-pane" *ngIf="node">
+  <div class="essential-container">
+    <div class="essential-item essential-half">
+      <div class="essential-head">
+        Name
+      </div>
+      <div class="essential-body">
+        {{node.name}}<app-clip-board [text]="node.name"></app-clip-board>
+      </div>
     </div>
+
+    <div class="essential-item essential-half">
+      <div class="essential-head">
+        Upgrade Domain
+      </div>
+      <div class="essential-body">
+        {{node.raw.UpgradeDomain}}
+      </div>
+    </div>
+
+    <div class="essential-item essential-half">
+      <div class="essential-head">
+        Health State
+      </div>
+      <div class="essential-body">
+        <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge>
+      </div>
+    </div>
+
+    <div class="essential-item essential-half">
+      <div class="essential-head">
+        Fault Domain
+      </div>
+      <div class="essential-body">
+        {{node.raw.FaultDomain}}<app-clip-board [text]="node.raw.FaultDomain"></app-clip-board>
+      </div>
+    </div>
+
+    <div class="essential-item essential-half">
+      <div class="essential-head">
+        Status
+      </div>
+      <div class="essential-body">
+        {{node.nodeStatus}}
+      </div>
+    </div>
+
+    <div class="essential-item essential-half">
+      <div class="essential-head">
+        IP Address or Domain Name
+      </div>
+      <div class="essential-body">
+        {{node.raw.IpAddressOrFQDN}}<app-clip-board [text]="node.raw.IpAddressOrFQDN"></app-clip-board>
+      </div>
+    </div>
+
+    <div class="essential-item essential-half">
+      <div class="essential-head">
+        Type
+      </div>
+      <div class="essential-body">
+        {{node.raw.Type}}<app-clip-board [text]="node.raw.Type"></app-clip-board>
+      </div>
+    </div>
+
+    <div class="essential-item essential-half">
+      <div class="essential-head">
+        Is Seed Node
+      </div>
+      <div class="essential-body">
+        {{node.raw.IsSeedNode}}
+      </div>
+    </div>
+  </div>
 </div>
 
 <div class="detail-pane essen-pane">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Unhealthy Evaluations">
         <div collapse-header>
             <h4>Unhealthy Evaluations</h4>
         </div>
@@ -50,7 +86,7 @@
 </div>
 
 <div class="detail-pane essen-pane"  *ngIf="deployedApps">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Deployed Applications">
         <div collapse-header>
             <h4>Deployed Applications</h4>
         </div>

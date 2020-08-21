@@ -1,4 +1,4 @@
-@import "src/styles.scss";
+@import "src/vars.scss";
 
 $dashboard-margin: 12px;
 $dashboard-padding: 7px;
@@ -104,7 +104,7 @@ $dashboard-small-padding-horizontal: 20px;
             position: relative;
             text-align: left;
             width: 240px;
-            height: 130px;
+            height: 137px;
 
             .dashboard-tile-inner {
                 position: relative;
@@ -146,7 +146,7 @@ $dashboard-small-padding-horizontal: 20px;
     .dashboard-large {
         padding: $dashboard-large-padding-vertical $dashboard-padding;
         position: relative;
-        height: 286px;
+        height: 300px;
         display: flex;
         flex-direction: column-reverse;
 
@@ -171,8 +171,8 @@ $dashboard-small-padding-horizontal: 20px;
     .dashboard-small {
         padding: $dashboard-padding $dashboard-small-padding-horizontal;
         position: relative;
-        width: 230px;
-        height: 137px;
+        width: 254px;
+        height: 144px;
         overflow: hidden;
 
         .dashboard-datapoints {

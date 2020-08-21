@@ -28,12 +28,12 @@ describe('RefreshService', () => {
     const func = () => of(null)
 
     service.insertRefreshSubject(keyName, func);
-    expect(service["_refreshSubjectsMap"][keyName]).toBe(func);
-    expect(service["refreshSubjects"].length).toBe(1);
+    expect(service.hasRefreshSubject(keyName)).toBeTruthy();
+    expect(service.refreshSubjectCount()).toBe(1);
 
     service.removeRefreshSubject(keyName);
-    expect(service["_refreshSubjectsMap"][keyName]).toBeUndefined();
-    expect(service["refreshSubjects"].length).toBe(0);
+    expect(service.hasRefreshSubject(keyName)).toBeFalsy();
+    expect(service.refreshSubjectCount()).toBe(0);
 
   });
 
@@ -44,8 +44,8 @@ describe('RefreshService', () => {
     const func = () => of(null).pipe(map( () => done = true))
 
     service.insertRefreshSubject(keyName, func);
-    expect(service["_refreshSubjectsMap"][keyName]).toBe(func);
-    expect(service["refreshSubjects"].length).toBe(1);
+    expect(service.hasRefreshSubject(keyName)).toBeTruthy();
+    expect(service.refreshSubjectCount()).toBe(1);
 
     service.refreshAll()
 
@@ -65,7 +65,7 @@ describe('RefreshService', () => {
 
     service.insertRefreshSubject(keyName, func);
     service.insertRefreshSubject(keyName2, func2);
-    expect(service["refreshSubjects"].length).toBe(2);
+    expect(service.refreshSubjectCount()).toBe(2);
 
     service.refreshAll();
 

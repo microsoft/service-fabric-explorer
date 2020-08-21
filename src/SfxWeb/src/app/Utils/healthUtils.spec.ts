@@ -1,163 +1,165 @@
 import { IUnhealthyEvaluationNode, getNestedNode, getParentPath, getLeafNodes, HealthUtils } from "./healthUtils";
 import { HealthEvaluation } from '../Models/DataModels/Shared';
-import { IRawHealthEvaluation } from "../Models/RawDataTypes";
+import {
+    IRawHealthEvaluation, IRawDeployedServicePackageHealthEvaluation, IRawNodeHealthEvluation,
+    IRawApplicationHealthEvluation, IRawServiceHealthEvaluation, IRawPartitionHealthEvaluation, IRawReplicaHealthEvaluation, IRawServicesHealthEvaluation
+} from "../Models/RawDataTypes";
 import { DataService } from "../services/data.service";
 import { ApplicationCollection } from "../Models/DataModels/collections/Collections";
 
-    
+
 describe('Health Utils', () => {
 
-
     describe('unhealthy tree', () => {
-    
-    let parent: IUnhealthyEvaluationNode 
-    let child1: IUnhealthyEvaluationNode 
-    let child2: IUnhealthyEvaluationNode 
-    let nestedchild: IUnhealthyEvaluationNode 
-  
-    beforeEach((() => {
-        parent = {
-            healthEvaluation: {
-                treeName: "0",
-                viewPathUrl: "0",
-                healthState : { badgeClass: "Ok", text: "Ok", badgeId: "ok" },
-            } as HealthEvaluation,
-            children: [],
-            parent: null,
-            containsErrorInPath: false,
-            displayNames: [],
-            id: "root"
-        };
-        
-        child1 = {
-            healthEvaluation: {
-                treeName: "1",
-                viewPathUrl: "1",
-                healthState : { badgeClass: "Ok", text: "Ok", badgeId: "ok" },
-            } as HealthEvaluation,
-            children: [],
-            parent,
-            containsErrorInPath: false,
-            displayNames: [],
-            id: "child1"
-        };
 
-        child2 = {
-            healthEvaluation: {
-                treeName: "2",
-                viewPathUrl: "2",
-                healthState : { badgeClass: "Ok", text: "Ok", badgeId: "ok" },
-            } as HealthEvaluation,
-            children: [],
-            parent,
-            containsErrorInPath: false,
-            displayNames: [],
-            id: "child2"
-        };
+        let parent: IUnhealthyEvaluationNode
+        let child1: IUnhealthyEvaluationNode
+        let child2: IUnhealthyEvaluationNode
+        let nestedchild: IUnhealthyEvaluationNode
 
-        parent.children = [child1, child2];
+        beforeEach((() => {
+            parent = {
+                healthEvaluation: {
+                    treeName: "0",
+                    viewPathUrl: "0",
+                    healthState: { badgeClass: "Ok", text: "Ok", badgeId: "ok" },
+                } as HealthEvaluation,
+                children: [],
+                parent: null,
+                containsErrorInPath: false,
+                displayNames: [],
+                id: "root"
+            };
 
-        nestedchild = {
-            healthEvaluation: {
-                treeName: "3",
-                viewPathUrl: "3",
-                healthState : { badgeClass: "Ok", text: "Ok", badgeId: "ok" },
-            } as HealthEvaluation,
-            children: [],
-            parent: child2,
-            containsErrorInPath: false,
-            displayNames: [],
-            id: "nestedchild"
-        };
+            child1 = {
+                healthEvaluation: {
+                    treeName: "1",
+                    viewPathUrl: "1",
+                    healthState: { badgeClass: "Ok", text: "Ok", badgeId: "ok" },
+                } as HealthEvaluation,
+                children: [],
+                parent,
+                containsErrorInPath: false,
+                displayNames: [],
+                id: "child1"
+            };
 
-        child2.children = [nestedchild];
-    }));
+            child2 = {
+                healthEvaluation: {
+                    treeName: "2",
+                    viewPathUrl: "2",
+                    healthState: { badgeClass: "Ok", text: "Ok", badgeId: "ok" },
+                } as HealthEvaluation,
+                children: [],
+                parent,
+                containsErrorInPath: false,
+                displayNames: [],
+                id: "child2"
+            };
 
-    describe('validate getNestedNode', () => {
-        fit('validate getNestedNode no path', () => {
-            let node = getNestedNode([], parent);
-            expect(node).toEqual(parent);
-        });
+            parent.children = [child1, child2];
 
-        fit('validate getNestedNode nested child', () => {
-            let node = getNestedNode(["child2", "nestedchild"], parent);
-            expect(node).toEqual(nestedchild);
-        });
+            nestedchild = {
+                healthEvaluation: {
+                    treeName: "3",
+                    viewPathUrl: "3",
+                    healthState: { badgeClass: "Ok", text: "Ok", badgeId: "ok" },
+                } as HealthEvaluation,
+                children: [],
+                parent: child2,
+                containsErrorInPath: false,
+                displayNames: [],
+                id: "nestedchild"
+            };
 
-        fit('validate getNestedNode no matching path', () => {
-            let node = getNestedNode(["child3"], parent);
-            expect(node).toBeNull();
-        });
-    })
+            child2.children = [nestedchild];
+        }));
 
-    describe('validate getParentPath', () => {
-        fit('validate getParentPath no parent', () => {
-            let parents = getParentPath(parent);
-            expect(parents.length).toEqual(0);
-        });
-
-        fit('validate getParentPath nested child', () => {
-            let parents = getParentPath(nestedchild);
-            expect(parents.length).toEqual(2);
-            expect(parents[0]).toEqual(parent);
-            expect(parents[1]).toEqual(child2);
-        });
-    })
-
-    describe('validate getLeafNodes', () => {
-        fit('validate getLeafNodes nested', () => {
-            let nodes = getLeafNodes(nestedchild, false);
-            expect(nodes.length).toEqual(1);
-
-            const node = nodes[0];
-            expect(node.displayNames.length).toEqual(2);
-            expect(node.displayNames[0]).toEqual({
-                text: "0",
-                link: "0",
-                badge:"Ok",
-                node: parent
+        describe('validate getNestedNode', () => {
+            fit('validate getNestedNode no path', () => {
+                let node = getNestedNode([], parent);
+                expect(node).toEqual(parent);
             });
 
-            expect(node.displayNames[1]).toEqual({
-                text: "2",
-                link: "2",
-                badge:"Ok",
-                node: child2
+            fit('validate getNestedNode nested child', () => {
+                let node = getNestedNode(["child2", "nestedchild"], parent);
+                expect(node).toEqual(nestedchild);
             });
 
-            expect(nestedchild.displayNames.length).toEqual(0);
-        });
-
-        fit('validate getLeafNodes nested skip root', () => {
-            let nodes = getLeafNodes(nestedchild);
-            expect(nodes.length).toEqual(1);
-
-            const node = nodes[0];
-            expect(node.displayNames.length).toEqual(1);
-            expect(node.displayNames[0]).toEqual({
-                text: "2",
-                link: "2",
-                badge:"Ok",
-                node: child2
+            fit('validate getNestedNode no matching path', () => {
+                let node = getNestedNode(["child3"], parent);
+                expect(node).toBeNull();
             });
-            expect(nestedchild.displayNames.length).toEqual(0);
-        });
-    })
+        })
 
-    describe('validate getParentPath', () => {
-        fit('validate getParentPath no parent', () => {
-            let parents = getParentPath(parent);
-            expect(parents.length).toEqual(0);
-        });
+        describe('validate getParentPath', () => {
+            fit('validate getParentPath no parent', () => {
+                let parents = getParentPath(parent);
+                expect(parents.length).toEqual(0);
+            });
 
-        fit('validate getParentPath nested child', () => {
-            let parents = getParentPath(nestedchild);
-            expect(parents.length).toEqual(2);
-            expect(parents[0]).toEqual(parent);
-            expect(parents[1]).toEqual(child2);
-        });
-    })
-  });
+            fit('validate getParentPath nested child', () => {
+                let parents = getParentPath(nestedchild);
+                expect(parents.length).toEqual(2);
+                expect(parents[0]).toEqual(parent);
+                expect(parents[1]).toEqual(child2);
+            });
+        })
+
+        describe('validate getLeafNodes', () => {
+            fit('validate getLeafNodes nested', () => {
+                let nodes = getLeafNodes(nestedchild, false);
+                expect(nodes.length).toEqual(1);
+
+                const node = nodes[0];
+                expect(node.displayNames.length).toEqual(2);
+                expect(node.displayNames[0]).toEqual({
+                    text: "0",
+                    link: "0",
+                    badge: "Ok",
+                    node: parent
+                });
+
+                expect(node.displayNames[1]).toEqual({
+                    text: "2",
+                    link: "2",
+                    badge: "Ok",
+                    node: child2
+                });
+
+                expect(nestedchild.displayNames.length).toEqual(0);
+            });
+
+            fit('validate getLeafNodes nested skip root', () => {
+                let nodes = getLeafNodes(nestedchild);
+                expect(nodes.length).toEqual(1);
+
+                const node = nodes[0];
+                expect(node.displayNames.length).toEqual(1);
+                expect(node.displayNames[0]).toEqual({
+                    text: "2",
+                    link: "2",
+                    badge: "Ok",
+                    node: child2
+                });
+                expect(nestedchild.displayNames.length).toEqual(0);
+            });
+        })
+
+        describe('validate getParentPath', () => {
+            fit('validate getParentPath no parent', () => {
+                let parents = getParentPath(parent);
+                expect(parents.length).toEqual(0);
+            });
+
+            fit('validate getParentPath nested child', () => {
+                let parents = getParentPath(nestedchild);
+                expect(parents.length).toEqual(2);
+                expect(parents[0]).toEqual(parent);
+                expect(parents[1]).toEqual(child2);
+            });
+        })
+    });
 
     describe('parsing health events', () => {
 
@@ -174,7 +176,7 @@ describe('Health Utils', () => {
                 } as IRawHealthEvaluation;
 
                 let data = HealthUtils.getViewPathUrl(health, dataService);
-                
+
                 expect(data).toEqual({
                     viewPathUrl: "/nodes",
                     name: "Nodes",
@@ -185,10 +187,11 @@ describe('Health Utils', () => {
             fit('Node', () => {
                 let health = {
                     Kind: "Node",
-                } as IRawHealthEvaluation;
-                health["NodeName"] = "test"
+                    NodeName: "test"
+                } as IRawNodeHealthEvluation;
+
                 let data = HealthUtils.getViewPathUrl(health, dataService);
-                
+
                 expect(data).toEqual({
                     viewPathUrl: "/node/test",
                     name: "test",
@@ -202,7 +205,7 @@ describe('Health Utils', () => {
                 } as IRawHealthEvaluation;
 
                 let data = HealthUtils.getViewPathUrl(health, dataService);
-                
+
                 expect(data).toEqual({
                     viewPathUrl: "/apps",
                     name: "applications",
@@ -213,20 +216,20 @@ describe('Health Utils', () => {
             fit('Application', () => {
                 let health = {
                     Kind: "Application",
-                } as IRawHealthEvaluation;
+                    ApplicationName: "fabric:/test"
+                } as IRawApplicationHealthEvluation;
 
                 let apps = {
                     find: (name: string) => {
                         return {
-                            raw: {TypeName: "someType"}
+                            raw: { TypeName: "someType" }
                         }
                     }
                 }
                 dataService.apps = apps as ApplicationCollection;
 
-                health["ApplicationName"] = "fabric:/test"
                 let data = HealthUtils.getViewPathUrl(health, dataService);
-                
+
                 expect(data).toEqual({
                     viewPathUrl: "/apptype/someType/app/test",
                     name: "test",
@@ -239,10 +242,11 @@ describe('Health Utils', () => {
                     Kind: "Service",
                     Description: "Service 'fabric:/WordCountV1/WordCountWebService' is in Warning.",
                     AggregatedHealthState: "Warning",
-                } as IRawHealthEvaluation;
-                health["ServiceName"] = "fabric:/WordCountV1/WordCountWebService"
+                    ServiceName: "fabric:/WordCountV1/WordCountWebService"
+                } as IRawServiceHealthEvaluation;
+
                 let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
-                
+
                 expect(data).toEqual({
                     viewPathUrl: "/parent/service/WordCountV1%2FWordCountWebService",
                     name: "WordCountV1/WordCountWebService",
@@ -254,10 +258,10 @@ describe('Health Utils', () => {
                 let health = {
                     Kind: "Service",
                     AggregatedHealthState: "Warning",
-                } as IRawHealthEvaluation;
-                health["ServiceName"] = "fabric:/System%2FClusterManagerService"
+                    ServiceName: "fabric:/System%2FClusterManagerService"
+                } as IRawServiceHealthEvaluation;
                 let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
-                
+
                 expect(data).toEqual({
                     viewPathUrl: "/apptype/System/app/System/service/System%252FClusterManagerService",
                     name: "System%2FClusterManagerService",
@@ -268,10 +272,11 @@ describe('Health Utils', () => {
             fit('Partition', () => {
                 let health = {
                     Kind: "Partition",
-                } as IRawHealthEvaluation;
-                health["PartitionId"] = "512361234123465"
+                    PartitionId: "512361234123465"
+                } as IRawPartitionHealthEvaluation;
+
                 let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
-                
+
                 expect(data).toEqual({
                     viewPathUrl: "/parent/partition/512361234123465",
                     name: "512361234123465",
@@ -282,10 +287,11 @@ describe('Health Utils', () => {
             fit('Replica', () => {
                 let health = {
                     Kind: "Replica",
-                } as IRawHealthEvaluation;
-                health["ReplicaOrInstanceId"] = "512361234123465"
+                    ReplicaOrInstanceId: "512361234123465"
+                } as IRawReplicaHealthEvaluation;
+
                 let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
-                
+
                 expect(data).toEqual({
                     viewPathUrl: "/parent/replica/512361234123465",
                     name: "512361234123465",
@@ -300,7 +306,7 @@ describe('Health Utils', () => {
                 health["SourceId"] = "someId"
                 health["Property"] = "Ok"
                 let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
-                
+
                 expect(data).toEqual({
                     viewPathUrl: "/parent",
                     name: "Event",
@@ -311,20 +317,20 @@ describe('Health Utils', () => {
             fit('DeployedServicePackage', () => {
                 let health = {
                     Kind: "DeployedServicePackage",
-                } as IRawHealthEvaluation;
+                    ServiceManifestName: "manifest"
+                } as IRawDeployedServicePackageHealthEvaluation;
 
-                health["ServiceManifestName"] = "manifest"
                 let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
-                
+
                 expect(data).toEqual({
                     viewPathUrl: "/parent/deployedservice/manifest",
                     name: "manifest",
                     uniqueId: "manifest"
                 });
 
-                health["ServicePackageActivationId"] = "1234"
+                health.ServicePackageActivationId = "1234"
                 data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
-                
+
                 expect(data).toEqual({
                     viewPathUrl: "/parent/deployedservice/activationid/1234manifest",
                     name: "manifest",
@@ -374,7 +380,8 @@ describe('Health Utils', () => {
             fit('Services', () => {
                 let health = {
                     Kind: "Services",
-                } as IRawHealthEvaluation;
+                    ServiceTypeName: 'testService'
+                } as IRawServicesHealthEvaluation;
 
                 health['ServiceTypeName'] = "testService"
                 let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
@@ -388,7 +395,6 @@ describe('Health Utils', () => {
     });
 })
 
-
 /*
 Kind: "Services"
 Description: "100% (1/1) services of service type 'WordCountWebServiceType' are unhealthy. The evaluation tolerates 0% unhealthy services for the service type."
@@ -397,6 +403,4 @@ ServiceTypeName: "WordCountWebServiceType"
 UnhealthyEvaluations: [{,…}]
 MaxPercentUnhealthyServices: 0
 TotalCount: 1
-
-
 */

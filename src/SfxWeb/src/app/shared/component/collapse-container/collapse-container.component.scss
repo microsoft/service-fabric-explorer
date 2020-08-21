@@ -1,6 +1,6 @@
 .base-header {
     cursor: pointer;
-    &:hover {
+    &:hover, &:focus-within {
         // opacity: .7;
         filter: brightness(100%);
         background-color: rgba(255, 255, 255, 0.1);
@@ -15,4 +15,11 @@
 
 .status-icon {
     width: 25px;
+}
+
+button {
+  padding: 0px;
+  background-color: transparent;
+  border: 0px;
+  color: white;
 }
