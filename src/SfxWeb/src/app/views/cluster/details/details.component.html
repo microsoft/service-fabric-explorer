@@ -39,7 +39,7 @@
                         </tr>
                     </table>
                 </div>
-            <div style="display: flex; flex-direction: row; align-content: flex-start; margin-top: 20px;">
+            <div style="margin-top: 20px;">
                 <!-- <div class="row-wrapper-container" style="justify-content: start;">
                     <div class="row-wrapper cell-wrapper">
                         <div class="field">
@@ -95,67 +95,22 @@
                         </div>
                     </div>
                 </div> -->
+                    <div *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
+                        <h5 style="font-size: 16px;">Upgrade Domain Progress</h5>
+                        <upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></upgrade-progress>
+                    </div>
+            </div>
 
-                <div>
-                    <upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></upgrade-progress>
-
-                </div>
-
-                <div style="margin-left: 10px; flex: 1 auto;">
-                    <div class="detail-pane" *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
-                        <!-- <h5 style="font-size: 16px;">Progress by Upgrade Domain</h5> -->
-                        
-                        <h5>
-                            Current Upgrade Domain : {{clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName}}
-                        </h5>
-
-                        <div>
-                            Duration : {{clusterUpgradeProgress.upgradeDomainDuration}} / Timeout : {{clusterUpgradeProgress.raw.UpgradeDescription.MonitoringPolicy.UpgradeDomainTimeoutInMilliseconds}}
-                        </div>
-
-                        <div>
-                            <h5 style="font-size: 16px; margin-top: 15px;">Nodes status
-                            </h5>
-                            <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress"></app-upgrade-domain-progress>
-                        </div>
+            <div style="margin-top:20px">
+                <h5 style="font-size: 16px;">Current Upgrade Domain : {{clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName}} </h5>    
+                <div style="margin-left: 10px;">
+                    Duration : {{clusterUpgradeProgress.upgradeDomainDuration}} / Timeout : {{clusterUpgradeProgress.raw.UpgradeDescription.MonitoringPolicy.UpgradeDomainTimeoutInMilliseconds}}
+                    <div>
+                        <h5 style="font-size: 15px; margin-top: 15px;">Nodes status</h5>
+                        <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress"></app-upgrade-domain-progress>
                     </div>
                 </div>
             </div>
-
-            <div>
-                <!-- <h5 style="font-size: 16px; margin-top: 15px;">
-                    Current Upgrade Domain
-                    <span style="float: right;">
-                        Duration : {{clusterUpgradeProgress.upgradeDomainDuration}}
-                    </span>
-                </h5> -->
-
-            </div>
-
-            <!-- <div class="table-responsive">
-                    <table class="essen-table" role="presentation">
-                        <tr>
-                            <th>Code Version</th>
-                            <th>Config Version</th>
-                            <th>Upgrade Mode</th>
-                            <th>Upgrade State</th>
-                        </tr>
-                        <tr>
-                            <td>{{clusterUpgradeProgress.raw.CodeVersion}}</td>
-                            <td>{{clusterUpgradeProgress.raw.ConfigVersion}}</td>
-                            <td>{{clusterUpgradeProgress.raw.UpgradeState}}</td>
-                            <td>{{clusterUpgradeProgress.raw.RollingUpgradeMode}}</td>
-                        </tr>
-                        <tr>
-                            <th>Start Timestamp Utc</th>
-                            <th title="Upgrade Duration">Upgrade Duration</th>
-                        </tr>
-                        <tr>
-                            <td>{{clusterUpgradeProgress.startTimestampUtc}}</td>
-                            <td>{{clusterUpgradeProgress.upgradeDuration}}</td>
-                        </tr>
-                    </table>
-                </div> -->
 
             <div *ngIf="clusterUpgradeProgress.raw.FailureReason !== 'None'">
                 <h4>Upgrade Failure</h4>

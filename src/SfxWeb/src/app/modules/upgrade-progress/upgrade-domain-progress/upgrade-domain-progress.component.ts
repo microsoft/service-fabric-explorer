@@ -1,6 +1,6 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { UpgradeDomain } from 'src/app/Models/DataModels/Shared';
-import { IRawUpgradeDomainProgress, IRawServiceNameInfo, IRawApplicationNameInfo, IRawPartition } from 'src/app/Models/RawDataTypes';
+import { IRawUpgradeDomainProgress, IRawSafetyCheckDescription, IRawNodeUpgradeProgress } from 'src/app/Models/RawDataTypes';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { IPartitionData } from '../partition-info/partition-info.component';
 
@@ -22,17 +22,22 @@ export class UpgradeDomainProgressComponent implements OnInit {
 
   async getPartitionInfo(id: string) {
     const partition = await this.restClientService.getPartitionById(id).toPromise();
-    console.log(partition)
-
     const serviceName = await this.restClientService.getServiceNameInfo(id).toPromise();
-    console.log(serviceName);
     const applicationName = await this.restClientService.getApplicationNameInfo(serviceName.Id).toPromise();
-    console.log(applicationName);
+
     this.partitions[id] = {
       serviceName,
       applicationName,
       partition
     }
+  }
+
+  nodeTrackBy(index, node: IRawNodeUpgradeProgress) {
+    return node.NodeName;
+  }
+
+  safetyCheck(index, safetyCheck: IRawSafetyCheckDescription) {
+    return safetyCheck.PartitionId || "nodePendingSafetyCheck";
   }
 
 }
