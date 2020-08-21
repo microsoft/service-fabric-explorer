@@ -138,10 +138,9 @@ describe('Health Utils', () => {
 
             fit('Event', () => {
                 let health = {
-                    Kind: "Event",
+                    Kind: "Event"
                 } as IRawHealthEvaluation;
-                health["SourceId"] = "someId"
-                health["Property"] = "Ok"
+
                 let data = HealthUtils.getViewPathUrl(health, dataService, "/parent");
 
                 expect(data).toEqual({
