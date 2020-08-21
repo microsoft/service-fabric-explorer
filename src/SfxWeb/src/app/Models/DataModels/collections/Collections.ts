@@ -28,6 +28,7 @@ import { PartitionBackup, PartitionBackupInfo } from '../PartitionBackupInfo';
 import { DataModelCollectionBase, IDataModelCollection } from './CollectionBase';
 
 import   groupBy  from 'lodash/groupBy';
+import { RoutesService } from 'src/app/services/routes.service';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -50,7 +51,7 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     public get viewPath(): string {
-        return this.data.routes.getAppsViewPath();
+        return RoutesService.getAppsViewPath();
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
@@ -95,7 +96,7 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
     }
 
     public get viewPath(): string {
-        return this.data.routes.getAppTypesViewPath();
+        return RoutesService.getAppTypesViewPath();
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -278,7 +279,7 @@ export class DeployedCodePackageCollection extends DataModelCollectionBase<Deplo
     }
 
     public get viewPath(): string {
-        return this.data.routes.getDeployedCodePackagesViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId);
+        return RoutesService.getDeployedCodePackagesViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId);
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -296,7 +297,7 @@ export class DeployedReplicaCollection extends DataModelCollectionBase<DeployedR
     }
 
     public get viewPath(): string {
-        return this.data.routes.getDeployedReplicasViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId);
+        return RoutesService.getDeployedReplicasViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId);
     }
 
     public get isStatefulService(): boolean {

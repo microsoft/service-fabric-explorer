@@ -12,6 +12,7 @@ import { map, mergeMap } from 'rxjs/operators';
 import { ReplicaOnPartition } from './Replica';
 import { LoadMetricReport } from './Partition';
 import { ActionWithConfirmationDialog } from '../Action';
+import { RoutesService } from 'src/app/services/routes.service';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -48,7 +49,7 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     public get serviceViewPath(): string {
-        return this.data.routes.getServiceViewPath(this.parent.parent.raw.TypeName, this.parent.parent.raw.Id, encodeURI(IdUtils.nameToId(this.raw.ServiceName)));
+        return RoutesService.getServiceViewPath(this.parent.parent.raw.TypeName, this.parent.parent.raw.Id, encodeURI(IdUtils.nameToId(this.raw.ServiceName)));
     }
 
     public get isStatefulService(): boolean {
@@ -80,7 +81,7 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getDeployedReplicaViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId, this.raw.PartitionId, this.id);
+        return RoutesService.getDeployedReplicaViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId, this.raw.PartitionId, this.id);
     }
 
     public get lastInBuildDuration(): string {
