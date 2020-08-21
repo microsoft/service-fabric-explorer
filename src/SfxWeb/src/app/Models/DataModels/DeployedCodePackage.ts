@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { ActionWithConfirmationDialog } from '../Action';
+import { RoutesService } from 'src/app/services/routes.service';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -39,7 +40,7 @@ export class DeployedCodePackage extends DataModelBase<IRawDeployedCodePackage> 
     }
 
     public get viewPath(): string {
-        return this.data.routes.getCodePackageViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId, this.name);
+        return RoutesService.getCodePackageViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId, this.name);
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedCodePackage> {

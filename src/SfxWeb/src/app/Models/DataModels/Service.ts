@@ -17,6 +17,7 @@ import  escapeRegExp  from 'lodash/escapeRegExp';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { ScaleServiceComponent } from 'src/app/views/service/scale-service/scale-service.component';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
+import { RoutesService } from 'src/app/services/routes.service';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -65,7 +66,7 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getServiceViewPath(this.parent.raw.TypeName, this.parent.id, this.id);
+        return RoutesService.getServiceViewPath(this.parent.raw.TypeName, this.parent.id, this.id);
     }
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IServiceHealthStateFilter {
