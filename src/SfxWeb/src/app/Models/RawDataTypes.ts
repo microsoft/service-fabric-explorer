@@ -212,6 +212,10 @@ import { Node } from './DataModels/Node';
         ServiceManifestName: string;
         ServicePackageActivationId?: string;
     }
+
+    export interface IRawServicesHealthEvaluation extends IRawHealthEvaluation {
+        ServiceTypeName: string;
+    }
     export interface IRawUnhealthyEvent {
         SourceId: string;
         Property: string;
