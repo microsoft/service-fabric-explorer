@@ -12,6 +12,7 @@ import { map } from 'rxjs/operators';
 import { Utils } from 'src/app/Utils/Utils';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { CreateApplicationComponent } from 'src/app/views/application-type/create-application/create-application.component';
+import { RoutesService } from 'src/app/services/routes.service';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -35,7 +36,7 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getAppTypeViewPath(this.name);
+        return RoutesService.getAppTypeViewPath(this.name);
     }
 
     public unprovision(): Observable<any> {
@@ -91,7 +92,7 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getAppTypeViewPath(this.name);
+        return RoutesService.getAppTypeViewPath(this.name);
     }
 
     // Whenever the data.apps get refreshed, it will call this method to

@@ -12,6 +12,7 @@ import { HealthBase } from './HealthEvent';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { ActionWithConfirmationDialog } from '../Action';
+import { RoutesService } from 'src/app/services/routes.service';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -79,11 +80,11 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getReplicaViewPath(this.parent.parent.parent.raw.TypeName, this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, this.id);
+        return RoutesService.getReplicaViewPath(this.parent.parent.parent.raw.TypeName, this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, this.id);
     }
 
     public get nodeViewPath(): string {
-        return this.data.routes.getNodeViewPath(this.raw.NodeName);
+        return RoutesService.getNodeViewPath(this.raw.NodeName);
     }
 
     public get lastInBuildDuration(): string {

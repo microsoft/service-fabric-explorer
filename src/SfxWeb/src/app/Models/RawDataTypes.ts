@@ -171,6 +171,47 @@ import { Node } from './DataModels/Node';
         ConsiderWarningAsError: boolean;
     }
 
+    export interface IRawApplicationHealthEvluation extends IRawHealthEvaluation {
+        ApplicationName: string;
+    }
+
+    export interface IRawApplicationsHealthEvluation extends IRawHealthEvaluation {
+        MaxPercentUnhealthyApplications: number;
+        TotalCount: number;
+    }
+
+    export interface IRawApplicationTypeHealthEvluation extends IRawHealthEvaluation {
+        ApplicationTypeName: string;
+        MaxPercentUnhealthyApplications: number;
+    }
+
+    export interface IRawNodeHealthEvluation extends IRawHealthEvaluation {
+        NodeName: string;
+    }
+    
+    export interface IRawPartitionHealthEvaluation extends IRawHealthEvaluation {
+        PartitionId: string;
+    }
+
+    export interface IRawServiceHealthEvaluation extends IRawHealthEvaluation {
+        ServiceName: string;
+    }
+
+    export interface IRawReplicaHealthEvaluation extends IRawHealthEvaluation {
+        ReplicaOrInstanceId: string;
+        PartitionId: string;
+    }
+
+    export interface IRawDeployedApplicationHealthEvaluation extends IRawHealthEvaluation {
+        NodeName: string;
+        ApplicationName: string;
+    }
+    export interface IRawDeployedServicePackageHealthEvaluation extends IRawHealthEvaluation {
+        NodeName: string;
+        ApplicationName: string;
+        ServiceManifestName: string;
+        ServicePackageActivationId?: string;
+    }
     export interface IRawUnhealthyEvent {
         SourceId: string;
         Property: string;

@@ -162,6 +162,7 @@ describe('Cluster', () => {
             expect(clusterManifest.isBackupRestoreEnabled).toBe(false);
             expect(clusterManifest.isRepairManagerEnabled).toBe(false);
             expect(clusterManifest.isSfrpCluster).toBe(false);
+            expect(clusterManifest.isEventStoreEnabled).toBe(false);
         })
 
         fit('back up service enabled', async () => {
@@ -263,6 +264,28 @@ describe('Cluster', () => {
             expect(clusterManifest.isBackupRestoreEnabled).toBe(false);
             expect(clusterManifest.isRepairManagerEnabled).toBe(false);
             expect(clusterManifest.isSfrpCluster).toBe(true);
+        })
+
+        fit('Event store enabled', async () => {
+            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> => 
+            of({
+                Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+                Name="WRP_Generated_ClusterManifest" Version="37" Description="This is a generated file. Do not modify."
+                xmlns="http://schemas.microsoft.com/2011/01/fabric">
+                <FabricSettings>
+                    <Section Name="EventStoreService">
+                        <Parameter Name="MinReplicaSetSize" Value="3" />
+                        <Parameter Name="PlacementConstraints" Value="(NodeTypeName==nt)" />
+                        <Parameter Name="TargetReplicaSetSize" Value="5" />
+                    </Section>
+                </FabricSettings>
+            </ClusterManifest>
+                `
+            })
+
+            await clusterManifest.ensureInitialized().toPromise();
+
+            expect(clusterManifest.isEventStoreEnabled).toBeTruthy();
         })
     })
     
