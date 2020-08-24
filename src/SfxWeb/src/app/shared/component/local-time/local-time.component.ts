@@ -9,9 +9,10 @@ import { interval } from 'rxjs';
 })
 export class LocalTimeComponent implements OnInit {
 
-  localTime: string;
-  utcTime: string;
-
+  localTime: string = "";
+  utcTime: string = "";
+  showTime = false;
+  
   constructor(private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
@@ -23,7 +24,6 @@ export class LocalTimeComponent implements OnInit {
     currentDate.setMilliseconds(0);
     this.localTime = currentDate.toLocaleString();
     this.utcTime = currentDate.toISOString();
-    console.log("test")
     this.cdr.detectChanges();
   }
 }
