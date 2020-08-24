@@ -1,4 +1,4 @@
-<div *ngFor="let node of upgradeDomain.NodeUpgradeProgressList" style="border: 1px solid gray;">
+<div *ngFor="let node of upgradeDomain.NodeUpgradeProgressList;trackBy: nodeTrackBy" style="border: 1px solid gray;">
     <app-collapse-container collapsed="true">
         <div collapse-header>
             <div style="font-size: 15px; margin-bottom: 5px;">
@@ -9,7 +9,7 @@
                 </div>
             </div>
         </div>
-        <div collapse-body>
+        <div collapse-body class="table-responsive">
             <table class="table detail-list" style="width: 100%">
                 <thead>
                 <tr>
@@ -23,7 +23,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                    <tr *ngFor="let check of node.PendingSafetyChecks">
+                    <tr *ngFor="let check of node.PendingSafetyChecks;trackBy: safetyCheck">
                         <td>
                             {{check.SafetyCheck?.PartitionId}}
                         </td>

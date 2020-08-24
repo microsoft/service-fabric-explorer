@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, ChangeDetectorRef } from '@angular/core';
 import { UpgradeDomain } from 'src/app/Models/DataModels/Shared';
 import { IRawUpgradeDomainProgress, IRawSafetyCheckDescription, IRawNodeUpgradeProgress } from 'src/app/Models/RawDataTypes';
 import { RestClientService } from 'src/app/services/rest-client.service';
@@ -7,7 +7,8 @@ import { IPartitionData } from '../partition-info/partition-info.component';
 @Component({
   selector: 'app-upgrade-domain-progress',
   templateUrl: './upgrade-domain-progress.component.html',
-  styleUrls: ['./upgrade-domain-progress.component.scss']
+  styleUrls: ['./upgrade-domain-progress.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UpgradeDomainProgressComponent implements OnInit {
 
@@ -15,7 +16,7 @@ export class UpgradeDomainProgressComponent implements OnInit {
 
   @Input() upgradeDomain: IRawUpgradeDomainProgress;
 
-  constructor(private restClientService: RestClientService) { }
+  constructor(private restClientService: RestClientService, private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {
   }
@@ -30,6 +31,7 @@ export class UpgradeDomainProgressComponent implements OnInit {
       applicationName,
       partition
     }
+    this.cdr.detectChanges();
   }
 
   nodeTrackBy(index, node: IRawNodeUpgradeProgress) {

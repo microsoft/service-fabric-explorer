@@ -1,19 +1,18 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { IRawServiceNameInfo, IRawApplicationNameInfo, IRawPartition } from 'src/app/Models/RawDataTypes';
 
 @Component({
   selector: 'app-partition-info',
   templateUrl: './partition-info.component.html',
-  styleUrls: ['./partition-info.component.scss']
+  styleUrls: ['./partition-info.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PartitionInfoComponent implements OnInit {
+export class PartitionInfoComponent {
 
   @Input() partitionInfo: IPartitionData;
 
   constructor() { }
 
-  ngOnInit(): void {
-  }
 
 }
 

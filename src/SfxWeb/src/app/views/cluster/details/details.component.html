@@ -14,6 +14,24 @@
                 <h4 *ngIf="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h4>
         </div>
         <div collapse-body>
+            <table>
+                <tr>
+                    <td>
+                        Upgrade Duration
+                    </td>
+                    <td>
+                        : {{clusterUpgradeProgress.upgradeDuration}}
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        Timeout
+                    </td>
+                    <td>
+                        : {{clusterUpgradeProgress.raw.UpgradeDescription.MonitoringPolicy.UpgradeTimeoutInMilliseconds | formatDate}}
+                    </td>
+                </tr>
+            </table>
 
             <div class="table-responsive">
                     <table class="essen-table" role="presentation">
@@ -31,70 +49,13 @@
                         </tr>
                         <tr>
                             <th>Start Timestamp Utc</th>
-                            <th title="Upgrade Duration">Upgrade Duration</th>
                         </tr>
                         <tr>
                             <td>{{clusterUpgradeProgress.startTimestampUtc}}</td>
-                            <td>{{clusterUpgradeProgress.upgradeDuration}}</td>
                         </tr>
                     </table>
                 </div>
             <div style="margin-top: 20px;">
-                <!-- <div class="row-wrapper-container" style="justify-content: start;">
-                    <div class="row-wrapper cell-wrapper">
-                        <div class="field">
-                            Code Version :
-                        </div>
-                        <div>
-                            {{clusterUpgradeProgress.raw.CodeVersion}}
-                        </div>
-                    </div>
-    
-                    <div class="row-wrapper cell-wrapper">
-                        <div class="field">
-                            Config Version :
-                        </div>
-                        <div>
-                            {{clusterUpgradeProgress.raw.ConfigVersion}}
-                        </div>
-                    </div>
-    
-                    <div class="row-wrapper cell-wrapper">
-                        <div class="field">
-                            Upgrade Mode :
-                        </div>
-                        <div>
-                            {{clusterUpgradeProgress.raw.UpgradeState}}
-                        </div>
-                    </div>
-    
-                    <div class="row-wrapper cell-wrapper">
-                        <div class="field">
-                            Upgrade State :
-                        </div>
-                        <div>
-                            {{clusterUpgradeProgress.raw.RollingUpgradeMode}}
-                        </div>
-                    </div>
-    
-                    <div class="row-wrapper cell-wrapper">
-                        <div class="field">
-                            Start Timestamp Utc :
-                        </div>
-                        <div>
-                            {{clusterUpgradeProgress.startTimestampUtc}}
-                        </div>
-                    </div>
-    
-                    <div class="row-wrapper cell-wrapper">
-                        <div class="field">
-                            Upgrade Duration :
-                        </div>
-                        <div>
-                            {{clusterUpgradeProgress.upgradeDuration}}
-                        </div>
-                    </div>
-                </div> -->
                     <div *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
                         <h5 style="font-size: 16px;">Upgrade Domain Progress</h5>
                         <upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></upgrade-progress>
@@ -102,14 +63,30 @@
             </div>
 
             <div style="margin-top:20px">
-                <h5 style="font-size: 16px;">Current Upgrade Domain : {{clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName}} </h5>    
-                <div style="margin-left: 10px;">
-                    Duration : {{clusterUpgradeProgress.upgradeDomainDuration}} / Timeout : {{clusterUpgradeProgress.raw.UpgradeDescription.MonitoringPolicy.UpgradeDomainTimeoutInMilliseconds}}
-                    <div>
-                        <h5 style="font-size: 15px; margin-top: 15px;">Nodes status</h5>
-                        <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress"></app-upgrade-domain-progress>
-                    </div>
+                <h5 style="font-size: 16px;">Current Upgrade Domain : {{clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName}} </h5>
+                <div>
+
+                    <table>
+                        <tr>
+                            <td>
+                                Duration
+                            </td>
+                            <td>
+                                : {{clusterUpgradeProgress.upgradeDomainDuration}}
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                Timeout
+                            </td>
+                            <td>
+                                : {{clusterUpgradeProgress.raw.UpgradeDescription.MonitoringPolicy.UpgradeDomainTimeoutInMilliseconds | formatDate}}
+                            </td>
+                        </tr>
+                    </table>
                 </div>
+                <h5 style="font-size: 15px; margin-top: 15px;">Nodes status</h5>
+                <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress"></app-upgrade-domain-progress>
             </div>
 
             <div *ngIf="clusterUpgradeProgress.raw.FailureReason !== 'None'">
