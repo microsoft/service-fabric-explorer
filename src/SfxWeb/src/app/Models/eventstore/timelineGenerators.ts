@@ -153,7 +153,7 @@ export class EventStoreUtils {
     */
     public static addSubGroups(groups: DataSet<DataGroup>): void {
         groups.forEach(group => {
-            group["subgroupStack"] = {"stack": true, "noStack": false };
+            group.subgroupStack = {"stack": true, "noStack": false };
             groups.update(group);
         });
     }
@@ -505,11 +505,11 @@ function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: st
             if (findIndex(groupIds, (g: DataGroup) => g.id === currentPath) === -1) {
 
                 const content = padStart("", i * 3) + event.raw[prop].toString();
-                const childGroup = {id: currentPath, content, treeLevel: (i + 1) };
+                const childGroup: DataGroup = {id: currentPath, content };
 
                 //"leaf" rows dont have nested rows
                 if ( (i + 1) < properties.length) {
-                    childGroup["nestedGroups"] = [];
+                    childGroup.nestedGroups = [];
                 }
 
                 //"root" rows dont have parents
@@ -560,7 +560,7 @@ export function parseEventsGenerically(events: FabricEvent[], textSearch: string
             }
         }
 
-        let item = {
+        let item: DataItem = {
             content: "",
             id: index,
             start: event.timeStamp,
@@ -588,11 +588,11 @@ export function parseEventsGenerically(events: FabricEvent[], textSearch: string
 
                 if (duration < 0) {
                     item.start = end;
-                    item["end"] = start;
+                    item.end = start;
                     item.title = EventStoreUtils.tooltipFormat(event.raw, start, end, item.content);
                 }else {
                     item.start = start;
-                    item["end"] = end;
+                    item.end = end;
                     item.title = EventStoreUtils.tooltipFormat(event.raw, end, start, item.content);
                 }
 
