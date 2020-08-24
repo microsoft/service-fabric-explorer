@@ -1,22 +1,44 @@
 <!-- the last tabbed element needs to close the drop down for accessability compliance -->
-<div>
-    <div ngbDropdown #myDrop="ngbDropdown" placement="bottom-right" (openChange)="closeChange($event)" >
-        <button class="simple-button" aria-label="settings drop down" ngbDropdownToggle [attr.aria-haspopup]="false">
-            <span class="mif-tools"></span>
-        </button>
-        <div ngbDropdownMenu>
-            <label ngbDropdownItem>
-                Advanced Mode
-                <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()" [attr.aria-checked]="status"
-                    aria-label="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly"
-                    ngbTooltip="Advanced mode is only meant to be turned on to perform dangerous operations when not used properly">
-            </label>
-            <label ngbDropdownItem title="Hide all messages in the bottom right">
-                Suppress message
-                <input type="checkbox" [(ngModel)]="messageService.suppressMessage" (keydown.tab)="myDrop.close();"
-                    [attr.aria-checked]="messageService.suppressMessage" ngbTooltip="Hide all messages in the bottom right"
-                    aria-label="Hide all messages in the bottom right">
-            </label>
-        </div>
+<div ngbDropdown placement="bottom-right" (openChange)="closeChange($event)" #myDrop="ngbDropdown">
+    <button class="simple-button" ngbDropdownToggle aria-label="settings drop down">
+        <span class="mif-tools"></span>
+    </button>
+    <div ngbDropdownMenu aria-labelledby="dropdownBasic1" class="dropdown-container">
+        <table>
+            <tr ngbDropdownItem>
+                <td>
+                    <span class="mif-info"
+                        ngbTooltip="Advanced mode is only meant to be turned on to perform potentially dangerous operations. Use with caution."></span>
+                    Advanced Mode
+                </td>
+                <td class="centered">
+                    <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()" [attr.aria-checked]="status">
+                </td>
+            </tr>
+            <tr ngbDropdownItem>
+                <td>
+                    <span class="mif-info" ngbTooltip="Hide all messages in the bottom right."></span>
+                    Suppress Messages
+                </td>
+                <td class="centered">
+                    <input type="checkbox" [(ngModel)]="messageService.suppressMessage"
+                        [attr.aria-checked]="messageService.suppressMessage">
+                </td>
+            </tr>
+
+            <tr>
+                <td>
+                    <span class="mif-info" title="Display items per page in lists"></span>
+                    Page Size
+                </td>
+                <td class="centered">
+                    <input type="number" min="5" [(ngModel)]="settingsService.paginationLimit" class="input-flat"
+                        style="width: 50px; margin-left: 5px">
+                </td>
+            </tr>
+        </table>
+
+        <div style="width: 100%; background-color: gray; height: 1px; margin: 5px 0px;"></div>
+        <a href="https://go.microsoft.com/fwlink/?LinkId=512132" (keydown.tab)="myDrop.close();">Privacy and Cookies</a>
     </div>
 </div>

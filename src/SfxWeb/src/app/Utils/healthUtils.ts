@@ -1,6 +1,14 @@
-import { IRawUnhealthyEvaluation, IRawHealthEvaluation } from '../Models/RawDataTypes';
+import { IRawUnhealthyEvaluation, IRawHealthEvaluation, IRawNodeHealthEvluation, 
+        IRawApplicationHealthEvluation, IRawServiceHealthEvaluation, IRawPartitionHealthEvaluation, 
+        IRawReplicaHealthEvaluation, IRawDeployedServicePackageHealthEvaluation, IRawDeployedApplicationHealthEvaluation } from '../Models/RawDataTypes';
 import { HealthEvaluation } from '../Models/DataModels/Shared';
 import { DataService } from '../services/data.service';
+import { RoutesService } from '../services/routes.service';
+
+export interface IViewPathData {
+    viewPathUrl: string;
+    displayName: string 
+}
 
 export class HealthUtils {
     public static getParsedHealthEvaluations(rawUnhealthyEvals: IRawUnhealthyEvaluation[], level: number = 0, parent: HealthEvaluation = null, data: DataService): HealthEvaluation[] {
@@ -41,54 +49,63 @@ export class HealthUtils {
      * @param data
      * @param parentUrl
      */
-    public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): {viewPathUrl: string, displayName: string } {
+    public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): IViewPathData {
         let viewPathUrl = "";
+        let name = "";
 
         switch (healthEval.Kind) {
             case "Nodes" : {
-                viewPathUrl = data.routes.getNodesViewPath();
+                viewPathUrl = RoutesService.getNodesViewPath();
+                name = "Nodes";
                 break;
             }
             case "Node" : {
-                let nodeName = healthEval["NodeName"];
-                viewPathUrl = data.routes.getNodeViewPath(nodeName);
+                let nodeName = (healthEval as IRawNodeHealthEvluation).NodeName;
+                name = nodeName;
+                viewPathUrl = RoutesService.getNodeViewPath(nodeName);
                 break;
             }
             case "Applications" : {
-                viewPathUrl = data.routes.getAppsViewPath();
+                viewPathUrl = RoutesService.getAppsViewPath();
+                name = "applications"
                 break;
             }
             case "Application" : {
-                let applicationName = healthEval["ApplicationName"];
+                let applicationName = (healthEval as IRawApplicationHealthEvluation).ApplicationName;
                 let appName = applicationName.replace("fabric:/", ""); //remove fabric:/
+                name = appName;
 
                 let app = data.apps.find(appName);
                 if (app) {
                     let appType = app.raw.TypeName;
-                    viewPathUrl += `/apptype/${data.routes.doubleEncode(appType)}/app/${data.routes.doubleEncode(appName)}`;
+                    viewPathUrl += `/apptype/${RoutesService.doubleEncode(appType)}/app/${RoutesService.doubleEncode(appName)}`;
                 }
                 break;
             }
             case "Service" : {
-                let exactServiceName = healthEval["ServiceName"].replace("fabric:/", "");
+                let exactServiceName = (healthEval as IRawServiceHealthEvaluation).ServiceName.replace("fabric:/", "");
+                name = exactServiceName;
+
                 //Handle system services slightly different by setting their exact path
-                if (healthEval["ServiceName"].startsWith("fabric:/System")) {
-                    viewPathUrl = `/apptype/System/app/System/service/${data.routes.doubleEncode(exactServiceName)}`;
+                if ((healthEval as IRawServiceHealthEvaluation).ServiceName.startsWith("fabric:/System")) {
+                    viewPathUrl = `/apptype/System/app/System/service/${RoutesService.doubleEncode(exactServiceName)}`;
                 }else {
-                    parentUrl += `/service/${data.routes.doubleEncode(exactServiceName)}`;
+                    parentUrl += `/service/${RoutesService.doubleEncode(exactServiceName)}`;
                     viewPathUrl = parentUrl;
                 }
                 break;
             }
             case "Partition" : {
-                let partitionId = healthEval["PartitionId"];
-                parentUrl += `/partition/${data.routes.doubleEncode(partitionId)}`;
+                let partitionId = (healthEval as IRawPartitionHealthEvaluation).PartitionId;
+                name = partitionId;
+                parentUrl += `/partition/${RoutesService.doubleEncode(partitionId)}`;
                 viewPathUrl = parentUrl;
                 break;
             }
             case "Replica" : {
-                let replicaId = healthEval["ReplicaOrInstanceId"];
-                parentUrl += `/replica/${data.routes.doubleEncode(replicaId)}`;
+                let replicaId = (healthEval as IRawReplicaHealthEvaluation).ReplicaOrInstanceId;
+                name = replicaId;
+                parentUrl += `/replica/${RoutesService.doubleEncode(replicaId)}`;
                 viewPathUrl = parentUrl;
                 break;
             }
@@ -96,21 +113,27 @@ export class HealthUtils {
                 if (parentUrl) {
                     viewPathUrl = parentUrl;
                 }
+                name = "Event";
+
                 break;
             }
 
             case "DeployedApplication" : {
-                const nodeName = healthEval["NodeName"];
-                const applicationName = healthEval["Name"];
+                const nodeName = (healthEval as IRawDeployedApplicationHealthEvaluation).NodeName;
+                const applicationName = (healthEval as IRawDeployedApplicationHealthEvaluation).NodeName;
                 const appName = applicationName.replace("fabric:/", "");
-                viewPathUrl += `/node/${data.routes.doubleEncode(nodeName)}/deployedapp/${data.routes.doubleEncode(appName)}`;
+                name = appName;
+
+                viewPathUrl += `/node/${RoutesService.doubleEncode(nodeName)}/deployedapp/${RoutesService.doubleEncode(appName)}`;
                 break;
             }
 
             case "DeployedServicePackage" : {
-                const serviceManifestName = healthEval["ServiceManifestName"];
-                const activationId = healthEval["ServicePackageActivationId"];
-                const activationIdUrlInfo =  activationId ? "activationid/" + data.routes.doubleEncode(activationId) : "";
+                const serviceManifestName = (healthEval as IRawDeployedServicePackageHealthEvaluation).ServiceManifestName;
+                const activationId = (healthEval as IRawDeployedServicePackageHealthEvaluation).ServicePackageActivationId;
+                const activationIdUrlInfo =  activationId ? "activationid/" + RoutesService.doubleEncode(activationId) : "";
+                name = serviceManifestName;
+
                 viewPathUrl = parentUrl + `/deployedservice/${activationIdUrlInfo}${serviceManifestName}`;
                 break;
             }
@@ -120,13 +143,13 @@ export class HealthUtils {
             // case: "Partitions"
             // case: "Replicas"
             default: {
+                name = healthEval.Kind;
                 viewPathUrl = parentUrl;
                 break;
             }
         }
-        // if (replaceText.length > 0) {
-        //     healthEval.Description = Utils.injectLink(healthEval.Description, replaceText, viewPathUrl, replaceText);
-        // }
-        return {viewPathUrl: viewPathUrl, displayName: "" };
+
+        return {viewPathUrl, 
+                displayName: name };
     }
 }

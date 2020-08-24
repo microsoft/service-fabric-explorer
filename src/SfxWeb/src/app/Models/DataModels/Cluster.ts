@@ -148,10 +148,11 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
 
     public isSfrpCluster: boolean = false;
 
-    private _imageStoreConnectionString: string = "";
-    private _isNetworkInventoryManagerEnabled: boolean = false;
-    private _isBackUpRestoreEnabled: boolean = false;
+    public imageStoreConnectionString: string = "";
+    public isNetworkInventoryManagerEnabled: boolean = false;
+    public isBackupRestoreEnabled: boolean = false;
     public isRepairManagerEnabled: boolean = false;
+    public isEventStoreEnabled: boolean = false;
     public constructor(data: DataService) {
         super(data);
     }
@@ -165,7 +166,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         for(let i = 0; i < params.length; i ++) {
             const item = params.item(i);
             if(item.getAttribute("Name") === "ImageStoreConnectionString"){
-                this._imageStoreConnectionString = item.getAttribute("Value");
+                this.imageStoreConnectionString = item.getAttribute("Value");
                 break;
             }
         }
@@ -187,25 +188,15 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
             if(item.getAttribute("Name") === "Management"){
                 this.getImageStoreConnectionString(item);
             }else if (item.getAttribute("Name") === "BackupRestoreService"){
-                this._isBackUpRestoreEnabled = true;
+                this.isBackupRestoreEnabled = true;
             }else if (item.getAttribute("Name") === "UpgradeService"){
                 this.isSfrpCluster = true;
             }else if (item.getAttribute("Name") === "RepairManager"){
                 this.isRepairManagerEnabled = true;
+            }else if (item.getAttribute("Name") === "EventStoreService"){
+                this.isEventStoreEnabled = true;
             }
         }
-    }
-
-    public get isNetworkInventoryManagerEnabled(): boolean {
-        return this._isNetworkInventoryManagerEnabled;
-    }
-
-    public get imageStoreConnectionString(): string {
-        return this._imageStoreConnectionString;
-    }
-
-    public get isBackupRestoreEnabled(): boolean {
-        return this._isBackUpRestoreEnabled;
     }
 }
 

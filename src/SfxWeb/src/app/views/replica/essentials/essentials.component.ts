@@ -6,6 +6,7 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
 import { ReplicaBaseController } from '../ReplicaBase';
+import { RoutesService } from 'src/app/services/routes.service';
 
 @Component({
   selector: 'app-essentials',
@@ -34,7 +35,7 @@ export class EssentialsComponent extends ReplicaBaseController {
 
                 const serviceNameOnly = detailRaw.ServiceManifestName;
                 const activationId = detailRaw.ServicePackageActivationId || null;
-                this.nodeView = this.data.routes.getDeployedReplicaViewPath(this.replica.raw.NodeName, this.appId, serviceNameOnly, activationId, this.partitionId, this.replicaId);
+                this.nodeView = RoutesService.getDeployedReplicaViewPath(this.replica.raw.NodeName, this.appId, serviceNameOnly, activationId, this.partitionId, this.replicaId);
             })).pipe(tap()).subscribe();
           } catch (e) {
               console.log(e);
