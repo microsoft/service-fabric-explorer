@@ -55,14 +55,12 @@
                         </tr>
                     </table>
                 </div>
-            <div style="margin-top: 20px;">
-                    <div *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
-                        <h5 style="font-size: 16px;">Upgrade Domain Progress</h5>
-                        <upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></upgrade-progress>
-                    </div>
-            </div>
+                <div *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0" style="margin-top: 20px;">
+                    <h5 style="font-size: 16px;">Upgrade Domain Progress</h5>
+                    <upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></upgrade-progress>
+                </div>
 
-            <div style="margin-top:20px">
+            <div style="margin-top:20px" *ngIf="clusterUpgradeProgress.isUpgrading">
                 <h5 style="font-size: 16px;">Current Upgrade Domain : {{clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName}} </h5>
                 <div>
 
