@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit } from '@angular/core';
 import { IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
-import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
+import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
 
 @Component({
   selector: 'app-dashboard-tile',
@@ -60,6 +60,8 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
     },
     plotOptions: {
       pie: {
+        borderColor: '#191919',
+        borderWidth: 2,
         dataLabels: {
           enabled: false,
           distance: -50,
@@ -68,12 +70,13 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
             color: 'white'
           }
         },
-        innerSize: '90%',
+        innerSize: '85%',
         startAngle: -50,
         endAngle: 230,
       }
     },
     series: [{
+      animation: false,
       type: "pie",
       data:
         [
@@ -107,7 +110,7 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
 
     const data = this.getDataSet();
     this.options.tooltip.enabled = data.length === 3;
-    this.options.series[0]['data'] = data;
+    (this.options.series[0] as SeriesPieOptions).data = data;
 
     if (!this.data.largeTile) {
       this.options.title.style.fontSize = '13pt';
@@ -123,9 +126,9 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
 
   getDataSet(): PointOptionsObject[] {
     const colors = {
-      'Healthy': "green",
-      'Warning': 'yellow',
-      'Error': 'red'
+      'Healthy': "#7FBA00",
+      'Warning': '#FCD116',
+      'Error': '#E81123'
     }
 
     let data = this.data.dataPoints.map(p => {

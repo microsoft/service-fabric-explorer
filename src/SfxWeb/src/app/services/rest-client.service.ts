@@ -35,40 +35,14 @@ export class RestClientService {
 
   private cacheAllowanceToken: number = Date.now().valueOf();
 
-  private requestCount: number = 0;
-  private requestStarted: { (param: number): void; }[] = [];
-  private requestEnded: { (param: number): void; }[] = [];
-  private allRequestsComplete: { (): void; }[] = [];
-
   constructor(private httpClient: HttpClient, private message: MessageService) {
-      this.registerRequestEndedCallback(requestCount => {
-          if (requestCount === 0) {
-              this.allRequestsComplete = [];
-          }
-      });
+
   }
 
   public invalidateBrowserRestResponseCache(): void {
       this.cacheAllowanceToken = Date.now().valueOf();
   }
 
-  public registerRequestStartedCallback(callback: (number) => void): RestClientService {
-      this.requestStarted.push(callback);
-      return this;
-  }
-
-  public registerRequestEndedCallback(callback: (number) => void): RestClientService {
-      this.requestEnded.push(callback);
-      return this;
-  }
-
-  public registerAllRequestsCompleteCallback(callback: () => void): void {
-      if (this.requestCount === 0) {
-          callback();
-      } else {
-          this.allRequestsComplete.push(callback);
-      }
-  }
 
   public getClusterHealth(
       eventsHealthStateFilter: number = HealthStateFilterFlags.Default,

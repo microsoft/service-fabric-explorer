@@ -131,9 +131,9 @@ module Sfx {
     export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         public clusterManifestName: string;
         public isSfrpCluster: boolean = false;
+        public isBRSEnabled: boolean = false;
         private _imageStoreConnectionString: string;
         private _isNetworkInventoryManagerEnabled: boolean = false;
-
         public constructor(data: DataService) {
             super(data);
         }
@@ -159,6 +159,13 @@ module Sfx {
             try {
                 let $sfrp = $("Section[Name='UpgradeService']", $manifest);
                 this.isSfrpCluster = $sfrp.length > 0;
+            } catch (e) {
+                console.log(e);
+            }
+
+            try {
+                let $isBRSEnabled = $("Section[Name='BackupRestoreService']", $manifest);
+                this.isBRSEnabled = $isBRSEnabled.length > 0;
             } catch (e) {
                 console.log(e);
             }

@@ -8,6 +8,7 @@ import { Node } from './Node';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { HealthBase } from './HealthEvent';
+import { RoutesService } from 'src/app/services/routes.service';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -34,11 +35,11 @@ export class DeployedApplication extends DataModelBase<IRawDeployedApplication> 
     }
 
     public get viewPath(): string {
-        return this.data.routes.getDeployedAppViewPath(this.parent.name, this.id);
+        return RoutesService.getDeployedAppViewPath(this.parent.name, this.id);
     }
 
     public get appTypeViewPath(): string {
-        return this.data.routes.getAppTypeViewPath(this.raw.TypeName);
+        return RoutesService.getAppTypeViewPath(this.raw.TypeName);
     }
 
     public get diskLocation(): string {

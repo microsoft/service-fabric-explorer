@@ -18,6 +18,7 @@ import { ServiceCollection } from './collections/ServiceCollection';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import   isEmpty from 'lodash/isEmpty';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
+import { RoutesService } from 'src/app/services/routes.service';
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -66,14 +67,14 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getAppViewPath(this.raw.TypeName, this.id);
+        return RoutesService.getAppViewPath(this.raw.TypeName, this.id);
     }
 
     public get appTypeViewPath(): string {
         if (this.raw.TypeName === Constants.SystemAppTypeName) {
-            return this.data.routes.getSystemAppsViewPath();
+            return RoutesService.getSystemAppsViewPath();
         }
-        return this.data.routes.getAppTypeViewPath(this.raw.TypeName);
+        return RoutesService.getAppTypeViewPath(this.raw.TypeName);
     }
 
     public delete(): Observable<any> {
@@ -186,7 +187,7 @@ export class SystemApplication extends Application {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getSystemAppsViewPath();
+        return RoutesService.getSystemAppsViewPath();
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
@@ -227,7 +228,7 @@ export class ApplicationHealth extends HealthBase<IRawApplicationHealth> {
 
 export class DeployedApplicationHealthState extends DataModelBase<IRawDeployedApplicationHealthState> {
     public get viewPath(): string {
-        return this.data.routes.getDeployedAppViewPath(this.raw.NodeName, this.parent.parent.id);
+        return RoutesService.getDeployedAppViewPath(this.raw.NodeName, this.parent.parent.id);
     }
 
     public constructor(data: DataService, raw: IRawDeployedApplicationHealthState, public parent: ApplicationHealth) {

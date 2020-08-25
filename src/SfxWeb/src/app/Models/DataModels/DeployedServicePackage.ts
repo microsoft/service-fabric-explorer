@@ -10,6 +10,7 @@ import { HealthBase } from './HealthEvent';
 import { DeployedApplication } from './DeployedApplication';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { RoutesService } from 'src/app/services/routes.service';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -40,7 +41,7 @@ export class DeployedServicePackage extends DataModelBase<IRawDeployedServicePac
     }
 
     public get viewPath(): string {
-        return this.data.routes.getDeployedServiceViewPath(this.parent.parent.name, this.parent.id, this.id, this.servicePackageActivationId);
+        return RoutesService.getDeployedServiceViewPath(this.parent.parent.name, this.parent.id, this.id, this.servicePackageActivationId);
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedServicePackage> {

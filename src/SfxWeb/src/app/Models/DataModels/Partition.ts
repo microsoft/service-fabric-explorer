@@ -10,6 +10,7 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HealthBase } from './HealthEvent';
 import { PartitionBackupInfo } from './PartitionBackupInfo';
 import { Observable } from 'rxjs';
+import { RoutesService } from 'src/app/services/routes.service';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -50,7 +51,7 @@ export class Partition extends DataModelBase<IRawPartition> {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getPartitionViewPath(this.parent.parent.raw.TypeName, this.parent.parent.id, this.parent.id, this.id);
+        return RoutesService.getPartitionViewPath(this.parent.parent.raw.TypeName, this.parent.parent.id, this.parent.id, this.id);
     }
 
     public get IsStatefulServiceAndSystemService(): Boolean {
