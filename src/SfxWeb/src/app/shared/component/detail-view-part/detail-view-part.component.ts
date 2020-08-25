@@ -2,6 +2,7 @@ import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Constants } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
+import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
 import  size from 'lodash/size';
 import  forOwn  from 'lodash/forOwn';
 import  startCase  from 'lodash/startCase';
@@ -153,7 +154,9 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
           } else if (isObject(resolvedValue)) {
               // Deal with badge class as a special case
               if (Utils.isBadge(resolvedValue)) {
-                  if (resolvedValue.text && resolvedValue.badgeClass) {
+                resolvedValue = resolvedValue as ITextAndBadge
+
+                if ( resolvedValue.text && resolvedValue.badgeClass) {
                       resolvedValue = HtmlUtils.getBadgeHtml(resolvedValue);
                   } else {
                       resolvedValue = resolvedValue.text;

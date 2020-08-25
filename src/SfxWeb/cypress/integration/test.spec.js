@@ -1,4 +1,4 @@
-describe('My First Test', () => {
+describe('shallow routes check', () => {
     it('Visits the Kitchen Sink', () => {
       cy.visit('localhost:2500');
 
