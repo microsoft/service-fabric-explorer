@@ -1,9 +1,24 @@
 import { IRawUnhealthyEvaluation, IRawHealthEvaluation, IRawNodeHealthEvluation, 
         IRawApplicationHealthEvluation, IRawServiceHealthEvaluation, IRawPartitionHealthEvaluation, 
-        IRawReplicaHealthEvaluation, IRawDeployedServicePackageHealthEvaluation, IRawDeployedApplicationHealthEvaluation } from '../Models/RawDataTypes';
+        IRawReplicaHealthEvaluation, IRawDeployedServicePackageHealthEvaluation, IRawDeployedApplicationHealthEvaluation, IRawHealthStateCount } from '../Models/RawDataTypes';
 import { HealthEvaluation } from '../Models/DataModels/Shared';
 import { DataService } from '../services/data.service';
 import { RoutesService } from '../services/routes.service';
+import { ApplicationHealth } from '../Models/DataModels/Application';
+import { ClusterHealth } from '../Models/DataModels/Cluster';
+import { ServiceHealth } from '../Models/DataModels/Service';
+import { ReplicaHealth } from '../Models/DataModels/Replica';
+
+export enum HealthStatisticsEntityKind {
+    Node,
+    Application,
+    Service,
+    Partition,
+    Replica,
+    DeployedApplication,
+    DeployedServicePackage
+}
+
 
 export interface IViewPathData {
     viewPathUrl: string;
@@ -151,5 +166,19 @@ export class HealthUtils {
 
         return {viewPathUrl, 
                 displayName: name };
+    }
+
+    public static getHealthStateCount(data: ApplicationHealth | ClusterHealth | ServiceHealth, entityKind: HealthStatisticsEntityKind): IRawHealthStateCount {
+        if (data.raw && data.raw.HealthStatistics) {
+            let entityHealthCount = data.raw.HealthStatistics.HealthStateCountList.find(item => item.EntityKind === HealthStatisticsEntityKind[entityKind]);
+            if (entityHealthCount) {
+                return entityHealthCount.HealthStateCount;
+            }
+        }
+        return {
+            OkCount: 0,
+            ErrorCount: 0,
+            WarningCount: 0
+        };
     }
 }

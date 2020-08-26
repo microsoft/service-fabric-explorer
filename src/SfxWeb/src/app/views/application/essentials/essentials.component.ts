@@ -1,15 +1,16 @@
 import { Component, Injector, ChangeDetectorRef } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
-import { ApplicationUpgradeProgress } from 'src/app/Models/DataModels/Application';
+import { ApplicationUpgradeProgress, ApplicationHealth } from 'src/app/Models/DataModels/Application';
 import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
-import { Constants } from 'src/app/Common/Constants';
 import { forkJoin, of, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ClusterManifest } from 'src/app/Models/DataModels/Cluster';
 import { ApplicationBaseController } from '../applicationBase';
 import { ListColumnSettingForApplicationServiceRow } from '../action-row/action-row.component';
+import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
+import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
@@ -23,6 +24,10 @@ export class EssentialsComponent extends ApplicationBaseController {
   upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
   serviceTypesListSettings: ListSettings;
   clusterManifest: ClusterManifest;
+
+  servicesDashboard: IDashboardViewModel;
+  partitionsDashboard: IDashboardViewModel;
+  replicasDashboard: IDashboardViewModel;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService, private cdr: ChangeDetectorRef) { 
     super(data, injector);
@@ -67,7 +72,16 @@ export class EssentialsComponent extends ApplicationBaseController {
       })),
       this.app.serviceTypes.refresh(messageHandler),
       this.app.services.refresh(messageHandler),
-      this.app.health.refresh(messageHandler)
+      this.app.health.refresh(messageHandler).pipe(map((appHealth: ApplicationHealth) => {
+        let servicesHealthStateCount = HealthUtils.getHealthStateCount(appHealth, HealthStatisticsEntityKind.Service);
+        this.servicesDashboard = DashboardViewModel.fromHealthStateCount("Services", "Service", false, servicesHealthStateCount);
+
+        let partitionsDashboard = HealthUtils.getHealthStateCount(appHealth, HealthStatisticsEntityKind.Partition);
+        this.partitionsDashboard = DashboardViewModel.fromHealthStateCount("Partitions", "Partition", false, partitionsDashboard);
+
+        let replicasHealthStateCount = HealthUtils.getHealthStateCount(appHealth, HealthStatisticsEntityKind.Replica);
+        this.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
+      }))
     ]).pipe(map( () => {
       this.cdr.detectChanges();
     }))
