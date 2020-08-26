@@ -54,19 +54,19 @@ export class EssentialsComponent extends BaseController {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
       this.clusterHealth.refresh(messageHandler).pipe(map((clusterHealth: ClusterHealth) => {
-        let nodesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth,HealthStatisticsEntityKind.Node);
+        let nodesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw,HealthStatisticsEntityKind.Node);
         this.nodesDashboard = DashboardViewModel.fromHealthStateCount("Nodes", "Node", true, nodesHealthStateCount, this.data.routes, RoutesService.getNodesViewPath());
 
-        let appsHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth, HealthStatisticsEntityKind.Application);
+        let appsHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Application);
         this.appsDashboard = DashboardViewModel.fromHealthStateCount("Applications", "Application", true, appsHealthStateCount, this.data.routes, RoutesService.getAppsViewPath());
 
-        let servicesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth, HealthStatisticsEntityKind.Service);
+        let servicesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Service);
         this.servicesDashboard = DashboardViewModel.fromHealthStateCount("Services", "Service", false, servicesHealthStateCount);
 
-        let partitionsDashboard = HealthUtils.getHealthStateCount(clusterHealth, HealthStatisticsEntityKind.Partition);
+        let partitionsDashboard = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Partition);
         this.partitionsDashboard = DashboardViewModel.fromHealthStateCount("Partitions", "Partition", false, partitionsDashboard);
 
-        let replicasHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth, HealthStatisticsEntityKind.Replica);
+        let replicasHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Replica);
         this.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
         clusterHealth.checkExpiredCertStatus();
     })),

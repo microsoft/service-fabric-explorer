@@ -44,10 +44,10 @@ export class EssentialsComponent extends ServiceBaseController {
     return forkJoin([
       this.service.health.refresh(messageHandler).pipe(map((replicaHealth: ServiceHealth) => {
         console.log("test")
-        let partitionsDashboard = HealthUtils.getHealthStateCount(replicaHealth, HealthStatisticsEntityKind.Partition);
+        let partitionsDashboard = HealthUtils.getHealthStateCount(replicaHealth.raw, HealthStatisticsEntityKind.Partition);
         this.partitionsDashboard = DashboardViewModel.fromHealthStateCount("Partitions", "Partition", false, partitionsDashboard);
 
-        let replicasHealthStateCount = HealthUtils.getHealthStateCount(replicaHealth, HealthStatisticsEntityKind.Replica);
+        let replicasHealthStateCount = HealthUtils.getHealthStateCount(replicaHealth.raw, HealthStatisticsEntityKind.Replica);
         this.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
       })),
       this.service.partitions.refresh(messageHandler)

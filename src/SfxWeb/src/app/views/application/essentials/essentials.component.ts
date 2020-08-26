@@ -73,13 +73,13 @@ export class EssentialsComponent extends ApplicationBaseController {
       this.app.serviceTypes.refresh(messageHandler),
       this.app.services.refresh(messageHandler),
       this.app.health.refresh(messageHandler).pipe(map((appHealth: ApplicationHealth) => {
-        let servicesHealthStateCount = HealthUtils.getHealthStateCount(appHealth, HealthStatisticsEntityKind.Service);
+        let servicesHealthStateCount = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Service);
         this.servicesDashboard = DashboardViewModel.fromHealthStateCount("Services", "Service", false, servicesHealthStateCount);
 
-        let partitionsDashboard = HealthUtils.getHealthStateCount(appHealth, HealthStatisticsEntityKind.Partition);
+        let partitionsDashboard = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Partition);
         this.partitionsDashboard = DashboardViewModel.fromHealthStateCount("Partitions", "Partition", false, partitionsDashboard);
 
-        let replicasHealthStateCount = HealthUtils.getHealthStateCount(appHealth, HealthStatisticsEntityKind.Replica);
+        let replicasHealthStateCount = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Replica);
         this.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
       }))
     ]).pipe(map( () => {
