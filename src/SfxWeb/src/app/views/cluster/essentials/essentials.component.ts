@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
-import { ClusterUpgradeProgress, ClusterHealth, HealthStatisticsEntityKind } from '../../../Models/DataModels/Cluster';
+import { ClusterUpgradeProgress, ClusterHealth } from '../../../Models/DataModels/Cluster';
 import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
 import { SystemApplication } from 'src/app/Models/DataModels/Application';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -12,6 +12,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { map, catchError } from 'rxjs/operators';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { RoutesService } from 'src/app/services/routes.service';
+import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
 
 
 @Component({
@@ -53,19 +54,19 @@ export class EssentialsComponent extends BaseController {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
       this.clusterHealth.refresh(messageHandler).pipe(map((clusterHealth: ClusterHealth) => {
-        let nodesHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Node);
+        let nodesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw,HealthStatisticsEntityKind.Node);
         this.nodesDashboard = DashboardViewModel.fromHealthStateCount("Nodes", "Node", true, nodesHealthStateCount, this.data.routes, RoutesService.getNodesViewPath());
 
-        let appsHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Application);
+        let appsHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Application);
         this.appsDashboard = DashboardViewModel.fromHealthStateCount("Applications", "Application", true, appsHealthStateCount, this.data.routes, RoutesService.getAppsViewPath());
 
-        let servicesHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Service);
+        let servicesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Service);
         this.servicesDashboard = DashboardViewModel.fromHealthStateCount("Services", "Service", false, servicesHealthStateCount);
 
-        let partitionsDashboard = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Partition);
+        let partitionsDashboard = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Partition);
         this.partitionsDashboard = DashboardViewModel.fromHealthStateCount("Partitions", "Partition", false, partitionsDashboard);
 
-        let replicasHealthStateCount = clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Replica);
+        let replicasHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Replica);
         this.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
         clusterHealth.checkExpiredCertStatus();
     })),

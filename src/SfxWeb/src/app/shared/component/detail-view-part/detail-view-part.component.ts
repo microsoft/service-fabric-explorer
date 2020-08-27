@@ -13,6 +13,7 @@ import  isNull  from 'lodash/isNull';
 import  isEmpty  from 'lodash/isEmpty';
 import  isObject  from 'lodash/isObject';
 import  first  from 'lodash/first';
+import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
 
 export class ResolvedObject {
   [index: string]: any;
@@ -153,6 +154,7 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
           } else if (isObject(resolvedValue)) {
               // Deal with badge class as a special case
               if (Utils.isBadge(resolvedValue)) {
+                  resolvedValue = resolvedValue as ITextAndBadge;
                   if (resolvedValue.text && resolvedValue.badgeClass) {
                       resolvedValue = HtmlUtils.getBadgeHtml(resolvedValue);
                   } else {

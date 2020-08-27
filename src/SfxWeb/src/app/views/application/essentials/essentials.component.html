@@ -57,6 +57,12 @@
   </div>
 </div>
 
+<div>
+  <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard"></app-dashboard-tile>
+  <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard"></app-dashboard-tile>
+  <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
+</div>
+
 <div id="upgradeDetailsSection" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container [sectionName]="app.isUpgrading ? 'Upgrade In Progress' : 'Latest Upgrade State'">
         <div collapse-header>
