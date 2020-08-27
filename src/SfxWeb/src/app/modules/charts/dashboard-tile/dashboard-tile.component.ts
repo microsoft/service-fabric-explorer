@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit } from '@angular/core';
 import { IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
-import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
+import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
 
 @Component({
   selector: 'app-dashboard-tile',
@@ -110,7 +110,7 @@ export class DashboardTileComponent implements OnInit, AfterViewInit {
 
     const data = this.getDataSet();
     this.options.tooltip.enabled = data.length === 3;
-    this.options.series[0]['data'] = data;
+    (this.options.series[0] as SeriesPieOptions).data = data;
 
     if (!this.data.largeTile) {
       this.options.title.style.fontSize = '13pt';

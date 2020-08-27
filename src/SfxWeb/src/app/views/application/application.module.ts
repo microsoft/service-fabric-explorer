@@ -17,6 +17,7 @@ import { FormsModule } from '@angular/forms';
 import { NgbTypeaheadModule, NgbDropdownModule, NgbButtonsModule } from '@ng-bootstrap/ng-bootstrap';
 import { ActionRowComponent } from './action-row/action-row.component';
 import { BackupComponent } from './backup/backup.component';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
 
 @NgModule({
   declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent, ActionRowComponent, BackupComponent],
@@ -30,7 +31,8 @@ import { BackupComponent } from './backup/backup.component';
     NgbTypeaheadModule,
     NgbDropdownModule,
     NgbButtonsModule,
-    UpgradeProgressModule
+    UpgradeProgressModule,
+    ChartsModule
   ]
 })
 export class ApplicationModule { }

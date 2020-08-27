@@ -20,26 +20,11 @@ import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-export enum HealthStatisticsEntityKind {
-    Node,
-    Application,
-    Service,
-    Partition,
-    Replica,
-    DeployedApplication,
-    DeployedServicePackage
-}
 
 export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 
     //make sure we only check once per session and this object will get destroyed/recreated
     private static certExpirationChecked = false;
-
-    private emptyHealthStateCount: IRawHealthStateCount = {
-        OkCount: 0,
-        ErrorCount: 0,
-        WarningCount: 0
-    };
 
     public constructor(data: DataService,
         protected eventsHealthStateFilter: HealthStateFilterFlags,
@@ -69,16 +54,6 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
         }catch (e) {
             console.log(e);
         }
-    }
-
-    public getHealthStateCount(entityKind: HealthStatisticsEntityKind): IRawHealthStateCount {
-        if (this.raw && this.raw.HealthStatistics) {
-            let entityHealthCount = this.raw.HealthStatistics.HealthStateCountList.find(item => item.EntityKind === HealthStatisticsEntityKind[entityKind]);
-            if (entityHealthCount) {
-                return entityHealthCount.HealthStateCount;
-            }
-        }
-        return this.emptyHealthStateCount;
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<any> {

@@ -1,4 +1,4 @@
-import { HealthUtils } from "./healthUtils";
+import { HealthUtils, HealthStatisticsEntityKind } from "./healthUtils";
 import { IRawHealthEvaluation, IRawDeployedServicePackageHealthEvaluation, IRawNodeHealthEvluation, IRawApplicationHealthEvluation, IRawServiceHealthEvaluation, IRawPartitionHealthEvaluation, IRawReplicaHealthEvaluation } from "../Models/RawDataTypes";
 import { DataService } from "../services/data.service";
 import { ApplicationCollection } from "../Models/DataModels/collections/Collections";
@@ -220,4 +220,141 @@ describe('Health Utils', () => {
             });
         })
     });
+
+
+    describe('get health state count', () => {
+        fit('getHealthStateCount valid', async () => {
+            let data = {
+                "HealthEvents": [],
+                "AggregatedHealthState": "Warning",
+                "UnhealthyEvaluations": [],
+                "HealthStatistics": {
+                    "HealthStateCountList": [
+                        {
+                            "EntityKind": "Node",
+                            "HealthStateCount": {
+                                "OkCount": 0,
+                                "ErrorCount": 1,
+                                "WarningCount": 5
+                            }
+                        },
+                        {
+                            "EntityKind": "Replica",
+                            "HealthStateCount": {
+                                "OkCount": 41,
+                                "ErrorCount": 6,
+                                "WarningCount": 0
+                            }
+                        },
+                        {
+                            "EntityKind": "Partition",
+                            "HealthStateCount": {
+                                "OkCount": 13,
+                                "ErrorCount": 5,
+                                "WarningCount": 0
+                            }
+                        },
+                        {
+                            "EntityKind": "Service",
+                            "HealthStateCount": {
+                                "OkCount": 4,
+                                "ErrorCount": 0,
+                                "WarningCount": 5
+                            }
+                        },
+                        {
+                            "EntityKind": "DeployedServicePackage",
+                            "HealthStateCount": {
+                                "OkCount": 22,
+                                "ErrorCount": 0,
+                                "WarningCount": 0
+                            }
+                        },
+                        {
+                            "EntityKind": "DeployedApplication",
+                            "HealthStateCount": {
+                                "OkCount": 16,
+                                "ErrorCount": 0,
+                                "WarningCount": 0
+                            }
+                        },
+                        {
+                            "EntityKind": "Application",
+                            "HealthStateCount": {
+                                "OkCount": 0,
+                                "ErrorCount": 0,
+                                "WarningCount": 4
+                            }
+                        }
+                    ]
+                },
+                "NodeHealthStates": [],
+                "ApplicationHealthStates": []
+               }
+    
+            expect(HealthUtils.getHealthStateCount(data, HealthStatisticsEntityKind.Node)).toEqual({
+                OkCount: 0,
+                ErrorCount: 1,
+                WarningCount: 5})
+            expect(HealthUtils.getHealthStateCount(data, HealthStatisticsEntityKind.Application)).toEqual({
+                OkCount: 0,
+                ErrorCount: 0,
+                WarningCount: 4})
+            expect(HealthUtils.getHealthStateCount(data, HealthStatisticsEntityKind.Service)).toEqual({
+                OkCount: 4,
+                ErrorCount: 0,
+                WarningCount: 5})
+    
+            expect(HealthUtils.getHealthStateCount(data, HealthStatisticsEntityKind.Partition)).toEqual({
+                OkCount: 13,
+                ErrorCount: 5,
+                WarningCount: 0})
+    
+            expect(HealthUtils.getHealthStateCount(data, HealthStatisticsEntityKind.Replica)).toEqual({
+                OkCount: 41,
+                ErrorCount: 6,
+                WarningCount: 0})
+    
+            expect(HealthUtils.getHealthStateCount(data, HealthStatisticsEntityKind.DeployedApplication)).toEqual({
+                OkCount: 16,
+                ErrorCount: 0,
+                WarningCount: 0})
+            expect(HealthUtils.getHealthStateCount(data, HealthStatisticsEntityKind.DeployedServicePackage)).toEqual({
+                OkCount: 22,
+                ErrorCount: 0,
+                WarningCount: 0})
+
+            expect(HealthUtils.getHealthStateCount(data, HealthStatisticsEntityKind.DeployedServicePackage)).toEqual({
+                OkCount: 22,
+                ErrorCount: 0,
+                WarningCount: 0})
+        })
+
+        fit('getHealthStateCount queried entity doesnt exist on list', async () => {
+            let data = {
+                "HealthEvents": [],
+                "AggregatedHealthState": "Warning",
+                "UnhealthyEvaluations": [],
+                "HealthStatistics": {
+                    "HealthStateCountList": [
+                        {
+                            "EntityKind": "Application",
+                            "HealthStateCount": {
+                                "OkCount": 0,
+                                "ErrorCount": 0,
+                                "WarningCount": 4
+                            }
+                        }
+                    ]
+                },
+                "NodeHealthStates": [],
+                "ApplicationHealthStates": []
+               }
+
+            expect(HealthUtils.getHealthStateCount(data, HealthStatisticsEntityKind.DeployedServicePackage)).toEqual({
+                OkCount: 0,
+                ErrorCount: 0,
+                WarningCount: 0})
+        })
+    })
 })
