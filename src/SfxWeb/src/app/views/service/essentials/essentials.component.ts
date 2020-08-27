@@ -5,6 +5,10 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin, of } from 'rxjs';
 import { ServiceBaseController } from '../ServiceBase';
+import { map } from 'rxjs/operators';
+import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
+import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
+import { ServiceHealth } from 'src/app/Models/DataModels/Service';
 
 @Component({
   selector: 'app-essentials',
@@ -15,7 +19,8 @@ export class EssentialsComponent extends ServiceBaseController {
 
   listSettings: ListSettings;
   unhealthyEvaluationsListSettings: ListSettings;
-
+  partitionsDashboard: IDashboardViewModel;
+  replicasDashboard: IDashboardViewModel;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
     super(data, injector);
@@ -37,7 +42,14 @@ export class EssentialsComponent extends ServiceBaseController {
     this.service.description.refresh(messageHandler).subscribe();
 
     return forkJoin([
-      this.service.health.refresh(messageHandler),
+      this.service.health.refresh(messageHandler).pipe(map((replicaHealth: ServiceHealth) => {
+        console.log("test")
+        let partitionsDashboard = HealthUtils.getHealthStateCount(replicaHealth.raw, HealthStatisticsEntityKind.Partition);
+        this.partitionsDashboard = DashboardViewModel.fromHealthStateCount("Partitions", "Partition", false, partitionsDashboard);
+
+        let replicasHealthStateCount = HealthUtils.getHealthStateCount(replicaHealth.raw, HealthStatisticsEntityKind.Replica);
+        this.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
+      })),
       this.service.partitions.refresh(messageHandler)
     ]);
   }

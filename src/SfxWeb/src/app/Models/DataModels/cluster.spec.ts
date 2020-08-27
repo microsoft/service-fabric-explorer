@@ -1,10 +1,9 @@
 import { DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
-import { ClusterHealth, HealthStatisticsEntityKind, ClusterManifest, ClusterUpgradeProgress } from './Cluster';
-import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
+import { ClusterManifest, ClusterUpgradeProgress } from './Cluster';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { of, Observable } from 'rxjs';
-import { IRawClusterHealth, IRawHealthStateCount, IRawClusterManifest, IRawClusterUpgradeProgress } from '../RawDataTypes';
+import { IRawClusterManifest, IRawClusterUpgradeProgress } from '../RawDataTypes';
 import { RestClientService } from 'src/app/services/rest-client.service';
 
     
@@ -18,122 +17,6 @@ describe('Cluster', () => {
             ensureInitialized: () => of(null)
         }
     } as DataService;
-
-    describe('health', () => {
-        fit('validate getHealthStateCount', async () => {
-            let clusterHealth =  new ClusterHealth(mockDataService, HealthStateFilterFlags.Default, HealthStateFilterFlags.Default, HealthStateFilterFlags.Default);
-    
-            restClientMock.getClusterHealth = (eventsHealthStateFilter:number, 
-                nodesHealthStateFilter:number, 
-                applicationsHealthStateFilter:number,
-                messageHandler?: IResponseMessageHandler): Observable<IRawClusterHealth> => of({
-                     "HealthEvents": [],
-                     "AggregatedHealthState": "Warning",
-                     "UnhealthyEvaluations": [],
-                     "HealthStatistics": {
-                         "HealthStateCountList": [
-                             {
-                                 "EntityKind": "Node",
-                                 "HealthStateCount": {
-                                     "OkCount": 0,
-                                     "ErrorCount": 1,
-                                     "WarningCount": 5
-                                 }
-                             },
-                             {
-                                 "EntityKind": "Replica",
-                                 "HealthStateCount": {
-                                     "OkCount": 41,
-                                     "ErrorCount": 6,
-                                     "WarningCount": 0
-                                 }
-                             },
-                             {
-                                 "EntityKind": "Partition",
-                                 "HealthStateCount": {
-                                     "OkCount": 13,
-                                     "ErrorCount": 5,
-                                     "WarningCount": 0
-                                 }
-                             },
-                             {
-                                 "EntityKind": "Service",
-                                 "HealthStateCount": {
-                                     "OkCount": 4,
-                                     "ErrorCount": 0,
-                                     "WarningCount": 5
-                                 }
-                             },
-                             {
-                                 "EntityKind": "DeployedServicePackage",
-                                 "HealthStateCount": {
-                                     "OkCount": 22,
-                                     "ErrorCount": 0,
-                                     "WarningCount": 0
-                                 }
-                             },
-                             {
-                                 "EntityKind": "DeployedApplication",
-                                 "HealthStateCount": {
-                                     "OkCount": 16,
-                                     "ErrorCount": 0,
-                                     "WarningCount": 0
-                                 }
-                             },
-                             {
-                                 "EntityKind": "Application",
-                                 "HealthStateCount": {
-                                     "OkCount": 0,
-                                     "ErrorCount": 0,
-                                     "WarningCount": 4
-                                 }
-                             }
-                         ]
-                     },
-                     "NodeHealthStates": [],
-                     "ApplicationHealthStates": []
-                    })
-    
-            expect(clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Node)).toEqual({
-                                                                                            OkCount: 0,
-                                                                                            ErrorCount: 0,
-                                                                                            WarningCount: 0})
-    
-            await clusterHealth.ensureInitialized().toPromise();
-            await clusterHealth.refresh().toPromise();
-            expect(clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Node)).toEqual({
-                OkCount: 0,
-                ErrorCount: 1,
-                WarningCount: 5})
-            expect(clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Application)).toEqual({
-                OkCount: 0,
-                ErrorCount: 0,
-                WarningCount: 4})
-            expect(clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Service)).toEqual({
-                OkCount: 4,
-                ErrorCount: 0,
-                WarningCount: 5})
-    
-            expect(clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Partition)).toEqual({
-                OkCount: 13,
-                ErrorCount: 5,
-                WarningCount: 0})
-    
-            expect(clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.Replica)).toEqual({
-                OkCount: 41,
-                ErrorCount: 6,
-                WarningCount: 0})
-    
-            expect(clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.DeployedApplication)).toEqual({
-                OkCount: 16,
-                ErrorCount: 0,
-                WarningCount: 0})
-            expect(clusterHealth.getHealthStateCount(HealthStatisticsEntityKind.DeployedServicePackage)).toEqual({
-                OkCount: 22,
-                ErrorCount: 0,
-                WarningCount: 0})
-        })
-    })
 
     describe("manifest", () => {
 
