@@ -23,7 +23,6 @@
 
     <!-- push stuff to align right -->
     <div style="margin-left: auto;"></div>
-
     <div>
       <app-refresh-rate [value]="refreshService.refreshRate" (onChange)="refreshService.updateRefreshInterval($event)"
                         [refresh]="refreshService.isRefreshing" (onForceRefresh)="attemptForceRefresh()"></app-refresh-rate>

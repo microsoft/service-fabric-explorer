@@ -37,7 +37,7 @@
                                             <span [ngClass]="point.displayInfo.badgeIcon" [title]="point.displayInfo.status"></span>
                                             {{point.phase}}
                                         </td>
-                                        <td style="white-space: nowrap;">{{point.timestamp}}</td>
+                                        <td style="white-space: nowrap;"><app-display-time [time]="point.timestamp"></app-display-time></td>
                                         <td style="white-space: pre-line; text-align: center;">{{point.duration}}</td>
                                     </tr>
                                 </tbody>

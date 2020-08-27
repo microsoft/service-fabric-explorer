@@ -1,0 +1,14 @@
+
+<ng-template #popTemplate>
+    <div class="my-custom-class">
+        <div >
+            Local Time : {{ localTime | date:'medium' }}
+        </div>
+        <div>
+            Time Since : {{timeSince}}
+        </div>
+    </div>
+</ng-template>
+<div [ngbTooltip]="popTemplate" tooltipClass="my-custom-class">
+    <span class="mif-hour-glass"></span> {{time}}
+</div>
