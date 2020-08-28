@@ -85,7 +85,9 @@
                     <tbody>
                         <tr>
                             <td title="{{upgradeProgress.raw.TargetApplicationTypeVersion}}">{{upgradeProgress.raw.TargetApplicationTypeVersion}}</td>
-                            <td>{{upgradeProgress.startTimestampUtc}}</td>
+                            <td>
+                              <app-display-time [time]="upgradeProgress.startTimestampUtc"></app-display-time>
+                            </td>
                             <td>{{upgradeProgress.upgradeDuration}}</td>
                             <td>{{upgradeProgress.upgradeDomainDuration}}</td>
                             <td>{{upgradeProgress.raw.RollingUpgradeMode}}</td>
