@@ -8,10 +8,7 @@ import { interval } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LocalTimeComponent implements OnInit {
-
-  localTime: string = "";
   utcTime: string = "";
-  showTime = false;
   
   constructor(private cdr: ChangeDetectorRef) { }
 
@@ -22,7 +19,6 @@ export class LocalTimeComponent implements OnInit {
   setTime() {
     const currentDate = new Date();
     currentDate.setMilliseconds(0);
-    this.localTime = currentDate.toLocaleString();
     this.utcTime = currentDate.toISOString();
     this.cdr.detectChanges();
   }
