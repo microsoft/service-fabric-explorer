@@ -1,7 +1,6 @@
-
 <ng-template #popTemplate>
-    <div class="my-custom-class">
-        <div >
+    <div>
+        <div>
             Local Time : {{ localTime | date:'medium' }}
         </div>
         <div>
@@ -9,6 +8,6 @@
         </div>
     </div>
 </ng-template>
-<div [ngbTooltip]="popTemplate" tooltipClass="my-custom-class">
-    <span class="mif-hour-glass"></span> {{time}}
+<div [ngbTooltip]="popTemplate">
+    <span class="mif-hour-glass" style="color: #70daf8;"></span> {{time}}
 </div>
