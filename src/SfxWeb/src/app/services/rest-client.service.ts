@@ -583,18 +583,17 @@ export class RestClientService {
       return this.get(this.getApiUrl(url, RestClientService.apiVersion60), "Get partition by id", messageHandler);
   }
 
-  public getServiceNameInfo(partitionId: string, messageHandler?: IResponseMessageHandler): Observable<IRawServiceNameInfo> {
-    let url = `Partitions/${partitionId}/$/GetServiceName`;
+    public getServiceNameInfo(partitionId: string, messageHandler?: IResponseMessageHandler): Observable<IRawServiceNameInfo> {
+        let url = `Partitions/${partitionId}/$/GetServiceName`;
 
-    return this.get(this.getApiUrl(url), "Get service", messageHandler);
-}
+        return this.get(this.getApiUrl(url), "Get service", messageHandler);
+    }
 
-public getApplicationNameInfo(serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawApplicationNameInfo> {
-    let url = `Services/${serviceId}/$/GetApplicationName`;
+    public getApplicationNameInfo(serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawApplicationNameInfo> {
+        let url = `Services/${serviceId}/$/GetApplicationName`;
 
-    return this.get(this.getApiUrl(url), "Get service", messageHandler);
-}
-
+        return this.get(this.getApiUrl(url), "Get service", messageHandler);
+    }
 
   public getPartitionHealth(applicationId: string, serviceId: string, partitionId: string,
       eventsHealthStateFilter: number = HealthStateFilterFlags.Default,

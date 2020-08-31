@@ -996,7 +996,6 @@ import { Node } from './DataModels/Node';
         Disabled = 5
     }
 
-
     export interface IRawApplicationNameInfo{
         Id: string;
         Name: string;

@@ -78,7 +78,7 @@ export class Node extends DataModelBase<IRawNode> {
     }
 
     public get isDeactivating(): boolean {
-        return this.raw.NodeDeactivationInfo.NodeDeactivationStatus != "None";
+        return this.raw.NodeDeactivationInfo.NodeDeactivationStatus !== "None";
     }
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IHealthStateFilter {
