@@ -4,16 +4,18 @@ import { UpgradeDomainProgressComponent } from './upgrade-domain-progress/upgrad
 import { SharedModule } from 'src/app/shared/shared.module';
 import { PartitionInfoComponent } from './partition-info/partition-info.component';
 import { UpgradeProgressComponent } from './upgrade-progress/upgrade-progress.component';
+import { SafetyChecksComponent } from './safety-checks/safety-checks.component';
 
 @NgModule({
-  declarations: [UpgradeDomainProgressComponent, PartitionInfoComponent, UpgradeProgressComponent],
+  declarations: [UpgradeDomainProgressComponent, PartitionInfoComponent, UpgradeProgressComponent, SafetyChecksComponent],
   imports: [
     CommonModule,
     SharedModule
   ],
   exports: [
     UpgradeDomainProgressComponent,
-    UpgradeProgressComponent
+    UpgradeProgressComponent,
+    SafetyChecksComponent
   ]
 })
 export class UpgradeProgressModule { }

@@ -10,42 +10,7 @@
             </div>
         </div>
         <div collapse-body class="table-responsive">
-            <table class="table detail-list" style="width: 100%">
-                <thead>
-                <tr>
-                    <th>
-                        Partition Id
-                    </th>
-                    <th>
-                        Phase
-                    </th>
-                    <th></th>
-                </tr>
-                </thead>
-                <tbody>
-                    <tr *ngFor="let check of node.PendingSafetyChecks;trackBy: safetyCheck">
-                        <td>
-                            {{check.SafetyCheck?.PartitionId}}
-                        </td>
-                
-                        <td>
-                            {{check.SafetyCheck.Kind}}
-                        </td>
-                
-                        <td>
-                            <div *ngIf="partitions[check.SafetyCheck.PartitionId]; else elseBlock">
-                                <app-partition-info [partitionInfo]="partitions[check.SafetyCheck.PartitionId]"></app-partition-info>
-                            </div>
-    
-                            <ng-template #elseBlock>
-                                <button (click)="getPartitionInfo(check.SafetyCheck.PartitionId)" class="simple-button" *ngIf="check.SafetyCheck.PartitionId">
-                                    Get Info
-                                </button>
-                            </ng-template>
-                        </td>
-                    </tr>
-                </tbody>        
-            </table>
+            <app-safety-checks [safetyChecks]="node.PendingSafetyChecks" [partitions]="partitions"></app-safety-checks>
         </div>
     </app-collapse-container>
 </div>

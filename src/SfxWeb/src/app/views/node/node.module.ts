@@ -9,6 +9,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { EventsComponent } from './events/events.component';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
+import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-progress.module';
 
 @NgModule({
   declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent],
@@ -17,7 +18,8 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
     NodeRoutingModule,
     SharedModule,
     DetailListTemplatesModule,
-    EventStoreModule
+    EventStoreModule,
+    UpgradeProgressModule
   ]
 })
 export class NodeModule { }

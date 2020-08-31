@@ -16,37 +16,13 @@ export class UpgradeDomainProgressComponent implements OnInit {
 
   @Input() upgradeDomain: IRawUpgradeDomainProgress;
 
-  constructor(private restClientService: RestClientService,
-              private cdr: ChangeDetectorRef,
-              private messageService: MessageService) { }
+  constructor() { }
 
   ngOnInit(): void {
   }
 
-  async getPartitionInfo(id: string) {
-    try {
-      const partition = await this.restClientService.getPartitionById(id).toPromise();
-      const serviceName = await this.restClientService.getServiceNameInfo(id).toPromise();
-      const applicationName = await this.restClientService.getApplicationNameInfo(serviceName.Id).toPromise();
-  
-      this.partitions[id] = {
-        serviceName,
-        applicationName,
-        partition
-      }
-    } catch {
-      this.messageService.showMessage("There was an issue getting partition info", MessageSeverity.Err);
-    }
-
-    this.cdr.detectChanges();
-  }
-
   nodeTrackBy(index, node: IRawNodeUpgradeProgress) {
     return node.NodeName;
-  }
-
-  safetyCheck(index, safetyCheck: IRawSafetyCheckDescription) {
-    return safetyCheck.PartitionId || "nodePendingSafetyCheck";
   }
 
 }

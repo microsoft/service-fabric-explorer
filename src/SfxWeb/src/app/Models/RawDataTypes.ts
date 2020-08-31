@@ -400,6 +400,7 @@ import { Node } from './DataModels/Node';
         NodeDeactivationIntent: string;
         NodeDeactivationStatus: string;
         NodeDeactivationTask: IRawNodeDeactivationTask[];
+        PendingSafetyChecks: IRawSafetyCheckDescription[];
     }
 
     export interface IRawNodeDeactivationTask {
