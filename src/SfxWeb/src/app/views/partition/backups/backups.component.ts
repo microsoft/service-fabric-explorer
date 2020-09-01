@@ -35,7 +35,7 @@ export class BackupsComponent extends PartitionBaseController {
       new ListColumnSetting("raw.EpochOfLastBackupRecord.DataLossVersion", "Data Loss Version"),
       new ListColumnSetting("raw.EpochOfLastBackupRecord.ConfigurationVersion", "Configuration Version"),
       new ListColumnSetting("raw.LsnOfLastBackupRecord", "Lsn of last Backup Record"),
-      new ListColumnSetting("raw.CreationTimeUtc", "Creation Time Utc"),
+      new ListColumnSetting("raw.CreationTimeUtc", "Creation Time UTC"),
     ]);
     console.log(this);
   }

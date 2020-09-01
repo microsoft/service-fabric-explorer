@@ -14,6 +14,15 @@
                     <td [title]="item.value">{{item.value}}</td>
                 </tr>
 
+                <tr *ngSwitchCase="'Date'">
+                    <th [title]="item.key">
+                        {{item.key}}
+                    </th>
+                    <td>
+                        <app-display-time [time]="item.value"></app-display-time>
+                    </td>
+                </tr>
+
                 <!-- Render html property (one row) -->
                 <tr *ngSwitchCase="'Html'">
                     <!-- Render property name -->

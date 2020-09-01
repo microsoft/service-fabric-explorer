@@ -58,7 +58,9 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
         return "Array";
     } else if (this.isHtml(value)) {
         return "Html";
-    } else {
+    } else if (this.isISODate(value)) {
+        return "Date"
+    }else {
         return "Value";
     }
   }
@@ -92,6 +94,10 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
 
     private isHtml(value: string): boolean {
         return HtmlUtils.isHtml(value);
+    }
+
+    private isISODate(value: any): boolean {
+        return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value);
     }
 
     private getResolvedDataObjectInternal(data: any, parent: any, preserveEmptyProperties: boolean = false): ResolvedObject {

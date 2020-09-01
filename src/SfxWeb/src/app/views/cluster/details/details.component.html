@@ -29,12 +29,14 @@
                             <td>{{clusterUpgradeProgress.raw.RollingUpgradeMode}}</td>
                         </tr>
                         <tr>
-                            <th>Start Timestamp Utc</th>
+                            <th>Start Timestamp UTC</th>
                             <th title="Upgrade Duration">Upgrade Duration</th>
                             <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>
                         </tr>
                         <tr>
-                            <td>{{clusterUpgradeProgress.startTimestampUtc}}</td>
+                            <td>
+                                <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
+                            </td>
                             <td>{{clusterUpgradeProgress.upgradeDuration}}</td>
                             <td>{{clusterUpgradeProgress.upgradeDomainDuration}}</td>
                         </tr>
@@ -52,7 +54,7 @@
                     <table class="table detail-table">
                         <tbody>
                             <tr>
-                                <th>Failure Timestamp Utc</th>
+                                <th>Failure Timestamp UTC</th>
                                 <td>{{clusterUpgradeProgress.failureTimestampUtc}}</td>
                             </tr>
                             <tr>

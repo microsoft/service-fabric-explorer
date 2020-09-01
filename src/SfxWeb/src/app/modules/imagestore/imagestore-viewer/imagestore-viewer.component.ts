@@ -1,7 +1,7 @@
 import { Component, OnInit, Input } from '@angular/core';
 import { ImageStore } from 'src/app/Models/DataModels/ImageStore';
 import { SettingsService } from 'src/app/services/settings.service';
-import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
+import { ListColumnSetting, ListSettings, ListColumnSettingWithUtcTime } from 'src/app/Models/ListSettings';
 import { ListColumnSettingWithDisplaySize } from '../display-size-column/display-size-column.component';
 import { ListColumnSettingWithDisplayName } from '../display-name-column/display-name-column.component';
 import { ListColumnSettingWithImageStoreActions } from '../folder-actions/folder-actions.component';
@@ -28,7 +28,7 @@ export class ImagestoreViewerComponent implements OnInit {
       new ListColumnSettingWithImageStoreActions(this.imagestoreRoot),
       new ListColumnSettingWithDisplayName(this.imagestoreRoot),
       new ListColumnSettingWithDisplaySize(this.imagestoreRoot),
-      new ListColumnSetting("modifiedDate", "Date modified"),
+      new ListColumnSettingWithUtcTime("modifiedDate", "Date modified"),
       new ListColumnSetting("fileCount", "Count of Files", ["isFolder", "fileCount"])
     ]);
   }
