@@ -6,6 +6,7 @@ import { RowDisplayComponent } from '../modules/event-store/row-display/row-disp
 import { FullDescriptionComponent } from '../modules/event-store/full-description/full-description.component';
 import { DetailBaseComponent } from '../ViewModels/detail-table-base.component';
 import { Type } from '@angular/core';
+import { UtcTimestampComponent } from '../modules/detail-list-templates/utc-timestamp/utc-timestamp.component';
 
 //-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -243,6 +244,19 @@ export class ListColumnSettingForLink extends ListColumnSetting {
 
 export class ListColumnSettingWithCopyText extends ListColumnSetting {
     template = CopyTextComponent;
+    public constructor(
+        propertyPath: string,
+        displayName: string,
+        sortPropertyPath: string[] = [],
+        enableFilter: boolean = false, 
+        colSpan: number = 1) {
+
+        super(propertyPath, displayName, sortPropertyPath, enableFilter, null, colSpan);
+    }
+}
+
+export class ListColumnSettingWithUtcTime extends ListColumnSetting {
+    template = UtcTimestampComponent;
     public constructor(
         propertyPath: string,
         displayName: string,

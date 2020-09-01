@@ -51,7 +51,9 @@
                             <th>Start Timestamp Utc</th>
                         </tr>
                         <tr>
-                            <td>{{clusterUpgradeProgress.startTimestampUtc}}</td>
+                            <td>
+                                <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
+                            </td>
                         </tr>
                     </table>
                 </div>
@@ -93,7 +95,7 @@
                     <table class="table detail-table">
                         <tbody>
                             <tr>
-                                <th>Failure Timestamp Utc</th>
+                                <th>Failure Timestamp UTC</th>
                                 <td>{{clusterUpgradeProgress.failureTimestampUtc}}</td>
                             </tr>
                             <tr>

@@ -22,9 +22,10 @@ import { DualDatePickerComponent } from './component/dual-date-picker/dual-date-
 import { AdvancedOptionComponent } from './component/advanced-option/advanced-option.component';
 import { ReplicaAddressComponent } from './component/replica-address/replica-address.component';
 import { FormatDatePipe } from './pipes/format-date.pipe';
-
+import { LocalTimeComponent } from './component/local-time/local-time.component';
+import { DisplayTimeComponent } from './component/display-time/display-time.component';
 @NgModule({
-  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, FormatDatePipe],
+  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, FormatDatePipe, LocalTimeComponent, DisplayTimeComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -34,6 +35,6 @@ import { FormatDatePipe } from './pipes/format-date.pipe';
     NgbDatepickerModule,
     NgbTooltipModule
   ],
-  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, FormatDatePipe]
+  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, FormatDatePipe, LocalTimeComponent, DisplayTimeComponent]
 })
 export class SharedModule { }
