@@ -14,25 +14,6 @@
                 <h4 *ngIf="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h4>
         </div>
         <div collapse-body>
-            <table>
-                <tr>
-                    <td>
-                        Upgrade Duration
-                    </td>
-                    <td>
-                        : {{clusterUpgradeProgress.upgradeDuration}}
-                    </td>
-                </tr>
-                <tr>
-                    <td>
-                        Timeout
-                    </td>
-                    <td>
-                        : {{clusterUpgradeProgress.raw.UpgradeDescription.MonitoringPolicy.UpgradeTimeoutInMilliseconds | formatDate}}
-                    </td>
-                </tr>
-            </table>
-
             <div class="table-responsive">
                     <table class="essen-table" role="presentation">
                         <tr>
@@ -49,11 +30,13 @@
                         </tr>
                         <tr>
                             <th>Start Timestamp Utc</th>
+                            <th title="Upgrade Duration">Upgrade Duration</th>	
+                            <th title="Upgrade Domain Duration">Upgrade Domain Duratiaon</th>
                         </tr>
                         <tr>
-                            <td>
-                                <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
-                            </td>
+                            <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
+                            <td>{{clusterUpgradeProgress.upgradeDuration}}</td>	
+                            <td>{{clusterUpgradeProgress.upgradeDomainDuration}}</td>
                         </tr>
                     </table>
                 </div>
@@ -64,27 +47,6 @@
 
             <div style="margin-top:20px" *ngIf="clusterUpgradeProgress.isUpgrading">
                 <h5 style="font-size: 16px;">Current Upgrade Domain : {{clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName}} </h5>
-                <div>
-
-                    <table>
-                        <tr>
-                            <td>
-                                Duration
-                            </td>
-                            <td>
-                                : {{clusterUpgradeProgress.upgradeDomainDuration}}
-                            </td>
-                        </tr>
-                        <tr>
-                            <td>
-                                Timeout
-                            </td>
-                            <td>
-                                : {{clusterUpgradeProgress.raw.UpgradeDescription.MonitoringPolicy.UpgradeDomainTimeoutInMilliseconds | formatDate}}
-                            </td>
-                        </tr>
-                    </table>
-                </div>
                 <h5 style="font-size: 15px; margin-top: 15px;">Nodes status</h5>
                 <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress"></app-upgrade-domain-progress>
             </div>
