@@ -20,12 +20,11 @@ context('Files', () => {
     cy.fixture('appType.json').as('appTypes')
     cy.fixture('clusterHealth.json').as('clusterHealth')
     cy.fixture('clusterHealthChunk.json').as('clusterHealthChunk')
-    cy.fixture('clustermanifest.json').as('manifest')
+    cy.fixture('clusterManifest.json').as('manifest')
     cy.fixture('nodes.json').as('nodes')
     cy.fixture('systemApplicationHealth.json').as('systemAppHealth')
     cy.fixture('upgradeProgress.json').as('upgrade')
 
-    console.log(apiUrl('/$/GetClusterManifest*'));
     cy.route('GET', apiUrl('/$/GetAadMetadata/*'), '@aad').as('getAad')
     cy.route('GET', apiUrl('/Applications/?*'), '@apps').as('getApps')
     cy.route('GET', apiUrl('/ApplicationTypes/?*'), '@appTypes').as('getAppTypes')
