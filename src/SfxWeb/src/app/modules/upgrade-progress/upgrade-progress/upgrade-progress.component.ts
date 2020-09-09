@@ -1,10 +1,11 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { UpgradeDomain } from 'src/app/Models/DataModels/Shared';
 
 @Component({
   selector: 'upgrade-progress',
   templateUrl: './upgrade-progress.component.html',
-  styleUrls: ['./upgrade-progress.component.scss']
+  styleUrls: ['./upgrade-progress.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class UpgradeProgressComponent implements OnInit {
 

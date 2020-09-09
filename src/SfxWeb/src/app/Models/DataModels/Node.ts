@@ -77,6 +77,10 @@ export class Node extends DataModelBase<IRawNode> {
         return this.raw.FaultDomain;
     }
 
+    public get isDeactivating(): boolean {
+        return this.raw.NodeDeactivationInfo.NodeDeactivationStatus !== "None";
+    }
+
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IHealthStateFilter {
         // To get all deployed applications on this node, we need to add deployed application filters in all existing application filters.
         // (There will be at least one application filter there by default which is returned by DataService.getInitialClusterHealthChunkQueryDescription)

@@ -784,6 +784,12 @@ app-navbar {
     background-color: $tree-node-search-highlight-background-color;
 }
 
+.row-wrapper-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
 .row-wrapper {
     display: flex;
     flex-direction: row;

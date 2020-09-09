@@ -29,25 +29,28 @@
                             <td>{{clusterUpgradeProgress.raw.RollingUpgradeMode}}</td>
                         </tr>
                         <tr>
-                            <th>Start Timestamp UTC</th>
-                            <th title="Upgrade Duration">Upgrade Duration</th>
-                            <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>
+                            <th>Start Timestamp Utc</th>
+                            <th title="Upgrade Duration">Upgrade Duration</th>	
+                            <th title="Upgrade Domain Duration">Upgrade Domain Duratiaon</th>
                         </tr>
                         <tr>
-                            <td>
-                                <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
-                            </td>
-                            <td>{{clusterUpgradeProgress.upgradeDuration}}</td>
+                            <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
+                            <td>{{clusterUpgradeProgress.upgradeDuration}}</td>	
                             <td>{{clusterUpgradeProgress.upgradeDomainDuration}}</td>
                         </tr>
                     </table>
                 </div>
-            <div class="detail-pane" *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
-                <h5>Progress by Upgrade Domain</h5>
-                <upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></upgrade-progress>
-                <!-- <sfx-upgrade-domain-progress ng-if="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList.length > 0"
-                                                node-upgrade-progress-list="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList"></sfx-upgrade-domain-progress> -->
+                <div *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0" style="margin-top: 20px;">
+                    <h5 style="font-size: 16px;">Upgrade Domain Progress</h5>
+                    <upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></upgrade-progress>
+                </div>
+
+            <div style="margin-top:20px" *ngIf="clusterUpgradeProgress.isUpgrading">
+                <h5 style="font-size: 16px;">Current Upgrade Domain : {{clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName}} </h5>
+                <h5 style="font-size: 15px; margin-top: 15px;">Nodes status</h5>
+                <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress"></app-upgrade-domain-progress>
             </div>
+
             <div *ngIf="clusterUpgradeProgress.raw.FailureReason !== 'None'">
                 <h4>Upgrade Failure</h4>
                 <div class="table-responsive">
@@ -74,7 +77,7 @@
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="clusterUpgradeProgress">
-    <app-collapse-container sectionName="Upgrade Description">
+    <app-collapse-container sectionName="Upgrade Description" collapsed="true">
         <h4 collapse-header>Upgrade Description</h4>        
         <div class="detail-pane" *ngIf="clusterUpgradeProgress.upgradeDescription" collapse-body>
             <app-detail-view-part [data]="clusterUpgradeProgress.upgradeDescription"></app-detail-view-part>
