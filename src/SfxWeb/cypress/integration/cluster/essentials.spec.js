@@ -36,9 +36,6 @@ context('Files', () => {
     cy.route('GET', apiUrl('/$/GetUpgradeProgress*'), '@upgrade').as('getUpgrades')
   })
 
-  beforeEach(() => {
-  })
-
   describe("essentials", () => {
     it('load essentials', () => {
       cy.visit('')
@@ -100,15 +97,16 @@ context('Files', () => {
   })
 
   describe("image store", () => {
-    it.only('load image store', () => {
-      cy.visit('/#/imagestore')
-
-      cy.fixture('cluster-page/imagestore/base-directory.json').as('baseDictoery')
-      cy.route('GET', apiUrl('/ImageStore?*'), '@baseDictoery').as('getbaseDictoery')
+    it('load image store', () => {
+      cy.fixture('cluster-page/imagestore/base-directory.json').as('baseDirectory')
+      cy.route('GET', apiUrl('/ImageStore?*'), '@baseDirectory').as('getbaseDirectory')
   
       cy.fixture('cluster-page/imagestore/nested-directory.json').as('nestedDictectory')
       cy.route('GET', apiUrl('/ImageStore/StoreTest?*'), '@nestedDictectory').as('getnestedDictectory')
   
+      cy.visit('/#/imagestore')
+
+      cy.wait('@getbaseDirectory')
 
       cy.get('[data-cy=imagestore]').within(() => {
   

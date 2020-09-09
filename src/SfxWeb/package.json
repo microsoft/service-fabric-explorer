@@ -11,12 +11,13 @@
     "build:stats": "ng build --stats-json",
 
     "test": "ng test",
+    "cypress": "./node_modules/.bin/cypress open",
 
     "ci:test": "ng test --watch=false --browsers=ChromeHeadless",
-    "ci:start-server": "angular-http-server --path ./dist -p 4200",
+    "ci:start-server": "angular-http-server --path ./dist -p 3000",
     "ci:test-build": "ng build --configuration=accesstesting",
     "cy:run": "cypress run",
-    "ci:cy-run": "start-server-and-test ci:start-server http://localhost:4200 cy:run",
+    "ci:cy-run": "start-server-and-test ci:start-server http://localhost:3000 cy:run",
     "e2e": "ng e2e",
 
     "lint": "ng lint",
