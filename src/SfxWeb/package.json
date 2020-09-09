@@ -16,7 +16,7 @@
     "ci:start-server": "angular-http-server --path ./dist -p 4200",
     "ci:test-build": "ng build --configuration=accesstesting",
     "cy:run": "cypress run",
-    "ci:cy-run": "start-server-and-test test:ci-start-server http://localhost:4200 cy:run",
+    "ci:cy-run": "start-server-and-test ci:start-server http://localhost:4200 cy:run",
     "e2e": "ng e2e",
 
     "lint": "ng lint",
