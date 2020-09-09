@@ -9,10 +9,6 @@ const requiredExample = require('../../fixtures/example')
 context('Files', () => {
 
   beforeEach(() => {
-    // https://on.cypress.io/fixture
-
-    // Instead of writing a response inline you can
-    // use a fixture file's content.
 
     cy.server()
     cy.fixture('aad.json').as('aad');
