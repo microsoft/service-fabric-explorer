@@ -11,6 +11,12 @@
 		},
 		{
 			"path": "src\\SfxWeb"
+		},
+		{
+			"path": "test"
+		},
+		{
+			"path": ".github"
 		}
 	],
 	"settings": {}

@@ -9,11 +9,18 @@
     "build:prod": "ng build --prod  --output-hashing=none",
     "build:accesstesting": "ng build --prod --outputPath=../Sfx-Proxy/wwwroot --configuration=accesstesting --output-hashing=none",
     "build:stats": "ng build --stats-json",
+
     "test": "ng test",
-    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
-    "lint": "ng lint",
+
+    "ci:test": "ng test --watch=false --browsers=ChromeHeadless",
+    "ci:start-server": "angular-http-server --path ./dist -p 4200",
+    "ci:test-build": "ng build --configuration=accesstesting",
+    "cy:run": "cypress run",
+    "ci:cy-run": "start-server-and-test test:ci-start-server http://localhost:4200 cy:run",
     "e2e": "ng e2e",
-    "cypress": "./node_modules/.bin/cypress open",
+
+    "lint": "ng lint",
+
     "analyze": "webpack-bundle-analyzer dist/sfxWeb/stats-es2015.json"
   },
   "private": true,
@@ -63,6 +70,7 @@
     "@types/node": "^12.11.1",
     "@types/nouislider": "^9.0.6",
     "angular-cli-builders": "^2.1.2",
+    "angular-http-server": "^1.9.0",
     "codelyzer": "^6.0.0",
     "cypress": "^4.12.1",
     "jasmine-core": "~3.5.0",
@@ -73,6 +81,7 @@
     "karma-jasmine": "~3.3.0",
     "karma-jasmine-html-reporter": "^1.5.0",
     "protractor": "~7.0.0",
+    "start-server-and-test": "^1.11.3",
     "ts-node": "~7.0.0",
     "tslint": "~6.1.0",
     "typescript": "~3.9.7",
