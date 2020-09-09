@@ -104,6 +104,9 @@ context('Files', () => {
       cy.fixture('cluster-page/imagestore/nested-directory.json').as('nestedDictectory')
       cy.route('GET', apiUrl('/ImageStore/StoreTest?*'), '@nestedDictectory').as('getnestedDictectory')
   
+      cy.fixture('cluster-page/imagestore/load-size.json').as('loadSize')
+      cy.route('GET', apiUrl('/ImageStore/Store/VisualObjectsApplicationType/$/FolderSize?*'), '@loadSize').as('getloadSize')
+      
       cy.visit('/#/imagestore')
 
       cy.wait('@getbaseDirectory')
