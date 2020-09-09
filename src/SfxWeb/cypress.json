@@ -1,6 +1,6 @@
 {
-    "baseUrl": "http://localhost:3000",
+    "baseUrl": "http://localhost:4200",
     "env" : {
-        "API_PREFIX": "/api"
+        "API_PREFIX": ""
     }
 }
