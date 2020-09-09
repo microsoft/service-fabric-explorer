@@ -45,7 +45,7 @@ jobs:
         run: npm run build:prod
 
       - name: Test
-        run: npm run ci:Test
+        run: npm run ci:test
 
       - name: E2E build
         run: npm run cy:test-build
