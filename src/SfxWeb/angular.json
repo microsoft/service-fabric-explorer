@@ -15,14 +15,8 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-builders/custom-webpack:browser",
-          "options": {
-            "customWebpackConfig": {
-              "path": "./extra-webpack.config.js",
-              "mergeStrategies": {
-                "externals": "replace"
-              }
-            },
+          "builder": "@angular-devkit/build-angular:browser",	
+            "options": {
             "outputPath": "dist",
             "index": "src/beta.html",
             "main": "src/main.ts",
@@ -93,11 +87,8 @@
           }
         },
         "serve": {
-          "builder": "@angular-builders/custom-webpack:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",	
           "options": {
-            "customWebpackConfig": {
-              "path": "./extra-webpack.config.js"
-           },
             "browserTarget": "SfxWeb:build",
             "proxyConfig": "proxy.conf.js"
           },
