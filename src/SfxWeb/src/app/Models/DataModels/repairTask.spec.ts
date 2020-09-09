@@ -105,7 +105,7 @@ describe('RepairTask', () => {
         expect(task.history).toContain({
             timestamp: "2020-07-17T03:17:48.437Z",
             phase: "Executing",
-            duration: "0.01:00:00.000",
+            duration: "01:00:00.000",
             durationMilliseconds: 60 * 60 * 1000,
             displayInfo: InProgressStatus,
         })

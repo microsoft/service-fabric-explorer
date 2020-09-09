@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink, ListColumnSettingWithCopyText } from '../Models/ListSettings';
+import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink, ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime } from '../Models/ListSettings';
 import { HtmlUtils } from '../Utils/HtmlUtils';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
@@ -88,7 +88,7 @@ export class SettingsService {
               new ListColumnSettingForBadge("healthState", "Health State"),
               new ListColumnSetting("raw.SourceId", "Source"),
               new ListColumnSetting("raw.Property", "Property"),
-              new ListColumnSetting("sourceUtcTimestamp", "Source UTC"),
+              new ListColumnSettingWithUtcTime("sourceUtcTimestamp", "Source UTC"),
               new ListColumnSetting("TTL", "TTL"),
               new ListColumnSetting("raw.SequenceNumber", "Sequence Number"),
               new ListColumnSetting("raw.RemoveWhenExpired", "Remove When Expired"),

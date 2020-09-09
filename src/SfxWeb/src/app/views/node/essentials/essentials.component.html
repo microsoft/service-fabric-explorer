@@ -74,24 +74,79 @@
   </div>
 </div>
 
-<div class="detail-pane essen-pane">
-    <app-collapse-container sectionName="Unhealthy Evaluations">
-        <div collapse-header>
-            <h4>Unhealthy Evaluations</h4>
+<div class="detail-pane essen-pane" *ngIf="node && node.isDeactivating">
+  <app-collapse-container sectionName="Unhealthy Evaluations">
+    <div collapse-header>
+      <h4>Deactivation Info</h4>
+    </div>
+    <div collapse-body>
+      <div class="essential-item" style="margin-bottom: 10px;">
+        <div class="essential-head">
+          Deactivation Status
         </div>
-        <div collapse-body>
-            <detail-list *ngIf="node" [list]="node.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+        <div class="essential-body">
+          {{node.raw.NodeDeactivationInfo.NodeDeactivationStatus}}
         </div>
-    </app-collapse-container>
+      </div>
+      <div *ngIf="node.raw.NodeDeactivationInfo.NodeDeactivationTask.length > 0">
+        <label style="font-size: 16px;">Deactivation Tasks</label>
+        <table class="table detail-list" style="width: 100%">
+          <thead>
+            <tr>
+              <th>
+                Intent
+              </th>
+              <th>
+                Id
+              </th>
+              <th>
+                Task Type
+              </th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let task of node.raw.NodeDeactivationInfo.NodeDeactivationTask">
+              <td>
+                {{task.NodeDeactivationIntent}}
+              </td>
+              <td>
+                {{task.NodeDeactivationTaskId.Id}}
+              </td>
+              <td>
+                {{task.NodeDeactivationTaskId.NodeDeactivationTaskType}}
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div style="margin-top: 30px;" *ngIf="node.raw.NodeDeactivationInfo.PendingSafetyChecks.length > 0">
+        <h5 style="font-size: 16px;">Safety Checks</h5>
+        <app-safety-checks [safetyChecks]="node.raw.NodeDeactivationInfo.PendingSafetyChecks"></app-safety-checks>
+      </div>
+    </div>
+  </app-collapse-container>
 </div>
 
-<div class="detail-pane essen-pane"  *ngIf="deployedApps">
-    <app-collapse-container sectionName="Deployed Applications">
-        <div collapse-header>
-            <h4>Deployed Applications</h4>
-        </div>
-        <div collapse-body>
-            <detail-list [list]="deployedApps.collection" [listSettings]="listSettings"></detail-list>
-        </div>
-    </app-collapse-container>
+<div class="detail-pane essen-pane">
+  <app-collapse-container sectionName="Unhealthy Evaluations">
+    <div collapse-header>
+      <h4>Unhealthy Evaluations</h4>
+    </div>
+    <div collapse-body>
+      <detail-list *ngIf="node" [list]="node.health.unhealthyEvaluations"
+        [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+    </div>
+  </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="deployedApps">
+  <app-collapse-container sectionName="Deployed Applications">
+    <div collapse-header>
+      <h4>Deployed Applications</h4>
+    </div>
+    <div collapse-body>
+      <detail-list [list]="deployedApps.collection" [listSettings]="listSettings"></detail-list>
+    </div>
+  </app-collapse-container>
 </div>

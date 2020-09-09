@@ -57,6 +57,12 @@
   </div>
 </div>
 
+<div>
+  <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard"></app-dashboard-tile>
+  <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard"></app-dashboard-tile>
+  <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
+</div>
+
 <div id="upgradeDetailsSection" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container [sectionName]="app.isUpgrading ? 'Upgrade In Progress' : 'Latest Upgrade State'">
         <div collapse-header>
@@ -69,7 +75,7 @@
                     <thead>
                         <tr>
                             <th>Target Version</th>
-                            <th>Start Timestamp Utc</th>
+                            <th>Start Timestamp UTC</th>
                             <th title="Upgrade Duration">Upgrade Duration</th>
                             <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>
                             <th>Upgrade Mode</th>
@@ -79,7 +85,9 @@
                     <tbody>
                         <tr>
                             <td title="{{upgradeProgress.raw.TargetApplicationTypeVersion}}">{{upgradeProgress.raw.TargetApplicationTypeVersion}}</td>
-                            <td>{{upgradeProgress.startTimestampUtc}}</td>
+                            <td>
+                              <app-display-time [time]="upgradeProgress.startTimestampUtc"></app-display-time>
+                            </td>
                             <td>{{upgradeProgress.upgradeDuration}}</td>
                             <td>{{upgradeProgress.upgradeDomainDuration}}</td>
                             <td>{{upgradeProgress.raw.RollingUpgradeMode}}</td>
@@ -104,7 +112,7 @@
                                 <td><img class="badge-icon" src="images/badge-error.svg"><span> {{upgradeProgress.raw.FailureReason}}</span></td>
                             </tr>
                             <tr>
-                                <th>Failure Timestamp Utc</th>
+                                <th>Failure Timestamp UTC</th>
                                 <td>{{upgradeProgress.failureTimestampUtc}}</td>
                             </tr>
                         </tbody>

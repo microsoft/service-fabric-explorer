@@ -122,6 +122,11 @@
   </div>
 </div>
 
+<div>
+  <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard"></app-dashboard-tile>
+  <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
+</div>
+
 <div class="detail-pane essen-pane">
   <app-collapse-container sectionName="Unhealthy Evaluations">
     <div collapse-header>

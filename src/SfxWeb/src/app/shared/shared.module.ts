@@ -5,7 +5,6 @@ import { RouterModule } from '@angular/router';
 import { FormsModule } from '@angular/forms';
 import { ClipBoardComponent } from './component/clip-board/clip-board.component';
 import { HealthBadgeComponent } from './component/health-badge/health-badge.component';
-import { UpgradeProgressComponent } from './component/upgrade-progress/upgrade-progress.component';
 import { CandyBarCompactComponent } from './component/candy-bar-compact/candy-bar-compact.component';
 import { DetailViewPartComponent } from './component/detail-view-part/detail-view-part.component';
 import { CollapseContainerComponent } from './component/collapse-container/collapse-container.component';
@@ -22,9 +21,11 @@ import { ClusterUpgradeBannerComponent } from './component/cluster-upgrade-banne
 import { DualDatePickerComponent } from './component/dual-date-picker/dual-date-picker.component';
 import { AdvancedOptionComponent } from './component/advanced-option/advanced-option.component';
 import { ReplicaAddressComponent } from './component/replica-address/replica-address.component';
-
+import { FormatDatePipe } from './pipes/format-date.pipe';
+import { LocalTimeComponent } from './component/local-time/local-time.component';
+import { DisplayTimeComponent } from './component/display-time/display-time.component';
 @NgModule({
-  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent],
+  declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, FormatDatePipe, LocalTimeComponent, DisplayTimeComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -34,6 +35,6 @@ import { ReplicaAddressComponent } from './component/replica-address/replica-add
     NgbDatepickerModule,
     NgbTooltipModule
   ],
-  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, UpgradeProgressComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent]
+  exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent, CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent, ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent, ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent, FormatDatePipe, LocalTimeComponent, DisplayTimeComponent]
 })
 export class SharedModule { }
