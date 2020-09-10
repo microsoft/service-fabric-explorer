@@ -11,23 +11,23 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class PartitionTriggerBackUpComponent implements OnInit {
 
-  form: FormGroup
+  form: FormGroup;
 
   constructor(private formBuilder: FormBuilder,
               private data: DataService,
               @Inject(MAT_DIALOG_DATA) public partition: Partition,
               public dialogRef: MatDialogRef<PartitionTriggerBackUpComponent>) { }
   ngOnInit() {
-    //storage gets set by nested component
+    // storage gets set by nested component
     this.form = this.formBuilder.group({
-      BackupTimeout: ["", [Validators.required]]
-    })
+      BackupTimeout: ['', [Validators.required]]
+    });
   }
 
   ok() {
     this.data.restClient.triggerPartitionBackup(this.partition, this.form.value.BackupTimeout, this.form.value.Storage).subscribe( () => {
       this.cancel();
-    }, 
+    },
     err => console.log(err));
   }
 

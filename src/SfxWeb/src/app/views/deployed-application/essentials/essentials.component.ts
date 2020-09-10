@@ -37,11 +37,11 @@ export class EssentialsComponent extends DeployedAppBaseController {
 
   setup(){
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-    this.listSettings = this.settings.getNewOrExistingListSettings("servicePackages", ["name"], [
-      new ListColumnSettingForLink("uniqueId", "Name", item => item.viewPath),
-      new ListColumnSetting("raw.Version", "Version"),
-      new ListColumnSettingForBadge("health.healthState", "Health State"),
-      new ListColumnSettingWithFilter("raw.Status", "Status")
+    this.listSettings = this.settings.getNewOrExistingListSettings('servicePackages', ['name'], [
+      new ListColumnSettingForLink('uniqueId', 'Name', item => item.viewPath),
+      new ListColumnSetting('raw.Version', 'Version'),
+      new ListColumnSettingForBadge('health.healthState', 'Health State'),
+      new ListColumnSettingWithFilter('raw.Status', 'Status')
     ]);
   }
 }

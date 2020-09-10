@@ -11,22 +11,22 @@ import { AadMetadata } from './Models/DataModels/Aad';
 describe('Http interceptors', () => {
     let httpClient: HttpClient;
     let httpMock: HttpTestingController;
-    let dataService: Partial<DataService> = { readOnlyHeader: null, clusterNameMetadata: "old-name" };
-    let adalService: Partial<AdalService> = {
+    const dataService: Partial<DataService> = { readOnlyHeader: null, clusterNameMetadata: 'old-name' };
+    const adalService: Partial<AdalService> = {
         aadEnabled: false,
-        acquireTokenResilient: (resource) => of("aad-token"),
+        acquireTokenResilient: (resource) => of('aad-token'),
         config: new AadMetadata({
-            type: "aad",
+            type: 'aad',
             metadata: {
-                login: "login",
-                authority: "auth",
-                client: "client-id",
-                cluster: "cluster-id",
-                redirect: "redirect",
-                tenant: "tenant-id"
+                login: 'login',
+                authority: 'auth',
+                client: 'client-id',
+                cluster: 'cluster-id',
+                redirect: 'redirect',
+                tenant: 'tenant-id'
             }
         })
-    }
+    };
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
@@ -46,25 +46,25 @@ describe('Http interceptors', () => {
         const request = httpMock.expectOne('/test');
 
         const headers = {
-            "SFX-Readonly": '1',
-            "SFX-ClusterName": 'test-cluster'
+            'SFX-Readonly': '1',
+            'SFX-ClusterName': 'test-cluster'
         };
-        request.flush(null, { headers })
+        request.flush(null, { headers });
 
         expect(dataService.readOnlyHeader).toBeTruthy();
-        expect(dataService.clusterNameMetadata).toBe("test-cluster");
-    })
+        expect(dataService.clusterNameMetadata).toBe('test-cluster');
+    });
 
     fit('readonly off', async () => {
         httpClient.get('/test').subscribe();
 
         const request = httpMock.expectOne('/test');
 
-        const headers = { "SFX-Readonly": '0' };
-        request.flush(null, { headers })
+        const headers = { 'SFX-Readonly': '0' };
+        request.flush(null, { headers });
 
         expect(dataService.readOnlyHeader).toBeFalsy();
-    })
+    });
 
     fit('client headers sent', async () => {
         httpClient.get('/test').subscribe();
@@ -72,7 +72,7 @@ describe('Http interceptors', () => {
         const requests = httpMock.match({ method: 'get' });
         expect(requests[0].request.headers.get('x-servicefabricclienttype')).toBe('SFX');
         expect(requests[0].request.headers.get('sfx-build')).toBe(environment.version);
-    })
+    });
 
     fit('aad auth not enabled', async () => {
         adalService.aadEnabled = false;
@@ -81,7 +81,7 @@ describe('Http interceptors', () => {
 
         const requests = httpMock.match({ method: 'get' });
         expect(requests[0].request.headers.get('Authorization')).toBeNull();
-    })
+    });
 
     fit('aad auth enabled', async () => {
         adalService.aadEnabled = true;
@@ -89,8 +89,8 @@ describe('Http interceptors', () => {
         httpClient.get('/test').subscribe();
 
         const requests = httpMock.match({ method: 'get' });
-        expect(requests[0].request.headers.get('Authorization')).toBe("Bearer aad-token");
-    })
+        expect(requests[0].request.headers.get('Authorization')).toBe('Bearer aad-token');
+    });
 
 
 

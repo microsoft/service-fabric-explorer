@@ -24,12 +24,12 @@ export class ImagestoreViewerComponent implements OnInit {
   }
 
   setup() {
-    this.fileListSettings = this.settings.getNewOrExistingListSettings("imagestore", ["name"], [
+    this.fileListSettings = this.settings.getNewOrExistingListSettings('imagestore', ['name'], [
       new ListColumnSettingWithImageStoreActions(this.imagestoreRoot),
       new ListColumnSettingWithDisplayName(this.imagestoreRoot),
       new ListColumnSettingWithDisplaySize(this.imagestoreRoot),
-      new ListColumnSettingWithUtcTime("modifiedDate", "Date modified"),
-      new ListColumnSetting("fileCount", "Count of Files", ["isFolder", "fileCount"])
+      new ListColumnSettingWithUtcTime('modifiedDate', 'Date modified'),
+      new ListColumnSetting('fileCount', 'Count of Files', ['isFolder', 'fileCount'])
     ]);
   }
 

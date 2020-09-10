@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
 
 const routes: Routes = [
-  //application section
+  // application section
   { path: 'apptype/:appTypeName/app/:appId/service/:serviceId/partition/:partitionId/replica/:replicaId', loadChildren: () => import(`./views/replica/replica.module`).then(m => m.ReplicaModule) },
   { path: 'apptype/:appTypeName/app/:appId/service/:serviceId/partition/:partitionId', loadChildren: () => import(`./views/partition/partition.module`).then(m => m.PartitionModule) },
   { path: 'apptype/:appTypeName/app/:appId/service/:serviceId', loadChildren: () => import(`./views/service/service.module`).then(m => m.ServiceModule) },
@@ -12,7 +12,7 @@ const routes: Routes = [
   { path: 'apps', loadChildren: () => import(`./views/applications/applications.module`).then(m => m.ApplicationsModule) },
 
 
-  //node section
+  // node section
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/activationid/:activationId/partition/:partitionId/replica/:replicaId', loadChildren: () => import(`./views/deployed-replica/deployed-replica.module`).then(m => m.DeployedReplicaModule) },
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/partition/:partitionId/replica/:replicaId', loadChildren: () => import(`./views/deployed-replica/deployed-replica.module`).then(m => m.DeployedReplicaModule) },
 
@@ -24,7 +24,7 @@ const routes: Routes = [
 
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/activationid/:activationId/codepackages', loadChildren: () => import(`./views/deployed-code-packages/deployed-code-packages.module`).then(m => m.DeployedCodePackagesModule) },
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/codepackages', loadChildren: () => import(`./views/deployed-code-packages/deployed-code-packages.module`).then(m => m.DeployedCodePackagesModule) },
-  
+
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/activationid/:activationId', loadChildren: () => import(`./views/deployed-service-package/deployed-service-package.module`).then(m => m.DeployedServicePackageModule) },
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId', loadChildren: () => import(`./views/deployed-service-package/deployed-service-package.module`).then(m => m.DeployedServicePackageModule) },
 
@@ -32,7 +32,7 @@ const routes: Routes = [
   { path: 'node/:nodeName', loadChildren: () => import(`./views/node/node.module`).then(m => m.NodeModule) },
   { path: 'nodes', loadChildren: () => import(`./views/nodes/nodes.module`).then(m => m.NodesModule) },
 
-  //system section(shares some routes with application)
+  // system section(shares some routes with application)
   // { path: 'network/:networkName', loadChildren: () => import(`./views/node/node.module`).then(m => m.NodeModule) },
   // { path: 'networks', loadChildren: () => import(`./views/networks/networks.module`).then(m => m.NodeModule) },
   { path: 'system/apps', loadChildren: () => import(`./views/system-applications/system-applications.module`).then(m => m.SystemApplicationsModule) },

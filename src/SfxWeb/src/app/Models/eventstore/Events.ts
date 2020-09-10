@@ -2,10 +2,10 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from '../DataModels/Base';
 import { DataService } from 'src/app/services/data.service';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export interface IFabricEventMetadata {
     kind: string;
@@ -46,19 +46,19 @@ export abstract class FabricEventBase implements IFabricEventMetadata, IEventPro
 
     protected extractField(name: string, value: any): boolean {
         switch (name) {
-            case "Kind":
+            case 'Kind':
                 this._kind = value;
                 return true;
-            case "Category":
+            case 'Category':
                 this._category = value;
                 return true;
-            case "EventInstanceId":
+            case 'EventInstanceId':
                 this._eventInstanceId = value;
                 return true;
-            case "TimeStamp":
+            case 'TimeStamp':
                 this._timeStamp = value;
                 return true;
-            case "HasCorrelatedEvents":
+            case 'HasCorrelatedEvents':
                 this._hasCorrelatedEvents = value;
                 return true;
             default:
@@ -71,7 +71,7 @@ export abstract class FabricEventBase implements IFabricEventMetadata, IEventPro
 
 export class FabricEventInstanceModel<T extends FabricEventBase> extends DataModelBase<T> {
     // Initially keep additional details collapsed.
-    public isSecondRowCollapsed: boolean = true;
+    public isSecondRowCollapsed = true;
     public constructor(data: DataService, raw: T) {
         super(data, raw);
     }
@@ -99,7 +99,7 @@ export class NodeEvent extends FabricEventBase {
         }
 
         switch (name) {
-            case "NodeName":
+            case 'NodeName':
                 this._nodeName = value;
                 return true;
             default:
@@ -121,7 +121,7 @@ export class ApplicationEvent extends FabricEventBase {
         }
 
         switch (name) {
-            case "ApplicationId":
+            case 'ApplicationId':
                 this._applicationId = value;
                 return true;
             default:
@@ -143,7 +143,7 @@ export class ServiceEvent extends FabricEventBase {
         }
 
         switch (name) {
-            case "ServiceId":
+            case 'ServiceId':
                 this._serviceId = value;
                 return true;
             default:
@@ -165,7 +165,7 @@ export class PartitionEvent extends FabricEventBase {
         }
 
         switch (name) {
-            case "PartitionId":
+            case 'PartitionId':
                 this._partitionId = value;
                 return true;
             default:
@@ -189,10 +189,10 @@ export class ReplicaEvent extends FabricEventBase {
         }
 
         switch (name) {
-            case "PartitionId":
+            case 'PartitionId':
                 this._partitionId = value;
                 return true;
-            case "ReplicaId":
+            case 'ReplicaId':
                 this._replicaId = value;
                 return true;
             default:

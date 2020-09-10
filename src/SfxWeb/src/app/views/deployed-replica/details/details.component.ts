@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
 })
 export class DetailsComponent extends DeployedReplicaBaseController {
 
-  constructor(protected data: DataService, injector: Injector) { 
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 

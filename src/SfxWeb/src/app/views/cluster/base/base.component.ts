@@ -11,31 +11,31 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class BaseComponent implements OnInit {
 
-  SFXClusterName: string = "";
-  
+  SFXClusterName = '';
+
   tabs: ITab[] = [{
-    name: "essentials",
-    route: ""
+    name: 'essentials',
+    route: ''
     },
     {
-      name: "details",
-      route: "/details"
+      name: 'details',
+      route: '/details'
     },
     {
-      name: "metrics",
-      route: "/metrics"
+      name: 'metrics',
+      route: '/metrics'
     },
     {
-      name: "cluster map",
-      route: "/clustermap"
+      name: 'cluster map',
+      route: '/clustermap'
     },
     {
-      name: "image store",
-      route: "/imagestore"
+      name: 'image store',
+      route: '/imagestore'
     },
     {
-      name: "manifest",
-      route: "/manifest"
+      name: 'manifest',
+      route: '/manifest'
     }
   ];
   constructor(public tree: TreeService, public dataService: DataService) { }
@@ -46,36 +46,36 @@ export class BaseComponent implements OnInit {
     ], true);
 
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
-      if(this.dataService.clusterManifest.isEventStoreEnabled) {
+      if (this.dataService.clusterManifest.isEventStoreEnabled) {
         this.tabs = this.tabs.concat({
-          name: "events",
-          route: "/events"
-        })
+          name: 'events',
+          route: '/events'
+        });
       }
-      if(this.dataService.clusterManifest.isBackupRestoreEnabled) {
+      if (this.dataService.clusterManifest.isBackupRestoreEnabled) {
         this.tabs = this.tabs.concat({
-          name: "backups",
-          route: "/backups"
-        })
+          name: 'backups',
+          route: '/backups'
+        });
       }
-      if(this.dataService.clusterManifest.isRepairManagerEnabled) {
+      if (this.dataService.clusterManifest.isRepairManagerEnabled) {
         this.tabs = this.tabs.concat({
-          name: "repair jobs",
-          route: "/repairtasks"
-        })
+          name: 'repair jobs',
+          route: '/repairtasks'
+        });
       }
-    })
+    });
 
     this.dataService.nodes.refresh().subscribe( () => {
-      this.dataService.clusterManifest.ensureInitialized().subscribe( ()=> {
-          //if < 5 seed nodes display warning for SFRP
-          if(this.dataService.clusterManifest.isSfrpCluster){
+      this.dataService.clusterManifest.ensureInitialized().subscribe( () => {
+          // if < 5 seed nodes display warning for SFRP
+          if (this.dataService.clusterManifest.isSfrpCluster){
               this.dataService.nodes.checkSeedNodeCount(5);
           }
-      })
-  })
+      });
+  });
 
-    this.SFXClusterName = window.location.host; //TODO FIX THIS
+    this.SFXClusterName = window.location.host; // TODO FIX THIS
   }
 
 }

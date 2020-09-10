@@ -1,13 +1,13 @@
-﻿import { Observable, of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { mergeMap, finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ActionDialogComponent } from '../shared/component/action-dialog/action-dialog.component';
 import { ComponentType } from '@angular/cdk/portal';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class Action {
     private _running: boolean;
@@ -40,13 +40,13 @@ export class Action {
     }
 
     protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
-        
+
         if (this.canRun()) {
             this._running = true;
             const executing = this.execute();
-            return executing.pipe(finalize( ()=> {
+            return executing.pipe(finalize( () => {
                 this._running = false;
-            }))
+            }));
         }
     }
 }
@@ -79,13 +79,13 @@ export class ActionWithDialog extends Action {
     protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
         if (this.canRun()) {
             return of(this.beforeOpen ? this.beforeOpen() : true).pipe(mergeMap(() => {
-                let dialogRef = this.dialog.open(this.template, {data: this, panelClass: "mat-dialog-container-wrapper"});
+                const dialogRef = this.dialog.open(this.template, {data: this, panelClass: 'mat-dialog-container-wrapper'});
                 return dialogRef.afterClosed().pipe(mergeMap( (data: boolean) => {
-                    if(data){
+                    if (data){
                         return super.runInternal(success, error, params);
                     }
-                    return of(null)
-                }))
+                    return of(null);
+                }));
             }));
         }else{
             return of(null);
@@ -127,8 +127,8 @@ export class IsolatedAction extends Action {
     protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
         if (this.canRun()) {
             return (!!this.beforeOpen ? this.beforeOpen() : of(null)).pipe(mergeMap(() => {
-                let dialogRef = this.dialog.open(this.template, {data: this, panelClass: "mat-dialog-container-wrapper"});
-                return dialogRef.afterClosed()
+                const dialogRef = this.dialog.open(this.template, {data: this, panelClass: 'mat-dialog-container-wrapper'});
+                return dialogRef.afterClosed();
             }));
         }else{
             return of(null);

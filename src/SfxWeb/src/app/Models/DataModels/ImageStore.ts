@@ -9,11 +9,11 @@ import { map, catchError, mergeMap } from 'rxjs/operators';
 import { MessageSeverity } from 'src/app/services/message.service';
 
 export class ImageStore extends DataModelBase<IRawImageStoreContent> {
-    public static reservedFileName: string = "_.dir";
+    public static reservedFileName = '_.dir';
 
-    //These start as true to not display prematurely while loading correct state.
-    public isAvailable: boolean = true;
-    public isNative: boolean = true;
+    // These start as true to not display prematurely while loading correct state.
+    public isAvailable = true;
+    public isNative = true;
     public connectionString: string;
     public root: ImageStoreFolder = new ImageStoreFolder();
     public initialized = false;
@@ -22,34 +22,34 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
     public currentFolder: ImageStoreFolder;
     public pathBreadcrumbItems: IStorePathBreadcrumbItem[] = [];
     public allChildren: ImageStoreItem[];
-    public isLoadingFolderContent: boolean = false;
+    public isLoadingFolderContent = false;
 
 
-    //helper to determine which way for slashes to be added in.
+    // helper to determine which way for slashes to be added in.
     public static slashDirection(path: string): boolean {
-        return path.indexOf("\\") > -1;
+        return path.indexOf('\\') > -1;
     }
 
     public static chopPath(path: string): string[] {
         if (ImageStore.slashDirection(path)) {
-            return path.split("\\");
+            return path.split('\\');
         }
 
-        return path.split("/");
+        return path.split('/');
     }
 
     constructor(public data: DataService) {
         super(data);
-        this.root.path = "";
-        this.root.displayName = "Image Store";
+        this.root.path = '';
+        this.root.displayName = 'Image Store';
 
         this.currentFolder = this.root;
-        this.pathBreadcrumbItems = [<IStorePathBreadcrumbItem>{ path: this.root.path, name: this.root.displayName}];
+        this.pathBreadcrumbItems = [{ path: this.root.path, name: this.root.displayName} as IStorePathBreadcrumbItem];
 
-        let manifest = new ClusterManifest(data);
+        const manifest = new ClusterManifest(data);
         manifest.refresh().subscribe(() => {
             this.connectionString = manifest.imageStoreConnectionString;
-            this.isNative = this.connectionString.toLowerCase() === "fabric:imagestore";
+            this.isNative = this.connectionString.toLowerCase() === 'fabric:imagestore';
 
             if (this.isNative) {
                     // if we get an actual request error. i.e a 400 that means this cluster does not have the API
@@ -85,14 +85,14 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
             this.isLoadingFolderContent = true;
             this.loadFolderContent(path).subscribe(raw => {
                 this.setCurrentFolder(path, raw, clearCache);
-    
-                let index = this.pathBreadcrumbItems.findIndex(item => item.path === this.currentFolder.path);
+
+                const index = this.pathBreadcrumbItems.findIndex(item => item.path === this.currentFolder.path);
                 if (index > -1) {
                     this.pathBreadcrumbItems = this.pathBreadcrumbItems.slice(0, index + 1);
                 } else {
-                    this.pathBreadcrumbItems.push(<IStorePathBreadcrumbItem>{ path: this.currentFolder.path, name: this.currentFolder.displayName });
+                    this.pathBreadcrumbItems.push({ path: this.currentFolder.path, name: this.currentFolder.displayName } as IStorePathBreadcrumbItem);
                 }
-    
+
                 this.isLoadingFolderContent = false;
                 observer.next(raw);
             }, err => {
@@ -102,15 +102,15 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
                 }else if (err.status === 404) {
                     this.data.message.showMessage(
                         `Directory ${path} does not appear to exist anymore. Navigating back to the base of the image store directory.`, MessageSeverity.Warn);
-                    //go to the base directory
+                    // go to the base directory
                     return this.expandFolder(this.root.path).subscribe( raw => {
                         observer.next(raw);
-                    })
+                    });
                 }else{
                     observer.next(null);
                 }
             });
-        })
+        });
     }
 
     public deleteContent(path: string): Observable<any> {
@@ -140,20 +140,20 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
     }
 
     public getFolderSize(path: string): Observable<IRawStoreFolderSize> {
-        return this.data.restClient.getImageStoreFolderSize(path)
+        return this.data.restClient.getImageStoreFolderSize(path);
     }
 
     private setCurrentFolder(path: string, content: IRawImageStoreContent, clearFolderSizeCache: boolean): void {
         if (clearFolderSizeCache) {
             this.cachedCurrentDirectoryFolderSizes = {};
         }
-        let folder: ImageStoreFolder = new ImageStoreFolder();
+        const folder: ImageStoreFolder = new ImageStoreFolder();
         folder.path = path;
-        let pathSegements = ImageStore.chopPath(path);
+        const pathSegements = ImageStore.chopPath(path);
         folder.displayName = pathSegements[pathSegements.length - 1];
 
         folder.childrenFolders = content.StoreFolders.map(f => {
-            let childFolder = new ImageStoreFolder(f);
+            const childFolder = new ImageStoreFolder(f);
             if (childFolder.path in this.cachedCurrentDirectoryFolderSizes) {
                 childFolder.size = this.cachedCurrentDirectoryFolderSizes[childFolder.path].size;
             }
@@ -186,20 +186,20 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
                 }
                 observer.next(raw);
             }, err => {
-                //handle bug if root directory does not exist.
+                // handle bug if root directory does not exist.
                 if (err.status === 404 && path === this.root.path) {
                     observer.next({StoreFiles: [], StoreFolders: []});
                 }else {
-                    observer.error(err)
+                    observer.error(err);
                 }
             },
-            () => {observer.complete()});
+            () => {observer.complete(); });
         });
     }
 }
 
 export class ImageStoreItem {
-    //Used for name based sorting in the table
+    // Used for name based sorting in the table
     public isFolder: number;
 
     public path: string;
@@ -214,23 +214,23 @@ export class ImageStoreItem {
         this.uniqueId = path;
         this.path = path;
 
-        let pathSegements = ImageStore.chopPath(path);
+        const pathSegements = ImageStore.chopPath(path);
         this.displayName = pathSegements[pathSegements.length - 1];
-        this.isReserved = pathSegements[0] === "Store" || pathSegements[0] === "WindowsFabricStore" || this.displayName === ImageStore.reservedFileName;
+        this.isReserved = pathSegements[0] === 'Store' || pathSegements[0] === 'WindowsFabricStore' || this.displayName === ImageStore.reservedFileName;
     }
 }
 
 export class ImageStoreFolder extends ImageStoreItem {
-    public isFolder: number = -1;
-    public size: number = -1; //setting to -1 for sorting
+    public isFolder = -1;
+    public size = -1; // setting to -1 for sorting
     public fileCount: number;
-    public isExpanded: boolean = false;
+    public isExpanded = false;
     public childrenFolders: ImageStoreFolder[];
     public childrenFiles: ImageStoreFile[];
     public allChildren: ImageStoreItem[];
 
     constructor(raw?: IRawStoreFolder) {
-        super(raw ? raw.StoreRelativePath : "");
+        super(raw ? raw.StoreRelativePath : '');
         if (!raw) {
             return;
         }
@@ -241,14 +241,14 @@ export class ImageStoreFolder extends ImageStoreItem {
 }
 
 export class ImageStoreFile extends ImageStoreItem {
-    public isFolder: number = 1;
+    public isFolder = 1;
 
     public version: string;
     public modifiedDate: string;
-    public size: number = 0;
+    public size = 0;
 
     constructor(raw?: IRawStoreFile) {
-        super(raw ? raw.StoreRelativePath : "");
+        super(raw ? raw.StoreRelativePath : '');
 
         if (!raw) {
             return;
@@ -257,7 +257,7 @@ export class ImageStoreFile extends ImageStoreItem {
         this.path = raw.StoreRelativePath;
         this.size = Number(raw.FileSize);
         this.displayedSize = Utils.getFriendlyFileSize(this.size);
-        this.version = raw.FileVersion ? raw.FileVersion.VersionNumber : "";
+        this.version = raw.FileVersion ? raw.FileVersion.VersionNumber : '';
         this.modifiedDate = raw.ModifiedDate;
     }
 }

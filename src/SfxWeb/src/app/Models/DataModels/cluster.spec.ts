@@ -6,50 +6,50 @@ import { of, Observable } from 'rxjs';
 import { IRawClusterManifest, IRawClusterUpgradeProgress } from '../RawDataTypes';
 import { RestClientService } from 'src/app/services/rest-client.service';
 
-    
+
 describe('Cluster', () => {
 
-    let restClientMock: RestClientService = {} as RestClientService;
+    const restClientMock: RestClientService = {} as RestClientService;
 
-    let mockDataService: DataService = {
+    const mockDataService: DataService = {
         restClient: restClientMock,
         apps: {
             ensureInitialized: () => of(null)
         }
     } as DataService;
 
-    describe("manifest", () => {
+    describe('manifest', () => {
 
         let clusterManifest: ClusterManifest;
 
         beforeEach((() => {
             clusterManifest = new ClusterManifest(mockDataService);
-        }))
-    
+        }));
+
         fit('validate no services', async () => {
-            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> => 
+            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 Name="WRP_Generated_ClusterManifest" Version="37" Description="This is a generated file. Do not modify."
                 xmlns="http://schemas.microsoft.com/2011/01/fabric">
                 <FabricSettings>
-            
+
                 </FabricSettings>
             </ClusterManifest>
                 `
-            })
+            });
 
             await clusterManifest.ensureInitialized().toPromise();
 
-            expect(clusterManifest.imageStoreConnectionString).toBe("");
+            expect(clusterManifest.imageStoreConnectionString).toBe('');
             expect(clusterManifest.isBackupRestoreEnabled).toBe(false);
             expect(clusterManifest.isRepairManagerEnabled).toBe(false);
             expect(clusterManifest.isSfrpCluster).toBe(false);
             expect(clusterManifest.isEventStoreEnabled).toBe(false);
-        })
+        });
 
         fit('back up service enabled', async () => {
-            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> => 
+            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 Name="WRP_Generated_ClusterManifest" Version="37" Description="This is a generated file. Do not modify."
@@ -63,18 +63,18 @@ describe('Cluster', () => {
                 </FabricSettings>
             </ClusterManifest>
                 `
-            })
+            });
 
             await clusterManifest.ensureInitialized().toPromise();
 
-            expect(clusterManifest.imageStoreConnectionString).toBe("");
+            expect(clusterManifest.imageStoreConnectionString).toBe('');
             expect(clusterManifest.isBackupRestoreEnabled).toBe(true);
             expect(clusterManifest.isRepairManagerEnabled).toBe(false);
             expect(clusterManifest.isSfrpCluster).toBe(false);
-        })
+        });
 
         fit('native image store', async () => {
-            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> => 
+            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 Name="WRP_Generated_ClusterManifest" Version="37" Description="This is a generated file. Do not modify."
@@ -87,18 +87,18 @@ describe('Cluster', () => {
                 </FabricSettings>
             </ClusterManifest>
                 `
-            })
+            });
 
             await clusterManifest.ensureInitialized().toPromise();
 
-            expect(clusterManifest.imageStoreConnectionString).toBe("fabric:ImageStore");
+            expect(clusterManifest.imageStoreConnectionString).toBe('fabric:ImageStore');
             expect(clusterManifest.isBackupRestoreEnabled).toBe(false);
             expect(clusterManifest.isRepairManagerEnabled).toBe(false);
             expect(clusterManifest.isSfrpCluster).toBe(false);
-        })
+        });
 
         fit('back up service enabled', async () => {
-            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> => 
+            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 Name="WRP_Generated_ClusterManifest" Version="37" Description="This is a generated file. Do not modify."
@@ -113,18 +113,18 @@ describe('Cluster', () => {
                 </FabricSettings>
             </ClusterManifest>
                 `
-            })
+            });
 
             await clusterManifest.ensureInitialized().toPromise();
 
-            expect(clusterManifest.imageStoreConnectionString).toBe("");
+            expect(clusterManifest.imageStoreConnectionString).toBe('');
             expect(clusterManifest.isBackupRestoreEnabled).toBe(false);
             expect(clusterManifest.isRepairManagerEnabled).toBe(true);
             expect(clusterManifest.isSfrpCluster).toBe(false);
-        })
+        });
 
         fit('Repair manager enabled', async () => {
-            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> => 
+            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 Name="WRP_Generated_ClusterManifest" Version="37" Description="This is a generated file. Do not modify."
@@ -139,18 +139,18 @@ describe('Cluster', () => {
                 </FabricSettings>
             </ClusterManifest>
                 `
-            })
+            });
 
             await clusterManifest.ensureInitialized().toPromise();
 
-            expect(clusterManifest.imageStoreConnectionString).toBe("");
+            expect(clusterManifest.imageStoreConnectionString).toBe('');
             expect(clusterManifest.isBackupRestoreEnabled).toBe(false);
             expect(clusterManifest.isRepairManagerEnabled).toBe(false);
             expect(clusterManifest.isSfrpCluster).toBe(true);
-        })
+        });
 
         fit('Event store enabled', async () => {
-            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> => 
+            restClientMock.getClusterManifest = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> =>
             of({
                 Manifest: `<ClusterManifest xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
                 Name="WRP_Generated_ClusterManifest" Version="37" Description="This is a generated file. Do not modify."
@@ -164,176 +164,176 @@ describe('Cluster', () => {
                 </FabricSettings>
             </ClusterManifest>
                 `
-            })
+            });
 
             await clusterManifest.ensureInitialized().toPromise();
 
             expect(clusterManifest.isEventStoreEnabled).toBeTruthy();
-        })
-    })
-    
-    describe("upgrade progress", () => {
+        });
+    });
+
+    describe('upgrade progress', () => {
 
         let clusterUpgrade: ClusterUpgradeProgress;
 
         beforeEach((() => {
             clusterUpgrade = new ClusterUpgradeProgress(mockDataService);
-        }))
-    
+        }));
+
         fit('completed upgrade', async () => {
-            restClientMock.getClusterUpgradeProgress = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> => 
+            restClientMock.getClusterUpgradeProgress = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> =>
             of({
-                "CodeVersion": "7.0.457.9590",
-                "ConfigVersion": "37",
-                "UpgradeDomains": [
+                CodeVersion: '7.0.457.9590',
+                ConfigVersion: '37',
+                UpgradeDomains: [
                     {
-                        "Name": "0",
-                        "State": "Completed"
+                        Name: '0',
+                        State: 'Completed'
                     },
                     {
-                        "Name": "1",
-                        "State": "Completed"
+                        Name: '1',
+                        State: 'Completed'
                     },
                     {
-                        "Name": "2",
-                        "State": "Completed"
+                        Name: '2',
+                        State: 'Completed'
                     },
                     {
-                        "Name": "3",
-                        "State": "Completed"
+                        Name: '3',
+                        State: 'Completed'
                     },
                     {
-                        "Name": "4",
-                        "State": "Completed"
+                        Name: '4',
+                        State: 'Completed'
                     }
                 ],
-                "UpgradeState": "RollingForwardCompleted",
-                "NextUpgradeDomain": "",
-                "RollingUpgradeMode": "Monitored",
-                "UpgradeDescription": {
-                    "CodeVersion": "7.0.457.9590",
-                    "ConfigVersion": "37",
-                    "UpgradeKind": "Rolling",
-                    "RollingUpgradeMode": "Monitored",
-                    "UpgradeReplicaSetCheckTimeoutInSeconds": 4294967295,
-                    "ForceRestart": true,
-                    "MonitoringPolicy": {
-                        "FailureAction": "Rollback",
-                        "HealthCheckWaitDurationInMilliseconds": "PT0H0M30S",
-                        "HealthCheckStableDurationInMilliseconds": "PT0H1M0S",
-                        "HealthCheckRetryTimeoutInMilliseconds": "PT0H45M0S",
-                        "UpgradeTimeoutInMilliseconds": "PT12H0M0S",
-                        "UpgradeDomainTimeoutInMilliseconds": "PT2H0M0S"
+                UpgradeState: 'RollingForwardCompleted',
+                NextUpgradeDomain: '',
+                RollingUpgradeMode: 'Monitored',
+                UpgradeDescription: {
+                    CodeVersion: '7.0.457.9590',
+                    ConfigVersion: '37',
+                    UpgradeKind: 'Rolling',
+                    RollingUpgradeMode: 'Monitored',
+                    UpgradeReplicaSetCheckTimeoutInSeconds: 4294967295,
+                    ForceRestart: true,
+                    MonitoringPolicy: {
+                        FailureAction: 'Rollback',
+                        HealthCheckWaitDurationInMilliseconds: 'PT0H0M30S',
+                        HealthCheckStableDurationInMilliseconds: 'PT0H1M0S',
+                        HealthCheckRetryTimeoutInMilliseconds: 'PT0H45M0S',
+                        UpgradeTimeoutInMilliseconds: 'PT12H0M0S',
+                        UpgradeDomainTimeoutInMilliseconds: 'PT2H0M0S'
                     },
-                    "ClusterHealthPolicy": {
-                        "ConsiderWarningAsError": false,
-                        "MaxPercentUnhealthyNodes": 0,
-                        "MaxPercentUnhealthyApplications": 0
+                    ClusterHealthPolicy: {
+                        ConsiderWarningAsError: false,
+                        MaxPercentUnhealthyNodes: 0,
+                        MaxPercentUnhealthyApplications: 0
                     },
-                    "EnableDeltaHealthEvaluation": false,
-                    "SortOrder": "Default"
+                    EnableDeltaHealthEvaluation: false,
+                    SortOrder: 'Default'
                 },
-                "UpgradeDurationInMilliseconds": "PT0H19M2.21122S",
-                "UpgradeDomainDurationInMilliseconds": "PT0H0M0.0469861S",
-                "UnhealthyEvaluations": [],
-                "CurrentUpgradeDomainProgress": {
-                    "DomainName": "",
-                    "NodeUpgradeProgressList": []
+                UpgradeDurationInMilliseconds: 'PT0H19M2.21122S',
+                UpgradeDomainDurationInMilliseconds: 'PT0H0M0.0469861S',
+                UnhealthyEvaluations: [],
+                CurrentUpgradeDomainProgress: {
+                    DomainName: '',
+                    NodeUpgradeProgressList: []
                 },
-                "StartTimestampUtc": "2020-03-02T23:23:20.669Z",
-                "FailureTimestampUtc": "0001-01-01T00:00:00.000Z",
-                "FailureReason": "None",
-                "UpgradeDomainProgressAtFailure": {
-                    "DomainName": "",
-                    "NodeUpgradeProgressList": []
+                StartTimestampUtc: '2020-03-02T23:23:20.669Z',
+                FailureTimestampUtc: '0001-01-01T00:00:00.000Z',
+                FailureReason: 'None',
+                UpgradeDomainProgressAtFailure: {
+                    DomainName: '',
+                    NodeUpgradeProgressList: []
                 }
-            })
+            });
 
             await clusterUpgrade.ensureInitialized().toPromise();
 
             expect(clusterUpgrade.isUpgrading).toBe(false);
-            expect(clusterUpgrade.startTimestampUtc).toBe("2020-03-02T23:23:20.669Z");
-            expect(clusterUpgrade.failureTimestampUtc).toBe("0001-01-01T00:00:00.000Z");
+            expect(clusterUpgrade.startTimestampUtc).toBe('2020-03-02T23:23:20.669Z');
+            expect(clusterUpgrade.failureTimestampUtc).toBe('0001-01-01T00:00:00.000Z');
             expect(clusterUpgrade.getCompletedUpgradeDomains()).toBe(5);
-        })
+        });
 
         fit('completed upgrade', async () => {
-            restClientMock.getClusterUpgradeProgress = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> => 
+            restClientMock.getClusterUpgradeProgress = (messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> =>
             of({
-                "CodeVersion": "7.0.457.9590",
-                "ConfigVersion": "37",
-                "UpgradeDomains": [
+                CodeVersion: '7.0.457.9590',
+                ConfigVersion: '37',
+                UpgradeDomains: [
                     {
-                        "Name": "0",
-                        "State": "Completed"
+                        Name: '0',
+                        State: 'Completed'
                     },
                     {
-                        "Name": "1",
-                        "State": "Completed"
+                        Name: '1',
+                        State: 'Completed'
                     },
                     {
-                        "Name": "2",
-                        "State": "InProgress "
+                        Name: '2',
+                        State: 'InProgress '
                     },
                     {
-                        "Name": "3",
-                        "State": "Pending "
+                        Name: '3',
+                        State: 'Pending '
                     },
                     {
-                        "Name": "4",
-                        "State": "Pending "
+                        Name: '4',
+                        State: 'Pending '
                     }
                 ],
-                "UpgradeState": "RollingForwardInProgress ",
-                "NextUpgradeDomain": "3",
-                "RollingUpgradeMode": "Monitored",
-                "UpgradeDescription": {
-                    "CodeVersion": "7.0.457.9590",
-                    "ConfigVersion": "37",
-                    "UpgradeKind": "Rolling",
-                    "RollingUpgradeMode": "Monitored",
-                    "UpgradeReplicaSetCheckTimeoutInSeconds": 4294967295,
-                    "ForceRestart": true,
-                    "MonitoringPolicy": {
-                        "FailureAction": "Rollback",
-                        "HealthCheckWaitDurationInMilliseconds": "PT0H0M30S",
-                        "HealthCheckStableDurationInMilliseconds": "PT0H1M0S",
-                        "HealthCheckRetryTimeoutInMilliseconds": "PT0H45M0S",
-                        "UpgradeTimeoutInMilliseconds": "PT12H0M0S",
-                        "UpgradeDomainTimeoutInMilliseconds": "PT2H0M0S"
+                UpgradeState: 'RollingForwardInProgress ',
+                NextUpgradeDomain: '3',
+                RollingUpgradeMode: 'Monitored',
+                UpgradeDescription: {
+                    CodeVersion: '7.0.457.9590',
+                    ConfigVersion: '37',
+                    UpgradeKind: 'Rolling',
+                    RollingUpgradeMode: 'Monitored',
+                    UpgradeReplicaSetCheckTimeoutInSeconds: 4294967295,
+                    ForceRestart: true,
+                    MonitoringPolicy: {
+                        FailureAction: 'Rollback',
+                        HealthCheckWaitDurationInMilliseconds: 'PT0H0M30S',
+                        HealthCheckStableDurationInMilliseconds: 'PT0H1M0S',
+                        HealthCheckRetryTimeoutInMilliseconds: 'PT0H45M0S',
+                        UpgradeTimeoutInMilliseconds: 'PT12H0M0S',
+                        UpgradeDomainTimeoutInMilliseconds: 'PT2H0M0S'
                     },
-                    "ClusterHealthPolicy": {
-                        "ConsiderWarningAsError": false,
-                        "MaxPercentUnhealthyNodes": 0,
-                        "MaxPercentUnhealthyApplications": 0
+                    ClusterHealthPolicy: {
+                        ConsiderWarningAsError: false,
+                        MaxPercentUnhealthyNodes: 0,
+                        MaxPercentUnhealthyApplications: 0
                     },
-                    "EnableDeltaHealthEvaluation": false,
-                    "SortOrder": "Default"
+                    EnableDeltaHealthEvaluation: false,
+                    SortOrder: 'Default'
                 },
-                "UpgradeDurationInMilliseconds": "PT0H19M2.21122S",
-                "UpgradeDomainDurationInMilliseconds": "PT0H0M0.0469861S",
-                "UnhealthyEvaluations": [],
-                "CurrentUpgradeDomainProgress": {
-                    "DomainName": "2",
-                    "NodeUpgradeProgressList": []
+                UpgradeDurationInMilliseconds: 'PT0H19M2.21122S',
+                UpgradeDomainDurationInMilliseconds: 'PT0H0M0.0469861S',
+                UnhealthyEvaluations: [],
+                CurrentUpgradeDomainProgress: {
+                    DomainName: '2',
+                    NodeUpgradeProgressList: []
                 },
-                "StartTimestampUtc": "2020-03-02T23:23:20.669Z",
-                "FailureTimestampUtc": "0001-01-01T00:00:00.000Z",
-                "FailureReason": "None",
-                "UpgradeDomainProgressAtFailure": {
-                    "DomainName": "",
-                    "NodeUpgradeProgressList": []
+                StartTimestampUtc: '2020-03-02T23:23:20.669Z',
+                FailureTimestampUtc: '0001-01-01T00:00:00.000Z',
+                FailureReason: 'None',
+                UpgradeDomainProgressAtFailure: {
+                    DomainName: '',
+                    NodeUpgradeProgressList: []
                 }
-            })
+            });
 
             await clusterUpgrade.ensureInitialized().toPromise();
 
             expect(clusterUpgrade.isUpgrading).toBe(true);
-            expect(clusterUpgrade.startTimestampUtc).toBe("2020-03-02T23:23:20.669Z");
-            expect(clusterUpgrade.failureTimestampUtc).toBe("0001-01-01T00:00:00.000Z");
+            expect(clusterUpgrade.startTimestampUtc).toBe('2020-03-02T23:23:20.669Z');
+            expect(clusterUpgrade.failureTimestampUtc).toBe('0001-01-01T00:00:00.000Z');
             expect(clusterUpgrade.getCompletedUpgradeDomains()).toBe(2);
-        })
-    })
+        });
+    });
 
   });
 

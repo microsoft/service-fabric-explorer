@@ -1,11 +1,11 @@
-﻿import { TelemetryService } from '../services/telemetry.service';
+import { TelemetryService } from '../services/telemetry.service';
 import { Action } from './Action';
 import { of, throwError, Observable } from 'rxjs';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class ActionCollection {
     public collection: Action[] = [];
@@ -33,23 +33,23 @@ export class ActionCollection {
     }
 
     public get title(): string {
-        let runningAction = this.collection.find(a => a.running);
+        const runningAction = this.collection.find(a => a.running);
         if (runningAction) {
             return runningAction.runningTitle;
         } else {
-            return "Actions";
+            return 'Actions';
         }
     }
 
     private runInternal(action: Action, source: string): Observable<any> {
-        let params: any[] = [
+        const params: any[] = [
             // success handler
             (result: any) => {
                 this.telemetry.trackActionEvent(action.name, source, true);
             },
             // error handler
             (reason: any) => {
-                let result = reason && reason.statusText && reason.status && reason.status + ": " + reason.statusText || false;
+                const result = reason && reason.statusText && reason.status && reason.status + ': ' + reason.statusText || false;
                 this.telemetry.trackActionEvent(action.name, source, result);
                 return throwError(reason);
             }];

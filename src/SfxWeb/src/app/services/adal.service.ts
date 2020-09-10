@@ -4,11 +4,11 @@ import { RestClientService } from './rest-client.service';
 import { Observable, Subscriber, of } from 'rxjs';
 import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
-import * as AuthenticationContext from  "adal-angular";
+import * as AuthenticationContext from  'adal-angular';
 import { adal } from 'adal-angular';
 
 // declare var AuthenticationContext: adal.AuthenticationContextStatic;
-let createAuthContextFn: adal.AuthenticationContextStatic = AuthenticationContext;
+const createAuthContextFn: adal.AuthenticationContextStatic = AuthenticationContext;
 
 export class AdalConfig {
   apiEndpoint: string;
@@ -24,25 +24,25 @@ export class AdalConfig {
 export class AdalService {
   private context: adal.AuthenticationContext;
   public config: AadMetadata;
-  public aadEnabled: boolean = false;
-  
+  public aadEnabled = false;
+
   constructor(private http: RestClientService) { }
 
   load(): Observable<adal.AuthenticationContext> {
-    if(!!this.context){
+    if (!!this.context){
       return of(this.context);
     }else{
       return this.http.getAADmetadata().pipe(map(data => {
         this.config = data;
-        if(data.isAadAuthType){
+        if (data.isAadAuthType){
 
           const config = {
             tenant: data.raw.metadata.tenant,
             clientId: data.raw.metadata.cluster,
             cacheLocation: 'localStorage',
-        }
+        };
 
-        this.context = new createAuthContextFn(config);
+          this.context = new createAuthContextFn(config);
           this.aadEnabled = true;
         }
       }));
@@ -60,7 +60,7 @@ export class AdalService {
   }
   handleWindowCallback() {
       this.context.handleWindowCallback();
-  }    
+  }
   public get userInfo() {
 
       return this.context.getCachedUser();
@@ -92,13 +92,13 @@ export class AdalService {
               if (token) {
                   subscriber.next(token);
               } else {
-                  console.error(message)
+                  console.error(message);
                   subscriber.error(message);
               }
               subscriber.complete();
-          })
+          });
           }
       ).pipe(retry(3));
   }
-  
+
 }

@@ -16,24 +16,24 @@ import { Constants } from 'src/app/Common/Constants';
 export class BaseComponent extends PartitionBaseController {
 
   tabs: ITab[] = [{
-    name: "essentials",
-    route: "./"
+    name: 'essentials',
+    route: './'
     },
     {
-      name: "details",
-      route: "./details"
+      name: 'details',
+      route: './details'
     },
     {
-      name: "backups",
-      route: "./backups"
+      name: 'backups',
+      route: './backups'
     },
     {
-      name: "events",
-      route: "./events"
+      name: 'events',
+      route: './events'
     }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) { 
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
     super(data, injector);
   }
 
@@ -59,15 +59,15 @@ export class BaseComponent extends PartitionBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    if (this.partition.isStatelessService || this.partition.parent.parent.raw.TypeName === "System") {
-      this.tabs = this.tabs.filter(tab => tab.name !== "backups")
-    };
+    if (this.partition.isStatelessService || this.partition.parent.parent.raw.TypeName === 'System') {
+      this.tabs = this.tabs.filter(tab => tab.name !== 'backups');
+    }
 
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
-      if(!this.data.clusterManifest.isBackupRestoreEnabled) {
-        this.tabs = this.tabs.filter(tab => tab.name !== "backups")
+      if (!this.data.clusterManifest.isBackupRestoreEnabled) {
+        this.tabs = this.tabs.filter(tab => tab.name !== 'backups');
       }
-    })
+    });
 
     return of(null);
   }

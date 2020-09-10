@@ -15,18 +15,18 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 })
 export class AppComponent implements OnInit{
 
-  @ViewChild('main') main:ElementRef;
+  @ViewChild('main') main: ElementRef;
 
-  smallScreenSize: boolean = false;
-  smallScreenLeftPanelWidth: string = '0px';
+  smallScreenSize = false;
+  smallScreenLeftPanelWidth = '0px';
 
   public assetBase = environment.assetBase;
-  treeWidth: string = "450px";
+  treeWidth = '450px';
   rightOffset: string = this.treeWidth;
-  tabIndex: number = -1;
-  hideAzure: boolean = false;
-  hideSFXTest: boolean = false;
-  hideSFXLogo: boolean = false;
+  tabIndex = -1;
+  hideAzure = false;
+  hideSFXTest = false;
+  hideSFXLogo = false;
   constructor(public treeService: TreeService,
               public refreshService: RefreshService,
               public adalService: AdalService,
@@ -42,15 +42,15 @@ export class AppComponent implements OnInit{
     this.treeService.refresh().subscribe();
     this.refreshService.init();
 
-    this.treeWidth = this.storageService.getValueString("treeWidth", "450px");
+    this.treeWidth = this.storageService.getValueString('treeWidth', '450px');
     this.rightOffset =  this.treeWidth;
 
-    this.checkWidth(window.innerWidth)
+    this.checkWidth(window.innerWidth);
   }
 
   @HostListener('window:resize', ['$event.target'])
   onResize(event: Window) {
-    this.checkWidth(event.innerWidth)
+    this.checkWidth(event.innerWidth);
   }
 
   checkWidth(width: number) {
@@ -63,15 +63,15 @@ export class AppComponent implements OnInit{
   }
 
   resize($event: number): void {
-    if(this.smallScreenSize) {
+    if (this.smallScreenSize) {
       this.smallScreenLeftPanelWidth = `${$event}px`;
       return;
     }
-    //have to subtract the offset
+    // have to subtract the offset
     const offsetWidth = $event + 8;
     this.treeWidth = offsetWidth.toString() + 'px';
     this.rightOffset = this.treeWidth;
-    this.storageService.setValue("treeWidth", this.treeWidth);
+    this.storageService.setValue('treeWidth', this.treeWidth);
   }
 
   changeSmallScreenSizePanelState() {
@@ -80,14 +80,14 @@ export class AppComponent implements OnInit{
 
   attemptForceRefresh() {
     this.refreshService.refreshAll();
-    this.liveAnnouncer.announce("Started refreshing data");
+    this.liveAnnouncer.announce('Started refreshing data');
     setTimeout( () => {
-      this.liveAnnouncer.announce("Data has been refreshed.");  
-    }, 2000)
+      this.liveAnnouncer.announce('Data has been refreshed.');
+    }, 2000);
   }
 
   setMainFocus() {
     this.tabIndex = -1;
-    setTimeout(() => {this.main.nativeElement.focus(); this.tabIndex = null;}, 0);
+    setTimeout(() => {this.main.nativeElement.focus(); this.tabIndex = null; }, 0);
   }
 }

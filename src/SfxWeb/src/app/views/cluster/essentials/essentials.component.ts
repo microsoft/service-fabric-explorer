@@ -34,10 +34,10 @@ export class EssentialsComponent extends BaseController {
   partitionsDashboard: IDashboardViewModel;
   replicasDashboard: IDashboardViewModel;
   upgradesDashboard: IDashboardViewModel;
-  upgradeAppsCount: number = 0;
+  upgradeAppsCount = 0;
 
-  constructor(public data: DataService, 
-              public injector: Injector, 
+  constructor(public data: DataService,
+              public injector: Injector,
               public settings: SettingsService,
               private routes: RoutesService) {
     super(injector);
@@ -54,20 +54,20 @@ export class EssentialsComponent extends BaseController {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
       this.clusterHealth.refresh(messageHandler).pipe(map((clusterHealth: ClusterHealth) => {
-        let nodesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw,HealthStatisticsEntityKind.Node);
-        this.nodesDashboard = DashboardViewModel.fromHealthStateCount("Nodes", "Node", true, nodesHealthStateCount, this.data.routes, RoutesService.getNodesViewPath());
+        const nodesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Node);
+        this.nodesDashboard = DashboardViewModel.fromHealthStateCount('Nodes', 'Node', true, nodesHealthStateCount, this.data.routes, RoutesService.getNodesViewPath());
 
-        let appsHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Application);
-        this.appsDashboard = DashboardViewModel.fromHealthStateCount("Applications", "Application", true, appsHealthStateCount, this.data.routes, RoutesService.getAppsViewPath());
+        const appsHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Application);
+        this.appsDashboard = DashboardViewModel.fromHealthStateCount('Applications', 'Application', true, appsHealthStateCount, this.data.routes, RoutesService.getAppsViewPath());
 
-        let servicesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Service);
-        this.servicesDashboard = DashboardViewModel.fromHealthStateCount("Services", "Service", false, servicesHealthStateCount);
+        const servicesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Service);
+        this.servicesDashboard = DashboardViewModel.fromHealthStateCount('Services', 'Service', false, servicesHealthStateCount);
 
-        let partitionsDashboard = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Partition);
-        this.partitionsDashboard = DashboardViewModel.fromHealthStateCount("Partitions", "Partition", false, partitionsDashboard);
+        const partitionsDashboard = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Partition);
+        this.partitionsDashboard = DashboardViewModel.fromHealthStateCount('Partitions', 'Partition', false, partitionsDashboard);
 
-        let replicasHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Replica);
-        this.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
+        const replicasHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Replica);
+        this.replicasDashboard = DashboardViewModel.fromHealthStateCount('Replicas', 'Replica', false, replicasHealthStateCount);
         clusterHealth.checkExpiredCertStatus();
     })),
       this.data.getApps(true, messageHandler)

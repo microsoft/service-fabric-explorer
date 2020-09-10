@@ -1,12 +1,12 @@
-﻿//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export declare namespace Standalone.http {
     type HttpMethod =
-        "GET" | "POST" | "PUT" | "PATCH" | "DELETE" |
-        "HEAD" | "CONNECT" | "OPTIONS" | "TRACE";
+        'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' |
+        'HEAD' | 'CONNECT' | 'OPTIONS' | 'TRACE';
 
     interface IHttpHeader {
         name: string;
@@ -64,15 +64,15 @@ export class StandaloneIntegration {
     private static _clusterUrl: string = null;
 
     public static isStandalone(): boolean {
-        return typeof sfxModuleManager !== "undefined" && sfxModuleManager !== null;
+        return typeof sfxModuleManager !== 'undefined' && sfxModuleManager !== null;
     }
 
     public static get clusterUrl(): string {
         if (StandaloneIntegration._clusterUrl == null) {
             if (StandaloneIntegration.isStandalone()) {
-                StandaloneIntegration._clusterUrl = StandaloneIntegration.extractQueryItem(window.location.search, "targetcluster");
+                StandaloneIntegration._clusterUrl = StandaloneIntegration.extractQueryItem(window.location.search, 'targetcluster');
             } else {
-                StandaloneIntegration._clusterUrl = "";
+                StandaloneIntegration._clusterUrl = '';
             }
         }
 
@@ -81,7 +81,7 @@ export class StandaloneIntegration {
 
     public static getHttpClient(): Promise<Standalone.http.IHttpClient> {
         if (this.isStandalone()) {
-            return sfxModuleManager.getComponentAsync<Standalone.http.IHttpClient>("http.http-client.service-fabric");
+            return sfxModuleManager.getComponentAsync<Standalone.http.IHttpClient>('http.http-client.service-fabric');
         }
 
         return undefined;
@@ -89,10 +89,10 @@ export class StandaloneIntegration {
 
     private static extractQueryItem(queryString: string, name: string): string {
         if (queryString) {
-            let urlParameters = window.location.search.split("?")[1];
-            let queryParams = urlParameters.split("&");
+            const urlParameters = window.location.search.split('?')[1];
+            const queryParams = urlParameters.split('&');
             for (let i = 0; i < queryParams.length; i++) {
-                let queryParam = queryParams[i].split("=");
+                const queryParam = queryParams[i].split('=');
                 if (queryParam[0] === name) {
                     return decodeURIComponent(queryParam[1]);
                 }

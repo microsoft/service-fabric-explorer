@@ -13,15 +13,15 @@ export class ServiceApplicationsBaseController extends BaseController {
     listSettings: ListSettings;
     unhealthyEvaluationsListSettings: ListSettings;
 
-    constructor(protected data: DataService, injector: Injector) { 
+    constructor(protected data: DataService, injector: Injector) {
       super(injector);
     }
-  
+
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getSystemApp(true, messageHandler).pipe(map(systemApp => {
             this.systemApp = systemApp;
             // Don't need to refresh the systemApp.health here because it is done in data.getSystemApp already.
         }));
     }
-    
+
 }

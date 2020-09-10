@@ -12,7 +12,7 @@ import { map } from 'rxjs/operators';
 })
 export class ContainerLogsComponent extends DeployedCodePackageBaseController {
   containerLogs: string;
-  
+
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }

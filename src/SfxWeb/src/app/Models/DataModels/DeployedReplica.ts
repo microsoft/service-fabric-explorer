@@ -1,4 +1,4 @@
-﻿import { DataModelBase, IDecorators } from './Base';
+import { DataModelBase, IDecorators } from './Base';
 import { IRawDeployedReplica, IRawPartition, IRawDeployedReplicaDetail, IRawLoadMetricReport, IRawReplicatorStatus, IRawRemoteReplicatorStatus } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { DeployedServicePackage } from './DeployedServicePackage';
@@ -14,16 +14,16 @@ import { LoadMetricReport } from './Partition';
 import { ActionWithConfirmationDialog } from '../Action';
 import { RoutesService } from 'src/app/services/routes.service';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     public decorators: IDecorators = {
         decorators: {
-            "LastInBuildDurationInSeconds": {
-                displayName: (name) => "Last In Build Duration",
+            LastInBuildDurationInSeconds: {
+                displayName: (name) => 'Last In Build Duration',
                 displayValueInHtml: (value) => this.lastInBuildDuration
             }
         }
@@ -73,7 +73,7 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     public get role(): string {
-        if (this.partition && this.partition.PartitionStatus === "Reconfiguring") {
+        if (this.partition && this.partition.PartitionStatus === 'Reconfiguring') {
             return `Reconfiguring - Target Role: ${this.raw.ReplicaRole}`;
         }
 
@@ -99,9 +99,9 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedReplica> {
         return this.data.restClient.getPartitionById(this.raw.PartitionId, ResponseMessageHandlers.silentResponseMessageHandler).pipe(mergeMap(data => {
             this.partition = data;
-            return this.data.restClient.getDeployedReplica(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.raw.PartitionId, messageHandler)
-        })).pipe(map( values => values[0]))
-        //TODO check into this
+            return this.data.restClient.getDeployedReplica(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.raw.PartitionId, messageHandler);
+        })).pipe(map( values => values[0]));
+        // TODO check into this
         // return forkJoin([
         //     this.data.restClient.getPartitionById(this.raw.PartitionId, ResponseMessageHandlers.silentResponseMessageHandler),
         //     this.data.restClient.getDeployedReplica(this.parent.parent.parent.name, this.parent.parent.id, this.parent.name, this.raw.PartitionId, messageHandler)
@@ -117,18 +117,18 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
     }
 
     private setUpActions(): void {
-        let serviceName = this.parent.parent.raw.Name;
+        const serviceName = this.parent.parent.raw.Name;
 
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
-            "Restart Replica",
-            "Restart Replica",
-            "Restarting",
+            'Restart Replica',
+            'Restart Replica',
+            'Restarting',
             () => this.restartReplica(),
             () => true,
             `Confirm Replica Restart`,
             `Restart Replica for ${serviceName}`,
-            "confirm"
+            'confirm'
         ));
     }
 }
@@ -136,9 +136,9 @@ export class DeployedReplica extends DataModelBase<IRawDeployedReplica> {
 export class DeployedReplicaDetail extends DataModelBase<IRawDeployedReplicaDetail> {
     public decorators: IDecorators = {
         hideList: [
-            "ServiceKind",
-            "InstanceId",
-            "ReplicaId"
+            'ServiceKind',
+            'InstanceId',
+            'ReplicaId'
         ]
     };
 
@@ -156,11 +156,11 @@ export class DeployedReplicaDetail extends DataModelBase<IRawDeployedReplicaDeta
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedReplicaDetail> {
         let getDeployedReplicaDetailPromise = null;
         if (this.parent instanceof DeployedReplica) {
-            let deployedReplica = <DeployedReplica>this.parent;
+            const deployedReplica = this.parent as DeployedReplica;
             getDeployedReplicaDetailPromise = this.data.restClient.getDeployedReplicaDetail(
                 deployedReplica.parent.parent.parent.name, deployedReplica.raw.PartitionId, deployedReplica.id, messageHandler);
         } else {
-            let replica = <ReplicaOnPartition>this.parent;
+            const replica = this.parent as ReplicaOnPartition;
             getDeployedReplicaDetailPromise = this.data.restClient.getDeployedReplicaDetail(
                 replica.raw.NodeName, replica.parent.id, replica.id, messageHandler);
         }

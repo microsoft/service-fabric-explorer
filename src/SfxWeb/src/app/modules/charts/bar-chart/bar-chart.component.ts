@@ -10,14 +10,14 @@ export class BarChartComponent implements OnInit, OnChanges {
 
   @Input() xAxisCategories: string[];
   @Input() dataSet: any[] = [];
-  @Input() title: string = "";
-  @Input() subtitle: string = "";
+  @Input() title = '';
+  @Input() subtitle = '';
 
   private chart: Chart;
 
   fontColor = {
-                color: "#fff"
-              }
+                color: '#fff'
+              };
 
   public options: Options = {
     chart: {
@@ -25,7 +25,7 @@ export class BarChartComponent implements OnInit, OnChanges {
       inverted: false,
       polar: false,
       animation: true,
-      backgroundColor:"#191919"
+      backgroundColor: '#191919'
     },
     title: {
       text: '',
@@ -37,7 +37,7 @@ export class BarChartComponent implements OnInit, OnChanges {
 
    },
    yAxis: {
-    gridLineColor: "#fff",
+    gridLineColor: '#fff',
     labels: {
       style: this.fontColor
 
@@ -52,13 +52,13 @@ export class BarChartComponent implements OnInit, OnChanges {
    },
     xAxis: {
       categories: [],
-      lineColor: "#fff",
+      lineColor: '#fff',
       labels: {
         style: this.fontColor
       }
     },
     colorAxis: [{
-      gridLineColor: "#fff"
+      gridLineColor: '#fff'
     }],
     series: [
       {
@@ -70,15 +70,15 @@ export class BarChartComponent implements OnInit, OnChanges {
         }
       }
     ]
-  }
+  };
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges) {
-    if(this.chart){
+    if (this.chart){
       this.chart.series[0].setData(this.dataSet);
-      this.chart.title.update({text: this.title})
-      this.chart.subtitle.update({text: this.subtitle})
-      this.chart.xAxis[0].update({categories: this.xAxisCategories})  
+      this.chart.title.update({text: this.title});
+      this.chart.subtitle.update({text: this.subtitle});
+      this.chart.xAxis[0].update({categories: this.xAxisCategories});
     }
   }
 

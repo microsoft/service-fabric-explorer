@@ -43,7 +43,7 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
       year: date.getFullYear(),
       month: date.getMonth() + 1,
       day: date.getDate()
-    })
+    });
   }
 
   onDateSelection(date: NgbDate) {
@@ -56,13 +56,13 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
       this.fromDate = date;
     }
 
-    if(this.fromDate && this.toDate){
-      this.currentStartDate.setFullYear(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day)
-      this.currentEndDate.setFullYear(this.toDate.year, this.toDate.month - 1, this.toDate.day)
+    if (this.fromDate && this.toDate){
+      this.currentStartDate.setFullYear(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
+      this.currentEndDate.setFullYear(this.toDate.year, this.toDate.month - 1, this.toDate.day);
       this.onDateChange.emit({
-        endDate: this.currentEndDate, 
+        endDate: this.currentEndDate,
         startDate: this.currentStartDate
-      })
+      });
     }
   }
 

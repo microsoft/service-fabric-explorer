@@ -23,6 +23,6 @@ export class EventsComponent extends BaseController {
    }
 
    refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.appEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler))
+    return this.appEvents.refresh(new EventsStoreResponseMessageHandler(messageHandler));
   }
 }

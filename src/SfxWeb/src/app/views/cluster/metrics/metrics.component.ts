@@ -30,9 +30,9 @@ export class MetricsComponent extends BaseController {
   tableData: IChartData = {
     dataPoints: [],
     categories: [],
-    title: "",
-    subtitle: ""
-  }
+    title: '',
+    subtitle: ''
+  };
   constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
     super(injector);
    }
@@ -43,7 +43,7 @@ export class MetricsComponent extends BaseController {
   }
 
   updateSelectedMetric(metric: LoadMetricInformation) {
-    this.metricsViewModel.toggleMetric(metric)
+    this.metricsViewModel.toggleMetric(metric);
     this.updateViewMetric();
   }
 
@@ -52,14 +52,14 @@ export class MetricsComponent extends BaseController {
       dataPoints: [],
       categories: [],
       title: this.metricsViewModel.selectedMetrics[0].displayName,
-      subtitle: ""
-    }
-  
+      subtitle: ''
+    };
+
     this.metricsViewModel.filteredNodeLoadInformation.forEach(metric => {
       this.tableData.dataPoints.push(metric.metrics[this.metricsViewModel.selectedMetrics[0].name]);
       this.tableData.categories.push(metric.raw.NodeName);
     });
-  
+
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -71,11 +71,11 @@ export class MetricsComponent extends BaseController {
               this.metricsViewModel = this.settings.getNewOrExistingMetricsViewModel(this.clusterLoadInformation, this.nodes.collection.map(node => node.loadInformation));
           }
 
-          let promises = this.nodes.collection.map(node => node.loadInformation.refresh(messageHandler));
+          const promises = this.nodes.collection.map(node => node.loadInformation.refresh(messageHandler));
           return forkJoin(promises).pipe(map(() => {
               this.metricsViewModel.refresh();
               this.updateViewMetric();
             }));
-      }))
+      }));
   }
 }

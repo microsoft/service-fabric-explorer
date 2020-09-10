@@ -20,7 +20,7 @@ export class ViewBackupComponent implements OnInit {
   backUpData: IViewBackUpData;
 
   constructor(public dialogRef: MatDialogRef<ViewBackupComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IsolatedAction) {
+              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction) {
   }
 
   ngOnInit() {
@@ -30,9 +30,9 @@ export class ViewBackupComponent implements OnInit {
   update() {
     new IsolatedAction(
       this.data.dialog,
-      "createBackupPolicy",
-      "Create Backup Policy",
-      "Creating",
+      'createBackupPolicy',
+      'Create Backup Policy',
+      'Creating',
       this.backUpData.backup,
       ActionCreateBackupPolicyComponent,
       () => true

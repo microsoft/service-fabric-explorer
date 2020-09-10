@@ -15,7 +15,7 @@ export class DetailsComponent extends ReplicaBaseController {
 
   healthEventsListSettings: ListSettings;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 

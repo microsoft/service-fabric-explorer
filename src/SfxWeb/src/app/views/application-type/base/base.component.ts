@@ -11,18 +11,18 @@ import { DataService } from 'src/app/services/data.service';
   styleUrls: ['./base.component.scss']
 })
 export class BaseComponent extends ApplicationTypeBaseController {
-  
+
   tabs: ITab[] = [{
-    name: "essentials",
-    route: "./"
+    name: 'essentials',
+    route: './'
     },
     {
-      name: "details",
-      route: "./details"
+      name: 'details',
+      route: './details'
     }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) { 
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
     super(data, injector);
   }
 

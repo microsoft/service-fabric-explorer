@@ -1,11 +1,11 @@
-﻿import { LoadMetricInformation } from "../Models/DataModels/Shared";
+import { LoadMetricInformation } from '../Models/DataModels/Shared';
 import { NodeLoadInformation } from '../Models/DataModels/Node';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export interface IMetricsViewModel {
     filteredNodeLoadInformation: NodeLoadInformation[];
@@ -26,37 +26,37 @@ export interface IMetricsViewModel {
 }
 
 export class MetricsViewModel implements IMetricsViewModel {
-    public _showResourceGovernanceMetrics: boolean = true;
-    public _showLoadMetrics: boolean = true;
-    public _showSystemMetrics: boolean = false;
-    public _normalizeMetricsData: boolean = true;
-    public refreshToken: number = 0;
-    public isExpanderEnabled: boolean = false;
-    public isFullScreen: boolean = false;
+    public _showResourceGovernanceMetrics = true;
+    public _showLoadMetrics = true;
+    public _showSystemMetrics = false;
+    public _normalizeMetricsData = true;
+    public refreshToken = 0;
+    public isExpanderEnabled = false;
+    public isFullScreen = false;
 
     private _metrics: LoadMetricInformation[] = null;
 
     private static ensureResourceGovernanceMetrics(metrics: LoadMetricInformation[]): LoadMetricInformation[] {
-        let cpuCapacityAvailable: boolean = false;
-        let memoryCapacityAvailable: boolean = false;
-        let metricsWithResourceGov: LoadMetricInformation[] = metrics.map(m => {
-            if (m.name === "servicefabric:/_CpuCores") {
+        let cpuCapacityAvailable = false;
+        let memoryCapacityAvailable = false;
+        const metricsWithResourceGov: LoadMetricInformation[] = metrics.map(m => {
+            if (m.name === 'servicefabric:/_CpuCores') {
                 cpuCapacityAvailable = true;
-            } else if (m.name === "servicefabric:/_MemoryInMB") {
+            } else if (m.name === 'servicefabric:/_MemoryInMB') {
                 memoryCapacityAvailable = true;
             }
             return m;
         });
         if (!cpuCapacityAvailable) {
-            let zeroCpuCapacity: LoadMetricInformation = new LoadMetricInformation(null, {
-                Name: "servicefabric:/_CpuCores",
+            const zeroCpuCapacity: LoadMetricInformation = new LoadMetricInformation(null, {
+                Name: 'servicefabric:/_CpuCores',
                 IsBalancedBefore: true,
                 IsBalancedAfter: true,
-                DeviationBefore: "",
-                DeviationAfter: "",
-                BalancingThreshold: "",
-                Action: "",
-                ActivityThreshold: "",
+                DeviationBefore: '',
+                DeviationAfter: '',
+                BalancingThreshold: '',
+                Action: '',
+                ActivityThreshold: '',
                 ClusterCapacity: 0,
                 ClusterLoad: 0,
                 CurrentClusterLoad: 0,
@@ -73,15 +73,15 @@ export class MetricsViewModel implements IMetricsViewModel {
             metricsWithResourceGov.unshift(zeroCpuCapacity);
         }
         if (!memoryCapacityAvailable) {
-            let zeroMemoryCapacity: LoadMetricInformation = new LoadMetricInformation(null, {
-                Name: "servicefabric:/_MemoryInMB",
+            const zeroMemoryCapacity: LoadMetricInformation = new LoadMetricInformation(null, {
+                Name: 'servicefabric:/_MemoryInMB',
                 IsBalancedBefore: true,
                 IsBalancedAfter: true,
-                DeviationBefore: "",
-                DeviationAfter: "",
-                BalancingThreshold: "",
-                Action: "",
-                ActivityThreshold: "",
+                DeviationBefore: '',
+                DeviationAfter: '',
+                BalancingThreshold: '',
+                Action: '',
+                ActivityThreshold: '',
                 ClusterCapacity: 0,
                 ClusterLoad: 0,
                 CurrentClusterLoad: 0,

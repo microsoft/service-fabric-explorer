@@ -24,10 +24,10 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 export class DetailListComponent implements OnInit, OnDestroy {
 
   @Input() listSettings: ListSettings;
-  @Input() searchText = "Search list";
-  @Input() isLoading: boolean = false;
+  @Input() searchText = 'Search list';
+  @Input() isLoading = false;
   private _list: any[];
-  public sortedFilteredList: any[] = []; //actual list displayed in html.
+  public sortedFilteredList: any[] = []; // actual list displayed in html.
 
   page = 1;
   totalListSize = 0;
@@ -39,12 +39,12 @@ export class DetailListComponent implements OnInit, OnDestroy {
   constructor(private liveAnnouncer: LiveAnnouncer) { }
 
   @Input()
-  set list(data:  any[] | DataModelCollectionBase<any>) {
-    if(data instanceof DataModelCollectionBase){
+  set list(data: any[] | DataModelCollectionBase<any>) {
+    if (data instanceof DataModelCollectionBase){
       data.ensureInitialized().subscribe(data => {
         this._list = [].concat(data.collection);
         this.updateList();
-      })
+      });
     }else{
       this._list = data;
     }
@@ -64,7 +64,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if(this.debouncerHandlerSubscription){
+    if (this.debouncerHandlerSubscription){
       this.debouncerHandlerSubscription.unsubscribe();
     }
   }
@@ -81,20 +81,20 @@ export class DetailListComponent implements OnInit, OnDestroy {
   }
 
   trackByColumnSetting(columnSetting: ListColumnSetting) {
-    return columnSetting.propertyPath
+    return columnSetting.propertyPath;
   }
 
   sort(columnSetting: ListColumnSetting) {
     this.listSettings.sort(columnSetting.sortPropertyPaths);
     this.updateList();
 
-    if(!Utils.isIEOrEdge) {
-      this.liveAnnouncer.announce(`Table is sorted by ${columnSetting.displayName} and is ${this.listSettings.sortReverse ? 'descending' : 'ascending'}`)
+    if (!Utils.isIEOrEdge) {
+      this.liveAnnouncer.announce(`Table is sorted by ${columnSetting.displayName} and is ${this.listSettings.sortReverse ? 'descending' : 'ascending'}`);
     }
   }
 
   closeChange(state: boolean) {
-    this.liveAnnouncer.announce(`dropdown is now ${state ? 'Expanded' : 'Collapsed'}`)
+    this.liveAnnouncer.announce(`dropdown is now ${state ? 'Expanded' : 'Collapsed'}`);
   }
 
   private getSortedFilteredList(): any[] {
@@ -104,9 +104,9 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
         // Retrieve text values of all columns for searching and filtering
         let pluckedList = list.map(item => {
-            let pluckedObj = this.listSettings.getPluckedObject(item);
+            const pluckedObj = this.listSettings.getPluckedObject(item);
             // Preserve the original object, property start with $ will be ignored by filter
-            pluckedObj["$originalItem"] = item;
+            pluckedObj.$originalItem = item;
             return pluckedObj;
         });
 
@@ -115,22 +115,22 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
         // Search
         if (this.listSettings.search) {
-            let keywords = this.listSettings.search.trim().toLowerCase().split(/\s+/);
+            const keywords = this.listSettings.search.trim().toLowerCase().split(/\s+/);
 
             keywords.forEach(keyword => {
-                pluckedList = pluckedList.filter(item => filterByProperty(item, keyword) ) //this.$filter("filter")(pluckedList, keyword);
+                pluckedList = pluckedList.filter(item => filterByProperty(item, keyword) ); // this.$filter("filter")(pluckedList, keyword);
             });
         }
 
         // Retrieve the original objects from filtered plucked object list
-        list = pluckedList.map(pluckedObj => pluckedObj["$originalItem"]);
+        list = pluckedList.map(pluckedObj => pluckedObj.$originalItem);
     }
 
     // Sort
     if (this.listSettings && !isEmpty(this.listSettings.sortPropertyPaths)) {
         list = sortByProperty(list,
                               this.listSettings.sortPropertyPaths,
-                              this.listSettings.sortReverse)
+                              this.listSettings.sortReverse);
     }
 
     return list;
@@ -139,7 +139,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   private filterOnColumns(pluckedList: any, listSettings: ListSettings): any {
 
     // Initialize the filter array, false indicate filtered, true indicate not filtered
-    let filterMark: boolean[] = new Array(pluckedList.length);
+    const filterMark: boolean[] = new Array(pluckedList.length);
     fill(filterMark, true);
 
     // Update each column filter values by scanning through the list and found out all unique values exist in current column
@@ -149,8 +149,8 @@ export class DetailListComponent implements OnInit, OnDestroy {
         }
 
         // If any filter value is unchecked, we need to filter on this column
-        let hasEffectiveFilters = columnSetting.filterValues.some(filterValue => !filterValue.isChecked);
-        let checkedValues = map(filter(columnSetting.filterValues, filterValue => filterValue.isChecked), "value");
+        const hasEffectiveFilters = columnSetting.filterValues.some(filterValue => !filterValue.isChecked);
+        const checkedValues = map(filter(columnSetting.filterValues, filterValue => filterValue.isChecked), 'value');
 
         // Update filter values in each column and filter the list at the same time
         columnSetting.filterValues =
@@ -163,7 +163,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
                                     map( // Get all property values in current column
                                         pluckedList,
                                         (item, index) => {
-                                            let targetPropertyTextValue = item[columnSetting.propertyPath];
+                                            const targetPropertyTextValue = item[columnSetting.propertyPath];
                                             filterMark[index] = filterMark[index] // Not already filtered
                                                 && (!hasEffectiveFilters // No effective filters
                                                     || !targetPropertyTextValue // Target value is empty, no filters apply
@@ -180,7 +180,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
                     ),
                     columnSetting.filterValues
                 ),
-                "value"
+                'value'
             );
     });
 
@@ -205,18 +205,18 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
 }
 
-//TODO verify this works
+// TODO verify this works
 const sortByProperty = (items: any[], propertyPath: string[], sortReverse: boolean): any[] => {
-  //need to continually check each property in this list
+  // need to continually check each property in this list
   const direction = sortReverse ? 1 : -1;
   return items.sort( (a, b) => {
     let i = 0;
 
-    while(i < propertyPath.length) {
+    while (i < propertyPath.length) {
       const aResult = Utils.result(a, propertyPath[i]);
       const bResult = Utils.result(b, propertyPath[i]);
 
-      if(aResult !== bResult){
+      if (aResult !== bResult){
         return direction * ( aResult > bResult ? 1 : -1 );
       }
 
@@ -224,17 +224,17 @@ const sortByProperty = (items: any[], propertyPath: string[], sortReverse: boole
     }
 
     return 0;
-  })
-}
+  });
+};
 
 const filterByProperty = (obj: any, filter: string): boolean => {
   return Object.keys(obj).some(property => {
-    if(!property.startsWith("$")){
+    if (!property.startsWith('$')){
       const val = obj[property];
       return (val as string|number|boolean).toString().toLowerCase().includes(filter);
     }
-  })
-}
+  });
+};
 
 /* TODO
 set up track by function for columnSettings

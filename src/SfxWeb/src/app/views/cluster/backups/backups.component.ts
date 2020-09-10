@@ -36,15 +36,15 @@ export class BackupsComponent extends BaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.data.backupPolicies.refresh(messageHandler)
+    return this.data.backupPolicies.refresh(messageHandler);
   }
 
   private setupActions() {
     this.actions.add(new IsolatedAction(
       this.data.dialog,
-      "createBackupPolicy",
-      "Create Backup Policy",
-      "Creating",
+      'createBackupPolicy',
+      'Create Backup Policy',
+      'Creating',
       null,
       ActionCreateBackupPolicyComponent,
       () => true

@@ -1,158 +1,158 @@
-﻿//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 
 export class Constants {
 
     // The name of the SFX app itself.  Used in bootstrapping processes.
-    public static sfxAppName: string = "sfx";
-    public static FabricPrefix: string = "fabric:/";
+    public static sfxAppName = 'sfx';
+    public static FabricPrefix = 'fabric:/';
 
     // Storage key names
-    public static AutoRefreshIntervalStorageKey: string = "sfxAutoRefreshIntervalV2";
-    public static SplitterLeftWidth: string = "sfxSplitterleftWidth";
-    public static ThemeNameStorageKey: string = "sfxThemeName";
-    public static PaginationLimitStorageKey: string = "sfxPaginationLimit";
-    public static AdvancedModeKey: string = "sfxAdvancedMode";
+    public static AutoRefreshIntervalStorageKey = 'sfxAutoRefreshIntervalV2';
+    public static SplitterLeftWidth = 'sfxSplitterleftWidth';
+    public static ThemeNameStorageKey = 'sfxThemeName';
+    public static PaginationLimitStorageKey = 'sfxPaginationLimit';
+    public static AdvancedModeKey = 'sfxAdvancedMode';
 
     // Default values for storage keys
-    public static DefaultThemeName: string = "dark";
-    public static DefaultAutoRefreshInterval: number = 15;
+    public static DefaultThemeName = 'dark';
+    public static DefaultAutoRefreshInterval = 15;
     // Keep this in sync with $left-panel-width in _config.scss
-    public static DefaultSplitterLeftWidth: number = 400;
-    public static DefaultPaginationLimit: number = 100;
+    public static DefaultSplitterLeftWidth = 400;
+    public static DefaultPaginationLimit = 100;
 
     // System app constants
-    public static SystemAppId: string = "System";
-    public static SystemAppName: string = "fabric:/System";
-    public static SystemAppTypeName: string = "System";
+    public static SystemAppId = 'System';
+    public static SystemAppName = 'fabric:/System';
+    public static SystemAppTypeName = 'System';
 
     // Version header
-    public static SfxVersionMetadataName: string = "SFX-Version";
-    public static SfxBuildMetadataName: string = "SFX-Build";
+    public static SfxVersionMetadataName = 'SFX-Version';
+    public static SfxBuildMetadataName = 'SFX-Build';
 
-    //telemetry header
-    public static SfxTelemetryMetadataName: string = "X-ServiceFabricClientType";
-    public static SfxTelemetryHeaderValue: string = "SFX";
+    // telemetry header
+    public static SfxTelemetryMetadataName = 'X-ServiceFabricClientType';
+    public static SfxTelemetryHeaderValue = 'SFX';
 
     // Custom headers
-    public static SfxReadonlyHeaderName: string = "SFX-Readonly";
-    public static SfxClusterNameHeaderName: string = "SFX-ClusterName";
-    public static SfxReadonlyMetadataName: string = "SFXReadonly";
-    public static SfxClusterNameMetadataName: string = "SFXClusterName";
+    public static SfxReadonlyHeaderName = 'SFX-Readonly';
+    public static SfxClusterNameHeaderName = 'SFX-ClusterName';
+    public static SfxReadonlyMetadataName = 'SFXReadonly';
+    public static SfxClusterNameMetadataName = 'SFXClusterName';
 
     // Theming
-    public static ThemeSourceQueryStringName: string = "theme_source";
-    public static ThemeNameQueryStringName: string = "theme_name";
-    public static ThemeNameMonitorPropertyName: string = "ThemeName";
+    public static ThemeSourceQueryStringName = 'theme_source';
+    public static ThemeNameQueryStringName = 'theme_name';
+    public static ThemeNameMonitorPropertyName = 'ThemeName';
 
     // Items per page limit
-    public static PaginationLimitMin: number = 5;
-    public static PaginationLimitMax: number = 200;
+    public static PaginationLimitMin = 5;
+    public static PaginationLimitMax = 200;
 
-    public static InvalidTimestamp: string = "N/A";
-    public static DurationInfinity: string = "Infinity";
+    public static InvalidTimestamp = 'N/A';
+    public static DurationInfinity = 'Infinity';
 
-    public static ServiceKindStateful: string = "Stateful";
-    public static ServiceKindStateless: string = "Stateless";
+    public static ServiceKindStateful = 'Stateful';
+    public static ServiceKindStateless = 'Stateless';
 
-    public static ComposeApplicationDefinitionKind: string = "Compose";
+    public static ComposeApplicationDefinitionKind = 'Compose';
 
-    public static ContainerHostTypeName: string = "ContainerHost";
+    public static ContainerHostTypeName = 'ContainerHost';
 
     // Directive names
-    public static DirectiveNameActionsRow = "sfx-actions-row";
-    public static DirectiveNameUpgradeProgress = "sfx-upgrade-progress";
+    public static DirectiveNameActionsRow = 'sfx-actions-row';
+    public static DirectiveNameUpgradeProgress = 'sfx-upgrade-progress';
 
     // Misc
-    public static Empty = "(empty)";
+    public static Empty = '(empty)';
     public static SvgTransitionDuration = 250;
     public static SvgTransitionDurationSlow = 600;
 }
 
 export class FabricEnumValues {
     public static ServiceCorrelationSchemes = [
-        "Invalid",
-        "Affinity",
-        "AlignedAffinity",
-        "NonAlignedAffinity"
+        'Invalid',
+        'Affinity',
+        'AlignedAffinity',
+        'NonAlignedAffinity'
     ];
 
     public static ServiceLoadMetricWeights = [
-        "Zero",
-        "Low",
-        "Medium",
-        "High"
+        'Zero',
+        'Low',
+        'Medium',
+        'High'
     ];
 
     public static PlacementPolicies = [
-        "Invalid",
-        "InvalidDomain",
-        "RequiredDomain",
-        "PreferredPrimaryDomain",
-        "RequiredDomainDistribution",
-        "NonPartiallyPlaceService"
+        'Invalid',
+        'InvalidDomain',
+        'RequiredDomain',
+        'PreferredPrimaryDomain',
+        'RequiredDomainDistribution',
+        'NonPartiallyPlaceService'
     ];
 
     public static ServicePartitionKinds = [
-        "Invalid",
-        "Singleton",
-        "Int64Range",
-        "Named"
+        'Invalid',
+        'Singleton',
+        'Int64Range',
+        'Named'
     ];
 
     public static ServicePackageActivationModes = [
-        "SharedProcess",
-        "ExclusiveProcess"
+        'SharedProcess',
+        'ExclusiveProcess'
     ];
 }
 
 export class BadgeConstants {
-    public static BadgeOK: string = "badge-ok";
-    public static BadgeError: string = "badge-error";
-    public static BadgeWarning: string = "badge-warning";
-    public static BadgeUnknown: string = "badge-unknown";
+    public static BadgeOK = 'badge-ok';
+    public static BadgeError = 'badge-error';
+    public static BadgeWarning = 'badge-warning';
+    public static BadgeUnknown = 'badge-unknown';
 }
 
 export class AppStatusConstants {
-    public static Upgrading: string = "Upgrading";
+    public static Upgrading = 'Upgrading';
 }
 
 export class NodeStatusConstants {
-    public static Invalid: string = "Invalid";
-    public static Up: string = "Up";
-    public static Down: string = "Down";
-    public static Enabling: string = "Enabling";
-    public static Disabling: string = "Disabling";
-    public static Disabled: string = "Disabled";
-    public static Unknown: string = "Unknown";
+    public static Invalid = 'Invalid';
+    public static Up = 'Up';
+    public static Down = 'Down';
+    public static Enabling = 'Enabling';
+    public static Disabling = 'Disabling';
+    public static Disabled = 'Disabled';
+    public static Unknown = 'Unknown';
 }
 
 export class HealthStateConstants {
-    public static Invalid: string = "Invalid";
-    public static OK: string = "OK";
-    public static Warning: string = "Warning";
-    public static Error: string = "Error";
-    public static Unknown: string = "Unknown";
+    public static Invalid = 'Invalid';
+    public static OK = 'OK';
+    public static Warning = 'Warning';
+    public static Error = 'Error';
+    public static Unknown = 'Unknown';
 
     public static Values = {
-        "Invalid": 0,
-        "OK": 1,
-        "Warning": 2,
-        "Error": 3,
-        "Unknown": 4
+        Invalid: 0,
+        OK: 1,
+        Warning: 2,
+        Error: 3,
+        Unknown: 4
     };
 }
 
 export class SortPriorities {
     public static ReplicaRolesToSortPriorities = {
-        "Unknown": 0,
-        "None": 1,
-        "Primary": 2,
-        "ActiveSecondary": 3,
-        "IdleSecondary": 4
+        Unknown: 0,
+        None: 1,
+        Primary: 2,
+        ActiveSecondary: 3,
+        IdleSecondary: 4
     };
 }
 
@@ -172,30 +172,30 @@ export class UpgradeDomainStateRegexes {
 }
 
 export class ClusterUpgradeStates {
-    public static RollingForwardPending: string = "RollingForwardPending";
+    public static RollingForwardPending = 'RollingForwardPending';
 }
 
 export class UpgradeDomainStateNames {
-    public static InProgress: string = "InProgress";
-    public static Completed: string = "Completed";
-    public static Pending: string = "Pending";
+    public static InProgress = 'InProgress';
+    public static Completed = 'Completed';
+    public static Pending = 'Pending';
 }
 
 export class StatusWarningLevel {
-    public static Warning: string = "warning";
-    public static Error: string = "error";
-    public static Info: string = "info";
+    public static Warning = 'warning';
+    public static Error = 'error';
+    public static Info = 'info';
 }
 
 export class BannerWarningID {
-    public static ClusterDegradedState = "degradedClusterState";
-    public static OneNodeCluster = "oneNodeCluster";
-    public static ExpiringClusterCert = "CertificateClusterExpiring";
+    public static ClusterDegradedState = 'degradedClusterState';
+    public static OneNodeCluster = 'oneNodeCluster';
+    public static ExpiringClusterCert = 'CertificateClusterExpiring';
 }
 
 export class CertExpiraryHealthEventProperty {
-    public static Client: string = "Certificate_client";
-    public static Cluster: string = "Certificate_cluster";
-    public static Server: string = "Certificate_server";
+    public static Client = 'Certificate_client';
+    public static Cluster = 'Certificate_cluster';
+    public static Server = 'Certificate_server';
 }
 

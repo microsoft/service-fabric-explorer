@@ -18,29 +18,29 @@ export abstract class BaseController implements  OnInit, OnDestroy {
 
     constructor(public injector: Injector) {}
 
-    
+
     ngOnInit(){
          this.activatedRoute = this.injector.get<ActivatedRoute>(ActivatedRoute);
          this.refreshService = this.injector.get<RefreshService>(RefreshService);
          this.messageService = this.injector.get<MessageService>(MessageService);
          this.router = this.injector.get<Router>(Router);
          this.subscriptions.add(this.activatedRoute.params.subscribe( () => {
-             //get params
+             // get params
              this.getParams(this.activatedRoute.snapshot);
 
              this.setup();
 
              this.subscriptions.add(this.common().pipe(mergeMap( () => this.refresh())).subscribe(
                  () => {
-                    this.refreshService.insertRefreshSubject("current controller" + this.getClassName(), this.refresh.bind(this, this.messageService));
+                    this.refreshService.insertRefreshSubject('current controller' + this.getClassName(), this.refresh.bind(this, this.messageService));
                  },
                  () => {
-                     this.router.navigate(["/"]);
+                     this.router.navigate(['/']);
                  }
              ));
-        }))
+        }));
 
-        console.log(this)
+         console.log(this);
     }
 
     getClassName() {
@@ -57,7 +57,7 @@ export abstract class BaseController implements  OnInit, OnDestroy {
 
     ngOnDestroy(){
         this.subscriptions.unsubscribe();
-        this.refreshService.removeRefreshSubject("current controller" + this.getClassName());
+        this.refreshService.removeRefreshSubject('current controller' + this.getClassName());
     }
 
 

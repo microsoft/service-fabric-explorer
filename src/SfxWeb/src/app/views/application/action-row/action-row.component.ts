@@ -21,9 +21,9 @@ export class ActionRowComponent implements DetailBaseComponent {
   createService() {
     new IsolatedAction(
       this.data.dialog,
-      "",
-      "",
-      "",
+      '',
+      '',
+      '',
       this.item,
       CreateServiceComponent,
       () => true).run();
@@ -33,6 +33,6 @@ export class ActionRowComponent implements DetailBaseComponent {
 export class ListColumnSettingForApplicationServiceRow extends ListColumnSetting {
   template = ActionRowComponent;
   public constructor() {
-      super("actions", "Actions", null, false);
+      super('actions', 'Actions', null, false);
   }
 }

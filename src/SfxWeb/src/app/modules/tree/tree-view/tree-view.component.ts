@@ -10,16 +10,16 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 })
 export class TreeViewComponent implements DoCheck {
 
-  @Input() smallWindowSize: boolean = false;
+  @Input() smallWindowSize = false;
   @Output() onTreeSize = new EventEmitter<number>();
 
   public showBeta = environment.showBeta;
   public canExpand = false;
-  @ViewChild("tree") tree: ElementRef;
+  @ViewChild('tree') tree: ElementRef;
   constructor(public treeService: TreeService, private liveAnnouncer: LiveAnnouncer) { }
 
   ngDoCheck(): void {
-    if(this.tree) {
+    if (this.tree) {
       this.canExpand = this.tree.nativeElement.scrollWidth > this.tree.nativeElement.clientWidth;
     }
   }
@@ -30,7 +30,7 @@ export class TreeViewComponent implements DoCheck {
   }
 
   setWidth() {
-    this.onTreeSize.emit(this.tree.nativeElement.scrollWidth + 20)
+    this.onTreeSize.emit(this.tree.nativeElement.scrollWidth + 20);
   }
 
   setSearchText(text: string) {

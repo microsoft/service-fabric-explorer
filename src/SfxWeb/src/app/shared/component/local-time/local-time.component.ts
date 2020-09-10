@@ -8,8 +8,8 @@ import { interval } from 'rxjs';
   changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class LocalTimeComponent implements OnInit {
-  utcTime: string = "";
-  
+  utcTime = '';
+
   constructor(private cdr: ChangeDetectorRef) { }
 
   ngOnInit(): void {

@@ -10,15 +10,15 @@ import { Router } from '@angular/router';
 })
 export class NavbarComponent {
 
-  @Input() type: string = "";
-  @Input() name: string = "";
+  @Input() type = '';
+  @Input() name = '';
   @Input() tabs: ITab[] = [];
   @Input() actions: ActionCollection;
 
   constructor(private router: Router) { }
 
   navigateBySpaceBar(route: string) {
-    this.router.navigate([route])
+    this.router.navigate([route]);
   }
 
 }

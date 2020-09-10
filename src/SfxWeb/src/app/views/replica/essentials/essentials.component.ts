@@ -17,7 +17,7 @@ export class EssentialsComponent extends ReplicaBaseController {
   unhealthyEvaluationsListSettings: ListSettings;
   nodeView: string;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
@@ -30,7 +30,7 @@ export class EssentialsComponent extends ReplicaBaseController {
       if (!this.isSystem) {
           try {
             this.replica.detail.refresh(messageHandler).pipe(map( () => {
-                const rawDataProperty = this.replica.isStatefulService ? "DeployedServiceReplica" : "DeployedServiceReplicaInstance";
+                const rawDataProperty = this.replica.isStatefulService ? 'DeployedServiceReplica' : 'DeployedServiceReplicaInstance';
                 const detailRaw = this.replica.detail.raw[rawDataProperty];
 
                 const serviceNameOnly = detailRaw.ServiceManifestName;

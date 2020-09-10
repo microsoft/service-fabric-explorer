@@ -14,7 +14,7 @@ export class InputComponent implements OnInit, OnDestroy {
 
   modelValue: string;
 
-  @Input() placeholder = "Search list";
+  @Input() placeholder = 'Search list';
   @Input()
   get model(){
     return this.modelValue;
@@ -39,7 +39,7 @@ export class InputComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
-    if(this.debouncerHandlerSubscription){
+    if (this.debouncerHandlerSubscription){
       this.debouncerHandlerSubscription.unsubscribe();
     }
   }

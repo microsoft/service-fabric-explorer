@@ -21,7 +21,7 @@ export class StatusWarningsComponent{
   }
 
   public remove(alert: IStatusWarning, hidePermanently = false): void {
-    if(alert.level === StatusWarningLevel.Warning){
+    if (alert.level === StatusWarningLevel.Warning){
       this.removeWithConfirm(alert);
     }else{
       this.alerts.removeNotificationById(alert.id, hidePermanently);
@@ -31,14 +31,14 @@ export class StatusWarningsComponent{
   public removeWithConfirm(alert: IStatusWarning): void {
     new ActionWithConfirmationDialog(
         this.data.dialog,
-        "",
-        "Accept",
-        "acknowledge",
+        '',
+        'Accept',
+        'acknowledge',
         () => of(this.alerts.removeNotificationById(alert.id, true)),
         () => true,
-        "Acknowledge",
+        'Acknowledge',
         alert.confirmText,
-        "Accept").run();
+        'Accept').run();
   }
 
 

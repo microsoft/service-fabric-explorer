@@ -16,7 +16,7 @@ export class ImagestoreComponent extends BaseController {
   imageStore: ImageStore;
 
   constructor(public data: DataService, injector: Injector, public settings: SettingsService) {
-    super(injector)
+    super(injector);
    }
 
   setup() {
@@ -24,6 +24,6 @@ export class ImagestoreComponent extends BaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.imageStore.refresh(messageHandler)
+    return this.imageStore.refresh(messageHandler);
   }
 }

@@ -23,9 +23,9 @@ describe('RefreshService', () => {
 
   fit('add and remove refresh subject', () => {
     const service: RefreshService = TestBed.get(RefreshService);
-    
-    const keyName = "test";
-    const func = () => of(null)
+
+    const keyName = 'test';
+    const func = () => of(null);
 
     service.insertRefreshSubject(keyName, func);
     expect(service.hasRefreshSubject(keyName)).toBeTruthy();
@@ -40,14 +40,14 @@ describe('RefreshService', () => {
   fit('refresh all', async () => {
     const service: RefreshService = TestBed.get(RefreshService);
     let done = false;
-    const keyName = "test";
-    const func = () => of(null).pipe(map( () => done = true))
+    const keyName = 'test';
+    const func = () => of(null).pipe(map( () => done = true));
 
     service.insertRefreshSubject(keyName, func);
     expect(service.hasRefreshSubject(keyName)).toBeTruthy();
     expect(service.refreshSubjectCount()).toBe(1);
 
-    service.refreshAll()
+    service.refreshAll();
 
     await timer(1000).toPromise();
 
@@ -57,10 +57,10 @@ describe('RefreshService', () => {
 
   fit('refresh withError', async () => {
     const service: RefreshService = TestBed.get(RefreshService);
-    const keyName = "test";
-    const func = () =>  throwError("error");
+    const keyName = 'test';
+    const func = () =>  throwError('error');
     let done = false;
-    const keyName2 = "success";
+    const keyName2 = 'success';
     const func2 = () => of(null).pipe(map( () => done = true));
 
     service.insertRefreshSubject(keyName, func);
@@ -79,10 +79,10 @@ describe('RefreshService', () => {
     const service: RefreshService = TestBed.get(RefreshService);
     service.init();
 
-    expect(service.refreshRate).toBe("15");
-    
-    service.updateRefreshInterval("10");
-    expect(service.refreshRate).toBe("10");
+    expect(service.refreshRate).toBe('15');
+
+    service.updateRefreshInterval('10');
+    expect(service.refreshRate).toBe('10');
 
   });
 

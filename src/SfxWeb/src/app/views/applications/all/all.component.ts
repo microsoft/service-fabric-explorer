@@ -23,12 +23,12 @@ export class AllComponent extends BaseController {
    }
 
   setup() {
-    this.listSettings = this.settings.getNewOrExistingListSettings("apps", ["name"], [
-      new ListColumnSettingForLink("name", "Name", item => item.viewPath),
-      new ListColumnSettingWithFilter("raw.TypeName", "Application Type"),
-      new ListColumnSetting("raw.TypeVersion", "Version"),
-      new ListColumnSettingForBadge("healthState", "Health State"),
-      new ListColumnSettingWithFilter("raw.Status", "Status")
+    this.listSettings = this.settings.getNewOrExistingListSettings('apps', ['name'], [
+      new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
+      new ListColumnSettingWithFilter('raw.TypeName', 'Application Type'),
+      new ListColumnSetting('raw.TypeVersion', 'Version'),
+      new ListColumnSettingForBadge('healthState', 'Health State'),
+      new ListColumnSettingWithFilter('raw.Status', 'Status')
     ]);
   }
 

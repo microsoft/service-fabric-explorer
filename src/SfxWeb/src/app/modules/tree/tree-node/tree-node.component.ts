@@ -15,6 +15,6 @@ export class TreeNodeComponent {
   constructor() { }
 
   trackById(index: number, node: TreeNodeGroupViewModel) {
-    return node.nodeId
+    return node.nodeId;
   }
 }

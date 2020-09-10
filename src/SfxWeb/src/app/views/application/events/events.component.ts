@@ -14,7 +14,7 @@ export class EventsComponent extends ApplicationBaseController {
   timelineGenerator: ApplicationTimelineGenerator;
   appEvents: ApplicationEventList;
 
-  constructor(protected data: DataService, injector: Injector) { 
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 

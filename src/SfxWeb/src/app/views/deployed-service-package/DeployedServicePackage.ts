@@ -17,19 +17,19 @@ export class DeployedServicePackageBaseController extends BaseController {
 
     servicePackage: DeployedServicePackage;
 
-    constructor(protected data: DataService, injector: Injector) { 
+    constructor(protected data: DataService, injector: Injector) {
       super(injector);
     }
-  
+
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getDeployedServicePackage(this.nodeName, this.appId, this.serviceId, this.activationId, true, messageHandler)
                 .pipe(mergeMap(servicePackage => {
                     this.servicePackage = servicePackage;
 
                     return this.servicePackage.health.refresh(messageHandler);
-                }))
+                }));
     }
-    
+
     getParams(route: ActivatedRouteSnapshot): void {
         this.nodeName = IdUtils.getNodeName(route);
         this.serviceId = IdUtils.getServiceId(route);

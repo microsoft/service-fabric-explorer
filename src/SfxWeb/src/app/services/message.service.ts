@@ -3,9 +3,9 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { StorageService } from './storage.service';
 
 export enum MessageSeverity {
-  Info = "Info", 
-  Warn = "Warning", 
-  Err = "Error"
+  Info = 'Info',
+  Warn = 'Warning',
+  Err = 'Error'
 }
 
 export interface IToast {
@@ -20,11 +20,11 @@ export interface IToast {
 })
 export class MessageService {
 
-  static readonly LOCALSTORAGE_KEY_SUPPRES = "SFX-supress-message";
+  static readonly LOCALSTORAGE_KEY_SUPPRES = 'SFX-supress-message';
 
   toasts: IToast[] = [];
-  _suppressMessages: boolean = false;
-  constructor(private storageService: StorageService) { 
+  _suppressMessages = false;
+  constructor(private storageService: StorageService) {
     this.suppressMessage = this.storageService.getValueBoolean(MessageService.LOCALSTORAGE_KEY_SUPPRES, false);
   }
 
@@ -33,10 +33,10 @@ export class MessageService {
   }
 
   getClass(severity: MessageSeverity): string {
-    const colors = {}
-    colors[MessageSeverity.Info] = "bg-info";
-    colors[MessageSeverity.Warn] = "bg-warning";
-    colors[MessageSeverity.Err] = "bg-danger";
+    const colors = {};
+    colors[MessageSeverity.Info] = 'bg-info';
+    colors[MessageSeverity.Warn] = 'bg-warning';
+    colors[MessageSeverity.Err] = 'bg-danger';
 
     return colors[severity];
   }
@@ -50,14 +50,14 @@ export class MessageService {
     this._suppressMessages = b;
   }
 
-  public showMessage(message: string, severity: MessageSeverity, header: string = "", duration: number = 5000) {
-    if(!this.suppressMessage) {
+  public showMessage(message: string, severity: MessageSeverity, header: string = '', duration: number = 5000) {
+    if (!this.suppressMessage) {
       this.toasts.push({
         header: `${severity} ${header}`,
         body: message,
         duration,
         class: this.getClass(severity)
-      })
+      });
     }
   }
 

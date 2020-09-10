@@ -19,24 +19,24 @@ export class EssentialsComponent extends NodeBaseController {
   listSettings: ListSettings;
   unhealthyEvaluationsListSettings: ListSettings;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
   setup() {
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
 
-    this.listSettings = this.settings.getNewOrExistingListSettings("apps", ["name"], [
-      new ListColumnSettingForLink("name", "Name", item => item.viewPath),
-      new ListColumnSetting("raw.TypeName", "Application Type"),
-      new ListColumnSettingForBadge("health.healthState", "Health State"),
-      new ListColumnSettingWithFilter("raw.Status", "Status"),
+    this.listSettings = this.settings.getNewOrExistingListSettings('apps', ['name'], [
+      new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
+      new ListColumnSetting('raw.TypeName', 'Application Type'),
+      new ListColumnSettingForBadge('health.healthState', 'Health State'),
+      new ListColumnSettingWithFilter('raw.Status', 'Status'),
     ]);
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.node.deployedApps.refresh(messageHandler).pipe(map(deployedApps => {
         this.deployedApps = deployedApps;
-      }))
+      }));
   }
 }

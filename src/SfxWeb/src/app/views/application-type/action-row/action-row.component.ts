@@ -24,6 +24,6 @@ export class ActionRowComponent implements OnInit, DetailBaseComponent {
 export class ListColumnSettingForApplicationType extends ListColumnSetting {
   template = ActionRowComponent;
   public constructor() {
-      super("actions", "Actions", null, false);
+      super('actions', 'Actions', null, false);
   }
 }

@@ -13,13 +13,13 @@ import { PartitionBaseController } from '../PartitionBase';
 })
 export class EssentialsComponent extends PartitionBaseController {
 
-  public hideReplicator: boolean = true;
+  public hideReplicator = true;
 
   unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
 
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
@@ -30,22 +30,22 @@ export class EssentialsComponent extends PartitionBaseController {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     if (!this.listSettings) {
-        let defaultSortProperties = ["replicaRoleSortPriority", "raw.NodeName"];
-        let columnSettings = [
-            new ListColumnSettingForLink("id", "Id", item => item.viewPath),
-            new ListColumnSetting("raw.NodeName", "Node Name"),
-            new ListColumnSettingWithFilter("role", "Replica Role", defaultSortProperties),
-            new ListColumnSettingForBadge("healthState", "Health State"),
-            new ListColumnSettingWithFilter("raw.ReplicaStatus", "Status")
+        let defaultSortProperties = ['replicaRoleSortPriority', 'raw.NodeName'];
+        const columnSettings = [
+            new ListColumnSettingForLink('id', 'Id', item => item.viewPath),
+            new ListColumnSetting('raw.NodeName', 'Node Name'),
+            new ListColumnSettingWithFilter('role', 'Replica Role', defaultSortProperties),
+            new ListColumnSettingForBadge('healthState', 'Health State'),
+            new ListColumnSettingWithFilter('raw.ReplicaStatus', 'Status')
         ];
 
         if (this.partition.isStatelessService) {
             columnSettings.splice(2, 1); // Remove replica role column
-            defaultSortProperties = ["raw.NodeName"];
+            defaultSortProperties = ['raw.NodeName'];
         }
 
         // Keep the sort properties in sync with the sortBy for ClusterTreeService.getDeployedReplicas
-        this.listSettings = this.settings.getNewOrExistingListSettings("replicas", defaultSortProperties, columnSettings);
+        this.listSettings = this.settings.getNewOrExistingListSettings('replicas', defaultSortProperties, columnSettings);
     }
 
     return forkJoin([

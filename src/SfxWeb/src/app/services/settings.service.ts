@@ -55,7 +55,7 @@ export class SettingsService {
       searchable: boolean = true) {
 
       // Use URL + listName as unique key to track list settings on detail pages
-      let key: string = listName // TODO fix this this.$location.path() + "/" + listName;
+      const key: string = listName; // TODO fix this this.$location.path() + "/" + listName;
       if (!this.listSettings[key]) {
           this.listSettings[key] = new ListSettings(this.paginationLimit, defaultSortProperties, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
       }
@@ -73,62 +73,62 @@ export class SettingsService {
       return this.listSettings[listKey];
   }
 
-  public getNewOrExistingUnhealthyEvaluationsListSettings(listKey: string = "unhealthyEvaluations") {
+  public getNewOrExistingUnhealthyEvaluationsListSettings(listKey: string = 'unhealthyEvaluations') {
       return this.getNewOrExistingListSettings(listKey, null,
           [
-              new ListColumnSettingForLink("kind", "Kind", (item) =>  item.viewPath),
-              new ListColumnSettingForBadge("healthState", "Health State"),
-              new ListColumnSettingWithCopyText("description", "Description")
+              new ListColumnSettingForLink('kind', 'Kind', (item) =>  item.viewPath),
+              new ListColumnSettingForBadge('healthState', 'Health State'),
+              new ListColumnSettingWithCopyText('description', 'Description')
           ]);
   }
 
-  public getNewOrExistingHealthEventsListSettings(listKey: string = "healthEvents") {
-      return this.getNewOrExistingListSettings(listKey, ["raw.SequenceNumber"],
+  public getNewOrExistingHealthEventsListSettings(listKey: string = 'healthEvents') {
+      return this.getNewOrExistingListSettings(listKey, ['raw.SequenceNumber'],
           [
-              new ListColumnSettingForBadge("healthState", "Health State"),
-              new ListColumnSetting("raw.SourceId", "Source"),
-              new ListColumnSetting("raw.Property", "Property"),
-              new ListColumnSettingWithUtcTime("sourceUtcTimestamp", "Source UTC"),
-              new ListColumnSetting("TTL", "TTL"),
-              new ListColumnSetting("raw.SequenceNumber", "Sequence Number"),
-              new ListColumnSetting("raw.RemoveWhenExpired", "Remove When Expired"),
-              new ListColumnSetting("raw.IsExpired", "Is Expired")
+              new ListColumnSettingForBadge('healthState', 'Health State'),
+              new ListColumnSetting('raw.SourceId', 'Source'),
+              new ListColumnSetting('raw.Property', 'Property'),
+              new ListColumnSettingWithUtcTime('sourceUtcTimestamp', 'Source UTC'),
+              new ListColumnSetting('TTL', 'TTL'),
+              new ListColumnSetting('raw.SequenceNumber', 'Sequence Number'),
+              new ListColumnSetting('raw.RemoveWhenExpired', 'Remove When Expired'),
+              new ListColumnSetting('raw.IsExpired', 'Is Expired')
           ],
           // Second row with description
           [
-              new ListColumnSetting("placeholder", "placeholder", null, false), // Empty column
-              new ListColumnSettingWithCopyText("description", "Description", [], false, 7)
+              new ListColumnSetting('placeholder', 'placeholder', null, false), // Empty column
+              new ListColumnSettingWithCopyText('description', 'Description', [], false, 7)
           ],
           false,
           (item) => item.description.length > 0
           );
   }
 
-  public getNewOrExistingNodeStatusListSetting(listKey: string = "nodeStatus") {
+  public getNewOrExistingNodeStatusListSetting(listKey: string = 'nodeStatus') {
       return this.getNewOrExistingListSettings(listKey, null,
           [
-              new ListColumnSetting("nodeType", "Node Type"),
-              new ListColumnSetting("totalCount", "Total Node Count"),
+              new ListColumnSetting('nodeType', 'Node Type'),
+              new ListColumnSetting('totalCount', 'Total Node Count'),
               new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Up}`, NodeStatusConstants.Up),
               new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Down}`, NodeStatusConstants.Down),
               new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Disabled}`, NodeStatusConstants.Disabled),
               new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Disabling}`, NodeStatusConstants.Disabling),
-              new ListColumnSetting("errorCount", "Error"),
-              new ListColumnSetting("warningCount", "Warning"),
+              new ListColumnSetting('errorCount', 'Error'),
+              new ListColumnSetting('warningCount', 'Warning'),
           ]
 
       );
-  };
+  }
 
-  public getNewOrExistingBackupPolicyListSettings(listKey: string = "backupPolicies") {
+  public getNewOrExistingBackupPolicyListSettings(listKey: string = 'backupPolicies') {
       return this.getNewOrExistingListSettings(listKey, null, [
-          new ListColumnSetting("raw.Name", "Name", ["raw.Name"], false, (item, property) =>  `<span class="link">${property}</span>`, 1, item => item.action.run()),
-          new ListColumnSetting("raw.Schedule.ScheduleKind", "ScheduleKind"),
-          new ListColumnSetting("raw.Storage.StorageKind", "StorageKind"),
-          new ListColumnSetting("raw.AutoRestoreOnDataLoss", "AutoRestoreOnDataLoss"),
-          new ListColumnSetting("raw.MaxIncrementalBackups", "MaxIncrementalBackups"),
+          new ListColumnSetting('raw.Name', 'Name', ['raw.Name'], false, (item, property) =>  `<span class="link">${property}</span>`, 1, item => item.action.run()),
+          new ListColumnSetting('raw.Schedule.ScheduleKind', 'ScheduleKind'),
+          new ListColumnSetting('raw.Storage.StorageKind', 'StorageKind'),
+          new ListColumnSetting('raw.AutoRestoreOnDataLoss', 'AutoRestoreOnDataLoss'),
+          new ListColumnSetting('raw.MaxIncrementalBackups', 'MaxIncrementalBackups'),
       ]);
-  };
+  }
 
   // Update all existing list settings to use new limit
   private updatePaginationLimit(limit: number): void {

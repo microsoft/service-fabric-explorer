@@ -13,16 +13,16 @@ import { IdGenerator } from 'src/app/Utils/IdGenerator';
 export class BaseComponent extends DeployedAppBaseController {
 
   tabs: ITab[] = [{
-    name: "essentials",
-    route: "./"
+    name: 'essentials',
+    route: './'
     },
     {
-      name: "details",
-      route: "./details"
+      name: 'details',
+      route: './details'
     }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) { 
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
     super(data, injector);
   }
 

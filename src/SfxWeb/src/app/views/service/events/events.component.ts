@@ -12,7 +12,7 @@ export class EventsComponent extends ServiceBaseController {
 
   serviceEvents: ServiceEventList;
 
-  constructor(protected data: DataService, injector: Injector) { 
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 

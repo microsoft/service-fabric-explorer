@@ -18,8 +18,8 @@ export class ScaleServiceComponent implements OnInit {
   updateServiceDescription: IRawUpdateServiceDescription;
 
   constructor(public dialogRef: MatDialogRef<ScaleServiceComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
-    private dataService: DataService) { }
+              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
+              private dataService: DataService) { }
 
   ngOnInit() {
     this.service = this.data.data;
@@ -35,7 +35,7 @@ export class ScaleServiceComponent implements OnInit {
       this.close();
     },
     err => {
-      console.log(err)
+      console.log(err);
     });
   }
 

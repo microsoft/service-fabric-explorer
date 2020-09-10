@@ -12,19 +12,19 @@ import { ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType'
 export class ApplicationTypeBaseController extends BaseController {
     appTypeName: string;
     appTypeGroup: ApplicationTypeGroup;
-  
-    constructor(protected data: DataService, injector: Injector) { 
+
+    constructor(protected data: DataService, injector: Injector) {
       super(injector);
     }
-  
+
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getAppTypeGroup(this.appTypeName, true, messageHandler).pipe(map( appTypeGroup => {
             this.appTypeGroup = appTypeGroup;
         }));
     }
-    
+
     getParams(route: ActivatedRouteSnapshot): void {
       this.appTypeName = IdUtils.getAppTypeName(route);
     }
-  
+
   }

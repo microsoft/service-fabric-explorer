@@ -7,7 +7,7 @@ import { AadMetadata } from '../Models/DataModels/Aad';
 import { Observable, of } from 'rxjs';
 
 describe('AdalService', () => {
-  let restClientMock: Partial<RestClientService> = {};
+  const restClientMock: Partial<RestClientService> = {};
   beforeEach(() => TestBed.configureTestingModule({
     providers: [{provide: RestClientService, useValue: restClientMock}]
   }));
@@ -22,45 +22,45 @@ describe('AdalService', () => {
 
     restClientMock.getAADmetadata = (messageHandler: IResponseMessageHandler): Observable<AadMetadata> => {
       return of(new AadMetadata({
-        type: "aad",
+        type: 'aad',
         metadata: {
-          login: "login",
-          authority: "auth",
-          client: "client-id",
-          cluster: "cluster-id",
-          redirect: "redirect",
-          tenant: "tenant-id"
+          login: 'login',
+          authority: 'auth',
+          client: 'client-id',
+          cluster: 'cluster-id',
+          redirect: 'redirect',
+          tenant: 'tenant-id'
         }
-        }))
+        }));
       };
 
-      await service.load().toPromise();
+    await service.load().toPromise();
 
-      expect(service.authContext).toBeDefined();
-      expect(service.aadEnabled).toBeTruthy(); 
-  })
+    expect(service.authContext).toBeDefined();
+    expect(service.aadEnabled).toBeTruthy();
+  });
 
   fit('load non aad authed', async () => {
     const service: AdalService = TestBed.get(AdalService);
 
     restClientMock.getAADmetadata = (messageHandler: IResponseMessageHandler): Observable<AadMetadata> => {
       return of(new AadMetadata({
-        type: "",
+        type: '',
         metadata: {
-          login: "",
-          authority: "",
-          client: "",
-          cluster: "",
-          redirect: "",
-          tenant: ""
+          login: '',
+          authority: '',
+          client: '',
+          cluster: '',
+          redirect: '',
+          tenant: ''
         }
-        }))
+        }));
       };
 
-      await service.load().toPromise();
+    await service.load().toPromise();
 
-      expect(service.authContext).toBeUndefined();
-      expect(service.aadEnabled).toBeFalsy();
-  })
+    expect(service.authContext).toBeUndefined();
+    expect(service.aadEnabled).toBeFalsy();
+  });
 
 });
