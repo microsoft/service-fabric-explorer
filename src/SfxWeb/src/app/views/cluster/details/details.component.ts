@@ -37,12 +37,12 @@ export class DetailsComponent extends BaseController {
   setup(){
     this.clusterUpgradeProgress = this.data.clusterUpgradeProgress;
     this.clusterLoadInformation = this.data.clusterLoadInformation;
-    this.clusterHealth = this.data.getClusterHealth(HealthStateFilterFlags.Default, HealthStateFilterFlags.None, HealthStateFilterFlags.None)
+    this.clusterHealth = this.data.getClusterHealth(HealthStateFilterFlags.Default, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
     this.nodes = this.data.nodes;
 
     this.nodeStatusListSettings = this.settings.getNewOrExistingNodeStatusListSetting();
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-    this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings("clusterUpgradeProgressUnhealthyEvaluations");
+    this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('clusterUpgradeProgressUnhealthyEvaluations');
     this.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
   }
 

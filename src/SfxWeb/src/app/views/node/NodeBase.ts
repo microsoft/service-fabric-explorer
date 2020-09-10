@@ -13,17 +13,17 @@ export class NodeBaseController extends BaseController {
     nodeName: string;
     node: Node;
 
-    constructor(protected data: DataService, injector: Injector) { 
+    constructor(protected data: DataService, injector: Injector) {
       super(injector);
     }
-  
+
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getNode(this.nodeName, true, messageHandler).pipe(mergeMap( node => {
                 this.node = node;
                 return this.node.health.refresh(messageHandler).pipe(map( () => console.log(this)));
-            }))
+            }));
     }
-    
+
     getParams(route: ActivatedRouteSnapshot): void {
         this.nodeName = IdUtils.getNodeName(route);
     }

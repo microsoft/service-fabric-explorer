@@ -13,7 +13,7 @@ import { map } from 'rxjs/operators';
 export class ManifestComponent extends DeployedServicePackageBaseController {
   serviceManifest: string;
 
-  constructor(protected data: DataService, injector: Injector) { 
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 

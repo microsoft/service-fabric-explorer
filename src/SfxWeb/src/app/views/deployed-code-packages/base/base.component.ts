@@ -26,7 +26,7 @@ export class BaseComponent extends BaseController {
   codePackages: DeployedCodePackageCollection;
   listSettings: ListSettings;
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService, private settings: SettingsService) {
     super(injector);
   }
 
@@ -47,24 +47,24 @@ export class BaseComponent extends BaseController {
         this.codePackages = codePackages;
 
         if (!this.listSettings && codePackages.length > 0) {
-            let columnSettings = [
-                new ListColumnSettingForLink("name", "Name", item => item.viewPath),
-                new ListColumnSettingWithFilter("raw.HostType", "Host Type"),
-                new ListColumnSettingWithFilter("raw.HostIsolationMode", "Host Isolation Mode"),
-                new ListColumnSetting("raw.Version", "Version"),
-                new ListColumnSetting("raw.MainEntryPoint.ProcessId", "Process Id"),
-                new ListColumnSettingWithFilter("raw.Status", "Status"),
+            const columnSettings = [
+                new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
+                new ListColumnSettingWithFilter('raw.HostType', 'Host Type'),
+                new ListColumnSettingWithFilter('raw.HostIsolationMode', 'Host Isolation Mode'),
+                new ListColumnSetting('raw.Version', 'Version'),
+                new ListColumnSetting('raw.MainEntryPoint.ProcessId', 'Process Id'),
+                new ListColumnSettingWithFilter('raw.Status', 'Status'),
             ];
 
             if (codePackages.collection.some(cp => cp.servicePackageActivationId)) {
-                columnSettings.splice(3, 0, new ListColumnSetting("servicePackageActivationId", "Service Package Activation Id"));
+                columnSettings.splice(3, 0, new ListColumnSetting('servicePackageActivationId', 'Service Package Activation Id'));
             }
 
-            this.listSettings = this.settings.getNewOrExistingListSettings("codePkgs", ["name"], columnSettings);
+            this.listSettings = this.settings.getNewOrExistingListSettings('codePkgs', ['name'], columnSettings);
         }
     }));
   }
-  
+
   getParams(route: ActivatedRouteSnapshot): void {
       this.nodeName = IdUtils.getNodeName(route);
       this.serviceId = IdUtils.getServiceId(route);

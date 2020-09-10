@@ -20,39 +20,39 @@ export class EssentialsComponent extends ApplicationTypeBaseController {
   appsListSettings: ListSettings;
   appTypesListSettings: ListSettings;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
   setup() {
     this.appTypesListSettings = this.settings.getNewOrExistingListSettings(
-      "appTypeAppTypes",
-      ["raw.Version"],
+      'appTypeAppTypes',
+      ['raw.Version'],
       [
-          new ListColumnSetting("name", "Name"),
-          new ListColumnSetting("raw.Version", "Version"),
-          new ListColumnSettingWithFilter("raw.Status", "Status"),
+          new ListColumnSetting('name', 'Name'),
+          new ListColumnSetting('raw.Version', 'Version'),
+          new ListColumnSettingWithFilter('raw.Status', 'Status'),
           new ListColumnSettingForApplicationType()
       ],
       [
-          new ListColumnSetting("placeholder", "placeholder", null, false), // Empty column
-          new ListColumnSetting("raw.StatusDetails", "Status Details", null, false, (item) => HtmlUtils.getSpanWithCustomClass("preserve-whitespace-wrap", item.raw.StatusDetails), 100)
+          new ListColumnSetting('placeholder', 'placeholder', null, false), // Empty column
+          new ListColumnSetting('raw.StatusDetails', 'Status Details', null, false, (item) => HtmlUtils.getSpanWithCustomClass('preserve-whitespace-wrap', item.raw.StatusDetails), 100)
       ],
       false /* collapsable */,
       (item) => item.raw.StatusDetails, /* only show second row when status details is not empty */
       false /* searchable */);
 
-    this.appsListSettings = this.settings.getNewOrExistingListSettings("appTypeApps", ["name"], [
-        new ListColumnSettingForLink("name", "Name", item => item.viewPath),
-        new ListColumnSetting("raw.TypeName", "Application Type"),
-        new ListColumnSetting("raw.TypeVersion", "Version"),
-        new ListColumnSettingForBadge("healthState", "Health State"),
-        new ListColumnSettingWithFilter("raw.Status", "Status"),
+    this.appsListSettings = this.settings.getNewOrExistingListSettings('appTypeApps', ['name'], [
+        new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
+        new ListColumnSetting('raw.TypeName', 'Application Type'),
+        new ListColumnSetting('raw.TypeVersion', 'Version'),
+        new ListColumnSettingForBadge('healthState', 'Health State'),
+        new ListColumnSettingWithFilter('raw.Status', 'Status'),
     ]);
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return this.data.getApps(true, messageHandler)
+    return this.data.getApps(true, messageHandler);
   }
 
 }

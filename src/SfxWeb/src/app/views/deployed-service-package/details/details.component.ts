@@ -12,7 +12,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 export class DetailsComponent extends DeployedServicePackageBaseController {
   healthEventsListSettings: ListSettings;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 

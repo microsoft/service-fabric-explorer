@@ -12,8 +12,8 @@ export class DisplayTimeComponent implements OnInit, OnChanges, OnDestroy {
 
   @Input() time: string;
 
-  localTime = "";
-  timeSince = "";
+  localTime = '';
+  timeSince = '';
 
   private sub: Subscription = new Subscription();
 

@@ -1,4 +1,4 @@
-﻿import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
+import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { ITextAndBadge, ValueResolver } from 'src/app/Utils/ValueResolver';
 import { DataService } from 'src/app/services/data.service';
 import { Observable, of, Subject } from 'rxjs';
@@ -6,10 +6,10 @@ import { IHealthStateChunk, IClusterHealthChunkQueryDescription, IHealthStateFil
 import { mergeMap, map } from 'rxjs/operators';
 import { ActionCollection } from '../ActionCollection';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export interface IDataModel<T> {
     // The underlying raw object returned by service fabric REST API
@@ -96,11 +96,11 @@ export class DataModelBase<T> implements IDataModel<T> {
     }
 
     public get name(): string {
-        return this.rawAny.Name || "";
+        return this.rawAny.Name || '';
     }
 
     public get viewPath(): string {
-        return "";
+        return '';
     }
 
     public get healthState(): ITextAndBadge {
@@ -134,15 +134,15 @@ export class DataModelBase<T> implements IDataModel<T> {
             })).subscribe( data => {
                 this.refreshingPromise.next(this);
                 this.refreshingPromise.complete();
-                this.refreshingPromise = null
+                this.refreshingPromise = null;
             },
             err => {
                 this.refreshingPromise.error(this);
-                this.refreshingPromise = null
-            })
+                this.refreshingPromise = null;
+            });
 
         }
-        return this.refreshingPromise? this.refreshingPromise.asObservable() : of(null);
+        return this.refreshingPromise ? this.refreshingPromise.asObservable() : of(null);
     }
 
     public update(raw: T): Observable<any> {
@@ -175,7 +175,7 @@ export class DataModelBase<T> implements IDataModel<T> {
     }
 
     protected get rawAny(): any {
-        return <any>this.raw;
+        return this.raw as any;
     }
 
     // Derived class should override this function to retrieve new version of raw data.

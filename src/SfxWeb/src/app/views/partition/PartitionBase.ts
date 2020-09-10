@@ -14,20 +14,20 @@ export class PartitionBaseController extends BaseController {
     public serviceId: string;
     public partitionId: string;
     public appTypeName: string;
-  
+
     partition: Partition;
 
-    constructor(protected data: DataService, injector: Injector) { 
+    constructor(protected data: DataService, injector: Injector) {
       super(injector);
     }
-  
+
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getPartition(this.appId, this.serviceId, this.partitionId, true, messageHandler)
         .pipe(map(partition => {
             this.partition = partition;
         }));
     }
-    
+
     getParams(route: ActivatedRouteSnapshot): void {
         this.appTypeName = IdUtils.getAppTypeName(route);
         this.appId = IdUtils.getAppId(route);

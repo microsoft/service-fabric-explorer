@@ -1,4 +1,4 @@
-﻿import { IDataModel } from '../Base';
+import { IDataModel } from '../Base';
 import { IClusterHealthChunk, IHealthStateChunk, IHealthStateChunkList, IServiceHealthStateChunk, IDeployedApplicationHealthStateChunk, IDeployedServicePackageHealthStateChunk } from '../../HealthChunkRawDataTypes';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, Subject, of, throwError, forkJoin } from 'rxjs';
@@ -29,10 +29,10 @@ import { DataModelCollectionBase, IDataModelCollection } from './CollectionBase'
 
 import   groupBy  from 'lodash/groupBy';
 import { RoutesService } from 'src/app/services/routes.service';
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy> {
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -43,7 +43,7 @@ export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy
 }
 
 export class ApplicationCollection extends DataModelCollectionBase<Application> {
-    public upgradingAppCount: number = 0;
+    public upgradingAppCount = 0;
     public healthState: ITextAndBadge;
 
     public constructor(data: DataService) {
@@ -74,10 +74,10 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     private updateAppsHealthState(): void {
-        this.collection.map(app => HealthStateConstants.Values[app.healthState.text])
+        this.collection.map(app => HealthStateConstants.Values[app.healthState.text]);
         // calculates the applications health state which is the max state value of all applications
         this.healthState = this.length > 0
-            ? this.valueResolver.resolveHealthStatus(Math.max(...<number[]>this.collection.map(app => HealthStateConstants.Values[app.healthState.text])).toString())
+            ? this.valueResolver.resolveHealthStatus(Math.max(...this.collection.map(app => HealthStateConstants.Values[app.healthState.text]) as number[]).toString())
             : ValueResolver.healthStatuses[1];
     }
 
@@ -86,7 +86,7 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
         return this.data.getAppTypeGroups(false).pipe(map(appTypeGroups => {
             appTypeGroups.collection.forEach(appTypeGroup => appTypeGroup.refreshAppTypeApps(this));
             return appTypeGroups;
-        }))
+        }));
     }
 }
 
@@ -101,10 +101,10 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getApplicationTypes(null, messageHandler).pipe(map(response => {
-            let appTypes = response.map(item => new ApplicationType(this.data, item));
-            let groups = groupBy(appTypes, item => item.raw.Name);
+            const appTypes = response.map(item => new ApplicationType(this.data, item));
+            const groups = groupBy(appTypes, item => item.raw.Name);
             return Object.keys(groups).map(g => new ApplicationTypeGroup(this.data, groups[g]));
-        }))
+        }));
     }
 }
 
@@ -173,11 +173,11 @@ export class ServiceTypeCollection extends DataModelCollectionBase<ServiceType> 
         let appTypeName = null;
         let appTypeVersion = null;
         if (this.parent instanceof ApplicationType) {
-            appTypeName = (<ApplicationType>(this.parent)).raw.Name;
-            appTypeVersion = (<ApplicationType>(this.parent)).raw.Version;
+            appTypeName = ((this.parent) as ApplicationType).raw.Name;
+            appTypeVersion = ((this.parent) as ApplicationType).raw.Version;
         } else {
-            appTypeName = (<Application>(this.parent)).raw.TypeName;
-            appTypeVersion = (<Application>(this.parent)).raw.TypeVersion;
+            appTypeName = ((this.parent) as Application).raw.TypeName;
+            appTypeVersion = ((this.parent) as Application).raw.TypeVersion;
         }
 
         return this.data.restClient.getServiceTypes(appTypeName, appTypeVersion, messageHandler)
@@ -193,9 +193,9 @@ export class PartitionCollection extends DataModelCollectionBase<Partition> {
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        let appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.parent.name);
+        const appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.parent.name);
         if (appHealthChunk) {
-            let serviceHealthChunk = appHealthChunk.ServiceHealthStateChunks.Items.find(item => item.ServiceName === this.parent.name);
+            const serviceHealthChunk = appHealthChunk.ServiceHealthStateChunks.Items.find(item => item.ServiceName === this.parent.name);
             if (serviceHealthChunk) {
                 return this.updateCollectionFromHealthChunkList(serviceHealthChunk.PartitionHealthStateChunks, item => IdGenerator.partition(item.PartitionId));
             }
@@ -238,9 +238,9 @@ export class DeployedServicePackageCollection extends DataModelCollectionBase<De
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        let appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.name);
+        const appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.name);
         if (appHealthChunk) {
-            let deployedAppHealthChunk = appHealthChunk.DeployedApplicationHealthStateChunks.Items.find(
+            const deployedAppHealthChunk = appHealthChunk.DeployedApplicationHealthStateChunks.Items.find(
                 deployedAppHealthChunk => deployedAppHealthChunk.NodeName === this.parent.parent.name);
             if (deployedAppHealthChunk) {
                 return this.updateCollectionFromHealthChunkList<IDeployedServicePackageHealthStateChunk>(
@@ -262,7 +262,7 @@ export class DeployedServicePackageCollection extends DataModelCollectionBase<De
         // The deployed application does not include "HealthState" information by default.
         // Trigger a health chunk query to fill the health state information.
         if (this.length > 0) {
-            let healthChunkQueryDescription = this.data.getInitialClusterHealthChunkQueryDescription();
+            const healthChunkQueryDescription = this.data.getInitialClusterHealthChunkQueryDescription();
             this.parent.addHealthStateFiltersForChildren(healthChunkQueryDescription);
             return this.data.getClusterHealthChunk(healthChunkQueryDescription).pipe(mergeMap(healthChunk => {
                 return this.mergeClusterHealthStateChunk(healthChunk);
@@ -338,7 +338,7 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     }
     public get endDate() {
         let endDate = new Date(this._endDate.valueOf());
-        let timeNow = new Date();
+        const timeNow = new Date();
         if (endDate > timeNow) {
             endDate = timeNow;
         }
@@ -405,19 +405,19 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     }
 
     private createListSettings(): ListSettings {
-        let listSettings = new ListSettings(
+        const listSettings = new ListSettings(
             this.pageSize,
-            ["raw.timeStamp"],
+            ['raw.timeStamp'],
             [
                 new ListColumnSettingWithEventStoreRowDisplay(),
             new ListColumnSetting(
-                "raw.category",
-                "Event Category",
-                ["raw.category"],
+                'raw.category',
+                'Event Category',
+                ['raw.category'],
                 true,
-                (item) => (!item.raw.category ? "Operational" : item.raw.category)),
-            new ListColumnSetting("raw.timeStampString", "Timestamp", ["raw.timeStamp"]),
-            new ListColumnSetting("raw.timeStamp", "Timestamp(UTC)", ["raw.timeStamp"])],
+                (item) => (!item.raw.category ? 'Operational' : item.raw.category)),
+            new ListColumnSetting('raw.timeStampString', 'Timestamp', ['raw.timeStamp']),
+            new ListColumnSetting('raw.timeStamp', 'Timestamp(UTC)', ['raw.timeStamp'])],
             [
                 new ListColumnSettingWithEventStoreFullDescription()
             ],
@@ -479,8 +479,8 @@ export class NodeEventList extends EventListBase<NodeEvent> {
                 this.optionalColsStartIndex,
                 0,
                 new ListColumnSettingWithFilter(
-                    "raw.nodeName",
-                    "Node Name"));
+                    'raw.nodeName',
+                    'Node Name'));
         }
     }
 
@@ -498,7 +498,7 @@ export class ApplicationEventList extends EventListBase<ApplicationEvent> {
     public constructor(data: DataService, applicationId?: string) {
         super(data);
         if (applicationId) {
-            this.applicationId = applicationId.replace(new RegExp("/", "g"), "~");
+            this.applicationId = applicationId.replace(new RegExp('/', 'g'), '~');
         }
 
         if (!this.applicationId) {
@@ -507,8 +507,8 @@ export class ApplicationEventList extends EventListBase<ApplicationEvent> {
                 this.optionalColsStartIndex,
                 0,
                 new ListColumnSettingWithFilter(
-                    "raw.applicationId",
-                    "Application Id"));
+                    'raw.applicationId',
+                    'Application Id'));
         }
     }
 
@@ -526,7 +526,7 @@ export class ServiceEventList extends EventListBase<ServiceEvent> {
     public constructor(data: DataService, serviceId?: string) {
         super(data);
         if (serviceId) {
-            this.serviceId = serviceId.replace(new RegExp("/", "g"), "~");
+            this.serviceId = serviceId.replace(new RegExp('/', 'g'), '~');
         }
         if (!this.serviceId) {
             // Show ServiceId as the first column.
@@ -534,8 +534,8 @@ export class ServiceEventList extends EventListBase<ServiceEvent> {
                 this.optionalColsStartIndex,
                 0,
                 new ListColumnSettingWithFilter(
-                    "raw.serviceId",
-                    "Service Id"));
+                    'raw.serviceId',
+                    'Service Id'));
         }
     }
 
@@ -559,8 +559,8 @@ export class PartitionEventList extends EventListBase<PartitionEvent> {
                 this.optionalColsStartIndex,
                 0,
                 new ListColumnSettingWithFilter(
-                    "raw.partitionId",
-                    "Partition Id"));
+                    'raw.partitionId',
+                    'Partition Id'));
         }
     }
 
@@ -586,8 +586,8 @@ export class ReplicaEventList extends EventListBase<ReplicaEvent> {
                 this.optionalColsStartIndex,
                 0,
                 new ListColumnSettingWithFilter(
-                    "raw.replicaId",
-                    "Replica Id"));
+                    'raw.replicaId',
+                    'Replica Id'));
         }
     }
 

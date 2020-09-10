@@ -13,14 +13,14 @@ import { map, mergeMap } from 'rxjs/operators';
 export class ManifestComponent extends ServiceBaseController {
   serviceManifest: string;
 
-  constructor(protected data: DataService, injector: Injector) { 
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   setup() {}
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    let app = this.service.parent;
+    const app = this.service.parent;
     return this.data.getServiceType(app.raw.TypeName, app.raw.TypeVersion, this.service.description.raw.ServiceTypeName, true, messageHandler)
         .pipe(mergeMap(serviceType => {
             return serviceType.manifest.refresh(messageHandler).pipe(map(() => {

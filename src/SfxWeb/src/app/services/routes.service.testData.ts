@@ -1,5 +1,5 @@
-import { Component, NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
+import { Component, NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
 @Component({
     template: `Search`
 })

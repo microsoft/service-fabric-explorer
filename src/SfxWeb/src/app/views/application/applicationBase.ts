@@ -12,22 +12,22 @@ import { BaseController } from 'src/app/ViewModels/BaseController';
 export class ApplicationBaseController extends BaseController {
     appTypeName: string;
     appId: string;
-  
+
     app: Application;
-  
-    constructor(protected data: DataService, injector: Injector) { 
+
+    constructor(protected data: DataService, injector: Injector) {
       super(injector);
     }
-  
+
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getApp(this.appId, true, messageHandler).pipe(map(data => {
             this.app = data;
         }));
     }
-    
+
     getParams(route: ActivatedRouteSnapshot): void {
       this.appId = IdUtils.getAppId(route);
       this.appTypeName = IdUtils.getAppTypeName(route);
     }
-  
+
   }

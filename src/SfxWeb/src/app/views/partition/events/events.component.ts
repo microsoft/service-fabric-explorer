@@ -13,7 +13,7 @@ export class EventsComponent extends PartitionBaseController {
   partitionEvents: PartitionEventList;
   partitionTimeLineGenerator: PartitionTimelineGenerator;
 
-  constructor(protected data: DataService, injector: Injector) { 
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 

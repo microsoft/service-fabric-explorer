@@ -20,7 +20,7 @@ export class ServiceCollection extends DataModelCollectionBase<Service> {
         if (this.parent.name === Constants.SystemAppName) {
             serviceHealthStateChunks = clusterHealthChunk.SystemApplicationHealthStateChunk.ServiceHealthStateChunks;
         } else {
-            let appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.name);
+            const appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.name);
             if (appHealthChunk) {
                 serviceHealthStateChunks = appHealthChunk.ServiceHealthStateChunks;
             }
@@ -36,6 +36,6 @@ export class ServiceCollection extends DataModelCollectionBase<Service> {
             items => {
                 return items.map(raw => new Service(this.data, raw, this.parent));
             }
-        ))
+        ));
     }
 }

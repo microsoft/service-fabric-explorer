@@ -16,29 +16,29 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
   replicatorData: IRawReplicatorStatus;
   replicaDict = {};
   primaryReplica: ReplicaOnPartition;
-  queueSize: string = "";
-  
+  queueSize = '';
+
   sub: Subscription = new Subscription();
 
   constructor() { }
 
   ngOnChanges(): void {
     this.replicas.forEach(replica => {
-      if(replica.raw.ReplicaRole === "Primary") {
+      if (replica.raw.ReplicaRole === 'Primary') {
         this.primaryReplica = replica;
       }
-    })
-    //wrap check given primary starts as null
-    if(this.primaryReplica) {
-      this.sub.add(this.primaryReplica.detail.refresh().subscribe(()=> {
+    });
+    // wrap check given primary starts as null
+    if (this.primaryReplica) {
+      this.sub.add(this.primaryReplica.detail.refresh().subscribe(() => {
 
         this.queueSize = Utils.getFriendlyFileSize(+this.primaryReplica.detail.raw.ReplicatorStatus.ReplicationQueueStatus.QueueMemorySize);
-    
+
         this.replicatorData = this.primaryReplica.detail.raw.ReplicatorStatus;
         this.replicatorData.RemoteReplicators.sort( a => a.IsInBuild ? -1 : 1 );
-    
-        this.replicaDict = this.replicas.reduce(( (data, replica) => {data[replica.id] = replica; return data}), {});
-      }))
+
+        this.replicaDict = this.replicas.reduce(( (data, replica) => {data[replica.id] = replica; return data; }), {});
+      }));
     }
 
   }
@@ -46,7 +46,7 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
   ngOnDestroy() {
     this.sub.unsubscribe();
   }
-  
+
   trackByFn(index, replicaStatus: IRawRemoteReplicatorStatus) {
     return replicaStatus.ReplicaId;
   }

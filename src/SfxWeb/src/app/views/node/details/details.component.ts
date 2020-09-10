@@ -16,7 +16,7 @@ export class DetailsComponent extends NodeBaseController {
   healthEventsListSettings: ListSettings;
 
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
@@ -28,7 +28,7 @@ export class DetailsComponent extends NodeBaseController {
     return forkJoin([
       this.node.loadInformation.refresh(messageHandler),
       this.node.health.refresh(messageHandler)
-    ]).pipe(map( ()=>     console.log(this.node)
+    ]).pipe(map( () =>     console.log(this.node)
     ));
   }
 }

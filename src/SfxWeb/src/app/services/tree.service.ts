@@ -22,7 +22,7 @@ export class TreeService {
         private clusterHealth: ClusterHealth;
         private cm: ClusterManifest;
         // controller views can get instantiated before this service and so a request to set the tree location might
-        //get requested before the init function is called and so it needs to be cached.
+        // get requested before the init function is called and so it needs to be cached.
         private cachedTreeSelection: {path: string[], skipSelectAction?: boolean};
 
         constructor(
@@ -41,11 +41,11 @@ export class TreeService {
             }
 
             this.cm = new ClusterManifest(this.data);
-            this.refreshService.insertRefreshSubject("tree", this.refresh.bind(this))
+            this.refreshService.insertRefreshSubject('tree', this.refresh.bind(this));
         }
 
         public selectTreeNode(path: string[], skipSelectAction?: boolean): Observable<any> {
-            //if init hasnt been called and set this.tree, then cache request for tree selection
+            // if init hasnt been called and set this.tree, then cache request for tree selection
             if (!this.tree) {
                 this.cachedTreeSelection = {path, skipSelectAction};
                 return of(null);
@@ -69,14 +69,14 @@ export class TreeService {
             // For tree refresh, call health chunk API to retrieve health information for all expanded nodes.
             // Merge the health chunk result back to the shared data models, during refresh, all tree nodes will
             // retrieve data from the cached data model which already has latest health state.
-            let clusterHealthQueryDescription = this.tree.addHealthChunkFiltersRecursively(this.data.getInitialClusterHealthChunkQueryDescription());
+            const clusterHealthQueryDescription = this.tree.addHealthChunkFiltersRecursively(this.data.getInitialClusterHealthChunkQueryDescription());
             return this.data.getClusterHealthChunk(clusterHealthQueryDescription)
                 .pipe(mergeMap(healthChunk => {
                     return forkJoin([
                         // cluster health needs to be refreshed even when the root node is collapsed
                         this.clusterHealth.mergeHealthStateChunk(healthChunk),
                         this.tree.mergeClusterHealthStateChunk(healthChunk)
-                    ]).pipe(mergeMap( () => this.tree.refresh()) )
+                    ]).pipe(mergeMap( () => this.tree.refresh()) );
                 }));
         }
 
@@ -85,7 +85,7 @@ export class TreeService {
                 return [
                     {
                         nodeId: IdGenerator.cluster(),
-                        displayName: () => "Cluster",
+                        displayName: () => 'Cluster',
                         childrenQuery: () => this.getGroupNodes(),
                         selectAction: () => this.routes.navigate(() => RoutesService.getClusterViewPath()),
                         badge: () => clusterHealth.healthState,
@@ -103,15 +103,15 @@ export class TreeService {
                         }
                     }
                 ];
-            }))
+            }));
         }
 
         private getGroupNodes(): Observable<ITreeNode[]> {
 
-            let getAppsPromise = this.data.getApps().pipe(map(apps => {
+            const getAppsPromise = this.data.getApps().pipe(map(apps => {
               return {
                     nodeId: IdGenerator.appGroup(),
-                    displayName: () => "Applications",
+                    displayName: () => 'Applications',
                     childrenQuery: () => this.getApplicationTypes(),
                     badge: () => apps.healthState,
                     selectAction: () => this.routes.navigate(() => apps.viewPath),
@@ -120,10 +120,10 @@ export class TreeService {
                 };
             }));
 
-            let getNodesPromise = this.data.getNodes().pipe(map(nodes => {
+            const getNodesPromise = this.data.getNodes().pipe(map(nodes => {
               return {
                     nodeId: IdGenerator.nodeGroup(),
-                    displayName: () => "Nodes",
+                    displayName: () => 'Nodes',
                     selectAction: () => this.routes.navigate(() => nodes.viewPath),
                     childrenQuery: () => this.getNodes(),
                     badge: () => nodes.healthState,
@@ -132,12 +132,12 @@ export class TreeService {
                 };
             }));
 
-            let systemNodePromise = this.data.getSystemApp().pipe(
+            const systemNodePromise = this.data.getSystemApp().pipe(
                             catchError(err => {
                 return of(null);
             }),
             map(systemApp => {
-              if(systemApp) {
+              if (systemApp) {
                 return {
                     nodeId: IdGenerator.systemAppGroup(),
                     displayName: () => Constants.SystemAppTypeName,
@@ -163,7 +163,7 @@ export class TreeService {
 
 
             return forkJoin([getAppsPromise, getNodesPromise, systemNodePromise]).pipe(map(resp => {
-                if(resp[2] === null) {
+                if (resp[2] === null) {
                     resp.splice(2);
                     return resp;
                 }
@@ -179,20 +179,20 @@ export class TreeService {
                     return {
                         nodeId: IdGenerator.node(node.name),
                         displayName: () => {
-                            let suffix: string = "";
+                            let suffix = '';
                             if (node.raw.NodeStatus !== NodeStatusConstants.Up) {
                                 if (node.raw.IsStopped) {
-                                    suffix = "Down (Stopped)";
+                                    suffix = 'Down (Stopped)';
                                 } else {
                                     suffix = node.raw.NodeStatus;
                                 }
                             }
 
                             if (node.raw.IsSeedNode) {
-                                suffix = "Seed Node" + (suffix === "" ? "" : " - " + suffix);
+                                suffix = 'Seed Node' + (suffix === '' ? '' : ' - ' + suffix);
                             }
 
-                            if (suffix !== "") {
+                            if (suffix !== '') {
                                 return `${node.name} (${suffix})`;
                             }
 
@@ -276,10 +276,10 @@ export class TreeService {
         private getDeployedServiceChildrenGroupNodes(nodeName: string, applicationId: string, servicePackageName: string, servicePackageActivationId: string): Observable<ITreeNode[]> {
             let codePkgNode;
             // No health chunk data for deployed code packages, need to do force refresh to retrieve health data from server
-            let getCodePkgsPromise = this.data.getDeployedCodePackages(nodeName, applicationId, servicePackageName, servicePackageActivationId, true).pipe(map(codePkgs => {
+            const getCodePkgsPromise = this.data.getDeployedCodePackages(nodeName, applicationId, servicePackageName, servicePackageActivationId, true).pipe(map(codePkgs => {
                 codePkgNode = {
                     nodeId: IdGenerator.deployedCodePackageGroup(),
-                    displayName: () => "Code Packages",
+                    displayName: () => 'Code Packages',
                     childrenQuery: () => this.getDeployedCodePackages(codePkgs, nodeName, applicationId, servicePackageName, servicePackageActivationId),
                     selectAction: () => this.routes.navigate(() => codePkgs.viewPath),
                 };
@@ -287,10 +287,10 @@ export class TreeService {
 
             let replicasNode;
             // No health chunk data for deployed replicas, need to do force refresh to retrieve health data from server
-            let getReplicasPromise = this.data.getDeployedReplicas(nodeName, applicationId, servicePackageName, servicePackageActivationId, true).pipe(map(replicas => {
+            const getReplicasPromise = this.data.getDeployedReplicas(nodeName, applicationId, servicePackageName, servicePackageActivationId, true).pipe(map(replicas => {
                 replicasNode = {
                     nodeId: IdGenerator.deployedReplicaGroup(),
-                    displayName: () => replicas.isStatelessService ? "Instances" : "Replicas",
+                    displayName: () => replicas.isStatelessService ? 'Instances' : 'Replicas',
                     childrenQuery: () => this.getDeployedReplicas(replicas, nodeName, applicationId, servicePackageName, servicePackageActivationId),
                     selectAction: () => this.routes.navigate(() => replicas.viewPath),
                     listSettings: this.settings.getNewOrExistingTreeNodeListSettings(replicas.viewPath),
@@ -320,7 +320,7 @@ export class TreeService {
                     nodeId: IdGenerator.deployedReplica(replica.raw.PartitionId),
                     displayName: () => replica.isStatelessService
                         ? replica.id
-                        : replica.id + " (" + replica.role + ")",
+                        : replica.id + ' (' + replica.role + ')',
                     selectAction: () => this.routes.navigate(() => replica.viewPath),
                     sortBy: () => replica.isStatelessService
                         ? [replica.id]

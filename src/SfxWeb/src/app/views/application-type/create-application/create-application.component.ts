@@ -12,31 +12,31 @@ import { Constants } from 'src/app/Common/Constants';
 })
 export class CreateApplicationComponent implements OnInit {
 
-  app: ApplicationType
+  app: ApplicationType;
   form: FormGroup;
 
   constructor(public dialogRef: MatDialogRef<CreateApplicationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
-    private formBuilder: FormBuilder) { }
+              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
+              private formBuilder: FormBuilder) { }
 
   ngOnInit(): void {
    this.app = this.data.data.appType;
    this.form = this.formBuilder.group({
     userInput: [Constants.FabricPrefix + this.app.name, [Validators.required, Validators.pattern(/^fabric:\/.+/)]]
-    })
+    });
 
-    this.form.invalid
+   this.form.invalid;
   }
 
   ok(){
     this.app.createInstance(this.form.value.userInput).subscribe(
       () => this.close(),
-      () => console.log("failed to create application")
-    )
+      () => console.log('failed to create application')
+    );
   }
 
   close() {
-    this.dialogRef.close(false);    
+    this.dialogRef.close(false);
   }
 
 }

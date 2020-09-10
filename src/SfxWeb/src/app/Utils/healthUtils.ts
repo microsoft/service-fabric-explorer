@@ -1,5 +1,5 @@
-import { IRawUnhealthyEvaluation, IRawHealthEvaluation, IRawNodeHealthEvluation, 
-        IRawApplicationHealthEvluation, IRawServiceHealthEvaluation, IRawPartitionHealthEvaluation, 
+import { IRawUnhealthyEvaluation, IRawHealthEvaluation, IRawNodeHealthEvluation,
+        IRawApplicationHealthEvluation, IRawServiceHealthEvaluation, IRawPartitionHealthEvaluation,
         IRawReplicaHealthEvaluation, IRawDeployedServicePackageHealthEvaluation, IRawDeployedApplicationHealthEvaluation, IRawHealthStateCount, IRawApplicationHealth, IRawClusterHealth, IRawServiceHealth } from '../Models/RawDataTypes';
 import { HealthEvaluation } from '../Models/DataModels/Shared';
 import { DataService } from '../services/data.service';
@@ -22,21 +22,21 @@ export enum HealthStatisticsEntityKind {
 
 export interface IViewPathData {
     viewPathUrl: string;
-    displayName: string 
+    displayName: string;
 }
 
 export class HealthUtils {
     public static getParsedHealthEvaluations(rawUnhealthyEvals: IRawUnhealthyEvaluation[], level: number = 0, parent: HealthEvaluation = null, data: DataService): HealthEvaluation[] {
         let healthEvals: HealthEvaluation[] = new Array(0);
-        let children: HealthEvaluation[] = new Array(0);
+        const children: HealthEvaluation[] = new Array(0);
         if (rawUnhealthyEvals) {
             rawUnhealthyEvals.forEach(item => {
-                let healthEval: IRawHealthEvaluation = item.HealthEvaluation;
-                let health = new HealthEvaluation(healthEval, level, parent);
+                const healthEval: IRawHealthEvaluation = item.HealthEvaluation;
+                const health = new HealthEvaluation(healthEval, level, parent);
                 if (healthEval) {
 
-                    //the parent Url is either the parent healthEvaluation or the current locationUrl if its the first parent.
-                    let parentUrl = "";
+                    // the parent Url is either the parent healthEvaluation or the current locationUrl if its the first parent.
+                    let parentUrl = '';
                     if (parent) {
                         parentUrl = parent.viewPathUrl;
                     }else {
@@ -64,45 +64,45 @@ export class HealthUtils {
      * @param data
      * @param parentUrl
      */
-    public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ""): IViewPathData {
-        let viewPathUrl = "";
-        let name = "";
+    public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ''): IViewPathData {
+        let viewPathUrl = '';
+        let name = '';
 
         switch (healthEval.Kind) {
-            case "Nodes" : {
+            case 'Nodes' : {
                 viewPathUrl = RoutesService.getNodesViewPath();
-                name = "Nodes";
+                name = 'Nodes';
                 break;
             }
-            case "Node" : {
-                let nodeName = (healthEval as IRawNodeHealthEvluation).NodeName;
+            case 'Node' : {
+                const nodeName = (healthEval as IRawNodeHealthEvluation).NodeName;
                 name = nodeName;
                 viewPathUrl = RoutesService.getNodeViewPath(nodeName);
                 break;
             }
-            case "Applications" : {
+            case 'Applications' : {
                 viewPathUrl = RoutesService.getAppsViewPath();
-                name = "applications"
+                name = 'applications';
                 break;
             }
-            case "Application" : {
-                let applicationName = (healthEval as IRawApplicationHealthEvluation).ApplicationName;
-                let appName = applicationName.replace("fabric:/", ""); //remove fabric:/
+            case 'Application' : {
+                const applicationName = (healthEval as IRawApplicationHealthEvluation).ApplicationName;
+                const appName = applicationName.replace('fabric:/', ''); // remove fabric:/
                 name = appName;
 
-                let app = data.apps.find(appName);
+                const app = data.apps.find(appName);
                 if (app) {
-                    let appType = app.raw.TypeName;
+                    const appType = app.raw.TypeName;
                     viewPathUrl += `/apptype/${RoutesService.doubleEncode(appType)}/app/${RoutesService.doubleEncode(appName)}`;
                 }
                 break;
             }
-            case "Service" : {
-                let exactServiceName = (healthEval as IRawServiceHealthEvaluation).ServiceName.replace("fabric:/", "");
+            case 'Service' : {
+                const exactServiceName = (healthEval as IRawServiceHealthEvaluation).ServiceName.replace('fabric:/', '');
                 name = exactServiceName;
 
-                //Handle system services slightly different by setting their exact path
-                if ((healthEval as IRawServiceHealthEvaluation).ServiceName.startsWith("fabric:/System")) {
+                // Handle system services slightly different by setting their exact path
+                if ((healthEval as IRawServiceHealthEvaluation).ServiceName.startsWith('fabric:/System')) {
                     viewPathUrl = `/apptype/System/app/System/service/${RoutesService.doubleEncode(exactServiceName)}`;
                 }else {
                     parentUrl += `/service/${RoutesService.doubleEncode(exactServiceName)}`;
@@ -110,43 +110,43 @@ export class HealthUtils {
                 }
                 break;
             }
-            case "Partition" : {
-                let partitionId = (healthEval as IRawPartitionHealthEvaluation).PartitionId;
+            case 'Partition' : {
+                const partitionId = (healthEval as IRawPartitionHealthEvaluation).PartitionId;
                 name = partitionId;
                 parentUrl += `/partition/${RoutesService.doubleEncode(partitionId)}`;
                 viewPathUrl = parentUrl;
                 break;
             }
-            case "Replica" : {
-                let replicaId = (healthEval as IRawReplicaHealthEvaluation).ReplicaOrInstanceId;
+            case 'Replica' : {
+                const replicaId = (healthEval as IRawReplicaHealthEvaluation).ReplicaOrInstanceId;
                 name = replicaId;
                 parentUrl += `/replica/${RoutesService.doubleEncode(replicaId)}`;
                 viewPathUrl = parentUrl;
                 break;
             }
-            case "Event" : {
+            case 'Event' : {
                 if (parentUrl) {
                     viewPathUrl = parentUrl;
                 }
-                name = "Event";
+                name = 'Event';
 
                 break;
             }
 
-            case "DeployedApplication" : {
+            case 'DeployedApplication' : {
                 const nodeName = (healthEval as IRawDeployedApplicationHealthEvaluation).NodeName;
                 const applicationName = (healthEval as IRawDeployedApplicationHealthEvaluation).NodeName;
-                const appName = applicationName.replace("fabric:/", "");
+                const appName = applicationName.replace('fabric:/', '');
                 name = appName;
 
                 viewPathUrl += `/node/${RoutesService.doubleEncode(nodeName)}/deployedapp/${RoutesService.doubleEncode(appName)}`;
                 break;
             }
 
-            case "DeployedServicePackage" : {
+            case 'DeployedServicePackage' : {
                 const serviceManifestName = (healthEval as IRawDeployedServicePackageHealthEvaluation).ServiceManifestName;
                 const activationId = (healthEval as IRawDeployedServicePackageHealthEvaluation).ServicePackageActivationId;
-                const activationIdUrlInfo =  activationId ? "activationid/" + RoutesService.doubleEncode(activationId) : "";
+                const activationIdUrlInfo =  activationId ? 'activationid/' + RoutesService.doubleEncode(activationId) : '';
                 name = serviceManifestName;
 
                 viewPathUrl = parentUrl + `/deployedservice/${activationIdUrlInfo}${serviceManifestName}`;
@@ -164,13 +164,13 @@ export class HealthUtils {
             }
         }
 
-        return {viewPathUrl, 
+        return {viewPathUrl,
                 displayName: name };
     }
 
     public static getHealthStateCount(data: IRawApplicationHealth | IRawClusterHealth | IRawServiceHealth, entityKind: HealthStatisticsEntityKind): IRawHealthStateCount {
         if (data && data.HealthStatistics) {
-            let entityHealthCount = data.HealthStatistics.HealthStateCountList.find(item => item.EntityKind === HealthStatisticsEntityKind[entityKind]);
+            const entityHealthCount = data.HealthStatistics.HealthStateCountList.find(item => item.EntityKind === HealthStatisticsEntityKind[entityKind]);
             if (entityHealthCount) {
                 return entityHealthCount.HealthStateCount;
             }

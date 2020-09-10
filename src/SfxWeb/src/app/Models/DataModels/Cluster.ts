@@ -1,4 +1,4 @@
-﻿import { DataModelBase, IDecorators } from './Base';
+import { DataModelBase, IDecorators } from './Base';
 import { IRawClusterHealth, IRawHealthStateCount, IRawClusterManifest, IRawClusterUpgradeProgress, IRawClusterLoadInformation, IRawBackupPolicy } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
@@ -15,37 +15,37 @@ import { HealthUtils } from 'src/app/Utils/healthUtils';
 import { IsolatedAction } from '../Action';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 
 export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 
-    //make sure we only check once per session and this object will get destroyed/recreated
+    // make sure we only check once per session and this object will get destroyed/recreated
     private static certExpirationChecked = false;
 
     public constructor(data: DataService,
-        protected eventsHealthStateFilter: HealthStateFilterFlags,
-        protected nodesHealthStateFilter: HealthStateFilterFlags,
-        protected applicationsHealthStateFilter: HealthStateFilterFlags) {
+                       protected eventsHealthStateFilter: HealthStateFilterFlags,
+                       protected nodesHealthStateFilter: HealthStateFilterFlags,
+                       protected applicationsHealthStateFilter: HealthStateFilterFlags) {
         super(data);
     }
 
     public checkExpiredCertStatus() {
         try {
             if (!ClusterHealth.certExpirationChecked) {
-            //Check cluster health
-            //if healthy then no cert issue
-            //if warning/Error
-                //starting walking and query all seed nodes in warning state for cluster cert issues
+            // Check cluster health
+            // if healthy then no cert issue
+            // if warning/Error
+                // starting walking and query all seed nodes in warning state for cluster cert issues
                 this.ensureInitialized().subscribe( (clusterHealth: ClusterHealth) => {
                     clusterHealth = this;
 
                     if (clusterHealth.healthState.text === HealthStateConstants.Warning || clusterHealth.healthState.text === HealthStateConstants.Error) {
                         this.data.getNodes(true).subscribe(nodes => {
-                            let seedNodes = nodes.collection.filter(node => node.raw.IsSeedNode);
+                            const seedNodes = nodes.collection.filter(node => node.raw.IsSeedNode);
                             this.checkNodesContinually(0, seedNodes);
                         });
                     }
@@ -72,27 +72,27 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 
         */
 
-        const thumbprintSearchText = "thumbprint = ";
+        const thumbprintSearchText = 'thumbprint = ';
         const thumbprintIndex = healthEvent.raw.Description.indexOf(thumbprintSearchText);
-        const thumbprint =  healthEvent.raw.Description.substr(thumbprintIndex + thumbprintSearchText.length).split(",")[0];
+        const thumbprint =  healthEvent.raw.Description.substr(thumbprintIndex + thumbprintSearchText.length).split(',')[0];
 
-        const expirationSearchText = "expiration = ";
-        const expirationIndex = healthEvent.raw.Description.indexOf("expiration = ");
-        const expiration = healthEvent.raw.Description.substring(expirationIndex + expirationSearchText.length).split(",")[0];
+        const expirationSearchText = 'expiration = ';
+        const expirationIndex = healthEvent.raw.Description.indexOf('expiration = ');
+        const expiration = healthEvent.raw.Description.substring(expirationIndex + expirationSearchText.length).split(',')[0];
 
         this.data.warnings.addOrUpdateNotification({
             message: `A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure. <br> <b>Thumbprint</b> : ${thumbprint}  <b>Expiration</b>: ${expiration}`,
             level: StatusWarningLevel.Error,
             priority: 5,
             id: BannerWarningID.ExpiringClusterCert,
-            link: "https://aka.ms/sfrenewclustercert/",
-            linkText: "Read here for more guidance"
+            link: 'https://aka.ms/sfrenewclustercert/',
+            linkText: 'Read here for more guidance'
         });
         ClusterHealth.certExpirationChecked = true;
     }
 
     private containsCertExpiringHealthEvent(unhealthyEvaluations: HealthEvent[]): HealthEvent[] {
-        return unhealthyEvaluations.filter(event => event.raw.Description.indexOf("Certificate expiration") === 0 &&
+        return unhealthyEvaluations.filter(event => event.raw.Description.indexOf('Certificate expiration') === 0 &&
                                             event.raw.Property === CertExpiraryHealthEventProperty.Cluster &&
                                             (event.raw.HealthState === HealthStateConstants.Warning || event.raw.HealthState === HealthStateConstants.Error));
     }
@@ -121,13 +121,13 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public clusterManifestName: string;
 
-    public isSfrpCluster: boolean = false;
+    public isSfrpCluster = false;
 
-    public imageStoreConnectionString: string = "";
-    public isNetworkInventoryManagerEnabled: boolean = false;
-    public isBackupRestoreEnabled: boolean = false;
-    public isRepairManagerEnabled: boolean = false;
-    public isEventStoreEnabled: boolean = false;
+    public imageStoreConnectionString = '';
+    public isNetworkInventoryManagerEnabled = false;
+    public isBackupRestoreEnabled = false;
+    public isRepairManagerEnabled = false;
+    public isEventStoreEnabled = false;
     public constructor(data: DataService) {
         super(data);
     }
@@ -137,38 +137,38 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     }
 
     private getImageStoreConnectionString(element: Element) {
-        const params = element.getElementsByTagName("Parameter");
-        for(let i = 0; i < params.length; i ++) {
+        const params = element.getElementsByTagName('Parameter');
+        for (let i = 0; i < params.length; i ++) {
             const item = params.item(i);
-            if(item.getAttribute("Name") === "ImageStoreConnectionString"){
-                this.imageStoreConnectionString = item.getAttribute("Value");
+            if (item.getAttribute('Name') === 'ImageStoreConnectionString'){
+                this.imageStoreConnectionString = item.getAttribute('Value');
                 break;
             }
         }
     }
 
     protected updateInternal(): Observable<any> | void {
-        let parser = new DOMParser();
-        let xml = parser.parseFromString(this.raw.Manifest,"text/xml");
+        const parser = new DOMParser();
+        const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
 
         // let $xml = $($.parseXML(this.raw.Manifest));
-        let manifest = xml.getElementsByTagName("ClusterManifest")[0];
-        this.clusterManifestName = manifest.getAttribute("Name");
+        const manifest = xml.getElementsByTagName('ClusterManifest')[0];
+        this.clusterManifestName = manifest.getAttribute('Name');
 
-        const FabricSettings = manifest.getElementsByTagName("FabricSettings")[0]
-        const management = FabricSettings.getElementsByTagName("Section") 
+        const FabricSettings = manifest.getElementsByTagName('FabricSettings')[0];
+        const management = FabricSettings.getElementsByTagName('Section');
 
-        for(let i = 0; i < management.length; i ++) {
+        for (let i = 0; i < management.length; i ++) {
             const item = management.item(i);
-            if(item.getAttribute("Name") === "Management"){
+            if (item.getAttribute('Name') === 'Management'){
                 this.getImageStoreConnectionString(item);
-            }else if (item.getAttribute("Name") === "BackupRestoreService"){
+            }else if (item.getAttribute('Name') === 'BackupRestoreService'){
                 this.isBackupRestoreEnabled = true;
-            }else if (item.getAttribute("Name") === "UpgradeService"){
+            }else if (item.getAttribute('Name') === 'UpgradeService'){
                 this.isSfrpCluster = true;
-            }else if (item.getAttribute("Name") === "RepairManager"){
+            }else if (item.getAttribute('Name') === 'RepairManager'){
                 this.isRepairManagerEnabled = true;
-            }else if (item.getAttribute("Name") === "EventStoreService"){
+            }else if (item.getAttribute('Name') === 'EventStoreService'){
                 this.isEventStoreEnabled = true;
             }
         }
@@ -179,15 +179,15 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
     public decorators: IDecorators = {
         hideList: [
             // Unhealthy evaluations are displayed in separate section in app detail page
-            "UnhealthyEvaluations"
+            'UnhealthyEvaluations'
         ],
         decorators: {
-            "UpgradeDurationInMilliseconds": {
-                displayName: (name) => "Upgrade Duration",
+            UpgradeDurationInMilliseconds: {
+                displayName: (name) => 'Upgrade Duration',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             },
-            "UpgradeDomainDurationInMilliseconds": {
-                displayName: (name) => "Upgrade Domain Duration",
+            UpgradeDomainDurationInMilliseconds: {
+                displayName: (name) => 'Upgrade Domain Duration',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             }
         }
@@ -218,26 +218,26 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
     }
 
     public getCompletedUpgradeDomains(): number {
-        return this.upgradeDomains.filter(upgradeDomain => {return upgradeDomain.stateName === UpgradeDomainStateNames.Completed; }).length;
+        return this.upgradeDomains.filter(upgradeDomain => upgradeDomain.stateName === UpgradeDomainStateNames.Completed).length;
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> {
         return this.data.restClient.getClusterUpgradeProgress(messageHandler).pipe(mergeMap( data => {
-            if (data.CodeVersion === "0.0.0.0") {
+            if (data.CodeVersion === '0.0.0.0') {
                 return this.data.restClient.getClusterVersion().pipe(map(resp => {
                     data.CodeVersion = resp.Version;
                     return data;
-                }))
+                }));
             }else {
                 return of(data);
             }
-        }))
+        }));
     }
 
-    protected updateInternal():Observable<any> | void {
+    protected updateInternal(): Observable<any> | void {
         this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
-        let domains = this.raw.UpgradeDomains.map(ud => new UpgradeDomain(this.data, ud));
-        let groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
+        const domains = this.raw.UpgradeDomains.map(ud => new UpgradeDomain(this.data, ud));
+        const groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
             .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.InProgress))
             .concat(domains.filter(ud => ud.name === this.raw.NextUpgradeDomain))
             .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain));
@@ -265,14 +265,14 @@ export class ClusterLoadInformation extends DataModelBase<IRawClusterLoadInforma
         return this.data.restClient.getClusterLoadInformation(messageHandler);
     }
 
-    protected updateInternal():Observable<any> | void {
+    protected updateInternal(): Observable<any> | void {
         this.loadMetricInformation = CollectionUtils.updateDataModelCollection(this.loadMetricInformation, this.raw.LoadMetricInformation.map(lmi => new LoadMetricInformation(this.data, lmi)));
     }
 }
 export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
     public decorators: IDecorators = {
         hideList: [
-            "Name",
+            'Name',
         ]
     };
     public action: IsolatedAction;
@@ -281,9 +281,9 @@ export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
         super(data, raw);
         this.action = new IsolatedAction(
             data.dialog,
-            "deleteBackupPolicy",
-            "Delete Backup Policy",
-            "Deleting",
+            'deleteBackupPolicy',
+            'Delete Backup Policy',
+            'Deleting',
             {
                 backup: raw,
                 delete: () => data.restClient.deleteBackupPolicy(this.raw.Name)

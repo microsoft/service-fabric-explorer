@@ -9,12 +9,12 @@ export class ReplicaAddressComponent implements OnChanges {
 
   @Input() address: any;
 
-  isString: boolean = false;
+  isString = false;
 
   constructor() { }
 
   ngOnChanges() {
-    this.isString = (typeof this.address === "string");
+    this.isString = (typeof this.address === 'string');
   }
 
 }

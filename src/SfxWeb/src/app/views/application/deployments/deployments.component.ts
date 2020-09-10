@@ -18,14 +18,14 @@ export class DeploymentsComponent extends ApplicationBaseController {
   deployedApplicationsHealthStatesListSettings: ListSettings;
   deployedApplicationsHealthStates: DeployedApplicationHealthState[] = [];
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
   setup() {
-    this.deployedApplicationsHealthStatesListSettings = this.settings.getNewOrExistingListSettings("deployedApps", ["raw.NodeName"], [
-        new ListColumnSettingForLink("raw.NodeName", "Node Name", item => item.viewPath),
-        new ListColumnSettingForBadge("healthState", "Health State"),
+    this.deployedApplicationsHealthStatesListSettings = this.settings.getNewOrExistingListSettings('deployedApps', ['raw.NodeName'], [
+        new ListColumnSettingForLink('raw.NodeName', 'Node Name', item => item.viewPath),
+        new ListColumnSettingForBadge('healthState', 'Health State'),
     ]);
   }
 

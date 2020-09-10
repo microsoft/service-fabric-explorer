@@ -13,7 +13,7 @@ export class EssentialsComponent extends DeployedServicePackageBaseController {
   unhealthyEvaluationsListSettings: ListSettings;
 
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 

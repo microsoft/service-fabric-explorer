@@ -1,4 +1,4 @@
-﻿import { IRawNode, IRawNodeLoadInformation, IRawNodeLoadMetricInformation, IRawNodeHealth, NodeStatus } from '../RawDataTypes';
+import { IRawNode, IRawNodeLoadInformation, IRawNodeLoadMetricInformation, IRawNodeHealth, NodeStatus } from '../RawDataTypes';
 import { IDecorators, DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IHealthStateFilter } from '../HealthChunkRawDataTypes';
@@ -13,16 +13,16 @@ import { ActionWithConfirmationDialog, Action } from '../Action';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { RoutesService } from 'src/app/services/routes.service';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class Node extends DataModelBase<IRawNode> {
     public decorators: IDecorators = {
         decorators: {
-            "NodeUpTimeInSeconds": {
-                displayName: (name) => "Node Up Time",
+            NodeUpTimeInSeconds: {
+                displayName: (name) => 'Node Up Time',
                 displayValueInHtml: (value) => this.nodeUpTime
             }
         }
@@ -50,7 +50,7 @@ export class Node extends DataModelBase<IRawNode> {
     }
 
     public get nodeStatus(): string {
-        return this.raw.IsStopped ? "Down (Stopped)" : this.raw.NodeStatus;
+        return this.raw.IsStopped ? 'Down (Stopped)' : this.raw.NodeStatus;
     }
 
     public get nodeUpTime(): string {
@@ -78,7 +78,7 @@ export class Node extends DataModelBase<IRawNode> {
     }
 
     public get isDeactivating(): boolean {
-        return this.raw.NodeDeactivationInfo.NodeDeactivationStatus !== "None";
+        return this.raw.NodeDeactivationInfo.NodeDeactivationStatus !== 'None';
     }
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IHealthStateFilter {
@@ -98,71 +98,71 @@ export class Node extends DataModelBase<IRawNode> {
 
     public setAdvancedActions(): void {
         this.actions.add(new Action(
-            "activateNode",
-            "Activate",
-            "Activating",
+            'activateNode',
+            'Activate',
+            'Activating',
             () => this.activate(),
             () => (this.expectedNodeStatus !== NodeStatus.Invalid) ?
                 this.expectedNodeStatus === NodeStatus.Disabled :
                 this.raw.NodeStatus === NodeStatusConstants.Down || this.raw.NodeStatus === NodeStatusConstants.Disabling || this.raw.NodeStatus === NodeStatusConstants.Disabled
-            ,true
+            , true
                 ));
 
         const removeNodeState = new ActionWithConfirmationDialog(
             this.data.dialog,
-            "removeNodeState",
-            "Remove node state",
-            "Removing",
+            'removeNodeState',
+            'Remove node state',
+            'Removing',
             () => this.removeNodeState(),
             () => this.raw.NodeStatus === NodeStatusConstants.Down,
-            "Confirm Node Removal",
+            'Confirm Node Removal',
             `Data about node ${this.name} will be completely erased from the cluster ${window.location.host}. All data stored on the node will be lost permanently. Are you sure to continue?`,
             this.name
-            )
+            );
         removeNodeState.isAdvanced = true;
         this.actions.add(removeNodeState);
 
         const deactivePauseNode = new ActionWithConfirmationDialog(
             this.data.dialog,
-            "deactivePauseNode",
-            "Deactivate (pause)",
-            "Deactivating",
+            'deactivePauseNode',
+            'Deactivate (pause)',
+            'Deactivating',
             () => this.deactivate(1),
             // There are various levels of "disabling" and it should be possible to disable "at a higher level" an already-disabled node.
             () => this.raw.NodeStatus !== NodeStatusConstants.Down,
             // We do not track the level of disabling, so we just enable the command as long as the node is not down.
-            "Confirm Node Deactivation",
+            'Confirm Node Deactivation',
             `Deactivate node '${this.name}' from cluster '${window.location.host}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
             this.name
-        )
+        );
         deactivePauseNode.isAdvanced = true;
         this.actions.add(deactivePauseNode);
 
         const deactiveRestartNode = new ActionWithConfirmationDialog(
             this.data.dialog,
-            "deactiveRestartNode",
-            "Deactivate (restart)",
-            "Deactivating",
+            'deactiveRestartNode',
+            'Deactivate (restart)',
+            'Deactivating',
             () => this.deactivate(2),
             () => this.raw.NodeStatus !== NodeStatusConstants.Down,
-            "Confirm Node Deactivation",
+            'Confirm Node Deactivation',
             `Deactivate node '${this.name}' from cluster '${window.location.host}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
             this.name
-        )
+        );
         deactiveRestartNode.isAdvanced = true;
         this.actions.add(deactiveRestartNode);
 
         const deactiveRemoveNodeData =  new ActionWithConfirmationDialog(
             this.data.dialog,
-            "deactiveRemoveNodeData",
-            "Deactivate (remove data)",
-            "Deactivating",
+            'deactiveRemoveNodeData',
+            'Deactivate (remove data)',
+            'Deactivating',
             () => this.deactivate(3),
             () => this.raw.NodeStatus !== NodeStatusConstants.Down,
-            "Confirm Node Deactivation",
+            'Confirm Node Deactivation',
             `Deactivate node '${this.name}' from cluster '${window.location.host}'? This node will not become operational again until it is manually reactivated. WARNING: Deactivating nodes can cause data loss if not used with caution. For more information see: https://go.microsoft.com/fwlink/?linkid=825861`,
             this.name
-        )
+        );
         deactiveRemoveNodeData.isAdvanced = true;
         this.actions.add(deactiveRemoveNodeData);
     }
@@ -177,12 +177,12 @@ export class Node extends DataModelBase<IRawNode> {
     private setUpActions(): void {
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
-            "restartNode",
-            "Restart",
-            "Restarting",
+            'restartNode',
+            'Restart',
+            'Restarting',
             () => this.restart(),
             () => true,
-            "Confirm Node Restart",
+            'Confirm Node Restart',
             `Restart node ${this.name} from the cluster ${window.location.host}?`,
             // `Restart node ${this.name} from the cluster ${this.data.$location.host()}?`, TODO
             this.name
@@ -193,7 +193,7 @@ export class Node extends DataModelBase<IRawNode> {
         return this.data.restClient.activateNode(this.name)
             .pipe(map( () => {
                 this.expectedNodeStatus = NodeStatus.Up;
-            }))
+            }));
     }
 
     private deactivate(intent: number): Observable<any> {
@@ -216,7 +216,7 @@ export class NodeLoadInformation extends DataModelBase<IRawNodeLoadInformation> 
     public metrics: Record<string, number>;
     public decorators: IDecorators = {
         hideList: [
-            "NodeName"
+            'NodeName'
         ]
     };
 
@@ -247,9 +247,9 @@ export class NodeLoadInformation extends DataModelBase<IRawNodeLoadInformation> 
 export class NodeLoadMetricInformation extends DataModelBase<IRawNodeLoadMetricInformation> {
     public decorators: IDecorators = {
         hideList: [
-            "NodeLoad",
-            "NodeRemainingCapacity",
-            "NodeRemainingBufferedCapacity"
+            'NodeLoad',
+            'NodeRemainingCapacity',
+            'NodeRemainingBufferedCapacity'
         ]
     };
     public get hasCapacity(): boolean {
@@ -257,7 +257,7 @@ export class NodeLoadMetricInformation extends DataModelBase<IRawNodeLoadMetricI
     }
 
     public get isSystemMetric(): boolean {
-        return this.raw.Name.startsWith("__") && this.raw.Name.endsWith("__");
+        return this.raw.Name.startsWith('__') && this.raw.Name.endsWith('__');
     }
 
     public get loadCapacityRatio(): number {
@@ -265,7 +265,7 @@ export class NodeLoadMetricInformation extends DataModelBase<IRawNodeLoadMetricI
     }
 
     public get loadCapacityRatioString(): string {
-        return (this.loadCapacityRatio * 100).toFixed(1) + "%";
+        return (this.loadCapacityRatio * 100).toFixed(1) + '%';
     }
 
     public constructor(data: DataService, raw: IRawNodeLoadMetricInformation, public parent: NodeLoadInformation) {

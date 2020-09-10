@@ -26,13 +26,13 @@ export class UpgradingComponent extends BaseController {
    }
 
   setup() {
-    this.upgradeAppsListSettings = this.settings.getNewOrExistingListSettings("upgrades", ["name"], [
-      new ListColumnSettingForLink("name", "Name", item => item.viewPath),
-      new ListColumnSettingForLink("parent.raw.TypeName", "Application Type", item => item.parent.appTypeViewPath),
-      new ListColumnSetting("parent.raw.TypeVersion", "Current Version"),
-      new ListColumnSetting("raw.TargetApplicationTypeVersion", "Target Version"),
-      new ListColumnSetting("upgrade", "Progress by Upgrade Domain", null, false, (item) => HtmlUtils.getUpgradeProgressHtml("item.upgradeDomains")),
-      new ListColumnSettingWithFilter("raw.UpgradeState", "Upgrade State")
+    this.upgradeAppsListSettings = this.settings.getNewOrExistingListSettings('upgrades', ['name'], [
+      new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
+      new ListColumnSettingForLink('parent.raw.TypeName', 'Application Type', item => item.parent.appTypeViewPath),
+      new ListColumnSetting('parent.raw.TypeVersion', 'Current Version'),
+      new ListColumnSetting('raw.TargetApplicationTypeVersion', 'Target Version'),
+      new ListColumnSetting('upgrade', 'Progress by Upgrade Domain', null, false, (item) => HtmlUtils.getUpgradeProgressHtml('item.upgradeDomains')),
+      new ListColumnSettingWithFilter('raw.UpgradeState', 'Upgrade State')
     ]);
   }
 
@@ -41,9 +41,9 @@ export class UpgradingComponent extends BaseController {
       this.apps = apps;
 
 
-      let observables = this.apps.collection.filter(app => app.isUpgrading).map(app => app.upgradeProgress.refresh(messageHandler));
+      const observables = this.apps.collection.filter(app => app.isUpgrading).map(app => app.upgradeProgress.refresh(messageHandler));
 
-      if(observables.length === 0) {
+      if (observables.length === 0) {
         return of(null);
       }
       return forkJoin(observables).pipe(map(() => {

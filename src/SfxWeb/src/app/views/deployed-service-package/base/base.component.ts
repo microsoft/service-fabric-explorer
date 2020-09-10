@@ -13,20 +13,20 @@ import { DeployedServicePackageBaseController } from '../DeployedServicePackage'
 export class BaseComponent extends DeployedServicePackageBaseController {
 
   tabs: ITab[] = [{
-    name: "essentials",
-    route: "./"
+    name: 'essentials',
+    route: './'
     },
     {
-      name: "details",
-      route: "./details"
+      name: 'details',
+      route: './details'
     },
     {
-        name: "manifest",
-        route: "./manifest"
+        name: 'manifest',
+        route: './manifest'
       }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) { 
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
     super(data, injector);
   }
 

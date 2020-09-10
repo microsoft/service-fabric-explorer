@@ -27,5 +27,5 @@ export class PartitionInfoComponent {
 export interface IPartitionData {
   serviceName: IRawServiceNameInfo;
   applicationName: IRawApplicationNameInfo;
-  partition: IRawPartition
+  partition: IRawPartition;
 }

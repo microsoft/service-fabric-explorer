@@ -12,7 +12,7 @@ export class EventsComponent extends ReplicaBaseController {
 
   replicaEvents: ReplicaEventList;
 
-  constructor(protected data: DataService, injector: Injector) { 
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 

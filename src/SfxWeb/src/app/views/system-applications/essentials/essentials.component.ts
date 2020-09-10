@@ -17,18 +17,18 @@ export class EssentialsComponent extends ServiceApplicationsBaseController {
   unhealthyEvaluationsListSettings: ListSettings;
 
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
   setup() {
-    this.listSettings = this.settings.getNewOrExistingListSettings("systemServices", ["name"], [
-      new ListColumnSettingForLink("name", "Name", item => item.viewPath),
-      new ListColumnSetting("raw.TypeName", "Service Type"),
-      new ListColumnSetting("raw.ManifestVersion", "Version"),
-      new ListColumnSettingWithFilter("raw.ServiceKind", "Service Kind"),
-      new ListColumnSettingForBadge("healthState", "Health State"),
-      new ListColumnSettingWithFilter("raw.ServiceStatus", "Status")
+    this.listSettings = this.settings.getNewOrExistingListSettings('systemServices', ['name'], [
+      new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
+      new ListColumnSetting('raw.TypeName', 'Service Type'),
+      new ListColumnSetting('raw.ManifestVersion', 'Version'),
+      new ListColumnSettingWithFilter('raw.ServiceKind', 'Service Kind'),
+      new ListColumnSettingForBadge('healthState', 'Health State'),
+      new ListColumnSettingWithFilter('raw.ServiceStatus', 'Status')
   ]);
 
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();

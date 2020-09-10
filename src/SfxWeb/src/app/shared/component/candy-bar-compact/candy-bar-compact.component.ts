@@ -8,7 +8,7 @@ import { Component, OnInit, Input } from '@angular/core';
 export class CandyBarCompactComponent {
 
   @Input() item: any;
-  @Input() viewPath: string = "";
+  @Input() viewPath = '';
 
   constructor() { }
 

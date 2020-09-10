@@ -1,12 +1,12 @@
-﻿import { Constants } from '../Common/Constants';
+import { Constants } from '../Common/Constants';
 import { Utils } from './Utils';
 import dayjs from 'dayjs';
-import Duration from 'luxon/src/duration'
+import Duration from 'luxon/src/duration';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 // TODO:
 //   1. Upgrade moment and remove this when issue https://github.com/moment/moment/issues/3763 gets resolved
@@ -15,22 +15,22 @@ import Duration from 'luxon/src/duration'
 export class TimeUtils {
     // Per email thread, this is:
     //     int64.max / 10000000 = 922337203685477.5807;
-    public static MaxDurationInMilliseconds: number = 922337203685477.5807;
+    public static MaxDurationInMilliseconds = 922337203685477.5807;
 
     public static AddSeconds(toDate: Date, seconds: number): Date {
-        let date = new Date(toDate.valueOf());
+        const date = new Date(toDate.valueOf());
         date.setTime(date.getTime() + (seconds * 1000));
         return date;
     }
 
     public static AddHours(toDate: Date, hours: number): Date {
-        let date = new Date(toDate.valueOf());
+        const date = new Date(toDate.valueOf());
         date.setTime(date.getTime() + (hours * 1000 * 60 * 60));
         return date;
     }
 
     public static AddDays(toDate: Date, days: number): Date {
-        let date = new Date(toDate.valueOf());
+        const date = new Date(toDate.valueOf());
         date.setDate(date.getDate() + days);
         return date;
     }
@@ -45,10 +45,10 @@ export class TimeUtils {
         let momentDuration;
         if (Number.isFinite(duration)) {
             // Finite number in milliseconds
-            momentDuration = duration
+            momentDuration = duration;
         } else if (Utils.isNumeric(duration)) {
             // Numeric representation in string
-            momentDuration = parseFloat(<string>duration);
+            momentDuration = parseFloat(duration as string);
         } else {
             // ISO 8601 format string
             momentDuration = Duration.fromISO(duration).as('milliseconds');
@@ -71,7 +71,7 @@ export class TimeUtils {
      */
     public static datetimeToString(datetime: string): string {
         const d = new Date(datetime);
-        return  d.toLocaleString() + `(${-1 * (d.getTimezoneOffset() / 60)}00)` //moment(datetime).format("MMM D, YYYY [at] h:mm:ss A (ZZ)");
+        return  d.toLocaleString() + `(${-1 * (d.getTimezoneOffset() / 60)}00)`; // moment(datetime).format("MMM D, YYYY [at] h:mm:ss A (ZZ)");
     }
 
     /**
@@ -99,10 +99,10 @@ export class TimeUtils {
 
 
         return `${Math.floor(days) > 0 ? Math.floor(days) + ' days ' : ''}`
-            + `${Math.floor(hours % 24).toString().padStart(2, "0")}:`
-            + `${Math.floor(minutes % 60).toString().padStart(2, "0")}:`
-            + `${Math.floor(seconds % 60).toString().substring(0, 2).padStart(2, "0")}.`
-            + `${milliseconds.toString().padStart(3, "0")}`;
+            + `${Math.floor(hours % 24).toString().padStart(2, '0')}:`
+            + `${Math.floor(minutes % 60).toString().padStart(2, '0')}:`
+            + `${Math.floor(seconds % 60).toString().substring(0, 2).padStart(2, '0')}.`
+            + `${milliseconds.toString().padStart(3, '0')}`;
     }
 }
 

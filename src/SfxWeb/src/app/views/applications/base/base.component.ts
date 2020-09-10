@@ -9,22 +9,22 @@ import { IdGenerator } from 'src/app/Utils/IdGenerator';
   styleUrls: ['./base.component.scss']
 })
 export class BaseComponent implements OnInit {
-  SFXClusterName: string = "";
-  
+  SFXClusterName = '';
+
   tabs: ITab[] = [{
-    name: "all applications",
-    route: "./"
+    name: 'all applications',
+    route: './'
     },
     {
-      name: "upgrades in progress",
-      route: "./upgrades"
+      name: 'upgrades in progress',
+      route: './upgrades'
     },
     {
-      name: "events",
-      route: "./events"
+      name: 'events',
+      route: './events'
     }
   ];
-  constructor(private tree: TreeService) { 
+  constructor(private tree: TreeService) {
   }
 
   ngOnInit() {

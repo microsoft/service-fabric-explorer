@@ -11,14 +11,14 @@ import { FabricEventBase } from 'src/app/Models/eventstore/Events';
 })
 export class FullDescriptionComponent implements DetailBaseComponent, OnInit {
 
-  copyText: string = "";
+  copyText = '';
   item: FabricEventBase;
   listSetting: ListColumnSetting;
 
-  color =  "white";
+  color =  'white';
   constructor() { }
 
   ngOnInit() {
-    this.copyText = JSON.stringify(this.item.raw.raw, null, "\t");
+    this.copyText = JSON.stringify(this.item.raw.raw, null, '\t');
   }
 }

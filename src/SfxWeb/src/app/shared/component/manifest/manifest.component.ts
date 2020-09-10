@@ -7,8 +7,8 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class ManifestComponent {
 
-  @Input() manifestName: string = "";
-  @Input() manifest: string = "";
+  @Input() manifestName = '';
+  @Input() manifest = '';
 
   constructor() { }
 }

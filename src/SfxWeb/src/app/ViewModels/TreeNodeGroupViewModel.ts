@@ -1,4 +1,4 @@
-﻿import { ITreeNode } from './TreeTypes';
+import { ITreeNode } from './TreeTypes';
 import { TreeViewModel } from './TreeViewModel';
 import { IClusterHealthChunkQueryDescription, IClusterHealthChunk } from '../Models/HealthChunkRawDataTypes';
 import { Observable, of, forkJoin, Subject } from 'rxjs';
@@ -9,20 +9,20 @@ import { ListSettings } from '../Models/ListSettings';
 import { ActionCollection } from '../Models/ActionCollection';
 import { ITextAndBadge } from '../Utils/ValueResolver';
 import orderBy from 'lodash/orderBy';
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 export class TreeNodeGroupViewModel {
     public parent: TreeNodeGroupViewModel;
     public sortBy: () => any[];
-    public selected: boolean = false;
+    public selected = false;
     public leafNode: boolean;
     public displayName: () => string;
     public listSettings: ListSettings;
     public badge: () => ITextAndBadge;
     public actions: ActionCollection;
-    public canExpandAll: boolean = false;
+    public canExpandAll = false;
 
     public get depth(): number {
         if (this.parent) {
@@ -34,13 +34,13 @@ export class TreeNodeGroupViewModel {
 
     public _tree: TreeViewModel;
     public node: ITreeNode;
-    private _keyboardSelectActionDelayInMilliseconds: number = 200;
+    private _keyboardSelectActionDelayInMilliseconds = 200;
 
     public children: TreeNodeGroupViewModel[] = [];
-    public loadingChildren: boolean = false;
-    public childrenLoaded: boolean = false;
+    public loadingChildren = false;
+    public childrenLoaded = false;
 
-    private _isExpanded: boolean = false;
+    private _isExpanded = false;
     private _currentGetChildrenPromise: Subject<any>;
 
     public get displayedChildren(): TreeNodeGroupViewModel[] {
@@ -69,7 +69,7 @@ export class TreeNodeGroupViewModel {
         if (this.parent) {
             return this.nonRootpaddingLeftPx;
         } else {
-            return "10px";
+            return '10px';
         }
     }
 
@@ -78,7 +78,7 @@ export class TreeNodeGroupViewModel {
         this.node = node;
         this.parent = parent;
         this.listSettings = node.listSettings;
-        this.displayName = node.displayName || function(){ return "" };
+        this.displayName = node.displayName || function(){ return ''; };
         this.update(node);
     }
 
@@ -118,11 +118,11 @@ export class TreeNodeGroupViewModel {
         return of(this.node && this.node.mergeClusterHealthStateChunk
             ? this.node.mergeClusterHealthStateChunk(clusterHealthChunk)
             : true).pipe(map( () => {
-                let updateChildrenPromises = this.children.map(child => {
+                const updateChildrenPromises = this.children.map(child => {
                     return child.updateDataModelFromHealthChunkRecursively(clusterHealthChunk);
                 });
                 return forkJoin(updateChildrenPromises);
-            } ))
+            } ));
     }
 
     public refreshExpandedChildrenRecursively(): Observable<any> {
@@ -133,7 +133,7 @@ export class TreeNodeGroupViewModel {
         return this.node.childrenQuery().pipe(mergeMap(response => {
             const filteredChildren = [];
             this.children.forEach(child => {
-                if(response.some(newChild => newChild.nodeId === child.nodeId) ) {
+                if (response.some(newChild => newChild.nodeId === child.nodeId) ) {
                     filteredChildren.push(child);
                 }else {
                     if (this._tree.selectedNode && (child === this._tree.selectedNode || child.isParentOf(this._tree.selectedNode))) {
@@ -145,12 +145,12 @@ export class TreeNodeGroupViewModel {
 
             response.forEach(child => {
                 const existingNode = filteredChildren.find(node => node.nodeId === child.nodeId);
-                if(existingNode) {
-                    existingNode.update(child)
+                if (existingNode) {
+                    existingNode.update(child);
                 }else{
                     filteredChildren.push(new TreeNodeGroupViewModel(this._tree, child, this));
                 }
-            })
+            });
 
             this.children = filteredChildren;
 
@@ -168,9 +168,9 @@ export class TreeNodeGroupViewModel {
             this._currentGetChildrenPromise = new Subject();
             this.node.childrenQuery().subscribe(response => {
 
-                this.children = response.map(node => new TreeNodeGroupViewModel(this._tree, node, this))
+                this.children = response.map(node => new TreeNodeGroupViewModel(this._tree, node, this));
                 // Sort the children
-                this.children = orderBy(this.children, item => item.sortBy ? item.sortBy() : [])
+                this.children = orderBy(this.children, item => item.sortBy ? item.sortBy() : []);
 
                 this.childrenLoaded = true;
 
@@ -197,11 +197,11 @@ export class TreeNodeGroupViewModel {
 
     public get nonRootpaddingLeftPx(): string {
         // 18px is the total width of the expander icon
-       return (18 * (this.depth - .5)) + "px";
+       return (18 * (this.depth - .5)) + 'px';
    }
 
    public get isVisibleByBadge(): boolean {
-       const badgeState = this.node.badge ? this.node.badge(): null;
+       const badgeState = this.node.badge ? this.node.badge() : null;
        let isVisible = this.node.alwaysVisible ||
                        badgeState === null ||
                        !badgeState?.badgeClass;
@@ -223,11 +223,11 @@ export class TreeNodeGroupViewModel {
            }
        }
 
-        if (this.selected && !isVisible) {
+       if (this.selected && !isVisible) {
             this._tree.selectTreeNode([IdGenerator.cluster()]);
         }
 
-        return isVisible;
+       return isVisible;
     }
 
     public get allChildrenInvisibleByBadge(): boolean {
@@ -239,13 +239,13 @@ export class TreeNodeGroupViewModel {
     }
 
     public get displayHtml(): string {
-        let name = this.node.displayName();
+        const name = this.node.displayName();
         if (this._tree && this._tree.searchTerm && this._tree.searchTerm.trim()) {
-            let searchTerm = this._tree.searchTerm;
-            let matchIndex = name.toLowerCase().indexOf(searchTerm.toLowerCase());
+            const searchTerm = this._tree.searchTerm;
+            const matchIndex = name.toLowerCase().indexOf(searchTerm.toLowerCase());
 
             if (matchIndex !== -1) {
-                return name.substring(0, matchIndex) + "<span class='search-match'>" + name.substr(matchIndex, searchTerm.length) + "</span>" + name.substring(matchIndex + searchTerm.length);
+                return name.substring(0, matchIndex) + '<span class=\'search-match\'>' + name.substr(matchIndex, searchTerm.length) + '</span>' + name.substring(matchIndex + searchTerm.length);
             }
         }
 
@@ -300,8 +300,8 @@ export class TreeNodeGroupViewModel {
     }
 
     public selectPrevious(actionDelay?: number) {
-        let parentsChildren = this.getParentsChildren();
-        let myIndex = parentsChildren.indexOf(this);
+        const parentsChildren = this.getParentsChildren();
+        const myIndex = parentsChildren.indexOf(this);
 
         if (myIndex === 0 && this.parent) {
             this.parent.select(this._keyboardSelectActionDelayInMilliseconds);
@@ -342,7 +342,7 @@ export class TreeNodeGroupViewModel {
 
     private selectLast() {
         if (this.hasExpandedAndLoadedChildren) {
-            let lastChild: TreeNodeGroupViewModel = this.displayedChildren[this.displayedChildren.length - 1];
+            const lastChild: TreeNodeGroupViewModel = this.displayedChildren[this.displayedChildren.length - 1];
             lastChild.selectLast();
         } else {
             this.select(this._keyboardSelectActionDelayInMilliseconds);
@@ -367,7 +367,7 @@ export class TreeNodeGroupViewModel {
             return;
         }
 
-        let listSettings = this.node.listSettings;
+        const listSettings = this.node.listSettings;
         if (listSettings.currentPage < listSettings.pageCount) {
             listSettings.currentPage++;
         }
@@ -378,7 +378,7 @@ export class TreeNodeGroupViewModel {
             return;
         }
 
-        let listSettings = this.node.listSettings;
+        const listSettings = this.node.listSettings;
         if (listSettings.currentPage > 1) {
             listSettings.currentPage--;
         }
@@ -389,7 +389,7 @@ export class TreeNodeGroupViewModel {
             return;
         }
 
-        let listSettings = this.node.listSettings;
+        const listSettings = this.node.listSettings;
         listSettings.currentPage = 1;
     }
 
@@ -398,13 +398,13 @@ export class TreeNodeGroupViewModel {
             return;
         }
 
-        let listSettings = this.node.listSettings;
+        const listSettings = this.node.listSettings;
         listSettings.currentPage = listSettings.pageCount;
     }
 
     private selectNextSibling(): number {
-        let parentsChildren = this.getParentsChildren();
-        let myIndex = parentsChildren.indexOf(this);
+        const parentsChildren = this.getParentsChildren();
+        const myIndex = parentsChildren.indexOf(this);
 
         if (myIndex === parentsChildren.length - 1 && this.parent) {
             this.parent.selectNextSibling();
@@ -415,11 +415,11 @@ export class TreeNodeGroupViewModel {
     }
 
     public get filtered(): number {
-        if(this._tree.searchTerm.length === 0) {
+        if (this._tree.searchTerm.length === 0) {
             return 0;
         }else {
             let count = 0;
-            if(this.displayName().toLowerCase().indexOf(this._tree.searchTerm.toLowerCase()) > -1) {
+            if (this.displayName().toLowerCase().indexOf(this._tree.searchTerm.toLowerCase()) > -1) {
                 count ++;
             }
             this.children.forEach(child => count += child.filtered );

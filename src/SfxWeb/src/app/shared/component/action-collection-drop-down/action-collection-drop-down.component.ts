@@ -10,14 +10,14 @@ import { Utils } from 'src/app/Utils/Utils';
   styleUrls: ['./action-collection-drop-down.component.scss']
 })
 export class ActionCollectionDropDownComponent {
-  @Input() treeView: boolean = false;
+  @Input() treeView = false;
   @Input() actionCollection: ActionCollection;
   @Input() displayText: string;
   constructor(public dataService: DataService, private liveAnnouncer: LiveAnnouncer) { }
 
   closeChange(state: boolean) {
-    if(!Utils.isIEOrEdge) {
-      this.liveAnnouncer.announce(`Actions dropdown button is now ${state ? 'Expanded' : 'Collapsed'}`)
+    if (!Utils.isIEOrEdge) {
+      this.liveAnnouncer.announce(`Actions dropdown button is now ${state ? 'Expanded' : 'Collapsed'}`);
     }
   }
 

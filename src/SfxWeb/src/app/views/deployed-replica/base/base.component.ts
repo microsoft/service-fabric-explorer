@@ -14,24 +14,24 @@ import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 })
 export class BaseComponent extends DeployedReplicaBaseController {
 
-  type: string = "";
+  type = '';
 
   tabs: ITab[] = [{
-    name: "essentials",
-    route: "./"
+    name: 'essentials',
+    route: './'
     },
     {
-      name: "details",
-      route: "./details"
+      name: 'details',
+      route: './details'
     }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) { 
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
     super(data, injector);
   }
 
   setup() {
-    console.log(this)
+    console.log(this);
     this.tree.selectTreeNode([
         IdGenerator.cluster(),
         IdGenerator.nodeGroup(),
@@ -44,7 +44,7 @@ export class BaseComponent extends DeployedReplicaBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    this.type = this.replica.isStatelessService ? 'Deployed Instance' : 'Deployed Replica'
+    this.type = this.replica.isStatelessService ? 'Deployed Instance' : 'Deployed Replica';
 
     return of(null);
   }

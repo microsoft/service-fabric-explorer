@@ -15,18 +15,18 @@ export class DetailsComponent extends ServiceBaseController {
   healthEventsListSettings: ListSettings;
   serviceBackupConfigurationInfoListSettings: ListSettings;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
   setup() {
-    this.serviceBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings("serviceBackupConfigurationInfoListSettings", ["raw.PolicyName"], [
-      new ListColumnSetting("raw.PolicyName", "Policy Name", ["raw.PolicyName"], false, (item, property) => `<a href='${item.parent.viewPath}/tab/details'>${property}</a>`, 1, item => item.action.runWithCallbacks.apply(item.action)),
-      new ListColumnSetting("raw.Kind", "Kind"),
-      new ListColumnSetting("raw.PolicyInheritedFrom", "Policy Inherited From"),
-      new ListColumnSetting("raw.PartitionId", "Partition Id"),
-      new ListColumnSetting("raw.SuspensionInfo.IsSuspended", "Is Suspended"),
-      new ListColumnSetting("raw.SuspensionInfo.SuspensionInheritedFrom", "Suspension Inherited From"),
+    this.serviceBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings('serviceBackupConfigurationInfoListSettings', ['raw.PolicyName'], [
+      new ListColumnSetting('raw.PolicyName', 'Policy Name', ['raw.PolicyName'], false, (item, property) => `<a href='${item.parent.viewPath}/tab/details'>${property}</a>`, 1, item => item.action.runWithCallbacks.apply(item.action)),
+      new ListColumnSetting('raw.Kind', 'Kind'),
+      new ListColumnSetting('raw.PolicyInheritedFrom', 'Policy Inherited From'),
+      new ListColumnSetting('raw.PartitionId', 'Partition Id'),
+      new ListColumnSetting('raw.SuspensionInfo.IsSuspended', 'Is Suspended'),
+      new ListColumnSetting('raw.SuspensionInfo.SuspensionInheritedFrom', 'Suspension Inherited From'),
     ]);
     this.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
   }

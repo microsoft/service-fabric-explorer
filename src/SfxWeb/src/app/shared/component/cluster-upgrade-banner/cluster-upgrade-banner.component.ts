@@ -11,11 +11,11 @@ import { Observable } from 'rxjs';
 })
 export class ClusterUpgradeBannerComponent extends BaseController {
 
-  displayMiddleText: boolean = true;
-  displayAllText: boolean = true;
+  displayMiddleText = true;
+  displayAllText = true;
   @Input() clusterUpgradeProgress: ClusterUpgradeProgress;
 
-  constructor(injector: Injector) { 
+  constructor(injector: Injector) {
     super(injector);
   }
 
@@ -30,7 +30,7 @@ export class ClusterUpgradeBannerComponent extends BaseController {
 
   @HostListener('window:resize', ['$event.target'])
   onResize(event: Window) {
-    this.checkWidth(event.innerWidth)
+    this.checkWidth(event.innerWidth);
   }
 
   checkWidth(width: number) {
@@ -39,7 +39,7 @@ export class ClusterUpgradeBannerComponent extends BaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.clusterUpgradeProgress.refresh(messageHandler)
+    return this.clusterUpgradeProgress.refresh(messageHandler);
   }
 
 }

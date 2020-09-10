@@ -13,20 +13,20 @@ import { DataService } from 'src/app/services/data.service';
 export class BaseComponent extends NodeBaseController {
 
   tabs: ITab[] = [{
-    name: "essentials",
-    route: "./"
+    name: 'essentials',
+    route: './'
     },
     {
-      name: "details",
-      route: "./details"
+      name: 'details',
+      route: './details'
     },
     {
-      name: "events",
-      route: "./events"
+      name: 'events',
+      route: './events'
     }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) { 
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
     super(data, injector);
   }
 

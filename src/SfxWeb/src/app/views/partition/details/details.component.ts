@@ -20,7 +20,7 @@ export class DetailsComponent extends PartitionBaseController {
 
   healthEventsListSettings: ListSettings;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
@@ -31,16 +31,16 @@ export class DetailsComponent extends PartitionBaseController {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     this.subscriptions.add(this.data.clusterManifest.ensureInitialized().subscribe( () => {
-      if(this.data.clusterManifest.isBackupRestoreEnabled){
+      if (this.data.clusterManifest.isBackupRestoreEnabled){
         if (this.partition.isStatefulService) {
           this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler);
           this.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler);
         }
-  
+
         this.partition.partitionBackupInfo.partitionBackupProgress.refresh(messageHandler);
         this.partition.partitionBackupInfo.partitionRestoreProgress.refresh(messageHandler);
       }
-    }))
+    }));
 
 
     return forkJoin([

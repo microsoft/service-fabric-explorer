@@ -22,19 +22,19 @@ export class BackupComponent extends ApplicationBaseController  {
   applicationBackupConfigurationInfoListSettings: ListSettings;
   actions: ActionCollection;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService, private telemetry: TelemetryService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService, private telemetry: TelemetryService) {
     super(data, injector);
   }
 
   setup() {
-    this.applicationBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings("backupConfigurationInfoCollection", ["raw.PolicyName"], [
-      new ListColumnSetting("raw.PolicyName", "Policy Name", ["raw.PolicyName"], false, (item, property) =>  `<span class="link">${property}</span>`, 1, item => item.action.run()), 
-      new ListColumnSetting("raw.Kind", "Kind"),
-      new ListColumnSetting("raw.PolicyInheritedFrom", "Policy Inherited From"),
-      new ListColumnSetting("raw.ServiceName", "Service Name"),
-      new ListColumnSetting("raw.PartitionId", "Partition Id"),
-      new ListColumnSetting("raw.SuspensionInfo.IsSuspended", "Is Suspended"),
-      new ListColumnSetting("raw.SuspensionInfo.SuspensionInheritedFrom", "Suspension Inherited From"),
+    this.applicationBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings('backupConfigurationInfoCollection', ['raw.PolicyName'], [
+      new ListColumnSetting('raw.PolicyName', 'Policy Name', ['raw.PolicyName'], false, (item, property) =>  `<span class="link">${property}</span>`, 1, item => item.action.run()),
+      new ListColumnSetting('raw.Kind', 'Kind'),
+      new ListColumnSetting('raw.PolicyInheritedFrom', 'Policy Inherited From'),
+      new ListColumnSetting('raw.ServiceName', 'Service Name'),
+      new ListColumnSetting('raw.PartitionId', 'Partition Id'),
+      new ListColumnSetting('raw.SuspensionInfo.IsSuspended', 'Is Suspended'),
+      new ListColumnSetting('raw.SuspensionInfo.SuspensionInheritedFrom', 'Suspension Inherited From'),
     ]);
   }
 
@@ -47,15 +47,15 @@ export class BackupComponent extends ApplicationBaseController  {
 
 
   setUpActions() {
-    if(!this.actions) {
-      this.actions = new ActionCollection(this.telemetry)
+    if (!this.actions) {
+      this.actions = new ActionCollection(this.telemetry);
 
 
       this.actions.add(new IsolatedAction(
         this.data.dialog,
-        "enableApplicationBackup",
-        "Enable/Update Application Backup",
-        "Enabling Application Backup",
+        'enableApplicationBackup',
+        'Enable/Update Application Backup',
+        'Enabling Application Backup',
         {
             enable: (backupName: string) => this.data.restClient.enableApplicationBackup(this.app, backupName).pipe(mergeMap(() => {
                 return this.app.applicationBackupConfigurationInfoCollection.refresh();
@@ -65,12 +65,12 @@ export class BackupComponent extends ApplicationBaseController  {
         PartitionEnableBackUpComponent,
         () => true,
     ));
-  
-    this.actions.add(new IsolatedAction(
+
+      this.actions.add(new IsolatedAction(
         this.data.dialog,
-        "disableApplicationBackup",
-        "Disable Application Backup",
-        "Disabling Application Backup",
+        'disableApplicationBackup',
+        'Disable Application Backup',
+        'Disabling Application Backup',
         {
             enable: (cleanBackup: boolean) => this.data.restClient.disableApplicationBackup(this.app, cleanBackup).pipe(mergeMap(() => {
                 return this.app.applicationBackupConfigurationInfoCollection.refresh();
@@ -78,40 +78,40 @@ export class BackupComponent extends ApplicationBaseController  {
             data: this
         },
         PartitionDisableBackUpComponent,
-        () => this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw && 
-              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && 
-              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application",
+        () => this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw &&
+              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === 'Application' &&
+              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Application',
     ));
-  
-    this.actions.add(new ActionWithConfirmationDialog(
+
+      this.actions.add(new ActionWithConfirmationDialog(
         this.data.dialog,
-        "suspendApplicationBackup",
-        "Suspend Application Backup",
-        "Suspending...",
+        'suspendApplicationBackup',
+        'Suspend Application Backup',
+        'Suspending...',
         () => this.data.restClient.suspendApplicationBackup(this.app.id).pipe(map(() => {
               this.app.applicationBackupConfigurationInfoCollection.refresh();
         })),
-        () => this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw && 
-              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && 
-              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application" && 
+        () => this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw &&
+              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === 'Application' &&
+              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Application' &&
               this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === false,
-        "Confirm Application Backup Suspension",
+        'Confirm Application Backup Suspension',
         `Suspend application backup for ${this.app.name} ?`,
         this.app.name));
-  
-    this.actions.add(new ActionWithConfirmationDialog(
+
+      this.actions.add(new ActionWithConfirmationDialog(
         this.data.dialog,
-        "resumeApplicationBackup",
-        "Resume Application Backup",
-        "Resuming...",
+        'resumeApplicationBackup',
+        'Resume Application Backup',
+        'Resuming...',
         () => this.data.restClient.resumeApplicationBackup(this.app.id).pipe(map(() => {
             this.app.applicationBackupConfigurationInfoCollection.refresh();
         })),
-        () => this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw && 
-              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === "Application" && 
-              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === "Application" && 
+        () => this.app.applicationBackupConfigurationInfoCollection.collection.length && this.app.applicationBackupConfigurationInfoCollection.collection[0].raw &&
+              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.Kind === 'Application' &&
+              this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.PolicyInheritedFrom === 'Application' &&
               this.app.applicationBackupConfigurationInfoCollection.collection[0].raw.SuspensionInfo.IsSuspended === true,
-        "Confirm Application Backup Resumption",
+        'Confirm Application Backup Resumption',
         `Resume application backup for ${this.app.name} ?`,
         this.app.name));
     }

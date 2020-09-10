@@ -15,8 +15,8 @@ import { HealthStateConstants } from 'src/app/Common/Constants';
 export class ClustermapComponent extends BaseController {
 
   nodes: NodeCollection;
-  filter: string = "";
-  healthFilter: Record<string, boolean> = {}
+  filter = '';
+  healthFilter: Record<string, boolean> = {};
 
   constructor(private data: DataService, injector: Injector) {
 
@@ -33,13 +33,13 @@ export class ClustermapComponent extends BaseController {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
       this.nodes.refresh(messageHandler)
-    ])
+    ]);
   }
 
   public getNodesForDomains(upgradeDomain: string, faultDomain: string): Node[] {
-    return this.nodes.collection.filter((node) => node.upgradeDomain === upgradeDomain && 
-                                                  node.faultDomain === faultDomain && 
-                                                  (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter): true) &&
+    return this.nodes.collection.filter((node) => node.upgradeDomain === upgradeDomain &&
+                                                  node.faultDomain === faultDomain &&
+                                                  (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter) : true) &&
                                                   (node.healthState.badgeId in this.healthFilter ? this.healthFilter[node.healthState.badgeId] : true));
   }
 }

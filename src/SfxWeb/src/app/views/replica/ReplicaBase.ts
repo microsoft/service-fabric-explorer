@@ -17,13 +17,13 @@ export class ReplicaBaseController extends BaseController {
     public replicaId: string;
     public appTypeName: string;
     public isSystem: boolean;
-  
+
     replica: ReplicaOnPartition;
 
-    constructor(protected data: DataService, injector: Injector) { 
+    constructor(protected data: DataService, injector: Injector) {
       super(injector);
     }
-  
+
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         this.isSystem = this.appTypeName === Constants.SystemAppTypeName;
 
@@ -33,7 +33,7 @@ export class ReplicaBaseController extends BaseController {
             return this.replica.health.refresh(messageHandler);
         }));
     }
-    
+
     getParams(route: ActivatedRouteSnapshot): void {
         this.appTypeName = IdUtils.getAppTypeName(route);
         this.appId = IdUtils.getAppId(route);

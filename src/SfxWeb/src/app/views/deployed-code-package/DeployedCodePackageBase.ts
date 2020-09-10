@@ -15,20 +15,20 @@ export class DeployedCodePackageBaseController extends BaseController {
     appId: string;
     nodeName: string;
     codePackageName: string;
-    
+
     deployedCodePackage: DeployedCodePackage;
 
-    constructor(protected data: DataService, injector: Injector) { 
+    constructor(protected data: DataService, injector: Injector) {
       super(injector);
     }
-  
+
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getDeployedCodePackage(this.nodeName, this.appId, this.serviceId, this.activationId, this.codePackageName, true, messageHandler)
         .pipe(map(deployedCodePackage => {
             this.deployedCodePackage = deployedCodePackage;
         }));
     }
-    
+
     getParams(route: ActivatedRouteSnapshot): void {
         this.nodeName = IdUtils.getNodeName(route);
         this.serviceId = IdUtils.getServiceId(route);
