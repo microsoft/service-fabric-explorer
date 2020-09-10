@@ -1,0 +1,33 @@
+{
+    "ContinuationToken": "",
+    "Items": [
+        {
+            "Name": "_nt_4",
+            "IpAddressOrFQDN": "10.0.0.8",
+            "Type": "nt",
+            "CodeVersion": "7.1.456.9590",
+            "ConfigVersion": "10",
+            "NodeStatus": "Up",
+            "NodeUpTimeInSeconds": "698803",
+            "HealthState": "Warning",
+            "IsSeedNode": true,
+            "UpgradeDomain": "4",
+            "FaultDomain": "fd:/4",
+            "Id": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "InstanceId": "132428553760489593",
+            "NodeDeactivationInfo": {
+                "NodeDeactivationIntent": "Invalid",
+                "NodeDeactivationStatus": "None",
+                "NodeDeactivationTask": [],
+                "PendingSafetyChecks": []
+            },
+            "IsStopped": false,
+            "NodeDownTimeInSeconds": "0",
+            "NodeUpAt": "2020-08-25T18:56:31.439Z",
+            "NodeDownAt": "2020-08-25T18:54:10.988Z",
+            "InfrastructurePlacementID": ""
+        }
+    ]
+}

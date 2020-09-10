@@ -2,6 +2,7 @@ import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Constants } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
+import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
 import  size from 'lodash/size';
 import  forOwn  from 'lodash/forOwn';
 import  startCase  from 'lodash/startCase';
@@ -13,7 +14,6 @@ import  isNull  from 'lodash/isNull';
 import  isEmpty  from 'lodash/isEmpty';
 import  isObject  from 'lodash/isObject';
 import  first  from 'lodash/first';
-import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
 
 export class ResolvedObject {
   [index: string]: any;

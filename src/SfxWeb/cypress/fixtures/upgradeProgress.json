@@ -1,0 +1,208 @@
+{
+    "CodeVersion": "7.1.428.9590",
+    "ConfigVersion": "9",
+    "UpgradeDomains": [
+        {
+            "Name": "4",
+            "State": "InProgress"
+        },
+        {
+            "Name": "0",
+            "State": "Completed"
+        },
+        {
+            "Name": "1",
+            "State": "Completed"
+        },
+        {
+            "Name": "2",
+            "State": "Completed"
+        },
+        {
+            "Name": "3",
+            "State": "Completed"
+        }
+    ],
+    "UpgradeState": "RollingForwardInProgress",
+    "NextUpgradeDomain": "",
+    "RollingUpgradeMode": "Monitored",
+    "UpgradeDescription": {
+        "CodeVersion": "7.1.428.9590",
+        "ConfigVersion": "9",
+        "UpgradeKind": "Rolling",
+        "RollingUpgradeMode": "Monitored",
+        "UpgradeReplicaSetCheckTimeoutInSeconds": 4294967295,
+        "InstanceCloseDelayDurationInSeconds": 4294967295,
+        "ForceRestart": false,
+        "MonitoringPolicy": {
+            "FailureAction": "Rollback",
+            "HealthCheckWaitDurationInMilliseconds": "PT0H0M30S",
+            "HealthCheckStableDurationInMilliseconds": "PT0H1M0S",
+            "HealthCheckRetryTimeoutInMilliseconds": "PT0H45M0S",
+            "UpgradeTimeoutInMilliseconds": "PT12H0M0S",
+            "UpgradeDomainTimeoutInMilliseconds": "PT2H0M0S"
+        },
+        "ClusterHealthPolicy": {
+            "ConsiderWarningAsError": false,
+            "MaxPercentUnhealthyNodes": 100,
+            "MaxPercentUnhealthyApplications": 0
+        },
+        "EnableDeltaHealthEvaluation": true,
+        "ClusterUpgradeHealthPolicy": {
+            "MaxPercentDeltaUnhealthyNodes": 0,
+            "MaxPercentUpgradeDomainDeltaUnhealthyNodes": 0
+        },
+        "ApplicationHealthPolicyMap": {
+            "ApplicationHealthPolicyMap": [
+                {
+                    "Key": "fabric:/System",
+                    "Value": {
+                        "ConsiderWarningAsError": false,
+                        "MaxPercentUnhealthyDeployedApplications": 0,
+                        "DefaultServiceTypeHealthPolicy": {
+                            "MaxPercentUnhealthyServices": 0,
+                            "MaxPercentUnhealthyPartitionsPerService": 0,
+                            "MaxPercentUnhealthyReplicasPerPartition": 0
+                        },
+                        "ServiceTypeHealthPolicyMap": [
+                            {
+                                "Key": "BackupRestoreServiceType",
+                                "Value": {
+                                    "MaxPercentUnhealthyServices": 0,
+                                    "MaxPercentUnhealthyPartitionsPerService": 0,
+                                    "MaxPercentUnhealthyReplicasPerPartition": 0
+                                }
+                            },
+                            {
+                                "Key": "ClusterManagerServiceType",
+                                "Value": {
+                                    "MaxPercentUnhealthyServices": 0,
+                                    "MaxPercentUnhealthyPartitionsPerService": 0,
+                                    "MaxPercentUnhealthyReplicasPerPartition": 0
+                                }
+                            },
+                            {
+                                "Key": "DnsServiceType",
+                                "Value": {
+                                    "MaxPercentUnhealthyServices": 0,
+                                    "MaxPercentUnhealthyPartitionsPerService": 0,
+                                    "MaxPercentUnhealthyReplicasPerPartition": 0
+                                }
+                            },
+                            {
+                                "Key": "EventStoreServiceType",
+                                "Value": {
+                                    "MaxPercentUnhealthyServices": 0,
+                                    "MaxPercentUnhealthyPartitionsPerService": 0,
+                                    "MaxPercentUnhealthyReplicasPerPartition": 0
+                                }
+                            },
+                            {
+                                "Key": "FMServiceType",
+                                "Value": {
+                                    "MaxPercentUnhealthyServices": 0,
+                                    "MaxPercentUnhealthyPartitionsPerService": 0,
+                                    "MaxPercentUnhealthyReplicasPerPartition": 0
+                                }
+                            },
+                            {
+                                "Key": "FaultAnalysisServiceType",
+                                "Value": {
+                                    "MaxPercentUnhealthyServices": 0,
+                                    "MaxPercentUnhealthyPartitionsPerService": 0,
+                                    "MaxPercentUnhealthyReplicasPerPartition": 0
+                                }
+                            },
+                            {
+                                "Key": "FileStoreServiceType",
+                                "Value": {
+                                    "MaxPercentUnhealthyServices": 0,
+                                    "MaxPercentUnhealthyPartitionsPerService": 0,
+                                    "MaxPercentUnhealthyReplicasPerPartition": 0
+                                }
+                            },
+                            {
+                                "Key": "InfrastructureServiceType",
+                                "Value": {
+                                    "MaxPercentUnhealthyServices": 0,
+                                    "MaxPercentUnhealthyPartitionsPerService": 0,
+                                    "MaxPercentUnhealthyReplicasPerPartition": 0
+                                }
+                            },
+                            {
+                                "Key": "NamingStoreService",
+                                "Value": {
+                                    "MaxPercentUnhealthyServices": 0,
+                                    "MaxPercentUnhealthyPartitionsPerService": 0,
+                                    "MaxPercentUnhealthyReplicasPerPartition": 0
+                                }
+                            },
+                            {
+                                "Key": "RepairManagerServiceType",
+                                "Value": {
+                                    "MaxPercentUnhealthyServices": 0,
+                                    "MaxPercentUnhealthyPartitionsPerService": 0,
+                                    "MaxPercentUnhealthyReplicasPerPartition": 0
+                                }
+                            },
+                            {
+                                "Key": "UpgradeServiceType",
+                                "Value": {
+                                    "MaxPercentUnhealthyServices": 0,
+                                    "MaxPercentUnhealthyPartitionsPerService": 0,
+                                    "MaxPercentUnhealthyReplicasPerPartition": 0
+                                }
+                            }
+                        ]
+                    }
+                }
+            ]
+        },
+        "SortOrder": "Default"
+    },
+    "UpgradeDurationInMilliseconds": "PT0H15M1.79525S",
+    "UpgradeDomainDurationInMilliseconds": "PT0H0M0.210455S",
+    "UnhealthyEvaluations": [],
+    "CurrentUpgradeDomainProgress": {
+        "DomainName": "4",
+        "NodeUpgradeProgressList": [
+            {
+                "NodeName": "_nt_4",
+                "UpgradePhase": "PreUpgradeSafetyCheck",
+                "PendingSafetyChecks": [
+                    {
+                        "SafetyCheck": {
+                            "Kind": "WaitForPrimarySwap",
+                            "PartitionId": "4dc30f2a-63bf-4f01-9e49-d0aeac0b262a"
+                        }
+                    },
+                    {
+                        "SafetyCheck": {
+                            "Kind": "WaitForPrimarySwap",
+                            "PartitionId": "4dc30f2a-63bf-4f01-9e49-d0aeac0b262a2"
+                        }
+                    }
+                ]
+            },
+            {
+                "NodeName": "_nt_3",
+                "UpgradePhase": "PreUpgradeSafetyCheck",
+                "PendingSafetyChecks": [
+                    {
+                        "SafetyCheck": {
+                            "Kind": "WaitForPrimarySwap",
+                            "PartitionId": "4dc30f2a-63bf-4f01-9e49-d0aeac0b262a"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "StartTimestampUtc": "2020-08-19T22:02:13.088Z",
+    "FailureTimestampUtc": "0001-01-01T00:00:00.000Z",
+    "FailureReason": "None",
+    "UpgradeDomainProgressAtFailure": {
+        "DomainName": "",
+        "NodeUpgradeProgressList": []
+    }
+}

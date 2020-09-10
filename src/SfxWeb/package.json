@@ -3,16 +3,24 @@
   "version": "0.0.0",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
-    "start-local": "ng serve --proxy-config=proxy.conf.json --port 3000",
+    "start": "ng serve --proxy-config=proxy.conf.json --port 3000",
+
     "build": "ng build",
     "build:prod": "ng build --prod  --output-hashing=none",
     "build:accesstesting": "ng build --prod --outputPath=../Sfx-Proxy/wwwroot --configuration=accesstesting --output-hashing=none",
-    "build:stats": "ng build --stats-json",
+
     "test": "ng test",
-    "test:ci": "ng test --watch=false --browsers=ChromeHeadless",
+    "cypress:local" : "cypress open --env API_PREFIX=api/",
+
+    "ci:start-server": "angular-http-server --path ./dist -p 3000",
+    "ci:test-build": "ng build --configuration=accesstesting",
+
+    "ci:test": "ng test --watch=false --browsers=ChromeHeadless",
+    "ci:cy-run": "start-server-and-test ci:start-server http://localhost:3000 cy:run",
+    "cy:run": "cypress run",
+
     "lint": "ng lint",
-    "e2e": "ng e2e",
+    "build:stats": "ng build --stats-json",
     "analyze": "webpack-bundle-analyzer dist/sfxWeb/stats-es2015.json"
   },
   "private": true,
@@ -54,12 +62,14 @@
     "@angular/compiler-cli": "~10.0.7",
     "@angular/language-service": "~10.0.7",
     "@types/adal": "^1.0.29",
+    "@types/d3": "^5.7.2",
     "@types/jasmine": "~3.3.8",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
-    "@types/d3": "^5.7.2",
     "@types/nouislider": "^9.0.6",
+    "angular-http-server": "^1.9.0",
     "codelyzer": "^6.0.0",
+    "cypress": "^4.12.1",
     "jasmine-core": "~3.5.0",
     "jasmine-spec-reporter": "~5.0.0",
     "karma": "~5.0.0",
@@ -68,6 +78,7 @@
     "karma-jasmine": "~3.3.0",
     "karma-jasmine-html-reporter": "^1.5.0",
     "protractor": "~7.0.0",
+    "start-server-and-test": "^1.11.3",
     "ts-node": "~7.0.0",
     "tslint": "~6.1.0",
     "typescript": "~3.9.7",
