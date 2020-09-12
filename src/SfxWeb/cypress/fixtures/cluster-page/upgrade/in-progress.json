@@ -23,7 +23,7 @@
             "State": "Completed"
         }
     ],
-    "UpgradeState": "RollingForwardCompleted",
+    "UpgradeState": "RollingForwardInProgress",
     "NextUpgradeDomain": "",
     "RollingUpgradeMode": "Monitored",
     "UpgradeDescription": {
@@ -58,8 +58,22 @@
     "UpgradeDomainDurationInMilliseconds": "PT0H0M0.0741611S",
     "UnhealthyEvaluations": [],
     "CurrentUpgradeDomainProgress": {
-        "DomainName": "",
-        "NodeUpgradeProgressList": []
+        "DomainName": "4",
+        "NodeUpgradeProgressList": [
+            {
+                "NodeName" : "1",
+                "PendingSafetyChecks":[
+                    {
+                        "SafetyCheck" : {
+                            "Kind": "WaitForPrimarySwap",
+                            "PartitionId": "guidID"
+    
+                        }
+                    }
+                ],
+                "UpgradePhase": "Upgrading"
+            }
+        ]
     },
     "StartTimestampUtc": "2020-08-25T18:09:10.960Z",
     "FailureTimestampUtc": "0001-01-01T00:00:00.000Z",

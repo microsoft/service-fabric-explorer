@@ -7,7 +7,7 @@
     </app-collapse-container>
 </div>
 
-<div id="upgradeDetailsSection" *ngIf="clusterUpgradeProgress.isInitialized" class="detail-pane essen-pane">
+<div data-cy="upgradeDetails" *ngIf="clusterUpgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container sectionName="Upgrade Status">
         <div collapse-header>
                 <h4 *ngIf="clusterUpgradeProgress.isUpgrading">Cluster Upgrade In Progress</h4>
@@ -45,7 +45,7 @@
                     <upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></upgrade-progress>
                 </div>
 
-            <div style="margin-top:20px" *ngIf="clusterUpgradeProgress.isUpgrading">
+            <div style="margin-top:20px" *ngIf="clusterUpgradeProgress.isUpgrading" data-cy="currentud">
                 <h5 style="font-size: 16px;">Current Upgrade Domain : {{clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName}} </h5>
                 <h5 style="font-size: 15px; margin-top: 15px;">Nodes status</h5>
                 <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress"></app-upgrade-domain-progress>
