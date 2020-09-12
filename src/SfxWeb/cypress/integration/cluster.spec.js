@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, upgradeProgress_route } from './util';
+import { apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS } from './util';
 
 context('Cluster page', () => {
 
@@ -77,6 +77,7 @@ context('Cluster page', () => {
     it('upgrade completed', () => {
       cy.visit('/#/details')
 
+      cy.wait(FIXTURE_REF_UPGRADEPROGRESS)
       cy.contains('Latest Cluster Upgrade')
     })
 

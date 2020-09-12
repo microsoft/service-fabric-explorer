@@ -40,11 +40,11 @@ context('Header', () => {
 
     describe("upgrade banner", () => {
 
-        it.only("dont show then show", () => {
+        it("dont show then show", () => {
             cy.get('[data-cy=upgradebanner]').should('not.exist')
 
             cy.route('GET', upgradeProgress_route, 'fixture:upgrade-in-progress').as("inprogres");
-            
+
             refresh();
             cy.wait("@inprogres");
 
