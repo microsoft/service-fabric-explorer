@@ -48,9 +48,9 @@ context('Cluster page', () => {
     it('upgrade in progress', () => {
       cy.route('GET', upgradeProgress_route, 'fixture:upgrade-in-progress').as("inprogres");
 
-      cy.route('GET', apiUrl('/Partitions/guidID?*'), 'fixture:cluster-page/upgrade/get-partitioninfo');
-      cy.route('GET', apiUrl('/Partitions/guidID/$/GetServiceName?*'), 'fixture:cluster-page/upgrade/get-servicename');
-      cy.route('GET', apiUrl('/Services/VisualObjectsApplicationType~VisualObjects.ActorService/$/GetApplicationName?*'), 'fixture:cluster-page/upgrade/get-applicationinfo').as('appinfo');
+      cy.route('GET', apiUrl('/Partitions/guidID?*'), 'fx:cluster-page/upgrade/get-partition-info');
+      cy.route('GET', apiUrl('/Partitions/guidID/$/GetServiceName?*'), 'fx:cluster-page/upgrade/get-service-name');
+      cy.route('GET', apiUrl('/Services/VisualObjectsApplicationType~VisualObjects.ActorService/$/GetApplicationName?*'), 'fx:cluster-page/upgrade/get-application-info').as('appinfo');
 
       cy.visit('/#/details')
 
