@@ -23,9 +23,3 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-
-
-// Cypress.Commands.add('apiUrl', (url) => {
-//     console.log(`${Cypress.env("API_PREFIX")}${url}`)
-//     return Cypress.env("API_PREFIX") +  url;
-// })
