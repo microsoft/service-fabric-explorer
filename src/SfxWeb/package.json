@@ -17,7 +17,7 @@
 
     "ci:test": "ng test --watch=false --browsers=ChromeHeadless",
     "ci:cy-run": "start-server-and-test ci:start-server http://localhost:3000 cy:run",
-    "cy:run": "cypress run --config video=false",
+    "cy:run": "cypress run ",
 
     "lint": "ng lint",
     "build:stats": "ng build --stats-json",
