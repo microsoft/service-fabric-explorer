@@ -41,19 +41,25 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
-      - name: Build
-        run: npm run build:prod
+      # - name: Build
+      #   run: npm run build:prod
 
-      - name: Test
-        run: npm run ci:test
+      # - name: Test
+      #   run: npm run ci:test
 
       - name: E2E build
         run: npm run ci:test-build
 
       - name: E2E test
         run: npm run ci:cy-run
-        uses: actions/upload-artifact@v1
-        if: always()
+        # uses: actions/upload-artifact@v1
+        # if: always()
+        # with:
+        #   name: cypress-screenshots
+        #   path: cypress/screenshots
+
+      - name: upload failed
+        uses: actions/upload-artifact@v2-preview
         with:
           name: cypress-screenshots
-          path: cypress/screenshots
+          path: cypress/screenshots/* # or maybe cypress/**/*
