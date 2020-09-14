@@ -45,6 +45,10 @@ context('Cluster page', () => {
 
   describe("details", () => {
 
+    beforeEach(() => {
+      cy.route('GET', apiUrl('/$/GetLoadInformation?*'), 'fx:cluster-page/upgrade/get-load-information');
+    })
+  
     it('upgrade in progress', () => {
       cy.route('GET', upgradeProgress_route, 'fx:upgrade-in-progress').as("inprogres");
 
