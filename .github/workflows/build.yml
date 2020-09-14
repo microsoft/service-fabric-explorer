@@ -63,4 +63,4 @@ jobs:
         if: always()
         with:
           name: cypress-screenshots
-          path: src/sfxWeb/cypress/* # or maybe cypress/**/*
+          path:  /home/runner/work/service-fabric-explorer/service-fabric-explorer/src/SfxWeb/cypress/*
