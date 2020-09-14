@@ -52,4 +52,7 @@ jobs:
 
       - name: E2E test
         run: npm run ci:cy-run
-
+        uses: actions/upload-artifact@v1
+        with:
+          name: cypress-screenshots
+          path: cypress/screenshots
