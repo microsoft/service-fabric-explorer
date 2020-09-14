@@ -46,7 +46,7 @@ context('Cluster page', () => {
   describe("details", () => {
 
     it('upgrade in progress', () => {
-      cy.route('GET', upgradeProgress_route, 'fixture:upgrade-in-progress').as("inprogres");
+      cy.route('GET', upgradeProgress_route, 'fx:upgrade-in-progress').as("inprogres");
 
       cy.route('GET', apiUrl('/Partitions/guidID?*'), 'fx:cluster-page/upgrade/get-partition-info');
       cy.route('GET', apiUrl('/Partitions/guidID/$/GetServiceName?*'), 'fx:cluster-page/upgrade/get-service-name');
