@@ -1,6 +1,8 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS } from './util';
+import { apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST } from './util';
+
+const LOAD_INFO = "getloadinfo"
 
 context('Cluster page', () => {
 
@@ -8,6 +10,8 @@ context('Cluster page', () => {
 
     cy.server()
     addDefaultFixtures();
+    cy.route('GET', apiUrl('/$/GetLoadInformation?*'), 'fx:cluster-page/upgrade/get-load-information').as(LOAD_INFO);
+
   })
 
   describe("essentials", () => {
@@ -44,10 +48,6 @@ context('Cluster page', () => {
   })
 
   describe("details", () => {
-
-    beforeEach(() => {
-      cy.route('GET', apiUrl('/$/GetLoadInformation?*'), 'fx:cluster-page/upgrade/get-load-information');
-    })
   
     it('upgrade in progress', () => {
       cy.route('GET', upgradeProgress_route, 'fx:upgrade-in-progress').as("inprogres");
@@ -89,9 +89,13 @@ context('Cluster page', () => {
   })
 
   describe("metrics", () => {
-    it('load details', () => {
+    it('load metrics', () => {
       cy.visit('/#/metrics')
-      //TODO check that all nodes are queried, maybe mock to 1 node list
+      cy.wait('@' + LOAD_INFO);
+
+      cy.get('app-metrics').within(() => {
+        cy.contains("Reserved CpuCores");
+      })
     })
 
   })
@@ -138,4 +142,17 @@ context('Cluster page', () => {
     })
 
   })
+
+  describe("manifest", () => {
+    it('load manifest page', () => {
+      cy.visit('/#/manifest')
+
+      cy.wait(FIXTURE_REF_MANIFEST)
+
+      cy.get('app-manifest-viewer').within(() => {
+        cy.contains("WRP_Generated_ClusterManifest");
+      })
+    })
+  })
+
 })
