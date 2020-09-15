@@ -5,12 +5,12 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { IdUtils } from 'src/app/Utils/IdUtils';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { Constants } from 'src/app/Common/Constants';
 
 @Directive()
-export class ReplicaBaseController extends BaseController {
+export class ReplicaBaseControllerDirective extends BaseControllerDirective {
     public appId: string;
     public serviceId: string;
     public partitionId: string;

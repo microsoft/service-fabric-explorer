@@ -5,11 +5,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { IdUtils } from 'src/app/Utils/IdUtils';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { Partition } from 'src/app/Models/DataModels/Partition';
 
 @Directive()
-export class PartitionBaseController extends BaseController {
+export class PartitionBaseControllerDirective extends BaseControllerDirective {
     public appId: string;
     public serviceId: string;
     public partitionId: string;

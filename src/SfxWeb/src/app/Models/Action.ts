@@ -10,14 +10,10 @@ import { ComponentType } from '@angular/cdk/portal';
 // -----------------------------------------------------------------------------
 
 export class Action {
-    private _running: boolean;
-
-    public get running(): boolean {
-        return this._running;
-    }
+    public running: boolean;
 
     public get displayTitle(): string {
-        return this._running ? this.runningTitle : this.title;
+        return this.running ? this.runningTitle : this.title;
     }
 
     constructor(
@@ -28,7 +24,7 @@ export class Action {
         public canRun: () => boolean,
         public isAdvanced: boolean = false) {
 
-        this._running = false;
+        this.running = false;
     }
 
     public run(...params: any[]) {
@@ -42,10 +38,10 @@ export class Action {
     protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
 
         if (this.canRun()) {
-            this._running = true;
+            this.running = true;
             const executing = this.execute();
             return executing.pipe(finalize( () => {
-                this._running = false;
+                this.running = false;
             }));
         }
     }

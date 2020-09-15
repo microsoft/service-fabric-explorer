@@ -7,7 +7,7 @@ import { RefreshService } from '../services/refresh.service';
 import { MessageService } from '../services/message.service';
 
 @Directive()
-export abstract class BaseController implements  OnInit, OnDestroy {
+export abstract class BaseControllerDirective implements  OnInit, OnDestroy {
 
     subscriptions: Subscription = new Subscription();
 

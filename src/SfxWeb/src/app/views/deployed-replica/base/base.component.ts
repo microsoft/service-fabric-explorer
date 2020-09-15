@@ -1,5 +1,5 @@
 import { Component, Injector } from '@angular/core';
-import { DeployedReplicaBaseController } from '../DeployedReplicaBase';
+import { DeployedReplicaBaseControllerDirective } from '../DeployedReplicaBase';
 import { DataService } from 'src/app/services/data.service';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
@@ -12,7 +12,7 @@ import { ITab } from 'src/app/shared/component/navbar/navbar.component';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends DeployedReplicaBaseController {
+export class BaseComponent extends DeployedReplicaBaseControllerDirective {
 
   type = '';
 

@@ -10,7 +10,7 @@ export interface IRepairTaskHistoryPhase {
 
 export interface IDisplayStatus {
     badgeIcon: string;
-    status: String;
+    status: string;
     statusCss: string;
 }
 

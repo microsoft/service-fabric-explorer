@@ -35,8 +35,8 @@ describe('Http interceptors', () => {
                 { provide: AdalService, useValue: adalService }]
         });
 
-        httpMock = TestBed.get(HttpTestingController);
-        httpClient = TestBed.get(HttpClient);
+        httpMock = TestBed.inject(HttpTestingController);
+        httpClient = TestBed.inject(HttpClient);
     });
 
 

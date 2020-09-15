@@ -10,12 +10,12 @@
                     </div>
                 </div>
 
-                <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (onDateChange)="setNewDates($event)"
+                <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (dateChanged)="setNewDates($event)"
                 [currentStartDate]="startDate" [currentEndDate]="endDate" ></app-dual-date-picker>    
             </div>
             <div style="min-width: 400px; flex: 1; padding-left: 15px;" >
                 <div style="width: 90%; margin-top: 15px; margin-bottom: 15px;">
-                    <app-double-slider [startDate]="startDate" [endDate]="endDate" (onDateChange)="setNewDates($event)"></app-double-slider>
+                    <app-double-slider [startDate]="startDate" [endDate]="endDate" (dateChanged)="setNewDates($event)"></app-double-slider>
                 </div>
             </div>
         </div>
@@ -30,7 +30,7 @@
             </div>
             <span class="mif-info mif-lg" style="vertical-align: middle; margin-left: 10px;" title="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
             <span *ngIf="dataService.isAdvancedModeEnabled() && showAllEvents">
-                <app-input placeholder="query string" [model]="transformText" (onChange)="transformText = $event;"></app-input>
+                <app-input placeholder="query string" [model]="transformText" (changed)="transformText = $event;"></app-input>
                 <button class="simple-button" (click)="setTimelineData()">filter</button>
             </span>
             <p *ngIf="timeLineEventsData?.potentiallyMissingEvents" style="display: inline-block; margin-left: 10px;">
@@ -43,7 +43,7 @@
             <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>
         </div>
 
-        <detail-list [list]="eventsList.collection" [listSettings]="eventsList.settings" [isLoading]="!eventsList.isInitialized"></detail-list>
+        <app-detail-listlist [list]="eventsList.collection" [listSettings]="eventsList.settings" [isLoading]="!eventsList.isInitializedapp-detail-listail-list>
     
         <div>
             <div style="float: right; padding: 15px 0 0 0; margin: 0px;">

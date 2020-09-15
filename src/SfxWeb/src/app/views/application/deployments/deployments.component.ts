@@ -6,14 +6,14 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { DeployedApplicationHealthState } from 'src/app/Models/DataModels/Application';
 import { ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink } from 'src/app/Models/ListSettings';
 import { map } from 'rxjs/operators';
-import { ApplicationBaseController } from '../applicationBase';
+import { ApplicationBaseControllerDirective } from '../applicationBase';
 
 @Component({
   selector: 'app-deployments',
   templateUrl: './deployments.component.html',
   styleUrls: ['./deployments.component.scss']
 })
-export class DeploymentsComponent extends ApplicationBaseController {
+export class DeploymentsComponent extends ApplicationBaseControllerDirective {
 
   deployedApplicationsHealthStatesListSettings: ListSettings;
   deployedApplicationsHealthStates: DeployedApplicationHealthState[] = [];

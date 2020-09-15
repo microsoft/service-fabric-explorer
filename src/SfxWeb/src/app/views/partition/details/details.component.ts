@@ -7,16 +7,16 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Partition } from 'src/app/Models/DataModels/Partition';
 import { ListSettings } from 'src/app/Models/ListSettings';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { map } from 'rxjs/operators';
-import { PartitionBaseController } from '../PartitionBase';
+import { PartitionBaseControllerDirective } from '../PartitionBase';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent extends PartitionBaseController {
+export class DetailsComponent extends PartitionBaseControllerDirective {
 
   healthEventsListSettings: ListSettings;
 

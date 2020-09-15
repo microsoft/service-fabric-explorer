@@ -17,7 +17,7 @@ export class DoubleSliderComponent implements OnChanges, AfterViewInit {
   @Input() startDate: any;
   @Input() endDate: any;
 
-  @Output() onDateChange = new EventEmitter<IOnDateChange>();
+  @Output() dateChanged = new EventEmitter<IOnDateChange>();
 
   slider: noUiSlider;
 

@@ -1,5 +1,6 @@
 import { DataModelBase, IDecorators } from './Base';
-import { IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest, IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription } from '../RawDataTypes';
+import { IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest,
+         IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription } from '../RawDataTypes';
 import { PartitionCollection, ServiceBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IServiceHealthStateFilter } from '../HealthChunkRawDataTypes';
@@ -12,8 +13,8 @@ import { Observable, of } from 'rxjs';
 import { HealthBase } from './HealthEvent';
 import { ApplicationType } from './ApplicationType';
 import { mergeMap, map } from 'rxjs/operators';
-import  cloneDeep  from 'lodash/cloneDeep';
-import  escapeRegExp  from 'lodash/escapeRegExp';
+import cloneDeep from 'lodash/cloneDeep';
+import escapeRegExp from 'lodash/escapeRegExp';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { ScaleServiceComponent } from 'src/app/views/service/scale-service/scale-service.component';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
@@ -291,16 +292,19 @@ export class CreateServiceDescription {
         const descriptionCloned = cloneDeep(this.raw);
         let flags = 0;
         if (this.raw.ReplicaRestartWaitDurationSeconds !== null) {
+            // tslint:disable-next-line:no-bitwise
             flags ^= 0x01;
         } else {
             delete descriptionCloned.ReplicaRestartWaitDurationSeconds;
         }
         if (this.raw.QuorumLossWaitDurationSeconds !== null) {
+            // tslint:disable-next-line:no-bitwise
             flags ^= 0x02;
         } else {
             delete descriptionCloned.QuorumLossWaitDurationSeconds;
         }
         if (this.raw.StandByReplicaKeepDurationSeconds !== null) {
+            // tslint:disable-next-line:no-bitwise
             flags ^= 0x04;
         } else {
             delete descriptionCloned.StandByReplicaKeepDurationSeconds;
@@ -447,8 +451,8 @@ export class ServiceBackupConfigurationInfo extends DataModelBase<IRawServiceBac
             },
             ViewBackupComponent,
             () => true,
-            () => this.data.restClient.getBackupPolicy(this.raw.PolicyName).pipe(map(data => {
-                this.action.data.backup = data;
+            () => this.data.restClient.getBackupPolicy(this.raw.PolicyName).pipe(map(resp => {
+                this.action.data.backup = resp;
             }))
             );
     }

@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DeployedReplicaCollection } from 'src/app/Models/DataModels/collections/Collections';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForLink } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
@@ -17,7 +17,7 @@ import { ActivatedRouteSnapshot } from '@angular/router';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends BaseController {
+export class BaseComponent extends BaseControllerDirective {
   nodeName: string;
   appId: string;
   serviceId: string;

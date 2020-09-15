@@ -2,7 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
-import { NodeBaseController } from '../NodeBase';
+import { NodeBaseControllerDirective } from '../NodeBase';
 import { DataService } from 'src/app/services/data.service';
 
 @Component({
@@ -10,7 +10,7 @@ import { DataService } from 'src/app/services/data.service';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends NodeBaseController {
+export class BaseComponent extends NodeBaseControllerDirective {
 
   tabs: ITab[] = [{
     name: 'essentials',

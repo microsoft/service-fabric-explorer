@@ -1,7 +1,7 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { ApplicationEventList } from 'src/app/Models/DataModels/collections/Collections';
 import { DataService } from 'src/app/services/data.service';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { IResponseMessageHandler, EventsStoreResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 
@@ -10,7 +10,7 @@ import { Observable } from 'rxjs';
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss']
 })
-export class EventsComponent extends BaseController {
+export class EventsComponent extends BaseControllerDirective {
 
   appEvents: ApplicationEventList;
 

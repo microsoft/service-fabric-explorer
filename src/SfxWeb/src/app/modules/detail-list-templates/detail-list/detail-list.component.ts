@@ -1,15 +1,15 @@
 import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChildren, QueryList} from '@angular/core';
 import { ListSettings, ListColumnSetting, FilterValue } from 'src/app/Models/ListSettings';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
-import  fill  from 'lodash/fill';
-import  isEmpty  from 'lodash/isEmpty';
-import  sortBy  from 'lodash/sortBy';
-import  union  from 'lodash/union';
-import  map from 'lodash/map';
-import  filter from 'lodash/filter';
-import  uniq from 'lodash/uniq';
-import  includes from 'lodash/includes';
-import  every from 'lodash/every';
+import fill from 'lodash/fill';
+import isEmpty from 'lodash/isEmpty';
+import sortBy from 'lodash/sortBy';
+import union from 'lodash/union';
+import map from 'lodash/map';
+import filter from 'lodash/filter';
+import uniq from 'lodash/uniq';
+import includes from 'lodash/includes';
+import every from 'lodash/every';
 
 import { Utils } from 'src/app/Utils/Utils';
 import { Subject, Subscription } from 'rxjs';
@@ -17,7 +17,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 @Component({
-  selector: 'detail-list',
+  selector: 'app-detail-list',
   templateUrl: './detail-list.component.html',
   styleUrls: ['./detail-list.component.scss']
 })
@@ -26,7 +26,9 @@ export class DetailListComponent implements OnInit, OnDestroy {
   @Input() listSettings: ListSettings;
   @Input() searchText = 'Search list';
   @Input() isLoading = false;
-  private _list: any[];
+  @Output() sorted = new EventEmitter<any[]>();
+
+  private iList: any[];
   public sortedFilteredList: any[] = []; // actual list displayed in html.
 
   page = 1;
@@ -41,19 +43,17 @@ export class DetailListComponent implements OnInit, OnDestroy {
   @Input()
   set list(data: any[] | DataModelCollectionBase<any>) {
     if (data instanceof DataModelCollectionBase){
-      data.ensureInitialized().subscribe(data => {
-        this._list = [].concat(data.collection);
+      data.ensureInitialized().subscribe(resp => {
+        this.iList = [].concat(resp.collection);
         this.updateList();
       });
     }else{
-      this._list = data;
+      this.iList = data;
     }
 
-    this._list = this._list || [];
+    this.iList = this.iList || [];
     this.updateList();
   }
-
-  @Output() onSort = new EventEmitter<any[]>();
 
   ngOnInit() {
     this.debouncerHandlerSubscription = this.debounceHandler
@@ -98,7 +98,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   }
 
   private getSortedFilteredList(): any[] {
-    let list = this._list;
+    let list = this.iList;
 
     if (this.listSettings && (this.listSettings.hasEnabledFilters || this.listSettings.search)) {
 
@@ -227,11 +227,11 @@ const sortByProperty = (items: any[], propertyPath: string[], sortReverse: boole
   });
 };
 
-const filterByProperty = (obj: any, filter: string): boolean => {
+const filterByProperty = (obj: any, propFilter: string): boolean => {
   return Object.keys(obj).some(property => {
     if (!property.startsWith('$')){
       const val = obj[property];
-      return (val as string|number|boolean).toString().toLowerCase().includes(filter);
+      return (val as string|number|boolean).toString().toLowerCase().includes(propFilter);
     }
   });
 };

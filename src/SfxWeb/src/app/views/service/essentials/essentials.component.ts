@@ -4,7 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin, of } from 'rxjs';
-import { ServiceBaseController } from '../ServiceBase';
+import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { map } from 'rxjs/operators';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
@@ -15,7 +15,7 @@ import { ServiceHealth } from 'src/app/Models/DataModels/Service';
   templateUrl: './essentials.component.html',
   styleUrls: ['./essentials.component.scss']
 })
-export class EssentialsComponent extends ServiceBaseController {
+export class EssentialsComponent extends ServiceBaseControllerDirective {
 
   listSettings: ListSettings;
   unhealthyEvaluationsListSettings: ListSettings;

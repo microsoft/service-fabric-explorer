@@ -5,11 +5,11 @@ import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { IdUtils } from 'src/app/Utils/IdUtils';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType';
 
 @Directive()
-export class ApplicationTypeBaseController extends BaseController {
+export class ApplicationTypeBaseControllerDirective extends BaseControllerDirective {
     appTypeName: string;
     appTypeGroup: ApplicationTypeGroup;
 

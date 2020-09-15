@@ -1,5 +1,6 @@
 import { HealthUtils, HealthStatisticsEntityKind } from './healthUtils';
-import { IRawHealthEvaluation, IRawDeployedServicePackageHealthEvaluation, IRawNodeHealthEvluation, IRawApplicationHealthEvluation, IRawServiceHealthEvaluation, IRawPartitionHealthEvaluation, IRawReplicaHealthEvaluation } from '../Models/RawDataTypes';
+import { IRawHealthEvaluation, IRawDeployedServicePackageHealthEvaluation, IRawNodeHealthEvluation, IRawApplicationHealthEvluation,
+         IRawServiceHealthEvaluation, IRawPartitionHealthEvaluation, IRawReplicaHealthEvaluation } from '../Models/RawDataTypes';
 import { DataService } from '../services/data.service';
 import { ApplicationCollection } from '../Models/DataModels/collections/Collections';
 

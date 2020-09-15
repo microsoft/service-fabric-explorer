@@ -1,13 +1,9 @@
-import { IRawUnhealthyEvaluation, IRawHealthEvaluation, IRawNodeHealthEvluation,
-        IRawApplicationHealthEvluation, IRawServiceHealthEvaluation, IRawPartitionHealthEvaluation,
-        IRawReplicaHealthEvaluation, IRawDeployedServicePackageHealthEvaluation, IRawDeployedApplicationHealthEvaluation, IRawHealthStateCount, IRawApplicationHealth, IRawClusterHealth, IRawServiceHealth } from '../Models/RawDataTypes';
+import { IRawUnhealthyEvaluation, IRawHealthEvaluation, IRawNodeHealthEvluation, IRawApplicationHealthEvluation, IRawServiceHealthEvaluation,
+         IRawPartitionHealthEvaluation, IRawReplicaHealthEvaluation, IRawDeployedServicePackageHealthEvaluation, IRawDeployedApplicationHealthEvaluation,
+         IRawHealthStateCount, IRawApplicationHealth, IRawClusterHealth, IRawServiceHealth } from '../Models/RawDataTypes';
 import { HealthEvaluation } from '../Models/DataModels/Shared';
 import { DataService } from '../services/data.service';
 import { RoutesService } from '../services/routes.service';
-import { ApplicationHealth } from '../Models/DataModels/Application';
-import { ClusterHealth } from '../Models/DataModels/Cluster';
-import { ServiceHealth } from '../Models/DataModels/Service';
-import { ReplicaHealth } from '../Models/DataModels/Replica';
 
 export enum HealthStatisticsEntityKind {
     Node,
@@ -60,9 +56,6 @@ export class HealthUtils {
     /**
      * Generates the url for a healthEvaluation to be able to route to the proper page. Urls are built up by taking the parentUrl and adding the minimum needed to route to this event.
      * Make sure that the application collection is initialized before calling this because for application kinds they make calls to the collection on the dataservice to get apptype.
-     * @param healthEval
-     * @param data
-     * @param parentUrl
      */
     public static getViewPathUrl(healthEval: IRawHealthEvaluation, data: DataService, parentUrl: string = ''): IViewPathData {
         let viewPathUrl = '';

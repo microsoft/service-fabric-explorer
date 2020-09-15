@@ -55,8 +55,8 @@
       <h4>Unhealthy Evaluations</h4>
     </div>
     <div collapse-body>
-      <detail-list [list]="deployedApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"
-        *ngIf="deployedApp && deployedApp.health"></detail-list>
+      <app-detail-listlistlist [list]="deployedApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"
+        *ngIf="deployedApp && deployedApp.health"></app-detail-listlistlist>
     </div>
   </app-collapse-container>
 </div>
@@ -67,8 +67,8 @@
       <h4>Deployed Service Packages</h4>
     </div>
     <div collapse-body>
-      <detail-list [list]="deployedServicePackages.collection" [listSettings]="listSettings"
-        *ngIf="deployedServicePackages"></detail-list>
+      <app-detail-listlistlist [list]="deployedServicePackages.collection" [listSettings]="listSettings"
+        *ngIf="deployedServicePackages"></app-detail-listlistlist>
     </div>
   </app-collapse-container>
 </div>

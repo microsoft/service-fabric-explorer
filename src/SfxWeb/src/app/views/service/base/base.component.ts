@@ -1,7 +1,7 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { TreeService } from 'src/app/services/tree.service';
-import { ServiceBaseController } from '../ServiceBase';
+import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { DataService } from 'src/app/services/data.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { Constants } from 'src/app/Common/Constants';
@@ -14,7 +14,7 @@ import { map } from 'rxjs/operators';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends ServiceBaseController {
+export class BaseComponent extends ServiceBaseControllerDirective {
 
   tabs: ITab[] = [{
     name: 'essentials',

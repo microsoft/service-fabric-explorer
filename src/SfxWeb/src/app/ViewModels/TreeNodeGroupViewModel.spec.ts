@@ -13,7 +13,7 @@ describe('Tree Node', () => {
 
     let child: ITreeNode;
 
-    let parent: null;
+    const parent = null;
     let childQuery: ITreeNode[];
 
     beforeEach((() => {

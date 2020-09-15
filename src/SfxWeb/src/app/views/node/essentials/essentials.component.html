@@ -90,7 +90,7 @@
       </div>
       <div *ngIf="node.raw.NodeDeactivationInfo.NodeDeactivationTask.length > 0">
         <label style="font-size: 16px;">Deactivation Tasks</label>
-        <table class="table detail-list" style="width: 100%">
+        <table class="table app-detail-list" style="width: 100%">
           <thead>
             <tr>
               <th>
@@ -134,8 +134,8 @@
       <h4>Unhealthy Evaluations</h4>
     </div>
     <div collapse-body>
-      <detail-list *ngIf="node" [list]="node.health.unhealthyEvaluations"
-        [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+      <app-detail-list *ngIf="node" [list]="node.health.unhealthyEvaluations"
+        [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
     </div>
   </app-collapse-container>
 </div>
@@ -146,7 +146,7 @@
       <h4>Deployed Applications</h4>
     </div>
     <div collapse-body>
-      <detail-list [list]="deployedApps.collection" [listSettings]="listSettings"></detail-list>
+      <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings"></app-detail-list>
     </div>
   </app-collapse-container>
 </div>

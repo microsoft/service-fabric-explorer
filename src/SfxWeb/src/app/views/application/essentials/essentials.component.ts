@@ -7,7 +7,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { forkJoin, of, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ClusterManifest } from 'src/app/Models/DataModels/Cluster';
-import { ApplicationBaseController } from '../applicationBase';
+import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { ListColumnSettingForApplicationServiceRow } from '../action-row/action-row.component';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
@@ -16,7 +16,7 @@ import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUti
   templateUrl: './essentials.component.html',
   styleUrls: ['./essentials.component.scss']
 })
-export class EssentialsComponent extends ApplicationBaseController {
+export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
   upgradeProgress: ApplicationUpgradeProgress;
   listSettings: ListSettings;

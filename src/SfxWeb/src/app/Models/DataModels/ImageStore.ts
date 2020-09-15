@@ -81,7 +81,7 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
             return;
         }
 
-        return Observable.create(observer => {
+        return new Observable(observer => {
             this.isLoadingFolderContent = true;
             this.loadFolderContent(path).subscribe(raw => {
                 this.setCurrentFolder(path, raw, clearCache);
@@ -179,7 +179,7 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
 
         */
 
-        return Observable.create(observer => {
+        return new Observable(observer => {
             this.data.restClient.getImageStoreContent(path).subscribe(raw => {
                 if (refresh) {
                     this.setCurrentFolder(path, raw, false);
