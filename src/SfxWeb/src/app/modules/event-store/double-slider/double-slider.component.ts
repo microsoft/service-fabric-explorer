@@ -64,7 +64,7 @@ export class DoubleSliderComponent implements OnChanges, AfterViewInit {
         }
 
         if (changed){
-          this.onDateChange.emit({
+          this.dateChanged.emit({
             endDate: this.endDate,
             startDate: this.startDate
           });

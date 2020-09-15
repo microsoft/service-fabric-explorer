@@ -2,14 +2,12 @@
     Copy raw repair Job <app-clip-board [text]="copyText"></app-clip-board>
 </div>
 
-<ngb-tabset>
-    <ngb-tab>
-        <ng-template ngbTabTitle>
-            <div style="font-size: 12pt;">
-                Condensed
-            </div>
-        </ng-template>
-        <ng-template ngbTabContent>
+<div ngbNav #nav="ngbNav">
+    <div ngbNavItem>
+        <a ngbNavLink style="font-size: 12pt;">
+            Condensed
+        </a>
+        <ng-template ngbNavContent>
             <div style="display: flex;flex-direction: row;">
                 <div *ngIf="item.raw.History" style="min-width: 400px;">
                     <h5 style="border-bottom: 1px solid gray; padding-bottom: 5px">
@@ -69,17 +67,16 @@
             </div>
 
         </ng-template>
-    </ngb-tab>
-    <ngb-tab>
-        <ng-template ngbTabTitle>
-            <div style="font-size: 12pt;">
-                Full Description
-            </div>
-        </ng-template>
-        <ng-template ngbTabContent>
+    </div>
+    <div ngbNavItem>
+        <a ngbNavLink style="font-size: 12pt;">
+            Full Description
+        </a>
+        <ng-template ngbNavContent>
             <div style="width: 80%">
                 <app-detail-view-part [data]="item.raw"></app-detail-view-part>
             </div>
         </ng-template>
-    </ngb-tab>
-</ngb-tabset>
+    </div>
+</div>
+<div [ngbNavOutlet]="nav"></div>

@@ -2,7 +2,7 @@ import { ITreeNode } from './TreeTypes';
 import { TreeViewModel } from './TreeViewModel';
 import { IClusterHealthChunkQueryDescription, IClusterHealthChunk } from '../Models/HealthChunkRawDataTypes';
 import { Observable, of, forkJoin, Subject } from 'rxjs';
-import { map, mergeMap, filter } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { BadgeConstants } from '../Common/Constants';
 import { IdGenerator } from '../Utils/IdGenerator';
 import { ListSettings } from '../Models/ListSettings';
@@ -34,14 +34,10 @@ export class TreeNodeGroupViewModel {
 
     public tree: TreeViewModel;
     public node: ITreeNode;
-    private keyboardSelectActionDelayInMilliseconds = 200;
 
     public children: TreeNodeGroupViewModel[] = [];
     public loadingChildren = false;
     public childrenLoaded = false;
-
-    private IisExpanded = false;
-    private currentGetChildrenPromise: Subject<any>;
 
     public get displayedChildren(): TreeNodeGroupViewModel[] {
         let result = this.children.filter(node => node.isVisibleByBadge);
@@ -58,11 +54,11 @@ export class TreeNodeGroupViewModel {
     }
 
     public get isExpanded(): boolean {
-        return  this.IisExpanded && !!this.node.childrenQuery;
+        return  this.internalIsExpanded && !!this.node.childrenQuery;
     }
 
     public get isCollapsed(): boolean {
-        return !this.IisExpanded && this.hasChildren;
+        return !this.internalIsExpanded && this.hasChildren;
     }
 
     public get paddingLeftPx(): string {
@@ -72,6 +68,10 @@ export class TreeNodeGroupViewModel {
             return '10px';
         }
     }
+
+    private keyboardSelectActionDelayInMilliseconds = 200;
+    private internalIsExpanded = false;
+    private currentGetChildrenPromise: Subject<any>;
 
     constructor(tree: TreeViewModel, node: ITreeNode, parent: TreeNodeGroupViewModel) {
         this.tree = tree;
@@ -87,21 +87,21 @@ export class TreeNodeGroupViewModel {
     }
 
     public toggle(): Observable<any> {
-        this.IisExpanded = !this.IisExpanded;
-        return this.IisExpanded ? this.getChildren() : of(true);
+        this.internalIsExpanded = !this.internalIsExpanded;
+        return this.internalIsExpanded ? this.getChildren() : of(true);
     }
 
     public expand(): Observable<any> {
-        this.IisExpanded = true;
+        this.internalIsExpanded = true;
         return this.getChildren();
     }
 
     public collapse() {
-        this.IisExpanded = false;
+        this.internalIsExpanded = false;
     }
 
     public updateHealthChunkQueryRecursively(healthChunkQueryDescription: IClusterHealthChunkQueryDescription): void {
-        if (!this.IisExpanded) {
+        if (!this.internalIsExpanded) {
             return;
         }
 
@@ -115,7 +115,7 @@ export class TreeNodeGroupViewModel {
     }
 
     public updateDataModelFromHealthChunkRecursively(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        if (!this.IisExpanded) {
+        if (!this.internalIsExpanded) {
             return of(true);
         }
 
@@ -130,7 +130,7 @@ export class TreeNodeGroupViewModel {
     }
 
     public refreshExpandedChildrenRecursively(): Observable<any> {
-        if (!this.node.childrenQuery || !this.IisExpanded) {
+        if (!this.node.childrenQuery || !this.internalIsExpanded) {
             return of(true);
         }
 
@@ -214,7 +214,7 @@ export class TreeNodeGroupViewModel {
            switch (badgeState.badgeClass) {
                case BadgeConstants.BadgeUnknown:
                case BadgeConstants.BadgeOK:
-                   isVisible = this..showOkItems;
+                   isVisible = this.tree.showOkItems;
                    break;
                case BadgeConstants.BadgeWarning:
                    isVisible = this.tree.showWarningItems;

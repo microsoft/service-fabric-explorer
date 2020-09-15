@@ -439,10 +439,10 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
                 this.defaultDateWindowInDays);
         }
 
-        if (!this._startDate || this._startDate.getTime() !== startDate.getTime() ||
-            !this._endDate || this._endDate.getTime() !== endDate.getTime()) {
-            this._startDate = startDate;
-            this._endDate = endDate;
+        if (!this.iStartDate || this.iStartDate.getTime() !== startDate.getTime() ||
+            !this.iEndDate || this.iEndDate.getTime() !== endDate.getTime()) {
+            this.iStartDate = startDate;
+            this.iEndDate = endDate;
             return true;
         }
 

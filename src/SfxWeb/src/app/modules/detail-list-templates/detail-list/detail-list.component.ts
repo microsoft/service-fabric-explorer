@@ -59,7 +59,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
     this.debouncerHandlerSubscription = this.debounceHandler
    .pipe(debounceTime(1000), distinctUntilChanged())
    .subscribe(val => {
-      this.onSort.emit(val);
+      this.sorted.emit(val);
    });
   }
 
