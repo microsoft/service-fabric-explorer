@@ -36,7 +36,7 @@ context('Cluster page', () => {
 
     it('certificate expiring banner', () => {
       cy.route('GET', nodes_route, 'fixture:cluster-page/nodes-1-warning')
-      cy.route('GET', apiUrl('/Nodes/_nt_4/$/GetHealth?*'), 'fixture:cluster-page/node-health').as('getnodeHealth')
+      cy.route('GET', apiUrl('/Nodes/_nt_0/$/GetHealth?*'), 'fixture:cluster-page/node-health').as('getnodeHealth')
 
       cy.visit('')
 
