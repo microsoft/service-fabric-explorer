@@ -60,10 +60,10 @@ describe('Tree Node', () => {
         beforeEach(() => {
             node.alwaysVisible = false;
 
-            testNode._tree = {} as TreeViewModel;
-            testNode._tree.showOkItems = false;
-            testNode._tree.showWarningItems = false;
-            testNode._tree.showErrorItems = false;
+            testNode.tree = {} as TreeViewModel;
+            testNode.tree.showOkItems = false;
+            testNode.tree.showWarningItems = false;
+            testNode.tree.showErrorItems = false;
 
             vr =  new ValueResolver();
         });
@@ -84,7 +84,7 @@ describe('Tree Node', () => {
             node.badge = () => vr.resolveHealthStatus('OK');
             testNode.update(node);
             expect(testNode.isVisibleByBadge).toBeFalsy();
-            testNode._tree.showOkItems = true;
+            testNode.tree.showOkItems = true;
             expect(testNode.isVisibleByBadge).toBeTruthy();
         });
 
@@ -94,7 +94,7 @@ describe('Tree Node', () => {
             testNode.update(node);
 
             expect(testNode.isVisibleByBadge).toBeFalsy();
-            testNode._tree.showWarningItems = true;
+            testNode.tree.showWarningItems = true;
             expect(testNode.isVisibleByBadge).toBeTruthy();
         });
 
@@ -104,7 +104,7 @@ describe('Tree Node', () => {
             testNode.update(node);
 
             expect(testNode.isVisibleByBadge).toBeFalsy();
-            testNode._tree.showErrorItems = true;
+            testNode.tree.showErrorItems = true;
             expect(testNode.isVisibleByBadge).toBeTruthy();
         });
 
