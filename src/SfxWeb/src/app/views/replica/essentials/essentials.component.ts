@@ -5,7 +5,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { map, tap } from 'rxjs/operators';
-import { ReplicaBaseController } from '../ReplicaBase';
+import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { RoutesService } from 'src/app/services/routes.service';
 
 @Component({
@@ -13,7 +13,7 @@ import { RoutesService } from 'src/app/services/routes.service';
   templateUrl: './essentials.component.html',
   styleUrls: ['./essentials.component.scss']
 })
-export class EssentialsComponent extends ReplicaBaseController {
+export class EssentialsComponent extends ReplicaBaseControllerDirective {
   unhealthyEvaluationsListSettings: ListSettings;
   nodeView: string;
 

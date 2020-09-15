@@ -3,7 +3,7 @@ import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { forkJoin, Observable } from 'rxjs';
 import { Node } from 'src/app/Models/DataModels/Node';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { HealthStateConstants } from 'src/app/Common/Constants';
 
@@ -12,7 +12,7 @@ import { HealthStateConstants } from 'src/app/Common/Constants';
   templateUrl: './clustermap.component.html',
   styleUrls: ['./clustermap.component.scss']
 })
-export class ClustermapComponent extends BaseController {
+export class ClustermapComponent extends BaseControllerDirective {
 
   nodes: NodeCollection;
   filter = '';

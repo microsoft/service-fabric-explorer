@@ -1,14 +1,12 @@
-import { IDataModel } from '../Base';
-import { IClusterHealthChunk, IHealthStateChunk, IHealthStateChunkList, IServiceHealthStateChunk, IDeployedApplicationHealthStateChunk, IDeployedServicePackageHealthStateChunk } from '../../HealthChunkRawDataTypes';
+import { IClusterHealthChunk, IDeployedServicePackageHealthStateChunk } from '../../HealthChunkRawDataTypes';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, Subject, of, throwError, forkJoin } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { ValueResolver, ITextAndBadge } from 'src/app/Utils/ValueResolver';
-import { INodesStatusDetails, NodeStatusDetails, IRawDeployedApplication, IRawDeployedServicePackage } from '../../RawDataTypes';
+import { IRawDeployedServicePackage } from '../../RawDataTypes';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
-import { HealthStateConstants, NodeStatusConstants, StatusWarningLevel, BannerWarningID, Constants } from 'src/app/Common/Constants';
+import { HealthStateConstants } from 'src/app/Common/Constants';
 import { mergeMap, map } from 'rxjs/operators';
-import { Utils } from 'src/app/Utils/Utils';
 import { BackupPolicy } from '../Cluster';
 import { ApplicationBackupConfigurationInfo, Application } from '../Application';
 import { ApplicationTypeGroup, ApplicationType } from '../ApplicationType';
@@ -24,10 +22,8 @@ import { FabricEventBase, FabricEventInstanceModel, ClusterEvent, NodeEvent, App
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingWithEventStoreFullDescription, ListColumnSettingWithEventStoreRowDisplay } from '../../ListSettings';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { PartitionBackup, PartitionBackupInfo } from '../PartitionBackupInfo';
-
 import { DataModelCollectionBase, IDataModelCollection } from './CollectionBase';
-
-import   groupBy  from 'lodash/groupBy';
+import groupBy from 'lodash/groupBy';
 import { RoutesService } from 'src/app/services/routes.service';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -241,7 +237,7 @@ export class DeployedServicePackageCollection extends DataModelCollectionBase<De
         const appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.name);
         if (appHealthChunk) {
             const deployedAppHealthChunk = appHealthChunk.DeployedApplicationHealthStateChunks.Items.find(
-                deployedAppHealthChunk => deployedAppHealthChunk.NodeName === this.parent.parent.name);
+                deployedAppHealth => deployedAppHealth.NodeName === this.parent.parent.name);
             if (deployedAppHealthChunk) {
                 return this.updateCollectionFromHealthChunkList<IDeployedServicePackageHealthStateChunk>(
                     deployedAppHealthChunk.DeployedServicePackageHealthStateChunks,
@@ -330,14 +326,14 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     protected readonly optionalColsStartIndex: number = 2;
 
     private lastRefreshTime?: Date;
-    private _startDate: Date;
-    private _endDate: Date;
+    private iStartDate: Date;
+    private iEndDate: Date;
 
     public get startDate() {
-        return new Date(this._startDate.valueOf());
+        return new Date(this.iStartDate.valueOf());
     }
     public get endDate() {
-        let endDate = new Date(this._endDate.valueOf());
+        let endDate = new Date(this.iEndDate.valueOf());
         const timeNow = new Date();
         if (endDate > timeNow) {
             endDate = timeNow;
@@ -443,10 +439,10 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
                 this.defaultDateWindowInDays);
         }
 
-        if (!this._startDate || this._startDate.getTime() !== startDate.getTime() ||
-            !this._endDate || this._endDate.getTime() !== endDate.getTime()) {
-            this._startDate = startDate;
-            this._endDate = endDate;
+        if (!this.iStartDate || this.iStartDate.getTime() !== startDate.getTime() ||
+            !this.iEndDate || this.iEndDate.getTime() !== endDate.getTime()) {
+            this.iStartDate = startDate;
+            this.iEndDate = endDate;
             return true;
         }
 

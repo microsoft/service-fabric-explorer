@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { ServiceApplicationsBaseController } from '../SystemApplicationBase';
+import { ServiceApplicationsBaseControllerDirective } from '../SystemApplicationBase';
 import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -11,7 +11,7 @@ import { Observable } from 'rxjs';
   templateUrl: './essentials.component.html',
   styleUrls: ['./essentials.component.scss']
 })
-export class EssentialsComponent extends ServiceApplicationsBaseController {
+export class EssentialsComponent extends ServiceApplicationsBaseControllerDirective {
 
   listSettings: ListSettings;
   unhealthyEvaluationsListSettings: ListSettings;

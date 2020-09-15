@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
@@ -17,7 +17,7 @@ import { SettingsService } from 'src/app/services/settings.service';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends BaseController {
+export class BaseComponent extends BaseControllerDirective {
   public nodeName: string;
   public appId: string;
   public serviceId: string;

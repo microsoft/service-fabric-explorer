@@ -235,7 +235,8 @@ export class NodeLoadInformation extends DataModelBase<IRawNodeLoadInformation> 
     }
 
     protected updateInternal(): Observable<any> | void {
-        this.nodeLoadMetricInformation = CollectionUtils.updateDataModelCollection(this.nodeLoadMetricInformation, this.raw.NodeLoadMetricInformation.map(lmi => new NodeLoadMetricInformation(this.data, lmi, this)));
+        this.nodeLoadMetricInformation = CollectionUtils.updateDataModelCollection(this.nodeLoadMetricInformation,
+                                                                                   this.raw.NodeLoadMetricInformation.map(lmi => new NodeLoadMetricInformation(this.data, lmi, this)));
         this.metrics = this.nodeLoadMetricInformation.reduce(
             (obj: Record<string, number>, metricData) => {
                 obj[metricData.name] = +metricData.raw.NodeLoad;

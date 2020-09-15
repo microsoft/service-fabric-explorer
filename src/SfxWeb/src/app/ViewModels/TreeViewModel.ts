@@ -30,16 +30,16 @@ export class TreeViewModel {
             !this.childGroupViewModel.children.length;
     }
 
-    private _childrenQuery: () => Observable<ITreeNode[]>;
-    private _selectTreeNodeOpId = 1;
+    private childrenQuery: () => Observable<ITreeNode[]>;
+    private selectTreeNodeOpId = 1;
 
     constructor(childrenQuery: () => Observable<ITreeNode[]>) {
-        this._childrenQuery = childrenQuery;
+        this.childrenQuery = childrenQuery;
         this.refreshChildren();
     }
 
     public refreshChildren() {
-        const baseNode: ITreeNode = {childrenQuery: this._childrenQuery,
+        const baseNode: ITreeNode = {childrenQuery: this.childrenQuery,
                                      displayName: () => '',
                                     nodeId: 'base'};
         this.childGroupViewModel = new TreeNodeGroupViewModel(this, baseNode, null);
@@ -71,17 +71,17 @@ export class TreeViewModel {
 
     public onKeyDown(event: KeyboardEvent) {
         const selectedNode = this.selectedNode;
-        switch (event.which) {
-            case 40: // Down
+        switch (event.key) {
+            case '40': // Down
                 this.selectedNode.selectNext();
                 break;
-            case 38: // Up
+            case '38': // Up
                 this.selectedNode.selectPrevious();
                 break;
-            case 39: // Right
+            case '39': // Right
                 this.selectedNode.expandOrMoveToChild();
                 break;
-            case 37: // Left
+            case '37': // Left
                 this.selectedNode.collapseOrMoveToParent();
                 break;
         }
@@ -97,8 +97,8 @@ export class TreeViewModel {
     }
 
     public selectTreeNode(path: string[], skipSelectAction?: boolean): Observable<void> {
-        this._selectTreeNodeOpId++;
-        const opId = this._selectTreeNodeOpId;
+        this.selectTreeNodeOpId++;
+        const opId = this.selectTreeNodeOpId;
         return this.selectTreeNodeInternal(path, 0, this.childGroupViewModel, opId, skipSelectAction);
     }
 
@@ -114,15 +114,15 @@ export class TreeViewModel {
     private selectTreeNodeInternal(path: string[], currIndex: number, group: TreeNodeGroupViewModel, opId: number, skipSelectAction?: boolean): Observable<void> {
         const observ = group.expand();
         observ.subscribe(() => {
-            if (opId !== this._selectTreeNodeOpId) {
+            if (opId !== this.selectTreeNodeOpId) {
                 return;
             }
 
             let node: TreeNodeGroupViewModel = null;
             const nodes = group.children;
-            for (let i = 0; i < nodes.length; i++) {
-                if (nodes[i].nodeId === path[currIndex]) {
-                    node = nodes[i];
+            for (const n of nodes) {
+                if (n.nodeId === path[currIndex]) {
+                    node = n;
                     break;
                 }
             }

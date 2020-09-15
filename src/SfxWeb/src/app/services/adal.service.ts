@@ -1,13 +1,11 @@
 import { Injectable } from '@angular/core';
-import { DataService } from './data.service';
 import { RestClientService } from './rest-client.service';
 import { Observable, Subscriber, of } from 'rxjs';
 import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
-import * as AuthenticationContext from  'adal-angular';
+import * as AuthenticationContext from 'adal-angular';
 import { adal } from 'adal-angular';
 
-// declare var AuthenticationContext: adal.AuthenticationContextStatic;
 const createAuthContextFn: adal.AuthenticationContextStatic = AuthenticationContext;
 
 export class AdalConfig {

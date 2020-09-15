@@ -6,7 +6,7 @@ describe('StatusWarningService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: StatusWarningService = TestBed.get(StatusWarningService);
+    const service: StatusWarningService = TestBed.inject(StatusWarningService);
     expect(service).toBeTruthy();
   });
 });

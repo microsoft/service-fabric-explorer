@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { PartitionBaseController } from '../PartitionBase';
+import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { DataService } from 'src/app/services/data.service';
 import { PartitionEventList } from 'src/app/Models/DataModels/collections/Collections';
 import { PartitionTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
@@ -9,7 +9,7 @@ import { PartitionTimelineGenerator } from 'src/app/Models/eventstore/timelineGe
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss']
 })
-export class EventsComponent extends PartitionBaseController {
+export class EventsComponent extends PartitionBaseControllerDirective {
   partitionEvents: PartitionEventList;
   partitionTimeLineGenerator: PartitionTimelineGenerator;
 

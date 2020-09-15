@@ -20,13 +20,15 @@ import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { StatusWarningsComponent } from './status-warnings/status-warnings.component';
 import { BackupsComponent } from './backups/backups.component';
-import { NgbDropdownModule, NgbTabsetModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-restore.module';
 import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
 import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.component';
 
 @NgModule({
-  declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent, ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent, StatusWarningsComponent, BackupsComponent, RepairTasksComponent, RepairTaskViewComponent],
+  declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
+                 ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent,
+                 StatusWarningsComponent, BackupsComponent, RepairTasksComponent, RepairTaskViewComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,
@@ -39,7 +41,7 @@ import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.com
     ChartsModule,
     NgbDropdownModule,
     BackupRestoreModule,
-    NgbTabsetModule,
+    NgbNavModule,
     UpgradeProgressModule
   ]
 })

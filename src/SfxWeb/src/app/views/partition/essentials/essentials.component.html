@@ -106,8 +106,8 @@
         <h4>Unhealthy Evaluations</h4>
       </div>
       <div collapse-body>
-        <detail-list [list]="partition.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings">
-        </detail-list>
+        <app-detail-list [list]="partition.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings">
+        </app-detail-list>
       </div>
     </app-collapse-container>
   </div>
@@ -118,8 +118,8 @@
         <h4>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h4>
       </div>
       <div collapse-body>
-        <detail-list [list]="partition.replicas.collection" [listSettings]="listSettings"
-          *ngIf="partition.replicas.isInitialized"></detail-list>
+        <app-detail-list [list]="partition.replicas.collection" [listSettings]="listSettings"
+          *ngIf="partition.replicas.isInitialized"></app-detail-list>
       </div>
     </app-collapse-container>
   </div>

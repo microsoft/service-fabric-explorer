@@ -18,40 +18,40 @@ export class ListSettings {
     public sortPropertyPaths: string[] = [];
     public sortReverse = false;
 
-    private _currentPage = 1;
-    private _itemCount = 0;
+    private iCurrentPage = 1;
+    private iItemCount = 0;
 
     public get count(): number {
-        return this._itemCount;
+        return this.iItemCount;
     }
 
     public set count(itemCount: number) {
-        this._itemCount = itemCount;
+        this.iItemCount = itemCount;
 
         if (this.currentPage > this.pageCount) {
             this.currentPage = this.pageCount;
         }
     }
 
-    public get currentPage(): number {
-        return this._currentPage;
-    }
-
     public get hasEnabledFilters(): boolean {
         return this.columnSettings.some(cs => cs.enableFilter);
     }
 
+    public get currentPage(): number {
+        return this.iCurrentPage;
+    }
+
     public set currentPage(page: number) {
         if (page < 1) {
-            this._currentPage = 1;
+            this.iCurrentPage = 1;
         } else if (page > this.pageCount) {
             if (this.pageCount > 0) {
-                this._currentPage = this.pageCount;
+                this.iCurrentPage = this.pageCount;
             } else {
-                this._currentPage = 1;
+                this.iCurrentPage = 1;
             }
         } else {
-            this._currentPage = page;
+            this.iCurrentPage = page;
         }
     }
 

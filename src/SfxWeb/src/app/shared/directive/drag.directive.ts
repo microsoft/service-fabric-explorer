@@ -7,12 +7,12 @@ export class DragDirective {
 
   down = false;
 
-  @Output() onDrag = new EventEmitter();
+  @Output() dragFinish = new EventEmitter();
 
   @HostListener('document:mousemove', ['$event'])
   handleDrag($event: MouseEvent){
     if (this.down){
-      this.onDrag.emit($event.clientX);
+      this.dragFinish.emit($event.clientX);
     }
   }
 
@@ -25,7 +25,7 @@ export class DragDirective {
   @HostListener('document:mouseup', ['$event'])
   endDrag($event: any){
     if (this.down){
-      this.onDrag.emit($event.clientX);
+      this.dragFinish.emit($event.clientX);
     }
     this.down = false;
   }

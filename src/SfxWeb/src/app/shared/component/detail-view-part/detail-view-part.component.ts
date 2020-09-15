@@ -3,17 +3,17 @@ import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Constants } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
 import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
-import  size from 'lodash/size';
-import  forOwn  from 'lodash/forOwn';
-import  startCase  from 'lodash/startCase';
-import  camelCase  from 'lodash/camelCase';
-import  isNumber  from 'lodash/isNumber';
-import  isBoolean  from 'lodash/isBoolean';
-import  isUndefined  from 'lodash/isUndefined';
-import  isNull  from 'lodash/isNull';
-import  isEmpty  from 'lodash/isEmpty';
-import  isObject  from 'lodash/isObject';
-import  first  from 'lodash/first';
+import size from 'lodash/size';
+import forOwn from 'lodash/forOwn';
+import startCase from 'lodash/startCase';
+import camelCase from 'lodash/camelCase';
+import isNumber from 'lodash/isNumber';
+import isBoolean from 'lodash/isBoolean';
+import isUndefined from 'lodash/isUndefined';
+import isNull from 'lodash/isNull';
+import isEmpty from 'lodash/isEmpty';
+import isObject from 'lodash/isObject';
+import first from 'lodash/first';
 
 export class ResolvedObject {
   [index: string]: any;

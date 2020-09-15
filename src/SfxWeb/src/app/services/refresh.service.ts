@@ -15,7 +15,7 @@ export class RefreshService {
   private previousRefreshSetting = 0;
 
   private refreshSubjects: (() => Observable<any>)[] = [];
-  private _refreshSubjectsMap: Record<string, () => Observable<any>> = {};
+  private refreshSubjectsMap: Record<string, () => Observable<any>> = {};
 
   constructor(private storage: StorageService) { }
 
@@ -27,23 +27,23 @@ export class RefreshService {
   }
 
   public insertRefreshSubject(key: string, func: () => Observable<any> ) {
-    if (key in this._refreshSubjectsMap) {
+    if (key in this.refreshSubjectsMap) {
       return;
     }
 
-    this._refreshSubjectsMap[key] = func;
+    this.refreshSubjectsMap[key] = func;
     this.refreshSubjects.push(func);
   }
 
   public removeRefreshSubject(key: string) {
-    if (key in this._refreshSubjectsMap) {
-      this.refreshSubjects = this.refreshSubjects.filter( subject => subject !== this._refreshSubjectsMap[key]);
-      delete this._refreshSubjectsMap[key];
+    if (key in this.refreshSubjectsMap) {
+      this.refreshSubjects = this.refreshSubjects.filter( subject => subject !== this.refreshSubjectsMap[key]);
+      delete this.refreshSubjectsMap[key];
     }
   }
 
   public hasRefreshSubject(key: string): boolean {
-    return key in this._refreshSubjectsMap;
+    return key in this.refreshSubjectsMap;
   }
 
   public refreshSubjectCount(): number{

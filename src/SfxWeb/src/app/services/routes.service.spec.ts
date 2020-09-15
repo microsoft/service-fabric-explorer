@@ -27,8 +27,8 @@ describe('RoutesService', () => {
       declarations: [AppComponent]
     });
 
-    router = TestBed.get(Router);
-    location = TestBed.get(Location);
+    router = TestBed.inject(Router);
+    location = TestBed.inject(Location);
 
     fixture = TestBed.createComponent(AppComponent);
     router.initialNavigation();
@@ -36,12 +36,12 @@ describe('RoutesService', () => {
 
 
   fit('should be created', () => {
-    const service: RoutesService = TestBed.get(RoutesService);
+    const service: RoutesService = TestBed.inject(RoutesService);
     expect(service).toBeTruthy();
   });
 
   fit('start on nondefault route of entity and view different entity of same type (redirect)', async () => {
-    const service: RoutesService = TestBed.get(RoutesService);
+    const service: RoutesService = TestBed.inject(RoutesService);
 
     await router.navigate(['/node/node1/details']);
     expect(location.path()).toBe('/node/node1/details');
@@ -56,7 +56,7 @@ describe('RoutesService', () => {
   });
 
   fit('route to different view and back (no redirect)', async () => {
-    const service: RoutesService = TestBed.get(RoutesService);
+    const service: RoutesService = TestBed.inject(RoutesService);
 
     await router.navigate(['/node/node1/details']);
     expect(location.path()).toBe('/node/node1/details');
@@ -72,7 +72,7 @@ describe('RoutesService', () => {
 
 
   fit('route to different subpage. (no redirect)', async () => {
-    const service: RoutesService = TestBed.get(RoutesService);
+    const service: RoutesService = TestBed.inject(RoutesService);
 
     await router.navigate(['/node/node1/details']);
     expect(location.path()).toBe('/node/node1/details');
@@ -87,7 +87,7 @@ describe('RoutesService', () => {
   });
 
   fit('route to default page of same entity type (no redirect)', async () => {
-    const service: RoutesService = TestBed.get(RoutesService);
+    const service: RoutesService = TestBed.inject(RoutesService);
 
     await router.navigate(['/node/node1']);
     expect(location.path()).toBe('/node/node1');

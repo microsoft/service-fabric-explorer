@@ -24,10 +24,6 @@ export class DetailTableResolverComponent implements OnInit {
     this.loadComponent();
   }
 
-  ngOnDestroy() {
-
-  }
-
   loadComponent() {
 
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.template);

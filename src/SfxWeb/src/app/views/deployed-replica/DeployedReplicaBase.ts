@@ -5,11 +5,11 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { IdUtils } from 'src/app/Utils/IdUtils';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DeployedReplica } from 'src/app/Models/DataModels/DeployedReplica';
 
 @Directive()
-export class DeployedReplicaBaseController extends BaseController {
+export class DeployedReplicaBaseControllerDirective extends BaseControllerDirective {
     replicaStatus: number;
 
     nodeName: string;

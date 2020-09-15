@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -15,7 +15,7 @@ import { ActionCreateBackupPolicyComponent } from '../action-create-backup-polic
   templateUrl: './backups.component.html',
   styleUrls: ['./backups.component.scss']
 })
-export class BackupsComponent extends BaseController {
+export class BackupsComponent extends BaseControllerDirective {
 
   backupPolicyListSettings: ListSettings;
   backupPolicies: BackupPolicyCollection;

@@ -99,7 +99,7 @@
 
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDomains.length > 0">
                 <h4>Progress by Upgrade Domain</h4>
-                <upgrade-progress [upgradeDomains]="upgradeProgress.upgradeDomains"></upgrade-progress>
+                <app-upgrade-progress [upgradeDomains]="upgradeProgress.upgradeDomains"></app-upgrade-progress>
             </div>
 
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.raw.FailureReason !== 'None'">
@@ -123,7 +123,7 @@
             </div>
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.unhealthyEvaluations.length > 0">
                 <h4>Unhealthy Evaluations (Upgrade)</h4>
-                <detail-list [list]="upgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></detail-list>
+                <app-detail-list [list]="upgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
             </div>
 
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDescription">
@@ -140,7 +140,7 @@
             <h4>Unhealthy Evaluations</h4>
         </div>
         <div collapse-body>
-            <detail-list [list]="app.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+            <app-detail-list [list]="app.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
         </div>
     </app-collapse-container>
 </div>
@@ -151,7 +151,7 @@
             <h4>Services</h4>
         </div>
         <div collapse-body>
-            <detail-list [list]="app.services.collection" [listSettings]="listSettings"></detail-list>
+            <app-detail-list [list]="app.services.collection" [listSettings]="listSettings"></app-detail-list>
         </div>
     </app-collapse-container>
 </div>
@@ -162,12 +162,12 @@
             <h4>Service Types</h4>
         </div>
         <div collapse-body>
-            <detail-list [list]="app.serviceTypes.collection" [listSettings]="serviceTypesListSettings"></detail-list>
+            <app-detail-list [list]="app.serviceTypes.collection" [listSettings]="serviceTypesListSettings"></app-detail-list>
         </div>
     </app-collapse-container>
 </div>
 
 <!-- <div class="detail-pane essen-pane" *ngIf="clusterManifest && clusterManifest.isNetworkInventoryManagerEnabled">
     <h4>Networks</h4>
-    <detail-list [list]="networks" [listSettings]="networkListSettings"></detail-list>
+    <app-detail-list [list]="networks" [listSettings]="networkListSettings"></app-detail-list>
 </div> -->

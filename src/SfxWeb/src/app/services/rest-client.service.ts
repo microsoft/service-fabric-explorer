@@ -1,22 +1,24 @@
 import { Injectable } from '@angular/core';
 import { MessageService, MessageSeverity } from './message.service';
-import { HttpClient, HttpResponse, HttpErrorResponse } from '@angular/common/http';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription } from '../Models/HealthChunkRawDataTypes';
 import { IResponseMessageHandler, ResponseMessageHandlers } from '../Common/ResponseMessageHandlers';
-import { Observable, of, Observer, throwError } from 'rxjs';
-import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgradeProgress, IRawClusterLoadInformation, IRawNetwork, IRawNetworkOnApp,
-         IRawNetworkOnNode, IRawAppOnNetwork, IRawNodeOnNetwork, IRawDeployedContainerOnNetwork, IRawNode, IRawBackupPolicy, IRawApplicationBackupConfigurationInfo,
+import { Observable, of, throwError } from 'rxjs';
+import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgradeProgress, IRawClusterLoadInformation,
+        IRawDeployedContainerOnNetwork, IRawNode, IRawBackupPolicy, IRawApplicationBackupConfigurationInfo,
          IRawServiceBackupConfigurationInfo, IRawBackupProgressInfo, IRawRestoreProgressInfo, IRawPartitionBackupConfigurationInfo, IRawPartitionBackup, IRawNodeHealth,
          IRawNodeLoadInformation, IRawDeployedApplication, IRawApplicationHealth, IRawDeployedServicePackage, IRawDeployedServicePackageHealth, IRawServiceManifest,
          IRawDeployedReplica, IRawServiceType, IRawDeployedCodePackage, IRawContainerLogs, IRawDeployedReplicaDetail, IRawApplicationType, IRawApplicationManifest,
          IRawApplication, IRawService, IRawCreateServiceDescription, IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription, IRawServiceDescription,
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
-         IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadataMetadata, IRawAadMetadata, IRawStorage, IRawRepairTask, IRawServiceNameInfo, IRawApplicationNameInfo } from '../Models/RawDataTypes';
+         IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
+         IRawServiceNameInfo, IRawApplicationNameInfo } from '../Models/RawDataTypes';
 import { mergeMap, map, catchError } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
 import { Partition } from '../Models/DataModels/Partition';
-import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent, FabricEvent, EventsResponseAdapter, FabricEventBase } from '../Models/eventstore/Events';
+import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent,
+         FabricEvent, EventsResponseAdapter, FabricEventBase } from '../Models/eventstore/Events';
 import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
@@ -121,11 +123,13 @@ export class RestClientService {
   }
 
   public getLatestPartitionBackup(partitionId: string, messageHandler?: IResponseMessageHandler): Observable<IRawPartitionBackup[]> {
-      return this.getFullCollection2<IRawPartitionBackup>('Partitions/' + encodeURIComponent(partitionId) + '/$/GetBackups', 'Gets the latest partition backup', RestClientService.apiVersion64, messageHandler, undefined, undefined, undefined, undefined, true);
+      return this.getFullCollection2<IRawPartitionBackup>('Partitions/' + encodeURIComponent(partitionId) + '/$/GetBackups', 'Gets the latest partition backup',
+                                                          RestClientService.apiVersion64, messageHandler, undefined, undefined, undefined, undefined, true);
   }
 
   public getPartitionBackupList(partitionId: string, messageHandler?: IResponseMessageHandler, startDate?: Date, endDate?: Date, maxResults?: number): Observable<IRawPartitionBackup[]> {
-      return this.getFullCollection2<IRawPartitionBackup>('Partitions/' + encodeURIComponent(partitionId) + '/$/GetBackups', 'Gets the partition backup list', RestClientService.apiVersion64, messageHandler, undefined, startDate, endDate, maxResults);
+      return this.getFullCollection2<IRawPartitionBackup>('Partitions/' + encodeURIComponent(partitionId) + '/$/GetBackups', 'Gets the partition backup list', RestClientService.apiVersion64,
+                                                          messageHandler, undefined, startDate, endDate, maxResults);
   }
 
   public getBackupPolicy(backupName: string, messageHandler?: IResponseMessageHandler): Observable<IRawBackupPolicy> {
@@ -252,6 +256,8 @@ export class RestClientService {
       return this.get(formedUrl, 'Get deployed code packages', messageHandler);
   }
 
+
+// tslint:disable-next-line:max-line-length
   public getDeployedCodePackage(nodeName: string, applicationId: string, servicePackageName: string, codePackageName: string, messageHandler?: IResponseMessageHandler): Observable<IRawDeployedCodePackage[]> {
       const url = 'Nodes/' + encodeURIComponent(nodeName)
           + '/$/GetApplications/' + encodeURIComponent(applicationId)
@@ -264,6 +270,7 @@ export class RestClientService {
       return this.get(formedUrl, 'Get deployed code package', messageHandler);
   }
 
+// tslint:disable-next-line:max-line-length
   public getDeployedContainerLogs(nodeName: string, applicationId: string, servicePackageName: string, codePackageName: string, servicePackageActivationId: string, tail: string, messageHandler?: IResponseMessageHandler): Observable<IRawContainerLogs> {
       const url = 'Nodes/' + encodeURIComponent(nodeName)
           + '/$/GetApplications/' + encodeURIComponent(applicationId)
@@ -279,6 +286,7 @@ export class RestClientService {
       return this.get(formedUrl, 'Get deployed container logs', messageHandler);
   }
 
+    // tslint:disable-next-line:max-line-length
   public restartCodePackage(nodeName: string, applicationId: string, serviceManifestName: string, codePackageName: string, codePackageInstanceId: string, servicePackageActivationId?: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'Nodes/' + encodeURIComponent(nodeName)
           + '/$/GetApplications/' + encodeURIComponent(applicationId)
@@ -736,7 +744,7 @@ export class RestClientService {
   }
 
   public getRepairTasks(messageHandler?: IResponseMessageHandler): Observable<IRawRepairTask[]> {
-        const url = `$/GetRepairTaskList`; // additional filters available but not in use. keeping here incase they are needed ?StateFilter=${stateFilter}&TaskIdFilter=${taskIdFilter}&ExecutorFilter=${ExecutorFilter}
+        const url = `$/GetRepairTaskList`;
 
         return this.get(this.getApiUrl(url, RestClientService.apiVersion60), 'Get repair tasks', messageHandler);
     }
@@ -778,11 +786,12 @@ export class RestClientService {
           `/${path}${path.indexOf('?') === -1 ? '?' : '&'}api-version=${apiVersion ? apiVersion : RestClientService.defaultApiVersion}${skipCacheToken === true ? '' : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ''}`;
   }
 
+  // tslint:disable-next-line:max-line-length
   private getApiUrl2(path: string, apiVersion = RestClientService.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): string {
       // token to allow for invalidation of browser api call cache
       const appUrl =  this.getApiUrl(path, apiVersion, continuationToken, false);
-      return appUrl +
-          `${maxResults === undefined || maxResults === null ? '' : `&MaxResults=${maxResults}`}${(startDate === undefined || startDate === null || endDate === undefined || endDate === null) ? '' : `&StartDateTimeFilter=${startDate.toISOString().substr(0, 19)}Z&EndDateTimeFilter=${endDate.toISOString().substr(0, 19)}Z`}${latest === true ? `&Latest=True` : ''}`;
+          // tslint:disable-next-line:max-line-length
+      return appUrl + `${maxResults === undefined || maxResults === null ? '' : `&MaxResults=${maxResults}`}${(startDate === undefined || startDate === null || endDate === undefined || endDate === null) ? '' : `&StartDateTimeFilter=${startDate.toISOString().substr(0, 19)}Z&EndDateTimeFilter=${endDate.toISOString().substr(0, 19)}Z`}${latest === true ? `&Latest=True` : ''}`;
   }
 
   private getFullCollection<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string): Observable<T[]> {
@@ -801,18 +810,18 @@ export class RestClientService {
 
   }
 
+    // tslint:disable-next-line:max-line-length
   private getFullCollection2<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): Observable<T[]> {
       const appUrl = this.getApiUrl2(url, apiVersion, continuationToken, false, startDate, endDate, maxResults, latest);
       return this.get<IRawCollection<T>>(appUrl, apiDesc, messageHandler).pipe(mergeMap(response => {
           if (response.ContinuationToken) {
               return this.getFullCollection<T>(url, apiDesc, apiVersion, messageHandler, response.ContinuationToken).pipe(map(items => {
-                  return of(response.Items.concat(items));
+                  return response.Items.concat(items);
               }));
+          }else{
+            return of(response.Items);
           }
-          return of(response.Items);
-        }, err => {
-          return [];
-      }));
+        }));
   }
 
   private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {

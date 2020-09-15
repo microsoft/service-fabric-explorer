@@ -133,8 +133,8 @@
       <h4>Unhealthy Evaluations</h4>
     </div>
     <div collapse-body>
-      <detail-list [list]="service.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"
-        *ngIf="service && service.health"></detail-list>
+      <app-detail-list [list]="service.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"
+        *ngIf="service && service.health"></app-detail-list>
     </div>
   </app-collapse-container>
 </div>
@@ -145,8 +145,8 @@
       <h4>Partitions</h4>
     </div>
     <div collapse-body>
-      <detail-list [list]="service.partitions.collection" [listSettings]="listSettings"
-        *ngIf="service && service.partitions.isInitialized"></detail-list>
+      <app-detail-list [list]="service.partitions.collection" [listSettings]="listSettings"
+        *ngIf="service && service.partitions.isInitialized"></app-detail-list>
     </div>
   </app-collapse-container>
 </div>

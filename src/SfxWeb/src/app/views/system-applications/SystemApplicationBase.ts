@@ -3,12 +3,12 @@ import { Injector, Directive } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { SystemApplication } from 'src/app/Models/DataModels/Application';
 import { ListSettings } from 'src/app/Models/ListSettings';
 
 @Directive()
-export class ServiceApplicationsBaseController extends BaseController {
+export class ServiceApplicationsBaseControllerDirective extends BaseControllerDirective {
     systemApp: SystemApplication;
     listSettings: ListSettings;
     unhealthyEvaluationsListSettings: ListSettings;

@@ -54,7 +54,7 @@ export class Partition extends DataModelBase<IRawPartition> {
         return RoutesService.getPartitionViewPath(this.parent.parent.raw.TypeName, this.parent.parent.id, this.parent.id, this.id);
     }
 
-    public get IsStatefulServiceAndSystemService(): Boolean {
+    public get IsStatefulServiceAndSystemService(): boolean {
         return this.isStatefulService && this.parent.parent.raw.TypeName !== 'System';
     }
 

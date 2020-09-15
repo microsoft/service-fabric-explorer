@@ -5,11 +5,11 @@ import { Observable, forkJoin } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { IdUtils } from 'src/app/Utils/IdUtils';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { Service } from 'src/app/Models/DataModels/Service';
 
 @Directive()
-export class ServiceBaseController extends BaseController {
+export class ServiceBaseControllerDirective extends BaseControllerDirective {
     appId: string;
     serviceId: string;
     appTypeName: string;

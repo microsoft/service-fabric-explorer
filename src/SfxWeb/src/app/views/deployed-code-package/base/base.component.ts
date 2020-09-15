@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { DeployedCodePackageBaseController } from '../DeployedCodePackageBase';
+import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePackageBase';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { DataService } from 'src/app/services/data.service';
 import { TreeService } from 'src/app/services/tree.service';
@@ -13,7 +13,7 @@ import { Observable, of } from 'rxjs';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends DeployedCodePackageBaseController {
+export class BaseComponent extends DeployedCodePackageBaseControllerDirective {
 
   containerLogTabName = 'container logs';
 

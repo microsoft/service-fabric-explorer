@@ -13,12 +13,6 @@ export class CollectionUtils {
      *  - deleting items which are not in new collection
      *  - update item using update delegate
      *  - add new items using create delegate
-     * @param collection
-     * @param newCollection
-     * @param keySelector
-     * @param newKeySelector
-     * @param create
-     * @param update
      */
     public static updateCollection<T, P>(collection: T[], newCollection: P[],
                                          keySelector: (item: T) => any, newKeySelector: (item: P) => any,
@@ -52,10 +46,6 @@ export class CollectionUtils {
     /**
      * Returns true if the two collections have the same set of keys.
      * Otherwise false.
-     * @param collection
-     * @param newCollection
-     * @param keySelector
-     * @param newKeySelector
      */
     public static compareCollectionsByKeys<T, P>(collection: T[], newCollection: P[],
                                                  keySelector: (item: T) => any, newKeySelector: (item: P) => any) {
@@ -73,11 +63,10 @@ export class CollectionUtils {
 
     /**
      * Update DataModelCollection
-     * @param collection
-     * @param newCollection
      */
     public static updateDataModelCollection<T>(collection: IDataModel<T>[], newCollection: IDataModel<T>[], appendOnly: boolean = false): any[] {
-        return CollectionUtils.updateCollection(collection, newCollection, item => item.uniqueId, item => item.uniqueId, (item, newItem) => newItem, (item, newItem) => item.update(newItem.raw), appendOnly);
+        return CollectionUtils.updateCollection(collection, newCollection, item => item.uniqueId, item => item.uniqueId,
+                                                (item, newItem) => newItem, (item, newItem) => item.update(newItem.raw), appendOnly);
     }
 }
 
