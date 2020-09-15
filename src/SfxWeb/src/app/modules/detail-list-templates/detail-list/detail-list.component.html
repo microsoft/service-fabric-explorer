@@ -1,10 +1,10 @@
-<div class="app-detail-list-container flex-child" style="margin-top: 15px;">
+<div class="detail-list-container flex-child" style="margin-top: 15px;">
         <app-input [placeholder]="searchText" [model]="listSettings.search" (changed)="listSettings.search = $event; updateList()"></app-input>
         <button class="simple-button"  (click)="resetAll()">Reset All</button>
 
         <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
         <div class="table-responsive">
-            <table class="table app-detail-list">
+            <table class="table detail-list">
                 <thead aria-live="polite">
                     <tr>
                     <th class="sort-filter-th" *ngFor="let columnSetting of listSettings.columnSettings; let i = index"

@@ -3,7 +3,7 @@
         <h4 collapse-header>
             Health Events
         </h4>
-        <app-detail-listlist [list]="clusterHealth.healthEvents" [listSettings]="healthEventsListSettings"  collapse-bodapp-detail-listail-list>
+        <app-detail-list [list]="clusterHealth.healthEvents" [listSettings]="healthEventsListSettings"  collapse-body></app-detail-list>
     </app-collapse-container>
 </div>
 
@@ -70,7 +70,7 @@
             </div>
             <div class="detail-pane" *ngIf="clusterUpgradeProgress.unhealthyEvaluations.length > 0">
                 <h4>Unhealthy Evaluations (Upgrade)</h4>
-                <app-detail-listlist [list]="clusterUpgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettingsapp-detail-listail-list>
+                <app-detail-list [list]="clusterUpgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
             </div>
         </div>
     </app-collapse-container>
@@ -88,7 +88,7 @@
 <div *ngIf="nodesStatuses" class="detail-pane essen-pane">
     <app-collapse-container sectionName="Node States">
         <h4 collapse-header>Node States</h4>        
-        <app-detail-listlist [list]="nodesStatuses" [listSettings]="nodeStatusListSettings" collapse-bodapp-detail-listail-list>
+        <app-detail-list [list]="nodesStatuses" [listSettings]="nodeStatusListSettings" collapse-body></app-detail-list>
     </app-collapse-container>
 </div>
 
