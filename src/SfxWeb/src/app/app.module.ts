@@ -31,7 +31,7 @@ import { ReactiveFormsModule } from '@angular/forms';
     ReactiveFormsModule,
     NgbTooltipModule
   ],
-  
+
   providers: [
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     AdalService,
@@ -46,4 +46,4 @@ import { ReactiveFormsModule } from '@angular/forms';
   ],
   bootstrap: [AppComponent],
 })
-export class AppModule { } 
+export class AppModule { }

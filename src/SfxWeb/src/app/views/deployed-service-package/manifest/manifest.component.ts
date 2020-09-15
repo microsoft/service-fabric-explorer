@@ -1,5 +1,5 @@
 import { Component, Injector } from '@angular/core';
-import { DeployedServicePackageBaseController } from '../DeployedServicePackage';
+import { DeployedServicePackageBaseControllerDirective } from '../DeployedServicePackage';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
@@ -10,10 +10,10 @@ import { map } from 'rxjs/operators';
   templateUrl: './manifest.component.html',
   styleUrls: ['./manifest.component.scss']
 })
-export class ManifestComponent extends DeployedServicePackageBaseController {
+export class ManifestComponent extends DeployedServicePackageBaseControllerDirective {
   serviceManifest: string;
 
-  constructor(protected data: DataService, injector: Injector) { 
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 

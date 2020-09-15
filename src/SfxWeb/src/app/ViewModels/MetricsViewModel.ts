@@ -1,11 +1,11 @@
-﻿import { LoadMetricInformation } from "../Models/DataModels/Shared";
+import { LoadMetricInformation } from '../Models/DataModels/Shared';
 import { NodeLoadInformation } from '../Models/DataModels/Node';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export interface IMetricsViewModel {
     filteredNodeLoadInformation: NodeLoadInformation[];
@@ -26,37 +26,37 @@ export interface IMetricsViewModel {
 }
 
 export class MetricsViewModel implements IMetricsViewModel {
-    public _showResourceGovernanceMetrics: boolean = true;
-    public _showLoadMetrics: boolean = true;
-    public _showSystemMetrics: boolean = false;
-    public _normalizeMetricsData: boolean = true;
-    public refreshToken: number = 0;
-    public isExpanderEnabled: boolean = false;
-    public isFullScreen: boolean = false;
+    public iShowResourceGovernanceMetrics = true;
+    public iShowLoadMetrics = true;
+    public iShowSystemMetrics = false;
+    public iNormalizeMetricsData = true;
+    public refreshToken = 0;
+    public isExpanderEnabled = false;
+    public isFullScreen = false;
 
-    private _metrics: LoadMetricInformation[] = null;
+    private iMetrics: LoadMetricInformation[] = null;
 
     private static ensureResourceGovernanceMetrics(metrics: LoadMetricInformation[]): LoadMetricInformation[] {
-        let cpuCapacityAvailable: boolean = false;
-        let memoryCapacityAvailable: boolean = false;
-        let metricsWithResourceGov: LoadMetricInformation[] = metrics.map(m => {
-            if (m.name === "servicefabric:/_CpuCores") {
+        let cpuCapacityAvailable = false;
+        let memoryCapacityAvailable = false;
+        const metricsWithResourceGov: LoadMetricInformation[] = metrics.map(m => {
+            if (m.name === 'servicefabric:/_CpuCores') {
                 cpuCapacityAvailable = true;
-            } else if (m.name === "servicefabric:/_MemoryInMB") {
+            } else if (m.name === 'servicefabric:/_MemoryInMB') {
                 memoryCapacityAvailable = true;
             }
             return m;
         });
         if (!cpuCapacityAvailable) {
-            let zeroCpuCapacity: LoadMetricInformation = new LoadMetricInformation(null, {
-                Name: "servicefabric:/_CpuCores",
+            const zeroCpuCapacity: LoadMetricInformation = new LoadMetricInformation(null, {
+                Name: 'servicefabric:/_CpuCores',
                 IsBalancedBefore: true,
                 IsBalancedAfter: true,
-                DeviationBefore: "",
-                DeviationAfter: "",
-                BalancingThreshold: "",
-                Action: "",
-                ActivityThreshold: "",
+                DeviationBefore: '',
+                DeviationAfter: '',
+                BalancingThreshold: '',
+                Action: '',
+                ActivityThreshold: '',
                 ClusterCapacity: 0,
                 ClusterLoad: 0,
                 CurrentClusterLoad: 0,
@@ -73,15 +73,15 @@ export class MetricsViewModel implements IMetricsViewModel {
             metricsWithResourceGov.unshift(zeroCpuCapacity);
         }
         if (!memoryCapacityAvailable) {
-            let zeroMemoryCapacity: LoadMetricInformation = new LoadMetricInformation(null, {
-                Name: "servicefabric:/_MemoryInMB",
+            const zeroMemoryCapacity: LoadMetricInformation = new LoadMetricInformation(null, {
+                Name: 'servicefabric:/_MemoryInMB',
                 IsBalancedBefore: true,
                 IsBalancedAfter: true,
-                DeviationBefore: "",
-                DeviationAfter: "",
-                BalancingThreshold: "",
-                Action: "",
-                ActivityThreshold: "",
+                DeviationBefore: '',
+                DeviationAfter: '',
+                BalancingThreshold: '',
+                Action: '',
+                ActivityThreshold: '',
                 ClusterCapacity: 0,
                 ClusterLoad: 0,
                 CurrentClusterLoad: 0,
@@ -105,6 +105,7 @@ export class MetricsViewModel implements IMetricsViewModel {
             if (this.selectedMetrics[0].hasCapacity) {
                 // If selected metric has capacity defined only display nodes with non-zero capacity defined or non-zero load reported
                 return this.nodesLoadInformation.filter(nli => {
+                    // tslint:disable-next-line:max-line-length
                     return nli.isInitialized && nli.nodeLoadMetricInformation.some(lmi => this.selectedMetrics.some(m => m.name === lmi.name && (+lmi.raw.NodeCapacity !== -1 || +lmi.raw.NodeLoad > 0)));
                 });
             } else {
@@ -117,11 +118,11 @@ export class MetricsViewModel implements IMetricsViewModel {
     }
 
     public get metrics(): LoadMetricInformation[] {
-        if (this._metrics == null) {
+        if (this.iMetrics == null) {
             // Copy list of metrics and append zero CPU/Memory allocated capacities if info not available
-            this._metrics = MetricsViewModel.ensureResourceGovernanceMetrics(this.clusterLoadInformation.loadMetricInformation);
+            this.iMetrics = MetricsViewModel.ensureResourceGovernanceMetrics(this.clusterLoadInformation.loadMetricInformation);
         }
-        return this._metrics;
+        return this.iMetrics;
     }
 
     public get filteredMetrics(): LoadMetricInformation[] {
@@ -153,33 +154,33 @@ export class MetricsViewModel implements IMetricsViewModel {
     }
 
     public get showResourceGovernanceMetrics(): boolean {
-        return this._showResourceGovernanceMetrics;
+        return this.iShowResourceGovernanceMetrics;
     }
 
     public set showResourceGovernanceMetrics(value: boolean) {
-        this._showResourceGovernanceMetrics = value;
+        this.iShowResourceGovernanceMetrics = value;
         if (!value) {
             this.refresh();
         }
     }
 
     public get showLoadMetrics(): boolean {
-        return this._showLoadMetrics;
+        return this.iShowLoadMetrics;
     }
 
     public set showLoadMetrics(value: boolean) {
-        this._showLoadMetrics = value;
+        this.iShowLoadMetrics = value;
         if (!value) {
             this.refresh();
         }
     }
 
     public get showSystemMetrics(): boolean {
-        return this._showSystemMetrics;
+        return this.iShowSystemMetrics;
     }
 
     public set showSystemMetrics(value: boolean) {
-        this._showSystemMetrics = value;
+        this.iShowSystemMetrics = value;
         if (!value) {
             this.selectedMetrics.forEach(m => {
                 if (m.isSystemMetric) { m.selected = false; }
@@ -190,18 +191,18 @@ export class MetricsViewModel implements IMetricsViewModel {
     }
 
     public get normalizeMetricsData(): boolean {
-        return this._normalizeMetricsData;
+        return this.iNormalizeMetricsData;
     }
 
     public set normalizeMetricsData(value: boolean) {
-        this._normalizeMetricsData = value;
+        this.iNormalizeMetricsData = value;
         this.refresh();
     }
 
     public refresh(): void {
         this.refreshToken = (this.refreshToken + 1) % 10000;
         // Clear copied list of metrics
-        this._metrics = null;
+        this.iMetrics = null;
     }
 
     public toggleMetric(metric: LoadMetricInformation) {

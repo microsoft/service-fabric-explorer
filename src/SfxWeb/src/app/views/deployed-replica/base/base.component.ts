@@ -1,5 +1,5 @@
 import { Component, Injector } from '@angular/core';
-import { DeployedReplicaBaseController } from '../DeployedReplicaBase';
+import { DeployedReplicaBaseControllerDirective } from '../DeployedReplicaBase';
 import { DataService } from 'src/app/services/data.service';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
@@ -12,26 +12,26 @@ import { ITab } from 'src/app/shared/component/navbar/navbar.component';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends DeployedReplicaBaseController {
+export class BaseComponent extends DeployedReplicaBaseControllerDirective {
 
-  type: string = "";
+  type = '';
 
   tabs: ITab[] = [{
-    name: "essentials",
-    route: "./"
+    name: 'essentials',
+    route: './'
     },
     {
-      name: "details",
-      route: "./details"
+      name: 'details',
+      route: './details'
     }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) { 
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
     super(data, injector);
   }
 
   setup() {
-    console.log(this)
+    console.log(this);
     this.tree.selectTreeNode([
         IdGenerator.cluster(),
         IdGenerator.nodeGroup(),
@@ -44,7 +44,7 @@ export class BaseComponent extends DeployedReplicaBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    this.type = this.replica.isStatelessService ? 'Deployed Instance' : 'Deployed Replica'
+    this.type = this.replica.isStatelessService ? 'Deployed Instance' : 'Deployed Replica';
 
     return of(null);
   }

@@ -7,14 +7,14 @@ import { map } from 'rxjs/operators';
 import { ListSettings, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DeployedServicePackageCollection } from 'src/app/Models/DataModels/collections/Collections';
-import { DeployedAppBaseController } from '../DeployedApplicationBase';
+import { DeployedAppBaseControllerDirective } from '../DeployedApplicationBase';
 
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
   styleUrls: ['./essentials.component.scss']
 })
-export class EssentialsComponent extends DeployedAppBaseController {
+export class EssentialsComponent extends DeployedAppBaseControllerDirective {
   deployedServicePackages: DeployedServicePackageCollection;
 
   unhealthyEvaluationsListSettings: ListSettings;
@@ -37,11 +37,11 @@ export class EssentialsComponent extends DeployedAppBaseController {
 
   setup(){
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-    this.listSettings = this.settings.getNewOrExistingListSettings("servicePackages", ["name"], [
-      new ListColumnSettingForLink("uniqueId", "Name", item => item.viewPath),
-      new ListColumnSetting("raw.Version", "Version"),
-      new ListColumnSettingForBadge("health.healthState", "Health State"),
-      new ListColumnSettingWithFilter("raw.Status", "Status")
+    this.listSettings = this.settings.getNewOrExistingListSettings('servicePackages', ['name'], [
+      new ListColumnSettingForLink('uniqueId', 'Name', item => item.viewPath),
+      new ListColumnSetting('raw.Version', 'Version'),
+      new ListColumnSettingForBadge('health.healthState', 'Health State'),
+      new ListColumnSettingWithFilter('raw.Status', 'Status')
     ]);
   }
 }

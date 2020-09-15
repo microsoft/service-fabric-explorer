@@ -18,7 +18,8 @@ export class PartitionInfoComponent {
 
   view() {
     this.dataService.getApp(this.partitionInfo.applicationName.Id).subscribe(app => {
-      const routeLocation = () => RoutesService.getPartitionViewPath(app.raw.TypeName, this.partitionInfo.applicationName.Id, this.partitionInfo.serviceName.Id, this.partitionInfo.partition.PartitionInformation.Id);
+      const routeLocation = () => RoutesService.getPartitionViewPath(app.raw.TypeName, this.partitionInfo.applicationName.Id,
+                                                                     this.partitionInfo.serviceName.Id, this.partitionInfo.partition.PartitionInformation.Id);
       this.routeService.navigate(routeLocation);
     });
   }
@@ -27,5 +28,5 @@ export class PartitionInfoComponent {
 export interface IPartitionData {
   serviceName: IRawServiceNameInfo;
   applicationName: IRawApplicationNameInfo;
-  partition: IRawPartition
+  partition: IRawPartition;
 }

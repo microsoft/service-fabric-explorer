@@ -1,19 +1,17 @@
 <div class="detail-pane">
-    <div *ngIf="nodes" data-cy="clustermap">
-        <div>
-            <app-input placeholder="Filter nodes" [model]="filter" (onChange)="filter = $event;" ></app-input>
-    
-            <div style="margin: 15px; display: block;">
-                <app-check-box [(state)]="healthFilter.OK">
-                    <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
-                </app-check-box>
-                <app-check-box [(state)]="healthFilter.Warning">
-                    <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
-                </app-check-box>
-                <app-check-box [(state)]="healthFilter.Error">
-                    <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
-                </app-check-box>
-            </div>
+    <div data-cy="clustermap">
+        <app-input placeholder="Filter nodes" [model]="filter" (changed)="filter = $event;" ></app-input>
+
+        <div style="margin: 15px; display: block;">
+            <app-check-box [(state)]="healthFilter.OK">
+                <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+            </app-check-box>
+            <app-check-box [(state)]="healthFilter.Warning">
+                <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+            </app-check-box>
+            <app-check-box [(state)]="healthFilter.Error">
+                <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+            </app-check-box>
         </div>
         <div class="table-responsive">
             <table class="table map-table" role="presentation">

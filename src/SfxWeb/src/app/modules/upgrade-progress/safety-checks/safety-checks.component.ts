@@ -13,8 +13,8 @@ import { MessageService, MessageSeverity } from 'src/app/services/message.servic
 export class SafetyChecksComponent {
 
   @Input() safetyChecks: IRawSafetyCheckDescription[];
-  //This can be provided to share a cache between safety check components
-  @Input() partitions: Record<string, IPartitionData> = {}
+  // This can be provided to share a cache between safety check components
+  @Input() partitions: Record<string, IPartitionData> = {};
 
   constructor(private restClientService: RestClientService,
               private cdr: ChangeDetectorRef,
@@ -30,16 +30,16 @@ export class SafetyChecksComponent {
         serviceName,
         applicationName,
         partition
-      }
+      };
     } catch {
-      this.messageService.showMessage("There was an issue getting partition info", MessageSeverity.Err);
+      this.messageService.showMessage('There was an issue getting partition info', MessageSeverity.Err);
     }
 
     this.cdr.detectChanges();
   }
 
   safetyCheck(index, safetyCheck: IRawSafetyCheckDescription) {
-    return safetyCheck.PartitionId || "nodePendingSafetyCheck";
+    return safetyCheck.PartitionId || 'nodePendingSafetyCheck';
   }
 
 }

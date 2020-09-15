@@ -1,11 +1,11 @@
-﻿import { IRawHealthStateCount } from "../Models/RawDataTypes";
+import { IRawHealthStateCount } from '../Models/RawDataTypes';
 import { RoutesService } from '../services/routes.service';
 import { ValueResolver, ITextAndBadge } from '../Utils/ValueResolver';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export interface IDashboardViewModel {
     displayTitle: string;
@@ -27,7 +27,7 @@ export interface IDashboardDataPointViewModel {
 }
 
 export class DashboardViewModel implements IDashboardViewModel {
-    public count: number = 0;
+    public count = 0;
     public viewPath: string;
 
     public static fromHealthStateCount(
@@ -38,12 +38,12 @@ export class DashboardViewModel implements IDashboardViewModel {
         routes?: RoutesService,
         viewPath?: string) {
 
-        let dps: DashboardDataPointViewModel[] = [];
-        dps.push(new DashboardDataPointViewModel("Error", healthStateCount.ErrorCount, ValueResolver.healthStatuses[3]));
-        dps.push(new DashboardDataPointViewModel("Warning", healthStateCount.WarningCount, ValueResolver.healthStatuses[2]));
-        dps.push(new DashboardDataPointViewModel("Healthy", healthStateCount.OkCount, ValueResolver.healthStatuses[1]));
+        const dps: DashboardDataPointViewModel[] = [];
+        dps.push(new DashboardDataPointViewModel('Error', healthStateCount.ErrorCount, ValueResolver.healthStatuses[3]));
+        dps.push(new DashboardDataPointViewModel('Warning', healthStateCount.WarningCount, ValueResolver.healthStatuses[2]));
+        dps.push(new DashboardDataPointViewModel('Healthy', healthStateCount.OkCount, ValueResolver.healthStatuses[1]));
 
-        let data = new DashboardViewModel(title, titleInSingular, dps, largeTile, routes, viewPath);
+        const data = new DashboardViewModel(title, titleInSingular, dps, largeTile, routes, viewPath);
 
         return data;
     }
@@ -89,7 +89,7 @@ export class DashboardViewModel implements IDashboardViewModel {
 }
 
 export class DashboardDataPointViewModel implements IDashboardDataPointViewModel {
-    public adjustedCount: number = 0;
+    public adjustedCount = 0;
 
     constructor(public title: string, public count: number, public state: ITextAndBadge) {
     }

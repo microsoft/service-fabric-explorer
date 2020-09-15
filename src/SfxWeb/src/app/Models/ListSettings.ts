@@ -1,4 +1,4 @@
-﻿import { HtmlUtils } from '../Utils/HtmlUtils';
+import { HtmlUtils } from '../Utils/HtmlUtils';
 import { Utils } from '../Utils/Utils';
 import { HyperLinkComponent } from '../modules/detail-list-templates/hyper-link/hyper-link.component';
 import { CopyTextComponent } from '../modules/detail-list-templates/copy-text/copy-text.component';
@@ -8,50 +8,50 @@ import { DetailBaseComponent } from '../ViewModels/detail-table-base.component';
 import { Type } from '@angular/core';
 import { UtcTimestampComponent } from '../modules/detail-list-templates/utc-timestamp/utc-timestamp.component';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class ListSettings {
-    public search: string = "";
+    public search = '';
     public sortPropertyPaths: string[] = [];
-    public sortReverse: boolean = false;
+    public sortReverse = false;
 
-    private _currentPage: number = 1;
-    private _itemCount: number = 0;
+    private iCurrentPage = 1;
+    private iItemCount = 0;
 
     public get count(): number {
-        return this._itemCount;
+        return this.iItemCount;
     }
 
     public set count(itemCount: number) {
-        this._itemCount = itemCount;
+        this.iItemCount = itemCount;
 
         if (this.currentPage > this.pageCount) {
             this.currentPage = this.pageCount;
         }
     }
 
-    public get currentPage(): number {
-        return this._currentPage;
-    }
-
     public get hasEnabledFilters(): boolean {
         return this.columnSettings.some(cs => cs.enableFilter);
     }
 
+    public get currentPage(): number {
+        return this.iCurrentPage;
+    }
+
     public set currentPage(page: number) {
         if (page < 1) {
-            this._currentPage = 1;
+            this.iCurrentPage = 1;
         } else if (page > this.pageCount) {
             if (this.pageCount > 0) {
-                this._currentPage = this.pageCount;
+                this.iCurrentPage = this.pageCount;
             } else {
-                this._currentPage = 1;
+                this.iCurrentPage = 1;
             }
         } else {
-            this._currentPage = page;
+            this.iCurrentPage = page;
         }
     }
 
@@ -100,7 +100,7 @@ export class ListSettings {
 
     public reset(): void {
         this.columnSettings.forEach(cs => cs.reset());
-        this.search = "";
+        this.search = '';
         this.sortPropertyPaths = this.defaultSortPropertyPaths;
         this.sortReverse = false;
         this.currentPage = 1;
@@ -108,7 +108,7 @@ export class ListSettings {
 
     public getPluckedObject(item: any): any {
         if (this.columnSettings.length > 0) {
-            let newObj = {};
+            const newObj = {};
             Utils.unique(this.columnSettings.concat(this.secondRowColumnSettings)).forEach(column => newObj[column.propertyPath] = column.getTextValue(item));
             return newObj;
         }
@@ -117,7 +117,7 @@ export class ListSettings {
 }
 
 export class FilterValue {
-    public isChecked: boolean = true;
+    public isChecked = true;
 
     public constructor(public value: string) {
     }
@@ -167,7 +167,7 @@ export class ListColumnSetting {
     }
 
     public getProperty(item: any): any { // TODO CHECK IF THIS MEANS ROUTING RELATED STUFF?
-        if (this.propertyPath && this.propertyPath.startsWith("#")) {
+        if (this.propertyPath && this.propertyPath.startsWith('#')) {
             return this.propertyPath.substr(1);
         }
 
@@ -179,22 +179,22 @@ export class ListColumnSetting {
     }
 
     public getTextValue(item: any): string {
-        let property = this.getProperty(item);
+        const property = this.getProperty(item);
         if (property === undefined || property === null) {
-            return "";
+            return '';
         }
 
         return property.toString();
     }
 
     public getDisplayContentsInHtml(item: any): string {
-        let property = this.getProperty(item);
+        const property = this.getProperty(item);
         if (this.getDisplayHtml) {
             return this.getDisplayHtml(item, property);
         }
 
         if (property === undefined || property === null) {
-            return "";
+            return '';
         }
 
         return property.toString();
@@ -205,17 +205,17 @@ export class ListColumnSettingForBadge extends ListColumnSetting {
     public constructor(
         propertyPath: string,
         displayName: string,
-        sortPropertyPaths: string[] = [propertyPath + ".text"]) {
+        sortPropertyPaths: string[] = [propertyPath + '.text']) {
 
         super(propertyPath, displayName, sortPropertyPaths, true, (item, property) => HtmlUtils.getBadgeHtml(property));
     }
 
     public getTextValue(item: any): string {
-        let property = this.getProperty(item);
+        const property = this.getProperty(item);
         if (property) {
             return property.text;
         }
-        return "";
+        return '';
     }
 }
 
@@ -248,7 +248,7 @@ export class ListColumnSettingWithCopyText extends ListColumnSetting {
         propertyPath: string,
         displayName: string,
         sortPropertyPath: string[] = [],
-        enableFilter: boolean = false, 
+        enableFilter: boolean = false,
         colSpan: number = 1) {
 
         super(propertyPath, displayName, sortPropertyPath, enableFilter, null, colSpan);
@@ -261,7 +261,7 @@ export class ListColumnSettingWithUtcTime extends ListColumnSetting {
         propertyPath: string,
         displayName: string,
         sortPropertyPath: string[] = [],
-        enableFilter: boolean = false, 
+        enableFilter: boolean = false,
         colSpan: number = 1) {
 
         super(propertyPath, displayName, sortPropertyPath, enableFilter, null, colSpan);
@@ -271,25 +271,25 @@ export class ListColumnSettingWithUtcTime extends ListColumnSetting {
 export class ListColumnSettingWithEventStoreRowDisplay extends ListColumnSetting {
     template = RowDisplayComponent;
     public constructor() {
-        super("raw.kind", "Type", ["raw.kind"], true);
+        super('raw.kind', 'Type', ['raw.kind'], true);
     }
 }
 
 export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSetting {
     template = FullDescriptionComponent;
     public constructor() {
-        super("raw.eventInstanceId", "", [], false, () => "", -1);
+        super('raw.eventInstanceId', '', [], false, () => '', -1);
     }
 }
 
 
 export class ListColumnSettingWithCustomComponent extends ListColumnSetting {
     public constructor(public template: Type<DetailBaseComponent>,
-                        public propertyPath: string = "",
-                        public displayName: string = "",
-                        public sortPropertyPaths: string[] = [propertyPath],
-                        public enableFilter?: boolean,
-                        public colspan: number = 1 ) {
-        super(propertyPath, displayName, sortPropertyPaths, enableFilter, () => "", colspan);
+                       public propertyPath: string = '',
+                       public displayName: string = '',
+                       public sortPropertyPaths: string[] = [propertyPath],
+                       public enableFilter?: boolean,
+                       public colspan: number = 1 ) {
+        super(propertyPath, displayName, sortPropertyPaths, enableFilter, () => '', colspan);
     }
 }

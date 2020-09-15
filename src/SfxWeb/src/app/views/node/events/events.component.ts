@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
-import { NodeBaseController } from '../NodeBase';
+import { NodeBaseControllerDirective } from '../NodeBase';
 import { NodeTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 import { NodeEventList } from 'src/app/Models/DataModels/collections/Collections';
 
@@ -9,11 +9,11 @@ import { NodeEventList } from 'src/app/Models/DataModels/collections/Collections
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss']
 })
-export class EventsComponent extends NodeBaseController {
+export class EventsComponent extends NodeBaseControllerDirective {
   nodeEvents: NodeEventList;
   nodeEventTimelineGenerator: NodeTimelineGenerator;
 
-  constructor(protected data: DataService, injector: Injector) { 
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 

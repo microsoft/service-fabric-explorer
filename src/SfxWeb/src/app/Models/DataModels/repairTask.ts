@@ -10,7 +10,7 @@ export interface IRepairTaskHistoryPhase {
 
 export interface IDisplayStatus {
     badgeIcon: string;
-    status: String;
+    status: string;
     statusCss: string;
 }
 
@@ -25,45 +25,45 @@ export interface IRepairTaskPhase {
 }
 
 export enum StatusCSS {
-    Finished = "repair-green",
-    InProgress = "repair-blue",
-    NotStarted = "repair-gray"
+    Finished = 'repair-green',
+    InProgress = 'repair-blue',
+    NotStarted = 'repair-gray'
 }
 
-//TEMPLATES FOR DISPLAYING STATUS
+// TEMPLATES FOR DISPLAYING STATUS
 export const FinishedStatus: IDisplayStatus = {
-    badgeIcon: "mif-done",
-    status: "This step is Finished",
+    badgeIcon: 'mif-done',
+    status: 'This step is Finished',
     statusCss: StatusCSS.Finished
-}
+};
 
 
 export const InProgressStatus: IDisplayStatus = {
-    badgeIcon: "mif-spinner4",
-    status: "This step is in progress",
+    badgeIcon: 'mif-spinner4',
+    status: 'This step is in progress',
     statusCss: StatusCSS.InProgress
-}
+};
 
 
 export const NotStartedStatus: IDisplayStatus = {
-    badgeIcon: "",
-    status: "This step is not started",
+    badgeIcon: '',
+    status: 'This step is not started',
     statusCss: StatusCSS.NotStarted
-}
+};
 
 
 
 export class RepairTask {
-    public static NonStartedTimeStamp = "0001-01-01T00:00:00.000Z";
+    public static NonStartedTimeStamp = '0001-01-01T00:00:00.000Z';
 
     // Initially keep additional details collapsed.
-    public isSecondRowCollapsed: boolean = true;
+    public isSecondRowCollapsed = true;
     public impactedNodes: string[] = [];
     public history: IRepairTaskHistoryPhase[] = [];
-    public createdAt: string = "";
+    public createdAt = '';
 
-    public couldParseExecutorData: boolean = false;
-    public inProgress: boolean = true;
+    public couldParseExecutorData = false;
+    public inProgress = true;
 
     public duration: number;
     public displayDuration: string;
@@ -77,7 +77,7 @@ export class RepairTask {
             this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
         }
         this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString();
-        this.inProgress = this.raw.State !== "Completed";
+        this.inProgress = this.raw.State !== 'Completed';
 
         const start = new Date(this.createdAt).getTime();
         if (this.inProgress) {
@@ -93,53 +93,53 @@ export class RepairTask {
 
             this.couldParseExecutorData = true;
         } catch (e) {
-            console.log(e)
+            console.log(e);
             this.couldParseExecutorData = false;
         }
 
         this.parseHistory();
 
         this.historyPhases = [
-            this.generateHistoryPhase("Preparing", this.history.slice(0, 5)),
-            this.generateHistoryPhase("Executing", [this.history[6]]),
-            this.generateHistoryPhase("Restoring", this.history.slice(7))
-        ]
+            this.generateHistoryPhase('Preparing', this.history.slice(0, 5)),
+            this.generateHistoryPhase('Executing', [this.history[6]]),
+            this.generateHistoryPhase('Restoring', this.history.slice(7))
+        ];
 
     }
 
     /*
-    WIll use created at timestamp instead of 
+    WIll use created at timestamp instead of
     */
     public get startTime(): Date {
         return new Date(this.raw.History.ExecutingUtcTimestamp === RepairTask.NonStartedTimeStamp ? this.raw.History.CreatedUtcTimestamp :
-            this.raw.History.ExecutingUtcTimestamp)
+            this.raw.History.ExecutingUtcTimestamp);
     }
 
     private parseHistory() {
         const history = [
-            { timestamp: this.raw.History.PreparingUtcTimestamp, phase: "Preparing" },
-            { timestamp: this.raw.History.ClaimedUtcTimestamp, phase: "Claimed" },
-            { timestamp: this.raw.History.CreatedUtcTimestamp, phase: "Created" },
-            { timestamp: this.raw.History.PreparingHealthCheckStartUtcTimestamp, phase: "Preparing Health Check start" },
-            { timestamp: this.raw.History.PreparingHealthCheckEndUtcTimestamp, phase: "Preparing Health check End" },
-            { timestamp: this.raw.History.ApprovedUtcTimestamp, phase: "Approved" },
-            { timestamp: this.raw.History.ExecutingUtcTimestamp, phase: "Executing" },
-            { timestamp: this.raw.History.RestoringUtcTimestamp, phase: "Restoring" },
-            { timestamp: this.raw.History.RestoringHealthCheckStartUtcTimestamp, phase: "Restoring health check start" },
-            { timestamp: this.raw.History.RestoringHealthCheckEndUtcTimestamp, phase: "Restoring Health check end" },
-            { timestamp: this.raw.History.CompletedUtcTimestamp, phase: "Completed" },
+            { timestamp: this.raw.History.PreparingUtcTimestamp, phase: 'Preparing' },
+            { timestamp: this.raw.History.ClaimedUtcTimestamp, phase: 'Claimed' },
+            { timestamp: this.raw.History.CreatedUtcTimestamp, phase: 'Created' },
+            { timestamp: this.raw.History.PreparingHealthCheckStartUtcTimestamp, phase: 'Preparing Health Check start' },
+            { timestamp: this.raw.History.PreparingHealthCheckEndUtcTimestamp, phase: 'Preparing Health check End' },
+            { timestamp: this.raw.History.ApprovedUtcTimestamp, phase: 'Approved' },
+            { timestamp: this.raw.History.ExecutingUtcTimestamp, phase: 'Executing' },
+            { timestamp: this.raw.History.RestoringUtcTimestamp, phase: 'Restoring' },
+            { timestamp: this.raw.History.RestoringHealthCheckStartUtcTimestamp, phase: 'Restoring health check start' },
+            { timestamp: this.raw.History.RestoringHealthCheckEndUtcTimestamp, phase: 'Restoring Health check end' },
+            { timestamp: this.raw.History.CompletedUtcTimestamp, phase: 'Completed' },
         ];
 
         this.history = history.map((phase, index) => {
-            let duration = "";
+            let duration = '';
             let displayInfo: IDisplayStatus = NotStartedStatus;
             let phaseDuration = 0;
 
             if (index < (history.length - 1)) {
                 const nextPhase = history[index + 1];
 
-                //if the next phase has a timestamp then this phase is finished
-                //otherwise if this phase has a timestamp it would be the active one 
+                // if the next phase has a timestamp then this phase is finished
+                // otherwise if this phase has a timestamp it would be the active one
                 if (nextPhase.timestamp !== RepairTask.NonStartedTimeStamp) {
                     phaseDuration = new Date(nextPhase.timestamp).getTime() - new Date(phase.timestamp).getTime();
                     duration = TimeUtils.formatDurationAsAspNetTimespan(phaseDuration);
@@ -147,11 +147,11 @@ export class RepairTask {
                 } else if (phase.timestamp !== RepairTask.NonStartedTimeStamp) {
                     phaseDuration = this.dateRef.getTime() - new Date(phase.timestamp).getTime();
                     duration = TimeUtils.formatDurationAsAspNetTimespan(phaseDuration);
-                    displayInfo = InProgressStatus
+                    displayInfo = InProgressStatus;
                 }
             }
 
-            //handle completed phase which does not have a duration
+            // handle completed phase which does not have a duration
             if (index === (history.length - 1)) {
                 if (phase.timestamp !== RepairTask.NonStartedTimeStamp) {
                     displayInfo = FinishedStatus;
@@ -160,11 +160,11 @@ export class RepairTask {
 
             return {
                 ...phase,
-                timestamp: phase.timestamp === RepairTask.NonStartedTimeStamp ? "" : phase.timestamp,
+                timestamp: phase.timestamp === RepairTask.NonStartedTimeStamp ? '' : phase.timestamp,
                 duration,
                 displayInfo,
                 durationMilliseconds: phaseDuration,
-            }
+            };
         });
     }
 
@@ -174,9 +174,9 @@ export class RepairTask {
         let duration = 0;
         let status = -1;
 
-        //check all of the phases and if any are in progress, default to not started
-        //set the phase to at least 0 saying in progress
-        //if last phase is finished, set overall to finished status.
+        // check all of the phases and if any are in progress, default to not started
+        // set the phase to at least 0 saying in progress
+        // if last phase is finished, set overall to finished status.
         phases.forEach((phase, index) => {
             duration += phase.durationMilliseconds;
 
@@ -189,7 +189,7 @@ export class RepairTask {
                     status = 1;
                 }
             }
-        })
+        });
 
         let statusText: string;
         let statusCss: StatusCSS;
@@ -197,18 +197,18 @@ export class RepairTask {
         switch (status) {
             case 1:
                 statusCss = StatusCSS.Finished;
-                statusText = "Done";
+                statusText = 'Done';
                 startCollapsed = true;
                 break;
             case 0:
                 statusCss = StatusCSS.InProgress;
-                statusText = "In Progress";
+                statusText = 'In Progress';
                 startCollapsed = false;
                 break;
 
             default:
                 statusCss = StatusCSS.NotStarted;
-                statusText = "Not Started";
+                statusText = 'Not Started';
                 startCollapsed = true;
                 break;
         }
@@ -221,7 +221,7 @@ export class RepairTask {
             durationMilliseconds: duration,
             phases,
             startCollapsed
-        }
+        };
     }
 
 }

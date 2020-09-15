@@ -38,7 +38,7 @@ export class HealthBase<T extends IRawHealth> extends DataModelBase<T> {
     public constructor(data: DataService, parent?: any) {
         // Use {} instead of null because health information may be merged into this object
         // before the object gets fully refreshed from server.
-        super(data, <T>{}, parent);
+        super(data, {} as T, parent);
     }
 
     public mergeHealthStateChunk(healthChunk: IHealthStateChunk): Observable<any> {
@@ -51,12 +51,12 @@ export class HealthBase<T extends IRawHealth> extends DataModelBase<T> {
     }
 
     protected parseCommonHealthProperties(): Observable<any> {
-        let healthEvents = this.raw.HealthEvents.map(rawHealthEvent => new HealthEvent(this.data, <IRawHealthEvent>rawHealthEvent));
+        const healthEvents = this.raw.HealthEvents.map(rawHealthEvent => new HealthEvent(this.data, rawHealthEvent as IRawHealthEvent));
         this.healthEvents = CollectionUtils.updateDataModelCollection(this.healthEvents, healthEvents);
         // There is no unique ID to identify the unhealthy evaluations collection, update the collection directly.
         // Make sure that the apps are initialized because some of the parsedHealth Evaluations need to reference the app's collection and that needs to be set.
         return this.data.apps.ensureInitialized().pipe(map( () => {
             this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
-        }))
+        }));
     }
 }

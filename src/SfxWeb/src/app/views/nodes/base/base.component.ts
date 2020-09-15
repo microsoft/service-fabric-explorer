@@ -11,12 +11,12 @@ import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 export class BaseComponent implements OnInit {
 
   tabs: ITab[] = [{
-    name: "all nodes",
-    route: "./"
+    name: 'all nodes',
+    route: './'
     },
     {
-      name: "events",
-      route: "./events"
+      name: 'events',
+      route: './events'
     }
   ];
   constructor(public tree: TreeService) { }

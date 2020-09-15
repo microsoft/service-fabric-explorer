@@ -17,11 +17,11 @@ export class StorageService {
   }
 
   public getValueBoolean(key: string, defaultValue: boolean): boolean {
-      return this.getValueT<boolean>(key, (item) => item === "true", defaultValue);
+      return this.getValueT<boolean>(key, (item) => item === 'true', defaultValue);
   }
 
   public getValueT<T>(key: string, convert: (item) => T, defaultValue: T): T {
-      let value = localStorage.getItem(key);
+      const value = localStorage.getItem(key);
       if (value !== null) {
           return convert(value);
       }
@@ -39,7 +39,7 @@ export class StorageService {
   }
 
   public setValue(key: string, newValue: any) {
-      let oldValue = localStorage.getItem(key) || "";
+      const oldValue = localStorage.getItem(key) || '';
       if (oldValue !== newValue.toString()) {
           localStorage.setItem(key, newValue.toString());
       }

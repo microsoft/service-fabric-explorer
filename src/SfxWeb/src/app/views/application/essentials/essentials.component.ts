@@ -7,7 +7,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { forkJoin, of, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { ClusterManifest } from 'src/app/Models/DataModels/Cluster';
-import { ApplicationBaseController } from '../applicationBase';
+import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { ListColumnSettingForApplicationServiceRow } from '../action-row/action-row.component';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
@@ -16,7 +16,7 @@ import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUti
   templateUrl: './essentials.component.html',
   styleUrls: ['./essentials.component.scss']
 })
-export class EssentialsComponent extends ApplicationBaseController {
+export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
   upgradeProgress: ApplicationUpgradeProgress;
   listSettings: ListSettings;
@@ -29,38 +29,38 @@ export class EssentialsComponent extends ApplicationBaseController {
   partitionsDashboard: IDashboardViewModel;
   replicasDashboard: IDashboardViewModel;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService, private cdr: ChangeDetectorRef) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService, private cdr: ChangeDetectorRef) {
     super(data, injector);
   }
 
   setup() {
     this.clusterManifest = new ClusterManifest(this.data);
 
-    this.listSettings = this.settings.getNewOrExistingListSettings("services", ["name"], [
-      new ListColumnSettingForLink("name", "Name", item => item.viewPath),
-      new ListColumnSetting("raw.TypeName", "Service Type"),
-      new ListColumnSetting("raw.ManifestVersion", "Version"),
-      new ListColumnSettingWithFilter("raw.ServiceKind", "Service Kind"),
-      new ListColumnSettingForBadge("healthState", "Health State"),
-      new ListColumnSettingWithFilter("raw.ServiceStatus", "Status")
+    this.listSettings = this.settings.getNewOrExistingListSettings('services', ['name'], [
+      new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
+      new ListColumnSetting('raw.TypeName', 'Service Type'),
+      new ListColumnSetting('raw.ManifestVersion', 'Version'),
+      new ListColumnSettingWithFilter('raw.ServiceKind', 'Service Kind'),
+      new ListColumnSettingForBadge('healthState', 'Health State'),
+      new ListColumnSettingWithFilter('raw.ServiceStatus', 'Status')
     ]);
 
-    this.serviceTypesListSettings = this.settings.getNewOrExistingListSettings("serviceTypes", ["raw.ServiceTypeDescription.ServiceTypeName"], [
-        new ListColumnSetting("raw.ServiceTypeDescription.ServiceTypeName", "Service Type Name"),
-        new ListColumnSettingWithFilter("serviceKind", "Service Kind"),
-        new ListColumnSetting("raw.ServiceManifestVersion", "Service Manifest Version"),
+    this.serviceTypesListSettings = this.settings.getNewOrExistingListSettings('serviceTypes', ['raw.ServiceTypeDescription.ServiceTypeName'], [
+        new ListColumnSetting('raw.ServiceTypeDescription.ServiceTypeName', 'Service Type Name'),
+        new ListColumnSettingWithFilter('serviceKind', 'Service Kind'),
+        new ListColumnSetting('raw.ServiceManifestVersion', 'Service Manifest Version'),
         new ListColumnSettingForApplicationServiceRow(),
     ]);
 
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-    this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings("upgradeProgressUnhealthyEvaluations");
-      this.cdr.detectChanges();
+    this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('upgradeProgressUnhealthyEvaluations');
+    this.cdr.detectChanges();
 
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
-      if(this.data.clusterManifest.isBackupRestoreEnabled) {
+      if (this.data.clusterManifest.isBackupRestoreEnabled) {
         this.data.refreshBackupPolicies(messageHandler);
       }
     });
@@ -73,18 +73,18 @@ export class EssentialsComponent extends ApplicationBaseController {
       this.app.serviceTypes.refresh(messageHandler),
       this.app.services.refresh(messageHandler),
       this.app.health.refresh(messageHandler).pipe(map((appHealth: ApplicationHealth) => {
-        let servicesHealthStateCount = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Service);
-        this.servicesDashboard = DashboardViewModel.fromHealthStateCount("Services", "Service", false, servicesHealthStateCount);
+        const servicesHealthStateCount = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Service);
+        this.servicesDashboard = DashboardViewModel.fromHealthStateCount('Services', 'Service', false, servicesHealthStateCount);
 
-        let partitionsDashboard = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Partition);
-        this.partitionsDashboard = DashboardViewModel.fromHealthStateCount("Partitions", "Partition", false, partitionsDashboard);
+        const partitionsDashboard = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Partition);
+        this.partitionsDashboard = DashboardViewModel.fromHealthStateCount('Partitions', 'Partition', false, partitionsDashboard);
 
-        let replicasHealthStateCount = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Replica);
-        this.replicasDashboard = DashboardViewModel.fromHealthStateCount("Replicas", "Replica", false, replicasHealthStateCount);
+        const replicasHealthStateCount = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Replica);
+        this.replicasDashboard = DashboardViewModel.fromHealthStateCount('Replicas', 'Replica', false, replicasHealthStateCount);
       }))
     ]).pipe(map( () => {
       this.cdr.detectChanges();
-    }))
+    }));
   }
 
 }

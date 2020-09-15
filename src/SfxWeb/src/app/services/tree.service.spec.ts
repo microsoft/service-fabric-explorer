@@ -6,7 +6,7 @@ describe('TreeService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   it('should be created', () => {
-    const service: TreeService = TestBed.get(TreeService);
+    const service: TreeService = TestBed.inject(TreeService);
     expect(service).toBeTruthy();
   });
 });

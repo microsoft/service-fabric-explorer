@@ -3,9 +3,9 @@ import { HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { StorageService } from './storage.service';
 
 export enum MessageSeverity {
-  Info = "Info", 
-  Warn = "Warning", 
-  Err = "Error"
+  Info = 'Info',
+  Warn = 'Warning',
+  Err = 'Error'
 }
 
 export interface IToast {
@@ -20,44 +20,44 @@ export interface IToast {
 })
 export class MessageService {
 
-  static readonly LOCALSTORAGE_KEY_SUPPRES = "SFX-supress-message";
+  static readonly LOCALSTORAGE_KEY_SUPPRES = 'SFX-supress-message';
 
   toasts: IToast[] = [];
-  _suppressMessages: boolean = false;
-  constructor(private storageService: StorageService) { 
+  private suppressMessagesState = false;
+  constructor(private storageService: StorageService) {
     this.suppressMessage = this.storageService.getValueBoolean(MessageService.LOCALSTORAGE_KEY_SUPPRES, false);
   }
 
   remove(toast: IToast) {
-    this.toasts = this.toasts.filter(t => t != toast);
+    this.toasts = this.toasts.filter(t => t !== toast);
   }
 
   getClass(severity: MessageSeverity): string {
-    const colors = {}
-    colors[MessageSeverity.Info] = "bg-info";
-    colors[MessageSeverity.Warn] = "bg-warning";
-    colors[MessageSeverity.Err] = "bg-danger";
+    const colors = {};
+    colors[MessageSeverity.Info] = 'bg-info';
+    colors[MessageSeverity.Warn] = 'bg-warning';
+    colors[MessageSeverity.Err] = 'bg-danger';
 
     return colors[severity];
   }
 
   public get suppressMessage() {
-    return this._suppressMessages;
+    return this.suppressMessagesState;
   }
 
   public set suppressMessage(b: boolean) {
     this.storageService.setValue(MessageService.LOCALSTORAGE_KEY_SUPPRES, b);
-    this._suppressMessages = b;
+    this.suppressMessagesState = b;
   }
 
-  public showMessage(message: string, severity: MessageSeverity, header: string = "", duration: number = 5000) {
-    if(!this.suppressMessage) {
+  public showMessage(message: string, severity: MessageSeverity, header: string = '', duration: number = 5000) {
+    if (!this.suppressMessage) {
       this.toasts.push({
         header: `${severity} ${header}`,
         body: message,
         duration,
         class: this.getClass(severity)
-      })
+      });
     }
   }
 
