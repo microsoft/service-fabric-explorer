@@ -13,19 +13,29 @@ const routes: Routes = [
 
 
   // node section
+  // tslint:disable-next-line:max-line-length
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/activationid/:activationId/partition/:partitionId/replica/:replicaId', loadChildren: () => import(`./views/deployed-replica/deployed-replica.module`).then(m => m.DeployedReplicaModule) },
+  // tslint:disable-next-line:max-line-length
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/partition/:partitionId/replica/:replicaId', loadChildren: () => import(`./views/deployed-replica/deployed-replica.module`).then(m => m.DeployedReplicaModule) },
 
+  // tslint:disable-next-line:max-line-length
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/activationid/:activationId/replicas', loadChildren: () => import(`./views/deployed-replicas/deployed-replicas.module`).then(m => m.DeployedReplicasModule) },
+  // tslint:disable-next-line:max-line-length
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/replicas', loadChildren: () => import(`./views/deployed-replicas/deployed-replicas.module`).then(m => m.DeployedReplicasModule) },
 
+  // tslint:disable-next-line:max-line-length
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/activationid/:activationId/codepackage/:codePackageName', loadChildren: () => import(`./views/deployed-code-package/deployed-code-package.module`).then(m => m.DeployedCodePackageModule) },
+  // tslint:disable-next-line:max-line-length
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/codepackage/:codePackageName', loadChildren: () => import(`./views/deployed-code-package/deployed-code-package.module`).then(m => m.DeployedCodePackageModule) },
 
+  // tslint:disable-next-line:max-line-length
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/activationid/:activationId/codepackages', loadChildren: () => import(`./views/deployed-code-packages/deployed-code-packages.module`).then(m => m.DeployedCodePackagesModule) },
+  // tslint:disable-next-line:max-line-length
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/codepackages', loadChildren: () => import(`./views/deployed-code-packages/deployed-code-packages.module`).then(m => m.DeployedCodePackagesModule) },
 
+    // tslint:disable-next-line:max-line-length
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId/activationid/:activationId', loadChildren: () => import(`./views/deployed-service-package/deployed-service-package.module`).then(m => m.DeployedServicePackageModule) },
+    // tslint:disable-next-line:max-line-length
   { path: 'node/:nodeName/deployedapp/:appId/deployedservice/:serviceId', loadChildren: () => import(`./views/deployed-service-package/deployed-service-package.module`).then(m => m.DeployedServicePackageModule) },
 
   { path: 'node/:nodeName/deployedapp/:appId', loadChildren: () => import(`./views/deployed-application/deployed-application.module`).then(m => m.DeployedApplicationModule) },

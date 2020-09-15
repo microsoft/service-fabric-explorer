@@ -6,14 +6,14 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { ListSettings, ListColumnSetting, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { DeployedApplicationCollection } from 'src/app/Models/DataModels/collections/DeployedApplicationCollection';
-import { NodeBaseController } from '../NodeBase';
+import { NodeBaseControllerDirective } from '../NodeBase';
 
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
   styleUrls: ['./essentials.component.scss']
 })
-export class EssentialsComponent extends NodeBaseController {
+export class EssentialsComponent extends NodeBaseControllerDirective {
 
   deployedApps: DeployedApplicationCollection;
   listSettings: ListSettings;

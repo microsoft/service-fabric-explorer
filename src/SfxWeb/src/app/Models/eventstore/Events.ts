@@ -19,21 +19,14 @@ export interface IEventPropertiesCollection {
 }
 
 export abstract class FabricEventBase implements IFabricEventMetadata, IEventPropertiesCollection {
-    private _kind: string;
-    private _category?: string;
-    private _eventInstanceId: string;
-    private _timeStamp: string;
-    private _hasCorrelatedEvents?: boolean;
-    private _eventProperties: { [key: string]: any; } = {};
-
+    public hasCorrelatedEvents: boolean;
+    public eventProperties: { [key: string]: any; } = {};
+    public kind: string;
+    public eventInstanceId: string;
+    public timeStamp: string;
+    public category: string;
     public raw: { [key: string]: any; } = {};
-    public get kind() { return this._kind; }
-    public get category() { return this._category; }
-    public get eventInstanceId() { return this._eventInstanceId; }
-    public get timeStamp() { return this._timeStamp; }
-    public get timeStampString() {  return TimeUtils.datetimeToString(this._timeStamp); }
-    public get hasCorrelatedEvents() { return this._hasCorrelatedEvents; }
-    public get eventProperties() { return this._eventProperties; }
+    public get timeStampString() {  return TimeUtils.datetimeToString(this.timeStamp); }
 
     public fillFromJSON(responseItem: any) {
         this.raw = responseItem;
@@ -47,19 +40,19 @@ export abstract class FabricEventBase implements IFabricEventMetadata, IEventPro
     protected extractField(name: string, value: any): boolean {
         switch (name) {
             case 'Kind':
-                this._kind = value;
+                this.kind = value;
                 return true;
             case 'Category':
-                this._category = value;
+                this.category = value;
                 return true;
             case 'EventInstanceId':
-                this._eventInstanceId = value;
+                this.eventInstanceId = value;
                 return true;
             case 'TimeStamp':
-                this._timeStamp = value;
+                this.timeStamp = value;
                 return true;
             case 'HasCorrelatedEvents':
-                this._hasCorrelatedEvents = value;
+                this.hasCorrelatedEvents = value;
                 return true;
             default:
                 break;
@@ -89,9 +82,7 @@ export class ClusterEvent extends FabricEventBase {
 }
 
 export class NodeEvent extends FabricEventBase {
-    private _nodeName: string;
-
-    public get nodeName() { return this._nodeName; }
+    public nodeName: string;
 
     protected extractField(name: string, value: any): boolean {
         if (super.extractField(name, value)) {
@@ -100,7 +91,7 @@ export class NodeEvent extends FabricEventBase {
 
         switch (name) {
             case 'NodeName':
-                this._nodeName = value;
+                this.nodeName = value;
                 return true;
             default:
                 break;
@@ -111,9 +102,7 @@ export class NodeEvent extends FabricEventBase {
 }
 
 export class ApplicationEvent extends FabricEventBase {
-    private _applicationId: string;
-
-    public get applicationId() { return this._applicationId; }
+    public applicationId: string;
 
     protected extractField(name: string, value: any): boolean {
         if (super.extractField(name, value)) {
@@ -122,7 +111,7 @@ export class ApplicationEvent extends FabricEventBase {
 
         switch (name) {
             case 'ApplicationId':
-                this._applicationId = value;
+                this.applicationId = value;
                 return true;
             default:
                 break;
@@ -133,9 +122,7 @@ export class ApplicationEvent extends FabricEventBase {
 }
 
 export class ServiceEvent extends FabricEventBase {
-    private _serviceId: string;
-
-    public get serviceId() { return this._serviceId; }
+    public serviceId: string;
 
     protected extractField(name: string, value: any): boolean {
         if (super.extractField(name, value)) {
@@ -144,7 +131,7 @@ export class ServiceEvent extends FabricEventBase {
 
         switch (name) {
             case 'ServiceId':
-                this._serviceId = value;
+                this.serviceId = value;
                 return true;
             default:
                 break;
@@ -155,9 +142,7 @@ export class ServiceEvent extends FabricEventBase {
 }
 
 export class PartitionEvent extends FabricEventBase {
-    private _partitionId: string;
-
-    public get partitionId() { return this._partitionId; }
+    public partitionId: string;
 
     protected extractField(name: string, value: any): boolean {
         if (super.extractField(name, value)) {
@@ -166,7 +151,7 @@ export class PartitionEvent extends FabricEventBase {
 
         switch (name) {
             case 'PartitionId':
-                this._partitionId = value;
+                this.partitionId = value;
                 return true;
             default:
                 break;
@@ -177,11 +162,8 @@ export class PartitionEvent extends FabricEventBase {
 }
 
 export class ReplicaEvent extends FabricEventBase {
-    private _partitionId: string;
-    private _replicaId: string;
-
-    public get partitionId() { return this._partitionId; }
-    public get replicaId() { return this._replicaId; }
+    public partitionId: string;
+    public replicaId: string;
 
     protected extractField(name: string, value: any): boolean {
         if (super.extractField(name, value)) {
@@ -190,10 +172,10 @@ export class ReplicaEvent extends FabricEventBase {
 
         switch (name) {
             case 'PartitionId':
-                this._partitionId = value;
+                this.partitionId = value;
                 return true;
             case 'ReplicaId':
-                this._replicaId = value;
+                this.replicaId = value;
                 return true;
             default:
                 break;

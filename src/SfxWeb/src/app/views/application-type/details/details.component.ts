@@ -1,20 +1,17 @@
-import { Component, OnInit, Injector } from '@angular/core';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { Component, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { ActivatedRouteSnapshot } from '@angular/router';
-import { IdUtils } from 'src/app/Utils/IdUtils';
 import { ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType';
 import { mergeMap } from 'rxjs/operators';
 import { forkJoin, Observable } from 'rxjs';
-import { ApplicationTypeBaseController } from '../ApplicationTypeBase';
+import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
 
 @Component({
   selector: 'app-details',
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent extends ApplicationTypeBaseController {
+export class DetailsComponent extends ApplicationTypeBaseControllerDirective {
   appTypeName: string;
   appTypeGroup: ApplicationTypeGroup;
 

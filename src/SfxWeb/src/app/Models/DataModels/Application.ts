@@ -1,4 +1,4 @@
-import { IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState, IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo, IRawHealthStateCount } from '../RawDataTypes';
+import { IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState, IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo } from '../RawDataTypes';
 import { DataModelBase, IDecorators } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { ServiceTypeCollection, ApplicationBackupConfigurationInfoCollection } from './collections/Collections';
@@ -16,7 +16,7 @@ import { map, catchError } from 'rxjs/operators';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
 import { ServiceCollection } from './collections/ServiceCollection';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
-import   isEmpty from 'lodash/isEmpty';
+import isEmpty from 'lodash/isEmpty';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
 // -----------------------------------------------------------------------------
@@ -105,10 +105,6 @@ export class Application extends DataModelBase<IRawApplication> {
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
         return this.data.restClient.getApplication(this.id, messageHandler);
-    }
-
-    public removeAdvancedActions(): void {
-        this.actions.collection = this.actions.collection.filter(action => ['enableApplicationBackup', 'disableApplicationBackup', 'suspendApplicationBackup', 'suspendApplicationBackup'].indexOf(action.name) === -1);
     }
 
     private setUpActions(): void {
@@ -339,8 +335,8 @@ export class ApplicationBackupConfigurationInfo extends DataModelBase<IRawApplic
             },
             ViewBackupComponent,
             () => true,
-            () => this.data.restClient.getBackupPolicy(this.raw.PolicyName).pipe(map(data => {
-                this.action.data.backup = data;
+            () => this.data.restClient.getBackupPolicy(this.raw.PolicyName).pipe(map(resp => {
+                this.action.data.backup = resp;
             }))
             );
     }

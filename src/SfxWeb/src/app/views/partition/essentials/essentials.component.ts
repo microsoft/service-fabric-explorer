@@ -4,14 +4,14 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin, of } from 'rxjs';
-import { PartitionBaseController } from '../PartitionBase';
+import { PartitionBaseControllerDirective } from '../PartitionBase';
 
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
   styleUrls: ['./essentials.component.scss']
 })
-export class EssentialsComponent extends PartitionBaseController {
+export class EssentialsComponent extends PartitionBaseControllerDirective {
 
   public hideReplicator = true;
 

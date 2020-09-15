@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
@@ -16,7 +16,7 @@ import { DataSet, DataGroup, DataItem } from 'vis-timeline';
   templateUrl: './repair-tasks.component.html',
   styleUrls: ['./repair-tasks.component.scss']
 })
-export class RepairTasksComponent extends BaseController {
+export class RepairTasksComponent extends BaseControllerDirective {
 
   repairTasks: RepairTask[] = [];
   completedRepairTasks: RepairTask[] = [];

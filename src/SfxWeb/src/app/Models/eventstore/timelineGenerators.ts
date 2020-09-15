@@ -2,8 +2,8 @@
 
 import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent } from './Events';
 import { DataSet, DataGroup, DataItem } from 'vis-timeline';
-import  padStart  from 'lodash/padStart';
-import  findIndex  from 'lodash/findIndex';
+import padStart from 'lodash/padStart';
+import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 
 /*
@@ -11,12 +11,17 @@ import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
     Reference for understanding the timeline rendering library https://visjs.github.io/vis-timeline/docs/timeline/
     high level concerns:
     Currently there are 2 "versions" of the timeline event generation.
-    1. Applies some level of parsing event/multiple events to create one entry on the timeline. This is currently only used on significant items
-    2. Generically applies all events to the timeline. Some level of customization is available to drive their appearance from information on the event. Currently by adding "Duration", "Status", "Description" properties.
-    Ideally enough flexibility is applied to the generic handling to have all logic driven from there and no needing to update SFX except for updating to look for more fields.
-    To handle the generic approach there is a distinction for what is allowed to "stack" on the graph. Point based events are intended to not be allowed to stack and only let range based events stack for visibility.
-    The current approach for handling this is by adding 2 subgroupStack groups of "stack" and "noStack", where only stack allows for that group to not overlap. This solution works because we dont currently have any
-    subgroups defined otherwise.
+    1. Applies some level of parsing event/multiple events to create one entry on the timeline.
+       This is currently only used on significant items
+    2. Generically applies all events to the timeline. Some level of customization is available to drive their
+        appearance from information on the event. Currently by adding "Duration", "Status", "Description" properties.
+        Ideally enough flexibility is applied to the generic handling to have all logic driven from there and no needing
+        to update SFX except for updating to look for more fields.
+
+        To handle the generic approach there is a distinction for what is allowed to "stack" on the graph.
+        Point based events are intended to not be allowed to stack and only let range based events stack for visibility.
+        The current approach for handling this is by adding 2 subgroupStack groups of "stack" and "noStack", where only stack
+        allows for that group to not overlap. This solution works because we dont currently have any subgroups defined otherwise.
     */
 
 export interface ITimelineData {
@@ -45,10 +50,12 @@ export class EventStoreUtils {
 
         const outline = `<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
 
+        // tslint:disable-next-line:max-line-length
         return `<div class="tooltip-test">${title.length > 0 ? title + '<br>' : ''}Start: ${start} <br>${ end ? 'End: ' + end + '<br>' : ''}<b style="text-align: center;">Details</b><br>${outline}</div>`;
     }
 
-    public static parseUpgradeAndRollback(rollbackCompleteEvent: FabricEventBase, rollbackStartedEvent: ClusterEvent, items: DataSet<DataItem>, startOfRange: Date, group: string, targetVersionProperty: string) {
+    public static parseUpgradeAndRollback(rollbackCompleteEvent: FabricEventBase, rollbackStartedEvent: ClusterEvent, items: DataSet<DataItem>,
+                                          startOfRange: Date, group: string, targetVersionProperty: string) {
         const rollbackEnd = rollbackCompleteEvent.timeStamp;
 
         let rollbackStarted = startOfRange.toISOString();
@@ -485,9 +492,6 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<NodeEvent>
  *    Category2
  *       Category2 - kind 1
  *       category2 - kind 2
- * @param event
- * @param groupIds
- * @param query
  */
 function parseAndAddGroupIdByString(event: FabricEvent, groupIds: any, query: string): string {
     const properties = query.split(',');

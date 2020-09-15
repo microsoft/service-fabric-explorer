@@ -5,11 +5,11 @@ import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { IdUtils } from 'src/app/Utils/IdUtils';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DeployedServicePackage } from 'src/app/Models/DataModels/DeployedServicePackage';
 
 @Directive()
-export class DeployedServicePackageBaseController extends BaseController {
+export class DeployedServicePackageBaseControllerDirective extends BaseControllerDirective {
     public serviceId: string;
     public activationId: string;
     public appId: string;

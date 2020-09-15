@@ -4,7 +4,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge } from 'src/app/Models/ListSettings';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 
 @Component({
@@ -12,7 +12,7 @@ import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollec
   templateUrl: './all-nodes.component.html',
   styleUrls: ['./all-nodes.component.scss']
 })
-export class AllNodesComponent extends BaseController {
+export class AllNodesComponent extends BaseControllerDirective {
 
   nodes: NodeCollection;
   listSettings: ListSettings;

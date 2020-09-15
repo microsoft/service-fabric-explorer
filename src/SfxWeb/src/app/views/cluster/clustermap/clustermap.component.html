@@ -1,6 +1,6 @@
 <div class="detail-pane">
     <div>
-        <app-input placeholder="Filter nodes" [model]="filter" (onChange)="filter = $event;" ></app-input>
+        <app-input placeholder="Filter nodes" [model]="filter" (changed)="filter = $event;" ></app-input>
 
         <div style="margin: 15px; display: block;">
             <app-check-box [(state)]="healthFilter.OK">

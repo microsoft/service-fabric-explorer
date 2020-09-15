@@ -2,7 +2,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { ListSettings, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
-import { PartitionBaseController } from '../PartitionBase';
+import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, of } from 'rxjs';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
@@ -19,7 +19,7 @@ import { PartitionRestoreBackUpComponent } from '../partition-restore-back-up/pa
   templateUrl: './backups.component.html',
   styleUrls: ['./backups.component.scss']
 })
-export class BackupsComponent extends PartitionBaseController {
+export class BackupsComponent extends PartitionBaseControllerDirective {
 
   partitionBackupListSettings: ListSettings;
   actions: ActionCollection;

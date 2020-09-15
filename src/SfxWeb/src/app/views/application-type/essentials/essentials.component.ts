@@ -1,13 +1,12 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForLink } from 'src/app/Models/ListSettings';
-import { Constants } from 'src/app/Common/Constants';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
-import { ApplicationTypeBaseController } from '../ApplicationTypeBase';
+import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
 import { ListColumnSettingForApplicationType } from '../action-row/action-row.component';
 
 @Component({
@@ -15,7 +14,7 @@ import { ListColumnSettingForApplicationType } from '../action-row/action-row.co
   templateUrl: './essentials.component.html',
   styleUrls: ['./essentials.component.scss']
 })
-export class EssentialsComponent extends ApplicationTypeBaseController {
+export class EssentialsComponent extends ApplicationTypeBaseControllerDirective {
   appTypeGroup: ApplicationTypeGroup;
   appsListSettings: ListSettings;
   appTypesListSettings: ListSettings;

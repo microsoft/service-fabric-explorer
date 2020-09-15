@@ -21,9 +21,9 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
   constructor(public dataService: DataService) { }
 
-  public get showAllEvents() { return this._showAllEvents; }
+  public get showAllEvents() { return this.pshowAllEvents; }
   public set showAllEvents(state: boolean) {
-      this._showAllEvents = state;
+      this.pshowAllEvents = state;
       this.setTimelineData();
   }
 
@@ -52,13 +52,13 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
   public transformText = 'Category,Kind';
 
-  private _showAllEvents = false;
+  private pshowAllEvents = false;
 
   public startDate: Date;
   public endDate: Date;
 
   ngOnInit() {
-    this._showAllEvents = !this.timelineGenerator;
+    this.pshowAllEvents = !this.timelineGenerator;
     this.resetSelectionProperties();
     this.setTimelineData();
     this.debouncerHandlerSubscription = this.debounceHandler
@@ -115,7 +115,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   public setTimelineData(): void {
     this.eventsList.ensureInitialized().subscribe( () => {
         try {
-            if (this._showAllEvents) {
+            if (this.pshowAllEvents) {
                 const d = parseEventsGenerically(this.eventsList.collection.map(event => event.raw), this.transformText);
 
                 this.timeLineEventsData = {

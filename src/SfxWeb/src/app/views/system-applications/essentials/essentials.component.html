@@ -21,7 +21,7 @@
                 <h4>Unhealthy Evaluations</h4>
             </div>
             <div collapse-body>
-                <detail-list [list]="systemApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+                <app-detail-list [list]="systemApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
             </div>
         </app-collapse-container>
     </div>
@@ -32,7 +32,7 @@
                 <h4>System</h4>
             </div>
             <div collapse-body>
-                <detail-list [list]="systemApp.services.collection" [listSettings]="listSettings"></detail-list>
+                <app-detail-list [list]="systemApp.services.collection" [listSettings]="listSettings"></app-detail-list>
             </div>
         </app-collapse-container>
     </div>

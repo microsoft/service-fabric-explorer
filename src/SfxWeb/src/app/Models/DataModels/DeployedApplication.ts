@@ -51,7 +51,7 @@ export class DeployedApplication extends DataModelBase<IRawDeployedApplication> 
     }
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IDeployedApplicationHealthStateFilter {
-        let appFilter = clusterHealthChunkQueryDescription.ApplicationFilters.find(appFilter => appFilter.ApplicationNameFilter === this.name);
+        let appFilter = clusterHealthChunkQueryDescription.ApplicationFilters.find(aFilter => aFilter.ApplicationNameFilter === this.name);
         if (!appFilter) {
             // Add one filter for current application and node
             appFilter = {

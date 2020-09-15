@@ -8,7 +8,7 @@ import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
 import { INodesStatusDetails } from 'src/app/Models/RawDataTypes';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 
 
@@ -17,7 +17,7 @@ import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollec
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent extends BaseController {
+export class DetailsComponent extends BaseControllerDirective {
 
   clusterUpgradeProgress: ClusterUpgradeProgress;
   clusterLoadInformation: ClusterLoadInformation;

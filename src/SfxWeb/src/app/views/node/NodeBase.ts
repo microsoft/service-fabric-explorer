@@ -5,11 +5,11 @@ import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { ActivatedRouteSnapshot } from '@angular/router';
 import { IdUtils } from 'src/app/Utils/IdUtils';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { Node } from 'src/app/Models/DataModels/Node';
 
 @Directive()
-export class NodeBaseController extends BaseController {
+export class NodeBaseControllerDirective extends BaseControllerDirective {
     nodeName: string;
     node: Node;
 

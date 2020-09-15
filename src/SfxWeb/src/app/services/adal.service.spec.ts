@@ -1,5 +1,4 @@
 import { TestBed } from '@angular/core/testing';
-
 import { AdalService } from './adal.service';
 import { RestClientService } from './rest-client.service';
 import { IResponseMessageHandler } from '../Common/ResponseMessageHandlers';
@@ -13,12 +12,12 @@ describe('AdalService', () => {
   }));
 
   fit('should be created', () => {
-    const service: AdalService = TestBed.get(AdalService);
+    const service: AdalService = TestBed.inject(AdalService);
     expect(service).toBeTruthy();
   });
 
   fit('load', async () => {
-    const service: AdalService = TestBed.get(AdalService);
+    const service: AdalService = TestBed.inject(AdalService);
 
     restClientMock.getAADmetadata = (messageHandler: IResponseMessageHandler): Observable<AadMetadata> => {
       return of(new AadMetadata({
@@ -41,7 +40,7 @@ describe('AdalService', () => {
   });
 
   fit('load non aad authed', async () => {
-    const service: AdalService = TestBed.get(AdalService);
+    const service: AdalService = TestBed.inject(AdalService);
 
     restClientMock.getAADmetadata = (messageHandler: IResponseMessageHandler): Observable<AadMetadata> => {
       return of(new AadMetadata({

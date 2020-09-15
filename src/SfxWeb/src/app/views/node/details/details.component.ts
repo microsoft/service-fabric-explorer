@@ -4,7 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { Observable, forkJoin } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { SettingsService } from 'src/app/services/settings.service';
-import { NodeBaseController } from '../NodeBase';
+import { NodeBaseControllerDirective } from '../NodeBase';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -12,7 +12,7 @@ import { map } from 'rxjs/operators';
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent extends NodeBaseController {
+export class DetailsComponent extends NodeBaseControllerDirective {
   healthEventsListSettings: ListSettings;
 
 

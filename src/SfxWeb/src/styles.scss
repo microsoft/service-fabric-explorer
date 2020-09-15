@@ -804,7 +804,7 @@ app-navbar {
     border-bottom-color: inherit;
 }
 
-.nav-tabs .nav-link.active {
+.nav-item > .active {
     border-bottom-color: #0075c9;
     border-bottom-style: solid;
     color: #FFFFFF;

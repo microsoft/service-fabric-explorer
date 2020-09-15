@@ -9,8 +9,6 @@ export class Utils {
 
     /**
      * checks if two arrays have the same primitives;
-     * @param list
-     * @param list2
      */
     public static arraysAreEqual<T>(list: T[], list2: T[]): boolean{
         if (list === null || list === undefined || list2 === null || list2 === undefined){
@@ -21,7 +19,6 @@ export class Utils {
 
     /**
      * Filter all duplicates
-     * @param list
      */
     public static unique<T>(list: T[]): T[]{
         return Array.from(new Set(list));
@@ -33,8 +30,6 @@ export class Utils {
 
     /**
      * implements lodash groupBy in es6. returns a dictionary of lists
-     * @param list
-     * @param key key for value
      */
     public static groupByFunc<T>(list: T[], keyFunction: (T) => string): Record<string, T[]> {
         return list.reduce( (previous, current) => { const key = keyFunction(current);
@@ -49,25 +44,22 @@ export class Utils {
 
     /**
      * implements lodash groupBy in es6. returns a dictionary of lists
-     * @param list
      * @param key key for value
      */
     public static groupBy<T>(list: T[], key: string): Record<string, T[]> {
         return list.reduce( (previous, current) => { previous[key] = (previous[key] || []).push(current) ; return previous; }, {});
     }
 
-        /**
+    /**
      * implements lodash keyBy in es6. returns a dictionary of lists
-     * @param list
      * @param key key for value
      */
     public static keyBy<T>(list: T[], key: string): Record<string, T> {
         return list.reduce( (previous, current) => { previous[current[key]] = current; return previous; }, {});
     }
 
-        /**
+    /**
      * implements lodash keyBy in es6. returns a dictionary of lists
-     * @param list
      * @param keyFunction function to return a key based string for each entry.
      */
     public static keyByFromFunction<T>(list: T[], keyFunction: (T) => string): Record<string, T> {
@@ -77,7 +69,6 @@ export class Utils {
     /**
      * Check if the input value is numeric.
      * Solution comes from http://stackoverflow.com/questions/18082/validate-decimal-numbers-in-javascript-isnumeric
-     * @param value
      */
     public static isNumeric(value: any): boolean {
         return !isNaN(parseFloat(value)) && isFinite(value);
@@ -90,8 +81,6 @@ export class Utils {
      * Lodash version of result does not work here because b and c might
      * be function where _.result only call function when it is the last
      * element in the chain.
-     * @param item
-     * @param propertyPath
      */
     public static result(item: any, propertyPath: string) {
         let value = item;
@@ -107,7 +96,6 @@ export class Utils {
 
     /**
      * Check if a giving object represents a Badge object
-     * @param item
      */
     public static isBadge(item: any) {
         return item && item.hasOwnProperty('text') && item.hasOwnProperty('badgeId');

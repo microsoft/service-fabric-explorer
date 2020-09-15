@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
-import { PartitionBaseController } from '../PartitionBase';
+import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { DataService } from 'src/app/services/data.service';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
@@ -13,7 +13,7 @@ import { Constants } from 'src/app/Common/Constants';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends PartitionBaseController {
+export class BaseComponent extends PartitionBaseControllerDirective {
 
   tabs: ITab[] = [{
     name: 'essentials',

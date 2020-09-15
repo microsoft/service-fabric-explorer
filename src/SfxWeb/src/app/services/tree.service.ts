@@ -302,7 +302,8 @@ export class TreeService {
             }));
         }
 
-        private getDeployedCodePackages(deployedCodePackages: DeployedCodePackageCollection, nodeName: string, applicationId: string, servicePackageName: string, servicePackageActivationId: string): Observable<ITreeNode[]> {
+        private getDeployedCodePackages(deployedCodePackages: DeployedCodePackageCollection, nodeName: string, applicationId: string,
+                                        servicePackageName: string, servicePackageActivationId: string): Observable<ITreeNode[]> {
             return of(deployedCodePackages.collection.map(codePackage => {
                 return {
                     nodeId: IdGenerator.deployedCodePackage(codePackage.name),
@@ -314,7 +315,8 @@ export class TreeService {
             }));
         }
 
-        private getDeployedReplicas(deployedReplicas: DeployedReplicaCollection, nodeName: string, applicationId: string, servicePackageName: string, servicePackageActivationId: string): Observable<ITreeNode[]> {
+        private getDeployedReplicas(deployedReplicas: DeployedReplicaCollection, nodeName: string, applicationId: string,
+                                    servicePackageName: string, servicePackageActivationId: string): Observable<ITreeNode[]> {
             return of(deployedReplicas.collection.map(replica => {
                 return {
                     nodeId: IdGenerator.deployedReplica(replica.raw.PartitionId),

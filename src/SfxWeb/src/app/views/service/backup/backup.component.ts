@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { ServiceBaseController } from '../ServiceBase';
+import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { ListSettings, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -17,7 +17,7 @@ import { TelemetryService } from 'src/app/services/telemetry.service';
   templateUrl: './backup.component.html',
   styleUrls: ['./backup.component.scss']
 })
-export class BackupComponent extends ServiceBaseController {
+export class BackupComponent extends ServiceBaseControllerDirective {
   serviceBackupConfigurationInfoListSettings: ListSettings;
   actions: ActionCollection;
 

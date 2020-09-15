@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
-import { DeployedReplicaBaseController } from '../DeployedReplicaBase';
+import { DeployedReplicaBaseControllerDirective } from '../DeployedReplicaBase';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent extends DeployedReplicaBaseController {
+export class DetailsComponent extends DeployedReplicaBaseControllerDirective {
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);

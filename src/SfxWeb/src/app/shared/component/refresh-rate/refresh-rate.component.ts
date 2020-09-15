@@ -9,16 +9,16 @@ export class RefreshRateComponent {
   @Input() refresh = false;
   @Input()
   set value( val: number) {
-    this.change( +(Object.keys(this._mapping).find(key => this._mapping[key] === val) || 4), false );
+    this.change( +(Object.keys(this.mapping).find(key => this.mapping[key] === val) || 4), false );
   }
 
-  @Output() onChange = new EventEmitter<string>();
-  @Output() onForceRefresh = new EventEmitter<any>();
+  @Output() rateChange = new EventEmitter<string>();
+  @Output() forceRefreshed = new EventEmitter<any>();
   refreshRate = 0;
 
   displayRate: string | number;
 
-  _mapping: Record<number, string> = {
+  private mapping: Record<number, string> = {
     0: '0',
     1: '300',
     2: '60',
@@ -32,16 +32,16 @@ export class RefreshRateComponent {
   }
 
   change(updatedValue: number, emitValue = true) {
-    this.displayRate = this._mapping[updatedValue];
+    this.displayRate = this.mapping[updatedValue];
     this.refreshRate = updatedValue;
 
     if (emitValue){
-      this.onChange.emit(this.displayRate);
+      this.rateChange.emit(this.displayRate);
     }
   }
 
   forceRefresh() {
-    this.onForceRefresh.emit();
+    this.forceRefreshed.emit();
   }
 
 

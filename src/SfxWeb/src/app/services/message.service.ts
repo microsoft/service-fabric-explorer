@@ -23,13 +23,13 @@ export class MessageService {
   static readonly LOCALSTORAGE_KEY_SUPPRES = 'SFX-supress-message';
 
   toasts: IToast[] = [];
-  _suppressMessages = false;
+  private suppressMessagesState = false;
   constructor(private storageService: StorageService) {
     this.suppressMessage = this.storageService.getValueBoolean(MessageService.LOCALSTORAGE_KEY_SUPPRES, false);
   }
 
   remove(toast: IToast) {
-    this.toasts = this.toasts.filter(t => t != toast);
+    this.toasts = this.toasts.filter(t => t !== toast);
   }
 
   getClass(severity: MessageSeverity): string {
@@ -42,12 +42,12 @@ export class MessageService {
   }
 
   public get suppressMessage() {
-    return this._suppressMessages;
+    return this.suppressMessagesState;
   }
 
   public set suppressMessage(b: boolean) {
     this.storageService.setValue(MessageService.LOCALSTORAGE_KEY_SUPPRES, b);
-    this._suppressMessages = b;
+    this.suppressMessagesState = b;
   }
 
   public showMessage(message: string, severity: MessageSeverity, header: string = '', duration: number = 5000) {

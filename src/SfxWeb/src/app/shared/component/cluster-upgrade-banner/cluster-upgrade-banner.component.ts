@@ -1,6 +1,6 @@
 import { Component, OnInit, Input, HostListener, Injector } from '@angular/core';
 import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
   templateUrl: './cluster-upgrade-banner.component.html',
   styleUrls: ['./cluster-upgrade-banner.component.scss']
 })
-export class ClusterUpgradeBannerComponent extends BaseController {
+export class ClusterUpgradeBannerComponent extends BaseControllerDirective implements OnInit {
 
   displayMiddleText = true;
   displayAllText = true;

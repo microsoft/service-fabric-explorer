@@ -1,5 +1,5 @@
 import { Component, Injector } from '@angular/core';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { ApplicationCollection } from 'src/app/Models/DataModels/collections/Collections';
 import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSettingWithFilter } from 'src/app/Models/ListSettings';
 import { ApplicationUpgradeProgress } from 'src/app/Models/DataModels/Application';
@@ -15,7 +15,7 @@ import { Observable, forkJoin, of } from 'rxjs';
   templateUrl: './upgrading.component.html',
   styleUrls: ['./upgrading.component.scss']
 })
-export class UpgradingComponent extends BaseController {
+export class UpgradingComponent extends BaseControllerDirective {
 
   apps: ApplicationCollection;
   upgradeAppsListSettings: ListSettings;

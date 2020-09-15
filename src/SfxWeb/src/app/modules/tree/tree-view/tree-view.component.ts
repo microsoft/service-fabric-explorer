@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, OnChanges, AfterViewInit, Output, EventEmitter, DoCheck, Input } from '@angular/core';
+import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input } from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
 import { environment } from 'src/environments/environment';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -11,7 +11,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 export class TreeViewComponent implements DoCheck {
 
   @Input() smallWindowSize = false;
-  @Output() onTreeSize = new EventEmitter<number>();
+  @Output() treeResize = new EventEmitter<number>();
 
   public showBeta = environment.showBeta;
   public canExpand = false;
@@ -30,7 +30,7 @@ export class TreeViewComponent implements DoCheck {
   }
 
   setWidth() {
-    this.onTreeSize.emit(this.tree.nativeElement.scrollWidth + 20);
+    this.treeResize.emit(this.tree.nativeElement.scrollWidth + 20);
   }
 
   setSearchText(text: string) {

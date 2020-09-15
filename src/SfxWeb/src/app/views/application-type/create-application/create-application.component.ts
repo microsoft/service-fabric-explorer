@@ -24,8 +24,6 @@ export class CreateApplicationComponent implements OnInit {
    this.form = this.formBuilder.group({
     userInput: [Constants.FabricPrefix + this.app.name, [Validators.required, Validators.pattern(/^fabric:\/.+/)]]
     });
-
-   this.form.invalid;
   }
 
   ok(){

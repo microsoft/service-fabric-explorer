@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
 import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink, ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime } from '../Models/ListSettings';
-import { HtmlUtils } from '../Utils/HtmlUtils';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 import { NodeLoadInformation } from '../Models/DataModels/Node';
-import { IMetricsViewModel, MetricsViewModel } from '../ViewModels/MetricsViewModel';
+import { MetricsViewModel } from '../ViewModels/MetricsViewModel';
 import { StorageService } from './storage.service';
 
 @Injectable({
@@ -12,11 +11,11 @@ import { StorageService } from './storage.service';
 })
 export class SettingsService {
   private listSettings: Record<string, ListSettings>;
-  private _paginationLimit: number;
-  private _metricsViewModel: MetricsViewModel;
+  private iPaginationLimit: number;
+  private iMetricsViewModel: MetricsViewModel;
 
   public get paginationLimit(): number {
-      return this._paginationLimit;
+      return this.iPaginationLimit;
   }
 
   public set paginationLimit(limit: number) {
@@ -28,21 +27,21 @@ export class SettingsService {
       } else if (limit > Constants.PaginationLimitMax) {
           limit = Constants.PaginationLimitMax;
       }
-      this._paginationLimit = limit;
+      this.iPaginationLimit = limit;
       this.storage.setValue(Constants.PaginationLimitStorageKey, limit);
       this.updatePaginationLimit(limit);
   }
 
   public constructor(private storage: StorageService) {
       this.listSettings = {};
-      this._paginationLimit = storage.getValueNumber(Constants.PaginationLimitStorageKey, Constants.DefaultPaginationLimit);
+      this.iPaginationLimit = storage.getValueNumber(Constants.PaginationLimitStorageKey, Constants.DefaultPaginationLimit);
   }
 
   public getNewOrExistingMetricsViewModel(clusterLoadInformation: ClusterLoadInformation, nodesLoadInformation: NodeLoadInformation[]): MetricsViewModel {
-      if (!this._metricsViewModel) {
-          this._metricsViewModel = new MetricsViewModel(clusterLoadInformation, nodesLoadInformation);
+      if (!this.iMetricsViewModel) {
+          this.iMetricsViewModel = new MetricsViewModel(clusterLoadInformation, nodesLoadInformation);
       }
-      return this._metricsViewModel;
+      return this.iMetricsViewModel;
   }
 
   public getNewOrExistingListSettings(

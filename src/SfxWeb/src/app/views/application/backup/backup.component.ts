@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { ApplicationBaseController } from '../applicationBase';
+import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSetting } from 'src/app/Models/ListSettings';
@@ -17,7 +17,7 @@ import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/p
   templateUrl: './backup.component.html',
   styleUrls: ['./backup.component.scss']
 })
-export class BackupComponent extends ApplicationBaseController  {
+export class BackupComponent extends ApplicationBaseControllerDirective  {
 
   applicationBackupConfigurationInfoListSettings: ListSettings;
   actions: ActionCollection;

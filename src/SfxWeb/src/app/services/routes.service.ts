@@ -61,7 +61,7 @@ export class RoutesService {
     });
    }
 
-  private static _forceSingleEncode = true;
+  private static singleEncode = true;
 
 // keep track of previous states to know when we changed
   private previouslastPaths = [];
@@ -125,7 +125,8 @@ export class RoutesService {
   }
 
   public static getDeployedReplicaViewPath(nodeName: string, appId: string, serviceId: string, activationId: string, partitionId: string, replicaId: string): string {
-      // A partition with a node/app/service is enough to uniquely identify a Replica.  A replicaId is NOT enough to identify a replica.  However, the replicaId is still used in displaying information.
+      // A partition with a node/app/service is enough to uniquely identify a Replica.
+      // A replicaId is NOT enough to identify a replica.  However, the replicaId is still used in displaying information.
       return '/node/' + this.doubleEncode(nodeName) + '/deployedapp/' + this.doubleEncode(appId) +
           '/deployedservice/' + this.doubleEncode(serviceId) +
           (activationId ? '/activationid/' + this.doubleEncode(activationId) : '') +
@@ -164,11 +165,11 @@ export class RoutesService {
 
   // Double encode may be necessary because the browser automatically decodes the token before we have access to it
   public static doubleEncode(str: string): string {
-      return RoutesService._forceSingleEncode ? encodeURIComponent(str) : encodeURIComponent(encodeURIComponent(str));
+      return RoutesService.singleEncode ? encodeURIComponent(str) : encodeURIComponent(encodeURIComponent(str));
   }
 
   private static forceSingleEncode(force: boolean) {
-    RoutesService._forceSingleEncode = force;
+    RoutesService.singleEncode = force;
   }
 
    getPathData(snapshot: ActivatedRouteSnapshot): { params: {}, pathPostFix: string, lastPaths: Component[] } {

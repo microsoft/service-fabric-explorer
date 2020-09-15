@@ -5,7 +5,7 @@ import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
 import { SystemApplication } from 'src/app/Models/DataModels/Application';
 import { Observable, forkJoin, of } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -20,7 +20,7 @@ import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUti
   templateUrl: './essentials.component.html',
   styleUrls: ['./essentials.component.scss']
 })
-export class EssentialsComponent extends BaseController {
+export class EssentialsComponent extends BaseControllerDirective {
 
   clusterUpgradeProgress: ClusterUpgradeProgress;
   nodes: NodeCollection;

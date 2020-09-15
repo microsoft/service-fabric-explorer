@@ -16,13 +16,13 @@ describe('RefreshService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   fit('should be created', () => {
-    const service: RefreshService = TestBed.get(RefreshService);
+    const service: RefreshService = TestBed.inject(RefreshService);
     expect(service).toBeTruthy();
   });
 
 
   fit('add and remove refresh subject', () => {
-    const service: RefreshService = TestBed.get(RefreshService);
+    const service: RefreshService = TestBed.inject(RefreshService);
 
     const keyName = 'test';
     const func = () => of(null);
@@ -38,7 +38,7 @@ describe('RefreshService', () => {
   });
 
   fit('refresh all', async () => {
-    const service: RefreshService = TestBed.get(RefreshService);
+    const service: RefreshService = TestBed.inject(RefreshService);
     let done = false;
     const keyName = 'test';
     const func = () => of(null).pipe(map( () => done = true));
@@ -56,7 +56,7 @@ describe('RefreshService', () => {
   });
 
   fit('refresh withError', async () => {
-    const service: RefreshService = TestBed.get(RefreshService);
+    const service: RefreshService = TestBed.inject(RefreshService);
     const keyName = 'test';
     const func = () =>  throwError('error');
     let done = false;
@@ -76,7 +76,7 @@ describe('RefreshService', () => {
   });
 
   fit('update refresh interval', async () => {
-    const service: RefreshService = TestBed.get(RefreshService);
+    const service: RefreshService = TestBed.inject(RefreshService);
     service.init();
 
     expect(service.refreshRate).toBe('15');

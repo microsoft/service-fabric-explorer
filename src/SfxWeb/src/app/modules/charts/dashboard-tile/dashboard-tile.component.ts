@@ -1,4 +1,4 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges } from '@angular/core';
 import { IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
 
@@ -7,7 +7,7 @@ import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'hig
   templateUrl: './dashboard-tile.component.html',
   styleUrls: ['./dashboard-tile.component.scss']
 })
-export class DashboardTileComponent implements OnInit, AfterViewInit {
+export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() data: IDashboardViewModel;
 
