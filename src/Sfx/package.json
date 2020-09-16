@@ -38,7 +38,7 @@
     "@types/nouislider": "^9.0.5",
     "@types/vis": "^4.21.18",
     "adal-angular": "1.0.17",
-    "angular": "1.5.0",
+    "angular": "1.8.0",
     "angular-animate": "1.5.0",
     "angular-aria": "1.5.0",
     "angular-route": "1.5.0",
