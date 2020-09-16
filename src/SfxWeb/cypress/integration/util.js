@@ -79,5 +79,5 @@ export const refresh = () => {
     cy.get("[data-cy=refresh]").click();
 }
 
-
 export const EMPTY_LIST_TEXT = "No items to display.";
+

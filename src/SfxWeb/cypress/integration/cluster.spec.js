@@ -36,7 +36,7 @@ context('Cluster page', () => {
 
     it('certificate expiring banner', () => {
       cy.route('GET', nodes_route, 'fixture:cluster-page/nodes-1-warning')
-      cy.route('GET', apiUrl('/Nodes/_nt_4/$/GetHealth?*'), 'fixture:cluster-page/node-health').as('getnodeHealth')
+      cy.route('GET', apiUrl('/Nodes/_nt_0/$/GetHealth?*'), 'fixture:cluster-page/node-health').as('getnodeHealth')
 
       cy.visit('')
 
@@ -90,8 +90,12 @@ context('Cluster page', () => {
 
   describe("metrics", () => {
     it('load metrics', () => {
+      cy.route('GET', nodes_route, 'fixture:cluster-page/nodes-1-warning')
+      cy.route('GET', apiUrl('/Nodes/_nt_0/$/GetLoadInformation?*'), 'fixture:node-load/get-node-load-information').as("nodeLoad")
+
       cy.visit('/#/metrics')
       cy.wait('@' + LOAD_INFO);
+      cy.wait('@' + "nodeLoad");
 
       cy.get('app-metrics').within(() => {
         cy.contains("Reserved CpuCores");
