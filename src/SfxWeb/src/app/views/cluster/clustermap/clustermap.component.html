@@ -1,5 +1,5 @@
 <div class="detail-pane">
-    <div>
+    <div data-cy="clustermap">
         <app-input placeholder="Filter nodes" [model]="filter" (changed)="filter = $event;" ></app-input>
 
         <div style="margin: 15px; display: block;">
@@ -13,30 +13,30 @@
                 <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
             </app-check-box>
         </div>
-    </div>
-    <div class="table-responsive" *ngIf="nodes">
-        <table class="table map-table" role="presentation">
-            <tbody>
-                <tr>
-                    <td class="legend" colspan="2" rowspan="2"></td>
-                    <td [colSpan]="nodes.faultDomains.length" class="legend">Fault Domain</td>
-                </tr>
-                <tr>
-                    <td *ngFor="let faultDomain of nodes.faultDomains" class="header">{{faultDomain}}</td>
-                </tr>
-                <tr *ngFor="let upgradeDomain of nodes.upgradeDomains; first as isFirst">
-                    <td class="legend" [rowSpan]="nodes.upgradeDomains.length" *ngIf="isFirst">Upgrade<br />Domain</td>
-                    <td class="header">{{upgradeDomain}}</td>
-                    <td *ngFor="let faultDomain of nodes.faultDomains">
-                        <div class="candybar-container">
-                            <div class="candybar-wrapper compact"
-                                *ngFor="let node of getNodesForDomains(upgradeDomain, faultDomain)">
-                                <app-candybar-compact [item]="node" [viewPath]="node.viewPath"></app-candybar-compact>
+        <div class="table-responsive">
+            <table class="table map-table" role="presentation">
+                <tbody>
+                    <tr>
+                        <td class="legend" colspan="2" rowspan="2"></td>
+                        <td [colSpan]="nodes.faultDomains.length" class="legend">Fault Domain</td>
+                    </tr>
+                    <tr>
+                        <td *ngFor="let faultDomain of nodes.faultDomains" class="header">{{faultDomain}}</td>
+                    </tr>
+                    <tr *ngFor="let upgradeDomain of nodes.upgradeDomains; first as isFirst">
+                        <td class="legend" [rowSpan]="nodes.upgradeDomains.length" *ngIf="isFirst">Upgrade<br />Domain</td>
+                        <td class="header">{{upgradeDomain}}</td>
+                        <td *ngFor="let faultDomain of nodes.faultDomains">
+                            <div class="candybar-container">
+                                <div class="candybar-wrapper compact"
+                                    *ngFor="let node of getNodesForDomains(upgradeDomain, faultDomain)" data-cy="node">
+                                    <app-candybar-compact [item]="node" [viewPath]="node.viewPath"></app-candybar-compact>
+                                </div>
                             </div>
-                        </div>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
     </div>
 </div>

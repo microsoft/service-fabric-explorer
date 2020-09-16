@@ -1,0 +1,533 @@
+{
+    "LastBalancingStartTimeUtc": "2020-09-11T01:00:48.269Z",
+    "LastBalancingEndTimeUtc": "2020-09-11T01:00:48.269Z",
+    "LoadMetricInformation": [
+        {
+            "Name": "Count",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 0.003849,
+            "DeviationAfter": 0.003849,
+            "BalancingThreshold": 1,
+            "Action": "NewReplicaPlacement",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "51",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "6",
+            "MinNodeLoadId": {
+                "Id": "86fa6852ad467a903afbbc67edc16b66"
+            },
+            "MaxNodeLoadValue": "12",
+            "MaxNodeLoadId": {
+                "Id": "32d053460052907aed14ce6b3a6d673c"
+            },
+            "CurrentClusterLoad": 51,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 12,
+            "MinimumNodeLoad": 6,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "PrimaryCount",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 0.157459,
+            "DeviationAfter": 0.157459,
+            "BalancingThreshold": 1,
+            "Action": "NewReplicaPlacement",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "13",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "2",
+            "MinNodeLoadId": {
+                "Id": "4ede5ab80fe7ff7eea4999d6c9dd7269"
+            },
+            "MaxNodeLoadValue": "3",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 13,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 3,
+            "MinimumNodeLoad": 2,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "ReplicaCount",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 0,
+            "DeviationAfter": 0,
+            "BalancingThreshold": 1,
+            "Action": "NewReplicaPlacement",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "45",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "5",
+            "MinNodeLoadId": {
+                "Id": "86fa6852ad467a903afbbc67edc16b66"
+            },
+            "MaxNodeLoadValue": "10",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 45,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 10,
+            "MinimumNodeLoad": 5,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "__ClusterManagerServicePrimaryCount__",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 1.732051,
+            "DeviationAfter": 1.732051,
+            "BalancingThreshold": 1,
+            "Action": "NoActionNeeded",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "1",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "0",
+            "MinNodeLoadId": {
+                "Id": "32d053460052907aed14ce6b3a6d673c"
+            },
+            "MaxNodeLoadValue": "1",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 1,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 1,
+            "MinimumNodeLoad": 0,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "__ClusterManagerServiceReplicaCount__",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 0,
+            "DeviationAfter": 0,
+            "BalancingThreshold": 1,
+            "Action": "NoActionNeeded",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "5",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "1",
+            "MinNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "MaxNodeLoadValue": "1",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 5,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 1,
+            "MinimumNodeLoad": 1,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "__FaultAnalysisServicePrimaryCount__",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 1.732051,
+            "DeviationAfter": 1.732051,
+            "BalancingThreshold": 1,
+            "Action": "NoActionNeeded",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "1",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "0",
+            "MinNodeLoadId": {
+                "Id": "32d053460052907aed14ce6b3a6d673c"
+            },
+            "MaxNodeLoadValue": "1",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 1,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 1,
+            "MinimumNodeLoad": 0,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "__FaultAnalysisServiceReplicaCount__",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 0,
+            "DeviationAfter": 0,
+            "BalancingThreshold": 1,
+            "Action": "NoActionNeeded",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "5",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "1",
+            "MinNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "MaxNodeLoadValue": "1",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 5,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 1,
+            "MinimumNodeLoad": 1,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "__FileStoreServicePrimaryCount__",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 1.732051,
+            "DeviationAfter": 1.732051,
+            "BalancingThreshold": 1,
+            "Action": "NoActionNeeded",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "1",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "0",
+            "MinNodeLoadId": {
+                "Id": "32d053460052907aed14ce6b3a6d673c"
+            },
+            "MaxNodeLoadValue": "1",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 1,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 1,
+            "MinimumNodeLoad": 0,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "__FileStoreServiceReplicaCount__",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 0,
+            "DeviationAfter": 0,
+            "BalancingThreshold": 1,
+            "Action": "NoActionNeeded",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "5",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "1",
+            "MinNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "MaxNodeLoadValue": "1",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 5,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 1,
+            "MinimumNodeLoad": 1,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "__InfrastructureServicePrimaryCount__",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 1.732051,
+            "DeviationAfter": 1.732051,
+            "BalancingThreshold": 1,
+            "Action": "NoActionNeeded",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "1",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "0",
+            "MinNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "MaxNodeLoadValue": "1",
+            "MaxNodeLoadId": {
+                "Id": "32d053460052907aed14ce6b3a6d673c"
+            },
+            "CurrentClusterLoad": 1,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 1,
+            "MinimumNodeLoad": 0,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "__InfrastructureServiceReplicaCount__",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 0.173205,
+            "DeviationAfter": 0.173205,
+            "BalancingThreshold": 1,
+            "Action": "NoActionNeeded",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "3",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "0",
+            "MinNodeLoadId": {
+                "Id": "4ede5ab80fe7ff7eea4999d6c9dd7269"
+            },
+            "MaxNodeLoadValue": "1",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 3,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 1,
+            "MinimumNodeLoad": 0,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "__NamingServicePrimaryCount__",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 0.57735,
+            "DeviationAfter": 0.57735,
+            "BalancingThreshold": 1,
+            "Action": "NoActionNeeded",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "3",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "0",
+            "MinNodeLoadId": {
+                "Id": "4ede5ab80fe7ff7eea4999d6c9dd7269"
+            },
+            "MaxNodeLoadValue": "1",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 3,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 1,
+            "MinimumNodeLoad": 0,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "__NamingServiceReplicaCount__",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 0,
+            "DeviationAfter": 0,
+            "BalancingThreshold": 1,
+            "Action": "NoActionNeeded",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "15",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "3",
+            "MinNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "MaxNodeLoadValue": "3",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 15,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 3,
+            "MinimumNodeLoad": 3,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "__RepairManagerServicePrimaryCount__",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 1.732051,
+            "DeviationAfter": 1.732051,
+            "BalancingThreshold": 1,
+            "Action": "NoActionNeeded",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "1",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "0",
+            "MinNodeLoadId": {
+                "Id": "32d053460052907aed14ce6b3a6d673c"
+            },
+            "MaxNodeLoadValue": "1",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 1,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 1,
+            "MinimumNodeLoad": 0,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "__RepairManagerServiceReplicaCount__",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 0,
+            "DeviationAfter": 0,
+            "BalancingThreshold": 1,
+            "Action": "NoActionNeeded",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "0",
+            "ClusterLoad": "5",
+            "RemainingUnbufferedCapacity": "0",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "0",
+            "RemainingBufferedCapacity": "0",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "1",
+            "MinNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "MaxNodeLoadValue": "1",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 5,
+            "BufferedClusterCapacityRemaining": 0,
+            "ClusterCapacityRemaining": 0,
+            "MaximumNodeLoad": 1,
+            "MinimumNodeLoad": 1,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "servicefabric:/_CpuCores",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 0,
+            "DeviationAfter": 0,
+            "BalancingThreshold": 1,
+            "Action": "ActionNotChosenYet",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "5",
+            "ClusterLoad": "0",
+            "RemainingUnbufferedCapacity": "5",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "5",
+            "RemainingBufferedCapacity": "5",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "0",
+            "MinNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "MaxNodeLoadValue": "0",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 0,
+            "BufferedClusterCapacityRemaining": 5,
+            "ClusterCapacityRemaining": 5,
+            "MaximumNodeLoad": 0,
+            "MinimumNodeLoad": 0,
+            "PlannedLoadRemoval": 0
+        },
+        {
+            "Name": "servicefabric:/_MemoryInMB",
+            "IsBalancedBefore": true,
+            "IsBalancedAfter": true,
+            "DeviationBefore": 0,
+            "DeviationAfter": 0,
+            "BalancingThreshold": 1,
+            "Action": "ActionNotChosenYet",
+            "ActivityThreshold": 0,
+            "ClusterCapacity": "32760",
+            "ClusterLoad": "0",
+            "RemainingUnbufferedCapacity": "32760",
+            "NodeBufferPercentage": 0,
+            "BufferedCapacity": "32760",
+            "RemainingBufferedCapacity": "32760",
+            "IsClusterCapacityViolation": false,
+            "MinNodeLoadValue": "0",
+            "MinNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "MaxNodeLoadValue": "0",
+            "MaxNodeLoadId": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "CurrentClusterLoad": 0,
+            "BufferedClusterCapacityRemaining": 32760,
+            "ClusterCapacityRemaining": 32760,
+            "MaximumNodeLoad": 0,
+            "MinimumNodeLoad": 0,
+            "PlannedLoadRemoval": 0
+        }
+    ]
+}

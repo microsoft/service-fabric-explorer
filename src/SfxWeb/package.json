@@ -12,12 +12,12 @@
     "test": "ng test",
     "cypress:local" : "cypress open --env API_PREFIX=api/",
 
-    "ci:start-server": "angular-http-server --path ./dist -p 3000",
+    "ci:start-server": "angular-http-server --path ./dist -p 3000 --silent",
     "ci:test-build": "ng build --configuration=accesstesting",
 
     "ci:test": "ng test --watch=false --browsers=ChromeHeadless",
     "ci:cy-run": "start-server-and-test ci:start-server http://localhost:3000 cy:run",
-    "cy:run": "cypress run",
+    "cy:run": "cypress run ",
 
     "lint": "ng lint",
     "build:stats": "ng build --stats-json",
