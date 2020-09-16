@@ -78,3 +78,6 @@ Cause an SFX refresh by pressing the refresh button in page.
 export const refresh = () => {
     cy.get("[data-cy=refresh]").click();
 }
+
+
+export const EMPTY_LIST_TEXT = "No items to display.";

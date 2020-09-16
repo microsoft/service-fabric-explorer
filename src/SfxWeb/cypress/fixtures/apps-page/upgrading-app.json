@@ -1,0 +1,24 @@
+{
+    "Name": "fabric:/VisualObjectsApplicationType",
+    "TypeName": "VisualObjectsApplicationType",
+    "TargetApplicationTypeVersion": "16.0.0",
+    "UpgradeDomains": [],
+    "UpgradeState": "UnmonitoredManual",
+    "NextUpgradeDomain": "",
+    "RollingUpgradeMode": "RollingForwardInProgress",
+    "UpgradeDurationInMilliseconds": "PT0H0M0S",
+    "UpgradeDomainDurationInMilliseconds": "PT0H0M0S",
+    "UnhealthyEvaluations": [],
+    "CurrentUpgradeDomainProgress": {
+        "DomainName": "",
+        "NodeUpgradeProgressList": []
+    },
+    "StartTimestampUtc": "0001-01-01T00:00:00.000Z",
+    "FailureTimestampUtc": "0001-01-01T00:00:00.000Z",
+    "FailureReason": "None",
+    "UpgradeDomainProgressAtFailure": {
+        "DomainName": "",
+        "NodeUpgradeProgressList": []
+    },
+    "UpgradeStatusDetails": ""
+}

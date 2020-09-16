@@ -3,10 +3,10 @@
         <div *ngIf="actions && actions.length > 0" class="actions">
             <app-action-collection-drop-down [actionCollection]="actions"></app-action-collection-drop-down>
         </div>
-        <h1 class="detail-view-title" [title]="name" *ngIf="type">
+        <h1 class="detail-view-title" [title]="name" *ngIf="type" data-cy="header">
             {{type}} <span *ngIf="name">: {{name}}</span>
         </h1>
-    <div class="detail-view-navbar" role="tablist" [attr.aria-label]="name">
+    <div class="detail-view-navbar" role="tablist" [attr.aria-label]="name" data-cy="navtabs">
         <div class="detail-view-navbar-tab" *ngFor="let tab of tabs; let i = index">
             <a [routerLink]="tab.route" [title]="tab.name" role="tab" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" [id]="i" (keydown.space)="navigateBySpaceBar(tab.route)">{{tab.name}}</a>
             <!-- <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div> -->
