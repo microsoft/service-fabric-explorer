@@ -1,64 +1,111 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, FIXTURE_REF_APPS, apps_route, EMPTY_LIST_TEXT, refresh } from './util';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_APPTYPES, EMPTY_LIST_TEXT } from './util';
 
-const appName = "fabric:/VisualObjectsApplicationType";
-"/#/apptype/VisualObjectsApplicationType/app/VisualObjectsApplicationType"
+const appName = "VisualObjectsApplicationType";
+const waitRequest = "@services"
 context('app', () => {
     beforeEach(() => {
         cy.server()
         addDefaultFixtures();
-        cy.visit('/#/apps')
+
+        cy.route(apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`), "fx:app-page/upgrade-progress").as("upgradeProgress")
+        cy.route(apiUrl(`/Applications/${appName}/$/GetServices?*`), "fx:app-page/services").as("services")
+        cy.route(apiUrl(`/Applications/${appName}/$/GetHealth?*`), "fx:app-page/app-health").as("apphealth")
+        cy.route(apiUrl(`/Applications/${appName}?*`), "fx:app-page/app-type").as("appType")
+        cy.route(apiUrl(`ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`), "fx:app-page/service-types").as("serviceTypes")
+        cy.visit(`/#/apptype/${appName}/app/${appName}`)
     })
 
     describe("essentials", () => {
         it('load essentials', () => {
             cy.get('[data-cy=header').within(() => {
-                cy.contains('Applications').click();
-              })
+                cy.contains(appName).click();
+            })
 
-            cy.get('[data-cy=appslist]').within(() => {
-                cy.contains(appName)
+            cy.wait(['@upgradeProgress', waitRequest, '@apphealth', '@serviceTypes'])
+
+            cy.get('[data-cy=upgradeDetails]').within(() => {
+                cy.contains("Latest Upgrade State")
+            })
+
+            cy.get('[data-cy=health]').within(() => {
+                cy.contains(EMPTY_LIST_TEXT)
+            })
+
+            cy.get('[data-cy=serviceTypes]').within(() => {
+                cy.contains("VisualObjects.WebServiceType");
+                cy.contains("VisualObjects.ActorServiceType");
+
+            })
+
+            cy.get('[data-cy=services]').within(() => {
+                cy.contains("fabric:/VisualObjectsApplicationType/VisualObjects.WebService");
+                cy.contains("fabric:/VisualObjectsApplicationType/VisualObjects.ActorService");
             })
         })
 
     })
 
-    describe("upgrades in progress", () => {
-        it.only('view upgrades', () => {
-            
+    describe("details", () => {
+        it('view details', () => {
+            cy.wait(FIXTURE_REF_APPTYPES);
+
             cy.get('[data-cy=navtabs]').within(() => {
-                cy.contains('upgrades in progress').click();
-            })
-    
-            cy.url().should('include', '/apps/upgrades')
-
-            cy.get("[data-cy=upgradingapps]").within( () => {
-                cy.contains(EMPTY_LIST_TEXT);
+                cy.contains('details').click();
             })
 
-            cy.route('GET', apiUrl(`/Applications/VisualObjectsApplicationType/$/GetUpgradeProgress?*`), 'fx:apps-page/upgrading-app').as("appUpgrading");
-            cy.route('GET', apps_route, 'fx:apps-page/upgrading-apps').as("appsUpgrading");
+            cy.url().should('include', '/details')
+        })
+    })
 
-            refresh();
+    describe("deployments", () => {
+        it('view details', () => {
+            cy.wait(FIXTURE_REF_APPTYPES);
 
-            cy.wait(["@appsUpgrading", "@appUpgrading"]);
-
-            cy.get("[data-cy=upgradingapps]").within( () => {
-                cy.contains(appName);
+            cy.get('[data-cy=navtabs]').within(() => {
+                cy.contains('deployments').click();
             })
+
+            cy.url().should('include', '/deployments')
+        })
+    })
+
+    describe("manifest", () => {
+        it('view manifest', () => {
+            cy.wait(FIXTURE_REF_APPTYPES);
+
+            cy.get('[data-cy=navtabs]').within(() => {
+                cy.contains('manifest').click();
+            })
+
+            cy.url().should('include', '/manifest')
+        })
+    })
+
+    describe("backups", () => {
+        it('view backup', () => {
+            cy.wait(FIXTURE_REF_APPTYPES);
+
+            cy.get('[data-cy=navtabs]').within(() => {
+                cy.contains('backup').click();
+            })
+
+            cy.url().should('include', '/backup')
         })
     })
 
     describe("events", () => {
         it('view events', () => {
-            cy.wait(FIXTURE_REF_APPS);
+            cy.route(apiUrl(`EventsStore/Applications/${appName}/$/Events?*`), "fx:empty-list").as("events")
+
+            cy.wait([FIXTURE_REF_APPTYPES, "@events"]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();
             })
-    
-            cy.url().should('include', '/apps/events')
+
+            cy.url().should('include', '/events')
         })
     })
 

@@ -1,0 +1,95 @@
+{
+    "HealthEvents": [
+        {
+            "SourceId": "System.CM",
+            "Property": "State",
+            "HealthState": "Ok",
+            "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+            "Description": "Application has been created.",
+            "SequenceNumber": "139620",
+            "RemoveWhenExpired": false,
+            "HealthReportId": "CM_7.0_1000",
+            "SourceUtcTimestamp": "2020-07-22T21:30:14.594Z",
+            "LastModifiedUtcTimestamp": "2020-08-26T16:45:20.848Z",
+            "IsExpired": false,
+            "LastOkTransitionAt": "2020-07-22T21:30:14.594Z",
+            "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+            "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        }
+    ],
+    "AggregatedHealthState": "Ok",
+    "UnhealthyEvaluations": [],
+    "HealthStatistics": {
+        "HealthStateCountList": [
+            {
+                "EntityKind": "Replica",
+                "HealthStateCount": {
+                    "OkCount": 31,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            },
+            {
+                "EntityKind": "Partition",
+                "HealthStateCount": {
+                    "OkCount": 11,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            },
+            {
+                "EntityKind": "Service",
+                "HealthStateCount": {
+                    "OkCount": 2,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            },
+            {
+                "EntityKind": "DeployedServicePackage",
+                "HealthStateCount": {
+                    "OkCount": 6,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            },
+            {
+                "EntityKind": "DeployedApplication",
+                "HealthStateCount": {
+                    "OkCount": 5,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            }
+        ]
+    },
+    "Name": "fabric:/VisualObjectsApplicationType",
+    "ServiceHealthStates": [],
+    "DeployedApplicationHealthStates": [
+        {
+            "ApplicationName": "fabric:/VisualObjectsApplicationType",
+            "NodeName": "_nt_4",
+            "AggregatedHealthState": "Ok"
+        },
+        {
+            "ApplicationName": "fabric:/VisualObjectsApplicationType",
+            "NodeName": "_nt_1",
+            "AggregatedHealthState": "Ok"
+        },
+        {
+            "ApplicationName": "fabric:/VisualObjectsApplicationType",
+            "NodeName": "_nt_3",
+            "AggregatedHealthState": "Ok"
+        },
+        {
+            "ApplicationName": "fabric:/VisualObjectsApplicationType",
+            "NodeName": "_nt_2",
+            "AggregatedHealthState": "Ok"
+        },
+        {
+            "ApplicationName": "fabric:/VisualObjectsApplicationType",
+            "NodeName": "_nt_0",
+            "AggregatedHealthState": "Ok"
+        }
+    ]
+}
