@@ -50,7 +50,7 @@ export class DataService {
 
   public readOnlyHeader: boolean =  null;
   public clusterNameMetadata: string = null;
-  ;
+  
 
   constructor(
     public routes: RoutesService,
