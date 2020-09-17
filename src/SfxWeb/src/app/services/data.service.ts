@@ -49,7 +49,8 @@ export class DataService {
   public backupPolicies: BackupPolicyCollection;
 
   public readOnlyHeader: boolean =  null;
-  public clusterNameMetadata: string =  null;
+  public clusterNameMetadata: string = null;
+  ;
 
   constructor(
     public routes: RoutesService,

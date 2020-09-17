@@ -4,7 +4,7 @@
             <app-action-collection-drop-down [actionCollection]="actions"></app-action-collection-drop-down>
         </div>
         <h1 class="detail-view-title" [title]="name" *ngIf="type" data-cy="header">
-            {{type}} <span *ngIf="name">: {{name}}</span>
+            <b>{{type}}</b> <span *ngIf="name"> {{name}}</span>
         </h1>
     <div class="detail-view-navbar" role="tablist" [attr.aria-label]="name" data-cy="navtabs">
         <div class="detail-view-navbar-tab" *ngFor="let tab of tabs; let i = index">
