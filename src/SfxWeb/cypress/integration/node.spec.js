@@ -8,8 +8,7 @@ const nodeInfoRef = "@nodeInfo"
 context('node page', () => {
 
     beforeEach(() => {
-
-        cy.server()
+        cy.server();
         addDefaultFixtures();
         cy.route(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/node-info').as('nodeInfo');
         cy.route(apiUrl(`Nodes/${nodeName}/$/GetHealth?*`), 'fx:node-page/health').as('health');
@@ -19,7 +18,7 @@ context('node page', () => {
 
     describe("essentials", () => {
         it('load essentials', () => {
-            cy.visit(`/#/node/${nodeName}`)
+            cy.visit(`/#/node/${nodeName}`);
 
             cy.wait(FIXTURE_REF_NODES);
 
@@ -37,7 +36,7 @@ context('node page', () => {
         it('deactivated', () => {
             cy.route(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/deactivated-node').as('deactivatedNode');
 
-            cy.visit(`/#/node/${nodeName}`)
+            cy.visit(`/#/node/${nodeName}`);
 
             cy.wait("@deactivatedNode");
 
@@ -50,21 +49,25 @@ context('node page', () => {
 
     describe("details", () => {
         it('view details', () => {
+            cy.route('GET', apiUrl('/Nodes/_nt_0/$/GetLoadInformation?*'), 'fixture:node-load/get-node-load-information').as("nodeLoad")
+
             cy.visit(`/#/node/${nodeName}`)
 
             cy.wait(nodeInfoRef);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
-            })
+            });
     
-            cy.url().should('include', 'details')
+            cy.wait("@nodeLoad" );
+            cy.url().should('include', 'details');
+            cy.get("[data-cy=load]");
         })
     })
 
     describe("events", () => {
         it('view events', () => {
-            cy.visit(`/#/node/${nodeName}`)
+            cy.visit(`/#/node/${nodeName}`);
 
             cy.wait(nodeInfoRef);
 
@@ -72,7 +75,7 @@ context('node page', () => {
                 cy.contains('events').click();
             })
     
-            cy.url().should('include', 'events')
+            cy.url().should('include', 'events');
         })
     })
 
