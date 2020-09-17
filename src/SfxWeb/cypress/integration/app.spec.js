@@ -3,7 +3,7 @@
 import { addDefaultFixtures, apiUrl, FIXTURE_REF_APPTYPES, EMPTY_LIST_TEXT } from './util';
 
 const appName = "VisualObjectsApplicationType";
-const waitRequest = "@services"
+const waitRequest = FIXTURE_REF_APPTYPES;
 context('app', () => {
     beforeEach(() => {
         cy.server()
@@ -12,18 +12,17 @@ context('app', () => {
         cy.route(apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`), "fx:app-page/upgrade-progress").as("upgradeProgress")
         cy.route(apiUrl(`/Applications/${appName}/$/GetServices?*`), "fx:app-page/services").as("services")
         cy.route(apiUrl(`/Applications/${appName}/$/GetHealth?*`), "fx:app-page/app-health").as("apphealth")
-        cy.route(apiUrl(`/Applications/${appName}?*`), "fx:app-page/app-type").as("appType")
+        cy.route(apiUrl(`/Applications/${appName}/?*`), "fx:app-page/app-type").as("app")
         cy.route(apiUrl(`ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`), "fx:app-page/service-types").as("serviceTypes")
         cy.visit(`/#/apptype/${appName}/app/${appName}`)
     })
 
     describe("essentials", () => {
         it('load essentials', () => {
+            cy.wait(waitRequest);
             cy.get('[data-cy=header').within(() => {
                 cy.contains(appName).click();
             })
-
-            cy.wait(['@upgradeProgress', waitRequest, '@apphealth', '@serviceTypes'])
 
             cy.get('[data-cy=upgradeDetails]').within(() => {
                 cy.contains("Latest Upgrade State")
@@ -49,7 +48,7 @@ context('app', () => {
 
     describe("details", () => {
         it('view details', () => {
-            cy.wait(FIXTURE_REF_APPTYPES);
+            cy.wait(waitRequest);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
@@ -61,7 +60,7 @@ context('app', () => {
 
     describe("deployments", () => {
         it('view details', () => {
-            cy.wait(FIXTURE_REF_APPTYPES);
+            cy.wait(waitRequest);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('deployments').click();
@@ -73,7 +72,7 @@ context('app', () => {
 
     describe("manifest", () => {
         it('view manifest', () => {
-            cy.wait(FIXTURE_REF_APPTYPES);
+            cy.wait(waitRequest);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('manifest').click();
@@ -85,7 +84,7 @@ context('app', () => {
 
     describe("backups", () => {
         it('view backup', () => {
-            cy.wait(FIXTURE_REF_APPTYPES);
+            cy.wait(waitRequest);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('backup').click();
@@ -99,7 +98,7 @@ context('app', () => {
         it('view events', () => {
             cy.route(apiUrl(`EventsStore/Applications/${appName}/$/Events?*`), "fx:empty-list").as("events")
 
-            cy.wait([FIXTURE_REF_APPTYPES, "@events"]);
+            cy.wait(waitRequest);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();
