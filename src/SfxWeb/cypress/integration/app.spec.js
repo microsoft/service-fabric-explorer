@@ -3,7 +3,7 @@
 import { addDefaultFixtures, apiUrl, FIXTURE_REF_APPTYPES, EMPTY_LIST_TEXT } from './util';
 
 const appName = "VisualObjectsApplicationType";
-const waitRequest = FIXTURE_REF_APPTYPES;
+const waitRequest = "@app";
 context('app', () => {
     beforeEach(() => {
         cy.server()
