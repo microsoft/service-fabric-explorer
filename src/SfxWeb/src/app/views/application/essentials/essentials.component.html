@@ -63,7 +63,7 @@
   <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
 </div>
 
-<div id="upgradeDetailsSection" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
+<div data-cy="upgradeDetails" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container [sectionName]="app.isUpgrading ? 'Upgrade In Progress' : 'Latest Upgrade State'">
         <div collapse-header>
             <h4 *ngIf="app.isUpgrading">Upgrade In Progress</h4>
@@ -134,7 +134,7 @@
     </app-collapse-container>
 </div>
 
-<div class="detail-pane essen-pane" *ngIf="app && app.health">
+<div class="detail-pane essen-pane" *ngIf="app && app.health" data-cy="health">
     <app-collapse-container sectionName="Unhealthy Evaluations">
         <div collapse-header>
             <h4>Unhealthy Evaluations</h4>
@@ -151,7 +151,7 @@
             <h4>Services</h4>
         </div>
         <div collapse-body>
-            <app-detail-list [list]="app.services.collection" [listSettings]="listSettings"></app-detail-list>
+            <app-detail-list [list]="app.services.collection" [listSettings]="listSettings" data-cy="services"></app-detail-list>
         </div>
     </app-collapse-container>
 </div>
@@ -162,7 +162,7 @@
             <h4>Service Types</h4>
         </div>
         <div collapse-body>
-            <app-detail-list [list]="app.serviceTypes.collection" [listSettings]="serviceTypesListSettings"></app-detail-list>
+            <app-detail-list [list]="app.serviceTypes.collection" [listSettings]="serviceTypesListSettings" data-cy="serviceTypes"></app-detail-list>
         </div>
     </app-collapse-container>
 </div>
