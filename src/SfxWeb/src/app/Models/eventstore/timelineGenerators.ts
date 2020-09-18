@@ -44,24 +44,17 @@ export class EventStoreUtils {
 
     private static internalToolTipFormatterObject = (data: any) => {
         const rows = Object.keys(data).map(key => EventStoreUtils.internalToolTipFormatter(key, data[key])).join('');
-
-        const outline = `<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
-
-        return outline;
+        return`<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
     }
 
     private static internalToolTipFormatter = (key: string, data: any) => {
-            let value = data;
-            if(Array.isArray(data) ) {
-                value = data.map(arrValue => EventStoreUtils.internalToolTipFormatter("", arrValue)).join("");
-            }else if(typeof data === "object") {
-                value = EventStoreUtils.internalToolTipFormatterObject(data);
-            }
-            const row = `<tr style="padding: 0 5 px; bottom-border: 1px solid gray"><td style="word-break: keep-all;">${key}</td><td style="display:flex; flex-direction: row; "> <div style="margin-right: 4px">:</div> ${value}</td></tr>`
-
-        // const outline = `<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
-
-        return row;
+        let value = data;
+        if (Array.isArray(data) ) {
+            value = data.map(arrValue => EventStoreUtils.internalToolTipFormatter('', arrValue)).join('');
+        }else if (typeof data === 'object') {
+            value = EventStoreUtils.internalToolTipFormatterObject(data);
+        }
+        return`<tr style="padding: 0 5 px; bottom-border: 1px solid gray"><td style="word-break: keep-all;">${key}</td><td style="display:flex; flex-direction: row; "> <div style="margin-right: 4px">:</div> ${value}</td></tr>`;
     }
 
     /*
