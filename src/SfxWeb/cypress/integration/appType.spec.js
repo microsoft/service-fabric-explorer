@@ -15,7 +15,7 @@ context('app', () => {
     describe("essentials", () => {
         it('load essentials', () => {
             cy.get('[data-cy=header').within(() => {
-                cy.contains(`Application Type : ${appTypeName}`).click();
+                cy.contains(`Application Type ${appTypeName}`).click();
               })
 
             cy.get('[data-cy=appTypeVersions]').within(() => {
