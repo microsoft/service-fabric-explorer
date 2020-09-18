@@ -1,22 +1,24 @@
-<div *ngIf="timelineData" style="margin-bottom: 20px; margin-left: 15px;">
-    <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" 
-                              [displayMoveToStart]="false" [displayMoveToEnd]="false"></app-event-store-timeline>
-</div>
-
-<div class="detail-pane essen-pane">
-    <app-collapse-container sectionName="Pending Repair Tasks">
-        <h4 collapse-header>
-            Pending Repair Tasks
-        </h4>
-        <app-detail-list [list]="repairTasks" [listSettings]="repairTaskListSettings" collapse-body (sorted)="sorted($event, false)"></app-detail-list>
-    </app-collapse-container>
-</div>
-
-<div class="detail-pane essen-pane">
-    <app-collapse-container collapsed=true sectionName="Completed Repair Tasks">
-        <h4 collapse-header>
-            Completed Repair Tasks
-        </h4>
-        <app-detail-list [list]="completedRepairTasks" [listSettings]="completedRepairTaskListSettings" collapse-body (sorted)="sorted($event)"></app-detail-list>
-    </app-collapse-container>
+<div style="min-height: 900px">
+    <div *ngIf="timelineData" style="margin-bottom: 20px; margin-left: 15px;">
+        <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" 
+                                  [displayMoveToStart]="false" [displayMoveToEnd]="false"></app-event-store-timeline>
+    </div>
+    
+    <div class="detail-pane essen-pane">
+        <app-collapse-container sectionName="Pending Repair Tasks">
+            <h4 collapse-header>
+                Pending Repair Tasks
+            </h4>
+            <app-detail-list [list]="repairTasks" [listSettings]="repairTaskListSettings" collapse-body (sorted)="sorted($event, false)"></app-detail-list>
+        </app-collapse-container>
+    </div>
+    
+    <div class="detail-pane essen-pane">
+        <app-collapse-container collapsed=true sectionName="Completed Repair Tasks">
+            <h4 collapse-header>
+                Completed Repair Tasks
+            </h4>
+            <app-detail-list [list]="completedRepairTasks" [listSettings]="completedRepairTaskListSettings" collapse-body (sorted)="sorted($event)"></app-detail-list>
+        </app-collapse-container>
+    </div>
 </div>
