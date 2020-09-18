@@ -41,14 +41,35 @@ export interface ITimelineDataGenerator<T extends FabricEventBase>{
 }
 
 export class EventStoreUtils {
+
+    private static internalToolTipFormatterObject = (data: any) => {
+        const rows = Object.keys(data).map(key => EventStoreUtils.internalToolTipFormatter(key, data[key])).join('');
+
+        const outline = `<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
+
+        return outline;
+    }
+
+    private static internalToolTipFormatter = (key: string, data: any) => {
+            let value = data;
+            if(Array.isArray(data) ) {
+                value = data.map(arrValue => EventStoreUtils.internalToolTipFormatter("", arrValue)).join("");
+            }else if(typeof data === "object") {
+                value = EventStoreUtils.internalToolTipFormatterObject(data);
+            }
+            const row = `<tr style="padding: 0 5 px; bottom-border: 1px solid gray"><td style="word-break: keep-all;">${key}</td><td style="display:flex; flex-direction: row; "> <div style="margin-right: 4px">:</div> ${value}</td></tr>`
+
+        // const outline = `<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
+
+        return row;
+    }
+
     /*
     Produces an html string used for vis.js timeline tooltips.
     */
     public static tooltipFormat = (data: Record<string, any> , start: string, end: string = '', title: string= ''): string => {
 
-        const rows = Object.keys(data).map(key => `<tr><td style="word-break: keep-all;">${key}</td><td> : ${data[key]}</td></tr>`).join('');
-
-        const outline = `<table style="word-break: break-all;"><tbody>${rows}</tbody></table>`;
+        const outline = EventStoreUtils.internalToolTipFormatterObject(data);
 
         // tslint:disable-next-line:max-line-length
         return `<div class="tooltip-test">${title.length > 0 ? title + '<br>' : ''}Start: ${start} <br>${ end ? 'End: ' + end + '<br>' : ''}<b style="text-align: center;">Details</b><br>${outline}</div>`;

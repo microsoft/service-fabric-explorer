@@ -80,6 +80,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
         true,
         (item) => true,
         true);
+        
   }
 
   /*
@@ -140,6 +141,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
           this.completedRepairTasks.push(task);
         }
       });
+      
     }));
   }
 }
