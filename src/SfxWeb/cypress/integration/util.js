@@ -52,9 +52,13 @@ export const FIXTURE_UPGRADEPROGRESS ="upgradeProgress";
 export const FIXTURE_REF_UPGRADEPROGRESS = exportFormat(FIXTURE_UPGRADEPROGRESS);
 export const upgradeProgress_route = apiUrl('/$/GetUpgradeProgress*');
 
+export const addRoute = (fixtureName, fixtureFileName, route, requestType = 'GET') => {
+    cy.fixture(fixtureFileName).as(fixtureName);
+    const fixtureRef = fixtureRefFormatter(fixtureName);
+    cy.route(requestType, route, fixtureRef).as(fixtureRequestFormatter(fixtureName))
+}
 
 export const addDefaultFixtures = () => {
-
     addRoute(FIXTURE_AAD, 'aad.json', aad_route)
     addRoute(FIXTURE_APPS, 'applications.json', apps_route)
     addRoute(FIXTURE_APPTYPES, 'appType.json', apptypes_route)
@@ -66,10 +70,9 @@ export const addDefaultFixtures = () => {
     addRoute(FIXTURE_UPGRADEPROGRESS, 'upgradeProgress.json', upgradeProgress_route)
 }
 
-export const addRoute = (fixtureName, fixtureFileName, route, requestType = 'GET') => {
-    cy.fixture(fixtureFileName).as(fixtureName);
-    const fixtureRef = fixtureRefFormatter(fixtureName);
-    cy.route(requestType, route, fixtureRef).as(fixtureRequestFormatter(fixtureName))
+
+export const addDefaultAppTypeFixtures = () => {
+    addDefaultFixtures();
 }
 
 /**
