@@ -1,0 +1,10 @@
+{
+    "ServiceKind": "Stateless",
+    "Name": "fabric:/VisualObjectsApplicationType/VisualObjects.WebService",
+    "TypeName": "VisualObjects.WebServiceType",
+    "ManifestVersion": "12.0.0",
+    "HealthState": "Ok",
+    "ServiceStatus": "Active",
+    "IsServiceGroup": false,
+    "Id": "VisualObjectsApplicationType/VisualObjects.WebService"
+}
