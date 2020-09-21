@@ -24,6 +24,7 @@ context('service', () => {
             cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`), "fx:partition-page/partition-info").as("partitionInfo");
             cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetReplicas?*`), "fx:partition-page/replicas").as("replicasList");
             cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetHealth?*`), "fx:partition-page/health").as("health");
+            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetLoadInformation?*`), "fx:partition-page/load").as("load");
 
             cy.visit(urlFormatter(appName, serviceName, partitionId))
         })
@@ -51,7 +52,9 @@ context('service', () => {
                 cy.contains('details').click();
             })
 
-            cy.url().should('include', '/details')
+            cy.wait('@load');
+
+            cy.url().should('include', '/details');
         })
 
         it('view events', () => {
