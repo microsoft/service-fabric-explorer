@@ -1,14 +1,11 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_APPTYPES, EMPTY_LIST_TEXT } from './util';
+import { addDefaultFixtures, apiUrl} from './util';
 
 const appName = "VisualObjectsApplicationType";
-const waitRequest = "@replicaInfo";
-
 
 /*
 Default to stateful service for the page
-
 */
 context('replica', () => {
     beforeEach(() => {
@@ -65,7 +62,6 @@ context('replica', () => {
 
             cy.url().should('include', '/events')
         })
-
     })
 
     describe("stateful", () => {
@@ -97,88 +93,5 @@ context('replica', () => {
                 cy.contains('http://10.0.0.7:8081/visualobjects/data/');
             })
         })
-
     })
-
-    // describe("stateless", () => {
-    //     beforeEach(() => {
-    //         cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${statefulServiceName}/$/GetDescription?*`), "fx:service-page/service-stateless-description").as("description");
-    //         cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${statefulServiceName}?*`), "fx:service-page/service-stateless-info").as("serviceInfo");
-    //         cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${statefulServiceName}/$/GetPartitions?*`), "fx:service-page/service-stateless-partitions").as("partitions");
-    //         cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${statefulServiceName}/$/GetHealth?*`), "fx:service-page/service-health").as("health")
-    //     })
-
-    //     it('stateless information', () => {
-    //         cy.visit(`/#/apptype/${appName}/app/${appName}/service/${appName}%252F${statefulServiceName}`)
-    //         cy.wait("@serviceInfo");
-
-    //         cy.get('[data-cy=stateless]').within(() => {
-    //             cy.contains("Stateless")
-    //             cy.contains("Instance Count")
-    //         })
-    //     })
-    // })
-
-    // describe("details", () => {
-    //     it('view details', () => {
-    //         cy.wait(waitRequest);
-
-    //         cy.get('[data-cy=navtabs]').within(() => {
-    //             cy.contains('details').click();
-    //         })
-
-    //         cy.url().should('include', '/details')
-    //     })
-    // })
-
-    // describe("deployments", () => {
-    //     it('view details', () => {
-    //         cy.wait(waitRequest);
-
-    //         cy.get('[data-cy=navtabs]').within(() => {
-    //             cy.contains('deployments').click();
-    //         })
-
-    //         cy.url().should('include', '/deployments')
-    //     })
-    // })
-
-    // describe("manifest", () => {
-    //     it('view manifest', () => {
-    //         cy.wait(waitRequest);
-
-    //         cy.get('[data-cy=navtabs]').within(() => {
-    //             cy.contains('manifest').click();
-    //         })
-
-    //         cy.url().should('include', '/manifest')
-    //     })
-    // })
-
-    // describe("backups", () => {
-    //     it('view backup', () => {
-    //         cy.wait(waitRequest);
-
-    //         cy.get('[data-cy=navtabs]').within(() => {
-    //             cy.contains('backup').click();
-    //         })
-
-    //         cy.url().should('include', '/backup')
-    //     })
-    // })
-
-    // describe("events", () => {
-    //     it('view events', () => {
-    //         cy.route(apiUrl(`EventsStore/Applications/${appName}/$/Events?*`), "fx:empty-list").as("events")
-
-    //         cy.wait(waitRequest);
-
-    //         cy.get('[data-cy=navtabs]').within(() => {
-    //             cy.contains('events').click();
-    //         })
-
-    //         cy.url().should('include', '/events')
-    //     })
-    // })
-
 })
