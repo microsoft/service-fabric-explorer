@@ -8,20 +8,14 @@ const appName = "VisualObjectsApplicationType";
 
 const waitRequest = "@partitionInfo";
 
-/*
-Default to stateful service for the page
-*/
-
 const routeFormatter = (appName, serviceName) => `/Applications/${appName}/$/GetServices/${appName}/${serviceName}/$/GetPartitions`;
 const urlFormatter = (app, service, partition) => `/#/apptype/${app}/app/${app}/service/${app}%252F${service}/partition/${partition}`;
-
 
 context('service', () => {
     beforeEach(() => {
         cy.server()
         addDefaultFixtures();
         cy.route(apiUrl(`/Applications/${appName}/$/GetServices?*`), "fx:app-page/services").as("services")
-
     })
 
     describe("stateful", () => {
