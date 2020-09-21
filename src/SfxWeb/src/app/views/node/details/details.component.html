@@ -16,6 +16,6 @@
     </app-collapse-container>
 </div>
 
-<div class="detail-pane essen-pane" *ngIf="node && node.loadInformation.isInitialized">
+<div class="detail-pane essen-pane" *ngIf="node && node.loadInformation.isInitialized" data-cy="load">
     <app-detail-view-part [data]="node.loadInformation.raw" [parent]="node.loadInformation" collapse-body></app-detail-view-part>
 </div>
