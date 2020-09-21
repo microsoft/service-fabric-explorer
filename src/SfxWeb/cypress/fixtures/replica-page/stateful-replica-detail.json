@@ -1,0 +1,56 @@
+{
+    "ServiceKind": "Stateful",
+    "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+    "PartitionId": "28bfaf73-37b0-467d-9d47-d011b0aedbc0",
+    "CurrentServiceOperation": "None",
+    "CurrentServiceOperationStartTimeUtc": "2020-09-21T19:18:52.831Z",
+    "ReportedLoad": [],
+    "ReplicaId": "132429154475414363",
+    "CurrentReplicatorOperation": "None",
+    "ReadStatus": "NotPrimary",
+    "WriteStatus": "NotPrimary",
+    "ReplicatorStatus": {
+        "Kind": "ActiveSecondary",
+        "ReplicationQueueStatus": {
+            "QueueUtilizationPercentage": 0,
+            "QueueMemorySize": "2330",
+            "FirstSequenceNumber": "379899575",
+            "CompletedSequenceNumber": "379899576",
+            "CommittedSequenceNumber": "379899576",
+            "LastSequenceNumber": "379899576"
+        },
+        "LastReplicationOperationReceivedTimeUtc": "2020-09-21T19:27:50.127Z",
+        "IsInBuild": false,
+        "CopyQueueStatus": {
+            "QueueUtilizationPercentage": 0,
+            "QueueMemorySize": "0",
+            "FirstSequenceNumber": "-1",
+            "CompletedSequenceNumber": "-1",
+            "CommittedSequenceNumber": "-1",
+            "LastSequenceNumber": "-1"
+        },
+        "LastCopyOperationReceivedTimeUtc": "2020-09-21T19:18:46.581Z",
+        "LastAcknowledgementSentTimeUtc": "2020-09-21T19:27:50.142Z"
+    },
+    "DeployedServiceReplica": {
+        "ServiceKind": "Stateful",
+        "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+        "ServiceTypeName": "VisualObjects.ActorServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "VisualObjects.ActorServicePkg",
+        "CodePackageName": "Code",
+        "PartitionId": "28bfaf73-37b0-467d-9d47-d011b0aedbc0",
+        "ReplicaId": "132429154475414363",
+        "ReplicaRole": "ActiveSecondary",
+        "ReplicaStatus": "Ready",
+        "Address": "",
+        "ServicePackageActivationId": "",
+        "HostProcessId": "836",
+        "ReconfigurationInformation": {
+            "PreviousConfigurationRole": "None",
+            "ReconfigurationPhase": "None",
+            "ReconfigurationType": "None",
+            "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+        }
+    }
+}

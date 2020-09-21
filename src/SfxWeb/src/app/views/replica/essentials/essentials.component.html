@@ -50,7 +50,7 @@
     </div>
     <div *ngIf="nodeView"><a [routerLink]="nodeView">View on Node</a></div>
   </div>
-  <div class="detail-pane">
+  <div class="detail-pane" data-cy="address">
     <app-replica-address [address]="replica.address"></app-replica-address>
   </div>
 
