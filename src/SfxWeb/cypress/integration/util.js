@@ -82,5 +82,13 @@ export const refresh = () => {
     cy.get("[data-cy=refresh]").click();
 }
 
+/*
+Get the number of rows in a table.
+This should be used when there is only one table within scope.
+*/
+export const checkTableSize = (size) => {
+    return cy.get('tbody > tr').should('have.length', size);
+}
+
 export const EMPTY_LIST_TEXT = "No items to display.";
 
