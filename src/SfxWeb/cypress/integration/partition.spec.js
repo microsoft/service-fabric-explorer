@@ -45,7 +45,7 @@ context('service', () => {
         })
 
         it('view details', () => {
-            cy.wait(waitRequest);
+            cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
