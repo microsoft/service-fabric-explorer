@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST } from './util';
+import { addDefaultFixtures, apiUrl, checkTableSize, EMPTY_LIST_TEXT } from './util';
 
 const serviceName = "VisualObjects.ActorService";
 const partitionId = "28bfaf73-37b0-467d-9d47-d011b0aedbc0";
@@ -39,6 +39,14 @@ context('service', () => {
 
             cy.get('[data-cy=header]').within(() => {
                 cy.contains(partitionId).click();
+            })
+
+            cy.get('[data-cy=health]').within(() => {
+                cy.contains(EMPTY_LIST_TEXT).click();
+            })
+
+            cy.get('[data-cy=replicas]').within(() => {
+                checkTableSize(3);
             })
         })
 
