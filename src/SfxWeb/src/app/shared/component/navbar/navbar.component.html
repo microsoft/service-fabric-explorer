@@ -1,7 +1,7 @@
 <div class="main-header">
     <div class="detail-view-title-bar">
         <div *ngIf="actions && actions.length > 0" class="actions">
-            <app-action-collection-drop-down [actionCollection]="actions"></app-action-collection-drop-down>
+            <app-action-collection-drop-down [actionCollection]="actions" data-cy="actions"></app-action-collection-drop-down>
         </div>
         <h1 class="detail-view-title" [title]="name" *ngIf="type" data-cy="header">
             {{type}} <span *ngIf="name">: {{name}}</span>
