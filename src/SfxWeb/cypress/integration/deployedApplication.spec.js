@@ -15,7 +15,7 @@ context('app', () => {
         cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetHealth?*`), 'fx:deployed-app-page/health').as('health');
         cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), 'fx:deployed-app-page/service-packages').as('services');
 
-        cy.visit(`/#/node/_nt_2/deployedapp/VisualObjectsApplicationType`)
+        cy.visit(`/#/node/_nt_2/deployedapp/${appName}`)
     })
 
     describe("essentials", () => {

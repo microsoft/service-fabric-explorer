@@ -1,0 +1,58 @@
+{
+    "ApplicationName": "fabric:/VisualObjectsApplicationType",
+    "ServiceManifestName": "VisualObjects.ActorServicePkg",
+    "NodeName": "_nt_1",
+    "ServicePackageActivationId": "",
+    "HealthEvents": [
+        {
+            "SourceId": "System.Hosting",
+            "Property": "Activation",
+            "HealthState": "Ok",
+            "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+            "Description": "The ServicePackage was activated successfully.",
+            "SequenceNumber": "132451895165266088",
+            "RemoveWhenExpired": false,
+            "HealthReportId": "Hosting_7.0_1004",
+            "SourceUtcTimestamp": "2020-09-21T19:18:36.526Z",
+            "LastModifiedUtcTimestamp": "2020-09-21T19:49:27.892Z",
+            "IsExpired": false,
+            "LastOkTransitionAt": "2020-09-21T19:18:43.872Z",
+            "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+            "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        },
+        {
+            "SourceId": "System.Hosting",
+            "Property": "CodePackageActivation:Code:EntryPoint:132451894779231452",
+            "HealthState": "Ok",
+            "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+            "Description": "The CodePackage was activated successfully.S_OK",
+            "SequenceNumber": "132451895165891635",
+            "RemoveWhenExpired": false,
+            "HealthReportId": "Hosting_7.0_1002",
+            "SourceUtcTimestamp": "2020-09-21T19:18:36.589Z",
+            "LastModifiedUtcTimestamp": "2020-09-21T19:49:27.892Z",
+            "IsExpired": false,
+            "LastOkTransitionAt": "2020-09-21T19:18:43.934Z",
+            "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+            "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        },
+        {
+            "SourceId": "System.Hosting",
+            "Property": "ServiceTypeRegistration:VisualObjects.ActorServiceType",
+            "HealthState": "Ok",
+            "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+            "Description": "The ServiceType was registered successfully.",
+            "SequenceNumber": "132451895185320073",
+            "RemoveWhenExpired": false,
+            "HealthReportId": "Hosting_7.0_1001",
+            "SourceUtcTimestamp": "2020-09-21T19:18:38.532Z",
+            "LastModifiedUtcTimestamp": "2020-09-21T19:49:27.892Z",
+            "IsExpired": false,
+            "LastOkTransitionAt": "2020-09-21T19:18:43.934Z",
+            "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+            "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        }
+    ],
+    "AggregatedHealthState": "Ok",
+    "UnhealthyEvaluations": []
+}
