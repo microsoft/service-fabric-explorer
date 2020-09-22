@@ -1,0 +1,17 @@
+{
+    "ContinuationToken": "",
+    "Items": [
+        {
+            "ServiceKind": "Stateless",
+            "PartitionInformation": {
+                "ServicePartitionKind": "Singleton",
+                "Id": "18efefc0-c136-4ba4-b1ec-d075704e412b"
+            },
+            "InstanceCount": 1,
+            "MinInstanceCount": 1,
+            "MinInstancePercentage": 0,
+            "HealthState": "Ok",
+            "PartitionStatus": "Ready"
+        }
+    ]
+}

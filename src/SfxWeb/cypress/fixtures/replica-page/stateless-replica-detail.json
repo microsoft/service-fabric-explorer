@@ -1,0 +1,23 @@
+{
+    "ServiceKind": "Stateless",
+    "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.WebService",
+    "PartitionId": "18efefc0-c136-4ba4-b1ec-d075704e412b",
+    "CurrentServiceOperation": "None",
+    "CurrentServiceOperationStartTimeUtc": "2020-08-26T16:45:54.542Z",
+    "ReportedLoad": [],
+    "InstanceId": "132429339499004157",
+    "DeployedServiceReplicaInstance": {
+        "ServiceKind": "Stateless",
+        "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.WebService",
+        "ServiceTypeName": "VisualObjects.WebServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "VisualObjects.WebServicePkg",
+        "CodePackageName": "Code",
+        "PartitionId": "18efefc0-c136-4ba4-b1ec-d075704e412b",
+        "InstanceId": "132429339499004157",
+        "ReplicaStatus": "Ready",
+        "Address": "{\"Endpoints\":{\"httpListener\":\"http:\\/\\/10.0.0.7:8081\\/visualobjects\\/\",\"webSocketListener\":\"http:\\/\\/10.0.0.7:8081\\/visualobjects\\/data\\/\"}}",
+        "ServicePackageActivationId": "",
+        "HostProcessId": "7956"
+    }
+}
