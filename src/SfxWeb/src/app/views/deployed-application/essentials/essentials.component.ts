@@ -1,12 +1,9 @@
-import { Component, OnInit, OnDestroy, Injector } from '@angular/core';
-import { Subscription, of, Observable, forkJoin } from 'rxjs';
+import { Component, Injector } from '@angular/core';
+import { Observable, forkJoin, of } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
-import { ActivatedRoute, ParamMap, ActivatedRouteSnapshot } from '@angular/router';
 import { SettingsService } from 'src/app/services/settings.service';
-import { map } from 'rxjs/operators';
 import { ListSettings, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { DeployedServicePackageCollection } from 'src/app/Models/DataModels/collections/Collections';
 import { DeployedAppBaseControllerDirective } from '../DeployedApplicationBase';
 
 @Component({
@@ -15,8 +12,6 @@ import { DeployedAppBaseControllerDirective } from '../DeployedApplicationBase';
   styleUrls: ['./essentials.component.scss']
 })
 export class EssentialsComponent extends DeployedAppBaseControllerDirective {
-  deployedServicePackages: DeployedServicePackageCollection;
-
   unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
 
@@ -25,14 +20,8 @@ export class EssentialsComponent extends DeployedAppBaseControllerDirective {
    }
 
 
-  refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return forkJoin([
-      this.deployedApp.deployedServicePackages.refresh(messageHandler).pipe(map(servicePackages => {
-        this.deployedServicePackages = servicePackages;
-        console.log(this.deployedServicePackages)
-      })),
-      this.deployedApp.health.refresh(messageHandler)
-    ]);
+   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    return this.deployedApp.deployedServicePackages.refresh(messageHandler);
   }
 
 
