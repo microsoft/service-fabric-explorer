@@ -20,7 +20,7 @@ export class DeployedAppBaseControllerDirective extends BaseControllerDirective 
     }
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.data.getDeployedApplication(this.nodeName, this.appId, true, messageHandler).pipe(mergeMap( deployedApp => {
+      return this.data.getDeployedApplication(this.nodeName, this.appId, true, messageHandler).pipe(mergeMap( deployedApp => {
         this.deployedApp = deployedApp;
         return this.deployedApp.health.refresh(messageHandler);
       }));

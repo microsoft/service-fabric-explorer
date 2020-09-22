@@ -100,7 +100,7 @@
   </div>
 
 
-  <div class="detail-pane essen-pane">
+  <div class="detail-pane essen-pane" data-cy="health">
     <app-collapse-container sectionName="Unhealthy Evaluations">
       <div collapse-header>
         <h4>Unhealthy Evaluations</h4>
@@ -112,7 +112,7 @@
     </app-collapse-container>
   </div>
 
-  <div class="detail-pane essen-pane">
+  <div class="detail-pane essen-pane" data-cy="replicas">
     <app-collapse-container [sectionName]="partition.isStatelessService ? 'Instances' : 'Replicas'">
       <div collapse-header>
         <h4>{{partition.isStatelessService ? "Instances" : "Replicas"}}</h4>

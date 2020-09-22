@@ -119,7 +119,7 @@
             "Type": "nt",
             "CodeVersion": "7.1.456.9590",
             "ConfigVersion": "10",
-            "NodeStatus": "Disabled",
+            "NodeStatus": "Up",
             "NodeUpTimeInSeconds": "701495",
             "HealthState": "Ok",
             "IsSeedNode": true,
@@ -130,17 +130,9 @@
             },
             "InstanceId": "132428526792306088",
             "NodeDeactivationInfo": {
-                "NodeDeactivationIntent": "Pause",
-                "NodeDeactivationStatus": "Completed",
-                "NodeDeactivationTask": [
-                    {
-                        "NodeDeactivationTaskId": {
-                            "Id": "86fa6852ad467a903afbbc67edc16b66",
-                            "NodeDeactivationTaskType": "Client"
-                        },
-                        "NodeDeactivationIntent": "Pause"
-                    }
-                ],
+                "NodeDeactivationIntent": "Invalid",
+                "NodeDeactivationStatus": "None",
+                "NodeDeactivationTask": [],
                 "PendingSafetyChecks": []
             },
             "IsStopped": false,

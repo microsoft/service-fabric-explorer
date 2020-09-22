@@ -13,6 +13,7 @@ context('app', () => {
         cy.route(apiUrl(`/Applications/${appName}/$/GetServices?*`), "fx:app-page/services").as("services")
         cy.route(apiUrl(`/Applications/${appName}/$/GetHealth?*`), "fx:app-page/app-health").as("apphealth")
         cy.route(apiUrl(`/Applications/${appName}/?*`), "fx:app-page/app-type").as("app")
+        cy.route(apiUrl(`ApplicationTypes/${appName}/$/GetApplicationManifest?*`), "fx:app-page/manifest").as("manifest")
         cy.route(apiUrl(`ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`), "fx:app-page/service-types").as("serviceTypes")
         cy.visit(`/#/apptype/${appName}/app/${appName}`)
     })
@@ -79,7 +80,7 @@ context('app', () => {
                 cy.contains('manifest').click();
             })
 
-            cy.wait("@appManifest");
+            cy.wait("@appManifest")
             cy.url().should('include', '/manifest')
         })
     })
