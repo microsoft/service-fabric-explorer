@@ -29,6 +29,7 @@ export class EssentialsComponent extends DeployedAppBaseControllerDirective {
     return forkJoin([
       this.deployedApp.deployedServicePackages.refresh(messageHandler).pipe(map(servicePackages => {
         this.deployedServicePackages = servicePackages;
+        console.log(this.deployedServicePackages)
       })),
       this.deployedApp.health.refresh(messageHandler)
     ]);
