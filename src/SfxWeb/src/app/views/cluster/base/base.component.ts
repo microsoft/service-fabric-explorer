@@ -75,7 +75,7 @@ export class BaseComponent implements OnInit {
       });
   });
 
-    this.SFXClusterName = window.location.host; // TODO FIX THIS
+    this.SFXClusterName = this.dataService.clusterNameMetadata || (window.location.protocol + '//' + window.location.hostname);
   }
 
 }
