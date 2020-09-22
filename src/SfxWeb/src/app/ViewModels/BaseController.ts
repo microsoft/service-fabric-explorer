@@ -32,7 +32,7 @@ export abstract class BaseControllerDirective implements  OnInit, OnDestroy {
 
              this.subscriptions.add(this.common().pipe(mergeMap( () => this.refresh())).subscribe(
                  () => {
-                    this.refreshService.insertRefreshSubject('current controller' + this.getClassName(), this.refresh.bind(this, this.messageService));
+                    this.refreshService.insertRefreshSubject('current controller' + this.getClassName(), () => this.common().pipe(mergeMap(() => this.refresh(this.messageService))));
                  },
                  () => {
                      this.router.navigate(['/']);
