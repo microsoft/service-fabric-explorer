@@ -61,20 +61,24 @@
                             </td>
                         </tr>
                         <!-- Optional second row -->
+                        <ng-container *ngIf="!listSettings.secondRowCollapsible || (listSettings.secondRowCollapsible && !item.isSecondRowCollapsed)">
+
                         <tr *ngIf="listSettings.secondRowColumnSettings.length > 0 && listSettings.showSecondRow(item)">
                             <!-- TODO  track by columnSetting.propertyPath -->
-                            <td class="no-border"
+                                <td class="no-border"
                                 *ngFor="let columnSetting of listSettings.secondRowColumnSettings; trackBy: trackByColumnSetting; let i = index;"
                                 [colSpan]="columnSetting.colspan === -1 ? (listSettings.columnSettings.length - listSettings.secondRowColumnSettings.length + 1) : columnSetting.colspan"
                                 [ngClass]="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed}">
-                                <div *ngIf="!listSettings.secondRowCollapsible || (listSettings.secondRowCollapsible && !item.isSecondRowCollapsed)"
+                                <div 
                                     [ngClass]="{'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}">
                                     <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
                                     <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
                                 </div>
                             </td>
                         </tr>
-                </ng-container>
+                    </ng-container>
+
+                    </ng-container>
                     <tr *ngIf="isLoading">
                         <td [attr.colspan]="listSettings.columnSettings.length">Loading...</td>
                     </tr>

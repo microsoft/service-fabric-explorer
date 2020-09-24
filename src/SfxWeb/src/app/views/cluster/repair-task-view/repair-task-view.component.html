@@ -9,7 +9,7 @@
         </a>
         <ng-template ngbNavContent>
             <div style="display: flex;flex-direction: row;">
-                <div *ngIf="item.raw.History" style="min-width: 400px;">
+                <div *ngIf="item.raw.History" style="min-width: 400px;" data-cy="history">
                     <h5 style="border-bottom: 1px solid gray; padding-bottom: 5px">
                         History
                     </h5>
@@ -43,7 +43,7 @@
                         </div>
                     </app-collapse-container>
                 </div>
-                <div *ngIf="item.couldParseExecutorData" style="margin-left: 15px;">
+                <div *ngIf="item.couldParseExecutorData" style="margin-left: 15px;" data-cy="jobinfo">
                     <div>
                         <h5>
                             Job Info
