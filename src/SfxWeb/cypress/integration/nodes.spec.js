@@ -13,7 +13,7 @@ context('nodes list page', () => {
     })
 
     describe("essentials", () => {
-        it.only('load essentials', () => {
+        it('load essentials', () => {
             cy.wait(FIXTURE_REF_NODES);
 
             cy.get('[data-cy=header]').within(() => {

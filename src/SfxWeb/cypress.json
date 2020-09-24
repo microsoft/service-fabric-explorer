@@ -3,5 +3,5 @@
     "env" : {
         "API_PREFIX": ""
     },
-    "requestTimeout" : 6000
+    "requestTimeout" : 10000
 }

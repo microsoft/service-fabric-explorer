@@ -1,10 +1,10 @@
 <div style="min-height: 900px">
     <div *ngIf="timelineData" style="margin-bottom: 20px; margin-left: 15px;">
-        <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" 
+        <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" data-cy="timeline"
                                   [displayMoveToStart]="false" [displayMoveToEnd]="false"></app-event-store-timeline>
     </div>
     
-    <div class="detail-pane essen-pane">
+    <div class="detail-pane essen-pane" data-cy="pendingjobs">
         <app-collapse-container sectionName="Pending Repair Tasks">
             <h4 collapse-header>
                 Pending Repair Tasks
@@ -13,7 +13,7 @@
         </app-collapse-container>
     </div>
     
-    <div class="detail-pane essen-pane">
+    <div class="detail-pane essen-pane" data-cy="completedjobs">
         <app-collapse-container collapsed=true sectionName="Completed Repair Tasks">
             <h4 collapse-header>
                 Completed Repair Tasks

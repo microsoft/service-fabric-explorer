@@ -48,7 +48,7 @@ context('deployed replica', () => {
             
         })
 
-        it.only('essentials', () => {
+        it('essentials', () => {
             cy.wait(waitRequest);
             cy.get('[data-cy=header]').within(() => {
                 cy.contains(replica);

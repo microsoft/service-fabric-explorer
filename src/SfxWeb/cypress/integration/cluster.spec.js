@@ -1,6 +1,7 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST } from './util';
+import { apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, checkTableSize,
+          upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST } from './util';
 
 const LOAD_INFO = "getloadinfo"
 
@@ -159,4 +160,57 @@ context('Cluster page', () => {
     })
   })
 
+  describe.only("repair tasks", () => {
+    const setup = (file) => {
+      cy.route('GET', apiUrl('/$/GetRepairTaskList?*'), file).as('repairs')
+      cy.visit('/#/repairtasks')
+
+      cy.wait("@repairs")
+    }
+
+    it('loads properly', () => {
+      setup('fixture:cluster-page/repair-jobs/simple')
+      
+      cy.get('[data-cy=timeline]');
+      cy.get('[data-cy=pendingjobs]');
+      cy.get('[data-cy=completedjobs]').within( ()=> {
+        cy.contains('Completed Repair Tasks').click();  
+        checkTableSize(6);
+      });
+    })
+
+    it('view completd repair job', () => {
+      setup('fixture:cluster-page/repair-jobs/simple')
+
+      cy.get('[data-cy=completedjobs]').within( ()=> {
+        cy.contains('Completed Repair Tasks').click();  
+        
+        cy.get('tbody > tr').first().within(() =>{
+           cy.get('button').click();
+        });
+
+        cy.get('[data-cy=history]').within(() => {
+          cy.contains('Preparing : Done');
+          cy.contains('Executing : Done');
+          cy.contains('Restoring : Done');
+        })
+      });
+    })
+
+    it('view in progress repair job', () => {
+      setup('fixture:cluster-page/repair-jobs/in-progress')
+
+      cy.get('[data-cy=pendingjobs]').within( ()=> {        
+        cy.get('tbody > tr').first().within(() =>{
+           cy.get('button').click();
+        });
+
+        cy.get('[data-cy=history]').within(() => {
+          cy.contains('Preparing : Done');
+          cy.contains('Executing : In Progress');
+          cy.contains('Restoring : Not Started');
+        })
+      });
+    })
+  })
 })
