@@ -8,8 +8,8 @@ export class TelemetryService {
   constructor() { }
 
   trackActionEvent(name: string, source: string, data: any) {
-    console.log("track event");
-    //TODO
+    console.log('track event');
+    // TODO
   }
 
 }

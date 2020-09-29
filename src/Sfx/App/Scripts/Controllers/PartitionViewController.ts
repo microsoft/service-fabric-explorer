@@ -70,6 +70,12 @@ module Sfx {
                 new ListColumnSetting("raw.LsnOfLastBackupRecord", "Lsn of last Backup Record"),
                 new ListColumnSetting("raw.CreationTimeUtc", "Creation Time Utc"),
             ]);
+
+            this.data.clusterManifest.ensureInitialized().then( () => {
+                if(!this.data.clusterManifest.isBRSEnabled) {
+                    delete this.tabs["backups"];
+                }
+            })
             this.refresh();
         }
 
@@ -77,10 +83,16 @@ module Sfx {
             return this.data.getPartition(this.appId, this.serviceId, this.partitionId, true, messageHandler)
                 .then(partition => {
                     this.$scope.partition = partition;
-                    this.data.backupPolicies.refresh(messageHandler);
-                    if (this.$scope.partition.isStatefulService) {
-                        this.$scope.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler);
-                    }
+
+                    this.data.clusterManifest.ensureInitialized().then( () => {
+                        if(this.data.clusterManifest.isBRSEnabled) {
+                            this.data.backupPolicies.refresh(messageHandler);
+                            if (this.$scope.partition.isStatefulService) {
+                                this.$scope.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler);
+                            }
+                        }
+                    })
+
                     if (this.$scope.partition.isStatelessService || partition.parent.parent.raw.TypeName === "System") {
                         this.tabs = {
                             "essentials": { name: "Essentials" },
@@ -114,15 +126,24 @@ module Sfx {
         }
 
         private refreshDetails(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            this.$scope.partition.partitionBackupInfo.partitionBackupProgress.refresh(messageHandler);
-            this.$scope.partition.partitionBackupInfo.partitionRestoreProgress.refresh(messageHandler);
+
+            this.data.clusterManifest.ensureInitialized().then( () => {
+                if(this.data.clusterManifest.isBRSEnabled) {
+                    this.$scope.partition.partitionBackupInfo.partitionBackupProgress.refresh(messageHandler);
+                    this.$scope.partition.partitionBackupInfo.partitionRestoreProgress.refresh(messageHandler);
+                }
+            })
+
             return this.$scope.partition.loadInformation.refresh(messageHandler);
         }
 
         private refreshEssentials(messageHandler?: IResponseMessageHandler): angular.IPromise<any> {
-            if (this.$scope.partition.isStatefulService) {
-                this.$scope.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler);
-            }
+            this.data.clusterManifest.ensureInitialized().then( () => {
+                if(this.data.clusterManifest.isBRSEnabled && this.$scope.partition.isStatefulService) {
+                    this.$scope.partition.partitionBackupInfo.latestPartitionBackup.refresh(messageHandler);
+                }
+            })
+
             return this.$scope.partition.replicas.refresh(messageHandler);
         }
 

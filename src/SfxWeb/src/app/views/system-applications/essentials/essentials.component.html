@@ -16,23 +16,23 @@
     </div>
     
     <div class="detail-pane essen-pane" *ngIf="systemApp.health.isInitialized">
-        <app-collapse-container>
+        <app-collapse-container sectionName="Unhealthy Evaluations">
             <div collapse-header>
                 <h4>Unhealthy Evaluations</h4>
             </div>
             <div collapse-body>
-                <detail-list [list]="systemApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
+                <app-detail-list [list]="systemApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
             </div>
         </app-collapse-container>
     </div>
     
     <div class="detail-pane essen-pane" *ngIf="systemApp.services">
-        <app-collapse-container>
+        <app-collapse-container sectionName="System">
             <div collapse-header>
                 <h4>System</h4>
             </div>
             <div collapse-body>
-                <detail-list [list]="systemApp.services.collection" [listSettings]="listSettings"></detail-list>
+                <app-detail-list [list]="systemApp.services.collection" [listSettings]="listSettings"></app-detail-list>
             </div>
         </app-collapse-container>
     </div>

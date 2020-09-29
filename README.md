@@ -1,5 +1,7 @@
 # Service Fabric Explorer (SFX)
 
+NOTE: Sfx is currently in the process of migrating from angularjs(Sfx v1) to angular 10(Sfx v2). The Sfx folder holds the previous version and SfxWeb is the new version. While this migration is happening, Sfx v1 will still be available but once Sfx v2 is considered safe and has 100% parity with V1 will be removed and official deprecated. All new development is being focused on V2 and unless its a critical bug with V1, V1 will not be getting any continued support.
+
 Service Fabric Explorer is an application for inspecting and managing cloud applications and nodes in a Microsoft Azure Service Fabric cluster.
 
 ## Build Status
@@ -32,11 +34,7 @@ Service Fabric Explorer consists of two main components, an AngularJS based appl
 To develop Service Fabric Explorer, the following components are required.
 
 * Git: https://git-scm.com/
-* Python 2: https://www.python.org/
 * Node.js (Latest is preferred): https://nodejs.org/
-* C++ Compiler
-   * Windows: Visual C++ https://www.visualstudio.com/
-   * Ubuntu: `sudo apt-get install -y build-essential`
 
 The recommended IDE for Service Fabric Explorer development is VSCode because VSCode is a cross-platform editor, which supports Windows, Linux and macOS. But you can use whatever editor to develop. 
 
@@ -49,7 +47,7 @@ Here's a list of common IDE used.
 1. Clone the master branch.
 `git clone --recurse-submodules https://github.com/Microsoft/service-fabric-explorer.git <path to the local folder>`
 2. Install project dependencies: *This can be done inside VSCode or use a console window.*
-   1. [SFX] Navigate to `src/Sfx` and run the following scripts.
+   1. [SFX] Navigate to `src/SfxWeb` and run the following scripts.
    ```Shell
    npm install   
    ```
@@ -57,41 +55,40 @@ Here's a list of common IDE used.
    ```Shell
    npm install
    ```
-   3. [SFX Tests] Navigate to `test/SfxTests` and run the following scripts.
-   ```Shell
-   npm install   
-   ```
-   34. [SFX Proxy] Navigate to `src/Sfx-Proxy` and run the following scripts.
+   3. [SFX Proxy] Navigate to `src/Sfx-Proxy` and run the following scripts.
    ```Shell
    npm install   
    ```
 
 3. Build projects
    * VSCode
-      1. Open `src/Sfx`, `src/Sfx-Standalone` and `test/SfxTests` in VSCode with multiple-root workspce.
+      1. Open `src/SfxWeb`, `src/Sfx-Standalone` and `src/Sfx-Proxy` in VSCode with multiple-root workspce.
       2. Run following tasks orderly.
-         * `clean-build` for Sfx
          * `clean-build` for Sfx-Standalone
-         * `clean-build` for SfxTests
    * Console
       1. Install Gulp globally on the machine.
       ```Shell
       npm install gulp-cli -g
       ```
-      2. [SFX] Navigate to `src/Sfx` and run the following scripts.
+      2. [SFX] Navigate to `src/SfxWeb` and run the following scripts.
+      For a develop/quick build
       ```Shell
-      gulp clean-build
+      npm run build
       ```
-      3. [SFX Standalone] Navigate to `src/Sfx-Standalone` and run the following scripts.
-      ```Shell
-      gulp clean-build
+      For a production build
       ```
-      4. [SFX Tests] Navigate to `test/SfxTests` and run the following scripts.
+      npm run build:prod
+      ```
+      4. [SFX Standalone] Navigate to `src/Sfx-Standalone` and run the following scripts.
       ```Shell
       gulp clean-build
       ```
 
-### Run Local http server/Proxy
+### Develop Locally and Run Local Proxy
+Navigate to `src/SfxWeb`
+```Shell
+npm start
+```
 Navigate to `src/Sfx-Proxy`
 ```Shell
 npm start
@@ -105,19 +102,38 @@ npm start -- -r -p
 ```
 
 If proxying requests to a secure cluster the appsettings.json can also take a cert pfx location like
+```
 {
   "TargetCluster": {
-    "Url": "https://jejarryacesstesting.eastus.cloudapp.azure.com:19080",
+    "Url": "https://test.eastus.cloudapp.azure.com:19080",
     "PFXLocation": "C:/some_cert.pfx",
     "PFXPassPhrase": "password"
   },
   "recordFileBase": "playbackRecordings/"
 }
+```
 
+## Testing
 
-### Run unit tests for Sfx
+### Run unit tests
+Navigate to  `sfx/SfxWeb` folder and run 
+```
+npm test
+```
 
-Open `test/SfxTests` in VSCode or Navigate to `test/SfxTests` in console and run the `ut` gulp task.
+### Run E2E tests
+Navigate to sfx/SfxWeb folder and run
+```
+npm run cypress:local
+```
+This assumes that the angular local dev server is running
+
+### CI overview
+The CI will run the following
+
+* production build
+* unit tests
+* E2E tests
 
 ## Issues and questions
 

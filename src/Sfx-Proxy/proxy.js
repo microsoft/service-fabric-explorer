@@ -80,16 +80,16 @@ const proxyRequest = async (req) => {
 }
 
 const app = express()
-const port = 2500
+const port = process.env.PORT || 2500;
 
 //need to be set to accept certs from secure clusters when certs cant be trusted
 //this is mainly for SFRP clusters to test against.
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
-app.use(express.static(__dirname + '/../Sfx/wwwroot/'))
+app.use(express.static(__dirname + '/wwwroot/'))
 app.use(express.json())
 app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + '/../Sfx/wwwroot/index.html'));
+    res.sendFile(path.join(__dirname + 'wwwroot/index.html'));
 });
 app.all('/*', async (req, res) => {
     let resp = null;

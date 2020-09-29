@@ -1,7 +1,7 @@
-﻿//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 
 type HttpMethod =
@@ -61,22 +61,22 @@ declare const sfxModuleManager: {
 };
 
 export class StandaloneIntegration {
-    private static _clusterUrl: string = null;
+    private static iclusterUrl: string = null;
 
     public static isStandalone(): boolean {
-        return typeof sfxModuleManager !== "undefined" && sfxModuleManager !== null;
+        return typeof sfxModuleManager !== 'undefined' && sfxModuleManager !== null;
     }
 
     public static get clusterUrl(): string {
-        if (StandaloneIntegration._clusterUrl == null) {
+        if (StandaloneIntegration.iclusterUrl == null) {
             if (StandaloneIntegration.isStandalone()) {
-                StandaloneIntegration._clusterUrl = StandaloneIntegration.extractQueryItem(window.location.search, "targetcluster");
+                StandaloneIntegration.iclusterUrl = StandaloneIntegration.extractQueryItem(window.location.search, 'targetcluster');
             } else {
-                StandaloneIntegration._clusterUrl = "";
+                StandaloneIntegration.iclusterUrl = '';
             }
         }
 
-        return StandaloneIntegration._clusterUrl;
+        return StandaloneIntegration.iclusterUrl;
     }
 
     public static getHttpClient(): Promise<IHttpClient> {
@@ -89,10 +89,10 @@ export class StandaloneIntegration {
 
     private static extractQueryItem(queryString: string, name: string): string {
         if (queryString) {
-            let urlParameters = window.location.search.split("?")[1];
-            let queryParams = urlParameters.split("&");
-            for (let i = 0; i < queryParams.length; i++) {
-                let queryParam = queryParams[i].split("=");
+            const urlParameters = window.location.search.split('?')[1];
+            const queryParams = urlParameters.split('&');
+            for (const q of queryParams) {
+                const queryParam = q.split('=');
                 if (queryParam[0] === name) {
                     return decodeURIComponent(queryParam[1]);
                 }

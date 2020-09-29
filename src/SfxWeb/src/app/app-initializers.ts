@@ -15,16 +15,13 @@ export function initApp(aadService: AdalService) {
 
             await aadService.load().toPromise();
 
-            if(aadService.aadEnabled){
-                if(!aadService.isAuthenticated){
+            if (aadService.aadEnabled){
+                if (!aadService.isAuthenticated){
                     aadService.login();
                 }
-                aadService.handleWindowCallback()
-
-                return of(null)
-            }else{
-                return of(null);
+                aadService.handleWindowCallback();
             }
+            return of(null);
         } catch {
             return of(null);
         }

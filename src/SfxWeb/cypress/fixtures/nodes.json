@@ -1,0 +1,145 @@
+{
+    "ContinuationToken": "",
+    "Items": [
+        {
+            "Name": "_nt_4",
+            "IpAddressOrFQDN": "10.0.0.8",
+            "Type": "nt",
+            "CodeVersion": "7.1.456.9590",
+            "ConfigVersion": "10",
+            "NodeStatus": "Up",
+            "NodeUpTimeInSeconds": "698803",
+            "HealthState": "Ok",
+            "IsSeedNode": true,
+            "UpgradeDomain": "4",
+            "FaultDomain": "fd:/4",
+            "Id": {
+                "Id": "16c24c9250e4bb878c26b5128f4deb05"
+            },
+            "InstanceId": "132428553760489593",
+            "NodeDeactivationInfo": {
+                "NodeDeactivationIntent": "Invalid",
+                "NodeDeactivationStatus": "None",
+                "NodeDeactivationTask": [],
+                "PendingSafetyChecks": []
+            },
+            "IsStopped": false,
+            "NodeDownTimeInSeconds": "0",
+            "NodeUpAt": "2020-08-25T18:56:31.439Z",
+            "NodeDownAt": "2020-08-25T18:54:10.988Z",
+            "InfrastructurePlacementID": ""
+        },
+        {
+            "Name": "_nt_3",
+            "IpAddressOrFQDN": "10.0.0.7",
+            "Type": "nt",
+            "CodeVersion": "7.1.456.9590",
+            "ConfigVersion": "10",
+            "NodeStatus": "Up",
+            "NodeUpTimeInSeconds": "699515",
+            "HealthState": "Ok",
+            "IsSeedNode": true,
+            "UpgradeDomain": "3",
+            "FaultDomain": "fd:/3",
+            "Id": {
+                "Id": "32d053460052907aed14ce6b3a6d673c"
+            },
+            "InstanceId": "132428546598364586",
+            "NodeDeactivationInfo": {
+                "NodeDeactivationIntent": "Invalid",
+                "NodeDeactivationStatus": "None",
+                "NodeDeactivationTask": [],
+                "PendingSafetyChecks": []
+            },
+            "IsStopped": false,
+            "NodeDownTimeInSeconds": "0",
+            "NodeUpAt": "2020-08-25T18:44:39.354Z",
+            "NodeDownAt": "2020-08-25T18:43:06.954Z",
+            "InfrastructurePlacementID": ""
+        },
+        {
+            "Name": "_nt_2",
+            "IpAddressOrFQDN": "10.0.0.6",
+            "Type": "nt",
+            "CodeVersion": "7.1.456.9590",
+            "ConfigVersion": "10",
+            "NodeStatus": "Up",
+            "NodeUpTimeInSeconds": "700102",
+            "HealthState": "Ok",
+            "IsSeedNode": true,
+            "UpgradeDomain": "2",
+            "FaultDomain": "fd:/2",
+            "Id": {
+                "Id": "4ede5ab80fe7ff7eea4999d6c9dd7269"
+            },
+            "InstanceId": "132428540810951592",
+            "NodeDeactivationInfo": {
+                "NodeDeactivationIntent": "Invalid",
+                "NodeDeactivationStatus": "None",
+                "NodeDeactivationTask": [],
+                "PendingSafetyChecks": []
+            },
+            "IsStopped": false,
+            "NodeDownTimeInSeconds": "0",
+            "NodeUpAt": "2020-08-25T18:34:52.190Z",
+            "NodeDownAt": "2020-08-25T18:32:09.294Z",
+            "InfrastructurePlacementID": ""
+        },
+        {
+            "Name": "_nt_1",
+            "IpAddressOrFQDN": "10.0.0.5",
+            "Type": "nt",
+            "CodeVersion": "7.1.456.9590",
+            "ConfigVersion": "10",
+            "NodeStatus": "Up",
+            "NodeUpTimeInSeconds": "700783",
+            "HealthState": "Ok",
+            "IsSeedNode": true,
+            "UpgradeDomain": "1",
+            "FaultDomain": "fd:/1",
+            "Id": {
+                "Id": "6aec61e77cb87effc9ccc772eac3d6d1"
+            },
+            "InstanceId": "132428534015364530",
+            "NodeDeactivationInfo": {
+                "NodeDeactivationIntent": "Invalid",
+                "NodeDeactivationStatus": "None",
+                "NodeDeactivationTask": [],
+                "PendingSafetyChecks": []
+            },
+            "IsStopped": false,
+            "NodeDownTimeInSeconds": "0",
+            "NodeUpAt": "2020-08-25T18:23:31.697Z",
+            "NodeDownAt": "2020-08-25T18:21:05.881Z",
+            "InfrastructurePlacementID": ""
+        },
+        {
+            "Name": "_nt_0",
+            "IpAddressOrFQDN": "10.0.0.4",
+            "Type": "nt",
+            "CodeVersion": "7.1.456.9590",
+            "ConfigVersion": "10",
+            "NodeStatus": "Up",
+            "NodeUpTimeInSeconds": "701495",
+            "HealthState": "Ok",
+            "IsSeedNode": true,
+            "UpgradeDomain": "0",
+            "FaultDomain": "fd:/0",
+            "Id": {
+                "Id": "86fa6852ad467a903afbbc67edc16b66"
+            },
+            "InstanceId": "132428526792306088",
+            "NodeDeactivationInfo": {
+                "NodeDeactivationIntent": "Invalid",
+                "NodeDeactivationStatus": "None",
+                "NodeDeactivationTask": [],
+                "PendingSafetyChecks": []
+            },
+            "IsStopped": false,
+            "NodeDownTimeInSeconds": "0",
+            "NodeUpAt": "2020-08-25T18:11:38.834Z",
+            "NodeDownAt": "2020-08-25T18:10:06.769Z",
+            "InfrastructurePlacementID": ""
+        }
+    ]
+}

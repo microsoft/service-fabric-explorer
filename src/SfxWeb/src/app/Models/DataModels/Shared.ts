@@ -1,19 +1,19 @@
-﻿import { DataModelBase, IDecorators } from './Base';
+import { DataModelBase, IDecorators } from './Base';
 import { IRawHealthEvaluation, IRawLoadMetricInformation, IRawUpgradeDescription, IRawMonitoringPolicy, IRawUpgradeDomain, IRawClusterUpgradeDescription } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { UpgradeDomainStateRegexes, UpgradeDomainStateNames, BadgeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
-    public viewPathUrl: string = "";
+    public viewPathUrl = '';
     public children: any[];
     public displayName: string;
-    public constructor(raw: IRawHealthEvaluation, public level: number = 0, parent: HealthEvaluation = null, viewPathUrl: string = "") {
+    public constructor(raw: IRawHealthEvaluation, public level: number = 0, parent: HealthEvaluation = null, viewPathUrl: string = '') {
         super(null, raw, parent);
         this.viewPathUrl = viewPathUrl;
     }
@@ -24,7 +24,7 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
 
     public get kind(): string {
         if (this.level > 0) {
-            return Array(this.level * 4).join(" ")  + this.raw.Kind;
+            return Array(this.level * 4).join(' ')  + this.raw.Kind;
         } else {
             return this.raw.Kind;
         }
@@ -36,29 +36,29 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
     }
 
     public get description(): string {
-        let description = "";
+        let description = '';
         if (this.raw.UnhealthyEvent) {
-            description = (this.raw.Description + "\n" + this.raw.UnhealthyEvent.Description).trim();
+            description = (this.raw.Description + '\n' + this.raw.UnhealthyEvent.Description).trim();
         } else {
             description = this.raw.Description.trim();
         }
 
         // Temp solution for rendering a link instead of plain text
         // Long term solution would be an independent service which provides troubleshooting tips based on health report
-        return description.replace("http://aka.ms/sfhealth", "<a href='https://aka.ms/sfhealth' target='_blank'>https://aka.ms/sfhealth</a>");
+        return description.replace('http://aka.ms/sfhealth', '<a href=\'https://aka.ms/sfhealth\' target=\'_blank\'>https://aka.ms/sfhealth</a>');
     }
 }
 
 export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformation> {
     public decorators: IDecorators = {
         showList: [
-            "Name",
-            "BalancingThreshold",
-            "Action",
-            "IsBalancedBefore",
-            "DeviationBefore",
-            "IsBalancedAfter",
-            "DeviationAfter"
+            'Name',
+            'BalancingThreshold',
+            'Action',
+            'IsBalancedBefore',
+            'DeviationBefore',
+            'IsBalancedAfter',
+            'DeviationAfter'
         ]
     };
 
@@ -77,11 +77,11 @@ export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformati
     }
 
     public get isResourceGovernanceMetric(): boolean {
-        return this.raw.Name.startsWith("servicefabric:/_");
+        return this.raw.Name.startsWith('servicefabric:/_');
     }
 
     public get isSystemMetric(): boolean {
-        return this.raw.Name.startsWith("__") && this.raw.Name.endsWith("__");
+        return this.raw.Name.startsWith('__') && this.raw.Name.endsWith('__');
     }
 
     public get isLoadMetric(): boolean {
@@ -93,11 +93,11 @@ export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformati
     }
 
     public get loadCapacityRatioString(): string {
-        return (this.loadCapacityRatio * 100).toFixed(1) + "%";
+        return (this.loadCapacityRatio * 100).toFixed(1) + '%';
     }
 
     public get displayName(): string {
-        return this.name.replace(/^servicefabric:\/_/, "Reserved ");
+        return this.name.replace(/^servicefabric:\/_/, 'Reserved ');
     }
 
     public constructor(data: DataService, raw: IRawLoadMetricInformation) {
@@ -107,7 +107,7 @@ export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformati
 
 export class UpgradeDescription extends DataModelBase<IRawUpgradeDescription | IRawClusterUpgradeDescription> {
     public decorators: IDecorators = {
-        hideList: ["Name", "TargetApplicationTypeVersion", "UpgradeKind", "RollingUpgradeMode"]
+        hideList: ['Name', 'TargetApplicationTypeVersion', 'UpgradeKind', 'RollingUpgradeMode']
     };
 
     public monitoringPolicy: MonitoringPolicy;
@@ -122,24 +122,24 @@ export class UpgradeDescription extends DataModelBase<IRawUpgradeDescription | I
 export class MonitoringPolicy extends DataModelBase<IRawMonitoringPolicy> {
     public decorators: IDecorators = {
         decorators: {
-            "HealthCheckWaitDurationInMilliseconds": {
-                displayName: (name) => "Health Check Wait Duration",
+            HealthCheckWaitDurationInMilliseconds: {
+                displayName: (name) => 'Health Check Wait Duration',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             },
-            "HealthCheckStableDurationInMilliseconds": {
-                displayName: (name) => "Health Check Stable Duration",
+            HealthCheckStableDurationInMilliseconds: {
+                displayName: (name) => 'Health Check Stable Duration',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             },
-            "HealthCheckRetryTimeoutInMilliseconds": {
-                displayName: (name) => "Health Check Retry Timeout",
+            HealthCheckRetryTimeoutInMilliseconds: {
+                displayName: (name) => 'Health Check Retry Timeout',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             },
-            "UpgradeTimeoutInMilliseconds": {
-                displayName: (name) => "Upgrade Timeout",
+            UpgradeTimeoutInMilliseconds: {
+                displayName: (name) => 'Upgrade Timeout',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             },
-            "UpgradeDomainTimeoutInMilliseconds": {
-                displayName: (name) => "Upgrade Domain Timeout",
+            UpgradeDomainTimeoutInMilliseconds: {
+                displayName: (name) => 'Upgrade Domain Timeout',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             }
         }

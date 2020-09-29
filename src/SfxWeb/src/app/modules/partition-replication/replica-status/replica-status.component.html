@@ -24,7 +24,7 @@
                     (click)="$event.stopPropagation()"></span>
             </div>
         </div>
-        <div collapse-body style="margin-left: 7px; border-left: 3px solid gray; padding-left: 4px;">
+        <div collapse-body class="collapse-inner-bar">
             <app-collapse-container collapsed="true" [disabled]="!isCopying">
                 <div collapse-header>
                     <label>Copy Status : {{isCopying ? estimatedTime : 'Complete' }} <span class="mif-hour-glass"

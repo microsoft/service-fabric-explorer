@@ -1,0 +1,25 @@
+{
+    "ServiceKind": "Stateless",
+    "ApplicationName": "fabric:/VisualObjectsApplicationType",
+    "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.WebService",
+    "ServiceTypeName": "VisualObjects.WebServiceType",
+    "InitializationData": [],
+    "PartitionDescription": {
+        "PartitionScheme": "Singleton"
+    },
+    "InstanceCount": 1,
+    "MinInstanceCount": 1,
+    "MinInstancePercentage": 0,
+    "PlacementConstraints": "",
+    "CorrelationScheme": [],
+    "ServiceLoadMetrics": [],
+    "ServicePlacementPolicies": [],
+    "DefaultMoveCost": "Zero",
+    "IsDefaultMoveCostSpecified": true,
+    "ServicePackageActivationMode": "SharedProcess",
+    "ServiceDnsName": "",
+    "ScalingPolicies": [],
+    "StatelessFailoverFlags": 3,
+    "InstanceCloseDelayDurationSeconds": 0,
+    "InstanceRestartWaitDurationSeconds": 0
+}

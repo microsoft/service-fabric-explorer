@@ -1,69 +1,76 @@
-import { Component, Input, Output, EventEmitter, OnInit, OnDestroy} from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnInit, OnDestroy, ViewChildren, QueryList} from '@angular/core';
 import { ListSettings, ListColumnSetting, FilterValue } from 'src/app/Models/ListSettings';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
-import  fill  from 'lodash/fill';
-import  isEmpty  from 'lodash/isEmpty';
-import  sortBy  from 'lodash/sortBy';
-import  union  from 'lodash/union';
-import  map from 'lodash/map';
-import  filter from 'lodash/filter';
-import  uniq from 'lodash/uniq';
-import  includes from 'lodash/includes';
-import  every from 'lodash/every';
+import fill from 'lodash/fill';
+import isEmpty from 'lodash/isEmpty';
+import sortBy from 'lodash/sortBy';
+import union from 'lodash/union';
+import map from 'lodash/map';
+import filter from 'lodash/filter';
+import uniq from 'lodash/uniq';
+import includes from 'lodash/includes';
+import every from 'lodash/every';
 
 import { Utils } from 'src/app/Utils/Utils';
 import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 @Component({
-  selector: 'detail-list',
+  selector: 'app-detail-list',
   templateUrl: './detail-list.component.html',
   styleUrls: ['./detail-list.component.scss']
 })
 export class DetailListComponent implements OnInit, OnDestroy {
 
   @Input() listSettings: ListSettings;
-  @Input() searchText = "Search list";
-  private _list: any[];
-  public sortedFilteredList: any[] = []; //actual list displayed in html.
+  @Input() searchText = 'Search list';
+  @Input() isLoading = false;
+  @Output() sorted = new EventEmitter<any[]>();
+
+  private iList: any[];
+  public sortedFilteredList: any[] = []; // actual list displayed in html.
 
   page = 1;
-  pageSize = 10;
   totalListSize = 0;
 
   debounceHandler: Subject<any[]> = new Subject<any[]>();
   debouncerHandlerSubscription: Subscription;
+  @ViewChildren(NgbDropdown) dropdowns: QueryList<NgbDropdown>;
 
-  constructor() { }
+  constructor(private liveAnnouncer: LiveAnnouncer) { }
 
-  @Input() 
-  set list(data:  any[] | DataModelCollectionBase<any>) {
-    if(data instanceof DataModelCollectionBase){
-      data.ensureInitialized().subscribe(data => {
-        this._list = [].concat(data.collection);
+  @Input()
+  set list(data: any[] | DataModelCollectionBase<any>) {
+    if (data instanceof DataModelCollectionBase){
+      data.ensureInitialized().subscribe(resp => {
+        this.iList = [].concat(resp.collection);
         this.updateList();
-      })
+      });
     }else{
-      this._list = data;
+      this.iList = data;
     }
 
-    this._list = this._list || [];
+    this.iList = this.iList || [];
     this.updateList();
   }
-
-  @Output() onSort = new EventEmitter<any[]>();
 
   ngOnInit() {
     this.debouncerHandlerSubscription = this.debounceHandler
    .pipe(debounceTime(1000), distinctUntilChanged())
    .subscribe(val => {
-      this.onSort.emit(val);
+      this.sorted.emit(val);
    });
   }
 
   ngOnDestroy() {
-    if(this.debouncerHandlerSubscription){
+    if (this.debouncerHandlerSubscription){
       this.debouncerHandlerSubscription.unsubscribe();
     }
+  }
+
+  resetAll() {
+    this.listSettings.reset();
   }
 
   public handleClickRow(item: any, event: any): void {
@@ -74,19 +81,32 @@ export class DetailListComponent implements OnInit, OnDestroy {
   }
 
   trackByColumnSetting(columnSetting: ListColumnSetting) {
-    return columnSetting.propertyPath
+    return columnSetting.propertyPath;
+  }
+
+  sort(columnSetting: ListColumnSetting) {
+    this.listSettings.sort(columnSetting.sortPropertyPaths);
+    this.updateList();
+
+    if (!Utils.isIEOrEdge) {
+      this.liveAnnouncer.announce(`Table is sorted by ${columnSetting.displayName} and is ${this.listSettings.sortReverse ? 'descending' : 'ascending'}`);
+    }
+  }
+
+  closeChange(state: boolean) {
+    this.liveAnnouncer.announce(`dropdown is now ${state ? 'Expanded' : 'Collapsed'}`);
   }
 
   private getSortedFilteredList(): any[] {
-    let list = this._list;
+    let list = this.iList;
 
     if (this.listSettings && (this.listSettings.hasEnabledFilters || this.listSettings.search)) {
 
         // Retrieve text values of all columns for searching and filtering
         let pluckedList = list.map(item => {
-            let pluckedObj = this.listSettings.getPluckedObject(item);
+            const pluckedObj = this.listSettings.getPluckedObject(item);
             // Preserve the original object, property start with $ will be ignored by filter
-            pluckedObj["$originalItem"] = item;
+            pluckedObj.$originalItem = item;
             return pluckedObj;
         });
 
@@ -95,22 +115,22 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
         // Search
         if (this.listSettings.search) {
-            let keywords = this.listSettings.search.trim().toLowerCase().split(/\s+/);
+            const keywords = this.listSettings.search.trim().toLowerCase().split(/\s+/);
 
             keywords.forEach(keyword => {
-                pluckedList = pluckedList.filter(item => filterByProperty(item, keyword) ) //this.$filter("filter")(pluckedList, keyword);
+                pluckedList = pluckedList.filter(item => filterByProperty(item, keyword) ); // this.$filter("filter")(pluckedList, keyword);
             });
         }
 
         // Retrieve the original objects from filtered plucked object list
-        list = pluckedList.map(pluckedObj => pluckedObj["$originalItem"]);
+        list = pluckedList.map(pluckedObj => pluckedObj.$originalItem);
     }
 
     // Sort
     if (this.listSettings && !isEmpty(this.listSettings.sortPropertyPaths)) {
-        list = sortByProperty(list, 
+        list = sortByProperty(list,
                               this.listSettings.sortPropertyPaths,
-                              this.listSettings.sortReverse)
+                              this.listSettings.sortReverse);
     }
 
     return list;
@@ -119,7 +139,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   private filterOnColumns(pluckedList: any, listSettings: ListSettings): any {
 
     // Initialize the filter array, false indicate filtered, true indicate not filtered
-    let filterMark: boolean[] = new Array(pluckedList.length);
+    const filterMark: boolean[] = new Array(pluckedList.length);
     fill(filterMark, true);
 
     // Update each column filter values by scanning through the list and found out all unique values exist in current column
@@ -129,8 +149,8 @@ export class DetailListComponent implements OnInit, OnDestroy {
         }
 
         // If any filter value is unchecked, we need to filter on this column
-        let hasEffectiveFilters = columnSetting.filterValues.some(filterValue => !filterValue.isChecked);
-        let checkedValues = map(filter(columnSetting.filterValues, filterValue => filterValue.isChecked), "value");
+        const hasEffectiveFilters = columnSetting.filterValues.some(filterValue => !filterValue.isChecked);
+        const checkedValues = map(filter(columnSetting.filterValues, filterValue => filterValue.isChecked), 'value');
 
         // Update filter values in each column and filter the list at the same time
         columnSetting.filterValues =
@@ -143,7 +163,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
                                     map( // Get all property values in current column
                                         pluckedList,
                                         (item, index) => {
-                                            let targetPropertyTextValue = item[columnSetting.propertyPath];
+                                            const targetPropertyTextValue = item[columnSetting.propertyPath];
                                             filterMark[index] = filterMark[index] // Not already filtered
                                                 && (!hasEffectiveFilters // No effective filters
                                                     || !targetPropertyTextValue // Target value is empty, no filters apply
@@ -160,7 +180,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
                     ),
                     columnSetting.filterValues
                 ),
-                "value"
+                'value'
             );
     });
 
@@ -177,20 +197,26 @@ export class DetailListComponent implements OnInit, OnDestroy {
     this.debounceHandler.next(this.sortedFilteredList);
   }
 
+  closeDropDown() {
+    this.dropdowns.toArray().forEach(el => {
+      el.close();
+  });
+  }
+
 }
 
-//TODO verify this works
+// TODO verify this works
 const sortByProperty = (items: any[], propertyPath: string[], sortReverse: boolean): any[] => {
-  //need to continually check each property in this list
+  // need to continually check each property in this list
   const direction = sortReverse ? 1 : -1;
   return items.sort( (a, b) => {
     let i = 0;
 
-    while(i < propertyPath.length) {
+    while (i < propertyPath.length) {
       const aResult = Utils.result(a, propertyPath[i]);
       const bResult = Utils.result(b, propertyPath[i]);
-      
-      if(aResult !== bResult){
+
+      if (aResult !== bResult){
         return direction * ( aResult > bResult ? 1 : -1 );
       }
 
@@ -198,17 +224,17 @@ const sortByProperty = (items: any[], propertyPath: string[], sortReverse: boole
     }
 
     return 0;
-  })
-}
+  });
+};
 
-const filterByProperty = (obj: any, filter: string): boolean => {
+const filterByProperty = (obj: any, propFilter: string): boolean => {
   return Object.keys(obj).some(property => {
-    if(!property.startsWith("$")){
+    if (!property.startsWith('$')){
       const val = obj[property];
-      return (val as string|number|boolean).toString().toLowerCase().includes(filter);
+      return (val as string|number|boolean).toString().toLowerCase().includes(propFilter);
     }
-  })
-}
+  });
+};
 
 /* TODO
 set up track by function for columnSettings

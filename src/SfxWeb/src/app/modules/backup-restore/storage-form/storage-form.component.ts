@@ -10,47 +10,47 @@ export class StorageFormComponent implements OnInit {
 
   @Input() form: FormGroup;
   @Input() data: any;
-  @Input() required: boolean = true;
+  @Input() required = true;
 
   localForm: FormGroup;
   constructor(private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.localForm = this.formBuilder.group({
-      StorageKind: ["", [Validators.required]],
-      FriendlyName: [""],
-      Path: [""],
-      ConnectionString: [""],
-      ContainerName: [""],
-      PrimaryUserName: [""],
-      PrimaryPassword: [""],
-      SecondaryUserName: [""],
-      SecondaryPassword: [""]
+      StorageKind: ['', [Validators.required]],
+      FriendlyName: [''],
+      Path: [''],
+      ConnectionString: [''],
+      ContainerName: [''],
+      PrimaryUserName: [''],
+      PrimaryPassword: [''],
+      SecondaryUserName: [''],
+      SecondaryPassword: ['']
     });
 
-    this.form.addControl('Storage', this.localForm)
+    this.form.addControl('Storage', this.localForm);
 
     this.localForm.get('StorageKind').valueChanges.subscribe(storageKind => {
-      if(this.required) {
+      if (this.required) {
         this.updateStorageKindValidators(this.localForm, storageKind);
       }
-    })
+    });
 
-    //set default data or if none then give it a default state;
+    // set default data or if none then give it a default state;
     this.data = this.data || {
-      StorageKind: "AzureBlobStore",
-      FriendlyName: "",
-      Path: "",
-      ConnectionString: "",
-      ContainerName: "",
-      PrimaryUserName: "",
-      PrimaryPassword: "",
-      SecondaryUserName: "",
-      SecondaryPassword: ""
+      StorageKind: 'AzureBlobStore',
+      FriendlyName: '',
+      Path: '',
+      ConnectionString: '',
+      ContainerName: '',
+      PrimaryUserName: '',
+      PrimaryPassword: '',
+      SecondaryUserName: '',
+      SecondaryPassword: ''
     };
-    this.localForm.patchValue(this.data)
+    this.localForm.patchValue(this.data);
 
-    if(this.required) {
+    if (this.required) {
       this.localForm.get('ContainerName').setValidators(null);
       this.localForm.get('ConnectionString').setValidators(null);
       this.localForm.get('Path').setValidators(null);
@@ -58,14 +58,14 @@ export class StorageFormComponent implements OnInit {
   }
 
   updateStorageKindValidators(storage: AbstractControl, storageKind: string) {
-    if(storageKind === 'AzureBlobStore') {
+    if (storageKind === 'AzureBlobStore') {
       storage.get('ContainerName').setValidators([Validators.required]);
       storage.get('ConnectionString').setValidators([Validators.required]);
 
       storage.get('Path').setValidators(null);
     }
 
-    if(storageKind === 'FileShare') {
+    if (storageKind === 'FileShare') {
       storage.get('ContainerName').setValidators(null);
       storage.get('ConnectionString').setValidators(null);
 

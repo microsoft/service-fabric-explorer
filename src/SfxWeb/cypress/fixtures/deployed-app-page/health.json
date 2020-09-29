@@ -1,0 +1,37 @@
+{
+    "HealthEvents": [
+        {
+            "SourceId": "System.Hosting",
+            "Property": "Activation",
+            "HealthState": "Ok",
+            "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+            "Description": "The application was activated successfully.",
+            "SequenceNumber": "132451902059230468",
+            "RemoveWhenExpired": false,
+            "HealthReportId": "Hosting_7.0_1003",
+            "SourceUtcTimestamp": "2020-09-21T19:30:05.923Z",
+            "LastModifiedUtcTimestamp": "2020-09-21T19:49:27.876Z",
+            "IsExpired": false,
+            "LastOkTransitionAt": "2020-09-21T19:30:20.086Z",
+            "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+            "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        }
+    ],
+    "AggregatedHealthState": "Ok",
+    "UnhealthyEvaluations": [],
+    "HealthStatistics": {
+        "HealthStateCountList": [
+            {
+                "EntityKind": "DeployedServicePackage",
+                "HealthStateCount": {
+                    "OkCount": 2,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            }
+        ]
+    },
+    "Name": "fabric:/VisualObjectsApplicationType",
+    "NodeName": "_nt_2",
+    "DeployedServicePackageHealthStates": []
+}

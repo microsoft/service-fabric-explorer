@@ -15,8 +15,8 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",
-          "options": {
+          "builder": "@angular-devkit/build-angular:browser",	
+            "options": {
             "outputPath": "dist",
             "index": "src/beta.html",
             "main": "src/main.ts",
@@ -37,6 +37,9 @@
               "src/calender.scss",
               "src/_candybar.scss"
             ],
+            "allowedCommonJsDependencies": [
+              "lodash"
+           ],
             "scripts": [],
             "stylePreprocessorOptions": {
               "includePaths": [
@@ -44,6 +47,15 @@
             }
           },
           "configurations": {
+            "accesstesting": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.accesstesting.ts"
+                }
+              ],
+              "index": "src/index.html"
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -85,7 +97,7 @@
           }
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "@angular-devkit/build-angular:dev-server",	
           "options": {
             "browserTarget": "SfxWeb:build",
             "proxyConfig": "proxy.conf.js"
@@ -94,7 +106,10 @@
             "production": {
               "browserTarget": "SfxWeb:build:production"
             }
-          }
+          },
+          "allowedCommonJsDependencies": [
+            "lodash"
+          ]
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",

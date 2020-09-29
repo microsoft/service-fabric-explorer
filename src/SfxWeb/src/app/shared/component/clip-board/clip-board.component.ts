@@ -7,7 +7,7 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class ClipBoardComponent {
 
-  @Input() text: string = "";
+  @Input() text = '';
 
   constructor() { }
 

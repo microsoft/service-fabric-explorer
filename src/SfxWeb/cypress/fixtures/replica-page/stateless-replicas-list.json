@@ -1,0 +1,14 @@
+{
+    "ContinuationToken": "",
+    "Items": [
+        {
+            "ServiceKind": "Stateless",
+            "InstanceId": "132429339499004157",
+            "ReplicaStatus": "Ready",
+            "HealthState": "Ok",
+            "Address": "{\"Endpoints\":{\"httpListener\":\"http:\\/\\/10.0.0.7:8081\\/visualobjects\\/\",\"webSocketListener\":\"http:\\/\\/10.0.0.7:8081\\/visualobjects\\/data\\/\"}}",
+            "NodeName": "_nt_3",
+            "LastInBuildDurationInSeconds": "5"
+        }
+    ]
+}

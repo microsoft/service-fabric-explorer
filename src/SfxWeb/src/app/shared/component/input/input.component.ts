@@ -14,7 +14,7 @@ export class InputComponent implements OnInit, OnDestroy {
 
   modelValue: string;
 
-  @Input() placeholder = "Search list";
+  @Input() placeholder = 'Search list';
   @Input()
   get model(){
     return this.modelValue;
@@ -22,24 +22,24 @@ export class InputComponent implements OnInit, OnDestroy {
 
   set model(val: string) {
     this.modelValue = val;
-    this.onChange.emit(this.modelValue);
+    this.onValueChange(val);
   }
 
 
-  @Output() onChange: EventEmitter<string> = new EventEmitter<string>();
+  @Output() changed: EventEmitter<string> = new EventEmitter<string>();
 
   constructor() { }
 
   ngOnInit() {
     this.debouncerHandlerSubscription = this.debounceHandler
-   .pipe(debounceTime(1000), distinctUntilChanged())
+   .pipe(debounceTime(200), distinctUntilChanged())
    .subscribe(val => {
-        this.modelValue = val;
+      this.changed.emit(val);
    });
   }
 
   ngOnDestroy() {
-    if(this.debouncerHandlerSubscription){
+    if (this.debouncerHandlerSubscription){
       this.debouncerHandlerSubscription.unsubscribe();
     }
   }

@@ -1,7 +1,7 @@
-﻿//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 /**
  * Generate unique Id for fabric entity
@@ -9,19 +9,19 @@
 export class IdGenerator {
 
     public static cluster(): string {
-        return "<cluster>";
+        return '<cluster>';
     }
 
     public static appGroup(): string {
-        return "<app group>";
+        return '<app group>';
     }
 
     public static nodeGroup(): string {
-        return "<node group>";
+        return '<node group>';
     }
 
     public static networkGroup(): string {
-        return "<network group>";
+        return '<network group>';
     }
 
     public static network(networkName: string): string {
@@ -37,7 +37,7 @@ export class IdGenerator {
     }
 
     public static systemAppGroup(): string {
-        return "<system app group>";
+        return '<system app group>';
     }
 
     public static appType(appTypeName: string): string {
@@ -68,11 +68,11 @@ export class IdGenerator {
     }
 
     public static deployedCodePackageGroup(): string {
-        return "<deployed code package group>";
+        return '<deployed code package group>';
     }
 
     public static deployedReplicaGroup(): string {
-        return "<deployed replica group>";
+        return '<deployed replica group>';
     }
 
     public static deployedCodePackage(codePackageName: string): string {

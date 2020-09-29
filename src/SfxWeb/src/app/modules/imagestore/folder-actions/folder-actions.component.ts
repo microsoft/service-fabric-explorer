@@ -12,7 +12,7 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class FolderActionsComponent  implements DetailBaseComponent {
 
-  
+
   item: ImageStoreItem;
   listSetting: ListColumnSettingWithImageStoreActions;
 
@@ -21,12 +21,12 @@ export class FolderActionsComponent  implements DetailBaseComponent {
   deleteItem() {
     new ActionWithConfirmationDialog(
       this.data.dialog,
-      "",
-      "Delete Image Store content",
-      "",
+      '',
+      'Delete Image Store content',
+      '',
       () => this.listSetting.imagestore.deleteContent(this.item.path),
       () => true,
-      "Confirm Deletion",
+      'Confirm Deletion',
       `Delete ${this.item.path}? This action cannot be undone`,
       this.item.path).run();
   }
@@ -36,6 +36,6 @@ export class FolderActionsComponent  implements DetailBaseComponent {
 export class ListColumnSettingWithImageStoreActions extends ListColumnSetting {
   template = FolderActionsComponent;
   public constructor(public imagestore: ImageStore) {
-      super("", "");
+      super('', '');
   }
 }

@@ -9,21 +9,21 @@ import { Action, ActionWithConfirmationDialog } from 'src/app/Models/Action';
 })
 export class ActionDialogComponent implements OnInit {
 
-  userInput = "";
-  placeHolderText: string = "";
+  userInput = '';
+  placeHolderText = '';
   constructor(public dialogRef: MatDialogRef<ActionDialogComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: ActionWithConfirmationDialog) { }
+              @Inject(MAT_DIALOG_DATA) public data: ActionWithConfirmationDialog) { }
 
   ngOnInit() {
     this.placeHolderText = `Type in ${this.data.confirmationKeyword} to continue`;
   }
 
   ok(){
-    this.dialogRef.close(true);    
+    this.dialogRef.close(true);
   }
 
   cancel() {
-    this.dialogRef.close(false);    
+    this.dialogRef.close(false);
   }
 
 }

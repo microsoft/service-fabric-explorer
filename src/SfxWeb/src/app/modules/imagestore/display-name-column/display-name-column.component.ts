@@ -24,7 +24,7 @@ export class ListColumnSettingWithDisplayName extends ListColumnSetting {
   template = DisplayNameColumnComponent;
   imagestore: ImageStore;
   public constructor(imagestore: ImageStore) {
-      super("displayName", "name", ["isFolder", "displayName"]);
+      super('displayName', 'name', ['isFolder', 'displayName']);
       this.imagestore = imagestore;
   }
 }

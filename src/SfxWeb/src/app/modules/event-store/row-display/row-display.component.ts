@@ -11,29 +11,29 @@ import { Utils } from 'src/app/Utils/Utils';
 })
 export class RowDisplayComponent implements OnInit, DetailBaseComponent {
 
-  item: any; //FabricEventInstanceModel
+  item: any; // FabricEventInstanceModel
   listSetting: ListColumnSetting;
 
-  color =  "white";
-  value = "";
+  color =  'white';
+  value = '';
   constructor() { }
 
-  ngOnInit() { 
-    this.value = Utils.result(this.item, this.listSetting.propertyPath)
+  ngOnInit() {
+    this.value = Utils.result(this.item, this.listSetting.propertyPath);
 
     let color = null;
     if (HtmlUtils.eventTypesUtil.isResolved(this.item)) {
-        color = "#3AA655";
+        color = '#3AA655';
     } else if (HtmlUtils.eventTypesUtil.isWarning(this.item)) {
-        color = "#F2C649";
+        color = '#F2C649';
     } else if (HtmlUtils.eventTypesUtil.isError(this.item)) {
-        color = "#FF5349";
+        color = '#FF5349';
     }
 
     if (color) {
       this.color = color;
     }
-    
+
   }
 
 }

@@ -10,11 +10,12 @@ import { PagerComponent } from './pager/pager.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { NgbPaginationModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { UtcTimestampComponent } from './utc-timestamp/utc-timestamp.component';
 
 
 
 @NgModule({
-  declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective, DetailListComponent, PagerComponent],
+  declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective, DetailListComponent, PagerComponent, UtcTimestampComponent],
   imports: [
     CommonModule,
     RouterModule,

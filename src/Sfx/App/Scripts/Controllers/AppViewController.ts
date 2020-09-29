@@ -102,8 +102,13 @@ module Sfx {
             return this.$q.all([
                 this.data.getApp(this.appId, true, messageHandler).then(data => {
                     this.$scope.app = data;
-                    this.$scope.app.applicationBackupConfigurationInfoCollection.refresh(messageHandler);
-                    this.data.backupPolicies.refresh(messageHandler);
+
+                    this.$scope.clusterManifest.ensureInitialized().then( () => {
+                        if(this.$scope.clusterManifest.isBRSEnabled) {
+                            this.$scope.app.applicationBackupConfigurationInfoCollection.refresh(messageHandler);
+                            this.data.backupPolicies.refresh(messageHandler);
+                        }
+                    })
                     return this.$scope.app.health.refresh(messageHandler).then(() => {
                         this.$scope.deployedApplicationsHealthStates = this.$scope.app.health.deployedApplicationHealthStates;
 

@@ -1,14 +1,14 @@
 <div class="detail-pane essen-pane" *ngIf="clusterHealth.isInitialized">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Health Events">
         <h4 collapse-header>
             Health Events
         </h4>
-        <detail-list [list]="clusterHealth.healthEvents" [listSettings]="healthEventsListSettings"  collapse-body></detail-list>
+        <app-detail-list [list]="clusterHealth.healthEvents" [listSettings]="healthEventsListSettings"  collapse-body></app-detail-list>
     </app-collapse-container>
 </div>
 
-<div id="upgradeDetailsSection" *ngIf="clusterUpgradeProgress.isInitialized" class="detail-pane essen-pane">
-    <app-collapse-container>
+<div data-cy="upgradeDetails" *ngIf="clusterUpgradeProgress.isInitialized" class="detail-pane essen-pane">
+    <app-collapse-container sectionName="Upgrade Status">
         <div collapse-header>
                 <h4 *ngIf="clusterUpgradeProgress.isUpgrading">Cluster Upgrade In Progress</h4>
                 <h4 *ngIf="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h4>
@@ -30,29 +30,34 @@
                         </tr>
                         <tr>
                             <th>Start Timestamp Utc</th>
-                            <th title="Upgrade Duration">Upgrade Duration</th>
-                            <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>
+                            <th title="Upgrade Duration">Upgrade Duration</th>	
+                            <th title="Upgrade Domain Duration">Upgrade Domain Duratiaon</th>
                         </tr>
                         <tr>
-                            <td>{{clusterUpgradeProgress.startTimestampUtc}}</td>
-                            <td>{{clusterUpgradeProgress.upgradeDuration}}</td>
+                            <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
+                            <td>{{clusterUpgradeProgress.upgradeDuration}}</td>	
                             <td>{{clusterUpgradeProgress.upgradeDomainDuration}}</td>
                         </tr>
                     </table>
                 </div>
-            <div class="detail-pane" *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
-                <h5>Progress by Upgrade Domain</h5>
-                <upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></upgrade-progress>
-                <!-- <sfx-upgrade-domain-progress ng-if="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList.length > 0"
-                                                node-upgrade-progress-list="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.NodeUpgradeProgressList"></sfx-upgrade-domain-progress> -->
+                <div *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0" style="margin-top: 20px;">
+                    <h5 style="font-size: 16px;">Upgrade Domain Progress</h5>
+                    <app-upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></app-upgrade-progress>
+                </div>
+
+            <div style="margin-top:20px" *ngIf="clusterUpgradeProgress.isUpgrading" data-cy="currentud">
+                <h5 style="font-size: 16px;">Current Upgrade Domain : {{clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName}} </h5>
+                <h5 style="font-size: 15px; margin-top: 15px;">Nodes status</h5>
+                <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress"></app-upgrade-domain-progress>
             </div>
+
             <div *ngIf="clusterUpgradeProgress.raw.FailureReason !== 'None'">
                 <h4>Upgrade Failure</h4>
                 <div class="table-responsive">
                     <table class="table detail-table">
                         <tbody>
                             <tr>
-                                <th>Failure Timestamp Utc</th>
+                                <th>Failure Timestamp UTC</th>
                                 <td>{{clusterUpgradeProgress.failureTimestampUtc}}</td>
                             </tr>
                             <tr>
@@ -65,14 +70,14 @@
             </div>
             <div class="detail-pane" *ngIf="clusterUpgradeProgress.unhealthyEvaluations.length > 0">
                 <h4>Unhealthy Evaluations (Upgrade)</h4>
-                <detail-list [list]="clusterUpgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></detail-list>
+                <app-detail-list [list]="clusterUpgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
             </div>
         </div>
     </app-collapse-container>
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="clusterUpgradeProgress">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Upgrade Description" collapsed="true">
         <h4 collapse-header>Upgrade Description</h4>        
         <div class="detail-pane" *ngIf="clusterUpgradeProgress.upgradeDescription" collapse-body>
             <app-detail-view-part [data]="clusterUpgradeProgress.upgradeDescription"></app-detail-view-part>
@@ -81,14 +86,14 @@
 </div> 
 
 <div *ngIf="nodesStatuses" class="detail-pane essen-pane">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Node States">
         <h4 collapse-header>Node States</h4>        
-        <detail-list [list]="nodesStatuses" [listSettings]="nodeStatusListSettings" collapse-body></detail-list>
+        <app-detail-list [list]="nodesStatuses" [listSettings]="nodeStatusListSettings" collapse-body></app-detail-list>
     </app-collapse-container>
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="clusterLoadInformation && clusterLoadInformation.isInitialized">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Load Information">
         <h4 collapse-header>Load Information</h4>
         <app-detail-view-part [data]="clusterLoadInformation.raw" [parent]="clusterLoadInformation" collapse-body></app-detail-view-part>
     </app-collapse-container>

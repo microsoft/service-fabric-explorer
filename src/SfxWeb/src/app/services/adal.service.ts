@@ -1,16 +1,14 @@
 import { Injectable } from '@angular/core';
-import { DataService } from './data.service';
 import { RestClientService } from './rest-client.service';
 import { Observable, Subscriber, of, Subject } from 'rxjs';
 import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
-import * as AuthenticationContext from  "adal-angular";
+import * as AuthenticationContext from 'adal-angular';
 import { adal } from 'adal-angular';
 import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { StringUtils } from '../Utils/StringUtils';
 
-// declare var AuthenticationContext: adal.AuthenticationContextStatic;
-let createAuthContextFn: adal.AuthenticationContextStatic = AuthenticationContext;
+const createAuthContextFn: adal.AuthenticationContextStatic = AuthenticationContext;
 
 export class AdalConfig {
   apiEndpoint: string;
@@ -26,19 +24,19 @@ export class AdalConfig {
 export class AdalService {
   private context: adal.AuthenticationContext;
   public config: AadMetadata;
-  public aadEnabled: boolean = false;
 
   private tokenSubject: Subject<any>;
+  public aadEnabled = false;
 
   constructor(private http: RestClientService) { }
 
   load(): Observable<adal.AuthenticationContext> {
-    if(!!this.context){
+    if (!!this.context){
       return of(this.context);
     }else{
       return this.http.getAADmetadata().pipe(map(data => {
         this.config = data;
-        if(data.isAadAuthType){
+        if (data.isAadAuthType){
 
           const config = {
             tenant: data.raw.metadata.tenant,
@@ -103,6 +101,7 @@ export class AdalService {
   }
 
   public acquireTokenResilient(resource: string): Observable<any> {
+<<<<<<< HEAD
     let newToken = "";
     if(this.tokenSubject) {
       return this.tokenSubject;
@@ -137,6 +136,21 @@ export class AdalService {
       console.log(this.tokenSubject, newToken);
       return this.tokenSubject ? this.tokenSubject.asObservable() : of(newToken);
     }
+=======
+      return new Observable<any>((subscriber: Subscriber<any>) =>
+          {
+            this.context.acquireToken(resource, (message: string, token: string) => {
+              if (token) {
+                  subscriber.next(token);
+              } else {
+                  console.error(message);
+                  subscriber.error(message);
+              }
+              subscriber.complete();
+          });
+          }
+      ).pipe(retry(3));
+>>>>>>> master
   }
 
 }

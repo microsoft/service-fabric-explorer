@@ -17,7 +17,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private adalService: AdalService) {}
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
-    if(this.adalService.aadEnabled){
+    if (this.adalService.aadEnabled){
         return this.adalService.acquireTokenResilient(this.adalService.config.raw.metadata.cluster)
         .pipe(mergeMap((token) => {
           console.log(token)
@@ -43,19 +43,18 @@ export class ReadOnlyHeaderInterceptor implements HttpInterceptor {
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
         return next.handle(req).pipe(map(res => {
-            if (event instanceof HttpResponse) {
-
-                if(event.headers.get(Constants.SfxReadonlyHeaderName)) {
-                    this.dataService.readOnlyHeader = event.headers.get(Constants.SfxReadonlyHeaderName) === "1";
+            if (res instanceof HttpResponse) {
+                if ( res.headers.has(Constants.SfxReadonlyHeaderName)) {
+                    this.dataService.readOnlyHeader = res.headers.get(Constants.SfxReadonlyHeaderName) === '1';
                 }
 
-                if(event.headers.get(Constants.SfxClusterNameMetadataName)) {
-                    this.dataService.clusterNameMetadata = event.headers.get(Constants.SfxClusterNameMetadataName);
+                if (res.headers.has(Constants.SfxClusterNameHeaderName)) {
+                    this.dataService.clusterNameMetadata = res.headers.get(Constants.SfxClusterNameHeaderName);
                 }
 
               }
             return res;
-        }))
+        }));
   }
 }
 
@@ -64,9 +63,9 @@ export class GlobalHeaderInterceptor implements HttpInterceptor {
   constructor() {}
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let newHeaders = req.headers;
-    //ADD ADDITIONAL HEADERS HERE
+    // ADD ADDITIONAL HEADERS HERE
     newHeaders = newHeaders.append('x-servicefabricclienttype', 'SFX')
-                           .append('sfx-build', environment.version)
+                           .append('sfx-build', environment.version);
 
     return next.handle(req.clone({headers: newHeaders}));
  }

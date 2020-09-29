@@ -38,7 +38,7 @@ export interface IDataModelCollection<T extends IDataModel<any>> {
 }
 
 export class DataModelCollectionBase<T extends IDataModel<any>> implements IDataModelCollection<T> {
-    public isInitialized: boolean = false;
+    public isInitialized = false;
     public parent: any;
     public collection: T[] = [];
 
@@ -49,7 +49,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     private refreshingPromise: Subject<any>;
 
     public get viewPath(): string {
-        return "";
+        return '';
     }
 
     public get length(): number {
@@ -62,7 +62,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
 
     protected get indexPropery(): string {
         // index the collection by "uniqueId" by default
-        return "uniqueId";
+        return 'uniqueId';
     }
 
     public constructor(public data: DataService, parent?: any, appendOnly: boolean = false) {
@@ -74,9 +74,9 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     public refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
         if (!this.refreshingPromise) {
             this.refreshingPromise = new AsyncSubject<any>();
-            
+
             this.retrieveNewCollection(messageHandler).pipe(mergeMap(collection => {
-                return this.update(collection)
+                return this.update(collection);
             }),
             catchError( err => of(err))
             ).subscribe( () => {
@@ -180,7 +180,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         }
 
         // Merge health chunk data
-        let updatePromises = [];
+        const updatePromises = [];
         CollectionUtils.updateCollection<T, P>(
             this.collection,
             healthChunkList.Items,

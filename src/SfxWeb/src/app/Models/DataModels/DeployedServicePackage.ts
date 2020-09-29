@@ -1,4 +1,4 @@
-﻿import { DataModelBase } from './Base';
+import { DataModelBase } from './Base';
 import { IRawDeployedServicePackage, IRawDeployedServicePackageHealth } from '../RawDataTypes';
 import { DeployedCodePackageCollection, DeployedReplicaCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
@@ -10,11 +10,12 @@ import { HealthBase } from './HealthEvent';
 import { DeployedApplication } from './DeployedApplication';
 import { map } from 'rxjs/operators';
 import { Observable } from 'rxjs';
+import { RoutesService } from 'src/app/services/routes.service';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class DeployedServicePackage extends DataModelBase<IRawDeployedServicePackage> {
     public deployedCodePackages: DeployedCodePackageCollection;
@@ -40,7 +41,7 @@ export class DeployedServicePackage extends DataModelBase<IRawDeployedServicePac
     }
 
     public get viewPath(): string {
-        return this.data.routes.getDeployedServiceViewPath(this.parent.parent.name, this.parent.id, this.id, this.servicePackageActivationId);
+        return RoutesService.getDeployedServiceViewPath(this.parent.parent.name, this.parent.id, this.id, this.servicePackageActivationId);
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedServicePackage> {

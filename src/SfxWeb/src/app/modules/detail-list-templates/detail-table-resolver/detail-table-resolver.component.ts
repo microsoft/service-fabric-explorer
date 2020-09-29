@@ -24,10 +24,6 @@ export class DetailTableResolverComponent implements OnInit {
     this.loadComponent();
   }
 
-  ngOnDestroy() {
-
-  }
-
   loadComponent() {
 
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.template);
@@ -36,8 +32,8 @@ export class DetailTableResolverComponent implements OnInit {
     viewContainerRef.clear();
 
     const componentRef = viewContainerRef.createComponent(componentFactory);
-    (<DetailBaseComponent>componentRef.instance).item = this.item;
-    (<DetailBaseComponent>componentRef.instance).listSetting = this.setting;
+    (componentRef.instance as DetailBaseComponent).item = this.item;
+    (componentRef.instance as DetailBaseComponent).listSetting = this.setting;
   }
 
 }

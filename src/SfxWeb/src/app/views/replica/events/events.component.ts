@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { ReplicaBaseController } from '../ReplicaBase';
+import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { DataService } from 'src/app/services/data.service';
 import { ReplicaEventList } from 'src/app/Models/DataModels/collections/Collections';
 
@@ -8,11 +8,11 @@ import { ReplicaEventList } from 'src/app/Models/DataModels/collections/Collecti
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss']
 })
-export class EventsComponent extends ReplicaBaseController {
+export class EventsComponent extends ReplicaBaseControllerDirective {
 
   replicaEvents: ReplicaEventList;
 
-  constructor(protected data: DataService, injector: Injector) { 
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 

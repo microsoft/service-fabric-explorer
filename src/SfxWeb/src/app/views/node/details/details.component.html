@@ -1,5 +1,5 @@
 <div class="detail-pane essen-pane" *ngIf="node">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Node">
         <h4 collapse-header>
             Node
         </h4>    
@@ -8,14 +8,14 @@
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="node && node.health">
-    <app-collapse-container>
+    <app-collapse-container sectionName="Health Events">
         <h4 collapse-header>
             Health Events
         </h4>    
-        <detail-list [list]="node.health.healthEvents" [listSettings]="healthEventsListSettings" collapse-body></detail-list>
+        <app-detail-list [list]="node.health.healthEvents" [listSettings]="healthEventsListSettings" collapse-body></app-detail-list>
     </app-collapse-container>
 </div>
 
-<div class="detail-pane essen-pane" *ngIf="node && node.loadInformation.isInitialized">
+<div class="detail-pane essen-pane" *ngIf="node && node.loadInformation.isInitialized" data-cy="load">
     <app-detail-view-part [data]="node.loadInformation.raw" [parent]="node.loadInformation" collapse-body></app-detail-view-part>
 </div>

@@ -1,12 +1,14 @@
-<div>
-    <div (click)="changeCollapseState()" [ngClass]="{'base-header': !disabled}" >
-        <span class="mif-2x status-icon {{collapsed ? 'mif-arrow-drop-down' : 'mif-arrow-drop-up' }}" *ngIf="!disabled"></span>
+<div style="position: relative;">
+    <div (click)="changeCollapseState()" [ngClass]="{'base-header': !disabled}" [attr.aria-expanded]="!collapsed"
+    [ngbTooltip]="(collapsed ? 'Open ': 'Close ')  + sectionName + ' Section'" placement="top" [disableTooltip]="disabled || hideTooltip">
+        <button class="mif-2x status-icon {{collapsed ? 'mif-arrow-drop-down' : 'mif-arrow-drop-up' }}" *ngIf="!disabled"
+                tabindex="0" [attr.aria-label]=" (collapsed ? 'Open ': 'Close ')  + sectionName + ' Section'"></button>
         <div class="header-wrapper" [ngStyle]="{'margin-left': disabled ? '25px' : ''}">
             <ng-content select="[collapse-header]"></ng-content>
         </div>
     </div>
 
     <div *ngIf="!collapsed">
-        <ng-content select="[collapse-body]"></ng-content>    
+        <ng-content select="[collapse-body]"></ng-content>
     </div>
 </div>

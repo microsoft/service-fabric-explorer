@@ -16,38 +16,38 @@ describe('RefreshService', () => {
   beforeEach(() => TestBed.configureTestingModule({}));
 
   fit('should be created', () => {
-    const service: RefreshService = TestBed.get(RefreshService);
+    const service: RefreshService = TestBed.inject(RefreshService);
     expect(service).toBeTruthy();
   });
 
 
   fit('add and remove refresh subject', () => {
-    const service: RefreshService = TestBed.get(RefreshService);
-    
-    const keyName = "test";
-    const func = () => of(null)
+    const service: RefreshService = TestBed.inject(RefreshService);
+
+    const keyName = 'test';
+    const func = () => of(null);
 
     service.insertRefreshSubject(keyName, func);
-    expect(service["_refreshSubjectsMap"][keyName]).toBe(func);
-    expect(service["refreshSubjects"].length).toBe(1);
+    expect(service.hasRefreshSubject(keyName)).toBeTruthy();
+    expect(service.refreshSubjectCount()).toBe(1);
 
     service.removeRefreshSubject(keyName);
-    expect(service["_refreshSubjectsMap"][keyName]).toBeUndefined();
-    expect(service["refreshSubjects"].length).toBe(0);
+    expect(service.hasRefreshSubject(keyName)).toBeFalsy();
+    expect(service.refreshSubjectCount()).toBe(0);
 
   });
 
   fit('refresh all', async () => {
-    const service: RefreshService = TestBed.get(RefreshService);
+    const service: RefreshService = TestBed.inject(RefreshService);
     let done = false;
-    const keyName = "test";
-    const func = () => of(null).pipe(map( () => done = true))
+    const keyName = 'test';
+    const func = () => of(null).pipe(map( () => done = true));
 
     service.insertRefreshSubject(keyName, func);
-    expect(service["_refreshSubjectsMap"][keyName]).toBe(func);
-    expect(service["refreshSubjects"].length).toBe(1);
+    expect(service.hasRefreshSubject(keyName)).toBeTruthy();
+    expect(service.refreshSubjectCount()).toBe(1);
 
-    service.refreshAll()
+    service.refreshAll();
 
     await timer(1000).toPromise();
 
@@ -56,16 +56,16 @@ describe('RefreshService', () => {
   });
 
   fit('refresh withError', async () => {
-    const service: RefreshService = TestBed.get(RefreshService);
-    const keyName = "test";
-    const func = () =>  throwError("error");
+    const service: RefreshService = TestBed.inject(RefreshService);
+    const keyName = 'test';
+    const func = () =>  throwError('error');
     let done = false;
-    const keyName2 = "success";
+    const keyName2 = 'success';
     const func2 = () => of(null).pipe(map( () => done = true));
 
     service.insertRefreshSubject(keyName, func);
     service.insertRefreshSubject(keyName2, func2);
-    expect(service["refreshSubjects"].length).toBe(2);
+    expect(service.refreshSubjectCount()).toBe(2);
 
     service.refreshAll();
 
@@ -76,13 +76,13 @@ describe('RefreshService', () => {
   });
 
   fit('update refresh interval', async () => {
-    const service: RefreshService = TestBed.get(RefreshService);
+    const service: RefreshService = TestBed.inject(RefreshService);
     service.init();
 
-    expect(service.refreshRate).toBe("15");
-    
-    service.updateRefreshInterval("10");
-    expect(service.refreshRate).toBe("10");
+    expect(service.refreshRate).toBe('15');
+
+    service.updateRefreshInterval('10');
+    expect(service.refreshRate).toBe('10');
 
   });
 

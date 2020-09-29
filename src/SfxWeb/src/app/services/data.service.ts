@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { SystemApplication, Application } from '../Models/DataModels/Application';
-import { ApplicationTypeGroupCollection, ApplicationCollection, BackupPolicyCollection, ServiceTypeCollection, DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, ReplicaOnPartitionCollection, PartitionCollection, ClusterEventList, NodeEventList, ApplicationEventList, ServiceEventList, PartitionEventList, ReplicaEventList, CorrelatedEventList } from '../Models/DataModels/collections/Collections';
+import { ApplicationTypeGroupCollection, ApplicationCollection, BackupPolicyCollection, ServiceTypeCollection,
+         DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, ReplicaOnPartitionCollection,
+         PartitionCollection, ClusterEventList, NodeEventList, ApplicationEventList, ServiceEventList, PartitionEventList, ReplicaEventList, CorrelatedEventList } from '../Models/DataModels/collections/Collections';
 import { RoutesService } from './routes.service';
 import { MessageService } from './message.service';
 import { TelemetryService } from './telemetry.service';
@@ -47,7 +49,7 @@ export class DataService {
   public backupPolicies: BackupPolicyCollection;
 
   public readOnlyHeader: boolean =  null;
-  public clusterNameMetadata: string =  null;
+  public clusterNameMetadata: string = null;
 
   constructor(
     public routes: RoutesService,
@@ -77,7 +79,7 @@ export class DataService {
   }
 
   public isAdvancedModeEnabled(): boolean {
-    return this.storage.getValueBoolean(Constants.AdvancedModeKey, false)
+    return this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
   }
 
   public getClusterHealth(
@@ -128,7 +130,7 @@ export class DataService {
 
   public getSystemServices(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ServiceCollection> {
       return this.getSystemApp(false, messageHandler).pipe(mergeMap(app => app.services.ensureInitialized(forceRefresh, messageHandler)
-      ),map(app => app.services));
+      ), map(app => app.services));
   }
 
   public getApps(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationCollection> {
@@ -152,7 +154,7 @@ export class DataService {
   }
 
   public getAppTypeGroups(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationTypeGroupCollection> {
-    return this.appTypeGroups.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.appTypeGroups))
+    return this.appTypeGroups.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.appTypeGroups));
   }
 
   public getAppTypeGroup(name: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationTypeGroup> {
@@ -163,7 +165,7 @@ export class DataService {
 
   public getAppType(name: string, version: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationType> {
     return this.getAppTypeGroup(name, false, messageHandler).pipe(map(appTypeGroup => {
-        let filteredAppTypes = appTypeGroup.appTypes.filter(appType => appType.raw.Version === version);
+        const filteredAppTypes = appTypeGroup.appTypes.filter(appType => appType.raw.Version === version);
         return filteredAppTypes[0];
     }));
   }
@@ -181,7 +183,7 @@ export class DataService {
   }
 
   public getServices(appId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ServiceCollection> {
-    let getAppPromise = appId === Constants.SystemAppId
+    const getAppPromise = appId === Constants.SystemAppId
         ? this.getSystemApp(false, messageHandler)
         : this.getApp(appId, false, messageHandler);
 
@@ -214,6 +216,7 @@ export class DataService {
       }));
   }
 
+  // tslint:disable-next-line:max-line-length
   public getReplicaOnPartition(appId: string, serviceId: string, partitionId: string, replicaId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ReplicaOnPartition> {
       return this.getReplicasOnPartition(appId, serviceId, partitionId, false, messageHandler).pipe(mergeMap(collection => {
           return this.tryGetValidItem(collection, IdGenerator.replica(replicaId), forceRefresh, messageHandler);
@@ -222,7 +225,7 @@ export class DataService {
 
   public getDeployedApplications(nodeName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedApplicationCollection> {
       return this.getNode(nodeName, false, messageHandler).pipe(mergeMap(node => {
-          return node.deployedApps.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => node.deployedApps))
+          return node.deployedApps.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => node.deployedApps));
       }));
   }
 
@@ -238,30 +241,35 @@ export class DataService {
       }));
   }
 
+  // tslint:disable-next-line:max-line-length
   public getDeployedServicePackage(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedServicePackage> {
       return this.getDeployedServicePackages(nodeName, appId, false, messageHandler).pipe(mergeMap(collection => {
           return this.tryGetValidItem(collection, IdGenerator.deployedServicePackage(servicePackageName, servicePackageActivationId), forceRefresh, messageHandler);
       }));
   }
 
+  // tslint:disable-next-line:max-line-length
   public getDeployedCodePackages(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedCodePackageCollection> {
       return this.getDeployedServicePackage(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(deployedServicePackage => {
           return deployedServicePackage.deployedCodePackages.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => deployedServicePackage.deployedCodePackages));
       }));
   }
 
+  // tslint:disable-next-line:max-line-length
   public getDeployedCodePackage(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, codePackageName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedCodePackage> {
       return this.getDeployedCodePackages(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(collection => {
           return this.tryGetValidItem(collection, IdGenerator.deployedCodePackage(codePackageName), forceRefresh, messageHandler);
       }));
   }
 
+// tslint:disable-next-line:max-line-length
   public getDeployedReplicas(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedReplicaCollection> {
       return this.getDeployedServicePackage(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(deployedServicePackage => {
           return deployedServicePackage.deployedReplicas.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => deployedServicePackage.deployedReplicas));
       }));
   }
 
+    // tslint:disable-next-line:max-line-length
   public getDeployedReplica(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, partitionId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedReplica> {
     return this.getDeployedReplicas(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(collection => {
         return this.tryGetValidItem(collection, IdGenerator.deployedReplica(partitionId), forceRefresh, messageHandler);
@@ -270,12 +278,12 @@ export class DataService {
 
   public refreshBackupPolicies(messageHandler: IResponseMessageHandler): Observable<any> {
     return this.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
-        if(this.clusterManifest.isBackupRestoreEnabled){
+        if (this.clusterManifest.isBackupRestoreEnabled){
             return this.backupPolicies.refresh(messageHandler);
         }else{
-            return of(null)
+            return of(null);
         }
-      }))
+      }));
   }
 
   public createClusterEventList(): ClusterEventList {
@@ -307,43 +315,43 @@ export class DataService {
     }
 
   private tryGetValidItem<T extends IDataModel<any>>(collection: IDataModelCollection<T>, uniqueId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<any> {
-    let item = collection.find(uniqueId);
+    const item = collection.find(uniqueId);
     if (item) {
         return item.ensureInitialized(forceRefresh, messageHandler);
     } else {
         return throwError(null);
     }
-  } 
+  }
 
   private preprocessHealthChunkData(clusterHealthChunk: IClusterHealthChunk): IClusterHealthChunk {
     // Move system app to be a standalone object to match the tree structure
     clusterHealthChunk.SystemApplicationHealthStateChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.filter(
         appHealthStateChunk => appHealthStateChunk.ApplicationName === Constants.SystemAppName)[0];
 
-    let deployedApps: IDeployedApplicationHealthStateChunk[] = [];
+    const deployedApps: IDeployedApplicationHealthStateChunk[] = [];
 
     // Add application name to deployed application health chunk
-    clusterHealthChunk.ApplicationHealthStateChunks.Items.forEach(appHealthStateChunk => 
+    clusterHealthChunk.ApplicationHealthStateChunks.Items.forEach(appHealthStateChunk =>
       appHealthStateChunk.DeployedApplicationHealthStateChunks.Items.forEach(deployedApp => {
             deployedApp.ApplicationName = appHealthStateChunk.ApplicationName;
             deployedApps.push(deployedApp);
         }));
 
     // Assign deployed apps under their belonging nodes
-    let nodeDeployedAppsGroups = deployedApps.reduce( (previous, current) => { 
-        if( current.NodeName in previous){
+    const nodeDeployedAppsGroups = deployedApps.reduce( (previous, current) => {
+        if ( current.NodeName in previous){
             previous[current.NodeName].push(current);
         }else{
-            previous[current.NodeName] = [current]
+            previous[current.NodeName] = [current];
         }
-        return previous}, {});
-    
-    // TODO 
-    //let nodeDeployedAppsGroups = _.groupBy(deployedApps, deployedApp => deployedApp.NodeName);
+        return previous; }, {});
+
+    // TODO
+    // let nodeDeployedAppsGroups = _.groupBy(deployedApps, deployedApp => deployedApp.NodeName);
     Object.keys(nodeDeployedAppsGroups).forEach(key => {
         const group = nodeDeployedAppsGroups[key];
 
-        let nodeHealthChunk = clusterHealthChunk.NodeHealthStateChunks.Items.find(chunk => chunk.NodeName === key);
+        const nodeHealthChunk = clusterHealthChunk.NodeHealthStateChunks.Items.find(chunk => chunk.NodeName === key);
         if (nodeHealthChunk) {
             nodeHealthChunk.DeployedApplicationHealthStateChunks = {
                 Items: group,

@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { ReplicaBaseController } from '../ReplicaBase';
+import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
@@ -11,11 +11,11 @@ import { SettingsService } from 'src/app/services/settings.service';
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent extends ReplicaBaseController {
+export class DetailsComponent extends ReplicaBaseControllerDirective {
 
   healthEventsListSettings: ListSettings;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 

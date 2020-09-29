@@ -4,7 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { Observable, forkJoin } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { SettingsService } from 'src/app/services/settings.service';
-import { NodeBaseController } from '../NodeBase';
+import { NodeBaseControllerDirective } from '../NodeBase';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -12,11 +12,11 @@ import { map } from 'rxjs/operators';
   templateUrl: './details.component.html',
   styleUrls: ['./details.component.scss']
 })
-export class DetailsComponent extends NodeBaseController {
+export class DetailsComponent extends NodeBaseControllerDirective {
   healthEventsListSettings: ListSettings;
 
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
@@ -28,7 +28,7 @@ export class DetailsComponent extends NodeBaseController {
     return forkJoin([
       this.node.loadInformation.refresh(messageHandler),
       this.node.health.refresh(messageHandler)
-    ]).pipe(map( ()=>     console.log(this.node)
+    ]).pipe(map( () =>     console.log(this.node)
     ));
   }
 }
