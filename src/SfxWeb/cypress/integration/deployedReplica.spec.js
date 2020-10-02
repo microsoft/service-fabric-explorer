@@ -42,7 +42,8 @@ context('deployed replica', () => {
         beforeEach(() => {
             cy.route(apiUrl(`Partitions/${partition}?*`), 'fx:deployed-replica/partition').as('partition');
             //we call this route twice with different params
-            cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?**PartitionId=${partition}*`), 'fx:deployed-replica/view-replica')
+            cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?**PartitionId=${partition}*`), 'fx:deployed-replica/view-replica').as('replica2')
+            cy.route(apiUrl(`Nodes/${nodeName}/$/GetPartitions/${partition}/$/GetReplicas/${replica}/$/GetDetail?*`), 'fx:deployed-replica/replica-details').as('replica-details');
 
             cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}/partition/${partition}/replica/${replica}`);
             
@@ -56,11 +57,13 @@ context('deployed replica', () => {
         })
 
         it('details', () => {
+            cy.wait('@apps')
             cy.wait(waitRequest);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
             })
+            cy.wait("@replica-details");
 
             cy.url().should('include', '/details')
         })
