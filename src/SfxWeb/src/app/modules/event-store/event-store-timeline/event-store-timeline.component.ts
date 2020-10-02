@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy } from '@angular/core';
-// import * as vis from 'vis';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
-import { Timeline, DataItem, DataSet, DataGroup, moment } from 'vis-timeline/standalone';
-
+import { Timeline, DataItem, DataGroup, moment, DataSet } from 'vis-timeline/standalone/esm';
 @Component({
   selector: 'app-event-store-timeline',
   templateUrl: './event-store-timeline.component.html',
