@@ -42,8 +42,8 @@ context('deployed replica', () => {
         beforeEach(() => {
             cy.route(apiUrl(`Partitions/${partition}?*`), 'fx:deployed-replica/partition').as('partition');
             //we call this route twice with different params
-            cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?**PartitionId=${partition}*`), 'fx:deployed-replica/view-replica')
-            cy.route(apiUrl(`Nodes/${nodeName}/$/GetPartitions/${partition}/$/GetReplicas/${replica}/$/GetDetail?*`), 'fx:deployed-replica/replicas').as('replica-details');
+            cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?**PartitionId=${partition}*`), 'fx:deployed-replica/view-replica').as('replica2')
+            cy.route(apiUrl(`Nodes/${nodeName}/$/GetPartitions/${partition}/$/GetReplicas/${replica}/$/GetDetail?*`), 'fx:deployed-replica/replica-details').as('replica-details');
 
             cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}/partition/${partition}/replica/${replica}`);
             
