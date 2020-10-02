@@ -1,4 +1,4 @@
-const config = require("./appsettings.json");
+
 const axios = require('axios');
 const { promises: fs } = require("fs");
 const fsBase = require("fs");
@@ -6,6 +6,16 @@ const fsBase = require("fs");
 const https = require("https");
 const express = require('express');
 const path = require('path');
+
+let config;
+try {
+    config = require("./localsettings.json");
+    console.log("config loaded from localSettings")
+} catch {
+    config = require("./appsettings.json");
+    console.log("config loaded from defaultSettings")
+}
+
 //get flags
 let recordRequest = process.argv.includes("-r");
 let replayRequest = process.argv.includes("-p");
