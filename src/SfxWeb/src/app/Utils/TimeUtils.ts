@@ -8,9 +8,6 @@ import Duration from 'luxon/src/duration';
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
 
-// TODO:
-//   1. Upgrade moment and remove this when issue https://github.com/moment/moment/issues/3763 gets resolved
-//   2. Import moment from tsconfig.json
 
 export class TimeUtils {
     // Per email thread, this is:
