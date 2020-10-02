@@ -63,6 +63,7 @@ context('deployed replica', () => {
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
             })
+            cy.wait("@replica-details");
 
             cy.url().should('include', '/details')
         })
