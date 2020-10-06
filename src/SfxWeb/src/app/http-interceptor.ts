@@ -1,9 +1,8 @@
 import { HttpRequest, HttpInterceptor, HttpHandler, HttpEvent, HTTP_INTERCEPTORS, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { Observable } from 'rxjs';
 import { AdalService } from './services/adal.service';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
 import { environment } from 'src/environments/environment';
