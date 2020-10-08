@@ -33,7 +33,7 @@ export class ScaleServiceComponent implements OnInit {
     };
 
     this.form = this.formBuilder.group({
-      count: [this.service.description.raw.InstanceCount, [Validators.required, Validators.pattern('^(?:-1|[1-9]\d*)$')]],  
+      count: [this.service.description.raw.InstanceCount, [Validators.required, Validators.pattern('^(?:-1|[1-9]\d*)$')]],
     });
   }
 
