@@ -54,7 +54,7 @@ export class EventStoreUtils {
         }else if (typeof data === 'object') {
             value = EventStoreUtils.internalToolTipFormatterObject(data);
         }
-        return`<tr style="padding: 0 5 px; bottom-border: 1px solid gray"><td style="word-break: keep-all;">${key}</td><td style="display:flex; flex-direction: row; "> <div style="margin-right: 4px">:</div> ${value}</td></tr>`;
+        return`<tr style="padding: 0 5 px; bottom-border: 1px solid gray"><td style="word-break: keep-all;">${key}</td><td style="display:flex; flex-direction: row; "> <div style="margin-right: 4px">:</div style="white-space: pre-wrap; display: inline-block;"> ${value}</td></tr>`;
     }
 
     /*
