@@ -4,6 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { Service } from 'src/app/Models/DataModels/Service';
 import { IRawUpdateServiceDescription } from 'src/app/Models/RawDataTypes';
+import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
   selector: 'app-scale-service',
@@ -17,9 +18,11 @@ export class ScaleServiceComponent implements OnInit {
 
   updateServiceDescription: IRawUpdateServiceDescription;
 
+  form: FormGroup;
+
   constructor(public dialogRef: MatDialogRef<ScaleServiceComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IsolatedAction,
-              private dataService: DataService) { }
+              private formBuilder: FormBuilder) { }
 
   ngOnInit() {
     this.service = this.data.data;
@@ -28,9 +31,14 @@ export class ScaleServiceComponent implements OnInit {
       Flags: 0x01, // Update InstanceCount flag
       InstanceCount: this.service.description.raw.InstanceCount
     };
+
+    this.form = this.formBuilder.group({
+      count: [this.service.description.raw.InstanceCount, [Validators.required, Validators.pattern('^(?:-1|[1-9]\d*)$')]],  
+    });
   }
 
   ok() {
+    this.updateServiceDescription.InstanceCount = this.form.value.count;
     this.service.updateService(this.updateServiceDescription).subscribe( () => {
       this.close();
     },

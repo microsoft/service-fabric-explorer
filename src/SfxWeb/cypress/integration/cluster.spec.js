@@ -46,6 +46,14 @@ context('Cluster page', () => {
       cy.contains('A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure.')
       cy.contains('Thumbprint : 52b0278d37cbfe68f8cdf04f423a994d66ceb932')
     })
+
+    it.only('upgrade in progress banner', () => {
+      cy.route('GET', upgradeProgress_route, 'fx:upgrade-in-progress').as("inprogres");
+      cy.visit('')
+      cy.wait("@inprogres")
+
+      cy.get('app-cluster-upgrade-banner');
+    })
   })
 
   describe("details", () => {
