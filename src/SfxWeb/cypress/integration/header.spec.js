@@ -7,7 +7,6 @@ context('Header', () => {
     beforeEach(() => {
         cy.server()
         addDefaultFixtures();
-        cy.visit('');
     })
 
     describe("refresh rate", () => {
@@ -17,6 +16,8 @@ context('Header', () => {
             Set refresh to OFF, wait for the first request to kick off
             wait 13 seconds and ensure only request has been sent so far.
             */
+           cy.visit('');
+
             cy.get('[data-cy=refreshrate]').within(() => {
                 cy.contains("REFRESH RATE 10")
 
@@ -26,7 +27,6 @@ context('Header', () => {
                 cy.wait(FIXTURE_REF_UPGRADEPROGRESS);
 
                 cy.wait(13000)
-                cy.get(FIXTURE_REF_UPGRADEPROGRESS + '.2').should('not.exist')
 
                 cy.contains("FAST").click();
                 cy.contains("REFRESH RATE 5");
@@ -40,7 +40,9 @@ context('Header', () => {
 
     describe("upgrade banner", () => {
 
+        //visit a page which does not refresh upgrade progress as part of the page view.
         it("dont show then show", () => {
+            cy.visit('/clustermap');
             cy.get('[data-cy=upgradebanner]').should('not.exist')
 
             cy.route('GET', upgradeProgress_route, 'fixture:upgrade-in-progress').as("inprogres");
