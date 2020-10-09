@@ -55,6 +55,8 @@ context('app', () => {
                 cy.contains('details').click();
             })
 
+            cy.wait("@apphealth")
+
             cy.url().should('include', '/details')
         })
     })
@@ -74,7 +76,7 @@ context('app', () => {
     describe("manifest", () => {
         it('view manifest', () => {
             cy.wait(waitRequest);
-            cy.route(apiUrl(`/ApplicationTypes/${appName}/$/GetApplicationManifest??*`), "fx:app-page/app-manifest").as("appManifest")
+            cy.route(apiUrl(`/ApplicationTypes/${appName}/$/GetApplicationManifest?*`), "fx:app-page/app-manifest").as("appManifest")
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('manifest').click();
