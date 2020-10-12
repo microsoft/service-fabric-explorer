@@ -109,6 +109,7 @@ context('app', () => {
                 cy.contains('events').click();
             })
 
+            cy.wait('@events')
             cy.url().should('include', '/events')
         })
     })

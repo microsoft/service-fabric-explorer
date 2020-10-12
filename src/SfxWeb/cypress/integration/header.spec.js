@@ -16,23 +16,25 @@ context('Header', () => {
             Set refresh to OFF, wait for the first request to kick off
             wait 13 seconds and ensure only request has been sent so far.
             */
-           cy.visit('');
+            cy.visit('');
+
+            cy.wait(FIXTURE_REF_UPGRADEPROGRESS);
 
             cy.get('[data-cy=refreshrate]').within(() => {
                 cy.contains("REFRESH RATE 10")
 
                 cy.contains('OFF').click();
-                cy.contains("REFRESH RATE OFF")
+                cy.route('GET', upgradeProgress_route, 'fixture:upgrade-in-progress').as("record");
 
-                cy.wait(FIXTURE_REF_UPGRADEPROGRESS);
+                cy.contains("REFRESH RATE OFF")
 
                 cy.wait(13000)
 
                 cy.contains("FAST").click();
                 cy.contains("REFRESH RATE 5");
 
-                cy.wait(FIXTURE_REF_UPGRADEPROGRESS);
-                cy.get(FIXTURE_REF_UPGRADEPROGRESS + '.3').should('not.exist')
+                cy.wait("@record");
+                cy.get("@record" + '.3').should('not.exist')
             })
         })
 
