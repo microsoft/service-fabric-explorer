@@ -75,7 +75,7 @@ context('app', () => {
 
     describe("manifest", () => {
         it('view manifest', () => {
-            cy.wait(waitRequest);
+            cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
             cy.route(apiUrl(`/ApplicationTypes/${appName}/$/GetApplicationManifest?*`), "fx:app-page/app-manifest").as("appManifest")
 
             cy.get('[data-cy=navtabs]').within(() => {
