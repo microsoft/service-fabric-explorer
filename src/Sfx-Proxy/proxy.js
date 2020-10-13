@@ -19,6 +19,7 @@ try {
 //get flags
 let recordRequest = process.argv.includes("-r");
 let replayRequest = process.argv.includes("-p");
+let stripEventSToreRequests = !process.argv.includes("-e");
 
 console.log("record requests : " + recordRequest);
 console.log("replay requests : " + replayRequest);
@@ -103,6 +104,11 @@ app.get('/', function(req, res) {
 });
 app.all('/*', async (req, res) => {
     let resp = null;
+
+    if(stripEventSToreRequests) {
+        delete req.query['starttimeutc'];
+        delete req.query['endtimeutc'];
+    }
 
     if(replayRequest && await checkFile(req)){
         resp =  await loadRequest(req);

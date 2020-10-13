@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_APPTYPES, EMPTY_LIST_TEXT } from './util';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT } from './util';
 
 const appName = "VisualObjectsApplicationType";
 const waitRequest = "@app";
@@ -55,6 +55,8 @@ context('app', () => {
                 cy.contains('details').click();
             })
 
+            cy.wait("@apphealth")
+
             cy.url().should('include', '/details')
         })
     })
@@ -73,8 +75,8 @@ context('app', () => {
 
     describe("manifest", () => {
         it('view manifest', () => {
-            cy.wait(waitRequest);
-            cy.route(apiUrl(`/ApplicationTypes/${appName}/$/GetApplicationManifest??*`), "fx:app-page/app-manifest").as("appManifest")
+            cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
+            cy.route(apiUrl(`/ApplicationTypes/${appName}/$/GetApplicationManifest?*`), "fx:app-page/app-manifest").as("appManifest")
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('manifest').click();
@@ -101,12 +103,13 @@ context('app', () => {
         it('view events', () => {
             cy.route(apiUrl(`EventsStore/Applications/${appName}/$/Events?*`), "fx:empty-list").as("events")
 
-            cy.wait(waitRequest);
+            cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();
             })
 
+            cy.wait('@events')
             cy.url().should('include', '/events')
         })
     })
