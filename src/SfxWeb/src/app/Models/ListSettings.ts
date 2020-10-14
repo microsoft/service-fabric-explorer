@@ -134,6 +134,9 @@ export interface IListColumnAdditionalSettings {
     alternateExportFormat?: (item) => string;
 }
 
+export interface ITemplate {
+    template: Type<DetailBaseComponent>;
+}
 export class ListColumnSetting {
     // This array contains all unique values in the specified property of items in current list.
     // This will be populated by DetailListDirective when the list changes.
@@ -169,16 +172,16 @@ export class ListColumnSetting {
         // public sortPropertyPaths: string[] = [propertyPath],
         public config?: IListColumnAdditionalSettings) {
 
-            const internalConfig: IListColumnAdditionalSettings = {
-                enableFilter: false,
-                colspan: 1,
-                clickEvent: (item) => null,
-                canNotExport: false,
-                sortPropertyPaths: [propertyPath],
-                ...config
-            };
+        const internalConfig: IListColumnAdditionalSettings = {
+            enableFilter: false,
+            colspan: 1,
+            clickEvent: (item) => null,
+            canNotExport: false,
+            sortPropertyPaths: [propertyPath],
+            ...config
+        };
 
-            this.config = internalConfig;
+        this.config = internalConfig;
     }
 
     public reset(): void {
@@ -225,10 +228,12 @@ export class ListColumnSettingForBadge extends ListColumnSetting {
         propertyPath: string,
         displayName: string) {
 
-        super(propertyPath, displayName, { enableFilter: true,
+        super(propertyPath, displayName, {
+            enableFilter: true,
             sortPropertyPaths: [propertyPath + '.text'],
-                                                             getDisplayHtml: (item, property) => HtmlUtils.getBadgeHtml(property),
-                                                            alternateExportFormat: (item: ITextAndBadge) => item.text });
+            getDisplayHtml: (item, property) => HtmlUtils.getBadgeHtml(property),
+            alternateExportFormat: (item: ITextAndBadge) => item.text
+        });
     }
 
     public getTextValue(item: any): string {
@@ -245,7 +250,7 @@ export class ListColumnSettingWithFilter extends ListColumnSetting {
         propertyPath: string,
         displayName: string,
         config?: IListColumnAdditionalSettings) {
-        super(propertyPath, displayName, { enableFilter: true, ...config});
+        super(propertyPath, displayName, { enableFilter: true, ...config });
     }
 }
 
@@ -283,29 +288,29 @@ export class ListColumnSettingWithUtcTime extends ListColumnSetting {
     }
 }
 
-export class ListColumnSettingWithEventStoreRowDisplay extends ListColumnSetting {
+export class ListColumnSettingWithEventStoreRowDisplay extends ListColumnSetting implements ITemplate {
     template = RowDisplayComponent;
     public constructor() {
-        super('raw.kind', 'Type', { enableFilter: true});
+        super('raw.kind', 'Type', { enableFilter: true });
     }
 }
 
-export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSetting {
+export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSetting implements ITemplate{
     template = FullDescriptionComponent;
     public constructor() {
         super('raw.eventInstanceId', '', {
-            colspan : -1,
+            colspan: -1,
             enableFilter: false
         });
     }
 }
 
 
-export class ListColumnSettingWithCustomComponent extends ListColumnSetting {
+export class ListColumnSettingWithCustomComponent extends ListColumnSetting implements ITemplate{
     public constructor(public template: Type<DetailBaseComponent>,
-                       public propertyPath: string = '',
-                       public displayName: string = '',
-                       config?: IListColumnAdditionalSettings) {
+        public propertyPath: string = '',
+        public displayName: string = '',
+        config?: IListColumnAdditionalSettings) {
 
         super(propertyPath, displayName, config);
     }
