@@ -33,6 +33,6 @@ export class ActionRowComponent implements DetailBaseComponent {
 export class ListColumnSettingForApplicationServiceRow extends ListColumnSetting {
   template = ActionRowComponent;
   public constructor() {
-      super('actions', 'Actions', null, false);
+      super('actions', 'Actions', null, {enableFilter: false});
   }
 }

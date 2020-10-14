@@ -36,6 +36,8 @@ export class FolderActionsComponent  implements DetailBaseComponent {
 export class ListColumnSettingWithImageStoreActions extends ListColumnSetting {
   template = FolderActionsComponent;
   public constructor(public imagestore: ImageStore) {
-      super('', '');
+      super('', '', [], {
+        canNotExport: true
+      });
   }
 }

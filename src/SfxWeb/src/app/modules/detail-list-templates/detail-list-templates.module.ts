@@ -11,11 +11,12 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { NgbPaginationModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { UtcTimestampComponent } from './utc-timestamp/utc-timestamp.component';
+import { ExportModalComponent } from './export-modal/export-modal.component';
 
 
 
 @NgModule({
-  declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective, DetailListComponent, PagerComponent, UtcTimestampComponent],
+  declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective, DetailListComponent, PagerComponent, UtcTimestampComponent, ExportModalComponent],
   imports: [
     CommonModule,
     RouterModule,

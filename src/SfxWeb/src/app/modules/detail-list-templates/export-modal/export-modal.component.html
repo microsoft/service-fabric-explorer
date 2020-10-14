@@ -1,0 +1,28 @@
+<div class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Export Table</h4>
+    </div>
+    <div class="modal-body" style="display: flex; flex-direction: column;">
+        Export the table to CSV by selecting which columns to include.
+        
+        <ul>
+            <ng-container  *ngFor="let column of data.config.columnSettings">
+                <li *ngIf="!column.config.canNotExport" >
+                    <input type="checkbox" [name]="column.displayName" [(ngModel)]="selected[column.displayName]"
+                            [id]="column.displayName" style="margin-right: 5px;">  <label [for]="column.displayName">{{column.displayName}}</label>
+                </li>
+            </ng-container >
+        </ul>
+
+        <div class="text-wrapper" contenteditable="true" *ngIf="text.length > 0">
+            <div *ngFor="let row of text" class="text-row">
+                {{row}}
+            </div>
+        </div>
+
+    </div>
+    <div class="modal-footer">
+        <button type="submit" class="solid-button blue" (click)="export()">Export</button>
+        <button type="button" class="flat-button" (click)="dialogRef.close()">Cancel</button>
+    </div>
+</div>

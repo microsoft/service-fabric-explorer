@@ -7,6 +7,7 @@ import { FullDescriptionComponent } from '../modules/event-store/full-descriptio
 import { DetailBaseComponent } from '../ViewModels/detail-table-base.component';
 import { Type } from '@angular/core';
 import { UtcTimestampComponent } from '../modules/detail-list-templates/utc-timestamp/utc-timestamp.component';
+import { ITextAndBadge } from '../Utils/ValueResolver';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -34,7 +35,7 @@ export class ListSettings {
     }
 
     public get hasEnabledFilters(): boolean {
-        return this.columnSettings.some(cs => cs.enableFilter);
+        return this.columnSettings.some(cs => cs.config.enableFilter);
     }
 
     public get currentPage(): number {
@@ -123,6 +124,15 @@ export class FilterValue {
     }
 }
 
+export interface IListColumnAdditionalSettings {
+    enableFilter?: boolean;
+    getDisplayHtml?: (item, property) => string;
+    colspan?: number;
+    clickEvent?: (item) => void;
+    canNotExport?: boolean;
+    alternateExportFormat?: (item) => string;
+}
+
 export class ListColumnSetting {
     // This array contains all unique values in the specified property of items in current list.
     // This will be populated by DetailListDirective when the list changes.
@@ -131,7 +141,7 @@ export class ListColumnSetting {
     public fixedWidthPx?: number;
 
     public get hasFilters(): boolean {
-        return this.enableFilter && this.filterValues.length > 0;
+        return this.config.enableFilter && this.filterValues.length > 0;
     }
 
     public get hasEffectiveFilters(): boolean {
@@ -156,10 +166,17 @@ export class ListColumnSetting {
         public propertyPath: string,
         public displayName: string,
         public sortPropertyPaths: string[] = [propertyPath],
-        public enableFilter?: boolean,
-        public getDisplayHtml?: (item, property) => string,
-        public colspan: number = 1,
-        public clickEvent: (item) => void = (item) => null ) {
+        public config?: IListColumnAdditionalSettings) {
+
+            const internalConfig: IListColumnAdditionalSettings = {
+                enableFilter: false,
+                colspan: 1,
+                clickEvent: (item) => null,
+                canNotExport: false,
+                ...config
+            }
+            
+            this.config = internalConfig
     }
 
     public reset(): void {
@@ -189,8 +206,8 @@ export class ListColumnSetting {
 
     public getDisplayContentsInHtml(item: any): string {
         const property = this.getProperty(item);
-        if (this.getDisplayHtml) {
-            return this.getDisplayHtml(item, property);
+        if (this.config.getDisplayHtml) {
+            return this.config.getDisplayHtml(item, property);
         }
 
         if (property === undefined || property === null) {
@@ -207,7 +224,9 @@ export class ListColumnSettingForBadge extends ListColumnSetting {
         displayName: string,
         sortPropertyPaths: string[] = [propertyPath + '.text']) {
 
-        super(propertyPath, displayName, sortPropertyPaths, true, (item, property) => HtmlUtils.getBadgeHtml(property));
+        super(propertyPath, displayName, sortPropertyPaths, { enableFilter: true,
+                                                             getDisplayHtml: (item, property) => HtmlUtils.getBadgeHtml(property),
+                                                            alternateExportFormat: (item: ITextAndBadge) => item.text });
     }
 
     public getTextValue(item: any): string {
@@ -225,20 +244,19 @@ export class ListColumnSettingWithFilter extends ListColumnSetting {
         displayName: string,
         sortPropertyPaths: string[] = [propertyPath]) {
 
-        super(propertyPath, displayName, sortPropertyPaths, true);
+        super(propertyPath, displayName, sortPropertyPaths, { enableFilter: true});
     }
 }
 
 export class ListColumnSettingForLink extends ListColumnSetting {
     template = HyperLinkComponent;
-    href: (item: any) => string;
     public constructor(
         propertyPath: string,
         displayName: string,
-        href: (item: any) => string) {
-
-        super(propertyPath, displayName, [propertyPath], false, (item, property) => HtmlUtils.getLinkHtml(property, href(item)));
-        this.href = href;
+        public href: (item: any) => string) {
+        super(propertyPath, displayName, [propertyPath], {
+            enableFilter: false,
+        });
     }
 }
 
@@ -248,10 +266,9 @@ export class ListColumnSettingWithCopyText extends ListColumnSetting {
         propertyPath: string,
         displayName: string,
         sortPropertyPath: string[] = [],
-        enableFilter: boolean = false,
-        colSpan: number = 1) {
+        config?: IListColumnAdditionalSettings) {
 
-        super(propertyPath, displayName, sortPropertyPath, enableFilter, null, colSpan);
+        super(propertyPath, displayName, sortPropertyPath, config);
     }
 }
 
@@ -261,24 +278,26 @@ export class ListColumnSettingWithUtcTime extends ListColumnSetting {
         propertyPath: string,
         displayName: string,
         sortPropertyPath: string[] = [],
-        enableFilter: boolean = false,
-        colSpan: number = 1) {
+        config?: IListColumnAdditionalSettings) {
 
-        super(propertyPath, displayName, sortPropertyPath, enableFilter, null, colSpan);
+        super(propertyPath, displayName, sortPropertyPath, config);
     }
 }
 
 export class ListColumnSettingWithEventStoreRowDisplay extends ListColumnSetting {
     template = RowDisplayComponent;
     public constructor() {
-        super('raw.kind', 'Type', ['raw.kind'], true);
+        super('raw.kind', 'Type', ['raw.kind'], { enableFilter: true});
     }
 }
 
 export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSetting {
     template = FullDescriptionComponent;
     public constructor() {
-        super('raw.eventInstanceId', '', [], false, () => '', -1);
+        super('raw.eventInstanceId', '', [], {
+            colspan : -1,
+            enableFilter: false
+        });
     }
 }
 
@@ -288,8 +307,8 @@ export class ListColumnSettingWithCustomComponent extends ListColumnSetting {
                        public propertyPath: string = '',
                        public displayName: string = '',
                        public sortPropertyPaths: string[] = [propertyPath],
-                       public enableFilter?: boolean,
-                       public colspan: number = 1 ) {
-        super(propertyPath, displayName, sortPropertyPaths, enableFilter, () => '', colspan);
+                       config?: IListColumnAdditionalSettings) {
+
+        super(propertyPath, displayName, sortPropertyPaths, config);
     }
 }
