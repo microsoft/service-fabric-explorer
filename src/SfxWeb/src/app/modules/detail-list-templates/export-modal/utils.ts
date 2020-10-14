@@ -3,10 +3,10 @@ import { Utils } from 'src/app/Utils/Utils';
 
 export interface IExportInfo {
     config: ListSettings;
-    list: any[]
+    list: any[];
 }
 
-const delimiter = ",";
+const delimiter = ',';
 
 export const exportInfo = (info: IExportInfo, selected: Record<string, boolean>) => {
     const selectedColumns = info.config.columnSettings.filter(column => selected[column.displayName] && !column.config.canNotExport);
@@ -15,7 +15,7 @@ export const exportInfo = (info: IExportInfo, selected: Record<string, boolean>)
 
     const rows = info.list.map(item => {
         const row = selectedColumns.map(column => {
-            let value = Utils.result(item, column.propertyPath)
+            let value = Utils.result(item, column.propertyPath);
 
             if (column.config.alternateExportFormat !== undefined) {
                 value = column.config.alternateExportFormat(value);
@@ -25,7 +25,7 @@ export const exportInfo = (info: IExportInfo, selected: Record<string, boolean>)
         }).join(delimiter);
 
         return row;
-    })
+    });
 
     return [header, ...rows];
-}
+};

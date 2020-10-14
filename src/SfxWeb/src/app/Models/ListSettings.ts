@@ -96,7 +96,7 @@ export class ListSettings {
     }
 
     public isSortedByColumn(columnSetting: ListColumnSetting): boolean {
-        return Utils.arraysAreEqual(this.sortPropertyPaths, columnSetting.sortPropertyPaths);
+        return Utils.arraysAreEqual(this.sortPropertyPaths, columnSetting.config.sortPropertyPaths);
     }
 
     public reset(): void {
@@ -125,6 +125,7 @@ export class FilterValue {
 }
 
 export interface IListColumnAdditionalSettings {
+    sortPropertyPaths?: string[];
     enableFilter?: boolean;
     getDisplayHtml?: (item, property) => string;
     colspan?: number;
@@ -149,7 +150,7 @@ export class ListColumnSetting {
     }
 
     public get sortable(): boolean {
-        return this.sortPropertyPaths && this.sortPropertyPaths.length > 0;
+        return this.config.sortPropertyPaths.length > 0;
     }
 
     /**
@@ -165,7 +166,7 @@ export class ListColumnSetting {
     public constructor(
         public propertyPath: string,
         public displayName: string,
-        public sortPropertyPaths: string[] = [propertyPath],
+        // public sortPropertyPaths: string[] = [propertyPath],
         public config?: IListColumnAdditionalSettings) {
 
             const internalConfig: IListColumnAdditionalSettings = {
@@ -173,10 +174,11 @@ export class ListColumnSetting {
                 colspan: 1,
                 clickEvent: (item) => null,
                 canNotExport: false,
+                sortPropertyPaths: [propertyPath],
                 ...config
-            }
-            
-            this.config = internalConfig
+            };
+
+            this.config = internalConfig;
     }
 
     public reset(): void {
@@ -221,10 +223,10 @@ export class ListColumnSetting {
 export class ListColumnSettingForBadge extends ListColumnSetting {
     public constructor(
         propertyPath: string,
-        displayName: string,
-        sortPropertyPaths: string[] = [propertyPath + '.text']) {
+        displayName: string) {
 
-        super(propertyPath, displayName, sortPropertyPaths, { enableFilter: true,
+        super(propertyPath, displayName, { enableFilter: true,
+            sortPropertyPaths: [propertyPath + '.text'],
                                                              getDisplayHtml: (item, property) => HtmlUtils.getBadgeHtml(property),
                                                             alternateExportFormat: (item: ITextAndBadge) => item.text });
     }
@@ -242,9 +244,8 @@ export class ListColumnSettingWithFilter extends ListColumnSetting {
     public constructor(
         propertyPath: string,
         displayName: string,
-        sortPropertyPaths: string[] = [propertyPath]) {
-
-        super(propertyPath, displayName, sortPropertyPaths, { enableFilter: true});
+        config?: IListColumnAdditionalSettings) {
+        super(propertyPath, displayName, { enableFilter: true, ...config});
     }
 }
 
@@ -254,7 +255,7 @@ export class ListColumnSettingForLink extends ListColumnSetting {
         propertyPath: string,
         displayName: string,
         public href: (item: any) => string) {
-        super(propertyPath, displayName, [propertyPath], {
+        super(propertyPath, displayName, {
             enableFilter: false,
         });
     }
@@ -265,10 +266,9 @@ export class ListColumnSettingWithCopyText extends ListColumnSetting {
     public constructor(
         propertyPath: string,
         displayName: string,
-        sortPropertyPath: string[] = [],
         config?: IListColumnAdditionalSettings) {
 
-        super(propertyPath, displayName, sortPropertyPath, config);
+        super(propertyPath, displayName, config);
     }
 }
 
@@ -277,24 +277,23 @@ export class ListColumnSettingWithUtcTime extends ListColumnSetting {
     public constructor(
         propertyPath: string,
         displayName: string,
-        sortPropertyPath: string[] = [],
         config?: IListColumnAdditionalSettings) {
 
-        super(propertyPath, displayName, sortPropertyPath, config);
+        super(propertyPath, displayName, config);
     }
 }
 
 export class ListColumnSettingWithEventStoreRowDisplay extends ListColumnSetting {
     template = RowDisplayComponent;
     public constructor() {
-        super('raw.kind', 'Type', ['raw.kind'], { enableFilter: true});
+        super('raw.kind', 'Type', { enableFilter: true});
     }
 }
 
 export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSetting {
     template = FullDescriptionComponent;
     public constructor() {
-        super('raw.eventInstanceId', '', [], {
+        super('raw.eventInstanceId', '', {
             colspan : -1,
             enableFilter: false
         });
@@ -306,9 +305,8 @@ export class ListColumnSettingWithCustomComponent extends ListColumnSetting {
     public constructor(public template: Type<DetailBaseComponent>,
                        public propertyPath: string = '',
                        public displayName: string = '',
-                       public sortPropertyPaths: string[] = [propertyPath],
                        config?: IListColumnAdditionalSettings) {
 
-        super(propertyPath, displayName, sortPropertyPaths, config);
+        super(propertyPath, displayName, config);
     }
 }

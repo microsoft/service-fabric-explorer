@@ -29,7 +29,7 @@ export class ImagestoreViewerComponent implements OnInit {
       new ListColumnSettingWithDisplayName(this.imagestoreRoot),
       new ListColumnSettingWithDisplaySize(this.imagestoreRoot),
       new ListColumnSettingWithUtcTime('modifiedDate', 'Date modified'),
-      new ListColumnSetting('fileCount', 'Count of Files', ['isFolder', 'fileCount'])
+      new ListColumnSetting('fileCount', 'Count of Files', {sortPropertyPaths: ['isFolder', 'fileCount']})
     ]);
   }
 

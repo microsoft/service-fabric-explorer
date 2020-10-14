@@ -31,7 +31,7 @@ export class UpgradingComponent extends BaseControllerDirective {
       new ListColumnSettingForLink('parent.raw.TypeName', 'Application Type', item => item.parent.appTypeViewPath),
       new ListColumnSetting('parent.raw.TypeVersion', 'Current Version'),
       new ListColumnSetting('raw.TargetApplicationTypeVersion', 'Target Version'),
-      new ListColumnSetting('upgrade', 'Progress by Upgrade Domain', null, {
+      new ListColumnSetting('upgrade', 'Progress by Upgrade Domain', {
         enableFilter: false,
         getDisplayHtml: (item) => HtmlUtils.getUpgradeProgressHtml('item.upgradeDomains')
       }),

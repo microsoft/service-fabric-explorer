@@ -83,7 +83,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
         list: this.sortedFilteredList,
         config: this.listSettings
       }
-    })
+    });
   }
 
   public handleClickRow(item: any, event: any): void {
@@ -98,7 +98,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   }
 
   sort(columnSetting: ListColumnSetting) {
-    this.listSettings.sort(columnSetting.sortPropertyPaths);
+    this.listSettings.sort(columnSetting.config.sortPropertyPaths);
     this.updateList();
 
     if (!Utils.isIEOrEdge) {

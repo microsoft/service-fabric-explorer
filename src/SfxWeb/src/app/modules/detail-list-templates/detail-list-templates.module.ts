@@ -16,7 +16,8 @@ import { ExportModalComponent } from './export-modal/export-modal.component';
 
 
 @NgModule({
-  declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective, DetailListComponent, PagerComponent, UtcTimestampComponent, ExportModalComponent],
+  declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective,
+                 DetailListComponent, PagerComponent, UtcTimestampComponent, ExportModalComponent],
   imports: [
     CommonModule,
     RouterModule,

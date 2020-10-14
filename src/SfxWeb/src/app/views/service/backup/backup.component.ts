@@ -28,9 +28,9 @@ export class BackupComponent extends ServiceBaseControllerDirective {
 
   setup() {
     this.serviceBackupConfigurationInfoListSettings = this.settings.getNewOrExistingListSettings('serviceBackupConfigurationInfoListSettings', ['raw.PolicyName'], [
-      new ListColumnSetting('raw.PolicyName', 'Policy Name', ['raw.PolicyName'], {
-        enableFilter: false, 
-        getDisplayHtml: (item, property) =>  `<span class="link">${property}</span>`, 
+      new ListColumnSetting('raw.PolicyName', 'Policy Name', {
+        enableFilter: false,
+        getDisplayHtml: (item, property) =>  `<span class="link">${property}</span>`,
         clickEvent: item => item.action.run()
       }),
       new ListColumnSetting('raw.Kind', 'Kind'),

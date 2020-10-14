@@ -95,8 +95,8 @@ export class SettingsService {
           ],
           // Second row with description
           [
-              new ListColumnSetting('placeholder', 'placeholder', null, {enableFilter: false}), // Empty column
-              new ListColumnSettingWithCopyText('description', 'Description', [], {enableFilter: false, colspan: 7})
+              new ListColumnSetting('placeholder', 'placeholder', {enableFilter: false}), // Empty column
+              new ListColumnSettingWithCopyText('description', 'Description', {enableFilter: false, colspan: 7})
           ],
           false,
           (item) => item.description.length > 0
@@ -121,7 +121,7 @@ export class SettingsService {
 
   public getNewOrExistingBackupPolicyListSettings(listKey: string = 'backupPolicies') {
       return this.getNewOrExistingListSettings(listKey, null, [
-        new ListColumnSetting('raw.Name', 'Name', ['raw.Name'], {
+        new ListColumnSetting('raw.Name', 'Name', {
             enableFilter: false,
             getDisplayHtml: (item, property) =>  `<span class="link">${property}</span>`,
             colspan: 1,

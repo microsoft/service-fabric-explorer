@@ -15,7 +15,7 @@ export class ExportModalComponent implements OnInit {
               public dialogRef: MatDialogRef<ExportModalComponent>) { }
 
   ngOnInit(): void {
-    this.selected = this.data.config.columnSettings.reduce( (previous, current) => {previous[current.displayName] = true; return previous}, {});
+    this.selected = this.data.config.columnSettings.reduce((previous, current) => { previous[current.displayName] = true; return previous; }, {});
   }
 
   export() {
