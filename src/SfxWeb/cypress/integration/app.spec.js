@@ -89,7 +89,7 @@ context('app', () => {
 
     describe("backups", () => {
         it('view backup', () => {
-            cy.wait(waitRequest);
+            cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
             cy.route(apiUrl(`/Applications/${appName}/$/GetBackupConfigurationInfo?*`)).as('backup');
 
             cy.get('[data-cy=navtabs]').within(() => {
