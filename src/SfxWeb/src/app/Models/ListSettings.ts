@@ -308,9 +308,9 @@ export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSe
 
 export class ListColumnSettingWithCustomComponent extends ListColumnSetting implements ITemplate{
     public constructor(public template: Type<DetailBaseComponent>,
-        public propertyPath: string = '',
-        public displayName: string = '',
-        config?: IListColumnAdditionalSettings) {
+                       public propertyPath: string = '',
+                       public displayName: string = '',
+                       config?: IListColumnAdditionalSettings) {
 
         super(propertyPath, displayName, config);
     }
