@@ -90,10 +90,13 @@ context('app', () => {
     describe("backups", () => {
         it('view backup', () => {
             cy.wait(waitRequest);
+            cy.route(apiUrl(`/Applications/${appName}/$/GetBackupConfigurationInfo?*`)).as('backup');
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('backup').click();
             })
+
+            cy.wait("@backup")
 
             cy.url().should('include', '/backup')
         })

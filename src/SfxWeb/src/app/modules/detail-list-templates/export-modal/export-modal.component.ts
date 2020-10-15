@@ -9,7 +9,7 @@ import { IExportInfo, exportInfo } from './utils';
 export class ExportModalComponent implements OnInit {
 
   public text = [];
-
+  public copyText = "";
   public selected: Record<string, boolean> = {};
   constructor(@Inject(MAT_DIALOG_DATA) public data: IExportInfo,
               public dialogRef: MatDialogRef<ExportModalComponent>) { }
@@ -20,5 +20,6 @@ export class ExportModalComponent implements OnInit {
 
   export() {
     this.text = exportInfo(this.data, this.selected);
+    this.copyText = this.text.join("\n")
   }
 }
