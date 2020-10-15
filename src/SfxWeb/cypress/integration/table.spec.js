@@ -24,7 +24,7 @@ context('table', () => {
                 cy.contains("Export").click();
             })
         })
-        
+
         it('unselect 1 column', () => {
             cy.get('[data-cy=modal]').within(() => {
                 cy.get(columnSelector).within(() => {

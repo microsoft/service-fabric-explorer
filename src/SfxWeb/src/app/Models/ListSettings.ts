@@ -124,6 +124,15 @@ export class FilterValue {
     }
 }
 
+/**
+* @param sortPropertyPaths The properties to sort against when user click the column header, instead of defaulting to property path
+* @param enableFilter Whether to enable filters for this column
+* @param getDisplayHtml Customize the HTML to render in this column giving a specific item
+* @param colspan The colspan for the extra line, does not affect the first line
+* @param clickEvent A callback that will be executed on click
+* @param canNotExport This column will not be selectable when exporting table
+* @param alternateExportFormat Provide a different export formatting
+*/
 export interface IListColumnAdditionalSettings {
     sortPropertyPaths?: string[];
     enableFilter?: boolean;
@@ -160,16 +169,10 @@ export class ListColumnSetting {
      * Create a column setting
      * @param propertyPath The property path to retrieve display object/value
      * @param displayName The property name displayed in the column header
-     * @param sortPropertyPaths The properties to sort against when user click the column header
-     * @param enableFilter Whether to enable filters for this column
-     * @param getDisplayHtml Customize the HTML to render in this column giving a specific item
-     * @param colspan The colspan for the extra line, does not affect the first line
-     * @param clickEvent A callback that will be executed on click
      */
     public constructor(
         public propertyPath: string,
         public displayName: string,
-        // public sortPropertyPaths: string[] = [propertyPath],
         public config?: IListColumnAdditionalSettings) {
 
         const internalConfig: IListColumnAdditionalSettings = {
@@ -295,7 +298,7 @@ export class ListColumnSettingWithEventStoreRowDisplay extends ListColumnSetting
     }
 }
 
-export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSetting implements ITemplate{
+export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSetting implements ITemplate {
     template = FullDescriptionComponent;
     public constructor() {
         super('raw.eventInstanceId', '', {
@@ -306,11 +309,11 @@ export class ListColumnSettingWithEventStoreFullDescription extends ListColumnSe
 }
 
 
-export class ListColumnSettingWithCustomComponent extends ListColumnSetting implements ITemplate{
+export class ListColumnSettingWithCustomComponent extends ListColumnSetting implements ITemplate {
     public constructor(public template: Type<DetailBaseComponent>,
-                       public propertyPath: string = '',
-                       public displayName: string = '',
-                       config?: IListColumnAdditionalSettings) {
+        public propertyPath: string = '',
+        public displayName: string = '',
+        config?: IListColumnAdditionalSettings) {
 
         super(propertyPath, displayName, config);
     }

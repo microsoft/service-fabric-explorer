@@ -4,19 +4,20 @@
     </div>
     <div class="modal-body" style="display: flex; flex-direction: column;">
         Export the table to CSV by selecting which columns to include.
-        
+
         <ul data-cy="columns">
-            <ng-container  *ngFor="let column of data.config.columnSettings">
-                <li *ngIf="!column.config.canNotExport" >
+            <ng-container *ngFor="let column of data.config.columnSettings">
+                <li *ngIf="!column.config.canNotExport">
                     <input type="checkbox" [name]="column.displayName" [(ngModel)]="selected[column.displayName]"
-                            [id]="column.displayName" style="margin-right: 5px;">  <label [for]="column.displayName">{{column.displayName}}</label>
+                        [id]="column.displayName" style="margin-right: 5px;"> <label
+                        [for]="column.displayName">{{column.displayName}}</label>
                 </li>
-            </ng-container >
+            </ng-container>
         </ul>
 
         <div style="margin: auto; margin-bottom: 10px;" *ngIf="text.length > 0">
             Copy to Clipboard
-            <app-clip-board [text]="copyText" ></app-clip-board>
+            <app-clip-board [text]="copyText"></app-clip-board>
         </div>
 
         <div class="text-wrapper" contenteditable="true" *ngIf="text.length > 0">
