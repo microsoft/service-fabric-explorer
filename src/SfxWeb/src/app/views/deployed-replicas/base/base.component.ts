@@ -58,7 +58,7 @@ export class BaseComponent extends BaseControllerDirective {
                 new ListColumnSettingForLink('id', 'Id', item => item.viewPath),
                 new ListColumnSetting('raw.PartitionId', 'Partition Id'),
                 new ListColumnSettingWithFilter('raw.ServiceKind', 'Service Kind'),
-                new ListColumnSettingWithFilter('role', 'Replica Role', defaultSortProperties),
+                new ListColumnSettingWithFilter('role', 'Replica Role', {sortPropertyPaths: defaultSortProperties}),
                 new ListColumnSettingWithFilter('raw.ReplicaStatus', 'Status')
             ];
 

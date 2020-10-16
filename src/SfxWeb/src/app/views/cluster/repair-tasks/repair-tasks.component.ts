@@ -38,10 +38,10 @@ export class RepairTasksComponent extends BaseControllerDirective {
     this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', null,
     [
         new ListColumnSetting('raw.TaskId', 'TaskId'),
-        new ListColumnSetting('raw.Action', 'Action', ['raw.Action'], true),
+        new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
         new ListColumnSetting('raw.Target.NodeNames', 'Target'),
         new ListColumnSetting('impactedNodes', 'Impact'),
-        new ListColumnSetting('raw.State', 'State', ['raw.State'], true),
+        new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
         new ListColumnSetting('createdAt', 'Created at'),
         new ListColumnSetting('displayDuration', 'Duration'),
     ],
@@ -49,10 +49,10 @@ export class RepairTasksComponent extends BaseControllerDirective {
       new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
         '',
         '',
-        [],
-        false,
-        -1
-        )
+        {
+          enableFilter: false,
+          colspan: -1
+        })
   ],
     true,
     (item) => (Object.keys(item).length > 0),
@@ -61,10 +61,10 @@ export class RepairTasksComponent extends BaseControllerDirective {
     this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings('completedRepair', null,
         [
             new ListColumnSetting('raw.TaskId', 'TaskId'),
-            new ListColumnSetting('raw.Action', 'Action', ['raw.Action'], true),
+            new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
             new ListColumnSetting('raw.Target.NodeNames', 'Target'),
             new ListColumnSetting('impactedNodes', 'Impact'),
-            new ListColumnSetting('raw.ResultStatus', 'Result Status', ['raw.ResultStatus'], true),
+            new ListColumnSetting('raw.ResultStatus', 'Result Status', {enableFilter: true}),
             new ListColumnSetting('createdAt', 'Created at'),
             new ListColumnSetting('displayDuration', 'Duration'),
         ],
@@ -72,10 +72,10 @@ export class RepairTasksComponent extends BaseControllerDirective {
           new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
             '',
             '',
-            [],
-            false,
-            -1
-            )
+            {
+              enableFilter: false,
+              colspan: -1
+            })
       ],
         true,
         (item) => true,
