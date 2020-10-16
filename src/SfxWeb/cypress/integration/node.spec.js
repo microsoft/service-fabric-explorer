@@ -49,11 +49,11 @@ context('node page', () => {
 
     describe("details", () => {
         it('view details', () => {
-            cy.route('GET', apiUrl('/Nodes/_nt_0/$/GetLoadInformation?*'), 'fixture:node-load/get-node-load-information').as("nodeLoad")
+            cy.route('GET', apiUrl(`/Nodes/${nodeName}/$/GetLoadInformation?*`), 'fixture:node-load/get-node-load-information').as("nodeLoad")
 
             cy.visit(`/#/node/${nodeName}`)
 
-            cy.wait(nodeInfoRef);
+            cy.wait([nodeInfoRef, "@health"]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
