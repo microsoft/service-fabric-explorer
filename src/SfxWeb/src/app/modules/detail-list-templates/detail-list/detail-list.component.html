@@ -14,7 +14,7 @@
                         [attr.aria-sort]="listSettings.isSortedByColumn(columnSetting) ? listSettings.sortReverse ? 'ascending' : 'descending' : 'none'">
                         <!-- Header label -->
                         <button  class="flat-button" [ngClass]="{'active': columnSetting.sortable, 'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}" tabindex="0"
-                            (click)="sort(columnSetting);" [title]="'Sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'">
+                            style="padding-left: 0px;" (click)="sort(columnSetting);" [title]="'Sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'">
                             {{columnSetting.displayName}}
                       </button>
 
