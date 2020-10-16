@@ -2,6 +2,8 @@
         <app-input [placeholder]="searchText" [model]="listSettings.search" (changed)="listSettings.search = $event; updateList()"></app-input>
         <button class="simple-button"  (click)="resetAll()">Reset All</button>
 
+        <button class="simple-button" style="float: right;" (click)="export()"> <span class="mif-download2"></span> Export</button>
+
         <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
         <div class="table-responsive">
             <table class="table detail-list">
@@ -12,7 +14,7 @@
                         [attr.aria-sort]="listSettings.isSortedByColumn(columnSetting) ? listSettings.sortReverse ? 'ascending' : 'descending' : 'none'">
                         <!-- Header label -->
                         <button  class="flat-button" [ngClass]="{'active': columnSetting.sortable, 'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}" tabindex="0"
-                            (click)="sort(columnSetting);" [title]="'Sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'">
+                            style="padding-left: 0px;" (click)="sort(columnSetting);" [title]="'Sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'">
                             {{columnSetting.displayName}}
                       </button>
 
@@ -55,7 +57,7 @@
                                 <button class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button" (click)="handleClickRow(item, $event)"
                                 *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)" [attr.aria-expanded]="!item.isSecondRowCollapsed"
                                 [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></button>
-                                <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
+                                <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;"></span>
                                 <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>                                
                             </div>
                             </td>
@@ -67,11 +69,11 @@
                             <!-- TODO  track by columnSetting.propertyPath -->
                                 <td class="no-border"
                                 *ngFor="let columnSetting of listSettings.secondRowColumnSettings; trackBy: trackByColumnSetting; let i = index;"
-                                [colSpan]="columnSetting.colspan === -1 ? (listSettings.columnSettings.length - listSettings.secondRowColumnSettings.length + 1) : columnSetting.colspan"
+                                [colSpan]="columnSetting.config.colspan === -1 ? (listSettings.columnSettings.length - listSettings.secondRowColumnSettings.length + 1) : columnSetting.config.colspan"
                                 [ngClass]="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed}">
                                 <div 
                                     [ngClass]="{'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}">
-                                    <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.clickEvent(item);" style="cursor: auto;"></span>
+                                    <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;"></span>
                                     <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
                                 </div>
                             </td>

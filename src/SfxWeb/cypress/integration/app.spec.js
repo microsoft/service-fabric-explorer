@@ -49,26 +49,26 @@ context('app', () => {
 
     describe("details", () => {
         it('view details', () => {
-            cy.wait(waitRequest);
+            cy.wait([waitRequest, "@apphealth"]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
             })
-
-            cy.wait("@apphealth")
 
             cy.url().should('include', '/details')
         })
     })
 
     describe("deployments", () => {
-        it('view details', () => {
+        it('view deployments', () => {
             cy.wait(waitRequest);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('deployments').click();
             })
+            cy.wait("@apphealth")
 
+            cy.wait(waitRequest);
             cy.url().should('include', '/deployments')
         })
     })
@@ -89,11 +89,14 @@ context('app', () => {
 
     describe("backups", () => {
         it('view backup', () => {
-            cy.wait(waitRequest);
+            cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
+            cy.route(apiUrl(`/Applications/${appName}/$/GetBackupConfigurationInfo?*`)).as('backup');
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('backup').click();
             })
+
+            cy.wait("@backup")
 
             cy.url().should('include', '/backup')
         })

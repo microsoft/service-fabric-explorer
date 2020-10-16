@@ -16,6 +16,8 @@ import { Subject, Subscription } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { MatDialog } from '@angular/material/dialog';
+import { ExportModalComponent } from '../export-modal/export-modal.component';
 @Component({
   selector: 'app-detail-list',
   templateUrl: './detail-list.component.html',
@@ -38,7 +40,8 @@ export class DetailListComponent implements OnInit, OnDestroy {
   debouncerHandlerSubscription: Subscription;
   @ViewChildren(NgbDropdown) dropdowns: QueryList<NgbDropdown>;
 
-  constructor(private liveAnnouncer: LiveAnnouncer) { }
+  constructor(private liveAnnouncer: LiveAnnouncer,
+              private dialog: MatDialog) { }
 
   @Input()
   set list(data: any[] | DataModelCollectionBase<any>) {
@@ -73,6 +76,16 @@ export class DetailListComponent implements OnInit, OnDestroy {
     this.listSettings.reset();
   }
 
+  export() {
+    this.dialog.open(ExportModalComponent, {
+      panelClass: 'mat-dialog-container-wrapper',
+      data : {
+        list: this.sortedFilteredList,
+        config: this.listSettings
+      }
+    });
+  }
+
   public handleClickRow(item: any, event: any): void {
       if (event && event.target !== event.currentTarget) { return; }
       if (this.listSettings.secondRowCollapsible && this.listSettings.showSecondRow(item)) {
@@ -85,7 +98,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   }
 
   sort(columnSetting: ListColumnSetting) {
-    this.listSettings.sort(columnSetting.sortPropertyPaths);
+    this.listSettings.sort(columnSetting.config.sortPropertyPaths);
     this.updateList();
 
     if (!Utils.isIEOrEdge) {
@@ -144,7 +157,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
     // Update each column filter values by scanning through the list and found out all unique values exist in current column
     listSettings.columnSettings.forEach((columnSetting: ListColumnSetting) => {
-        if (!columnSetting.enableFilter) {
+        if (!columnSetting.config.enableFilter) {
             return;
         }
 
