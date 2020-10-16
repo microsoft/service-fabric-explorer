@@ -413,7 +413,7 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
                     enableFilter: true,
                     getDisplayHtml: (item) => (!item.raw.category ? 'Operational' : item.raw.category)
                 }),
-            new ListColumnSetting('raw.timeStampString', 'Timestamp'),
+            new ListColumnSetting('raw.timeStampString', 'Timestamp', {sortPropertyPaths: ['raw.timestamp']}),
             new ListColumnSetting('raw.timeStamp', 'Timestamp(UTC)')],
             [
                 new ListColumnSettingWithEventStoreFullDescription()
