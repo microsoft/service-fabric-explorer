@@ -68,6 +68,7 @@ context('app', () => {
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('deployments').click();
             })
+            cy.wait("@apphealth")
 
             cy.url().should('include', '/deployments')
         })
