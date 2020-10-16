@@ -1,7 +1,34 @@
 <div style="min-height: 900px">
-    <div *ngIf="timelineData" style="margin-bottom: 20px; margin-left: 15px;">
-        <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" data-cy="timeline"
-                                  [displayMoveToStart]="false" [displayMoveToEnd]="false"></app-event-store-timeline>
+    <div *ngIf="timelineData" style="margin-bottom: 20px;">
+        <div data-cy="pendingjobs" class="essen-pane detail-pane" style="margin-bottom: 0px;">
+            <app-collapse-container sectionName="Pending Repair Tasks" collapsed="true">
+                <h4 collapse-header>
+                    Repair  Task timeline Legend
+                </h4>
+                <div style="display: flex; flex-direction: row;" collapse-body>
+                    <div class="vis-item vis-range blue example-wrapper">
+                        <div class="vis-item-content">
+                            In Progress
+                        </div>
+                    </div>
+                    <div class="vis-item vis-range red example-wrapper">
+                        <div class="vis-item-content">
+                            Finished with non success code
+                        </div>
+                    </div>
+                    <div class="vis-item vis-range green example-wrapper">
+                        <div class="vis-item-content">
+                            finished with success code
+                        </div>
+                    </div>
+                </div>
+            </app-collapse-container>
+        </div>
+
+        <div style="margin-left: 15px;">
+            <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" data-cy="timeline" 
+            [displayMoveToStart]="false" [displayMoveToEnd]="false"></app-event-store-timeline>
+        </div>
     </div>
     
     <div class="detail-pane essen-pane" data-cy="pendingjobs">
