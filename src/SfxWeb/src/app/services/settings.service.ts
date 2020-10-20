@@ -77,7 +77,8 @@ export class SettingsService {
           [
               new ListColumnSettingForLink('kind', 'Kind', (item) =>  item.viewPath),
               new ListColumnSettingForBadge('healthState', 'Health State'),
-              new ListColumnSettingWithCopyText('description', 'Description')
+              new ListColumnSettingWithCopyText('description', 'Description'),
+              new ListColumnSettingWithUtcTime('sourceTimeStamp', 'Source UTC'),
           ]);
   }
 
