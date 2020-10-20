@@ -36,7 +36,7 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
     }
 
     public get sourceTimeStamp(): string {
-        return this.raw?.UnhealthyEvent?.SourceUtcTimestamp
+        return this.raw?.UnhealthyEvent?.SourceUtcTimestamp;
     }
 
     public get description(): string {
