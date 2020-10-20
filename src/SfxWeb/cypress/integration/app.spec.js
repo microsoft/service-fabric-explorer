@@ -67,8 +67,6 @@ context('app', () => {
                 cy.contains('deployments').click();
             })
             cy.wait("@apphealth")
-
-            cy.wait(waitRequest);
             cy.url().should('include', '/deployments')
         })
     })
