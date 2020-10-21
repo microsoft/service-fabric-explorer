@@ -279,7 +279,9 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
 }
 export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     static readonly NodesDownLabel = 'Node Down';
-    static readonly transitions = ['NodeDeactivateStarted'];
+    static readonly NodesRemoved = 'Node Removed';
+    static readonly NodesAdded = 'Node Added';
+    static readonly transitions = ['NodeDeactivateStarted', 'NodeRemovedFromCluster'];
 
     consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
         const items = new DataSet<DataItem>();
@@ -288,6 +290,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         // so that we know we need to chart a down node from the start of the timeline.
         const nodeUpEvents: Record<string, NodeEvent> = {};
         const previousTransitions: Record<string, NodeEvent> = {};
+        const nodeDownDataItems: Record<string, DataItem> = {};
+
         let potentiallyMissingEvents = false;
 
         events.forEach( event => {
@@ -305,9 +309,9 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                         delete nodeUpEvents[event.nodeName];
                     }
                     const end = previousTransition ? previousTransition.timeStamp : endOfRange.toISOString();
-                    const start = event.eventProperties.LastNodeUpAt;
+                    const start = event.timeStamp;
                     const label = `Node ${event.nodeName} down`;
-                    items.add({
+                    const item = {
                         id: event.eventInstanceId + label,
                         content: label,
                         start,
@@ -317,16 +321,50 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                         title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
                         className: 'red',
                         subgroup: 'stack'
-                    });
+                    }
+
+                    if(event.eventProperties.NodeInstance in nodeDownDataItems) {
+                        items.add(nodeDownDataItems[event.eventProperties.NodeInstance])
+                    }
+                    
+                    nodeDownDataItems[event.eventProperties.NodeInstance] = item;
+                }else if(event.kind === 'NodeDeactivateCompleted') {
+                    delete nodeDownDataItems[event.eventProperties.NodeInstance];
+                    const label = `Node ${event.nodeName} removed`;
+
+                    items.add({
+                        id: event.eventInstanceId + label,
+                        start: event.timeStamp,
+                        group: NodeTimelineGenerator.NodesRemoved,
+                        type: 'point',
+                        title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, label ),
+                        className: 'orange-point',
+                        subgroup: 'noStack'
+                    })
                 }
 
-                if (event.kind === 'NodeUp') {
+                if (event.kind === 'NodeUp' && event.eventProperties.LastNodeDownAt !== "1601-01-01T00:00:00Z") {
                     previousTransitions[event.nodeName] = event;
                     if (event.nodeName in nodeUpEvents) {
                         potentiallyMissingEvents = true;
                     }
                     nodeUpEvents[event.nodeName] = event;
                 }
+
+                if(event.kind === 'NodeAddedToCluster') {
+                    const label = `Node ${event.nodeName} added`;
+
+                    items.add({
+                        id: event.eventInstanceId + label,
+                        start: event.timeStamp,
+                        group: NodeTimelineGenerator.NodesAdded,
+                        type: 'point',
+                        title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, label ),
+                        className: 'orange-point',
+                        subgroup: 'noStack'
+                    })
+                }
+
             }
 
             if (NodeTimelineGenerator.transitions.includes(event.kind) ) {
@@ -353,6 +391,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
 
         const groups = new DataSet<DataGroup>([
             {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {stack: true}},
+            {id: NodeTimelineGenerator.NodesRemoved, content: NodeTimelineGenerator.NodesRemoved, subgroupStack: {stack: true}},
+            {id: NodeTimelineGenerator.NodesAdded, content: NodeTimelineGenerator.NodesAdded, subgroupStack: {stack: true}},
         ]);
 
         return {
