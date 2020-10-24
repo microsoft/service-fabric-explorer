@@ -328,7 +328,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                     }
                     
                     nodeDownDataItems[event.eventProperties.NodeInstance] = item;
-                }else if(event.kind === 'NodeDeactivateCompleted') {
+                }else if(event.kind === 'NodeDeactivateCompleted' && event.eventProperties.EffectiveDeactivateIntent === "RemoveNode") {
                     delete nodeDownDataItems[event.eventProperties.NodeInstance];
                     const label = `Node ${event.nodeName} removed`;
 
