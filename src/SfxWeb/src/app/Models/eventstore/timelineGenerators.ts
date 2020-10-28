@@ -326,49 +326,33 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                     if(event.eventProperties.NodeInstance in nodeDownDataItems) {
                         items.add(nodeDownDataItems[event.eventProperties.NodeInstance])
                     }
-                    
+
                     nodeDownDataItems[event.eventProperties.NodeInstance] = item;
                 }else if(event.kind === 'NodeDeactivateCompleted' && event.eventProperties.EffectiveDeactivateIntent === "RemoveNode") {
-                    delete nodeDownDataItems[event.eventProperties.NodeInstance];
-                    const content = `Node ${event.nodeName} down or removed from cluster (Unclear)`;
+                    const nodeDownEvent = nodeDownDataItems[event.eventProperties.NodeInstance];
 
-                    items.add({
-                        id: event.eventInstanceId + content,
-                        start: event.timeStamp,
-                        content,
-                        end: endOfRange,
-                        group: NodeTimelineGenerator.NodesDownLabel,
-                        type: 'range',
-                        title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, content ),
-                        className: 'yellow',
-                        subgroup: 'stack'
-                    })
+                    if(nodeDownEvent) {
+                      const content = `Node ${event.nodeName} down or removed from cluster (Unclear)`;
+
+                      items.add({
+                          ...nodeDownEvent,
+                          content,
+                          type: 'range',
+                          title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, nodeDownEvent.end, content ),
+                          className: 'yellow',
+                          subgroup: 'stack'
+                      })
+
+                     delete nodeDownDataItems[event.eventProperties.NodeInstance];
+                    }
 
                     potentiallyMissingEvents = true;
                 }
 
                 if (event.kind === 'NodeUp' && event.eventProperties.LastNodeDownAt !== "1601-01-01T00:00:00Z") {
                     previousTransitions[event.nodeName] = event;
-                    if (event.nodeName in nodeUpEvents) {
-                        potentiallyMissingEvents = true;
-                    }
                     nodeUpEvents[event.nodeName] = event;
                 }
-
-                // if(event.kind === 'NodeAddedToCluster') {
-                //     const label = `Node ${event.nodeName} added`;
-
-                //     items.add({
-                //         id: event.eventInstanceId + label,
-                //         start: event.timeStamp,
-                //         group: NodeTimelineGenerator.NodesAdded,
-                //         type: 'point',
-                //         title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, label ),
-                //         className: 'orange-point',
-                //         subgroup: 'noStack'
-                //     })
-                // }
-
             }
 
             if (NodeTimelineGenerator.transitions.includes(event.kind) ) {
@@ -399,8 +383,6 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
 
         const groups = new DataSet<DataGroup>([
             {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {stack: true}},
-            // {id: NodeTimelineGenerator.NodesRemoved, content: NodeTimelineGenerator.NodesRemoved, subgroupStack: {stack: true}},
-            // {id: NodeTimelineGenerator.NodesAdded, content: NodeTimelineGenerator.NodesAdded, subgroupStack: {stack: true}},
         ]);
 
         return {
