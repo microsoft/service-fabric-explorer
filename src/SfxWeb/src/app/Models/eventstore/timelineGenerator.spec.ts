@@ -64,7 +64,6 @@ describe('TimelineGenerators', () => {
         });
 
         fit('node started up and goes down', () => {
-
             const data = [downEvent];
             const events = generator.consume(data, startDate, endDate);
 
@@ -72,11 +71,11 @@ describe('TimelineGenerators', () => {
             expect(events.items.get(id)).toEqual({
                 id,
                 content: 'Node _dis-svc-test-BackEnd-vmss_2 down',
-                start: lastNodeUpAt,
+                start: downEvent.timeStamp,
                 end: endDate.toISOString(),
                 group: NodeTimelineGenerator.NodesDownLabel,
                 type: 'range',
-                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, lastNodeUpAt, endDate.toISOString(), 'Node _dis-svc-test-BackEnd-vmss_2 down'),
+                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, downEvent.timeStamp, endDate.toISOString(), 'Node _dis-svc-test-BackEnd-vmss_2 down'),
                 className: 'red',
                 subgroup: 'stack'
             });
@@ -95,11 +94,11 @@ describe('TimelineGenerators', () => {
             expect(events.items.get(id)).toEqual({
                 id,
                 content: 'Node _dis-svc-test-BackEnd-vmss_2 down',
-                start: lastNodeUpAt,
-                end: '2020-05-09T17:46:39.2458955Z',
+                start: downEvent.timeStamp,
+                end: upEvent.timeStamp,
                 group: NodeTimelineGenerator.NodesDownLabel,
                 type: 'range',
-                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, lastNodeUpAt, '2020-05-09T17:46:39.2458955Z', 'Node _dis-svc-test-BackEnd-vmss_2 down'),
+                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, downEvent.timeStamp, upEvent.timeStamp, 'Node _dis-svc-test-BackEnd-vmss_2 down'),
                 className: 'red',
                 subgroup: 'stack'
             });
@@ -154,11 +153,11 @@ describe('TimelineGenerators', () => {
             expect(events.items.get(id)).toEqual({
                 id,
                 content: 'Node _dis-svc-test-BackEnd-vmss_2 down',
-                start: lastNodeUpAt,
+                start: downEvent.timeStamp,
                 end: timeStamp,
                 group: NodeTimelineGenerator.NodesDownLabel,
                 type: 'range',
-                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, lastNodeUpAt, timeStamp, 'Node _dis-svc-test-BackEnd-vmss_2 down'),
+                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, downEvent.timeStamp, timeStamp, 'Node _dis-svc-test-BackEnd-vmss_2 down'),
                 className: 'red',
                 subgroup: 'stack'
             });
@@ -191,11 +190,11 @@ describe('TimelineGenerators', () => {
             expect(events.items.get(id)).toEqual({
                 id,
                 content: 'Node _dis-svc-test-BackEnd-vmss_2 down',
-                start: lastNodeUpAt,
-                end: '2020-05-09T17:46:39.2458955Z',
+                start: downEvent.timeStamp,
+                end: upEvent.timeStamp,
                 group: NodeTimelineGenerator.NodesDownLabel,
                 type: 'range',
-                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, lastNodeUpAt, '2020-05-09T17:46:39.2458955Z', 'Node _dis-svc-test-BackEnd-vmss_2 down'),
+                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, downEvent.timeStamp, upEvent.timeStamp, 'Node _dis-svc-test-BackEnd-vmss_2 down'),
                 className: 'red',
                 subgroup: 'stack'
             });

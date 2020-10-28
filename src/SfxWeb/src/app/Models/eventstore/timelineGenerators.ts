@@ -281,7 +281,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     static readonly NodesDownLabel = 'Node Down';
     static readonly NodesRemoved = 'Node Removed';
     static readonly NodesAdded = 'Node Added';
-    static readonly transitions = ['NodeDeactivateStarted', 'NodeRemovedFromCluster'];
+    static readonly transitions = ['NodeDeactivateStarted'];
 
     consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
         const items = new DataSet<DataItem>();
@@ -330,17 +330,21 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                     nodeDownDataItems[event.eventProperties.NodeInstance] = item;
                 }else if(event.kind === 'NodeDeactivateCompleted' && event.eventProperties.EffectiveDeactivateIntent === "RemoveNode") {
                     delete nodeDownDataItems[event.eventProperties.NodeInstance];
-                    const label = `Node ${event.nodeName} removed`;
+                    const content = `Node ${event.nodeName} down or removed from cluster (Unclear)`;
 
                     items.add({
-                        id: event.eventInstanceId + label,
+                        id: event.eventInstanceId + content,
                         start: event.timeStamp,
-                        group: NodeTimelineGenerator.NodesRemoved,
-                        type: 'point',
-                        title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, label ),
-                        className: 'orange-point',
-                        subgroup: 'noStack'
+                        content,
+                        end: endOfRange,
+                        group: NodeTimelineGenerator.NodesDownLabel,
+                        type: 'range',
+                        title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, content ),
+                        className: 'yellow',
+                        subgroup: 'stack'
                     })
+
+                    potentiallyMissingEvents = true;
                 }
 
                 if (event.kind === 'NodeUp' && event.eventProperties.LastNodeDownAt !== "1601-01-01T00:00:00Z") {
@@ -351,19 +355,19 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                     nodeUpEvents[event.nodeName] = event;
                 }
 
-                if(event.kind === 'NodeAddedToCluster') {
-                    const label = `Node ${event.nodeName} added`;
+                // if(event.kind === 'NodeAddedToCluster') {
+                //     const label = `Node ${event.nodeName} added`;
 
-                    items.add({
-                        id: event.eventInstanceId + label,
-                        start: event.timeStamp,
-                        group: NodeTimelineGenerator.NodesAdded,
-                        type: 'point',
-                        title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, label ),
-                        className: 'orange-point',
-                        subgroup: 'noStack'
-                    })
-                }
+                //     items.add({
+                //         id: event.eventInstanceId + label,
+                //         start: event.timeStamp,
+                //         group: NodeTimelineGenerator.NodesAdded,
+                //         type: 'point',
+                //         title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, label ),
+                //         className: 'orange-point',
+                //         subgroup: 'noStack'
+                //     })
+                // }
 
             }
 
@@ -372,6 +376,10 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
             }
         });
 
+        Object.keys(nodeDownDataItems).forEach(key => {
+            const item = nodeDownDataItems[key];
+            items.add(item);
+        });
         // add any left over node up events to the chart.
         Object.keys(nodeUpEvents).forEach(key => {
             const event = nodeUpEvents[key];
@@ -391,8 +399,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
 
         const groups = new DataSet<DataGroup>([
             {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {stack: true}},
-            {id: NodeTimelineGenerator.NodesRemoved, content: NodeTimelineGenerator.NodesRemoved, subgroupStack: {stack: true}},
-            {id: NodeTimelineGenerator.NodesAdded, content: NodeTimelineGenerator.NodesAdded, subgroupStack: {stack: true}},
+            // {id: NodeTimelineGenerator.NodesRemoved, content: NodeTimelineGenerator.NodesRemoved, subgroupStack: {stack: true}},
+            // {id: NodeTimelineGenerator.NodesAdded, content: NodeTimelineGenerator.NodesAdded, subgroupStack: {stack: true}},
         ]);
 
         return {

@@ -422,8 +422,6 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
             (item) => (Object.keys(item.raw.eventProperties).length > 0),
             true);
 
-        listSettings.sortReverse = true;
-
         return listSettings;
     }
 

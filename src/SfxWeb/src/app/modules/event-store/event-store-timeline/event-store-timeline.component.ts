@@ -104,6 +104,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
                 items: events.items
             });
 
+            console.log(this.firstEventsSet)
             this.timeline.setOptions({
                 selectable: false,
                 margin: {
@@ -118,7 +119,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
                 maxHeight: '700px',
                 verticalScroll: true,
                 width: '95%',
-                zoomMin: this.firstEventsSet ? 10800000 : 10
+                zoomMin: this.firstEventsSet ? 10800000 : 60000
             });
 
             if (this.fitOnDataChange) {
