@@ -67,6 +67,8 @@ context('node page', () => {
 
     describe("events", () => {
         it('view events', () => {
+            cy.route(apiUrl(`EventsStore/Nodes/${nodeName}/$/Events?*`), "fx:empty-list").as("events")
+
             cy.visit(`/#/node/${nodeName}`);
 
             cy.wait(nodeInfoRef);
@@ -75,6 +77,7 @@ context('node page', () => {
                 cy.contains('events').click();
             })
     
+            cy.wait("@events");
             cy.url().should('include', 'events');
         })
     })
