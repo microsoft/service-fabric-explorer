@@ -321,14 +321,14 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                         title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
                         className: 'red',
                         subgroup: 'stack'
+                    };
+
+                    if (event.eventProperties.NodeInstance in nodeDownDataItems) {
+                        items.add(nodeDownDataItems[event.eventProperties.NodeInstance]);
                     }
 
-                    if(event.eventProperties.NodeInstance in nodeDownDataItems) {
-                        items.add(nodeDownDataItems[event.eventProperties.NodeInstance])
-                    }
-                    
                     nodeDownDataItems[event.eventProperties.NodeInstance] = item;
-                }else if(event.kind === 'NodeDeactivateCompleted' && event.eventProperties.EffectiveDeactivateIntent === "RemoveNode") {
+                }else if (event.kind === 'NodeDeactivateCompleted' && event.eventProperties.EffectiveDeactivateIntent === 'RemoveNode') {
                     delete nodeDownDataItems[event.eventProperties.NodeInstance];
                     const content = `Node ${event.nodeName} down or removed from cluster (Unclear)`;
 
@@ -342,12 +342,12 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                         title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, content ),
                         className: 'yellow',
                         subgroup: 'stack'
-                    })
+                    });
 
                     potentiallyMissingEvents = true;
                 }
 
-                if (event.kind === 'NodeUp' && event.eventProperties.LastNodeDownAt !== "1601-01-01T00:00:00Z") {
+                if (event.kind === 'NodeUp' && event.eventProperties.LastNodeDownAt !== '1601-01-01T00:00:00Z') {
                     previousTransitions[event.nodeName] = event;
                     if (event.nodeName in nodeUpEvents) {
                         potentiallyMissingEvents = true;

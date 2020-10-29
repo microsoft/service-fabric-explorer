@@ -104,7 +104,6 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
                 items: events.items
             });
 
-            console.log(this.firstEventsSet)
             this.timeline.setOptions({
                 selectable: false,
                 margin: {
