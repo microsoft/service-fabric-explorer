@@ -218,6 +218,57 @@ describe('TimelineGenerators', () => {
 
         });
 
+        fit('removed from cluster', () => {
+            const endDate = new Date("2020-10-17T05:41:22.8992645Z");
+
+            const deactivate = new NodeEvent();
+            deactivate.fillFromJSON(        {
+                "Kind": "NodeDeactivateCompleted",
+                "NodeInstance": 132473586821247630,
+                "EffectiveDeactivateIntent": "RemoveNode",
+                "BatchIdsWithDeactivateIntent": "{[qwerqwerqwer:RemoveNode]",
+                "StartTime": "2020-10-16T21:26:23Z",
+                "NodeName": "_node4_3",
+                "EventInstanceId": "6bd7ba2a-3c0a-4699-acb6-6e139773de0d",
+                "TimeStamp": "2020-10-17T01:41:22.8992645Z",
+                "Category": "StateTransition",
+                "HasCorrelatedEvents": false
+            });
+
+            const down = new NodeEvent();
+            down.fillFromJSON({
+                "Kind": "NodeDown",
+                "NodeInstance": 132473586821247630,
+                "LastNodeUpAt": "2020-10-16T21:51:31Z",
+                "NodeName": "_node4_3",
+                "EventInstanceId": "b1c23829-3d71-499d-b82e-b3ac89447399",
+                "TimeStamp": "2020-10-17T01:42:11.3342981Z",
+                "Category": "StateTransition",
+                "HasCorrelatedEvents": false
+            });
+
+            const data = [down, deactivate];
+
+            const events = generator.consume(data, startDate, endDate);
+            expect(events.items.length).toBe(1);
+
+            const content = `Node ${down.nodeName} down or removed from cluster (Unclear)`;
+            const id = down.eventInstanceId + 'Node _node4_3 down';
+            expect(events.items.get(id)).toEqual({
+                id,
+                content,
+                start: down.timeStamp,
+                end: endDate.toISOString(),
+                group: NodeTimelineGenerator.NodesDownLabel,
+                type: 'range',
+                title: EventStoreUtils.tooltipFormat(deactivate.eventProperties, down.timeStamp, endDate.toISOString(), content),
+                className: 'yellow',
+                subgroup: 'stack'
+            });
+
+            expect(events.potentiallyMissingEvents).toBeTruthy();
+
+        });
     });
   });
 

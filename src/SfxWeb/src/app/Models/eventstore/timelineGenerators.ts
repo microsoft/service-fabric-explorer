@@ -338,7 +338,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                           ...nodeDownEvent,
                           content,
                           type: 'range',
-                          title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, nodeDownEvent.end, content ),
+                          title: EventStoreUtils.tooltipFormat(event.eventProperties, nodeDownEvent.start, nodeDownEvent.end, content ),
                           className: 'yellow',
                           subgroup: 'stack'
                       });
