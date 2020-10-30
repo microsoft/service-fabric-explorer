@@ -6,7 +6,7 @@
           Id
         </div>
         <div class="essential-body">
-          {{replica.id}}<app-clip-board text="replica.id"></app-clip-board>
+          {{replica.id}}<app-clip-board [text]="replica.id"></app-clip-board>
         </div>
       </div>
 
@@ -16,7 +16,7 @@
         </div>
         <div class="essential-body">
           <a [routerLink]="replica.nodeViewPath">{{replica.raw.NodeName}}</a>
-          <app-clip-board text="replica.raw.NodeName"></app-clip-board>
+          <app-clip-board [text]="replica.raw.NodeName"></app-clip-board>
         </div>
       </div>
 
