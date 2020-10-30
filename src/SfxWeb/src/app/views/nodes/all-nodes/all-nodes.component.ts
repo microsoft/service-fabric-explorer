@@ -33,6 +33,7 @@ export class AllNodesComponent extends BaseControllerDirective {
       new ListColumnSettingForBadge('healthState', 'Health State'),
       new ListColumnSettingWithFilter('nodeStatus', 'Status'),
       new ListColumnSettingWithFilter('raw.InstanceId', 'Node Id'),
+      new ListColumnSettingWithFilter('raw.CodeVersion', 'Code Version'),
   ]);
   }
 

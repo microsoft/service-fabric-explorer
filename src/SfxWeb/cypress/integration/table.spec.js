@@ -42,6 +42,7 @@ context('table', () => {
                     cy.contains('Health State').click();
                     cy.contains('Kind').click();
                     cy.contains('Description').click();
+                    cy.contains('Source UTC').click();
                 })
 
                 cy.get(exportButtonSelector).click();

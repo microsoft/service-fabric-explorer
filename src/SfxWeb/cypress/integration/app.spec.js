@@ -61,14 +61,12 @@ context('app', () => {
 
     describe("deployments", () => {
         it('view deployments', () => {
-            cy.wait(waitRequest);
+            cy.wait([waitRequest, "@apphealth"]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('deployments').click();
             })
             cy.wait("@apphealth")
-
-            cy.wait(waitRequest);
             cy.url().should('include', '/deployments')
         })
     })
