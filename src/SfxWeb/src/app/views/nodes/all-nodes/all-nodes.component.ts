@@ -32,7 +32,7 @@ export class AllNodesComponent extends BaseControllerDirective {
       new ListColumnSettingWithFilter('raw.IsSeedNode', 'Is Seed Node'),
       new ListColumnSettingForBadge('healthState', 'Health State'),
       new ListColumnSettingWithFilter('nodeStatus', 'Status'),
-      new ListColumnSettingWithFilter('raw.InstanceId', 'Instance Id'),
+      new ListColumnSettingWithFilter('raw.InstanceId', 'Node Id'),
   ]);
   }
 
