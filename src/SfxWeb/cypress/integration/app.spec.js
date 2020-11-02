@@ -80,7 +80,7 @@ context('app', () => {
                 cy.contains('manifest').click();
             })
 
-            cy.wait("@appManifest")
+            cy.wait(["@appManifest", waitRequest])
             cy.url().should('include', '/manifest')
         })
     })
