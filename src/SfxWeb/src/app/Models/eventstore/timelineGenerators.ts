@@ -332,21 +332,9 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                     const nodeDownEvent = nodeDownDataItems[event.eventProperties.NodeInstance];
 
                     if (nodeDownEvent) {
-                      const content = `Node ${event.nodeName} down or removed from cluster (Unclear)`;
-
-                      items.add({
-                          ...nodeDownEvent,
-                          content,
-                          type: 'range',
-                          title: EventStoreUtils.tooltipFormat(event.eventProperties, nodeDownEvent.start, nodeDownEvent.end, content ),
-                          className: 'yellow',
-                          subgroup: 'stack'
-                      });
-
                       delete nodeDownDataItems[event.eventProperties.NodeInstance];
+                      potentiallyMissingEvents = true;
                     }
-
-                    potentiallyMissingEvents = true;
                 }
 
                 if (event.kind === 'NodeUp' && event.eventProperties.LastNodeDownAt !== '1601-01-01T00:00:00Z') {

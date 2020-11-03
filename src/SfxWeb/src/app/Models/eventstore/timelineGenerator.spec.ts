@@ -250,24 +250,8 @@ describe('TimelineGenerators', () => {
             const data = [down, deactivate];
 
             const events = generator.consume(data, startDate, endDateRange);
-            expect(events.items.length).toBe(1);
-
-            const content = `Node ${down.nodeName} down or removed from cluster (Unclear)`;
-            const eventId = down.eventInstanceId + 'Node _node4_3 down';
-            expect(events.items.get(eventId)).toEqual({
-                id: eventId,
-                content,
-                start: down.timeStamp,
-                end: endDateRange.toISOString(),
-                group: NodeTimelineGenerator.NodesDownLabel,
-                type: 'range',
-                title: EventStoreUtils.tooltipFormat(deactivate.eventProperties, down.timeStamp, endDateRange.toISOString(), content),
-                className: 'yellow',
-                subgroup: 'stack'
-            });
-
+            expect(events.items.length).toBe(0);
             expect(events.potentiallyMissingEvents).toBeTruthy();
-
         });
     });
   });

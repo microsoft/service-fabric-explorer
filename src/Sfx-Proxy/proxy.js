@@ -19,6 +19,7 @@ try {
 //get flags
 let recordRequest = process.argv.includes("-r");
 let replayRequest = process.argv.includes("-p");
+let serveSFXV1Files = process.argv.includes("-s");
 let stripEventSToreRequests = !process.argv.includes("-e");
 
 console.log("record requests : " + recordRequest);
@@ -97,10 +98,11 @@ const port = process.env.PORT || 2500;
 //this is mainly for SFRP clusters to test against.
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
-app.use(express.static(__dirname + '/wwwroot/'))
+const basePath = __dirname +  serveSFXV1Files ? '../Sfx' : ''
+app.use(express.static(basePath + '/wwwroot/'))
 app.use(express.json())
 app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + 'wwwroot/index.html'));
+    res.sendFile(path.join(basePath + 'wwwroot/index.html'));
 });
 app.all('/*', async (req, res) => {
     let resp = null;
