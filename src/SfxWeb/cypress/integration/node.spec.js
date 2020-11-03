@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES } from './util';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST  } from './util';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@nodeInfo"
@@ -67,14 +67,18 @@ context('node page', () => {
 
     describe("events", () => {
         it('view events', () => {
+            cy.route(apiUrl(`EventsStore/Nodes/${nodeName}/$/Events?*`), "fx:empty-list").as("events")
+
             cy.visit(`/#/node/${nodeName}`);
 
-            cy.wait(nodeInfoRef);
+            cy.wait([nodeInfoRef
+            ]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();
             })
     
+            cy.wait("@events");
             cy.url().should('include', 'events');
         })
     })
