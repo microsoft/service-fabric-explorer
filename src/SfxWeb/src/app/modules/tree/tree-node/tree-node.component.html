@@ -29,9 +29,10 @@
             [ngClass]="{ 'mif-unfold-less': child.isCollapsed, 'mif-unfold-more': child.isExpanded }"
             [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'" style="font-size: large; padding: 0px;"></button>
 
-            <img *ngIf="child.badge()?.badgeClass && child.badge()?.badgeClass !== 'badge-ok'"
-                    class="tree-badge" [title]="child.badge()?.text" style="margin-right: 3px;"
-                    [src]="assetBase + 'assets/' + child.badge()?.badgeClass + '.svg'" role="presentation">
+            <span *ngIf="child.badge && child.badge()?.badgeClass && child.badge()?.badgeClass !== 'badge-ok'" style="margin-right: 3px;">
+                <app-health-badge [badgeClass]="child.badge()?.badgeClass" [text]="child.badge()?.text" [showText]="false"></app-health-badge>
+            </span>
+
             <div class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()" ></div>
 
             <div *ngIf="child.actions" class="hidden right-action">
