@@ -20,16 +20,14 @@ export class RowDisplayComponent implements OnInit, DetailBaseComponent {
 
   ngOnInit() {
     this.value = Utils.result(this.item, this.listSetting.propertyPath);
-
     let color = null;
-    if (HtmlUtils.eventTypesUtil.isResolved(this.item)) {
+    if (HtmlUtils.eventTypesUtil.isResolved(this.item.raw)) {
         color = '#3AA655';
-    } else if (HtmlUtils.eventTypesUtil.isWarning(this.item)) {
+    } else if (HtmlUtils.eventTypesUtil.isWarning(this.item.raw)) {
         color = '#F2C649';
-    } else if (HtmlUtils.eventTypesUtil.isError(this.item)) {
+    } else if (HtmlUtils.eventTypesUtil.isError(this.item.raw)) {
         color = '#FF5349';
     }
-
     if (color) {
       this.color = color;
     }
