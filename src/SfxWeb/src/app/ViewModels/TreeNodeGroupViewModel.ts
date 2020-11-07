@@ -157,7 +157,7 @@ export class TreeNodeGroupViewModel {
                 }
             });
 
-            this.children = orderBy(filteredChildren, item => item.sortBy() );
+            this.children = orderBy(filteredChildren, item => item.sortBy ? item.sortBy() : []);
 
             return forkJoin(this.children.map(child => child.refreshExpandedChildrenRecursively()));
         }));
