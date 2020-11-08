@@ -9,6 +9,7 @@ import { ListSettings } from '../Models/ListSettings';
 import { ActionCollection } from '../Models/ActionCollection';
 import { ITextAndBadge } from '../Utils/ValueResolver';
 import orderBy from 'lodash/orderBy';
+
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -135,7 +136,7 @@ export class TreeNodeGroupViewModel {
         }
 
         return this.node.childrenQuery().pipe(mergeMap(response => {
-            const filteredChildren = [];
+            const filteredChildren: TreeNodeGroupViewModel[] = [];
             this.children.forEach(child => {
                 if (response.some(newChild => newChild.nodeId === child.nodeId) ) {
                     filteredChildren.push(child);
@@ -156,7 +157,7 @@ export class TreeNodeGroupViewModel {
                 }
             });
 
-            this.children = filteredChildren;
+            this.children = orderBy(filteredChildren, item => item.sortBy ? item.sortBy() : []);
 
             return forkJoin(this.children.map(child => child.refreshExpandedChildrenRecursively()));
         }));
