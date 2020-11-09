@@ -38,7 +38,7 @@
             <dd>
                 <input type="text" class="input-flat" formControlName="Path" name="Path">
             </dd>
-            <dt>IsPrimaryCredentialEmpty</dt>
+            <dt>IsPrimaryCredsEmpty</dt>
             <dd class="checkbox-container-default">
                 <input type="checkbox" formControlName="IsEmptyPrimaryCredential"/>
             </dd>
@@ -51,7 +51,7 @@
                 <input type="password" class="input-flat" formControlName="PrimaryPassword"
                     name="PrimaryPassword" [attr.disabled]="localForm.value.IsEmptyPrimaryCredential?true:null">
             </dd>
-            <dt>IsSecondaryCredentialEmpty</dt>
+            <dt>IsSecondaryCredsEmpty</dt>
             <dd class="checkbox-container-default">
                 <input type="checkbox" formControlName="IsEmptySecondaryCredential"/>
             </dd>

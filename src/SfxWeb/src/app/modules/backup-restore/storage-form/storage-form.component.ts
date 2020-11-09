@@ -95,6 +95,8 @@ export class StorageFormComponent implements OnInit {
     {
       storage.get('PrimaryUserName').setValidators(null);
       storage.get('PrimaryPassword').setValidators(null);
+      storage.get('PrimaryUserName').setValue('');
+      storage.get('PrimaryPassword').setValue('');
     }
     else
     {
@@ -110,6 +112,8 @@ export class StorageFormComponent implements OnInit {
     {
       storage.get('SecondaryUserName').setValidators(null);
       storage.get('SecondaryPassword').setValidators(null);
+      storage.get('SecondaryUserName').setValue('');
+      storage.get('SecondaryPassword').setValue('');
     }
     else
     {
