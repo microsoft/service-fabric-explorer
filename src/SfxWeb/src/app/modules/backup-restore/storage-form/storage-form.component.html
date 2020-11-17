@@ -38,32 +38,32 @@
             <dd>
                 <input type="text" class="input-flat" formControlName="Path" name="Path">
             </dd>
-            <dt>IsPrimaryCredsEmpty</dt>
+            <dt>Empty Primary Creds</dt>
             <dd class="checkbox-container-default">
                 <input type="checkbox" formControlName="IsEmptyPrimaryCredential"/>
             </dd>
             <dt>PrimaryUserName</dt>
             <dd>
-                <input type="text" class="input-flat" formControlName="PrimaryUserName" name="PrimaryUserName" [attr.disabled]="localForm.value.IsEmptyPrimaryCredential?true:null">
+                <input type="text" class="input-flat" formControlName="PrimaryUserName" name="PrimaryUserName" >
             </dd>
             <dt>PrimaryPassword</dt>
             <dd>
                 <input type="password" class="input-flat" formControlName="PrimaryPassword"
-                    name="PrimaryPassword" [attr.disabled]="localForm.value.IsEmptyPrimaryCredential?true:null">
+                    name="PrimaryPassword" >
             </dd>
-            <dt>IsSecondaryCredsEmpty</dt>
+            <dt>Empty Secondary Creds</dt>
             <dd class="checkbox-container-default">
                 <input type="checkbox" formControlName="IsEmptySecondaryCredential"/>
             </dd>
             <dt>SecondaryUserName</dt>
             <dd>
                 <input type="text" class="input-flat" formControlName="SecondaryUserName"
-                    name="SecondaryUserName" [attr.disabled]="localForm.value.IsEmptySecondaryCredential?true:null">
+                    name="SecondaryUserName" >
             </dd>
             <dt>SecondaryPassword</dt>
             <dd>
                 <input type="password" class="input-flat" formControlName="SecondaryPassword"
-                    name="SecondaryPassword" [attr.disabled]="localForm.value.IsEmptySecondaryCredential?true:null">
+                    name="SecondaryPassword" >
             </dd>
         </dl>
     </div>

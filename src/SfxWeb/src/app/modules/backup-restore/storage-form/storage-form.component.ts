@@ -91,34 +91,42 @@ export class StorageFormComponent implements OnInit {
     storage.get('Path').updateValueAndValidity();
   }
   updateStorageKindValidatorsPrimaryCredentials(storage: AbstractControl, IsEmptyPrimaryCredential: boolean){
-    if(IsEmptyPrimaryCredential === true)
+    if(IsEmptyPrimaryCredential)
     {
       storage.get('PrimaryUserName').setValidators(null);
       storage.get('PrimaryPassword').setValidators(null);
       storage.get('PrimaryUserName').setValue('');
       storage.get('PrimaryPassword').setValue('');
+      storage.get('PrimaryUserName').disable();
+      storage.get('PrimaryPassword').disable();
     }
     else
     {
       storage.get('PrimaryUserName').setValidators([Validators.required]);
       storage.get('PrimaryPassword').setValidators([Validators.required]);
+      storage.get('PrimaryUserName').enable();
+      storage.get('PrimaryPassword').enable();
     }
     storage.get('PrimaryUserName').updateValueAndValidity();
     storage.get('PrimaryPassword').updateValueAndValidity();
   }
 
   updateStorageKindValidatorsSecondaryCredentials(storage: AbstractControl, IsEmptySecondaryCredential: boolean){
-    if(IsEmptySecondaryCredential === true)
+    if(IsEmptySecondaryCredential)
     {
       storage.get('SecondaryUserName').setValidators(null);
       storage.get('SecondaryPassword').setValidators(null);
       storage.get('SecondaryUserName').setValue('');
       storage.get('SecondaryPassword').setValue('');
+      storage.get('SecondaryUserName').disable();
+      storage.get('SecondaryPassword').disable();
     }
     else
     {
       storage.get('SecondaryUserName').setValidators([Validators.required]);
       storage.get('SecondaryPassword').setValidators([Validators.required]);
+      storage.get('SecondaryUserName').enable();
+      storage.get('SecondaryPassword').enable();
     }
     storage.get('SecondaryUserName').updateValueAndValidity();
     storage.get('SecondaryPassword').updateValueAndValidity();
