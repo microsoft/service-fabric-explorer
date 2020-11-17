@@ -90,8 +90,8 @@ export class StorageFormComponent implements OnInit {
     storage.get('ConnectionString').updateValueAndValidity();
     storage.get('Path').updateValueAndValidity();
   }
-  updateStorageKindValidatorsPrimaryCredentials(storage: AbstractControl, IsEmptyPrimaryCredential: boolean){
-    if(IsEmptyPrimaryCredential)
+  updateStorageKindValidatorsPrimaryCredentials(storage: AbstractControl, IsEmptyPrimaryCredential: boolean) {
+    if (IsEmptyPrimaryCredential)
     {
       storage.get('PrimaryUserName').setValidators(null);
       storage.get('PrimaryPassword').setValidators(null);
@@ -111,8 +111,8 @@ export class StorageFormComponent implements OnInit {
     storage.get('PrimaryPassword').updateValueAndValidity();
   }
 
-  updateStorageKindValidatorsSecondaryCredentials(storage: AbstractControl, IsEmptySecondaryCredential: boolean){
-    if(IsEmptySecondaryCredential)
+  updateStorageKindValidatorsSecondaryCredentials(storage: AbstractControl, IsEmptySecondaryCredential: boolean) {
+    if (IsEmptySecondaryCredential)
     {
       storage.get('SecondaryUserName').setValidators(null);
       storage.get('SecondaryPassword').setValidators(null);
