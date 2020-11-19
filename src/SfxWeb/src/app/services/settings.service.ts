@@ -135,6 +135,24 @@ export class SettingsService {
       ]);
   }
 
+  public getNewOrExistingNetworkRequestListSettings(includeApiDesc: boolean = false) {
+    const listKey: string ='requestsData';
+    const settings = [
+        new ListColumnSetting('statusCode', 'statusCode'),
+        new ListColumnSetting('errorMessage', 'errorMessage'),
+        new ListColumnSetting('duration', 'duration(ms)'),
+        new ListColumnSettingWithUtcTime('startTime', 'startTime'),
+      ];
+
+      if(includeApiDesc) {
+        return this.getNewOrExistingListSettings(listKey + 'andApiDesc', [], 
+                                                [new ListColumnSetting('apiDesc', 'apiDesc')].concat(settings));
+      }
+
+    return this.getNewOrExistingListSettings(listKey, [], settings);
+
+  }
+
   // Update all existing list settings to use new limit
   private updatePaginationLimit(limit: number): void {
       Object.keys(this.listSettings).forEach(key => {

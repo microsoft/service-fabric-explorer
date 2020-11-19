@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { RequestLoggingComponent } from './views/debugging/request-logging/request-logging.component';
 
 const routes: Routes = [
   // application section
@@ -41,6 +42,8 @@ const routes: Routes = [
   { path: 'node/:nodeName/deployedapp/:appId', loadChildren: () => import(`./views/deployed-application/deployed-application.module`).then(m => m.DeployedApplicationModule) },
   { path: 'node/:nodeName', loadChildren: () => import(`./views/node/node.module`).then(m => m.NodeModule) },
   { path: 'nodes', loadChildren: () => import(`./views/nodes/nodes.module`).then(m => m.NodesModule) },
+
+  { path: 'networking', component: RequestLoggingComponent },
 
   // system section(shares some routes with application)
   // { path: 'network/:networkName', loadChildren: () => import(`./views/node/node.module`).then(m => m.NodeModule) },

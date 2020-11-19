@@ -1,0 +1,54 @@
+<div style="display: flex;
+flex-direction: row;
+align-items: center;">
+
+    <div style=" margin-right: 10px">
+        <div class="wrap">
+            Pause Request Recording<input type="checkbox" [(ngModel)]="networkService.stopRecordingRequests">
+        </div>
+        <div class="wrap">
+            Number Of retained Requests<input type="number" min="0" class="input-flat"
+                style="width: 50px; margin-left: 5px;" [(ngModel)]="networkService.maxRequests">
+        </div>
+
+    </div>
+
+    <div>
+        <button class="simple-button">Clear Log</button>
+
+    </div>
+
+
+
+</div>
+
+<div>
+    {{networkService.overall.failureRate}}
+</div>
+<div>
+    {{networkService.overall.averageDuration}}
+</div>
+
+
+
+<div ngbNav #nav="ngbNav">
+    <div ngbNavItem>
+        <a ngbNavLink style="font-size: 12pt;">
+            Last ({{networkService.overall.requests.length}}) Requests
+        </a>
+        <ng-template ngbNavContent>
+            <app-detail-list [list]="networkService.overall.requests" [listSettings]="listSettingsRecent"></app-detail-list>
+
+        </ng-template>
+    </div>
+    <div ngbNavItem>
+        <a ngbNavLink style="font-size: 12pt;">
+            Request Per Api
+        </a>
+        <ng-template ngbNavContent>
+            <app-detail-list [list]="networkService.requestsMap" [listSettings]="listSettings"></app-detail-list>
+
+        </ng-template>
+    </div>
+</div>
+<div [ngbNavOutlet]="nav"></div>

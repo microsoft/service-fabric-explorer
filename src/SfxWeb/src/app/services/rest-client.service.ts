@@ -13,7 +13,7 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
          IRawServiceNameInfo, IRawApplicationNameInfo } from '../Models/RawDataTypes';
-import { mergeMap, map, catchError } from 'rxjs/operators';
+import { mergeMap, map, catchError, finalize } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
 import { Partition } from '../Models/DataModels/Partition';
@@ -22,6 +22,8 @@ import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent
 import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
+import { IRequest, IRequestsData } from '../views/debugging/request-logging/request-logging.component';
+import { TimeUtils } from '../Utils/TimeUtils';
 
 @Injectable({
   providedIn: 'root'
@@ -42,6 +44,84 @@ export class RestClientService {
   private static baseUrl = 'api';
 
   private cacheAllowanceToken: number = Date.now().valueOf();
+
+  public stopRecordingRequests = false;
+  public overall = {apiDesc: "overall",
+    failureRate: "",
+    failureCount: 0,
+    requestCount: 1,
+    averageDuration: 0,
+    requests: [],
+    isSecondRowCollapsed: true};
+  public maxRequests = 10;
+  individualRequests: Record<string, IRequestsData> = {};
+  public requestsMap: IRequestsData[] = [];
+
+    addToArrayAndTrim<T>(list: T[], data: T, maxLength: number, onRemoval = (item: T) => null, onAddition = (item: T) => null) {
+        if (list.length >= maxLength) {
+            const r = list.splice(this.maxRequests - 2, 1);
+            onRemoval(r[0]);
+        }
+
+        list.splice(0,0,data);
+        onAddition(data);
+    }
+
+    addRequest(data: IRequest) {
+        if(this.stopRecordingRequests) {
+            return;
+        }
+        //add to overall list
+        const individualRequests = this.individualRequests[data.apiDesc] || {apiDesc: data.apiDesc,
+                                                                            failureRate: "",
+                                                                            failureCount: 0,
+                                                                            requestCount: 1,
+                                                                            averageDuration: 0,
+                                                                            requests: [],
+                                                                            isSecondRowCollapsed: true} as IRequestsData;
+
+        this.addToArrayAndTrim(individualRequests.requests, data, this.maxRequests,
+            (item) => {
+                if (item.errorMessage) {
+                    individualRequests.failureCount--;                    
+                }
+            },
+            (item) => {
+                if (item.errorMessage) {
+                    individualRequests.failureCount++;
+                }
+                individualRequests.failureRate = (individualRequests.failureCount/ individualRequests.requests.length * 100).toFixed(0) + "%";
+
+                individualRequests.averageDuration = +(individualRequests.requests.reduce( (sum, request) => sum += request.duration, 0) / individualRequests.requests.length).toFixed(0);
+
+            })
+
+        individualRequests.requestCount = individualRequests.requests.length;
+
+        this.individualRequests[data.apiDesc] = individualRequests;
+        
+        if(individualRequests.requestCount === 1){
+            this.requestsMap.push(individualRequests)
+        }
+
+        this.addToArrayAndTrim(this.overall.requests, data, this.maxRequests,
+            (item) => {
+                if (item.errorMessage) {
+                    this.overall.failureCount--;                    
+                }
+            },
+            (item) => {
+                if (item.errorMessage) {
+                    this.overall.failureCount++;
+                }
+                this.overall.failureRate = (this.overall.failureCount/ this.overall.requests.length * 100).toFixed(0) + "%";
+
+                this.overall.averageDuration = +(this.overall.requests.reduce( (sum, request) => sum += request.duration, 0) / this.overall.requests.length).toFixed(0);
+
+            })
+
+        console.log(this.overall, this.individualRequests, this.requestsMap)
+    }
 
   public invalidateBrowserRestResponseCache(): void {
       this.cacheAllowanceToken = Date.now().valueOf();
@@ -857,30 +937,46 @@ export class RestClientService {
   }
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
+    let data: IRequest = {
+        startTime: new Date().toISOString(),
+        apiDesc,
+        errorMessage: "",
+        duration: 0,
+        data: null,
+        statusCode: 200
+    }
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
         const header = `${err.status.toString()} : ${apiDesc}`;
 
-
+        // data.failed = err
         const message = messageHandler.getErrorMessage(apiDesc, err);
+        let displayMessage = "";
         if (message) {
-                    this.message.showMessage(message, MessageSeverity.Err, header);
-                }
+            displayMessage = message;
+        }
 
-            else if (err.error instanceof Error) {
-                // A client-side or network error occurred. Handle it accordingly.
-            this.message.showMessage(err.error.message, MessageSeverity.Err, header);
+        else if (err.error instanceof Error) {
+            // A client-side or network error occurred. Handle it accordingly.
+            displayMessage = err.error.message;
 
-            } else {
-                // The backend returned an unsuccessful response code.
-                // The response body may contain clues as to what went wrong,
-                this.message.showMessage(err.message, MessageSeverity.Err, header);
-            }
+        } else {
+            // The backend returned an unsuccessful response code.
+            // The response body may contain clues as to what went wrong,
+            displayMessage = err.message;
+        }
 
+        this.message.showMessage(displayMessage, MessageSeverity.Err, header);
+        data.errorMessage = displayMessage;
+        data.statusCode = err.status;
         // ...optionally return a default fallback value so app can continue (pick one)
         // which could be a default value (which has to be a HttpResponse here)
         // return Observable.of(new HttpResponse({body: [{name: "Default value..."}]}));
         // or simply an empty observable
         return throwError(err);
+    }),finalize(() => {
+        data.duration = new Date().getTime() - new Date(data.startTime).getTime();
+        this.addRequest(data);
+        // console.log(data);
     }));
     }
 }
