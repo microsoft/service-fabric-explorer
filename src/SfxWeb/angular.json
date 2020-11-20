@@ -38,7 +38,9 @@
               "src/_candybar.scss"
             ],
             "allowedCommonJsDependencies": [
-              "lodash"
+              "lodash",
+              "nouislider",
+              "highcharts"
            ],
             "scripts": [],
             "stylePreprocessorOptions": {
