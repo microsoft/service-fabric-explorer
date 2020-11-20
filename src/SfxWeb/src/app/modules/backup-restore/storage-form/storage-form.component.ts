@@ -22,8 +22,10 @@ export class StorageFormComponent implements OnInit {
       Path: [''],
       ConnectionString: [''],
       ContainerName: [''],
+      IsEmptyPrimaryCredential: [false],
       PrimaryUserName: [''],
       PrimaryPassword: [''],
+      IsEmptySecondaryCredential: [false],
       SecondaryUserName: [''],
       SecondaryPassword: ['']
     });
@@ -35,7 +37,16 @@ export class StorageFormComponent implements OnInit {
         this.updateStorageKindValidators(this.localForm, storageKind);
       }
     });
-
+    this.localForm.get('IsEmptyPrimaryCredential').valueChanges.subscribe(IsEmptyPrimaryCredential => {
+      if (this.required) {
+        this.updateStorageKindValidatorsPrimaryCredentials(this.localForm, IsEmptyPrimaryCredential);
+      }
+    });
+    this.localForm.get('IsEmptySecondaryCredential').valueChanges.subscribe(IsEmptySecondaryCredential => {
+      if (this.required) {
+        this.updateStorageKindValidatorsSecondaryCredentials(this.localForm, IsEmptySecondaryCredential);
+      }
+    });
     // set default data or if none then give it a default state;
     this.data = this.data || {
       StorageKind: 'AzureBlobStore',
@@ -43,8 +54,10 @@ export class StorageFormComponent implements OnInit {
       Path: '',
       ConnectionString: '',
       ContainerName: '',
+      IsEmptyPrimaryCredential: false,
       PrimaryUserName: '',
       PrimaryPassword: '',
+      IsEmptySecondaryCredential: false,
       SecondaryUserName: '',
       SecondaryPassword: ''
     };
@@ -71,10 +84,51 @@ export class StorageFormComponent implements OnInit {
 
       storage.get('Path').setValidators([Validators.required]);
     }
-
+    this.updateStorageKindValidatorsPrimaryCredentials(storage, false);
+    this.updateStorageKindValidatorsSecondaryCredentials(storage, false);
     storage.get('ContainerName').updateValueAndValidity();
     storage.get('ConnectionString').updateValueAndValidity();
     storage.get('Path').updateValueAndValidity();
   }
+  updateStorageKindValidatorsPrimaryCredentials(storage: AbstractControl, IsEmptyPrimaryCredential: boolean) {
+    if (IsEmptyPrimaryCredential)
+    {
+      storage.get('PrimaryUserName').setValidators(null);
+      storage.get('PrimaryPassword').setValidators(null);
+      storage.get('PrimaryUserName').setValue('');
+      storage.get('PrimaryPassword').setValue('');
+      storage.get('PrimaryUserName').disable();
+      storage.get('PrimaryPassword').disable();
+    }
+    else
+    {
+      storage.get('PrimaryUserName').setValidators([Validators.required]);
+      storage.get('PrimaryPassword').setValidators([Validators.required]);
+      storage.get('PrimaryUserName').enable();
+      storage.get('PrimaryPassword').enable();
+    }
+    storage.get('PrimaryUserName').updateValueAndValidity();
+    storage.get('PrimaryPassword').updateValueAndValidity();
+  }
 
+  updateStorageKindValidatorsSecondaryCredentials(storage: AbstractControl, IsEmptySecondaryCredential: boolean) {
+    if (IsEmptySecondaryCredential)
+    {
+      storage.get('SecondaryUserName').setValidators(null);
+      storage.get('SecondaryPassword').setValidators(null);
+      storage.get('SecondaryUserName').setValue('');
+      storage.get('SecondaryPassword').setValue('');
+      storage.get('SecondaryUserName').disable();
+      storage.get('SecondaryPassword').disable();
+    }
+    else
+    {
+      storage.get('SecondaryUserName').setValidators([Validators.required]);
+      storage.get('SecondaryPassword').setValidators([Validators.required]);
+      storage.get('SecondaryUserName').enable();
+      storage.get('SecondaryPassword').enable();
+    }
+    storage.get('SecondaryUserName').updateValueAndValidity();
+    storage.get('SecondaryPassword').updateValueAndValidity();
+  }
 }
