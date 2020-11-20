@@ -14,10 +14,12 @@ import { AdalService } from './services/adal.service';
 import { httpInterceptorProviders } from './http-interceptor';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
+import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
 
 @NgModule({
   declarations: [
-    AppComponent
+    AppComponent,
+    TelemetrySnackBarComponent
   ],
   imports: [
     BrowserModule,

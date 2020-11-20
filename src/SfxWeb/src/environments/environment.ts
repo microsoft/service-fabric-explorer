@@ -7,7 +7,8 @@ export const environment = {
   baseUrl: 'api',
   version: 'test',
   assetBase: '',
-  showBeta: true
+  showBeta: true,
+  telemetryKey: ""
 };
 
 /*
