@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DisplaySizeColumnComponent } from './display-size-column.component';
 
@@ -6,7 +6,7 @@ describe('DisplaySizeColumnComponent', () => {
   let component: DisplaySizeColumnComponent;
   let fixture: ComponentFixture<DisplaySizeColumnComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DisplaySizeColumnComponent ]
     })

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { HyperLinkComponent } from './hyper-link.component';
 
@@ -6,7 +6,7 @@ describe('HyperLinkComponent', () => {
   let component: HyperLinkComponent;
   let fixture: ComponentFixture<HyperLinkComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ HyperLinkComponent ]
     })

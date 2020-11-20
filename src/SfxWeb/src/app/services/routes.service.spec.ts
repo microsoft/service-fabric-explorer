@@ -1,4 +1,4 @@
-import { TestBed, fakeAsync, async, tick } from '@angular/core/testing';
+import { TestBed, fakeAsync, tick, waitForAsync } from '@angular/core/testing';
 import { Location } from '@angular/common';
 
 import { RoutesService } from './routes.service';

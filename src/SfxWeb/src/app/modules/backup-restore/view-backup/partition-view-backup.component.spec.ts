@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ViewBackupComponent } from './view-backup.component';
 
@@ -6,7 +6,7 @@ describe('PartitionViewBackupComponent', () => {
   let component: ViewBackupComponent;
   let fixture: ComponentFixture<ViewBackupComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ViewBackupComponent ]
     })

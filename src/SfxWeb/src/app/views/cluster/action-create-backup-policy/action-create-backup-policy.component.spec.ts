@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ActionCreateBackupPolicyComponent } from './action-create-backup-policy.component';
 
@@ -6,7 +6,7 @@ describe('ActionCreateBackupPolicyComponent', () => {
   let component: ActionCreateBackupPolicyComponent;
   let fixture: ComponentFixture<ActionCreateBackupPolicyComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ActionCreateBackupPolicyComponent ]
     })
