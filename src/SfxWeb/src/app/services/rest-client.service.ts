@@ -473,7 +473,6 @@ export class RestClientService {
 
   public updateBackupPolicy(backupPolicy: IRawBackupPolicy, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'BackupRestore/BackupPolicies/' + encodeURIComponent(backupPolicy.Name) + '/$/Update';
-      const formedurl = this.getApiUrl(url, RestClientService.apiVersion64)+'&validateConnection='+encodeURIComponent(true);
       return this.post(this.getApiUrl(url, RestClientService.apiVersion64)+'&validateConnection=true', 'Backup Policy updation', backupPolicy, messageHandler);
   }
 
