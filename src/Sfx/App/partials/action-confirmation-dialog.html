@@ -8,7 +8,7 @@
                autocomplete="off" ng-show="::action.confirmationKeyword" ng-model="usertypedkeyword" aria-label="Type in '{{::action.confirmationKeyword}} to confirm">
     </div>
     <div class="modal-footer">
-        <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-disabled="action.confirmationKeyword !== usertypedkeyword" ng-click="ok()">{{::action.title}}</button>
+        <button type="submit" class="btn btn-primary" data-dismiss="modal" ng-disabled="action.confirmationKeyword !== usertypedkeyword.trim()" ng-click="ok()">{{::action.title}}</button>
         <button type="button" class="btn btn-default" data-dismiss="modal" ng-click="usertypedkeyword = null; cancel()">Cancel</button>
     </div>
 </form>
