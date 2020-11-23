@@ -89,7 +89,6 @@ export class StorageFormComponent implements OnInit {
       this.updateStorageKindValidatorsPrimaryCredentials(storage, false);
       this.updateStorageKindValidatorsSecondaryCredentials(storage, false);
     }
-    
     storage.get('ContainerName').updateValueAndValidity();
     storage.get('ConnectionString').updateValueAndValidity();
     storage.get('Path').updateValueAndValidity();
