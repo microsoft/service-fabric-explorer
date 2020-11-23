@@ -473,12 +473,12 @@ export class RestClientService {
 
   public updateBackupPolicy(backupPolicy: IRawBackupPolicy, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'BackupRestore/BackupPolicies/' + encodeURIComponent(backupPolicy.Name) + '/$/Update';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64)+'&validateConnection=true', 'Backup Policy updation', backupPolicy, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64) + '&validateConnection=true', 'Backup Policy updation', backupPolicy, messageHandler);
   }
 
   public createBackupPolicy(backupPolicy: IRawBackupPolicy, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'BackupRestore/BackupPolicies/$/Create';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64)+'&validateConnection=true', 'Backup Policy creation', backupPolicy, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64) + '&validateConnection=true', 'Backup Policy creation', backupPolicy, messageHandler);
   }
 
   public triggerPartitionBackup(partition: Partition, timeOut: number, storage: IRawStorage,  messageHandler?: IResponseMessageHandler): Observable<{}> {
