@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { CopyTextComponent } from './copy-text.component';
 
@@ -6,7 +6,7 @@ describe('CopyTextComponent', () => {
   let component: CopyTextComponent;
   let fixture: ComponentFixture<CopyTextComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ CopyTextComponent ]
     })

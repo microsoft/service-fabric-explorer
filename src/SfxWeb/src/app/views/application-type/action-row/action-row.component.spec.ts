@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ActionRowComponent } from './action-row.component';
 
@@ -6,7 +6,7 @@ describe('ActionRowComponent', () => {
   let component: ActionRowComponent;
   let fixture: ComponentFixture<ActionRowComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ActionRowComponent ]
     })
