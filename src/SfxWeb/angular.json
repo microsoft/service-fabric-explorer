@@ -38,7 +38,9 @@
               "src/_candybar.scss"
             ],
             "allowedCommonJsDependencies": [
-              "lodash"
+              "lodash",
+              "nouislider",
+              "highcharts"
            ],
             "scripts": [],
             "stylePreprocessorOptions": {
@@ -66,7 +68,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,

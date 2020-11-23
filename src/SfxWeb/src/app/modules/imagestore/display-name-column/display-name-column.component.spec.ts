@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { DisplayNameColumnComponent } from './display-name-column.component';
 
@@ -6,7 +6,7 @@ describe('DisplayNameColumnComponent', () => {
   let component: DisplayNameColumnComponent;
   let fixture: ComponentFixture<DisplayNameColumnComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ DisplayNameColumnComponent ]
     })
