@@ -4,25 +4,6 @@ import { RestClientService } from 'src/app/services/rest-client.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { NestedTableComponent } from '../nested-table/nested-table.component';
 
-export interface IRequest {
-  errorMessage: string;
-  statusCode: number;
-  startTime: string;
-  duration: number;
-  data: any;
-  apiDesc: string;
-}
-
-export interface IRequestsData {
-  apiDesc: string;
-  failureRate: string;
-  failureCount: number
-  requestCount: number;
-  averageDuration: number;
-  requests: IRequest[];
-  isSecondRowCollapsed: boolean;
-}
-
 @Component({
   selector: 'app-request-logging',
   templateUrl: './request-logging.component.html',

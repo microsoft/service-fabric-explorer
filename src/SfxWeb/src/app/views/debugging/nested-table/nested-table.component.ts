@@ -1,8 +1,8 @@
-import { Component, OnInit } from '@angular/core';
-import { ListColumnSetting, ListColumnSettingWithUtcTime, ListSettings } from 'src/app/Models/ListSettings';
+import { Component } from '@angular/core';
+import { IRequestsData } from 'src/app/Models/DataModels/networkDebugger';
+import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
-import { IRequestsData } from '../request-logging/request-logging.component';
 
 @Component({
   selector: 'app-nested-table',

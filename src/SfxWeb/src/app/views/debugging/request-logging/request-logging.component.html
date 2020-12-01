@@ -8,20 +8,20 @@
     <div class="panel-wrapper">
         <div>
             <div>
-                Failure rate: {{networkService.overall.failureRate}}
+                Failure rate: {{networkService.networkDebugger.overall.failureRate}}
             </div>
             <div>
-                Average Duration: {{networkService.overall.averageDuration}}
+                Average Duration: {{networkService.networkDebugger.overall.averageDuration}}
             </div>
         </div>
     
         <div>
             <div class="wrap">
-                Pause Request Recording<input type="checkbox" [(ngModel)]="networkService.stopRecordingRequests">
+                Pause Request Recording<input type="checkbox" [(ngModel)]="networkService.networkDebugger.stopRecordingRequests">
             </div>
             <div class="wrap">
                 Number Of retained Requests<input type="number" min="0" class="input-flat"
-                    style="width: 50px; margin-left: 5px;" [(ngModel)]="networkService.maxRequests">
+                    style="width: 50px; margin-left: 5px;" [(ngModel)]="networkService.networkDebugger.maxRequests">
             </div>
         </div>
     </div>
@@ -30,10 +30,10 @@
 <div ngbNav #nav="ngbNav" class="essen-pane">
     <div ngbNavItem>
         <a ngbNavLink style="font-size: 12pt;">
-            Last ({{networkService.overall.requests.length}}) Requests
+            Last ({{networkService.networkDebugger.overall.requests.length}}) Requests
         </a>
         <ng-template ngbNavContent>
-            <app-detail-list [list]="networkService.overall.requests" [listSettings]="listSettingsRecent">
+            <app-detail-list [list]="networkService.networkDebugger.overall.requests" [listSettings]="listSettingsRecent">
             </app-detail-list>
 
         </ng-template>
@@ -43,7 +43,7 @@
             Request Per Api
         </a>
         <ng-template ngbNavContent>
-            <app-detail-list [list]="networkService.requestsMap" [listSettings]="listSettings"></app-detail-list>
+            <app-detail-list [list]="networkService.networkDebugger.requestsMap" [listSettings]="listSettings"></app-detail-list>
 
         </ng-template>
     </div>
