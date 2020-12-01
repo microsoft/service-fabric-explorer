@@ -6,8 +6,7 @@ import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates
 import { NestedTableComponent } from './nested-table/nested-table.component';
 import { FormsModule } from '@angular/forms';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
-
-
+import { DebuggingRoutingModule } from './debugging-routing.module';
 
 @NgModule({
   declarations: [RequestLoggingComponent, NestedTableComponent],
@@ -16,7 +15,8 @@ import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
     SharedModule,
     DetailListTemplatesModule,
     FormsModule,
-    NgbNavModule
+    NgbNavModule,
+    DebuggingRoutingModule
   ],
   exports: [RequestLoggingComponent],
 })

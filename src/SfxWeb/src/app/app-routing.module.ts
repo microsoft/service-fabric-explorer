@@ -43,7 +43,7 @@ const routes: Routes = [
   { path: 'node/:nodeName', loadChildren: () => import(`./views/node/node.module`).then(m => m.NodeModule) },
   { path: 'nodes', loadChildren: () => import(`./views/nodes/nodes.module`).then(m => m.NodesModule) },
 
-  { path: 'networking', component: RequestLoggingComponent },
+  { path: 'networking', loadChildren: () => import(`./views/debugging/debugging.module`).then(m => m.DebuggingModule) },
 
   // system section(shares some routes with application)
   // { path: 'network/:networkName', loadChildren: () => import(`./views/node/node.module`).then(m => m.NodeModule) },

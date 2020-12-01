@@ -59,7 +59,7 @@ export class RestClientService {
 
     addToArrayAndTrim<T>(list: T[], data: T, maxLength: number, onRemoval = (item: T) => null, onAddition = (item: T) => null) {
         if (list.length >= maxLength) {
-            const r = list.splice(this.maxRequests - 2, 1);
+            const r = list.splice(this.maxRequests - 1, 1);
             onRemoval(r[0]);
         }
 

@@ -1,43 +1,40 @@
-<div style="display: flex;
-flex-direction: row;
-align-items: center;">
+<app-navbar type="Network Debugger"></app-navbar>
 
-    <div style=" margin-right: 10px">
-        <div class="wrap">
-            Pause Request Recording<input type="checkbox" [(ngModel)]="networkService.stopRecordingRequests">
-        </div>
-        <div class="wrap">
-            Number Of retained Requests<input type="number" min="0" class="input-flat"
-                style="width: 50px; margin-left: 5px;" [(ngModel)]="networkService.maxRequests">
-        </div>
-
-    </div>
-
+<div class="detail-pane essen-pane">
     <div>
-        <button class="simple-button">Clear Log</button>
-
+        <button class="simple-button" >Clear Log</button>
     </div>
 
-
-
+    <div class="panel-wrapper">
+        <div>
+            <div>
+                Failure rate: {{networkService.overall.failureRate}}
+            </div>
+            <div>
+                Average Duration: {{networkService.overall.averageDuration}}
+            </div>
+        </div>
+    
+        <div>
+            <div class="wrap">
+                Pause Request Recording<input type="checkbox" [(ngModel)]="networkService.stopRecordingRequests">
+            </div>
+            <div class="wrap">
+                Number Of retained Requests<input type="number" min="0" class="input-flat"
+                    style="width: 50px; margin-left: 5px;" [(ngModel)]="networkService.maxRequests">
+            </div>
+        </div>
+    </div>
 </div>
 
-<div>
-    {{networkService.overall.failureRate}}
-</div>
-<div>
-    {{networkService.overall.averageDuration}}
-</div>
-
-
-
-<div ngbNav #nav="ngbNav">
+<div ngbNav #nav="ngbNav" class="essen-pane">
     <div ngbNavItem>
         <a ngbNavLink style="font-size: 12pt;">
             Last ({{networkService.overall.requests.length}}) Requests
         </a>
         <ng-template ngbNavContent>
-            <app-detail-list [list]="networkService.overall.requests" [listSettings]="listSettingsRecent"></app-detail-list>
+            <app-detail-list [list]="networkService.overall.requests" [listSettings]="listSettingsRecent">
+            </app-detail-list>
 
         </ng-template>
     </div>
@@ -51,4 +48,4 @@ align-items: center;">
         </ng-template>
     </div>
 </div>
-<div [ngbNavOutlet]="nav"></div>
+<div [ngbNavOutlet]="nav" class="essen-pane"></div>

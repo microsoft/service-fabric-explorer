@@ -29,8 +29,7 @@ import { DebuggingModule } from './views/debugging/debugging.module';
     MatDialogModule,
     NgbDropdownModule,
     ReactiveFormsModule,
-    NgbTooltipModule,
-    DebuggingModule
+    NgbTooltipModule
   ],
 
   providers: [
