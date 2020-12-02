@@ -1,3 +1,5 @@
+import { Utils } from 'src/app/Utils/Utils';
+
 export interface IRequest {
     errorMessage: string;
     statusCode: number;
@@ -15,9 +17,12 @@ export interface IRequestsData {
     averageDuration: number;
     requests: IRequest[];
     isSecondRowCollapsed: boolean;
+    isSlowOrUnresponsive: boolean;
 }
 
+
 export class NetworkDebugger {
+    public slowOrResponsiveNetwork = false;
     public stopRecordingRequests = false;
     public overall = {
         apiDesc: "overall",
@@ -26,21 +31,15 @@ export class NetworkDebugger {
         requestCount: 1,
         averageDuration: 0,
         requests: [],
-        isSecondRowCollapsed: true
+        isSecondRowCollapsed: true,
+        isSlowOrUnresponsive: false
     };
     public maxRequests = 10;
+    public slowAverageResponse = 100;
+
+
     individualRequests: Record<string, IRequestsData> = {};
     public requestsMap: IRequestsData[] = [];
-
-    addToArrayAndTrim<T>(list: T[], data: T, maxLength: number, onRemoval = (item: T) => null, onAddition = (item: T) => null) {
-        if (list.length >= maxLength) {
-            const r = list.splice(this.maxRequests - 1, 1);
-            onRemoval(r[0]);
-        }
-
-        list.splice(0, 0, data);
-        onAddition(data);
-    }
 
     addRequest(data: IRequest) {
         if (this.stopRecordingRequests) {
@@ -57,7 +56,7 @@ export class NetworkDebugger {
             isSecondRowCollapsed: true
         } as IRequestsData;
 
-        this.addToArrayAndTrim(individualRequests.requests, data, this.maxRequests,
+        Utils.addToArrayAndTrim(individualRequests.requests, data, this.maxRequests,
             (item) => {
                 if (item.errorMessage) {
                     individualRequests.failureCount--;
@@ -67,10 +66,10 @@ export class NetworkDebugger {
                 if (item.errorMessage) {
                     individualRequests.failureCount++;
                 }
-                individualRequests.failureRate = (individualRequests.failureCount / individualRequests.requests.length * 100).toFixed(0) + "%";
-
+                const failureRate = (individualRequests.failureCount / individualRequests.requests.length) * 100;
+                individualRequests.failureRate = failureRate.toFixed(0) + "%";
                 individualRequests.averageDuration = +(individualRequests.requests.reduce((sum, request) => sum += request.duration, 0) / individualRequests.requests.length).toFixed(0);
-
+                individualRequests.isSlowOrUnresponsive = this.slowAverageResponse < individualRequests.averageDuration || failureRate > 30;
             })
 
         individualRequests.requestCount = individualRequests.requests.length;
@@ -81,7 +80,7 @@ export class NetworkDebugger {
             this.requestsMap.push(individualRequests)
         }
 
-        this.addToArrayAndTrim(this.overall.requests, data, this.maxRequests,
+        Utils.addToArrayAndTrim(this.overall.requests, data, this.maxRequests,
             (item) => {
                 if (item.errorMessage) {
                     this.overall.failureCount--;
@@ -92,8 +91,8 @@ export class NetworkDebugger {
                     this.overall.failureCount++;
                 }
                 this.overall.failureRate = (this.overall.failureCount / this.overall.requests.length * 100).toFixed(0) + "%";
-
                 this.overall.averageDuration = +(this.overall.requests.reduce((sum, request) => sum += request.duration, 0) / this.overall.requests.length).toFixed(0);
+                this.overall.isSlowOrUnresponsive = this.requestsMap.some( requests => requests.isSlowOrUnresponsive);
 
             })
 

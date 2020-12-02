@@ -19,10 +19,10 @@ export class RequestLoggingComponent implements OnInit {
     this.listSettingsRecent = this.settings.getNewOrExistingNetworkRequestListSettings(true);
 
     this.listSettings = this.settings.getNewOrExistingListSettings('requests', [], [
-      new ListColumnSetting('apiDesc', 'Api'),
+      new ListColumnSetting('apiDesc', 'API Description'),
       new ListColumnSetting('requestCount', '# of requests'),
-      new ListColumnSetting('averageDuration', 'averageDuration(ms)'),
-      new ListColumnSetting('failureRate', 'failureRate'),
+      new ListColumnSetting('averageDuration', 'Average Duration(MS)'),
+      new ListColumnSetting('failureRate', 'Failure Rate'),
     ],
     [
       new ListColumnSettingWithCustomComponent(NestedTableComponent, '',
