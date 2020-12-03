@@ -8,9 +8,6 @@
                 <a href="https://aka.ms/sfxrepo" target="_blank" style="color: black;">You can report any issues you run into (Click here)</a>
             </div>
         </div>
-        <div *ngIf="restClientService.networkDebugger.overall.isSlowOrUnresponsive">
-            aye network is slow n stuff
-        </div>
         <app-check-box [(state)]="treeService.tree.showOkItems">
             <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
         </app-check-box>
