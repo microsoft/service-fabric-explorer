@@ -95,7 +95,5 @@ export class NetworkDebugger {
                 this.overall.isSlowOrUnresponsive = this.requestsMap.some( requests => requests.isSlowOrUnresponsive);
 
             })
-
-        console.log(this.overall, this.individualRequests, this.requestsMap)
     }
 }
