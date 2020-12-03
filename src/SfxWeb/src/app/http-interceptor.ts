@@ -68,20 +68,9 @@ export class GlobalHeaderInterceptor implements HttpInterceptor {
  }
 }
 
-@Injectable()
-export class TimerInterceptor implements HttpInterceptor {
-  constructor() {}
-  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    return next.handle(req).pipe(map( res => {
-      console.log(res);
-      return res;
-    }))
- }
-}
 
 /** Http interceptor providers in outside-in order */
 export const httpInterceptorProviders = [
-  // { provide: HTTP_INTERCEPTORS, useClass: TimerInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: ReadOnlyHeaderInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: GlobalHeaderInterceptor, multi: true },

@@ -22,7 +22,7 @@ import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent
 import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
-import { IRequestsData, IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger'
+import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger';
 @Injectable({
   providedIn: 'root'
 })
@@ -857,20 +857,20 @@ export class RestClientService {
   }
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
-    let data: IRequest = {
+    const data: IRequest = {
         startTime: new Date().toISOString(),
         apiDesc,
-        errorMessage: "",
+        errorMessage: '',
         duration: 0,
         data: null,
         statusCode: 200
-    }
+    };
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
         const header = `${err.status.toString()} : ${apiDesc}`;
 
         // data.failed = err
         const message = messageHandler.getErrorMessage(apiDesc, err);
-        let displayMessage = "";
+        let displayMessage = '';
         if (message) {
             displayMessage = message;
         }
@@ -893,7 +893,7 @@ export class RestClientService {
         // return Observable.of(new HttpResponse({body: [{name: "Default value..."}]}));
         // or simply an empty observable
         return throwError(err);
-    }),finalize(() => {
+    }), finalize(() => {
         data.duration = new Date().getTime() - new Date(data.startTime).getTime();
         this.networkDebugger.addRequest(data);
         // console.log(data);

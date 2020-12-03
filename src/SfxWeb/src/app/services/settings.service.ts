@@ -136,7 +136,7 @@ export class SettingsService {
   }
 
   public getNewOrExistingNetworkRequestListSettings(includeApiDesc: boolean = false) {
-    const listKey: string ='requestsData';
+    const listKey = 'requestsData';
     const settings = [
         new ListColumnSetting('statusCode', 'Status Code'),
         new ListColumnSetting('errorMessage', 'Error Message'),
@@ -144,8 +144,8 @@ export class SettingsService {
         new ListColumnSettingWithUtcTime('startTime', 'Start Time'),
       ];
 
-      if(includeApiDesc) {
-        return this.getNewOrExistingListSettings(listKey + 'andApiDesc', [], 
+    if (includeApiDesc) {
+        return this.getNewOrExistingListSettings(listKey + 'andApiDesc', [],
                                                 [new ListColumnSetting('apiDesc', 'API Description')].concat(settings));
       }
 

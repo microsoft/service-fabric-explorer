@@ -174,11 +174,11 @@ export class Utils {
             const r = list.splice(maxLength - 1, 1);
             onRemoval(r[0]);
         }
-    
+
         list.splice(0, 0, data);
         onAddition(data);
     }
-    
+
 
 }
 
