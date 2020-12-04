@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ClusterUpgradeBannerComponent } from './cluster-upgrade-banner.component';
 
@@ -6,7 +6,7 @@ describe('ClusterUpgradeBannerComponent', () => {
   let component: ClusterUpgradeBannerComponent;
   let fixture: ComponentFixture<ClusterUpgradeBannerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ClusterUpgradeBannerComponent ]
     })

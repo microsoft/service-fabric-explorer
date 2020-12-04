@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { ReplicaStatusComponent } from './replica-status.component';
 import { IRemoteReplicatorAcknowledgementDetail } from 'src/app/Models/RawDataTypes';
@@ -8,7 +8,7 @@ describe('ReplicaStatusComponent', () => {
   let component: ReplicaStatusComponent;
   let fixture: ComponentFixture<ReplicaStatusComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ ReplicaStatusComponent ],
       schemas: [NO_ERRORS_SCHEMA]
