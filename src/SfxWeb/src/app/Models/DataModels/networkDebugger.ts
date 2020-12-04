@@ -24,22 +24,32 @@ export interface IRequestsData {
 export class NetworkDebugger {
     public slowOrResponsiveNetwork = false;
     public stopRecordingRequests = false;
-    public overall = {
-        apiDesc: 'overall',
-        failureRate: '',
-        failureCount: 0,
-        requestCount: 1,
-        averageDuration: 0,
-        requests: [],
-        isSecondRowCollapsed: true,
-        isSlowOrUnresponsive: false
-    };
+    public overall: IRequestsData;
     public maxRequests = 10;
     public slowAverageResponse = 100;
 
 
     individualRequests: Record<string, IRequestsData> = {};
     public requestsMap: IRequestsData[] = [];
+
+    constructor() {
+        this.clear();
+    }
+
+    clear() {
+        this.requestsMap = [];
+        this.individualRequests = {};
+        this.overall = {
+            apiDesc: 'overall',
+            failureRate: '',
+            failureCount: 0,
+            requestCount: 1,
+            averageDuration: 0,
+            requests: [],
+            isSecondRowCollapsed: true,
+            isSlowOrUnresponsive: false
+        };
+    }
 
     addRequest(data: IRequest) {
         if (this.stopRecordingRequests) {

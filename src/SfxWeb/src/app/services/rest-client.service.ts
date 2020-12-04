@@ -868,7 +868,6 @@ export class RestClientService {
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
         const header = `${err.status.toString()} : ${apiDesc}`;
 
-        // data.failed = err
         const message = messageHandler.getErrorMessage(apiDesc, err);
         let displayMessage = '';
         if (message) {
@@ -896,8 +895,7 @@ export class RestClientService {
     }), finalize(() => {
         data.duration = new Date().getTime() - new Date(data.startTime).getTime();
         this.networkDebugger.addRequest(data);
-        // console.log(data);
-    }));
+     }));
     }
 }
 
