@@ -22,10 +22,10 @@ export class StorageFormComponent implements OnInit {
       Path: [''],
       ConnectionString: [''],
       ContainerName: [''],
-      IsEmptyPrimaryCredential: [false],
+      IsEmptyPrimaryCredential: [true],
       PrimaryUserName: [''],
       PrimaryPassword: [''],
-      IsEmptySecondaryCredential: [false],
+      IsEmptySecondaryCredential: [true],
       SecondaryUserName: [''],
       SecondaryPassword: ['']
     });
@@ -54,15 +54,14 @@ export class StorageFormComponent implements OnInit {
       Path: '',
       ConnectionString: '',
       ContainerName: '',
-      IsEmptyPrimaryCredential: false,
+      IsEmptyPrimaryCredential: true,
       PrimaryUserName: '',
       PrimaryPassword: '',
-      IsEmptySecondaryCredential: false,
+      IsEmptySecondaryCredential: true,
       SecondaryUserName: '',
-      SecondaryPassword: ''
+      SecondaryPassword: '',
     };
     this.localForm.patchValue(this.data);
-
     if (this.required) {
       this.localForm.get('ContainerName').setValidators(null);
       this.localForm.get('ConnectionString').setValidators(null);
@@ -76,6 +75,8 @@ export class StorageFormComponent implements OnInit {
       storage.get('ConnectionString').setValidators([Validators.required]);
 
       storage.get('Path').setValidators(null);
+      this.updateStorageKindValidatorsPrimaryCredentials(storage, true);
+      this.updateStorageKindValidatorsSecondaryCredentials(storage, true);
     }
 
     if (storageKind === 'FileShare') {
@@ -83,9 +84,11 @@ export class StorageFormComponent implements OnInit {
       storage.get('ConnectionString').setValidators(null);
 
       storage.get('Path').setValidators([Validators.required]);
+      storage.get('IsEmptyPrimaryCredential').setValue(false);
+      storage.get('IsEmptySecondaryCredential').setValue(false);
+      this.updateStorageKindValidatorsPrimaryCredentials(storage, false);
+      this.updateStorageKindValidatorsSecondaryCredentials(storage, false);
     }
-    this.updateStorageKindValidatorsPrimaryCredentials(storage, false);
-    this.updateStorageKindValidatorsSecondaryCredentials(storage, false);
     storage.get('ContainerName').updateValueAndValidity();
     storage.get('ConnectionString').updateValueAndValidity();
     storage.get('Path').updateValueAndValidity();
