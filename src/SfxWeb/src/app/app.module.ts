@@ -15,6 +15,7 @@ import { httpInterceptorProviders } from './http-interceptor';
 import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 import { ReactiveFormsModule } from '@angular/forms';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
+import { MatSnackBarModule } from '@angular/material/snack-bar';
 
 @NgModule({
   declarations: [
@@ -31,7 +32,8 @@ import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snac
     MatDialogModule,
     NgbDropdownModule,
     ReactiveFormsModule,
-    NgbTooltipModule
+    NgbTooltipModule,
+    MatSnackBarModule
   ],
 
   providers: [
