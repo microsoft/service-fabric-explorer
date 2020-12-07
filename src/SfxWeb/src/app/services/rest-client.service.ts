@@ -12,7 +12,7 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawApplication, IRawService, IRawCreateServiceDescription, IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription, IRawServiceDescription,
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
-         IRawServiceNameInfo, IRawApplicationNameInfo } from '../Models/RawDataTypes';
+         IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity } from '../Models/RawDataTypes';
 import { mergeMap, map, catchError } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
@@ -499,6 +499,10 @@ export class RestClientService {
                                                                                                           BackupLocation: backupLocation }, messageHandler);
   }
 
+  public getBackupEnabledEntities(backupPolicyName: string, messageHandler?: IResponseMessageHandler): Observable<IRawBackupEntity[]> {
+      let url = "BackupRestore/BackupPolicies/" + encodeURIComponent(backupPolicyName) + "/$/GetBackupEnabledEntities";
+      return this.getFullCollection<IRawBackupEntity>(url, 'Get Backup Enabled Entities', RestClientService.apiVersion64, messageHandler);
+  }
   public getServiceDescription(applicationId: string, serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawServiceDescription> {
       const url = 'Applications/' + encodeURIComponent(applicationId)
           + '/$/GetServices/' + encodeURIComponent(serviceId)

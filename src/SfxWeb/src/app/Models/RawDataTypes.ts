@@ -23,7 +23,25 @@ export interface IRawApplication {
         HealthState: string;
         ApplicationDefinitionKind: string;
     }
-
+export class IRawBackupEntity{
+    EntityKind : BackupEntityKind;
+}
+export interface IRawApplicationBackupEntity extends IRawBackupEntity{
+    ApplicationName : string;
+}
+export interface IRawServiceBackupEntity extends IRawBackupEntity{
+    ServiceName : string;
+}
+export interface IRawPartitionBackupEntity extends IRawBackupEntity{
+    ServiceName : string;
+    PartitionId : string;
+}
+export enum BackupEntityKind{
+    Invalid,
+    Partition,
+    Service,
+    Application
+}
 export interface IRawBackupConfigurationInfo {
         Kind: string;
         PolicyName: string;

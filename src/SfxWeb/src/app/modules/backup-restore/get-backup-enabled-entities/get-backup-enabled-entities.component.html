@@ -1,0 +1,19 @@
+<form class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Enabled Entities </h4>
+    </div>
+    <div class="modal-body table-responsive">
+        <table>
+            <ng-container *ngFor="let entity of rawdata">
+                <tr *ngFor="let y of entity | keyvalue">
+                    <th>{{y.key}}</th>
+                    <td style="margin-left: 20px;">{{y.value}}</td>
+                </tr>
+                <br>
+            </ng-container>
+        </table>
+    </div>
+    <div class="modal-footer">
+        <button type="button" class="flat-button" (click)="cancel()">Ok</button>
+    </div>
+</form>
