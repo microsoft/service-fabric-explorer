@@ -22,9 +22,9 @@ export interface IViewBackUpData {
 export class ViewBackupComponent implements OnInit {
 
   backUpData: IViewBackUpData;
-  action : IsolatedAction;
+  action: IsolatedAction;
   constructor(public dialogRef: MatDialogRef<ViewBackupComponent>,
-              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService : DataService) {
+              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) {
   }
 
   ngOnInit() {
@@ -33,14 +33,14 @@ export class ViewBackupComponent implements OnInit {
   getEntities() {
     this.action = new IsolatedAction(
       this.data.dialog,
-      "getEnabledEntities",
+      'getEnabledEntities',
       'Get Enabled Entities',
-      "Getting Enabled Entities",
+      'Getting Enabled Entities',
       {
       backupEntity : IRawBackupEntity
       },
       GetBackupEnabledEntitiesComponent,
-      ()=>true,
+      () => true,
       () => this.backUpData.getEnabledEntities().pipe(map(entity => this.action.data.backupEntity = entity))
     );
     this.action.run();

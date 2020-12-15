@@ -18,13 +18,13 @@ import { Observable } from 'rxjs/internal/Observable';
 
 export class GetBackupEnabledEntitiesComponent implements OnInit {
 
-  MaxResults : number;
-  ContinuationToken : string;
-  TimeOut : number;
-  rawdata : IRawBackupEntity[];
+  MaxResults: number;
+  ContinuationToken: string;
+  TimeOut: number;
+  rawdata: IRawBackupEntity[];
   response = '';
   constructor(public dialogRef: MatDialogRef<GetBackupEnabledEntitiesComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) {
+              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) {
       this.MaxResults = 0;
       this.ContinuationToken = '';
       this.TimeOut = 60;
@@ -33,7 +33,7 @@ export class GetBackupEnabledEntitiesComponent implements OnInit {
   ngOnInit(){
     this.rawdata = this.data.data.backupEntity;
   }
-  getBackupEnabledEntities() : Observable<IRawBackupEntity[]>
+  getBackupEnabledEntities(): Observable<IRawBackupEntity[]>
   {
     return this.dataService.restClient.getBackupEnabledEntities(this.data.data);
   }

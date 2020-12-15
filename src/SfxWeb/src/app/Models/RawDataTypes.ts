@@ -24,17 +24,17 @@ export interface IRawApplication {
         ApplicationDefinitionKind: string;
     }
 export class IRawBackupEntity{
-    EntityKind : BackupEntityKind;
+    EntityKind: BackupEntityKind;
 }
 export interface IRawApplicationBackupEntity extends IRawBackupEntity{
-    ApplicationName : string;
+    ApplicationName: string;
 }
 export interface IRawServiceBackupEntity extends IRawBackupEntity{
-    ServiceName : string;
+    ServiceName: string;
 }
 export interface IRawPartitionBackupEntity extends IRawBackupEntity{
-    ServiceName : string;
-    PartitionId : string;
+    ServiceName: string;
+    PartitionId: string;
 }
 export enum BackupEntityKind{
     Invalid,
