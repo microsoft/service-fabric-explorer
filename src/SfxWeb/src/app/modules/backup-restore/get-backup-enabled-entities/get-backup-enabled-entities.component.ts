@@ -9,6 +9,8 @@ import { InvokeFunctionExpr } from '@angular/compiler';
 import { map } from 'rxjs/operators';
 import { IRawBackupEntity } from 'src/app/Models/RawDataTypes';
 import { Observable } from 'rxjs/internal/Observable';
+import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
+import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
   selector: 'app-get-backup-enabled-entities',
@@ -23,6 +25,7 @@ export class GetBackupEnabledEntitiesComponent implements OnInit {
   TimeOut: number;
   rawdata: IRawBackupEntity[];
   response = '';
+  backupEnabledEntitiesInfoListSettings : ListSettings;
   constructor(public dialogRef: MatDialogRef<GetBackupEnabledEntitiesComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) {
       this.MaxResults = 0;
@@ -32,7 +35,14 @@ export class GetBackupEnabledEntitiesComponent implements OnInit {
 
   ngOnInit(){
     this.rawdata = this.data.data.backupEntity;
+    this.backupEnabledEntitiesInfoListSettings = new ListSettings(10, null, [
+      new ListColumnSetting('EntityKind', 'Entity Kind', {colspan: 10}),
+      new ListColumnSetting('ApplicationName', 'Application Name', {colspan: 10}),
+      new ListColumnSetting('ServiceName', 'Service Name', {colspan: 10}),
+      new ListColumnSetting('PartitionId', 'Partition Id', {colspan: 10}),
+    ]);
   }
+
   getBackupEnabledEntities(): Observable<IRawBackupEntity[]>
   {
     return this.dataService.restClient.getBackupEnabledEntities(this.data.data);
