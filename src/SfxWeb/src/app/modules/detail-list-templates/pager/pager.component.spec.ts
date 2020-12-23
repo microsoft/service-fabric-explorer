@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { PagerComponent } from './pager.component';
 
@@ -6,7 +6,7 @@ describe('PagerComponent', () => {
   let component: PagerComponent;
   let fixture: ComponentFixture<PagerComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ PagerComponent ]
     })
