@@ -500,7 +500,7 @@ export class RestClientService {
   }
 
   public getBackupEnabledEntities(backupPolicyName: string, messageHandler?: IResponseMessageHandler): Observable<IRawBackupEntity[]> {
-      let url = "BackupRestore/BackupPolicies/" + encodeURIComponent(backupPolicyName) + "/$/GetBackupEnabledEntities";
+      const url = 'BackupRestore/BackupPolicies/' + encodeURIComponent(backupPolicyName) + '/$/GetBackupEnabledEntities';
       return this.getFullCollection<IRawBackupEntity>(url, 'Get Backup Enabled Entities', RestClientService.apiVersion64, messageHandler);
   }
   public getServiceDescription(applicationId: string, serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawServiceDescription> {
