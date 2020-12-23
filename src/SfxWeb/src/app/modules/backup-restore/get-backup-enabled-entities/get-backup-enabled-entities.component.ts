@@ -19,18 +19,11 @@ import { SettingsService } from 'src/app/services/settings.service';
 })
 
 export class GetBackupEnabledEntitiesComponent implements OnInit {
-
-  MaxResults: number;
-  ContinuationToken: string;
-  TimeOut: number;
   rawdata: IRawBackupEntity[];
   response = '';
   backupEnabledEntitiesInfoListSettings : ListSettings;
   constructor(public dialogRef: MatDialogRef<GetBackupEnabledEntitiesComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) {
-      this.MaxResults = 0;
-      this.ContinuationToken = '';
-      this.TimeOut = 60;
      }
 
   ngOnInit(){
@@ -41,11 +34,6 @@ export class GetBackupEnabledEntitiesComponent implements OnInit {
       new ListColumnSetting('ServiceName', 'Service Name', {colspan: 10}),
       new ListColumnSetting('PartitionId', 'Partition Id', {colspan: 10}),
     ]);
-  }
-
-  getBackupEnabledEntities(): Observable<IRawBackupEntity[]>
-  {
-    return this.dataService.restClient.getBackupEnabledEntities(this.data.data);
   }
 
   cancel() {
