@@ -489,8 +489,8 @@ export class RestClientService {
       return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Partition Backup trigger', { BackupStorage: storage }, messageHandler);
   }
 
-  public restorePartitionBackup(partition: Partition, storage: IRawStorage, timeOut: number, backupId: string, backupLocation: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
-      let url = 'Partitions/' + encodeURIComponent(partition.id) + '/$/Restore';
+  public restorePartitionBackup(partitionId: string, storage: IRawStorage, timeOut: number, backupId: string, backupLocation: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
+      let url = 'Partitions/' + encodeURIComponent(partitionId) + '/$/Restore';
       if (timeOut) {
           url += '?RestoreTimeout=' + timeOut.toString();
       }
