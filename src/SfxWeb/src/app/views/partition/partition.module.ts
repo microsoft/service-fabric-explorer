@@ -14,7 +14,7 @@ import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-resto
 import { PartitionReplicationModule } from 'src/app/modules/partition-replication/partition-replication.module';
 import { PartitionRestoreBackUpComponent } from './partition-restore-back-up/partition-restore-back-up.component';
 import { PartitionTriggerBackUpComponent } from './partition-trigger-back-up/partition-trigger-back-up.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BackupinfoComponent } from './backupinfo/backupinfo.component';
 
 
@@ -28,7 +28,8 @@ import { BackupinfoComponent } from './backupinfo/backupinfo.component';
     EventStoreModule,
     BackupRestoreModule,
     ReactiveFormsModule,
-    PartitionReplicationModule
+    PartitionReplicationModule,
+    FormsModule
   ],
   exports: [BackupinfoComponent]
 })

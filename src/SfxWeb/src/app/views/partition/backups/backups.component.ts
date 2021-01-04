@@ -4,15 +4,17 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, of } from 'rxjs';
+import { Observable, of, Subject, Subscription } from 'rxjs';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { ActionWithConfirmationDialog, IsolatedAction } from 'src/app/Models/Action';
-import { mergeMap, catchError } from 'rxjs/operators';
+import { mergeMap, catchError, debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { PartitionDisableBackUpComponent } from 'src/app/modules/backup-restore/partition-disable-back-up/partition-disable-back-up.component';
 import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/partition-enable-back-up/partition-enable-back-up.component';
 import { PartitionTriggerBackUpComponent } from '../partition-trigger-back-up/partition-trigger-back-up.component';
 import { PartitionRestoreBackUpComponent } from '../partition-restore-back-up/partition-restore-back-up.component';
+import { IOnDateChange } from 'src/app/modules/event-store/double-slider/double-slider.component';
+import { Partition } from 'src/app/Models/DataModels/Partition';
 
 @Component({
   selector: 'app-backups',
@@ -23,12 +25,22 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
 
   partitionBackupListSettings: ListSettings;
   actions: ActionCollection;
-
+  private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
+  startDate : Date;
+  endDate : Date;
+  minDate : Date;
+  maxDate : Date;
+  partition : Partition;
+  startTime : any;
+  endTime : any;
+  private debouncerHandlerSubscription: Subscription;
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) {
     super(data, injector);
   }
-
-  setup() {
+  backupList : any;
+  dateRefresh : boolean;
+  
+  setup() {    
     this.partitionBackupListSettings = this.settings.getNewOrExistingListSettings('partitionBackups', [null], [
       new ListColumnSetting('raw.BackupId', 'BackupId', {
         enableFilter: false,
@@ -41,14 +53,65 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
       new ListColumnSetting('raw.LsnOfLastBackupRecord', 'Lsn of last Backup Record'),
       new ListColumnSetting('raw.CreationTimeUtc', 'Creation Time UTC'),
     ]);
-    console.log(this);
+    this.debouncerHandlerSubscription = this.debounceHandler
+    .pipe(debounceTime(400), distinctUntilChanged())
+    .subscribe(dates => {
+        this.startDate = dates.startDate;
+        this.endDate = dates.endDate;
+        this.startDate.setUTCHours(0,0,0,0);
+        this.endDate.setUTCHours(23,59,59,999);
+        this.setNewPartitionBackupList(this.startDate, this.endDate);
+     });
+    this.dateRefresh = true;
+    this.minDate = new Date();
+    this.maxDate = new Date();
+  }
+
+  startTimeChange(){
+    let time = this.startTime.split(':');
+    this.startDate.setUTCHours(parseInt(time[0]),parseInt(time[1]),0,0);
+    this.setNewPartitionBackupList(this.startDate, this.endDate);
+  }
+
+  endTimeChange(){
+    let time = this.endTime.split(':');
+    this.endDate.setUTCHours(parseInt(time[0]),parseInt(time[1]),0,0);
+    this.setNewPartitionBackupList(this.startDate, this.endDate);
+  }
+
+  setNewPartitionBackupList(startDate : Date, endDate: Date)
+  {
+    this.backupList = this.partition.partitionBackupInfo.partitionBackupList.collection;
+    this.backupList = this.backupList.sort((left, right): number => {
+      if (left.CreationTimeUtc < right.CreationTimeUtc) return -1;
+      if (left.CreationTimeUtc > right.CreationTimeUtc) return 1;
+      return 0;});
+    this.backupList = this.backupList.filter(function(info) {
+      return (new Date(info.raw.CreationTimeUtc) >= startDate && new Date(info.raw.CreationTimeUtc) <= endDate);
+    });
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     if (this.data.actionsEnabled()) {
       this.attemptSetActions();
     }
-
+    
+    if(this.dateRefresh)
+    {
+      this.backupList = this.partition.partitionBackupInfo.partitionBackupList.collection;
+      if(this.backupList.length != 0)
+      {
+        let templist = this.backupList.sort((left, right): number => {
+          if (left.CreationTimeUtc < right.CreationTimeUtc) return -1;
+          if (left.CreationTimeUtc > right.CreationTimeUtc) return 1;
+          return 0;});
+        this.startDate = new Date(templist[0].raw.CreationTimeUtc);
+        this.endDate = new Date(templist[templist.length-1].raw.CreationTimeUtc);
+        this.maxDate.setDate(this.endDate.getDate() + 30);
+        this.minDate.setDate(this.startDate.getDate() - 30);
+        this.dateRefresh = false;
+      }
+    }
     try {
       this.subscriptions.add(this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh(messageHandler).subscribe());
     } catch {}
@@ -67,7 +130,10 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
 
     return this.partition.partitionBackupInfo.partitionBackupList.refresh(messageHandler);
   }
-
+  
+  setNewDates(dates: IOnDateChange) {
+    this.debounceHandler.next(dates);
+  }
 
   attemptSetActions() {
     if (!this.actions) {
