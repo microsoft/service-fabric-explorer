@@ -18,9 +18,8 @@ const f = async () => {
                 let row = data.findIndex(row => row.includes(key));
                 let split = data[row].split(":");
 
-                //replace ' with "" to keep consistent
                 //do not include a , if its the last item in the object
-                data[row] = `${split[0]}: ${value} ${ data[row + 1].includes('}') ? '' : ','}\r`.replace(/'/g, '"');
+                data[row] = `${split[0]}: ${value} ${ data[row + 1].includes('}') ? '' : ','}\r`;
             })
     
         }

@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ApplicationInsights } from '@microsoft/applicationinsights-web'
+import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import { StorageService } from './storage.service';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { TelemetrySnackBarComponent } from '../telemetry-snack-bar/telemetry-snack-bar.component';
@@ -11,14 +11,9 @@ import { Router, NavigationEnd, ActivatedRoute, ActivationEnd } from '@angular/r
 })
 export class TelemetryService {
 
-  appInsights: ApplicationInsights;
-  telemetryEnabled: boolean = true;
-  static readonly localStorageKey = "sfx-telemetry-enabled";
-  static readonly localStoragePromptedTelemetryKey = "sfx-telemetry-prompted";
-
   constructor(private storage: StorageService,
-    private snackBar: MatSnackBar,
-    public routing: Router) {
+              private snackBar: MatSnackBar,
+              public routing: Router) {
 
     this.telemetryEnabled = this.storage.getValueBoolean(TelemetryService.localStorageKey, true);
     if (!this.storage.getValueBoolean(TelemetryService.localStoragePromptedTelemetryKey, false)) {
@@ -28,7 +23,7 @@ export class TelemetryService {
       this.storage.setValue(TelemetryService.localStoragePromptedTelemetryKey, true);
     }
 
-    //enable telemetry
+    // enable telemetry
     this.appInsights = new ApplicationInsights({
       config: {
         instrumentationKey: environment.telemetryKey,
@@ -43,7 +38,7 @@ export class TelemetryService {
 
     this.appInsights.loadAppInsights();
 
-    //there can be multiple activationEnd events so we want to grab the last one.
+    // there can be multiple activationEnd events so we want to grab the last one.
     let lastActivationEnd = null;
     this.routing.events.subscribe(event => {
       if (event instanceof ActivationEnd) {
@@ -58,8 +53,13 @@ export class TelemetryService {
         }
         lastActivationEnd = null;
       }
-    })
+    });
   }
+  static readonly localStorageKey = 'sfx-telemetry-enabled';
+  static readonly localStoragePromptedTelemetryKey = 'sfx-telemetry-prompted';
+
+  appInsights: ApplicationInsights;
+  telemetryEnabled = true;
 
   public SetTelemetry(state: boolean) {
     this.storage.setValue(TelemetryService.localStorageKey, state);
@@ -73,7 +73,7 @@ export class TelemetryService {
   trackPageEvent(name: string) {
     this.appInsights.trackPageView({
       name
-    })
+    });
   }
 
 }
