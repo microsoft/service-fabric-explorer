@@ -3,6 +3,7 @@ const { promises: fs } = require("fs");
 const fileLocation = "./src/environments/environment.prod.ts";
 //csv of key value pairs seperated with :
 //example node replaceEnvVars.js telemetryKey:'test',version:1.2
+//to add string values use ' quotes not " when passing as args.
 const argvs = process.argv.splice(2);
 
 const f = async () => {
@@ -19,7 +20,7 @@ const f = async () => {
                 let split = data[row].split(":");
 
                 //do not include a , if its the last item in the object
-                data[row] = `${split[0]}: ${value} ${ data[row + 1].includes('}') ? '' : ','}\r`;
+                data[row] = `${split[0]}: ${value} ${ data[row + 1].includes('}') ? '' : ','}\r`.replace(/'/g, '"');
             })
     
         }
