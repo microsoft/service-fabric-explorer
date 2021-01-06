@@ -16,7 +16,8 @@
     "cy:run": "cypress run ",
     "lint": "ng lint",
     "build:stats": "ng build --stats-json",
-    "analyze": "webpack-bundle-analyzer dist/stats.json"
+    "analyze": "webpack-bundle-analyzer dist/stats.json",
+    "replaceEnv": "node replaceEnvVars.js"
   },
   "private": true,
   "dependencies": {
