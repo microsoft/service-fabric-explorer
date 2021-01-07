@@ -31,7 +31,7 @@ export class TelemetryService {
         disableAjaxTracking: true,
         disableFetchTracking: true,
         enableAutoRouteTracking: true,
-        disableTelemetry: !this.telemetryEnabled && !!environment.telemetryKey
+        disableTelemetry: !this.telemetryEnabled || !environment.telemetryKey
         /* ...Other Configuration Options... */
       }
     });
