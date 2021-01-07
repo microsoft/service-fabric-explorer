@@ -2,8 +2,8 @@
     Copy raw repair Job <app-clip-board [text]="copyText"></app-clip-board>
 </div>
 
-<div ngbNav #nav="ngbNav">
-    <div ngbNavItem>
+<div ngbNav #nav="ngbNav" [(activeId)]="item.activeTab">
+    <div [ngbNavItem]="1">
         <a ngbNavLink style="font-size: 12pt;">
             Condensed
         </a>
@@ -16,7 +16,7 @@
                     <div style="font-size: larger;">
                         Phase <div style="float: right">Duration</div>
                     </div>
-                    <app-collapse-container *ngFor="let phase of item.historyPhases" [collapsed]="phase.startCollapsed" hideTooltip="true">
+                    <app-collapse-container *ngFor="let phase of item.historyPhases" [collapsed]="phase.startCollapsed" hideTooltip="true" (collapsedChange)="phase.startCollapsed = $event">
                         <div style="margin-bottom: .5em;" collapse-header [ngClass]='phase.statusCss'>
                             {{phase.name}} : {{phase.status}} <span *ngIf="phase.durationMilliseconds > 0" style="float: right;">{{phase.duration}}</span>
                         </div>
@@ -68,7 +68,7 @@
 
         </ng-template>
     </div>
-    <div ngbNavItem>
+    <div [ngbNavItem]="2">
         <a ngbNavLink style="font-size: 12pt;">
             Full Description
         </a>

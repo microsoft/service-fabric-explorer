@@ -125,13 +125,13 @@ export class RepairTasksComponent extends BaseControllerDirective {
     return this.data.restClient.getRepairTasks(messageHandler).pipe(map(data => {
       const expandedDict = {};
       this.completedRepairTasks.concat(this.repairTasks).forEach( (repairTask) => {
-          expandedDict[repairTask.raw.TaskId] = repairTask.isSecondRowCollapsed;
+          expandedDict[repairTask.raw.TaskId] = repairTask;
       });
       this.completedRepairTasks = [];
       this.repairTasks = [];
       data.map(json => new RepairTask(json)).forEach(task => {
         if (task.raw.TaskId in expandedDict) {
-          task.isSecondRowCollapsed = expandedDict[task.raw.TaskId];
+          task.updateViewInfo(expandedDict[task.raw.TaskId]);
         }
 
         if (task.inProgress) {
