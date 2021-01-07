@@ -25,7 +25,7 @@ export class TreeViewComponent implements DoCheck {
   }
 
   leaveBeta() {
-    const originalUrl =  location.href.replace('beta.html', 'index.html');
+    const originalUrl =  location.href.replace('index.html', 'beta.html');
     window.location.assign(originalUrl);
   }
 
