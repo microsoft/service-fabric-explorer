@@ -59,11 +59,13 @@ context('apps list page', () => {
     describe("events", () => {
         it('view events', () => {
             cy.wait(FIXTURE_REF_APPS);
+            cy.route(apiUrl(`/EventsStore/**`), "fx:empty-list").as("events")
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();
             })
     
+            cy.wait('@events')
             cy.url().should('include', '/apps/events')
         })
     })

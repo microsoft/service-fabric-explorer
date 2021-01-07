@@ -163,13 +163,24 @@ describe('Tree Node', () => {
             const child3 = {
                 displayName: () => 'child3',
                 nodeId: 'child3',
-                sortBy: () => [1]
+                sortBy: () => [2]
             };
 
             childQuery = [child3, child2];
             testNode.toggle();
             expect(testNode.displayedChildren.length).toBe(2);
             expect(testNode.displayedChildren[0].nodeId).toBe('child2');
+
+            const child4 = {
+                displayName: () => 'child4',
+                nodeId: 'child4',
+                sortBy: () => [1]
+            };
+
+            childQuery = [child3, child2, child4];
+            testNode.refreshExpandedChildrenRecursively().subscribe();
+            expect(testNode.displayedChildren[1].nodeId).toBe('child4');
+
         });
 
     });

@@ -77,7 +77,8 @@ export class SettingsService {
           [
               new ListColumnSettingForLink('kind', 'Kind', (item) =>  item.viewPath),
               new ListColumnSettingForBadge('healthState', 'Health State'),
-              new ListColumnSettingWithCopyText('description', 'Description')
+              new ListColumnSettingWithCopyText('description', 'Description'),
+              new ListColumnSettingWithUtcTime('sourceTimeStamp', 'Source UTC'),
           ]);
   }
 
@@ -95,8 +96,8 @@ export class SettingsService {
           ],
           // Second row with description
           [
-              new ListColumnSetting('placeholder', 'placeholder', null, false), // Empty column
-              new ListColumnSettingWithCopyText('description', 'Description', [], false, 7)
+              new ListColumnSetting('placeholder', 'placeholder', {enableFilter: false}), // Empty column
+              new ListColumnSettingWithCopyText('description', 'Description', {enableFilter: false, colspan: 7})
           ],
           false,
           (item) => item.description.length > 0
@@ -121,7 +122,12 @@ export class SettingsService {
 
   public getNewOrExistingBackupPolicyListSettings(listKey: string = 'backupPolicies') {
       return this.getNewOrExistingListSettings(listKey, null, [
-          new ListColumnSetting('raw.Name', 'Name', ['raw.Name'], false, (item, property) =>  `<span class="link">${property}</span>`, 1, item => item.action.run()),
+        new ListColumnSetting('raw.Name', 'Name', {
+            enableFilter: false,
+            getDisplayHtml: (item, property) =>  `<span class="link">${property}</span>`,
+            colspan: 1,
+            clickEvent: item => item.action.run()
+          }),
           new ListColumnSetting('raw.Schedule.ScheduleKind', 'ScheduleKind'),
           new ListColumnSetting('raw.Storage.StorageKind', 'StorageKind'),
           new ListColumnSetting('raw.AutoRestoreOnDataLoss', 'AutoRestoreOnDataLoss'),

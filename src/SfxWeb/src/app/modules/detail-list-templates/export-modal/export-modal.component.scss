@@ -1,0 +1,25 @@
+ul {
+    list-style: none;
+}
+
+li {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+label {
+    margin-bottom: 0px;
+}
+
+.text-row {
+    white-space: nowrap;
+}
+
+.text-wrapper {
+    overflow: auto;
+    flex: auto;
+    border: 1px solid gray;
+    padding: 5px;
+    border-radius: 5px;
+}

@@ -473,12 +473,12 @@ export class RestClientService {
 
   public updateBackupPolicy(backupPolicy: IRawBackupPolicy, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'BackupRestore/BackupPolicies/' + encodeURIComponent(backupPolicy.Name) + '/$/Update';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Backup Policy updation', backupPolicy, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64) + '&validateConnection=true', 'Backup Policy updation', backupPolicy, messageHandler);
   }
 
   public createBackupPolicy(backupPolicy: IRawBackupPolicy, messageHandler?: IResponseMessageHandler): Observable<{}> {
       const url = 'BackupRestore/BackupPolicies/$/Create';
-      return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Backup Policy creation', backupPolicy, messageHandler);
+      return this.post(this.getApiUrl(url, RestClientService.apiVersion64) + '&validateConnection=true', 'Backup Policy creation', backupPolicy, messageHandler);
   }
 
   public triggerPartitionBackup(partition: Partition, timeOut: number, storage: IRawStorage,  messageHandler?: IResponseMessageHandler): Observable<{}> {
@@ -859,22 +859,22 @@ export class RestClientService {
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
         const header = `${err.status.toString()} : ${apiDesc}`;
-        console.log(err);
+
 
         const message = messageHandler.getErrorMessage(apiDesc, err);
         if (message) {
-                this.message.showMessage(message, MessageSeverity.Err, header);
+                    this.message.showMessage(message, MessageSeverity.Err, header);
+                }
+
+            else if (err.error instanceof Error) {
+                // A client-side or network error occurred. Handle it accordingly.
+            this.message.showMessage(err.error.message, MessageSeverity.Err, header);
+
+            } else {
+                // The backend returned an unsuccessful response code.
+                // The response body may contain clues as to what went wrong,
+                this.message.showMessage(err.message, MessageSeverity.Err, header);
             }
-
-        if (err.error instanceof Error) {
-            // A client-side or network error occurred. Handle it accordingly.
-        this.message.showMessage(err.error.message, MessageSeverity.Err, header);
-
-        } else {
-            // The backend returned an unsuccessful response code.
-            // The response body may contain clues as to what went wrong,
-            this.message.showMessage(err.message, MessageSeverity.Err, header);
-        }
 
         // ...optionally return a default fallback value so app can continue (pick one)
         // which could be a default value (which has to be a HttpResponse here)

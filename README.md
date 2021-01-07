@@ -101,7 +101,7 @@ There are 2 optional flags
 npm start -- -r -p
 ```
 
-If proxying requests to a secure cluster the appsettings.json can also take a cert pfx location like
+If proxying requests to a secure cluster adding a file called localsettings.json to src/Sfx-Proxy can take a cert pfx location like below.
 ```
 {
   "TargetCluster": {
@@ -112,6 +112,7 @@ If proxying requests to a secure cluster the appsettings.json can also take a ce
   "recordFileBase": "playbackRecordings/"
 }
 ```
+
 
 ## Testing
 
