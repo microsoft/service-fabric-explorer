@@ -67,13 +67,13 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
 
   startTimeChange(){
     let time = this.startTime.split(':');
-    this.startDate.setUTCHours(parseInt(time[0]),parseInt(time[1]),0,0);
+    this.startDate.setUTCHours(parseInt(time[0]),parseInt(time[1]),parseInt(time[2]),0);
     this.setNewPartitionBackupList(this.startDate, this.endDate);
   }
 
   endTimeChange(){
     let time = this.endTime.split(':');
-    this.endDate.setUTCHours(parseInt(time[0]),parseInt(time[1]),59,0);
+    this.endDate.setUTCHours(parseInt(time[0]),parseInt(time[1]),parseInt(time[2]),0);
     this.setNewPartitionBackupList(this.startDate, this.endDate);
   }
 
@@ -91,7 +91,6 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
 
   restore()
   {
-    console.log(this);
     var rawData :any;
     rawData = this.partition.partitionBackupInfo.latestPartitionBackup.collection[0].raw;
     this.data.restClient.restorePartitionBackup(rawData.PartitionInformation.Id, null, null, this.partition.partitionBackupInfo.latestPartitionBackup.collection[0].raw.BackupId, this.partition.partitionBackupInfo.latestPartitionBackup.collection[0].raw.BackupLocation).subscribe( () => {
@@ -116,6 +115,8 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
         this.endDate = new Date(templist[templist.length-1].raw.CreationTimeUtc);
         this.maxDate.setDate(this.endDate.getDate() + 30);
         this.minDate.setDate(this.startDate.getDate() - 30);
+        this.startTime = templist[0].raw.CreationTimeUtc.split('T')[1].split("Z")[0];
+        this.endTime = templist[templist.length-1].raw.CreationTimeUtc.split('T')[1].split("Z")[0];
         this.dateRefresh = false;
       }
     }
