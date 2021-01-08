@@ -20,7 +20,7 @@ export class RequestLoggingComponent implements OnInit {
 
     this.listSettings = this.settings.getNewOrExistingListSettings('requests', [], [
       new ListColumnSetting('apiDesc', 'API Description'),
-      new ListColumnSetting('requestCount', '# of requests'),
+      new ListColumnSetting('requestCount', '# of Requests'),
       new ListColumnSetting('averageDuration', 'Average Duration(MS)'),
       new ListColumnSetting('failureRate', 'Failure Rate'),
     ],
