@@ -13,8 +13,6 @@ export class NestedTableComponent implements DetailBaseComponent, OnInit {
 
   item: IRequestsData;
   listSetting: ListColumnSetting;
-
-
   listSettings: ListSettings;
 
   constructor(private settings: SettingsService) { }

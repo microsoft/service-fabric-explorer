@@ -24,17 +24,17 @@ export class RequestLoggingComponent implements OnInit {
       new ListColumnSetting('averageDuration', 'Average Duration(MS)'),
       new ListColumnSetting('failureRate', 'Failure Rate'),
     ],
-    [
-      new ListColumnSettingWithCustomComponent(NestedTableComponent, '',
-      '',
-      {
-        enableFilter: false,
-        colspan: -1
-      })
-    ],
-    true,
-    (item) => true,
-    true);
+      [
+        new ListColumnSettingWithCustomComponent(NestedTableComponent, '',
+          '',
+          {
+            enableFilter: false,
+            colspan: -1
+          })
+      ],
+      true,
+      (item) => true,
+      true);
   }
 
 }
