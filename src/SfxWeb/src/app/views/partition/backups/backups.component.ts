@@ -58,8 +58,6 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
     .subscribe(dates => {
         this.startDate = dates.startDate;
         this.endDate = dates.endDate;
-        this.startDate.setUTCHours(0,0,0,0);
-        this.endDate.setUTCHours(23,59,59,999);
         this.setNewPartitionBackupList(this.startDate, this.endDate);
      });
     this.dateRefresh = true;
@@ -75,7 +73,7 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
 
   endTimeChange(){
     let time = this.endTime.split(':');
-    this.endDate.setUTCHours(parseInt(time[0]),parseInt(time[1]),0,0);
+    this.endDate.setUTCHours(parseInt(time[0]),parseInt(time[1]),59,0);
     this.setNewPartitionBackupList(this.startDate, this.endDate);
   }
 
@@ -91,6 +89,15 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
     });
   }
 
+  restore()
+  {
+    console.log(this);
+    var rawData :any;
+    rawData = this.partition.partitionBackupInfo.latestPartitionBackup.collection[0].raw;
+    this.data.restClient.restorePartitionBackup(rawData.PartitionInformation.Id, null, null, this.partition.partitionBackupInfo.latestPartitionBackup.collection[0].raw.BackupId, this.partition.partitionBackupInfo.latestPartitionBackup.collection[0].raw.BackupLocation).subscribe( () => {
+    },
+    err => console.log(err));
+  }
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     if (this.data.actionsEnabled()) {
       this.attemptSetActions();

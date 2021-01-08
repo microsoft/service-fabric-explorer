@@ -7,6 +7,9 @@
     <div class="detail-pane essen-pane">
         <h4>Latest Backup</h4>
         <app-detail-view-part [data]="partition.partitionBackupInfo.latestPartitionBackup.collection[0]"></app-detail-view-part>
+        <div class="text-right">
+            <button type="button" (click)="restore()">Restore</button>
+        </div>
     </div>
     
     <div *ngIf="partition && partition.partitionBackupInfo">

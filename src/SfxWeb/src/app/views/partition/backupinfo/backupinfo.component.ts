@@ -25,7 +25,6 @@ export class BackupinfoComponent implements OnInit {
       this.cancel();
     },
     err => console.log(err));
-    console.log(this);
   }
   cancel() {
     this.dialogRef.close();
