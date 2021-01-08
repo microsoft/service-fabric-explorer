@@ -26,21 +26,20 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
   partitionBackupListSettings: ListSettings;
   actions: ActionCollection;
   private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
-  startDate : Date;
-  endDate : Date;
-  minDate : Date;
-  maxDate : Date;
-  partition : Partition;
-  startTime : any;
-  endTime : any;
+  startDate: Date;
+  endDate: Date;
+  minDate: Date;
+  maxDate: Date;
+  startTime: any;
+  endTime: any;
   private debouncerHandlerSubscription: Subscription;
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) {
     super(data, injector);
   }
-  backupList : any;
-  dateRefresh : boolean;
-  
-  setup() {    
+  backupList: any;
+  dateRefresh: boolean;
+
+  setup(){
     this.partitionBackupListSettings = this.settings.getNewOrExistingListSettings('partitionBackups', [null], [
       new ListColumnSetting('raw.BackupId', 'BackupId', {
         enableFilter: false,
@@ -66,34 +65,45 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
   }
 
   startTimeChange(){
-    let time = this.startTime.split(':');
-    this.startDate.setUTCHours(parseInt(time[0]),parseInt(time[1]),parseInt(time[2]),0);
+    const time = this.startTime.split(':');
+    this.startDate.setUTCHours(parseInt(time[0], 10), parseInt(time[1], 10), parseInt(time[2], 10), 0);
     this.setNewPartitionBackupList(this.startDate, this.endDate);
   }
 
   endTimeChange(){
-    let time = this.endTime.split(':');
-    this.endDate.setUTCHours(parseInt(time[0]),parseInt(time[1]),parseInt(time[2]),0);
+    const time = this.endTime.split(':');
+    this.endDate.setUTCHours(parseInt(time[0], 10), parseInt(time[1], 10), parseInt(time[2], 10), 0);
     this.setNewPartitionBackupList(this.startDate, this.endDate);
   }
 
-  setNewPartitionBackupList(startDate : Date, endDate: Date)
+  setNewPartitionBackupList(startDate: Date, endDate: Date)
   {
     this.backupList = this.partition.partitionBackupInfo.partitionBackupList.collection;
     this.backupList = this.backupList.sort((left, right): number => {
-      if (left.CreationTimeUtc < right.CreationTimeUtc) return -1;
-      if (left.CreationTimeUtc > right.CreationTimeUtc) return 1;
-      return 0;});
-    this.backupList = this.backupList.filter(function(info) {
+      if (left.CreationTimeUtc < right.CreationTimeUtc) {
+        return -1;
+      }
+      if (left.CreationTimeUtc > right.CreationTimeUtc) {
+        return 1;
+      }
+      return 0;
+    });
+    this.backupList = this.backupList.filter(function getData(info) {
       return (new Date(info.raw.CreationTimeUtc) >= startDate && new Date(info.raw.CreationTimeUtc) <= endDate);
     });
   }
 
   restore()
   {
-    var rawData :any;
+    let rawData: any;
     rawData = this.partition.partitionBackupInfo.latestPartitionBackup.collection[0].raw;
-    this.data.restClient.restorePartitionBackup(rawData.PartitionInformation.Id, null, null, this.partition.partitionBackupInfo.latestPartitionBackup.collection[0].raw.BackupId, this.partition.partitionBackupInfo.latestPartitionBackup.collection[0].raw.BackupLocation).subscribe( () => {
+    this.data.restClient.restorePartitionBackup(
+      rawData.PartitionInformation.Id,
+      null,
+      null,
+      this.partition.partitionBackupInfo.latestPartitionBackup.collection[0].raw.BackupId,
+      this.partition.partitionBackupInfo.latestPartitionBackup.collection[0].raw.BackupLocation
+      ).subscribe( () => {
     },
     err => console.log(err));
   }
@@ -101,22 +111,26 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
     if (this.data.actionsEnabled()) {
       this.attemptSetActions();
     }
-    
-    if(this.dateRefresh)
+    if (this.dateRefresh)
     {
       this.backupList = this.partition.partitionBackupInfo.partitionBackupList.collection;
-      if(this.backupList.length != 0)
+      if (this.backupList.length !== 0)
       {
-        let templist = this.backupList.sort((left, right): number => {
-          if (left.CreationTimeUtc < right.CreationTimeUtc) return -1;
-          if (left.CreationTimeUtc > right.CreationTimeUtc) return 1;
-          return 0;});
+        const templist = this.backupList.sort((left, right): number => {
+          if (left.CreationTimeUtc < right.CreationTimeUtc) {
+            return -1;
+          }
+          if (left.CreationTimeUtc > right.CreationTimeUtc) {
+            return 1;
+          }
+          return 0;
+        });
         this.startDate = new Date(templist[0].raw.CreationTimeUtc);
-        this.endDate = new Date(templist[templist.length-1].raw.CreationTimeUtc);
+        this.endDate = new Date(templist[templist.length - 1].raw.CreationTimeUtc);
         this.maxDate.setDate(this.endDate.getDate() + 30);
         this.minDate.setDate(this.startDate.getDate() - 30);
-        this.startTime = templist[0].raw.CreationTimeUtc.split('T')[1].split("Z")[0];
-        this.endTime = templist[templist.length-1].raw.CreationTimeUtc.split('T')[1].split("Z")[0];
+        this.startTime = templist[0].raw.CreationTimeUtc.split('T')[1].split('Z')[0];
+        this.endTime = templist[templist.length - 1].raw.CreationTimeUtc.split('T')[1].split('Z')[0];
         this.dateRefresh = false;
       }
     }
@@ -138,7 +152,7 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
 
     return this.partition.partitionBackupInfo.partitionBackupList.refresh(messageHandler);
   }
-  
+
   setNewDates(dates: IOnDateChange) {
     this.debounceHandler.next(dates);
   }

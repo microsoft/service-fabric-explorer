@@ -21,7 +21,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 export class GetBackupEnabledEntitiesComponent implements OnInit {
   rawdata: IRawBackupEntity[];
   response = '';
-  backupEnabledEntitiesInfoListSettings : ListSettings;
+  backupEnabledEntitiesInfoListSettings: ListSettings;
   constructor(public dialogRef: MatDialogRef<GetBackupEnabledEntitiesComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) {
      }

@@ -10,7 +10,7 @@ import { DataService } from 'src/app/services/data.service';
   styleUrls: ['./backupinfo.component.scss']
 })
 export class BackupinfoComponent implements OnInit {
-  backupinfo: any;//IRawPartitionBackup;
+  backupinfo: any;
   constructor(public dialogRef: MatDialogRef<BackupinfoComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, injector: Injector, private dataService: DataService) {
     this.backupinfo = data.data;

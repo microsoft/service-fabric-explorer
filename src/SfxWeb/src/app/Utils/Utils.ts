@@ -84,7 +84,7 @@ export class Utils {
      */
     public static result(item: any, propertyPath: string) {
         let value = item;
-        if(propertyPath!=null)
+        if (propertyPath !== null)
         {
             propertyPath.split('.').forEach(path => {
                 if (typeof value[path] === 'function'){

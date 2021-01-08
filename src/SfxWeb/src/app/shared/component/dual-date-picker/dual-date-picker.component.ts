@@ -55,7 +55,6 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
       this.toDate = null;
       this.fromDate = date;
     }
-    
     if (this.fromDate && this.toDate){
       this.currentStartDate.setFullYear(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
       this.currentEndDate.setFullYear(this.toDate.year, this.toDate.month - 1, this.toDate.day);
