@@ -58,6 +58,8 @@ export class RepairTask {
 
     // Initially keep additional details collapsed.
     public isSecondRowCollapsed = true;
+    public activeTab = 1;
+
     public impactedNodes: string[] = [];
     public history: IRepairTaskHistoryPhase[] = [];
     public createdAt = '';
@@ -224,4 +226,15 @@ export class RepairTask {
         };
     }
 
+    updateViewInfo(previousTask: RepairTask) {
+        this.isSecondRowCollapsed = previousTask.isSecondRowCollapsed;
+        this.activeTab = previousTask.activeTab;
+        previousTask.historyPhases.forEach( (phase, index) => {
+            // if starting collapsed is false, let it open.
+            if (this.historyPhases[index].startCollapsed) {
+                this.historyPhases[index].startCollapsed = phase.startCollapsed;
+            }
+        });
+
+    }
 }

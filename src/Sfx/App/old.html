@@ -1,0 +1,229 @@
+﻿<!DOCTYPE html>
+<!-- NOTE: We no longer have ng-app in the html tag,
+     as we want to control the Angular bootstrapping
+     until after our query against the cluster.-->
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="version" content="{{::SfxVersion}}">
+    <meta name="build" content="{{::SfxBuild}}">
+    <title>Service Fabric Explorer</title>
+    <link rel="icon" type="image/png" href="images/favicon.png" />
+
+    <!-- Make sure ng-cloak gets processed first so users do not see flashing binding template -->
+    <style>
+        [ng-cloak],
+        .ng-cloak,
+        .ng-hide {
+            display: none !important;
+        }
+    </style>
+
+    <!-- CSS imports -->
+    <link href="css/lib.min.css" rel="stylesheet" />
+    <link href="css/dark.min.css" rel="stylesheet" sfx-theme-import />
+</head>
+
+<body ng-cloak ng-show="authCtrl.isApplicationBootstrapped" ng-controller="AuthenticationController as authCtrl">
+    <a href="#main" style="display: none;">Skip to main content</a>
+    <!-- Navbar -->
+    <nav class="navbar navbar-inverse navbar-custom navbar-fixed-top" ng-controller="NavbarController as navbarCtrl" role="banner">
+        <div class="container-fluid">
+            <div class="navbar-header">
+                <a class="navbar-brand navbar-brand-azure" href="https://aka.ms/portalsfx" target="_blank" tabindex="0" sfx-tree-set-focus selected="true">Microsoft Azure</a>
+                <!-- Use inline style to limit the icon size to prevent a huge icon show up in browser before css is downloaded -->
+                <a class="navbar-brand navbar-brand-title" href="#" ng-click="navbarCtrl.navigateToCluster()">
+                    <img style="width: 24px" src="images/favicon.svg" title="{{authCtrl.brandTitle}}" class="navbar-brand-icon"
+                    />{{authCtrl.brandTitle}}</a>
+
+                    <span ng-controller="HeaderAlertController as HeaderAlertCtrl">
+                        <div style="display: inline-flex; height: 50px;" ng-if="HeaderAlertCtrl.clusterUpgradeProgress.isInitialized && HeaderAlertCtrl.clusterUpgradeProgress.isUpgrading">
+                            <a href="#/tab/details" style="margin: auto;" class="essen-pane">
+                                <span ng-if="HeaderAlertCtrl.clusterUpgradeProgress.isInitialized">
+                                    <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error"></span>
+                                    Cluster Upgrade in Progress since {{HeaderAlertCtrl.clusterUpgradeProgress.startTimestampUtc}}
+                                        {{HeaderAlertCtrl.getUpgradeDomainProgress()}}
+                                </span>
+                            </a>
+                        </div>
+                    </span>
+
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#navbar-right-control">
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+            </div>
+            <div class="collapse navbar-collapse" id="navbar-right-control">
+                <div class="navbar-control-section navbar-right">
+                    <div class="slider-control" ng-controller="RefreshSliderController as refreshCtrl">
+                        <span class="slider-title" id="refresh-rate-title">REFRESH RATE</span>
+                        <span class="slider-label" id="refresh-rate-label" ng-if="refreshCtrl.refreshRate > 0">{{refreshCtrl.refreshRate}}s</span>
+                        <a href="" class="slider-label" id="slider-min-label" role="button" aria-label="Turn off refresh">OFF</a>
+                        <sfx-slider min-label-id="slider-min-label" max-label-id="slider-max-label" class="slider" title="Change how often content is updated by clicking or using arrow keys"
+                            aria-label="Change how often content is updated" role="slider" aria-valuenow="{{refreshCtrl.refreshRate}}" aria-valuemax="{{refreshCtrl.max}}" aria-valuemin="{{refreshCtrl.min}}" ></sfx-slider>
+                        <a href="" class="slider-label" id="slider-max-label" role="button" aria-label="Set the refresh rate to the fastest">FAST</a>
+                        <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-navigate-refresh" ng-class="{'disabled rotate': navbarCtrl.isRefreshing}"
+                            ng-click="navbarCtrl.refreshAll()" role="button" aria-label="refresh" title="refresh"></a>
+                    </div>
+
+                    <div class="settings-control dropdown">
+                        <a href="" class="dropdown-toggle dark-background-link bowtie-icon bowtie-settings-gear" role="button" data-toggle="dropdown"
+                            aria-haspopup="true" aria-expanded="true" aria-label="settings" title="settings"></a>
+                        <!-- use inline style to work around IE bug that list-style=none gets ignored for first load -->
+                        <ul class="dropdown-menu dropdown-menu-right" style="list-style: none" ng-controller="SettingsController as settingsCtrl">
+                            <li ng-controller="ThemeController as themeCtrl">
+                                <div class="settings-item-title">Choose a theme</div>
+                                <div class="choose-theme-container" role="menu">
+                                    <img ng-class="{'selected': themeCtrl.getActiveThemeName() === 'dark'}" ng-click="themeCtrl.changeToTheme('dark'); $event.stopPropagation()"
+                                        title="Use the dark theme" src="images/dark-theme.png" role="menuitemradio" />
+                                    <img ng-class="{'selected': themeCtrl.getActiveThemeName() === 'light'}" ng-click="themeCtrl.changeToTheme('light'); $event.stopPropagation()"
+                                        title="Use the light theme" src="images/light-theme.png" role="menuitemradio" />
+                                </div>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li>
+                                <label class="settings-item-title" id="page-size-label">Display items per page: </label>
+                                <input class="input-flat dark-bg" autocomplete="off" onkeypress="return event.charCode >= 48 && event.charCode <= 57" type="number"
+                                    ng-model="settingsCtrl.settings.paginationLimit" ng-model-options="{ updateOn: 'blur' }"
+                                    min="5" max="200" step="5" aria-labelledby="page-size-label" />
+                            </li>
+                            <li>
+                                <label class="settings-item-title" id="page-size-label">
+                                    Advanced mode
+                                    <input type="checkbox" ng-model="settingsCtrl.advancedModeState" ng-change="settingsCtrl.setAdvancedMode()"> 
+                                </label>
+                            </li>
+                            <li role="separator" class="divider"></li>
+                            <li class="hoverable-link">
+                                <a href="https://go.microsoft.com/fwlink/?LinkId=512132" title="Privacy and Cookies" target="_blank" style="color:white;">
+                                    <span>Privacy and Cookies</span>
+                                    <i class="bowtie-icon bowtie-navigate-external"></i>
+                                </a>
+                            </li>
+                            <li class="hoverable-link">
+                                <a href="https://aka.ms/servicefabricfeedback" title="Suggest an improvement" target="_blank" style="color:white;">
+                                    <span>Suggest an improvement</span>
+                                    <i class="bowtie-icon bowtie-navigate-external"></i>
+                                </a>
+                            </li>
+                        </ul>
+                    </div>
+
+                    <a href="https://aka.ms/sf/discovery" class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-info" target="_blank"
+                        title="Get more info"></a>
+
+                    <div class="user-control dropdown" ng-if="authCtrl.isAadAuthenticated && !anthCtrl.isStandalone">
+                        <div class="dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="true">
+                            {{authCtrl.userName}}
+                            <i class="user-icon bowtie-icon bowtie-user"></i>
+                        </div>
+                        <ul class="dropdown-menu dropdown-menu-right" style="list-style: none">
+                            <li class="hoverable" ng-click="authCtrl.logOut()">
+                                <span>Sign out</span>
+                                <img class="sign-out-icon" src="images/logout.svg" />
+                            </li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Tree -->
+    <div id="tree" class="left-panel" aria-hidden="false" role="navigation">
+        <div sfx-include src="'treeViewPanel'" ng-controller="TreeViewController as treeCtrl"></div>
+        <div sfx-splitter id="splitter" aria-valuemin="150" aria-valuemax="600" ng-controller="SplitterController" tabindex="0" role="separator" aria-label="splitter - please use arrow key to resize the tree panel"></div>
+    </div>
+
+    <!-- View -->
+    <div id="main" role="main" class="right-panel" aria-hidden="false">
+        <div id="view-container" ng-view></div>
+    </div>
+
+    <!-- Messages -->
+    <div class="message-container" ng-controller="MessageController as msgCtrl">
+        <div ng-repeat="msg in msgCtrl.messages" class="alert alert-dismissible" role="alert" ng-class="{'alert-info': msg.severity === 0, 'alert-warning': msg.severity === 1, 'alert-danger': msg.severity === 2 }">
+            <button type="button" class="close" ng-click="msgCtrl.removeMsg(msg.message)">
+                <span aria-hidden="true">&times;</span>
+                <span class="sr-only">Close</span>
+            </button>
+            <strong ng-show="msg.severity === 0">Information:</strong>
+            <strong ng-show="msg.severity === 1">Warning:</strong>
+            <strong ng-show="msg.severity === 2">Error:</strong>
+            <span class="preserve-whitespace-wrap">{{msg.message}}</span>
+        </div>
+    </div>
+
+    <script type="text/ng-template" id="treeViewPanel">
+        <div class="tree-header">
+            <div style="padding: 6px;" class="info alert-info">
+                <div style="padding: 3px;">
+                    <span style="vertical-align: middle; font-size: large;" ng-click="treeCtrl.enterBeta();"> To enter beta (click here)</span>
+                </div>
+            </div>
+            <div class="toolbar container-fluid">
+                <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showOkItems}" ng-click="treeCtrl.tree.showOkItems = !treeCtrl.tree.showOkItems">
+                    <sfx-badge badge-class="'badge-ok'" text="'OK'"></sfx-badge>
+                </div>
+                <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showWarningItems}" ng-click="treeCtrl.tree.showWarningItems = !treeCtrl.tree.showWarningItems">
+                    <sfx-badge badge-class="'badge-warning'" text="'Warning'"></sfx-badge>
+                </div>
+                <div class="checkbox-push" ng-class="{active: treeCtrl.tree.showErrorItems}" ng-click="treeCtrl.tree.showErrorItems = !treeCtrl.tree.showErrorItems">
+                    <sfx-badge badge-class="'badge-error'" text="'Error'"></sfx-badge>
+                </div>
+            </div>
+            <sfx-search-bar class="tree-search-bar" custom-class="dark-bg" placeholder="Search Cluster" model="treeCtrl.tree.searchTerm"></sfx-search-bar>
+        </div>
+
+        <div class="tree-body">
+            <div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate" ng-show="treeCtrl.tree.isLoading">
+            </div>
+
+            <div ng-show="!treeCtrl.tree.isLoading && treeCtrl.tree.isEmpty" class="informative content">
+                <p>Nothing to display</p>
+            </div>
+
+            <div ng-show="!treeCtrl.tree.isLoading && !treeCtrl.tree.isEmpty"
+                 ng-keydown="treeCtrl.tree.onKeyDown($event)" class="tree-view" tabindex="0">
+                <div sfx-tree-node node="treeCtrl.tree.childGroupViewModel"></div>
+            </div>
+        </div>
+    </script>
+
+    <!-- Nodejs integration for standalone SFX -->
+    <script type="text/javascript">
+        if (typeof require !== 'undefined'
+            && require !== null) {
+
+            window.nodeRequire = require;
+
+            delete window.require;
+            delete window.exports;
+            delete window.module;
+        }
+    </script>
+
+    <!-- Application Insights -->
+    <script type="text/javascript">
+        var appInsights = window.appInsights || function (config) {
+            function r(config) { t[config] = function () { var i = arguments; t.queue.push(function () { t[config].apply(t, i) }) } } var t = { config: config }, u = document, e = window, o = "script", s = u.createElement(o), i, f; for (s.src = config.url || "https://az416426.vo.msecnd.net/scripts/a/ai.0.js", u.getElementsByTagName(o)[0].parentNode.appendChild(s), t.cookie = u.cookie, t.queue = [], i = ["Event", "Exception", "Metric", "PageView", "Trace"]; i.length;) r("track" + i.pop()); return r("setAuthenticatedUserContext"), r("clearAuthenticatedUserContext"), config.disableExceptionTracking || (i = "onerror", r("_" + i), f = e[i], e[i] = function (config, r, u, e, o) { var s = f && f(config, r, u, e, o); return s !== !0 && t["_" + i](config, r, u, e, o), s }), t
+        }({
+            instrumentationKey: "84c71119-d044-4bc2-86b3-d65a8968c241",
+            disableAjaxTracking: true,
+            disableTelemetry: true // Disable telemetry by default, which will be enabled in TelemetryService
+        });
+
+        window.appInsights = appInsights;
+    </script>
+
+    <!-- Script imports -->
+    <script src="js/lib.min.js"></script>
+    <script src="js/templates.min.js"></script>
+    <script src="js/app.min.js"></script>
+</body>
+
+</html>
