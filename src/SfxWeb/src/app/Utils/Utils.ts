@@ -169,5 +169,16 @@ export class Utils {
         return text;
     }
 
+    public static addToArrayAndTrim<T>(list: T[], data: T, maxLength: number, onRemoval = (item: T) => null, onAddition = (item: T) => null) {
+        if (list.length >= maxLength) {
+            const r = list.splice(maxLength - 1, 1);
+            onRemoval(r[0]);
+        }
+
+        list.splice(0, 0, data);
+        onAddition(data);
+    }
+
+
 }
 

@@ -13,7 +13,7 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
          IRawServiceNameInfo, IRawApplicationNameInfo } from '../Models/RawDataTypes';
-import { mergeMap, map, catchError } from 'rxjs/operators';
+import { mergeMap, map, catchError, finalize } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
 import { Partition } from '../Models/DataModels/Partition';
@@ -22,7 +22,7 @@ import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent
 import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
-
+import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger';
 @Injectable({
   providedIn: 'root'
 })
@@ -39,9 +39,9 @@ export class RestClientService {
   private static apiVersion64 = '6.4';
   private static apiVersion65 = '6.5';
 
-  private static baseUrl = 'api';
-
   private cacheAllowanceToken: number = Date.now().valueOf();
+
+  public networkDebugger: NetworkDebugger = new NetworkDebugger();
 
   public invalidateBrowserRestResponseCache(): void {
       this.cacheAllowanceToken = Date.now().valueOf();
@@ -857,31 +857,45 @@ export class RestClientService {
   }
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
+    const data: IRequest = {
+        startTime: new Date().toISOString(),
+        apiDesc,
+        errorMessage: '',
+        duration: 0,
+        data: null,
+        statusCode: 200
+    };
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
         const header = `${err.status.toString()} : ${apiDesc}`;
 
-
         const message = messageHandler.getErrorMessage(apiDesc, err);
+        let displayMessage = '';
         if (message) {
-                    this.message.showMessage(message, MessageSeverity.Err, header);
-                }
+            displayMessage = message;
+        }
 
-            else if (err.error instanceof Error) {
-                // A client-side or network error occurred. Handle it accordingly.
-            this.message.showMessage(err.error.message, MessageSeverity.Err, header);
+        else if (err.error instanceof Error) {
+            // A client-side or network error occurred. Handle it accordingly.
+            displayMessage = err.error.message;
 
-            } else {
-                // The backend returned an unsuccessful response code.
-                // The response body may contain clues as to what went wrong,
-                this.message.showMessage(err.message, MessageSeverity.Err, header);
-            }
+        } else {
+            // The backend returned an unsuccessful response code.
+            // The response body may contain clues as to what went wrong,
+            displayMessage = err.message;
+        }
 
+        this.message.showMessage(displayMessage, MessageSeverity.Err, header);
+        data.errorMessage = displayMessage;
+        data.statusCode = err.status;
         // ...optionally return a default fallback value so app can continue (pick one)
         // which could be a default value (which has to be a HttpResponse here)
         // return Observable.of(new HttpResponse({body: [{name: "Default value..."}]}));
         // or simply an empty observable
         return throwError(err);
-    }));
+    }), finalize(() => {
+        data.duration = new Date().getTime() - new Date(data.startTime).getTime();
+        this.networkDebugger.addRequest(data);
+     }));
     }
 }
 
