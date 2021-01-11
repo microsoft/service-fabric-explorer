@@ -112,7 +112,6 @@ $SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
 
 .left-panel {
     overflow: hidden;
-    padding: 10px 0 20px 0;
     background-color: $tree-background-color;
 }
 
@@ -430,8 +429,6 @@ html,body {
     vertical-align: top;
     border-top: 1px solid #4c4c4c;
 }
-html, body { height: 100%; }
-body { margin: 0; font-family: Roboto, "Helvetica Neue", sans-serif; }
 
 app-navbar {
     width: 100%;
@@ -644,6 +641,11 @@ app-navbar {
     color: black;
   }
 
+  .vis-item.yellow {
+      background-color: yellow;
+      color: black;
+  }
+
   .vis-item.blue {
     background-color: #0075c9;
   }
@@ -790,6 +792,12 @@ app-navbar {
     background-color: $tree-node-search-highlight-background-color;
 }
 
+.row-wrapper-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-evenly;
+}
+
 .row-wrapper {
     display: flex;
     flex-direction: row;
@@ -804,7 +812,7 @@ app-navbar {
     border-bottom-color: inherit;
 }
 
-.nav-tabs .nav-link.active {
+.nav-item > .active {
     border-bottom-color: #0075c9;
     border-bottom-style: solid;
     color: #FFFFFF;

@@ -1,9 +1,8 @@
 import { HttpRequest, HttpInterceptor, HttpHandler, HttpEvent, HTTP_INTERCEPTORS, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { mergeMap } from 'rxjs/internal/operators/mergeMap';
 import { Observable } from 'rxjs';
 import { AdalService } from './services/adal.service';
-import { map } from 'rxjs/operators';
+import { finalize, map, mergeMap } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
 import { environment } from 'src/environments/environment';
@@ -16,7 +15,7 @@ export class AuthInterceptor implements HttpInterceptor {
   constructor(private adalService: AdalService) {}
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
-    if(this.adalService.aadEnabled){
+    if (this.adalService.aadEnabled){
         return this.adalService.acquireTokenResilient(this.adalService.config.raw.metadata.cluster)
         .pipe(mergeMap((token) => {
             if (token) {
@@ -42,17 +41,17 @@ export class ReadOnlyHeaderInterceptor implements HttpInterceptor {
     Observable<HttpEvent<any>> {
         return next.handle(req).pipe(map(res => {
             if (res instanceof HttpResponse) {
-                if( res.headers.has(Constants.SfxReadonlyHeaderName)) {
-                    this.dataService.readOnlyHeader = res.headers.get(Constants.SfxReadonlyHeaderName) === "1";
+                if ( res.headers.has(Constants.SfxReadonlyHeaderName)) {
+                    this.dataService.readOnlyHeader = res.headers.get(Constants.SfxReadonlyHeaderName) === '1';
                 }
 
-                if(res.headers.has(Constants.SfxClusterNameHeaderName)) {
+                if (res.headers.has(Constants.SfxClusterNameHeaderName)) {
                     this.dataService.clusterNameMetadata = res.headers.get(Constants.SfxClusterNameHeaderName);
                 }
 
               }
             return res;
-        }))
+        }));
   }
 }
 
@@ -61,9 +60,9 @@ export class GlobalHeaderInterceptor implements HttpInterceptor {
   constructor() {}
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let newHeaders = req.headers;
-    //ADD ADDITIONAL HEADERS HERE
+    // ADD ADDITIONAL HEADERS HERE
     newHeaders = newHeaders.append('x-servicefabricclienttype', 'SFX')
-                           .append('sfx-build', environment.version)
+                           .append('sfx-build', environment.version);
 
     return next.handle(req.clone({headers: newHeaders}));
  }

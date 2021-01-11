@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -13,7 +13,7 @@ import { map } from 'rxjs/operators';
   templateUrl: './all.component.html',
   styleUrls: ['./all.component.scss']
 })
-export class AllComponent extends BaseController {
+export class AllComponent extends BaseControllerDirective {
 
   apps: ApplicationCollection;
   listSettings: ListSettings;
@@ -23,12 +23,12 @@ export class AllComponent extends BaseController {
    }
 
   setup() {
-    this.listSettings = this.settings.getNewOrExistingListSettings("apps", ["name"], [
-      new ListColumnSettingForLink("name", "Name", item => item.viewPath),
-      new ListColumnSettingWithFilter("raw.TypeName", "Application Type"),
-      new ListColumnSetting("raw.TypeVersion", "Version"),
-      new ListColumnSettingForBadge("healthState", "Health State"),
-      new ListColumnSettingWithFilter("raw.Status", "Status")
+    this.listSettings = this.settings.getNewOrExistingListSettings('apps', ['name'], [
+      new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
+      new ListColumnSettingWithFilter('raw.TypeName', 'Application Type'),
+      new ListColumnSetting('raw.TypeVersion', 'Version'),
+      new ListColumnSettingForBadge('healthState', 'Health State'),
+      new ListColumnSettingWithFilter('raw.Status', 'Status')
     ]);
   }
 

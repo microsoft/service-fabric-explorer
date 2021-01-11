@@ -1,17 +1,17 @@
-﻿import { Constants } from '../Common/Constants';
+import { Constants } from '../Common/Constants';
 import { ActivatedRouteSnapshot } from '@angular/router';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class IdUtils {
 
     // This traverses the route, following ancestors, looking for the parameter.
     public static getParam(route: ActivatedRouteSnapshot, key: string): any {
       if (route != null) {
-        let param = route.params[key];
+        const param = route.params[key];
         if (param === undefined) {
           return IdUtils.getParam(route.parent, key);
         } else {
@@ -40,7 +40,7 @@ export class IdUtils {
 
     public static getServicePackageActivationId(route: ActivatedRouteSnapshot): string {
         const id = IdUtils.getParam(route, 'activationId');
-        return id ? decodeURIComponent(id) : "";
+        return id ? decodeURIComponent(id) : '';
     }
 
     public static getAppTypeName(route: ActivatedRouteSnapshot): string {

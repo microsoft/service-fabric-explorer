@@ -10,10 +10,10 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class PartitionEnableBackUpComponent implements OnInit {
 
-  backupPolicyName: string = "";
+  backupPolicyName = '';
 
   constructor(public dialogRef: MatDialogRef<PartitionEnableBackUpComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) { }
+              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) { }
 
   ngOnInit() {
     this.dataService.backupPolicies.ensureInitialized().subscribe();
@@ -21,14 +21,14 @@ export class PartitionEnableBackUpComponent implements OnInit {
 
   ok(){
     this.data.data.enable(this.backupPolicyName).subscribe( () => {
-      this.dialogRef.close(false);          
+      this.dialogRef.close(false);
     },
     err => {
-      console.log(err)
-    })
+      console.log(err);
+    });
   }
 
   cancel() {
-    this.dialogRef.close(false);    
+    this.dialogRef.close(false);
   }
 }

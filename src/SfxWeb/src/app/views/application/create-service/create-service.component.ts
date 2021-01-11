@@ -14,22 +14,22 @@ export class CreateServiceComponent implements OnInit {
   description: CreateServiceDescription;
   serviceType: ServiceType;
   constructor(public dialogRef: MatDialogRef<CreateServiceComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-    private dataService: DataService) { }
+              @Inject(MAT_DIALOG_DATA) public data: any,
+              private dataService: DataService) { }
 
   ngOnInit() {
     this.serviceType = this.data.data;
-    this.description = new CreateServiceDescription(this.serviceType, <Application>this.serviceType.parent);
+    this.description = new CreateServiceDescription(this.serviceType, this.serviceType.parent as Application);
   }
 
   create() {
     this.serviceType.createService(this.description).subscribe(() => {
-      if(this.description) {
-        //when success, reset the dialog
+      if (this.description) {
+        // when success, reset the dialog
         this.description.reset();
         this.dialogRef.close();
       }
-    })
+    });
   }
 
   cancel() {

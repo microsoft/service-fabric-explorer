@@ -1,0 +1,55 @@
+{
+    "HealthEvents": [
+        {
+            "SourceId": "System.FabricNode",
+            "Property": "Certificate_client",
+            "HealthState": "Ok",
+            "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+            "Description": "Certificate expiration: thumbprint = 52b0278d37cbfe68f8cdf04f423a994d66ceb932, expiration = 2021-04-23 16:11:19.000, remaining lifetime is 227:1:01:12.181, please refresh ahead of time to avoid catastrophic failure. Warning threshold Security/CertificateExpirySafetyMargin is configured at 115:17:46:40.000, if needed, you can adjust it to fit your refresh process.",
+            "SequenceNumber": "132440514068181266",
+            "RemoveWhenExpired": false,
+            "HealthReportId": "Node_7.0_1000",
+            "SourceUtcTimestamp": "2020-09-08T15:10:06.818Z",
+            "LastModifiedUtcTimestamp": "2020-09-08T15:10:30.263Z",
+            "IsExpired": false,
+            "LastOkTransitionAt": "2020-08-26T15:27:15.508Z",
+            "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+            "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        },
+        {
+            "SourceId": "System.FabricNode",
+            "Property": "Certificate_cluster",
+            "HealthState": "Warning",
+            "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+            "Description": "Certificate expiration: thumbprint = 52b0278d37cbfe68f8cdf04f423a994d66ceb932, expiration = 2021-04-23 16:11:19.000, remaining lifetime is 226:22:23:31.909, please refresh ahead of time to avoid catastrophic failure. Warning threshold Security/CertificateExpirySafetyMargin is configured at 115:17:46:40.000, if needed, you can adjust it to fit your refresh process.",
+            "SequenceNumber": "132440608670908614",
+            "RemoveWhenExpired": false,
+            "HealthReportId": "Node_7.0_1000",
+            "SourceUtcTimestamp": "2020-09-08T17:47:47.090Z",
+            "LastModifiedUtcTimestamp": "2020-09-08T17:47:59.636Z",
+            "IsExpired": false,
+            "LastOkTransitionAt": "2020-08-26T11:48:10.673Z",
+            "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+            "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        },
+        {
+            "SourceId": "System.FabricNode",
+            "Property": "Certificate_server",
+            "HealthState": "Ok",
+            "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+            "Description": "Certificate expiration: thumbprint = 52b0278d37cbfe68f8cdf04f423a994d66ceb932, expiration = 2021-04-23 16:11:19.000, remaining lifetime is 227:4:37:57.370, please refresh ahead of time to avoid catastrophic failure. Warning threshold Security/CertificateExpirySafetyMargin is configured at 115:17:46:40.000, if needed, you can adjust it to fit your refresh process.",
+            "SequenceNumber": "132440384016292799",
+            "RemoveWhenExpired": false,
+            "HealthReportId": "Node_7.0_1000",
+            "SourceUtcTimestamp": "2020-09-08T11:33:21.629Z",
+            "LastModifiedUtcTimestamp": "2020-09-08T11:33:27.019Z",
+            "IsExpired": false,
+            "LastOkTransitionAt": "2020-08-26T11:33:41.939Z",
+            "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+            "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        }
+    ],
+    "AggregatedHealthState": "Warning",
+    "UnhealthyEvaluations": [],
+    "Name": "_nt_4"
+}

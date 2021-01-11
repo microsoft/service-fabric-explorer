@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { FolderActionsComponent } from './folder-actions.component';
 
@@ -6,7 +6,7 @@ describe('FolderActionsComponent', () => {
   let component: FolderActionsComponent;
   let fixture: ComponentFixture<FolderActionsComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ FolderActionsComponent ]
     })

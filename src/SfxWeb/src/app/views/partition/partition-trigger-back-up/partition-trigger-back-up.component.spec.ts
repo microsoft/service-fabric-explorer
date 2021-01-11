@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { PartitionTriggerBackUpComponent } from './partition-trigger-back-up.component';
 
@@ -6,7 +6,7 @@ describe('PartitionTriggerBackUpComponent', () => {
   let component: PartitionTriggerBackUpComponent;
   let fixture: ComponentFixture<PartitionTriggerBackUpComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ PartitionTriggerBackUpComponent ]
     })

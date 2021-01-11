@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink, ListColumnSettingWithCopyText } from '../Models/ListSettings';
-import { HtmlUtils } from '../Utils/HtmlUtils';
+import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink, ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime } from '../Models/ListSettings';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 import { NodeLoadInformation } from '../Models/DataModels/Node';
-import { IMetricsViewModel, MetricsViewModel } from '../ViewModels/MetricsViewModel';
+import { MetricsViewModel } from '../ViewModels/MetricsViewModel';
 import { StorageService } from './storage.service';
 
 @Injectable({
@@ -12,11 +11,11 @@ import { StorageService } from './storage.service';
 })
 export class SettingsService {
   private listSettings: Record<string, ListSettings>;
-  private _paginationLimit: number;
-  private _metricsViewModel: MetricsViewModel;
+  private iPaginationLimit: number;
+  private iMetricsViewModel: MetricsViewModel;
 
   public get paginationLimit(): number {
-      return this._paginationLimit;
+      return this.iPaginationLimit;
   }
 
   public set paginationLimit(limit: number) {
@@ -28,21 +27,21 @@ export class SettingsService {
       } else if (limit > Constants.PaginationLimitMax) {
           limit = Constants.PaginationLimitMax;
       }
-      this._paginationLimit = limit;
+      this.iPaginationLimit = limit;
       this.storage.setValue(Constants.PaginationLimitStorageKey, limit);
       this.updatePaginationLimit(limit);
   }
 
   public constructor(private storage: StorageService) {
       this.listSettings = {};
-      this._paginationLimit = storage.getValueNumber(Constants.PaginationLimitStorageKey, Constants.DefaultPaginationLimit);
+      this.iPaginationLimit = storage.getValueNumber(Constants.PaginationLimitStorageKey, Constants.DefaultPaginationLimit);
   }
 
   public getNewOrExistingMetricsViewModel(clusterLoadInformation: ClusterLoadInformation, nodesLoadInformation: NodeLoadInformation[]): MetricsViewModel {
-      if (!this._metricsViewModel) {
-          this._metricsViewModel = new MetricsViewModel(clusterLoadInformation, nodesLoadInformation);
+      if (!this.iMetricsViewModel) {
+          this.iMetricsViewModel = new MetricsViewModel(clusterLoadInformation, nodesLoadInformation);
       }
-      return this._metricsViewModel;
+      return this.iMetricsViewModel;
   }
 
   public getNewOrExistingListSettings(
@@ -55,7 +54,7 @@ export class SettingsService {
       searchable: boolean = true) {
 
       // Use URL + listName as unique key to track list settings on detail pages
-      let key: string = listName // TODO fix this this.$location.path() + "/" + listName;
+      const key: string = listName; // TODO fix this this.$location.path() + "/" + listName;
       if (!this.listSettings[key]) {
           this.listSettings[key] = new ListSettings(this.paginationLimit, defaultSortProperties, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
       }
@@ -73,62 +72,86 @@ export class SettingsService {
       return this.listSettings[listKey];
   }
 
-  public getNewOrExistingUnhealthyEvaluationsListSettings(listKey: string = "unhealthyEvaluations") {
+  public getNewOrExistingUnhealthyEvaluationsListSettings(listKey: string = 'unhealthyEvaluations') {
       return this.getNewOrExistingListSettings(listKey, null,
           [
-              new ListColumnSettingForLink("kind", "Kind", (item) =>  item.viewPath),
-              new ListColumnSettingForBadge("healthState", "Health State"),
-              new ListColumnSettingWithCopyText("description", "Description")
+              new ListColumnSettingForLink('kind', 'Kind', (item) =>  item.viewPath),
+              new ListColumnSettingForBadge('healthState', 'Health State'),
+              new ListColumnSettingWithCopyText('description', 'Description'),
+              new ListColumnSettingWithUtcTime('sourceTimeStamp', 'Source UTC'),
           ]);
   }
 
-  public getNewOrExistingHealthEventsListSettings(listKey: string = "healthEvents") {
-      return this.getNewOrExistingListSettings(listKey, ["raw.SequenceNumber"],
+  public getNewOrExistingHealthEventsListSettings(listKey: string = 'healthEvents') {
+      return this.getNewOrExistingListSettings(listKey, ['raw.SequenceNumber'],
           [
-              new ListColumnSettingForBadge("healthState", "Health State"),
-              new ListColumnSetting("raw.SourceId", "Source"),
-              new ListColumnSetting("raw.Property", "Property"),
-              new ListColumnSetting("sourceUtcTimestamp", "Source UTC"),
-              new ListColumnSetting("TTL", "TTL"),
-              new ListColumnSetting("raw.SequenceNumber", "Sequence Number"),
-              new ListColumnSetting("raw.RemoveWhenExpired", "Remove When Expired"),
-              new ListColumnSetting("raw.IsExpired", "Is Expired")
+              new ListColumnSettingForBadge('healthState', 'Health State'),
+              new ListColumnSetting('raw.SourceId', 'Source'),
+              new ListColumnSetting('raw.Property', 'Property'),
+              new ListColumnSettingWithUtcTime('sourceUtcTimestamp', 'Source UTC'),
+              new ListColumnSetting('TTL', 'TTL'),
+              new ListColumnSetting('raw.SequenceNumber', 'Sequence Number'),
+              new ListColumnSetting('raw.RemoveWhenExpired', 'Remove When Expired'),
+              new ListColumnSetting('raw.IsExpired', 'Is Expired')
           ],
           // Second row with description
           [
-              new ListColumnSetting("placeholder", "placeholder", null, false), // Empty column
-              new ListColumnSettingWithCopyText("description", "Description", [], false, 7)
+              new ListColumnSetting('placeholder', 'placeholder', {enableFilter: false}), // Empty column
+              new ListColumnSettingWithCopyText('description', 'Description', {enableFilter: false, colspan: 7})
           ],
           false,
           (item) => item.description.length > 0
           );
   }
 
-  public getNewOrExistingNodeStatusListSetting(listKey: string = "nodeStatus") {
+  public getNewOrExistingNodeStatusListSetting(listKey: string = 'nodeStatus') {
       return this.getNewOrExistingListSettings(listKey, null,
           [
-              new ListColumnSetting("nodeType", "Node Type"),
-              new ListColumnSetting("totalCount", "Total Node Count"),
+              new ListColumnSetting('nodeType', 'Node Type'),
+              new ListColumnSetting('totalCount', 'Total Node Count'),
               new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Up}`, NodeStatusConstants.Up),
               new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Down}`, NodeStatusConstants.Down),
               new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Disabled}`, NodeStatusConstants.Disabled),
               new ListColumnSetting(`statusTypeCounts.${NodeStatusConstants.Disabling}`, NodeStatusConstants.Disabling),
-              new ListColumnSetting("errorCount", "Error"),
-              new ListColumnSetting("warningCount", "Warning"),
+              new ListColumnSetting('errorCount', 'Error'),
+              new ListColumnSetting('warningCount', 'Warning'),
           ]
 
       );
-  };
+  }
 
-  public getNewOrExistingBackupPolicyListSettings(listKey: string = "backupPolicies") {
+  public getNewOrExistingBackupPolicyListSettings(listKey: string = 'backupPolicies') {
       return this.getNewOrExistingListSettings(listKey, null, [
-          new ListColumnSetting("raw.Name", "Name", ["raw.Name"], false, (item, property) =>  `<span class="link">${property}</span>`, 1, item => item.action.run()),
-          new ListColumnSetting("raw.Schedule.ScheduleKind", "ScheduleKind"),
-          new ListColumnSetting("raw.Storage.StorageKind", "StorageKind"),
-          new ListColumnSetting("raw.AutoRestoreOnDataLoss", "AutoRestoreOnDataLoss"),
-          new ListColumnSetting("raw.MaxIncrementalBackups", "MaxIncrementalBackups"),
+        new ListColumnSetting('raw.Name', 'Name', {
+            enableFilter: false,
+            getDisplayHtml: (item, property) =>  `<span class="link">${property}</span>`,
+            colspan: 1,
+            clickEvent: item => item.action.run()
+          }),
+          new ListColumnSetting('raw.Schedule.ScheduleKind', 'ScheduleKind'),
+          new ListColumnSetting('raw.Storage.StorageKind', 'StorageKind'),
+          new ListColumnSetting('raw.AutoRestoreOnDataLoss', 'AutoRestoreOnDataLoss'),
+          new ListColumnSetting('raw.MaxIncrementalBackups', 'MaxIncrementalBackups'),
       ]);
-  };
+  }
+
+  public getNewOrExistingNetworkRequestListSettings(includeApiDesc: boolean = false) {
+    const listKey = 'requestsData';
+    const settings = [
+        new ListColumnSetting('statusCode', 'Status Code'),
+        new ListColumnSetting('errorMessage', 'Error Message'),
+        new ListColumnSetting('duration', 'Duration(MS)'),
+        new ListColumnSettingWithUtcTime('startTime', 'Start Time'),
+      ];
+
+    if (includeApiDesc) {
+        return this.getNewOrExistingListSettings(listKey + 'andApiDesc', [],
+                                                [new ListColumnSetting('apiDesc', 'API Description')].concat(settings));
+      }
+
+    return this.getNewOrExistingListSettings(listKey, [], settings);
+
+  }
 
   // Update all existing list settings to use new limit
   private updatePaginationLimit(limit: number): void {

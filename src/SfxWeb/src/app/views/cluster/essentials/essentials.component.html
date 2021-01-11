@@ -75,8 +75,8 @@
 </div>
 
 <div>
-    <app-dashboard-tile [data]="nodesDashboard" *ngIf="nodesDashboard"></app-dashboard-tile>
-    <app-dashboard-tile [data]="appsDashboard" *ngIf="appsDashboard"></app-dashboard-tile>
+    <app-dashboard-tile [data]="nodesDashboard" *ngIf="nodesDashboard" data-cy="nodesChart"></app-dashboard-tile>
+    <app-dashboard-tile [data]="appsDashboard" *ngIf="appsDashboard"  data-cy="appsChart"></app-dashboard-tile>
     <div style="display: inline-block">
         <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard" style="display: block"></app-dashboard-tile>    
         <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard" style="display: block"></app-dashboard-tile>    
@@ -88,7 +88,7 @@
     </div>
 </div>
 
-<div class="detail-pane essen-pane">
+<div class="detail-pane essen-pane" data-cy="health" style="position: relative;">
     <h4>Unhealthy Evaluations</h4>
     <app-health-viewer [unhealthyEvaluations]="clusterHealth.unhealthyEvaluations"></app-health-viewer>
 </div>

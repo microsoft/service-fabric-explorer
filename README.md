@@ -87,7 +87,7 @@ Here's a list of common IDE used.
 ### Develop Locally and Run Local Proxy
 Navigate to `src/SfxWeb`
 ```Shell
-npm run start-local
+npm start
 ```
 Navigate to `src/Sfx-Proxy`
 ```Shell
@@ -101,7 +101,7 @@ There are 2 optional flags
 npm start -- -r -p
 ```
 
-If proxying requests to a secure cluster the appsettings.json can also take a cert pfx location like
+If proxying requests to a secure cluster adding a file called localsettings.json to src/Sfx-Proxy can take a cert pfx location like below.
 ```
 {
   "TargetCluster": {
@@ -113,12 +113,28 @@ If proxying requests to a secure cluster the appsettings.json can also take a ce
 }
 ```
 
-### Run unit tests for Sfx
 
+## Testing
+
+### Run unit tests
 Navigate to  `sfx/SfxWeb` folder and run 
 ```
 npm test
 ```
+
+### Run E2E tests
+Navigate to sfx/SfxWeb folder and run
+```
+npm run cypress:local
+```
+This assumes that the angular local dev server is running
+
+### CI overview
+The CI will run the following
+
+* production build
+* unit tests
+* E2E tests
 
 ## Issues and questions
 

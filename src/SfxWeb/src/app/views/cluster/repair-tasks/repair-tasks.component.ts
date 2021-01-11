@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
@@ -16,12 +16,12 @@ import { DataSet, DataGroup, DataItem } from 'vis-timeline';
   templateUrl: './repair-tasks.component.html',
   styleUrls: ['./repair-tasks.component.scss']
 })
-export class RepairTasksComponent extends BaseController {
+export class RepairTasksComponent extends BaseControllerDirective {
 
   repairTasks: RepairTask[] = [];
   completedRepairTasks: RepairTask[] = [];
 
-  //used for timeline
+  // used for timeline
   sortedRepairTasks: RepairTask[] = [];
   sortedCompletedRepairTasks: RepairTask[] = [];
 
@@ -35,48 +35,48 @@ export class RepairTasksComponent extends BaseController {
    }
 
   setup() {
-    this.repairTaskListSettings = this.settings.getNewOrExistingListSettings("repair", null,
+    this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', null,
     [
-        new ListColumnSetting("raw.TaskId", "TaskId"),
-        new ListColumnSetting("raw.Action", "Action", ["raw.Action"], true),
-        new ListColumnSetting("raw.Target.NodeNames", "Target"),
-        new ListColumnSetting("impactedNodes", "Impact"),
-        new ListColumnSetting("raw.State", "State", ["raw.State"], true),
-        new ListColumnSetting("createdAt", "Created at"),
-        new ListColumnSetting("displayDuration", "Duration"),
+        new ListColumnSetting('raw.TaskId', 'TaskId'),
+        new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
+        new ListColumnSetting('raw.Target.NodeNames', 'Target'),
+        new ListColumnSetting('impactedNodes', 'Impact'),
+        new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
+        new ListColumnSetting('createdAt', 'Created at'),
+        new ListColumnSetting('displayDuration', 'Duration'),
     ],
     [
       new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
-        "",
-        "",
-        [],
-        false,
-        -1
-        )
-  ],  
+        '',
+        '',
+        {
+          enableFilter: false,
+          colspan: -1
+        })
+  ],
     true,
     (item) => (Object.keys(item).length > 0),
     true);
 
-    this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings("completedRepair", null,
+    this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings('completedRepair', null,
         [
-            new ListColumnSetting("raw.TaskId", "TaskId"),
-            new ListColumnSetting("raw.Action", "Action", ["raw.Action"], true),
-            new ListColumnSetting("raw.Target.NodeNames", "Target"),
-            new ListColumnSetting("impactedNodes", "Impact"),
-            new ListColumnSetting("raw.ResultStatus", "Result Status", ["raw.ResultStatus"], true),
-            new ListColumnSetting("createdAt", "Created at"),
-            new ListColumnSetting("displayDuration", "Duration"),
+            new ListColumnSetting('raw.TaskId', 'TaskId'),
+            new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
+            new ListColumnSetting('raw.Target.NodeNames', 'Target'),
+            new ListColumnSetting('impactedNodes', 'Impact'),
+            new ListColumnSetting('raw.ResultStatus', 'Result Status', {enableFilter: true}),
+            new ListColumnSetting('createdAt', 'Created at'),
+            new ListColumnSetting('displayDuration', 'Duration'),
         ],
         [
           new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
-            "",
-            "",
-            [],
-            false,
-            -1
-            )
-      ],  
+            '',
+            '',
+            {
+              enableFilter: false,
+              colspan: -1
+            })
+      ],
         true,
         (item) => true,
         true);
@@ -91,8 +91,8 @@ export class RepairTasksComponent extends BaseController {
   }
 
   generateTimeLineData(tasks: RepairTask[]) {
-    let items = new DataSet<DataItem>();
-    let groups = new DataSet<DataGroup>();
+    const items = new DataSet<DataItem>();
+    const groups = new DataSet<DataGroup>();
 
     tasks.forEach(task => {
         items.add({
@@ -100,46 +100,46 @@ export class RepairTasksComponent extends BaseController {
           content: task.raw.TaskId,
           start: task.startTime ,
           end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
-          type: "range",
-          group: "job",
-          subgroup: "stack",
-          className: task.inProgress ? 'blue' : task.raw.ResultStatus === "Succeeded" ? 'green' : 'red',
+          type: 'range',
+          group: 'job',
+          subgroup: 'stack',
+          className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
           title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(),
                                                          new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
-        })
-    })
+        });
+    });
 
     groups.add({
-      id: "job",
-      content: "Job History",
-      subgroupStack: {"stack": true}
-    })
+      id: 'job',
+      content: 'Job History',
+      subgroupStack: {stack: true}
+    });
 
     this.timelineData = {
       groups,
       items,
-    }
+    };
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.data.restClient.getRepairTasks(messageHandler).pipe(map(data => {
       const expandedDict = {};
-       this.completedRepairTasks.concat(this.repairTasks).forEach( (repairTask) => { 
-          expandedDict[repairTask.raw.TaskId] = repairTask.isSecondRowCollapsed;
-      })
+      this.completedRepairTasks.concat(this.repairTasks).forEach( (repairTask) => {
+          expandedDict[repairTask.raw.TaskId] = repairTask;
+      });
       this.completedRepairTasks = [];
       this.repairTasks = [];
       data.map(json => new RepairTask(json)).forEach(task => {
-        if(task.raw.TaskId in expandedDict) {
-          task.isSecondRowCollapsed = expandedDict[task.raw.TaskId]
+        if (task.raw.TaskId in expandedDict) {
+          task.updateViewInfo(expandedDict[task.raw.TaskId]);
         }
-        
-        if(task.inProgress) {
+
+        if (task.inProgress) {
           this.repairTasks.push(task);
         }else {
           this.completedRepairTasks.push(task);
         }
-      })
-    }))
+      });
+    }));
   }
 }

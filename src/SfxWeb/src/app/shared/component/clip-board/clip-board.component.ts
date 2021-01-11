@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-clip-board',
@@ -7,8 +7,9 @@ import { Component, OnInit, Input } from '@angular/core';
 })
 export class ClipBoardComponent {
 
-  @Input() text: string = "";
-  @Input() func:  () => string;
+  @Input() func: () => string;
+  @Input() text = '';
+
   constructor() { }
 
   copy(){

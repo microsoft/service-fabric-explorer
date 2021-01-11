@@ -2,17 +2,18 @@ import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Constants } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
-import  size from 'lodash/size';
-import  forOwn  from 'lodash/forOwn';
-import  startCase  from 'lodash/startCase';
-import  camelCase  from 'lodash/camelCase';
-import  isNumber  from 'lodash/isNumber';
-import  isBoolean  from 'lodash/isBoolean';
-import  isUndefined  from 'lodash/isUndefined';
-import  isNull  from 'lodash/isNull';
-import  isEmpty  from 'lodash/isEmpty';
-import  isObject  from 'lodash/isObject';
-import  first  from 'lodash/first';
+import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
+import size from 'lodash/size';
+import forOwn from 'lodash/forOwn';
+import startCase from 'lodash/startCase';
+import camelCase from 'lodash/camelCase';
+import isNumber from 'lodash/isNumber';
+import isBoolean from 'lodash/isBoolean';
+import isUndefined from 'lodash/isUndefined';
+import isNull from 'lodash/isNull';
+import isEmpty from 'lodash/isEmpty';
+import isObject from 'lodash/isObject';
+import first from 'lodash/first';
 
 export class ResolvedObject {
   [index: string]: any;
@@ -25,13 +26,13 @@ export class ResolvedObject {
 })
 export class DetailViewPartComponent implements OnInit, OnChanges {
 
-  @Input() noFixedLayout: boolean = false;
+  @Input() noFixedLayout = false;
 
   resolvedData: any;
-  
+
   @Input() data: any;
   @Input() title: string;
-  //with parent added it will assume data is from data.raw and this allows to run change detection.
+  // with parent added it will assume data is from data.raw and this allows to run change detection.
   @Input() parent: any;
   constructor() { }
 
@@ -39,8 +40,8 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-      if(this.parent){
-        this.resolvedData = this.getResolvedDataObjectInternal(this.data, this.parent);          
+      if (this.parent){
+        this.resolvedData = this.getResolvedDataObjectInternal(this.data, this.parent);
       }else{
         this.resolvedData = this.getResolvedDataObject(this.data);
       }
@@ -52,13 +53,15 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
 
   public getResolvedPropertyType(value: any): string {
     if (this.isResolvedObject(value)) {
-        return "Object";
+        return 'Object';
     } else if (this.isArray(value)) {
-        return "Array";
+        return 'Array';
     } else if (this.isHtml(value)) {
-        return "Html";
-    } else {
-        return "Value";
+        return 'Html';
+    } else if (this.isISODate(value)) {
+        return 'Date';
+    }else {
+        return 'Value';
     }
   }
 
@@ -71,8 +74,8 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
             return data;
         }
 
-        if (data.hasOwnProperty("raw")) {
-            if (data.raw === undefined|| data.raw === null) {
+        if (data.hasOwnProperty('raw')) {
+            if (data.raw === undefined || data.raw === null) {
                 return null;
             }
             return this.getResolvedDataObjectInternal(data.raw, data, preserveEmptyProperties);
@@ -93,8 +96,12 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
         return HtmlUtils.isHtml(value);
     }
 
+    private isISODate(value: any): boolean {
+        return /^\d{4}-\d{2}-\d{2}T\d{2}:\d{2}:\d{2}\.\d{3}Z$/.test(value);
+    }
+
     private getResolvedDataObjectInternal(data: any, parent: any, preserveEmptyProperties: boolean = false): ResolvedObject {
-      let resolvedObject = new ResolvedObject();
+      const resolvedObject = new ResolvedObject();
 
       forOwn(data, (value, name) => {
           let resolvedName = startCase(name);
@@ -145,7 +152,7 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
           } else if (Array.isArray(resolvedValue)) {
               if (!isObject(first(resolvedValue))) {
                   // The first element in the array is not an object, assume all the elements are value types
-                  resolvedValue = `[${resolvedValue.map(v => v.toString()).join(", ")}]`;
+                  resolvedValue = `[${resolvedValue.map(v => v.toString()).join(', ')}]`;
               } else {
                   // Resolve sub-array, for array, all properties are preserved unless filtered by showList/hideList
                   resolvedValue = resolvedValue.map(v => this.getResolvedDataObject(v, true));
@@ -153,6 +160,7 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
           } else if (isObject(resolvedValue)) {
               // Deal with badge class as a special case
               if (Utils.isBadge(resolvedValue)) {
+                  resolvedValue = resolvedValue as ITextAndBadge;
                   if (resolvedValue.text && resolvedValue.badgeClass) {
                       resolvedValue = HtmlUtils.getBadgeHtml(resolvedValue);
                   } else {

@@ -32,7 +32,7 @@
                 </h4>
             </div>
             <div collapse-body>
-                <detail-list [list]="replica.health.healthEvents" [listSettings]="healthEventsListSettings" *ngIf="replica.health"></detail-list>
+                <app-detail-list [list]="replica.health.healthEvents" [listSettings]="healthEventsListSettings" *ngIf="replica.health"></app-detail-list>
             </div>
         </app-collapse-container>
     </div>

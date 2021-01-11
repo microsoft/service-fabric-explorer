@@ -1,5 +1,5 @@
-import { Component, NgModule } from "@angular/core";
-import { Routes, RouterModule } from "@angular/router";
+import { Component, NgModule } from '@angular/core';
+import { Routes, RouterModule } from '@angular/router';
 @Component({
     template: `Search`
 })
@@ -32,27 +32,27 @@ export class ApplicationModule { }
 @Component({
     template: `Search`
 })
-export class SearchComponent2 {}
+export class Search2Component {}
 
 @Component({
     template: `Home`
 })
-export class HomeComponent2 {}
+export class Home2Component {}
 
 @Component({
     template: `<router-outlet></router-outlet>`
   })
-export class NestedComponent2 {}
+export class Nested2Component {}
 
 const routes2: Routes = [{
-    path: '', component: NestedComponent2, children: [
-        { path: '', component: HomeComponent2 },
-        { path: 'details', component: SearchComponent2 }
+    path: '', component: Nested2Component, children: [
+        { path: '', component: Home2Component },
+        { path: 'details', component: Search2Component }
       ]
     }];
 
 @NgModule({
-    declarations: [SearchComponent2, HomeComponent2, NestedComponent2],
+    declarations: [Search2Component, Home2Component, Nested2Component],
     imports: [RouterModule.forChild(routes2)]
 })
 export class ApplicationModule2 { }

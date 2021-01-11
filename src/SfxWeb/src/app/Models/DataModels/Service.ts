@@ -1,5 +1,6 @@
-﻿import { DataModelBase, IDecorators } from "./Base";
-import { IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest, IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription } from '../RawDataTypes';
+import { DataModelBase, IDecorators } from './Base';
+import { IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest,
+         IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription } from '../RawDataTypes';
 import { PartitionCollection, ServiceBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IServiceHealthStateFilter } from '../HealthChunkRawDataTypes';
@@ -12,21 +13,21 @@ import { Observable, of } from 'rxjs';
 import { HealthBase } from './HealthEvent';
 import { ApplicationType } from './ApplicationType';
 import { mergeMap, map } from 'rxjs/operators';
-import  cloneDeep  from 'lodash/cloneDeep';
-import  escapeRegExp  from 'lodash/escapeRegExp';
+import cloneDeep from 'lodash/cloneDeep';
+import escapeRegExp from 'lodash/escapeRegExp';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { ScaleServiceComponent } from 'src/app/views/service/scale-service/scale-service.component';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
 import { RoutesService } from 'src/app/services/routes.service';
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class Service extends DataModelBase<IRawService> {
     public decorators: IDecorators = {
         hideList: [
-            "IsServiceGroup"
+            'IsServiceGroup'
         ]
     };
 
@@ -70,7 +71,7 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IServiceHealthStateFilter {
-        let appFilter = this.parent.addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription);
+        const appFilter = this.parent.addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription);
         let serviceFilter = appFilter.ServiceFilters.find(filter => filter.ServiceNameFilter === this.name);
         if (!serviceFilter) {
             serviceFilter = {
@@ -103,14 +104,14 @@ export class Service extends DataModelBase<IRawService> {
 
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
-            "deleteService",
-            "Delete Service",
-            "Deleting",
+            'deleteService',
+            'Delete Service',
+            'Deleting',
             () => this.delete().pipe(map( () => {
-                this.data.routes.navigate(() => this.parent.viewPath)
+                this.data.routes.navigate(() => this.parent.viewPath);
             })),
             () => true,
-            "Confirm Service Deletion",
+            'Confirm Service Deletion',
             `Delete service ${this.name} from cluster ${window.location.host}?`,
             this.name
         ));
@@ -118,9 +119,9 @@ export class Service extends DataModelBase<IRawService> {
         if (this.isStatelessService) {
             this.actions.add(new IsolatedAction(
                 this.data.dialog,
-                "scaleService",
-                "Scale Service",
-                "Scaling Service",
+                'scaleService',
+                'Scale Service',
+                'Scaling Service',
                 this,
                 ScaleServiceComponent,
                 () => this.isStatelessService
@@ -136,8 +137,8 @@ export class Service extends DataModelBase<IRawService> {
 
 export class ServiceHealth extends HealthBase<IRawServiceHealth> {
     public constructor(data: DataService, public parent: Service,
-        protected eventsHealthStateFilter: HealthStateFilterFlags,
-        protected partitionsHealthStateFilter: HealthStateFilterFlags) {
+                       protected eventsHealthStateFilter: HealthStateFilterFlags,
+                       protected partitionsHealthStateFilter: HealthStateFilterFlags) {
         super(data, parent);
     }
 
@@ -149,16 +150,16 @@ export class ServiceHealth extends HealthBase<IRawServiceHealth> {
 export class ServiceDescription extends DataModelBase<IRawServiceDescription> {
     public decorators: IDecorators = {
         hideList: [
-            "ServiceKind",
-            "ServiceName",
-            "ServiceTypeName",
-            "HasPersistedState",
-            "IsDefaultMoveCostSpecified",
-            "Flags"
+            'ServiceKind',
+            'ServiceName',
+            'ServiceTypeName',
+            'HasPersistedState',
+            'IsDefaultMoveCostSpecified',
+            'Flags'
         ],
         decorators: {
-            "DefaultMoveCost": {
-                displayName: (name) => "Move Cost"
+            DefaultMoveCost: {
+                displayName: (name) => 'Move Cost'
             }
         }
     };
@@ -212,9 +213,9 @@ export class ServiceType extends DataModelBase<IRawServiceType> {
         if (this.parent instanceof Application) {
             this.actions.add(new IsolatedAction(
                 this.data.dialog,
-                "scaleService",
-                "Scale Service",
-                "Scaling Service",
+                'scaleService',
+                'Scale Service',
+                'Scaling Service',
                 this,
                 ScaleServiceComponent,
                 () => !this.raw.ServiceTypeDescription.IsStateful
@@ -232,11 +233,11 @@ export class ServiceManifest extends DataModelBase<IRawServiceManifest> {
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceManifest> {
         if (this.parent instanceof ServiceType) {
-            let serviceType = <ServiceType>(this.parent);
-            let appType = <ApplicationType>serviceType.parent;
+            const serviceType = (this.parent) as ServiceType;
+            const appType = serviceType.parent as ApplicationType;
             return this.getServiceManifest(serviceType.parent.name, appType.raw.Version, serviceType.raw.ServiceManifestName, messageHandler);
         } else {
-            let deployedService = <DeployedServicePackage>(this.parent);
+            const deployedService = (this.parent) as DeployedServicePackage;
             return this.data.getApp(deployedService.parent.raw.Id, false, messageHandler).pipe(mergeMap(app => {
                 return this.getServiceManifest(app.raw.TypeName, app.raw.TypeVersion, deployedService.name, messageHandler);
             }));
@@ -244,20 +245,20 @@ export class ServiceManifest extends DataModelBase<IRawServiceManifest> {
     }
 
     protected updateInternal(): Observable<any> | void {
-            let parser = new DOMParser();
-            let xml = parser.parseFromString(this.raw.Manifest,"text/xml");
+            const parser = new DOMParser();
+            const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
 
             // let $xml = $($.parseXML(this.raw.Manifest));
-            let packType = xml.getElementsByTagName("CodePackage");
+            let packType = xml.getElementsByTagName('CodePackage');
 
-            let packages = [];
+            const packages = [];
             Array.from(packType).forEach( (item: any) => {
-                packages.push(new ServiceTypePackage(this.data, "Code", item.getAttribute("Name"), item.getAttribute("Version")));
+                packages.push(new ServiceTypePackage(this.data, 'Code', item.getAttribute('Name'), item.getAttribute('Version')));
             });
-            
-            packType = xml.getElementsByTagName("ConfigPackage");
+
+            packType = xml.getElementsByTagName('ConfigPackage');
             Array.from(packType).forEach((item: any) => {
-                packages.push(new ServiceTypePackage(this.data, "Config", item.getAttribute("Name"), item.getAttribute("Version")));
+                packages.push(new ServiceTypePackage(this.data, 'Config', item.getAttribute('Name'), item.getAttribute('Version')));
             });
 
             this.packages = packages;
@@ -265,7 +266,7 @@ export class ServiceManifest extends DataModelBase<IRawServiceManifest> {
     }
 
     private getServiceManifest(appTypeName: string, appTypeVersion: string, manifestName: string,
-        messageHandler?: IResponseMessageHandler): Observable<IRawServiceManifest> {
+                               messageHandler?: IResponseMessageHandler): Observable<IRawServiceManifest> {
         return this.data.restClient.getServiceManifest(appTypeName, appTypeVersion, manifestName, messageHandler);
     }
 }
@@ -276,7 +277,7 @@ export class ServiceTypePackage extends DataModelBase<any> {
     }
 
     public get id(): string {
-        return this.Type + " " + this.Name + " " + this.Version;
+        return this.Type + ' ' + this.Name + ' ' + this.Version;
     }
 }
 
@@ -288,19 +289,22 @@ export class CreateServiceDescription {
     public isAdvancedOptionCollapsed: boolean;
 
     public get createDescription(): IRawCreateServiceDescription {
-        let descriptionCloned = cloneDeep(this.raw);
+        const descriptionCloned = cloneDeep(this.raw);
         let flags = 0;
         if (this.raw.ReplicaRestartWaitDurationSeconds !== null) {
+            // tslint:disable-next-line:no-bitwise
             flags ^= 0x01;
         } else {
             delete descriptionCloned.ReplicaRestartWaitDurationSeconds;
         }
         if (this.raw.QuorumLossWaitDurationSeconds !== null) {
+            // tslint:disable-next-line:no-bitwise
             flags ^= 0x02;
         } else {
             delete descriptionCloned.QuorumLossWaitDurationSeconds;
         }
         if (this.raw.StandByReplicaKeepDurationSeconds !== null) {
+            // tslint:disable-next-line:no-bitwise
             flags ^= 0x04;
         } else {
             delete descriptionCloned.StandByReplicaKeepDurationSeconds;
@@ -311,13 +315,13 @@ export class CreateServiceDescription {
     }
 
     public get createFromTemplateDescription(): IRawCreateServiceFromTemplateDescription {
-        return <IRawCreateServiceFromTemplateDescription>{
+        return {
             ApplicationName: this.raw.ApplicationName,
             ServiceName: this.raw.ServiceName,
             ServiceTypeName: this.raw.ServiceTypeName,
             ServicePackageActivationMode: this.raw.ServicePackageActivationMode,
             InitializationData: Utils.hexToBytes(this.initializationData)
-        };
+        } as IRawCreateServiceFromTemplateDescription;
     }
 
     public get servicePartitionKinds(): string[] {
@@ -355,19 +359,19 @@ export class CreateServiceDescription {
     }
 
     public addName(): void {
-        this.raw.PartitionDescription.Names.push("");
+        this.raw.PartitionDescription.Names.push('');
     }
 
     public addPlacementPolicy(): void {
         this.raw.ServicePlacementPolicies.push({
-            Type: "1"
+            Type: '1'
         });
     }
 
     public addServiceCorrelation(): void {
         this.raw.CorrelationScheme.push({
-            ServiceName: "",
-            Scheme: "1"
+            ServiceName: '',
+            Scheme: '1'
         });
     }
 
@@ -385,15 +389,15 @@ export class CreateServiceDescription {
 
     public addLoadMetric(): void {
         this.raw.ServiceLoadMetrics.push({
-            Name: "",
-            Weight: "1",
+            Name: '',
+            Weight: '1',
             PrimaryDefaultLoad: null,
             SecondaryDefaultLoad: null
         });
     }
 
     public reset(): void {
-        this.initializationData = "";
+        this.initializationData = '';
         this.createFromTemplate = false;
         this.isAdvancedOptionCollapsed = true;
         this.raw = {
@@ -403,11 +407,11 @@ export class CreateServiceDescription {
             ServiceTypeName: this.serviceType.name,
             InitializationData: [],
             PartitionDescription: {
-                PartitionScheme: "1",
+                PartitionScheme: '1',
                 Count: 1,
                 Names: [],
-                LowKey: "",
-                HighKey: ""
+                LowKey: '',
+                HighKey: ''
             },
             Flags: 0,
             ReplicaRestartWaitDurationSeconds: null,
@@ -417,19 +421,19 @@ export class CreateServiceDescription {
             MinReplicaSetSize: 1,
             HasPersistedState: this.serviceType.raw.ServiceTypeDescription.HasPersistedState,
             InstanceCount: 1,
-            PlacementConstraints: "",
+            PlacementConstraints: '',
             CorrelationScheme: [],
             ServiceLoadMetrics: [],
             ServicePlacementPolicies: [],
-            ServicePackageActivationMode: "0",
-            ServiceDnsName: ""
+            ServicePackageActivationMode: '0',
+            ServiceDnsName: ''
         };
     }
 }
 export class ServiceBackupConfigurationInfo extends DataModelBase<IRawServiceBackupConfigurationInfo> {
     public decorators: IDecorators = {
         hideList: [
-            "action.Name",
+            'action.Name',
         ]
     };
     public action: IsolatedAction;
@@ -438,17 +442,17 @@ export class ServiceBackupConfigurationInfo extends DataModelBase<IRawServiceBac
 
         this.action = new IsolatedAction(
             data.dialog,
-            "deleteBackupPolicy",
-            "Delete Backup Policy",
-            "Deleting",
+            'deleteBackupPolicy',
+            'Delete Backup Policy',
+            'Deleting',
             {
                 backup: raw,
                 delete: () => data.restClient.deleteBackupPolicy(this.raw.PolicyName)
             },
             ViewBackupComponent,
             () => true,
-            () => this.data.restClient.getBackupPolicy(this.raw.PolicyName).pipe(map(data => {
-                this.action.data.backup = data;
+            () => this.data.restClient.getBackupPolicy(this.raw.PolicyName).pipe(map(resp => {
+                this.action.data.backup = resp;
             }))
             );
     }

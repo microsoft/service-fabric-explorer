@@ -2,7 +2,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { ListSettings, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
-import { PartitionBaseController } from '../PartitionBase';
+import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, of } from 'rxjs';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
@@ -19,23 +19,27 @@ import { PartitionRestoreBackUpComponent } from '../partition-restore-back-up/pa
   templateUrl: './backups.component.html',
   styleUrls: ['./backups.component.scss']
 })
-export class BackupsComponent extends PartitionBaseController {
+export class BackupsComponent extends PartitionBaseControllerDirective {
 
   partitionBackupListSettings: ListSettings;
   actions: ActionCollection;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) {
     super(data, injector);
   }
 
   setup() {
-    this.partitionBackupListSettings = this.settings.getNewOrExistingListSettings("partitionBackups", [null], [
-      new ListColumnSetting("raw.BackupId", "BackupId", ["raw.BackupId"], false, (item, property) =>  `<span class="link">${property}</span>`, 1, item => item.action.run()),
-      new ListColumnSetting("raw.BackupType", "BackupType"),
-      new ListColumnSetting("raw.EpochOfLastBackupRecord.DataLossVersion", "Data Loss Version"),
-      new ListColumnSetting("raw.EpochOfLastBackupRecord.ConfigurationVersion", "Configuration Version"),
-      new ListColumnSetting("raw.LsnOfLastBackupRecord", "Lsn of last Backup Record"),
-      new ListColumnSetting("raw.CreationTimeUtc", "Creation Time Utc"),
+    this.partitionBackupListSettings = this.settings.getNewOrExistingListSettings('partitionBackups', [null], [
+      new ListColumnSetting('raw.BackupId', 'BackupId', {
+        enableFilter: false,
+        getDisplayHtml: (item, property) =>  `<span class="link">${property}</span>`,
+        clickEvent: item => item.action.run()
+      }),
+      new ListColumnSetting('raw.BackupType', 'BackupType'),
+      new ListColumnSetting('raw.EpochOfLastBackupRecord.DataLossVersion', 'Data Loss Version'),
+      new ListColumnSetting('raw.EpochOfLastBackupRecord.ConfigurationVersion', 'Configuration Version'),
+      new ListColumnSetting('raw.LsnOfLastBackupRecord', 'Lsn of last Backup Record'),
+      new ListColumnSetting('raw.CreationTimeUtc', 'Creation Time UTC'),
     ]);
     console.log(this);
   }
@@ -66,14 +70,14 @@ export class BackupsComponent extends PartitionBaseController {
 
 
   attemptSetActions() {
-    if(!this.actions) {
+    if (!this.actions) {
       this.actions = new ActionCollection(this.telemetry);
 
       this.actions.add(new IsolatedAction(
         this.data.dialog,
-        "enablePartitionBackup",
-        "Enable/Update Partition Backup",
-        "Enabling Partition Backup",
+        'enablePartitionBackup',
+        'Enable/Update Partition Backup',
+        'Enabling Partition Backup',
         {
           enable: (backupName: string) => this.data.restClient.enablePartitionBackup(this.partition, backupName).pipe(mergeMap(() => {
               return this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
@@ -83,12 +87,12 @@ export class BackupsComponent extends PartitionBaseController {
         PartitionEnableBackUpComponent,
         () => true
       ));
-  
+
       this.actions.add(new IsolatedAction(
           this.data.dialog,
-          "disablePartitionBackup",
-          "Disable Partition Backup",
-          "Disabling Partition Backup",
+          'disablePartitionBackup',
+          'Disable Partition Backup',
+          'Disabling Partition Backup',
           {
             enable: (cleanBackup: boolean) => this.data.restClient.disablePartitionBackup(this.partition, cleanBackup).pipe(mergeMap(() => {
                 return this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
@@ -98,59 +102,59 @@ export class BackupsComponent extends PartitionBaseController {
           PartitionDisableBackUpComponent,
           () => true
       ));
-  
+
       this.actions.add(new ActionWithConfirmationDialog(
           this.data.dialog,
-          "suspendPartitionBackup",
-          "Suspend Partition Backup",
-          "Suspending...",
+          'suspendPartitionBackup',
+          'Suspend Partition Backup',
+          'Suspending...',
           () => this.data.restClient.suspendPartitionBackup(this.partition.id).pipe(mergeMap(() => {
               return this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
           })),
-          () => this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw && 
-                this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" &&
-                this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition" &&
+          () => this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw &&
+                this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === 'Partition' &&
+                this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === 'Partition' &&
                 this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === false,
-          "Confirm Partition Backup Suspension",
+          'Confirm Partition Backup Suspension',
           `Suspend partition backup for ${this.partition.name} ?`,
           this.partition.name));
-  
+
       this.actions.add(new ActionWithConfirmationDialog(
           this.data.dialog,
-          "resumePartitionBackup",
-          "Resume Partition Backup",
-          "Resuming...",
+          'resumePartitionBackup',
+          'Resume Partition Backup',
+          'Resuming...',
           () => this.data.restClient.resumePartitionBackup(this.partition.id).pipe(mergeMap(() => {
               return this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.refresh();
           })),
-          () => this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw && 
-                this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === "Partition" &&
-                this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === "Partition" &&
+          () => this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw &&
+                this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.Kind === 'Partition' &&
+                this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.PolicyInheritedFrom === 'Partition' &&
                 this.partition.partitionBackupInfo.partitionBackupConfigurationInfo.raw.SuspensionInfo.IsSuspended === true,
-          "Confirm Partition Backup Resumption",
+          'Confirm Partition Backup Resumption',
           `Resume partition backup for ${this.partition.name} ?`,
           this.partition.name));
-  
+
       this.actions.add(new IsolatedAction(
           this.data.dialog,
-          "triggerPartitionBackup",
-          "Trigger Partition Backup",
-          "Triggering Partition Backup",
+          'triggerPartitionBackup',
+          'Trigger Partition Backup',
+          'Triggering Partition Backup',
           this.partition,
           PartitionTriggerBackUpComponent,
           () => true
       ));
-    
+
       this.actions.add(new IsolatedAction(
           this.data.dialog,
-          "restorePartitionBackup",
-          "Restore Partition Backup",
-          "Restoring Partition Backup",
+          'restorePartitionBackup',
+          'Restore Partition Backup',
+          'Restoring Partition Backup',
           this.partition,
           PartitionRestoreBackUpComponent,
           () => true
       ));
       }
-    
+
   }
 }

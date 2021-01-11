@@ -4,7 +4,7 @@ on:
   push:
   pull_request:
   schedule:
-    - cron: '0 0 * * 0' # weekly
+    - cron: 0 0 * * * # daily
 
 defaults:
   run:
@@ -41,9 +41,21 @@ jobs:
       - name: Install dependencies
         run: npm ci
 
+      - name: lint
+        run: npm run lint
+
       - name: Build
         run: npm run build:prod
 
       - name: Test
-        run: npm run test:ci
+        run: npm run ci:test
 
+      - name: E2E test
+        run: npm run ci:cy-run
+
+      - name: upload failed
+        uses: actions/upload-artifact@v2-preview
+        if: always()
+        with:
+          name: cypress-screenshots
+          path:  /home/runner/work/service-fabric-explorer/service-fabric-explorer/src/SfxWeb/cypress/*

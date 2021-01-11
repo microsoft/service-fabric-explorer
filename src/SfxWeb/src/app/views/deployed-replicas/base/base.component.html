@@ -1,8 +1,8 @@
 <div *ngIf="replicas">
     <app-navbar [type]="type" ></app-navbar>
     <div class="main-view">
-        <div class="detail-pane essen-pane" *ngIf="listSettings">
-            <detail-list [list]="replicas" [listSettings]="listSettings"></detail-list>
+        <div class="detail-pane essen-pane" *ngIf="listSettings" data-cy="replicas">
+            <app-detail-list [list]="replicas" [listSettings]="listSettings"></app-detail-list>
         </div>
     </div>
 </div>

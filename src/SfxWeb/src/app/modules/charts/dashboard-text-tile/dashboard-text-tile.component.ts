@@ -7,7 +7,7 @@ import { Component, Input } from '@angular/core';
 })
 export class DashboardTextTileComponent {
 
-  @Input() barClass: string = "";
+  @Input() barClass = '';
   @Input() title: string;
   @Input() count: string | number;
   @Input() link: string;

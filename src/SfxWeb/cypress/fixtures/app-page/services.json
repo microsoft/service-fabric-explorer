@@ -1,0 +1,26 @@
+{
+    "ContinuationToken": "",
+    "Items": [
+        {
+            "ServiceKind": "Stateful",
+            "Name": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+            "TypeName": "VisualObjects.ActorServiceType",
+            "ManifestVersion": "3.0.0",
+            "HasPersistedState": true,
+            "HealthState": "Ok",
+            "ServiceStatus": "Active",
+            "IsServiceGroup": false,
+            "Id": "VisualObjectsApplicationType/VisualObjects.ActorService"
+        },
+        {
+            "ServiceKind": "Stateless",
+            "Name": "fabric:/VisualObjectsApplicationType/VisualObjects.WebService",
+            "TypeName": "VisualObjects.WebServiceType",
+            "ManifestVersion": "12.0.0",
+            "HealthState": "Ok",
+            "ServiceStatus": "Active",
+            "IsServiceGroup": false,
+            "Id": "VisualObjectsApplicationType/VisualObjects.WebService"
+        }
+    ]
+}

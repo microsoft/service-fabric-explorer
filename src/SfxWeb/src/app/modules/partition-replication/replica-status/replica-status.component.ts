@@ -14,19 +14,19 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
   @Input() replicator: IRawRemoteReplicatorStatus;
   @Input() replica: ReplicaOnPartition;
 
-  isCopying: boolean = false;
-  isReplicating: boolean = false;
-  
-  replicationStatus: string = "";
+  isCopying = false;
+  isReplicating = false;
 
-  overallStatus: string = "";
-  stepsFinished: number = 0;
+  replicationStatus = '';
 
-  leftBannerColor: string = "";
-  
+  overallStatus = '';
+  stepsFinished = 0;
+
+  leftBannerColor = '';
+
   estimatedTime: string;
 
-  copyText: string = "";
+  copyText = '';
 
   constructor() { }
 
@@ -47,11 +47,11 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
   }
 
   getReplicationStatus() {
-    if(this.isCopying) {
+    if (this.isCopying) {
       return 'Not Started';
     }
-    
-    if(this.isReplicating) {
+
+    if (this.isReplicating) {
       return this.estimatedTime;
     }
     return 'Complete';
@@ -59,25 +59,25 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
   }
 
   setCurrentStatus() {
-    this.leftBannerColor = "blue-border";
+    this.leftBannerColor = 'blue-border';
 
-    if(this.isCopying) {
+    if (this.isCopying) {
       this.overallStatus = 'Copying';
       this.estimatedTime = this.getEstimatedDuration(this.replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail);
       this.stepsFinished = 0;
-    } else if(this.isReplicating) {
+    } else if (this.isReplicating) {
       this.overallStatus = 'Replicating';
       this.estimatedTime = this.getEstimatedDuration(this.replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail);
       this.stepsFinished = 1;
     } else {
       this.overallStatus = 'Complete';
-      this.leftBannerColor = "green-border";
+      this.leftBannerColor = 'green-border';
       this.stepsFinished = 2;
     }
   }
 
   getEstimatedDuration(details: IRemoteReplicatorAcknowledgementDetail) {
-    //average apply duration * (received and not applied  +  not received) +  not received * average receive duration
+    // average apply duration * (received and not applied  +  not received) +  not received * average receive duration
     return TimeUtils.getDuration(+details.AverageApplyDuration * (+details.ReceivedAndNotAppliedCount + +details.NotReceivedCount) +
                                  +details.AverageReceiveDuration * +details.NotReceivedCount);
   }

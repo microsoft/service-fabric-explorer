@@ -2,7 +2,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { ImageStore } from 'src/app/Models/DataModels/ImageStore';
 import { SettingsService } from 'src/app/services/settings.service';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 
@@ -11,12 +11,12 @@ import { Observable } from 'rxjs';
   templateUrl: './imagestore.component.html',
   styleUrls: ['./imagestore.component.scss']
 })
-export class ImagestoreComponent extends BaseController {
+export class ImagestoreComponent extends BaseControllerDirective {
 
   imageStore: ImageStore;
 
   constructor(public data: DataService, injector: Injector, public settings: SettingsService) {
-    super(injector)
+    super(injector);
    }
 
   setup() {
@@ -24,6 +24,6 @@ export class ImagestoreComponent extends BaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.imageStore.refresh(messageHandler)
+    return this.imageStore.refresh(messageHandler);
   }
 }

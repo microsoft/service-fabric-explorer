@@ -15,7 +15,7 @@
         </div>
     </li>
     <li *ngFor="let child of node.displayedChildren; trackBy: trackById" class="node" [ngClass]="{ 'selected': child.selected }" >
-        <button class="self hide-nested" (click)="child.select()" style="width: 100%; display: flex; align-items: center;" tabindex="0"  (keyup)="node._tree.onKeyDown($event)" role="treeitem" [attr.aria-level]="child.depth" 
+        <button class="self hide-nested" (click)="child.select()" style="width: 100%; display: flex; align-items: center;" tabindex="0"  (keyup)="node.tree.onKeyDown($event)" role="treeitem" [attr.aria-level]="child.depth" 
              [attr.aria-label]="child.displayName()">
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
             <div class="expander" *ngIf="!child.hasExpander"></div>
@@ -29,9 +29,10 @@
             [ngClass]="{ 'mif-unfold-less': child.isCollapsed, 'mif-unfold-more': child.isExpanded }"
             [title]="child.isCollapsed ? 'Expand All' : 'Collapse All'" style="font-size: large; padding: 0px;"></button>
 
-            <img *ngIf="child.badge && child.badge().badgeClass && child.badge().badgeClass !== 'badge-ok'"
-                    class="tree-badge" [title]="child.badge().text" style="margin-right: 3px;"
-                    [src]="assetBase + 'assets/' + child.badge().badgeClass + '.svg'" role="presentation">
+            <span *ngIf="child.badge && child.badge()?.badgeClass && child.badge()?.badgeClass !== 'badge-ok'" style="margin-right: 3px;">
+                <app-health-badge [badgeClass]="child.badge()?.badgeClass" [text]="child.badge()?.text" [showText]="false"></app-health-badge>
+            </span>
+
             <div class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()" ></div>
 
             <div *ngIf="child.actions" class="hidden right-action">

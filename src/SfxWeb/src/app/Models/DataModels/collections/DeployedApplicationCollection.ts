@@ -16,7 +16,7 @@ export class DeployedApplicationCollection extends DataModelCollectionBase<Deplo
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        let nodeHealthChunk = clusterHealthChunk.NodeHealthStateChunks.Items.find(chunk => chunk.NodeName === this.parent.name);
+        const nodeHealthChunk = clusterHealthChunk.NodeHealthStateChunks.Items.find(chunk => chunk.NodeName === this.parent.name);
         if (nodeHealthChunk) {
             return this.updateCollectionFromHealthChunkList<IDeployedApplicationHealthStateChunk>(
                 nodeHealthChunk.DeployedApplicationHealthStateChunks,
@@ -35,7 +35,7 @@ export class DeployedApplicationCollection extends DataModelCollectionBase<Deplo
         // The deployed application does not include "HealthState" information by default.
         // Trigger a health chunk query to fill the health state information.
         if (this.length > 0) {
-            let healthChunkQueryDescription = this.data.getInitialClusterHealthChunkQueryDescription();
+            const healthChunkQueryDescription = this.data.getInitialClusterHealthChunkQueryDescription();
             this.parent.addHealthStateFiltersForChildren(healthChunkQueryDescription);
             return this.data.getClusterHealthChunk(healthChunkQueryDescription).pipe(mergeMap(healthChunk => {
                 return this.mergeClusterHealthStateChunk(healthChunk);

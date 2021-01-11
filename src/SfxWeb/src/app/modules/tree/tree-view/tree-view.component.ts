@@ -1,7 +1,8 @@
-import { Component, OnInit, ViewChild, ElementRef, OnChanges, AfterViewInit, Output, EventEmitter, DoCheck, Input } from '@angular/core';
+import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input } from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
 import { environment } from 'src/environments/environment';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { RestClientService } from 'src/app/services/rest-client.service';
 
 @Component({
   selector: 'app-tree-view',
@@ -10,27 +11,29 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 })
 export class TreeViewComponent implements DoCheck {
 
-  @Input() smallWindowSize: boolean = false;
-  @Output() onTreeSize = new EventEmitter<number>();
+  @Input() smallWindowSize = false;
+  @Output() treeResize = new EventEmitter<number>();
 
   public showBeta = environment.showBeta;
   public canExpand = false;
-  @ViewChild("tree") tree: ElementRef;
-  constructor(public treeService: TreeService, private liveAnnouncer: LiveAnnouncer) { }
+  @ViewChild('tree') tree: ElementRef;
+  constructor(public treeService: TreeService,
+              private liveAnnouncer: LiveAnnouncer,
+              public restClientService: RestClientService) { }
 
   ngDoCheck(): void {
-    if(this.tree) {
+    if (this.tree) {
       this.canExpand = this.tree.nativeElement.scrollWidth > this.tree.nativeElement.clientWidth;
     }
   }
 
   leaveBeta() {
-    const originalUrl =  location.href.replace('beta.html', 'index.html');
+    const originalUrl =  location.href.replace('index.html', 'beta.html');
     window.location.assign(originalUrl);
   }
 
   setWidth() {
-    this.onTreeSize.emit(this.tree.nativeElement.scrollWidth + 20)
+    this.treeResize.emit(this.tree.nativeElement.scrollWidth + 20);
   }
 
   setSearchText(text: string) {

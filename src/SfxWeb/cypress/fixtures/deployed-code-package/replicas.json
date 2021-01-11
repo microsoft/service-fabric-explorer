@@ -1,0 +1,170 @@
+[
+    {
+        "ServiceKind": "Stateful",
+        "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+        "ServiceTypeName": "VisualObjects.ActorServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "VisualObjects.ActorServicePkg",
+        "CodePackageName": "Code",
+        "PartitionId": "fe893a0e-6046-4067-8533-3ef56ba20f85",
+        "ReplicaId": "132425795786059114",
+        "ReplicaRole": "ActiveSecondary",
+        "ReplicaStatus": "Ready",
+        "Address": "",
+        "ServicePackageActivationId": "",
+        "HostProcessId": "836",
+        "ReconfigurationInformation": {
+            "PreviousConfigurationRole": "None",
+            "ReconfigurationPhase": "None",
+            "ReconfigurationType": "None",
+            "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+        }
+    },
+    {
+        "ServiceKind": "Stateful",
+        "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+        "ServiceTypeName": "VisualObjects.ActorServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "VisualObjects.ActorServicePkg",
+        "CodePackageName": "Code",
+        "PartitionId": "41fb6918-986b-4b6d-bff6-0495b114c720",
+        "ReplicaId": "132425867491663573",
+        "ReplicaRole": "ActiveSecondary",
+        "ReplicaStatus": "Ready",
+        "Address": "",
+        "ServicePackageActivationId": "",
+        "HostProcessId": "836",
+        "ReconfigurationInformation": {
+            "PreviousConfigurationRole": "None",
+            "ReconfigurationPhase": "None",
+            "ReconfigurationType": "None",
+            "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+        }
+    },
+    {
+        "ServiceKind": "Stateful",
+        "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+        "ServiceTypeName": "VisualObjects.ActorServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "VisualObjects.ActorServicePkg",
+        "CodePackageName": "Code",
+        "PartitionId": "4dc30f2a-63bf-4f01-9e49-d0aeac0b262a",
+        "ReplicaId": "132451893319748533",
+        "ReplicaRole": "ActiveSecondary",
+        "ReplicaStatus": "Ready",
+        "Address": "",
+        "ServicePackageActivationId": "",
+        "HostProcessId": "836",
+        "ReconfigurationInformation": {
+            "PreviousConfigurationRole": "None",
+            "ReconfigurationPhase": "None",
+            "ReconfigurationType": "None",
+            "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+        }
+    },
+    {
+        "ServiceKind": "Stateful",
+        "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+        "ServiceTypeName": "VisualObjects.ActorServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "VisualObjects.ActorServicePkg",
+        "CodePackageName": "Code",
+        "PartitionId": "28bfaf73-37b0-467d-9d47-d011b0aedbc0",
+        "ReplicaId": "132429154475414363",
+        "ReplicaRole": "Primary",
+        "ReplicaStatus": "Ready",
+        "Address": "{\"Endpoints\":{\"\":\"10.0.0.5:20001+28bfaf73-37b0-467d-9d47-d011b0aedbc0-132429154475414363\"}}",
+        "ServicePackageActivationId": "",
+        "HostProcessId": "836",
+        "ReconfigurationInformation": {
+            "PreviousConfigurationRole": "None",
+            "ReconfigurationPhase": "None",
+            "ReconfigurationType": "None",
+            "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+        }
+    },
+    {
+        "ServiceKind": "Stateful",
+        "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+        "ServiceTypeName": "VisualObjects.ActorServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "VisualObjects.ActorServicePkg",
+        "CodePackageName": "Code",
+        "PartitionId": "558f717a-cc8d-4fb0-9562-1c53e9c6775d",
+        "ReplicaId": "132399270321041872",
+        "ReplicaRole": "ActiveSecondary",
+        "ReplicaStatus": "Ready",
+        "Address": "",
+        "ServicePackageActivationId": "",
+        "HostProcessId": "836",
+        "ReconfigurationInformation": {
+            "PreviousConfigurationRole": "None",
+            "ReconfigurationPhase": "None",
+            "ReconfigurationType": "None",
+            "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+        }
+    },
+    {
+        "ServiceKind": "Stateful",
+        "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+        "ServiceTypeName": "VisualObjects.ActorServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "VisualObjects.ActorServicePkg",
+        "CodePackageName": "Code",
+        "PartitionId": "8319a2ad-b380-4871-b89f-dd1e5a32822f",
+        "ReplicaId": "132425992327686429",
+        "ReplicaRole": "Primary",
+        "ReplicaStatus": "Ready",
+        "Address": "{\"Endpoints\":{\"\":\"10.0.0.5:20001+8319a2ad-b380-4871-b89f-dd1e5a32822f-132425992327686429\"}}",
+        "ServicePackageActivationId": "",
+        "HostProcessId": "836",
+        "ReconfigurationInformation": {
+            "PreviousConfigurationRole": "None",
+            "ReconfigurationPhase": "None",
+            "ReconfigurationType": "None",
+            "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+        }
+    },
+    {
+        "ServiceKind": "Stateful",
+        "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+        "ServiceTypeName": "VisualObjects.ActorServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "VisualObjects.ActorServicePkg",
+        "CodePackageName": "Code",
+        "PartitionId": "c8e13dbe-87b0-49c9-9ad8-de696446dab7",
+        "ReplicaId": "132431356665050524",
+        "ReplicaRole": "ActiveSecondary",
+        "ReplicaStatus": "Ready",
+        "Address": "",
+        "ServicePackageActivationId": "",
+        "HostProcessId": "836",
+        "ReconfigurationInformation": {
+            "PreviousConfigurationRole": "None",
+            "ReconfigurationPhase": "None",
+            "ReconfigurationType": "None",
+            "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+        }
+    },
+    {
+        "ServiceKind": "Stateful",
+        "ServiceName": "fabric:/VisualObjectsApplicationType/VisualObjects.ActorService",
+        "ServiceTypeName": "VisualObjects.ActorServiceType",
+        "ServiceManifestVersion": "",
+        "ServiceManifestName": "VisualObjects.ActorServicePkg",
+        "CodePackageName": "Code",
+        "PartitionId": "9c53d4c4-f9b7-4906-9b19-55d5d4c082d2",
+        "ReplicaId": "132431356665060458",
+        "ReplicaRole": "Primary",
+        "ReplicaStatus": "Ready",
+        "Address": "{\"Endpoints\":{\"\":\"10.0.0.5:20001+9c53d4c4-f9b7-4906-9b19-55d5d4c082d2-132431356665060458\"}}",
+        "ServicePackageActivationId": "",
+        "HostProcessId": "836",
+        "ReconfigurationInformation": {
+            "PreviousConfigurationRole": "None",
+            "ReconfigurationPhase": "None",
+            "ReconfigurationType": "None",
+            "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+        }
+    }
+]

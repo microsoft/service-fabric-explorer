@@ -1,14 +1,14 @@
-<div class="refresh-container">
+<div class="refresh-container" data-cy="refreshrate">
   <div style="overflow: hidden;">
     REFRESH RATE {{displayRate === "0" ? 'OFF' : displayRate}}
   </div>
   <button (click)="change(0)" class="flat-button rounded-button" ngbTooltip="Turn off refresh rate"> OFF </button>
   <input [(ngModel)]="refreshRate" type="range" list="tickmarks" step="1" min="0" max="5" (click)="changed()"
     ngbTooltip="Set the refresh rate">
-  <button (click)="change(5)" class="flat-button rounded-button" ngbTooltip="Set refresh rate to 2 seconds."> FAST </button>
-  <button (click)="forceRefresh()" class="mif-refresh mif-2x flat-button" [ngClass]="{'rotate': refresh}"
+  <button (click)="change(5)" class="flat-button rounded-button" ngbTooltip="Set refresh rate to 5 seconds."> FAST </button>
+  <button (click)="forceRefresh()" class="flat-button" data-cy="refresh"
     [attr.aria-polite]="refresh ? 'polite' : 'off'" aria-label="Force a refresh"
-    [ngbTooltip]="refresh ? 'Refreshing' : 'Force a refresh'"> </button>
+    [ngbTooltip]="refresh ? 'Refreshing' : 'Force a refresh'"> <i class="mif-refresh mif-2x " [ngClass]="{'rotate': refresh}"></i> </button>
 </div>
 
 <datalist id="tickmarks">

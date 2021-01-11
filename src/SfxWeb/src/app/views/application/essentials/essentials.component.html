@@ -57,7 +57,13 @@
   </div>
 </div>
 
-<div id="upgradeDetailsSection" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
+<div>
+  <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard"></app-dashboard-tile>
+  <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard"></app-dashboard-tile>
+  <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
+</div>
+
+<div data-cy="upgradeDetails" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container [sectionName]="app.isUpgrading ? 'Upgrade In Progress' : 'Latest Upgrade State'">
         <div collapse-header>
             <h4 *ngIf="app.isUpgrading">Upgrade In Progress</h4>
@@ -69,7 +75,7 @@
                     <thead>
                         <tr>
                             <th>Target Version</th>
-                            <th>Start Timestamp Utc</th>
+                            <th>Start Timestamp UTC</th>
                             <th title="Upgrade Duration">Upgrade Duration</th>
                             <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>
                             <th>Upgrade Mode</th>
@@ -79,7 +85,9 @@
                     <tbody>
                         <tr>
                             <td title="{{upgradeProgress.raw.TargetApplicationTypeVersion}}">{{upgradeProgress.raw.TargetApplicationTypeVersion}}</td>
-                            <td>{{upgradeProgress.startTimestampUtc}}</td>
+                            <td>
+                              <app-display-time [time]="upgradeProgress.startTimestampUtc"></app-display-time>
+                            </td>
                             <td>{{upgradeProgress.upgradeDuration}}</td>
                             <td>{{upgradeProgress.upgradeDomainDuration}}</td>
                             <td>{{upgradeProgress.raw.RollingUpgradeMode}}</td>
@@ -91,7 +99,7 @@
 
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDomains.length > 0">
                 <h4>Progress by Upgrade Domain</h4>
-                <upgrade-progress [upgradeDomains]="upgradeProgress.upgradeDomains"></upgrade-progress>
+                <app-upgrade-progress [upgradeDomains]="upgradeProgress.upgradeDomains"></app-upgrade-progress>
             </div>
 
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.raw.FailureReason !== 'None'">
@@ -104,7 +112,7 @@
                                 <td><img class="badge-icon" src="images/badge-error.svg"><span> {{upgradeProgress.raw.FailureReason}}</span></td>
                             </tr>
                             <tr>
-                                <th>Failure Timestamp Utc</th>
+                                <th>Failure Timestamp UTC</th>
                                 <td>{{upgradeProgress.failureTimestampUtc}}</td>
                             </tr>
                         </tbody>
@@ -115,7 +123,7 @@
             </div>
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.unhealthyEvaluations.length > 0">
                 <h4>Unhealthy Evaluations (Upgrade)</h4>
-                <detail-list [list]="upgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></detail-list>
+                <app-detail-list [list]="upgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
             </div>
 
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDescription">
@@ -126,7 +134,7 @@
     </app-collapse-container>
 </div>
 
-<div class="detail-pane essen-pane" *ngIf="app && app.health">
+<div class="detail-pane essen-pane" *ngIf="app && app.health" data-cy="health">
     <app-collapse-container sectionName="Unhealthy Evaluations">
         <div collapse-header>
             <h4>Unhealthy Evaluations</h4>
@@ -143,7 +151,7 @@
             <h4>Services</h4>
         </div>
         <div collapse-body>
-            <detail-list [list]="app.services.collection" [listSettings]="listSettings"></detail-list>
+            <app-detail-list [list]="app.services.collection" [listSettings]="listSettings" data-cy="services"></app-detail-list>
         </div>
     </app-collapse-container>
 </div>
@@ -154,12 +162,12 @@
             <h4>Service Types</h4>
         </div>
         <div collapse-body>
-            <detail-list [list]="app.serviceTypes.collection" [listSettings]="serviceTypesListSettings"></detail-list>
+            <app-detail-list [list]="app.serviceTypes.collection" [listSettings]="serviceTypesListSettings" data-cy="serviceTypes"></app-detail-list>
         </div>
     </app-collapse-container>
 </div>
 
 <!-- <div class="detail-pane essen-pane" *ngIf="clusterManifest && clusterManifest.isNetworkInventoryManagerEnabled">
     <h4>Networks</h4>
-    <detail-list [list]="networks" [listSettings]="networkListSettings"></detail-list>
+    <app-detail-list [list]="networks" [listSettings]="networkListSettings"></app-detail-list>
 </div> -->

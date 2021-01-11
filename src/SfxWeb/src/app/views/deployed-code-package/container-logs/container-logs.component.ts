@@ -2,7 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
-import { DeployedCodePackageBaseController } from '../DeployedCodePackageBase';
+import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePackageBase';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -10,9 +10,9 @@ import { map } from 'rxjs/operators';
   templateUrl: './container-logs.component.html',
   styleUrls: ['./container-logs.component.scss']
 })
-export class ContainerLogsComponent extends DeployedCodePackageBaseController {
+export class ContainerLogsComponent extends DeployedCodePackageBaseControllerDirective {
   containerLogs: string;
-  
+
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }

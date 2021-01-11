@@ -1,0 +1,12 @@
+[
+    {
+        "Id": "VisualObjectsApplicationType",
+        "Name": "fabric:/VisualObjectsApplicationType",
+        "TypeName": "VisualObjectsApplicationType",
+        "Status": "Active",
+        "WorkDirectory": "D:\\SvcFab\\_App\\VisualObjectsApplicationType_App18\\work",
+        "LogDirectory": "D:\\SvcFab\\_App\\VisualObjectsApplicationType_App18\\log",
+        "TempDirectory": "D:\\SvcFab\\_App\\VisualObjectsApplicationType_App18\\temp",
+        "HealthState": "Unknown"
+    }
+]

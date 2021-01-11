@@ -7,6 +7,7 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { Platform } from '@angular/cdk/platform';
 import { Utils } from 'src/app/Utils/Utils';
+import { TelemetryService } from 'src/app/services/telemetry.service';
 
 @Component({
   selector: 'app-advanced-option',
@@ -15,14 +16,15 @@ import { Utils } from 'src/app/Utils/Utils';
 })
 export class AdvancedOptionComponent implements OnInit {
 
-  status: boolean = false;
+  status = false;
   @ViewChild(NgbDropdown, {static: true}) dropdown: NgbDropdown;
 
   constructor(public storage: StorageService,
               public messageService: MessageService,
               public settingsService: SettingsService,
               private liveAnnouncer: LiveAnnouncer,
-              public platform: Platform) { }
+              public platform: Platform,
+              public telemetryService: TelemetryService) { }
 
   ngOnInit() {
     this.status = this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
@@ -33,8 +35,12 @@ export class AdvancedOptionComponent implements OnInit {
   }
 
   closeChange(state: boolean) {
-    if(!Utils.isIEOrEdge) {
-      this.liveAnnouncer.announce(`Settings dropdown button is now ${state ? 'Expanded' : 'Collapsed'}`)
+    if (!Utils.isIEOrEdge) {
+      this.liveAnnouncer.announce(`Settings dropdown button is now ${state ? 'Expanded' : 'Collapsed'}`);
     }
+  }
+
+  telemetryChange() {
+    this.telemetryService.SetTelemetry(this.telemetryService.telemetryEnabled);
   }
 }

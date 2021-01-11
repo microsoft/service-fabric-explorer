@@ -1,0 +1,13 @@
+<div>
+    min replica : {{partitionInfo.partition.MinReplicaSetSize}}
+</div>
+<div>
+    target replica : {{partitionInfo.partition.TargetReplicaSetSize}}
+</div>
+<div>
+    Application name : {{partitionInfo.applicationName.Id}}
+</div>
+<div>
+    Service name : {{partitionInfo.serviceName.Id}}
+</div>
+<button (click)="view()" class="simple-button">View</button>

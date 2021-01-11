@@ -1,6 +1,6 @@
-import { Component, OnInit, Input, HostListener, Injector } from '@angular/core';
+import { Component, Input, HostListener, Injector } from '@angular/core';
 import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 
@@ -9,17 +9,17 @@ import { Observable } from 'rxjs';
   templateUrl: './cluster-upgrade-banner.component.html',
   styleUrls: ['./cluster-upgrade-banner.component.scss']
 })
-export class ClusterUpgradeBannerComponent extends BaseController {
+export class ClusterUpgradeBannerComponent extends BaseControllerDirective {
 
-  displayMiddleText: boolean = true;
-  displayAllText: boolean = true;
+  displayMiddleText = true;
+  displayAllText = true;
   @Input() clusterUpgradeProgress: ClusterUpgradeProgress;
 
-  constructor(injector: Injector) { 
+  constructor(injector: Injector) {
     super(injector);
   }
 
-  ngOnInit() {
+  setup() {
     this.checkWidth(window.innerWidth);
   }
 
@@ -30,7 +30,7 @@ export class ClusterUpgradeBannerComponent extends BaseController {
 
   @HostListener('window:resize', ['$event.target'])
   onResize(event: Window) {
-    this.checkWidth(event.innerWidth)
+    this.checkWidth(event.innerWidth);
   }
 
   checkWidth(width: number) {
@@ -39,7 +39,9 @@ export class ClusterUpgradeBannerComponent extends BaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.clusterUpgradeProgress.refresh(messageHandler)
+    this.checkWidth(window.innerWidth);
+
+    return this.clusterUpgradeProgress.refresh(messageHandler);
   }
 
 }

@@ -3,7 +3,7 @@ import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { forkJoin, Observable } from 'rxjs';
 import { Node } from 'src/app/Models/DataModels/Node';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { HealthStateConstants } from 'src/app/Common/Constants';
 
@@ -12,11 +12,11 @@ import { HealthStateConstants } from 'src/app/Common/Constants';
   templateUrl: './clustermap.component.html',
   styleUrls: ['./clustermap.component.scss']
 })
-export class ClustermapComponent extends BaseController {
+export class ClustermapComponent extends BaseControllerDirective {
 
   nodes: NodeCollection;
-  filter: string = "";
-  healthFilter: Record<string, boolean> = {}
+  filter = '';
+  healthFilter: Record<string, boolean> = {};
 
   constructor(private data: DataService, injector: Injector) {
 
@@ -33,13 +33,13 @@ export class ClustermapComponent extends BaseController {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
       this.nodes.refresh(messageHandler)
-    ])
+    ]);
   }
 
   public getNodesForDomains(upgradeDomain: string, faultDomain: string): Node[] {
-    return this.nodes.collection.filter((node) => node.upgradeDomain === upgradeDomain && 
-                                                  node.faultDomain === faultDomain && 
-                                                  (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter): true) &&
+    return this.nodes.collection.filter((node) => node.upgradeDomain === upgradeDomain &&
+                                                  node.faultDomain === faultDomain &&
+                                                  (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter) : true) &&
                                                   (node.healthState.badgeId in this.healthFilter ? this.healthFilter[node.healthState.badgeId] : true));
   }
 }
