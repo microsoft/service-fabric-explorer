@@ -28,7 +28,7 @@ export class PartitionRestoreBackUpComponent implements OnInit {
   }
 
   ok() {
-    if(this.form.value.Storage.StorageKind == "")
+    if (this.form.value.Storage.StorageKind === '')
     {
       this.form.value.Storage = null;
     }
