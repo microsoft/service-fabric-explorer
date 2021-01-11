@@ -303,7 +303,7 @@ describe('Health Utils', () => {
                 const UnhealthyEvent: Partial<IRawHealthEvent> = {
                     SourceId: 'someId',
                     Property: 'Ok'
-                }
+                };
                 const health = {
                     Kind: 'Event',
                     UnhealthyEvent
