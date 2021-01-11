@@ -28,6 +28,10 @@ export class PartitionRestoreBackUpComponent implements OnInit {
   }
 
   ok() {
+    if(this.form.value.Storage.StorageKind == "")
+    {
+      this.form.value.Storage = null;
+    }
     const values = this.form.value;
     this.data.restClient.restorePartitionBackup(this.partition.data.id, values.Storage, values.RestoreTimeout, values.BackupId, values.BackupLocation).subscribe( () => {
       this.cancel();

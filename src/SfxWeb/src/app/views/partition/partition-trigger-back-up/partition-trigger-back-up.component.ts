@@ -26,6 +26,10 @@ export class PartitionTriggerBackUpComponent implements OnInit {
   }
 
   ok() {
+    if(this.form.value.Storage.StorageKind == "")
+    {
+      this.form.value.Storage = null;
+    }
     this.data.restClient.triggerPartitionBackup(this.partition.data, this.form.value.BackupTimeout, this.form.value.Storage).subscribe( () => {
       this.cancel();
     },
