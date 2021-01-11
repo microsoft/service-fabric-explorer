@@ -7,8 +7,8 @@ import { IUnhealthyEvaluationNode } from 'src/app/Utils/healthUtils';
 export class UnhealtyEvaluationChildFilterPipe implements PipeTransform {
 
   transform(children: IUnhealthyEvaluationNode[], errorOnly: boolean): IUnhealthyEvaluationNode[] {
-    if(errorOnly) {
-      return children.filter(child => child.containsErrorInPath)
+    if (errorOnly) {
+      return children.filter(child => child.containsErrorInPath);
     }else{
       return children;
     }

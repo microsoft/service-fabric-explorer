@@ -44,5 +44,5 @@
         </div>
     </div>
 </span>
-<app-unhealthy-evaluation [node]="viewNode" [condensed]="condensed" (onAnchor)="setNewRootNode($event)" isAnchor="True"
+<app-unhealthy-evaluation [node]="viewNode" [condensed]="condensed" (anchor)="setNewRootNode($event)" isAnchor="True"
     [containsErrorInPath]="errorOnly" [fullDescription]="fullDescriptions" *ngIf="!errorOnly || viewNode.containsErrorInPath"></app-unhealthy-evaluation>

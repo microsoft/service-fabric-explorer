@@ -9,7 +9,7 @@ import { HealthEvaluation } from 'src/app/Models/DataModels/Shared';
 export class HealthViewerComponent implements OnInit {
 
   @Input() unhealthyEvaluations: HealthEvaluation[];
-  
+
   constructor() { }
 
   ngOnInit(): void {

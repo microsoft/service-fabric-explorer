@@ -41,6 +41,6 @@
         <div class="up-bar" *ngIf="l"></div>
         <div class="left-bar"></div>
         <app-unhealthy-evaluation [node]="child" [condensed]="condensed" [containsErrorInPath]="containsErrorInPath"
-            [fullDescription]="fullDescription" (onAnchor)="onAnchorSet($event);"></app-unhealthy-evaluation>
+            [fullDescription]="fullDescription" (anchor)="onAnchorSet($event);"></app-unhealthy-evaluation>
     </li>
 </ul>

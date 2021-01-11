@@ -10,9 +10,9 @@ import { StorageService } from 'src/app/services/storage.service';
 })
 export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges {
 
-  static readonly STORAGE_LAYOUT_SETTING = "UNHEALTHY-STORAGE_LAYOUT_SETTING-LAYOUT";
-  static readonly STORAGE_ERRORS_ONLY_SETTING = "STORAGE_ERRORS_ONLY_SETTING-EVALUATION-LAYOUT";
-  static readonly STORAGE_LONG_DESCRIPTION_SETTING = "STORAGE_LONG_DESCRIPTION_SETTING-EVALUATION-LAYOUT";
+  static readonly STORAGE_LAYOUT_SETTING = 'UNHEALTHY-STORAGE_LAYOUT_SETTING-LAYOUT';
+  static readonly STORAGE_ERRORS_ONLY_SETTING = 'STORAGE_ERRORS_ONLY_SETTING-EVALUATION-LAYOUT';
+  static readonly STORAGE_LONG_DESCRIPTION_SETTING = 'STORAGE_LONG_DESCRIPTION_SETTING-EVALUATION-LAYOUT';
 
   @Input() healthEvaluations: HealthEvaluation[];
 
@@ -27,25 +27,25 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     parent: null,
     containsErrorInPath: false,
     displayNames: [],
-    id: "tree"
+    id: 'tree'
   };
 
-  usingOriginalRoot: boolean = true;
-  hiddenNodes: number = 0;
+  usingOriginalRoot = true;
+  hiddenNodes = 0;
 
-  view: string = "";
+  view = '';
 
-  condensed: boolean = true;
-  errorOnly: boolean = false;
-  fullDescriptions: boolean = false;
+  condensed = true;
+  errorOnly = false;
+  fullDescriptions = false;
   constructor(private storageService: StorageService) { }
 
   ngOnChanges(): void {
-    let roots = [];
+    const roots = [];
     this.healthEvaluations.filter(node => node.parent === null).forEach(root => {
       const newNode = recursivelyBuildTree(root, this.originalRoot);
       roots.push(newNode);
-    })
+    });
 
     this.originalRoot.children = roots;
 
@@ -62,7 +62,7 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
     this.root = this.originalRoot;
     this.viewNode = this.root;
 
-    this.view = this.storageService.getValueString(UnhealthyEvaluationsContainerComponent.STORAGE_LAYOUT_SETTING, "Verbose");
+    this.view = this.storageService.getValueString(UnhealthyEvaluationsContainerComponent.STORAGE_LAYOUT_SETTING, 'Verbose');
     this.errorOnly = this.storageService.getValueBoolean(UnhealthyEvaluationsContainerComponent.STORAGE_ERRORS_ONLY_SETTING, false);
     this.fullDescriptions = this.storageService.getValueBoolean(UnhealthyEvaluationsContainerComponent.STORAGE_LONG_DESCRIPTION_SETTING, false);
 
@@ -87,8 +87,8 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
           parent: null,
           containsErrorInPath: false,
           displayNames: [],
-          id: "all events"
-        }
+          id: 'all events'
+        };
 
         break;
       default:
@@ -111,13 +111,13 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
 
   setNewRootNode(node: IUnhealthyEvaluationNode) {
     this.root = node;
-    this.root.containsErrorInPath = this.root.children.some(child => child.containsErrorInPath)
+    this.root.containsErrorInPath = this.root.children.some(child => child.containsErrorInPath);
 
     this.parentPath = getParentPath(node);
-    this.rootPath = this.parentPath.slice(1).map(node => node.id);
+    this.rootPath = this.parentPath.slice(1).map(pathNode => pathNode.id);
     this.usingOriginalRoot = node === this.originalRoot;
     if (!this.usingOriginalRoot) {
-      this.rootPath.push(this.root.id)
+      this.rootPath.push(this.root.id);
     }
     this.updateTree();
   }
@@ -132,15 +132,15 @@ export class UnhealthyEvaluationsContainerComponent implements OnInit, OnChanges
 
   getEvents() {
     const children = getLeafNodes(this.root);
-    console.log(children)
-    let newRoot: IUnhealthyEvaluationNode = {
+    console.log(children);
+    const newRoot: IUnhealthyEvaluationNode = {
       healthEvaluation: null,
       children,
       parent: null,
       containsErrorInPath: false,
       displayNames: [],
-      id: "all events"
-    }
-    this.setNewRootNode(newRoot)
+      id: 'all events'
+    };
+    this.setNewRootNode(newRoot);
   }
 }

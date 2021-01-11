@@ -9,23 +9,23 @@ import { IUnhealthyEvaluationNode } from 'src/app/Utils/healthUtils';
 })
 export class UnhealthyEvaluationComponent implements OnChanges, OnInit, AfterViewInit {
 
-  @Input() isAnchor: boolean = false;
+  @Input() isAnchor = false;
 
   @Input() node: IUnhealthyEvaluationNode;
 
-  @Input() condensed: boolean = true;
-  @Input() containsErrorInPath: boolean = false;
-  @Input() fullDescription: boolean = false;
+  @Input() condensed = true;
+  @Input() containsErrorInPath = false;
+  @Input() fullDescription = false;
 
 
-  @Output() onAnchor = new EventEmitter<IUnhealthyEvaluationNode>();
+  @Output() anchor = new EventEmitter<IUnhealthyEvaluationNode>();
 
-  showChildren: boolean = true;
+  showChildren = true;
 
-  showFullText: boolean = false;
-  displayTextIsLong: boolean = false;
+  showFullText = false;
+  displayTextIsLong = false;
 
-  @ViewChild("tref", { read: ElementRef }) tref: ElementRef;
+  @ViewChild('tref', { read: ElementRef }) tref: ElementRef;
 
   constructor(private cdr: ChangeDetectorRef) { }
   ngAfterViewInit(): void {
@@ -43,8 +43,8 @@ export class UnhealthyEvaluationComponent implements OnChanges, OnInit, AfterVie
   checkText(runCdr: boolean = false) {
     if (this.tref) {
       this.displayTextIsLong = this.tref.nativeElement.clientHeight > 60;
-      if(runCdr) {
-        this.cdr.detectChanges()
+      if (runCdr) {
+        this.cdr.detectChanges();
       }
     }
   }
@@ -64,7 +64,7 @@ export class UnhealthyEvaluationComponent implements OnChanges, OnInit, AfterVie
   }
 
   onAnchorSet(node: IUnhealthyEvaluationNode) {
-    this.onAnchor.emit(node);
+    this.anchor.emit(node);
   }
 
   trackById(index: number, node: IUnhealthyEvaluationNode) {
