@@ -1,16 +1,16 @@
-<ul ngbNav #nav="ngbNav" class="nav-tabs">
-    <li ngbNavItem>
+<div ngbNav #nav="ngbNav">
+    <div ngbNavItem>
         <a ngbNavLink>List</a>
         <ng-template ngbNavContent>
             <app-list-view [unhealthyEvaluations]="unhealthyEvaluations"></app-list-view>
         </ng-template>
-    </li>
-    <li ngbNavItem>
+    </div>
+    <div ngbNavItem>
         <a ngbNavLink>Tree</a>
         <ng-template ngbNavContent>
             <app-unhealthy-evaluations-container [healthEvaluations]="unhealthyEvaluations">
             </app-unhealthy-evaluations-container>
         </ng-template>
-    </li>
-</ul>
+    </div>
+</div>
 <div [ngbNavOutlet]="nav"></div>

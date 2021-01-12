@@ -127,7 +127,6 @@ export class HealthUtils {
                 break;
             }
             case 'Event': {
-                console.log(healthEval);
                 const event = healthEval.UnhealthyEvent;
                 uniqueId = event.SourceId + event.Property;
 
