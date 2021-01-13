@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_APPTYPES, EMPTY_LIST_TEXT } from './util';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT } from './util';
 
 const appName = "VisualObjectsApplicationType";
 const waitRequest = "@app";
@@ -49,7 +49,7 @@ context('app', () => {
 
     describe("details", () => {
         it('view details', () => {
-            cy.wait(waitRequest);
+            cy.wait([waitRequest, "@apphealth"]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
@@ -60,38 +60,41 @@ context('app', () => {
     })
 
     describe("deployments", () => {
-        it('view details', () => {
-            cy.wait(waitRequest);
+        it('view deployments', () => {
+            cy.wait([waitRequest, "@apphealth"]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('deployments').click();
             })
-
+            cy.wait("@apphealth")
             cy.url().should('include', '/deployments')
         })
     })
 
     describe("manifest", () => {
         it('view manifest', () => {
-            cy.wait(waitRequest);
-            cy.route(apiUrl(`/ApplicationTypes/${appName}/$/GetApplicationManifest??*`), "fx:app-page/app-manifest").as("appManifest")
+            cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
+            cy.route(apiUrl(`/ApplicationTypes/${appName}/$/GetApplicationManifest?*`), "fx:app-page/app-manifest").as("appManifest")
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('manifest').click();
             })
 
-            cy.wait("@appManifest")
+            cy.wait(["@appManifest", waitRequest])
             cy.url().should('include', '/manifest')
         })
     })
 
     describe("backups", () => {
         it('view backup', () => {
-            cy.wait(waitRequest);
+            cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
+            cy.route(apiUrl(`/Applications/${appName}/$/GetBackupConfigurationInfo?*`)).as('backup');
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('backup').click();
             })
+
+            cy.wait("@backup")
 
             cy.url().should('include', '/backup')
         })
@@ -101,12 +104,13 @@ context('app', () => {
         it('view events', () => {
             cy.route(apiUrl(`EventsStore/Applications/${appName}/$/Events?*`), "fx:empty-list").as("events")
 
-            cy.wait(waitRequest);
+            cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();
             })
 
+            cy.wait('@events')
             cy.url().should('include', '/events')
         })
     })

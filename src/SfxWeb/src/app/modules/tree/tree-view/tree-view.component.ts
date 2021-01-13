@@ -2,6 +2,7 @@ import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input 
 import { TreeService } from 'src/app/services/tree.service';
 import { environment } from 'src/environments/environment';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { RestClientService } from 'src/app/services/rest-client.service';
 
 @Component({
   selector: 'app-tree-view',
@@ -16,7 +17,9 @@ export class TreeViewComponent implements DoCheck {
   public showBeta = environment.showBeta;
   public canExpand = false;
   @ViewChild('tree') tree: ElementRef;
-  constructor(public treeService: TreeService, private liveAnnouncer: LiveAnnouncer) { }
+  constructor(public treeService: TreeService,
+              private liveAnnouncer: LiveAnnouncer,
+              public restClientService: RestClientService) { }
 
   ngDoCheck(): void {
     if (this.tree) {
@@ -25,7 +28,7 @@ export class TreeViewComponent implements DoCheck {
   }
 
   leaveBeta() {
-    const originalUrl =  location.href.replace('beta.html', 'index.html');
+    const originalUrl =  location.href.replace('index.html', 'beta.html');
     window.location.assign(originalUrl);
   }
 

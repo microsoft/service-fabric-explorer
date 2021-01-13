@@ -34,8 +34,12 @@ export class EssentialsComponent extends ApplicationTypeBaseControllerDirective 
           new ListColumnSettingForApplicationType()
       ],
       [
-          new ListColumnSetting('placeholder', 'placeholder', null, false), // Empty column
-          new ListColumnSetting('raw.StatusDetails', 'Status Details', null, false, (item) => HtmlUtils.getSpanWithCustomClass('preserve-whitespace-wrap', item.raw.StatusDetails), 100)
+          new ListColumnSetting('placeholder', 'placeholder', {enableFilter: false}), // Empty column
+          new ListColumnSetting('raw.StatusDetails', 'Status Details', {
+            enableFilter: false,
+            getDisplayHtml: (item) => HtmlUtils.getSpanWithCustomClass('preserve-whitespace-wrap', item.raw.StatusDetails),
+            colspan: 100
+          })
       ],
       false /* collapsable */,
       (item) => item.raw.StatusDetails, /* only show second row when status details is not empty */

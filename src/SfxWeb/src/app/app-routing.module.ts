@@ -1,5 +1,6 @@
 import { NgModule } from '@angular/core';
 import { Routes, RouterModule } from '@angular/router';
+import { RequestLoggingComponent } from './views/debugging/request-logging/request-logging.component';
 
 const routes: Routes = [
   // application section
@@ -42,6 +43,8 @@ const routes: Routes = [
   { path: 'node/:nodeName', loadChildren: () => import(`./views/node/node.module`).then(m => m.NodeModule) },
   { path: 'nodes', loadChildren: () => import(`./views/nodes/nodes.module`).then(m => m.NodesModule) },
 
+  { path: 'networking', loadChildren: () => import(`./views/debugging/debugging.module`).then(m => m.DebuggingModule) },
+
   // system section(shares some routes with application)
   // { path: 'network/:networkName', loadChildren: () => import(`./views/node/node.module`).then(m => m.NodeModule) },
   // { path: 'networks', loadChildren: () => import(`./views/networks/networks.module`).then(m => m.NodeModule) },
@@ -52,7 +55,7 @@ const routes: Routes = [
 ];
 
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true })],
+  imports: [RouterModule.forRoot(routes, { useHash: true, relativeLinkResolution: 'legacy' })],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }

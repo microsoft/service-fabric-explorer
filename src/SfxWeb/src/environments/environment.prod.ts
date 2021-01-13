@@ -3,5 +3,6 @@ export const environment = {
   baseUrl: "",
   version: "7.0",
   assetBase: "",
-  showBeta: true
+  showBeta: true,
+  telemetryKey: ""
 };

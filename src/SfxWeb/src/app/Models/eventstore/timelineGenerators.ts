@@ -54,7 +54,7 @@ export class EventStoreUtils {
         }else if (typeof data === 'object') {
             value = EventStoreUtils.internalToolTipFormatterObject(data);
         }
-        return`<tr style="padding: 0 5 px; bottom-border: 1px solid gray"><td style="word-break: keep-all;">${key}</td><td style="display:flex; flex-direction: row; "> <div style="margin-right: 4px">:</div> ${value}</td></tr>`;
+        return`<tr style="padding: 0 5 px; bottom-border: 1px solid gray"><td style="word-break: keep-all;">${key}</td><td style="display:flex; flex-direction: row; "> <div style="margin-right: 4px">:</div style="white-space: pre-wrap; display: inline-block;"> ${value}</td></tr>`;
     }
 
     /*
@@ -279,6 +279,8 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
 }
 export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     static readonly NodesDownLabel = 'Node Down';
+    static readonly NodesRemoved = 'Node Removed';
+    static readonly NodesAdded = 'Node Added';
     static readonly transitions = ['NodeDeactivateStarted'];
 
     consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
@@ -288,6 +290,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         // so that we know we need to chart a down node from the start of the timeline.
         const nodeUpEvents: Record<string, NodeEvent> = {};
         const previousTransitions: Record<string, NodeEvent> = {};
+        const nodeDownDataItems: Record<string, DataItem> = {};
+
         let potentiallyMissingEvents = false;
 
         events.forEach( event => {
@@ -305,9 +309,9 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                         delete nodeUpEvents[event.nodeName];
                     }
                     const end = previousTransition ? previousTransition.timeStamp : endOfRange.toISOString();
-                    const start = event.eventProperties.LastNodeUpAt;
+                    const start = event.timeStamp;
                     const label = `Node ${event.nodeName} down`;
-                    items.add({
+                    const item = {
                         id: event.eventInstanceId + label,
                         content: label,
                         start,
@@ -317,14 +321,24 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                         title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
                         className: 'red',
                         subgroup: 'stack'
-                    });
+                    };
+
+                    if (event.eventProperties.NodeInstance in nodeDownDataItems) {
+                        items.add(nodeDownDataItems[event.eventProperties.NodeInstance]);
+                    }
+
+                    nodeDownDataItems[event.eventProperties.NodeInstance] = item;
+                }else if (event.kind === 'NodeDeactivateCompleted' && event.eventProperties.EffectiveDeactivateIntent === 'RemoveNode') {
+                    const nodeDownEvent = nodeDownDataItems[event.eventProperties.NodeInstance];
+
+                    if (nodeDownEvent) {
+                      delete nodeDownDataItems[event.eventProperties.NodeInstance];
+                      potentiallyMissingEvents = true;
+                    }
                 }
 
-                if (event.kind === 'NodeUp') {
+                if (event.kind === 'NodeUp' && event.eventProperties.LastNodeDownAt !== '1601-01-01T00:00:00Z') {
                     previousTransitions[event.nodeName] = event;
-                    if (event.nodeName in nodeUpEvents) {
-                        potentiallyMissingEvents = true;
-                    }
                     nodeUpEvents[event.nodeName] = event;
                 }
             }
@@ -334,6 +348,10 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
             }
         });
 
+        Object.keys(nodeDownDataItems).forEach(key => {
+            const item = nodeDownDataItems[key];
+            items.add(item);
+        });
         // add any left over node up events to the chart.
         Object.keys(nodeUpEvents).forEach(key => {
             const event = nodeUpEvents[key];

@@ -5,17 +5,19 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { PartitionInfoComponent } from './partition-info/partition-info.component';
 import { UpgradeProgressComponent } from './upgrade-progress/upgrade-progress.component';
 import { SafetyChecksComponent } from './safety-checks/safety-checks.component';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
   declarations: [UpgradeDomainProgressComponent, PartitionInfoComponent, UpgradeProgressComponent, SafetyChecksComponent],
   imports: [
     CommonModule,
-    SharedModule
+    SharedModule,
+    NgbTooltipModule
   ],
   exports: [
     UpgradeDomainProgressComponent,
     UpgradeProgressComponent,
-    SafetyChecksComponent
+    SafetyChecksComponent,
   ]
 })
 export class UpgradeProgressModule { }

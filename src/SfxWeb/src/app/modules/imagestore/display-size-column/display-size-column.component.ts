@@ -71,7 +71,7 @@ export class ListColumnSettingWithDisplaySize extends ListColumnSetting {
   template = DisplaySizeColumnComponent;
   imagestore: ImageStore;
   public constructor(imagestore: ImageStore) {
-      super('displayedSize', 'Size', ['isFolder', 'size', 'displayName']);
+      super('displayedSize', 'Size', {sortPropertyPaths: ['isFolder', 'size', 'displayName']});
       this.imagestore = imagestore;
   }
 }

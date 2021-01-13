@@ -54,7 +54,7 @@
                     </dd>
                     <dt *ngIf="!serviceType.raw.ServiceTypeDescription.IsStateful">Instance Count</dt>
                     <dd *ngIf="!serviceType.raw.ServiceTypeDescription.IsStateful">
-                        <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.InstanceCount" aria-label="Instance Count" min="1" aria-valuemin="1" integer>
+                        <input type="number" class="input-flat" autocomplete="off" [ngModelOptions]="{standalone: true}" [(ngModel)]="description.raw.InstanceCount" aria-label="Instance Count" pattern="^(?:-1|[1-9]\d*)$" integer>
                     </dd>
                     <dt *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">Has Persisted State</dt>
                     <dd *ngIf="serviceType.raw.ServiceTypeDescription.IsStateful">

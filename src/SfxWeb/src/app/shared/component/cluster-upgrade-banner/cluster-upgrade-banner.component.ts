@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, HostListener, Injector } from '@angular/core';
+import { Component, Input, HostListener, Injector } from '@angular/core';
 import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -9,7 +9,7 @@ import { Observable } from 'rxjs';
   templateUrl: './cluster-upgrade-banner.component.html',
   styleUrls: ['./cluster-upgrade-banner.component.scss']
 })
-export class ClusterUpgradeBannerComponent extends BaseControllerDirective implements OnInit {
+export class ClusterUpgradeBannerComponent extends BaseControllerDirective {
 
   displayMiddleText = true;
   displayAllText = true;
@@ -19,7 +19,7 @@ export class ClusterUpgradeBannerComponent extends BaseControllerDirective imple
     super(injector);
   }
 
-  ngOnInit() {
+  setup() {
     this.checkWidth(window.innerWidth);
   }
 
@@ -39,6 +39,8 @@ export class ClusterUpgradeBannerComponent extends BaseControllerDirective imple
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
+    this.checkWidth(window.innerWidth);
+
     return this.clusterUpgradeProgress.refresh(messageHandler);
   }
 

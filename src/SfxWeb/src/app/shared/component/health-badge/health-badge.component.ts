@@ -1,20 +1,18 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-health-badge',
   templateUrl: './health-badge.component.html',
-  styleUrls: ['./health-badge.component.scss']
+  styleUrls: ['./health-badge.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HealthBadgeComponent implements OnInit {
+export class HealthBadgeComponent {
   public assetBase = environment.assetBase;
 
   @Input() badgeClass;
   @Input() text: string;
-
+  @Input() showText = true;
   constructor() { }
-
-  ngOnInit() {
-  }
 
 }

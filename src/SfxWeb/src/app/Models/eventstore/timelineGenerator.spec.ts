@@ -64,7 +64,6 @@ describe('TimelineGenerators', () => {
         });
 
         fit('node started up and goes down', () => {
-
             const data = [downEvent];
             const events = generator.consume(data, startDate, endDate);
 
@@ -72,11 +71,11 @@ describe('TimelineGenerators', () => {
             expect(events.items.get(id)).toEqual({
                 id,
                 content: 'Node _dis-svc-test-BackEnd-vmss_2 down',
-                start: lastNodeUpAt,
+                start: downEvent.timeStamp,
                 end: endDate.toISOString(),
                 group: NodeTimelineGenerator.NodesDownLabel,
                 type: 'range',
-                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, lastNodeUpAt, endDate.toISOString(), 'Node _dis-svc-test-BackEnd-vmss_2 down'),
+                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, downEvent.timeStamp, endDate.toISOString(), 'Node _dis-svc-test-BackEnd-vmss_2 down'),
                 className: 'red',
                 subgroup: 'stack'
             });
@@ -95,11 +94,11 @@ describe('TimelineGenerators', () => {
             expect(events.items.get(id)).toEqual({
                 id,
                 content: 'Node _dis-svc-test-BackEnd-vmss_2 down',
-                start: lastNodeUpAt,
-                end: '2020-05-09T17:46:39.2458955Z',
+                start: downEvent.timeStamp,
+                end: upEvent.timeStamp,
                 group: NodeTimelineGenerator.NodesDownLabel,
                 type: 'range',
-                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, lastNodeUpAt, '2020-05-09T17:46:39.2458955Z', 'Node _dis-svc-test-BackEnd-vmss_2 down'),
+                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, downEvent.timeStamp, upEvent.timeStamp, 'Node _dis-svc-test-BackEnd-vmss_2 down'),
                 className: 'red',
                 subgroup: 'stack'
             });
@@ -154,11 +153,11 @@ describe('TimelineGenerators', () => {
             expect(events.items.get(id)).toEqual({
                 id,
                 content: 'Node _dis-svc-test-BackEnd-vmss_2 down',
-                start: lastNodeUpAt,
+                start: downEvent.timeStamp,
                 end: timeStamp,
                 group: NodeTimelineGenerator.NodesDownLabel,
                 type: 'range',
-                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, lastNodeUpAt, timeStamp, 'Node _dis-svc-test-BackEnd-vmss_2 down'),
+                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, downEvent.timeStamp, timeStamp, 'Node _dis-svc-test-BackEnd-vmss_2 down'),
                 className: 'red',
                 subgroup: 'stack'
             });
@@ -191,11 +190,11 @@ describe('TimelineGenerators', () => {
             expect(events.items.get(id)).toEqual({
                 id,
                 content: 'Node _dis-svc-test-BackEnd-vmss_2 down',
-                start: lastNodeUpAt,
-                end: '2020-05-09T17:46:39.2458955Z',
+                start: downEvent.timeStamp,
+                end: upEvent.timeStamp,
                 group: NodeTimelineGenerator.NodesDownLabel,
                 type: 'range',
-                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, lastNodeUpAt, '2020-05-09T17:46:39.2458955Z', 'Node _dis-svc-test-BackEnd-vmss_2 down'),
+                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, downEvent.timeStamp, upEvent.timeStamp, 'Node _dis-svc-test-BackEnd-vmss_2 down'),
                 className: 'red',
                 subgroup: 'stack'
             });
@@ -219,6 +218,41 @@ describe('TimelineGenerators', () => {
 
         });
 
+        fit('removed from cluster', () => {
+            const endDateRange = new Date('2020-10-17T05:41:22.8992645Z');
+
+            const deactivate = new NodeEvent();
+            deactivate.fillFromJSON(        {
+                Kind: 'NodeDeactivateCompleted',
+                NodeInstance: 132473586821247630,
+                EffectiveDeactivateIntent: 'RemoveNode',
+                BatchIdsWithDeactivateIntent: '{[qwerqwerqwer:RemoveNode]',
+                StartTime: '2020-10-16T21:26:23Z',
+                NodeName: '_node4_3',
+                EventInstanceId: '6bd7ba2a-3c0a-4699-acb6-6e139773de0d',
+                TimeStamp: '2020-10-17T01:41:22.8992645Z',
+                Category: 'StateTransition',
+                HasCorrelatedEvents: false
+            });
+
+            const down = new NodeEvent();
+            down.fillFromJSON({
+                Kind: 'NodeDown',
+                NodeInstance: 132473586821247630,
+                LastNodeUpAt: '2020-10-16T21:51:31Z',
+                NodeName: '_node4_3',
+                EventInstanceId: 'b1c23829-3d71-499d-b82e-b3ac89447399',
+                TimeStamp: '2020-10-17T01:42:11.3342981Z',
+                Category: 'StateTransition',
+                HasCorrelatedEvents: false
+            });
+
+            const data = [down, deactivate];
+
+            const events = generator.consume(data, startDate, endDateRange);
+            expect(events.items.length).toBe(0);
+            expect(events.potentiallyMissingEvents).toBeTruthy();
+        });
     });
   });
 

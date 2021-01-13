@@ -1,4 +1,4 @@
-const config = require("./appsettings.json");
+
 const axios = require('axios');
 const { promises: fs } = require("fs");
 const fsBase = require("fs");
@@ -6,9 +6,21 @@ const fsBase = require("fs");
 const https = require("https");
 const express = require('express');
 const path = require('path');
+
+let config;
+try {
+    config = require("./localsettings.json");
+    console.log("config loaded from localSettings")
+} catch {
+    config = require("./appsettings.json");
+    console.log("config loaded from defaultSettings")
+}
+
 //get flags
 let recordRequest = process.argv.includes("-r");
 let replayRequest = process.argv.includes("-p");
+let serveSFXV1Files = process.argv.includes("-s");
+let stripEventSToreRequests = !process.argv.includes("-e");
 
 console.log("record requests : " + recordRequest);
 console.log("replay requests : " + replayRequest);
@@ -86,13 +98,19 @@ const port = process.env.PORT || 2500;
 //this is mainly for SFRP clusters to test against.
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
-app.use(express.static(__dirname + '/wwwroot/'))
+const basePath = __dirname +  serveSFXV1Files ? '../Sfx' : ''
+app.use(express.static(basePath + '/wwwroot/'))
 app.use(express.json())
 app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + 'wwwroot/index.html'));
+    res.sendFile(path.join(basePath + 'wwwroot/index.html'));
 });
 app.all('/*', async (req, res) => {
     let resp = null;
+
+    if(stripEventSToreRequests) {
+        delete req.query['starttimeutc'];
+        delete req.query['endtimeutc'];
+    }
 
     if(replayRequest && await checkFile(req)){
         resp =  await loadRequest(req);

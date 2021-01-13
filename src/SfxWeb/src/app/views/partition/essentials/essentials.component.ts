@@ -34,7 +34,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
         const columnSettings = [
             new ListColumnSettingForLink('id', 'Id', item => item.viewPath),
             new ListColumnSetting('raw.NodeName', 'Node Name'),
-            new ListColumnSettingWithFilter('role', 'Replica Role', defaultSortProperties),
+            new ListColumnSettingWithFilter('role', 'Replica Role', {sortPropertyPaths: defaultSortProperties}),
             new ListColumnSettingForBadge('healthState', 'Health State'),
             new ListColumnSettingWithFilter('raw.ReplicaStatus', 'Status')
         ];

@@ -409,19 +409,18 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
             new ListColumnSetting(
                 'raw.category',
                 'Event Category',
-                ['raw.category'],
-                true,
-                (item) => (!item.raw.category ? 'Operational' : item.raw.category)),
-            new ListColumnSetting('raw.timeStampString', 'Timestamp', ['raw.timeStamp']),
-            new ListColumnSetting('raw.timeStamp', 'Timestamp(UTC)', ['raw.timeStamp'])],
+                {
+                    enableFilter: true,
+                    getDisplayHtml: (item) => (!item.raw.category ? 'Operational' : item.raw.category)
+                }),
+            new ListColumnSetting('raw.timeStampString', 'Timestamp', {sortPropertyPaths: ['raw.timestamp']}),
+            new ListColumnSetting('raw.timeStamp', 'Timestamp(UTC)')],
             [
                 new ListColumnSettingWithEventStoreFullDescription()
             ],
             true,
             (item) => (Object.keys(item.raw.eventProperties).length > 0),
             true);
-
-        listSettings.sortReverse = true;
 
         return listSettings;
     }

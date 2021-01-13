@@ -1,0 +1,54 @@
+<app-navbar type="Network Debugger"></app-navbar>
+
+<div class="detail-pane essen-pane" data-cy="info-pane">
+    <div>
+        Network Debugger is not meant to be used as a way to profile the performance of the cluster or user APIs.
+    </div>
+    <div style="margin-bottom: 5px;">
+        <button class="simple-button" (click)="networkService.networkDebugger.clear();">Clear Log</button>
+    </div>
+
+    <div class="panel-wrapper">
+        <div>
+            <div data-cy="failurerate">
+                Failure rate: {{networkService.networkDebugger.overall.failureRate}}
+            </div>
+            <div>
+                Average Duration: {{networkService.networkDebugger.overall.averageDuration}}
+            </div>
+        </div>
+    
+        <div>
+            <div class="wrap" data-cy="recording">
+                Pause Request Recording <input type="checkbox" [(ngModel)]="networkService.networkDebugger.stopRecordingRequests">
+            </div>
+            <div class="wrap" data-cy="retaining">
+                Number Of Retained Requests<input type="number" min="0" class="input-flat"
+                    style="width: 50px; margin-left: 5px;" [(ngModel)]="networkService.networkDebugger.maxRequests">
+            </div>
+        </div>
+    </div>
+</div>
+
+<div ngbNav #nav="ngbNav" class="essen-pane">
+    <div ngbNavItem>
+        <a ngbNavLink style="font-size: 12pt;">
+            Last (<span data-cy="lastxrequests">{{networkService.networkDebugger.overall.requests.length}}</span>) Requests
+        </a>
+        <ng-template ngbNavContent>
+            <app-detail-list [list]="networkService.networkDebugger.overall.requests" [listSettings]="listSettingsRecent">
+            </app-detail-list>
+
+        </ng-template>
+    </div>
+    <div ngbNavItem>
+        <a ngbNavLink style="font-size: 12pt;">
+            Request Per Api
+        </a>
+        <ng-template ngbNavContent>
+            <app-detail-list [list]="networkService.networkDebugger.requestsMap" [listSettings]="listSettings"></app-detail-list>
+
+        </ng-template>
+    </div>
+</div>
+<div [ngbNavOutlet]="nav" class="essen-pane"></div>
