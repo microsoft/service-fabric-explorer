@@ -29,10 +29,10 @@ export class GetBackupEnabledEntitiesComponent implements OnInit {
   ngOnInit(){
     this.rawdata = this.data.data.backupEntity;
     this.backupEnabledEntitiesInfoListSettings = new ListSettings(10, null, [
-      new ListColumnSetting('EntityKind', 'Entity Kind', {colspan: 10}),
-      new ListColumnSetting('ApplicationName', 'Application Name', {colspan: 10}),
-      new ListColumnSetting('ServiceName', 'Service Name', {colspan: 10}),
-      new ListColumnSetting('PartitionId', 'Partition Id', {colspan: 10}),
+      new ListColumnSetting('EntityKind', 'Entity Kind'),
+      new ListColumnSetting('ApplicationName', 'Application Name'),
+      new ListColumnSetting('ServiceName', 'Service Name'),
+      new ListColumnSetting('PartitionId', 'Partition Id'),
     ]);
   }
 

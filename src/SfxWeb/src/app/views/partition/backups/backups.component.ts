@@ -79,16 +79,7 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
   setNewPartitionBackupList(startDate: Date, endDate: Date)
   {
     this.backupList = this.partition.partitionBackupInfo.partitionBackupList.collection;
-    this.backupList = this.backupList.sort((left, right): number => {
-      if (left.CreationTimeUtc < right.CreationTimeUtc) {
-        return -1;
-      }
-      if (left.CreationTimeUtc > right.CreationTimeUtc) {
-        return 1;
-      }
-      return 0;
-    });
-    this.backupList = this.backupList.filter(function getData(info) {
+    this.backupList = this.backupList.filter((info) => {
       return (new Date(info.raw.CreationTimeUtc) >= startDate && new Date(info.raw.CreationTimeUtc) <= endDate);
     });
   }
