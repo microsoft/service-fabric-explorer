@@ -5,8 +5,8 @@
 
 
 type HttpMethod =
-    "GET" | "POST" | "PUT" | "PATCH" | "DELETE" |
-    "HEAD" | "CONNECT" | "OPTIONS" | "TRACE";
+    'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' |
+    'HEAD' | 'CONNECT' | 'OPTIONS' | 'TRACE';
 
 interface IHttpHeader {
     name: string;
@@ -81,7 +81,7 @@ export class StandaloneIntegration {
 
     public static getHttpClient(): Promise<IHttpClient> {
         if (this.isStandalone()) {
-            return sfxModuleManager.getComponentAsync<IHttpClient>("http.http-client.service-fabric");
+            return sfxModuleManager.getComponentAsync<IHttpClient>('http.http-client.service-fabric');
         }
 
         return undefined;

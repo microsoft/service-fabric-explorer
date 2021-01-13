@@ -825,7 +825,7 @@ export class RestClientService {
   }
 
   private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: "GET", url: url }) : this.httpClient.get<T>(environment.baseUrl + url);
+      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'GET', url }) : this.httpClient.get<T>(environment.baseUrl + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
       }
@@ -833,7 +833,7 @@ export class RestClientService {
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: "POST", url: url }) : this.httpClient.post<T>(environment.baseUrl  + url, data);
+      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'POST', url }) : this.httpClient.post<T>(environment.baseUrl  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
@@ -841,7 +841,7 @@ export class RestClientService {
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: "PUT", url: url }) : this.httpClient.put<T>(environment.baseUrl  + url, data);
+      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'PUT', url }) : this.httpClient.put<T>(environment.baseUrl  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
@@ -849,7 +849,7 @@ export class RestClientService {
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: "DELETE", url: url }) : this.httpClient.delete<T>(environment.baseUrl  + url);
+      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'DELETE', url }) : this.httpClient.delete<T>(environment.baseUrl  + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
       }
@@ -857,30 +857,30 @@ export class RestClientService {
   }
 
     public requestAsync<T>(request: IHttpRequest): Observable<T> {
-        return from(<Promise<T>>new Promise( (resolve, reject) => {
+        return from(new Promise( (resolve, reject) => {
             StandaloneIntegration.getHttpClient()
                 .then((client) => client.requestAsync(request))
                 .then((response) => {
-                    //only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
+                    // only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
                     resolve(response.data);
                     }
-                ,(err: IHttpResponse) =>
+                , (err: IHttpResponse) =>
                 {
-                    let r = new HttpErrorResponse({
+                    const r = new HttpErrorResponse({
                         status: err.statusCode,
                         statusText: err.statusMessage,
-                    })
-                    reject(r) }
+                    });
+                    reject(r); }
                 );
-        }));
+        }) as Promise<T>);
 }
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
-        console.log(JSON.stringify(err))
+        console.log(JSON.stringify(err));
         const header = `${err.status.toString()} : ${apiDesc}`;
-        let message = messageHandler.getErrorMessage(apiDesc, err);
-            if (message) {
+        const message = messageHandler.getErrorMessage(apiDesc, err);
+        if (message) {
                 this.message.showMessage(message, MessageSeverity.Err, header);
             }
 

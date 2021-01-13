@@ -5,11 +5,11 @@ import { StandaloneIntegration } from './Common/StandaloneIntegration';
 export function initApp(aadService: AdalService) {
     return async () => {
         try {
-            console.log(StandaloneIntegration.isStandalone())
+            console.log(StandaloneIntegration.isStandalone());
 
-            console.log(StandaloneIntegration.clusterUrl)
+            console.log(StandaloneIntegration.clusterUrl);
 
-            if(StandaloneIntegration.isStandalone()) {
+            if (StandaloneIntegration.isStandalone()) {
               return of(null);
             }
 
