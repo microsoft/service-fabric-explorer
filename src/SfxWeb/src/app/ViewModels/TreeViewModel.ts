@@ -70,7 +70,6 @@ export class TreeViewModel {
     }
 
     public onKeyDown(event: KeyboardEvent) {
-        console.log(event);
         const selectedNode = this.selectedNode;
         switch (event.key) {
             case 'ArrowDown': // Down
