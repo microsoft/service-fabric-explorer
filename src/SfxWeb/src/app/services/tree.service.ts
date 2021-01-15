@@ -41,7 +41,7 @@ export class TreeService {
             }
 
             this.cm = new ClusterManifest(this.data);
-            this.refreshService.insertRefreshSubject('tree', () => { return this.refresh() } );
+            this.refreshService.insertRefreshSubject('tree', () => this.refresh() );
         }
 
         public selectTreeNode(path: string[], skipSelectAction?: boolean): Observable<any> {
@@ -92,7 +92,6 @@ export class TreeService {
                         alwaysVisible: true,
                         startExpanded: true,
                         mergeClusterHealthStateChunk: (clusterHealthChunk: IClusterHealthChunk) => {
-                          console.log("test")
                             return forkJoin([
                                 // Refresh applications collection in order to refresh Applications health state which is computed based on health states of all apps
                                 this.data.getApps().pipe(map(apps => apps.mergeClusterHealthStateChunk(clusterHealthChunk))),

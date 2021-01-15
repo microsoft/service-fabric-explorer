@@ -1,6 +1,5 @@
-import { Component, Input, HostListener, Injector, OnInit } from '@angular/core';
+import { Component, Input, HostListener, OnInit } from '@angular/core';
 import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
-import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { RefreshService } from 'src/app/services/refresh.service';
