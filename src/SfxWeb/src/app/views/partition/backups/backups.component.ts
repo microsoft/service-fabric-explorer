@@ -52,13 +52,6 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
       new ListColumnSetting('raw.LsnOfLastBackupRecord', 'Lsn of last Backup Record'),
       new ListColumnSetting('raw.CreationTimeUtc', 'Creation Time UTC'),
     ]);
-    this.debouncerHandlerSubscription = this.debounceHandler
-    .pipe(debounceTime(400), distinctUntilChanged())
-    .subscribe(dates => {
-        this.startDate = dates.startDate;
-        this.endDate = dates.endDate;
-        this.setNewPartitionBackupList(this.startDate, this.endDate);
-     });
     this.dateRefresh = true;
     this.minDate = new Date();
     this.maxDate = new Date();
@@ -145,7 +138,9 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
   }
 
   setNewDates(dates: IOnDateChange) {
-    this.debounceHandler.next(dates);
+    this.startDate = dates.startDate;
+    this.endDate = dates.endDate;
+    this.setNewPartitionBackupList(this.startDate, this.endDate);
   }
 
   attemptSetActions() {
