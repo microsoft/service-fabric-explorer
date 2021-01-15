@@ -132,6 +132,7 @@ export class TreeNodeGroupViewModel {
 
     public refreshExpandedChildrenRecursively(): Observable<any> {
         if (!this.node.childrenQuery || !this.internalIsExpanded) {
+          console.log(this.displayName(), this)
             return of(true);
         }
 
