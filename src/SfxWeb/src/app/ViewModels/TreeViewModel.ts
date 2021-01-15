@@ -72,16 +72,16 @@ export class TreeViewModel {
     public onKeyDown(event: KeyboardEvent) {
         const selectedNode = this.selectedNode;
         switch (event.key) {
-            case '40': // Down
+            case 'ArrowDown': // Down
                 this.selectedNode.selectNext();
                 break;
-            case '38': // Up
+            case 'ArrowUp': // Up
                 this.selectedNode.selectPrevious();
                 break;
-            case '39': // Right
+            case 'ArrowRight': // Right
                 this.selectedNode.expandOrMoveToChild();
                 break;
-            case '37': // Left
+            case 'ArrowLeft': // Left
                 this.selectedNode.collapseOrMoveToParent();
                 break;
         }
