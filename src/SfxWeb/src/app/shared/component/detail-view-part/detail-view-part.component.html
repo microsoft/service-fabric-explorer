@@ -68,7 +68,7 @@
                                     <tbody>
                                         <tr *ngFor="let item of item.value; let $last = last;"  [ngClass]="{ 'nested-table-border': !($last) }">
                                                 <!-- Render sub-array table body, assuming the properties are always simple properties rather than object -->
-                                            <td *ngFor="let subItem of item | keyvalue" [ngSwitch]="getResolvedPropertyType(subItem.value)">
+                                            <td *ngFor="let subItem of item | keyvalue : asIsOrder" [ngSwitch]="getResolvedPropertyType(subItem.value)">
                                                 <span *ngSwitchCase="'Value'" [title]="subItem.value">{{subItem.value}}</span>
                                                 <span *ngSwitchCase="'Html'" [innerHtml]="subItem.value"></span>
                                                 <app-detail-view-part *ngSwitchCase="'Array'" [data]="subItem.value"></app-detail-view-part>
