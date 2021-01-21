@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataService } from 'src/app/services/data.service';
 import { Partition } from 'src/app/Models/DataModels/Partition';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { IsolatedAction } from 'src/app/Models/Action';
 
 @Component({
   selector: 'app-partition-trigger-back-up',
@@ -15,7 +16,7 @@ export class PartitionTriggerBackUpComponent implements OnInit {
 
   constructor(private formBuilder: FormBuilder,
               private data: DataService,
-              @Inject(MAT_DIALOG_DATA) public partition: Partition,
+              @Inject(MAT_DIALOG_DATA) public partition: IsolatedAction,
               public dialogRef: MatDialogRef<PartitionTriggerBackUpComponent>) { }
   ngOnInit() {
     // storage gets set by nested component
@@ -25,7 +26,11 @@ export class PartitionTriggerBackUpComponent implements OnInit {
   }
 
   ok() {
-    this.data.restClient.triggerPartitionBackup(this.partition, this.form.value.BackupTimeout, this.form.value.Storage).subscribe( () => {
+    if (this.form.value.Storage.StorageKind === '')
+    {
+      this.form.value.Storage = null;
+    }
+    this.data.restClient.triggerPartitionBackup(this.partition.data, this.form.value.BackupTimeout, this.form.value.Storage).subscribe( () => {
       this.cancel();
     },
     err => console.log(err));

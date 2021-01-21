@@ -63,7 +63,7 @@ module Sfx {
             this.$scope.partitionEvents = this.data.createPartitionEventList(this.partitionId);
             this.$scope.partitionTimeLineGenerator = new PartitionTimelineGenerator();
             this.$scope.partitionBackupListSettings = this.settings.getNewOrExistingListSettings("partitionBackups", [null], [
-                new ListColumnSetting("raw.BackupId", "BackupId", ["raw.BackupId"], false, (item, property) => `<a href='${item.parent.viewPath}/tab/backups'>${property}</a>` , 1, item => item.action.runWithCallbacks.apply(item.action)),
+                new ListColumnSetting("raw.BackupId", "BackupId", ["raw.BackupId"], false, (item, property) => `<span class="link"'>${property}</span>` , 1, item => item.action.runWithCallbacks.apply(item.action)),
                 new ListColumnSetting("raw.BackupType", "BackupType"),
                 new ListColumnSetting("raw.EpochOfLastBackupRecord.DataLossVersion", "Data Loss Version"),
                 new ListColumnSetting("raw.EpochOfLastBackupRecord.ConfigurationVersion", "Configuration Version"),
