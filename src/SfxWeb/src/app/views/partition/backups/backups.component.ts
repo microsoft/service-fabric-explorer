@@ -4,17 +4,16 @@ import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, of, Subject, Subscription } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { ActionWithConfirmationDialog, IsolatedAction } from 'src/app/Models/Action';
-import { mergeMap, catchError, debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { mergeMap } from 'rxjs/operators';
 import { PartitionDisableBackUpComponent } from 'src/app/modules/backup-restore/partition-disable-back-up/partition-disable-back-up.component';
 import { PartitionEnableBackUpComponent } from 'src/app/modules/backup-restore/partition-enable-back-up/partition-enable-back-up.component';
 import { PartitionTriggerBackUpComponent } from '../partition-trigger-back-up/partition-trigger-back-up.component';
 import { PartitionRestoreBackUpComponent } from '../partition-restore-back-up/partition-restore-back-up.component';
 import { IOnDateChange } from 'src/app/modules/event-store/double-slider/double-slider.component';
-import { Partition } from 'src/app/Models/DataModels/Partition';
 
 @Component({
   selector: 'app-backups',
@@ -25,14 +24,13 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
 
   partitionBackupListSettings: ListSettings;
   actions: ActionCollection;
-  private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
-  startDate: Date;
-  endDate: Date;
-  minDate: Date;
-  maxDate: Date;
+  startDate: Date = new Date();
+  endDate: Date = new Date();
+  minDate: Date = new Date();
+  maxDate: Date = new Date();
   startTime: any;
   endTime: any;
-  private debouncerHandlerSubscription: Subscription;
+
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) {
     super(data, injector);
   }
@@ -53,8 +51,9 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
       new ListColumnSetting('raw.CreationTimeUtc', 'Creation Time UTC'),
     ]);
     this.dateRefresh = true;
-    this.minDate = new Date();
-    this.maxDate = new Date();
+
+    this.maxDate.setDate(this.endDate.getDate() + 30);
+    this.minDate.setDate(this.startDate.getDate() - 30);
   }
 
   startTimeChange(){
@@ -77,8 +76,7 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
     });
   }
 
-  restore()
-  {
+  restore() {
     let rawData: any;
     rawData = this.partition.partitionBackupInfo.latestPartitionBackup.collection[0].raw;
     this.data.restClient.restorePartitionBackup(
@@ -91,12 +89,12 @@ export class BackupsComponent extends PartitionBaseControllerDirective {
     },
     err => console.log(err));
   }
+
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     if (this.data.actionsEnabled()) {
       this.attemptSetActions();
     }
-    if (this.dateRefresh)
-    {
+    if (this.dateRefresh) {
       this.backupList = this.partition.partitionBackupInfo.partitionBackupList.collection;
       if (this.backupList.length !== 0)
       {
