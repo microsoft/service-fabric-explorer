@@ -16,6 +16,7 @@ module Sfx {
         private static apiVersion62Preview: string = "6.2-preview";
         private static apiVersion64: string = "6.4";
         private static apiVersion65: string = "6.5";
+        private static apiVersion72: string = "7.2";
 
         private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -782,7 +783,7 @@ module Sfx {
                     + "&endtimeutc=" + endTime.toISOString().substr(0, 19) + "Z";
             }
 
-            let fullUrl = this.getApiUrl(apiUrl, RestClient.apiVersion62Preview, null, true);
+            let fullUrl = this.getApiUrl(apiUrl, RestClient.apiVersion72, null, true);
             return this.get<IRawList<{}>>(fullUrl, null, messageHandler)
                 .then(response => {
                     return new EventsResponseAdapter(eventType).getEvents(response.data);

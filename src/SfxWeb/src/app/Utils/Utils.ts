@@ -84,13 +84,16 @@ export class Utils {
      */
     public static result(item: any, propertyPath: string) {
         let value = item;
-        propertyPath.split('.').forEach(path => {
-            if (typeof value[path] === 'function'){
-                value = value[path]();
-            }else{
-                value = value[path];
-            }
-        });
+        if (propertyPath !== null)
+        {
+            propertyPath.split('.').forEach(path => {
+                if (typeof value[path] === 'function'){
+                    value = value[path]();
+                }else{
+                    value = value[path];
+                }
+            });
+        }
         return value;
     }
 
@@ -168,6 +171,17 @@ export class Utils {
 
         return text;
     }
+
+    public static addToArrayAndTrim<T>(list: T[], data: T, maxLength: number, onRemoval = (item: T) => null, onAddition = (item: T) => null) {
+        if (list.length >= maxLength) {
+            const r = list.splice(maxLength - 1, 1);
+            onRemoval(r[0]);
+        }
+
+        list.splice(0, 0, data);
+        onAddition(data);
+    }
+
 
 }
 

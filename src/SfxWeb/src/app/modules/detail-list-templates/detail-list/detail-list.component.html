@@ -1,4 +1,5 @@
 <div class="detail-list-container flex-child" style="margin-top: 15px;">
+    <ng-content></ng-content>
         <app-input [placeholder]="searchText" [model]="listSettings.search" (changed)="listSettings.search = $event; updateList()"></app-input>
         <button class="simple-button"  (click)="resetAll()">Reset All</button>
 

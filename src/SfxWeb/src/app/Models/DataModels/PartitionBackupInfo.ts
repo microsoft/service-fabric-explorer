@@ -6,7 +6,7 @@ import { DataModelBase, IDecorators } from './Base';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { IsolatedAction } from '../Action';
-import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
+import { BackupinfoComponent } from 'src/app/views/partition/backupinfo/backupinfo.component';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -94,8 +94,8 @@ export class PartitionBackup extends DataModelBase<IRawPartitionBackup> {
                 raw.BackupId,
                 raw.BackupId,
                 raw.BackupId,
-                {},
-                ViewBackupComponent,
+                raw,
+                BackupinfoComponent,
                 () => true
             );
         } else {

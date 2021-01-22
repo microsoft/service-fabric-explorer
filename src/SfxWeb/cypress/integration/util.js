@@ -82,6 +82,12 @@ export const refresh = () => {
     cy.get("[data-cy=refresh]").click();
 }
 
+export const turnOffRefresh = () => {
+    cy.get("[data-cy=refreshrate]").within( () => {
+        cy.contains("OFF").click();
+    })
+}
+
 /*
 Get the number of rows in a table.
 This should be used when there is only one table within scope.
