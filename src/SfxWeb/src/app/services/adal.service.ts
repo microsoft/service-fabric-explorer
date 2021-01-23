@@ -49,13 +49,13 @@ export class AdalService {
           if (data.raw.metadata.login) {
           // Set AAD instance URL (only available in service fabric 5.3 CU1 or later)
           // The AAD login instance URL must ends with "/"
-          config.instance = StringUtils.EnsureEndsWith(data.raw.metadata.login, '/');
+          // config.instance = StringUtils.EnsureEndsWith(data.raw.metadata.login, '/');
       }
 
-        // if (StandaloneIntegration.clusterUrl !== "") {
-        //   // config.redirectUri = StandaloneIntegration.clusterUrl + "/Explorer/index.html";
-        //   config['postLogoutRedirectUri'] = StandaloneIntegration.clusterUrl + "/Explorer/index.html";
-        // }
+          if (StandaloneIntegration.clusterUrl !== "") {
+            config.redirectUri = StandaloneIntegration.clusterUrl + "/Explorer/index.html";
+            config['postLogoutRedirectUri'] = StandaloneIntegration.clusterUrl + "/Explorer/index.html";
+          }
           console.log(config);
           this.context = new createAuthContextFn(config);
           this.aadEnabled = true;
@@ -101,7 +101,6 @@ export class AdalService {
   }
 
   public acquireTokenResilient(resource: string): Observable<any> {
-<<<<<<< HEAD
     let newToken = '';
     if (this.tokenSubject) {
       return this.tokenSubject;
@@ -136,21 +135,6 @@ export class AdalService {
       console.log(this.tokenSubject, newToken);
       return this.tokenSubject ? this.tokenSubject.asObservable() : of(newToken);
     }
-=======
-      return new Observable<any>((subscriber: Subscriber<any>) =>
-          {
-            this.context.acquireToken(resource, (message: string, token: string) => {
-              if (token) {
-                  subscriber.next(token);
-              } else {
-                  console.error(message);
-                  subscriber.error(message);
-              }
-              subscriber.complete();
-          });
-          }
-      ).pipe(retry(3));
->>>>>>> master
   }
 
 }

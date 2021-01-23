@@ -5,7 +5,7 @@
 //-----------------------------------------------------------------------------
 
 import * as $ from "jquery";
-import * as uuidv5 from "uuid/v5";
+import { v5 as uuidv5 } from "uuid";
 import { WebviewTag } from "electron";
 import { electron } from "../../../utilities/electron-adapter";
 import { ISfxContainer } from "sfx.sfx-view-container";
@@ -62,14 +62,13 @@ export class SfxContainer implements ISfxContainer {
 
         this.endpoints.push({ endpoint: targetServiceEndpoint, id: id });
         container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
-        $(`<div id="view-container-${id}" class="view-container current"><webview tabindex="1" src="${sfxUrl}" id="view-${id}" autosize="on" nodeintegration preload="./preload.js"></webview></div>`).appendTo(container);
+        $(`<div id="view-container-${id}" class="view-container current"><webview tabindex="1" src="${sfxUrl}" id="view-${id}" autosize="on" nodeintegration="true" preload="./preload.js" ></webview></div>`).appendTo(container);
 
         const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
+        console.log(sfxWebView);
+
         sfxWebView.addEventListener("dom-ready", async () => {
             container.children("#treeview-loading-glyph").remove();
-            // sfxWebView.loadURL("../../../sfx/beta.html");
-
-            //sfxWebView.executeJavaScript(" angular.bootstrap(document, [Sfx.Constants.sfxAppName], { strictDi: true });");
         });
 
         console.log("test");

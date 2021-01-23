@@ -2,5 +2,7 @@ export const environment = {
   production: true,
   baseUrl: "",
   version: "7.0",
-  assetBase: ""
+  assetBase: "",
+  showBeta: false,
+  telemetryKey: ""
 };

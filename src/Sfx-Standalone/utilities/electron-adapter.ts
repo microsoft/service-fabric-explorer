@@ -10,7 +10,7 @@ export const isRemote = utils.isObject(realElectron.remote);
 
 export const remote: realElectron.Remote = realElectron.remote;
 
-export const electron: realElectron.AllElectron = (() => {
+export const electron: any = (() => {
     if (isRemote) {
         const remoteElectron: any = Object.create(null);
         const mergeProperties = (target: Object, propertyDescriptors) =>
