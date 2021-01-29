@@ -19,7 +19,7 @@ import { Service } from '../Models/DataModels/Service';
 import { Partition } from '../Models/DataModels/Partition';
 import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent,
          FabricEvent, EventsResponseAdapter, FabricEventBase } from '../Models/eventstore/Events';
-import { StandaloneIntegration } from '../Common/StandaloneIntegration';
+import { IHttpClient, StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
 import { IHttpRequest, IHttpResponse } from '../Common/StandaloneIntegration';
@@ -28,6 +28,8 @@ import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger'
   providedIn: 'root'
 })
 export class RestClientService {
+
+    standAloneClient: IHttpClient;
 
   constructor(private httpClient: HttpClient, private message: MessageService) {
 
@@ -858,10 +860,17 @@ export class RestClientService {
       return this.handleResponse<T>(apiDesc, result as any, messageHandler);
   }
 
+  public async getStandAloneClient(): Promise<IHttpClient> {
+    if(!this.standAloneClient) {
+        this.standAloneClient = await StandaloneIntegration.getHttpClient();
+    }
+
+    return Promise.resolve(this.standAloneClient);
+  }
+
     public requestAsync<T>(request: IHttpRequest): Observable<T> {
         return from(new Promise( (resolve, reject) => {
-            StandaloneIntegration.getHttpClient()
-                .then((client) => client.requestAsync(request))
+                this.getStandAloneClient().then((client) => client.requestAsync(request))
                 .then((response) => {
                     // only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
                     resolve(response.data);

@@ -23,11 +23,13 @@ import createAuthWindowsResponseHandler from "./response-handlers/auth.windows";
 export default class ServiceFabricHttpClient extends HttpClient {
 
     private readonly trustedCerts: Donuts.IStringKeyDictionary<boolean>;
-
+    private readonly trustedCertsInProgress: Donuts.IStringKeyDictionary<Promise<any>>;
+    
     constructor(log: Donuts.Logging.ILog, pkiSvc: IPkiCertificateService) {
         super(log, [], []);
 
         this.trustedCerts = Object.create(null);
+        this.trustedCertsInProgress = Object.create(null);
 
         const certResponseHandler = createAuthCertResponseHandler(pkiSvc, this.selectClientCertAsync);
 
@@ -58,29 +60,33 @@ export default class ServiceFabricHttpClient extends HttpClient {
             return record;
         }
 
-        const response = dialog.showMessageBox(
-            BrowserWindow.getFocusedWindow(),
-            {
-                type: "warning",
-                buttons: ["Yes", "No"],
-                title: "Untrusted certificate",
-                message: "Do you want to trust this certificate?",
-                detail:
-                    `Site: ${serverName} \r\n` +
-                    `Subject: ${cert.subjectName}\r\n` +
-                    `Issuer: ${cert.issuerName}\r\n` +
-                    `Serial: ${cert.serialNumber}\r\n` +
-                    `Starts: ${cert.validStart.toLocaleString()}\r\n` +
-                    `Util: ${cert.validExpiry.toLocaleString()}\r\n` +
-                    `Thumbprint: ${cert.thumbprint}`,
-                cancelId: 1,
-                defaultId: 0,
-                noLink: true,
-            });
-        
-        let responseData = await response;
+        if (this.trustedCertsInProgress[cert.thumbprint] !== undefined) {
+            return await this.trustedCertsInProgress[cert.thumbprint];
+        }
 
-        return this.trustedCerts[cert.thumbprint] = responseData.response === 0;
+        this.trustedCertsInProgress[cert.thumbprint] = dialog.showMessageBox(
+                BrowserWindow.getFocusedWindow(),
+                {
+                    type: "warning",
+                    buttons: ["Yes", "No"],
+                    title: "Untrusted certificate",
+                    message: "Do you want to trust this certificate?",
+                    detail:
+                        `Site: ${serverName} \r\n` +
+                        `Subject: ${cert.subjectName}\r\n` +
+                        `Issuer: ${cert.issuerName}\r\n` +
+                        `Serial: ${cert.serialNumber}\r\n` +
+                        `Starts: ${cert.validStart.toLocaleString()}\r\n` +
+                        `Util: ${cert.validExpiry.toLocaleString()}\r\n` +
+                        `Thumbprint: ${cert.thumbprint}`,
+                    cancelId: 1,
+                    defaultId: 0,
+                    noLink: true,
+                }).then(responseData => {
+                    return this.trustedCerts[cert.thumbprint] = responseData.response === 0;
+                });
+        
+        return await this.trustedCertsInProgress[cert.thumbprint];
     }
 
     private selectClientCertAsync =

@@ -74,7 +74,8 @@ export default async function createBrowserWindowAsync(
         webPreferences: {
             preload: local("./preload.js"),
             nodeIntegration: true,
-            webviewTag: true
+            webviewTag: true,
+            contextIsolation: false
         },
         title: "Service Fabric Explorer",
     };

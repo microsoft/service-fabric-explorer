@@ -17,6 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { DebuggingModule } from './views/debugging/debugging.module';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { RestClientService } from './services/rest-client.service';
 
 @NgModule({
   declarations: [
@@ -42,11 +43,12 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     AdalService,
     DataService,
+    RestClientService,
     {
       provide: APP_INITIALIZER,
       useFactory: initApp,
       multi: true,
-      deps: [AdalService]
+      deps: [AdalService, RestClientService]
     },
     httpInterceptorProviders
   ],

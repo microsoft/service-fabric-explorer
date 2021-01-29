@@ -6,7 +6,7 @@
         "target": "ES2017",
         "sourceMap": true,
         "declaration": false,
-        "noUnusedLocals": true,
+        "noUnusedLocals": false,
         "noImplicitReturns": true,
         "removeComments": true,
         "sourceRoot": ".",

@@ -7,7 +7,6 @@ import { IPromptService, IPrompt } from "sfx.prompt";
 import { ICertificateInfo } from "sfx.cert";
 
 import * as shell from "donuts.node/shell";
-import { resolve } from "donuts.node/path";
 import * as utils from "donuts.node/utils";
 
 (<Donuts.Modularity.IModule>exports).getModuleMetadata = (components) => {
@@ -23,7 +22,7 @@ import * as utils from "donuts.node/utils";
 
                 return promptService.createAsync(
                     {
-                        pageUrl: resolve("select-certificate.html"),
+                        pageUrl: (__dirname + "/select-certificate.html"),
                         height: 640,
                         data: certInfos
                     });

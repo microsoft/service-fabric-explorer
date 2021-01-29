@@ -1,8 +1,9 @@
 import { AdalService } from './services/adal.service';
 import { of } from 'rxjs';
 import { StandaloneIntegration } from './Common/StandaloneIntegration';
+import { RestClientService } from './services/rest-client.service';
 
-export function initApp(aadService: AdalService) {
+export function initApp(aadService: AdalService, restClient: RestClientService) {
     return async () => {
         try {
             console.log(StandaloneIntegration.isStandalone());
@@ -10,6 +11,7 @@ export function initApp(aadService: AdalService) {
             console.log(StandaloneIntegration.clusterUrl);
 
             if (StandaloneIntegration.isStandalone()) {
+              await restClient.getStandAloneClient();
               return of(null);
             }
 

@@ -73,6 +73,7 @@ declare const angular: angular.IAngularStatic;
                 }
 
                 promptContext.finish($scope.selectedCertInfo);
+                window.close();
             };
 
             $scope.browseCertFiles = async () => {
@@ -143,7 +144,7 @@ declare const angular: angular.IAngularStatic;
                 return now >= startDate && now < expiryDate;
             };
 
-            $scope.cancel = () => promptContext.finish(null);
+            promptContext.finish(null);
         }
     }
 
