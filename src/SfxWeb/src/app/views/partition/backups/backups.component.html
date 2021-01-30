@@ -4,11 +4,11 @@
 </div>
 
 <div *ngIf="partition">
-    <div class="detail-pane essen-pane">
+    <div class="detail-pane essen-pane"  *ngIf="partition.partitionBackupInfo.latestPartitionBackup.collection.length > 0">
         <h4>Latest Backup</h4>
         <app-detail-view-part [data]="partition.partitionBackupInfo.latestPartitionBackup.collection[0]"></app-detail-view-part>
         <div class="text-right">
-            <button type="button" (click)="restore()">Restore</button>
+            <button (click)="restore()" class="solid-button">Restore</button>
         </div>
     </div>
     
@@ -29,7 +29,7 @@
         </div>
     </div>
     
-    <div *ngIf="partition && partition.replicas.isInitialized" class="detail-pane essen-pane">
+    <div *ngIf="partition" class="detail-pane essen-pane">
         <app-detail-list [list]="backupList" [listSettings]="partitionBackupListSettings" >
             <app-dual-date-picker [minDate]="minDate" [maxDate]="maxDate"
             [currentStartDate]="startDate" [currentEndDate]="endDate" (dateChanged)="setNewDates($event)">
