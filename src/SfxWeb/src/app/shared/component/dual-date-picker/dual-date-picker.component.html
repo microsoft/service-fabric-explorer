@@ -36,7 +36,8 @@
         <div class="input-group-append">
             <button class="mif-calendar simple-button" (click)="datepicker.toggle()" type="button" aria-label="Toggle start date calender date picker"></button>
         </div>
-        </div>
+        <ng-content select="[startTime]"></ng-content>
+        </div>   
     </div>
     <div class="form-group ml-2">
         <div class="input-group">
@@ -49,6 +50,7 @@
         <div class="input-group-append">
             <button class="mif-calendar simple-button" (click)="datepicker.toggle()" type="button" aria-label="Toggle end date calender date picker"></button>
         </div>
-        </div>
+        <ng-content select="[toTime]"></ng-content>
+        </div> 
     </div>
 </form>

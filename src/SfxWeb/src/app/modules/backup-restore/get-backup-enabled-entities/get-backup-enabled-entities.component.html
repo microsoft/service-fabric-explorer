@@ -1,0 +1,12 @@
+<form class="action-modal">
+    <div class="modal-header">
+        <h4 class="modal-title">Enabled Entities </h4>
+    </div>
+    <div class="modal-body">
+       <app-detail-list [list]="rawdata" [listSettings]="backupEnabledEntitiesInfoListSettings"></app-detail-list>
+    </div>
+
+    <div class="modal-footer">
+        <button type="button" class="flat-button" (click)="cancel()">Ok</button>
+    </div>
+</form>

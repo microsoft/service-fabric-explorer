@@ -12,7 +12,7 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawApplication, IRawService, IRawCreateServiceDescription, IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription, IRawServiceDescription,
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
-         IRawServiceNameInfo, IRawApplicationNameInfo } from '../Models/RawDataTypes';
+         IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity } from '../Models/RawDataTypes';
 import { mergeMap, map, catchError, finalize } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
@@ -38,6 +38,7 @@ export class RestClientService {
   private static apiVersion62Preview = '6.2-preview';
   private static apiVersion64 = '6.4';
   private static apiVersion65 = '6.5';
+  private static apiVersion72 = '7.2';
 
   private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -489,8 +490,8 @@ export class RestClientService {
       return this.post(this.getApiUrl(url, RestClientService.apiVersion64), 'Partition Backup trigger', { BackupStorage: storage }, messageHandler);
   }
 
-  public restorePartitionBackup(partition: Partition, storage: IRawStorage, timeOut: number, backupId: string, backupLocation: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
-      let url = 'Partitions/' + encodeURIComponent(partition.id) + '/$/Restore';
+  public restorePartitionBackup(partitionId: string, storage: IRawStorage, timeOut: number, backupId: string, backupLocation: string, messageHandler?: IResponseMessageHandler): Observable<{}> {
+      let url = 'Partitions/' + encodeURIComponent(partitionId) + '/$/Restore';
       if (timeOut) {
           url += '?RestoreTimeout=' + timeOut.toString();
       }
@@ -499,6 +500,10 @@ export class RestClientService {
                                                                                                           BackupLocation: backupLocation }, messageHandler);
   }
 
+  public getBackupEnabledEntities(backupPolicyName: string, messageHandler?: IResponseMessageHandler): Observable<IRawBackupEntity[]> {
+      const url = 'BackupRestore/BackupPolicies/' + encodeURIComponent(backupPolicyName) + '/$/GetBackupEnabledEntities';
+      return this.getFullCollection<IRawBackupEntity>(url, 'Get Backup Enabled Entities', RestClientService.apiVersion64, messageHandler);
+  }
   public getServiceDescription(applicationId: string, serviceId: string, messageHandler?: IResponseMessageHandler): Observable<IRawServiceDescription> {
       const url = 'Applications/' + encodeURIComponent(applicationId)
           + '/$/GetServices/' + encodeURIComponent(serviceId)
@@ -769,7 +774,7 @@ export class RestClientService {
               + '&endtimeutc=' + endTime.toISOString().substr(0, 19) + 'Z';
       }
 
-      const fullUrl = this.getApiUrl(apiUrl, RestClientService.apiVersion62Preview, null, true);
+      const fullUrl = this.getApiUrl(apiUrl, RestClientService.apiVersion72, null, true);
       return this.get<IRawList<{}>>(fullUrl, null, messageHandler).pipe(map(response => {
           return new EventsResponseAdapter(eventType).getEvents(response);
         }));

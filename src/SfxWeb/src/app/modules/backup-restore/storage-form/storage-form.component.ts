@@ -67,6 +67,10 @@ export class StorageFormComponent implements OnInit {
       this.localForm.get('ConnectionString').setValidators(null);
       this.localForm.get('Path').setValidators(null);
     }
+    else{
+      this.localForm.get('StorageKind').setValidators(null);
+      this.localForm.get('StorageKind').setValue('');
+    }
   }
 
   updateStorageKindValidators(storage: AbstractControl, storageKind: string) {

@@ -1,25 +1,26 @@
-import { Component, Input, HostListener, Injector } from '@angular/core';
+import { Component, Input, HostListener, OnInit } from '@angular/core';
 import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
-import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
+import { RefreshService } from 'src/app/services/refresh.service';
 
 @Component({
   selector: 'app-cluster-upgrade-banner',
   templateUrl: './cluster-upgrade-banner.component.html',
   styleUrls: ['./cluster-upgrade-banner.component.scss']
 })
-export class ClusterUpgradeBannerComponent extends BaseControllerDirective {
+export class ClusterUpgradeBannerComponent implements OnInit {
 
   displayMiddleText = true;
   displayAllText = true;
   @Input() clusterUpgradeProgress: ClusterUpgradeProgress;
 
-  constructor(injector: Injector) {
-    super(injector);
+  constructor(private refreshService: RefreshService) {
+
   }
 
-  setup() {
+  ngOnInit() {
+    this.refreshService.insertRefreshSubject('upgradeBanner', () => this.refresh());
     this.checkWidth(window.innerWidth);
   }
 

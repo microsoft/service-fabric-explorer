@@ -286,7 +286,8 @@ export class BackupPolicy extends DataModelBase<IRawBackupPolicy> {
             'Deleting',
             {
                 backup: raw,
-                delete: () => data.restClient.deleteBackupPolicy(this.raw.Name)
+                delete: () => data.restClient.deleteBackupPolicy(this.raw.Name),
+                getEnabledEntities: () => data.restClient.getBackupEnabledEntities(this.raw.Name)
             },
             ViewBackupComponent,
             () => true,
