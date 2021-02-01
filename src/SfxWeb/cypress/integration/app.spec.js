@@ -86,9 +86,9 @@ context('app', () => {
     })
 
     describe("backups", () => {
-        it('view backup', () => {
-            cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
+        it.only('view backup', () => {
             cy.route(apiUrl(`/Applications/${appName}/$/GetBackupConfigurationInfo?*`)).as('backup');
+            cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('backup').click();
