@@ -84,13 +84,16 @@ export class Utils {
      */
     public static result(item: any, propertyPath: string) {
         let value = item;
-        propertyPath.split('.').forEach(path => {
-            if (typeof value[path] === 'function'){
-                value = value[path]();
-            }else{
-                value = value[path];
-            }
-        });
+        if (propertyPath !== null)
+        {
+            propertyPath.split('.').forEach(path => {
+                if (typeof value[path] === 'function'){
+                    value = value[path]();
+                }else{
+                    value = value[path];
+                }
+            });
+        }
         return value;
     }
 

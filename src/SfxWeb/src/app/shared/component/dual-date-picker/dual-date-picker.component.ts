@@ -49,13 +49,12 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   onDateSelection(date: NgbDate) {
     if (!this.fromDate && !this.toDate) {
       this.fromDate = date;
-    } else if (this.fromDate && !this.toDate && date.after(this.fromDate)) {
+    } else if (this.fromDate && !this.toDate && !date.before(this.fromDate)) {
       this.toDate = date;
     } else {
       this.toDate = null;
       this.fromDate = date;
     }
-
     if (this.fromDate && this.toDate){
       this.currentStartDate.setFullYear(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
       this.currentEndDate.setFullYear(this.toDate.year, this.toDate.month - 1, this.toDate.day);

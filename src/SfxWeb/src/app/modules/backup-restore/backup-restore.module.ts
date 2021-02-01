@@ -6,17 +6,20 @@ import { PartitionDisableBackUpComponent } from './partition-disable-back-up/par
 import { ViewBackupComponent } from './view-backup/view-backup.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { StorageFormComponent } from './storage-form/storage-form.component';
+import { GetBackupEnabledEntitiesComponent } from './get-backup-enabled-entities/get-backup-enabled-entities.component';
+import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
 
 
 
 @NgModule({
-  declarations: [PartitionEnableBackUpComponent, PartitionDisableBackUpComponent, ViewBackupComponent, StorageFormComponent],
+  declarations: [PartitionEnableBackUpComponent, PartitionDisableBackUpComponent, ViewBackupComponent, StorageFormComponent, GetBackupEnabledEntitiesComponent],
   imports: [
     CommonModule,
     FormsModule,
     SharedModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    DetailListTemplatesModule
   ],
-  exports: [PartitionEnableBackUpComponent, PartitionDisableBackUpComponent, ViewBackupComponent, StorageFormComponent],
+  exports: [PartitionEnableBackUpComponent, PartitionDisableBackUpComponent, ViewBackupComponent, StorageFormComponent, GetBackupEnabledEntitiesComponent],
 })
 export class BackupRestoreModule { }
