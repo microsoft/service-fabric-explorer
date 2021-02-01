@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST  } from './util';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST, nodes_route, FIXTURE_NODES  } from './util';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@nodeInfo"
@@ -35,6 +35,7 @@ context('node page', () => {
 
         it('deactivated', () => {
             cy.route(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/deactivated-node').as('deactivatedNode');
+            cy.route(nodes_route, 'fx:node-page/node-list').as(FIXTURE_NODES);
 
             cy.visit(`/#/node/${nodeName}`);
 
