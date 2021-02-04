@@ -9,15 +9,14 @@ const waitRequest = "@info";
 
 context('app', () => {
     beforeEach(() => {
-        cy.server()
         addDefaultFixtures();
 
-        cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:deployed-service/deployed-apps').as('apps');
-        cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${serviceName}/$/GetHealth?*`), 'fx:deployed-service/health').as('health');
-        cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${serviceName}?*`), 'fx:deployed-service/service-info').as('info');
-        cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), 'fx:deployed-service/services').as('services');
+        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:deployed-service/deployed-apps').as('apps');
+        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${serviceName}/$/GetHealth?*`), 'fx:deployed-service/health').as('health');
+        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${serviceName}?*`), 'fx:deployed-service/service-info').as('info');
+        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), 'fx:deployed-service/services').as('services');
 
-        cy.route(apiUrl(`ApplicationTypes/${appName}/$/GetServiceManifest?*`), 'fx:deployed-service/manifest').as('manifest');
+        cy.intercept(apiUrl(`ApplicationTypes/${appName}/$/GetServiceManifest?*`), 'fx:deployed-service/manifest').as('manifest');
 
         cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}`)
     })

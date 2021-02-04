@@ -9,13 +9,12 @@ const waitRequest = "@codePackages";
 
 context('deployed code package', () => {
     beforeEach(() => {
-        cy.server()
         addDefaultFixtures();
 
-        cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:deployed-code-package/deployed-apps').as('apps');
-        cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), 'fx:deployed-code-package/service-packages').as('services');
-        cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetCodePackages?*`), 'fx:deployed-code-package/code-packages').as('codePackages');
-        cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?*`), 'fx:deployed-code-package/replicas').as('replicas');
+        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:deployed-code-package/deployed-apps').as('apps');
+        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), 'fx:deployed-code-package/service-packages').as('services');
+        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetCodePackages?*`), 'fx:deployed-code-package/code-packages').as('codePackages');
+        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?*`), 'fx:deployed-code-package/replicas').as('replicas');
     })
 
     describe("list page", () => {

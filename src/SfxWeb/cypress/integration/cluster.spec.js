@@ -1,18 +1,16 @@
 /// <reference types="cypress" />
 
 import { apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, checkTableSize,
-          upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST } from './util';
+          upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute } from './util';
 
 const LOAD_INFO = "getloadinfo"
 
 context('Cluster page', () => {
 
   beforeEach(() => {
-
-    cy.server()
     addDefaultFixtures();
-    cy.route('GET', apiUrl('/$/GetLoadInformation?*'), 'fx:cluster-page/upgrade/get-load-information').as(LOAD_INFO);
-
+    addRoute(LOAD_INFO, apiUrl('/$/GetLoadInformation?*'))
+    cy.intercept(apiUrl('/$/GetLoadInformation?*'), 'fx:cluster-page/upgrade/get-load-information').as(LOAD_INFO);
   })
 
   describe("essentials", () => {
@@ -36,8 +34,8 @@ context('Cluster page', () => {
     })
 
     it('certificate expiring banner', () => {
-      cy.route('GET', nodes_route, 'fixture:cluster-page/nodes-1-warning')
-      cy.route('GET', apiUrl('/Nodes/_nt_0/$/GetHealth?*'), 'fixture:cluster-page/node-health').as('getnodeHealth')
+      cy.intercept(nodes_route, { fixture: 'cluster-page/nodes-1-warning.json' })
+      cy.intercept(apiUrl('/Nodes/_nt_0/$/GetHealth?*'), {fixture: 'cluster-page/node-health.json'}).as('getnodeHealth')
 
       cy.visit('')
 
@@ -52,11 +50,11 @@ context('Cluster page', () => {
   describe("details", () => {
   
     it('upgrade in progress', () => {
-      cy.route('GET', upgradeProgress_route, 'fx:upgrade-in-progress').as("inprogres");
+      cy.intercept('GET', upgradeProgress_route, 'fx:upgrade-in-progress').as("inprogres");
 
-      cy.route('GET', apiUrl('/Partitions/guidID?*'), 'fx:cluster-page/upgrade/get-partition-info');
-      cy.route('GET', apiUrl('/Partitions/guidID/$/GetServiceName?*'), 'fx:cluster-page/upgrade/get-service-name');
-      cy.route('GET', apiUrl('/Services/VisualObjectsApplicationType~VisualObjects.ActorService/$/GetApplicationName?*'), 'fx:cluster-page/upgrade/get-application-info').as('appinfo');
+      cy.intercept('GET', apiUrl('/Partitions/guidID?*'), 'fx:cluster-page/upgrade/get-partition-info');
+      cy.intercept('GET', apiUrl('/Partitions/guidID/$/GetServiceName?*'), 'fx:cluster-page/upgrade/get-service-name');
+      cy.intercept('GET', apiUrl('/Services/VisualObjectsApplicationType~VisualObjects.ActorService/$/GetApplicationName?*'), 'fx:cluster-page/upgrade/get-application-info').as('appinfo');
 
       cy.visit('/#/details')
 
@@ -92,8 +90,8 @@ context('Cluster page', () => {
 
   describe("metrics", () => {
     it('load metrics', () => {
-      cy.route('GET', nodes_route, 'fixture:cluster-page/nodes-1-warning')
-      cy.route('GET', apiUrl('/Nodes/_nt_0/$/GetLoadInformation?*'), 'fixture:node-load/get-node-load-information').as("nodeLoad")
+      cy.intercept('GET', nodes_route, 'fixture:cluster-page/nodes-1-warning')
+      cy.intercept('GET', apiUrl('/Nodes/_nt_0/$/GetLoadInformation?*'), 'fixture:node-load/get-node-load-information').as("nodeLoad")
 
       cy.visit('/#/metrics')
       cy.wait('@' + LOAD_INFO);
@@ -124,10 +122,14 @@ context('Cluster page', () => {
 
   describe("image store", () => {
     it('load image store', () => {
-      cy.route('GET', apiUrl('/ImageStore?*'), 'fixture:cluster-page/imagestore/base-directory').as('getbaseDirectory')
-      cy.route('GET', apiUrl('/ImageStore/StoreTest?*'), 'fixture:cluster-page/imagestore/nested-directory').as('getnestedDictectory')
-      cy.route('GET', apiUrl('/ImageStore/Store/VisualObjectsApplicationType/$/FolderSize?*'),
-        'fixture:cluster-page/imagestore/load-size.json').as('getloadSize')
+      addRoute('baseDirectory', 'cluster-page/imagestore/base-directory.json', apiUrl('/ImageStore?*'))
+      addRoute('nestedDictectory', 'cluster-page/imagestore/nested-directory.json', apiUrl('/ImageStore/StoreTest?*'))
+      addRoute('loadSize', 'cluster-page/imagestore/load-size.json', apiUrl('/ImageStore/Store/VisualObjectsApplicationType/$/FolderSize?*'))
+
+      // cy.intercept('GET', apiUrl('/ImageStore?*'), 'fixture:cluster-page/imagestore/base-directory').as('getbaseDirectory')
+      // cy.intercept('GET', apiUrl('/ImageStore/StoreTest?*'), 'fixture:cluster-page/imagestore/nested-directory').as('getnestedDictectory')
+      // cy.intercept('GET', apiUrl('/ImageStore/Store/VisualObjectsApplicationType/$/FolderSize?*'),
+        // 'fixture:cluster-page/imagestore/load-size.json').as('getloadSize')
 
       cy.visit('/#/imagestore')
 
@@ -163,14 +165,14 @@ context('Cluster page', () => {
 
   describe.only("repair tasks", () => {
     const setup = (file) => {
-      cy.route('GET', apiUrl('/$/GetRepairTaskList?*'), file).as('repairs')
+      addRoute('repairs', file, apiUrl('/$/GetRepairTaskList?*'))
       cy.visit('/#/repairtasks')
 
-      cy.wait("@repairs")
+      cy.wait("@getrepairs")
     }
 
     it('loads properly', () => {
-      setup('fixture:cluster-page/repair-jobs/simple')
+      setup('cluster-page/repair-jobs/simple.json')
       
       cy.get('[data-cy=timeline]');
       cy.get('[data-cy=pendingjobs]');
@@ -181,7 +183,7 @@ context('Cluster page', () => {
     })
 
     it('view completd repair job', () => {
-      setup('fixture:cluster-page/repair-jobs/simple')
+      setup('cluster-page/repair-jobs/simple.json')
 
       cy.get('[data-cy=completedjobs]').within( ()=> {
         cy.contains('Completed Repair Tasks').click();  
@@ -199,7 +201,7 @@ context('Cluster page', () => {
     })
 
     it('view in progress repair job', () => {
-      setup('fixture:cluster-page/repair-jobs/in-progress')
+      setup('cluster-page/repair-jobs/in-progress.json')
 
       cy.get('[data-cy=pendingjobs]').within( ()=> {        
         cy.get('tbody > tr').first().within(() =>{

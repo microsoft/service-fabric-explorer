@@ -9,8 +9,6 @@ const recording = '[data-cy=recording]';
 context('Network Page', () => {
 
     beforeEach(() => {
-
-        cy.server()
         addDefaultFixtures();
 
         cy.visit('/#/networking')

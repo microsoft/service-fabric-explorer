@@ -8,7 +8,7 @@
     "build:prod": "ng build --prod  --output-hashing=none",
     "build:accesstesting": "ng build --prod --outputPath=../Sfx-Proxy/wwwroot --configuration=accesstesting --output-hashing=none",
     "test": "ng test",
-    "cypress:local": "cypress open --env API_PREFIX=api/",
+    "cypress:local": "cypress open --env API_PREFIX=api",
     "ci:start-server": "angular-http-server --path ./dist -p 3000 --silent",
     "ci:test-build": "ng build --configuration=accesstesting",
     "ci:test": "ng test --watch=false --browsers=ChromeHeadless",

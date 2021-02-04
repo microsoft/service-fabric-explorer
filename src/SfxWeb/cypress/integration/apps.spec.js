@@ -1,17 +1,14 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, FIXTURE_REF_APPS, apps_route, EMPTY_LIST_TEXT, refresh } from './util';
+import { apiUrl, addDefaultFixtures, addRoute, FIXTURE_REF_APPS, apps_route, EMPTY_LIST_TEXT, refresh, FIXTURE_APPS } from './util';
 
 const appName = "fabric:/VisualObjectsApplicationType";
 
 context('apps list page', () => {
 
     beforeEach(() => {
-
-        cy.server()
         addDefaultFixtures();
         cy.visit('/#/apps')
-
     })
 
     describe("essentials", () => {
@@ -30,7 +27,7 @@ context('apps list page', () => {
 
     describe("upgrades in progress", () => {
 
-        it('view upgrades', () => {
+        it.only('view upgrades', () => {
             
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('upgrades in progress').click();
@@ -42,14 +39,16 @@ context('apps list page', () => {
                 cy.contains(EMPTY_LIST_TEXT);
             })
 
-            cy.route('GET', apiUrl(`/Applications/VisualObjectsApplicationType/$/GetUpgradeProgress?*`), 'fx:apps-page/upgrading-app').as("appUpgrading");
-            cy.route('GET', apps_route, 'fx:apps-page/upgrading-apps').as("appsUpgrading");
 
+            addRoute("appUpgrading", "apps-page/upgrading-app.json", apiUrl(`/Applications/VisualObjectsApplicationType/$/GetUpgradeProgress?*`))
+            // addRoute(FIXTURE_APPS, "apps-page/upgrading-apps.json", apps_route)
+            cy.intercept(apps_route, { fixture: 'apps-page/upgrading-apps.json' }).as('appsUpgrading')
+
+            
             refresh();
 
             cy.wait("@appsUpgrading");
-            cy.wait("@appUpgrading");
-
+            cy.wait("@getappUpgrading")
             cy.get("[data-cy=upgradingapps]").within( () => {
                 cy.contains(appName);
             })
@@ -59,13 +58,13 @@ context('apps list page', () => {
     describe("events", () => {
         it('view events', () => {
             cy.wait(FIXTURE_REF_APPS);
-            cy.route(apiUrl(`/EventsStore/**`), "fx:empty-list").as("events")
+            addRoute("events", "empty-list.json", apiUrl(`/EventsStore/**`))
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();
             })
     
-            cy.wait('@events')
+            cy.wait('@getevents')
             cy.url().should('include', '/apps/events')
         })
     })

@@ -1,10 +1,10 @@
 /// <reference types="cypress" />
 
 export const apiUrl = (url) => {
-    return `${Cypress.env("API_PREFIX")}${url}`;
+    return `/${Cypress.env("API_PREFIX")}${url}`;
 }
 
-const fixtureRefFormatter = (fixture_ref_name) => {
+export const fixtureRefFormatter = (fixture_ref_name) => {
     return `@${fixture_ref_name}`;
 }
 
@@ -53,9 +53,7 @@ export const FIXTURE_REF_UPGRADEPROGRESS = exportFormat(FIXTURE_UPGRADEPROGRESS)
 export const upgradeProgress_route = apiUrl('/$/GetUpgradeProgress*');
 
 export const addRoute = (fixtureName, fixtureFileName, route, requestType = 'GET') => {
-    cy.fixture(fixtureFileName).as(fixtureName);
-    const fixtureRef = fixtureRefFormatter(fixtureName);
-    cy.route(requestType, route, fixtureRef).as(fixtureRequestFormatter(fixtureName))
+    cy.intercept(requestType, route, {fixture: fixtureFileName}).as(fixtureRequestFormatter(fixtureName))
 }
 
 export const addDefaultFixtures = () => {

@@ -1,13 +1,12 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, FIXTURE_REF_APPS, apps_route, EMPTY_LIST_TEXT, refresh } from './util';
+import { addDefaultFixtures, FIXTURE_REF_APPS } from './util';
 
 const appTypeName = "VisualObjectsApplicationType";
 const appname = "fabric:/VisualObjectsApplicationType";
 
 context('app', () => {
     beforeEach(() => {
-        cy.server()
         addDefaultFixtures();
         cy.visit(`/#/apptype/${appTypeName}`)
     })

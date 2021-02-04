@@ -1,18 +1,16 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST, nodes_route, FIXTURE_NODES  } from './util';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES  } from './util';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@nodeInfo"
 
 context('node page', () => {
-
     beforeEach(() => {
-        cy.server();
         addDefaultFixtures();
-        cy.route(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/node-info').as('nodeInfo');
-        cy.route(apiUrl(`Nodes/${nodeName}/$/GetHealth?*`), 'fx:node-page/health').as('health');
-        cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:node-page/apps').as('apps');
+        cy.intercept(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/node-info').as('nodeInfo');
+        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetHealth?*`), 'fx:node-page/health').as('health');
+        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:node-page/apps').as('apps');
 
     })
 
@@ -34,8 +32,8 @@ context('node page', () => {
         })
 
         it('deactivated', () => {
-            cy.route(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/deactivated-node').as('deactivatedNode');
-            cy.route(nodes_route, 'fx:node-page/node-list').as(FIXTURE_NODES);
+            cy.intercept(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/deactivated-node').as('deactivatedNode');
+            cy.intercept(nodes_route, 'fx:node-page/node-list').as(FIXTURE_NODES);
 
             cy.visit(`/#/node/${nodeName}`);
 
@@ -50,7 +48,7 @@ context('node page', () => {
 
     describe("details", () => {
         it('view details', () => {
-            cy.route('GET', apiUrl(`/Nodes/${nodeName}/$/GetLoadInformation?*`), 'fixture:node-load/get-node-load-information').as("nodeLoad")
+            cy.intercept('GET', apiUrl(`/Nodes/${nodeName}/$/GetLoadInformation?*`), 'fixture:node-load/get-node-load-information').as("nodeLoad")
 
             cy.visit(`/#/node/${nodeName}`)
 
@@ -68,7 +66,7 @@ context('node page', () => {
 
     describe("events", () => {
         it('view events', () => {
-            cy.route(apiUrl(`EventsStore/Nodes/${nodeName}/$/Events?*`), "fx:empty-list").as("events")
+            cy.intercept(apiUrl(`EventsStore/Nodes/${nodeName}/$/Events?*`), "fx:empty-list").as("events")
 
             cy.visit(`/#/node/${nodeName}`);
 

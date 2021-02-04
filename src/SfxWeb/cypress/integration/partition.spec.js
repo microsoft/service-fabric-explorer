@@ -13,23 +13,22 @@ const urlFormatter = (app, service, partition) => `/#/apptype/${app}/app/${app}/
 
 context('service', () => {
     beforeEach(() => {
-        cy.server()
         addDefaultFixtures();
-        cy.route(apiUrl(`/Applications/${appName}/$/GetServices?*`), "fx:app-page/services").as("services")
+        cy.intercept(apiUrl(`/Applications/${appName}/$/GetServices?*`), {fixture: "app-page/services.json" }).as("services")
     })
 
     describe("stateful", () => {
         beforeEach(() => {
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}?*`), "fx:partition-page/partitions").as("partitions");
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`), "fx:partition-page/partition-info").as("partitionInfo");
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetReplicas?*`), "fx:partition-page/replicas").as("replicasList");
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetHealth?*`), "fx:partition-page/health").as("health");
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetLoadInformation?*`), "fx:partition-page/load").as("load");
+            cy.intercept(apiUrl(`${routeFormatter(appName, serviceName)}?*`), {fixture: "partition-page/partitions.json",  }).as("partitions");
+            cy.intercept(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`), {fixture: "partition-page/partition-info.json"}).as("partitionInfo");
+            cy.intercept(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetReplicas?*`), {fixture: "partition-page/replicas.json"}).as("replicasList");
+            cy.intercept(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetHealth?*`), {fixture: "partition-page/health.json" }).as("health");
+            cy.intercept(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetLoadInformation?*`), {fixture: "partition-page/load.json" }).as("load");
 
             cy.visit(urlFormatter(appName, serviceName, partitionId))
         })
 
-        it('load essentials', () => {
+        it.only('load essentials', () => {
             cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
 
             cy.get('[data-cy=header]').within(() => {
