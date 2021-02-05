@@ -185,6 +185,9 @@ export class TreeService {
                                     suffix = 'Down (Stopped)';
                                 } else {
                                     suffix = node.raw.NodeStatus;
+                                    if (node.raw.NodeDeactivationInfo.NodeDeactivationIntent !== NodeStatusConstants.Invalid) {
+                                        suffix += " -> " + node.raw.NodeDeactivationInfo.NodeDeactivationIntent;
+                                    }
                                 }
                             }
 
