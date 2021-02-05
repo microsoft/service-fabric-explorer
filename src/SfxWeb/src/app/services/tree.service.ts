@@ -186,7 +186,7 @@ export class TreeService {
                                 } else {
                                     suffix = node.raw.NodeStatus;
                                     if (node.raw.NodeDeactivationInfo.NodeDeactivationIntent !== NodeStatusConstants.Invalid) {
-                                        suffix += " -> " + node.raw.NodeDeactivationInfo.NodeDeactivationIntent;
+                                        suffix += ' -> ' + node.raw.NodeDeactivationInfo.NodeDeactivationIntent;
                                     }
                                 }
                             }
