@@ -46,8 +46,6 @@ export class AppComponent implements OnInit{
     this.rightOffset =  this.treeWidth;
 
     this.checkWidth(window.innerWidth);
-
-    throw Error("TEST ERROR")
   }
 
   @HostListener('window:resize', ['$event.target'])
