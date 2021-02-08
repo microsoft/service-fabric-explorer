@@ -7,6 +7,9 @@ import { BreakpointObserver, BreakpointState } from '@angular/cdk/layout';
 import { DataService } from './services/data.service';
 import { environment } from 'src/environments/environment';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { TelemetryService } from './services/telemetry.service';
+import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
+import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
 
 @Component({
   selector: 'app-root',
@@ -33,7 +36,8 @@ export class AppComponent implements OnInit{
               private storageService: StorageService,
               public breakpointObserver: BreakpointObserver,
               public dataService: DataService,
-              public liveAnnouncer: LiveAnnouncer) {
+              public liveAnnouncer: LiveAnnouncer,
+              private snackBar: MatSnackBar) {
 
   }
 
@@ -46,6 +50,13 @@ export class AppComponent implements OnInit{
     this.rightOffset =  this.treeWidth;
 
     this.checkWidth(window.innerWidth);
+
+    if (!this.storageService.getValueBoolean(TelemetryService.localStoragePromptedTelemetryKey, false)) {
+      const config = new MatSnackBarConfig();
+      config.duration = 30000;
+      this.snackBar.openFromComponent(TelemetrySnackBarComponent, config);
+      this.storageService.setValue(TelemetryService.localStoragePromptedTelemetryKey, true);
+    }
   }
 
   @HostListener('window:resize', ['$event.target'])
