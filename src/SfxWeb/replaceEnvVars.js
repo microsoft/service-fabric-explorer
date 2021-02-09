@@ -10,6 +10,7 @@ const getVersion = () => {
     if (!process.env.BUILD_BUILDNUMBER || !process.env.BUILD_SOURCEVERSION) {
         return `,version:'unset'`;
     }
+  
     const version = `,version:'${process.env.BUILD_BUILDNUMBER}-${process.env.BUILD_SOURCEVERSION}'`;
     console.log(version)
     return version;
