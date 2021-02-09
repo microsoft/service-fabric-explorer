@@ -42,6 +42,8 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit() {
+    console.log(`SFX VERSION : ${environment.version}`);
+
     this.treeService.init();
     this.treeService.refresh().subscribe();
     this.refreshService.init();
