@@ -4,7 +4,18 @@ const fileLocation = "./src/environments/environment.prod.ts";
 //csv of key value pairs seperated with :
 //example node replaceEnvVars.js telemetryKey:'test',version:1.2
 //to add string values use ' quotes not " when passing as args.
-const argvs = process.argv.splice(2);
+let argvs = process.argv.splice(2);
+
+const getVersion = () => {
+    if (!process.env.BUILD_BUILDNUMBER || !process.env.BUILD_SOURCEVERSION) {
+        return `version:'unset'`;
+    }
+    const version = `version:'${process.env.BUILD_BUILDNUMBER}-${process.env.BUILD_SOURCEVERSION}'`;
+    console.log(version)
+    return version;
+} 
+
+argvs.push(getVersion());
 
 const f = async () => {
     try {
@@ -35,3 +46,4 @@ const f = async () => {
 }
 
 f();
+

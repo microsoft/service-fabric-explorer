@@ -28,6 +28,7 @@ export class TelemetryService {
     });
 
     this.appInsights.loadAppInsights();
+    this.appInsights.context.application.ver = environment.version;
 
     // there can be multiple activationEnd events so we want to grab the last one.
     let lastActivationEnd = null;
