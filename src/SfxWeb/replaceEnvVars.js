@@ -8,14 +8,15 @@ let argvs = process.argv.splice(2);
 
 const getVersion = () => {
     if (!process.env.BUILD_BUILDNUMBER || !process.env.BUILD_SOURCEVERSION) {
-        return `version:'unset'`;
+        return `,version:'unset'`;
     }
-    const version = `version:'${process.env.BUILD_BUILDNUMBER}-${process.env.BUILD_SOURCEVERSION}'`;
+  
+    const version = `,version:'${process.env.BUILD_BUILDNUMBER}-${process.env.BUILD_SOURCEVERSION}'`;
     console.log(version)
     return version;
 } 
 
-argvs.push(getVersion());
+argvs[0] += getVersion();
 
 const f = async () => {
     try {
