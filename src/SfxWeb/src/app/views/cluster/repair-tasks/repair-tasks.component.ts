@@ -42,7 +42,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
         new ListColumnSetting('raw.Target.NodeNames', 'Target'),
         new ListColumnSetting('impactedNodes', 'Impact'),
         new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
-        new ListColumnSetting('createdAt', 'Created at'),
+        new ListColumnSetting('raw.History.CreatedUtcTimestamp', 'Created at'),
         new ListColumnSetting('displayDuration', 'Duration'),
     ],
     [
@@ -65,7 +65,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
             new ListColumnSetting('raw.Target.NodeNames', 'Target'),
             new ListColumnSetting('impactedNodes', 'Impact'),
             new ListColumnSetting('raw.ResultStatus', 'Result Status', {enableFilter: true}),
-            new ListColumnSetting('createdAt', 'Created at'),
+            new ListColumnSetting('raw.History.CreatedUtcTimestamp', 'Created at'),
             new ListColumnSetting('displayDuration', 'Duration'),
         ],
         [
