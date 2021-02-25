@@ -1,5 +1,8 @@
 import { IRawRepairTask } from '../RawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { DataModelBase } from './Base';
+import { DataService } from 'src/app/services/data.service';
+import { Observable, of } from 'rxjs';
 export interface IRepairTaskHistoryPhase {
     timestamp: string;
     phase: string;
@@ -53,8 +56,12 @@ export const NotStartedStatus: IDisplayStatus = {
 
 
 
-export class RepairTask {
+export class RepairTask extends DataModelBase<IRawRepairTask> {
     public static NonStartedTimeStamp = '0001-01-01T00:00:00.000Z';
+
+    public get id(): string {
+        return this.raw.TaskId;
+    }
 
     // Initially keep additional details collapsed.
     public isSecondRowCollapsed = true;
@@ -74,7 +81,11 @@ export class RepairTask {
 
     public executorData: any;
 
-    constructor(public raw: IRawRepairTask, private dateRef: Date = new Date()) {
+    constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef: Date = new Date()) {
+        super(dataService, raw);
+    }
+
+    public update(raw: IRawRepairTask): Observable<any> {
         if (this.raw.Impact) {
             this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
         }
@@ -83,7 +94,7 @@ export class RepairTask {
 
         const start = new Date(this.createdAt).getTime();
         if (this.inProgress) {
-            const now = dateRef.getTime();
+            const now = this.dateRef.getTime();
             this.duration = now - start;
         } else {
             this.duration = new Date(this.raw.History.CompletedUtcTimestamp).getTime() - start;
@@ -106,7 +117,7 @@ export class RepairTask {
             this.generateHistoryPhase('Executing', [this.history[6]]),
             this.generateHistoryPhase('Restoring', this.history.slice(7))
         ];
-
+        return of();
     }
 
     /*

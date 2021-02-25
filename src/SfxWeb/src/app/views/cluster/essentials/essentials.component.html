@@ -1,80 +1,25 @@
-<div class="detail-pane essen-pane">
-        <div class="essential-container">
-            <div class="essential-item essential-fourth">
-                <div class="essential-head">
-                    Code Version
-                </div>
-                <div *ngIf="clusterUpgradeProgress.isInitialized"  class="essential-body">
-                    {{clusterUpgradeProgress.raw.CodeVersion}}<app-clip-board [text]="clusterUpgradeProgress.raw.CodeVersion"></app-clip-board>
-                </div>
-            </div>
-
-            <div class="essential-item essential-fourth">
-                <div class="essential-head">
-                    Upgrade State
-                </div>
-                <div *ngIf="clusterUpgradeProgress.isInitialized"  class="essential-body">
-                    {{clusterUpgradeProgress.raw.UpgradeState}}
-                </div>
-            </div>
-
-            <div class="essential-item essential-fourth">
-                <div class="essential-head">
-                    Fault Domains
-                </div>
-                <div *ngIf="nodes.isInitialized"  class="essential-body">
-                    {{nodes.faultDomains.length}}
-                </div>
-            </div>
-
-            <div class="essential-item essential-fourth">
-                <div class="essential-head">
-                    Upgrade Domains
-                </div>
-                <div *ngIf="nodes.isInitialized" class="essential-body">
-                    {{nodes.upgradeDomains.length}}
-                </div>
-            </div>
-
-            <div class="essential-item essential-fourth">
-                <div class="essential-head">
-                    Cluster Health State
-                </div>
-                <div *ngIf="clusterHealth.isInitialized"  class="essential-body">
-                    <app-health-badge [badgeClass]="clusterHealth.healthState.badgeClass" [text]="clusterHealth.healthState.text"></app-health-badge>
-                </div>
-            </div>
-
-            <div class="essential-item essential-fourth">
-                <div class="essential-head">
-                    System Application Health State
-                </div>
-                <div *ngIf="systemApp.isInitialized"  class="essential-body">
-                    <app-health-badge [badgeClass]="systemApp.healthState.badgeClass" [text]="systemApp.healthState.text"></app-health-badge>
-                </div>
-            </div>
-
-            <div class="essential-item essential-fourth">
-                <div class="essential-head">
-                    Healthy Seed Nodes
-                </div>
-                <div *ngIf="nodes.isInitialized"  class="essential-body">
-                    {{nodes.healthySeedNodes}}
-                </div>
-            </div>
-
-            <div class="essential-item essential-fourth">
-                <div class="essential-head">
-                    Disabled/Disabling Nodes
-                </div>
-                <div *ngIf="nodes.isInitialized"  class="essential-body">
-                    {{nodes.disabledNodes}}
-                </div>
-            </div>
-        </div>
+<div class="tile-container">
+    <app-dashboard-tile [data]="nodesDashboard" *ngIf="nodesDashboard" data-cy="nodesChart" class="tall"></app-dashboard-tile>
+    <app-dashboard-tile [data]="appsDashboard" *ngIf="appsDashboard" data-cy="appsChart" class="tall"></app-dashboard-tile>
+    <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard" style="display: block"></app-dashboard-tile>
+    <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard" style="display: block">
+    </app-dashboard-tile>
+    <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard" style="display: block"></app-dashboard-tile>
+    <app-dashboard-text-tile [barClass]="upgradeAppsCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
+        link="apps/upgrades" [count]="upgradeAppsCount"
+        [title]="upgradeAppsCount === 1 ? 'APPLICATION UPGRADE IN PROGRESS' : 'APPLICATION UPGRADES IN PROGRESS'"
+        style="display: block"></app-dashboard-text-tile>
+    <app-dashboard-text-tile
+        [barClass]="repairtaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
+        link="repairtasks" [count]="repairtaskCollection.repairTasks.length" *ngIf="repairtaskCollection.isInitialized"
+        title="REPAIR JOBS IN PROGRESS" style="display: block"></app-dashboard-text-tile>
+    <app-dashboard-text-tile
+        [barClass]="nodes.disabledAndDisablingCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" link="nodes"
+        [count]="nodes.disabledNodes" *ngIf="nodes.isInitialized" title="DISABLED/DISABLING NODES" style="display: block">
+    </app-dashboard-text-tile>
 </div>
 
-<div>
+<!-- <div>
     <app-dashboard-tile [data]="nodesDashboard" *ngIf="nodesDashboard" data-cy="nodesChart"></app-dashboard-tile>
     <app-dashboard-tile [data]="appsDashboard" *ngIf="appsDashboard"  data-cy="appsChart"></app-dashboard-tile>
     <div style="display: inline-block">
@@ -86,6 +31,99 @@
         <app-dashboard-text-tile [barClass]="upgradeAppsCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" link="apps/upgrades" [count]="upgradeAppsCount"
                                  [title]="upgradeAppsCount === 1 ? 'APPLICATION UPGRADE IN PROGRESS' : 'APPLICATION UPGRADES IN PROGRESS'" style="display: block"></app-dashboard-text-tile>    
     </div>
+    <div style="display: inline-block">
+        <app-dashboard-text-tile [barClass]="repairtaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" 
+            link="repairtasks" [count]="repairtaskCollection.repairTasks.length" *ngIf="repairtaskCollection.isInitialized"
+            title="REPAIR JOBS IN PROGRESS" style="display: block"></app-dashboard-text-tile>    
+        <app-dashboard-text-tile [barClass]="nodes.disabledAndDisablingCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" 
+            link="nodes" [count]="nodes.disabledNodes" *ngIf="nodes.isInitialized"
+            title="DISABLED/DISABLING NODES" style="display: block"></app-dashboard-text-tile>   
+    </div>
+</div> -->
+
+<div class="detail-pane essen-pane">
+    <div class="essential-container">
+        <div class="essential-item">
+            <div class="essential-head">
+                Code Version
+            </div>
+            <div *ngIf="clusterUpgradeProgress.isInitialized"  class="essential-body">
+                {{clusterUpgradeProgress.raw.CodeVersion}}<app-clip-board [text]="clusterUpgradeProgress.raw.CodeVersion"></app-clip-board>
+            </div>
+        </div>
+        <div class="essential-item">
+            <div class="essential-head">
+                Fault Domains
+            </div>
+            <div *ngIf="nodes.isInitialized"  class="essential-body">
+                {{nodes.faultDomains.length}}
+            </div>
+        </div>
+
+        <div class="essential-item">
+            <div class="essential-head">
+                Upgrade Domains
+            </div>
+            <div *ngIf="nodes.isInitialized" class="essential-body">
+                {{nodes.upgradeDomains.length}}
+            </div>
+        </div>
+
+        <div class="essential-item">
+            <div class="essential-head">
+                Healthy Seed Nodes
+            </div>
+            <div *ngIf="nodes.isInitialized"  class="essential-body">
+                {{nodes.healthySeedNodes}}
+            </div>
+        </div>
+    </div>
+</div>
+
+<div data-cy="upgradeDetails" *ngIf="clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading" class="detail-pane essen-pane">
+    <app-collapse-container sectionName="Upgrade Status">
+        <div collapse-header>
+                <h4>Cluster Upgrade In Progress</h4>
+        </div>
+        <div collapse-body>
+            <div class="table-responsive">
+                    <table class="essen-table" role="presentation">
+                        <tr>
+                            <th>Code Version</th>
+                            <th>Config Version</th>
+                            <th>Upgrade State</th>
+                            <th>Upgrade Mode</th>
+                        </tr>
+                        <tr>
+                            <td>{{clusterUpgradeProgress.raw.CodeVersion}}</td>
+                            <td>{{clusterUpgradeProgress.raw.ConfigVersion}}</td>
+                            <td>{{clusterUpgradeProgress.raw.UpgradeState}}</td>
+                            <td>{{clusterUpgradeProgress.raw.RollingUpgradeMode}}</td>
+                        </tr>
+                        <tr>
+                            <th>Start Timestamp Utc</th>
+                            <th title="Upgrade Duration">Upgrade Duration</th>	
+                            <th title="Upgrade Domain Duration">Upgrade Domain Duratiaon</th>
+                        </tr>
+                        <tr>
+                            <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
+                            <td>{{clusterUpgradeProgress.upgradeDuration}}</td>	
+                            <td>{{clusterUpgradeProgress.upgradeDomainDuration}}</td>
+                        </tr>
+                    </table>
+                </div>
+                <div *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0" style="margin-top: 20px;">
+                    <h5 style="font-size: 16px;">Upgrade Domain Progress</h5>
+                    <app-upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></app-upgrade-progress>
+                </div>
+
+            <div style="margin-top:20px" *ngIf="clusterUpgradeProgress.isUpgrading" data-cy="currentud">
+                <h5 style="font-size: 16px;">Current Upgrade Domain : {{clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName}} </h5>
+                <h5 style="font-size: 15px; margin-top: 15px;">Nodes status</h5>
+                <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress"></app-upgrade-domain-progress>
+            </div>
+        </div>
+    </app-collapse-container>
 </div>
 
 <div class="detail-pane essen-pane" data-cy="health" style="position: relative;">

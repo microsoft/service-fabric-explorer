@@ -1,6 +1,6 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
-import { ClusterUpgradeProgress, ClusterHealth } from '../../../Models/DataModels/Cluster';
+import { ClusterUpgradeProgress, ClusterHealth, ClusterManifest } from '../../../Models/DataModels/Cluster';
 import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
 import { SystemApplication } from 'src/app/Models/DataModels/Application';
 import { Observable, forkJoin, of } from 'rxjs';
@@ -13,6 +13,7 @@ import { map, catchError } from 'rxjs/operators';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { RoutesService } from 'src/app/services/routes.service';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
+import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 
 
 @Component({
@@ -27,6 +28,8 @@ export class EssentialsComponent extends BaseControllerDirective {
   clusterHealth: ClusterHealth;
   systemApp: SystemApplication;
   unhealthyEvaluationsListSettings: ListSettings;
+  clusterManifest: ClusterManifest;
+  repairtaskCollection: RepairTaskCollection;
 
   nodesDashboard: IDashboardViewModel;
   appsDashboard: IDashboardViewModel;
@@ -48,6 +51,7 @@ export class EssentialsComponent extends BaseControllerDirective {
     this.clusterUpgradeProgress = this.data.clusterUpgradeProgress;
     this.nodes = this.data.nodes;
     this.systemApp = this.data.systemApp;
+    this.repairtaskCollection = this.data.repairCollection;
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
   }
 
@@ -76,7 +80,14 @@ export class EssentialsComponent extends BaseControllerDirective {
                 })),
       this.nodes.refresh(messageHandler),
       this.systemApp.refresh(messageHandler).pipe(catchError(err => of(null))),
-      this.clusterUpgradeProgress.refresh(messageHandler)
+      this.clusterUpgradeProgress.refresh(messageHandler),
+      this.data.getClusterManifest().pipe(map((manifest) => {
+        if(manifest.isRepairManagerEnabled) {
+          return this.repairtaskCollection.refresh(messageHandler);
+        }else{
+          return of(null);
+        }
+      }))
     ]);
   }
 

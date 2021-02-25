@@ -21,6 +21,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     public healthySeedNodes: string;
     public disabledNodes: string;
     public seedNodeCount: number;
+    public disabledAndDisablingCount: number;
 
     public constructor(data: DataService) {
         super(data);
@@ -91,6 +92,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
 
         this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
         this.seedNodeCount = seedNodes.length;
+        this.disabledAndDisablingCount = disabledNodes + disablingNodes;
 
         this.checkOneNodeScenario();
 

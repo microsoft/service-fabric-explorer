@@ -69,7 +69,7 @@ $SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
 
 .detail-pane {
     display: block;
-    margin-bottom: 35px;
+    margin-bottom: 15px;
 
     &:last-of-type {
         margin-bottom: 0;
@@ -875,4 +875,18 @@ app-navbar {
 }
 .essential-half {
   width: 50%;
+}
+
+
+.tall {
+    grid-row: span 2;
+  }
+
+.tile-container {
+    display: grid;
+    grid-auto-flow: dense;
+    grid-template-columns: repeat(auto-fit, 240px);
+    grid-gap: 10px;
+    grid-auto-rows: 150px;
+    margin-bottom: 15px;
 }
