@@ -71,9 +71,9 @@ $SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
     display: block;
     margin-bottom: 15px;
 
-    &:last-of-type {
-        margin-bottom: 0;
-    }
+    // &:last-of-type {
+    //     margin-bottom: 0;
+    // }
 
     h4 {
         color: $detail-tab-color;

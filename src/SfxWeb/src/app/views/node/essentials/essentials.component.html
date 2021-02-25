@@ -80,7 +80,8 @@
       <h4>Deactivation Info</h4>
     </div>
     <div collapse-body>
-      <div class="essential-item" style="margin-bottom: 10px;">
+      <app-node-deactivation-info [node]="node"></app-node-deactivation-info>
+      <!-- <div class="essential-item" style="margin-bottom: 10px;">
         <div class="essential-head">
           Deactivation Status
         </div>
@@ -123,7 +124,7 @@
       <div style="margin-top: 30px;" *ngIf="node.raw.NodeDeactivationInfo.PendingSafetyChecks.length > 0">
         <h5 style="font-size: 16px;">Safety Checks</h5>
         <app-safety-checks [safetyChecks]="node.raw.NodeDeactivationInfo.PendingSafetyChecks"></app-safety-checks>
-      </div>
+      </div> -->
     </div>
   </app-collapse-container>
 </div>

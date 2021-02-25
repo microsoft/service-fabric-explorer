@@ -22,6 +22,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     public disabledNodes: string;
     public seedNodeCount: number;
     public disabledAndDisablingCount: number;
+    public disabledAndDisablingNodes: Node[];
 
     public constructor(data: DataService) {
         super(data);
@@ -81,12 +82,15 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         let disabledNodes = 0;
         let disablingNodes = 0;
 
+        this.disabledAndDisablingNodes = [];
         this.collection.forEach(node => {
             if (node.raw.NodeStatus === NodeStatusConstants.Disabled) {
                 disabledNodes++;
+                this.disabledAndDisablingNodes.push(node);
             }
             if (node.raw.NodeStatus === NodeStatusConstants.Disabling) {
                 disablingNodes++;
+                this.disabledAndDisablingNodes.push(node);
             }
         });
 
