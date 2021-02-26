@@ -19,28 +19,6 @@
     </app-dashboard-text-tile>
 </div>
 
-<!-- <div>
-    <app-dashboard-tile [data]="nodesDashboard" *ngIf="nodesDashboard" data-cy="nodesChart"></app-dashboard-tile>
-    <app-dashboard-tile [data]="appsDashboard" *ngIf="appsDashboard"  data-cy="appsChart"></app-dashboard-tile>
-    <div style="display: inline-block">
-        <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard" style="display: block"></app-dashboard-tile>
-        <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard" style="display: block"></app-dashboard-tile>
-    </div>
-    <div style="display: inline-block">
-        <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard" style="display: block"></app-dashboard-tile>
-        <app-dashboard-text-tile [barClass]="upgradeAppsCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" link="apps/upgrades" [count]="upgradeAppsCount"
-                                 [title]="upgradeAppsCount === 1 ? 'APPLICATION UPGRADE IN PROGRESS' : 'APPLICATION UPGRADES IN PROGRESS'" style="display: block"></app-dashboard-text-tile>
-    </div>
-    <div style="display: inline-block">
-        <app-dashboard-text-tile [barClass]="repairtaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
-            link="repairtasks" [count]="repairtaskCollection.repairTasks.length" *ngIf="repairtaskCollection.isInitialized"
-            title="REPAIR JOBS IN PROGRESS" style="display: block"></app-dashboard-text-tile>
-        <app-dashboard-text-tile [barClass]="nodes.disabledAndDisablingCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
-            link="nodes" [count]="nodes.disabledNodes" *ngIf="nodes.isInitialized"
-            title="DISABLED/DISABLING NODES" style="display: block"></app-dashboard-text-tile>
-    </div>
-</div> -->
-
 <div class="detail-pane essen-pane">
     <div class="essential-container">
         <div class="essential-item">
