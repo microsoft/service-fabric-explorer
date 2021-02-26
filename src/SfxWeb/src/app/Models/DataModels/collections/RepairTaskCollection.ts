@@ -1,13 +1,13 @@
-import { Observable, of } from "rxjs";
-import { map } from "rxjs/operators";
-import { IResponseMessageHandler } from "src/app/Common/ResponseMessageHandlers";
-import { DataService } from "src/app/services/data.service";
-import { RepairTask } from "../repairTask";
-import { DataModelCollectionBase } from "./CollectionBase";
+import { Observable, of } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
+import { DataService } from 'src/app/services/data.service';
+import { RepairTask } from '../repairTask';
+import { DataModelCollectionBase } from './CollectionBase';
 
 export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
     repairTasks: RepairTask[] = [];
-    completedRepairTasks: RepairTask[] = [];  
+    completedRepairTasks: RepairTask[] = [];
 
     public constructor(data: DataService) {
         super(data, parent);
@@ -30,7 +30,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
               }else {
                 this.completedRepairTasks.push(task);
               }
-        })
+        });
         return of(null);
     }
 }

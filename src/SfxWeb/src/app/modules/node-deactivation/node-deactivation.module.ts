@@ -8,7 +8,7 @@ import { UpgradeProgressModule } from '../upgrade-progress/upgrade-progress.modu
 
 @NgModule({
   declarations: [NodeDeactivationInfoComponent],
-  exports:[
+  exports: [
     NodeDeactivationInfoComponent
   ],
   imports: [
