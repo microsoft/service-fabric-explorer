@@ -2,3 +2,15 @@ button {
   padding-top: 2px;
   padding-bottom: 2px;
 }
+
+.check-options {
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.item {
+  &:hover {
+    background-color: #262626;
+    transition: .5s;
+  }
+}

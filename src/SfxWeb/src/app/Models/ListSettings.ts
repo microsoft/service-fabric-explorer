@@ -165,6 +165,14 @@ export class ListColumnSetting {
         return this.config.sortPropertyPaths.length > 0;
     }
 
+    public get allChecked() {
+        return this.filterValues.every(val => val.isChecked);
+    }
+    
+    public get noneChecked() {
+        return this.filterValues.every(val => !val.isChecked);
+    }
+
     /**
      * Create a column setting
      * @param propertyPath The property path to retrieve display object/value
@@ -224,6 +232,19 @@ export class ListColumnSetting {
 
         return property.toString();
     }
+
+    checkAll() {
+        this.filterValues.forEach(value => {
+          value.isChecked = true;
+        })
+      }
+    
+      
+      uncheckAll() {
+        this.filterValues.forEach(value => {
+          value.isChecked = false;
+        })
+      }
 }
 
 export class ListColumnSettingForBadge extends ListColumnSetting {
