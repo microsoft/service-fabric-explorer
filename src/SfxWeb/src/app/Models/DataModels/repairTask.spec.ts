@@ -5,7 +5,7 @@ import { DataService } from 'src/app/services/data.service';
 
 describe('RepairTask', () => {
 
-    let dataService = {} as DataService;
+    const dataService = {} as DataService;
     let testData: IRawRepairTask;
 
     beforeEach((() => {

@@ -83,42 +83,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
     constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef: Date = new Date()) {
         super(dataService, raw);
-        this.update(raw);
-    }
-
-    public update(raw: IRawRepairTask): Observable<any> {
-        if (this.raw.Impact) {
-            this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
-        }
-        this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString();
-        this.inProgress = this.raw.State !== 'Completed';
-
-        const start = new Date(this.createdAt).getTime();
-        if (this.inProgress) {
-            const now = this.dateRef.getTime();
-            this.duration = now - start;
-        } else {
-            this.duration = new Date(this.raw.History.CompletedUtcTimestamp).getTime() - start;
-        }
-        this.displayDuration = TimeUtils.formatDurationAsAspNetTimespan(this.duration);
-
-        try {
-            this.executorData = JSON.parse(this.raw.ExecutorData);
-
-            this.couldParseExecutorData = true;
-        } catch (e) {
-            console.log(e);
-            this.couldParseExecutorData = false;
-        }
-
-        this.parseHistory();
-
-        this.historyPhases = [
-            this.generateHistoryPhase('Preparing', this.history.slice(0, 5)),
-            this.generateHistoryPhase('Executing', [this.history[6]]),
-            this.generateHistoryPhase('Restoring', this.history.slice(7))
-        ];
-        return of();
+        this.updateInternal();
     }
 
     /*
@@ -248,5 +213,41 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             }
         });
 
+    }
+
+    updateInternal(): Observable<any> {
+        if (this.raw.Impact) {
+            this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
+        }
+        this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString();
+        this.inProgress = this.raw.State !== 'Completed';
+
+        const start = new Date(this.createdAt).getTime();
+        if (this.inProgress) {
+            const now = this.dateRef.getTime();
+            this.duration = now - start;
+        } else {
+            this.duration = new Date(this.raw.History.CompletedUtcTimestamp).getTime() - start;
+        }
+        this.displayDuration = TimeUtils.formatDurationAsAspNetTimespan(this.duration);
+
+        try {
+            this.executorData = JSON.parse(this.raw.ExecutorData);
+
+            this.couldParseExecutorData = true;
+        } catch (e) {
+            console.log(e);
+            this.couldParseExecutorData = false;
+        }
+
+        this.parseHistory();
+
+        this.historyPhases = [
+            this.generateHistoryPhase('Preparing', this.history.slice(0, 5)),
+            this.generateHistoryPhase('Executing', [this.history[6]]),
+            this.generateHistoryPhase('Restoring', this.history.slice(7))
+        ];
+        return of(null);
+        return of(null);
     }
 }
