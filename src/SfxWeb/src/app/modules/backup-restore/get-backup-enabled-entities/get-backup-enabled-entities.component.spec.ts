@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GetBackupEnabledEntitiesComponent } from './get-backup-enabled-entities.component';
 

@@ -5,11 +5,11 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable } from 'rxjs';
 import { ListColumnSetting, ListSettings, ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
-import { map } from 'rxjs/operators';
 import { RepairTaskViewComponent } from '../repair-task-view/repair-task-view.component';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { ITimelineData, EventStoreUtils } from 'src/app/Models/eventstore/timelineGenerators';
 import { DataSet, DataGroup, DataItem } from 'vis-timeline';
+import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 
 @Component({
   selector: 'app-repair-tasks',
@@ -17,9 +17,7 @@ import { DataSet, DataGroup, DataItem } from 'vis-timeline';
   styleUrls: ['./repair-tasks.component.scss']
 })
 export class RepairTasksComponent extends BaseControllerDirective {
-
-  repairTasks: RepairTask[] = [];
-  completedRepairTasks: RepairTask[] = [];
+  public repairTaskCollection: RepairTaskCollection;
 
   // used for timeline
   sortedRepairTasks: RepairTask[] = [];
@@ -35,28 +33,30 @@ export class RepairTasksComponent extends BaseControllerDirective {
    }
 
   setup() {
+    this.repairTaskCollection = this.data.repairCollection;
+
     this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', null,
-    [
-        new ListColumnSetting('raw.TaskId', 'TaskId'),
-        new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
-        new ListColumnSetting('raw.Target.NodeNames', 'Target'),
-        new ListColumnSetting('impactedNodes', 'Impact'),
-        new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
-        new ListColumnSetting('raw.History.CreatedUtcTimestamp', 'Created at'),
-        new ListColumnSetting('displayDuration', 'Duration'),
+      [
+          new ListColumnSetting('raw.TaskId', 'TaskId'),
+          new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
+          new ListColumnSetting('raw.Target.NodeNames', 'Target'),
+          new ListColumnSetting('impactedNodes', 'Impact'),
+          new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
+          new ListColumnSetting('raw.History.CreatedUtcTimestamp', 'Created at'),
+          new ListColumnSetting('displayDuration', 'Duration'),
+      ],
+      [
+        new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
+          '',
+          '',
+          {
+            enableFilter: false,
+            colspan: -1
+          })
     ],
-    [
-      new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
-        '',
-        '',
-        {
-          enableFilter: false,
-          colspan: -1
-        })
-  ],
-    true,
-    (item) => (Object.keys(item).length > 0),
-    true);
+      true,
+      (item) => (Object.keys(item).length > 0),
+      true);
 
     this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings('completedRepair', null,
         [
@@ -122,24 +122,6 @@ export class RepairTasksComponent extends BaseControllerDirective {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.data.restClient.getRepairTasks(messageHandler).pipe(map(data => {
-      const expandedDict = {};
-      this.completedRepairTasks.concat(this.repairTasks).forEach( (repairTask) => {
-          expandedDict[repairTask.raw.TaskId] = repairTask;
-      });
-      this.completedRepairTasks = [];
-      this.repairTasks = [];
-      data.map(json => new RepairTask(json)).forEach(task => {
-        if (task.raw.TaskId in expandedDict) {
-          task.updateViewInfo(expandedDict[task.raw.TaskId]);
-        }
-
-        if (task.inProgress) {
-          this.repairTasks.push(task);
-        }else {
-          this.completedRepairTasks.push(task);
-        }
-      });
-    }));
+    return this.repairTaskCollection.refresh(messageHandler);
   }
 }

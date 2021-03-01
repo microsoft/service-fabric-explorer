@@ -10,6 +10,7 @@ import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates
 import { EventsComponent } from './events/events.component';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-progress.module';
+import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-deactivation.module';
 
 @NgModule({
   declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent],
@@ -19,7 +20,8 @@ import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-
     SharedModule,
     DetailListTemplatesModule,
     EventStoreModule,
-    UpgradeProgressModule
+    UpgradeProgressModule,
+    NodeDeactivationModule
   ]
 })
 export class NodeModule { }

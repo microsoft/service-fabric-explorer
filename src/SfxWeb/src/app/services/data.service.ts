@@ -32,6 +32,7 @@ import { ServiceCollection } from '../Models/DataModels/collections/ServiceColle
 import { IDataModelCollection } from '../Models/DataModels/collections/CollectionBase';
 import { DeployedApplicationCollection } from '../Models/DataModels/collections/DeployedApplicationCollection';
 import { MatDialog } from '@angular/material/dialog';
+import { RepairTaskCollection } from '../Models/DataModels/collections/RepairTaskCollection';
 
 @Injectable({
   providedIn: 'root'
@@ -47,6 +48,7 @@ export class DataService {
   public nodes: NodeCollection;
   public imageStore: ImageStore;
   public backupPolicies: BackupPolicyCollection;
+  public repairCollection: RepairTaskCollection;
 
   public readOnlyHeader: boolean =  null;
   public clusterNameMetadata: string = null;
@@ -68,6 +70,7 @@ export class DataService {
     this.nodes = new NodeCollection(this);
     this.systemApp = new SystemApplication(this);
     this.backupPolicies = new BackupPolicyCollection(this);
+    this.repairCollection = new RepairTaskCollection(this);
    }
 
   public actionsEnabled(): boolean {
@@ -284,6 +287,10 @@ export class DataService {
             return of(null);
         }
       }));
+  }
+
+  public getRepairTasks(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler): Observable<RepairTaskCollection> {
+    return this.repairCollection.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.repairCollection));
   }
 
   public createClusterEventList(): ClusterEventList {

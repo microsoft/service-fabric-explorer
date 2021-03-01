@@ -14,42 +14,7 @@
                 <h4 *ngIf="!clusterUpgradeProgress.isUpgrading">Latest Cluster Upgrade</h4>
         </div>
         <div collapse-body>
-            <div class="table-responsive">
-                    <table class="essen-table" role="presentation">
-                        <tr>
-                            <th>Code Version</th>
-                            <th>Config Version</th>
-                            <th>Upgrade State</th>
-                            <th>Upgrade Mode</th>
-                        </tr>
-                        <tr>
-                            <td>{{clusterUpgradeProgress.raw.CodeVersion}}</td>
-                            <td>{{clusterUpgradeProgress.raw.ConfigVersion}}</td>
-                            <td>{{clusterUpgradeProgress.raw.UpgradeState}}</td>
-                            <td>{{clusterUpgradeProgress.raw.RollingUpgradeMode}}</td>
-                        </tr>
-                        <tr>
-                            <th>Start Timestamp Utc</th>
-                            <th title="Upgrade Duration">Upgrade Duration</th>	
-                            <th title="Upgrade Domain Duration">Upgrade Domain Duratiaon</th>
-                        </tr>
-                        <tr>
-                            <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
-                            <td>{{clusterUpgradeProgress.upgradeDuration}}</td>	
-                            <td>{{clusterUpgradeProgress.upgradeDomainDuration}}</td>
-                        </tr>
-                    </table>
-                </div>
-                <div *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0" style="margin-top: 20px;">
-                    <h5 style="font-size: 16px;">Upgrade Domain Progress</h5>
-                    <app-upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></app-upgrade-progress>
-                </div>
-
-            <div style="margin-top:20px" *ngIf="clusterUpgradeProgress.isUpgrading" data-cy="currentud">
-                <h5 style="font-size: 16px;">Current Upgrade Domain : {{clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName}} </h5>
-                <h5 style="font-size: 15px; margin-top: 15px;">Nodes status</h5>
-                <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress"></app-upgrade-domain-progress>
-            </div>
+            <app-upgrade-info [clusterUpgradeProgress]="clusterUpgradeProgress"></app-upgrade-info>
 
             <div *ngIf="clusterUpgradeProgress.raw.FailureReason !== 'None'">
                 <h4>Upgrade Failure</h4>

@@ -1,5 +1,8 @@
 import { IRawRepairTask } from '../RawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { DataModelBase } from './Base';
+import { DataService } from 'src/app/services/data.service';
+import { Observable, of } from 'rxjs';
 export interface IRepairTaskHistoryPhase {
     timestamp: string;
     phase: string;
@@ -53,8 +56,12 @@ export const NotStartedStatus: IDisplayStatus = {
 
 
 
-export class RepairTask {
+export class RepairTask extends DataModelBase<IRawRepairTask> {
     public static NonStartedTimeStamp = '0001-01-01T00:00:00.000Z';
+
+    public get id(): string {
+        return this.raw.TaskId;
+    }
 
     // Initially keep additional details collapsed.
     public isSecondRowCollapsed = true;
@@ -74,39 +81,9 @@ export class RepairTask {
 
     public executorData: any;
 
-    constructor(public raw: IRawRepairTask, private dateRef: Date = new Date()) {
-        if (this.raw.Impact) {
-            this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
-        }
-        this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString();
-        this.inProgress = this.raw.State !== 'Completed';
-
-        const start = new Date(this.createdAt).getTime();
-        if (this.inProgress) {
-            const now = dateRef.getTime();
-            this.duration = now - start;
-        } else {
-            this.duration = new Date(this.raw.History.CompletedUtcTimestamp).getTime() - start;
-        }
-        this.displayDuration = TimeUtils.formatDurationAsAspNetTimespan(this.duration);
-
-        try {
-            this.executorData = JSON.parse(this.raw.ExecutorData);
-
-            this.couldParseExecutorData = true;
-        } catch (e) {
-            console.log(e);
-            this.couldParseExecutorData = false;
-        }
-
-        this.parseHistory();
-
-        this.historyPhases = [
-            this.generateHistoryPhase('Preparing', this.history.slice(0, 5)),
-            this.generateHistoryPhase('Executing', [this.history[6]]),
-            this.generateHistoryPhase('Restoring', this.history.slice(7))
-        ];
-
+    constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef: Date = new Date()) {
+        super(dataService, raw);
+        this.updateInternal();
     }
 
     /*
@@ -226,15 +203,38 @@ export class RepairTask {
         };
     }
 
-    updateViewInfo(previousTask: RepairTask) {
-        this.isSecondRowCollapsed = previousTask.isSecondRowCollapsed;
-        this.activeTab = previousTask.activeTab;
-        previousTask.historyPhases.forEach( (phase, index) => {
-            // if starting collapsed is false, let it open.
-            if (this.historyPhases[index].startCollapsed) {
-                this.historyPhases[index].startCollapsed = phase.startCollapsed;
-            }
-        });
+    updateInternal(): Observable<any> {
+        if (this.raw.Impact) {
+            this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
+        }
+        this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString();
+        this.inProgress = this.raw.State !== 'Completed';
 
+        const start = new Date(this.createdAt).getTime();
+        if (this.inProgress) {
+            const now = this.dateRef.getTime();
+            this.duration = now - start;
+        } else {
+            this.duration = new Date(this.raw.History.CompletedUtcTimestamp).getTime() - start;
+        }
+        this.displayDuration = TimeUtils.formatDurationAsAspNetTimespan(this.duration);
+
+        try {
+            this.executorData = JSON.parse(this.raw.ExecutorData);
+
+            this.couldParseExecutorData = true;
+        } catch (e) {
+            console.log(e);
+            this.couldParseExecutorData = false;
+        }
+
+        this.parseHistory();
+
+        this.historyPhases = [
+            this.generateHistoryPhase('Preparing', this.history.slice(0, 5)),
+            this.generateHistoryPhase('Executing', [this.history[6]]),
+            this.generateHistoryPhase('Restoring', this.history.slice(7))
+        ];
+        return of(null);
     }
 }
