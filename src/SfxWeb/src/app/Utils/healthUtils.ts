@@ -175,3 +175,11 @@ export class HealthUtils {
         };
     }
 }
+
+export function checkForJson(text: string) {
+    try {
+        return JSON.stringify(JSON.parse(text), null, 4);
+    } catch (e) {
+        return text;
+    }
+}
