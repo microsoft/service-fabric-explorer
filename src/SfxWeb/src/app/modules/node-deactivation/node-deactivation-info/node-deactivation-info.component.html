@@ -1,0 +1,44 @@
+<div class="essential-item" style="margin-bottom: 10px;">
+  <div class="essential-head">
+    Deactivation Status
+  </div>
+  <div class="essential-body">
+    {{node.raw.NodeDeactivationInfo.NodeDeactivationStatus}}
+  </div>
+</div>
+<div *ngIf="node.raw.NodeDeactivationInfo.NodeDeactivationTask.length > 0">
+  <label style="font-size: 16px;">Deactivation Tasks</label>
+  <table class="table detail-list" style="width: 100%">
+    <thead>
+      <tr>
+        <th>
+          Intent
+        </th>
+        <th>
+          Id
+        </th>
+        <th>
+          Task Type
+        </th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let task of node.raw.NodeDeactivationInfo.NodeDeactivationTask">
+        <td>
+          {{task.NodeDeactivationIntent}}
+        </td>
+        <td>
+          {{task.NodeDeactivationTaskId.Id}}
+        </td>
+        <td>
+          {{task.NodeDeactivationTaskId.NodeDeactivationTaskType}}
+        </td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<div style="margin-top: 30px;" *ngIf="node.raw.NodeDeactivationInfo.PendingSafetyChecks.length > 0">
+  <h5 style="font-size: 16px;">Safety Checks</h5>
+  <app-safety-checks [safetyChecks]="node.raw.NodeDeactivationInfo.PendingSafetyChecks"></app-safety-checks>
+</div>

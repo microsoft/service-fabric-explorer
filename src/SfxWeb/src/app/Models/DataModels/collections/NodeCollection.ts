@@ -19,9 +19,10 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     public upgradeDomains: string[];
     public faultDomains: string[];
     public healthySeedNodes: string;
-    public disabledNodes: string;
+    public disabledNodes: number;
     public seedNodeCount: number;
     public disabledAndDisablingCount: number;
+    public disabledAndDisablingNodes: Node[];
 
     public constructor(data: DataService) {
         super(data);
@@ -81,16 +82,19 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         let disabledNodes = 0;
         let disablingNodes = 0;
 
+        this.disabledAndDisablingNodes = [];
         this.collection.forEach(node => {
             if (node.raw.NodeStatus === NodeStatusConstants.Disabled) {
                 disabledNodes++;
+                this.disabledAndDisablingNodes.push(node);
             }
             if (node.raw.NodeStatus === NodeStatusConstants.Disabling) {
                 disablingNodes++;
+                this.disabledAndDisablingNodes.push(node);
             }
         });
 
-        this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
+        this.disabledNodes = disabledNodes + disablingNodes;
         this.seedNodeCount = seedNodes.length;
         this.disabledAndDisablingCount = disabledNodes + disablingNodes;
 

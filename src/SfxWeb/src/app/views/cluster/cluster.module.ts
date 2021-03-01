@@ -24,6 +24,7 @@ import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-restore.module';
 import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
 import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.component';
+import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-deactivation.module';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
@@ -42,7 +43,8 @@ import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.com
     NgbDropdownModule,
     BackupRestoreModule,
     NgbNavModule,
-    UpgradeProgressModule
+    UpgradeProgressModule,
+    NodeDeactivationModule
   ]
 })
 export class ClusterModule { }
