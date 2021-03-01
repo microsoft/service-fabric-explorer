@@ -168,7 +168,7 @@ export class ListColumnSetting {
     public get allChecked() {
         return this.filterValues.every(val => val.isChecked);
     }
-    
+
     public get noneChecked() {
         return this.filterValues.every(val => !val.isChecked);
     }
@@ -236,14 +236,14 @@ export class ListColumnSetting {
     checkAll() {
         this.filterValues.forEach(value => {
           value.isChecked = true;
-        })
+        });
       }
-    
-      
+
+
       uncheckAll() {
         this.filterValues.forEach(value => {
           value.isChecked = false;
-        })
+        });
       }
 }
 

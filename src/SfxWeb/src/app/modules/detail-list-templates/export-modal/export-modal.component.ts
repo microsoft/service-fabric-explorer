@@ -30,4 +30,13 @@ export class ExportModalComponent implements OnInit {
     this.text = exportInfo(this.data, this.selected);
     this.copyText = this.text.join('\n');
   }
+
+  public get allChecked() {
+    return Object.keys(this.selected).every(val => this.selected[val]);
+  }
+
+  public get noneChecked() {
+    return Object.keys(this.selected).every(val => !this.selected[val]);
+}
+
 }
