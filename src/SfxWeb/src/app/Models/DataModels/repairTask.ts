@@ -83,6 +83,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
     constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef: Date = new Date()) {
         super(dataService, raw);
+        this.update(raw);
     }
 
     public update(raw: IRawRepairTask): Observable<any> {

@@ -25,6 +25,8 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         this.repairTasks = [];
         this.completedRepairTasks = [];
         this.collection.forEach(task => {
+            console.log(task)
+
             if (task.inProgress) {
                 this.repairTasks.push(task);
               }else {
