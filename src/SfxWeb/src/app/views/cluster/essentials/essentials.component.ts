@@ -82,7 +82,7 @@ export class EssentialsComponent extends BaseControllerDirective {
       this.systemApp.refresh(messageHandler).pipe(catchError(err => of(null))),
       this.clusterUpgradeProgress.refresh(messageHandler),
       this.data.getClusterManifest().pipe(map((manifest) => {
-        if(manifest.isRepairManagerEnabled) {
+        if (manifest.isRepairManagerEnabled) {
           return this.repairtaskCollection.refresh(messageHandler);
         }else{
           return of(null);
