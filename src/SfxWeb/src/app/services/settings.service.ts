@@ -5,7 +5,6 @@ import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 import { NodeLoadInformation } from '../Models/DataModels/Node';
 import { MetricsViewModel } from '../ViewModels/MetricsViewModel';
 import { StorageService } from './storage.service';
-import { RepairTaskViewComponent } from '../views/cluster/repair-task-view/repair-task-view.component';
 
 @Injectable({
   providedIn: 'root'
@@ -154,30 +153,6 @@ export class SettingsService {
 
   }
 
-  public getNewOrExistingPendingRepairTaskListSetting(listKey: string = 'repair') {
-    return this.getNewOrExistingListSettings(listKey, null,
-    [
-        new ListColumnSetting('raw.TaskId', 'TaskId'),
-        new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
-        new ListColumnSetting('raw.Target.NodeNames', 'Target'),
-        new ListColumnSetting('impactedNodes', 'Impact'),
-        new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
-        new ListColumnSetting('raw.History.CreatedUtcTimestamp', 'Created at'),
-        new ListColumnSetting('displayDuration', 'Duration'),
-    ],
-    [
-      new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
-        '',
-        '',
-        {
-          enableFilter: false,
-          colspan: -1
-        })
-  ],
-    true,
-    (item) => (Object.keys(item).length > 0),
-    true);
-}
 
   // Update all existing list settings to use new limit
   private updatePaginationLimit(limit: number): void {

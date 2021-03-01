@@ -36,7 +36,28 @@ export class RepairTasksComponent extends BaseControllerDirective {
   setup() {
     this.repairTaskCollection = this.data.repairCollection;
 
-    this.repairTaskListSettings = this.settings.getNewOrExistingPendingRepairTaskListSetting();
+    this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', null,
+      [
+          new ListColumnSetting('raw.TaskId', 'TaskId'),
+          new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
+          new ListColumnSetting('raw.Target.NodeNames', 'Target'),
+          new ListColumnSetting('impactedNodes', 'Impact'),
+          new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
+          new ListColumnSetting('raw.History.CreatedUtcTimestamp', 'Created at'),
+          new ListColumnSetting('displayDuration', 'Duration'),
+      ],
+      [
+        new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
+          '',
+          '',
+          {
+            enableFilter: false,
+            colspan: -1
+          })
+    ],
+      true,
+      (item) => (Object.keys(item).length > 0),
+      true);
 
     this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings('completedRepair', null,
         [

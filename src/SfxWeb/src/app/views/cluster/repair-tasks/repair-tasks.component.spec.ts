@@ -11,6 +11,7 @@ import { IRawRepairTask } from 'src/app/Models/RawDataTypes';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 
 describe('RepairTasksComponent', () => {
   let component: RepairTasksComponent;
@@ -129,6 +130,7 @@ describe('RepairTasksComponent', () => {
         ]);
       }
     } as any);
+    dataServiceStub.repairCollection = new RepairTaskCollection(dataServiceStub as DataService);
 
     TestBed.configureTestingModule({
       declarations: [ RepairTasksComponent ],
@@ -152,19 +154,19 @@ describe('RepairTasksComponent', () => {
   });
 
   fit('repair tasks in proper places', () => {
-    expect(component.completedRepairTasks.length).toBe(1);
-    expect(component.repairTasks.length).toBe(1);
+    expect(component.repairTaskCollection.repairTasks.length).toBe(1);
+    expect(component.repairTaskCollection.completedRepairTasks.length).toBe(1);
     expect(component.sortedCompletedRepairTasks.length).toBe(0);
     expect(component.sortedRepairTasks.length).toBe(0);
 
-    const newTask = new RepairTask(task);
+    const newTask = new RepairTask(TestBed.inject(DataService), task);
 
     component.sorted([newTask]);
 
     expect(component.sortedCompletedRepairTasks.length).toBe(1);
     expect(component.sortedRepairTasks.length).toBe(0);
 
-    const newTask2 = new RepairTask({...task});
+    const newTask2 = new RepairTask(TestBed.inject(DataService), {...task});
     newTask2.raw.TaskId = 'test';
 
     component.sorted([newTask2], false);
