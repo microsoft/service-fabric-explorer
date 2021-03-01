@@ -6,7 +6,7 @@ import { IHealthStateChunk } from '../HealthChunkRawDataTypes';
 import { HealthEvaluation } from './Shared';
 import { Observable, of } from 'rxjs';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
-import { HealthUtils } from 'src/app/Utils/healthUtils';
+import { checkForJson, HealthUtils } from 'src/app/Utils/healthUtils';
 import { map, tap } from 'rxjs/operators';
 
 export class HealthEvent extends DataModelBase<IRawHealthEvent> {
@@ -19,7 +19,7 @@ export class HealthEvent extends DataModelBase<IRawHealthEvent> {
     }
 
     public get description(): string {
-        return this.raw.Description.trim();
+        return checkForJson(this.raw.Description.trim());
     }
 
     public get sourceUtcTimestamp(): string {

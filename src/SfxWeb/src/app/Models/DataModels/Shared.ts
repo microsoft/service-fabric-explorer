@@ -3,6 +3,7 @@ import { IRawHealthEvaluation, IRawLoadMetricInformation, IRawUpgradeDescription
 import { DataService } from 'src/app/services/data.service';
 import { UpgradeDomainStateRegexes, UpgradeDomainStateNames, BadgeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { checkForJson } from 'src/app/Utils/healthUtils';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -42,9 +43,9 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
     public get description(): string {
         let description = '';
         if (this.raw.UnhealthyEvent) {
-            description = (this.raw.Description + '\n' + this.raw.UnhealthyEvent.Description).trim();
+            description = (checkForJson(this.raw.Description) + '\n' + checkForJson(this.raw.UnhealthyEvent.Description)).trim();
         } else {
-            description = this.raw.Description.trim();
+            description = checkForJson(this.raw.Description).trim();
         }
 
         // Temp solution for rendering a link instead of plain text
