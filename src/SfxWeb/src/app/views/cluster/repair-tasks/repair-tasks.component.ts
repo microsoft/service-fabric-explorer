@@ -2,7 +2,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ListColumnSetting, ListSettings, ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { RepairTaskViewComponent } from '../repair-task-view/repair-task-view.component';
@@ -10,7 +10,6 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { ITimelineData, EventStoreUtils } from 'src/app/Models/eventstore/timelineGenerators';
 import { DataSet, DataGroup, DataItem } from 'vis-timeline';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
-import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-repair-tasks',

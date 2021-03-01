@@ -54,7 +54,7 @@
         title="REPAIR JOBS IN PROGRESS" style="display: block"></app-dashboard-text-tile>
     <app-dashboard-text-tile
         [barClass]="nodes.disabledAndDisablingCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" link="nodes"
-        [count]="nodes.disabledNodes" *ngIf="nodes.isInitialized" title="DISABLED/DISABLING NODES" style="display: block">
+        [count]="nodes.disabledAndDisablingCount" *ngIf="nodes.isInitialized" title="DISABLED/DISABLING NODES" style="display: block">
     </app-dashboard-text-tile>
 </div>
 

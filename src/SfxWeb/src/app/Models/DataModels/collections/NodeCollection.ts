@@ -19,7 +19,6 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     public upgradeDomains: string[];
     public faultDomains: string[];
     public healthySeedNodes: string;
-    public disabledNodes: number;
     public seedNodeCount: number;
     public disabledAndDisablingCount: number;
     public disabledAndDisablingNodes: Node[];
@@ -94,7 +93,6 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
             }
         });
 
-        this.disabledNodes = disabledNodes + disablingNodes;
         this.seedNodeCount = seedNodes.length;
         this.disabledAndDisablingCount = disabledNodes + disablingNodes;
 

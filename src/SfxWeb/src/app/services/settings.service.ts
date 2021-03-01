@@ -1,5 +1,5 @@
 import { Injectable } from '@angular/core';
-import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink, ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime, ListColumnSettingWithCustomComponent } from '../Models/ListSettings';
+import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink, ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime } from '../Models/ListSettings';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 import { NodeLoadInformation } from '../Models/DataModels/Node';
@@ -152,7 +152,6 @@ export class SettingsService {
     return this.getNewOrExistingListSettings(listKey, [], settings);
 
   }
-
 
   // Update all existing list settings to use new limit
   private updatePaginationLimit(limit: number): void {

@@ -203,18 +203,6 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
         };
     }
 
-    updateViewInfo(previousTask: RepairTask) {
-        this.isSecondRowCollapsed = previousTask.isSecondRowCollapsed;
-        this.activeTab = previousTask.activeTab;
-        previousTask.historyPhases.forEach( (phase, index) => {
-            // if starting collapsed is false, let it open.
-            if (this.historyPhases[index].startCollapsed) {
-                this.historyPhases[index].startCollapsed = phase.startCollapsed;
-            }
-        });
-
-    }
-
     updateInternal(): Observable<any> {
         if (this.raw.Impact) {
             this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
@@ -247,7 +235,6 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             this.generateHistoryPhase('Executing', [this.history[6]]),
             this.generateHistoryPhase('Restoring', this.history.slice(7))
         ];
-        return of(null);
         return of(null);
     }
 }
