@@ -78,7 +78,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
                 id: RepairTaskCollection.bannerApprovalId,
             }, true);
         }else {
-            this.data.warnings.removeNotificationById(RepairTaskCollection.bannerId);
+            this.data.warnings.removeNotificationById(RepairTaskCollection.bannerApprovalId);
         }
 
         return of(null);

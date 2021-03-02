@@ -10,18 +10,18 @@
             <table class="table detail-list">
                 <thead aria-live="polite">
                     <tr>
-                    <th class="sort-filter-th" *ngFor="let columnSetting of listSettings.columnSettings; let i = index"
+                    <th class="sort-filter-th hover-row" *ngFor="let columnSetting of listSettings.columnSettings; let i = index"
                         [ngStyle]="{'width': columnSetting.fixedWidthPx ? columnSetting.fixedWidthPx + 'px' : ''}"
                         [attr.aria-sort]="listSettings.isSortedByColumn(columnSetting) ? listSettings.sortReverse ? 'ascending' : 'descending' : 'none'">
                         <!-- Header label -->
-                        <button  class="flat-button" [ngClass]="{'active': columnSetting.sortable, 'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}" tabindex="0"
+                        <button  class="flat-button supress-hover" [ngClass]="{'active': columnSetting.sortable, 'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}" tabindex="0"
                             style="padding-left: 0px;" (click)="sort(columnSetting);" [title]="'Sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'">
                             {{columnSetting.displayName}}
                       </button>
 
                         <div ngbDropdown *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle"
                             (openChange)="closeChange($event)">
-                            <button class="flat-button" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" [title]="'filter by ' + columnSetting.displayName + ' options'" [attr.aria-haspopup]="false">
+                            <button class="flat-button supress-hover" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" [title]="'filter by ' + columnSetting.displayName + ' options'" [attr.aria-haspopup]="false">
                                 <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}"></span>
                             </button>
                             <ul ngbDropdownMenu role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;"  >
@@ -56,7 +56,7 @@
                         <!-- track by (item.uniqueId || $id(item)) -->
                         <!-- | slice: listSettings.limit: listSettings.begin; -->
                 <ng-container *ngFor="let item of sortedFilteredList.slice( (page - 1) * listSettings.limit , page * listSettings.limit); ">
-                    <tr>
+                    <tr class="hover-row">
                             <!-- track by columnSetting.propertyPath -->
                             <!-- ng-mousedown="handleClickRow(item, $event)" -->
                         <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index; trackBy: trackByColumnSetting;">
