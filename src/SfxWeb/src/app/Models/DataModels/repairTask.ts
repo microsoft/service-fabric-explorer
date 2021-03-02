@@ -237,4 +237,8 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
         ];
         return of(null);
     }
+
+    public getPhase(phase: string): IRepairTaskHistoryPhase {
+        return this.history.find(historyPhase => historyPhase.phase === phase);
+    }
 }
