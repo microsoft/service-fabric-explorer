@@ -1,21 +1,17 @@
 <div style="float: right">
     Copy raw repair Job <app-clip-board [text]="copyText"></app-clip-board>
 </div>
-<div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-    <div *ngFor="let node of nodes" style="margin-right: 8px; border: 1px solid gray;" class="highlight-hover">
-        <div style="display: flex; flex-direction: row;">
+<div class="nodes-container">
+    <div *ngFor="let node of nodes" class="highlight-hover node-wrapper">
+        <div class="inner-node-wrapper">
             <div [ngClass]="node.healthState.badgeClass" style="width: 5px;"></div>
             <div style="padding: 4px; ">
-                <div style="display: flex;
-                flex-direction: row;
-                justify-content: space-between;">
+                <div class="row-container">
                     <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text">
                     </app-health-badge>
                     <a [routerLink]="node.viewPath">{{node.name}}</a>
                 </div>
-                <div style="display: flex;
-                flex-direction: row;
-                justify-content: space-between;">
+                <div class="row-container">
                     <div>
                         UD : {{node.raw.UpgradeDomain}}
                     </div>
