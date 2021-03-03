@@ -5,7 +5,7 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { DataService } from 'src/app/services/data.service';
 import { forkJoin } from 'rxjs';
 import { RefreshService } from 'src/app/services/refresh.service';
-import { map } from 'rxjs/operators';
+import { catchError, map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-repair-task-view',
@@ -38,9 +38,9 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
 
   updateNodesList() {
     return forkJoin(Array.from(new Set(this.item.raw.Target.NodeNames.concat(this.item.impactedNodes))).map(id => {
-      return this.dataService.getNode(id, true);
+      return this.dataService.getNode(id, true).pipe(catchError(err => null));
     })).pipe(map(data => {
-      this.nodes = data;
+      this.nodes = data.filter(node => node);
     }));
   }
 
