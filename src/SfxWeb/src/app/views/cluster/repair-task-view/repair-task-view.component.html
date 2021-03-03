@@ -2,19 +2,33 @@
     Copy raw repair Job <app-clip-board [text]="copyText"></app-clip-board>
 </div>
 <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
-    <a *ngFor="let node of nodes" style="border: 2px solid lightgray; padding: 4px; " [routerLink]="node.viewPath">
+    <div *ngFor="let node of nodes" style="margin-right: 8px; border: 1px solid gray;" class="highlight-hover">
         <div style="display: flex; flex-direction: row;">
             <div [ngClass]="node.healthState.badgeClass" style="width: 5px;"></div>
-            <div>
-                <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text">
-                </app-health-badge>
-                {{node.name}}
+            <div style="padding: 4px; ">
+                <div style="display: flex;
+                flex-direction: row;
+                justify-content: space-between;">
+                    <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text">
+                    </app-health-badge>
+                    <a [routerLink]="node.viewPath">{{node.name}}</a>
+                </div>
+                <div style="display: flex;
+                flex-direction: row;
+                justify-content: space-between;">
+                    <div>
+                        UD : {{node.raw.UpgradeDomain}}
+                    </div>
+                    <div>
+                        FD : {{node.raw.FaultDomain}}
+                    </div>
+                </div>
                 <div>
-                    {{node.raw.UpgradeDomain}}
+                    Deactivation Status : {{node.raw.NodeDeactivationInfo.NodeDeactivationStatus}}
                 </div>
             </div>
         </div>
-    </a>
+    </div>
 </div>
 
 <div ngbNav #nav="ngbNav" [(activeId)]="item.activeTab">

@@ -4,7 +4,6 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { DataService } from 'src/app/services/data.service';
 import { forkJoin } from 'rxjs';
-import { mergeMap } from 'rxjs/operators';
 
 @Component({
   selector: 'app-repair-task-view',
@@ -23,7 +22,7 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent {
     this.copyText = JSON.stringify(this.item.raw, null, '\t');
   
     console.log("test")
-    forkJoin(this.item.raw.Target.NodeNames.map(id => {
+    forkJoin(Array.from(new Set(this.item.raw.Target.NodeNames.concat(this.item.impactedNodes))).map(id => {
       return this.dataService.getNode(id);
     })).subscribe(data => {
       this.nodes = data;
