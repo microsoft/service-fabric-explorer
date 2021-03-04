@@ -16,3 +16,25 @@ table.detail-list {
 .repair-green {
     color: #30a530 !important;
 }
+
+.row-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.node-wrapper {
+    margin-right: 8px;
+    border: 1px solid gray;
+
+    .inner-node-wrapper {
+        display: flex;
+        flex-direction: row;
+    }
+}
+
+.nodes-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
