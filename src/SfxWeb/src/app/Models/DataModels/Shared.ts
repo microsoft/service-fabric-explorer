@@ -11,8 +11,9 @@ import { checkForJson } from 'src/app/Utils/healthUtils';
 // -----------------------------------------------------------------------------
 
 export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
-      isjsonDescription = false;
-      jsonData = null;
+    showAsRichText = false;
+    isjsonDescription = false;
+    jsonData = null;
     public viewPathUrl = '';
     public children: any[];
     public displayName: string;
@@ -22,9 +23,14 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
         try {
           this.jsonData =  JSON.parse(this.raw.UnhealthyEvent.Description.trim());
           this.isjsonDescription  = true;
+          this.showAsRichText = true;
       } catch (e) {
           this.isjsonDescription = false;
       }
+    }
+
+    changeDefaultView() {
+        this.showAsRichText = !this.showAsRichText;
     }
 
     public get viewPath(): string {
