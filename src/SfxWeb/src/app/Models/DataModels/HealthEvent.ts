@@ -20,7 +20,7 @@ export class HealthEvent extends DataModelBase<IRawHealthEvent> {
       } catch (e) {
           this.isjsonDescription = false;
       }
-      console.log(this.isjsonDescription)
+        console.log(this.isjsonDescription);
     }
 
     public get uniqueId(): string {
