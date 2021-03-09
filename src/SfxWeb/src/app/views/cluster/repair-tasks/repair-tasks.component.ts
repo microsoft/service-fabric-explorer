@@ -3,7 +3,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
-import { ListColumnSetting, ListSettings, ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
+import { ListColumnSetting, ListSettings, ListColumnSettingWithCustomComponent, ListColumnSettingWithUtcTime } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { RepairTaskViewComponent } from '../repair-task-view/repair-task-view.component';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
@@ -42,7 +42,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
           new ListColumnSetting('raw.Target.NodeNames', 'Target'),
           new ListColumnSetting('impactedNodes', 'Impact'),
           new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
-          new ListColumnSetting('raw.History.CreatedUtcTimestamp', 'Created at'),
+          new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created at'),
           new ListColumnSetting('displayDuration', 'Duration'),
       ],
       [
