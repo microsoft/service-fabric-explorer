@@ -8,8 +8,8 @@ import { DataModelCollectionBase } from './CollectionBase';
 
 export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
     static readonly minDurationApprovalbanner = 1000 * 60 * 15; // 15 minutes
-    static readonly bannerId = 'repair';
     static readonly bannerApprovalId = 'repair-approval';
+
     repairTasks: RepairTask[] = [];
     completedRepairTasks: RepairTask[] = [];
 
