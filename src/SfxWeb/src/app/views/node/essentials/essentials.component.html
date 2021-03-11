@@ -1,6 +1,6 @@
 <div class="detail-pane essen-pane" *ngIf="node">
   <div class="essential-container">
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Name
       </div>
@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Upgrade Domain
       </div>
@@ -18,7 +18,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Health State
       </div>
@@ -27,7 +27,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Fault Domain
       </div>
@@ -36,7 +36,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Status
       </div>
@@ -45,7 +45,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         IP Address or Domain Name
       </div>
@@ -54,7 +54,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Type
       </div>
@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Is Seed Node
       </div>
@@ -72,6 +72,15 @@
       </div>
     </div>
   </div>
+</div>
+
+<div *ngIf="node?.loadInformation?.isInitialized" class="tile-container">
+  <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Replica Count">
+  </app-dashboard-text-tile>
+  <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="Primary Count">
+  </app-dashboard-text-tile>
+  <app-dashboard-text-tile [count]="node.loadInformation.metrics.ReplicaCount" title="Replica Count">
+  </app-dashboard-text-tile>
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="node && node.isDeactivating" data-cy="deactivated">
