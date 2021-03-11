@@ -20,15 +20,6 @@
 
     <div class="essential-item ">
       <div class="essential-head">
-        Health State
-      </div>
-      <div class="essential-body">
-        <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge>
-      </div>
-    </div>
-
-    <div class="essential-item ">
-      <div class="essential-head">
         Fault Domain
       </div>
       <div class="essential-body">
@@ -42,6 +33,15 @@
       </div>
       <div class="essential-body">
         {{node.nodeStatus}}
+      </div>
+    </div>
+
+    <div class="essential-item ">
+      <div class="essential-head">
+        Health State
+      </div>
+      <div class="essential-body">
+        <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge>
       </div>
     </div>
 
