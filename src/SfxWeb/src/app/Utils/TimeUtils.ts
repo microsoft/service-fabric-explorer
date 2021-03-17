@@ -118,7 +118,7 @@ export class TimeUtils {
         return `${Math.floor(days) > 0 ? Math.floor(days) + ' days ' : ''}`
             + `${this.formatIndividualTime(hours % 24)}:`
             + `${this.formatIndividualTime(minutes % 60)}:`
-            + `${this.formatIndividualTime(seconds % 60, 2, 2)}.`
+            + `${this.formatIndividualTime(seconds % 60, 2, 2)}`
     }
 
     private static formatIndividualTime(duration: number, padStart = 2, substringSize: number = 0) {
