@@ -94,6 +94,26 @@ export class TimeUtils {
         const hours = minutes / 60;
         const days = hours / 24;
 
+        if( duration < 1000) {
+            return `${milliseconds} milliseconds`
+        }
+
+        if( duration < (60 * 1000) ) {
+            return `${seconds} seconds`
+        }
+        
+        
+        if( duration < (60 * 60 * 1000) ) {
+            return `${Math.floor(minutes % 60).toString().padStart(2, '0')}:`
+            + `${Math.floor(seconds % 60).toString().substring(0, 2).padStart(2, '0')} minutes`
+        }
+
+        if( duration < (60 * 60 * 1000* 24) ) {
+            return `${Math.floor(hours % 24)}:`
+            + `${Math.floor(minutes % 60).toString().padStart(2, '0')}:`
+            + `${Math.floor(seconds % 60).toString().substring(0, 2).padStart(2, '0')}`
+            + ` hours`
+        }
 
         return `${Math.floor(days) > 0 ? Math.floor(days) + ' days ' : ''}`
             + `${Math.floor(hours % 24).toString().padStart(2, '0')}:`

@@ -95,10 +95,10 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
     }
 
     private parseHistory() {
-        const history = [
-            { timestamp: this.raw.History.PreparingUtcTimestamp, phase: 'Preparing' },
+        let history = [
             { timestamp: this.raw.History.ClaimedUtcTimestamp, phase: 'Claimed' },
             { timestamp: this.raw.History.CreatedUtcTimestamp, phase: 'Created' },
+            { timestamp: this.raw.History.PreparingUtcTimestamp, phase: 'Preparing' },
             { timestamp: this.raw.History.PreparingHealthCheckStartUtcTimestamp, phase: 'Preparing Health Check start' },
             { timestamp: this.raw.History.PreparingHealthCheckEndUtcTimestamp, phase: 'Preparing Health check End' },
             { timestamp: this.raw.History.ApprovedUtcTimestamp, phase: 'Approved' },
@@ -108,6 +108,10 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             { timestamp: this.raw.History.RestoringHealthCheckEndUtcTimestamp, phase: 'Restoring Health check end' },
             { timestamp: this.raw.History.CompletedUtcTimestamp, phase: 'Completed' },
         ];
+
+        if(this.raw.ResultStatus === "Cancelled") {
+            history = history.filter(stamp => !['Approved', 'Executing'].includes(stamp.phase) );
+        }
 
         this.history = history.map((phase, index) => {
             let duration = '';
@@ -232,9 +236,15 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
         this.historyPhases = [
             this.generateHistoryPhase('Preparing', this.history.slice(0, 5)),
-            this.generateHistoryPhase('Executing', [this.history[6]]),
-            this.generateHistoryPhase('Restoring', this.history.slice(7))
-        ];
+        ]
+
+        if(this.raw.ResultStatus === "Cancelled") {
+            this.historyPhases.push(this.generateHistoryPhase('Restoring', this.history.slice(6)))
+            console.log(this)
+        }else {
+            this.historyPhases.push(this.generateHistoryPhase('Executing', [this.history[5], this.history[6]]),
+                                    this.generateHistoryPhase('Restoring', this.history.slice(7)))
+        }
         return of(null);
     }
 
