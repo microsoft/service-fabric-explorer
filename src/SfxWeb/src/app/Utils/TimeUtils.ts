@@ -94,6 +94,9 @@ export class TimeUtils {
         const hours = minutes / 60;
         const days = hours / 24;
 
+        if( duration < 1000) {
+            return 'less than 1 second'
+        }
 
         return `${Math.floor(days) > 0 ? Math.floor(days) + ' days ' : ''}`
             + `${Math.floor(hours % 24).toString().padStart(2, '0')}:`
