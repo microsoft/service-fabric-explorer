@@ -104,22 +104,29 @@ export class TimeUtils {
         
         
         if( duration < (60 * 60 * 1000) ) {
-            return `${Math.floor(minutes % 60).toString().padStart(2, '0')}:`
-            + `${Math.floor(seconds % 60).toString().substring(0, 2).padStart(2, '0')} minutes`
+            return `${this.formatIndividualTime(minutes % 60, 0)}:`
+            + `${this.formatIndividualTime(seconds % 60, 2, 2)} minutes`
         }
 
         if( duration < (60 * 60 * 1000* 24) ) {
             return `${Math.floor(hours % 24)}:`
-            + `${Math.floor(minutes % 60).toString().padStart(2, '0')}:`
-            + `${Math.floor(seconds % 60).toString().substring(0, 2).padStart(2, '0')}`
+            + `${this.formatIndividualTime(minutes % 60)}:`
+            + `${this.formatIndividualTime(seconds % 60, 2, 2)}`
             + ` hours`
         }
 
         return `${Math.floor(days) > 0 ? Math.floor(days) + ' days ' : ''}`
-            + `${Math.floor(hours % 24).toString().padStart(2, '0')}:`
-            + `${Math.floor(minutes % 60).toString().padStart(2, '0')}:`
-            + `${Math.floor(seconds % 60).toString().substring(0, 2).padStart(2, '0')}.`
-            + `${milliseconds.toString().padStart(3, '0')}`;
+            + `${this.formatIndividualTime(hours % 24)}:`
+            + `${this.formatIndividualTime(minutes % 60)}:`
+            + `${this.formatIndividualTime(seconds % 60, 2, 2)}.`
+    }
+
+    private static formatIndividualTime(duration: number, padStart = 2, substringSize: number = 0) {
+        let floored = Math.floor(duration).toString();
+        if(substringSize > 0) {
+            floored = floored.substring(0, substringSize)
+        }
+        return floored.padStart(padStart, '0')
     }
 }
 
