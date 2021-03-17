@@ -132,17 +132,17 @@ export class RepairTasksComponent extends BaseControllerDirective {
     return this.repairTaskCollection.refresh(messageHandler).pipe(map(() => {
       this.tileText = [];
 
-      if(this.repairTaskCollection.longRunningApprovalJob) {
-        this.tileText.push("Approving")
+      if (this.repairTaskCollection.longRunningApprovalJob) {
+        this.tileText.push('Approving');
         this.tileText.push(this.repairTaskCollection.longRunningApprovalJob.id);
         this.tileText.push(this.repairTaskCollection.longRunningApprovalJob.displayDuration);
       }
 
-      if(this.repairTaskCollection.longRunningApprovalJob) {
-        this.tileText.push("Executing")
+      if (this.repairTaskCollection.longRunningApprovalJob) {
+        this.tileText.push('Executing');
         this.tileText.push(this.repairTaskCollection.longRunningApprovalJob.id);
         this.tileText.push(this.repairTaskCollection.longRunningApprovalJob.displayDuration);
       }
-    }))
+    }));
   }
 }
