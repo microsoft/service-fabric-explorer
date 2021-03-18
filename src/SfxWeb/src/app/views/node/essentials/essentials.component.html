@@ -74,7 +74,7 @@
   </div>
 </div>
 
-<div *ngIf="node?.loadInformation?.isInitialized" class="tile-container">
+<div *ngIf="node?.loadInformation?.isInitialized" class="tile-container" data-cy="tiles">
   <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Replica Count">
   </app-dashboard-text-tile>
   <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="Primary Count">
