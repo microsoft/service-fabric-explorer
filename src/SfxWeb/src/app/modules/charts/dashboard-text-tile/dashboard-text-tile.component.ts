@@ -11,6 +11,7 @@ export class DashboardTextTileComponent {
   @Input() title: string;
   @Input() count: string | number;
   @Input() link: string;
+  @Input() middleMargin: string = "20px 0";
   constructor() { }
 
 }
