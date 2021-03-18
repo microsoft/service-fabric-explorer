@@ -109,7 +109,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             { timestamp: this.raw.History.CompletedUtcTimestamp, phase: 'Completed' },
         ];
 
-        if(this.raw.ResultStatus === "Cancelled") {
+        if (this.raw.ResultStatus === 'Cancelled') {
             history = history.filter(stamp => !['Approved', 'Executing'].includes(stamp.phase) );
         }
 
@@ -237,22 +237,15 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
         
         this.historyPhases = [
             this.generateHistoryPhase('Preparing', this.history.slice(0, 5)),
-        ]
+        ];
 
-        if(this.raw.ResultStatus === "Interrupted") {
-            console.log(this)
-        }
-        
-        if(this.raw.ResultStatus === "Cancelled") {
-            this.historyPhases.push(this.generateHistoryPhase('Restoring', this.history.slice(6)))
-            console.log(this)
+        if (this.raw.ResultStatus === 'Cancelled') {
+            this.historyPhases.push(this.generateHistoryPhase('Restoring', this.history.slice(6)));
+            console.log(this);
         }else {
             this.historyPhases.push(this.generateHistoryPhase('Executing', [this.history[5], this.history[6]]),
-                                    this.generateHistoryPhase('Restoring', this.history.slice(7)))
+                                    this.generateHistoryPhase('Restoring', this.history.slice(7)));
         }
-
-        
-
         return of(null);
     }
 

@@ -13,6 +13,8 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
     repairTasks: RepairTask[] = [];
     completedRepairTasks: RepairTask[] = [];
 
+    public longRunningApprovalJob: RepairTask;
+
     public constructor(data: DataService) {
         super(data, parent);
     }
@@ -54,6 +56,8 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         } else {
             this.data.warnings.removeNotificationById(RepairTaskCollection.bannerApprovalId);
         }
+
+        this.longRunningApprovalJob = longRunningApprovalRepairTask;
 
         return of(null);
     }

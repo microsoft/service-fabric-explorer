@@ -11,8 +11,8 @@ import { ITimelineData, EventStoreUtils } from 'src/app/Models/eventstore/timeli
 import { DataSet, DataGroup, DataItem } from 'vis-timeline';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { Chart, Options, chart } from 'highcharts';
-import { map } from 'rxjs/operators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { map } from 'rxjs/operators';
 
 @Component({
   selector: 'app-repair-tasks',
@@ -21,6 +21,8 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 })
 export class RepairTasksComponent extends BaseControllerDirective {
   public repairTaskCollection: RepairTaskCollection;
+
+  tileText: string[] = [];
 
   // used for timeline
   sortedRepairTasks: RepairTask[] = [];
@@ -130,13 +132,15 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
     this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', null,
       [
-        new ListColumnSetting('raw.TaskId', 'TaskId'),
-        new ListColumnSetting('raw.Action', 'Action', { enableFilter: true }),
-        new ListColumnSetting('raw.Target.NodeNames', 'Target'),
-        new ListColumnSetting('impactedNodes', 'Impact'),
-        new ListColumnSetting('raw.State', 'State', { enableFilter: true }),
-        new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created at'),
-        new ListColumnSetting('displayDuration', 'Duration'),
+          new ListColumnSetting('raw.TaskId', 'TaskId'),
+          new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
+          new ListColumnSetting('raw.Target.NodeNames', 'Target'),
+          new ListColumnSetting('impactedNodes', 'Impact'),
+          new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
+          new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created at'),
+          new ListColumnSetting('displayDuration', 'Duration', {
+            sortPropertyPaths: ['duration']
+          }),
       ],
       [
         new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
@@ -152,15 +156,17 @@ export class RepairTasksComponent extends BaseControllerDirective {
       true);
 
     this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings('completedRepair', null,
-      [
-        new ListColumnSetting('raw.TaskId', 'TaskId'),
-        new ListColumnSetting('raw.Action', 'Action', { enableFilter: true }),
-        new ListColumnSetting('raw.Target.NodeNames', 'Target'),
-        new ListColumnSetting('impactedNodes', 'Impact'),
-        new ListColumnSetting('raw.ResultStatus', 'Result Status', { enableFilter: true }),
-        new ListColumnSetting('raw.History.CreatedUtcTimestamp', 'Created at'),
-        new ListColumnSetting('displayDuration', 'Duration'),
-      ],
+        [
+            new ListColumnSetting('raw.TaskId', 'TaskId'),
+            new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
+            new ListColumnSetting('raw.Target.NodeNames', 'Target'),
+            new ListColumnSetting('impactedNodes', 'Impact'),
+            new ListColumnSetting('raw.ResultStatus', 'Result Status', {enableFilter: true}),
+            new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created at'),
+            new ListColumnSetting('displayDuration', 'Duration', {
+              sortPropertyPaths: ['duration']
+            }),
+        ],
       [
         new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
           '',
@@ -229,6 +235,20 @@ export class RepairTasksComponent extends BaseControllerDirective {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.repairTaskCollection.refresh(messageHandler);
+    return this.repairTaskCollection.refresh(messageHandler).pipe(map(() => {
+      this.tileText = [];
+
+      if (this.repairTaskCollection.longRunningApprovalJob) {
+        this.tileText.push('Approving');
+        this.tileText.push(this.repairTaskCollection.longRunningApprovalJob.id);
+        this.tileText.push(this.repairTaskCollection.longRunningApprovalJob.displayDuration);
+      }
+
+      if (this.repairTaskCollection.longRunningApprovalJob) {
+        this.tileText.push('Executing');
+        this.tileText.push(this.repairTaskCollection.longRunningApprovalJob.id);
+        this.tileText.push(this.repairTaskCollection.longRunningApprovalJob.displayDuration);
+      }
+    }));
   }
 }

@@ -1,6 +1,17 @@
 <div id="container" style="width:100%;"></div>
 
 <div style="min-height: 900px">
+    <div class="tile-container">
+        <app-dashboard-text-tile
+        [barClass]="repairTaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
+        link="repairtasks" [count]="repairTaskCollection.repairTasks.length" *ngIf="repairTaskCollection.isInitialized"
+        title="REPAIR JOBS IN PROGRESS" style="display: block"></app-dashboard-text-tile>
+
+        <app-dashboard-text-scale-tile barClass="badge-upgrade-active" [text]="tileText" 
+        title="LONGEST RUNNING" *ngIf="repairTaskCollection.repairTasks.length > 0" class="long"
+            style="display: block"></app-dashboard-text-scale-tile>
+    </div>
+
     <div *ngIf="timelineData" style="margin-bottom: 20px;">
         <div data-cy="pendingjobs" class="essen-pane detail-pane" style="margin-bottom: 0px;">
             <app-collapse-container sectionName="Pending Repair Tasks" collapsed="true">
