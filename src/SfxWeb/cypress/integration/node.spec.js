@@ -13,7 +13,7 @@ context('node page', () => {
         cy.route(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/node-info').as('nodeInfo');
         cy.route(apiUrl(`Nodes/${nodeName}/$/GetHealth?*`), 'fx:node-page/health').as('health');
         cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:node-page/apps').as('apps');
-
+        cy.route('GET', apiUrl(`/Nodes/${nodeName}/$/GetLoadInformation?*`), 'fixture:node-load/get-node-load-information').as("nodeLoad")
     })
 
     describe("essentials", () => {
@@ -25,6 +25,12 @@ context('node page', () => {
             cy.get('[data-cy=header]').within(() => {
                 cy.contains('_nt_0').click();
               });
+
+            cy.get('[data-cy=tiles]').within(() => {
+                cy.contains('6').click();
+                cy.contains('2').click();
+                cy.contains('5').click();
+            });
 
             cy.get('[data-cy=appsList]').within(() => {
                 checkTableSize(1);
@@ -50,8 +56,6 @@ context('node page', () => {
 
     describe("details", () => {
         it('view details', () => {
-            cy.route('GET', apiUrl(`/Nodes/${nodeName}/$/GetLoadInformation?*`), 'fixture:node-load/get-node-load-information').as("nodeLoad")
-
             cy.visit(`/#/node/${nodeName}`)
 
             cy.wait([nodeInfoRef, "@health"]);

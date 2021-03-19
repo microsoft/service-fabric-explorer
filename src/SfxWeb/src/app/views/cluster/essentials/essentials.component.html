@@ -82,7 +82,7 @@
   </div>
   <div collapse-body>
     <div *ngFor="let node of nodes.disabledAndDisablingNodes" style="border: 1px solid gray;">
-      <app-collapse-container collapsed="true" [sectionName]="node.NodeName">
+      <app-collapse-container collapsed="true" [sectionName]="node.name">
         <div collapse-header>
           <div style="font-size: 15px; margin-bottom: 5px;">{{node.name}} - {{node.raw.NodeStatus}}
           </div>

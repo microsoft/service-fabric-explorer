@@ -14,7 +14,7 @@
         Application Type
       </div>
       <div class="essential-body">
-        <a href="{{app?.appTypeViewPath}}" title="{{app?.raw.TypeName}}">{{app?.raw.TypeName}}</a>
+        <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName">{{app?.raw.TypeName}}</a>
         <app-clip-board [text]="app?.raw.TypeName"></app-clip-board>
       </div>
     </div>

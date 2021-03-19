@@ -1,6 +1,6 @@
 <div class="detail-pane essen-pane" *ngIf="node">
   <div class="essential-container">
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Name
       </div>
@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Upgrade Domain
       </div>
@@ -18,16 +18,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Health State
-      </div>
-      <div class="essential-body">
-        <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge>
-      </div>
-    </div>
-
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Fault Domain
       </div>
@@ -36,7 +27,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Status
       </div>
@@ -45,7 +36,16 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
+      <div class="essential-head">
+        Health State
+      </div>
+      <div class="essential-body">
+        <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge>
+      </div>
+    </div>
+
+    <div class="essential-item ">
       <div class="essential-head">
         IP Address or Domain Name
       </div>
@@ -54,7 +54,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Type
       </div>
@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Is Seed Node
       </div>
@@ -72,6 +72,24 @@
       </div>
     </div>
   </div>
+</div>
+
+<div class="essen-pane help-text-container">
+  <a target="_blank" href="https://aka.ms/sf/loadinformation">
+  Learn more about these metrics <span class="mif-info" ></span>
+  </a>
+</div>
+
+<div *ngIf="node?.loadInformation?.isInitialized" class="tile-container" data-cy="tiles">
+  <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="TOTAL COUNT" middleMargin="5px 0">
+    Count of all service objects (stateless and stateful) on the node
+  </app-dashboard-text-tile>
+  <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="PRIMARY COUNT" middleMargin="5px 0">
+    Count of Primary replicas on the node    
+  </app-dashboard-text-tile>
+  <app-dashboard-text-tile [count]="node.loadInformation.metrics.ReplicaCount" title="REPLICA COUNT" middleMargin="5px 0">
+    Count of total stateful replicas on the node
+  </app-dashboard-text-tile>
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="node && node.isDeactivating" data-cy="deactivated">

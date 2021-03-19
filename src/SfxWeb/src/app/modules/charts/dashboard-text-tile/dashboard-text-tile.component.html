@@ -1,11 +1,20 @@
-<a class="dashboard-wrapper" [routerLink]="link">
-    <div class="dashboard dashboard-small" style="padding: 11px 7px;">
-        <div class="dashboard-tile">
-            <div class="dashboard-tile-inner">
-                <div class="dashboard-tile-leftbar" [ngClass]="barClass"></div>
-                <div class="dashboard-tile-title">{{title}}</div>
-                <div class="dashboard-tile-number">{{count}}</div>
+<ng-template #internal>
+    <div class="dashboard-wrapper">
+
+        <div class="dashboard dashboard-small" style="padding: 11px 7px;">
+            <div class="dashboard-tile">
+                <div class="dashboard-tile-inner">
+                    <div class="dashboard-tile-leftbar" [ngClass]="barClass"></div>
+                    <div class="dashboard-tile-title">{{title}}</div>
+                    <div class="dashboard-tile-number" [style.margin]="middleMargin">{{count}}</div>
+                    <ng-content></ng-content>
+
+                </div>
             </div>
         </div>
     </div>
+</ng-template>
+
+<a *ngIf="link; else internal" [routerLink]="link">
+    <ng-container *ngTemplateOutlet="internal"></ng-container>
 </a>

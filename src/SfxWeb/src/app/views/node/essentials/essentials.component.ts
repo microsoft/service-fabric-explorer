@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 import { map } from 'rxjs/operators';
-import { Observable } from 'rxjs';
+import { Observable, forkJoin } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { ListSettings, ListColumnSetting, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter } from 'src/app/Models/ListSettings';
@@ -35,8 +35,11 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return this.node.deployedApps.refresh(messageHandler).pipe(map(deployedApps => {
+    return forkJoin([
+      this.node.loadInformation.refresh(messageHandler),
+      this.node.deployedApps.refresh(messageHandler).pipe(map(deployedApps => {
         this.deployedApps = deployedApps;
-      }));
+      }))
+    ]);
   }
 }
