@@ -81,17 +81,20 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         let disabledNodes = 0;
         let disablingNodes = 0;
 
-        this.disabledAndDisablingNodes = [];
+        const disabled = [];
+        const disabling = [];
         this.collection.forEach(node => {
             if (node.raw.NodeStatus === NodeStatusConstants.Disabled) {
                 disabledNodes++;
-                this.disabledAndDisablingNodes.push(node);
+                disabled.push(node);
             }
             if (node.raw.NodeStatus === NodeStatusConstants.Disabling) {
                 disablingNodes++;
-                this.disabledAndDisablingNodes.push(node);
+                disabling.push(node);
             }
         });
+
+        this.disabledAndDisablingNodes = disabling.concat(disabled);
 
         this.seedNodeCount = seedNodes.length;
         this.disabledAndDisablingCount = disabledNodes + disablingNodes;
