@@ -42,7 +42,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
                 if (task.raw.State === RepairTask.ApprovingStatus) {
                     const approving = task.getPhase('Approved');
                     if (!longRunningApprovalRepairTask ||
-                        approving.durationMilliseconds < longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds) {
+                        approving.durationMilliseconds > longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds) {
                         longRunningApprovalRepairTask = task;
                     }
                 }
@@ -51,7 +51,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
                     const executing = task.getPhase('Executing');
 
                     if (!longRunningExecutingRepairTask ||
-                        executing.durationMilliseconds < longRunningExecutingRepairTask.getPhase('Executing').durationMilliseconds) {
+                        executing.durationMilliseconds > longRunningExecutingRepairTask.getPhase('Executing').durationMilliseconds) {
                             longRunningExecutingRepairTask = task;
                     }
                 }
@@ -59,6 +59,9 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
                 this.completedRepairTasks.push(task);
             }
         });
+
+        this.longRunningApprovalJob = longRunningApprovalRepairTask;
+        this.longestExecutingJob = longRunningExecutingRepairTask;
 
         if (longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds > RepairTaskCollection.minDurationApprovalbanner) {
             this.data.warnings.addOrUpdateNotification({
@@ -70,9 +73,6 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         } else {
             this.data.warnings.removeNotificationById(RepairTaskCollection.bannerApprovalId);
         }
-
-        this.longRunningApprovalJob = longRunningApprovalRepairTask;
-        this.longestExecutingJob = longRunningExecutingRepairTask;
 
         return of(null);
     }

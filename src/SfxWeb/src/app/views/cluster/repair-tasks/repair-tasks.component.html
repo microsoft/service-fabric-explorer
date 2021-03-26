@@ -1,5 +1,5 @@
 <div style="min-height: 900px">
-    <div class="tile-container">
+    <div class="tile-container" data-cy="tiles">
         <app-dashboard-text-tile
             [barClass]="repairTaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
             link="repairtasks" [count]="repairTaskCollection.repairTasks.length"
@@ -7,10 +7,10 @@
         </app-dashboard-text-tile>
 
         <app-dashboard-text-scale-tile barClass="badge-upgrade-active" title="LONGEST RUNNING"
-            *ngIf="tileText.length > 0" class="long" style="display: block">
+            *ngIf="tileText.length > 0" class="long" style="display: block" data-cy="long">
             <div>
                 <div *ngFor="let line of tileText; let l = last" style="padding-bottom: 5px;"
-                    [ngClass]="l ? '': 'bottom'" class="highlight-hover">
+                    [ngClass]="l ? '': 'bottom'" class="highlight-hover" [attr.data-cy]="line.primaryText">
                     <div class="tile-item">
                         <div style="font-size: 15px;" class="overflow-text">{{line.primaryText}}</div>
                         <div class="left-auto centering-row">
@@ -31,7 +31,7 @@
         </app-dashboard-text-scale-tile>
 
         <app-dashboard-text-scale-tile class="long" title="TOP REPAIR JOB ACTIONS" *ngIf="tileText2.length > 0"
-            style="display: block">
+            style="display: block" data-cy="top">
             <div style="margin-top: 5px;">
                 <div *ngFor="let line of tileText2; let i = index" class="bottom">
                     <div class="highlight-hover tile-item">

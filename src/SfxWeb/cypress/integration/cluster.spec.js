@@ -183,6 +183,9 @@ context('Cluster page', () => {
     it('view completd repair job', () => {
       setup('fixture:cluster-page/repair-jobs/simple')
 
+      cy.get('[data-cy=Executing]').should('not.exist')
+
+
       cy.get('[data-cy=completedjobs]').within( ()=> {
         cy.contains('Completed Repair Tasks').click();  
         
@@ -200,6 +203,20 @@ context('Cluster page', () => {
 
     it('view in progress repair job', () => {
       setup('fixture:cluster-page/repair-jobs/in-progress')
+
+        
+      cy.get('[data-cy=Executing]').within( ()=> {      
+        cy.contains('Azure/TenantUpdate/441efe72-c74d-4cfa-84df-515b44c89060/4/1555')
+      })
+
+      cy.get('[data-cy=Approving]').within( ()=> {      
+        cy.contains('Azure/TenantUpdate/441efe72-c74d-4cfa-84df-515b44c89060/4/1145')
+      })
+
+      cy.get('[data-cy=top]').within( ()=> {      
+        cy.contains(2)  
+        cy.contains('System.Azure.Job.TenantUpdate')
+      })
 
       cy.get('[data-cy=pendingjobs]').within( ()=> {        
         cy.get('tbody > tr').first().within(() =>{
