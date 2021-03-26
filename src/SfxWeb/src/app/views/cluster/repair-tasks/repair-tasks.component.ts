@@ -133,11 +133,11 @@ export class RepairTasksComponent extends BaseControllerDirective {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.repairTaskCollection.refresh(messageHandler).pipe(map(() => {
       this.tileText2 = [];
-      let counter = new Counter();
+      const counter = new Counter();
       this.repairTaskCollection.collection.forEach(task => {
-        counter.add(task.raw.Action)
-      })
-      this.tileText2 = counter.mostCommon().slice(0,3);
+        counter.add(task.raw.Action);
+      });
+      this.tileText2 = counter.mostCommon().slice(0, 3);
 
       this.tileText = [];
       const longRunningApprovalJob = this.repairTaskCollection.longRunningApprovalJob;

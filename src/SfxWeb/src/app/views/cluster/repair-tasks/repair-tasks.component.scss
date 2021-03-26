@@ -7,10 +7,14 @@
     border-bottom: 1px solid #4c4c4c;
 }
 
-.tile-item {
+.centering-row {
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+
+.tile-item {
+    @extend .centering-row;
     height: 35px;
 }
 
