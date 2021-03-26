@@ -38,7 +38,7 @@ export class RestClientService {
   private static apiVersion64 = '6.4';
   private static apiVersion65 = '6.5';
   private static apiVersion72 = '7.2';
-  private static apiVersion80 = '7.2';
+  private static apiVersion80 = '8.0';
 
   private cacheAllowanceToken: number = Date.now().valueOf();
 
