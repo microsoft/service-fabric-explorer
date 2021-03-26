@@ -35,10 +35,10 @@ export class RestClientService {
   private static defaultApiVersion = '3.0';
   private static apiVersion40 = '4.0';
   private static apiVersion60 = '6.0';
-  private static apiVersion62Preview = '6.2-preview';
   private static apiVersion64 = '6.4';
   private static apiVersion65 = '6.5';
   private static apiVersion72 = '7.2';
+  private static apiVersion80 = '7.2';
 
   private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -774,7 +774,7 @@ export class RestClientService {
               + '&endtimeutc=' + endTime.toISOString().substr(0, 19) + 'Z';
       }
 
-      const fullUrl = this.getApiUrl(apiUrl, RestClientService.apiVersion72, null, true);
+      const fullUrl = this.getApiUrl(apiUrl, RestClientService.apiVersion80, null, true);
       return this.get<IRawList<{}>>(fullUrl, null, messageHandler).pipe(map(response => {
           return new EventsResponseAdapter(eventType).getEvents(response);
         }));
