@@ -21,8 +21,8 @@ import { Counter } from 'src/app/Utils/Utils';
 export class RepairTasksComponent extends BaseControllerDirective {
   public repairTaskCollection: RepairTaskCollection;
 
-  tileText: string[] = [];
-  tileText2: string[] = [];
+  tileText: any[] = [];
+  tileText2: any[] = [];
 
   // used for timeline
   sortedRepairTasks: RepairTask[] = [];
@@ -132,27 +132,30 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.repairTaskCollection.refresh(messageHandler).pipe(map(() => {
-      this.tileText = [];
       this.tileText2 = [];
       let counter = new Counter();
-
       this.repairTaskCollection.collection.forEach(task => {
         counter.add(task.raw.Action)
       })
+      this.tileText2 = counter.mostCommon().slice(0,3);
 
-      this.tileText2 = counter.mostCommon().slice(0,3).map(pair => `${pair.key}:${pair.value}`)
-      console.log(counter.mostCommon());
-
-      if (this.repairTaskCollection.longRunningApprovalJob) {
-        this.tileText.push('Approving');
-        this.tileText.push(this.repairTaskCollection.longRunningApprovalJob.id);
-        this.tileText.push(this.repairTaskCollection.longRunningApprovalJob.displayDuration);
+      this.tileText = [];
+      const longRunningApprovalJob = this.repairTaskCollection.longRunningApprovalJob;
+      if (longRunningApprovalJob) {
+        this.tileText.push({
+          primaryText: 'Approving',
+          secondaryText: longRunningApprovalJob.id,
+          topCorner: longRunningApprovalJob.displayDuration
+        });
       }
 
-      if (this.repairTaskCollection.longRunningApprovalJob) {
-        this.tileText.push('Executing');
-        this.tileText.push(this.repairTaskCollection.longRunningApprovalJob.id);
-        this.tileText.push(this.repairTaskCollection.longRunningApprovalJob.displayDuration);
+      const longRunningExecutingRepairJob = this.repairTaskCollection.longestExecutingJob;
+      if (longRunningExecutingRepairJob) {
+        this.tileText.push({
+          primaryText: 'Executing',
+          secondaryText: longRunningExecutingRepairJob.id,
+          topCorner: longRunningExecutingRepairJob.displayDuration
+        });
       }
     }));
   }

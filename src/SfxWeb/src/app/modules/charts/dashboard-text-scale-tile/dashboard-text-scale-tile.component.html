@@ -4,6 +4,7 @@
             <div class="dashboard-tile-inner">
                 <div class="dashboard-tile-leftbar" [ngClass]="barClass"></div>
                 <div class="dashboard-tile-title">{{title}}</div>
+                <ng-content></ng-content>
                 <div class="dashboard-tile-innertext" *ngFor="let line of text">{{line}}</div>
             </div>
         </div>

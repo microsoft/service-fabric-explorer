@@ -2,3 +2,31 @@
     margin: 5px;
     position: relative;
 }
+
+.bottom {
+    border-bottom: 1px solid #4c4c4c;
+}
+
+.tile-item {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    height: 35px;
+}
+
+.tile-list-entry {
+    width: 50px;
+    text-align: center;
+    margin-right: 10px;
+}
+
+
+.left-auto {
+    margin-left: auto;
+}
+
+.overflow-text {
+    text-overflow: ellipsis;
+    overflow: hidden;
+    white-space: nowrap;
+}

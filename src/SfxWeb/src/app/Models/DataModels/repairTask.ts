@@ -57,6 +57,8 @@ export const NotStartedStatus: IDisplayStatus = {
 
 
 export class RepairTask extends DataModelBase<IRawRepairTask> {
+    public static readonly ExecutingStatus = "Executing";
+    public static readonly ApprovingStatus = "Preparing";
     public static NonStartedTimeStamp = '0001-01-01T00:00:00.000Z';
 
     public get id(): string {
