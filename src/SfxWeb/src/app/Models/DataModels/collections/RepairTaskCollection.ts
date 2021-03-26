@@ -32,6 +32,9 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         let longRunningApprovalRepairTask: RepairTask = null;
         this.repairTasks = [];
         this.completedRepairTasks = [];
+
+        let longRunningExecutingRepairTask: RepairTask = null;
+
         this.collection.forEach(task => {
             if (task.inProgress) {
                 this.repairTasks.push(task);
@@ -41,6 +44,10 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
                     }
                     longRunningApprovalCount++;
                 }
+
+                // if (!longRunningExecutingRepairTask || longRunningExecutingRepairTask.getPhase('Executing')?.durationMilliseconds < task.getPhase('Executing').) {
+                //     longRunningExecutingRepairTask = task;
+                // }
             } else {
                 this.completedRepairTasks.push(task);
             }

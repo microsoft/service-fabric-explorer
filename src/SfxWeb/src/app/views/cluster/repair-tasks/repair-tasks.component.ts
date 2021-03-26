@@ -11,6 +11,7 @@ import { ITimelineData, EventStoreUtils } from 'src/app/Models/eventstore/timeli
 import { DataSet, DataGroup, DataItem } from 'vis-timeline';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { map } from 'rxjs/operators';
+import { Counter } from 'src/app/Utils/Utils';
 
 @Component({
   selector: 'app-repair-tasks',
@@ -21,6 +22,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
   public repairTaskCollection: RepairTaskCollection;
 
   tileText: string[] = [];
+  tileText2: string[] = [];
 
   // used for timeline
   sortedRepairTasks: RepairTask[] = [];
@@ -131,6 +133,15 @@ export class RepairTasksComponent extends BaseControllerDirective {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.repairTaskCollection.refresh(messageHandler).pipe(map(() => {
       this.tileText = [];
+      this.tileText2 = [];
+      let counter = new Counter();
+
+      this.repairTaskCollection.collection.forEach(task => {
+        counter.add(task.raw.Action)
+      })
+
+      this.tileText2 = counter.mostCommon().slice(0,3).map(pair => `${pair.key}:${pair.value}`)
+      console.log(counter.mostCommon());
 
       if (this.repairTaskCollection.longRunningApprovalJob) {
         this.tileText.push('Approving');
