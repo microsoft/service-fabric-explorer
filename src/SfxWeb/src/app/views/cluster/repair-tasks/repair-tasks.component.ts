@@ -11,7 +11,13 @@ import { ITimelineData, EventStoreUtils } from 'src/app/Models/eventstore/timeli
 import { DataSet, DataGroup, DataItem } from 'vis-timeline';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { map } from 'rxjs/operators';
-import { Counter } from 'src/app/Utils/Utils';
+import { Counter, ICounterMostCommonEntry } from 'src/app/Utils/Utils';
+
+interface ITileListItem {
+  primaryText: string;
+  secondaryText: string;
+  topCorner: string;
+}
 
 @Component({
   selector: 'app-repair-tasks',
@@ -21,9 +27,9 @@ import { Counter } from 'src/app/Utils/Utils';
 export class RepairTasksComponent extends BaseControllerDirective {
   public repairTaskCollection: RepairTaskCollection;
 
-  tileText: any[] = [];
-  tileText2: any[] = [];
-
+  tileText: ITileListItem[] = [];
+  tileText2: ICounterMostCommonEntry[] = [];
+  
   // used for timeline
   sortedRepairTasks: RepairTask[] = [];
   sortedCompletedRepairTasks: RepairTask[] = [];
