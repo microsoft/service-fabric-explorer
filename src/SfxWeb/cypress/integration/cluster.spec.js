@@ -51,7 +51,7 @@ context('Cluster page', () => {
 
   describe("details", () => {
   
-    it('upgrade in progress', () => {
+    it.only('upgrade in progress', () => {
       cy.route('GET', upgradeProgress_route, 'fx:upgrade-in-progress').as("inprogres");
 
       cy.route('GET', apiUrl('/Partitions/guidID?*'), 'fx:cluster-page/upgrade/get-partition-info');
@@ -63,9 +63,7 @@ context('Cluster page', () => {
       cy.wait("@inprogres")
 
       cy.contains('Cluster Upgrade In Progress')
-      cy.contains('Current Upgrade Domain : 4')
-
-      cy.get('[data-cy=currentud').within(() => {
+      cy.get('[data-cy=currentud]').within(() => {
         cy.contains('1 - Upgrading ').click();
 
         cy.contains('guidID')
@@ -75,8 +73,11 @@ context('Cluster page', () => {
         cy.wait('@appinfo');
 
         cy.contains('Application name : VisualObjectsApplicationType')
-        cy.contains('min replica : 2')
+        cy.contains('Minimum Replica Set Size : 2')
 
+        cy.get('[data-cy=cud]').within(() => {
+          cy.contains('4')
+        })
       })
     })
 
