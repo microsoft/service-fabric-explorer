@@ -29,7 +29,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
   tileText: ITileListItem[] = [];
   tileText2: ICounterMostCommonEntry[] = [];
-  
+
   // used for timeline
   sortedRepairTasks: RepairTask[] = [];
   sortedCompletedRepairTasks: RepairTask[] = [];
