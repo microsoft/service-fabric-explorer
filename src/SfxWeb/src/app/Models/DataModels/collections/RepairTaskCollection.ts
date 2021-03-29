@@ -39,7 +39,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
             if (task.inProgress) {
                 this.repairTasks.push(task);
 
-                if (task.raw.State === RepairTask.ApprovingStatus) {
+                if (task.raw.State === RepairTask.PreparingStatus) {
                     const approving = task.getPhase('Approved');
                     if (!longRunningApprovalRepairTask ||
                         approving.durationMilliseconds > longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds) {
@@ -49,7 +49,6 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
 
                 if (task.raw.State === RepairTask.ExecutingStatus) {
                     const executing = task.getPhase('Executing');
-
                     if (!longRunningExecutingRepairTask ||
                         executing.durationMilliseconds > longRunningExecutingRepairTask.getPhase('Executing').durationMilliseconds) {
                             longRunningExecutingRepairTask = task;

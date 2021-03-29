@@ -27,8 +27,8 @@ interface ITileListItem {
 export class RepairTasksComponent extends BaseControllerDirective {
   public repairTaskCollection: RepairTaskCollection;
 
-  tileText: ITileListItem[] = [];
-  tileText2: ICounterMostCommonEntry[] = [];
+  longestRunning: ITileListItem[] = [];
+  MostCommonActions: ICounterMostCommonEntry[] = [];
 
   // used for timeline
   sortedRepairTasks: RepairTask[] = [];
@@ -138,17 +138,15 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.repairTaskCollection.refresh(messageHandler).pipe(map(() => {
-      this.tileText2 = [];
-      const counter = new Counter();
-      this.repairTaskCollection.collection.forEach(task => {
-        counter.add(task.raw.Action);
-      });
-      this.tileText2 = counter.mostCommon().slice(0, 3);
 
-      this.tileText = [];
+      const counter = new Counter();
+      this.repairTaskCollection.collection.forEach(task => counter.add(task.raw.Action));
+      this.MostCommonActions = counter.mostCommon().slice(0, 3);
+
+      this.longestRunning = [];
       const longRunningApprovalJob = this.repairTaskCollection.longRunningApprovalJob;
       if (longRunningApprovalJob) {
-        this.tileText.push({
+        this.longestRunning.push({
           primaryText: 'Approving',
           secondaryText: longRunningApprovalJob.id,
           topCorner: longRunningApprovalJob.displayDuration
@@ -157,7 +155,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
       const longRunningExecutingRepairJob = this.repairTaskCollection.longestExecutingJob;
       if (longRunningExecutingRepairJob) {
-        this.tileText.push({
+        this.longestRunning.push({
           primaryText: 'Executing',
           secondaryText: longRunningExecutingRepairJob.id,
           topCorner: longRunningExecutingRepairJob.displayDuration

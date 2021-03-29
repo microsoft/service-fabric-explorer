@@ -58,7 +58,7 @@ export const NotStartedStatus: IDisplayStatus = {
 
 export class RepairTask extends DataModelBase<IRawRepairTask> {
     public static readonly ExecutingStatus = 'Executing';
-    public static readonly ApprovingStatus = 'Preparing';
+    public static readonly PreparingStatus = 'Preparing';
     public static NonStartedTimeStamp = '0001-01-01T00:00:00.000Z';
 
     public get id(): string {
@@ -111,6 +111,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             { timestamp: this.raw.History.CompletedUtcTimestamp, phase: 'Completed' },
         ];
 
+        // if the job has been cancelled there shouldnt be Approved or executing phases anymore
         if (this.raw.ResultStatus === 'Cancelled') {
             history = history.filter(stamp => !['Approved', 'Executing'].includes(stamp.phase) );
         }
@@ -240,9 +241,9 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             this.generateHistoryPhase('Preparing', this.history.slice(0, 5)),
         ];
 
+        // cancelled jobs have no executing phase
         if (this.raw.ResultStatus === 'Cancelled') {
             this.historyPhases.push(this.generateHistoryPhase('Restoring', this.history.slice(6)));
-            console.log(this);
         }else {
             this.historyPhases.push(this.generateHistoryPhase('Executing', [this.history[5], this.history[6]]),
                                     this.generateHistoryPhase('Restoring', this.history.slice(7)));

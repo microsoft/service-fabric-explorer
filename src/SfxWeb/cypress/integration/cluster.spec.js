@@ -51,7 +51,7 @@ context('Cluster page', () => {
 
   describe("details", () => {
   
-    it.only('upgrade in progress', () => {
+    it('upgrade in progress', () => {
       cy.route('GET', upgradeProgress_route, 'fx:upgrade-in-progress').as("inprogres");
 
       cy.route('GET', apiUrl('/Partitions/guidID?*'), 'fx:cluster-page/upgrade/get-partition-info');

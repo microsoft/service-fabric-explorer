@@ -102,7 +102,7 @@ describe('RepairTask', () => {
         };
         const dateRef = new Date('2020-07-17T04:17:48.437Z');
         const task = new RepairTask(dataService, testData, dateRef);
-        console.log(task);
+
         expect(task.inProgress).toBe(true);
         expect(task.history).toContain({
             timestamp: '2020-07-17T03:17:48.437Z',
