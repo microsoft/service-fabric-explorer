@@ -11,6 +11,7 @@ import { EventsComponent } from './events/events.component';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-progress.module';
 import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-deactivation.module';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
 
 @NgModule({
   declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent],
@@ -21,7 +22,8 @@ import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-d
     DetailListTemplatesModule,
     EventStoreModule,
     UpgradeProgressModule,
-    NodeDeactivationModule
+    NodeDeactivationModule,
+    ChartsModule
   ]
 })
 export class NodeModule { }
