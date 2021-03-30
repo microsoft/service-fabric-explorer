@@ -28,13 +28,13 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
         backgroundColor: '#191919'
       },
       title: {
-        text: '',
+        text: 'Filter and sort the tables below',
         style: this.fontColor
     },
 
     subtitle: {
       style: this.fontColor,
-      text: document.ontouchstart === undefined ?
+      text:  document.ontouchstart === undefined ?
           'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
     },
     yAxis: {
