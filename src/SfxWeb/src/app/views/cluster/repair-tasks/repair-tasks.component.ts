@@ -10,7 +10,6 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { ITimelineData, EventStoreUtils } from 'src/app/Models/eventstore/timelineGenerators';
 import { DataSet, DataGroup, DataItem } from 'vis-timeline';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
-import { Chart, Options, chart } from 'highcharts';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { map } from 'rxjs/operators';
 import { Counter, ICounterMostCommonEntry } from 'src/app/Utils/Utils';
@@ -40,102 +39,16 @@ export class RepairTasksComponent extends BaseControllerDirective {
   completedRepairTaskListSettings: ListSettings;
 
   timelineData: ITimelineData;
+  chartJobs: RepairTask[] = [];
+  groupByNodes: boolean = false;
 
-  private chart: Chart;
   orderedJobs: RepairTask[] = [];
-  fontColor = {
-    color: '#fff'
-  };
+
   constructor(private data: DataService, injector: Injector, private settings: SettingsService) {
     super(injector);
   }
 
   setup() {
-    const options: Options = {
-      chart: {
-        type:'area',
-        zoomType: 'x',
-        backgroundColor: '#191919'
-      },
-      title: {
-        text: '',
-        style: this.fontColor
-    },
-
-    subtitle: {
-      style: this.fontColor,
-      text: document.ontouchstart === undefined ?
-          'Click and drag in the plot area to zoom in' : 'Pinch the chart to zoom in'
-    },
-    yAxis: {
-        title: {
-            text: 'Duration',
-            style: this.fontColor
-        },
-        lineColor: '#fff',
-        labels: {
-          style: this.fontColor,
-          formatter: function() { return TimeUtils.getDuration(this.value) }
-        },
-        
-    },
-
-    xAxis: {
-        lineColor: '#fff',
-        labels: {
-          style: this.fontColor
-        }
-    },
-
-    legend: {
-        layout: 'vertical',
-        align: 'right',
-        verticalAlign: 'middle',
-        itemStyle: {
-          color: this.fontColor.color
-        }
-    },
-    tooltip: {
-      headerFormat: '<b>{series.name}</b><br />',
-      formatter: (() => { let bind = this; return function () { 
-        const task = bind.sortedCompletedRepairTasks.concat(bind.sortedRepairTasks)[this.point.category];
-        return `Job ${task.id} <br> ${this.point.series.name} : ${task.getHistoryPhase(this.point.series.name).duration} <br> Total Duration :  ${task.displayDuration}`; } 
-      })()
-    },
-    plotOptions: {
-      area: {
-        stacking: 'normal',
-
-      }
-    },
-    rangeSelector: {
-      verticalAlign: 'bottom',
-    },
-      series: [
-        {
-          type: 'area',
-          name: 'Restoring',
-          color: 'purple',
-          data: []
-        },
-        {
-          type: 'area',
-          name: 'Executing',
-          color: '#7FBA00',
-          data: []
-        },
-        {
-          type: 'area',
-          name: 'Preparing',
-          color: '#0075c9',
-          data: []
-        },
-      ]
-    }
-    this.chart = chart('container', options);
-
-
-
     this.repairTaskCollection = this.data.repairCollection;
 
     this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', null,
@@ -194,17 +107,18 @@ export class RepairTasksComponent extends BaseControllerDirective {
   */
   sorted(items: RepairTask[], isCompletedSet: boolean = true) {
     isCompletedSet ? this.sortedCompletedRepairTasks = items : this.sortedRepairTasks = items;
-    const jobs = this.sortedCompletedRepairTasks.concat(this.sortedRepairTasks);
-    this.generateTimeLineData(jobs);
-    this.setGraph(jobs)
+    this.chartJobs = this.sortedCompletedRepairTasks.concat(this.sortedRepairTasks);
+    this.generateTimeLineData(this.chartJobs);
   }
 
   generateTimeLineData(tasks: RepairTask[]) {
     const items = new DataSet<DataItem>();
     const groups = new DataSet<DataGroup>();
 
+    let nodes = new Set<string>();
+
     tasks.forEach(task => {
-      items.add({
+      let item = {
         id: task.raw.TaskId,
         content: task.raw.TaskId,
         start: task.startTime,
@@ -215,31 +129,40 @@ export class RepairTasksComponent extends BaseControllerDirective {
         className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
         title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(),
           new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
-      });
+      }
+
+      if(this.groupByNodes) {
+        task.raw.Target.NodeNames.forEach(name => {
+          nodes.add(name);
+          item.id = item.id + name;
+          item.group = name;
+          items.add(item);
+        })
+      }else{
+        items.add(item);
+      }
     });
 
-    groups.add({
-      id: 'job',
-      content: 'Job History',
-      subgroupStack: { stack: true }
-    });
+    if(this.groupByNodes) {
+      nodes.forEach(node => {
+        groups.add({
+          id: node,
+          content: node,
+          subgroupStack: { stack: true }
+        });
+      })  
+    }else {
+      groups.add({
+        id: 'job',
+        content: 'Job History',
+        subgroupStack: { stack: true }
+      });
+    }
 
     this.timelineData = {
       groups,
       items,
     };
-  }
-
-  setGraph(repairTasks: RepairTask[]) {
-    try {
-      if (this.chart) {
-        this.chart.series[2].setData(repairTasks.map(task => task.getHistoryPhase('Preparing').durationMilliseconds))
-        this.chart.series[1].setData(repairTasks.map(task => task.getHistoryPhase('Executing')?.durationMilliseconds || 0))
-        this.chart.series[0].setData(repairTasks.map(task => task.getHistoryPhase('Restoring').durationMilliseconds))
-      }
-    } catch(e) {
-      console.log(e)
-    }
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
