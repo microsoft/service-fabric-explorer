@@ -1,4 +1,4 @@
-<div style="min-height: 900px">
+<div style="min-height: 900px" *ngIf="repairTaskCollection">
     <div class="tile-container" data-cy="tiles">
         <app-dashboard-text-tile
             [barClass]="repairTaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
@@ -46,48 +46,6 @@
             </div>
         </app-dashboard-text-scale-tile>
     </div>
-
-    <div *ngIf="timelineData" style="margin-bottom: 20px;">
-        <div data-cy="pendingjobs" class="essen-pane detail-pane" style="margin-bottom: 0px;">
-            <app-collapse-container sectionName="Pending Repair Tasks" collapsed="true">
-                <h4 collapse-header>
-                    Repair Task timeline Legend
-                </h4>
-                <div style="display: flex; flex-direction: row;" collapse-body>
-                    <div class="vis-item vis-range blue example-wrapper">
-                        <div class="vis-item-content">
-                            The repair job is still in progress
-                        </div>
-                    </div>
-                    <div style="display: flex; flex-direction: row">
-                        <div>
-                            {{line.secondaryText}}
-                        </div>
-                        <div class="left-auto">
-                            <app-clip-board [text]="line.secondaryText"></app-clip-board>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </app-dashboard-text-scale-tile>
-
-        <app-dashboard-text-scale-tile class="long" title="TOP REPAIR JOB ACTIONS" *ngIf="MostCommonActions.length > 0"
-            style="display: block" data-cy="top">
-            <div style="margin-top: 5px;">
-                <div *ngFor="let line of MostCommonActions; let i = index" class="bottom">
-                    <div class="highlight-hover tile-item">
-                        <div [ngStyle]="{'font-size': ( 25 - i * 5 ) + 'px' }" class="tile-list-entry">{{line.value}}
-                        </div>
-                        <div>{{line.key}}</div>
-                        <div class="left-auto">
-                            <app-clip-board [text]="line.key"></app-clip-board>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </app-dashboard-text-scale-tile>
-    </div>
-
     <div ngbNav #nav="ngbNav">
         <div [ngbNavItem]="1">
             <a ngbNavLink style="font-size: 12pt;">
@@ -136,7 +94,7 @@
                 Duration Graph
             </a>
             <ng-template ngbNavContent>
-                <app-repair-job-chart [jobs]="chartJobs"></app-repair-job-chart>
+                <app-repair-job-chart [jobs]="chartJobs" [sortOrder]="ordering" ></app-repair-job-chart>
             </ng-template>
         </div>
     </div>
@@ -158,7 +116,7 @@
                 Completed Repair Tasks
             </h4>
             <app-detail-list [list]="repairTaskCollection.completedRepairTasks"
-                [listSettings]="completedRepairTaskListSettings" collapse-body (sorted)="sorted($event)">
+                [listSettings]="completedRepairTaskListSettings" collapse-body (sorted)="sorted($event)" (sortOrdering)="setSortOrdering($event)">
             </app-detail-list>
         </app-collapse-container>
     </div>

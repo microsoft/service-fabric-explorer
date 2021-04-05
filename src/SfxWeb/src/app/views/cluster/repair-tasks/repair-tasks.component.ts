@@ -12,6 +12,7 @@ import { DataSet, DataGroup, DataItem } from 'vis-timeline';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { map } from 'rxjs/operators';
 import { Counter, ICounterMostCommonEntry } from 'src/app/Utils/Utils';
+import { ISortOrdering } from 'src/app/modules/detail-list-templates/detail-list/detail-list.component';
 
 interface ITileListItem {
   primaryText: string;
@@ -42,6 +43,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
   groupByNodes: boolean = false;
 
   orderedJobs: RepairTask[] = [];
+  ordering: ISortOrdering;
 
   constructor(private data: DataService, injector: Injector, private settings: SettingsService) {
     super(injector);
@@ -108,6 +110,10 @@ export class RepairTasksComponent extends BaseControllerDirective {
     isCompletedSet ? this.sortedCompletedRepairTasks = items : this.sortedRepairTasks = items;
     this.chartJobs = this.sortedCompletedRepairTasks.concat(this.sortedRepairTasks);
     this.generateTimeLineData(this.chartJobs);
+  }
+
+  setSortOrdering(sortInfo: ISortOrdering) {
+    this.ordering = sortInfo;
   }
 
   generateTimeLineData(tasks: RepairTask[]) {

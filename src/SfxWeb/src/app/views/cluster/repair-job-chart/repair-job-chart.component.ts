@@ -1,7 +1,9 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { Chart, Options, chart } from 'highcharts';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { ISortOrdering } from 'src/app/modules/detail-list-templates/detail-list/detail-list.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { Utils } from 'src/app/Utils/Utils';
 
 @Component({
   selector: 'app-repair-job-chart',
@@ -11,6 +13,7 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 export class RepairJobChartComponent implements OnInit, OnChanges {
 
   @Input() jobs: RepairTask[];
+  @Input() sortOrder: ISortOrdering;
 
   fontColor = {
     color: '#fff'
@@ -68,7 +71,8 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
     tooltip: {
       headerFormat: '<b>{series.name}</b><br />',
       formatter: (() => { let bind = this; return function () { 
-        const task = bind.jobs.concat(bind.jobs)[this.point.category];
+        console.log(this)
+        const task = bind.jobs.concat(bind.jobs)[this.point.index];
         return `Job ${task.id} <br> ${this.point.series.name} : ${task.getHistoryPhase(this.point.series.name).duration} <br> Total Duration :  ${task.displayDuration}`; } 
       })()
     },
@@ -112,6 +116,10 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
         this.chart.series[2].setData(repairTasks.map(task => task.getHistoryPhase('Preparing').durationMilliseconds))
         this.chart.series[1].setData(repairTasks.map(task => task.getHistoryPhase('Executing')?.durationMilliseconds || 0))
         this.chart.series[0].setData(repairTasks.map(task => task.getHistoryPhase('Restoring').durationMilliseconds))
+
+        if(this.sortOrder) {
+          this.chart.xAxis[0].setCategories(repairTasks.map(task => Utils.result(task, this.sortOrder.displayPath)))
+        }
       }
     } catch(e) {
       console.log(e)
