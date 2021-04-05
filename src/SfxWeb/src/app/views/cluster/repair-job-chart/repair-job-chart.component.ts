@@ -26,7 +26,7 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
   ngOnInit(): void {
     const options: Options = {
       chart: {
-        type:'area',
+        type: 'area',
         zoomType: 'x',
         backgroundColor: '#191919'
       },
@@ -48,9 +48,9 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
         lineColor: '#fff',
         labels: {
           style: this.fontColor,
-          formatter: function() { return TimeUtils.getDuration(this.value) }
+          formatter() { return TimeUtils.getDuration(this.value); }
         },
-        
+
     },
 
     xAxis: {
@@ -70,10 +70,10 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
     },
     tooltip: {
       headerFormat: '<b>{series.name}</b><br />',
-      formatter: (() => { let bind = this; return function () { 
-        console.log(this)
+      formatter: (() => { const bind = this; return function() {
+        console.log(this);
         const task = bind.jobs.concat(bind.jobs)[this.point.index];
-        return `Job ${task.id} <br> ${this.point.series.name} : ${task.getHistoryPhase(this.point.series.name).duration} <br> Total Duration :  ${task.displayDuration}`; } 
+        return `Job ${task.id} <br> ${this.point.series.name} : ${task.getHistoryPhase(this.point.series.name).duration} <br> Total Duration :  ${task.displayDuration}`; };
       })()
     },
     plotOptions: {
@@ -105,7 +105,7 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
           data: []
         },
       ]
-    }
+    };
     this.chart = chart('container', options);
     this.setGraph(this.jobs);
   }
@@ -113,16 +113,16 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
   setGraph(repairTasks: RepairTask[]) {
     try {
       if (this.chart) {
-        this.chart.series[2].setData(repairTasks.map(task => task.getHistoryPhase('Preparing').durationMilliseconds))
-        this.chart.series[1].setData(repairTasks.map(task => task.getHistoryPhase('Executing')?.durationMilliseconds || 0))
-        this.chart.series[0].setData(repairTasks.map(task => task.getHistoryPhase('Restoring').durationMilliseconds))
+        this.chart.series[2].setData(repairTasks.map(task => task.getHistoryPhase('Preparing').durationMilliseconds));
+        this.chart.series[1].setData(repairTasks.map(task => task.getHistoryPhase('Executing')?.durationMilliseconds || 0));
+        this.chart.series[0].setData(repairTasks.map(task => task.getHistoryPhase('Restoring').durationMilliseconds));
 
-        if(this.sortOrder) {
-          this.chart.xAxis[0].setCategories(repairTasks.map(task => Utils.result(task, this.sortOrder.displayPath)))
+        if (this.sortOrder) {
+          this.chart.xAxis[0].setCategories(repairTasks.map(task => Utils.result(task, this.sortOrder.displayPath)));
         }
       }
-    } catch(e) {
-      console.log(e)
+    } catch (e) {
+      console.log(e);
     }
   }
 

@@ -237,7 +237,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
         this.parseHistory();
 
-        
+
         this.historyPhases = [
             this.generateHistoryPhase('Preparing', this.history.slice(0, 5)),
         ];

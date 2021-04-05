@@ -42,7 +42,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
   page = 1;
   totalListSize = 0;
-  displayPath: string = "";
+  displayPath = '';
 
   debounceHandler: Subject<any[]> = new Subject<any[]>();
   debouncerHandlerSubscription: Subscription;
@@ -75,7 +75,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
         propertyPath: this.listSettings.sortPropertyPaths,
         direction: this.listSettings.sortReverse,
         displayPath: this.displayPath
-      })
+      });
    });
   }
 

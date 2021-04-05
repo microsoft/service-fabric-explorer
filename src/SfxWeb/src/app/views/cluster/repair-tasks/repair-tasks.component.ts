@@ -40,7 +40,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
   timelineData: ITimelineData;
   chartJobs: RepairTask[] = [];
-  groupByNodes: boolean = false;
+  groupByNodes = false;
 
   orderedJobs: RepairTask[] = [];
   ordering: ISortOrdering;
@@ -120,10 +120,10 @@ export class RepairTasksComponent extends BaseControllerDirective {
     const items = new DataSet<DataItem>();
     const groups = new DataSet<DataGroup>();
 
-    let nodes = new Set<string>();
+    const nodes = new Set<string>();
 
     tasks.forEach(task => {
-      let item = {
+      const item = {
         id: task.raw.TaskId,
         content: task.raw.TaskId,
         start: task.startTime,
@@ -134,28 +134,28 @@ export class RepairTasksComponent extends BaseControllerDirective {
         className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
         title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(),
           new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
-      }
+      };
 
-      if(this.groupByNodes) {
+      if (this.groupByNodes) {
         task.raw.Target.NodeNames.forEach(name => {
           nodes.add(name);
           item.id = item.id + name;
           item.group = name;
           items.add(item);
-        })
+        });
       }else{
         items.add(item);
       }
     });
 
-    if(this.groupByNodes) {
+    if (this.groupByNodes) {
       nodes.forEach(node => {
         groups.add({
           id: node,
           content: node,
           subgroupStack: { stack: true }
         });
-      })  
+      });
     }else {
       groups.add({
         id: 'job',
