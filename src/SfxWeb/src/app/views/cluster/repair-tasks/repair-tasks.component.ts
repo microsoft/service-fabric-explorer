@@ -144,7 +144,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
       this.MostCommonActions = counter.mostCommon().slice(0, 3);
 
       this.longestRunning = [];
-      console.log(this.repairTaskCollection);
+
       const longRunningApprovalJob = this.repairTaskCollection.longRunningApprovalJob;
       if (longRunningApprovalJob) {
         this.longestRunning.push({

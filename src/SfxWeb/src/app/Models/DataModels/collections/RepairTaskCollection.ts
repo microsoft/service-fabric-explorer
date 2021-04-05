@@ -41,19 +41,19 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
                 const executingPhase = task.getPhase('Executing');
                 const approving = task.getPhase('Approved');
 
+                // set the longest approving job if executing has no timestamp but approving does
+                // showing that the current phase is in approving
                 if (executingPhase.timestamp === '' &&
-                    approving.timestamp !== RepairTask.NonStartedTimeStamp) {
-                    if (!longRunningApprovalRepairTask ||
-                        approving.durationMilliseconds > longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds) {
+                    approving.timestamp !== RepairTask.NonStartedTimeStamp &&
+                    (!longRunningApprovalRepairTask ||
+                        approving.durationMilliseconds > longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds)) {
                         longRunningApprovalRepairTask = task;
-                    }
                 }
 
-                if (task.raw.State === RepairTask.ExecutingStatus) {
-                    if (!longRunningExecutingRepairTask ||
-                        executingPhase.durationMilliseconds > longRunningExecutingRepairTask.getPhase('Executing').durationMilliseconds) {
+                if (task.raw.State === RepairTask.ExecutingStatus &&
+                   (!longRunningExecutingRepairTask ||
+                        executingPhase.durationMilliseconds > longRunningExecutingRepairTask.getPhase('Executing').durationMilliseconds)) {
                             longRunningExecutingRepairTask = task;
-                    }
                 }
             } else {
                 this.completedRepairTasks.push(task);
