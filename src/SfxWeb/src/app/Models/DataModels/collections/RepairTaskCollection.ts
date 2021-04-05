@@ -3,7 +3,7 @@ import { map } from 'rxjs/operators';
 import { StatusWarningLevel } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
-import { RepairTask } from '../repairTask';
+import { RepairTask, StatusCSS } from '../repairTask';
 import { DataModelCollectionBase } from './CollectionBase';
 
 export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
@@ -12,6 +12,9 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
 
     repairTasks: RepairTask[] = [];
     completedRepairTasks: RepairTask[] = [];
+
+    public longRunningApprovalJob: RepairTask;
+    public longestExecutingJob: RepairTask;
 
     public constructor(data: DataService) {
         super(data, parent);
@@ -26,25 +29,41 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
     }
 
     protected updateInternal(): Observable<any> {
-        let longRunningApprovalCount = 0;
         let longRunningApprovalRepairTask: RepairTask = null;
+        let longRunningExecutingRepairTask: RepairTask = null;
+
         this.repairTasks = [];
         this.completedRepairTasks = [];
+
         this.collection.forEach(task => {
             if (task.inProgress) {
                 this.repairTasks.push(task);
-                if (task.getPhase('Approved').durationMilliseconds > RepairTaskCollection.minDurationApprovalbanner) {
-                    if (!longRunningApprovalRepairTask || longRunningApprovalRepairTask.duration < task.duration) {
+                const executingPhase = task.getPhase('Executing');
+                const approving = task.getPhase('Approved');
+
+                // set the longest approving job if executing has no timestamp but approving does
+                // showing that the current phase is in approving
+                if (executingPhase.timestamp === '' &&
+                    approving.timestamp !== RepairTask.NonStartedTimeStamp &&
+                    (!longRunningApprovalRepairTask ||
+                        approving.durationMilliseconds > longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds)) {
                         longRunningApprovalRepairTask = task;
-                    }
-                    longRunningApprovalCount++;
+                }
+
+                if (task.raw.State === RepairTask.ExecutingStatus &&
+                   (!longRunningExecutingRepairTask ||
+                        executingPhase.durationMilliseconds > longRunningExecutingRepairTask.getPhase('Executing').durationMilliseconds)) {
+                            longRunningExecutingRepairTask = task;
                 }
             } else {
                 this.completedRepairTasks.push(task);
             }
         });
 
-        if (longRunningApprovalCount > 0) {
+        this.longRunningApprovalJob = longRunningApprovalRepairTask;
+        this.longestExecutingJob = longRunningExecutingRepairTask;
+
+        if (longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds > RepairTaskCollection.minDurationApprovalbanner) {
             this.data.warnings.addOrUpdateNotification({
                 message: `Action Required: There is a repair job (${longRunningApprovalRepairTask.id}) waiting for approval for ${longRunningApprovalRepairTask.displayDuration}. This can block updates to this cluster. Please see aka.ms/sflongapprovingjob for more information. `,
                 level: StatusWarningLevel.Warning,

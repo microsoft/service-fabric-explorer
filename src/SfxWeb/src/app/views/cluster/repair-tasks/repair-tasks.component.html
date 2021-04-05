@@ -1,4 +1,52 @@
 <div style="min-height: 900px">
+    <div class="tile-container" data-cy="tiles">
+        <app-dashboard-text-tile
+            [barClass]="repairTaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
+            link="repairtasks" [count]="repairTaskCollection.repairTasks.length"
+            *ngIf="repairTaskCollection.isInitialized" title="REPAIR JOBS IN PROGRESS" style="display: block">
+        </app-dashboard-text-tile>
+
+        <app-dashboard-text-scale-tile barClass="badge-upgrade-active" title="LONGEST RUNNING"
+            *ngIf="longestRunning.length > 0" class="long" style="display: block" data-cy="long">
+            <div>
+                <div *ngFor="let line of longestRunning; let l = last" style="padding-bottom: 5px;"
+                    [ngClass]="l ? '': 'bottom'" class="highlight-hover" [attr.data-cy]="line.primaryText">
+                    <div class="tile-item">
+                        <div style="font-size: 15px;" class="overflow-text">{{line.primaryText}}</div>
+                        <div class="left-auto centering-row">
+                            <span class="mif-watch mif-lg"></span>
+                            {{line.topCorner}}
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: row">
+                        <div>
+                            {{line.secondaryText}}
+                        </div>
+                        <div class="left-auto">
+                            <app-clip-board [text]="line.secondaryText"></app-clip-board>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </app-dashboard-text-scale-tile>
+
+        <app-dashboard-text-scale-tile class="long" title="TOP REPAIR JOB ACTIONS" *ngIf="MostCommonActions.length > 0"
+            style="display: block" data-cy="top">
+            <div style="margin-top: 5px;">
+                <div *ngFor="let line of MostCommonActions; let i = index" class="bottom">
+                    <div class="highlight-hover tile-item">
+                        <div [ngStyle]="{'font-size': ( 25 - i * 5 ) + 'px' }" class="tile-list-entry">{{line.value}}
+                        </div>
+                        <div>{{line.key}}</div>
+                        <div class="left-auto">
+                            <app-clip-board [text]="line.key"></app-clip-board>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </app-dashboard-text-scale-tile>
+    </div>
+
     <div *ngIf="timelineData" style="margin-bottom: 20px;">
         <div data-cy="pendingjobs" class="essen-pane detail-pane" style="margin-bottom: 0px;">
             <app-collapse-container sectionName="Pending Repair Tasks" collapsed="true">
@@ -26,26 +74,29 @@
         </div>
 
         <div style="margin-left: 15px;">
-            <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" data-cy="timeline" 
-            [displayMoveToStart]="false" [displayMoveToEnd]="false"></app-event-store-timeline>
+            <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" data-cy="timeline"
+                [displayMoveToStart]="false" [displayMoveToEnd]="false"></app-event-store-timeline>
         </div>
     </div>
-    
+
     <div class="detail-pane essen-pane" data-cy="pendingjobs">
         <app-collapse-container sectionName="Pending Repair Tasks">
             <h4 collapse-header>
                 Pending Repair Tasks
             </h4>
-            <app-detail-list [list]="repairTaskCollection.repairTasks" [listSettings]="repairTaskListSettings" collapse-body (sorted)="sorted($event, false)"></app-detail-list>
+            <app-detail-list [list]="repairTaskCollection.repairTasks" [listSettings]="repairTaskListSettings"
+                collapse-body (sorted)="sorted($event, false)"></app-detail-list>
         </app-collapse-container>
     </div>
-    
+
     <div class="detail-pane essen-pane" data-cy="completedjobs">
         <app-collapse-container collapsed=true sectionName="Completed Repair Tasks">
             <h4 collapse-header>
                 Completed Repair Tasks
             </h4>
-            <app-detail-list [list]="repairTaskCollection.completedRepairTasks" [listSettings]="completedRepairTaskListSettings" collapse-body (sorted)="sorted($event)"></app-detail-list>
+            <app-detail-list [list]="repairTaskCollection.completedRepairTasks"
+                [listSettings]="completedRepairTaskListSettings" collapse-body (sorted)="sorted($event)">
+            </app-detail-list>
         </app-collapse-container>
     </div>
 </div>

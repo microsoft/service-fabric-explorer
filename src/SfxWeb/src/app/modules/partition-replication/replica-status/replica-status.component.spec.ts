@@ -3,6 +3,7 @@ import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { ReplicaStatusComponent } from './replica-status.component';
 import { IRemoteReplicatorAcknowledgementDetail } from 'src/app/Models/RawDataTypes';
 import { NO_ERRORS_SCHEMA } from '@angular/core';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
 describe('ReplicaStatusComponent', () => {
   let component: ReplicaStatusComponent;
@@ -111,7 +112,7 @@ describe('ReplicaStatusComponent', () => {
       NotReceivedCount: '100',
       ReceivedAndNotAppliedCount: '100'
     };
-    expect(component.getEstimatedDuration(details)).toEqual('00:00:30.000');
+    expect(component.getEstimatedDuration(details)).toEqual(TimeUtils.formatDurationAsAspNetTimespan(30 * 1000));
 
     const details2: IRemoteReplicatorAcknowledgementDetail = {
       AverageApplyDuration: '1500',
@@ -119,7 +120,7 @@ describe('ReplicaStatusComponent', () => {
       NotReceivedCount: '200',
       ReceivedAndNotAppliedCount: '100'
     };
-    expect(component.getEstimatedDuration(details2)).toEqual('00:07:50.000');
+    expect(component.getEstimatedDuration(details2)).toEqual(TimeUtils.formatDurationAsAspNetTimespan(7 * 1000 * 60 + 50 * 1000));
   });
 
 });
