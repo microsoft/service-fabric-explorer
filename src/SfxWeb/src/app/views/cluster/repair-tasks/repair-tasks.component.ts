@@ -10,7 +10,6 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { ITimelineData, EventStoreUtils } from 'src/app/Models/eventstore/timelineGenerators';
 import { DataSet, DataGroup, DataItem } from 'vis-timeline';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { map } from 'rxjs/operators';
 import { Counter, ICounterMostCommonEntry } from 'src/app/Utils/Utils';
 
