@@ -16,6 +16,7 @@
 .tile-item {
     @extend .centering-row;
     height: 35px;
+    position: relative;
 }
 
 .tile-list-entry {

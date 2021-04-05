@@ -38,9 +38,11 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         this.collection.forEach(task => {
             if (task.inProgress) {
                 this.repairTasks.push(task);
+                const executingPhase = task.getPhase('Executing');
+                const approving = task.getPhase('Approved');
 
-                if (task.raw.State === RepairTask.PreparingStatus) {
-                    const approving = task.getPhase('Approved');
+                if (executingPhase.timestamp === '' &&
+                    approving.timestamp !== RepairTask.NonStartedTimeStamp) {
                     if (!longRunningApprovalRepairTask ||
                         approving.durationMilliseconds > longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds) {
                         longRunningApprovalRepairTask = task;
@@ -48,9 +50,8 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
                 }
 
                 if (task.raw.State === RepairTask.ExecutingStatus) {
-                    const executing = task.getPhase('Executing');
                     if (!longRunningExecutingRepairTask ||
-                        executing.durationMilliseconds > longRunningExecutingRepairTask.getPhase('Executing').durationMilliseconds) {
+                        executingPhase.durationMilliseconds > longRunningExecutingRepairTask.getPhase('Executing').durationMilliseconds) {
                             longRunningExecutingRepairTask = task;
                     }
                 }
