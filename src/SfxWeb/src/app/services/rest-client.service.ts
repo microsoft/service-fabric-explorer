@@ -774,7 +774,7 @@ export class RestClientService {
               + '&endtimeutc=' + endTime.toISOString().substr(0, 19) + 'Z';
       }
 
-      if(!apiVersion) {
+      if (!apiVersion) {
         apiVersion =  RestClientService.apiVersion72;
       }
 
