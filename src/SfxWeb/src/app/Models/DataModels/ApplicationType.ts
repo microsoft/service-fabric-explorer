@@ -113,7 +113,7 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplicationType> {
         return this.data.restClient.getApplicationTypes(this.name, messageHandler).pipe(map(response => {
-            CollectionUtils.updateDataModelCollection(this.appTypes, response.map( rawAppType => new ApplicationType(this.data, rawAppType)));
+            this.appTypes = CollectionUtils.updateDataModelCollection(this.appTypes, response.map( rawAppType => new ApplicationType(this.data, rawAppType)));
             return response[0];
             }));
     }

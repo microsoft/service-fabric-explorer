@@ -21,6 +21,7 @@ export class EssentialsComponent extends ApplicationTypeBaseControllerDirective 
   appTypesListSettings: ListSettings;
   activeAppTypesListSettings: ListSettings;
 
+  //have a separate list for active app types in addition to the app types on the appTypeGroup
   activeAppTypes: ApplicationType[] = [];
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
@@ -43,6 +44,7 @@ export class EssentialsComponent extends ApplicationTypeBaseControllerDirective 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.data.getApps(true, messageHandler).pipe(map(() => {
       try {
+        //check on refresh which appTypes are being used by at least one application
         this.activeAppTypes = [];
         this.appTypeGroup.appTypes.forEach(appType => {
           const used = this.appTypeGroup.apps.some(app => app.raw.TypeVersion === appType.raw.Version);
@@ -77,7 +79,7 @@ export class EssentialsComponent extends ApplicationTypeBaseControllerDirective 
     ];
 
     if (includeIsUsedColumn) {
-      settings.splice(3, 0, new ListColumnSetting('isInUse', 'In use'));
+      settings.splice(3, 0, new ListColumnSetting('isInUse', 'In Use'));
       listKey += 'andUsedCol';
     }
 
