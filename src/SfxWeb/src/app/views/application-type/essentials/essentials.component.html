@@ -3,7 +3,27 @@
         <h4 collapse-header>
             Application Type versions
         </h4>    
-        <app-detail-list [list]="appTypeGroup.appTypes" [listSettings]="appTypesListSettings" collapse-body data-cy="appTypeVersions"></app-detail-list>	
+        <div collapse-body>
+            <div ngbNav #nav="ngbNav" >
+                <div ngbNavItem>
+                    <a ngbNavLink style="font-size: 12pt;">
+                        Active
+                    </a>
+                    <ng-template ngbNavContent>
+                        <app-detail-list [list]="activeAppTypes" [listSettings]="activeAppTypesListSettings" data-cy="appTypeVersions"></app-detail-list>	
+                    </ng-template>
+                </div>
+                <div ngbNavItem>
+                    <a ngbNavLink style="font-size: 12pt;">
+                        All
+                    </a>
+                    <ng-template ngbNavContent>
+                        <app-detail-list [list]="appTypeGroup.appTypes" [listSettings]="appTypesListSettings"></app-detail-list>	
+                    </ng-template>
+                </div>
+            </div>
+            <div [ngbNavOutlet]="nav"></div>
+        </div>
     </app-collapse-container>
 </div>
 
