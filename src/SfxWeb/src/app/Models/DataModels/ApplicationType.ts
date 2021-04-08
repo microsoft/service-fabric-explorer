@@ -20,6 +20,8 @@ import { RoutesService } from 'src/app/services/routes.service';
 // -----------------------------------------------------------------------------
 
 export class ApplicationType extends DataModelBase<IRawApplicationType> {
+    /*IsInUse is only set on the AppType on the appType Essential page*/
+    public isInUse: boolean = null;
     public serviceTypes: ServiceTypeCollection;
 
     public constructor(data: DataService, raw?: IRawApplicationType) {
