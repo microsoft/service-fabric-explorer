@@ -12,6 +12,7 @@ import { DataSet, DataGroup, DataItem } from 'vis-timeline';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { map } from 'rxjs/operators';
 import { Counter, ICounterMostCommonEntry } from 'src/app/Utils/Utils';
+import { QuestionToolTipComponent } from 'src/app/modules/detail-list-templates/question-tool-tip/question-tool-tip.component';
 
 interface ITileListItem {
   primaryText: string;
@@ -48,7 +49,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
     this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', null,
       [
-          new ListColumnSetting('raw.TaskId', 'TaskId'),
+        new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'TaskId'),
           new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
           new ListColumnSetting('raw.Target.NodeNames', 'Target'),
           new ListColumnSetting('impactedNodes', 'Impact'),
@@ -73,8 +74,8 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
     this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings('completedRepair', null,
         [
-            new ListColumnSetting('raw.TaskId', 'TaskId'),
-            new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
+          new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'TaskId'),
+          new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
             new ListColumnSetting('raw.Target.NodeNames', 'Target'),
             new ListColumnSetting('impactedNodes', 'Impact'),
             new ListColumnSetting('raw.ResultStatus', 'Result Status', {enableFilter: true}),

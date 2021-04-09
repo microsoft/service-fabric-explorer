@@ -1,0 +1,2 @@
+<ng-template #tipContent>{{tooltipText.type}} <br> {{tooltipText.tooltip}}</ng-template>
+{{item.raw.TaskId}} <span class="mif-info" *ngIf="tooltipText.tooltip.length > 0" style="color: #70daf8;" [ngbTooltip]="tipContent" container="body"></span>

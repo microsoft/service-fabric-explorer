@@ -3,6 +3,13 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
 import { Observable, of } from 'rxjs';
+
+export enum RepairJobType {
+    TenantUpdate = 'TenantUpdate',
+    PlatformUpdate = 'PlatformUpdate',
+    TenantMaintenance = 'TenantMaintenance',
+    PlatformMaintenance = 'PlatformMaintenance'
+}
 export interface IRepairTaskHistoryPhase {
     timestamp: string;
     phase: string;
@@ -253,5 +260,25 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
     public getPhase(phase: string): IRepairTaskHistoryPhase {
         return this.history.find(historyPhase => historyPhase.phase === phase);
+    }
+
+    public tooltipInfo() {
+        const id = this.raw.TaskId;
+        let tooltip = '';
+        let type = '';
+        if (id.includes(RepairJobType.TenantUpdate)) {
+            type = RepairJobType.TenantUpdate;
+            tooltip = 'This is something either initiated by the user or on behalf of the user (auto-os upgrade for example)';
+        }else if (id.includes(RepairJobType.PlatformUpdate)) {
+            tooltip = 'Operating underneath the user';
+            type = RepairJobType.PlatformUpdate;
+        }else if (id.includes(RepairJobType.TenantMaintenance)) {
+            tooltip = 'Intitiated by the user either via SF or portal';
+            type = RepairJobType.TenantMaintenance;
+        }else if (id.includes(RepairJobType.PlatformMaintenance)) {
+            tooltip = 'Intitiated by the platform to heal something';
+            type = RepairJobType.PlatformMaintenance;
+        }
+        return {tooltip, type};
     }
 }
