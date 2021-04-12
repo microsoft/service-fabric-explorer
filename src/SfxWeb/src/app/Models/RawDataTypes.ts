@@ -971,14 +971,19 @@ export interface INodesStatusDetails {
         statusTypeCounts: Record<string, number>;
         warningCount: number;
         errorCount: number;
+        okCount: number;
     }
 
 export class NodeStatusDetails implements INodesStatusDetails {
+        public static readonly allNodeText = 'All Nodes';
+        public static readonly allSeedNodesText = 'Seed Nodes';
+
         public nodeType: string;
         public statusTypeCounts: Record<string, number>;
         public warningCount = 0;
         public errorCount = 0;
         public totalCount = 0;
+        public okCount = 0;
         public constructor(nodeType: string) {
             this.nodeType = nodeType;
 
@@ -1001,6 +1006,9 @@ export class NodeStatusDetails implements INodesStatusDetails {
             }
             if (node.healthState.text === HealthStateConstants.Error) {
                 this.errorCount++;
+            }
+            if (node.healthState.text === HealthStateConstants.OK) {
+                this.okCount++;
             }
         }
     }
