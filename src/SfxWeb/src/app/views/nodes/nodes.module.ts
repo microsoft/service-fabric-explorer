@@ -8,6 +8,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { EventsComponent } from './events/events.component';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
 
 
 @NgModule({
@@ -17,7 +18,8 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
     NodesRoutingModule,
     SharedModule,
     DetailListTemplatesModule,
-    EventStoreModule
+    EventStoreModule,
+    ChartsModule
   ]
 })
 export class NodesModule { }
