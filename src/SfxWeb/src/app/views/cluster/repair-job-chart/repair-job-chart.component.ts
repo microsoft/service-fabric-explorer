@@ -71,7 +71,6 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
     tooltip: {
       headerFormat: '<b>{series.name}</b><br />',
       formatter: (() => { const bind = this; return function() {
-        console.log(this);
         const task = bind.jobs.concat(bind.jobs)[this.point.index];
         return `Job ${task.id} <br> ${this.point.series.name} : ${task.getHistoryPhase(this.point.series.name).duration} <br> Total Duration :  ${task.displayDuration}`; };
       })()
@@ -116,9 +115,9 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
         this.chart.series[2].setData(repairTasks.map(task => task.getHistoryPhase('Preparing').durationMilliseconds));
         this.chart.series[1].setData(repairTasks.map(task => task.getHistoryPhase('Executing')?.durationMilliseconds || 0));
         this.chart.series[0].setData(repairTasks.map(task => task.getHistoryPhase('Restoring').durationMilliseconds));
-
+        console.log(this);
         if (this.sortOrder) {
-          this.chart.xAxis[0].setCategories(repairTasks.map(task => Utils.result(task, this.sortOrder.displayPath)));
+          this.chart.xAxis[0].setCategories(repairTasks.map(task => Utils.result(task, this.sortOrder.displayPath ? this.sortOrder.displayPath : this.sortOrder.propertyPath.join('.'))));
         }
       }
     } catch (e) {

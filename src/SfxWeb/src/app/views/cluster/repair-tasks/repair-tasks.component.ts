@@ -40,10 +40,11 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
   timelineData: ITimelineData;
   chartJobs: RepairTask[] = [];
-  groupByNodes = false;
-
-  orderedJobs: RepairTask[] = [];
-  ordering: ISortOrdering;
+  ordering: ISortOrdering = {
+    direction: true,
+    propertyPath: ['raw', 'History', 'CreatedUtcTimestamp'],
+    displayPath: 'raw.History.CreatedUtcTimestamp'
+  };
 
   constructor(private data: DataService, injector: Injector, private settings: SettingsService) {
     super(injector);
@@ -52,7 +53,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
   setup() {
     this.repairTaskCollection = this.data.repairCollection;
 
-    this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', null,
+    this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', ['raw.History.CreatedUtcTimestamp'],
       [
           new ListColumnSetting('raw.TaskId', 'TaskId'),
           new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
@@ -77,7 +78,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
       (item) => (Object.keys(item).length > 0),
       true);
 
-    this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings('completedRepair', null,
+    this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings('completedRepair', ['raw.History.CreatedUtcTimestamp'],
         [
             new ListColumnSetting('raw.TaskId', 'TaskId'),
             new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
@@ -120,49 +121,26 @@ export class RepairTasksComponent extends BaseControllerDirective {
     const items = new DataSet<DataItem>();
     const groups = new DataSet<DataGroup>();
 
-    const nodes = new Set<string>();
-
     tasks.forEach(task => {
-      const item = {
+      items.add({
         id: task.raw.TaskId,
         content: task.raw.TaskId,
-        start: task.startTime,
+        start: task.startTime ,
         end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
         type: 'range',
         group: 'job',
         subgroup: 'stack',
         className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
         title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(),
-          new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
-      };
-
-      if (this.groupByNodes) {
-        task.raw.Target.NodeNames.forEach(name => {
-          nodes.add(name);
-          item.id = item.id + name;
-          item.group = name;
-          items.add(item);
-        });
-      }else{
-        items.add(item);
-      }
+                                                       new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
+      });
     });
 
-    if (this.groupByNodes) {
-      nodes.forEach(node => {
-        groups.add({
-          id: node,
-          content: node,
-          subgroupStack: { stack: true }
-        });
-      });
-    }else {
-      groups.add({
-        id: 'job',
-        content: 'Job History',
-        subgroupStack: { stack: true }
-      });
-    }
+    groups.add({
+      id: 'job',
+      content: 'Job History',
+      subgroupStack: {stack: true}
+    });
 
     this.timelineData = {
       groups,
