@@ -37,10 +37,10 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         }));
     }
 
-    public getNodeStateCounts(): INodesStatusDetails[] {
+    public getNodeStateCounts(includeAllNodes: boolean = true, includeSeedNoddes: boolean = true): INodesStatusDetails[] {
         const counts = {};
-        const allNodes = new NodeStatusDetails('All nodes');
-        const seedNodes = new NodeStatusDetails('Seed Nodes');
+        const allNodes = new NodeStatusDetails(NodeStatusDetails.allNodeText);
+        const seedNodes = new NodeStatusDetails(NodeStatusDetails.allSeedNodesText);
 
         this.collection.forEach(node => {
             if (node.raw.IsSeedNode) {
@@ -52,7 +52,17 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
             counts[node.raw.Type].add(node);
             allNodes.add(node);
         });
-        return [allNodes, seedNodes].concat(Object.keys(counts).map(key => counts[key]));
+
+        const resultList = [];
+
+        if (includeAllNodes) {
+            resultList.push(allNodes);
+        }
+
+        if (includeSeedNoddes) {
+            resultList.push(seedNodes);
+        }
+        return resultList.concat(Object.keys(counts).map(key => counts[key]));
     }
 
     protected get indexPropery(): string {

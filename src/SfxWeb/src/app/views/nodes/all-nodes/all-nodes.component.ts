@@ -6,6 +6,9 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { Observable } from 'rxjs';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
+import { map } from 'rxjs/operators';
+import { INodesStatusDetails } from 'src/app/Models/RawDataTypes';
+import { DashboardViewModel, IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 
 @Component({
   selector: 'app-all-nodes',
@@ -16,6 +19,8 @@ export class AllNodesComponent extends BaseControllerDirective {
 
   nodes: NodeCollection;
   listSettings: ListSettings;
+  nodesStatuses: INodesStatusDetails[];
+  tiles: IDashboardViewModel[] = [];
 
   constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
     super(injector);
@@ -38,7 +43,18 @@ export class AllNodesComponent extends BaseControllerDirective {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return  this.nodes.refresh(messageHandler);
-  }
+    return this.nodes.refresh(messageHandler).pipe(map(() => {
+      this.tiles = [];
 
+      this.nodes.getNodeStateCounts(false, false).forEach(type => {
+        this.tiles.push(
+          DashboardViewModel.fromHealthStateCount(type.nodeType, type.nodeType, false, {
+            ErrorCount: type.errorCount,
+            WarningCount: type.warningCount,
+            OkCount: type.okCount
+          })
+        );
+      });
+    }));
+  }
 }

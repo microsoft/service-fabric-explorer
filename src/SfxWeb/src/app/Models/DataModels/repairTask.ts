@@ -279,6 +279,11 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             tooltip = 'Intitiated by the platform to heal something';
             type = RepairJobType.PlatformMaintenance;
         }
+
         return {tooltip, type};
+    }
+
+    public getHistoryPhase(phase: string): IRepairTaskPhase {
+        return this.historyPhases.find(historyPhase => historyPhase.name === phase);
     }
 }
