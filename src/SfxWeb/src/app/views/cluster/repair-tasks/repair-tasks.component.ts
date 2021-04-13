@@ -12,6 +12,7 @@ import { DataSet, DataGroup, DataItem } from 'vis-timeline';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { map } from 'rxjs/operators';
 import { Counter, ICounterMostCommonEntry } from 'src/app/Utils/Utils';
+import { ISortOrdering } from 'src/app/modules/detail-list-templates/detail-list/detail-list.component';
 
 interface ITileListItem {
   primaryText: string;
@@ -38,15 +39,19 @@ export class RepairTasksComponent extends BaseControllerDirective {
   completedRepairTaskListSettings: ListSettings;
 
   timelineData: ITimelineData;
+  chartJobs: RepairTask[] = [];
+
+  // will be initially set by detail list component.
+  ordering: ISortOrdering;
 
   constructor(private data: DataService, injector: Injector, private settings: SettingsService) {
     super(injector);
-   }
+  }
 
   setup() {
     this.repairTaskCollection = this.data.repairCollection;
 
-    this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', null,
+    this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', ['raw.History.CreatedUtcTimestamp'],
       [
           new ListColumnSetting('raw.TaskId', 'TaskId'),
           new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
@@ -66,12 +71,12 @@ export class RepairTasksComponent extends BaseControllerDirective {
             enableFilter: false,
             colspan: -1
           })
-    ],
+      ],
       true,
       (item) => (Object.keys(item).length > 0),
       true);
 
-    this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings('completedRepair', null,
+    this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings('completedRepair', ['raw.History.CreatedUtcTimestamp'],
         [
             new ListColumnSetting('raw.TaskId', 'TaskId'),
             new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
@@ -83,18 +88,18 @@ export class RepairTasksComponent extends BaseControllerDirective {
               sortPropertyPaths: ['duration']
             }),
         ],
-        [
-          new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
-            '',
-            '',
-            {
-              enableFilter: false,
-              colspan: -1
-            })
+      [
+        new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
+          '',
+          '',
+          {
+            enableFilter: false,
+            colspan: -1
+          })
       ],
-        true,
-        (item) => true,
-        true);
+      true,
+      (item) => true,
+      true);
   }
 
   /*
@@ -102,7 +107,12 @@ export class RepairTasksComponent extends BaseControllerDirective {
   */
   sorted(items: RepairTask[], isCompletedSet: boolean = true) {
     isCompletedSet ? this.sortedCompletedRepairTasks = items : this.sortedRepairTasks = items;
-    this.generateTimeLineData(this.sortedCompletedRepairTasks.concat(this.sortedRepairTasks));
+    this.chartJobs = this.sortedCompletedRepairTasks.concat(this.sortedRepairTasks);
+    this.generateTimeLineData(this.chartJobs);
+  }
+
+  setSortOrdering(sortInfo: ISortOrdering) {
+    this.ordering = sortInfo;
   }
 
   generateTimeLineData(tasks: RepairTask[]) {
@@ -110,18 +120,18 @@ export class RepairTasksComponent extends BaseControllerDirective {
     const groups = new DataSet<DataGroup>();
 
     tasks.forEach(task => {
-        items.add({
-          id: task.raw.TaskId,
-          content: task.raw.TaskId,
-          start: task.startTime ,
-          end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
-          type: 'range',
-          group: 'job',
-          subgroup: 'stack',
-          className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
-          title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(),
-                                                         new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
-        });
+      items.add({
+        id: task.raw.TaskId,
+        content: task.raw.TaskId,
+        start: task.startTime ,
+        end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
+        type: 'range',
+        group: 'job',
+        subgroup: 'stack',
+        className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
+        title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(),
+                                                       new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
+      });
     });
 
     groups.add({

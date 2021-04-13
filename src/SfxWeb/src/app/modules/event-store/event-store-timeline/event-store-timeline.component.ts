@@ -52,8 +52,6 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
     this.timeline.setOptions({
         moment: this.isUTC ? moment : moment.utc
     });
-
-    this.isUTC = !this.isUTC;
   }
 
   public fitData() {
