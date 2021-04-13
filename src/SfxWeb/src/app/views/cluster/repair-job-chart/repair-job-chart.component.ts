@@ -115,9 +115,9 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
         this.chart.series[2].setData(repairTasks.map(task => task.getHistoryPhase('Preparing').durationMilliseconds));
         this.chart.series[1].setData(repairTasks.map(task => task.getHistoryPhase('Executing')?.durationMilliseconds || 0));
         this.chart.series[0].setData(repairTasks.map(task => task.getHistoryPhase('Restoring').durationMilliseconds));
-        console.log(this);
+
         if (this.sortOrder) {
-          this.chart.xAxis[0].setCategories(repairTasks.map(task => Utils.result(task, this.sortOrder.displayPath ? this.sortOrder.displayPath : this.sortOrder.propertyPath.join('.'))));
+          this.chart.xAxis[0].setCategories(repairTasks.map(task => Utils.result(task, this.sortOrder.displayPath ? this.sortOrder.displayPath: this.sortOrder.propertyPath.join('.'))));
         }
       }
     } catch (e) {
