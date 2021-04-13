@@ -2,7 +2,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, of } from 'rxjs';
+import { Observable } from 'rxjs';
 import { ListColumnSetting, ListSettings, ListColumnSettingWithCustomComponent, ListColumnSettingWithUtcTime } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { RepairTaskViewComponent } from '../repair-task-view/repair-task-view.component';
@@ -40,11 +40,9 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
   timelineData: ITimelineData;
   chartJobs: RepairTask[] = [];
-  ordering: ISortOrdering = {
-    direction: true,
-    propertyPath: ['raw', 'History', 'CreatedUtcTimestamp'],
-    displayPath: 'raw.History.CreatedUtcTimestamp'
-  };
+
+  // will be initially set by detail list component.
+  ordering: ISortOrdering;
 
   constructor(private data: DataService, injector: Injector, private settings: SettingsService) {
     super(injector);
@@ -156,6 +154,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
       this.MostCommonActions = counter.mostCommon().slice(0, 3);
 
       this.longestRunning = [];
+
       const longRunningApprovalJob = this.repairTaskCollection.longRunningApprovalJob;
       if (longRunningApprovalJob) {
         this.longestRunning.push({
