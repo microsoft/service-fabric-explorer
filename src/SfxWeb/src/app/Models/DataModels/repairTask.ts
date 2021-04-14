@@ -1,5 +1,8 @@
 import { IRawRepairTask } from '../RawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { DataModelBase } from './Base';
+import { DataService } from 'src/app/services/data.service';
+import { Observable, of } from 'rxjs';
 export interface IRepairTaskHistoryPhase {
     timestamp: string;
     phase: string;
@@ -53,8 +56,14 @@ export const NotStartedStatus: IDisplayStatus = {
 
 
 
-export class RepairTask {
+export class RepairTask extends DataModelBase<IRawRepairTask> {
+    public static readonly ExecutingStatus = 'Executing';
+    public static readonly PreparingStatus = 'Preparing';
     public static NonStartedTimeStamp = '0001-01-01T00:00:00.000Z';
+
+    public get id(): string {
+        return this.raw.TaskId;
+    }
 
     // Initially keep additional details collapsed.
     public isSecondRowCollapsed = true;
@@ -74,39 +83,9 @@ export class RepairTask {
 
     public executorData: any;
 
-    constructor(public raw: IRawRepairTask, private dateRef: Date = new Date()) {
-        if (this.raw.Impact) {
-            this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
-        }
-        this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString();
-        this.inProgress = this.raw.State !== 'Completed';
-
-        const start = new Date(this.createdAt).getTime();
-        if (this.inProgress) {
-            const now = dateRef.getTime();
-            this.duration = now - start;
-        } else {
-            this.duration = new Date(this.raw.History.CompletedUtcTimestamp).getTime() - start;
-        }
-        this.displayDuration = TimeUtils.formatDurationAsAspNetTimespan(this.duration);
-
-        try {
-            this.executorData = JSON.parse(this.raw.ExecutorData);
-
-            this.couldParseExecutorData = true;
-        } catch (e) {
-            console.log(e);
-            this.couldParseExecutorData = false;
-        }
-
-        this.parseHistory();
-
-        this.historyPhases = [
-            this.generateHistoryPhase('Preparing', this.history.slice(0, 5)),
-            this.generateHistoryPhase('Executing', [this.history[6]]),
-            this.generateHistoryPhase('Restoring', this.history.slice(7))
-        ];
-
+    constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef: Date = new Date()) {
+        super(dataService, raw);
+        this.updateInternal();
     }
 
     /*
@@ -118,10 +97,10 @@ export class RepairTask {
     }
 
     private parseHistory() {
-        const history = [
-            { timestamp: this.raw.History.PreparingUtcTimestamp, phase: 'Preparing' },
+        let history = [
             { timestamp: this.raw.History.ClaimedUtcTimestamp, phase: 'Claimed' },
             { timestamp: this.raw.History.CreatedUtcTimestamp, phase: 'Created' },
+            { timestamp: this.raw.History.PreparingUtcTimestamp, phase: 'Preparing' },
             { timestamp: this.raw.History.PreparingHealthCheckStartUtcTimestamp, phase: 'Preparing Health Check start' },
             { timestamp: this.raw.History.PreparingHealthCheckEndUtcTimestamp, phase: 'Preparing Health check End' },
             { timestamp: this.raw.History.ApprovedUtcTimestamp, phase: 'Approved' },
@@ -131,6 +110,11 @@ export class RepairTask {
             { timestamp: this.raw.History.RestoringHealthCheckEndUtcTimestamp, phase: 'Restoring Health check end' },
             { timestamp: this.raw.History.CompletedUtcTimestamp, phase: 'Completed' },
         ];
+
+        // if the job has been cancelled there shouldnt be Approved or executing phases anymore
+        if (this.raw.ResultStatus === 'Cancelled') {
+            history = history.filter(stamp => !['Approved', 'Executing'].includes(stamp.phase) );
+        }
 
         this.history = history.map((phase, index) => {
             let duration = '';
@@ -226,15 +210,52 @@ export class RepairTask {
         };
     }
 
-    updateViewInfo(previousTask: RepairTask) {
-        this.isSecondRowCollapsed = previousTask.isSecondRowCollapsed;
-        this.activeTab = previousTask.activeTab;
-        previousTask.historyPhases.forEach( (phase, index) => {
-            // if starting collapsed is false, let it open.
-            if (this.historyPhases[index].startCollapsed) {
-                this.historyPhases[index].startCollapsed = phase.startCollapsed;
-            }
-        });
+    updateInternal(): Observable<any> {
+        if (this.raw.Impact) {
+            this.impactedNodes = this.raw.Impact.NodeImpactList.map(node => node.NodeName);
+        }
+        this.createdAt = new Date(this.raw.History.CreatedUtcTimestamp).toLocaleString();
+        this.inProgress = this.raw.State !== 'Completed';
 
+        const start = new Date(this.createdAt).getTime();
+        if (this.inProgress) {
+            const now = this.dateRef.getTime();
+            this.duration = now - start;
+        } else {
+            this.duration = new Date(this.raw.History.CompletedUtcTimestamp).getTime() - start;
+        }
+        this.displayDuration = TimeUtils.formatDurationAsAspNetTimespan(this.duration);
+
+        try {
+            this.executorData = JSON.parse(this.raw.ExecutorData);
+
+            this.couldParseExecutorData = true;
+        } catch (e) {
+            console.log(e);
+            this.couldParseExecutorData = false;
+        }
+
+        this.parseHistory();
+
+        this.historyPhases = [
+            this.generateHistoryPhase('Preparing', this.history.slice(0, 5)),
+        ];
+
+        // cancelled jobs have no executing phase
+        if (this.raw.ResultStatus === 'Cancelled') {
+            this.historyPhases.push(this.generateHistoryPhase('Restoring', this.history.slice(6)));
+        }else {
+            this.historyPhases.push(this.generateHistoryPhase('Executing', [this.history[5], this.history[6]]),
+                                    this.generateHistoryPhase('Restoring', this.history.slice(7)));
+        }
+        return of(null);
+    }
+
+    public getPhase(phase: string): IRepairTaskHistoryPhase {
+        return this.history.find(historyPhase => historyPhase.phase === phase);
+    }
+
+    public getHistoryPhase(phase: string): IRepairTaskPhase {
+        return this.historyPhases.find(historyPhase => historyPhase.name === phase);
     }
 }

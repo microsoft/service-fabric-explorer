@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST  } from './util';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST, nodes_route, FIXTURE_NODES  } from './util';
 
 const nodeName = "_nt_0"
 const nodeInfoRef = "@nodeInfo"
@@ -13,7 +13,7 @@ context('node page', () => {
         cy.route(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/node-info').as('nodeInfo');
         cy.route(apiUrl(`Nodes/${nodeName}/$/GetHealth?*`), 'fx:node-page/health').as('health');
         cy.route(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:node-page/apps').as('apps');
-
+        cy.route('GET', apiUrl(`/Nodes/${nodeName}/$/GetLoadInformation?*`), 'fixture:node-load/get-node-load-information').as("nodeLoad")
     })
 
     describe("essentials", () => {
@@ -26,6 +26,12 @@ context('node page', () => {
                 cy.contains('_nt_0').click();
               });
 
+            cy.get('[data-cy=tiles]').within(() => {
+                cy.contains('6').click();
+                cy.contains('2').click();
+                cy.contains('5').click();
+            });
+
             cy.get('[data-cy=appsList]').within(() => {
                 checkTableSize(1);
             })
@@ -35,6 +41,7 @@ context('node page', () => {
 
         it('deactivated', () => {
             cy.route(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/deactivated-node').as('deactivatedNode');
+            cy.route(nodes_route, 'fx:node-page/node-list').as(FIXTURE_NODES);
 
             cy.visit(`/#/node/${nodeName}`);
 
@@ -49,8 +56,6 @@ context('node page', () => {
 
     describe("details", () => {
         it('view details', () => {
-            cy.route('GET', apiUrl(`/Nodes/${nodeName}/$/GetLoadInformation?*`), 'fixture:node-load/get-node-load-information').as("nodeLoad")
-
             cy.visit(`/#/node/${nodeName}`)
 
             cy.wait([nodeInfoRef, "@health"]);

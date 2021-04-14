@@ -54,7 +54,7 @@
             </dd>
             <dt ng-if="!action.serviceType.raw.ServiceTypeDescription.IsStateful">Instance Count</dt>
             <dd ng-if="!action.serviceType.raw.ServiceTypeDescription.IsStateful">
-                <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.InstanceCount" aria-label="Instance Count" min="1" aria-valuemin="1" integer>
+                <input type="number" class="input-flat" autocomplete="off" ng-model="action.description.raw.InstanceCount" aria-label="Instance Count" pattern="^(?:-1|[1-9]\d*)$" integer>
             </dd>
             <dt ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">Has Persisted State</dt>
             <dd ng-if="action.serviceType.raw.ServiceTypeDescription.IsStateful">

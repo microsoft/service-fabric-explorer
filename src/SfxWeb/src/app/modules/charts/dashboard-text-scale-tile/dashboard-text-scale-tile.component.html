@@ -1,0 +1,12 @@
+<div class="dashboard-wrapper">
+    <div class="dashboard dashboard-small" style="padding: 11px 7px;">
+        <div class="dashboard-tile">
+            <div class="dashboard-tile-inner">
+                <div class="dashboard-tile-leftbar" [ngClass]="barClass"></div>
+                <div class="dashboard-tile-title">{{title}}</div>
+                <ng-content></ng-content>
+                <div class="dashboard-tile-innertext" *ngFor="let line of text">{{line}}</div>
+            </div>
+        </div>
+    </div>
+</div>

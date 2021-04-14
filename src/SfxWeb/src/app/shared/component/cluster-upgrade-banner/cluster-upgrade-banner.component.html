@@ -5,7 +5,7 @@
             <span *ngIf="displayAllText">
                 <span> Cluster Upgrade </span>
                 <span *ngIf="displayMiddleText">
-                    in Progress since {{clusterUpgradeProgress.startTimestampUtc}}
+                    in Progress since {{clusterUpgradeProgress.startTimestampUtc | date:'medium'}}
                 </span>
                 <span>
                     ({{clusterUpgradeProgress.getCompletedUpgradeDomains()}} / {{clusterUpgradeProgress.upgradeDomains.length}} UDs completed)

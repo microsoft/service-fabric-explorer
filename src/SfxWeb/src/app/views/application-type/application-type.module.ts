@@ -10,6 +10,7 @@ import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates
 import { ActionRowComponent } from './action-row/action-row.component';
 import { CreateApplicationComponent } from './create-application/create-application.component';
 import { ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
@@ -21,6 +22,7 @@ import { ReactiveFormsModule, FormsModule } from '@angular/forms';
     DetailListTemplatesModule,
     ReactiveFormsModule,
     FormsModule,
+    NgbNavModule
   ],
   entryComponents: [ActionRowComponent]
 })

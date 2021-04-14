@@ -19,8 +19,9 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     public upgradeDomains: string[];
     public faultDomains: string[];
     public healthySeedNodes: string;
-    public disabledNodes: string;
     public seedNodeCount: number;
+    public disabledAndDisablingCount: number;
+    public disabledAndDisablingNodes: Node[];
 
     public constructor(data: DataService) {
         super(data);
@@ -36,10 +37,10 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         }));
     }
 
-    public getNodeStateCounts(): INodesStatusDetails[] {
+    public getNodeStateCounts(includeAllNodes: boolean = true, includeSeedNoddes: boolean = true): INodesStatusDetails[] {
         const counts = {};
-        const allNodes = new NodeStatusDetails('All nodes');
-        const seedNodes = new NodeStatusDetails('Seed Nodes');
+        const allNodes = new NodeStatusDetails(NodeStatusDetails.allNodeText);
+        const seedNodes = new NodeStatusDetails(NodeStatusDetails.allSeedNodesText);
 
         this.collection.forEach(node => {
             if (node.raw.IsSeedNode) {
@@ -51,7 +52,17 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
             counts[node.raw.Type].add(node);
             allNodes.add(node);
         });
-        return [allNodes, seedNodes].concat(Object.keys(counts).map(key => counts[key]));
+
+        const resultList = [];
+
+        if (includeAllNodes) {
+            resultList.push(allNodes);
+        }
+
+        if (includeSeedNoddes) {
+            resultList.push(seedNodes);
+        }
+        return resultList.concat(Object.keys(counts).map(key => counts[key]));
     }
 
     protected get indexPropery(): string {
@@ -80,17 +91,23 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         let disabledNodes = 0;
         let disablingNodes = 0;
 
+        const disabled = [];
+        const disabling = [];
         this.collection.forEach(node => {
             if (node.raw.NodeStatus === NodeStatusConstants.Disabled) {
                 disabledNodes++;
+                disabled.push(node);
             }
             if (node.raw.NodeStatus === NodeStatusConstants.Disabling) {
                 disablingNodes++;
+                disabling.push(node);
             }
         });
 
-        this.disabledNodes = `${disabledNodes}/${disablingNodes}`;
+        this.disabledAndDisablingNodes = disabling.concat(disabled);
+
         this.seedNodeCount = seedNodes.length;
+        this.disabledAndDisablingCount = disabledNodes + disablingNodes;
 
         this.checkOneNodeScenario();
 

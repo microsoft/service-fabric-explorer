@@ -35,10 +35,10 @@ export class RestClientService {
   private static defaultApiVersion = '3.0';
   private static apiVersion40 = '4.0';
   private static apiVersion60 = '6.0';
-  private static apiVersion62Preview = '6.2-preview';
   private static apiVersion64 = '6.4';
   private static apiVersion65 = '6.5';
   private static apiVersion72 = '7.2';
+  private static apiVersion80 = '8.0';
 
   private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -696,7 +696,7 @@ export class RestClientService {
   }
 
   public getClusterEvents(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): Observable<ClusterEvent[]> {
-      return this.getEvents(ClusterEvent, 'EventsStore/Cluster/Events', startTime, endTime, messageHandler);
+      return this.getEvents(ClusterEvent, 'EventsStore/Cluster/Events', startTime, endTime, messageHandler, RestClientService.apiVersion80);
   }
 
   public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, messageHandler?: IResponseMessageHandler): Observable<NodeEvent[]> {
@@ -766,7 +766,7 @@ export class RestClientService {
       return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get cluster version', messageHandler);
   }
 
-  private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler): Observable<T[]> {
+  private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {
       let apiUrl = url;
       if (startTime && endTime) {
           apiUrl = apiUrl
@@ -774,7 +774,11 @@ export class RestClientService {
               + '&endtimeutc=' + endTime.toISOString().substr(0, 19) + 'Z';
       }
 
-      const fullUrl = this.getApiUrl(apiUrl, RestClientService.apiVersion72, null, true);
+      if (!apiVersion) {
+        apiVersion =  RestClientService.apiVersion72;
+      }
+
+      const fullUrl = this.getApiUrl(apiUrl, apiVersion, null, true);
       return this.get<IRawList<{}>>(fullUrl, null, messageHandler).pipe(map(response => {
           return new EventsResponseAdapter(eventType).getEvents(response);
         }));

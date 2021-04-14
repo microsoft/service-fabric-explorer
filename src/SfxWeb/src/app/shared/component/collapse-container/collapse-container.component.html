@@ -11,4 +11,7 @@
     <div *ngIf="!collapsed">
         <ng-content select="[collapse-body]"></ng-content>
     </div>
+    <div *ngIf="collapsed">
+      <ng-content select="[closed-body]"></ng-content>
+    </div>
 </div>

@@ -5,6 +5,10 @@
     <div class="modal-body" style="display: flex; flex-direction: column;">
         Export the table to CSV by selecting which columns to include.
 
+        <div style="margin: auto; display: flex; flex-direction:row;">
+            <button type="button" class="flat-button" (click)="selectAll()" *ngIf="!allChecked">Check all</button>
+            <button type="button" class="flat-button" (click)="unselectAll()" *ngIf="!noneChecked">Uncheck all</button>
+        </div>
         <ul data-cy="columns">
             <ng-container *ngFor="let column of data.config.columnSettings">
                 <li *ngIf="!column.config.canNotExport">

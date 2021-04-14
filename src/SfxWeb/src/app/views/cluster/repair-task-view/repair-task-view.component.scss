@@ -1,3 +1,5 @@
+$green: #30a530;
+
 .table {
     width: inherit;
 }
@@ -14,5 +16,31 @@ table.detail-list {
 }
 
 .repair-green {
-    color: #30a530 !important;
+    color: $green !important;
+}
+
+.row-container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+.node-wrapper {
+    margin-right: 8px;
+    border: 1px solid gray;
+
+    .inner-node-wrapper {
+        display: flex;
+        flex-direction: row;
+    }
+}
+
+.nodes-container {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+
+.badge-ok {
+    background-color: $green;
 }
