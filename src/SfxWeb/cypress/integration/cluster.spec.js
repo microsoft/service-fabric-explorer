@@ -61,9 +61,7 @@ context('Cluster page', () => {
       cy.wait("@inprogres")
 
       cy.contains('Cluster Upgrade In Progress')
-      cy.contains('Current Upgrade Domain : 4')
-
-      cy.get('[data-cy=currentud').within(() => {
+      cy.get('[data-cy=currentud]').within(() => {
         cy.contains('1 - Upgrading ').click();
 
         cy.contains('guidID')
@@ -73,8 +71,11 @@ context('Cluster page', () => {
         cy.wait('@appinfo');
 
         cy.contains('Application name : VisualObjectsApplicationType')
-        cy.contains('min replica : 2')
+        cy.contains('Minimum Replica Set Size : 2')
 
+        cy.get('[data-cy=cud]').within(() => {
+          cy.contains('4')
+        })
       })
     })
 
@@ -163,7 +164,7 @@ context('Cluster page', () => {
     })
   })
 
-  describe.only("repair tasks", () => {
+  describe("repair tasks", () => {
     const setup = (file) => {
       addRoute('repairs', file, apiUrl('/$/GetRepairTaskList?*'))
       cy.visit('/#/repairtasks')
@@ -185,6 +186,9 @@ context('Cluster page', () => {
     it('view completd repair job', () => {
       setup('cluster-page/repair-jobs/simple.json')
 
+      cy.get('[data-cy=Executing]').should('not.exist')
+
+
       cy.get('[data-cy=completedjobs]').within( ()=> {
         cy.contains('Completed Repair Tasks').click();  
         
@@ -202,6 +206,20 @@ context('Cluster page', () => {
 
     it('view in progress repair job', () => {
       setup('cluster-page/repair-jobs/in-progress.json')
+
+        
+      cy.get('[data-cy=Executing]').within( ()=> {      
+        cy.contains('Azure/TenantUpdate/441efe72-c74d-4cfa-84df-515b44c89060/4/1555')
+      })
+
+      cy.get('[data-cy=Approving]').within( ()=> {      
+        cy.contains('Azure/TenantUpdate/441efe72-c74d-4cfa-84df-515b44c89060/4/1145')
+      })
+
+      cy.get('[data-cy=top]').within( ()=> {      
+        cy.contains(2)  
+        cy.contains('System.Azure.Job.TenantUpdate')
+      })
 
       cy.get('[data-cy=pendingjobs]').within( ()=> {        
         cy.get('tbody > tr').first().within(() =>{

@@ -11,6 +11,7 @@ context('node page', () => {
         cy.intercept(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/node-info').as('nodeInfo');
         cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetHealth?*`), 'fx:node-page/health').as('health');
         cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:node-page/apps').as('apps');
+        cy.route('GET', apiUrl(`/Nodes/${nodeName}/$/GetLoadInformation?*`), 'fixture:node-load/get-node-load-information').as("nodeLoad")
 
     })
 
@@ -23,6 +24,12 @@ context('node page', () => {
             cy.get('[data-cy=header]').within(() => {
                 cy.contains('_nt_0').click();
               });
+
+            cy.get('[data-cy=tiles]').within(() => {
+                cy.contains('6').click();
+                cy.contains('2').click();
+                cy.contains('5').click();
+            });
 
             cy.get('[data-cy=appsList]').within(() => {
                 checkTableSize(1);

@@ -4,5 +4,8 @@
         "API_PREFIX": ""
     },
     "requestTimeout" : 10000,
-    "retries": 0
+    "retries": {
+        "runMode": 2,
+        "openMode": 0
+      }
 }

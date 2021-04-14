@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, APP_INITIALIZER } from '@angular/core';
+import { NgModule, APP_INITIALIZER, ErrorHandler } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -17,6 +17,7 @@ import { ReactiveFormsModule } from '@angular/forms';
 import { DebuggingModule } from './views/debugging/debugging.module';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
+import { AppInsightsErrorHandler } from './error-handling';
 
 @NgModule({
   declarations: [
@@ -48,7 +49,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
       multi: true,
       deps: [AdalService]
     },
-    httpInterceptorProviders
+    httpInterceptorProviders,
+    { provide: ErrorHandler, useClass: AppInsightsErrorHandler }
   ],
   bootstrap: [AppComponent],
 })

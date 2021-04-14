@@ -5,7 +5,7 @@ import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, addRoute } from './ut
 const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorService";
 const statelessServiceName = "VisualObjects.WebService";
-const waitRequest = "getserviceInfo";
+const waitRequest = "@getserviceInfo";
 
 /*
 Default to stateful service for the page

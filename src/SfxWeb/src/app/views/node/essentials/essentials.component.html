@@ -1,6 +1,6 @@
 <div class="detail-pane essen-pane" *ngIf="node">
   <div class="essential-container">
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Name
       </div>
@@ -9,7 +9,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Upgrade Domain
       </div>
@@ -18,16 +18,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Health State
-      </div>
-      <div class="essential-body">
-        <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge>
-      </div>
-    </div>
-
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Fault Domain
       </div>
@@ -36,7 +27,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Status
       </div>
@@ -45,7 +36,16 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
+      <div class="essential-head">
+        Health State
+      </div>
+      <div class="essential-body">
+        <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge>
+      </div>
+    </div>
+
+    <div class="essential-item ">
       <div class="essential-head">
         IP Address or Domain Name
       </div>
@@ -54,7 +54,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Type
       </div>
@@ -63,7 +63,7 @@
       </div>
     </div>
 
-    <div class="essential-item essential-half">
+    <div class="essential-item ">
       <div class="essential-head">
         Is Seed Node
       </div>
@@ -74,56 +74,31 @@
   </div>
 </div>
 
+<div class="essen-pane help-text-container">
+  <a target="_blank" href="https://aka.ms/sf/loadinformation">
+  Learn more about these metrics <span class="mif-info" ></span>
+  </a>
+</div>
+
+<div *ngIf="node?.loadInformation?.isInitialized" class="tile-container" data-cy="tiles">
+  <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="TOTAL COUNT" middleMargin="5px 0">
+    Count of all service objects (stateless and stateful) on the node
+  </app-dashboard-text-tile>
+  <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="PRIMARY COUNT" middleMargin="5px 0">
+    Count of Primary replicas on the node    
+  </app-dashboard-text-tile>
+  <app-dashboard-text-tile [count]="node.loadInformation.metrics.ReplicaCount" title="REPLICA COUNT" middleMargin="5px 0">
+    Count of total stateful replicas on the node
+  </app-dashboard-text-tile>
+</div>
+
 <div class="detail-pane essen-pane" *ngIf="node && node.isDeactivating" data-cy="deactivated">
   <app-collapse-container sectionName="Unhealthy Evaluations">
     <div collapse-header>
       <h4>Deactivation Info</h4>
     </div>
     <div collapse-body>
-      <div class="essential-item" style="margin-bottom: 10px;">
-        <div class="essential-head">
-          Deactivation Status
-        </div>
-        <div class="essential-body">
-          {{node.raw.NodeDeactivationInfo.NodeDeactivationStatus}}
-        </div>
-      </div>
-      <div *ngIf="node.raw.NodeDeactivationInfo.NodeDeactivationTask.length > 0">
-        <label style="font-size: 16px;">Deactivation Tasks</label>
-        <table class="table detail-list" style="width: 100%">
-          <thead>
-            <tr>
-              <th>
-                Intent
-              </th>
-              <th>
-                Id
-              </th>
-              <th>
-                Task Type
-              </th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr *ngFor="let task of node.raw.NodeDeactivationInfo.NodeDeactivationTask">
-              <td>
-                {{task.NodeDeactivationIntent}}
-              </td>
-              <td>
-                {{task.NodeDeactivationTaskId.Id}}
-              </td>
-              <td>
-                {{task.NodeDeactivationTaskId.NodeDeactivationTaskType}}
-              </td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
-
-      <div style="margin-top: 30px;" *ngIf="node.raw.NodeDeactivationInfo.PendingSafetyChecks.length > 0">
-        <h5 style="font-size: 16px;">Safety Checks</h5>
-        <app-safety-checks [safetyChecks]="node.raw.NodeDeactivationInfo.PendingSafetyChecks"></app-safety-checks>
-      </div>
+      <app-node-deactivation-info [node]="node"></app-node-deactivation-info>
     </div>
   </app-collapse-container>
 </div>

@@ -17,11 +17,20 @@ export class PartitionInfoComponent {
               private routeService: RoutesService) {}
 
   view() {
-    this.dataService.getApp(this.partitionInfo.applicationName.Id).subscribe(app => {
-      const routeLocation = () => RoutesService.getPartitionViewPath(app.raw.TypeName, this.partitionInfo.applicationName.Id,
-                                                                     this.partitionInfo.serviceName.Id, this.partitionInfo.partition.PartitionInformation.Id);
-      this.routeService.navigate(routeLocation);
-    });
+    console.log(this.partitionInfo);
+    if (this.partitionInfo.applicationName.Name === 'fabric:/System') {
+      this.dataService.getSystemApp().subscribe(app => {
+        const routeLocation = () => RoutesService.getPartitionViewPath(app.raw.TypeName, this.partitionInfo.applicationName.Id,
+          this.partitionInfo.serviceName.Id, this.partitionInfo.partition.PartitionInformation.Id);
+        this.routeService.navigate(routeLocation);
+      });
+    }else {
+      this.dataService.getApp(this.partitionInfo.applicationName.Id).subscribe(app => {
+        const routeLocation = () => RoutesService.getPartitionViewPath(app.raw.TypeName, this.partitionInfo.applicationName.Id,
+          this.partitionInfo.serviceName.Id, this.partitionInfo.partition.PartitionInformation.Id);
+        this.routeService.navigate(routeLocation);
+      });
+    }
   }
 }
 

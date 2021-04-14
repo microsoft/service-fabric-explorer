@@ -1,6 +1,31 @@
 <div style="float: right">
     Copy raw repair Job <app-clip-board [text]="copyText"></app-clip-board>
 </div>
+<div class="nodes-container">
+    <div *ngFor="let node of nodes" class="highlight-hover node-wrapper">
+        <div class="inner-node-wrapper">
+            <div [ngClass]="node.healthState.badgeClass" style="width: 5px;"></div>
+            <div style="padding: 4px; ">
+                <div class="row-container">
+                    <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text">
+                    </app-health-badge>
+                    <a [routerLink]="node.viewPath">{{node.name}}</a>
+                </div>
+                <div class="row-container">
+                    <div>
+                        UD : {{node.raw.UpgradeDomain}}
+                    </div>
+                    <div>
+                        FD : {{node.raw.FaultDomain}}
+                    </div>
+                </div>
+                <div>
+                    Deactivation Status : {{node.raw.NodeDeactivationInfo.NodeDeactivationStatus}}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
 
 <div ngbNav #nav="ngbNav" [(activeId)]="item.activeTab">
     <div [ngbNavItem]="1">

@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { GetBackupEnabledEntitiesComponent } from './get-backup-enabled-entities.component';
 
@@ -6,7 +6,7 @@ describe('GetBackupEnabledEntitiesComponent', () => {
   let component: GetBackupEnabledEntitiesComponent;
   let fixture: ComponentFixture<GetBackupEnabledEntitiesComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ GetBackupEnabledEntitiesComponent ]
     })

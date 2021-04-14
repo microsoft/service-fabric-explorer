@@ -1,10 +1,12 @@
 import { RepairTask, InProgressStatus } from './repairTask';
 import { IRawRepairTask } from '../RawDataTypes';
+import { DataService } from 'src/app/services/data.service';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
 
 
 describe('RepairTask', () => {
 
-
+    const dataService = {} as DataService;
     let testData: IRawRepairTask;
 
     beforeEach((() => {
@@ -51,7 +53,7 @@ describe('RepairTask', () => {
     }));
 
     fit('validate complete repairTask', () => {
-        const task = new RepairTask(testData);
+        const task = new RepairTask(dataService, testData);
 
         expect(task.couldParseExecutorData).toBe(true);
         expect(task.impactedNodes.length).toBe(0);
@@ -76,7 +78,7 @@ describe('RepairTask', () => {
                 ImpactLevel: 2
             }
         ];
-        const task = new RepairTask(testData);
+        const task = new RepairTask(dataService, testData);
 
         expect(task.couldParseExecutorData).toBe(true);
         expect(task.impactedNodes).toEqual(['_NodeType0_6']);
@@ -99,13 +101,13 @@ describe('RepairTask', () => {
             RestoringHealthCheckEndUtcTimestamp: '0001-01-01T00:00:00.000Z'
         };
         const dateRef = new Date('2020-07-17T04:17:48.437Z');
-        const task = new RepairTask(testData, dateRef);
+        const task = new RepairTask(dataService, testData, dateRef);
 
         expect(task.inProgress).toBe(true);
         expect(task.history).toContain({
             timestamp: '2020-07-17T03:17:48.437Z',
             phase: 'Executing',
-            duration: '01:00:00.000',
+            duration: TimeUtils.formatDurationAsAspNetTimespan(60 * 60 * 1000),
             durationMilliseconds: 60 * 60 * 1000,
             displayInfo: InProgressStatus,
         });

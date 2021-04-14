@@ -18,6 +18,12 @@ import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatDialog } from '@angular/material/dialog';
 import { ExportModalComponent } from '../export-modal/export-modal.component';
+
+export interface ISortOrdering {
+  direction: boolean;
+  propertyPath: string[];
+  displayPath: string;
+}
 @Component({
   selector: 'app-detail-list',
   templateUrl: './detail-list.component.html',
@@ -29,12 +35,14 @@ export class DetailListComponent implements OnInit, OnDestroy {
   @Input() searchText = 'Search list';
   @Input() isLoading = false;
   @Output() sorted = new EventEmitter<any[]>();
+  @Output() sortOrdering = new EventEmitter<ISortOrdering>();
 
   private iList: any[];
   public sortedFilteredList: any[] = []; // actual list displayed in html.
 
   page = 1;
   totalListSize = 0;
+  displayPath = '';
 
   debounceHandler: Subject<any[]> = new Subject<any[]>();
   debouncerHandlerSubscription: Subscription;
@@ -60,9 +68,14 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
   ngOnInit() {
     this.debouncerHandlerSubscription = this.debounceHandler
-   .pipe(debounceTime(1000), distinctUntilChanged())
+   .pipe(debounceTime(500), distinctUntilChanged())
    .subscribe(val => {
       this.sorted.emit(val);
+      this.sortOrdering.emit({
+        propertyPath: this.listSettings.sortPropertyPaths,
+        direction: this.listSettings.sortReverse,
+        displayPath: this.displayPath
+      });
    });
   }
 
@@ -99,6 +112,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
 
   sort(columnSetting: ListColumnSetting) {
     this.listSettings.sort(columnSetting.config.sortPropertyPaths);
+    this.displayPath = columnSetting.propertyPath;
     this.updateList();
 
     if (!Utils.isIEOrEdge) {

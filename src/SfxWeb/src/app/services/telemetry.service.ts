@@ -1,10 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import { StorageService } from './storage.service';
-import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
-import { TelemetrySnackBarComponent } from '../telemetry-snack-bar/telemetry-snack-bar.component';
 import { environment } from 'src/environments/environment';
-import { Router, NavigationEnd, ActivatedRoute, ActivationEnd } from '@angular/router';
+import { Router, NavigationEnd, ActivationEnd } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -12,16 +10,9 @@ import { Router, NavigationEnd, ActivatedRoute, ActivationEnd } from '@angular/r
 export class TelemetryService {
 
   constructor(private storage: StorageService,
-              private snackBar: MatSnackBar,
               public routing: Router) {
 
     this.telemetryEnabled = this.storage.getValueBoolean(TelemetryService.localStorageKey, true);
-    if (!this.storage.getValueBoolean(TelemetryService.localStoragePromptedTelemetryKey, false)) {
-      const config = new MatSnackBarConfig();
-      config.duration = 30000;
-      this.snackBar.openFromComponent(TelemetrySnackBarComponent, config);
-      this.storage.setValue(TelemetryService.localStoragePromptedTelemetryKey, true);
-    }
 
     // enable telemetry
     this.appInsights = new ApplicationInsights({
@@ -37,6 +28,7 @@ export class TelemetryService {
     });
 
     this.appInsights.loadAppInsights();
+    this.appInsights.context.application.ver = environment.version;
 
     // there can be multiple activationEnd events so we want to grab the last one.
     let lastActivationEnd = null;

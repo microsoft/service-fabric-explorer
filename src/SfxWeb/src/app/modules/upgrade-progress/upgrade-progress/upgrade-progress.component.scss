@@ -10,7 +10,7 @@
 
     .upgrade-domain-bar {
         display: inline-block;
-        color: white;
+        color: white !important;
         padding: 1px;
         text-align: center;
         vertical-align: middle;
@@ -25,6 +25,7 @@
             font-size: 9pt;
             width: 80px;
             height: 35px;
+            color: white !important;
 
             &.badge-unknown {
                 background-color: $badge-unknown-color;
