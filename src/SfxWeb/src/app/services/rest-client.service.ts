@@ -230,7 +230,7 @@ export class RestClientService {
       const url = 'ApplicationTypes/' + encodeURIComponent(appTypeName)
           + '/$/GetServiceTypes?ApplicationTypeVersion=' + encodeURIComponent(appTypeVersion);
 
-      const formedUrl = this.getApiUrl(url) //+ '&ApplicationTypeVersion=' + encodeURIComponent(appTypeVersion);
+      const formedUrl = this.getApiUrl(url); // + '&ApplicationTypeVersion=' + encodeURIComponent(appTypeVersion);
 
       return this.get(formedUrl, 'Get service types for application type', messageHandler);
   }
@@ -790,8 +790,8 @@ export class RestClientService {
    * @param apiVersion An optional parameter to specify the API Version.  If no API Version specified, defaults to "1.0"  This is due to the platform having independent versions for each type of call.
    */
   private getApiUrl(path: string, apiVersion = RestClientService.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean): string {
-      if(!environment.production) {
-          skipCacheToken = true
+      if (!environment.production) {
+          skipCacheToken = true;
       }
       // token to allow for invalidation of browser api call cache
       return StandaloneIntegration.clusterUrl +
