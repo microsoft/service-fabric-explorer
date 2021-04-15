@@ -10,8 +10,7 @@ const waitRequest = "@getserviceInfo";
 /*
 Default to stateful service for the page
 */
-
-const routeFormatter = (appName, serviceName) => `/Applications/${appName}/$/GetServices/${appName}/${serviceName}`;
+const routeFormatter = (appName, serviceName) => `/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}`;
 const urlFormatter = (appName, serviceName) => `/#/apptype/${appName}/app/${appName}/service/${appName}%252F${serviceName}`;
 
 
@@ -24,7 +23,7 @@ context('service', () => {
     describe("stateful", () => {
         beforeEach(() => {
             addRoute("description", "service-page/service-description.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetDescription?*`))
-            addRoute("serviceInfo", "service-page/service-info.json", apiUrl(`${routeFormatter(appName, "VisualObjectsApplicationType%2FVisualObjects.ActorService")}?*`))
+            addRoute("serviceInfo", "service-page/service-info.json", apiUrl(`${routeFormatter(appName, "VisualObjects.ActorService")}?*`))
             addRoute("partitions", "service-page/service-partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetPartitions?*`))
             addRoute("health", "service-page/service-health.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetHealth?*`))
             cy.visit(urlFormatter(appName, serviceName))
