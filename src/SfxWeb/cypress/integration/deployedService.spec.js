@@ -1,22 +1,22 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl } from './util';
+import { addDefaultFixtures, apiUrl, addRoute } from './util';
 
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorServicePkg";
-const waitRequest = "@info";
+const waitRequest = "@getinfo";
 
 context('app', () => {
     beforeEach(() => {
         addDefaultFixtures();
 
-        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:deployed-service/deployed-apps').as('apps');
-        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${serviceName}/$/GetHealth?*`), 'fx:deployed-service/health').as('health');
-        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${serviceName}?*`), 'fx:deployed-service/service-info').as('info');
-        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), 'fx:deployed-service/services').as('services');
 
-        cy.intercept(apiUrl(`ApplicationTypes/${appName}/$/GetServiceManifest?*`), 'fx:deployed-service/manifest').as('manifest');
+        addRoute("apps", "deployed-service/deployed-apps.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`));
+        addRoute("health", "deployed-service/health.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${serviceName}/$/GetHealth?*`));
+        addRoute("info", "deployed-service/service-info.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages/${serviceName}?*`));
+        addRoute("services", "deployed-service/services.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`));
+        addRoute("manifest", "deployed-service/manifest.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceManifest?*`));
 
         cy.visit(`/#/node/_nt_2/deployedapp/${appName}/deployedservice/${serviceName}`)
     })
@@ -52,7 +52,6 @@ context('app', () => {
                 cy.contains('manifest').click();
             })
 
-            cy.wait("@manifest")
             cy.url().should('include', '/manifest')
         })
     })

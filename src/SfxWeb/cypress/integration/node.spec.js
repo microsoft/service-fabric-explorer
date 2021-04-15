@@ -1,17 +1,24 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES  } from './util';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_route, FIXTURE_NODES, addRoute } from './util';
 
 const nodeName = "_nt_0"
-const nodeInfoRef = "@nodeInfo"
+const nodeInfoRef = "@getnodeInfo"
 
 context('node page', () => {
     beforeEach(() => {
         addDefaultFixtures();
-        cy.intercept(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/node-info').as('nodeInfo');
-        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetHealth?*`), 'fx:node-page/health').as('health');
-        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:node-page/apps').as('apps');
-        cy.route('GET', apiUrl(`/Nodes/${nodeName}/$/GetLoadInformation?*`), 'fixture:node-load/get-node-load-information').as("nodeLoad")
+
+        addRoute("nodeInfo", "node-page/node-info.json", apiUrl(`/Nodes/${nodeName}/?*`));
+        addRoute("nodehealthInfo", "node-page/health.json", apiUrl(`/Nodes/${nodeName}/$/GetHealth?*`));
+        addRoute("apps", "node-page/apps.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`));
+        addRoute("nodeLoad", "node-load/get-node-load-information.json", apiUrl(`/Nodes/${nodeName}/$/GetLoadInformation?*`));
+
+
+        // cy.intercept(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/node-info').as('nodeInfo');
+        // cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetHealth?*`), 'fx:node-page/health').as('health');
+        // cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:node-page/apps').as('apps');
+        // cy.route('GET', apiUrl(`/Nodes/${nodeName}/$/GetLoadInformation?*`), 'fixture:node-load/get-node-load-information').as("nodeLoad")
 
     })
 
@@ -23,7 +30,7 @@ context('node page', () => {
 
             cy.get('[data-cy=header]').within(() => {
                 cy.contains('_nt_0').click();
-              });
+            });
 
             cy.get('[data-cy=tiles]').within(() => {
                 cy.contains('6').click();
@@ -39,12 +46,12 @@ context('node page', () => {
         })
 
         it('deactivated', () => {
-            cy.intercept(apiUrl(`Nodes/${nodeName}/?*`), 'fx:node-page/deactivated-node').as('deactivatedNode');
-            cy.intercept(nodes_route, 'fx:node-page/node-list').as(FIXTURE_NODES);
+            addRoute("deactivatedNode", "node-page/deactivated-node.json", apiUrl(`/Nodes/${nodeName}/?*`));
+            addRoute(FIXTURE_NODES, "node-page/node-list.json", nodes_route);
 
             cy.visit(`/#/node/${nodeName}`);
 
-            cy.wait("@deactivatedNode");
+            cy.wait("@getdeactivatedNode");
 
             cy.get('[data-cy=deactivated]').within(() => {
                 cy.contains("86fa6852ad467a903afbbc67edc16b66");
@@ -55,17 +62,15 @@ context('node page', () => {
 
     describe("details", () => {
         it('view details', () => {
-            cy.intercept('GET', apiUrl(`/Nodes/${nodeName}/$/GetLoadInformation?*`), 'fixture:node-load/get-node-load-information').as("nodeLoad")
-
             cy.visit(`/#/node/${nodeName}`)
 
-            cy.wait([nodeInfoRef, "@health"]);
+            cy.wait([nodeInfoRef, "@getnodehealthInfo"]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
             });
-    
-            cy.wait("@nodeLoad" );
+
+            cy.wait("@getnodeLoad");
             cy.url().should('include', 'details');
             cy.get("[data-cy=load]");
         })
@@ -73,18 +78,17 @@ context('node page', () => {
 
     describe("events", () => {
         it('view events', () => {
-            cy.intercept(apiUrl(`EventsStore/Nodes/${nodeName}/$/Events?*`), "fx:empty-list").as("events")
+            addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`));
 
             cy.visit(`/#/node/${nodeName}`);
 
-            cy.wait([nodeInfoRef
-            ]);
+            cy.wait(nodeInfoRef);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();
             })
-    
-            cy.wait("@events");
+
+            cy.wait("@getevents");
             cy.url().should('include', 'events');
         })
     })

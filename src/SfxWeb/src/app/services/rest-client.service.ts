@@ -230,7 +230,7 @@ export class RestClientService {
       const url = 'ApplicationTypes/' + encodeURIComponent(appTypeName)
           + '/$/GetServiceTypes?ApplicationTypeVersion=' + encodeURIComponent(appTypeVersion);
 
-      const formedUrl = this.getApiUrl(url) + '&ApplicationTypeVersion=' + encodeURIComponent(appTypeVersion);
+      const formedUrl = this.getApiUrl(url) //+ '&ApplicationTypeVersion=' + encodeURIComponent(appTypeVersion);
 
       return this.get(formedUrl, 'Get service types for application type', messageHandler);
   }

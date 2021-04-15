@@ -23,7 +23,7 @@ context('Header', () => {
                 cy.contains("REFRESH RATE 10")
 
                 cy.contains('OFF').click();
-                cy.intercept('GET', upgradeProgress_route, 'fixture:upgrade-in-progress').as("record");
+                cy.intercept('GET', upgradeProgress_route, { fixture: 'upgrade-in-progress.json' }).as("record");
 
                 cy.contains("REFRESH RATE OFF")
 
@@ -46,7 +46,7 @@ context('Header', () => {
             cy.visit('/clustermap');
             cy.get('[data-cy=upgradebanner]').should('not.exist')
 
-            cy.intercept('GET', upgradeProgress_route, 'fixture:upgrade-in-progress').as("inprogres");
+            cy.intercept('GET', upgradeProgress_route, { fixture: 'upgrade-in-progress.json' }).as("inprogres");
 
             refresh();
             cy.wait("@inprogres");

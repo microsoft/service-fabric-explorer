@@ -16,7 +16,7 @@ context('apps list page', () => {
 
             cy.get('[data-cy=header').within(() => {
                 cy.contains('Applications').click();
-              })
+            })
 
             cy.get('[data-cy=appslist]').within(() => {
                 cy.contains(appName)
@@ -28,28 +28,26 @@ context('apps list page', () => {
     describe("upgrades in progress", () => {
 
         it.only('view upgrades', () => {
-            
+
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('upgrades in progress').click();
             })
-    
+
             cy.url().should('include', '/apps/upgrades')
 
-            cy.get("[data-cy=upgradingapps]").within( () => {
+            cy.get("[data-cy=upgradingapps]").within(() => {
                 cy.contains(EMPTY_LIST_TEXT);
             })
 
 
             addRoute("appUpgrading", "apps-page/upgrading-app.json", apiUrl(`/Applications/VisualObjectsApplicationType/$/GetUpgradeProgress?*`))
-            // addRoute(FIXTURE_APPS, "apps-page/upgrading-apps.json", apps_route)
             cy.intercept(apps_route, { fixture: 'apps-page/upgrading-apps.json' }).as('appsUpgrading')
 
-            
             refresh();
 
             cy.wait("@appsUpgrading");
             cy.wait("@getappUpgrading")
-            cy.get("[data-cy=upgradingapps]").within( () => {
+            cy.get("[data-cy=upgradingapps]").within(() => {
                 cy.contains(appName);
             })
         })
@@ -63,7 +61,7 @@ context('apps list page', () => {
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();
             })
-    
+
             cy.wait('@getevents')
             cy.url().should('include', '/apps/events')
         })

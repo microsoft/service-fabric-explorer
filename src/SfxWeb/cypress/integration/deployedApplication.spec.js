@@ -9,10 +9,10 @@ context('app', () => {
     beforeEach(() => {
         addDefaultFixtures();
 
-        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications?*`), 'fx:deployed-app-page/deployed-apps').as('apps');
-        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}?*`), 'fx:deployed-app-page/deployed-app-info').as('appInfo');
-        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetHealth?*`), 'fx:deployed-app-page/health').as('health');
-        cy.intercept(apiUrl(`Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), 'fx:deployed-app-page/service-packages').as('services');
+        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`), { fixture: 'deployed-app-page/deployed-apps.json' }).as('apps');
+        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}?*`), { fixture: 'deployed-app-page/deployed-app-info.json' }).as('appInfo');
+        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetHealth?*`), { fixture: 'deployed-app-page/health.json' }).as('health');
+        cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetServicePackages?*`), { fixture: 'deployed-app-page/service-packages.json' }).as('services');
 
         cy.visit(`/#/node/_nt_2/deployedapp/${appName}`)
     })

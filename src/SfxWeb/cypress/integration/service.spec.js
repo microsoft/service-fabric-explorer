@@ -18,21 +18,15 @@ const urlFormatter = (appName, serviceName) => `/#/apptype/${appName}/app/${appN
 context('service', () => {
     beforeEach(() => {
         addDefaultFixtures();
-        cy.intercept(apiUrl(`/Applications/${appName}/$/GetServices?*`), "fx:app-page/services").as("services")
+        cy.intercept(apiUrl(`/Applications/${appName}/$/GetServices?*`), {fixture: "app-page/services.json"}).as("services")
     })
 
     describe("stateful", () => {
         beforeEach(() => {
             addRoute("description", "service-page/service-description.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetDescription?*`))
-            addRoute("serviceInfo", "service-page/service-info.json", apiUrl(`${routeFormatter(appName, serviceName)}?*`))
+            addRoute("serviceInfo", "service-page/service-info.json", apiUrl(`${routeFormatter(appName, "VisualObjectsApplicationType%2FVisualObjects.ActorService")}?*`))
             addRoute("partitions", "service-page/service-partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetPartitions?*`))
             addRoute("health", "service-page/service-health.json", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetHealth?*`))
-
-            // cy.intercept(apiUrl(`${routeFormatter(appName, serviceName)}/$/GetDescription?*`), "fx:service-page/service-description").as("description");
-            // cy.intercept(apiUrl(`${routeFormatter(appName, serviceName)}?*`), "fx:service-page/service-info").as("serviceInfo");
-            // cy.intercept(apiUrl(`${routeFormatter(appName, serviceName)}/$/GetPartitions?*`), "fx:service-page/service-partitions").as("partitions");
-            // cy.intercept(apiUrl(`${routeFormatter(appName, serviceName)}/$/GetHealth?*`), "fx:service-page/service-health").as("health");
-
             cy.visit(urlFormatter(appName, serviceName))
         })
 
@@ -108,11 +102,6 @@ context('service', () => {
 
     describe("stateless", () => {
         beforeEach(() => {
-            // cy.intercept(apiUrl(`${routeFormatter(appName, statelessServiceName)}/$/GetDescription?*`), "fx:service-page/service-stateless-description").as("description");
-            // cy.intercept(apiUrl(`${routeFormatter(appName, statelessServiceName)}?*`), "fx:service-page/service-stateless-info").as("serviceInfo");
-            // cy.intercept(apiUrl(`${routeFormatter(appName, statelessServiceName)}/$/GetPartitions?*`), "fx:service-page/service-stateless-partitions").as("partitions");
-            // cy.intercept(apiUrl(`${routeFormatter(appName, statelessServiceName)}/$/GetHealth?*`), "fx:service-page/service-health").as("health")
-
             addRoute("description", "service-page/service-stateless-description.json", apiUrl(`${routeFormatter(appName, statelessServiceName)}/$/GetDescription?*`))
             addRoute("serviceInfo", "service-page/service-stateless-info.json", apiUrl(`${routeFormatter(appName, statelessServiceName)}?*`))
             addRoute("partitions", "service-page/service-stateless-partitions.json", apiUrl(`${routeFormatter(appName, statelessServiceName)}/$/GetPartitions?*`))

@@ -10,10 +10,10 @@ context('app', () => {
 
         addRoute("upgradeProgress", "app-page/upgrade-progress.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
         addRoute("services", "app-page/services.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
-        addRoute("apphealth", "app-page/app-health", apiUrl(`/Applications/${appName}/$/GetHealth?*`))
+        addRoute("apphealth", "app-page/app-health.json", apiUrl(`/Applications/${appName}/$/GetHealth?*`))
         addRoute("app", "app-page/app-type.json", apiUrl(`/Applications/${appName}/?*`))
         addRoute("manifest", "app-page/manifest.json", apiUrl(`/Applications/${appName}/$/GetApplicationManifest?*`))
-        addRoute(apiUrl("serviceTypes", "app-page/service-types.json", `/Applications/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*?*`))
+        addRoute("serviceTypes", "app-page/service-types.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`))
         cy.visit(`/#/apptype/${appName}/app/${appName}`)
     })
 

@@ -42,7 +42,7 @@ export const manifest_route = apiUrl('/$/GetClusterManifest*');
 
 export const FIXTURE_NODES ="nodes";
 export const FIXTURE_REF_NODES = exportFormat(FIXTURE_NODES);
-export const nodes_route = apiUrl('/Nodes/?api*');
+export const nodes_route = apiUrl('/Nodes/?*');
 
 export const FIXTURE_SYSTEMAPPLICATIONS_HEALTH ="systemAppHealth";
 export const FIXTURE_REF_SYSTEMAPPLICATIONS_HEALTH = exportFormat(FIXTURE_SYSTEMAPPLICATIONS_HEALTH);
@@ -71,6 +71,8 @@ export const addDefaultFixtures = () => {
     addRoute(FIXTURE_SYSTEMAPPLICATIONS_HEALTH, 'systemApplicationHealth.json', systemApplicationHealth_route)
     addRoute(FIXTURE_UPGRADEPROGRESS, 'upgradeProgress.json', upgradeProgress_route)
     addRoute(FIXTURE_UPGRADEREPAIRTASK, 'emptyRepairJobs.json', repairTask_route)
+
+    addRoute('visualObjectsApplicationType', 'visualObjectsApplicationType.json', apiUrl('/Applications/VisualObjectsApplicationType/*'))
 }
 
 
