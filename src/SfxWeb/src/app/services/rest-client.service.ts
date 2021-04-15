@@ -13,7 +13,7 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
          IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity } from '../Models/RawDataTypes';
-import { mergeMap, map, catchError, finalize } from 'rxjs/operators';
+import { mergeMap, map, catchError, finalize, skip } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
 import { Partition } from '../Models/DataModels/Partition';
@@ -230,7 +230,7 @@ export class RestClientService {
       const url = 'ApplicationTypes/' + encodeURIComponent(appTypeName)
           + '/$/GetServiceTypes?ApplicationTypeVersion=' + encodeURIComponent(appTypeVersion);
 
-      const formedUrl = this.getApiUrl(url) + '&ApplicationTypeVersion=' + encodeURIComponent(appTypeVersion);
+      const formedUrl = this.getApiUrl(url); // + '&ApplicationTypeVersion=' + encodeURIComponent(appTypeVersion);
 
       return this.get(formedUrl, 'Get service types for application type', messageHandler);
   }
@@ -790,6 +790,9 @@ export class RestClientService {
    * @param apiVersion An optional parameter to specify the API Version.  If no API Version specified, defaults to "1.0"  This is due to the platform having independent versions for each type of call.
    */
   private getApiUrl(path: string, apiVersion = RestClientService.defaultApiVersion, continuationToken?: string, skipCacheToken?: boolean): string {
+      if (!environment.production) {
+          skipCacheToken = true;
+      }
       // token to allow for invalidation of browser api call cache
       return StandaloneIntegration.clusterUrl +
           `/${path}${path.indexOf('?') === -1 ? '?' : '&'}api-version=${apiVersion ? apiVersion : RestClientService.defaultApiVersion}${skipCacheToken === true ? '' : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ''}`;

@@ -1,32 +1,33 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl} from './util';
+import { addDefaultFixtures, apiUrl, addRoute } from './util';
 
 const appName = "VisualObjectsApplicationType";
+
 
 /*
 Default to stateful service for the page
 */
 context('replica', () => {
     beforeEach(() => {
-        cy.server()
         addDefaultFixtures();
-        cy.route(apiUrl(`/Applications/${appName}/$/GetServices?*`), "fx:app-page/services").as("services")
+        addRoute("services", "app-page/services.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
     })
 
     describe("stateful", () => {
         const serviceName = "VisualObjects.ActorService";
         const partitionId = "28bfaf73-37b0-467d-9d47-d011b0aedbc0";
         const replicaId = "132429154475414363";
-        const waitRequest = "@replicaInfo";
+        const waitRequest = "@getreplicaInfo";
+        const baseUrl = `/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}/$/GetPartitions/${partitionId}`;
 
         beforeEach(() => {
-            cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${serviceName}/$/GetPartitions?*`), "fx:replica-page/stateful-service-partitions").as("partitions");
-            cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${serviceName}/$/GetPartitions/${partitionId}?*`), "fx:replica-page/stateful-partition-info").as("partitionInfo");
-            cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${serviceName}/$/GetPartitions/${partitionId}/$/GetReplicas?*`), "fx:replica-page/stateful-replicas-list").as("replicasList");
-            cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${serviceName}/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}?*`), "fx:replica-page/stateful-replica-info").as("replicaInfo");
-            cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${serviceName}/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/GetHealth?*`), "fx:replica-page/health").as("replicaHealth");
-            cy.route(apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/GetDetail?*`), "fx:replica-page/stateful-replica-detail").as("details");
+            addRoute("partitionInfo", "replica-page/stateful-partition-info.json", apiUrl(`${baseUrl}?*`))
+            addRoute("replicasList", "replica-page/stateful-replicas-list.json", apiUrl(`${baseUrl}/$/GetReplicas?*`))
+            addRoute("replicaInfo", "replica-page/stateful-replica-info.json", apiUrl(`${baseUrl}/$/GetReplicas/${replicaId}?*`))
+            addRoute("replicaHealth", "replica-page/health.json", apiUrl(`${baseUrl}/$/GetReplicas/${replicaId}/$/GetHealth?*`))
+            addRoute("details", "replica-page/stateful-replica-detail.json", apiUrl(`/Nodes/_nt_1/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/GetDetail?*`))
+            addRoute("partitions", "replica-page/stateful-service-partitions.json", apiUrl(`/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}/$/GetPartitions?*`))
 
             cy.visit(`/#/apptype/${appName}/app/${appName}/service/${appName}%252F${serviceName}/partition/${partitionId}/replica/${replicaId}`)
         })
@@ -52,7 +53,7 @@ context('replica', () => {
 
 
         it('view events', () => {
-            cy.route(apiUrl(`*/$/Events?*`), "fx:empty-list").as("events")
+            addRoute("events", "empty-list.json", apiUrl(`*/$/Events?*`))
 
             cy.wait(waitRequest);
 
@@ -68,15 +69,16 @@ context('replica', () => {
         const serviceName = "VisualObjects.WebService";
         const partitionId = "18efefc0-c136-4ba4-b1ec-d075704e412b";
         const replicaId = "132429339499004157";
-        const waitRequest = "@replicaInfo";
+        const waitRequest = "@getreplicaInfo";
+        const baseUrl = `/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}/$/GetPartitions/${partitionId}`;
 
         beforeEach(() => {
-            cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${serviceName}/$/GetPartitions?*`), "fx:replica-page/stateless-service-partitions").as("partitions");
-            cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${serviceName}/$/GetPartitions/${partitionId}?*`), "fx:replica-page/stateless-partition-info").as("partitionInfo");
-            cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${serviceName}/$/GetPartitions/${partitionId}/$/GetReplicas?*`), "fx:replica-page/stateless-replicas-list").as("replicasList");
-            cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${serviceName}/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}?*`), "fx:replica-page/stateless-replica-info").as("replicaInfo");
-            cy.route(apiUrl(`/Applications/${appName}/$/GetServices/${appName}/${serviceName}/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/GetHealth?*`), "fx:replica-page/health").as("replicaHealth");
-            cy.route(apiUrl(`/Nodes/_nt_3/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/GetDetail?*`), "fx:replica-page/stateless-replica-detail").as("details");
+            addRoute("partitionInfo", "replica-page/stateless-partition-info.json", apiUrl(`${baseUrl}?*`))
+            addRoute("replicasList", "replica-page/stateless-replicas-list.json", apiUrl(`${baseUrl}/$/GetReplicas?*`))
+            addRoute("replicaInfo", "replica-page/stateless-replica-info.json", apiUrl(`${baseUrl}/$/GetReplicas/${replicaId}?*`))
+            addRoute("replicaHealth", "replica-page/health.json", apiUrl(`${baseUrl}/$/GetReplicas/${replicaId}/$/GetHealth?*`))
+            addRoute("details", "replica-page/stateless-replica-detail.json", apiUrl(`/Nodes/_nt_3/$/GetPartitions/${partitionId}/$/GetReplicas/${replicaId}/$/GetDetail?*`))
+            addRoute("partitions", "replica-page/stateless-service-partitions.json", apiUrl(`/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}/$/GetPartitions?*`))
         })
 
         it('load essentials', () => {

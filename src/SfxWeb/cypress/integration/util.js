@@ -1,10 +1,10 @@
 /// <reference types="cypress" />
 
 export const apiUrl = (url) => {
-    return `${Cypress.env("API_PREFIX")}${url}`;
+    return `/${Cypress.env("API_PREFIX")}${url}`;
 }
 
-const fixtureRefFormatter = (fixture_ref_name) => {
+export const fixtureRefFormatter = (fixture_ref_name) => {
     return `@${fixture_ref_name}`;
 }
 
@@ -42,7 +42,7 @@ export const manifest_route = apiUrl('/$/GetClusterManifest*');
 
 export const FIXTURE_NODES ="nodes";
 export const FIXTURE_REF_NODES = exportFormat(FIXTURE_NODES);
-export const nodes_route = apiUrl('/Nodes/?api*');
+export const nodes_route = apiUrl('/Nodes/?*');
 
 export const FIXTURE_SYSTEMAPPLICATIONS_HEALTH ="systemAppHealth";
 export const FIXTURE_REF_SYSTEMAPPLICATIONS_HEALTH = exportFormat(FIXTURE_SYSTEMAPPLICATIONS_HEALTH);
@@ -52,10 +52,12 @@ export const FIXTURE_UPGRADEPROGRESS ="upgradeProgress";
 export const FIXTURE_REF_UPGRADEPROGRESS = exportFormat(FIXTURE_UPGRADEPROGRESS);
 export const upgradeProgress_route = apiUrl('/$/GetUpgradeProgress*');
 
+export const FIXTURE_UPGRADEREPAIRTASK ="GetRepairTaskList";
+export const FIXTURE_REF_UPGRADEREPAIRTASK = exportFormat(FIXTURE_UPGRADEPROGRESS);
+export const repairTask_route = apiUrl('/$/GetRepairTaskList?*');
+
 export const addRoute = (fixtureName, fixtureFileName, route, requestType = 'GET') => {
-    cy.fixture(fixtureFileName).as(fixtureName);
-    const fixtureRef = fixtureRefFormatter(fixtureName);
-    cy.route(requestType, route, fixtureRef).as(fixtureRequestFormatter(fixtureName))
+    cy.intercept(requestType, route, {fixture: fixtureFileName}).as(fixtureRequestFormatter(fixtureName))
 }
 
 export const addDefaultFixtures = () => {
@@ -68,6 +70,9 @@ export const addDefaultFixtures = () => {
     addRoute(FIXTURE_NODES, 'nodes.json', nodes_route)
     addRoute(FIXTURE_SYSTEMAPPLICATIONS_HEALTH, 'systemApplicationHealth.json', systemApplicationHealth_route)
     addRoute(FIXTURE_UPGRADEPROGRESS, 'upgradeProgress.json', upgradeProgress_route)
+    addRoute(FIXTURE_UPGRADEREPAIRTASK, 'emptyRepairJobs.json', repairTask_route)
+
+    addRoute('visualObjectsApplicationType', 'visualObjectsApplicationType.json', apiUrl('/Applications/VisualObjectsApplicationType/*'))
 }
 
 
