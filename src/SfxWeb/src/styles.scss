@@ -74,7 +74,6 @@ $SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
     h4 {
         color: $detail-tab-color;
         margin-left: 0;
-        // text-transform: uppercase;
         font-size: $detail-tab-title-font-size;
         // set padding instead of margin to avoid jumping of collapsed section
         margin-top: 0;
