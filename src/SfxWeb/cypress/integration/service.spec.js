@@ -51,7 +51,7 @@ context('service', () => {
             cy.wait(waitRequest);
 
             cy.get('[data-cy=actions]').within(() => {
-                cy.contains("ACTIONS").click();
+                cy.contains("Actions").click();
                 cy.contains("Delete Service")
             })
         })
@@ -122,7 +122,7 @@ context('service', () => {
             cy.wait(waitRequest);
 
             cy.get('[data-cy=actions]').within(() => {
-                cy.contains("ACTIONS").click();
+                cy.contains("Actions").click();
                 cy.contains("Delete Service")
                 cy.contains("Scale Service")
             })

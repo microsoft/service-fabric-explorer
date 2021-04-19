@@ -89,7 +89,7 @@ export const refresh = () => {
 
 export const turnOffRefresh = () => {
     cy.get("[data-cy=refreshrate]").within( () => {
-        cy.contains("OFF").click();
+        cy.contains("Off").click();
     })
 }
 

@@ -46,15 +46,15 @@
     <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard" style="display: block"></app-dashboard-tile>
     <app-dashboard-text-tile [barClass]="upgradeAppsCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
         link="apps/upgrades" [count]="upgradeAppsCount"
-        [title]="upgradeAppsCount === 1 ? 'APPLICATION UPGRADE IN PROGRESS' : 'APPLICATION UPGRADES IN PROGRESS'"
+        [title]="upgradeAppsCount === 1 ? 'Application Upgrade In Progress' : 'Application Upgrade In Progress'"
         style="display: block"></app-dashboard-text-tile>
     <app-dashboard-text-tile
         [barClass]="repairtaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
         link="repairtasks" [count]="repairtaskCollection.repairTasks.length" *ngIf="repairtaskCollection.isInitialized"
-        title="REPAIR JOBS IN PROGRESS" style="display: block"></app-dashboard-text-tile>
+        title="Repair Jobs In Progress" style="display: block"></app-dashboard-text-tile>
     <app-dashboard-text-tile
         [barClass]="nodes.disabledAndDisablingCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" link="nodes"
-        [count]="nodes.disabledAndDisablingCount" *ngIf="nodes.isInitialized" title="DISABLED/DISABLING NODES" style="display: block">
+        [count]="nodes.disabledAndDisablingCount" *ngIf="nodes.isInitialized" title="Disabled/Disabling Nodes" style="display: block">
     </app-dashboard-text-tile>
 </div>
 
