@@ -49,6 +49,7 @@ context('apps list page', () => {
             cy.wait("@getappUpgrading")
             cy.get("[data-cy=upgradingapps]").within(() => {
                 cy.contains(appName);
+                cy.contains("12341234");
             })
         })
     })
