@@ -14,10 +14,9 @@
         padding: 1px;
         text-align: center;
         vertical-align: middle;
-
         .upgrade-domain-title {
-            padding-left: 1px;
-            padding-right: 1px;
+            border: 1px solid black;
+            padding: 1px;
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
