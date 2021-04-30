@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
-import { RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { IRepairTaskPhase, RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { DataService } from 'src/app/services/data.service';
 import { forkJoin } from 'rxjs';
 import { RefreshService } from 'src/app/services/refresh.service';
@@ -43,5 +43,4 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
       this.nodes = data.filter(node => node);
     }));
   }
-
 }
