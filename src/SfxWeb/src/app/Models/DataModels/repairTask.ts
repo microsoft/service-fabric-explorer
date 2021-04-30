@@ -201,7 +201,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
                 break;
         }
 
-        if(this.timeStampsCollapses[name] === false) {
+        if (this.timeStampsCollapses[name] === false) {
           startCollapsed = false;
         }else {
           this.timeStampsCollapses[name] = startCollapsed;
