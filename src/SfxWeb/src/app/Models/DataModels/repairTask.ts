@@ -71,6 +71,8 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
     public impactedNodes: string[] = [];
     public history: IRepairTaskHistoryPhase[] = [];
+    private timeStampsCollapses: Record<string, boolean> = {};
+
     public createdAt = '';
 
     public couldParseExecutorData = false;
@@ -199,6 +201,12 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
                 break;
         }
 
+        if (this.timeStampsCollapses[name] === false) {
+          startCollapsed = false;
+        }else {
+          this.timeStampsCollapses[name] = startCollapsed;
+        }
+
         return {
             name,
             status: statusText,
@@ -248,6 +256,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             this.historyPhases.push(this.generateHistoryPhase('Executing', [this.history[5], this.history[6]]),
                                     this.generateHistoryPhase('Restoring', this.history.slice(7)));
         }
+
         return of(null);
     }
 
@@ -257,5 +266,10 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
     public getHistoryPhase(phase: string): IRepairTaskPhase {
         return this.historyPhases.find(historyPhase => historyPhase.name === phase);
+    }
+
+    public changePhaseCollapse(phase: string, state: boolean) {
+      this.getHistoryPhase(phase).startCollapsed = state;
+      this.timeStampsCollapses[phase] = state;
     }
 }
