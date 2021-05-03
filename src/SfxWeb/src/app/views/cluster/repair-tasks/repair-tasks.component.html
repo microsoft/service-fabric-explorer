@@ -2,7 +2,7 @@
     <div class="tile-container" data-cy="tiles">
         <app-dashboard-text-tile
             [barClass]="repairTaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
-            link="repairtasks" [count]="repairTaskCollection.repairTasks.length"
+            [count]="repairTaskCollection.repairTasks.length"
             *ngIf="repairTaskCollection.isInitialized" title="Repair Jobs In Progress" style="display: block">
         </app-dashboard-text-tile>
 
