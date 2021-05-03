@@ -7,10 +7,10 @@ export function initApp(aadService: AdalService) {
             await aadService.load().toPromise();
 
             if (aadService.aadEnabled){
-                if (!aadService.isAuthenticated){
+              aadService.handleWindowCallback();
+              if (!aadService.isAuthenticated){
                     aadService.login();
                 }
-                aadService.handleWindowCallback();
 
                 return of(null);
             }else{
