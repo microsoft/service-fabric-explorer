@@ -67,14 +67,14 @@
     </button>
       <div class="left-panel left-bar"  [ngStyle]="{'width': smallScreenSize ? smallScreenLeftPanelWidth : treeWidth }">
           <nav class="tree-container" [attr.aria-hidden]="smallScreenSize ? smallScreenLeftPanelWidth === '0px' : false" role="navigation">
-            <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize"  ></app-tree-view>
+            <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize" *ngIf="showTree" ></app-tree-view>
           </nav>
         <div class="slider-bar" appDrag (dragFinish)="resize($event)" *ngIf="!smallScreenSize"></div>
         <div class="slider-bar" style="cursor: initial;" *ngIf="smallScreenSize"></div>
     </div>
     <div [ngStyle]="{'left': smallScreenSize ? '0px' : rightOffset }" class="right-panel main-content" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
       <main>
-        <div class="view-container" #main>
+        <div class="view-container" #main *ngIf="showTree">
           <router-outlet id="view-container" ></router-outlet>
         </div>
       </main>

@@ -5,6 +5,7 @@ import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import * as AuthenticationContext from 'adal-angular';
 import { adal } from 'adal-angular';
+import { MsalService } from '@azure/msal-angular';
 
 const createAuthContextFn: adal.AuthenticationContextStatic = AuthenticationContext;
 
@@ -39,7 +40,7 @@ export class AdalService {
             clientId: data.raw.metadata.cluster,
             cacheLocation: 'localStorage',
         };
-
+        // console.log(this.msal)
           this.context = new createAuthContextFn(config);
           this.aadEnabled = true;
         }

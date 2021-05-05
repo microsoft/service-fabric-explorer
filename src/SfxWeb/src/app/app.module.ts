@@ -18,6 +18,10 @@ import { DebuggingModule } from './views/debugging/debugging.module';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppInsightsErrorHandler } from './error-handling';
+import { MsalGuard, MsalInterceptor, MsalBroadcastService, MsalInterceptorConfiguration, MsalModule, MsalService, MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG, MsalGuardConfiguration, MsalRedirectComponent } from '@azure/msal-angular';
+import { IPublicClientApplication, PublicClientApplication, InteractionType, BrowserCacheLocation, LogLevel } from '@azure/msal-browser';
+import { RestClientService } from './services/rest-client.service';
+import { MsalConfigDynamicModule } from './modules/msal-dynamic-config/msal-dynamic-config.module';
 
 @NgModule({
   declarations: [
@@ -36,22 +40,17 @@ import { AppInsightsErrorHandler } from './error-handling';
     ReactiveFormsModule,
     NgbTooltipModule,
     MatSnackBarModule,
-    DebuggingModule
+    DebuggingModule,
+    MsalConfigDynamicModule.forRoot()
   ],
 
   providers: [
     {provide: LocationStrategy, useClass: HashLocationStrategy},
-    AdalService,
     DataService,
-    {
-      provide: APP_INITIALIZER,
-      useFactory: initApp,
-      multi: true,
-      deps: [AdalService]
-    },
+    RestClientService,
     httpInterceptorProviders,
     { provide: ErrorHandler, useClass: AppInsightsErrorHandler }
   ],
-  bootstrap: [AppComponent],
+  bootstrap: [AppComponent, MsalRedirectComponent],
 })
 export class AppModule { }

@@ -878,7 +878,8 @@ export class RestClientService {
         statusCode: 200
     };
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
-        const header = `${err.status.toString()} : ${apiDesc}`;
+      console.log(err)
+        const header = `${err?.status?.toString()} : ${apiDesc}`;
 
         const message = messageHandler.getErrorMessage(apiDesc, err);
         let displayMessage = '';
