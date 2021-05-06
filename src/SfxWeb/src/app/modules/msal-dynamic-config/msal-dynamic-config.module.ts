@@ -28,13 +28,8 @@ export function MSALInstanceFactory(config: ConfigServiceService): IPublicClient
   return new PublicClientApplication({
     auth: {
       clientId: config.metaData.metadata.cluster,
-      // authority: config.metaData.metadata.tenant,
-
       authority:  config.metaData.metadata.authority,
       redirectUri: config.metaData.metadata.redirect,
-
-      // redirectUri: 'http://localhost:4200',
-      // postLogoutRedirectUri: 'http://localhost:4200'
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,
@@ -55,13 +50,13 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   // protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['user.read']);
 
   return {
-    interactionType: InteractionType.Redirect,
+    interactionType: InteractionType.Popup,
     protectedResourceMap
   };
 }
 
   export function MSALGuardConfigFactory(): MsalGuardConfiguration {
-    return { interactionType: InteractionType.Redirect };
+    return { interactionType: InteractionType.Popup };
   }
 
 @NgModule({
