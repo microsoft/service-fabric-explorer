@@ -37,7 +37,7 @@
     "adal-angular": "^1.0.17",
     "bootstrap": "^4.4.1",
     "dayjs": "^1.8.20",
-    "highcharts": "^8.1.1",
+    "highcharts": "^9.0.0",
     "lodash": "^4.17.19",
     "luxon": "^1.22.0",
     "metro4": "^4.3.5",
