@@ -54,8 +54,10 @@ const routes: Routes = [
   { path: '**', loadChildren: () => import(`./views/cluster/cluster.module`).then(m => m.ClusterModule) },
 ];
 
+const isIframe = window !== window.parent && !window.opener;
+
 @NgModule({
-  imports: [RouterModule.forRoot(routes, { useHash: true, relativeLinkResolution: 'legacy' })],
+  imports: [RouterModule.forRoot(routes, { useHash: true, relativeLinkResolution: 'legacy',initialNavigation: !isIframe ? 'enabled' : 'disabled'})],
   exports: [RouterModule]
 })
 export class AppRoutingModule { }
