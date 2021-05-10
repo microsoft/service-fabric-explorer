@@ -12,6 +12,7 @@ import { RefreshService } from 'src/app/services/refresh.service';
 import { RouterTestingModule } from '@angular/router/testing';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
 describe('RepairTasksComponent', () => {
   let component: RepairTasksComponent;
@@ -137,7 +138,7 @@ describe('RepairTasksComponent', () => {
       providers: [{provide: SettingsService, useValue: settingsStub },
                   {provide: DataService, useValue: dataServiceStub },
                   RefreshService],
-      imports: [RouterTestingModule]
+      imports: [RouterTestingModule, NgbNavModule]
     })
     .compileComponents();
   }));

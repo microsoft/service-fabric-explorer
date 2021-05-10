@@ -1,17 +1,14 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, FIXTURE_REF_APPS, apps_route, EMPTY_LIST_TEXT, refresh } from './util';
+import { apiUrl, addDefaultFixtures, addRoute, FIXTURE_REF_APPS, apps_route, EMPTY_LIST_TEXT, refresh, FIXTURE_APPS } from './util';
 
 const appName = "fabric:/VisualObjectsApplicationType";
 
 context('apps list page', () => {
 
     beforeEach(() => {
-
-        cy.server()
         addDefaultFixtures();
         cy.visit('/#/apps')
-
     })
 
     describe("essentials", () => {
@@ -19,7 +16,7 @@ context('apps list page', () => {
 
             cy.get('[data-cy=header').within(() => {
                 cy.contains('Applications').click();
-              })
+            })
 
             cy.get('[data-cy=appslist]').within(() => {
                 cy.contains(appName)
@@ -30,28 +27,29 @@ context('apps list page', () => {
 
     describe("upgrades in progress", () => {
 
-        it('view upgrades', () => {
-            
+        it.only('view upgrades', () => {
+
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('upgrades in progress').click();
             })
-    
+
             cy.url().should('include', '/apps/upgrades')
 
-            cy.get("[data-cy=upgradingapps]").within( () => {
+            cy.get("[data-cy=upgradingapps]").within(() => {
                 cy.contains(EMPTY_LIST_TEXT);
             })
 
-            cy.route('GET', apiUrl(`/Applications/VisualObjectsApplicationType/$/GetUpgradeProgress?*`), 'fx:apps-page/upgrading-app').as("appUpgrading");
-            cy.route('GET', apps_route, 'fx:apps-page/upgrading-apps').as("appsUpgrading");
+
+            addRoute("appUpgrading", "apps-page/upgrading-app.json", apiUrl(`/Applications/VisualObjectsApplicationType/$/GetUpgradeProgress?*`))
+            cy.intercept(apps_route, { fixture: 'apps-page/upgrading-apps.json' }).as('appsUpgrading')
 
             refresh();
 
             cy.wait("@appsUpgrading");
-            cy.wait("@appUpgrading");
-
-            cy.get("[data-cy=upgradingapps]").within( () => {
+            cy.wait("@getappUpgrading")
+            cy.get("[data-cy=upgradingapps]").within(() => {
                 cy.contains(appName);
+                cy.contains("12341234");
             })
         })
     })
@@ -59,13 +57,13 @@ context('apps list page', () => {
     describe("events", () => {
         it('view events', () => {
             cy.wait(FIXTURE_REF_APPS);
-            cy.route(apiUrl(`/EventsStore/**`), "fx:empty-list").as("events")
+            addRoute("events", "empty-list.json", apiUrl(`/EventsStore/**`))
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();
             })
-    
-            cy.wait('@events')
+
+            cy.wait('@getevents')
             cy.url().should('include', '/apps/events')
         })
     })

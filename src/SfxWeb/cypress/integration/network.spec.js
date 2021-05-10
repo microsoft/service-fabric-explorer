@@ -9,8 +9,6 @@ const recording = '[data-cy=recording]';
 context('Network Page', () => {
 
     beforeEach(() => {
-
-        cy.server()
         addDefaultFixtures();
 
         cy.visit('/#/networking')
@@ -72,6 +70,8 @@ context('Network Page', () => {
 
             //request count should go up
             refresh();
+            cy.wait(FIXTURE_REF_CLUSTERHEALTHCHUNK)
+
             cy.get(requestCount).within(ele => {
                 expect(parseInt(ele.text())).to.be.greaterThan(0);
             })

@@ -57,6 +57,8 @@ export const NotStartedStatus: IDisplayStatus = {
 
 
 export class RepairTask extends DataModelBase<IRawRepairTask> {
+    public static readonly ExecutingStatus = 'Executing';
+    public static readonly PreparingStatus = 'Preparing';
     public static NonStartedTimeStamp = '0001-01-01T00:00:00.000Z';
 
     public get id(): string {
@@ -69,6 +71,8 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
     public impactedNodes: string[] = [];
     public history: IRepairTaskHistoryPhase[] = [];
+    private timeStampsCollapses: Record<string, boolean> = {};
+
     public createdAt = '';
 
     public couldParseExecutorData = false;
@@ -95,10 +99,10 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
     }
 
     private parseHistory() {
-        const history = [
-            { timestamp: this.raw.History.PreparingUtcTimestamp, phase: 'Preparing' },
+        let history = [
             { timestamp: this.raw.History.ClaimedUtcTimestamp, phase: 'Claimed' },
             { timestamp: this.raw.History.CreatedUtcTimestamp, phase: 'Created' },
+            { timestamp: this.raw.History.PreparingUtcTimestamp, phase: 'Preparing' },
             { timestamp: this.raw.History.PreparingHealthCheckStartUtcTimestamp, phase: 'Preparing Health Check start' },
             { timestamp: this.raw.History.PreparingHealthCheckEndUtcTimestamp, phase: 'Preparing Health check End' },
             { timestamp: this.raw.History.ApprovedUtcTimestamp, phase: 'Approved' },
@@ -108,6 +112,11 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             { timestamp: this.raw.History.RestoringHealthCheckEndUtcTimestamp, phase: 'Restoring Health check end' },
             { timestamp: this.raw.History.CompletedUtcTimestamp, phase: 'Completed' },
         ];
+
+        // if the job has been cancelled there shouldnt be Approved or executing phases anymore
+        if (this.raw.ResultStatus === 'Cancelled') {
+            history = history.filter(stamp => !['Approved', 'Executing'].includes(stamp.phase) );
+        }
 
         this.history = history.map((phase, index) => {
             let duration = '';
@@ -192,6 +201,12 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
                 break;
         }
 
+        if (this.timeStampsCollapses[name] === false) {
+          startCollapsed = false;
+        }else {
+          this.timeStampsCollapses[name] = startCollapsed;
+        }
+
         return {
             name,
             status: statusText,
@@ -232,9 +247,29 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
         this.historyPhases = [
             this.generateHistoryPhase('Preparing', this.history.slice(0, 5)),
-            this.generateHistoryPhase('Executing', [this.history[6]]),
-            this.generateHistoryPhase('Restoring', this.history.slice(7))
         ];
+
+        // cancelled jobs have no executing phase
+        if (this.raw.ResultStatus === 'Cancelled') {
+            this.historyPhases.push(this.generateHistoryPhase('Restoring', this.history.slice(6)));
+        }else {
+            this.historyPhases.push(this.generateHistoryPhase('Executing', [this.history[5], this.history[6]]),
+                                    this.generateHistoryPhase('Restoring', this.history.slice(7)));
+        }
+
         return of(null);
+    }
+
+    public getPhase(phase: string): IRepairTaskHistoryPhase {
+        return this.history.find(historyPhase => historyPhase.phase === phase);
+    }
+
+    public getHistoryPhase(phase: string): IRepairTaskPhase {
+        return this.historyPhases.find(historyPhase => historyPhase.name === phase);
+    }
+
+    public changePhaseCollapse(phase: string, state: boolean) {
+      this.getHistoryPhase(phase).startCollapsed = state;
+      this.timeStampsCollapses[phase] = state;
     }
 }

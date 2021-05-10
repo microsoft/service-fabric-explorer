@@ -1,13 +1,10 @@
 /// <reference types="cypress" />
 
-import {
-    apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH
-} from './util';
+import { addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH } from './util';
 
 context('table', () => {
 
     beforeEach(() => {
-        cy.server()
         addDefaultFixtures();
         cy.visit('')
 

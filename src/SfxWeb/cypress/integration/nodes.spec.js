@@ -1,15 +1,11 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES } from './util';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, addRoute } from './util';
 
 context('nodes list page', () => {
-
     beforeEach(() => {
-
-        cy.server()
         addDefaultFixtures();
         cy.visit('/#/nodes')
-
     })
 
     describe("essentials", () => {
@@ -18,7 +14,7 @@ context('nodes list page', () => {
 
             cy.get('[data-cy=header]').within(() => {
                 cy.contains('Nodes').click();
-              });
+            });
 
             cy.get('[data-cy=nodesList]').within(() => {
                 checkTableSize(5);
@@ -29,15 +25,15 @@ context('nodes list page', () => {
 
     describe("events", () => {
         it('view events', () => {
-            cy.route(apiUrl(`EventsStore/Nodes/Events?*`), "fx:empty-list").as("events");
+            addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/Events?*`));
 
             cy.wait(FIXTURE_REF_NODES);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();
             })
-    
-            cy.wait('@events');
+
+            cy.wait('@getevents');
             cy.url().should('include', 'events');
         })
     })

@@ -37,10 +37,10 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         }));
     }
 
-    public getNodeStateCounts(): INodesStatusDetails[] {
+    public getNodeStateCounts(includeAllNodes: boolean = true, includeSeedNoddes: boolean = true): INodesStatusDetails[] {
         const counts = {};
-        const allNodes = new NodeStatusDetails('All nodes');
-        const seedNodes = new NodeStatusDetails('Seed Nodes');
+        const allNodes = new NodeStatusDetails(NodeStatusDetails.allNodeText);
+        const seedNodes = new NodeStatusDetails(NodeStatusDetails.allSeedNodesText);
 
         this.collection.forEach(node => {
             if (node.raw.IsSeedNode) {
@@ -52,7 +52,17 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
             counts[node.raw.Type].add(node);
             allNodes.add(node);
         });
-        return [allNodes, seedNodes].concat(Object.keys(counts).map(key => counts[key]));
+
+        const resultList = [];
+
+        if (includeAllNodes) {
+            resultList.push(allNodes);
+        }
+
+        if (includeSeedNoddes) {
+            resultList.push(seedNodes);
+        }
+        return resultList.concat(Object.keys(counts).map(key => counts[key]));
     }
 
     protected get indexPropery(): string {
@@ -81,17 +91,20 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         let disabledNodes = 0;
         let disablingNodes = 0;
 
-        this.disabledAndDisablingNodes = [];
+        const disabled = [];
+        const disabling = [];
         this.collection.forEach(node => {
             if (node.raw.NodeStatus === NodeStatusConstants.Disabled) {
                 disabledNodes++;
-                this.disabledAndDisablingNodes.push(node);
+                disabled.push(node);
             }
             if (node.raw.NodeStatus === NodeStatusConstants.Disabling) {
                 disablingNodes++;
-                this.disabledAndDisablingNodes.push(node);
+                disabling.push(node);
             }
         });
+
+        this.disabledAndDisablingNodes = disabling.concat(disabled);
 
         this.seedNodeCount = seedNodes.length;
         this.disabledAndDisablingCount = disabledNodes + disablingNodes;

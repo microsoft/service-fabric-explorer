@@ -74,7 +74,6 @@ $SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
     h4 {
         color: $detail-tab-color;
         margin-left: 0;
-        text-transform: uppercase;
         font-size: $detail-tab-title-font-size;
         // set padding instead of margin to avoid jumping of collapsed section
         margin-top: 0;
@@ -877,10 +876,14 @@ app-navbar {
     grid-row: span 2;
   }
 
+.long {
+    grid-column: span 2;
+}
+
 .tile-container {
     display: grid;
     grid-auto-flow: dense;
-    grid-template-columns: repeat(auto-fit, 240px);
+    grid-template-columns: repeat(auto-fit, $tile-width);
     grid-gap: 10px;
     grid-auto-rows: 150px;
     margin-bottom: 15px;
