@@ -28,7 +28,7 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
       chart: {
         type: 'area',
         zoomType: 'x',
-        backgroundColor: '#191919'
+        backgroundColor: '#262626'
       },
       title: {
         text: 'Filter and sort the tables below',
