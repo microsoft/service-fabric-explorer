@@ -11,29 +11,27 @@ export function initApp(aadService: AdalService) {
               if (!aadService.isAuthenticated){
                     aadService.login();
                 }
-                console.log(aadService.isAuthenticated)
+              await waitUntil(aadService);
 
-                await waitUntil(aadService)
-
-                return of(null);
+              return of(null);
             }else{
                 return of(null);
             }
         } catch (e){
-          console.log(e)
+          console.log(e);
           return of(null);
         }
     };
   }
 
 
-  async function waitUntil(service) {
+async function waitUntil(service) {
     return await new Promise(resolve => {
       const interval = setInterval(() => {
         if (!service.authContext.loginInProgress()) {
           resolve(null);
           clearInterval(interval);
-        };
+        }
       }, 100);
     });
   }
