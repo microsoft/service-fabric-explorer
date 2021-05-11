@@ -3,30 +3,19 @@ import { RestClientService } from './rest-client.service';
 import { Observable, Subscriber, of } from 'rxjs';
 import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
-import * as AuthenticationContext from 'adal-angular';
-import { adal } from 'adal-angular';
-
-const createAuthContextFn: adal.AuthenticationContextStatic = AuthenticationContext;
-
-export class AdalConfig {
-  apiEndpoint: string;
-  clientId: string;
-  resource: string;
-  tenantId: string;
-  redirectUri: string;
-}
+import AuthenticationContext, { Options } from 'adal-angular';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdalService {
-  private context: adal.AuthenticationContext;
+  private context: AuthenticationContext;
   public config: AadMetadata;
   public aadEnabled = false;
 
   constructor(private http: RestClientService) { }
 
-  load(): Observable<adal.AuthenticationContext> {
+  load(): Observable<AuthenticationContext> {
     if (!!this.context){
       return of(this.context);
     }else{
@@ -34,14 +23,17 @@ export class AdalService {
         this.config = data;
         if (data.isAadAuthType){
 
-          const config = {
+          const config: Options = {
             tenant: data.raw.metadata.tenant,
             clientId: data.raw.metadata.cluster,
             cacheLocation: 'localStorage',
+            popUp: true
         };
 
-          this.context = new createAuthContextFn(config);
+          this.context = new AuthenticationContext(config);
           this.aadEnabled = true;
+
+          return this.context;
         }
       }));
     }
@@ -67,7 +59,7 @@ export class AdalService {
       return this.context.getCachedToken(this.config.raw.metadata.cluster);
   }
   public get isAuthenticated(): boolean {
-      return this.userInfo && this.accessToken;
+      return !!this.userInfo && !!this.accessToken;
   }
 
   public isCallback(hash: string) {
