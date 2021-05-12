@@ -1,6 +1,6 @@
 import { Injectable } from '@angular/core';
 import { RestClientService } from './rest-client.service';
-import { Observable, Subscriber, of } from 'rxjs';
+import { Observable, Subscriber, of, Subject, ReplaySubject } from 'rxjs';
 import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import AuthenticationContext, { Options } from 'adal-angular';
@@ -12,6 +12,8 @@ export class AdalService {
   private context: AuthenticationContext;
   public config: AadMetadata;
   public aadEnabled = false;
+
+  private refreshSubject: Subject<string>;
 
   constructor(private http: RestClientService) { }
 
@@ -76,19 +78,22 @@ export class AdalService {
   }
 
   public acquireTokenResilient(resource: string): Observable<any> {
-      return new Observable<any>((subscriber: Subscriber<any>) =>
-          {
-            this.context.acquireToken(resource, (message: string, token: string) => {
-              if (token) {
-                  subscriber.next(token);
-              } else {
-                  console.error(message);
-                  subscriber.error(message);
-              }
-              subscriber.complete();
-          });
+      let subject = new ReplaySubject<string>();
+      if(!this.refreshSubject) {
+        this.refreshSubject = subject;
+        this.context.acquireToken(resource, (message: string, token: string) => {
+          if (token) {
+            this.refreshSubject.next(token);
+            this.refreshSubject.complete();
+            this.refreshSubject = null;
+          } else {
+            location.reload()
+
           }
-      ).pipe(retry(3));
+      });
+      }
+
+      return subject.asObservable();
   }
 
 }
