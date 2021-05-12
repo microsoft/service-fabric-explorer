@@ -29,7 +29,7 @@ export class AdalService {
             tenant: data.raw.metadata.tenant,
             clientId: data.raw.metadata.cluster,
             cacheLocation: 'localStorage',
-            popUp: true
+            // popUp: true
         };
 
           this.context = new AuthenticationContext(config);
