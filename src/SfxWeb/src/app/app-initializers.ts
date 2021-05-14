@@ -11,15 +11,10 @@ export function initApp(aadService: AdalService) {
               if (!aadService.isAuthenticated){
                     aadService.login();
                 }
-              await waitUntil(aadService);
-
-              return of(null);
-            }else{
-                return of(null);
+              // await waitUntil(aadService);
             }
         } catch (e){
           console.log(e);
-          return of(null);
         }
     };
   }
