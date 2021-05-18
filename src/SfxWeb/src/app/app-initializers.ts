@@ -1,32 +1,18 @@
 import { AdalService } from './services/adal.service';
-import { of } from 'rxjs';
 
 export function initApp(aadService: AdalService) {
-    return async () => {
-        try {
-            await aadService.load().toPromise();
+  return async () => {
+    try {
+      await aadService.load().toPromise();
 
-            if (aadService.aadEnabled){
-              aadService.handleWindowCallback();
-              if (!aadService.isAuthenticated){
-                    aadService.login();
-                }
-              // await waitUntil(aadService);
-            }
-        } catch (e){
-          console.log(e);
+      if (aadService.aadEnabled) {
+        aadService.handleWindowCallback();
+        if (!aadService.isAuthenticated) {
+          aadService.login();
         }
-    };
-  }
-
-
-async function waitUntil(service) {
-    return await new Promise(resolve => {
-      const interval = setInterval(() => {
-        if (!service.authContext.loginInProgress()) {
-          resolve(null);
-          clearInterval(interval);
-        }
-      }, 100);
-    });
-  }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}

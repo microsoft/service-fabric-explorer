@@ -13,8 +13,6 @@ export class AdalService {
   public config: AadMetadata;
   public aadEnabled = false;
 
-  private refreshSubject: Subject<string>;
-
   constructor(private http: RestClientService) { }
 
   load(): Observable<AuthenticationContext> {
@@ -29,7 +27,6 @@ export class AdalService {
             tenant: data.raw.metadata.tenant,
             clientId: data.raw.metadata.cluster,
             cacheLocation: 'localStorage',
-            // popUp: true
         };
 
           this.context = new AuthenticationContext(config);
@@ -78,22 +75,16 @@ export class AdalService {
   }
 
   public acquireTokenResilient(resource: string): Observable<any> {
-      let subject = new ReplaySubject<string>();
-      if(!this.refreshSubject) {
-        this.refreshSubject = subject;
-        this.context.acquireToken(resource, (message: string, token: string) => {
-          if (token) {
-            this.refreshSubject.next(token);
-            this.refreshSubject.complete();
-            this.refreshSubject = null;
-          } else {
-            location.reload()
-
-          }
+    return new Observable<any>((subscriber: Subscriber<any>) => {
+      this.context.acquireToken(resource, (message: string, token: string) => {
+        if (token) {
+          subscriber.next(token);
+        } else {
+          console.error(message);
+          subscriber.error(message);
+        }
+        subscriber.complete();
       });
-      }
-
-      return subject.asObservable();
+    }).pipe(retry(3));
   }
-
 }
