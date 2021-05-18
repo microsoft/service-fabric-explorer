@@ -21,6 +21,10 @@ export class NavbarComponent {
     this.router.navigate([route]);
   }
 
+  tabTracker(index: number, tab: ITab) {
+    return tab.name;
+  }
+
 }
 
 export interface ITab {
