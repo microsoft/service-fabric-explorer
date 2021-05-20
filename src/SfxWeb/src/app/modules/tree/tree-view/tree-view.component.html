@@ -21,7 +21,7 @@
             <app-input (changed)="setSearchText($event)"></app-input>
         </div>
     </div>
-    <div class="tree-list">
+    <div class="tree-list" #treeContainer>
         <span class="expand-panel-wrapper" *ngIf="canExpand && !smallWindowSize">
             <button class="expand-panel-button" (click)="setWidth()" title="Expand view to match width of tree">
                 <span class=" mif-chevron-right mif-3x"></span>
