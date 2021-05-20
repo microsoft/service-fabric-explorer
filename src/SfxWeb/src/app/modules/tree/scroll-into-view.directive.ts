@@ -1,4 +1,4 @@
-import { Directive, ElementRef, Input, OnChanges, OnInit } from '@angular/core';
+import { Directive, ElementRef, Input, OnChanges } from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
 
 @Directive({
@@ -13,7 +13,7 @@ export class ScrollIntoViewDirective implements OnChanges {
     if (this.selected) {
       setTimeout(() => {
         try {
-          if (Math.abs(this.elementRef.nativeElement.offsetTop - this.treeService.containerRef.nativeElement.scrollTop) > this.treeService.containerRef.nativeElement.offsetHeight) {
+          if (Math.abs(this.elementRef.nativeElement.offsetTop - this.treeService.containerRef.nativeElement.scrollTop) > (this.treeService.containerRef.nativeElement.offsetHeight - 30)) {
             this.elementRef.nativeElement.scrollIntoView({behavior: 'smooth', block: 'center'});
           }
         } catch (e) {
