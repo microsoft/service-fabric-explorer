@@ -63,7 +63,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         this.longRunningApprovalJob = longRunningApprovalRepairTask;
         this.longestExecutingJob = longRunningExecutingRepairTask;
 
-        if (longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds > RepairTaskCollection.minDurationApprovalbanner) {
+        if (longRunningApprovalRepairTask && longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds > RepairTaskCollection.minDurationApprovalbanner) {
             this.data.warnings.addOrUpdateNotification({
                 message: `Action Required: There is a repair job (${longRunningApprovalRepairTask.id}) waiting for approval for ${longRunningApprovalRepairTask.displayDuration}. This can block updates to this cluster. Please see aka.ms/sflongapprovingjob for more information. `,
                 level: StatusWarningLevel.Warning,

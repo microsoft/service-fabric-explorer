@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ElementRef, Injectable } from '@angular/core';
 import { IdGenerator } from '../Utils/IdGenerator';
 import { ITreeNode } from '../ViewModels/TreeTypes';
 import { IClusterHealthChunkQueryDescription, IClusterHealthChunk, HealthStateFilterFlags } from '../Models/HealthChunkRawDataTypes';
@@ -18,6 +18,7 @@ import { RefreshService } from './refresh.service';
 })
 export class TreeService {
 
+        public containerRef: ElementRef;
         public tree: TreeViewModel;
         private clusterHealth: ClusterHealth;
         private cm: ClusterManifest;
