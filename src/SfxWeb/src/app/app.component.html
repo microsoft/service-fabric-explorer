@@ -35,7 +35,7 @@
         </button>
         <div ngbDropdownMenu style="padding: 10px;" *ngIf="dataService.actionsEnabled()">
           <div ngbDropdownItem style="padding-bottom: 10px;" class="repress-highlight">
-            {{adalService.userInfo.profile.name}}
+            {{adalService?.userInfo?.profile?.name}}
           </div>
           <button class="simple-button" (click)="adalService.logout()" ngbDropdownItem>
             Log Out
