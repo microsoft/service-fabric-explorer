@@ -1,9 +1,10 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 
 @Component({
   selector: 'app-clip-board',
   templateUrl: './clip-board.component.html',
-  styleUrls: ['./clip-board.component.scss']
+  styleUrls: ['./clip-board.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ClipBoardComponent {
 
