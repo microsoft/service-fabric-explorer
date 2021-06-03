@@ -50,6 +50,9 @@ const routes: Routes = [
   // { path: 'networks', loadChildren: () => import(`./views/networks/networks.module`).then(m => m.NodeModule) },
   { path: 'system/apps', loadChildren: () => import(`./views/system-applications/system-applications.module`).then(m => m.SystemApplicationsModule) },
 
+  //combinedEvents
+  { path: 'combinedEvents', loadChildren: () => import(`./views/combined-events/combined-events.module`).then(m => m.CombinedEventsModule) },
+
   { path: '', loadChildren: () => import(`./views/cluster/cluster.module`).then(m => m.ClusterModule) },
   { path: '**', loadChildren: () => import(`./views/cluster/cluster.module`).then(m => m.ClusterModule) },
 ];
