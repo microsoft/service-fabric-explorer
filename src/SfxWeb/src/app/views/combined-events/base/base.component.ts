@@ -18,7 +18,7 @@ export class BaseComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    //Implement Treeservice
+    // Implement Treeservice
   }
 
 }
