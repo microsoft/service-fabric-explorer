@@ -21,7 +21,7 @@
         </div>
         <div>
             <div class="btn-group btn-group-toggle" ngbRadioGroup [(ngModel)]="showAllEvents" name="radioBasic">
-                <label class="flat-button checkbox-push solid-grey" ngbButtonLabel *ngIf="timelineGenerator">
+                <label class="flat-button checkbox-push solid-grey" ngbButtonLabel *ngIf="listEventStoreData"><!-- This is no the optimal condition -->
                     <input ngbButton type="radio" [value]="false"> Correlated
                 </label>
                 <label class="flat-button checkbox-push solid-grey" ngbButtonLabel>
@@ -43,8 +43,13 @@
             <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>
         </div>
 
-        <app-detail-list [list]="eventsList.collection" [listSettings]="eventsList.settings" [isLoading]="!eventsList.isInitialized"></app-detail-list>
-    
+        <div *ngFor="let eventStoreData of listEventStoreData">
+            <h2> {{eventStoreData.displayName}} </h2>
+            <app-detail-list [list]="eventStoreData.eventsList.collection" 
+            [listSettings]="eventStoreData.eventsList.settings" 
+            [isLoading]="!eventStoreData.eventsList.isInitialized"></app-detail-list>
+        </div>
+        
         <div>
             <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
                 <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error"
