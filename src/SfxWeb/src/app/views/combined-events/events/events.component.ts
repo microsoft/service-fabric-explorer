@@ -10,19 +10,19 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class EventsComponent implements OnInit {
 
-  listEventStoreData : IEventStoreData [];
+  listEventStoreData: IEventStoreData [];
 
-  constructor(public data : DataService) { }
+  constructor(public data: DataService) { }
 
   ngOnInit(): void {
     this.listEventStoreData = [
-      { eventsList : this.data.createClusterEventList(), 
+      { eventsList : this.data.createClusterEventList(),
         timelineGenerator: new ClusterTimelineGenerator(),
-        displayName : "Clusters"
+        displayName : 'Clusters'
       },
-      { eventsList : this.data.createNodeEventList(null), 
+      { eventsList : this.data.createNodeEventList(null),
         timelineGenerator : new NodeTimelineGenerator(),
-        displayName : "Nodes"
+        displayName : 'Nodes'
       }
     ];
   }

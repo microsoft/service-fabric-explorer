@@ -19,7 +19,7 @@ export interface IEventStoreData {
     eventsList: EventListBase<any>;
     timelineGenerator: TimeLineGeneratorBase<FabricEventBase>;
     timelineData?: ITimelineData;
-    displayName : string;
+    displayName: string;
 }
 
 @Component({
@@ -85,7 +85,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         this.debouncerHandlerSubscription.unsubscribe();
     }
 
-    /*
+    /* TODO: Find out what does this function does
     public reset(): void {
         this.isResetEnabled = false;
         if (this.eventsList.resetDateWindow()) {
@@ -98,8 +98,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         }
     }
     */
-
-    private resetSelectionProperties(data : IEventStoreData): void {
+   
+    private resetSelectionProperties(data: IEventStoreData): void {
         this.startDate = data.eventsList.startDate;
         this.endDate = data.eventsList.endDate;
         this.startDateMin = this.endDateMin = TimeUtils.AddDays(new Date(), -30);
@@ -116,15 +116,15 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     private setNewDateWindow(): void {
         let eventListChange = false;
 
-        for (let eventStoreData of this.listEventStoreData) {
-            if (eventStoreData.eventsList.setDateWindow(this.startDate, this.endDate)) {
-                this.resetSelectionProperties(eventStoreData);
+        for (const data of this.listEventStoreData) {
+            if (data.eventsList.setDateWindow(this.startDate, this.endDate)) {
+                this.resetSelectionProperties(data);
                 this.isResetEnabled = true;
-                eventStoreData.eventsList.reload().subscribe(data => {
+                data.eventsList.reload().subscribe(data => {
                     eventListChange = true;
                 });
             } else {
-                this.resetSelectionProperties(eventStoreData);
+                this.resetSelectionProperties(data);
             }
         }
 
@@ -142,11 +142,11 @@ export class EventStoreComponent implements OnInit, OnDestroy {
             this.timeLineEventsData.groups.add(group);
         });
 
-        this.timeLineEventsData.potentiallyMissingEvents = 
+        this.timeLineEventsData.potentiallyMissingEvents =
         this.timeLineEventsData.potentiallyMissingEvents || data.potentiallyMissingEvents;
     }
 
-    public clearCurrentData() : void{
+    public clearCurrentData(): void{
         this.timeLineEventsData = {
             start : this.startDate,
             end : this.endDate,
@@ -160,14 +160,14 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         let listRawEvents = [];
         let completedSubscriptions = 0;
 
-        for (let data of this.listEventStoreData) {
+        for (const data of this.listEventStoreData) {
             data.eventsList.ensureInitialized().subscribe(() => {
                 try {
                     if (this.pshowAllEvents) {
                         listRawEvents = listRawEvents.concat(data.eventsList.collection);
                         completedSubscriptions++;
 
-                        let receivedAllSubscriptions = (completedSubscriptions === this.listEventStoreData.length);
+                        const receivedAllSubscriptions = (completedSubscriptions === this.listEventStoreData.length);
 
                         if (receivedAllSubscriptions) {
                             listRawEvents = listRawEvents.map(event => event.raw);
@@ -178,7 +178,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 end: this.endDate,
                                 items: d.items,
                                 groups: d.groups
-                            }
+                            };
                         }
                     } else if (data.timelineGenerator) {
                         const d = data.timelineGenerator.generateTimeLineData(data.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
