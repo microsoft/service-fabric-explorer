@@ -98,7 +98,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         }
     }
     */
-   
+
     private resetSelectionProperties(data: IEventStoreData): void {
         this.startDate = data.eventsList.startDate;
         this.endDate = data.eventsList.endDate;
@@ -120,7 +120,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
             if (data.eventsList.setDateWindow(this.startDate, this.endDate)) {
                 this.resetSelectionProperties(data);
                 this.isResetEnabled = true;
-                data.eventsList.reload().subscribe(data => {
+                data.eventsList.reload().subscribe(d => {
                     eventListChange = true;
                 });
             } else {
@@ -152,10 +152,10 @@ export class EventStoreComponent implements OnInit, OnDestroy {
             end : this.endDate,
             groups : new DataSet<DataGroup>(),
             items : new DataSet<DataGroup>()
-        }
+        };
     }
 
-    public setTimelineData() : void{
+    public setTimelineData(): void{
         this.clearCurrentData();
         let listRawEvents = [];
         let completedSubscriptions = 0;
