@@ -6,6 +6,7 @@ import { finalize, map, mergeMap } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
 import { environment } from 'src/environments/environment';
+import { v4 as uuidv4 } from 'uuid';
 
 /*
 The will intercept and allow the modification of every http request going in and out.
@@ -62,7 +63,8 @@ export class GlobalHeaderInterceptor implements HttpInterceptor {
     let newHeaders = req.headers;
     // ADD ADDITIONAL HEADERS HERE
     newHeaders = newHeaders.append('x-servicefabricclienttype', 'SFX')
-                           .append('sfx-build', environment.version);
+                           .append('sfx-build', environment.version)
+                           .append('sfx-request-id', uuidv4());
 
     return next.handle(req.clone({headers: newHeaders}));
  }
