@@ -4,8 +4,8 @@ import { EventListBase } from 'src/app/Models/DataModels/collections/Collections
 import { FabricEventBase } from 'src/app/Models/eventstore/Events';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
-import { Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, Subscription, forkJoin } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
 import { hostViewClassName } from '@angular/compiler';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
@@ -17,7 +17,7 @@ export interface IQuickDates {
 
 export interface IEventStoreData {
     eventsList: EventListBase<any>;
-    timelineGenerator: TimeLineGeneratorBase<FabricEventBase>;
+    timelineGenerator?: TimeLineGeneratorBase<FabricEventBase>;
     timelineData?: ITimelineData;
     displayName: string;
 }
@@ -51,8 +51,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     ];
 
     @Input() listEventStoreData: IEventStoreData[];
-    @Input() eventsList: EventListBase<any>;
-    @Input() timelineGenerator: TimeLineGeneratorBase<FabricEventBase>;
     public startDateMin: Date;
     public endDateMin: Date;
     public startDateMax: Date;
@@ -69,8 +67,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     public endDate: Date;
 
     ngOnInit() {
-        this.pshowAllEvents = !this.listEventStoreData;
-        this.resetSelectionProperties(this.listEventStoreData[0]);
+        this.pshowAllEvents = this.checkAllOption();
+        this.resetSelectionProperties();
         this.setTimelineData();
         this.debouncerHandlerSubscription = this.debounceHandler
             .pipe(debounceTime(400), distinctUntilChanged())
@@ -85,23 +83,19 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         this.debouncerHandlerSubscription.unsubscribe();
     }
 
-    /* TODO: Find out what does this function does
-    public reset(): void {
-        this.isResetEnabled = false;
-        if (this.eventsList.resetDateWindow()) {
-            this.resetSelectionProperties();
-            this.eventsList.reload().subscribe( data => {
-                this.setTimelineData();
-            });
-        } else {
-            this.resetSelectionProperties();
+    public checkAllOption(): boolean {
+        let onlyShowAll = false;
+        for (const data of this.listEventStoreData) {
+            if (!data.timelineGenerator) {
+                onlyShowAll = true;
+            }
         }
+        return onlyShowAll;
     }
-    */
 
-    private resetSelectionProperties(data: IEventStoreData): void {
-        this.startDate = data.eventsList.startDate;
-        this.endDate = data.eventsList.endDate;
+    private resetSelectionProperties(): void {
+        this.startDate = this.listEventStoreData[0].eventsList.startDate;
+        this.endDate = this.listEventStoreData[0].eventsList.endDate;
         this.startDateMin = this.endDateMin = TimeUtils.AddDays(new Date(), -30);
         this.startDateMax = this.endDateMax = new Date(); // Today
     }
@@ -118,13 +112,13 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
         for (const data of this.listEventStoreData) {
             if (data.eventsList.setDateWindow(this.startDate, this.endDate)) {
-                this.resetSelectionProperties(data);
+                this.resetSelectionProperties();
                 this.isResetEnabled = true;
                 data.eventsList.reload().subscribe(d => {
                     eventListChange = true;
                 });
             } else {
-                this.resetSelectionProperties(data);
+                this.resetSelectionProperties();
             }
         }
 
@@ -133,53 +127,42 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         }
     }
 
-    public mergeTimelineData(data: ITimelineData): void {
+    public mergeTimelineData(combinedData: ITimelineData, data: ITimelineData): void {
         data.items.forEach(item => {
-            this.timeLineEventsData.items.add(item);
+            combinedData.items.add(item);
         });
 
         data.groups.forEach(group => {
-            this.timeLineEventsData.groups.add(group);
+            combinedData.groups.add(group);
         });
 
-        this.timeLineEventsData.potentiallyMissingEvents =
-        this.timeLineEventsData.potentiallyMissingEvents || data.potentiallyMissingEvents;
+        combinedData.potentiallyMissingEvents =
+            combinedData.potentiallyMissingEvents || data.potentiallyMissingEvents;
     }
 
-    public clearCurrentData(): void{
-        this.timeLineEventsData = {
-            start : this.startDate,
-            end : this.endDate,
-            groups : new DataSet<DataGroup>(),
-            items : new DataSet<DataGroup>()
+    private initializeTimelineData(): ITimelineData {
+        return {
+            start: this.startDate,
+            end: this.endDate,
+            groups: new DataSet<DataGroup>(),
+            items: new DataSet<DataItem>()
         };
     }
 
-    public setTimelineData(): void{
-        this.clearCurrentData();
-        let listRawEvents = [];
-        let completedSubscriptions = 0;
+    public setTimelineData(): void {
+        let rawEventlist = [];
+        const combinedTimelineData = this.initializeTimelineData();
 
-        for (const data of this.listEventStoreData) {
-            data.eventsList.ensureInitialized().subscribe(() => {
+        const subs = this.listEventStoreData.map((data) => {
+            return data.eventsList.ensureInitialized();
+        });
+
+        forkJoin(subs).pipe(finalize(() => {
+            for (const data of this.listEventStoreData) {
                 try {
                     if (this.pshowAllEvents) {
-                        listRawEvents = listRawEvents.concat(data.eventsList.collection);
-                        completedSubscriptions++;
+                        rawEventlist = rawEventlist.concat(data.eventsList.collection.map(event => event.raw));
 
-                        const receivedAllSubscriptions = (completedSubscriptions === this.listEventStoreData.length);
-
-                        if (receivedAllSubscriptions) {
-                            listRawEvents = listRawEvents.map(event => event.raw);
-                            const d = parseEventsGenerically(listRawEvents, this.transformText);
-
-                            this.timeLineEventsData = {
-                                start: this.startDate,
-                                end: this.endDate,
-                                items: d.items,
-                                groups: d.groups
-                            };
-                        }
                     } else if (data.timelineGenerator) {
                         const d = data.timelineGenerator.generateTimeLineData(data.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
 
@@ -190,14 +173,27 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                             end: this.endDate,
                             potentiallyMissingEvents: d.potentiallyMissingEvents
                         };
-
-                        this.mergeTimelineData(data.timelineData);
+                        this.mergeTimelineData(combinedTimelineData, data.timelineData);
                     }
                 } catch (e) {
                     console.error(e);
                 }
-            });
-        }
+            }
+
+            if (this.pshowAllEvents) {
+                const d = parseEventsGenerically(rawEventlist, this.transformText);
+
+                this.timeLineEventsData = {
+                    start: this.startDate,
+                    end: this.endDate,
+                    items: d.items,
+                    groups: d.groups
+                };
+            }
+            else {
+                this.timeLineEventsData = combinedTimelineData;
+            }
+        })).subscribe();
     }
 
     setNewDates(dates: IOnDateChange) {
