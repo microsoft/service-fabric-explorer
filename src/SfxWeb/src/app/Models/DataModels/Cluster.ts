@@ -128,6 +128,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
     public isBackupRestoreEnabled = false;
     public isRepairManagerEnabled = false;
     public isEventStoreEnabled = false;
+    public isInfrastructureServiceEnabled = false;
     public constructor(data: DataService) {
         super(data);
     }
@@ -170,6 +171,8 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
                 this.isRepairManagerEnabled = true;
             }else if (item.getAttribute('Name') === 'EventStoreService'){
                 this.isEventStoreEnabled = true;
+            }else if (item.getAttribute('Name') === 'InfrastructureService/Primary'){
+                this.isInfrastructureServiceEnabled = true;
             }
         }
     }

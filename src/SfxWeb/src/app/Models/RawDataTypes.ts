@@ -965,6 +965,29 @@ export interface IRawRepairTask {
         ResultDetails?: string;
     }
 
+    export interface IRawInfrastructureJob {
+        TaskId: string;
+        Version?: string;
+        Description?: string;
+        State: string;
+        Flags?: number;
+        Action: string;
+        Target?: IRawNodeRepairTargetDescription;
+        Executor?: string;
+        ExecutorData?: string;
+        Impact?: IRawNodeRepairImpactDescription;
+        ResultStatus?: string;
+        ResultCode?: number;
+        ResultDetail?: string;
+        History?: IRawRepairTaskHistory;
+        PreparingHealthCheckState?: string;
+        RestoringHealthCheckState?: string;
+        PerformPreparingHealthCheck?: boolean;
+        PerformRestoringHealthCheck?: boolean;
+        scope?: any;
+        ResultDetails?: string;
+    }
+
 
 export interface INodesStatusDetails {
         nodeType: string;

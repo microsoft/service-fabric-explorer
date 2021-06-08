@@ -10,6 +10,7 @@ import { ManifestComponent } from './manifest/manifest.component';
 import { EventsComponent } from './events/events.component';
 import { BackupsComponent } from './backups/backups.component';
 import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
+import {InfrastructureJobsComponent} from './infrastructure-tasks/infrastructure-tasks.component';
 
 
 const routes: Routes = [{
@@ -22,6 +23,7 @@ const routes: Routes = [{
     { path: 'events', component: EventsComponent },
     { path: 'backups', component: BackupsComponent },
     { path: 'repairtasks', component: RepairTasksComponent },
+    { path: 'infrastructurejobs', component: InfrastructureJobsComponent},
     { path: '', component: EssentialsComponent },
   ]
   }

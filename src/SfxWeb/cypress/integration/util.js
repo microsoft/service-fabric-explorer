@@ -53,8 +53,10 @@ export const FIXTURE_REF_UPGRADEPROGRESS = exportFormat(FIXTURE_UPGRADEPROGRESS)
 export const upgradeProgress_route = apiUrl('/$/GetUpgradeProgress*');
 
 export const FIXTURE_UPGRADEREPAIRTASK ="GetRepairTaskList";
+export const FIXTURE_UPGRADEINFRASTRUCTUREJOB ="GetRepairTaskList";
 export const FIXTURE_REF_UPGRADEREPAIRTASK = exportFormat(FIXTURE_UPGRADEPROGRESS);
 export const repairTask_route = apiUrl('/$/GetRepairTaskList?*');
+export const infrasturtureJob_route = apiUrl('/$/random?*');
 
 export const addRoute = (fixtureName, fixtureFileName, route, requestType = 'GET') => {
     cy.intercept(requestType, route, {fixture: fixtureFileName}).as(fixtureRequestFormatter(fixtureName))
@@ -71,6 +73,7 @@ export const addDefaultFixtures = () => {
     addRoute(FIXTURE_SYSTEMAPPLICATIONS_HEALTH, 'systemApplicationHealth.json', systemApplicationHealth_route)
     addRoute(FIXTURE_UPGRADEPROGRESS, 'upgradeProgress.json', upgradeProgress_route)
     addRoute(FIXTURE_UPGRADEREPAIRTASK, 'emptyRepairJobs.json', repairTask_route)
+    addRoute(FIXTURE_UPGRADEINFRASTRUCTUREJOB, 'emptyManagementJob.json', infrasturtureJob_route)
 
     addRoute('visualObjectsApplicationType', 'visualObjectsApplicationType.json', apiUrl('/Applications/VisualObjectsApplicationType/*'))
 }

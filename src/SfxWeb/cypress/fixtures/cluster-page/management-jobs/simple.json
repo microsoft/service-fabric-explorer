@@ -1,0 +1,260 @@
+[
+    {
+        "Scope": {
+            "Kind": "Cluster"
+        },
+        "TaskId": "Azure/PlatformUpdate/00065b20-aa83-4199-877b-a4b51efa8de6/3/616",
+        "Version": "132450185229614560",
+        "Description": "",
+        "State": "Completed",
+        "Flags": 0,
+        "Action": "System.Azure.Job.PlatformUpdate",
+        "Target": {
+            "Kind": "Node",
+            "NodeNames": [
+                "_nt_3"
+            ]
+        },
+        "Executor": "fabric:/System/InfrastructureService/nt",
+        "ExecutorData": "{\r\n  \"JobId\": \"00065b20-aa83-4199-877b-a4b51efa8de6\",\r\n  \"UD\": 3,\r\n  \"StepId\": \"_nt_3\"\r\n}",
+        "Impact": {
+            "Kind": "Node",
+            "NodeImpactList": []
+        },
+        "ResultStatus": "Succeeded",
+        "ResultCode": 0,
+        "ResultDetails": "Job step completed with status Executed",
+        "History": {
+            "CreatedUtcTimestamp": "2020-09-19T19:48:42.961Z",
+            "ClaimedUtcTimestamp": "2020-09-19T19:48:42.961Z",
+            "PreparingUtcTimestamp": "2020-09-19T19:48:42.961Z",
+            "ApprovedUtcTimestamp": "2020-09-19T19:48:43.148Z",
+            "ExecutingUtcTimestamp": "2020-09-19T19:48:58.075Z",
+            "RestoringUtcTimestamp": "2020-09-19T20:05:51.067Z",
+            "CompletedUtcTimestamp": "2020-09-19T20:05:51.257Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-09-19T19:48:43.039Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-09-19T19:48:43.086Z",
+            "RestoringHealthCheckStartUtcTimestamp": "2020-09-19T20:05:51.147Z",
+            "RestoringHealthCheckEndUtcTimestamp": "2020-09-19T20:05:51.194Z"
+        },
+        "PreparingHealthCheckState": "Skipped",
+        "RestoringHealthCheckState": "Skipped",
+        "PerformPreparingHealthCheck": false,
+        "PerformRestoringHealthCheck": false
+    },
+    {
+        "Scope": {
+            "Kind": "Cluster"
+        },
+        "TaskId": "Azure/PlatformUpdate/46df1c03-5212-4b8f-98b0-47dfb70744b6/2/612",
+        "Version": "132449998154141519",
+        "Description": "",
+        "State": "Completed",
+        "Flags": 0,
+        "Action": "System.Azure.Job.PlatformUpdate",
+        "Target": {
+            "Kind": "Node",
+            "NodeNames": [
+                "_nt_2"
+            ]
+        },
+        "Executor": "fabric:/System/InfrastructureService/nt",
+        "ExecutorData": "{\r\n  \"JobId\": \"46df1c03-5212-4b8f-98b0-47dfb70744b6\",\r\n  \"UD\": 2,\r\n  \"StepId\": \"_nt_2\"\r\n}",
+        "Impact": {
+            "Kind": "Node",
+            "NodeImpactList": []
+        },
+        "ResultStatus": "Succeeded",
+        "ResultCode": 0,
+        "ResultDetails": "Job step completed with status Executed",
+        "History": {
+            "CreatedUtcTimestamp": "2020-09-19T14:36:55.414Z",
+            "ClaimedUtcTimestamp": "2020-09-19T14:36:55.414Z",
+            "PreparingUtcTimestamp": "2020-09-19T14:36:55.414Z",
+            "ApprovedUtcTimestamp": "2020-09-19T14:36:55.606Z",
+            "ExecutingUtcTimestamp": "2020-09-19T14:37:10.510Z",
+            "RestoringUtcTimestamp": "2020-09-19T14:54:48.117Z",
+            "CompletedUtcTimestamp": "2020-09-19T14:54:48.310Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-09-19T14:36:55.495Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-09-19T14:36:55.543Z",
+            "RestoringHealthCheckStartUtcTimestamp": "2020-09-19T14:54:48.201Z",
+            "RestoringHealthCheckEndUtcTimestamp": "2020-09-19T14:54:48.248Z"
+        },
+        "PreparingHealthCheckState": "Skipped",
+        "RestoringHealthCheckState": "Skipped",
+        "PerformPreparingHealthCheck": false,
+        "PerformRestoringHealthCheck": false
+    },
+    {
+        "Scope": {
+            "Kind": "Cluster"
+        },
+        "TaskId": "Azure/PlatformUpdate/67d9f19b-e150-4261-9d7c-3d6e3576decf/0/628",
+        "Version": "132450354476544813",
+        "Description": "",
+        "State": "Completed",
+        "Flags": 0,
+        "Action": "System.Azure.Job.PlatformUpdate",
+        "Target": {
+            "Kind": "Node",
+            "NodeNames": [
+                "_nt_0"
+            ]
+        },
+        "Executor": "fabric:/System/InfrastructureService/nt",
+        "ExecutorData": "{\r\n  \"JobId\": \"67d9f19b-e150-4261-9d7c-3d6e3576decf\",\r\n  \"UD\": 0,\r\n  \"StepId\": \"_nt_0\"\r\n}",
+        "Impact": {
+            "Kind": "Node",
+            "NodeImpactList": []
+        },
+        "ResultStatus": "Succeeded",
+        "ResultCode": 0,
+        "ResultDetails": "Job step completed with status Executed",
+        "History": {
+            "CreatedUtcTimestamp": "2020-09-20T00:30:47.654Z",
+            "ClaimedUtcTimestamp": "2020-09-20T00:30:47.654Z",
+            "PreparingUtcTimestamp": "2020-09-20T00:30:47.654Z",
+            "ApprovedUtcTimestamp": "2020-09-20T00:30:47.795Z",
+            "ExecutingUtcTimestamp": "2020-09-20T00:31:02.743Z",
+            "RestoringUtcTimestamp": "2020-09-20T00:45:50.597Z",
+            "CompletedUtcTimestamp": "2020-09-20T00:45:50.753Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-09-20T00:30:47.732Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-09-20T00:30:47.779Z",
+            "RestoringHealthCheckStartUtcTimestamp": "2020-09-20T00:45:50.690Z",
+            "RestoringHealthCheckEndUtcTimestamp": "2020-09-20T00:45:50.737Z"
+        },
+        "PreparingHealthCheckState": "Skipped",
+        "RestoringHealthCheckState": "Skipped",
+        "PerformPreparingHealthCheck": false,
+        "PerformRestoringHealthCheck": false
+    },
+    {
+        "Scope": {
+            "Kind": "Cluster"
+        },
+        "TaskId": "Azure/PlatformUpdate/9f97a08d-0bba-4b26-9a53-fa8072777c08/2/632",
+        "Version": "132450473368350008",
+        "Description": "",
+        "State": "Completed",
+        "Flags": 0,
+        "Action": "System.Azure.Job.PlatformUpdate",
+        "Target": {
+            "Kind": "Node",
+            "NodeNames": [
+                "_nt_2"
+            ]
+        },
+        "Executor": "fabric:/System/InfrastructureService/nt",
+        "ExecutorData": "{\r\n  \"JobId\": \"9f97a08d-0bba-4b26-9a53-fa8072777c08\",\r\n  \"UD\": 2,\r\n  \"StepId\": \"_nt_2\"\r\n}",
+        "Impact": {
+            "Kind": "Node",
+            "NodeImpactList": []
+        },
+        "ResultStatus": "Succeeded",
+        "ResultCode": 0,
+        "ResultDetails": "Job step completed with status Executed",
+        "History": {
+            "CreatedUtcTimestamp": "2020-09-20T03:48:56.834Z",
+            "ClaimedUtcTimestamp": "2020-09-20T03:48:56.834Z",
+            "PreparingUtcTimestamp": "2020-09-20T03:48:56.834Z",
+            "ApprovedUtcTimestamp": "2020-09-20T03:48:56.980Z",
+            "ExecutingUtcTimestamp": "2020-09-20T03:49:11.950Z",
+            "RestoringUtcTimestamp": "2020-09-20T04:17:03.713Z",
+            "CompletedUtcTimestamp": "2020-09-20T04:17:03.917Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-09-20T03:48:56.928Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-09-20T03:48:56.980Z",
+            "RestoringHealthCheckStartUtcTimestamp": "2020-09-20T04:17:03.807Z",
+            "RestoringHealthCheckEndUtcTimestamp": "2020-09-20T04:17:03.854Z"
+        },
+        "PreparingHealthCheckState": "Skipped",
+        "RestoringHealthCheckState": "Skipped",
+        "PerformPreparingHealthCheck": false,
+        "PerformRestoringHealthCheck": false
+    },
+    {
+        "Scope": {
+            "Kind": "Cluster"
+        },
+        "TaskId": "Azure/PlatformUpdate/a5959705-ea4c-48df-946b-6a9e59ff9cd1/4/620",
+        "Version": "132450210460271518",
+        "Description": "",
+        "State": "Completed",
+        "Flags": 0,
+        "Action": "System.Azure.Job.PlatformUpdate",
+        "Target": {
+            "Kind": "Node",
+            "NodeNames": [
+                "_nt_4"
+            ]
+        },
+        "Executor": "fabric:/System/InfrastructureService/nt",
+        "ExecutorData": "{\r\n  \"JobId\": \"a5959705-ea4c-48df-946b-6a9e59ff9cd1\",\r\n  \"UD\": 4,\r\n  \"StepId\": \"_nt_4\"\r\n}",
+        "Impact": {
+            "Kind": "Node",
+            "NodeImpactList": []
+        },
+        "ResultStatus": "Succeeded",
+        "ResultCode": 0,
+        "ResultDetails": "Job step completed with status Executed",
+        "History": {
+            "CreatedUtcTimestamp": "2020-09-19T20:30:46.027Z",
+            "ClaimedUtcTimestamp": "2020-09-19T20:30:46.027Z",
+            "PreparingUtcTimestamp": "2020-09-19T20:30:46.027Z",
+            "ApprovedUtcTimestamp": "2020-09-19T20:30:46.230Z",
+            "ExecutingUtcTimestamp": "2020-09-19T20:31:01.140Z",
+            "RestoringUtcTimestamp": "2020-09-19T20:44:06.645Z",
+            "CompletedUtcTimestamp": "2020-09-19T20:44:06.786Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-09-19T20:30:46.120Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-09-19T20:30:46.183Z",
+            "RestoringHealthCheckStartUtcTimestamp": "2020-09-19T20:44:06.739Z",
+            "RestoringHealthCheckEndUtcTimestamp": "2020-09-19T20:44:06.786Z"
+        },
+        "PreparingHealthCheckState": "Skipped",
+        "RestoringHealthCheckState": "Skipped",
+        "PerformPreparingHealthCheck": false,
+        "PerformRestoringHealthCheck": false
+    },
+    {
+        "Scope": {
+            "Kind": "Cluster"
+        },
+        "TaskId": "Azure/PlatformUpdate/aa089e7b-5d40-4024-b587-5f885afadb41/1/624",
+        "Version": "132450281889966213",
+        "Description": "",
+        "State": "Completed",
+        "Flags": 0,
+        "Action": "System.Azure.Job.PlatformUpdate",
+        "Target": {
+            "Kind": "Node",
+            "NodeNames": [
+                "_nt_1"
+            ]
+        },
+        "Executor": "fabric:/System/InfrastructureService/nt",
+        "ExecutorData": "{\r\n  \"JobId\": \"aa089e7b-5d40-4024-b587-5f885afadb41\",\r\n  \"UD\": 1,\r\n  \"StepId\": \"_nt_1\"\r\n}",
+        "Impact": {
+            "Kind": "Node",
+            "NodeImpactList": []
+        },
+        "ResultStatus": "Succeeded",
+        "ResultCode": 0,
+        "ResultDetails": "Job step completed with status Executed",
+        "History": {
+            "CreatedUtcTimestamp": "2020-09-19T22:29:48.996Z",
+            "ClaimedUtcTimestamp": "2020-09-19T22:29:48.996Z",
+            "PreparingUtcTimestamp": "2020-09-19T22:29:48.996Z",
+            "ApprovedUtcTimestamp": "2020-09-19T22:29:49.205Z",
+            "ExecutingUtcTimestamp": "2020-09-19T22:30:04.098Z",
+            "RestoringUtcTimestamp": "2020-09-19T22:56:42.776Z",
+            "CompletedUtcTimestamp": "2020-09-19T22:56:42.932Z",
+            "PreparingHealthCheckStartUtcTimestamp": "2020-09-19T22:29:49.094Z",
+            "PreparingHealthCheckEndUtcTimestamp": "2020-09-19T22:29:49.142Z",
+            "RestoringHealthCheckStartUtcTimestamp": "2020-09-19T22:56:42.869Z",
+            "RestoringHealthCheckEndUtcTimestamp": "2020-09-19T22:56:42.916Z"
+        },
+        "PreparingHealthCheckState": "Skipped",
+        "RestoringHealthCheckState": "Skipped",
+        "PerformPreparingHealthCheck": false,
+        "PerformRestoringHealthCheck": false
+    }
+]

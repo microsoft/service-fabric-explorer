@@ -33,6 +33,7 @@ import { IDataModelCollection } from '../Models/DataModels/collections/Collectio
 import { DeployedApplicationCollection } from '../Models/DataModels/collections/DeployedApplicationCollection';
 import { MatDialog } from '@angular/material/dialog';
 import { RepairTaskCollection } from '../Models/DataModels/collections/RepairTaskCollection';
+import { InfrastructureJobCollection } from '../Models/DataModels/collections/InfrastructureJobCollection';
 
 @Injectable({
   providedIn: 'root'
@@ -49,6 +50,7 @@ export class DataService {
   public imageStore: ImageStore;
   public backupPolicies: BackupPolicyCollection;
   public repairCollection: RepairTaskCollection;
+  public infrastructureCollection: InfrastructureJobCollection
 
   public readOnlyHeader: boolean =  null;
   public clusterNameMetadata: string = null;
@@ -291,6 +293,10 @@ export class DataService {
 
   public getRepairTasks(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler): Observable<RepairTaskCollection> {
     return this.repairCollection.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.repairCollection));
+  }
+
+  public getInfrastructureJobs(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler): Observable<InfrastructureJobCollection> {
+    return this.infrastructureCollection.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.infrastructureCollection));
   }
 
   public createClusterEventList(): ClusterEventList {
