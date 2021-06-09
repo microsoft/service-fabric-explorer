@@ -21,7 +21,7 @@
         </div>
         <div>
             <div class="btn-group btn-group-toggle" ngbRadioGroup [(ngModel)]="showAllEvents" name="radioBasic">
-                <label class="flat-button checkbox-push solid-grey" ngbButtonLabel *ngIf="!checkAllOption()">
+                <label class="flat-button checkbox-push solid-grey" ngbButtonLabel *ngIf="showCorrelatedBtn">
                     <input ngbButton type="radio" [value]="false"> Correlated
                 </label>
                 <label class="flat-button checkbox-push solid-grey" ngbButtonLabel>

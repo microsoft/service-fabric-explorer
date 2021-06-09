@@ -62,12 +62,14 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   public transformText = 'Category,Kind';
 
   private pshowAllEvents = false;
+  public showCorrelatedBtn = false;
 
   public startDate: Date;
   public endDate: Date;
 
   ngOnInit() {
       this.pshowAllEvents = this.checkAllOption();
+      this.showCorrelatedBtn = !this.pshowAllEvents;
       this.resetSelectionProperties();
       this.setTimelineData();
       this.debouncerHandlerSubscription = this.debounceHandler
@@ -84,13 +86,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   }
 
   public checkAllOption(): boolean {
-      let onlyShowAll = false;
-      for (const data of this.listEventStoreData) {
-          if (!data.timelineGenerator) {
-              onlyShowAll = true;
-          }
-      }
-      return onlyShowAll;
+      return this.listEventStoreData.some(data => !data.timelineGenerator);
   }
 
   private resetSelectionProperties(): void {
@@ -108,33 +104,22 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   }
 
   private setNewDateWindow(): void {
-      let eventListChange = false;
+      const subs = this.listEventStoreData.filter(data => data.eventsList.setDateWindow(this.startDate, this.endDate))
+      .map((data) => {
+          this.resetSelectionProperties();
+          this.isResetEnabled = true;
+          return data.eventsList.reload();
+      });
 
-      for (const data of this.listEventStoreData) {
-          if (data.eventsList.setDateWindow(this.startDate, this.endDate)) {
-              this.resetSelectionProperties();
-              this.isResetEnabled = true;
-              data.eventsList.reload().subscribe(d => {
-                  eventListChange = true;
-              });
-          } else {
-              this.resetSelectionProperties();
-          }
-      }
-
-      if (eventListChange) {
-          this.setTimelineData();
+      if (subs) {
+          forkJoin(subs).subscribe(() => this.setTimelineData());
       }
   }
 
   public mergeTimelineData(combinedData: ITimelineData, data: ITimelineData): void {
-      data.items.forEach(item => {
-          combinedData.items.add(item);
-      });
+      data.items.forEach(item => combinedData.items.add(item));
 
-      data.groups.forEach(group => {
-          combinedData.groups.add(group);
-      });
+      data.groups.forEach(group => combinedData.groups.add(group));
 
       combinedData.potentiallyMissingEvents =
           combinedData.potentiallyMissingEvents || data.potentiallyMissingEvents;
@@ -153,11 +138,9 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       let rawEventlist = [];
       const combinedTimelineData = this.initializeTimelineData();
 
-      const subs = this.listEventStoreData.map((data) => {
-          return data.eventsList.ensureInitialized();
-      });
+      const subs = this.listEventStoreData.map(data => data.eventsList.ensureInitialized());
 
-      forkJoin(subs).pipe(finalize(() => {
+      forkJoin(subs).subscribe(() => {
           for (const data of this.listEventStoreData) {
               try {
                   if (this.pshowAllEvents) {
@@ -193,7 +176,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
           else {
               this.timeLineEventsData = combinedTimelineData;
           }
-      })).subscribe();
+      });
   }
 
   setNewDates(dates: IOnDateChange) {
