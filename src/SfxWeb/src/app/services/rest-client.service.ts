@@ -23,6 +23,15 @@ import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
 import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger';
+
+export interface IEventStoreRequestConfig {
+    startTime?: Date;
+    endTime?: Date;
+    messageHandler?: IResponseMessageHandler;
+    apiVersion?: string;
+    description: string;
+}
+
 @Injectable({
   providedIn: 'root'
 })
@@ -696,7 +705,7 @@ export class RestClientService {
   }
 
   public getClusterEvents(startTime: Date, endTime: Date, messageHandler?: IResponseMessageHandler): Observable<ClusterEvent[]> {
-      return this.getEvents(ClusterEvent, 'EventsStore/Cluster/Events', startTime, endTime, messageHandler, RestClientService.apiVersion80);
+      return this.getEvents(ClusterEvent, 'EventsStore/Cluster/Events', {startTime, endTime, messageHandler, apiVersion: RestClientService.apiVersion80, description: 'Get Cluster Events'});
   }
 
   public getNodeEvents(startTime: Date, endTime: Date, nodeName?: string, messageHandler?: IResponseMessageHandler): Observable<NodeEvent[]> {
@@ -704,7 +713,7 @@ export class RestClientService {
           + 'Nodes/'
           + (nodeName ? (encodeURIComponent(nodeName) + '/$/') : '')
           + 'Events';
-      return this.getEvents(NodeEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(NodeEvent, url, {startTime, endTime, messageHandler, description: 'Get Node Events' });
   }
 
   public getApplicationEvents(startTime: Date, endTime: Date, applicationId?: string, messageHandler?: IResponseMessageHandler): Observable<ApplicationEvent[]> {
@@ -712,7 +721,7 @@ export class RestClientService {
           + 'Applications/'
           + (applicationId ? (encodeURIComponent(applicationId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(ApplicationEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(ApplicationEvent, url, { startTime, endTime, messageHandler, description: 'Get Application Events' });
   }
 
   public getServiceEvents(startTime: Date, endTime: Date, serviceId?: string, messageHandler?: IResponseMessageHandler): Observable<ServiceEvent[]> {
@@ -720,7 +729,7 @@ export class RestClientService {
           + 'Services/'
           + (serviceId ? (encodeURIComponent(serviceId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(ServiceEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(ServiceEvent, url, { startTime, endTime, messageHandler, description: 'Get Service events' });
   }
 
   public getPartitionEvents(startTime: Date, endTime: Date, partitionId?: string, messageHandler?: IResponseMessageHandler): Observable<PartitionEvent[]> {
@@ -728,7 +737,7 @@ export class RestClientService {
           + 'Partitions/'
           + (partitionId ? (encodeURIComponent(partitionId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(PartitionEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(PartitionEvent, url, {startTime, endTime, messageHandler, description: 'Get Partition Events'});
   }
 
   public getReplicaEvents(startTime: Date, endTime: Date, partitionId: string, replicaId?: string, messageHandler?: IResponseMessageHandler): Observable<ReplicaEvent[]> {
@@ -737,7 +746,7 @@ export class RestClientService {
           + encodeURIComponent(partitionId) + '/$/' + 'Replicas/'
           + (replicaId ? (encodeURIComponent(replicaId) + '/$/') : '')
           + 'Events';
-      return this.getEvents(ReplicaEvent, url, startTime, endTime, messageHandler);
+      return this.getEvents(ReplicaEvent, url, { startTime, endTime, messageHandler, description: 'Get Replica Events' });
   }
 
   public getCorrelatedEvents(eventInstanceId: string, messageHandler?: IResponseMessageHandler): Observable<FabricEvent[]> {
@@ -745,7 +754,7 @@ export class RestClientService {
           + 'CorrelatedEvents/'
           + encodeURIComponent(eventInstanceId) + '/$/'
           + 'Events';
-      return this.getEvents(FabricEvent, url, null, null, messageHandler);
+      return this.getEvents(FabricEvent, url, { messageHandler, description: 'Get Correlated Events'});
   }
 
   public getRepairTasks(messageHandler?: IResponseMessageHandler): Observable<IRawRepairTask[]> {
@@ -766,20 +775,20 @@ export class RestClientService {
       return this.get(this.getApiUrl(url, RestClientService.apiVersion64), 'Get cluster version', messageHandler);
   }
 
-  private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, startTime?: Date, endTime?: Date, messageHandler?: IResponseMessageHandler, apiVersion?: string): Observable<T[]> {
+  private getEvents<T extends FabricEventBase>(eventType: new () => T, url: string, config: IEventStoreRequestConfig): Observable<T[]> {
       let apiUrl = url;
-      if (startTime && endTime) {
+      if (config.startTime && config.endTime) {
           apiUrl = apiUrl
-              + '?starttimeutc=' + startTime.toISOString().substr(0, 19) + 'Z'
-              + '&endtimeutc=' + endTime.toISOString().substr(0, 19) + 'Z';
+              + '?starttimeutc=' + config.startTime.toISOString().substr(0, 19) + 'Z'
+              + '&endtimeutc=' + config.endTime.toISOString().substr(0, 19) + 'Z';
       }
 
-      if (!apiVersion) {
-        apiVersion =  RestClientService.apiVersion72;
+      if (!config.apiVersion) {
+        config.apiVersion =  RestClientService.apiVersion72;
       }
 
-      const fullUrl = this.getApiUrl(apiUrl, apiVersion, null, true);
-      return this.get<IRawList<{}>>(fullUrl, null, messageHandler).pipe(map(response => {
+      const fullUrl = this.getApiUrl(apiUrl, config.apiVersion, null, true);
+      return this.get<IRawList<{}>>(fullUrl, config.description, config.messageHandler).pipe(map(response => {
           return new EventsResponseAdapter(eventType).getEvents(response);
         }));
   }
