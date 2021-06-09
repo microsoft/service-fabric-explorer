@@ -147,15 +147,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                       rawEventlist = rawEventlist.concat(data.eventsList.collection.map(event => event.raw));
 
                   } else if (data.timelineGenerator) {
-                      const d = data.timelineGenerator.generateTimeLineData(data.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
+                      data.timelineData = data.timelineGenerator.generateTimeLineData(data.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
 
-                      data.timelineData = {
-                          groups: d.groups,
-                          items: d.items,
-                          start: this.startDate,
-                          end: this.endDate,
-                          potentiallyMissingEvents: d.potentiallyMissingEvents
-                      };
                       this.mergeTimelineData(combinedTimelineData, data.timelineData);
                   }
               } catch (e) {
