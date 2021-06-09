@@ -111,7 +111,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
           return data.eventsList.reload();
       });
 
-      if (subs) {
+      if (subs.length > 0) {
           forkJoin(subs).subscribe(() => this.setTimelineData());
       }
   }
