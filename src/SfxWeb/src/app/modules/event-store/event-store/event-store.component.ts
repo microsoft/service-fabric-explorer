@@ -135,12 +135,12 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   }
 
   public setTimelineData(): void {
-      let rawEventlist = [];
-      const combinedTimelineData = this.initializeTimelineData();
-
       const subs = this.listEventStoreData.map(data => data.eventsList.ensureInitialized());
 
       forkJoin(subs).subscribe(() => {
+          let rawEventlist = [];
+          const combinedTimelineData = this.initializeTimelineData();
+
           for (const data of this.listEventStoreData) {
               try {
                   if (this.pshowAllEvents) {
