@@ -18,7 +18,7 @@ export class EventsComponent implements OnInit {
     this.listEventStoreData = [{
       eventsList: this.data.createClusterEventList(),
       timelineGenerator: new ClusterTimelineGenerator(),
-      displayName: 'Nodes'
+      displayName: 'Cluster'
     }];
   }
 
