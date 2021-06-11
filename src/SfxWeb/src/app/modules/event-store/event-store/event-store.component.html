@@ -43,13 +43,31 @@
             <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>
         </div>
         <br>
-        <div *ngFor="let eventStoreData of listEventStoreData">
-            <h2> {{eventStoreData.displayName}} </h2>
-            <app-detail-list [list]="eventStoreData.eventsList.collection" 
-            [listSettings]="eventStoreData.eventsList.settings" 
-            [isLoading]="!eventStoreData.eventsList.isInitialized"></app-detail-list>
-        </div>
-        
+
+        <div *ngIf="listEventStoreData.length > 1; then showTabs else showSingle"></div>
+
+        <ng-template #showTabs>
+            <div ngbNav #nav="ngbNav">
+                <div ngbNavItem *ngFor="let data of listEventStoreData">
+                    <a ngbNavLink class="bar-name">
+                        {{data.displayName}}
+                    </a>
+                    <ng-template ngbNavContent>
+                        <app-detail-list [list]="data.eventsList.collection" 
+                        [listSettings]="data.eventsList.settings" 
+                        [isLoading]="!data.eventsList.isInitialized"></app-detail-list>
+                    </ng-template>
+                </div>
+            </div>
+            <div [ngbNavOutlet]="nav"></div>
+        </ng-template>
+
+        <ng-template #showSingle>
+            <app-detail-list [list]="listEventStoreData[0].eventsList.collection" 
+                [listSettings]="listEventStoreData[0].eventsList.settings" 
+                [isLoading]="!listEventStoreData[0].eventsList.isInitialized"></app-detail-list>
+        </ng-template>
+
         <div>
             <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
                 <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error"

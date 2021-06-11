@@ -1,5 +1,5 @@
 import { Component, OnInit } from '@angular/core';
-import { ClusterTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
+import { ClusterTimelineGenerator, NodeTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 
@@ -19,7 +19,12 @@ export class EventsComponent implements OnInit {
       eventsList: this.data.createClusterEventList(),
       timelineGenerator: new ClusterTimelineGenerator(),
       displayName: 'Cluster'
-    }];
+    },
+    { eventsList : this.data.createNodeEventList(null),
+      timelineGenerator : new NodeTimelineGenerator(),
+      displayName : 'Nodes'
+    }
+  ];
   }
 
 }
