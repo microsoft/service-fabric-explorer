@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { NodeTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
-import { NodeEventList } from 'src/app/Models/DataModels/collections/Collections';
 import { DataService } from 'src/app/services/data.service';
+import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 
 @Component({
   selector: 'app-events',
@@ -10,14 +10,16 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class EventsComponent implements OnInit {
 
-  nodeEvents: NodeEventList;
-  nodeEventTimelineGenerator: NodeTimelineGenerator;
+  listEventStoreData: IEventStoreData [];
 
   constructor(public data: DataService) { }
 
   ngOnInit() {
-      this.nodeEvents = this.data.createNodeEventList(null);
-      this.nodeEventTimelineGenerator = new NodeTimelineGenerator();
+    this.listEventStoreData = [{
+      eventsList: this.data.createNodeEventList(null),
+      timelineGenerator: new NodeTimelineGenerator(),
+      displayName: 'Nodes'
+    }];
   }
 
 }
