@@ -39,6 +39,8 @@ import { SettingsService } from './settings.service';
 import { RepairTask } from '../Models/DataModels/repairTask';
 import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 import groupBy from 'lodash/groupBy';
+import { InfrastructureJobCollection } from '../Models/DataModels/collections/InfrastructureJobCollection';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -54,6 +56,7 @@ export class DataService {
   public imageStore: ImageStore;
   public backupPolicies: BackupPolicyCollection;
   public repairCollection: RepairTaskCollection;
+  public infrastructureCollection: InfrastructureJobCollection;
 
   public readOnlyHeader: boolean =  null;
   public clusterNameMetadata: string = null;
@@ -76,6 +79,7 @@ export class DataService {
     this.systemApp = new SystemApplication(this);
     this.backupPolicies = new BackupPolicyCollection(this);
     this.repairCollection = new RepairTaskCollection(this);
+    this.infrastructureCollection = new InfrastructureJobCollection(this);
    }
 
   public actionsEnabled(): boolean {
