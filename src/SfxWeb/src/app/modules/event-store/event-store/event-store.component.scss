@@ -1,3 +1,4 @@
+@import "src/vars.scss";
 .solid-grey {
     border-radius: 0px !important;
     border-color: white !important;
@@ -14,4 +15,9 @@
 .active {
     background-color: #0075c9 !important;
     border-width: 2px;
+}
+
+.bar-name{
+    font-size: 12pt;
+    background-color: $body-bg !important;
 }
