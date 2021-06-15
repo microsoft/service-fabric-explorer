@@ -81,7 +81,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
             }),
             catchError( err => {
                 success = false;
-                return of(err)
+                return of(err);
             })
             ).subscribe( () => {
                 this.refreshingPromise.next(success);
