@@ -1,0 +1,21 @@
+<div style="display: flex; align-items: center;">
+    <div class="badge-container">
+        <app-health-badge [badgeClass]="node.healthState.badgeClass" size="40px"></app-health-badge>
+    </div>
+    <table>
+        <tr>
+            <td>Status</td>
+            <td>: {{node.nodeStatus}}</td>
+        </tr>
+
+        <tr>
+            <td>Up Time</td>
+            <td>: {{duration}} <app-clip-board [text]="duration"></app-clip-board></td>
+        </tr>
+
+        <tr>
+            <td>Since</td>
+            <td style="display: flex;">: <app-display-time [time]="timestamp"></app-display-time> <app-clip-board [text]="timestamp"></app-clip-board></td>
+        </tr>
+    </table>
+</div>

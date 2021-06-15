@@ -398,6 +398,10 @@ export interface IRawNode {
         InstanceId: string;
         NodeDeactivationInfo: IRawNodeDeactivationInfo;
         IsStopped: boolean;
+        NodeDownTimeInSeconds: string;
+        NodeUpAt: string;
+        NodeDownAt: string;
+        NodeTags: string[];
     }
 
 export interface IRawBackupPolicy {

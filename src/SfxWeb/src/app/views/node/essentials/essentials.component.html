@@ -1,74 +1,64 @@
-<div class="detail-pane essen-pane" *ngIf="node">
-  <div class="essential-container">
-    <div class="essential-item ">
-      <div class="essential-head">
-        Name
+<div style="display: flex; flex-wrap: wrap;" *ngIf="node">
+  <div class="detail-pane essen-pane" style="    margin-right: 10px;
+  display: flex;
+  align-items: center;">
+    <app-node-status [node]="node"></app-node-status>
+  </div>
+  
+  <div class="detail-pane essen-pane"  style="flex-basis: 480px;">
+    <div class="essential-container">
+      <div class="essential-item ">
+        <div class="essential-head">
+          Name
+        </div>
+        <div class="essential-body">
+          {{node.name}}<app-clip-board [text]="node.name"></app-clip-board>
+        </div>
       </div>
-      <div class="essential-body">
-        {{node.name}}<app-clip-board [text]="node.name"></app-clip-board>
+  
+      <div class="essential-item ">
+        <div class="essential-head">
+          Upgrade Domain
+        </div>
+        <div class="essential-body">
+          {{node.raw.UpgradeDomain}}
+        </div>
       </div>
-    </div>
+  
+      <div class="essential-item ">
+        <div class="essential-head">
+          Fault Domain
+        </div>
+        <div class="essential-body">
+          {{node.raw.FaultDomain}}<app-clip-board [text]="node.raw.FaultDomain"></app-clip-board>
+        </div>
+      </div>
 
-    <div class="essential-item ">
-      <div class="essential-head">
-        Upgrade Domain
+      <div class="essential-item ">
+        <div class="essential-head">
+          IP Address or Domain Name
+        </div>
+        <div class="essential-body">
+          {{node.raw.IpAddressOrFQDN}}<app-clip-board [text]="node.raw.IpAddressOrFQDN"></app-clip-board>
+        </div>
       </div>
-      <div class="essential-body">
-        {{node.raw.UpgradeDomain}}
+  
+      <div class="essential-item ">
+        <div class="essential-head">
+          Type
+        </div>
+        <div class="essential-body">
+          {{node.raw.Type}}<app-clip-board [text]="node.raw.Type"></app-clip-board>
+        </div>
       </div>
-    </div>
-
-    <div class="essential-item ">
-      <div class="essential-head">
-        Fault Domain
-      </div>
-      <div class="essential-body">
-        {{node.raw.FaultDomain}}<app-clip-board [text]="node.raw.FaultDomain"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item ">
-      <div class="essential-head">
-        Status
-      </div>
-      <div class="essential-body">
-        {{node.nodeStatus}}
-      </div>
-    </div>
-
-    <div class="essential-item ">
-      <div class="essential-head">
-        Health State
-      </div>
-      <div class="essential-body">
-        <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge>
-      </div>
-    </div>
-
-    <div class="essential-item ">
-      <div class="essential-head">
-        IP Address or Domain Name
-      </div>
-      <div class="essential-body">
-        {{node.raw.IpAddressOrFQDN}}<app-clip-board [text]="node.raw.IpAddressOrFQDN"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item ">
-      <div class="essential-head">
-        Type
-      </div>
-      <div class="essential-body">
-        {{node.raw.Type}}<app-clip-board [text]="node.raw.Type"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item ">
-      <div class="essential-head">
-        Is Seed Node
-      </div>
-      <div class="essential-body">
-        {{node.raw.IsSeedNode}}
+  
+      <div class="essential-item ">
+        <div class="essential-head">
+          Is Seed Node
+        </div>
+        <div class="essential-body">
+          {{node.raw.IsSeedNode}}
+        </div>
       </div>
     </div>
   </div>
