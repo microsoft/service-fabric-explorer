@@ -57,7 +57,8 @@ export class EssentialsComponent extends BaseControllerDirective {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
-      this.clusterHealth.refresh(messageHandler).pipe(map((clusterHealth: ClusterHealth) => {
+      this.clusterHealth.refresh(messageHandler).pipe(map(() => {
+        const clusterHealth = this.clusterHealth;
         const nodesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Node);
         this.nodesDashboard = DashboardViewModel.fromHealthStateCount('Nodes', 'Node', true, nodesHealthStateCount, this.data.routes, RoutesService.getNodesViewPath());
 

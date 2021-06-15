@@ -125,24 +125,26 @@ export class DataModelBase<T> implements IDataModel<T> {
     }
 
     // Base refresh logic, do not override, override retrieveNewData/updateInternal to do custom logic
-    public refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
+    public refresh(messageHandler?: IResponseMessageHandler): Observable<boolean> {
+        let success = true;
         if (!this.refreshingPromise) {
             this.refreshingPromise = new Subject<any>();
 
             this.retrieveNewData(messageHandler).pipe(mergeMap((raw: T) => {
                 return this.update(raw);
             })).subscribe( data => {
-                this.refreshingPromise.next(this);
+                this.refreshingPromise.next(success);
                 this.refreshingPromise.complete();
                 this.refreshingPromise = null;
             },
             err => {
-                this.refreshingPromise.error(this);
+                success = false;
+                this.refreshingPromise.error(success);
                 this.refreshingPromise = null;
             });
 
         }
-        return this.refreshingPromise ? this.refreshingPromise.asObservable() : of(null);
+        return this.refreshingPromise ? this.refreshingPromise.asObservable() : of(success);
     }
 
     public update(raw: T): Observable<any> {

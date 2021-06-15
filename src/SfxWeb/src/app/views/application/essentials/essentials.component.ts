@@ -67,12 +67,13 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
     return forkJoin([
       this.clusterManifest.ensureInitialized(false),
-      this.app.upgradeProgress.refresh(messageHandler).pipe(map(upgradeProgress => {
-        this.upgradeProgress = upgradeProgress;
+      this.app.upgradeProgress.refresh(messageHandler).pipe(map(() => {
+        this.upgradeProgress = this.app.upgradeProgress;
       })),
       this.app.serviceTypes.refresh(messageHandler),
       this.app.services.refresh(messageHandler),
-      this.app.health.refresh(messageHandler).pipe(map((appHealth: ApplicationHealth) => {
+      this.app.health.refresh(messageHandler).pipe(map(() => {
+        const appHealth = this.app.health;
         const servicesHealthStateCount = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Service);
         this.servicesDashboard = DashboardViewModel.fromHealthStateCount('Services', 'Service', false, servicesHealthStateCount);
 

@@ -189,8 +189,8 @@ export class SystemApplication extends Application {
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
         // There is no special API to get system application, so we query its health
         // state and retrieve the health state from there.
-        return this.health.refresh(messageHandler).pipe(map(health => {
-            this.raw.HealthState = health.raw.AggregatedHealthState;
+        return this.health.refresh(messageHandler).pipe(map(() => {
+            this.raw.HealthState = this.health.raw.AggregatedHealthState;
             return this.raw;
         }));
     }

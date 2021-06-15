@@ -20,7 +20,7 @@ export class ContainerLogsComponent extends DeployedCodePackageBaseControllerDir
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.deployedCodePackage.containerLogs.refresh(messageHandler).pipe(map(containerLogs => {
-      this.containerLogs = containerLogs.raw.Content;
+      this.containerLogs = this.deployedCodePackage.containerLogs.raw.Content;
   }));
   }
 }

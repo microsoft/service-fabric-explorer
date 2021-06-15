@@ -42,8 +42,8 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
     this.service.description.refresh(messageHandler).subscribe();
 
     return forkJoin([
-      this.service.health.refresh(messageHandler).pipe(map((replicaHealth: ServiceHealth) => {
-        console.log('test');
+      this.service.health.refresh(messageHandler).pipe(map(() => {
+        const replicaHealth = this.service.health;
         const partitionsDashboard = HealthUtils.getHealthStateCount(replicaHealth.raw, HealthStatisticsEntityKind.Partition);
         this.partitionsDashboard = DashboardViewModel.fromHealthStateCount('Partitions', 'Partition', false, partitionsDashboard);
 

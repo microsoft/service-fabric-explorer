@@ -21,7 +21,7 @@ export class ManifestComponent extends DeployedServicePackageBaseControllerDirec
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.servicePackage.manifest.refresh(messageHandler).pipe(map(manifest => {
-      this.serviceManifest = manifest.raw.Manifest;
+      this.serviceManifest = this.servicePackage.manifest.raw.Manifest;
     }));
   }
 }
