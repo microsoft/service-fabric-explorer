@@ -141,11 +141,11 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         return this.updateInternal();
     }
 
-    public ensureInitialized(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<any> {
+    public ensureInitialized(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<boolean> {
         if (!this.isInitialized || forceRefresh) {
             return this.refresh(messageHandler);
         }
-        return of(this);
+        return of(true);
     }
 
     public find(uniqueId: string): T {

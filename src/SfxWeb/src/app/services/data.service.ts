@@ -133,7 +133,7 @@ export class DataService {
 
   public getSystemServices(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ServiceCollection> {
       return this.getSystemApp(false, messageHandler).pipe(mergeMap(app => app.services.ensureInitialized(forceRefresh, messageHandler)
-      ), map(app => app.services));
+      ), map(() => this.systemApp.services));
   }
 
   public getApps(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationCollection> {
@@ -147,7 +147,7 @@ export class DataService {
   }
 
   public getNodes(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<NodeCollection> {
-      return this.nodes.ensureInitialized(forceRefresh, messageHandler);
+      return this.nodes.ensureInitialized(forceRefresh, messageHandler).pipe(map(() => this.nodes));
   }
 
   public getNode(name: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<Node> {
