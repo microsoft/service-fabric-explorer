@@ -9,7 +9,7 @@ export class StringUtils {
      * Ensure the string ends with the specified suffix
      */
     public static EnsureEndsWith(str: string, suffix: string): string {
-        if (str.endsWith(suffix)) {
+        if (!str.endsWith(suffix)) {
             return str + suffix;
         }
         return str;
