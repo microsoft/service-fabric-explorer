@@ -6,7 +6,6 @@ import { finalize, map, mergeMap } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
 import { environment } from 'src/environments/environment';
-import { v4 as uuidv4 } from 'uuid';
 
 /*
 The will intercept and allow the modification of every http request going in and out.
@@ -61,9 +60,8 @@ export class GlobalHeaderInterceptor implements HttpInterceptor {
   constructor() {}
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     // ADD ADDITIONAL HEADERS HERE
-    let newHeaders = req.headers.append(Constants.SfxTelemetryMetadataName, Constants.SfxTelemetryHeaderValue)
-                           .append(Constants.SfxBuildMetadataName, environment.version)
-                           .append(Constants.SfxRequestIdHeaderName, uuidv4());
+    const newHeaders = req.headers.append(Constants.SfxTelemetryMetadataName, Constants.SfxTelemetryHeaderValue)
+                           .append(Constants.SfxBuildMetadataName, environment.version);
 
     return next.handle(req.clone({headers: newHeaders}));
  }

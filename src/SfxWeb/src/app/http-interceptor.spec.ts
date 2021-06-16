@@ -73,7 +73,6 @@ describe('Http interceptors', () => {
         const requests = httpMock.match({ method: 'get' });
         expect(requests[0].request.headers.get(Constants.SfxTelemetryMetadataName)).toBe(Constants.SfxTelemetryHeaderValue);
         expect(requests[0].request.headers.get(Constants.SfxBuildMetadataName)).toBe(environment.version);
-        expect(requests[0].request.headers.get(Constants.SfxRequestIdHeaderName)).toBeTruthy();
     });
 
     fit('aad auth not enabled', async () => {

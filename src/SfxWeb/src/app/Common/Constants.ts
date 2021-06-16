@@ -36,9 +36,9 @@ export class Constants {
     // telemetry header
     public static SfxTelemetryMetadataName = 'X-ServiceFabricClientType';
     public static SfxTelemetryHeaderValue = 'SFX';
-    
-    //request id header
-    public static SfxRequestIdHeaderName: string = 'X-ServiceFabricRequestId';
+
+    // request id header
+    public static SfxRequestIdHeaderName = 'X-ServiceFabricRequestId';
 
     // Custom headers
     public static SfxReadonlyHeaderName = 'SFX-Readonly';
