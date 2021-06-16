@@ -28,7 +28,7 @@ context('service', () => {
             cy.visit(urlFormatter(appName, serviceName, partitionId))
         })
 
-        it.only('load essentials', () => {
+        it('load essentials', () => {
             cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
 
             cy.get('[data-cy=header]').within(() => {
