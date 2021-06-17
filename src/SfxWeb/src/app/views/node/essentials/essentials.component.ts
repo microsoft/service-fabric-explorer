@@ -37,8 +37,8 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return forkJoin([
       this.node.loadInformation.refresh(messageHandler),
-      this.node.deployedApps.refresh(messageHandler).pipe(map(deployedApps => {
-        this.deployedApps = deployedApps;
+      this.node.deployedApps.refresh(messageHandler).pipe(map(() => {
+        this.deployedApps = this.node.deployedApps;
       }))
     ]);
   }
