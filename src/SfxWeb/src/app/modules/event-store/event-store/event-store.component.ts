@@ -139,7 +139,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       let combinedTimelineData = this.initializeTimelineData();
 
       for (const data of this.listEventStoreData) {
-          if(data.eventsList.lastRefreshWasSuccessful){
+          if (data.eventsList.lastRefreshWasSuccessful){
               try {
                   if (this.pshowAllEvents) {
                       rawEventlist = rawEventlist.concat(data.eventsList.collection.map(event => event.raw));
@@ -173,7 +173,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       const subs = this.listEventStoreData.map(data => data.eventsList.ensureInitialized());
 
       forkJoin(subs).subscribe(() => {
-          this.timeLineEventsData = this.getTimelineData(); 
+          this.timeLineEventsData = this.getTimelineData();
       });
   }
 
