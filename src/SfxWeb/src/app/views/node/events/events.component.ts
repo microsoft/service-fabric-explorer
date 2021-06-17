@@ -2,7 +2,7 @@ import { Component, OnInit, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { NodeBaseControllerDirective } from '../NodeBase';
 import { NodeTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
-import { NodeEventList } from 'src/app/Models/DataModels/collections/Collections';
+import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 
 @Component({
   selector: 'app-events',
@@ -10,16 +10,19 @@ import { NodeEventList } from 'src/app/Models/DataModels/collections/Collections
   styleUrls: ['./events.component.scss']
 })
 export class EventsComponent extends NodeBaseControllerDirective {
-  nodeEvents: NodeEventList;
-  nodeEventTimelineGenerator: NodeTimelineGenerator;
+
+  listEventStoreData: IEventStoreData [];
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   setup() {
-    this.nodeEvents = this.data.createNodeEventList(this.nodeName);
-    this.nodeEventTimelineGenerator = new NodeTimelineGenerator();
+    this.listEventStoreData = [{
+      eventsList: this.data.createNodeEventList(this.nodeName),
+      timelineGenerator: new NodeTimelineGenerator(),
+      displayName: 'Node: ' + this.nodeName
+    }];
   }
 
 }

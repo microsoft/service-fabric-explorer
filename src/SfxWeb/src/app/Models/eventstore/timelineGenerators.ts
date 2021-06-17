@@ -5,6 +5,7 @@ import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
 import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
+import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 
 /*
     NOTES:
@@ -180,12 +181,12 @@ export class EventStoreUtils {
     }
 }
 
-export abstract class TimeLineGeneratorBase<T extends FabricEventBase> {
+export abstract class TimeLineGeneratorBase<T> {
     consume(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData {
          throw new Error('NotImplementedError');
     }
 
-    generateTimeLineData(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData {
+    generateTimeLineData(events: T[], startOfRange?: Date, endOfRange?: Date): ITimelineData {
         const data = this.consume(events, startOfRange, endOfRange);
         EventStoreUtils.addSubGroups(data.groups);
         return data;
@@ -510,6 +511,40 @@ export class PartitionTimelineGenerator extends TimeLineGeneratorBase<NodeEvent>
         return {
             groups,
             items
+        };
+    }
+}
+
+export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTask>{
+
+    consume(tasks: RepairTask[], startOfRange: Date, endOfRange: Date): ITimelineData{
+        const items = new DataSet<DataItem>();
+        const groups = new DataSet<DataGroup>();
+
+        tasks.forEach(task => {
+            items.add({
+                id: task.raw.TaskId,
+                content: task.raw.TaskId,
+                start: task.startTime ,
+                end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
+                type: 'range',
+                group: 'job',
+                subgroup: 'stack',
+                className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',
+                title: EventStoreUtils.tooltipFormat(task.raw, new Date(task.raw.History.ExecutingUtcTimestamp).toLocaleString(),
+                                                            new Date(task.raw.History.CompletedUtcTimestamp).toLocaleString()),
+            });
+        });
+
+        groups.add({
+            id: 'job',
+            content: 'Job History',
+            subgroupStack: {stack: true}
+        });
+
+        return {
+            groups,
+            items,
         };
     }
 }

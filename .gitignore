@@ -288,3 +288,6 @@ __pycache__/
 *.xsd.cs
 
 playbackRecordings/
+src/Sfx-Proxy/package-lock.json
+src/Sfx-Standalone/package-lock.json
+src/SfxWeb/package-lock.json

@@ -1,8 +1,8 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { DataService } from 'src/app/services/data.service';
-import { ApplicationEventList } from 'src/app/Models/DataModels/collections/Collections';
 import { ApplicationTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
+import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 
 @Component({
   selector: 'app-events',
@@ -11,17 +11,19 @@ import { ApplicationTimelineGenerator } from 'src/app/Models/eventstore/timeline
 })
 export class EventsComponent extends ApplicationBaseControllerDirective {
 
-  timelineGenerator: ApplicationTimelineGenerator;
-  appEvents: ApplicationEventList;
+  listEventStoreData: IEventStoreData [];
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   setup() {
-    this.appEvents = this.data.createApplicationEventList(this.appId);
-    this.timelineGenerator = new ApplicationTimelineGenerator();
+    this.listEventStoreData = [
+      { eventsList : this.data.createApplicationEventList(this.appId),
+        timelineGenerator: new ApplicationTimelineGenerator(),
+        displayName : 'Application: ' + this.appId
+      }
+    ];
   }
-
 
 }
