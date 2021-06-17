@@ -34,7 +34,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   @Input() listSettings: ListSettings;
   @Input() searchText = 'Search list';
   @Input() isLoading = false;
-  @Input() successfulLoad = false;
+  @Input() successfulLoad = true;
   @Output() sorted = new EventEmitter<any[]>();
   @Output() sortOrdering = new EventEmitter<ISortOrdering>();
 
