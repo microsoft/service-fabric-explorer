@@ -34,7 +34,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   public get showAllEvents() { return this.pshowAllEvents; }
   public set showAllEvents(state: boolean) {
       this.pshowAllEvents = state;
-      this.setTimelineData();
+      this.timeLineEventsData = this.getTimelineData();
   }
 
   public static MaxWindowInDays = 7;
@@ -134,14 +134,12 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       };
   }
 
-  public setTimelineData(): void {
-      const subs = this.listEventStoreData.map(data => data.eventsList.ensureInitialized());
+  private getTimelineData(): ITimelineData{
+      let rawEventlist = [];
+      let combinedTimelineData = this.initializeTimelineData();
 
-      forkJoin(subs).subscribe(() => {
-          let rawEventlist = [];
-          const combinedTimelineData = this.initializeTimelineData();
-
-          for (const data of this.listEventStoreData) {
+      for (const data of this.listEventStoreData) {
+          if(data.eventsList.lastRefreshWasSuccessful){
               try {
                   if (this.pshowAllEvents) {
                       rawEventlist = rawEventlist.concat(data.eventsList.collection.map(event => event.raw));
@@ -155,20 +153,27 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                   console.error(e);
               }
           }
+      }
 
-          if (this.pshowAllEvents) {
-              const d = parseEventsGenerically(rawEventlist, this.transformText);
+      if (this.pshowAllEvents) {
+          const d = parseEventsGenerically(rawEventlist, this.transformText);
 
-              this.timeLineEventsData = {
-                  start: this.startDate,
-                  end: this.endDate,
-                  items: d.items,
-                  groups: d.groups
-              };
-          }
-          else {
-              this.timeLineEventsData = combinedTimelineData;
-          }
+          combinedTimelineData = {
+              start: this.startDate,
+              end: this.endDate,
+              items: d.items,
+              groups: d.groups
+          };
+      }
+
+      return combinedTimelineData;
+  }
+
+  public setTimelineData(): void {
+      const subs = this.listEventStoreData.map(data => data.eventsList.ensureInitialized());
+
+      forkJoin(subs).subscribe(() => {
+          this.timeLineEventsData = this.getTimelineData(); 
       });
   }
 

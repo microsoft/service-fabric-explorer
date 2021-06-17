@@ -88,11 +88,14 @@
                     </ng-container>
 
                     </ng-container>
-                    <tr *ngIf="isLoading">
+                    <tr *ngIf="isLoading && successfulLoad">
                         <td [attr.colspan]="listSettings.columnSettings.length">Loading...</td>
                     </tr>
-                    <tr *ngIf="sortedFilteredList.length === 0 && !list && !isLoading">
+                    <tr *ngIf="sortedFilteredList.length === 0 && !list && !isLoading && successfulLoad">
                         <td [attr.colspan]="listSettings.columnSettings.length">No items to display.</td>
+                    </tr>
+                    <tr *ngIf="!successfulLoad">
+                        <td [attr.colspan]="listSettings.columnSettings.length">Error: The list of events has failed to load.</td>
                     </tr>
                 </tbody>
             </table>
