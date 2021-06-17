@@ -28,11 +28,11 @@ export class AdalService {
             tenant: data.raw.metadata.tenant,
             clientId: data.raw.metadata.cluster,
             cacheLocation: 'localStorage'
-        };
+          };
 
-        if(data.raw.metadata.login) {
-          config.instance = StringUtils.EnsureEndsWith(data.raw.metadata.login, "/");
-        }
+          if (data.raw.metadata.login) {
+            config.instance = StringUtils.EnsureEndsWith(data.raw.metadata.login, '/');
+          }
 
           this.context = new AuthenticationContext(config);
           this.aadEnabled = true;
