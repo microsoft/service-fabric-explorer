@@ -30,6 +30,27 @@
     </div>
 </div>
 
+<div>
+    Send Request
+    <div>
+        <input [(ngModel)]="requestUrl">
+
+        <textarea [(ngModel)]="body"></textarea>
+    </div>
+    <div ngbDropdown #myDrop="ngbDropdown">
+        <button class="simple-button" ngbDropdownToggle (click)="$event.stopPropagation()">{{selectedType.type}}</button>
+        <div ngbDropdownMenu>
+            <div *ngFor="let type of requestTypes">
+                <button *ngIf="type !== selectedType" ngbDropdownItem
+                    (click)="setType(type)">
+                    {{type.type}}
+                </button>
+            </div>
+        </div>
+    </div>
+    
+</div>
+
 <div ngbNav #nav="ngbNav" class="essen-pane">
     <div ngbNavItem>
         <a ngbNavLink style="font-size: 12pt;">

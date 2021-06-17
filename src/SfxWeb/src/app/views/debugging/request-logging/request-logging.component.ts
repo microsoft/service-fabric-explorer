@@ -15,6 +15,30 @@ export class RequestLoggingComponent implements OnInit {
   listSettingsRecent: ListSettings;
   constructor(private settings: SettingsService, public networkService: RestClientService) { }
 
+  requestUrl: string = "";
+  body: string = "";
+  params: string[] = [];
+  requestTypes = [
+    {
+      type:'GET',
+      showBody: false
+    },
+    {
+      type:'PUT',
+      showBody: true
+    },
+    {
+      type:'POST',
+      showBody: true
+    },
+    {
+      type:'DELETE',
+      showBody: false
+    }
+  ];
+
+  selectedType = this.requestTypes[0];
+
   ngOnInit(): void {
     this.listSettingsRecent = this.settings.getNewOrExistingNetworkRequestListSettings(true);
 
@@ -37,4 +61,7 @@ export class RequestLoggingComponent implements OnInit {
       true);
   }
 
+  setType(type: any) {
+    this.selectedType = type;
+  }
 }

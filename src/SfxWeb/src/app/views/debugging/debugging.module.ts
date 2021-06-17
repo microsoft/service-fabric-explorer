@@ -5,7 +5,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { NestedTableComponent } from './nested-table/nested-table.component';
 import { FormsModule } from '@angular/forms';
-import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { DebuggingRoutingModule } from './debugging-routing.module';
 
 @NgModule({
@@ -16,7 +16,8 @@ import { DebuggingRoutingModule } from './debugging-routing.module';
     DetailListTemplatesModule,
     FormsModule,
     NgbNavModule,
-    DebuggingRoutingModule
+    DebuggingRoutingModule,
+    NgbDropdownModule
   ],
   exports: [RequestLoggingComponent],
 })
