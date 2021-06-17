@@ -42,7 +42,8 @@ export class TreeService {
             }
 
             this.cm = new ClusterManifest(this.data);
-            this.refreshService.insertRefreshSubject('tree', () => this.refresh() );
+
+            this.refreshService.refreshSubject.subscribe( () => this.refresh().subscribe());
         }
 
         public selectTreeNode(path: string[], skipSelectAction?: boolean): Observable<any> {

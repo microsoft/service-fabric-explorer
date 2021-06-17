@@ -21,61 +21,38 @@ describe('RefreshService', () => {
   });
 
 
-  fit('add and remove refresh subject', () => {
+  fit('auto refresh', async (done) => {
+    window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, 'OFF');
+
     const service: RefreshService = TestBed.inject(RefreshService);
+    expect(service.refreshTick).toBe(0);
 
-    const keyName = 'test';
-    const func = () => of(null);
+    service.updateRefreshInterval('2');
 
-    service.insertRefreshSubject(keyName, func);
-    expect(service.hasRefreshSubject(keyName)).toBeTruthy();
-    expect(service.refreshSubjectCount()).toBe(1);
+    await timer(3000).toPromise();
 
-    service.removeRefreshSubject(keyName);
-    expect(service.hasRefreshSubject(keyName)).toBeFalsy();
-    expect(service.refreshSubjectCount()).toBe(0);
+    service.refreshSubject.subscribe(tick => {
+      expect(tick).toBe(2);
+      done();
+    });
 
   });
 
-  fit('refresh all', async () => {
-    const service: RefreshService = TestBed.inject(RefreshService);
-    let done = false;
-    const keyName = 'test';
-    const func = () => of(null).pipe(map( () => done = true));
+  fit('refresh all', (done) => {
+    window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, 'OFF');
 
-    service.insertRefreshSubject(keyName, func);
-    expect(service.hasRefreshSubject(keyName)).toBeTruthy();
-    expect(service.refreshSubjectCount()).toBe(1);
+    const service: RefreshService = TestBed.inject(RefreshService);
+
+    service.refreshSubject.subscribe(tick => {
+      expect(tick).toBe(0);
+      done();
+    });
 
     service.refreshAll();
-
-    await timer(1000).toPromise();
-
-    expect(service.isRefreshing).toBeFalsy();
-    expect(done).toBeTruthy();
-  });
-
-  fit('refresh withError', async () => {
-    const service: RefreshService = TestBed.inject(RefreshService);
-    const keyName = 'test';
-    const func = () =>  throwError('error');
-    let done = false;
-    const keyName2 = 'success';
-    const func2 = () => of(null).pipe(map( () => done = true));
-
-    service.insertRefreshSubject(keyName, func);
-    service.insertRefreshSubject(keyName2, func2);
-    expect(service.refreshSubjectCount()).toBe(2);
-
-    service.refreshAll();
-
-    await timer(1500).toPromise();
-
-    expect(service.isRefreshing).toBeFalsy();
-    expect(done).toBeTruthy();
   });
 
   fit('update refresh interval', async () => {
+    window.localStorage.setItem(Constants.AutoRefreshIntervalStorageKey, '15');
     const service: RefreshService = TestBed.inject(RefreshService);
     service.init();
 

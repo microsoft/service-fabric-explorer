@@ -54,7 +54,6 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    console.log(this)
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.data.clusterManifest.isBackupRestoreEnabled) {
         this.data.refreshBackupPolicies(messageHandler);
@@ -77,7 +76,7 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
         const replicasHealthStateCount = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Replica);
         this.replicasDashboard = DashboardViewModel.fromHealthStateCount('Replicas', 'Replica', false, replicasHealthStateCount);
       }))
-    ])
+    ]);
   }
 
 }

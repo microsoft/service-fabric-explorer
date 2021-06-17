@@ -20,14 +20,9 @@ export class ApplicationBaseControllerDirective extends BaseControllerDirective 
     }
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
-      try {
         return this.data.getApp(this.appId, true, messageHandler).pipe(map(data => {
-          console.log(data);
           this.app = data;
         }));
-      }  catch(e) {
-        console.log(e)
-      }
     }
 
     getParams(route: ActivatedRouteSnapshot): void {
