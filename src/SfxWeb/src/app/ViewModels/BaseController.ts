@@ -30,7 +30,7 @@ export abstract class BaseControllerDirective implements  OnInit, OnDestroy {
 
              this.setup();
 
-             this.refreshService.insertRefreshSubject('current controller' + this.getClassName(), () => this.common().pipe(mergeMap(() => this.refresh(this.messageService))));
+             this.refreshService.insertRefreshSubject('current controller' + this.getClassName(), () => this.common().pipe(mergeMap(() => {console.log("refresh",this); return this.refresh(this.messageService)})));
 
              this.subscriptions.add(this.common().pipe(mergeMap(() => this.refresh(this.messageService))).subscribe());
         }));
@@ -68,6 +68,7 @@ export abstract class BaseControllerDirective implements  OnInit, OnDestroy {
     }
 
     common(messageHandler?: IResponseMessageHandler): Observable<any>{
+      console.log("test")
         return of(null);
     }
 }

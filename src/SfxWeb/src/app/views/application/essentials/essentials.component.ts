@@ -23,19 +23,16 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
   unhealthyEvaluationsListSettings: ListSettings;
   upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
   serviceTypesListSettings: ListSettings;
-  clusterManifest: ClusterManifest;
 
   servicesDashboard: IDashboardViewModel;
   partitionsDashboard: IDashboardViewModel;
   replicasDashboard: IDashboardViewModel;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService, private cdr: ChangeDetectorRef) {
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
   setup() {
-    this.clusterManifest = new ClusterManifest(this.data);
-
     this.listSettings = this.settings.getNewOrExistingListSettings('services', ['name'], [
       new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
       new ListColumnSetting('raw.TypeName', 'Service Type'),
@@ -54,11 +51,10 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
     this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('upgradeProgressUnhealthyEvaluations');
-    this.cdr.detectChanges();
-
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    console.log(this)
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.data.clusterManifest.isBackupRestoreEnabled) {
         this.data.refreshBackupPolicies(messageHandler);
@@ -66,7 +62,6 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
     });
 
     return forkJoin([
-      this.clusterManifest.ensureInitialized(false),
       this.app.upgradeProgress.refresh(messageHandler).pipe(map(upgradeProgress => {
         this.upgradeProgress = upgradeProgress;
       })),
@@ -82,9 +77,7 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
         const replicasHealthStateCount = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Replica);
         this.replicasDashboard = DashboardViewModel.fromHealthStateCount('Replicas', 'Replica', false, replicasHealthStateCount);
       }))
-    ]).pipe(map( () => {
-      this.cdr.detectChanges();
-    }));
+    ])
   }
 
 }
