@@ -41,7 +41,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     public isInitialized = false;
     public parent: any;
     public collection: T[] = [];
-    public lastRefreshWasSuccessful: boolean = false;
+    public lastRefreshWasSuccessful = false;
 
     protected valueResolver: ValueResolver = new ValueResolver();
 
