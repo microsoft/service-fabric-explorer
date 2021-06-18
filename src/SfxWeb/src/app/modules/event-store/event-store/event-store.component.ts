@@ -57,6 +57,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   public endDateMax: Date;
   public endDateInit: Date;
   public isResetEnabled = false;
+  public failedRefresh = false;
   public timeLineEventsData: ITimelineData;
 
   public transformText = 'Category,Kind';
@@ -137,6 +138,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   private getTimelineData(): ITimelineData{
       let rawEventlist = [];
       let combinedTimelineData = this.initializeTimelineData();
+      this.failedRefresh = false;
 
       for (const data of this.listEventStoreData) {
           if (data.eventsList.lastRefreshWasSuccessful){
@@ -152,6 +154,9 @@ export class EventStoreComponent implements OnInit, OnDestroy {
               } catch (e) {
                   console.error(e);
               }
+          }
+          else{
+              this.failedRefresh = true;
           }
       }
 
