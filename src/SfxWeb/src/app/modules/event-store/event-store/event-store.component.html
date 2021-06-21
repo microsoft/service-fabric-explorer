@@ -44,18 +44,23 @@
         </div>
         <br>
 
+        <app-health-badge *ngIf="failedRefresh" text=" Some items failed to load."  badgeClass="badge-warning"></app-health-badge>
+        
         <div *ngIf="listEventStoreData.length > 1; then showTabs else showSingle"></div>
 
         <ng-template #showTabs>
             <div ngbNav #nav="ngbNav">
                 <div ngbNavItem *ngFor="let data of listEventStoreData">
                     <a ngbNavLink class="bar-name">
+                        <app-health-badge *ngIf="!data.eventsList.lastRefreshWasSuccessful" 
+                        text="Error" [showText]="false"  badgeClass="badge-error"></app-health-badge>
                         {{data.displayName}}
                     </a>
                     <ng-template ngbNavContent>
                         <app-detail-list [list]="data.eventsList.collection" 
                         [listSettings]="data.eventsList.settings" 
-                        [isLoading]="!data.eventsList.isInitialized"></app-detail-list>
+                        [isLoading]="!data.eventsList.isInitialized"
+                        [successfulLoad]="data.eventsList.lastRefreshWasSuccessful"></app-detail-list>
                     </ng-template>
                 </div>
             </div>
@@ -65,7 +70,8 @@
         <ng-template #showSingle>
             <app-detail-list [list]="listEventStoreData[0].eventsList.collection" 
                 [listSettings]="listEventStoreData[0].eventsList.settings" 
-                [isLoading]="!listEventStoreData[0].eventsList.isInitialized"></app-detail-list>
+                [isLoading]="!listEventStoreData[0].eventsList.isInitialized"
+                [successfulLoad]="listEventStoreData[0].eventsList.lastRefreshWasSuccessful"></app-detail-list>
         </ng-template>
 
         <div>
