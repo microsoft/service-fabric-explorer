@@ -55,7 +55,7 @@ export class TreeNodeGroupViewModel {
     }
 
     public get isExpanded(): boolean {
-        return  this.internalIsExpanded && !!this.node.childrenQuery;
+        return  this.internalIsExpanded && this.hasChildren;
     }
 
     public get isCollapsed(): boolean {
@@ -122,11 +122,15 @@ export class TreeNodeGroupViewModel {
 
         return of(this.node && this.node.mergeClusterHealthStateChunk
             ? this.node.mergeClusterHealthStateChunk(clusterHealthChunk)
-            : true).pipe(map( () => {
+            : true).pipe(mergeMap( () => {
                 const updateChildrenPromises = this.children.map(child => {
                     return child.updateDataModelFromHealthChunkRecursively(clusterHealthChunk);
                 });
-                return forkJoin(updateChildrenPromises);
+                if (updateChildrenPromises.length > 0) {
+                  return forkJoin(updateChildrenPromises);
+                }else{
+                  return of(true);
+                }
             } ));
     }
 

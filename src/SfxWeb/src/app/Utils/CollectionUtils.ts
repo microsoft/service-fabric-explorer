@@ -1,6 +1,6 @@
 import { IDataModel } from '../Models/DataModels/Base';
 import { Utils } from './Utils';
-
+import KeyBy from 'lodash/KeyBy';
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
@@ -21,11 +21,11 @@ export class CollectionUtils {
                                          appendOnly: boolean = false): T[] {
 
         // create dictionary for old id => element
-        const oldCollectionMap = Utils.keyByFromFunction(collection, keySelector);
+        const oldCollectionMap = KeyBy(collection, keySelector);
         // remove deleted items first
         if (!appendOnly) {
             // create dictionary for new id => element
-            const newCollectionMap = Utils.keyByFromFunction(newCollection, newKeySelector);
+            const newCollectionMap = KeyBy(newCollection, newKeySelector);
             collection = collection.filter((item) => newCollectionMap[keySelector(item)]);
         }
 
@@ -53,7 +53,7 @@ export class CollectionUtils {
             return false;
         }
 
-        const oldCollectionMap = Utils.keyByFromFunction(collection, keySelector);
+        const oldCollectionMap = KeyBy(collection, keySelector);
 
         return newCollection.every(item => {
             const id = newKeySelector(item);
