@@ -12,7 +12,7 @@ import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-s
 })
 export class EventsComponent extends BaseControllerDirective {
 
-  listEventStoreData: IEventStoreData<any,any> [];
+  listEventStoreData: IEventStoreData<any, any> [];
 
   constructor(private data: DataService, injector: Injector) {
     super(injector);

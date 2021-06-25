@@ -10,7 +10,7 @@ import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-s
 })
 export class EventsComponent implements OnInit {
 
-  listEventStoreData: IEventStoreData<any,any> [];
+  listEventStoreData: IEventStoreData<any, any> [];
 
   constructor(public data: DataService) { }
 
