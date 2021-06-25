@@ -1,25 +1,34 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
 import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
-import { EventListBase } from 'src/app/Models/DataModels/collections/Collections';
-import { FabricEventBase } from 'src/app/Models/eventstore/Events';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
-import { Subject, Subscription, forkJoin } from 'rxjs';
-import { debounceTime, distinctUntilChanged, finalize } from 'rxjs/operators';
+import { Subject, Subscription, forkJoin, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, subscribeOn } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
 import { hostViewClassName } from '@angular/compiler';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
+import { Observable } from 'rxjs';
+import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
+import { ListSettings } from 'src/app/Models/ListSettings';
 
 export interface IQuickDates {
     display: string;
     hours: number;
 }
 
-export interface IEventStoreData {
-    eventsList: EventListBase<any>;
-    timelineGenerator?: TimeLineGeneratorBase<FabricEventBase>;
+export interface IEventStoreDataUtils{
+    setDateWindow(startDate: Date, endDate: Date): boolean;
+    reload(): Observable<any>;
+}
+
+export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
+    eventsList: T;
+    timelineGenerator?: TimeLineGeneratorBase<S>;
     timelineData?: ITimelineData;
     displayName: string;
+    listSettings?: ListSettings;
+    utils?: IEventStoreDataUtils;
+    getEvents?(): S [];
 }
 
 @Component({
@@ -50,7 +59,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       { display: '7 days', hours: 168 }
   ];
 
-  @Input() listEventStoreData: IEventStoreData[];
+  @Input() listEventStoreData: IEventStoreData<any, any>[];
   public startDateMin: Date;
   public endDateMin: Date;
   public startDateMax: Date;
@@ -105,11 +114,11 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   }
 
   private setNewDateWindow(): void {
-      const subs = this.listEventStoreData.filter(data => data.eventsList.setDateWindow(this.startDate, this.endDate))
+      const subs = this.listEventStoreData.filter(data => data.utils?.setDateWindow(this.startDate, this.endDate) ?? false)
       .map((data) => {
           this.resetSelectionProperties();
           this.isResetEnabled = true;
-          return data.eventsList.reload();
+          return data.utils?.reload() ?? of(false);
       });
 
       if (subs.length > 0) {
@@ -144,10 +153,12 @@ export class EventStoreComponent implements OnInit, OnDestroy {
           if (data.eventsList.lastRefreshWasSuccessful){
               try {
                   if (this.pshowAllEvents) {
-                      rawEventlist = rawEventlist.concat(data.eventsList.collection.map(event => event.raw));
+                      if (data.utils){
+                          rawEventlist = rawEventlist.concat(data.getEvents());
+                      }
 
                   } else if (data.timelineGenerator) {
-                      data.timelineData = data.timelineGenerator.generateTimeLineData(data.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
+                      data.timelineData = data.timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate);
 
                       this.mergeTimelineData(combinedTimelineData, data.timelineData);
                   }

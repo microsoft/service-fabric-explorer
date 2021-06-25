@@ -10,7 +10,7 @@ import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-s
 })
 export class EventsComponent extends ReplicaBaseControllerDirective {
 
-  listEventStoreData: IEventStoreData [];
+  listEventStoreData: IEventStoreData<any,any> [];
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);

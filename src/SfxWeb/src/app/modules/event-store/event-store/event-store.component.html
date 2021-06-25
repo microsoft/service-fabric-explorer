@@ -58,7 +58,7 @@
                     </a>
                     <ng-template ngbNavContent>
                         <app-detail-list [list]="data.eventsList.collection" 
-                        [listSettings]="data.eventsList.settings" 
+                        [listSettings]="data.listSettings" 
                         [isLoading]="!data.eventsList.isInitialized"
                         [successfulLoad]="data.eventsList.lastRefreshWasSuccessful"></app-detail-list>
                     </ng-template>
@@ -69,7 +69,7 @@
 
         <ng-template #showSingle>
             <app-detail-list [list]="listEventStoreData[0].eventsList.collection" 
-                [listSettings]="listEventStoreData[0].eventsList.settings" 
+                [listSettings]="listEventStoreData[0].listSettings" 
                 [isLoading]="!listEventStoreData[0].eventsList.isInitialized"
                 [successfulLoad]="listEventStoreData[0].eventsList.lastRefreshWasSuccessful"></app-detail-list>
         </ng-template>
