@@ -1,6 +1,6 @@
 import { IClusterHealthChunk, IDeployedServicePackageHealthStateChunk } from '../../HealthChunkRawDataTypes';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, of } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { ValueResolver, ITextAndBadge } from 'src/app/Utils/ValueResolver';
 import { IRawDeployedServicePackage } from '../../RawDataTypes';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
@@ -316,16 +316,12 @@ export class DeployedReplicaCollection extends DataModelCollectionBase<DeployedR
 export abstract class EventListBase<T extends FabricEventBase> extends DataModelCollectionBase<FabricEventInstanceModel<T>> {
     public readonly settings: ListSettings;
     public readonly detailsSettings: ListSettings;
-    // This will skip refreshing if period is set to be too quick by user, as currently events
-    // requests take ~3 secs, and so we shouldn't be delaying every global refresh.
-    public readonly minimumRefreshTimeInSecs: number = 10;
     public readonly pageSize: number = 15;
     public readonly defaultDateWindowInDays: number = 7;
     public readonly latestRefreshPeriodInSecs: number = 60 * 60;
 
     protected readonly optionalColsStartIndex: number = 2;
 
-    private lastRefreshTime?: Date;
     private iStartDate: Date;
     private iEndDate: Date;
 
@@ -374,20 +370,12 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     }
 
     public reload(messageHandler?: IResponseMessageHandler): Observable<any> {
-        this.lastRefreshTime = null;
         return this.clear().pipe(map(() => {
             return this.refresh(messageHandler);
         }));
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        // Use existing collection if a refresh is called in less than minimumRefreshTimeInSecs.
-        if (this.lastRefreshTime &&
-            (new Date().getTime() - this.lastRefreshTime.getTime()) < (this.minimumRefreshTimeInSecs * 1000)) {
-            return of(this.collection);
-        }
-
-        this.lastRefreshTime = new Date();
         return this.retrieveEvents(messageHandler);
     }
 
