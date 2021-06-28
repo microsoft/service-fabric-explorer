@@ -304,15 +304,13 @@ export class DataService {
     }
 
     public getRepairTasksData(settings: SettingsService): IEventStoreData<RepairTaskCollection, RepairTask>{
-        const d: IEventStoreData<RepairTaskCollection, RepairTask> = {
+        return {
             eventsList: this.repairCollection,
             timelineGenerator: new RepairTaskTimelineGenerator(),
             displayName: 'Repair Tasks',
             listSettings: settings.getNewOrExistingCompletedRepairTaskListSettings(),
             getEvents: () => this.repairCollection.collection
         };
-
-        return d;
     }
 
     public getClusterEventData(): IEventStoreData<ClusterEventList, ClusterEvent>{
