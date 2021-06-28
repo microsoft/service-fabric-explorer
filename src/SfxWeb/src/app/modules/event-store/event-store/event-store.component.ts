@@ -102,7 +102,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   }
 
   private setNewDateWindow(): void {
-      // If the date window changed for some collection, we should refresh its data to get the new one.
+      // If the data interface has that function implemented, we call it. If it doesn't we discard it by returning false.
       const refreshData = this.listEventStoreData.some(data => data.setDateWindow ? data.setDateWindow(this.startDate, this.endDate) : false);
 
       if (refreshData) {
