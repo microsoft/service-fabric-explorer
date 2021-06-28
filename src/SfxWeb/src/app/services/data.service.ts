@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SystemApplication, Application } from '../Models/DataModels/Application';
 import { ApplicationTypeGroupCollection, ApplicationCollection, BackupPolicyCollection, ServiceTypeCollection,
          DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, ReplicaOnPartitionCollection,
-         PartitionCollection, ClusterEventList, NodeEventList, ApplicationEventList, ServiceEventList, PartitionEventList, ReplicaEventList, CorrelatedEventList } from '../Models/DataModels/collections/Collections';
+         PartitionCollection, ClusterEventList, NodeEventList, ApplicationEventList, ServiceEventList, PartitionEventList, ReplicaEventList, CorrelatedEventList, EventListBase } from '../Models/DataModels/collections/Collections';
 import { RoutesService } from './routes.service';
 import { MessageService } from './message.service';
 import { TelemetryService } from './telemetry.service';
@@ -33,6 +33,11 @@ import { IDataModelCollection } from '../Models/DataModels/collections/Collectio
 import { DeployedApplicationCollection } from '../Models/DataModels/collections/DeployedApplicationCollection';
 import { MatDialog } from '@angular/material/dialog';
 import { RepairTaskCollection } from '../Models/DataModels/collections/RepairTaskCollection';
+import { ClusterEvent, FabricEventBase, NodeEvent, ServiceEvent } from '../Models/eventstore/Events';
+import { IEventStoreData } from '../modules/event-store/event-store/event-store.component';
+import { SettingsService } from './settings.service';
+import { RepairTask } from '../Models/DataModels/repairTask';
+import { ClusterTimelineGenerator, NodeTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 
 @Injectable({
   providedIn: 'root'
@@ -289,12 +294,35 @@ export class DataService {
       }));
   }
 
-  public getRepairTasks(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler): Observable<RepairTaskCollection> {
-    return this.repairCollection.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.repairCollection));
-  }
+    private addFabricEventData<T extends EventListBase<any>, S extends FabricEventBase>(data: IEventStoreData<T, S>){
+        data.listSettings = data.eventsList.settings;
+        data.getEvents = () => data.eventsList.collection.map(event => event.raw);
+        data.utils = {
+            setDateWindow: (startDate: Date, endDate: Date) => data.eventsList.setDateWindow(startDate, endDate),
+            reload: () => data.eventsList.reload(),
+        };
+    }
 
-  public createClusterEventList(): ClusterEventList {
-    return new ClusterEventList(this);
+    public getRepairTasksData(settings: SettingsService): IEventStoreData<RepairTaskCollection, RepairTask>{
+        return {
+            eventsList: this.repairCollection,
+            timelineGenerator: new RepairTaskTimelineGenerator(),
+            displayName: 'Repair Tasks',
+            listSettings: settings.getNewOrExistingCompletedRepairTaskListSettings(),
+            getEvents: () => this.repairCollection.collection
+        };
+    }
+
+    public getClusterEventData(): IEventStoreData<ClusterEventList, ClusterEvent>{
+        const list = new ClusterEventList(this);
+        const d = {
+            eventsList : list,
+            timelineGenerator : new ClusterTimelineGenerator(),
+            displayName : 'Cluster',
+        };
+
+        this.addFabricEventData<ClusterEventList, ClusterEvent>(d);
+        return d;
     }
 
     public createNodeEventList(nodeName?: string): NodeEventList {
