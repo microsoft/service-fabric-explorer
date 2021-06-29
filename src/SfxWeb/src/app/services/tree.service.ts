@@ -75,7 +75,7 @@ export class TreeService {
             return this.data.getClusterHealthChunk(clusterHealthQueryDescription)
                 .pipe(mergeMap(healthChunk => {
                   return forkJoin([
-                        // cluster health needs to be refreshed even when the rooddt node is collapsed
+                        // cluster health needs to be refreshed even when the root node is collapsed
                         this.clusterHealth.mergeHealthStateChunk(healthChunk),
                         this.tree.mergeClusterHealthStateChunk(healthChunk)
                     ]).pipe(mergeMap(() => this.tree.refresh()) );

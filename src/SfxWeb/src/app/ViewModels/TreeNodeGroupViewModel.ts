@@ -123,9 +123,8 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         return (this.node && this.node.mergeClusterHealthStateChunk ?
         this.node.mergeClusterHealthStateChunk(clusterHealthChunk)
         : of([])).pipe(mergeMap(() => {
-          const updateChildrenPromises = this.children.map(child => {
-            return child.updateDataModelFromHealthChunkRecursively(clusterHealthChunk);
-          });
+          const updateChildrenPromises = this.children.map(child => child.updateDataModelFromHealthChunkRecursively(clusterHealthChunk));
+
           if (updateChildrenPromises.length > 0) {
             return forkJoin(updateChildrenPromises);
           } else {
