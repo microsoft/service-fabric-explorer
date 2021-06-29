@@ -43,7 +43,7 @@ export class TreeService {
 
             this.cm = new ClusterManifest(this.data);
 
-            this.refreshService.refreshSubject.subscribe( () => {console.log(this); this.refresh().subscribe(); });
+            this.refreshService.refreshSubject.subscribe( () => this.refresh().subscribe());
         }
 
         public selectTreeNode(path: string[], skipSelectAction?: boolean): Observable<any> {
@@ -72,10 +72,8 @@ export class TreeService {
             // Merge the health chunk result back to the shared data models, during refresh, all tree nodes will
             // retrieve data from the cached data model which already has latest health state.
             const clusterHealthQueryDescription = this.tree.addHealthChunkFiltersRecursively(this.data.getInitialClusterHealthChunkQueryDescription());
-            console.log(clusterHealthQueryDescription);
             return this.data.getClusterHealthChunk(clusterHealthQueryDescription)
                 .pipe(mergeMap(healthChunk => {
-                  console.log(healthChunk);
                   return forkJoin([
                         // cluster health needs to be refreshed even when the rooddt node is collapsed
                         this.clusterHealth.mergeHealthStateChunk(healthChunk),
