@@ -87,8 +87,8 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
                 return of(err);
             })
             ).subscribe( () => {
-                if(this.clearOnFailureToUpdate && this.lastRefreshWasSuccessful){
-                    this.collection = [];   
+                if (this.clearOnFailureToUpdate && this.lastRefreshWasSuccessful){
+                    this.collection = [];
                 }
                 this.lastRefreshWasSuccessful = success;
                 this.refreshingPromise.next(success);
