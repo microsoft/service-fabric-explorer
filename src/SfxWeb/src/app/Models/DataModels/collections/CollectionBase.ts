@@ -42,6 +42,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     public parent: any;
     public collection: T[] = [];
     public lastRefreshWasSuccessful = false;
+    private clearOnFailureToUpdate = false;
 
     protected valueResolver: ValueResolver = new ValueResolver();
 
@@ -76,16 +77,19 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         let success = true;
         if (!this.refreshingPromise) {
             this.refreshingPromise = new AsyncSubject<any>();
+            this.clearOnFailureToUpdate = true;
 
             this.retrieveNewCollection(messageHandler).pipe(mergeMap(collection => {
                 return this.update(collection);
             }),
             catchError( err => {
-                this.collection = [];
                 success = false;
                 return of(err);
             })
             ).subscribe( () => {
+                if(this.clearOnFailureToUpdate && this.lastRefreshWasSuccessful){
+                    this.collection = [];   
+                }
                 this.lastRefreshWasSuccessful = success;
                 this.refreshingPromise.next(success);
                 this.refreshingPromise.complete();
@@ -137,6 +141,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
 
     protected update(collection: T[]): Observable<any> {
         this.isInitialized = true;
+        this.clearOnFailureToUpdate = false;
 
         this.collection = CollectionUtils.updateDataModelCollection(this.collection, collection, this.appendOnly);
 
