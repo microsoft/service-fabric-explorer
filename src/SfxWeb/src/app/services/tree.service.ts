@@ -72,10 +72,12 @@ export class TreeService {
             // Merge the health chunk result back to the shared data models, during refresh, all tree nodes will
             // retrieve data from the cached data model which already has latest health state.
             const clusterHealthQueryDescription = this.tree.addHealthChunkFiltersRecursively(this.data.getInitialClusterHealthChunkQueryDescription());
+            console.log(clusterHealthQueryDescription);
             return this.data.getClusterHealthChunk(clusterHealthQueryDescription)
                 .pipe(mergeMap(healthChunk => {
-                    return forkJoin([
-                        // cluster health needs to be refreshed even when the root node is collapsed
+                  console.log(healthChunk);
+                  return forkJoin([
+                        // cluster health needs to be refreshed even when the rooddt node is collapsed
                         this.clusterHealth.mergeHealthStateChunk(healthChunk),
                         this.tree.mergeClusterHealthStateChunk(healthChunk)
                     ]).pipe(mergeMap(() => this.tree.refresh()) );
