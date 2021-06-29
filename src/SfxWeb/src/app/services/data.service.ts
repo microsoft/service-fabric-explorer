@@ -33,7 +33,7 @@ import { IDataModelCollection } from '../Models/DataModels/collections/Collectio
 import { DeployedApplicationCollection } from '../Models/DataModels/collections/DeployedApplicationCollection';
 import { MatDialog } from '@angular/material/dialog';
 import { RepairTaskCollection } from '../Models/DataModels/collections/RepairTaskCollection';
-
+import groupBy from 'lodash/groupBy';
 @Injectable({
   providedIn: 'root'
 })
@@ -326,7 +326,7 @@ export class DataService {
     if (item) {
         return item.ensureInitialized(forceRefresh, messageHandler);
     } else {
-        return throwError(null);
+        return throwError('This item could not be found');
     }
   }
 
@@ -344,17 +344,8 @@ export class DataService {
             deployedApps.push(deployedApp);
         }));
 
-    // Assign deployed apps under their belonging nodes
-    const nodeDeployedAppsGroups = deployedApps.reduce( (previous, current) => {
-        if ( current.NodeName in previous){
-            previous[current.NodeName].push(current);
-        }else{
-            previous[current.NodeName] = [current];
-        }
-        return previous; }, {});
-
     // TODO
-    // let nodeDeployedAppsGroups = _.groupBy(deployedApps, deployedApp => deployedApp.NodeName);
+    const nodeDeployedAppsGroups = groupBy(deployedApps, deployedApp => deployedApp.NodeName);
     Object.keys(nodeDeployedAppsGroups).forEach(key => {
         const group = nodeDeployedAppsGroups[key];
 
