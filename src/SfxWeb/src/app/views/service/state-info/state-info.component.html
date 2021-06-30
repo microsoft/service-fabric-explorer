@@ -1,27 +1,4 @@
-<div style="display: flex; flex-wrap: wrap;">
-  <div class="detail-pane essen-pane" *ngIf="service" style="display: inline-block; margin-right: 15px;">
-    <app-overview-container [healthState]="service?.healthState">
-      <table>
-        <tr>
-          <td>Status</td>
-          <td> : {{service.raw.ServiceStatus}}</td>
-        </tr>
-        <tr>
-          <td>Service Type Version</td>
-          <td> : {{service?.raw.ManifestVersion}}<app-clip-board [text]="service.raw.ManifestVersion"></app-clip-board>
-          </td>
-        </tr>
-        <tr>
-          <td>Service Type</td>
-          <td> : {{service?.raw.TypeName}}<app-clip-board [text]="service?.raw.TypeName"></app-clip-board>
-          </td>
-        </tr>
-      </table>
-    </app-overview-container>
-  </div>
-
-  <!-- Stateful panel -->
-  <div class="detail-pane essen-pane">
+<div class="detail-pane essen-pane">
     <div class="essential-container" *ngIf="service.isStatefulService" data-cy="stateful">
   
       <div class="essential-item essential-half">
@@ -100,33 +77,3 @@
       </div>
     </div>
   </div>
-</div>
-
-<div class="tile-container">
-  <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard"></app-dashboard-tile>
-  <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
-</div>
-
-<div class="detail-pane essen-pane">
-  <app-collapse-container sectionName="Unhealthy Evaluations">
-    <div collapse-header>
-      <h4>Unhealthy Evaluations</h4>
-    </div>
-    <div collapse-body>
-      <app-detail-list [list]="service.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"
-        *ngIf="service && service.health"></app-detail-list>
-    </div>
-  </app-collapse-container>
-</div>
-
-<div class="detail-pane essen-pane">
-  <app-collapse-container sectionName="Partitions">
-    <div collapse-header>
-      <h4>Partitions</h4>
-    </div>
-    <div collapse-body>
-      <app-detail-list [list]="service.partitions.collection" [listSettings]="listSettings" data-cy="partitions"
-        *ngIf="service && service.partitions.isInitialized"></app-detail-list>
-    </div>
-  </app-collapse-container>
-</div>

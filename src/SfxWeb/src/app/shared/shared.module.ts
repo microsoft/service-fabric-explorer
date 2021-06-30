@@ -25,12 +25,14 @@ import { FormatDatePipe } from './pipes/format-date.pipe';
 import { LocalTimeComponent } from './component/local-time/local-time.component';
 import { DisplayTimeComponent } from './component/display-time/display-time.component';
 import { ToggleComponent } from './component/toggle/toggle.component';
+import { StatusResolverComponent } from './component/status-resolver/status-resolver.component';
+import { OverviewContainerComponent } from './component/overview-container/overview-container.component';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
                  ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
                  ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
-                 FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent],
+                 FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent, OverviewContainerComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -44,6 +46,6 @@ import { ToggleComponent } from './component/toggle/toggle.component';
             CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
             ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
-            FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent]
+            FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent, OverviewContainerComponent]
 })
 export class SharedModule { }
