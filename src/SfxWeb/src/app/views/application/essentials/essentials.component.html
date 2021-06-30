@@ -1,61 +1,22 @@
-<div class="detail-pane essen-pane">
-  <div class="essential-container" *ngIf="app && app.isInitialized">
-    <div class="essential-item essential-fourth">
-      <div class="essential-head">
-        Name
-      </div>
-      <div class="essential-body">
-        {{app?.name}}<app-clip-board [text]="app?.name"></app-clip-board>
-      </div>
-    </div>
+<app-overview-container [healthState]="app?.healthState" *ngIf="app && app.isInitialized" class="detail-pane essen-pane" style="display: inline-block;">
+  <table>
+      <tr>
+          <td>Application Type</td>
+          <td> :  <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName">{{app?.raw.TypeName}}</a>
+            <app-clip-board [text]="app?.raw.TypeName"></app-clip-board></td>
+      </tr>
 
-    <div class="essential-item essential-fourth">
-      <div class="essential-head">
-        Application Type
-      </div>
-      <div class="essential-body">
-        <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName">{{app?.raw.TypeName}}</a>
-        <app-clip-board [text]="app?.raw.TypeName"></app-clip-board>
-      </div>
-    </div>
+      <tr>
+          <td>Version</td>
+          <td> : {{app?.raw.TypeVersion}}<app-clip-board [text]="app?.raw.TypeVersion"></app-clip-board></td>
+      </tr>
 
-    <div class="essential-item essential-fourth">
-      <div class="essential-head">
-        Health State
-      </div>
-      <div class="essential-body">
-        <app-health-badge [badgeClass]="app?.healthState.badgeClass" [text]="app?.healthState.text"></app-health-badge>
-      </div>
-    </div>
-
-    <div class="essential-item essential-fourth">
-      <div class="essential-head">
-        Version
-      </div>
-      <div class="essential-body">
-        {{app?.raw.TypeVersion}}<app-clip-board [text]="app?.raw.TypeVersion"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item essential-fourth">
-      <div class="essential-head">
-        Status
-      </div>
-      <div class="essential-body">
-        {{app.raw.Status}}
-      </div>
-    </div>
-
-    <div class="essential-item essential-fourth" *ngIf="app && app.isUpgrading">
-      <div class="essential-head">
-        Upgrade status Details
-      </div>
-      <div class="essential-body" *ngIf="upgradeProgress && upgradeProgress.isInitialized">
-        {{upgradeProgress.raw.UpgradeStatusDetails}}
-      </div>
-    </div>
-  </div>
-</div>
+      <tr>
+          <td>Status</td>
+          <td> : {{app.raw.Status}}</td>
+      </tr>
+  </table>
+</app-overview-container>
 
 <div class="tile-container">
   <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard"></app-dashboard-tile>

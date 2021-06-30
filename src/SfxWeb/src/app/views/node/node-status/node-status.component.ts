@@ -14,11 +14,12 @@ export class NodeStatusComponent implements OnChanges {
 
   duration: string;
   timestamp: string;
-
-  constructor() { }
+  up: boolean
+  constructor() {}
 
   ngOnChanges(): void {
-    if (this.node.nodeStatus === NodeStatusConstants.Up) {
+    this.up = this.node.nodeStatus === NodeStatusConstants.Up;
+    if (this.up) {
       this.duration = TimeUtils.getDurationFromSeconds(this.node.raw.NodeUpTimeInSeconds);
       this.timestamp = this.node.raw.NodeUpAt;
     }else{

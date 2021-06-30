@@ -1,21 +1,47 @@
-<div style="display: flex; align-items: center;">
-    <div class="badge-container">
-        <app-health-badge [badgeClass]="node.healthState.badgeClass" size="40px"></app-health-badge>
+<app-overview-container [healthState]="node.healthState">
+    <div style="white-space: nowrap;">
+        <div style="display: flex;">
+            <div class="essential-item">
+                <div class="essential-head">
+                    Status
+                </div>
+                <div class="essential-body">
+                    <app-status-resolver [status]="node.nodeStatus"></app-status-resolver>
+                </div>
+              </div>
+    
+            <div class="essential-item">
+                <div class="essential-head">
+                    {{up ? 'Up' : 'Down'}} Time
+                </div>
+                <div class="essential-body">
+                    {{duration}} <app-clip-board [text]="duration"></app-clip-board>
+                </div>
+              </div>    
+        </div>
+        <div class="essential-item">
+            <div class="essential-head">
+                Since
+            </div>
+            <div class="essential-body" style="display: flex;">
+                <app-display-time [time]="timestamp"></app-display-time> <app-clip-board [text]="timestamp"></app-clip-board>
+            </div>
+          </div>
     </div>
-    <table>
+    <!-- <table>
         <tr>
             <td>Status</td>
-            <td>: {{node.nodeStatus}}</td>
+            <td> : <app-status-resolver [status]="node.nodeStatus"></app-status-resolver></td>
         </tr>
 
         <tr>
-            <td>Up Time</td>
-            <td>: {{duration}} <app-clip-board [text]="duration"></app-clip-board></td>
+            <td>{{up ? 'Up' : 'Down'}} Time</td>
+            <td> : {{duration}} <app-clip-board [text]="duration"></app-clip-board></td>
         </tr>
 
         <tr>
             <td>Since</td>
-            <td style="display: flex;">: <app-display-time [time]="timestamp"></app-display-time> <app-clip-board [text]="timestamp"></app-clip-board></td>
+            <td style="display: flex;"> : <app-display-time [time]="timestamp"></app-display-time> <app-clip-board [text]="timestamp"></app-clip-board></td>
         </tr>
-    </table>
-</div>
+    </table> -->
+</app-overview-container>

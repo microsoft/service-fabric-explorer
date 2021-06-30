@@ -14,10 +14,11 @@ import { ScaleServiceComponent } from './scale-service/scale-service.component';
 import { BackupComponent } from './backup/backup.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
+import { StateInfoComponent } from './state-info/state-info.component';
 
 
 @NgModule({
-  declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent],
+  declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent, StateInfoComponent],
   imports: [
     CommonModule,
     ServiceRoutingModule,
