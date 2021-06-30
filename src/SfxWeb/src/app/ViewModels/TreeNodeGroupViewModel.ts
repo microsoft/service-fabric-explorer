@@ -14,7 +14,7 @@ import orderBy from 'lodash/orderBy';
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
-export class TreeNodeGroupViewModel {
+export class TreeNodeGroupViewModel implements ITreeNode {
     public parent: TreeNodeGroupViewModel;
     public sortBy: () => any[];
     public selected = false;
@@ -55,7 +55,7 @@ export class TreeNodeGroupViewModel {
     }
 
     public get isExpanded(): boolean {
-        return  this.internalIsExpanded && !!this.node.childrenQuery;
+        return  this.internalIsExpanded && this.hasChildren;
     }
 
     public get isCollapsed(): boolean {
@@ -115,19 +115,22 @@ export class TreeNodeGroupViewModel {
         });
     }
 
-    public updateDataModelFromHealthChunkRecursively(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
+    public updateDataModelFromHealthChunkRecursively(clusterHealthChunk: IClusterHealthChunk): Observable<any[]> {
         if (!this.internalIsExpanded) {
-            return of(true);
+            return of([]);
         }
 
-        return of(this.node && this.node.mergeClusterHealthStateChunk
-            ? this.node.mergeClusterHealthStateChunk(clusterHealthChunk)
-            : true).pipe(map( () => {
-                const updateChildrenPromises = this.children.map(child => {
-                    return child.updateDataModelFromHealthChunkRecursively(clusterHealthChunk);
-                });
-                return forkJoin(updateChildrenPromises);
-            } ));
+        return (this.node && this.node.mergeClusterHealthStateChunk ?
+        this.node.mergeClusterHealthStateChunk(clusterHealthChunk)
+        : of([])).pipe(mergeMap(() => {
+          const updateChildrenPromises = this.children.map(child => child.updateDataModelFromHealthChunkRecursively(clusterHealthChunk));
+
+          if (updateChildrenPromises.length > 0) {
+            return forkJoin(updateChildrenPromises);
+          } else {
+            return of([]);
+          }
+        }));
     }
 
     public refreshExpandedChildrenRecursively(): Observable<any> {

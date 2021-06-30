@@ -41,6 +41,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     public isInitialized = false;
     public parent: any;
     public collection: T[] = [];
+    public lastRefreshWasSuccessful = false;
 
     protected valueResolver: ValueResolver = new ValueResolver();
 
@@ -84,6 +85,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
                 return of(err);
             })
             ).subscribe( () => {
+                this.lastRefreshWasSuccessful = success;
                 this.refreshingPromise.next(success);
                 this.refreshingPromise.complete();
                 this.refreshingPromise = null;
@@ -145,7 +147,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         if (!this.isInitialized || forceRefresh) {
             return this.refresh(messageHandler);
         }
-        return of(true);
+        return of(this.lastRefreshWasSuccessful);
     }
 
     public find(uniqueId: string): T {
