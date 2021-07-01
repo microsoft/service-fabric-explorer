@@ -20,8 +20,11 @@
     </app-overview-container>
   </div>
 
-  <!-- Stateful panel -->
   <div class="detail-pane essen-pane">
+    <app-state-info [service]="service"></app-state-info>
+  </div>
+  <!-- Stateful panel -->
+  <!-- <div class="detail-pane essen-pane">
     <div class="essential-container" *ngIf="service.isStatefulService" data-cy="stateful">
   
       <div class="essential-item essential-half">
@@ -99,7 +102,7 @@
         {{service.description.raw.ServiceDnsName}}
       </div>
     </div>
-  </div>
+  </div> -->
 </div>
 
 <div class="tile-container">

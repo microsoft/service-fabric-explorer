@@ -1,4 +1,6 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, Input, OnInit } from '@angular/core';
+import { Service } from 'src/app/Models/DataModels/Service';
+import { IRawServiceDescription } from 'src/app/Models/RawDataTypes';
 
 @Component({
   selector: 'app-state-info',
@@ -6,6 +8,8 @@ import { Component, OnInit } from '@angular/core';
   styleUrls: ['./state-info.component.scss']
 })
 export class StateInfoComponent implements OnInit {
+
+  @Input() service: Service;
 
   constructor() { }
 
