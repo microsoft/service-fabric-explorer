@@ -297,10 +297,7 @@ export class DataService {
     private addFabricEventData<T extends EventListBase<any>, S extends FabricEventBase>(data: IEventStoreData<T, S>){
         data.listSettings = data.eventsList.settings;
         data.getEvents = () => data.eventsList.collection.map(event => event.raw);
-        data.utils = {
-            setDateWindow: (startDate: Date, endDate: Date) => data.eventsList.setDateWindow(startDate, endDate),
-            reload: () => data.eventsList.reload(),
-        };
+        data.setDateWindow = (startDate: Date, endDate: Date) => data.eventsList.setDateWindow(startDate, endDate);
     }
 
     public getRepairTasksData(settings: SettingsService): IEventStoreData<RepairTaskCollection, RepairTask>{

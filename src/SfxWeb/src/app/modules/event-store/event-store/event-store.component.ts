@@ -7,7 +7,6 @@ import { debounceTime, distinctUntilChanged, finalize, subscribeOn } from 'rxjs/
 import { DataService } from 'src/app/services/data.service';
 import { hostViewClassName } from '@angular/compiler';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
-import { Observable } from 'rxjs';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import { ListSettings } from 'src/app/Models/ListSettings';
 
@@ -16,19 +15,14 @@ export interface IQuickDates {
     hours: number;
 }
 
-export interface IEventStoreDataUtils{
-    setDateWindow(startDate: Date, endDate: Date): boolean;
-    reload(): Observable<any>;
-}
-
 export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
     eventsList: T;
     timelineGenerator?: TimeLineGeneratorBase<S>;
     timelineData?: ITimelineData;
     displayName: string;
     listSettings?: ListSettings;
-    utils?: IEventStoreDataUtils;
-    getEvents?(): S [];
+    getEvents?(): S[];
+    setDateWindow?(startDate: Date, endDate: Date): boolean;
 }
 
 @Component({
@@ -46,8 +40,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       this.timeLineEventsData = this.getTimelineData();
   }
 
-  public static MaxWindowInDays = 7;
-
   private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
   private debouncerHandlerSubscription: Subscription;
 
@@ -61,11 +53,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   public startDateMin: Date;
-  public endDateMin: Date;
   public startDateMax: Date;
-  public endDateMax: Date;
-  public endDateInit: Date;
-  public isResetEnabled = false;
   public failedRefresh = false;
   public timeLineEventsData: ITimelineData;
 
@@ -100,29 +88,25 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   }
 
   private resetSelectionProperties(): void {
-      this.startDate = this.listEventStoreData[0].eventsList.startDate;
-      this.endDate = this.listEventStoreData[0].eventsList.endDate;
-      this.startDateMin = this.endDateMin = TimeUtils.AddDays(new Date(), -30);
-      this.startDateMax = this.endDateMax = new Date(); // Today
+      const todaysDate = new Date();
+      this.startDate = TimeUtils.AddDays(todaysDate, -7);
+      this.endDate = this.startDateMax = todaysDate;
+      this.startDateMin = TimeUtils.AddDays(todaysDate, -30);
   }
 
   public setDate(date: IQuickDates) {
       this.setNewDates({
-          endDate: new Date(this.listEventStoreData[0].eventsList.endDate),
+          endDate: new Date(this.endDate),
           startDate: TimeUtils.AddHours(this.endDate, -1 * date.hours)
       });
   }
 
   private setNewDateWindow(): void {
-      const subs = this.listEventStoreData.filter(data => data.utils?.setDateWindow(this.startDate, this.endDate) ?? false)
-      .map((data) => {
-          this.resetSelectionProperties();
-          this.isResetEnabled = true;
-          return data.utils?.reload() ?? of(false);
-      });
+      // If the data interface has that function implemented, we call it. If it doesn't we discard it by returning false.
+      const refreshData = this.listEventStoreData.some(data => data.setDateWindow ? data.setDateWindow(this.startDate, this.endDate) : false);
 
-      if (subs.length > 0) {
-          forkJoin(subs).subscribe(() => this.setTimelineData());
+      if (refreshData) {
+          this.setTimelineData();
       }
   }
 
@@ -153,7 +137,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
           if (data.eventsList.lastRefreshWasSuccessful){
               try {
                   if (this.pshowAllEvents) {
-                      if (data.utils){
+                      if (data.setDateWindow){
                           rawEventlist = rawEventlist.concat(data.getEvents());
                       }
 
@@ -186,7 +170,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   }
 
   public setTimelineData(): void {
-      const subs = this.listEventStoreData.map(data => data.eventsList.ensureInitialized());
+      const subs = this.listEventStoreData.map(data => data.eventsList.refresh());
 
       forkJoin(subs).subscribe(() => {
           this.timeLineEventsData = this.getTimelineData();
