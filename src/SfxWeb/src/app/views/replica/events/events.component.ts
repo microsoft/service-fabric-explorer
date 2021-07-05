@@ -17,10 +17,9 @@ export class EventsComponent extends ReplicaBaseControllerDirective {
   }
 
   setup() {
-    this.listEventStoreData = [{
-      eventsList: this.data.createReplicaEventList(this.partitionId, this.replicaId),
-      displayName: 'Replica: ' + this.replicaId
-    }];
+    this.listEventStoreData = [
+      this.data.getReplicaEventData(this.partitionId, this.replicaId)
+    ];
   }
 
 }

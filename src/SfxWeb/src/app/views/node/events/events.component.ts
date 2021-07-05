@@ -18,11 +18,9 @@ export class EventsComponent extends NodeBaseControllerDirective {
   }
 
   setup() {
-    this.listEventStoreData = [{
-      eventsList: this.data.createNodeEventList(this.nodeName),
-      timelineGenerator: new NodeTimelineGenerator(),
-      displayName: 'Node: ' + this.nodeName
-    }];
+    this.listEventStoreData = [
+      this.data.getNodeEventData(this.nodeName)
+    ];
   }
 
 }

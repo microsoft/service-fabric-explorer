@@ -17,10 +17,9 @@ export class EventsComponent extends ServiceBaseControllerDirective {
   }
 
   setup() {
-    this.listEventStoreData = [{
-      eventsList: this.data.createServiceEventList(this.serviceId),
-      displayName: 'Service: ' + this.serviceId
-    }];
+    this.listEventStoreData = [
+      this.data.getServiceEventData(this.serviceId)
+    ];
   }
 
 }

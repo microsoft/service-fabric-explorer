@@ -1,6 +1,6 @@
 
 
-import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent } from './Events';
+import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent } from './Events';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
 import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
@@ -475,11 +475,11 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
     }
 }
 
-export class PartitionTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
+export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionEvent> {
     static readonly swapPrimaryLabel = 'Primary Swap';
     static readonly swapPrimaryDurations = 'Swap Primary phases';
 
-    consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+    consume(events: PartitionEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
         const items = new DataSet<DataItem>();
 
         events.forEach( event => {

@@ -18,11 +18,9 @@ export class EventsComponent extends PartitionBaseControllerDirective {
   }
 
   setup() {
-    this.listEventStoreData = [{
-      eventsList: this.data.createPartitionEventList(this.partitionId),
-      timelineGenerator: new PartitionTimelineGenerator(),
-      displayName: 'Partition: ' + this.partitionId
-    }];
+    this.listEventStoreData = [
+      this.data.getPartitionEventData(this.partitionId)
+    ];
   }
 
 }
