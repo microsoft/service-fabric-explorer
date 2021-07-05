@@ -327,26 +327,26 @@ export class DataService {
         const d = {
             eventsList: list,
             timelineGenerator: new NodeTimelineGenerator(),
-            displayName: nodeName? nodeName : 'Nodes',
+            displayName: nodeName ? nodeName : 'Nodes',
         };
 
         this.addFabricEventData<NodeEventList, NodeEvent>(d);
         return d;
     }
 
-    public getApplicationEventData(applicationId?: string): IEventStoreData<ApplicationEventList,ApplicationEvent> {
+    public getApplicationEventData(applicationId?: string): IEventStoreData<ApplicationEventList, ApplicationEvent> {
         const list = new ApplicationEventList(this, applicationId);
         const d = {
             eventsList : list,
-            timelineGenerator : applicationId? new ApplicationTimelineGenerator() : null,
-            displayName : applicationId? applicationId : 'Apps',
+            timelineGenerator : applicationId ? new ApplicationTimelineGenerator() : null,
+            displayName : applicationId ? applicationId : 'Apps',
         };
 
         this.addFabricEventData<ApplicationEventList, ApplicationEvent>(d);
         return d;
     }
 
-    public getServiceEventData(serviceId?: string): IEventStoreData<ServiceEventList,ServiceEvent> {
+    public getServiceEventData(serviceId?: string): IEventStoreData<ServiceEventList, ServiceEvent> {
         const list = new ServiceEventList(this, serviceId);
         const d = {
             eventsList : list,
@@ -357,7 +357,7 @@ export class DataService {
         return d;
     }
 
-    public getPartitionEventData(partitionId?: string): IEventStoreData<PartitionEventList,PartitionEvent> {
+    public getPartitionEventData(partitionId?: string): IEventStoreData<PartitionEventList, PartitionEvent> {
         const list = new PartitionEventList(this, partitionId);
         const d = {
             eventsList : list,
@@ -369,7 +369,7 @@ export class DataService {
         return d;
     }
 
-    public getReplicaEventData(partitionId: string, replicaId?: string): IEventStoreData<ReplicaEventList,ReplicaEvent> {
+    public getReplicaEventData(partitionId: string, replicaId?: string): IEventStoreData<ReplicaEventList, ReplicaEvent> {
         const list = new ReplicaEventList(this, partitionId, replicaId);
         const d = {
             eventsList : list,
