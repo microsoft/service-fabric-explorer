@@ -19,9 +19,13 @@ export class EventsComponent implements OnInit {
       this.data.getNodeEventData(null)
     ];
 
-    if (this.data.clusterManifest.isRepairManagerEnabled){
-      this.listEventStoreData.push(this.data.getRepairTasksData(this.settings));
-    }
+    this.data.clusterManifest.ensureInitialized().subscribe(() => {
+      if (this.data.clusterManifest.isRepairManagerEnabled) {
+        this.data.repairCollection.ensureInitialized().subscribe(() => {
+          this.listEventStoreData.push(this.data.getRepairTasksData(this.settings));
+        });
+      }
+    });
   }
 
 }
