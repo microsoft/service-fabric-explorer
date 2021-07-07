@@ -594,7 +594,7 @@ export interface IRawSharedReplicaOrInstanceInfo {
     ServiceManifestName: string;
     CodePackageName: string;
     PartitionId: string;
-    ReplicaStatus: string; //TODO
+    ReplicaStatus: string; // TODO
     Address: string;
     ServicePackageActivationId: string;
     HostProcessId: string;
@@ -604,8 +604,8 @@ export interface IRawDeployedStatefulServiceReplicaInfo extends IRawSharedReplic
     ReplicaId: string;
     ReplicaRole: string; // TODO
 }
-    
-    export interface IRawDeployedStatelessServiceInstanceInfo extends IRawSharedReplicaOrInstanceInfo{
+
+export interface IRawDeployedStatelessServiceInstanceInfo extends IRawSharedReplicaOrInstanceInfo{
         InstanceId: string;
     }
 
@@ -717,11 +717,11 @@ export interface IRawServiceDescription {
     ServicePackageActivationMode: string;
     ServiceDnsName: string;
 
-    //scaling policies
-    //tags required to place
-    //tags required to run
+    // scaling policies
+    // tags required to place
+    // tags required to run
 
-    //STATEFUL
+    // STATEFUL
     TargetReplicaSetSize: number;
     MinReplicaSetSize: number;
     HasPersistedState: boolean;
@@ -730,14 +730,14 @@ export interface IRawServiceDescription {
     StandByReplicaKeepDurationSeconds: number;
     ServicePlacementTimeLimitSeconds: number;
     DropSourceReplicaOnMove: boolean;
-    ReplicaLifecycleDescription: any; //TODO
+    ReplicaLifecycleDescription: any; // TODO
 
-    //STATELESS
+    // STATELESS
     InstanceCount: number;
     MinInstanceCount: number;
     MinInstancePercentage: number;
     InstanceCloseDelayDurationSeconds: number;
-    InstanceLifecycleDescription: any; //TODO
+    InstanceLifecycleDescription: any; // TODO
     InstanceRestartWaitDurationSeconds: number;
 
     Flags: string;
@@ -752,12 +752,12 @@ export interface IRawStatefulServiceDescription extends IRawServiceDescription {
     StandByReplicaKeepDurationSeconds: number;
     ServicePlacementTimeLimitSeconds: number;
     DropSourceReplicaOnMove: boolean;
-    ReplicaLifecycleDescription: any; //TODO
+    ReplicaLifecycleDescription: any; // TODO
 }
 
 export interface IRawReplicaLifecycleDescription {
-    IsSingletonReplicaMoveAllowedDuringUpgrade:boolean;
-    RestoreReplicaLocationAfterUpgrade:boolean;
+    IsSingletonReplicaMoveAllowedDuringUpgrade: boolean;
+    RestoreReplicaLocationAfterUpgrade: boolean;
 }
 
 export interface IRawStatelessServiceDescription extends IRawServiceDescription {
@@ -765,7 +765,7 @@ export interface IRawStatelessServiceDescription extends IRawServiceDescription 
     MinInstanceCount: number;
     MinInstancePercentage: number;
     InstanceCloseDelayDurationSeconds: number;
-    InstanceLifecycleDescription: any; //TODO
+    InstanceLifecycleDescription: any; // TODO
     InstanceRestartWaitDurationSeconds: number;
 }
 

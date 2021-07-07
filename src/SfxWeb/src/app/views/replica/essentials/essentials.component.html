@@ -20,7 +20,7 @@
 
         <tr>
           <td>Status</td>
-          <td> : {{replica.raw.ReplicaStatus}}</td>
+          <td> : <app-status-resolver [status]="replica.raw.ReplicaStatus"></app-status-resolver></td>
         </tr>
       </table>
       <div *ngIf="nodeView"><a [routerLink]="nodeView">View on Node</a></div>

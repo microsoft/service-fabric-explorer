@@ -4,7 +4,7 @@
       <table>
         <tr>
           <td>Status</td>
-          <td> : {{service.raw.ServiceStatus}}</td>
+          <td> : <app-status-resolver [status]="service.raw.ServiceStatus"></app-status-resolver></td>
         </tr>
         <tr>
           <td>Service Type Version</td>
@@ -20,7 +20,7 @@
     </app-overview-container>
   </div>
 
-  <div class="detail-pane essen-pane" *ngIf="service.description.raw">
+  <div class="detail-pane essen-pane" *ngIf="service?.description.raw">
     <app-state-info [stateful]="service.isStatefulService" [data]="service.description.raw"></app-state-info>
   </div>
 </div>

@@ -1,52 +1,23 @@
 <div class="detail-pane essen-pane" *ngIf="deployedApp">
-  <div class="essential-container">
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Name
-      </div>
-      <div class="essential-body">
-        {{deployedApp.name}}<app-clip-board [text]="deployedApp.name"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Application Type
-      </div>
-      <div class="essential-body">
-        <a [routerLink]="deployedApp.appTypeViewPath"
-              [title]="deployedApp.raw.TypeName">{{deployedApp.raw.TypeName}}</a>
-      </div>
-    </div>
-
-    <div class="essential-item essential-half" *ngIf="deployedApp && deployedApp.health">
-      <div class="essential-head">
-        Health State
-      </div>
-      <div class="essential-body">
-        <app-health-badge [badgeClass]="deployedApp.health.healthState.badgeClass"
-        [text]="deployedApp.health.healthState.text"></app-health-badge>
-      </div>
-    </div>
-
-    <div class="essential-item essential-half" *ngIf="deployedApp && deployedApp.health">
-      <div class="essential-head">
-        Disk Location
-      </div>
-      <div class="essential-body">
-        {{deployedApp.diskLocation}}
-      </div>
-    </div>
-
-    <div class="essential-item essential-half" *ngIf="deployedApp && deployedApp.health">
-      <div class="essential-head">
-        Status
-      </div>
-      <div class="essential-body">
-        {{deployedApp.raw.Status}}
-      </div>
-    </div>
-  </div>
+  <app-overview-container [healthState]="deployedApp.health.healthState">
+    <table>
+      <tr>
+        <td>Status</td>
+        <td> : <app-status-resolver [status]="deployedApp.raw.Status"></app-status-resolver></td>
+      </tr>
+      <tr>
+        <td>Disk Location</td>
+        <td> : {{deployedApp.diskLocation}}<app-clip-board [text]="deployedApp.diskLocation"></app-clip-board>
+        </td>
+      </tr>
+      <tr>
+        <td>Application Type</td>
+        <td> :         <a [routerLink]="deployedApp.appTypeViewPath"
+          [title]="deployedApp.raw.TypeName">{{deployedApp.raw.TypeName}}</a>
+        </td>
+      </tr>
+    </table>
+  </app-overview-container>
 </div>
 
 <div class="detail-pane essen-pane" data-cy="health">

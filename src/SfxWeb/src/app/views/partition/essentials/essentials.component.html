@@ -4,7 +4,7 @@
       <table>
         <tr>
           <td>Status</td>
-          <td> : {{partition.raw.PartitionStatus}}</td>
+          <td> : <app-status-resolver [status]="partition.raw.PartitionStatus"></app-status-resolver></td>
         </tr>
         <tr>
           <td>Partition Kind</td>

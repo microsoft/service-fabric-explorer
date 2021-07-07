@@ -9,18 +9,21 @@ import { NodeStatusConstants } from 'src/app/Common/Constants';
 export class StatusResolverComponent implements OnInit {
 
   @Input() status: string;
-  
 
-  statusIconResolver = {}
+
+  statusIconResolver: Record<string, string> = {};
 
   constructor() { }
 
   ngOnInit(): void {
-    this.statusIconResolver[NodeStatusConstants.Up] = "mif-arrow-up green";
-    this.statusIconResolver[NodeStatusConstants.Down] = "mif-arrow-down red";
-    this.statusIconResolver[NodeStatusConstants.Disabled] = "mif-blocked orange";
-    this.statusIconResolver[NodeStatusConstants.Disabling] = "mif-blocked orange";
-    this.statusIconResolver[NodeStatusConstants.Unknown] = "";
+    this.statusIconResolver.Active = 'mif-arrow-up green';
+    this.statusIconResolver.Ready = 'mif-arrow-up green';
+
+    this.statusIconResolver[NodeStatusConstants.Up] = 'mif-arrow-up green';
+    this.statusIconResolver[NodeStatusConstants.Down] = 'mif-arrow-down red';
+    this.statusIconResolver[NodeStatusConstants.Disabled] = 'mif-blocked orange';
+    this.statusIconResolver[NodeStatusConstants.Disabling] = 'mif-blocked orange';
+    this.statusIconResolver[NodeStatusConstants.Unknown] = '';
   }
 
 }

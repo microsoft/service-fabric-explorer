@@ -11,9 +11,9 @@ import { IRawPartition, IRawServiceDescription } from 'src/app/Models/RawDataTyp
 })
 export class StateInfoComponent implements OnInit {
 
-  @Input() stateful: boolean = false;
+  @Input() stateful = false;
   @Input() data: IRawServiceDescription | IRawPartition;
-  
+
   constructor() { }
 
   ngOnInit(): void {

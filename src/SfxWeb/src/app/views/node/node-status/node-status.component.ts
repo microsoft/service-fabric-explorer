@@ -14,7 +14,7 @@ export class NodeStatusComponent implements OnChanges {
 
   duration: string;
   timestamp: string;
-  up: boolean
+  up: boolean;
   constructor() {}
 
   ngOnChanges(): void {

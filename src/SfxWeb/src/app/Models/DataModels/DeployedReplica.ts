@@ -168,7 +168,6 @@ export class DeployedReplicaDetail extends DataModelBase<IRawDeployedReplicaDeta
     }
 
     protected updateInternal(): Observable<any> | void {
-        console.log(this.raw)
         this.reportedLoad = this.raw.ReportedLoad.map(report => new LoadMetricReport(this.data, report));
         if (this.raw.ReplicatorStatus) {
             this.replicatorStatus = new ReplicatorStatus(this.data, this.raw.ReplicatorStatus);
@@ -180,7 +179,7 @@ export class DeployedReplicaDetail extends DataModelBase<IRawDeployedReplicaDeta
     }
 
     public get processID() {
-        let info = this.isStateful() ? (this.raw as IRawReplicaInfo).DeployedServiceReplica : (this.raw as IRawInstanceInfo).DeployedServiceReplicaInstance;
+        const info = this.isStateful() ? (this.raw as IRawReplicaInfo).DeployedServiceReplica : (this.raw as IRawInstanceInfo).DeployedServiceReplicaInstance;
         return info.HostProcessId;
     }
 }
