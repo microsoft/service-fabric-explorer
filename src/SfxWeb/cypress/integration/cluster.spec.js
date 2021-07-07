@@ -166,6 +166,16 @@ context('Cluster page', () => {
   })
 
   describe("events", () => {
+    const setup = (fileCluster, fileTasks) => {
+      addRoute('events', fileCluster, apiUrl(`/EventsStore/Cluster/Events?*`))
+      addRoute('repairs', fileTasks, apiUrl('/$/GetRepairTaskList?*'))
+
+      cy.visit('/#/events')
+
+      cy.wait('@getevents')
+      cy.wait('@getrepairs')
+    };
+
     it("loads properly", () => {
       addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
       cy.visit('/#/')
@@ -197,12 +207,7 @@ context('Cluster page', () => {
     })
 
     it("cluster events", () => {
-      addRoute('clusterevents', 'cluster-page/eventstore/cluster-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
-      addRoute('repairs', 'empty-list.json', apiUrl('/$/GetRepairTaskList?*'))
-      cy.visit('/#/events')
-
-      cy.wait('@getclusterevents')
-      cy.wait('@getrepairs')
+      setup('cluster-page/eventstore/cluster-events.json', 'empty-list.json')
 
       cy.get('[data-cy=eventtabs]').within(() => {
         cy.contains('Cluster')
@@ -217,12 +222,7 @@ context('Cluster page', () => {
     })
 
     it("all events", () => {
-      addRoute('clusterevents', 'cluster-page/eventstore/cluster-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
-      addRoute('repairs', 'cluster-page/repair-jobs/simple.json', apiUrl('/$/GetRepairTaskList?*'))
-      cy.visit('/#/events')
-
-      cy.wait('@getclusterevents')
-      cy.wait('@getrepairs')
+      setup('cluster-page/eventstore/cluster-events.json', 'cluster-page/repair-jobs/simple.json')
 
       cy.get('[data-cy=eventtabs]').within(() => {
         cy.contains('Cluster');
@@ -237,10 +237,7 @@ context('Cluster page', () => {
     })
 
     it("failed request",() => {
-      addRoute('events', 'failed-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
-      cy.visit('/#/events')
-
-      cy.wait('@getevents')
+      setup('failed-events.json', 'empty-list.json')
 
       cy.get('[data-cy=eventtabs]').within(() => {
         cy.contains('Cluster')
