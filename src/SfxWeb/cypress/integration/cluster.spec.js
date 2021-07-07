@@ -2,7 +2,7 @@
 
 import {
   apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, checkTableSize,
-  upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute
+  upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute, checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT
 } from './util';
 
 const LOAD_INFO = "getloadinfo"
@@ -165,6 +165,93 @@ context('Cluster page', () => {
     })
   })
 
+  describe("events", () => {
+    it("loads properly", () => {
+      addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
+      cy.visit('/#/')
+
+      cy.get('[data-cy=navtabs]').within(() => {
+        cy.contains('events').click();
+      })
+
+      cy.wait('@getevents');
+      cy.url().should('include', 'events');
+
+      cy.get('[data-cy=eventtabs]').within(() => {
+        cy.contains('Cluster')
+        cy.contains('Repair Tasks')
+      })
+    })
+
+    it("repair manager disabled", () => {
+      addRoute('repair-manager-manifest', 'manifestRepairManagerDisabled.json', apiUrl('/$/GetClusterManifest*'))
+
+      cy.visit('/#/events')
+
+      cy.wait('@getrepair-manager-manifest')
+
+      cy.get('[data-cy=eventtabs]').within(() => {
+        cy.contains('Cluster')
+        cy.get('Repair Tasks').should('not.exist')
+      })
+    })
+
+    it("cluster events", () => {
+      addRoute('clusterevents', 'cluster-page/eventstore/cluster-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
+      addRoute('repairs', 'empty-list.json', apiUrl('/$/GetRepairTaskList?*'))
+      cy.visit('/#/events')
+
+      cy.wait('@getclusterevents')
+      cy.wait('@getrepairs')
+
+      cy.get('[data-cy=eventtabs]').within(() => {
+        cy.contains('Cluster')
+      })
+      checkTableSize(15);
+
+      cy.get('[data-cy=eventtabs]').within(() => {
+        cy.contains('Repair Tasks').click();
+      })
+
+      checkTableErrorMessage(EMPTY_LIST_TEXT);
+    })
+
+    it("all events", () => {
+      addRoute('clusterevents', 'cluster-page/eventstore/cluster-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
+      addRoute('repairs', 'cluster-page/repair-jobs/simple.json', apiUrl('/$/GetRepairTaskList?*'))
+      cy.visit('/#/events')
+
+      cy.wait('@getclusterevents')
+      cy.wait('@getrepairs')
+
+      cy.get('[data-cy=eventtabs]').within(() => {
+        cy.contains('Cluster');
+      })
+      checkTableSize(15);
+
+
+      cy.get('[data-cy=eventtabs]').within(() => {
+        cy.contains('Repair Tasks').click();
+      })
+      checkTableSize(6);
+    })
+
+    it("failed request",() => {
+      addRoute('events', 'failed-events.json', apiUrl(`/EventsStore/Cluster/Events?*`))
+      cy.visit('/#/events')
+
+      cy.wait('@getevents')
+
+      cy.get('[data-cy=eventtabs]').within(() => {
+        cy.contains('Cluster')
+        cy.get('[text=Error]')
+      })
+      
+      cy.contains(FAILED_LOAD_TEXT);
+      checkTableErrorMessage(FAILED_TABLE_TEXT); 
+    })
+  })
+
   describe("repair tasks", () => {
     const setup = (file) => {
       addRoute('repairs', file, apiUrl('/$/GetRepairTaskList?*'))
@@ -184,7 +271,7 @@ context('Cluster page', () => {
       });
     })
 
-    it('view completd repair job', () => {
+    it('view completed repair job', () => {
       setup('cluster-page/repair-jobs/simple.json')
 
       cy.get('[data-cy=Executing]').should('not.exist')
