@@ -550,33 +550,63 @@ export interface IRawReplicaHealth extends IRawHealth {
     }
 
 export interface IRawDeployedReplica {
-        Address: string;
-        CodePackageName: string;
-        InstanceId: string;
-        LastInBuildDurationInSeconds: string;
-        ReplicaId: string;
-        PartitionId: string;
-        ReplicaRole: string;
-        ReplicaStatus: string;
-        ServiceKind: string;
-        ServiceManifestVersion: string;
-        ServiceName: string;
-        ServiceTypeName: string;
-        ServicePackageActivationId: string;
-    }
+    Address: string;
+    CodePackageName: string;
+    InstanceId: string;
+    LastInBuildDurationInSeconds: string;
+    ReplicaId: string;
+    PartitionId: string;
+    ReplicaRole: string;
+    ReplicaStatus: string;
+    ServiceKind: string;
+    ServiceManifestVersion: string;
+    ServiceName: string;
+    ServiceTypeName: string;
+    ServicePackageActivationId: string;
+}
+
+
 
 export interface IRawDeployedReplicaDetail {
-        PartitionId: string;
+    PartitionId: string;
+    InstanceId: string;
+    ReplicaId: string;
+    ReadStatus: string;
+    WriteStatus: string;
+    CurrentServiceOperation: string;
+    CurrentServiceOperationStartTimeUtc: string;
+    CurrentReplicatorOperation: string;
+    ReportedLoad: IRawLoadMetricReport[];
+    ReplicatorStatus: IRawReplicatorStatus;
+    ReplicaStatus: IRawDeployedReplicaStatus;
+}
+
+export interface IRawReplicaInfo extends IRawDeployedReplicaDetail {
+    DeployedServiceReplica: IRawDeployedStatefulServiceReplicaInfo;
+}
+
+export interface IRawInstanceInfo extends IRawDeployedReplicaDetail {
+    DeployedServiceReplicaInstance: IRawDeployedStatelessServiceInstanceInfo;
+}
+export interface IRawSharedReplicaOrInstanceInfo {
+    ServiceName: string;
+    ServiceTypeName: string;
+    ServiceManifestName: string;
+    CodePackageName: string;
+    PartitionId: string;
+    ReplicaStatus: string; //TODO
+    Address: string;
+    ServicePackageActivationId: string;
+    HostProcessId: string;
+}
+
+export interface IRawDeployedStatefulServiceReplicaInfo extends IRawSharedReplicaOrInstanceInfo {
+    ReplicaId: string;
+    ReplicaRole: string; // TODO
+}
+    
+    export interface IRawDeployedStatelessServiceInstanceInfo extends IRawSharedReplicaOrInstanceInfo{
         InstanceId: string;
-        ReplicaId: string;
-        ReadStatus: string;
-        WriteStatus: string;
-        CurrentServiceOperation: string;
-        CurrentServiceOperationStartTimeUtc: string;
-        CurrentReplicatorOperation: string;
-        ReportedLoad: IRawLoadMetricReport[];
-        ReplicatorStatus: IRawReplicatorStatus;
-        ReplicaStatus: IRawDeployedReplicaStatus;
     }
 
 export interface IRawDeployedReplicaStatus {
@@ -690,6 +720,25 @@ export interface IRawServiceDescription {
     //scaling policies
     //tags required to place
     //tags required to run
+
+    //STATEFUL
+    TargetReplicaSetSize: number;
+    MinReplicaSetSize: number;
+    HasPersistedState: boolean;
+    ReplicaRestartWaitDurationSeconds: number;
+    QuorumLossWaitDurationSeconds: number;
+    StandByReplicaKeepDurationSeconds: number;
+    ServicePlacementTimeLimitSeconds: number;
+    DropSourceReplicaOnMove: boolean;
+    ReplicaLifecycleDescription: any; //TODO
+
+    //STATELESS
+    InstanceCount: number;
+    MinInstanceCount: number;
+    MinInstancePercentage: number;
+    InstanceCloseDelayDurationSeconds: number;
+    InstanceLifecycleDescription: any; //TODO
+    InstanceRestartWaitDurationSeconds: number;
 
     Flags: string;
     }

@@ -27,12 +27,14 @@ import { DisplayTimeComponent } from './component/display-time/display-time.comp
 import { ToggleComponent } from './component/toggle/toggle.component';
 import { StatusResolverComponent } from './component/status-resolver/status-resolver.component';
 import { OverviewContainerComponent } from './component/overview-container/overview-container.component';
+import { StateInfoComponent } from './component/state-info/state-info.component';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
                  ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
                  ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
-                 FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent, OverviewContainerComponent],
+                 FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent, OverviewContainerComponent,
+                 StateInfoComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -46,6 +48,7 @@ import { OverviewContainerComponent } from './component/overview-container/overv
             CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
             ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
-            FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent, OverviewContainerComponent]
+            FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent, OverviewContainerComponent,
+            StateInfoComponent]
 })
 export class SharedModule { }

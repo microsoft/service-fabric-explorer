@@ -198,4 +198,3 @@ export class CertExpiraryHealthEventProperty {
     public static Cluster = 'Certificate_cluster';
     public static Server = 'Certificate_server';
 }
-

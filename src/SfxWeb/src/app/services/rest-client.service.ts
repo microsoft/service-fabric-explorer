@@ -326,7 +326,7 @@ export class RestClientService {
           + '/$/GetReplicas/' + encodeURIComponent(replicaId)
           + '/$/GetDetail';
 
-      return this.get(this.getApiUrl(url), 'Get deployed replica detail', messageHandler);
+      return this.get(this.getApiUrl(url, RestClientService.apiVersion60), 'Get deployed replica detail', messageHandler);
   }
 
   public getApplicationTypes(appTypeName?: string, messageHandler?: IResponseMessageHandler): Observable<IRawApplicationType[]> {

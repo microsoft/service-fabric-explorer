@@ -1,0 +1,60 @@
+.badge-container {
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center
+}
+
+.line-item {
+    line-height: 1;
+    margin-right: 7px;
+
+    &-small {
+        @extend .line-item;
+        font-size: 28px;
+    }
+
+    &-large {
+        @extend .line-item;
+        font-size: 33px;
+    }
+}
+
+.title-wrapper {
+    text-align: center;
+    margin-bottom: 0px;
+    font-size: 25px;
+    border-bottom: 1px solid white;
+    bottom: -6px;
+}
+
+.icon-item {
+    transform: rotate(90deg);
+    position: absolute;
+
+    &-left {
+        @extend .icon-item;
+        font-size: 29px;
+        left: -9px;
+    }
+
+    &-middle {
+        @extend .icon-item;
+        bottom: -8px;
+        font-size: 40px;            
+    }
+
+    &-right {
+        @extend .icon-item;
+        font-size: 29px;
+        left: 21px
+    }
+
+}

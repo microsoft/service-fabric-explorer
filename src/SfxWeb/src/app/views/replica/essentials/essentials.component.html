@@ -1,16 +1,32 @@
 <div *ngIf="replica">
-  <div class="detail-pane essen-pane">
-    <div class="essential-container">
-      <div class="essential-item essential-half">
-        <div class="essential-head">
-          Id
-        </div>
-        <div class="essential-body">
-          {{replica.id}}<app-clip-board [text]="replica.id"></app-clip-board>
-        </div>
-      </div>
+  <div class="detail-pane essen-pane" style="display: inline-block;">
 
-      <div class="essential-item essential-half">
+    <app-overview-container [healthState]="replica.healthState">
+
+      <table>
+        <tr>
+          <td>Node Name</td>
+          <td> : <a [routerLink]="replica.nodeViewPath">{{replica.raw.NodeName}}</a>
+            <app-clip-board [text]="replica.raw.NodeName"></app-clip-board> 
+          </td>
+        </tr>
+
+        <tr *ngIf="replica.detail.isInitialized">
+          <td> Process Id
+          </td>
+          <td> : {{replica.detail.processID}}<app-clip-board [text]="replica.detail.processID"></app-clip-board>
+          </td>
+        </tr>
+
+        <tr>
+          <td>Status</td>
+          <td> : {{replica.raw.ReplicaStatus}}</td>
+        </tr>
+      </table>
+      <div *ngIf="nodeView"><a [routerLink]="nodeView">View on Node</a></div>
+
+      <!-- <div class="essential-container"> -->
+      <!-- <div class="essential-item essential-half">
         <div class="essential-head">
           Node Name
         </div>
@@ -18,38 +34,38 @@
           <a [routerLink]="replica.nodeViewPath">{{replica.raw.NodeName}}</a>
           <app-clip-board [text]="replica.raw.NodeName"></app-clip-board>
         </div>
-      </div>
+      </div> -->
 
-      <div class="essential-item essential-half">
-        <div class="essential-head">
-          Health State
-        </div>
-        <div class="essential-body" *ngIf="replica.healthState">
-          <app-health-badge [badgeClass]="replica.healthState.badgeClass" [text]="replica.healthState.text">
-          </app-health-badge>
-        </div>
-      </div>
-
-      <div class="essential-item essential-half">
+      <!-- <div class="essential-item essential-half">
         <div class="essential-head">
           Status
         </div>
         <div class="essential-body">
           {{replica.raw.ReplicaStatus}}
         </div>
-      </div>
+      </div> -->
+      <!-- 
+      <div class="essential-item essential-half" *ngIf="replica.detail.isInitialized">
+        <div class="essential-head">
+          Process Id
+        </div>
+        <div class="essential-body">
+          {{this.replica.detail?.processID}}
+        </div>
+      </div> -->
 
-      <div class="essential-item essential-half" *ngIf="replica.isStatefulService">
+      <!-- <div class="essential-item essential-half" *ngIf="replica.isStatefulService">
         <div class="essential-head">
           Role
         </div>
         <div class="essential-body">
           {{replica.role}}
         </div>
-      </div>
-    </div>
-    <div *ngIf="nodeView"><a [routerLink]="nodeView">View on Node</a></div>
+      </div> -->
+      <!-- </div> -->
+    </app-overview-container>
   </div>
+
   <div class="detail-pane" data-cy="address">
     <app-replica-address [address]="replica.address"></app-replica-address>
   </div>
