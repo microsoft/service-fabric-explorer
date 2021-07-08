@@ -113,6 +113,9 @@ export const checkTableErrorMessage = (message) => {
 }
 
 export const EMPTY_LIST_TEXT = "No items to display.";
-export const FAILED_LOAD_TEXT = "Some items failed to load."
+export const FAILED_LOAD_TEXT = "Some items failed to load.";
 export const FAILED_TABLE_TEXT = "Items failed to load.";
 
+// Tabs names
+export const REPAIR_TASK_TAB_NAME = "Repair Tasks";
+export const CLUSTER_TAB_NAME = "Cluster";
