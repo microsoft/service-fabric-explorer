@@ -107,7 +107,7 @@ export class TreeViewModel {
         return clusterHealthQueryDescription;
     }
 
-    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
+    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any[]> {
         return this.childGroupViewModel.updateDataModelFromHealthChunkRecursively(clusterHealthChunk);
     }
 
