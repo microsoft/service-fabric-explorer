@@ -12,6 +12,7 @@ import { DataSet, DataGroup, DataItem } from 'vis-timeline';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { map } from 'rxjs/operators';
 import { Counter, ICounterMostCommonEntry } from 'src/app/Utils/Utils';
+import { QuestionToolTipComponent } from 'src/app/modules/detail-list-templates/question-tool-tip/question-tool-tip.component';
 import { ISortOrdering } from 'src/app/modules/detail-list-templates/detail-list/detail-list.component';
 
 interface ITileListItem {
@@ -53,8 +54,8 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
     this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', ['raw.History.CreatedUtcTimestamp'],
       [
-          new ListColumnSetting('raw.TaskId', 'Task Id'),
-          new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
+        new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'Task Id'),
+        new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
           new ListColumnSetting('raw.Target.NodeNames', 'Target'),
           new ListColumnSetting('impactedNodes', 'Impact'),
           new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
@@ -78,8 +79,8 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
     this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings('completedRepair', ['raw.History.CreatedUtcTimestamp'],
         [
-            new ListColumnSetting('raw.TaskId', 'Task Id'),
-            new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
+          new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'Task Id'),
+          new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
             new ListColumnSetting('raw.Target.NodeNames', 'Target'),
             new ListColumnSetting('impactedNodes', 'Impact'),
             new ListColumnSetting('raw.ResultStatus', 'Result Status', {enableFilter: true}),
