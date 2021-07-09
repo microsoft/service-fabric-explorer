@@ -142,9 +142,16 @@ export class DeployedReplicaDetail extends DataModelBase<IRawDeployedReplicaDeta
         ]
     };
 
+    public processIdChange: boolean = true//false;
+    public processIdChangeInfo = {
+        id: "",
+        timeStamp: ""
+    }
+    public lastProcessID: string = "100";
+
     public replicatorStatus: ReplicatorStatus;
     public reportedLoad: LoadMetricReport[];
-
+        
     public get currentServiceOperationStartTimeUtc(): string {
         return TimeUtils.timestampToUTCString(this.raw.CurrentServiceOperationStartTimeUtc);
     }
@@ -172,6 +179,12 @@ export class DeployedReplicaDetail extends DataModelBase<IRawDeployedReplicaDeta
         if (this.raw.ReplicatorStatus) {
             this.replicatorStatus = new ReplicatorStatus(this.data, this.raw.ReplicatorStatus);
         }
+
+        this.processIdChange = this.lastProcessID && this.lastProcessID !== this.processID;
+        if(this.processIdChange) {
+            this.processIdChangeInfo = {timeStamp: new Date().toUTCString(), id: this.lastProcessID }
+        }
+        this.lastProcessID = this.processID;
     }
 
     isStateful() {

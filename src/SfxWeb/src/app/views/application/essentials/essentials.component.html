@@ -1,4 +1,4 @@
-<app-overview-container [healthState]="app?.healthState" *ngIf="app && app.isInitialized" class="detail-pane essen-pane" style="display: inline-block;">
+<!-- <app-overview-container [healthState]="app?.healthState" *ngIf="app && app.isInitialized" class="detail-pane essen-pane" style="display: inline-block;">
   <table>
       <tr>
           <td>Application Type</td>
@@ -16,9 +16,57 @@
           <td> : {{app.raw.Status}}</td>
       </tr>
   </table>
-</app-overview-container>
+</app-overview-container> -->
 
 <div class="tile-container">
+  <app-essential-health-tile [healthState]="app?.healthState" *ngIf="app && app.isInitialized" class="long">
+    <div class="essential-container">
+      <div class="essential-item ">
+        <div class="essential-head">
+          Application Type
+        </div>
+        <div class="essential-body">
+          <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName">{{app?.raw.TypeName}}</a>
+            <app-clip-board [text]="app?.raw.TypeName"></app-clip-board>
+        </div>
+      </div>
+
+      <div class="essential-item ">
+        <div class="essential-head">
+          Version
+        </div>
+        <div class="essential-body">
+          {{app?.raw.TypeVersion}}<app-clip-board [text]="app?.raw.TypeVersion"></app-clip-board>
+        </div>
+      </div>
+
+      <div class="essential-item ">
+        <div class="essential-head">
+          Status
+        </div>
+        <div class="essential-body">
+          {{app.raw.Status}}
+        </div>
+      </div>
+    </div>
+    <!-- <table>
+      <tr>
+          <td>Application Type</td>
+          <td> :  <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName">{{app?.raw.TypeName}}</a>
+            <app-clip-board [text]="app?.raw.TypeName"></app-clip-board></td>
+      </tr>
+
+      <tr>
+          <td>Version</td>
+          <td> : {{app?.raw.TypeVersion}}<app-clip-board [text]="app?.raw.TypeVersion"></app-clip-board></td>
+      </tr>
+
+      <tr>
+          <td>Status</td>
+          <td> : {{app.raw.Status}}</td>
+      </tr>
+  </table> -->
+  </app-essential-health-tile>
   <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard"></app-dashboard-tile>
   <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard"></app-dashboard-tile>
   <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>

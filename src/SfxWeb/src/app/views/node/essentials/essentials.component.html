@@ -1,9 +1,9 @@
 <div style="display: flex; flex-wrap: wrap;" *ngIf="node">
-  <div class="detail-pane essen-pane" style="    margin-right: 10px;
+  <!-- <div class="detail-pane essen-pane" style="    margin-right: 10px;
   display: flex;
   align-items: center;">
     <app-node-status [node]="node"></app-node-status>
-  </div>
+  </div> -->
   
   <div class="detail-pane essen-pane"  style="flex-basis: 480px;">
     <div class="essential-container">
@@ -24,33 +24,6 @@
           {{node.raw.FaultDomain}}<app-clip-board [text]="node.raw.FaultDomain"></app-clip-board>
         </div>
       </div>
-
-      <div class="essential-item ">
-        <div class="essential-head">
-          IP Address or Domain Name
-        </div>
-        <div class="essential-body">
-          {{node.raw.IpAddressOrFQDN}}<app-clip-board [text]="node.raw.IpAddressOrFQDN"></app-clip-board>
-        </div>
-      </div>
-  
-      <div class="essential-item ">
-        <div class="essential-head">
-          Type
-        </div>
-        <div class="essential-body">
-          {{node.raw.Type}}<app-clip-board [text]="node.raw.Type"></app-clip-board>
-        </div>
-      </div>
-  
-      <div class="essential-item ">
-        <div class="essential-head">
-          Is Seed Node
-        </div>
-        <div class="essential-body">
-          {{node.raw.IsSeedNode}}
-        </div>
-      </div>
     </div>
   </div>
 </div>
@@ -62,6 +35,43 @@
 </div>
 
 <div *ngIf="node?.loadInformation?.isInitialized" class="tile-container" data-cy="tiles">
+  <app-essential-health-tile [healthState]="node.healthState" class="long">
+    <div style="display: flex;">
+      <app-node-status [node]="node" style="flex: 1;"></app-node-status>
+      <div style="    display: flex;
+      flex-direction: column;
+      justify-content: space-between;">
+        <div style="display: flex; justify-content: flex-end; align-items: center;">
+          <span class="mif-cancel" style="font-size: 22px;" *ngIf="!node.raw.IsSeedNode"></span>
+          <div style="display: flex;" *ngIf="node.raw.IsSeedNode">
+            <!-- <div style="border-radius: 25px;
+            width: 10px;
+            height: 10px;
+            border: green 3px solid;
+            padding: 7px;
+            margin-right: 5px;
+            z-index: 3;"> </div> -->
+  
+            <span class="mif-checkmark" style="
+            font-size: 22px;"></span>
+          </div>
+          Seed Node
+        </div>
+
+              <div class="essential-item " style="margin-top: 20px;">
+        <div class="essential-head">
+          IP Address or Domain Name
+        </div>
+        <div class="essential-body">
+          {{node.raw.IpAddressOrFQDN}}<app-clip-board [text]="node.raw.IpAddressOrFQDN"></app-clip-board>
+        </div>
+      </div>
+      </div>
+  
+    </div>
+
+
+  </app-essential-health-tile>
   <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="5px 0">
     Count of all service objects (stateless and stateful) on the node
   </app-dashboard-text-tile>

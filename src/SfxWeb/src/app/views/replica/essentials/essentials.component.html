@@ -11,12 +11,34 @@
           </td>
         </tr>
 
-        <tr *ngIf="replica.detail.isInitialized">
-          <td> Process Id
-          </td>
-          <td> : {{replica.detail.processID}}<app-clip-board [text]="replica.detail.processID"></app-clip-board>
-          </td>
-        </tr>
+        <ng-container *ngIf="replica.detail.isInitialized">
+          <tr >
+            <td> Process Id
+            </td>
+            <td> : 
+              {{replica.detail.processID}}<app-clip-board [text]="replica.detail.processID"></app-clip-board>
+            </td>
+          </tr>
+  
+          <tr>
+            <td>
+              <span class="mif-warning" style="color: yellow;"
+                  [ngbTooltip]="This"></span>
+              Previous Process Id
+            </td>
+            <td>
+              : {{replica.detail.processIdChangeInfo.id}}
+            </td>
+          </tr>
+          <tr>
+            <td colspan="2">
+              <div *ngIf="replica.detail.processIdChange">
+                  
+                  <app-display-time [time]="replica.detail.processIdChangeInfo.timeStamp"></app-display-time>
+              </div>
+            </td>
+          </tr>
+        </ng-container>
 
         <tr>
           <td>Status</td>

@@ -1,0 +1,22 @@
+<div class="dashboard-wrapper">
+    <div class="dashboard dashboard-small">
+        <div class="dashboard-tile">
+            <div style="display: flex; align-items: center; height: 100%;">
+                <div class="badge-container">
+                    <app-health-badge [badgeClass]="healthState.badgeClass" size="90px"></app-health-badge>
+                </div>
+                <div style="flex: 1;">
+                    <ng-content></ng-content>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="dashboard-donut-chart chart-wrapper"> -->
+    </div>
+    <!-- <div class="dashboard-datapoints">
+            <div class="dashboard-datapoint" *ngFor="let dataPoint of data.dataPoints; let i = index">
+                <div class="dashboard-datapoint-leftbar" [ngClass]="dataPoint.state.badgeClass"></div>
+                <div class="dashboard-datapoint-title">{{dataPoint.title}}</div>
+                <div class="dashboard-datapoint-number">{{dataPoint.count}}</div>
+            </div>
+        </div> -->
+</div>
