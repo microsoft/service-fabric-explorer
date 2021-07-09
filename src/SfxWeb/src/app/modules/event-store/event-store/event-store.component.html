@@ -49,7 +49,7 @@
         <div *ngIf="listEventStoreData.length > 1; then showTabs else showSingle"></div>
 
         <ng-template #showTabs>
-            <div ngbNav #nav="ngbNav">
+            <div ngbNav #nav="ngbNav" data-cy="eventtabs">
                 <div ngbNavItem *ngFor="let data of listEventStoreData">
                     <a ngbNavLink class="bar-name">
                         <app-health-badge *ngIf="!data.eventsList.lastRefreshWasSuccessful" 

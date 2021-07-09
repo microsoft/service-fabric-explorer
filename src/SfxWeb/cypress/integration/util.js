@@ -101,5 +101,21 @@ export const checkTableSize = (size) => {
     return cy.get('tbody > tr').should('have.length', size);
 }
 
-export const EMPTY_LIST_TEXT = "No items to display.";
+/*
+Checks if the table within scope only has a row and it displays the message.
+Used to validate detail lists on the events page.
+*/
+export const checkTableErrorMessage = (message) => {
+    checkTableSize(1);
+    cy.get('tbody > tr').first().within(() => {
+       cy.contains(message) 
+    });
+}
 
+export const EMPTY_LIST_TEXT = "No items to display.";
+export const FAILED_LOAD_TEXT = "Some items failed to load.";
+export const FAILED_TABLE_TEXT = "Items failed to load.";
+
+// Tabs names
+export const REPAIR_TASK_TAB_NAME = "Repair Tasks";
+export const CLUSTER_TAB_NAME = "Cluster";
