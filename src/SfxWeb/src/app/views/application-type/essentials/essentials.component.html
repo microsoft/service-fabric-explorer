@@ -7,7 +7,7 @@
             <div ngbNav #nav="ngbNav" >
                 <div ngbNavItem>
                     <a ngbNavLink style="font-size: 12pt;">
-                        Active
+                        In Use <span class="mif-info" ngbTooltip="Application Types which have at least 1 application instance." style="font-size: small;" container="body"></span>
                     </a>
                     <ng-template ngbNavContent>
                         <app-detail-list [list]="activeAppTypes" [listSettings]="activeAppTypesListSettings" data-cy="appTypeVersions"></app-detail-list>	

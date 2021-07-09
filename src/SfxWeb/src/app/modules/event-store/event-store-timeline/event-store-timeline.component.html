@@ -2,36 +2,36 @@
     <div class="button-container">
         <button type="button" class="simple-button margined" (click)="fitData()"
             title="Fit the timeline to only display the time range that has events.">
-            Fit events
+            Fit Events
         </button>
 
         <button type="button" class="simple-button margined" (click)="fitWindow()"
             title="Fit the timeline to display the whole time range.">
-            Fit range
+            Fit Range
         </button>
 
         <button type="button" class="simple-button margined" (click)="moveStart()"
             title="Move to the start of the timeline." *ngIf="displayMoveToStart">
-            Move to start
+            Move To Start
         </button>
 
         <button type="button" class="simple-button margined" (click)="moveEnd()"
             title="Move to the end of the timeline." *ngIf="displayMoveToEnd">
-            Move to end
+            Move To End
         </button>
 
         <button type="button" class="simple-button margined" (click)="moveToOldestEvent()"
             title="Move to the oldest event in the time range.">
-            Move to oldest event
+            Move To Oldest Event
         </button>
 
         <button type="button" class="simple-button margined" (click)="moveToNewestEvent()"
             title="Move to the newest event in the time range.">
-            Move to newest event
+            Move To Newest Event
         </button>
 
         <div class="margined">
-            <app-toggle [(state)]="isUTC" (stateChange)="flipTimeZone()"></app-toggle><span>Set to {{isUTC ? 'Local Time' : 'UTC'}}</span>
+            <app-toggle [(state)]="isUTC" (stateChange)="flipTimeZone()"></app-toggle><span>Set To {{isUTC ? 'Local Time' : 'UTC'}}</span>
         </div>
 
         <ng-content select="[buttons]"></ng-content>

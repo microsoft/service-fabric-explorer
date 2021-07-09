@@ -1,20 +1,19 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT } from './util';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute } from './util';
 
 const appName = "VisualObjectsApplicationType";
-const waitRequest = "@app";
+const waitRequest = "@getapp";
 context('app', () => {
     beforeEach(() => {
-        cy.server()
         addDefaultFixtures();
 
-        cy.route(apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`), "fx:app-page/upgrade-progress").as("upgradeProgress")
-        cy.route(apiUrl(`/Applications/${appName}/$/GetServices?*`), "fx:app-page/services").as("services")
-        cy.route(apiUrl(`/Applications/${appName}/$/GetHealth?*`), "fx:app-page/app-health").as("apphealth")
-        cy.route(apiUrl(`/Applications/${appName}/?*`), "fx:app-page/app-type").as("app")
-        cy.route(apiUrl(`ApplicationTypes/${appName}/$/GetApplicationManifest?*`), "fx:app-page/manifest").as("manifest")
-        cy.route(apiUrl(`ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`), "fx:app-page/service-types").as("serviceTypes")
+        addRoute("upgradeProgress", "app-page/upgrade-progress.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
+        addRoute("services", "app-page/services.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
+        addRoute("apphealth", "app-page/app-health.json", apiUrl(`/Applications/${appName}/$/GetHealth?*`))
+        addRoute("app", "app-page/app-type.json", apiUrl(`/Applications/${appName}/?*`))
+        addRoute("manifest", "app-page/manifest.json", apiUrl(`/Applications/${appName}/$/GetApplicationManifest?*`))
+        addRoute("serviceTypes", "app-page/service-types.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`))
         cy.visit(`/#/apptype/${appName}/app/${appName}`)
     })
 
@@ -49,7 +48,7 @@ context('app', () => {
 
     describe("details", () => {
         it('view details', () => {
-            cy.wait([waitRequest, "@apphealth"]);
+            cy.wait([waitRequest, "@getapphealth"]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
@@ -61,12 +60,12 @@ context('app', () => {
 
     describe("deployments", () => {
         it('view deployments', () => {
-            cy.wait([waitRequest, "@apphealth"]);
+            cy.wait([waitRequest, "@getapphealth"]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('deployments').click();
             })
-            cy.wait("@apphealth")
+            cy.wait("@getapphealth")
             cy.url().should('include', '/deployments')
         })
     })
@@ -74,20 +73,20 @@ context('app', () => {
     describe("manifest", () => {
         it('view manifest', () => {
             cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
-            cy.route(apiUrl(`/ApplicationTypes/${appName}/$/GetApplicationManifest?*`), "fx:app-page/app-manifest").as("appManifest")
+            addRoute("appManifest", "app-page/app-manifest.json", apiUrl(`/ApplicationTypes/${appName}/$/GetApplicationManifest?*`))
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('manifest').click();
             })
 
-            cy.wait(["@appManifest", waitRequest])
+            cy.wait(["@getappManifest", waitRequest])
             cy.url().should('include', '/manifest')
         })
     })
 
     describe("backups", () => {
-        it.only('view backup', () => {
-            cy.route(apiUrl(`/Applications/${appName}/$/GetBackupConfigurationInfo?*`)).as('backup');
+        it('view backup', () => {
+            cy.intercept(apiUrl(`/Applications/${appName}/$/GetBackupConfigurationInfo?*`)).as('backup');
             cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
 
             cy.get('[data-cy=navtabs]').within(() => {
@@ -102,7 +101,7 @@ context('app', () => {
 
     describe("events", () => {
         it('view events', () => {
-            cy.route(apiUrl(`EventsStore/Applications/${appName}/$/Events?*`), "fx:empty-list").as("events")
+            addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Applications/${appName}/$/Events?*`))
 
             cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
 
@@ -110,7 +109,7 @@ context('app', () => {
                 cy.contains('events').click();
             })
 
-            cy.wait('@events')
+            cy.wait('@getevents')
             cy.url().should('include', '/events')
         })
     })

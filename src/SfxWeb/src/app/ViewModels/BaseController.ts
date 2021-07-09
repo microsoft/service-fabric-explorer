@@ -30,14 +30,9 @@ export abstract class BaseControllerDirective implements  OnInit, OnDestroy {
 
              this.setup();
 
-             this.subscriptions.add(this.common().pipe(mergeMap( () => this.refresh())).subscribe(
-                 () => {
-                     this.refreshService.insertRefreshSubject('current controller' + this.getClassName(), () => this.common().pipe(mergeMap(() => this.refresh(this.messageService))));
-                 },
-                 () => {
-                     this.router.navigate(['/']);
-                 }
-             ));
+             this.subscriptions.add(this.refreshService.refreshSubject.subscribe(() => this.fullRefresh().subscribe()));
+
+             this.subscriptions.add(this.fullRefresh().subscribe());
         }));
 
          console.log(this);
@@ -57,9 +52,11 @@ export abstract class BaseControllerDirective implements  OnInit, OnDestroy {
 
     ngOnDestroy(){
         this.subscriptions.unsubscribe();
-        this.refreshService.removeRefreshSubject('current controller' + this.getClassName());
     }
 
+    fullRefresh(): Observable<any> {
+      return this.common().pipe(mergeMap(() => this.refresh(this.messageService)));
+    }
 
     /*
      Optional to get and set params from URL. called before common

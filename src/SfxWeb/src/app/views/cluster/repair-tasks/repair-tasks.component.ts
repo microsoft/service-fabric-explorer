@@ -54,12 +54,12 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
     this.repairTaskListSettings = this.settings.getNewOrExistingListSettings('repair', ['raw.History.CreatedUtcTimestamp'],
       [
-        new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'TaskId'),
-          new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
+        new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'Task Id'),
+        new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
           new ListColumnSetting('raw.Target.NodeNames', 'Target'),
           new ListColumnSetting('impactedNodes', 'Impact'),
           new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
-          new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created at'),
+          new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created At'),
           new ListColumnSetting('displayDuration', 'Duration', {
             sortPropertyPaths: ['duration']
           }),
@@ -79,12 +79,12 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
     this.completedRepairTaskListSettings = this.settings.getNewOrExistingListSettings('completedRepair', ['raw.History.CreatedUtcTimestamp'],
         [
-          new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'TaskId'),
+          new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'Task Id'),
           new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
             new ListColumnSetting('raw.Target.NodeNames', 'Target'),
             new ListColumnSetting('impactedNodes', 'Impact'),
             new ListColumnSetting('raw.ResultStatus', 'Result Status', {enableFilter: true}),
-            new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created at'),
+            new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created At'),
             new ListColumnSetting('displayDuration', 'Duration', {
               sortPropertyPaths: ['duration']
             }),

@@ -1,32 +1,22 @@
 import { Injectable } from '@angular/core';
 import { RestClientService } from './rest-client.service';
-import { Observable, Subscriber, of } from 'rxjs';
+import { Observable, Subscriber, of, Subject, ReplaySubject } from 'rxjs';
 import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
-import * as AuthenticationContext from 'adal-angular';
-import { adal } from 'adal-angular';
-
-const createAuthContextFn: adal.AuthenticationContextStatic = AuthenticationContext;
-
-export class AdalConfig {
-  apiEndpoint: string;
-  clientId: string;
-  resource: string;
-  tenantId: string;
-  redirectUri: string;
-}
+import AuthenticationContext, { Options } from 'adal-angular';
+import { StringUtils } from '../Utils/StringUtils';
 
 @Injectable({
   providedIn: 'root'
 })
 export class AdalService {
-  private context: adal.AuthenticationContext;
+  private context: AuthenticationContext;
   public config: AadMetadata;
   public aadEnabled = false;
 
   constructor(private http: RestClientService) { }
 
-  load(): Observable<adal.AuthenticationContext> {
+  load(): Observable<AuthenticationContext> {
     if (!!this.context){
       return of(this.context);
     }else{
@@ -34,14 +24,20 @@ export class AdalService {
         this.config = data;
         if (data.isAadAuthType){
 
-          const config = {
+          const config: Options = {
             tenant: data.raw.metadata.tenant,
             clientId: data.raw.metadata.cluster,
-            cacheLocation: 'localStorage',
-        };
+            cacheLocation: 'localStorage'
+          };
 
-          this.context = new createAuthContextFn(config);
+          if (data.raw.metadata.login) {
+            config.instance = StringUtils.EnsureEndsWith(data.raw.metadata.login, '/');
+          }
+
+          this.context = new AuthenticationContext(config);
           this.aadEnabled = true;
+
+          return this.context;
         }
       }));
     }
@@ -67,7 +63,7 @@ export class AdalService {
       return this.context.getCachedToken(this.config.raw.metadata.cluster);
   }
   public get isAuthenticated(): boolean {
-      return this.userInfo && this.accessToken;
+      return !!this.userInfo && !!this.accessToken;
   }
 
   public isCallback(hash: string) {
@@ -84,19 +80,16 @@ export class AdalService {
   }
 
   public acquireTokenResilient(resource: string): Observable<any> {
-      return new Observable<any>((subscriber: Subscriber<any>) =>
-          {
-            this.context.acquireToken(resource, (message: string, token: string) => {
-              if (token) {
-                  subscriber.next(token);
-              } else {
-                  console.error(message);
-                  subscriber.error(message);
-              }
-              subscriber.complete();
-          });
-          }
-      ).pipe(retry(3));
+    return new Observable<any>((subscriber: Subscriber<any>) => {
+      this.context.acquireToken(resource, (message: string, token: string) => {
+        if (token) {
+          subscriber.next(token);
+        } else {
+          console.error(message);
+          subscriber.error(message);
+        }
+        subscriber.complete();
+      });
+    }).pipe(retry(3));
   }
-
 }

@@ -2,7 +2,28 @@
     "Name": "fabric:/VisualObjectsApplicationType",
     "TypeName": "VisualObjectsApplicationType",
     "TargetApplicationTypeVersion": "16.0.0",
-    "UpgradeDomains": [],
+    "UpgradeDomains": [
+        {
+            "Name": "2",
+            "State": "InProgress"
+        },
+        {
+            "Name": "3",
+            "State": "Pending"
+        },
+        {
+            "Name": "4",
+            "State": "Pending"
+        },
+        {
+            "Name": "0",
+            "State": "Completed"
+        },
+        {
+            "Name": "12341234",
+            "State": "Completed"
+        }
+    ],
     "UpgradeState": "UnmonitoredManual",
     "NextUpgradeDomain": "",
     "RollingUpgradeMode": "RollingForwardInProgress",

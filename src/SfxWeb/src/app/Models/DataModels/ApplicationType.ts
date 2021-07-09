@@ -66,7 +66,7 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
         this.actions.add(new IsolatedAction(
             this.data.dialog,
             'createAppInstance',
-            'create',
+            'Create',
             'Creating',
             {
                 appType: this,

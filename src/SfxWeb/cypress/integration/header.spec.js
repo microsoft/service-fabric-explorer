@@ -5,7 +5,6 @@ import { addDefaultFixtures, refresh, upgradeProgress_route, FIXTURE_REF_UPGRADE
 context('Header', () => {
 
     beforeEach(() => {
-        cy.server()
         addDefaultFixtures();
     })
 
@@ -21,17 +20,17 @@ context('Header', () => {
             cy.wait(FIXTURE_REF_UPGRADEPROGRESS);
 
             cy.get('[data-cy=refreshrate]').within(() => {
-                cy.contains("REFRESH RATE 10")
+                cy.contains("Refresh Rate : 10")
 
-                cy.contains('OFF').click();
-                cy.route('GET', upgradeProgress_route, 'fixture:upgrade-in-progress').as("record");
+                cy.contains('Off').click();
+                cy.intercept('GET', upgradeProgress_route, { fixture: 'upgrade-in-progress.json' }).as("record");
 
-                cy.contains("REFRESH RATE OFF")
+                cy.contains("Refresh Rate : Off")
 
                 cy.wait(13000)
 
-                cy.contains("FAST").click();
-                cy.contains("REFRESH RATE 5");
+                cy.contains("Fast").click();
+                cy.contains("Refresh Rate : 5");
 
                 cy.wait("@record");
                 cy.get("@record" + '.3').should('not.exist')
@@ -47,7 +46,7 @@ context('Header', () => {
             cy.visit('/clustermap');
             cy.get('[data-cy=upgradebanner]').should('not.exist')
 
-            cy.route('GET', upgradeProgress_route, 'fixture:upgrade-in-progress').as("inprogres");
+            cy.intercept('GET', upgradeProgress_route, { fixture: 'upgrade-in-progress.json' }).as("inprogres");
 
             refresh();
             cy.wait("@inprogres");

@@ -78,6 +78,8 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
     public impactedNodes: string[] = [];
     public history: IRepairTaskHistoryPhase[] = [];
+    private timeStampsCollapses: Record<string, boolean> = {};
+
     public createdAt = '';
 
     public couldParseExecutorData = false;
@@ -206,6 +208,12 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
                 break;
         }
 
+        if (this.timeStampsCollapses[name] === false) {
+          startCollapsed = false;
+        }else {
+          this.timeStampsCollapses[name] = startCollapsed;
+        }
+
         return {
             name,
             status: statusText,
@@ -255,6 +263,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             this.historyPhases.push(this.generateHistoryPhase('Executing', [this.history[5], this.history[6]]),
                                     this.generateHistoryPhase('Restoring', this.history.slice(7)));
         }
+
         return of(null);
     }
 
@@ -268,9 +277,9 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
         let type = '';
         if (id.includes(RepairJobType.TenantUpdate)) {
             type = RepairJobType.TenantUpdate;
-            tooltip = 'This is something either initiated by the user or on behalf of the user (auto-os upgrade for example)';
+            tooltip = 'This is either initiated by the user or on behalf of the user (auto-os upgrade for example)';
         }else if (id.includes(RepairJobType.PlatformUpdate)) {
-            tooltip = 'Operating underneath the user';
+            tooltip = 'An operation underneath the user';
             type = RepairJobType.PlatformUpdate;
         }else if (id.includes(RepairJobType.TenantMaintenance)) {
             tooltip = 'Intitiated by the user either via SF or portal';
@@ -285,5 +294,10 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
     public getHistoryPhase(phase: string): IRepairTaskPhase {
         return this.historyPhases.find(historyPhase => historyPhase.name === phase);
+    }
+
+    public changePhaseCollapse(phase: string, state: boolean) {
+      this.getHistoryPhase(phase).startCollapsed = state;
+      this.timeStampsCollapses[phase] = state;
     }
 }

@@ -1,30 +1,29 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkTableSize, EMPTY_LIST_TEXT, FIXTURE_REF_MANIFEST } from './util';
+import { addDefaultFixtures, apiUrl, checkTableSize, EMPTY_LIST_TEXT, FIXTURE_REF_MANIFEST, addRoute } from './util';
 
 const serviceName = "VisualObjects.ActorService";
 const partitionId = "28bfaf73-37b0-467d-9d47-d011b0aedbc0";
 const appName = "VisualObjectsApplicationType";
 
-const waitRequest = "@partitionInfo";
+const waitRequest = "@getpartitionInfo";
 
-const routeFormatter = (appName, serviceName) => `/Applications/${appName}/$/GetServices/${appName}/${serviceName}/$/GetPartitions`;
+const routeFormatter = (appName, serviceName) => `/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}/$/GetPartitions`;
 const urlFormatter = (app, service, partition) => `/#/apptype/${app}/app/${app}/service/${app}%252F${service}/partition/${partition}`;
 
 context('service', () => {
     beforeEach(() => {
-        cy.server()
         addDefaultFixtures();
-        cy.route(apiUrl(`/Applications/${appName}/$/GetServices?*`), "fx:app-page/services").as("services")
+        addRoute("services", "app-page/services.json", apiUrl(`/Applications/${appName}/$/GetServices?*`));
     })
 
     describe("stateful", () => {
         beforeEach(() => {
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}?*`), "fx:partition-page/partitions").as("partitions");
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`), "fx:partition-page/partition-info").as("partitionInfo");
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetReplicas?*`), "fx:partition-page/replicas").as("replicasList");
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetHealth?*`), "fx:partition-page/health").as("health");
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetLoadInformation?*`), "fx:partition-page/load").as("load");
+            addRoute("partitions", "partition-page/partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
+            addRoute("partitionInfo", "partition-page/partition-info.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}?*`));
+            addRoute("replicasList", "partition-page/replicas.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetReplicas?*`));
+            addRoute("health", "partition-page/health.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetHealth?*`));
+            addRoute("load", "partition-page/load.json", apiUrl(`${routeFormatter(appName, serviceName)}/${partitionId}/$/GetLoadInformation?*`));
 
             cy.visit(urlFormatter(appName, serviceName, partitionId))
         })
@@ -52,7 +51,7 @@ context('service', () => {
                 cy.contains('details').click();
             })
 
-            cy.wait('@load');
+            cy.wait('@getload');
 
             cy.url().should('include', '/details');
         })

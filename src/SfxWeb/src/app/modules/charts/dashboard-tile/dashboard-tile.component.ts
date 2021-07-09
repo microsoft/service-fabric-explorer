@@ -101,7 +101,7 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
 
   ngOnInit() {
     const margin = 3;
-    const width = (this.data.largeTile ? 200 : 140) + margin * 2;
+    const width = (this.data.largeTile ? 230 : 150) + margin * 2;
     this.options.chart.height = width;
     this.options.chart.width = width;
 

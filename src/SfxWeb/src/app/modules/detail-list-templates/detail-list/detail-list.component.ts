@@ -54,8 +54,8 @@ export class DetailListComponent implements OnInit, OnDestroy {
   @Input()
   set list(data: any[] | DataModelCollectionBase<any>) {
     if (data instanceof DataModelCollectionBase){
-      data.ensureInitialized().subscribe(resp => {
-        this.iList = [].concat(resp.collection);
+      data.ensureInitialized().subscribe(() => {
+        this.iList = [].concat(data.collection);
         this.updateList();
       });
     }else{

@@ -1,9 +1,9 @@
 import { Component, OnDestroy, OnInit } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
-import { RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { IRepairTaskPhase, RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { DataService } from 'src/app/services/data.service';
-import { forkJoin } from 'rxjs';
+import { forkJoin, Subscription } from 'rxjs';
 import { RefreshService } from 'src/app/services/refresh.service';
 import { catchError, map } from 'rxjs/operators';
 
@@ -18,18 +18,19 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
   copyText = '';
   history: any;
   nodes = [];
+  subs: Subscription = new Subscription();
   constructor(public dataService: DataService, private refreshService: RefreshService) { }
 
   ngOnInit(): void {
     this.copyText = JSON.stringify(this.item.raw, null, '\t');
 
-    this.updateNodesList().subscribe();
+    this.subs.add(this.updateNodesList().subscribe());
 
-    this.refreshService.insertRefreshSubject(this.item.id, () => this.updateNodesList());
+    this.subs.add(this.refreshService.refreshSubject.subscribe(() => this.updateNodesList().subscribe()));
   }
 
   ngOnDestroy() {
-    this.refreshService.removeRefreshSubject(this.item.id);
+    this.subs.unsubscribe();
   }
 
   asIsOrder(a: any, b: any): number {
@@ -43,5 +44,4 @@ export class RepairTaskViewComponent implements OnInit, DetailBaseComponent, OnD
       this.nodes = data.filter(node => node);
     }));
   }
-
 }

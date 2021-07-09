@@ -16,7 +16,6 @@
       <span style="vertical-align: middle;" *ngIf="!hideSFXTest">
         Service Fabric Explorer
       </span>
-      <span style="vertical-align: middle;color: #60b2ec; font-size: x-large;"> Beta</span>
     </a>
 
     <app-cluster-upgrade-banner style="margin: auto;" [clusterUpgradeProgress]="dataService.clusterUpgradeProgress"></app-cluster-upgrade-banner>
@@ -35,7 +34,7 @@
         </button>
         <div ngbDropdownMenu style="padding: 10px;" *ngIf="dataService.actionsEnabled()">
           <div ngbDropdownItem style="padding-bottom: 10px;" class="repress-highlight">
-            {{adalService.userInfo.profile.name}}
+            {{adalService?.userInfo?.profile?.name}}
           </div>
           <button class="simple-button" (click)="adalService.logout()" ngbDropdownItem>
             Log Out
