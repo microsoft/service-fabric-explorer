@@ -20,7 +20,7 @@ export class EventsComponent extends BaseControllerDirective {
 
    setup() {
     this.listEventStoreData = [
-      this.data.getApplicationEventData(null)
+      this.data.getApplicationEventData()
     ];
    }
 

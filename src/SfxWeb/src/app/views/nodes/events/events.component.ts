@@ -16,7 +16,7 @@ export class EventsComponent implements OnInit {
 
   ngOnInit() {
     this.listEventStoreData = [
-      this.data.getNodeEventData(null)
+      this.data.getNodeEventData()
     ];
 
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
