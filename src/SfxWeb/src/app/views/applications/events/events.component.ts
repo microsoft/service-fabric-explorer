@@ -19,10 +19,9 @@ export class EventsComponent extends BaseControllerDirective {
    }
 
    setup() {
-    this.listEventStoreData = [{
-      eventsList: this.data.createApplicationEventList(null),
-      displayName: 'Applications'
-    }];
+    this.listEventStoreData = [
+      this.data.getApplicationEventData()
+    ];
    }
 
    refresh(messageHandler?: IResponseMessageHandler): Observable<any> {

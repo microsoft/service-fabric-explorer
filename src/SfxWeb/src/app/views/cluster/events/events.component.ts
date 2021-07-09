@@ -17,8 +17,16 @@ export class EventsComponent implements OnInit {
   ngOnInit() {
     this.listEventStoreData = [
       this.data.getClusterEventData(),
-      this.data.getRepairTasksData(this.settings)
+      this.data.getNodeEventData()
     ];
+
+    this.data.clusterManifest.ensureInitialized().subscribe(() => {
+      if (this.data.clusterManifest.isRepairManagerEnabled) {
+        this.data.repairCollection.ensureInitialized().subscribe(() => {
+          this.listEventStoreData.push(this.data.getRepairTasksData(this.settings));
+        });
+      }
+    });
   }
 
 }

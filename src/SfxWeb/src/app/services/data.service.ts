@@ -33,11 +33,11 @@ import { IDataModelCollection } from '../Models/DataModels/collections/Collectio
 import { DeployedApplicationCollection } from '../Models/DataModels/collections/DeployedApplicationCollection';
 import { MatDialog } from '@angular/material/dialog';
 import { RepairTaskCollection } from '../Models/DataModels/collections/RepairTaskCollection';
-import { ClusterEvent, FabricEventBase, NodeEvent, ServiceEvent } from '../Models/eventstore/Events';
+import { ApplicationEvent, ClusterEvent, FabricEventBase, NodeEvent, PartitionEvent, ReplicaEvent, ServiceEvent } from '../Models/eventstore/Events';
 import { IEventStoreData } from '../modules/event-store/event-store/event-store.component';
 import { SettingsService } from './settings.service';
 import { RepairTask } from '../Models/DataModels/repairTask';
-import { ClusterTimelineGenerator, NodeTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
+import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 
 @Injectable({
   providedIn: 'root'
@@ -322,24 +322,62 @@ export class DataService {
         return d;
     }
 
-    public createNodeEventList(nodeName?: string): NodeEventList {
-        return new NodeEventList(this, nodeName);
+    public getNodeEventData(nodeName?: string): IEventStoreData<NodeEventList, NodeEvent>{
+        const list = new NodeEventList(this, nodeName);
+        const d = {
+            eventsList: list,
+            timelineGenerator: new NodeTimelineGenerator(),
+            displayName: nodeName ? nodeName : 'Nodes',
+        };
+
+        this.addFabricEventData<NodeEventList, NodeEvent>(d);
+        return d;
     }
 
-    public createApplicationEventList(applicationId?: string): ApplicationEventList {
-        return new ApplicationEventList(this, applicationId);
+    public getApplicationEventData(applicationId?: string): IEventStoreData<ApplicationEventList, ApplicationEvent> {
+        const list = new ApplicationEventList(this, applicationId);
+        const d = {
+            eventsList : list,
+            timelineGenerator : applicationId ? new ApplicationTimelineGenerator() : null,
+            displayName : applicationId ? applicationId : 'Apps',
+        };
+
+        this.addFabricEventData<ApplicationEventList, ApplicationEvent>(d);
+        return d;
     }
 
-    public createServiceEventList(serviceId?: string): ServiceEventList {
-        return new ServiceEventList(this, serviceId);
+    public getServiceEventData(serviceId?: string): IEventStoreData<ServiceEventList, ServiceEvent> {
+        const list = new ServiceEventList(this, serviceId);
+        const d = {
+            eventsList : list,
+            displayName : serviceId
+        };
+
+        this.addFabricEventData<ServiceEventList, ServiceEvent>(d);
+        return d;
     }
 
-    public createPartitionEventList(partitionId?: string): PartitionEventList {
-        return new PartitionEventList(this, partitionId);
+    public getPartitionEventData(partitionId?: string): IEventStoreData<PartitionEventList, PartitionEvent> {
+        const list = new PartitionEventList(this, partitionId);
+        const d = {
+            eventsList : list,
+            timelineGenerator : new PartitionTimelineGenerator(),
+            displayName : partitionId
+        };
+
+        this.addFabricEventData<PartitionEventList, PartitionEvent>(d);
+        return d;
     }
 
-    public createReplicaEventList(partitionId: string, replicaId?: string): ReplicaEventList {
-        return new ReplicaEventList(this, partitionId, replicaId);
+    public getReplicaEventData(partitionId: string, replicaId?: string): IEventStoreData<ReplicaEventList, ReplicaEvent> {
+        const list = new ReplicaEventList(this, partitionId, replicaId);
+        const d = {
+            eventsList : list,
+            displayName : replicaId
+        };
+
+        this.addFabricEventData<ReplicaEventList, ReplicaEvent>(d);
+        return d;
     }
 
     public createCorrelatedEventList(eventInstanceId: string) {

@@ -19,10 +19,7 @@ export class EventsComponent extends ApplicationBaseControllerDirective {
 
   setup() {
     this.listEventStoreData = [
-      { eventsList : this.data.createApplicationEventList(this.appId),
-        timelineGenerator: new ApplicationTimelineGenerator(),
-        displayName : 'Application: ' + this.appId
-      }
+      this.data.getApplicationEventData(this.appId)
     ];
   }
 
