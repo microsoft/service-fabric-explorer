@@ -5,7 +5,7 @@ import { ValueResolver } from '../Utils/ValueResolver';
 import { TreeNodeGroupViewModel } from './TreeNodeGroupViewModel';
 
 describe('Tree Node', () => {
-
+    let vr: ValueResolver;
 
     let testNode: TreeNodeGroupViewModel;
     let treeViewModel: TreeViewModel;
@@ -17,6 +17,8 @@ describe('Tree Node', () => {
     let childQuery: ITreeNode[];
 
     beforeEach((() => {
+        vr =  new ValueResolver();
+
         treeViewModel = new TreeViewModel( () => of([]));
 
         child = {
@@ -55,7 +57,6 @@ describe('Tree Node', () => {
     });
 
     describe('validate tree Node - IsVisibleBadge', () => {
-        let vr: ValueResolver;
 
         beforeEach(() => {
             node.alwaysVisible = false;
@@ -64,8 +65,7 @@ describe('Tree Node', () => {
             testNode.tree.showOkItems = false;
             testNode.tree.showWarningItems = false;
             testNode.tree.showErrorItems = false;
-
-            vr =  new ValueResolver();
+            testNode.tree.orderbyHealthState = false;
         });
 
         fit('always visible', () => {
@@ -157,7 +157,7 @@ describe('Tree Node', () => {
             const child2 = {
                 displayName: () => 'child2',
                 nodeId: 'child2',
-                sortBy: () => [-1]
+                sortBy: () => [-1],
             };
 
             const child3 = {
@@ -180,6 +180,42 @@ describe('Tree Node', () => {
             childQuery = [child3, child2, child4];
             testNode.refreshExpandedChildrenRecursively().subscribe();
             expect(testNode.displayedChildren[1].nodeId).toBe('child4');
+
+        });
+
+        fit('sort children by sort health order', () => {
+            const child2 = {
+                displayName: () => 'child2',
+                nodeId: 'child2',
+                sortBy: () => [1],
+                badge: () => vr.resolveHealthStatus('Ok')
+            };
+
+            const child3 = {
+                displayName: () => 'child3',
+                nodeId: 'child3',
+                sortBy: () => [2],
+                badge: () => vr.resolveHealthStatus('Warning')
+            };
+
+            const child4 = {
+                displayName: () => 'child4',
+                nodeId: 'child4',
+                sortBy: () => [3],
+                badge: () => vr.resolveHealthStatus('Error')
+            };
+
+            childQuery = [child2, child3, child4];
+            testNode.toggle();
+            expect(testNode.displayedChildren[0].nodeId).toBe('child2');
+            expect(testNode.displayedChildren[1].nodeId).toBe('child3');
+            expect(testNode.displayedChildren[2].nodeId).toBe('child4');
+
+            testNode.tree.orderbyHealthState = true;
+
+            expect(testNode.displayedChildren[0].nodeId).toBe('child4');
+            expect(testNode.displayedChildren[1].nodeId).toBe('child3');
+            expect(testNode.displayedChildren[2].nodeId).toBe('child2');
 
         });
 
