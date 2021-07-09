@@ -9,6 +9,7 @@ import { ListSettings } from '../Models/ListSettings';
 import { ActionCollection } from '../Models/ActionCollection';
 import { ITextAndBadge } from '../Utils/ValueResolver';
 import orderBy from 'lodash/orderBy';
+import { HealthUtils } from '../Utils/healthUtils';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -33,9 +34,9 @@ export class TreeNodeGroupViewModel implements ITreeNode {
         }
 
         if (this.tree.orderbyHealthState) {
-            result = result.sort( (a, b) => {
-                const badgeState1 = a.badge ? this.resolveHealthState(a.badge()) : 0;
-                const badgeState2 = b.badge ? this.resolveHealthState(b.badge()) : 0;
+            result = result.sort( (child1, child2) => {
+                const badgeState1 = child1.badge ? HealthUtils.resolveHealthStateToValue(child1.badge()) : 0;
+                const badgeState2 = child2.badge ? HealthUtils.resolveHealthStateToValue(child2.badge()) : 0;
                 return badgeState2 - badgeState1;
             });
         }
@@ -172,25 +173,6 @@ export class TreeNodeGroupViewModel implements ITreeNode {
     private keyboardSelectActionDelayInMilliseconds = 200;
     private internalIsExpanded = false;
     private currentGetChildrenPromise: Subject<any>;
-
-    private resolveHealthState(badge: ITextAndBadge) {
-        let value = 0;
-        switch (badge.badgeClass) {
-            case BadgeConstants.BadgeUnknown:
-            case BadgeConstants.BadgeOK:
-                value = 0;
-                break;
-            case BadgeConstants.BadgeWarning:
-                value = 1;
-                break;
-            case BadgeConstants.BadgeError:
-                value = 2;
-                break;
-            default:
-                break;
-        }
-        return value;
-    }
 
     public toggle(): Observable<any> {
         this.internalIsExpanded = !this.internalIsExpanded;
