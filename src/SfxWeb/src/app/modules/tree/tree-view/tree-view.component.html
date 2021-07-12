@@ -8,16 +8,22 @@
                 <a href="https://aka.ms/sfxrepo" target="_blank" style="color: black;">You can report any issues you run into (Click here)</a>
             </div>
         </div>
-        <app-check-box [(state)]="treeService.tree.showOkItems">
-            <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
-        </app-check-box>
-        <app-check-box [(state)]="treeService.tree.showWarningItems">
-            <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
-        </app-check-box>
-        <app-check-box [(state)]="treeService.tree.showErrorItems">
-            <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
-        </app-check-box>
-        <div style="padding: 10px 10px 0px 0px; margin-left: -15px;">
+        <div class="filter-items-container">
+            <app-check-box [(state)]="treeService.tree.showOkItems" class="filter-item">
+                <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+            </app-check-box>
+            <app-check-box [(state)]="treeService.tree.showWarningItems" class="filter-item">
+                <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+            </app-check-box>
+            <app-check-box [(state)]="treeService.tree.showErrorItems" class="filter-item">
+                <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+            </app-check-box>
+            <div class="filter-item" style="display: inline-block;">
+                <app-toggle [(state)]="treeService.tree.orderbyHealthState"></app-toggle>
+                Sort by Health
+            </div>
+        </div>
+        <div style="padding: 5px 10px 0px 0px; margin-left: -15px;">
             <app-input (changed)="setSearchText($event)"></app-input>
         </div>
     </div>

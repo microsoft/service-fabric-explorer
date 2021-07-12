@@ -17,6 +17,7 @@ export class TreeViewModel {
     public showErrorItems = true;
 
     public searchTerm = '';
+    public orderbyHealthState = false;
 
     public firstTreeSelect = true;
 
