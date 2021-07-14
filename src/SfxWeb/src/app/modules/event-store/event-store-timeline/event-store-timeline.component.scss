@@ -1,12 +1,17 @@
 
 .button-container {
-  padding: 10px 0px;
+  margin-top: 5px;
   display: flex;
   flex-direction: row;
   flex-wrap: wrap;
   align-items: center;
 }
 
-.margined {
+.button-container > * {
+  margin: 5px;
   margin-right: 5px;
+}
+
+.rotated {
+  transform: rotate(180deg)
 }

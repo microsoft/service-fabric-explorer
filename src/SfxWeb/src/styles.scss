@@ -94,12 +94,8 @@ $SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
 }
 
 .right-panel {
-    // position: absolute;
-    // left: $left-panel-width;
-    // right: 20px;
-    // top: 50px;
-    // bottom: 20px;
     padding-left: 20px;
+    padding-right: 15px;
     overflow: hidden;
     min-width: $right-panel-min-width;
     background-color: $right-panel-background-color;
