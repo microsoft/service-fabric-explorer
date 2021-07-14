@@ -103,3 +103,12 @@ export const checkTableSize = (size) => {
 
 export const EMPTY_LIST_TEXT = "No items to display.";
 
+export const checkActions = (actionsText) => {
+  cy.get('[data-cy=actions]').within(() => {
+    cy.contains("Actions").click();
+
+    actionsText.forEach( actionName => {
+      cy.contains(actionName)
+    })
+})
+}
