@@ -2,7 +2,7 @@
 	<h5 collapse-header>
 		Select event types
 	</h5>
-	<div collapse-body>
+	<div collapse-body data-cy="option-picker">
 		<div *ngFor="let option of options" style="display: inline-block; padding-right: 15px;">
 			{{ option.displayName }} 
 			<app-toggle (stateChange)="emitData(option,$event)"></app-toggle>
