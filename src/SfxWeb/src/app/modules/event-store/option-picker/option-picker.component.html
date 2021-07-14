@@ -1,0 +1,11 @@
+<app-collapse-container collapsed="true" sectionName="Add events">
+	<h5 collapse-header>
+		Add more events
+	</h5>
+	<div collapse-body>
+		<div *ngFor="let option of options" style="display: inline-block; padding-right: 15px;">
+			{{ option.displayName }} 
+			<app-toggle (stateChange)="emitData(option,$event)"></app-toggle>
+		</div>
+	</div>
+</app-collapse-container>
