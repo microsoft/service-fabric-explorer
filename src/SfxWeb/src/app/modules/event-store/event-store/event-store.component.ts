@@ -9,6 +9,7 @@ import { hostViewClassName } from '@angular/compiler';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import { ListSettings } from 'src/app/Models/ListSettings';
+import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 
 export interface IQuickDates {
     display: string;
@@ -52,6 +53,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   ];
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
+  @Input() optionsConfig: IOptionConfig;
   public startDateMin: Date;
   public startDateMax: Date;
   public failedRefresh = false;
@@ -101,11 +103,11 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       });
   }
 
-  private setNewDateWindow(): void {
+  private setNewDateWindow(forceRefresh: boolean = false): void {
       // If the data interface has that function implemented, we call it. If it doesn't we discard it by returning false.
       const refreshData = this.listEventStoreData.some(data => data.setDateWindow ? data.setDateWindow(this.startDate, this.endDate) : false);
 
-      if (refreshData) {
+      if (refreshData || forceRefresh) {
           this.setTimelineData();
       }
   }
@@ -132,6 +134,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       let rawEventlist = [];
       let combinedTimelineData = this.initializeTimelineData();
       this.failedRefresh = false;
+      const addNestedGroups = this.listEventStoreData.length > 1;
 
       for (const data of this.listEventStoreData) {
           if (data.eventsList.lastRefreshWasSuccessful){
@@ -142,7 +145,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                       }
 
                   } else if (data.timelineGenerator) {
-                      data.timelineData = data.timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate);
+                      // If we have more than one element in the timeline the events get grouped by the displayName of the element.
+                      data.timelineData = data.timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
 
                       this.mergeTimelineData(combinedTimelineData, data.timelineData);
                   }
@@ -175,6 +179,16 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       forkJoin(subs).subscribe(() => {
           this.timeLineEventsData = this.getTimelineData();
       });
+  }
+
+  processData(option: IOptionData){
+    if (option.addToList){
+      this.listEventStoreData.push(option.data);
+    }
+    else{
+      this.listEventStoreData = this.listEventStoreData.filter(item => item !== option.data);
+    }
+    this.setNewDateWindow(true);
   }
 
   setNewDates(dates: IOnDateChange) {

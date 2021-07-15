@@ -44,35 +44,28 @@
         </div>
         <br>
 
+        <div class="detail-pane essen-pane" *ngIf="optionsConfig">
+            <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)"></app-option-picker>
+        </div>
+
         <app-health-badge *ngIf="failedRefresh" text=" Some items failed to load."  badgeClass="badge-warning"></app-health-badge>
-        
-        <div *ngIf="listEventStoreData.length > 1; then showTabs else showSingle"></div>
 
-        <ng-template #showTabs>
-            <div ngbNav #nav="ngbNav" data-cy="eventtabs">
-                <div ngbNavItem *ngFor="let data of listEventStoreData">
-                    <a ngbNavLink class="bar-name">
-                        <app-health-badge *ngIf="!data.eventsList.lastRefreshWasSuccessful" 
-                        text="Error" [showText]="false"  badgeClass="badge-error"></app-health-badge>
-                        {{data.displayName}}
-                    </a>
-                    <ng-template ngbNavContent>
-                        <app-detail-list [list]="data.eventsList.collection" 
-                        [listSettings]="data.listSettings" 
-                        [isLoading]="!data.eventsList.isInitialized"
-                        [successfulLoad]="data.eventsList.lastRefreshWasSuccessful"></app-detail-list>
-                    </ng-template>
-                </div>
+        <div ngbNav #nav="ngbNav" data-cy="eventtabs">
+            <div ngbNavItem *ngFor="let data of listEventStoreData">
+                <a ngbNavLink class="bar-name">
+                    <app-health-badge *ngIf="!data.eventsList.lastRefreshWasSuccessful" 
+                    text="Error" [showText]="false"  badgeClass="badge-error"></app-health-badge>
+                    {{data.displayName}}
+                </a>
+                <ng-template ngbNavContent>
+                    <app-detail-list [list]="data.eventsList.collection" 
+                    [listSettings]="data.listSettings" 
+                    [isLoading]="!data.eventsList.isInitialized"
+                    [successfulLoad]="data.eventsList.lastRefreshWasSuccessful"></app-detail-list>
+                </ng-template>
             </div>
-            <div [ngbNavOutlet]="nav"></div>
-        </ng-template>
-
-        <ng-template #showSingle>
-            <app-detail-list [list]="listEventStoreData[0].eventsList.collection" 
-                [listSettings]="listEventStoreData[0].listSettings" 
-                [isLoading]="!listEventStoreData[0].eventsList.isInitialized"
-                [successfulLoad]="listEventStoreData[0].eventsList.lastRefreshWasSuccessful"></app-detail-list>
-        </ng-template>
+        </div>
+        <div [ngbNavOutlet]="nav"></div>
 
         <div>
             <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
