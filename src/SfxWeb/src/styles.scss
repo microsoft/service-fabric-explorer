@@ -567,6 +567,9 @@ app-navbar {
     border-width: 10px;
     border-radius: 10px;
   }
+  .vis-item.vis-range {
+      border-radius: 0px;
+  }
   .vis-item.vis-selected {
     border-color: green;
     background-color: lightgreen;
@@ -690,6 +693,11 @@ app-navbar {
 
   .noUi-tooltip {
     display: none;
+    background-color: #262626;
+    border: 1px solid #0075c9;
+    color: white;
+    border-radius: 0px;
+    z-index: 2;
   }
   .noUi-handle {
       &:focus {
