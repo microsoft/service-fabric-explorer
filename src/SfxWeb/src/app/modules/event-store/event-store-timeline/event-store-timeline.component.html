@@ -9,11 +9,8 @@
         <ng-content select="[buttons]"></ng-content>
 
 
-        <div (click)="flipShowControls();" style="display: inline-block; margin-right: 5px;">
-            <div class="simple-button" style="display: flex;
-            align-items: center;
-            padding: 0 9px; height: 29px;
-        ">
+        <div (click)="flipShowControls();" >
+            <div class="simple-button flip-button">
                 <span class="mif-arrow-drop-up mif-2x" style="transition: .5s;"
                     [ngClass]="{'rotated': showControls}"></span>
                 {{showControls ? '' : 'Show Controls'}}

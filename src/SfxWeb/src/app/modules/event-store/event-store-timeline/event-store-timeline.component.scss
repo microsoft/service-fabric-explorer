@@ -15,3 +15,10 @@
 .rotated {
   transform: rotate(180deg)
 }
+
+.flip-button {
+  display: flex;
+  align-items: center;
+  padding: 0 9px;
+  height: 29px;
+}

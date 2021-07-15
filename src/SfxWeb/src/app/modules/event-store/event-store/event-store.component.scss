@@ -15,3 +15,34 @@
     background-color: #0075c9 !important;
     border-width: 2px;
 }
+
+.slider-wrapper {
+    min-width: 400px;
+    flex: 1;
+    padding-left: 15px;
+    margin-right: 15px;
+
+    app-double-slider {
+        width: 90%;
+    }
+}
+
+.flex-container {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.wrap {
+    flex-wrap: wrap;
+}
+
+.limit-wrapper {
+    margin-right: 2px;
+    vertical-align: top;
+}
+
+.correlated-icon {
+    vertical-align: middle;
+    margin-right: 3px;
+}

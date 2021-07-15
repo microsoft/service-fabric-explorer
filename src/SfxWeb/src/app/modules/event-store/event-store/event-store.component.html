@@ -1,11 +1,11 @@
 <div class="essen-pane detail-pane">
-    <div style=" display: flex; flex-direction: row; flex-wrap: wrap;">
-        <div style="display: flex; flex-direction: row; align-items: center;">
+    <div class="flex-container">
+        <div class="flex-container wrap">
             <div ngbDropdown style="margin-right: 10px;">
                 <button class="simple-button" ngbDropdownToggle>View Last </button>
                 <div ngbDropdownMenu>
-                    <button *ngFor="let date of quickDates" style="border-bottom: 1px solid gray;" ngbDropdownItem
-                        (click)="setDate(date)" style="padding: 5px; ">
+                    <button *ngFor="let date of quickDates" ngbDropdownItem
+                        (click)="setDate(date)" >
                         {{date.display}}
                     </button>
                 </div>
@@ -15,11 +15,9 @@
                 [currentStartDate]="startDate" [currentEndDate]="endDate">
             </app-dual-date-picker>
         </div>
-        <div style="min-width: 400px; flex: 1; padding-left: 15px;">
-            <div style="width: 90%; margin-top: 15px; margin-bottom: 15px;">
+        <div class="slider-wrapper">
                 <app-double-slider [startDate]="startDate" [endDate]="endDate" (dateChanged)="setNewDates($event)">
                 </app-double-slider>
-            </div>
         </div>
     </div>
     <div>
@@ -32,7 +30,7 @@
     <div *ngIf="timeLineEventsData">
         <app-event-store-timeline [events]="timeLineEventsData">
             <div buttons>
-                <span class="mif-info mif-lg" style="vertical-align: middle; margin-right: 3px;" placement="right"
+                <span class="mif-info mif-lg correlated-icon" placement="right"
                     ngbTooltip="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
 
                 <div class="btn-group btn-group-toggle" ngbRadioGroup [(ngModel)]="showAllEvents" name="radioBasic"
@@ -68,8 +66,7 @@
 
     <div>
         <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
-            <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error"
-                style="margin-right: 2px; vertical-align: top;"></span>
+            <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error limit-wrapper"></span>
             <div style="display: inline-block;">
                 There is a limit of up to 500 events for a given range.
             </div>
