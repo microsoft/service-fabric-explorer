@@ -186,8 +186,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       this.listEventStoreData.push(option.data);
     }
     else{
-      const index = this.listEventStoreData.indexOf(option.data);
-      this.listEventStoreData.splice(index, 1);
+      this.listEventStoreData = this.listEventStoreData.filter(item => item !== option.data);
     }
     this.setNewDateWindow(true);
   }

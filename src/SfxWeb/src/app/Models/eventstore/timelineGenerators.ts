@@ -189,6 +189,10 @@ export abstract class TimeLineGeneratorBase<T> {
     generateTimeLineData(events: T[], startOfRange?: Date, endOfRange?: Date, nestedGroupLabel?: string): ITimelineData {
         const data = this.consume(events, startOfRange, endOfRange);
         EventStoreUtils.addSubGroups(data.groups);
+        /*
+            When we have more than one event type on the timeline we should group them by type to make it easier to visualize.
+            If we set a nestedGroupLabel a group with the name of the event type will be created and gather all of its events.
+        */
         if (nestedGroupLabel){
             const nestedElementGroup: DataGroup = {
                 id: nestedGroupLabel,
@@ -205,7 +209,7 @@ export abstract class TimeLineGeneratorBase<T> {
                 }
             });
             // If the group is already nested, we remove it from the nested groups of the new one.
-            nestedElementGroup.nestedGroups = nestedElementGroup.nestedGroups.filter(group => groupsAlreadyNested.indexOf(group) === -1);
+            nestedElementGroup.nestedGroups = nestedElementGroup.nestedGroups.filter(group => !groupsAlreadyNested.includes(group));
 
             data.groups.add(nestedElementGroup);
         }
