@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
-import { SettingsService } from 'src/app/services/settings.service';
+import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
 
 @Component({
   selector: 'app-events',
@@ -11,22 +11,19 @@ import { SettingsService } from 'src/app/services/settings.service';
 export class EventsComponent implements OnInit {
 
   listEventStoreData: IEventStoreData<any, any> [];
+  optionsConfig: IOptionConfig;
 
-  constructor(public data: DataService, private settings: SettingsService) { }
+  constructor(public data: DataService) { }
 
   ngOnInit() {
     this.listEventStoreData = [
-      this.data.getClusterEventData(),
-      this.data.getNodeEventData()
+      this.data.getClusterEventData()
     ];
 
-    this.data.clusterManifest.ensureInitialized().subscribe(() => {
-      if (this.data.clusterManifest.isRepairManagerEnabled) {
-        this.data.repairCollection.ensureInitialized().subscribe(() => {
-          this.listEventStoreData.push(this.data.getRepairTasksData(this.settings));
-        });
-      }
-    });
+    this.optionsConfig = {
+      enableNodes: true,
+      enableRepairTasks: true
+    };
   }
 
 }

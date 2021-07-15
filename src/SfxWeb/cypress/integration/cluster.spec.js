@@ -188,19 +188,24 @@ context('Cluster page', () => {
 
       cy.get('[data-cy=eventtabs]').within(() => {
         cy.contains(CLUSTER_TAB_NAME)
-        cy.contains(REPAIR_TASK_TAB_NAME)
       })
     })
 
     it("repair manager disabled", () => {
+      addRoute('events', 'empty-list.json', apiUrl(`/EventsStore/Cluster/Events?*`))
       addRoute('repair-manager-manifest', 'manifestRepairManagerDisabled.json', manifest_route)
 
       cy.visit('/#/events')
-
-      cy.wait('@getrepair-manager-manifest')
+      cy.wait(['@getevents','@getrepair-manager-manifest'])
 
       cy.get('[data-cy=eventtabs]').within(() => {
         cy.contains(CLUSTER_TAB_NAME)
+      })
+      checkTableErrorMessage(EMPTY_LIST_TEXT);
+
+      cy.get('[sectionName=select-event-types]').click()
+
+      cy.get('[data-cy=option-picker]').within(() => {
         cy.get(REPAIR_TASK_TAB_NAME).should('not.exist')
       })
     })
@@ -212,12 +217,6 @@ context('Cluster page', () => {
         cy.contains(CLUSTER_TAB_NAME)
       })
       checkTableSize(15);
-
-      cy.get('[data-cy=eventtabs]').within(() => {
-        cy.contains(REPAIR_TASK_TAB_NAME).click();
-      })
-
-      checkTableErrorMessage(EMPTY_LIST_TEXT);
     })
 
     it("all events", () => {
@@ -228,6 +227,12 @@ context('Cluster page', () => {
       })
       checkTableSize(15);
 
+      cy.get('[sectionName=select-event-types]').click()
+
+      cy.get('[data-cy=option-picker]').within(() => {
+        cy.contains(REPAIR_TASK_TAB_NAME)
+        cy.get('[type=checkbox]').eq(1).check({force: true})
+      })
 
       cy.get('[data-cy=eventtabs]').within(() => {
         cy.contains(REPAIR_TASK_TAB_NAME).click();

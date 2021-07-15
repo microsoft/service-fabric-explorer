@@ -186,9 +186,29 @@ export abstract class TimeLineGeneratorBase<T> {
          throw new Error('NotImplementedError');
     }
 
-    generateTimeLineData(events: T[], startOfRange?: Date, endOfRange?: Date): ITimelineData {
+    generateTimeLineData(events: T[], startOfRange?: Date, endOfRange?: Date, nestedGroupLabel?: string): ITimelineData {
         const data = this.consume(events, startOfRange, endOfRange);
         EventStoreUtils.addSubGroups(data.groups);
+        if (nestedGroupLabel){
+            const nestedElementGroup: DataGroup = {
+                id: nestedGroupLabel,
+                content: nestedGroupLabel,
+                nestedGroups: []
+            };
+
+            // We should not add the already nested groups to the new event type one.
+            let groupsAlreadyNested: string[] = [];
+            data.groups.forEach(group => {
+                nestedElementGroup.nestedGroups.push(group.id);
+                if (group.nestedGroups){
+                    groupsAlreadyNested = groupsAlreadyNested.concat(group.nestedGroups);
+                }
+            });
+            // If the group is already nested, we remove it from the nested groups of the new one.
+            nestedElementGroup.nestedGroups = nestedElementGroup.nestedGroups.filter(group => groupsAlreadyNested.indexOf(group) === -1);
+
+            data.groups.add(nestedElementGroup);
+        }
         return data;
     }
 
@@ -196,7 +216,7 @@ export abstract class TimeLineGeneratorBase<T> {
 
 
 export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent> {
-    static readonly upgradeDomainLabel = 'Upgrade Domains';
+    static readonly upgradeDomainLabel = 'Cluster Upgrade Domains';
     static readonly clusterUpgradeLabel = 'Cluster Upgrades';
     static readonly seedNodeStatus = 'Seed Node Warnings';
 
@@ -383,7 +403,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
 }
 
 export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<ApplicationEvent> {
-    static readonly upgradeDomainLabel = 'Upgrade Domains';
+    static readonly upgradeDomainLabel = 'Application Upgrade Domains';
     static readonly applicationUpgradeLabel = 'Application Upgrades';
     static readonly applicationPrcoessExitedLabel = 'Application Process Exited';
 
