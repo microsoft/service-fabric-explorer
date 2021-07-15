@@ -9,10 +9,11 @@ import { RowDisplayComponent } from './row-display/row-display.component';
 import { FormsModule } from '@angular/forms';
 import { NgbButtonsModule, NgbDropdownModule, NgbModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { OptionPickerComponent } from './option-picker/option-picker.component';
 
 
 @NgModule({
-  declarations: [EventStoreComponent, EventStoreTimelineComponent, DoubleSliderComponent, FullDescriptionComponent, RowDisplayComponent],
+  declarations: [EventStoreComponent, EventStoreTimelineComponent, DoubleSliderComponent, FullDescriptionComponent, RowDisplayComponent, OptionPickerComponent],
   imports: [
     CommonModule,
     DetailListTemplatesModule,
@@ -22,6 +23,6 @@ import { SharedModule } from 'src/app/shared/shared.module';
     SharedModule,
     NgbModule
   ],
-  exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, EventStoreTimelineComponent],
+  exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, EventStoreTimelineComponent, OptionPickerComponent],
 })
 export class EventStoreModule { }
