@@ -8,24 +8,26 @@ import { CopyTextComponent } from './copy-text/copy-text.component';
 import { DetailListComponent } from './detail-list/detail-list.component';
 import { PagerComponent } from './pager/pager.component';
 import { SharedModule } from 'src/app/shared/shared.module';
-import { NgbPaginationModule, NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPaginationModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
 import { UtcTimestampComponent } from './utc-timestamp/utc-timestamp.component';
 import { ExportModalComponent } from './export-modal/export-modal.component';
+import { QuestionToolTipComponent } from './question-tool-tip/question-tool-tip.component';
 
 
 
 @NgModule({
   declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective,
-                 DetailListComponent, PagerComponent, UtcTimestampComponent, ExportModalComponent],
+                 DetailListComponent, PagerComponent, UtcTimestampComponent, ExportModalComponent, QuestionToolTipComponent],
   imports: [
     CommonModule,
     RouterModule,
     SharedModule,
     NgbPaginationModule,
     NgbDropdownModule,
+    NgbTooltipModule,
     FormsModule
   ],
-  exports: [DetailTableResolverComponent, HyperLinkComponent, CopyTextComponent, DetailListComponent]
+  exports: [DetailTableResolverComponent, HyperLinkComponent, CopyTextComponent, DetailListComponent, QuestionToolTipComponent]
 })
 export class DetailListTemplatesModule { }

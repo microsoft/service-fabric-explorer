@@ -6,6 +6,7 @@ import { NodeLoadInformation } from '../Models/DataModels/Node';
 import { MetricsViewModel } from '../ViewModels/MetricsViewModel';
 import { StorageService } from './storage.service';
 import { RepairTaskViewComponent } from '../views/cluster/repair-task-view/repair-task-view.component';
+import { QuestionToolTipComponent } from '../modules/detail-list-templates/question-tool-tip/question-tool-tip.component';
 
 @Injectable({
   providedIn: 'root'
@@ -157,7 +158,7 @@ export class SettingsService {
   public getNewOrExistingPendingRepairTaskListSettings(listKey: string = 'pendingRepair'){
     return this.getNewOrExistingListSettings(listKey, ['raw.History.CreatedUtcTimestamp'],
     [
-        new ListColumnSetting('raw.TaskId', 'Task Id'),
+        new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'Task Id'),
         new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
         new ListColumnSetting('raw.Target.NodeNames', 'Target'),
         new ListColumnSetting('impactedNodes', 'Impact'),
@@ -184,7 +185,7 @@ export class SettingsService {
   public getNewOrExistingCompletedRepairTaskListSettings(listKey: string = 'completedRepair'){
     return this.getNewOrExistingListSettings(listKey, ['raw.History.CreatedUtcTimestamp'],
     [
-        new ListColumnSetting('raw.TaskId', 'Task Id'),
+        new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'Task Id'),
         new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
         new ListColumnSetting('raw.Target.NodeNames', 'Target'),
         new ListColumnSetting('impactedNodes', 'Impact'),
