@@ -3,9 +3,10 @@
         <div class="dashboard-tile">
             <div style="display: flex; align-items: center; height: 100%;">
                 <div class="badge-container">
-                    <app-health-badge [badgeClass]="healthState.badgeClass" size="90px"></app-health-badge>
+                    <app-health-badge [badgeClass]="healthState.badgeClass" size="75px"></app-health-badge>
                 </div>
-                <div style="flex: 1;">
+                <div style="flex: 1;
+                min-width: 0px;">
                     <ng-content></ng-content>
                 </div>
             </div>

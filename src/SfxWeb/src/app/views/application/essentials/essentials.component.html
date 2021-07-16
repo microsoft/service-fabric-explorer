@@ -1,26 +1,54 @@
-<!-- <app-overview-container [healthState]="app?.healthState" *ngIf="app && app.isInitialized" class="detail-pane essen-pane" style="display: inline-block;">
-  <table>
-      <tr>
-          <td>Application Type</td>
-          <td> :  <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName">{{app?.raw.TypeName}}</a>
-            <app-clip-board [text]="app?.raw.TypeName"></app-clip-board></td>
-      </tr>
-
-      <tr>
-          <td>Version</td>
-          <td> : {{app?.raw.TypeVersion}}<app-clip-board [text]="app?.raw.TypeVersion"></app-clip-board></td>
-      </tr>
-
-      <tr>
-          <td>Status</td>
-          <td> : {{app.raw.Status}}</td>
-      </tr>
-  </table>
-</app-overview-container> -->
-
 <div class="tile-container">
   <app-essential-health-tile [healthState]="app?.healthState" *ngIf="app && app.isInitialized" class="long">
-    <div class="essential-container">
+    <div>
+        <div style="margin-top: 5px;">
+            <div class="bottom highlight-hover">
+                <div class="text-wrapper tile-item">
+                    <div class="tile-list-entry left-text">
+                        Application Type
+                        <div style="width: 10px; height: 1px;"></div>
+                    </div>
+                    <div class="middle-text">
+                        <!-- <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName"> -->
+                            {{app?.raw.TypeName}}{{app?.raw.TypeName}}
+                        <!-- </a> -->
+                    </div>
+                </div>
+                <app-clip-board [text]="app?.raw.TypeName"></app-clip-board>
+
+            </div>
+        </div>
+    
+        <div style="margin-top: 5px;">
+            <div class="bottom highlight-hover">
+                <div class="text-wrapper tile-item">
+                    <div class="left-text tile-list-entry">Version
+                        <div style="width: 10px; height: 1px;"></div>
+
+                    </div>
+                    <div class="middle-text">{{app?.raw.TypeVersion}}</div>
+                </div>
+                <app-clip-board [text]="app?.raw.TypeVersion"></app-clip-board>
+
+            </div>
+        </div>
+    
+        <div style="margin-top: 5px;">
+            <div class="bottom highlight-hover">
+                <div class="text-wrapper tile-item">
+                    <div class="left-text tile-list-entry">Status
+                        <div style="width: 10px; height: 1px;"></div>
+
+                    </div>
+                    <div class="middle-text">{{app.raw.Status}}</div>
+                </div>
+                <app-clip-board [text]="app.raw.Status"></app-clip-board>
+            </div>
+        </div>
+    </div>
+
+
+    <!-- <div class="essential-container">
       <div class="essential-item ">
         <div class="essential-head">
           Application Type
@@ -47,8 +75,8 @@
         <div class="essential-body">
           {{app.raw.Status}}
         </div>
-      </div>
-    </div>
+      </div> -->
+    <!-- </div> -->
     <!-- <table>
       <tr>
           <td>Application Type</td>
