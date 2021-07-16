@@ -18,7 +18,6 @@ describe('RepairTasksComponent', () => {
   let component: RepairTasksComponent;
   let fixture: ComponentFixture<RepairTasksComponent>;
 
-  let settingsStub: Partial<SettingsService>;
   let dataServiceStub: Partial<DataService>;
   const task = {
     Scope: {
@@ -65,20 +64,6 @@ describe('RepairTasksComponent', () => {
   };
 
   beforeEach(waitForAsync(() => {
-
-    settingsStub = {
-        getNewOrExistingListSettings(
-        listName: string,
-        defaultSortProperties: string[] = [],
-        columnSettings: ListColumnSetting[] = [],
-        secondRowColumnSettings: ListColumnSetting[] = [],
-        secondRowCollapsible: boolean = false,
-        showSecondRow: (item) => boolean = (item) => true,
-        searchable: boolean = true) {
-
-        return new ListSettings(this.paginationLimit, defaultSortProperties, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
-      }
-    };
 
     dataServiceStub = { };
     dataServiceStub.restClient = ({
@@ -135,7 +120,7 @@ describe('RepairTasksComponent', () => {
 
     TestBed.configureTestingModule({
       declarations: [ RepairTasksComponent ],
-      providers: [{provide: SettingsService, useValue: settingsStub },
+      providers: [SettingsService,
                   {provide: DataService, useValue: dataServiceStub },
                   RefreshService],
       imports: [RouterTestingModule, NgbNavModule]
