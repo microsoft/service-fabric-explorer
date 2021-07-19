@@ -9,6 +9,7 @@ import { map } from 'rxjs/operators';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { ServiceHealth } from 'src/app/Models/DataModels/Service';
+import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
   selector: 'app-essentials',
@@ -21,6 +22,8 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
   unhealthyEvaluationsListSettings: ListSettings;
   partitionsDashboard: IDashboardViewModel;
   replicasDashboard: IDashboardViewModel;
+
+  essentialItems: IEssentialListItem[] = [];
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -51,7 +54,27 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
         this.replicasDashboard = DashboardViewModel.fromHealthStateCount('Replicas', 'Replica', false, replicasHealthStateCount);
       })),
       this.service.partitions.refresh(messageHandler)
-    ]);
+    ]).pipe(map(() => {
+      this.essentialItems = [
+        {
+          descriptionName: "Service Type Version",
+          displayText: this.service.raw.ManifestVersion,
+          copyTextValue: this.service.raw.ManifestVersion,
+          // selectorName: "typename",
+          // displaySelector: true
+        },
+        {
+          descriptionName: "Service Type",
+          displayText: this.service.raw.TypeName,
+          copyTextValue: this.service.raw.TypeName
+        },
+        {
+          descriptionName: "Status",
+          displayText: this.service.raw.ServiceStatus,
+          copyTextValue: this.service.raw.ServiceStatus
+        }
+      ]
+    }))
   }
 
 }

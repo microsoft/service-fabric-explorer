@@ -2,22 +2,31 @@
     <div class="dashboard dashboard-small">
         <div class="dashboard-tile">
             <div style="display: flex; align-items: center; height: 100%;">
-                <div class="badge-container">
+                <div class="badge-container" *ngIf="healthState">
                     <app-health-badge [badgeClass]="healthState.badgeClass" size="75px"></app-health-badge>
                 </div>
                 <div style="flex: 1;
                 min-width: 0px;">
-                    <ng-content></ng-content>
+                    <div *ngFor="let item of internalList" style="margin-top: 5px;">
+                        <div class="bottom highlight-hover">
+                            <div class="text-wrapper tile-item">
+                                <div class="tile-list-entry left-text">
+                                    {{item.descriptionName}}
+                                    <div style="width: 10px; height: 1px;"></div>
+                                </div>
+                                <div class="middle-text">
+                                    <span *ngIf="!item.displaySelector">
+                                        {{item.displayText}}
+                                    </span>
+                                    <span *ngIf="item.displaySelector && item.ref">
+                                        <ng-container *ngTemplateOutlet="item.ref"></ng-container>
+                                    </span>
+                                </div>
+                            </div>
+                            <app-clip-board [text]="item.copyTextValue" *ngIf="item.copyTextValue"></app-clip-board>
+                        </div>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- <div class="dashboard-donut-chart chart-wrapper"> -->
     </div>
-    <!-- <div class="dashboard-datapoints">
-            <div class="dashboard-datapoint" *ngFor="let dataPoint of data.dataPoints; let i = index">
-                <div class="dashboard-datapoint-leftbar" [ngClass]="dataPoint.state.badgeClass"></div>
-                <div class="dashboard-datapoint-title">{{dataPoint.title}}</div>
-                <div class="dashboard-datapoint-number">{{dataPoint.count}}</div>
-            </div>
-        </div> -->
-</div>

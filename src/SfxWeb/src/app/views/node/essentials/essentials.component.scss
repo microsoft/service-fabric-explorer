@@ -1,6 +1,10 @@
 @import "src/vars.scss";
 
 
+.detail-pane {
+    width: 100%;
+}
+
 .help-text-container {
     width: $tile-width;
     margin-bottom: 5px;

@@ -886,6 +886,7 @@ app-navbar {
 }
 
 .tile-container {
+    width: 100%;
     display: grid;
     grid-auto-flow: dense;
     grid-template-columns: repeat(auto-fit, $tile-width);
