@@ -17,6 +17,8 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
 
   public isUTC = false;
 
+  public showControls = false;
+
   private timeline: Timeline;
   private start: Date;
   private end: Date;
@@ -150,4 +152,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
         }
     }
 
+    flipShowControls() {
+        this.showControls = !this.showControls;
+    }
 }

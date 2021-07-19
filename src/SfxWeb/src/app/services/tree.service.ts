@@ -21,7 +21,6 @@ export class TreeService {
         public containerRef: ElementRef;
         public tree: TreeViewModel;
         private clusterHealth: ClusterHealth;
-        private cm: ClusterManifest;
         // controller views can get instantiated before this service and so a request to set the tree location might
         // get requested before the init function is called and so it needs to be cached.
         private cachedTreeSelection: {path: string[], skipSelectAction?: boolean};
@@ -40,8 +39,6 @@ export class TreeService {
             if (this.cachedTreeSelection) {
                 this.tree.selectTreeNode(this.cachedTreeSelection.path, this.cachedTreeSelection.skipSelectAction);
             }
-
-            this.cm = new ClusterManifest(this.data);
 
             this.refreshService.refreshSubject.subscribe( () => this.refresh().subscribe());
         }

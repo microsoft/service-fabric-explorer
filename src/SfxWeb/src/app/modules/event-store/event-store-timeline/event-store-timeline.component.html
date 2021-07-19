@@ -1,49 +1,57 @@
 <div>
+    <div role="img" alt="timeline visualization for the next table."
+        aria-label="timeline visualization for the next table.">
+        <div #visualization></div>
+
+    </div>
+
     <div class="button-container">
-        <button type="button" class="simple-button margined" (click)="fitData()"
-            title="Fit the timeline to only display the time range that has events.">
-            Fit Events
-        </button>
-
-        <button type="button" class="simple-button margined" (click)="fitWindow()"
-            title="Fit the timeline to display the whole time range.">
-            Fit Range
-        </button>
-
-        <button type="button" class="simple-button margined" (click)="moveStart()"
-            title="Move to the start of the timeline." *ngIf="displayMoveToStart">
-            Move To Start
-        </button>
-
-        <button type="button" class="simple-button margined" (click)="moveEnd()"
-            title="Move to the end of the timeline." *ngIf="displayMoveToEnd">
-            Move To End
-        </button>
-
-        <button type="button" class="simple-button margined" (click)="moveToOldestEvent()"
-            title="Move to the oldest event in the time range.">
-            Move To Oldest Event
-        </button>
-
-        <button type="button" class="simple-button margined" (click)="moveToNewestEvent()"
-            title="Move to the newest event in the time range.">
-            Move To Newest Event
-        </button>
-
-        <div class="margined">
-            <app-toggle [(state)]="isUTC" (stateChange)="flipTimeZone()"></app-toggle><span>Set To {{isUTC ? 'Local Time' : 'UTC'}}</span>
-        </div>
-
         <ng-content select="[buttons]"></ng-content>
 
-        <div style="margin-left: auto;">
-            <a class="link"> Why is data missing?
-                <span class="mif-info" title="This timeline may present incomplete information and not fully represent the cluster for this date range. Events may also be missing due to data loss and lead to incomplete states. E.g.: A cluster upgrade starting before or ending after this time range will not be shown."></span>
-            </a>
-        </div>
-    </div>
-    <div role="img" alt="timeline visualization for the next table." aria-label="timeline visualization for the next table." >
-      <div #visualization ></div>
 
+        <div (click)="flipShowControls();" >
+            <div class="simple-button flip-button">
+                <span class="mif-arrow-drop-up mif-2x" style="transition: .5s;"
+                    [ngClass]="{'rotated': showControls}"></span>
+                {{showControls ? '' : 'Show Controls'}}
+            </div>
+        </div>
+
+        <ng-container  *ngIf="showControls">
+            <button type="button" class="simple-button margined" (click)="fitData()"
+            ngbTooltip="Fit the timeline to only display the time range that has events.">
+                Fit Events
+            </button>
+
+            <button type="button" class="simple-button margined" (click)="fitWindow()"
+                title="Fit the timeline to display the whole time range.">
+                Fit Range
+            </button>
+
+            <button type="button" class="simple-button margined" (click)="moveStart()"
+            ngbTooltip="Move to the start of the timeline." *ngIf="displayMoveToStart">
+                Move To Start
+            </button>
+
+            <button type="button" class="simple-button margined" (click)="moveEnd()"
+            ngbTooltip="Move to the end of the timeline." *ngIf="displayMoveToEnd">
+                Move To End
+            </button>
+
+            <button type="button" class="simple-button margined" (click)="moveToOldestEvent()"
+            ngbTooltip="Move to the oldest event in the time range.">
+                Move To Oldest Event
+            </button>
+
+            <button type="button" class="simple-button margined" (click)="moveToNewestEvent()"
+            ngbTooltip="Move to the newest event in the time range.">
+                Move To Newest Event
+            </button>
+
+            <div class="margined"  style="width: 105px;">
+                <app-toggle [(state)]="isUTC" (stateChange)="flipTimeZone()"></app-toggle><span>{{isUTC ? 'Local
+                    Time' : 'UTC'}}</span>
+            </div>
+        </ng-container>
     </div>
 </div>

@@ -20,7 +20,7 @@
                       </button>
 
                         <div ngbDropdown *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle"
-                            (openChange)="closeChange($event)">
+                            (openChange)="closeChange($event)" container="body" display="dynamic">
                             <button class="flat-button supress-hover" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" [title]="'filter by ' + columnSetting.displayName + ' options'" [attr.aria-haspopup]="false">
                                 <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}"></span>
                             </button>
@@ -88,11 +88,14 @@
                     </ng-container>
 
                     </ng-container>
-                    <tr *ngIf="isLoading">
+                    <tr *ngIf="isLoading && successfulLoad">
                         <td [attr.colspan]="listSettings.columnSettings.length">Loading...</td>
                     </tr>
-                    <tr *ngIf="sortedFilteredList.length === 0 && !list && !isLoading">
+                    <tr *ngIf="sortedFilteredList.length === 0 && !list && !isLoading && successfulLoad">
                         <td [attr.colspan]="listSettings.columnSettings.length">No items to display.</td>
+                    </tr>
+                    <tr *ngIf="!successfulLoad">
+                        <td [attr.colspan]="listSettings.columnSettings.length">Items failed to load.</td>
                     </tr>
                 </tbody>
             </table>
