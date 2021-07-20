@@ -493,7 +493,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
             start,
             group: groupLabel,
             type: 'point',
-            className: 'red-point',
+            className: event.eventProperties.UnexpectedTermination ? 'red-point' : 'green-point',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, null, 'Primary swap to ' + label),
         });
     }
