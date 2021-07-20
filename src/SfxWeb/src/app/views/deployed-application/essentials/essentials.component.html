@@ -1,27 +1,5 @@
-<div class="detail-pane essen-pane" *ngIf="deployedApp">
-  <app-overview-container [healthState]="deployedApp.health.healthState">
-    <table>
-      <tr>
-        <td>Status</td>
-        <td> : <app-status-resolver [status]="deployedApp.raw.Status"></app-status-resolver></td>
-      </tr>
-      <tr>
-        <td>Disk Location</td>
-        <td> : {{deployedApp.diskLocation}}<app-clip-board [text]="deployedApp.diskLocation"></app-clip-board>
-        </td>
-      </tr>
-      <tr>
-        <td>Application Type</td>
-        <td> :         <a [routerLink]="deployedApp.appTypeViewPath"
-          [title]="deployedApp.raw.TypeName">{{deployedApp.raw.TypeName}}</a>
-        </td>
-      </tr>
-    </table>
-  </app-overview-container>
-</div>
-
 <div class="tile-container">
-  <app-essential-health-tile [healthState]="deployedApp.health.healthState" *ngIf="deployedApp.isInitialized"
+  <app-essential-health-tile [healthState]="deployedApp.health.healthState" *ngIf="deployedApp?.isInitialized"
     class="long" [listItems]="essentialItems">
     <ng-template essentialTemplate id="appTypeViewPath">
       <a [routerLink]="deployedApp.appTypeViewPath" [title]="deployedApp.raw.TypeName">{{deployedApp.raw.TypeName}}</a>

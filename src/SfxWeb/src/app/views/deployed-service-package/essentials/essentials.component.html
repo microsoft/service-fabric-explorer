@@ -1,23 +1,12 @@
 <div *ngIf="servicePackage">
-    <div class="detail-pane essen-pane">
-      <app-overview-container [healthState]="servicePackage.health.healthState">
-        <table>
-          <tr>
-            <td>Version</td>
-            <td> : {{servicePackage.raw.Version}}<app-clip-board [text]="servicePackage.raw.Version"></app-clip-board></td>
-          </tr>
-          <tr>
-            <td>Status</td>
-            <td> : <app-status-resolver [status]="servicePackage.raw.Status"></app-status-resolver>
-            </td>
-          </tr>
-          <tr *ngIf="servicePackage.servicePackageActivationId">
-            <td>Service Package Activation Id</td>
-            <td> : {{servicePackage.servicePackageActivationId}}
-            </td>
-          </tr>
-        </table>
-      </app-overview-container>
+    <div class="tile-container">
+      <app-essential-health-tile [healthState]="servicePackage.health.healthState" *ngIf="servicePackage?.isInitialized"
+        class="long" [listItems]="essentialItems">
+    
+        <ng-template essentialTemplate id="status">
+          <app-status-resolver [status]="servicePackage.raw.Status"></app-status-resolver>
+        </ng-template>
+      </app-essential-health-tile>
     </div>
 
     <div class="detail-pane essen-pane" *ngIf="servicePackage.health">
