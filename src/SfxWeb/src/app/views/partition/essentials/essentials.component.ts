@@ -5,6 +5,8 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin, of } from 'rxjs';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
+import { map } from 'rxjs/operators';
+import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
   selector: 'app-essentials',
@@ -18,6 +20,7 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
   unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
 
+  essentialItems: IEssentialListItem[] = [];
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -51,6 +54,47 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
     return forkJoin([
       this.partition.health.refresh(messageHandler),
       this.partition.replicas.refresh(messageHandler)
-    ]);
+    ]).pipe(map(() => {
+      this.essentialItems = [
+        {
+          descriptionName: "Status",
+          displayText: this.partition.raw.PartitionStatus,
+          copyTextValue: this.partition.raw.PartitionStatus,
+          selectorName: "status",
+          displaySelector: true
+        },
+        {
+          descriptionName: "Partition Kind",
+          displayText: this.partition.partitionInformation.raw.ServicePartitionKind,
+          copyTextValue: this.partition.partitionInformation.raw.ServicePartitionKind,
+        }
+      ]
+
+      if(this.partition.isStatefulService) {
+
+        if(this.partition.partitionInformation.isPartitionKindInt64Range) {
+          this.essentialItems.push({
+            descriptionName: "High Key",
+            displayText: this.partition.partitionInformation.raw.HighKey,
+            copyTextValue: this.partition.partitionInformation.raw.HighKey
+          })
+          this.essentialItems.push({
+            descriptionName: "Low Key",
+            displayText: this.partition.partitionInformation.raw.LowKey,
+            copyTextValue: this.partition.partitionInformation.raw.LowKey
+          })
+        }
+
+        if(this.partition.partitionInformation.isPartitionKindNamed) {
+          this.essentialItems.push({
+            descriptionName: "Name",
+            displayText: this.partition.partitionInformation.raw.Name,
+            copyTextValue: this.partition.partitionInformation.raw.Name
+          })
+        }
+  
+      }
+
+    }))
   }
 }

@@ -1,10 +1,9 @@
-import { Template } from '@angular/compiler/src/render3/r3_ast';
-import { AfterContentInit, AfterViewInit, Component, ContentChild, ContentChildren, Directive, Input, OnChanges, OnInit, QueryList, TemplateRef } from '@angular/core';
+import { AfterContentChecked, AfterContentInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChild, ContentChildren, Directive, Input, OnChanges, OnInit, QueryList, TemplateRef } from '@angular/core';
 
 export interface IEssentialListItem {
   displayText?: string;
   copyTextValue?: string;
-  descriptionName: string;
+  descriptionName?: string;
   selectorName?: string;
   displaySelector?: boolean;
 }
@@ -18,7 +17,6 @@ export class EssentialTemplateDirective {
   @Input() id: string;
 
   constructor(public templateRef: TemplateRef<any>) {
-    console.log("test")
   }
 
   public getId() {
@@ -29,7 +27,8 @@ export class EssentialTemplateDirective {
 @Component({
   selector: 'app-essential-health-tile',
   templateUrl: './essential-health-tile.component.html',
-  styleUrls: ['./essential-health-tile.component.scss']
+  styleUrls: ['./essential-health-tile.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class EssentialHealthTileComponent implements OnInit, AfterViewInit, OnChanges {
 
@@ -41,7 +40,7 @@ export class EssentialHealthTileComponent implements OnInit, AfterViewInit, OnCh
   internalList: IEssentialListItemInternal[] = [];
   viewHasLoaded = false;
 
-  constructor() { }
+  constructor(private detectorRef: ChangeDetectorRef) { }
 
   ngOnInit(): void {
 
@@ -49,16 +48,16 @@ export class EssentialHealthTileComponent implements OnInit, AfterViewInit, OnCh
 
   ngAfterViewInit(): void {
     this.viewHasLoaded = true;
-    this.test.changes.subscribe(changes => {
-      console.log(changes)
-    })  
-    console.log(this.test.toArray()[0]);
-
-    console.log(this.internalList)
+    this.checkForTemplates();
+    this.detectorRef.detectChanges();
   }
 
   ngOnChanges() {
+    this.checkForTemplates()
+    console.log(this)
+  }
 
+  checkForTemplates() {
     if(this.viewHasLoaded) {
       this.internalList = this.listItems.map(item => {
         let copy = {...item} as IEssentialListItemInternal;
@@ -70,7 +69,6 @@ export class EssentialHealthTileComponent implements OnInit, AfterViewInit, OnCh
         return copy;
       })
     }
-    console.log(this)
   }
 
 }

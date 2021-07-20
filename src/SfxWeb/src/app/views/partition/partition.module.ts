@@ -16,6 +16,7 @@ import { PartitionRestoreBackUpComponent } from './partition-restore-back-up/par
 import { PartitionTriggerBackUpComponent } from './partition-trigger-back-up/partition-trigger-back-up.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { BackupinfoComponent } from './backupinfo/backupinfo.component';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
 
 
 @NgModule({
@@ -29,7 +30,8 @@ import { BackupinfoComponent } from './backupinfo/backupinfo.component';
     BackupRestoreModule,
     ReactiveFormsModule,
     PartitionReplicationModule,
-    FormsModule
+    FormsModule,
+    ChartsModule
   ],
   exports: [BackupinfoComponent]
 })

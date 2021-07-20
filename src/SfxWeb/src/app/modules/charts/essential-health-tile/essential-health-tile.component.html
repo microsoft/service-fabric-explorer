@@ -5,28 +5,32 @@
                 <div class="badge-container" *ngIf="healthState">
                     <app-health-badge [badgeClass]="healthState.badgeClass" size="75px"></app-health-badge>
                 </div>
-                <div style="flex: 1;
-                min-width: 0px;">
-                    <div *ngFor="let item of internalList" style="margin-top: 5px;">
-                        <div class="bottom highlight-hover">
-                            <div class="text-wrapper tile-item">
-                                <div class="tile-list-entry left-text">
-                                    {{item.descriptionName}}
-                                    <div style="width: 10px; height: 1px;"></div>
-                                </div>
-                                <div class="middle-text">
-                                    <span *ngIf="!item.displaySelector">
-                                        {{item.displayText}}
-                                    </span>
-                                    <span *ngIf="item.displaySelector && item.ref">
-                                        <ng-container *ngTemplateOutlet="item.ref"></ng-container>
-                                    </span>
-                                </div>
+                <div style="    flex: 1;
+                min-width: 0px;
+                flex-direction: column;
+                display: flex;
+                height: 100%;
+                justify-content: space-evenly;
+            ">
+                    <div class="row-item highlight-hover" *ngFor="let item of internalList; let l = last">
+                        <div class="text-wrapper tile-item" [ngClass]="l ? '': 'underline'">
+                            <div class="tile-list-entry left-text" *ngIf="item.descriptionName">
+                                {{item.descriptionName}}
+                                <div style="width: 10px; height: 1px;"></div>
                             </div>
-                            <app-clip-board [text]="item.copyTextValue" *ngIf="item.copyTextValue"></app-clip-board>
+                            <div class="middle-text">
+                                <span *ngIf="!item.displaySelector">
+                                    {{item.displayText}}
+                                </span>
+                                <span *ngIf="item.displaySelector && item.ref">
+                                    <ng-container *ngTemplateOutlet="item.ref"></ng-container>
+                                </span>
+                            </div>
                         </div>
+                        <app-clip-board [text]="item.copyTextValue" *ngIf="item.copyTextValue"></app-clip-board>
                     </div>
                 </div>
+
             </div>
         </div>
     </div>

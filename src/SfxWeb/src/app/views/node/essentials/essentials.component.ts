@@ -74,7 +74,9 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
         {
           descriptionName: "Status",
           displayText: this.node.nodeStatus,
-          copyTextValue: this.node.nodeStatus
+          copyTextValue: this.node.nodeStatus,
+          selectorName: "status",
+          displaySelector: true
         }
       ]
 

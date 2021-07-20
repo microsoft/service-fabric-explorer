@@ -5,6 +5,8 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DeployedAppBaseControllerDirective } from '../DeployedApplicationBase';
+import { map } from 'rxjs/operators';
+import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
   selector: 'app-essentials',
@@ -15,13 +17,35 @@ export class EssentialsComponent extends DeployedAppBaseControllerDirective {
   unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
 
+  essentialItems: IEssentialListItem[] = [];
+
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
       super(data, injector);
    }
 
 
    refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return this.deployedApp.deployedServicePackages.refresh(messageHandler);
+    return this.deployedApp.deployedServicePackages.refresh(messageHandler).pipe(map(() => {
+      this.essentialItems = [
+        {
+          descriptionName: "Application Type",
+          copyTextValue: this.deployedApp.raw.TypeName,
+          selectorName: "appTypeViewPath",
+          displaySelector: true
+        },
+        {
+          descriptionName: "Disk Location",
+          displayText: this.deployedApp.diskLocation,
+          copyTextValue: this.deployedApp.diskLocation
+        },
+        {
+          descriptionName: "Status",
+          copyTextValue: this.deployedApp.raw.Status,
+          selectorName: "status",
+          displaySelector: true
+        }
+      ]
+    }))
   }
 
 

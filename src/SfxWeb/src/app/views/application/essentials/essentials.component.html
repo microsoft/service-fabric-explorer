@@ -6,6 +6,10 @@
                 {{app?.raw.TypeName}}
             </a>
         </ng-template>
+
+        <ng-template essentialTemplate id="status">
+            <app-status-resolver [status]="app.raw.Status"></app-status-resolver>
+          </ng-template>
   </app-essential-health-tile>
   <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard"></app-dashboard-tile>
   <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard"></app-dashboard-tile>

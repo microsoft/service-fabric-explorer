@@ -29,11 +29,9 @@
 
   <app-essential-health-tile [healthState]="service?.healthState" *ngIf="service && service.isInitialized" 
   class="long" [listItems]="essentialItems">
-      <!-- <ng-template essentialTemplate id="typename">
-          <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName">
-              {{app?.raw.TypeName}}
-          </a>
-      </ng-template> -->
+  <ng-template essentialTemplate id="status">
+    <app-status-resolver [status]="service.raw.ServiceStatus"></app-status-resolver>
+  </ng-template>
 </app-essential-health-tile>
 
 <app-dashboard-text-tile *ngIf="service?.description.raw"

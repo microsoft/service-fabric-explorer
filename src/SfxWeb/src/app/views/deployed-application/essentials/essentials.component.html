@@ -20,6 +20,19 @@
   </app-overview-container>
 </div>
 
+<div class="tile-container">
+  <app-essential-health-tile [healthState]="deployedApp.health.healthState" *ngIf="deployedApp.isInitialized"
+    class="long" [listItems]="essentialItems">
+    <ng-template essentialTemplate id="appTypeViewPath">
+      <a [routerLink]="deployedApp.appTypeViewPath" [title]="deployedApp.raw.TypeName">{{deployedApp.raw.TypeName}}</a>
+    </ng-template>
+
+    <ng-template essentialTemplate id="status">
+      <app-status-resolver [status]="deployedApp.raw.Status"></app-status-resolver>
+    </ng-template>
+  </app-essential-health-tile>
+</div>
+
 <div class="detail-pane essen-pane" data-cy="health">
   <app-collapse-container sectionName="Unhealthy Evaluations">
     <div collapse-header>

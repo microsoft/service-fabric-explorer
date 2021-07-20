@@ -37,7 +37,7 @@
         transition: .5s;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 200px;
+        max-width: 800px;
         float: left;
     }
 
@@ -64,11 +64,9 @@
 
 }
 
-.bottom {
-    border-bottom: 1px solid #4c4c4c;
+.row-item {
     display: flex; align-items: center;
-    justify-content: space-between;
-
+    // justify-content: space-between;
     &:hover {
         .middle-text {
             min-width: fit-content;
@@ -79,4 +77,8 @@
             overflow: hidden;
         }
     }
+}
+
+.underline {
+    border-bottom: 1px solid #4c4c4c;
 }

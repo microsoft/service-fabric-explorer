@@ -71,7 +71,9 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
         {
           descriptionName: "Status",
           displayText: this.service.raw.ServiceStatus,
-          copyTextValue: this.service.raw.ServiceStatus
+          copyTextValue: this.service.raw.ServiceStatus,
+          selectorName: "status",
+          displaySelector: true
         }
       ]
     }))

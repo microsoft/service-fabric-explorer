@@ -95,7 +95,9 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
         {
           descriptionName: "Status",
           displayText: this.app.raw.Status,
-          copyTextValue: this.app.raw.Status
+          copyTextValue: this.app.raw.Status,
+          selectorName: "status",
+          displaySelector: true
         }
       ]
     }))
