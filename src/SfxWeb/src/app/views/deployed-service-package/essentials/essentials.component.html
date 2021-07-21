@@ -3,7 +3,7 @@
       <app-essential-health-tile [healthState]="servicePackage.health.healthState" *ngIf="servicePackage?.isInitialized"
         class="long" [listItems]="essentialItems">
     
-        <ng-template essentialTemplate id="status">
+        <ng-template appEssentialTemplate id="status">
           <app-status-resolver [status]="servicePackage.raw.Status"></app-status-resolver>
         </ng-template>
       </app-essential-health-tile>

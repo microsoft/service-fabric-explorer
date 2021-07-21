@@ -3,13 +3,13 @@
   <div class="tile-container">
     <app-essential-health-tile [healthState]="replica?.healthState" *ngIf="replica && replica.isInitialized"
       class="long" [listItems]="essentialItems">
-      <ng-template essentialTemplate id="status">
+      <ng-template appEssentialTemplate id="status">
         <app-status-resolver [status]="replica.raw.ReplicaStatus"></app-status-resolver>
       </ng-template>
-      <ng-template essentialTemplate id="nodeName">
+      <ng-template appEssentialTemplate id="nodeName">
         <a [routerLink]="replica.nodeViewPath">{{replica.raw.NodeName}}</a>
       </ng-template>
-      <ng-template essentialTemplate id="viewNode">
+      <ng-template appEssentialTemplate id="viewNode">
         <a [routerLink]="nodeView">View on Node</a>
       </ng-template>
     </app-essential-health-tile>

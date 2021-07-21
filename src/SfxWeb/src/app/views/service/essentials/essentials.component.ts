@@ -39,9 +39,30 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
 
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
 
+    this.essentialItems = [];
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    this.essentialItems = [
+      {
+        descriptionName: 'Service Type Version',
+        displayText: this.service.raw.ManifestVersion,
+        copyTextValue: this.service.raw.ManifestVersion,
+      },
+      {
+        descriptionName: 'Service Type',
+        displayText: this.service.raw.TypeName,
+        copyTextValue: this.service.raw.TypeName
+      },
+      {
+        descriptionName: 'Status',
+        displayText: this.service.raw.ServiceStatus,
+        copyTextValue: this.service.raw.ServiceStatus,
+        selectorName: 'status',
+        displaySelector: true
+      }
+    ];
+
     this.service.description.refresh(messageHandler).subscribe();
 
     return forkJoin([
@@ -54,29 +75,7 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
         this.replicasDashboard = DashboardViewModel.fromHealthStateCount('Replicas', 'Replica', false, replicasHealthStateCount);
       })),
       this.service.partitions.refresh(messageHandler)
-    ]).pipe(map(() => {
-      this.essentialItems = [
-        {
-          descriptionName: "Service Type Version",
-          displayText: this.service.raw.ManifestVersion,
-          copyTextValue: this.service.raw.ManifestVersion,
-          // selectorName: "typename",
-          // displaySelector: true
-        },
-        {
-          descriptionName: "Service Type",
-          displayText: this.service.raw.TypeName,
-          copyTextValue: this.service.raw.TypeName
-        },
-        {
-          descriptionName: "Status",
-          displayText: this.service.raw.ServiceStatus,
-          copyTextValue: this.service.raw.ServiceStatus,
-          selectorName: "status",
-          displaySelector: true
-        }
-      ]
-    }))
+    ]);
   }
 
 }

@@ -1,17 +1,17 @@
 <div *ngIf="replica">
     <div class="tile-container">
         <app-essential-health-tile [listItems]="essentialItems" class="long">
-          <ng-template essentialTemplate id="status">
+          <ng-template appEssentialTemplate id="status">
             <app-status-resolver [status]="replica.raw.ReplicaStatus"></app-status-resolver>
           </ng-template>
 
-          <ng-template essentialTemplate id="view">
+          <ng-template appEssentialTemplate id="view">
             <a [routerLink]="appView">View on Application</a>
             </ng-template>
         </app-essential-health-tile>
 
         <app-essential-health-tile [listItems]="essentialItems2" class="long">
-            <ng-template essentialTemplate id="serviceName">
+            <ng-template appEssentialTemplate id="serviceName">
                 <a [routerLink]="replica.serviceViewPath">{{replica.raw.ServiceName}}</a>
             </ng-template>
           </app-essential-health-tile>

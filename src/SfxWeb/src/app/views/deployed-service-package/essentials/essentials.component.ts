@@ -22,30 +22,32 @@ export class EssentialsComponent extends DeployedServicePackageBaseControllerDir
 
   setup() {
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
+
+    this.essentialItems = [];
   }
 
   refresh() {
     this.essentialItems = [
       {
-        descriptionName: "Version",
+        descriptionName: 'Version',
         displayText: this.servicePackage.raw.Version,
         copyTextValue: this.servicePackage.raw.Version
       },
       {
-        descriptionName: "Status",
+        descriptionName: 'Status',
         copyTextValue: this.servicePackage.raw.Status,
-        selectorName: "status",
+        selectorName: 'status',
         displaySelector: true
       }
-    ]
+    ];
 
-    if(this.servicePackage.servicePackageActivationId) {
+    if (this.servicePackage.servicePackageActivationId) {
       this.essentialItems.push({
-          descriptionName: "Service Package Activation Id",
+          descriptionName: 'Service Package Activation Id',
           copyTextValue: this.servicePackage.servicePackageActivationId,
-          selectorName: "appTypeViewPath",
+          selectorName: 'appTypeViewPath',
           displaySelector: true
-        })
+        });
     }
 
     return of(null);

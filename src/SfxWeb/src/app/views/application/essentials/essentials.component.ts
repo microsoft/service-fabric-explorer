@@ -53,6 +53,8 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
     this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('upgradeProgressUnhealthyEvaluations');
+
+    this.essentialItems = [];
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
@@ -81,26 +83,26 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
     ]).pipe(map(() => {
       this.essentialItems = [
         {
-          descriptionName: "Application Type",
+          descriptionName: 'Application Type',
           displayText: this.app.raw.TypeName,
           copyTextValue: this.app.raw.TypeName,
-          selectorName: "typename",
+          selectorName: 'typename',
           displaySelector: true
         },
         {
-          descriptionName: "Version",
+          descriptionName: 'Version',
           displayText: this.app.raw.TypeVersion,
           copyTextValue: this.app.raw.TypeVersion
         },
         {
-          descriptionName: "Status",
+          descriptionName: 'Status',
           displayText: this.app.raw.Status,
           copyTextValue: this.app.raw.Status,
-          selectorName: "status",
+          selectorName: 'status',
           displaySelector: true
         }
-      ]
-    }))
+      ];
+    }));
   }
 
 }

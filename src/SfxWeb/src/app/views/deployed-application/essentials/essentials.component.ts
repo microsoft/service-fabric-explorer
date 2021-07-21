@@ -28,24 +28,24 @@ export class EssentialsComponent extends DeployedAppBaseControllerDirective {
     return this.deployedApp.deployedServicePackages.refresh(messageHandler).pipe(map(() => {
       this.essentialItems = [
         {
-          descriptionName: "Application Type",
+          descriptionName: 'Application Type',
           copyTextValue: this.deployedApp.raw.TypeName,
-          selectorName: "appTypeViewPath",
+          selectorName: 'appTypeViewPath',
           displaySelector: true
         },
         {
-          descriptionName: "Disk Location",
+          descriptionName: 'Disk Location',
           displayText: this.deployedApp.diskLocation,
           copyTextValue: this.deployedApp.diskLocation
         },
         {
-          descriptionName: "Status",
+          descriptionName: 'Status',
           copyTextValue: this.deployedApp.raw.Status,
-          selectorName: "status",
+          selectorName: 'status',
           displaySelector: true
         }
-      ]
-    }))
+      ];
+    }));
   }
 
 

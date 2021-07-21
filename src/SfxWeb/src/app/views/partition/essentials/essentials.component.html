@@ -43,7 +43,7 @@
 
     <app-essential-health-tile [healthState]="partition?.healthState" *ngIf="partition && partition.isInitialized" 
     class="long" [listItems]="essentialItems">
-    <ng-template essentialTemplate id="status">
+    <ng-template appEssentialTemplate id="status">
       <app-status-resolver [status]="partition.raw.PartitionStatus"></app-status-resolver>
     </ng-template>
   </app-essential-health-tile>

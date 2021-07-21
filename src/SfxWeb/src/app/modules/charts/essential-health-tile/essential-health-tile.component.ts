@@ -1,4 +1,5 @@
-import { AfterContentChecked, AfterContentInit, AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component, ContentChild, ContentChildren, Directive, Input, OnChanges, OnInit, QueryList, TemplateRef } from '@angular/core';
+import { AfterViewInit, ChangeDetectionStrategy, ChangeDetectorRef, Component,
+        ContentChildren, Directive, Input, OnChanges, OnInit, QueryList, TemplateRef } from '@angular/core';
 
 export interface IEssentialListItem {
   displayText?: string;
@@ -12,7 +13,7 @@ interface IEssentialListItemInternal extends IEssentialListItem {
   ref?: TemplateRef<any>;
 }
 
-@Directive({ selector: '[essentialTemplate]'})
+@Directive({ selector: '[appEssentialTemplate]'})
 export class EssentialTemplateDirective {
   @Input() id: string;
 
@@ -36,7 +37,7 @@ export class EssentialHealthTileComponent implements OnInit, AfterViewInit, OnCh
   @Input() listItems: IEssentialListItem[] = [];
   @Input() templateRefs: Record<string, TemplateRef<any>>;
   @ContentChildren(EssentialTemplateDirective, { descendants: true } ) test!: QueryList<EssentialTemplateDirective>;
-  
+
   internalList: IEssentialListItemInternal[] = [];
   viewHasLoaded = false;
 
@@ -53,21 +54,21 @@ export class EssentialHealthTileComponent implements OnInit, AfterViewInit, OnCh
   }
 
   ngOnChanges() {
-    this.checkForTemplates()
-    console.log(this)
+    this.checkForTemplates();
+    console.log(this);
   }
 
   checkForTemplates() {
-    if(this.viewHasLoaded) {
+    if (this.viewHasLoaded) {
       this.internalList = this.listItems.map(item => {
-        let copy = {...item} as IEssentialListItemInternal;
-  
-        if(copy.displaySelector) {
+        const copy = {...item} as IEssentialListItemInternal;
+
+        if (copy.displaySelector) {
           copy.ref = this.test.toArray().find(directive => directive.id === copy.selectorName)?.templateRef;
         }
-  
+
         return copy;
-      })
+      });
     }
   }
 

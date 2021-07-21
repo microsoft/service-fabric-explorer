@@ -1,7 +1,7 @@
 <div style="display: flex; flex-wrap: wrap;" *ngIf="node">
   <div *ngIf="node?.loadInformation?.isInitialized" class="tile-container" data-cy="tiles">
     <app-essential-health-tile [healthState]="node.healthState" class="long" [listItems]="essentialItems">
-      <ng-template essentialTemplate id="status">
+      <ng-template appEssentialTemplate id="status">
         <app-status-resolver [status]="node.nodeStatus"></app-status-resolver>
       </ng-template>
     </app-essential-health-tile>

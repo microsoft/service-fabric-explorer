@@ -38,6 +38,9 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       new ListColumnSettingForBadge('health.healthState', 'Health State'),
       new ListColumnSettingWithFilter('raw.Status', 'Status'),
     ]);
+
+    this.essentialItems = [];
+    this.essentialItems2 = [];
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
@@ -60,7 +63,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
 
       this.essentialItems = [
         {
-          descriptionName: "IP Address or Domain Name",
+          descriptionName: 'IP Address or Domain Name',
           displayText: this.node.raw.IpAddressOrFQDN,
           copyTextValue: this.node.raw.IpAddressOrFQDN,
           // selectorName: "typename",
@@ -72,17 +75,17 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
           copyTextValue: duration
         },
         {
-          descriptionName: "Status",
+          descriptionName: 'Status',
           displayText: this.node.nodeStatus,
           copyTextValue: this.node.nodeStatus,
-          selectorName: "status",
+          selectorName: 'status',
           displaySelector: true
         }
-      ]
+      ];
 
       this.essentialItems2 = [
         {
-          descriptionName: "Upgrade Domain",
+          descriptionName: 'Upgrade Domain',
           displayText: this.node.raw.UpgradeDomain,
           copyTextValue: this.node.raw.UpgradeDomain,
           // selectorName: "typename",
@@ -94,10 +97,10 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
           copyTextValue: this.node.raw.FaultDomain
         },
         {
-          descriptionName: "Seed Node",
+          descriptionName: 'Seed Node',
           displayText: this.node.raw.IsSeedNode ? 'Yes' : 'No'
         }
-      ]
-    }))
+      ];
+    }));
   }
 }

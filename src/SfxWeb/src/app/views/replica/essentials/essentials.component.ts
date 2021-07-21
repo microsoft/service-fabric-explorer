@@ -27,6 +27,7 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
   setup() {
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
 
+    this.essentialItems = [];
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -45,28 +46,28 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
     ]).pipe(map(() => {
       this.essentialItems = [
         {
-          descriptionName: "Node Name",
+          descriptionName: 'Node Name',
           copyTextValue: this.replica.raw.NodeName,
-          selectorName: "nodeName",
+          selectorName: 'nodeName',
           displaySelector: true
         },
         {
-          descriptionName: "Process Id",
+          descriptionName: 'Process Id',
           displayText: this.replica.detail.processID,
           copyTextValue: this.replica.detail.processID
         },
         {
-          descriptionName: "Status",
+          descriptionName: 'Status',
           displayText: this.replica.raw.ReplicaStatus,
           copyTextValue: this.replica.raw.ReplicaStatus,
-          selectorName: "status",
+          selectorName: 'status',
           displaySelector: true
         },
         {
-          selectorName: "viewNode",
+          selectorName: 'viewNode',
           displaySelector: true
         }
-      ]
-    }))
+      ];
+    }));
   }
 }

@@ -11,8 +11,8 @@
                 display: flex;
                 height: 100%;
             ">
-                    <div class="row-item highlight-hover" *ngFor="let item of internalList; let l = last">
-                        <div class="text-wrapper tile-item" [ngClass]="l ? '': 'underline'">
+                    <div class="row-item highlight-hover" *ngFor="let item of internalList; let l = last" [ngClass]="l ? '': 'underline'">
+                        <div class="text-wrapper tile-item">
                             <div class="tile-list-entry left-text" *ngIf="item.descriptionName">
                                 {{item.descriptionName}}
                                 <div style="width: 10px; height: 1px;"></div>

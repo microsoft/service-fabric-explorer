@@ -1,13 +1,13 @@
 <div class="tile-container">
     <app-essential-health-tile [healthState]="app?.healthState" *ngIf="app && app.isInitialized" 
     class="long" [listItems]="essentialItems">
-        <ng-template essentialTemplate id="typename">
+        <ng-template appEssentialTemplate id="typename">
             <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName">
                 {{app?.raw.TypeName}}
             </a>
         </ng-template>
 
-        <ng-template essentialTemplate id="status">
+        <ng-template appEssentialTemplate id="status">
             <app-status-resolver [status]="app.raw.Status"></app-status-resolver>
           </ng-template>
   </app-essential-health-tile>

@@ -1,35 +1,7 @@
-<div style="display: flex; flex-wrap: wrap;">
-  <!-- <div class="detail-pane essen-pane" *ngIf="service" style="display: inline-block; margin-right: 15px;">
-    <app-overview-container [healthState]="service?.healthState">
-      <table>
-        <tr>
-          <td>Status</td>
-          <td> : <app-status-resolver [status]="service.raw.ServiceStatus"></app-status-resolver></td>
-        </tr>
-        <tr>
-          <td>Service Type Version</td>
-          <td> : {{service?.raw.ManifestVersion}}<app-clip-board [text]="service.raw.ManifestVersion"></app-clip-board>
-          </td>
-        </tr>
-        <tr>
-          <td>Service Type</td>
-          <td> : {{service?.raw.TypeName}}<app-clip-board [text]="service?.raw.TypeName"></app-clip-board>
-          </td>
-        </tr>
-      </table>
-    </app-overview-container>
-  </div> -->
-
-  <!-- <div class="detail-pane essen-pane" *ngIf="service?.description.raw" >
-    <app-state-info [stateful]="service.isStatefulService" [data]="service.description.raw"></app-state-info>
-  </div> -->
-</div>
-
 <div class="tile-container">
-
   <app-essential-health-tile [healthState]="service?.healthState" *ngIf="service && service.isInitialized" 
   class="long" [listItems]="essentialItems">
-  <ng-template essentialTemplate id="status">
+  <ng-template appEssentialTemplate id="status">
     <app-status-resolver [status]="service.raw.ServiceStatus"></app-status-resolver>
   </ng-template>
 </app-essential-health-tile>

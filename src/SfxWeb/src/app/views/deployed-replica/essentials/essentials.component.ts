@@ -21,6 +21,10 @@ export class EssentialsComponent extends DeployedReplicaBaseControllerDirective 
     super(data, injector);
   }
 
+  setup() {
+    this.essentialItems = [];
+  }
+
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     const deployedService = this.replica.parent;
     const deployedApplication = deployedService.parent;
@@ -30,45 +34,59 @@ export class EssentialsComponent extends DeployedReplicaBaseControllerDirective 
 
     this.essentialItems = [
       {
-        descriptionName: "Status",
+        descriptionName: 'Status',
         copyTextValue: this.replica.raw.ReplicaStatus,
-        selectorName: "status",
+        selectorName: 'status',
         displaySelector: true
       },
       {
-        selectorName: "view",
+        selectorName: 'view',
         displaySelector: true
       },
-    ]
+    ];
 
-    if(this.replica.servicePackageActivationId) {
+    if (this.replica.detail.isInitialized) {
+      this.essentialItems.splice(1, 0,
+        {
+          descriptionName: 'Process Id',
+          copyTextValue: this.replica.detail.processID,
+          displayText: this.replica.detail.processID
+        });
+    }
+
+    if (this.replica.servicePackageActivationId) {
       this.essentialItems.push({
-        descriptionName: "Service Package Activation Id",
+        descriptionName: 'Service Package Activation Id',
         copyTextValue: this.replica.servicePackageActivationId,
         displayText: this.replica.servicePackageActivationId
-      })
+      });
     }
 
     this.essentialItems2 = [
       {
-        descriptionName: "Service Name",
+        descriptionName: 'Service Name',
         copyTextValue: this.replica.raw.ServiceName,
-        selectorName: "serviceName",
+        selectorName: 'serviceName',
         displaySelector: true
       },
       {
-        descriptionName: "Service Kind",
+        descriptionName: 'Service Kind',
         displayText: this.replica.raw.ServiceKind,
         copyTextValue: this.replica.raw.ServiceKind
+      },
+      {
+        descriptionName: 'Partition Id',
+        displayText: this.replica.raw.PartitionId,
+        copyTextValue: this.replica.raw.PartitionId
       }
-    ]
+    ];
 
-    if(this.replica.isStatefulService) {
+    if (this.replica.isStatefulService) {
       this.essentialItems2.push({
-        descriptionName: "Replica Role",
+        descriptionName: 'Replica Role',
         copyTextValue: this.replica.role,
         displayText: this.replica.role
-      })
+      });
     }
     return of(null);
   }
