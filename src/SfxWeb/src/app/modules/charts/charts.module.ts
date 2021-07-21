@@ -7,15 +7,16 @@ import { RouterModule } from '@angular/router';
 import { DashboardTextScaleTileComponent } from './dashboard-text-scale-tile/dashboard-text-scale-tile.component';
 import { EssentialHealthTileComponent, EssentialTemplateDirective } from './essential-health-tile/essential-health-tile.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { TileWrapperComponent } from './tile-wrapper/tile-wrapper.component';
 
 
 @NgModule({
-  declarations: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent, EssentialHealthTileComponent, EssentialTemplateDirective],
+  declarations: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent, EssentialHealthTileComponent, EssentialTemplateDirective, TileWrapperComponent],
   imports: [
     CommonModule,
     RouterModule,
     SharedModule
   ],
-  exports: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent, EssentialHealthTileComponent, EssentialTemplateDirective]
+  exports: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent, EssentialHealthTileComponent, EssentialTemplateDirective, TileWrapperComponent]
 })
 export class ChartsModule { }

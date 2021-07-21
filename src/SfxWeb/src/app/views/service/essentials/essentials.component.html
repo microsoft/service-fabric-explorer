@@ -1,16 +1,19 @@
 <div class="tile-container">
-  <app-essential-health-tile [healthState]="service?.healthState" *ngIf="service && service.isInitialized" 
-  class="long" [listItems]="essentialItems">
-  <ng-template appEssentialTemplate id="status">
-    <app-status-resolver [status]="service.raw.ServiceStatus"></app-status-resolver>
-  </ng-template>
-</app-essential-health-tile>
+  <app-essential-health-tile [healthState]="service?.healthState" *ngIf="service && service.isInitialized" class="long"
+    [listItems]="essentialItems">
+    <ng-template appEssentialTemplate id="status">
+      <app-status-resolver [status]="service.raw.ServiceStatus"></app-status-resolver>
+    </ng-template>
+  </app-essential-health-tile>
+<!-- 
+  <app-dashboard-text-tile *ngIf="service?.description.raw" middleMargin="5px 0"
+    [title]="service.isStatefulService ? 'Stateful': 'Stateless'">
+    <app-state-info [stateful]="service.isStatefulService" [data]="service.description.raw"></app-state-info>
+  </app-dashboard-text-tile> -->
 
-<app-dashboard-text-tile *ngIf="service?.description.raw"
-middleMargin="5px 0" >
-<app-state-info [stateful]="service.isStatefulService" [data]="service.description.raw"></app-state-info>
-
-</app-dashboard-text-tile>
+  <app-tile-wrapper *ngIf="service?.description.raw">
+    <app-state-info [stateful]="service.isStatefulService" [data]="service.description.raw"></app-state-info>
+  </app-tile-wrapper>
 
   <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard"></app-dashboard-tile>
   <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>

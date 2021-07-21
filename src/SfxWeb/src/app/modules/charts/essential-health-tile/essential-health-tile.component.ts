@@ -31,7 +31,7 @@ export class EssentialTemplateDirective {
   styleUrls: ['./essential-health-tile.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class EssentialHealthTileComponent implements OnInit, AfterViewInit, OnChanges {
+export class EssentialHealthTileComponent implements AfterViewInit, OnChanges {
 
   @Input() healthState;
   @Input() listItems: IEssentialListItem[] = [];
@@ -43,10 +43,6 @@ export class EssentialHealthTileComponent implements OnInit, AfterViewInit, OnCh
 
   constructor(private detectorRef: ChangeDetectorRef) { }
 
-  ngOnInit(): void {
-
-  }
-
   ngAfterViewInit(): void {
     this.viewHasLoaded = true;
     this.checkForTemplates();
@@ -55,7 +51,6 @@ export class EssentialHealthTileComponent implements OnInit, AfterViewInit, OnCh
 
   ngOnChanges() {
     this.checkForTemplates();
-    console.log(this);
   }
 
   checkForTemplates() {

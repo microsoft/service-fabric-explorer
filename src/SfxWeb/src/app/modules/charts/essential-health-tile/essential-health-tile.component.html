@@ -1,7 +1,7 @@
 <div class="dashboard-wrapper">
     <div class="dashboard dashboard-small">
-        <div class="dashboard-tile">
-            <div style="display: flex; align-items: center; height: 100%;">
+        <div class="dashboard-tile flex-center" style="height: 100%;">
+            <div class="flex-center"  style="height: 100%;">
                 <div class="badge-container" *ngIf="healthState">
                     <app-health-badge [badgeClass]="healthState.badgeClass" size="75px"></app-health-badge>
                 </div>
@@ -11,9 +11,9 @@
                             <div class="tile-list-entry left-text" *ngIf="item.descriptionName">
                                 {{item.descriptionName}}
                             </div>
+                            <div class="spacer"></div>
                             <div class="middle-text">
                                 <span *ngIf="!item.displaySelector">
-                                    <div class="spacer"></div>
                                     {{item.displayText}}
                                 </span>
                                 <span *ngIf="item.displaySelector && item.ref">

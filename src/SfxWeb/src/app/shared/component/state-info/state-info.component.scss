@@ -2,14 +2,7 @@
     margin-right: 10px;
     width: 40px;
     height: 40px;
-    display: flex;
-    align-items: center;
     justify-content: center;
-}
-
-.flex-center {
-    display: flex;
-    align-items: center
 }
 
 .line-item {
@@ -28,11 +21,13 @@
 }
 
 .title-wrapper {
+    font-size: 18pt;
+    line-height: 0.9;
+    color: #c9c9c9;
+    font-weight: 600;
+    border-bottom: 1px solid #4c4c4c;
+    padding-bottom: 8px;
     text-align: center;
-    margin-bottom: 0px;
-    font-size: 25px;
-    border-bottom: 1px solid white;
-    bottom: -6px;
 }
 
 .icon-item {
@@ -57,4 +52,8 @@
         left: 21px
     }
 
+}
+
+.line-item-seperator {
+    border-bottom: 1px solid #4c4c4c;
 }

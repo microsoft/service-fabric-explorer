@@ -1,32 +1,34 @@
-<div class="flex-center" style="height: 100%;">
-    <div class="badge-container" style="position: relative;">
-        <span class="mif-minus icon-item-middle" ></span>
-        <span *ngIf="stateful" class="mif-minus icon-item-left">
-        </span><span *ngIf="stateful" class="mif-minus icon-item-right"></span>
-    </div>
-    <div>
-        <h4 class="title-wrapper">
-            {{stateful ? 'Stateful' : 'Stateless'}}
-        </h4>
-        <div *ngIf="stateful">
-            <div class="flex-center">
-                <div class="line-item-small">
-                    {{data.MinReplicaSetSize}}
+<div style="display: flex; flex-direction: column">
+    <h4 class="title-wrapper">
+        {{stateful ? 'Stateful' : 'Stateless'}}
+    </h4>
+    <div class="flex-center">
+        <div class="badge-container flex-center" style="position: relative;">
+            <span class="mif-minus icon-item-middle" ></span>
+            <span *ngIf="stateful" class="mif-minus icon-item-left">
+            </span><span *ngIf="stateful" class="mif-minus icon-item-right"></span>
+        </div>
+        <div>
+            <div *ngIf="stateful">
+                <div class="flex-center line-item-seperator">
+                    <div class="line-item-small">
+                        {{data.MinReplicaSetSize}}
+                    </div>
+                    <div>Minimum Replica Set Size</div>
                 </div>
-                <div>Minimum Replica Set Size</div>
+                <div class="flex-center">
+                    <div class="line-item-small">
+                        {{data.TargetReplicaSetSize}}
+                    </div>
+                    <div>Target Replica Set Size</div>
+                </div>
             </div>
-            <div class="flex-center">
-                <div class="line-item-small">
-                    {{data.TargetReplicaSetSize}}
+    
+            <div *ngIf="!stateful" class="flex-center">
+                <div class="line-item-large line-item">
+                    {{data.InstanceCount}}
                 </div>
-                <div>Target Replica Set Size</div>
+                <div>Instance Count</div>
             </div>
         </div>
-
-        <div *ngIf="!stateful" class="flex-center">
-            <div class="line-item-large">
-                {{data.InstanceCount}}
-            </div>
-            <div>Instance Count</div>
-        </div>
-    </div>
+</div>
