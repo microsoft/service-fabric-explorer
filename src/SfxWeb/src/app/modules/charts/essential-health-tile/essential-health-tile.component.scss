@@ -9,24 +9,10 @@
     justify-content: center;
 }
 
-.example-wrapper {
-    margin: 5px;
-    position: relative;
-}
 
 .tile-list-entry {
     text-align: center;
     display: flex;
-}
-
-.left-auto {
-    margin-left: auto;
-}
-
-.overflow-text {
-    text-overflow: ellipsis;
-    overflow: hidden;
-    white-space: nowrap;
 }
 
 .text-wrapper {
@@ -61,7 +47,6 @@
     @extend .centering-row;
     height: 35px;
     position: relative;
-
 }
 
 .row-item {
@@ -81,4 +66,16 @@
 
 .underline {
     border-bottom: 1px solid #4c4c4c;
+}
+
+.right-side-wrapper {
+    flex: 1;
+    min-width: 0px;
+    flex-direction: column;
+    display: flex;
+    height: 100%;
+}
+
+.spacer {
+    width: 10px; height: 1px;
 }

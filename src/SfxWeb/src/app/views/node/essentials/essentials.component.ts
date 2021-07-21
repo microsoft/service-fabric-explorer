@@ -23,7 +23,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   unhealthyEvaluationsListSettings: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
-  essentialItems2: IEssentialListItem[] = [];
+  ringInfo: IEssentialListItem[] = [];
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -40,67 +40,61 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
     ]);
 
     this.essentialItems = [];
-    this.essentialItems2 = [];
+    this.ringInfo = [];
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+
+    let duration = "";
+    const up = this.node.nodeStatus === NodeStatusConstants.Up;
+    if (up) {
+      duration = TimeUtils.getDurationFromSeconds(this.node.raw.NodeUpTimeInSeconds);
+    }else{
+      duration = TimeUtils.getDurationFromSeconds(this.node.raw.NodeDownTimeInSeconds);
+    }
+
+    this.essentialItems = [
+      {
+        descriptionName: 'IP Address or Domain Name',
+        displayText: this.node.raw.IpAddressOrFQDN,
+        copyTextValue: this.node.raw.IpAddressOrFQDN,
+      },
+      {
+        descriptionName: up ? 'Up Time' : 'Down Time',
+        displayText: duration,
+        copyTextValue: duration
+      },
+      {
+        descriptionName: 'Status',
+        displayText: this.node.nodeStatus,
+        copyTextValue: this.node.nodeStatus,
+        selectorName: 'status',
+        displaySelector: true
+      }
+    ];
+
+    this.ringInfo = [
+      {
+        descriptionName: 'Upgrade Domain',
+        displayText: this.node.raw.UpgradeDomain,
+        copyTextValue: this.node.raw.UpgradeDomain,
+      },
+      {
+        descriptionName: 'Fault Domain',
+        displayText: this.node.raw.FaultDomain,
+        copyTextValue: this.node.raw.FaultDomain
+      },
+      {
+        descriptionName: 'Seed Node',
+        displayText: this.node.raw.IsSeedNode ? 'Yes' : 'No'
+      }
+    ];
+
     return forkJoin([
       this.node.loadInformation.refresh(messageHandler),
       this.node.deployedApps.refresh(messageHandler).pipe(map(() => {
         this.deployedApps = this.node.deployedApps;
       }))
-    ]).pipe(map(() => {
-
-      let duration;
-      const up = this.node.nodeStatus === NodeStatusConstants.Up;
-      if (up) {
-        duration = TimeUtils.getDurationFromSeconds(this.node.raw.NodeUpTimeInSeconds);
-        // this.timestamp = this.node.raw.NodeUpAt;
-      }else{
-        duration = TimeUtils.getDurationFromSeconds(this.node.raw.NodeDownTimeInSeconds);
-        // this.timestamp = this.node.raw.NodeDownAt;
-      }
-
-      this.essentialItems = [
-        {
-          descriptionName: 'IP Address or Domain Name',
-          displayText: this.node.raw.IpAddressOrFQDN,
-          copyTextValue: this.node.raw.IpAddressOrFQDN,
-          // selectorName: "typename",
-          // displaySelector: true
-        },
-        {
-          descriptionName: up ? 'Up' : 'Down',
-          displayText: duration,
-          copyTextValue: duration
-        },
-        {
-          descriptionName: 'Status',
-          displayText: this.node.nodeStatus,
-          copyTextValue: this.node.nodeStatus,
-          selectorName: 'status',
-          displaySelector: true
-        }
-      ];
-
-      this.essentialItems2 = [
-        {
-          descriptionName: 'Upgrade Domain',
-          displayText: this.node.raw.UpgradeDomain,
-          copyTextValue: this.node.raw.UpgradeDomain,
-          // selectorName: "typename",
-          // displaySelector: true
-        },
-        {
-          descriptionName: 'Fault Domain',
-          displayText: this.node.raw.FaultDomain,
-          copyTextValue: this.node.raw.FaultDomain
-        },
-        {
-          descriptionName: 'Seed Node',
-          displayText: this.node.raw.IsSeedNode ? 'Yes' : 'No'
-        }
-      ];
-    }));
+    ]);
   }
 }

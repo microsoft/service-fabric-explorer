@@ -26,14 +26,13 @@ import { LocalTimeComponent } from './component/local-time/local-time.component'
 import { DisplayTimeComponent } from './component/display-time/display-time.component';
 import { ToggleComponent } from './component/toggle/toggle.component';
 import { StatusResolverComponent } from './component/status-resolver/status-resolver.component';
-import { OverviewContainerComponent } from './component/overview-container/overview-container.component';
 import { StateInfoComponent } from './component/state-info/state-info.component';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
                  ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
                  ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
-                 FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent, OverviewContainerComponent,
+                 FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
                  StateInfoComponent],
   imports: [
     CommonModule,
@@ -48,7 +47,7 @@ import { StateInfoComponent } from './component/state-info/state-info.component'
             CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
             ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
-            FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent, OverviewContainerComponent,
+            FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
             StateInfoComponent]
 })
 export class SharedModule { }

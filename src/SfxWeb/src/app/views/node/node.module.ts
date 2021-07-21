@@ -12,10 +12,9 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
 import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-progress.module';
 import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-deactivation.module';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
-import { NodeStatusComponent } from './node-status/node-status.component';
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, NodeStatusComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent],
   imports: [
     CommonModule,
     NodeRoutingModule,

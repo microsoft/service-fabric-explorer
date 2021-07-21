@@ -5,20 +5,15 @@
                 <div class="badge-container" *ngIf="healthState">
                     <app-health-badge [badgeClass]="healthState.badgeClass" size="75px"></app-health-badge>
                 </div>
-                <div style="    flex: 1;
-                min-width: 0px;
-                flex-direction: column;
-                display: flex;
-                height: 100%;
-            ">
+                <div class="right-side-wrapper">
                     <div class="row-item highlight-hover" *ngFor="let item of internalList; let l = last" [ngClass]="l ? '': 'underline'">
                         <div class="text-wrapper tile-item">
                             <div class="tile-list-entry left-text" *ngIf="item.descriptionName">
                                 {{item.descriptionName}}
-                                <div style="width: 10px; height: 1px;"></div>
                             </div>
                             <div class="middle-text">
                                 <span *ngIf="!item.displaySelector">
+                                    <div class="spacer"></div>
                                     {{item.displayText}}
                                 </span>
                                 <span *ngIf="item.displaySelector && item.ref">
