@@ -75,10 +75,9 @@ $SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
         color: $detail-tab-color;
         margin-left: 0;
         font-size: $detail-tab-title-font-size;
-        // set padding instead of margin to avoid jumping of collapsed section
         margin-top: 0;
-        padding-top: 7px;
-        margin-bottom: 10px;
+        padding-top: 0px;
+        margin-bottom: 0px;
     }
 
     h4.no-uppercase {
