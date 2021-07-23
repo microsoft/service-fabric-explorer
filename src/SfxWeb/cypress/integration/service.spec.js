@@ -40,7 +40,7 @@ context('service', () => {
         it('stateful information', () => {
             cy.wait(waitRequest);
 
-            cy.get('[data-cy=stateful]').within(() => {
+            cy.get('[data-cy=state-data]').within(() => {
                 cy.contains("Stateful")
                 cy.contains("Minimum Replica Set Size")
                 cy.contains("Target Replica Set Size")
@@ -112,7 +112,7 @@ context('service', () => {
         it('stateless information', () => {
             cy.wait(waitRequest);
 
-            cy.get('[data-cy=stateless]').within(() => {
+            cy.get('[data-cy=state-data]').within(() => {
                 cy.contains("Stateless")
                 cy.contains("Instance Count")
             })

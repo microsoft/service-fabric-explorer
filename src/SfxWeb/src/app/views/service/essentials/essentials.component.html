@@ -5,13 +5,8 @@
       <app-status-resolver [status]="service.raw.ServiceStatus"></app-status-resolver>
     </ng-template>
   </app-essential-health-tile>
-<!-- 
-  <app-dashboard-text-tile *ngIf="service?.description.raw" middleMargin="5px 0"
-    [title]="service.isStatefulService ? 'Stateful': 'Stateless'">
-    <app-state-info [stateful]="service.isStatefulService" [data]="service.description.raw"></app-state-info>
-  </app-dashboard-text-tile> -->
 
-  <app-tile-wrapper *ngIf="service?.description.raw">
+  <app-tile-wrapper *ngIf="service?.description.raw" data-cy="state-data">
     <app-state-info [stateful]="service.isStatefulService" [data]="service.description.raw"></app-state-info>
   </app-tile-wrapper>
 

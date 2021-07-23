@@ -64,6 +64,28 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
       }
     });
 
+    this.essentialItems = [
+      {
+        descriptionName: 'Application Type',
+        displayText: this.app.raw.TypeName,
+        copyTextValue: this.app.raw.TypeName,
+        selectorName: 'typename',
+        displaySelector: true
+      },
+      {
+        descriptionName: 'Version',
+        displayText: this.app.raw.TypeVersion,
+        copyTextValue: this.app.raw.TypeVersion
+      },
+      {
+        descriptionName: 'Status',
+        displayText: this.app.raw.Status,
+        copyTextValue: this.app.raw.Status,
+        selectorName: 'status',
+        displaySelector: true
+      }
+    ];
+
     return forkJoin([
       this.app.upgradeProgress.refresh(messageHandler).pipe(map(upgradeProgress => {
         this.upgradeProgress = upgradeProgress;
@@ -80,29 +102,7 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
         const replicasHealthStateCount = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Replica);
         this.replicasDashboard = DashboardViewModel.fromHealthStateCount('Replicas', 'Replica', false, replicasHealthStateCount);
       }))
-    ]).pipe(map(() => {
-      this.essentialItems = [
-        {
-          descriptionName: 'Application Type',
-          displayText: this.app.raw.TypeName,
-          copyTextValue: this.app.raw.TypeName,
-          selectorName: 'typename',
-          displaySelector: true
-        },
-        {
-          descriptionName: 'Version',
-          displayText: this.app.raw.TypeVersion,
-          copyTextValue: this.app.raw.TypeVersion
-        },
-        {
-          descriptionName: 'Status',
-          displayText: this.app.raw.Status,
-          copyTextValue: this.app.raw.Status,
-          selectorName: 'status',
-          displaySelector: true
-        }
-      ];
-    }));
+    ]);
   }
 
 }

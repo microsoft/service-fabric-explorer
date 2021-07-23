@@ -493,6 +493,7 @@ export interface IRawPartition {
         HealthState: string;
         PartitionStatus: string;
         CurrentConfigurationEpoch: IRawConfigurationEpoch;
+        MinInstanceCount: number;
     }
 
 export interface IRawPartitionDescription {

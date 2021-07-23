@@ -12,6 +12,8 @@
     &-small {
         @extend .line-item;
         font-size: 28px;
+        width: 30px;
+        text-align: end;
     }
 
     &-large {

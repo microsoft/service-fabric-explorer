@@ -4,7 +4,7 @@
     </h4>
     <div class="flex-center">
         <div class="badge-container flex-center" style="position: relative;">
-            <span class="mif-minus icon-item-middle" ></span>
+            <span class="mif-minus icon-item-middle"></span>
             <span *ngIf="stateful" class="mif-minus icon-item-left">
             </span><span *ngIf="stateful" class="mif-minus icon-item-right"></span>
         </div>
@@ -23,12 +23,21 @@
                     <div>Target Replica Set Size</div>
                 </div>
             </div>
-    
-            <div *ngIf="!stateful" class="flex-center">
-                <div class="line-item-large line-item">
-                    {{data.InstanceCount}}
+
+            <div *ngIf="!stateful">
+                <div class="flex-center line-item-seperator">
+                    <div class="line-item-small">
+                        {{data.InstanceCount}}
+                    </div>
+                    <div>Instance Count</div>
                 </div>
-                <div>Instance Count</div>
+                <div class="flex-center">
+                    <div class="line-item-small">
+                        {{data.MinInstanceCount}}
+                    </div>
+                    <div >Minimum Instance Count</div>
+                </div>
             </div>
         </div>
+    </div>
 </div>

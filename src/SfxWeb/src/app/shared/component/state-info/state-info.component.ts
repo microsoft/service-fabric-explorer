@@ -17,6 +17,7 @@ export class StateInfoComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
+    // this.data.MinInstanceCount
   }
 
 }

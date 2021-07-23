@@ -25,27 +25,26 @@ export class EssentialsComponent extends DeployedAppBaseControllerDirective {
 
 
    refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return this.deployedApp.deployedServicePackages.refresh(messageHandler).pipe(map(() => {
-      this.essentialItems = [
-        {
-          descriptionName: 'Application Type',
-          copyTextValue: this.deployedApp.raw.TypeName,
-          selectorName: 'appTypeViewPath',
-          displaySelector: true
-        },
-        {
-          descriptionName: 'Disk Location',
-          displayText: this.deployedApp.diskLocation,
-          copyTextValue: this.deployedApp.diskLocation
-        },
-        {
-          descriptionName: 'Status',
-          copyTextValue: this.deployedApp.raw.Status,
-          selectorName: 'status',
-          displaySelector: true
-        }
-      ];
-    }));
+    this.essentialItems = [
+      {
+        descriptionName: 'Application Type',
+        copyTextValue: this.deployedApp.raw.TypeName,
+        selectorName: 'appTypeViewPath',
+        displaySelector: true
+      },
+      {
+        descriptionName: 'Disk Location',
+        displayText: this.deployedApp.diskLocation,
+        copyTextValue: this.deployedApp.diskLocation
+      },
+      {
+        descriptionName: 'Status',
+        copyTextValue: this.deployedApp.raw.Status,
+        selectorName: 'status',
+        displaySelector: true
+      }
+    ];
+    return this.deployedApp.deployedServicePackages.refresh(messageHandler);
   }
 
 
