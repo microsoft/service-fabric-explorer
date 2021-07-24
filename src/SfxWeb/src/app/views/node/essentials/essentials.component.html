@@ -1,5 +1,5 @@
-<div style="display: flex; flex-wrap: wrap;" *ngIf="node">
-  <div *ngIf="node?.loadInformation?.isInitialized" class="tile-container" data-cy="tiles">
+<div *ngIf="node">
+  <div class="tile-container" data-cy="tiles">
     <app-essential-health-tile [healthState]="node.healthState" class="long" [listItems]="essentialItems">
       <ng-template appEssentialTemplate id="status">
         <app-status-resolver [status]="node.nodeStatus"></app-status-resolver>
@@ -9,17 +9,19 @@
     <app-essential-health-tile [listItems]="ringInfo">
     </app-essential-health-tile>
 
-    <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="5px 0">
-      Count of all service objects (stateless and stateful) on the node
-    </app-dashboard-text-tile>
-    <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="Primary Count"
-      middleMargin="5px 0">
-      Count of Primary replicas on the node
-    </app-dashboard-text-tile>
-    <app-dashboard-text-tile [count]="node.loadInformation.metrics.ReplicaCount" title="Replica Count"
-      middleMargin="5px 0">
-      Count of total stateful replicas on the node
-    </app-dashboard-text-tile>
+    <ng-container *ngIf="node?.loadInformation?.isInitialized" >
+      <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="5px 0">
+        Count of all service objects (stateless and stateful) on the node
+      </app-dashboard-text-tile>
+      <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="Primary Count"
+        middleMargin="5px 0">
+        Count of Primary replicas on the node
+      </app-dashboard-text-tile>
+      <app-dashboard-text-tile [count]="node.loadInformation.metrics.ReplicaCount" title="Replica Count"
+        middleMargin="5px 0">
+        Count of total stateful replicas on the node
+      </app-dashboard-text-tile>
+    </ng-container>
   </div>
 
   <div style="width: 100%;">

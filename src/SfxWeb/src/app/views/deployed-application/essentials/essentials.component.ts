@@ -49,6 +49,8 @@ export class EssentialsComponent extends DeployedAppBaseControllerDirective {
 
 
   setup(){
+    this.essentialItems = [];
+
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
     this.listSettings = this.settings.getNewOrExistingListSettings('servicePackages', ['name'], [
       new ListColumnSettingForLink('uniqueId', 'Name', item => item.viewPath),

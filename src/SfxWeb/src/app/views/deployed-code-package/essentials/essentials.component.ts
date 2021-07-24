@@ -67,4 +67,9 @@ export class EssentialsComponent extends DeployedCodePackageBaseControllerDirect
 
     return of(null);
   }
+
+  setup() {
+    this.essentialItems = [];
+    this.essentialItems2 = [];
+  }
 }
