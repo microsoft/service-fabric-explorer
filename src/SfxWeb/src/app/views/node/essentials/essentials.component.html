@@ -1,24 +1,24 @@
 <div *ngIf="node">
   <div class="tile-container" data-cy="tiles">
-    <app-essential-health-tile [healthState]="node.healthState" class="long" [listItems]="essentialItems">
+    <app-essential-health-tile [healthState]="node.healthState" class="long" [listItems]="essentialItems" data-cy="essential-info">
       <ng-template appEssentialTemplate id="status">
-        <app-status-resolver [status]="node.nodeStatus"></app-status-resolver>
+        <app-status-resolver [status]="node.nodeStatus"  data-cy="status"></app-status-resolver>
       </ng-template>
     </app-essential-health-tile>
 
-    <app-essential-health-tile [listItems]="ringInfo">
+    <app-essential-health-tile [listItems]="ringInfo" data-cy="node-ring-info">
     </app-essential-health-tile>
 
     <ng-container *ngIf="node?.loadInformation?.isInitialized" >
-      <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="5px 0">
+      <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="0px 0">
         Count of all service objects (stateless and stateful) on the node
       </app-dashboard-text-tile>
       <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="Primary Count"
-        middleMargin="5px 0">
+        middleMargin="0px 0">
         Count of Primary replicas on the node
       </app-dashboard-text-tile>
       <app-dashboard-text-tile [count]="node.loadInformation.metrics.ReplicaCount" title="Replica Count"
-        middleMargin="5px 0">
+        middleMargin="0px 0">
         Count of total stateful replicas on the node
       </app-dashboard-text-tile>
     </ng-container>

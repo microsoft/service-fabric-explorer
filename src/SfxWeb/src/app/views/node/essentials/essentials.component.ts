@@ -46,7 +46,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
 
     let duration = '';
-    const up = this.node.nodeStatus === NodeStatusConstants.Up;
+    const up = this.node.raw.NodeDownTimeInSeconds === '0';
     if (up) {
       duration = TimeUtils.getDurationFromSeconds(this.node.raw.NodeUpTimeInSeconds);
     }else{
