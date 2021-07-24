@@ -11,7 +11,7 @@ import { TileWrapperComponent } from './tile-wrapper/tile-wrapper.component';
 
 
 @NgModule({
-  declarations: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent, EssentialHealthTileComponent, EssentialTemplateDirective, 
+  declarations: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent, EssentialHealthTileComponent, EssentialTemplateDirective,
                  TileWrapperComponent],
   imports: [
     CommonModule,
