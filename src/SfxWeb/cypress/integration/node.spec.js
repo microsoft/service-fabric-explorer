@@ -9,7 +9,7 @@ context('node page', () => {
     beforeEach(() => {
         addDefaultFixtures();
 
-        addRoute(FIXTURE_REF_NODES, "node-page/Ok-nodes-list.json", nodes_route);
+        addRoute(FIXTURE_NODES, "node-page/Ok-nodes-list.json", nodes_route);
         addRoute("nodeInfo", "node-page/node-info.json", apiUrl(`/Nodes/${nodeName}/?*`));
         addRoute("nodehealthInfo", "node-page/health.json", apiUrl(`/Nodes/${nodeName}/$/GetHealth?*`));
         addRoute("apps", "node-page/apps.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`));
@@ -27,7 +27,7 @@ context('node page', () => {
         it('load essentials', () => {
             cy.visit(`/#/node/${nodeName}`);
 
-            cy.wait(FIXTURE_REF_NODES);
+            cy.wait(nodeInfoRef);
 
             cy.get('[data-cy=header]').within(() => {
                 cy.contains('_nt_0').click();
