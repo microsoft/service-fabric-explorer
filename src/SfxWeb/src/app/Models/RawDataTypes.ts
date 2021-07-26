@@ -398,6 +398,10 @@ export interface IRawNode {
         InstanceId: string;
         NodeDeactivationInfo: IRawNodeDeactivationInfo;
         IsStopped: boolean;
+        NodeDownTimeInSeconds: string;
+        NodeUpAt: string;
+        NodeDownAt: string;
+        NodeTags: string[];
     }
 
 export interface IRawBackupPolicy {
@@ -489,6 +493,7 @@ export interface IRawPartition {
         HealthState: string;
         PartitionStatus: string;
         CurrentConfigurationEpoch: IRawConfigurationEpoch;
+        MinInstanceCount: number;
     }
 
 export interface IRawPartitionDescription {
@@ -546,33 +551,63 @@ export interface IRawReplicaHealth extends IRawHealth {
     }
 
 export interface IRawDeployedReplica {
-        Address: string;
-        CodePackageName: string;
-        InstanceId: string;
-        LastInBuildDurationInSeconds: string;
-        ReplicaId: string;
-        PartitionId: string;
-        ReplicaRole: string;
-        ReplicaStatus: string;
-        ServiceKind: string;
-        ServiceManifestVersion: string;
-        ServiceName: string;
-        ServiceTypeName: string;
-        ServicePackageActivationId: string;
-    }
+    Address: string;
+    CodePackageName: string;
+    InstanceId: string;
+    LastInBuildDurationInSeconds: string;
+    ReplicaId: string;
+    PartitionId: string;
+    ReplicaRole: string;
+    ReplicaStatus: string;
+    ServiceKind: string;
+    ServiceManifestVersion: string;
+    ServiceName: string;
+    ServiceTypeName: string;
+    ServicePackageActivationId: string;
+}
+
+
 
 export interface IRawDeployedReplicaDetail {
-        PartitionId: string;
+    PartitionId: string;
+    InstanceId: string;
+    ReplicaId: string;
+    ReadStatus: string;
+    WriteStatus: string;
+    CurrentServiceOperation: string;
+    CurrentServiceOperationStartTimeUtc: string;
+    CurrentReplicatorOperation: string;
+    ReportedLoad: IRawLoadMetricReport[];
+    ReplicatorStatus: IRawReplicatorStatus;
+    ReplicaStatus: IRawDeployedReplicaStatus;
+}
+
+export interface IRawReplicaInfo extends IRawDeployedReplicaDetail {
+    DeployedServiceReplica: IRawDeployedStatefulServiceReplicaInfo;
+}
+
+export interface IRawInstanceInfo extends IRawDeployedReplicaDetail {
+    DeployedServiceReplicaInstance: IRawDeployedStatelessServiceInstanceInfo;
+}
+export interface IRawSharedReplicaOrInstanceInfo {
+    ServiceName: string;
+    ServiceTypeName: string;
+    ServiceManifestName: string;
+    CodePackageName: string;
+    PartitionId: string;
+    ReplicaStatus: string; // TODO
+    Address: string;
+    ServicePackageActivationId: string;
+    HostProcessId: string;
+}
+
+export interface IRawDeployedStatefulServiceReplicaInfo extends IRawSharedReplicaOrInstanceInfo {
+    ReplicaId: string;
+    ReplicaRole: string; // TODO
+}
+
+export interface IRawDeployedStatelessServiceInstanceInfo extends IRawSharedReplicaOrInstanceInfo{
         InstanceId: string;
-        ReplicaId: string;
-        ReadStatus: string;
-        WriteStatus: string;
-        CurrentServiceOperation: string;
-        CurrentServiceOperationStartTimeUtc: string;
-        CurrentReplicatorOperation: string;
-        ReportedLoad: IRawLoadMetricReport[];
-        ReplicatorStatus: IRawReplicatorStatus;
-        ReplicaStatus: IRawDeployedReplicaStatus;
     }
 
 export interface IRawDeployedReplicaStatus {
@@ -667,27 +702,74 @@ export interface IRawServicePlacementPolicy {
     }
 
 export interface IRawServiceDescription {
-        ServiceKind: string;
-        ApplicationName: string;
-        ServiceName: string;
-        ServiceTypeName: string;
-        InitializationData: number[];
-        PartitionDescription: IRawPartitionDescription;
-        InstanceCount: number;
-        TargetReplicaSetSize: number;
-        MinReplicaSetSize: number;
-        HasPersistedState: boolean;
-        PlacementConstraints: string;
-        CorrelationScheme: IRawServiceCorrelationDescription[];
-        ReplicaRestartWaitDurationSeconds: number;
-        ServiceLoadMetrics: IRawServiceLoadMetricDescription[];
-        ServicePlacementPolicies: IRawServicePlacementPolicy[];
-        Flags: string;
-        DefaultMoveCost: string;
-        IsDefaultMoveCostSpecified: boolean;
-        ServicePackageActivationMode: string;
-        ServiceDnsName: string;
+    ServiceKind: string;
+
+    ApplicationName: string;
+    ServiceName: string;
+    ServiceTypeName: string;
+    InitializationData: number[];
+    PartitionDescription: IRawPartitionDescription;
+    PlacementConstraints: string;
+    CorrelationScheme: IRawServiceCorrelationDescription[];
+    ServiceLoadMetrics: IRawServiceLoadMetricDescription[];
+    ServicePlacementPolicies: IRawServicePlacementPolicy[];
+    DefaultMoveCost: string;
+    IsDefaultMoveCostSpecified: boolean;
+    ServicePackageActivationMode: string;
+    ServiceDnsName: string;
+
+    // scaling policies
+    // tags required to place
+    // tags required to run
+
+    // STATEFUL
+    TargetReplicaSetSize: number;
+    MinReplicaSetSize: number;
+    HasPersistedState: boolean;
+    ReplicaRestartWaitDurationSeconds: number;
+    QuorumLossWaitDurationSeconds: number;
+    StandByReplicaKeepDurationSeconds: number;
+    ServicePlacementTimeLimitSeconds: number;
+    DropSourceReplicaOnMove: boolean;
+    ReplicaLifecycleDescription: any; // TODO
+
+    // STATELESS
+    InstanceCount: number;
+    MinInstanceCount: number;
+    MinInstancePercentage: number;
+    InstanceCloseDelayDurationSeconds: number;
+    InstanceLifecycleDescription: any; // TODO
+    InstanceRestartWaitDurationSeconds: number;
+
+    Flags: string;
     }
+
+export interface IRawStatefulServiceDescription extends IRawServiceDescription {
+    TargetReplicaSetSize: number;
+    MinReplicaSetSize: number;
+    HasPersistedState: boolean;
+    ReplicaRestartWaitDurationSeconds: number;
+    QuorumLossWaitDurationSeconds: number;
+    StandByReplicaKeepDurationSeconds: number;
+    ServicePlacementTimeLimitSeconds: number;
+    DropSourceReplicaOnMove: boolean;
+    ReplicaLifecycleDescription: any; // TODO
+}
+
+export interface IRawReplicaLifecycleDescription {
+    IsSingletonReplicaMoveAllowedDuringUpgrade: boolean;
+    RestoreReplicaLocationAfterUpgrade: boolean;
+}
+
+export interface IRawStatelessServiceDescription extends IRawServiceDescription {
+    InstanceCount: number;
+    MinInstanceCount: number;
+    MinInstancePercentage: number;
+    InstanceCloseDelayDurationSeconds: number;
+    InstanceLifecycleDescription: any; // TODO
+    InstanceRestartWaitDurationSeconds: number;
+}
+
 
 export interface IRawServiceHealth extends IRawHealth {
         Name: string;

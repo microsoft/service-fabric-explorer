@@ -1,0 +1,30 @@
+<div class="dashboard-wrapper">
+    <div class="dashboard dashboard-small">
+        <div class="dashboard-tile flex-center" style="height: 100%;">
+            <div class="flex-center"  style="height: 100%;">
+                <div class="badge-container" *ngIf="healthState">
+                    <app-health-badge [badgeClass]="healthState.badgeClass" size="75px"></app-health-badge>
+                </div>
+                <div class="right-side-wrapper">
+                    <div class="row-item highlight-hover" *ngFor="let item of internalList; let l = last" [ngClass]="l ? '': 'underline'">
+                        <div class="text-wrapper tile-item">
+                            <div class="tile-list-entry left-text" *ngIf="item.descriptionName">
+                                {{item.descriptionName}}
+                            </div>
+                            <div class="spacer"></div>
+                            <div class="middle-text">
+                                <span *ngIf="!item.displaySelector">
+                                    {{item.displayText}}
+                                </span>
+                                <span *ngIf="item.displaySelector && item.ref">
+                                    <ng-container *ngTemplateOutlet="item.ref"></ng-container>
+                                </span>
+                            </div>
+                        </div>
+                        <app-clip-board [text]="item.copyTextValue" *ngIf="item.copyTextValue"></app-clip-board>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>

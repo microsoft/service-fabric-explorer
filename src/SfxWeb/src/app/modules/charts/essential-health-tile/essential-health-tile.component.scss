@@ -1,0 +1,81 @@
+@import "../chart.scss";
+
+.badge-container {
+    margin: 0px 10px 0px 0px;
+    width: 90px;
+    height: 90px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+
+.tile-list-entry {
+    text-align: center;
+    display: flex;
+}
+
+.text-wrapper {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    .middle-text {
+        transition: .5s;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 800px;
+        float: left;
+    }
+
+    .left-text {
+        transition: .5s;
+        white-space: nowrap;
+        color: #c9c9c9;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+}
+
+.centering-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.tile-item {
+    @extend .centering-row;
+    height: 35px;
+    position: relative;
+}
+
+.row-item {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    &:hover {
+        .middle-text {
+            min-width: fit-content;
+            white-space: normal;
+        }
+
+        .left-text {
+            overflow: hidden;
+        }
+    }
+}
+
+.underline {
+    border-bottom: 1px solid #4c4c4c;
+}
+
+.right-side-wrapper {
+    flex: 1;
+    min-width: 0px;
+    flex-direction: column;
+    display: flex;
+    height: 100%;
+}
+
+.spacer {
+    width: 10px; height: 1px;
+}

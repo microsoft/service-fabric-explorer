@@ -1,52 +1,14 @@
-<div class="detail-pane essen-pane" *ngIf="deployedApp">
-  <div class="essential-container">
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Name
-      </div>
-      <div class="essential-body">
-        {{deployedApp.name}}<app-clip-board [text]="deployedApp.name"></app-clip-board>
-      </div>
-    </div>
+<div class="tile-container">
+  <app-essential-health-tile [healthState]="deployedApp.health.healthState" *ngIf="deployedApp?.isInitialized"
+    class="long" [listItems]="essentialItems">
+    <ng-template appEssentialTemplate id="appTypeViewPath">
+      <a [routerLink]="deployedApp.appTypeViewPath" [title]="deployedApp.raw.TypeName">{{deployedApp.raw.TypeName}}</a>
+    </ng-template>
 
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Application Type
-      </div>
-      <div class="essential-body">
-        <a [routerLink]="deployedApp.appTypeViewPath"
-              [title]="deployedApp.raw.TypeName">{{deployedApp.raw.TypeName}}</a>
-      </div>
-    </div>
-
-    <div class="essential-item essential-half" *ngIf="deployedApp && deployedApp.health">
-      <div class="essential-head">
-        Health State
-      </div>
-      <div class="essential-body">
-        <app-health-badge [badgeClass]="deployedApp.health.healthState.badgeClass"
-        [text]="deployedApp.health.healthState.text"></app-health-badge>
-      </div>
-    </div>
-
-    <div class="essential-item essential-half" *ngIf="deployedApp && deployedApp.health">
-      <div class="essential-head">
-        Disk Location
-      </div>
-      <div class="essential-body">
-        {{deployedApp.diskLocation}}
-      </div>
-    </div>
-
-    <div class="essential-item essential-half" *ngIf="deployedApp && deployedApp.health">
-      <div class="essential-head">
-        Status
-      </div>
-      <div class="essential-body">
-        {{deployedApp.raw.Status}}
-      </div>
-    </div>
-  </div>
+    <ng-template appEssentialTemplate id="status">
+      <app-status-resolver [status]="deployedApp.raw.Status"></app-status-resolver>
+    </ng-template>
+  </app-essential-health-tile>
 </div>
 
 <div class="detail-pane essen-pane" data-cy="health">

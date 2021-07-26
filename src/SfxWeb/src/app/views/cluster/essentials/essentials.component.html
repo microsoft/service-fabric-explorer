@@ -1,57 +1,22 @@
-<div class="detail-pane essen-pane">
-  <div class="essential-container">
-      <div class="essential-item">
-          <div class="essential-head">
-              Code Version
-          </div>
-          <div *ngIf="clusterUpgradeProgress.isInitialized"  class="essential-body">
-              {{clusterUpgradeProgress.raw.CodeVersion}}<app-clip-board [text]="clusterUpgradeProgress.raw.CodeVersion"></app-clip-board>
-          </div>
-      </div>
-      <div class="essential-item">
-          <div class="essential-head">
-              Fault Domains
-          </div>
-          <div *ngIf="nodes.isInitialized"  class="essential-body">
-              {{nodes.faultDomains.length}}
-          </div>
-      </div>
-
-      <div class="essential-item">
-          <div class="essential-head">
-              Upgrade Domains
-          </div>
-          <div *ngIf="nodes.isInitialized" class="essential-body">
-              {{nodes.upgradeDomains.length}}
-          </div>
-      </div>
-
-      <div class="essential-item">
-          <div class="essential-head">
-              Healthy Seed Nodes
-          </div>
-          <div *ngIf="nodes.isInitialized"  class="essential-body">
-              {{nodes.healthySeedNodes}}
-          </div>
-      </div>
-  </div>
-</div>
-
 <div class="tile-container">
+  <app-essential-health-tile *ngIf="nodes.isInitialized && clusterUpgradeProgress.isInitialized" 
+  class="long" [listItems]="essentialItems">
+  </app-essential-health-tile>
+
     <app-dashboard-tile [data]="nodesDashboard" *ngIf="nodesDashboard" data-cy="nodesChart" class="tall"></app-dashboard-tile>
     <app-dashboard-tile [data]="appsDashboard" *ngIf="appsDashboard" data-cy="appsChart" class="tall"></app-dashboard-tile>
-    <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard" style="display: block"></app-dashboard-tile>
-    <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard" style="display: block">
+    <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard" ></app-dashboard-tile>
+    <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard" >
     </app-dashboard-tile>
-    <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard" style="display: block"></app-dashboard-tile>
+    <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard" ></app-dashboard-tile>
     <app-dashboard-text-tile [barClass]="upgradeAppsCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
         link="apps/upgrades" [count]="upgradeAppsCount"
         [title]="upgradeAppsCount === 1 ? 'Application Upgrade In Progress' : 'Application Upgrade In Progress'"
-        style="display: block"></app-dashboard-text-tile>
+       ></app-dashboard-text-tile>
     <app-dashboard-text-tile
         [barClass]="repairtaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
         link="repairtasks" [count]="repairtaskCollection.repairTasks.length" *ngIf="repairtaskCollection.isInitialized"
-        title="Repair Jobs In Progress" style="display: block"></app-dashboard-text-tile>
+        title="Repair Jobs In Progress" ></app-dashboard-text-tile>
     <app-dashboard-text-tile
         [barClass]="nodes.disabledAndDisablingCount > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'" link="nodes"
         [count]="nodes.disabledAndDisablingCount" *ngIf="nodes.isInitialized" title="Disabled/Disabling Nodes" style="display: block">

@@ -11,6 +11,7 @@ import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { ListColumnSettingForApplicationServiceRow } from '../action-row/action-row.component';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
+import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
@@ -27,6 +28,7 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
   servicesDashboard: IDashboardViewModel;
   partitionsDashboard: IDashboardViewModel;
   replicasDashboard: IDashboardViewModel;
+  essentialItems: IEssentialListItem[] = [];
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -51,6 +53,8 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
     this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('upgradeProgressUnhealthyEvaluations');
+
+    this.essentialItems = [];
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
@@ -59,6 +63,28 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
         this.data.refreshBackupPolicies(messageHandler);
       }
     });
+
+    this.essentialItems = [
+      {
+        descriptionName: 'Application Type',
+        displayText: this.app.raw.TypeName,
+        copyTextValue: this.app.raw.TypeName,
+        selectorName: 'typename',
+        displaySelector: true
+      },
+      {
+        descriptionName: 'Version',
+        displayText: this.app.raw.TypeVersion,
+        copyTextValue: this.app.raw.TypeVersion
+      },
+      {
+        descriptionName: 'Status',
+        displayText: this.app.raw.Status,
+        copyTextValue: this.app.raw.Status,
+        selectorName: 'status',
+        displaySelector: true
+      }
+    ];
 
     return forkJoin([
       this.app.upgradeProgress.refresh(messageHandler).pipe(map(upgradeProgress => {

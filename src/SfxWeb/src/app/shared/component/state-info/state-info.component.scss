@@ -1,0 +1,67 @@
+.badge-container {
+    margin-right: 10px;
+    width: 40px;
+    height: 40px;
+    justify-content: center;
+}
+
+.line-item {
+    line-height: 1;
+    margin-right: 7px;
+
+    &-small {
+        @extend .line-item;
+        font-size: 28px;
+        width: 30px;
+        text-align: end;
+    }
+
+    &-large {
+        @extend .line-item;
+        font-size: 33px;
+    }
+}
+
+.title-wrapper {
+    font-size: 18pt;
+    line-height: 0.9;
+    color: #c9c9c9;
+    font-weight: 600;
+    border-bottom: 1px solid #4c4c4c;
+    padding-bottom: 8px;
+    text-align: center;
+}
+
+.icon-item {
+    transform: rotate(90deg);
+    position: absolute;
+
+    &-left {
+        @extend .icon-item;
+        font-size: 29px;
+        left: -9px;
+    }
+
+    &-middle {
+        @extend .icon-item;
+        bottom: -8px;
+        font-size: 40px;            
+    }
+
+    &-right {
+        @extend .icon-item;
+        font-size: 29px;
+        left: 21px
+    }
+
+}
+
+.top-seperator {
+    border-bottom: 5px solid #4c4c4c;
+}
+
+.line-item-seperator {
+    border-bottom: 1px solid #4c4c4c;
+    padding-bottom: 4px;
+    margin-bottom: 3px;
+}
