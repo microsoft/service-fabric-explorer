@@ -55,19 +55,24 @@
                 <tbody>
                         <!-- track by (item.uniqueId || $id(item)) -->
                         <!-- | slice: listSettings.limit: listSettings.begin; -->
-                <ng-container *ngFor="let item of sortedFilteredList.slice( (page - 1) * listSettings.limit , page * listSettings.limit); ">
+                <ng-container *ngFor="let item of sortedFilteredList.slice( (page - 1) * listSettings.limit , page * listSettings.limit)">
                     <tr class="hover-row">
                             <!-- track by columnSetting.propertyPath -->
-                            <!-- ng-mousedown="handleClickRow(item, $event)" -->
-                        <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index; trackBy: trackByColumnSetting;">
+                        <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index; trackBy: (item | customTrackBy)">
                             <div style="display: flex; flex-direction: row">
-                                <button class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button" (click)="handleClickRow(item, $event)"
-                                *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)" [attr.aria-expanded]="!item.isSecondRowCollapsed"
-                                [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></button>
-                                <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;"></span>
-                                <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>                                
+                                <button
+                                    class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button"
+                                    (click)="handleClickRow(item, $event)"
+                                    *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)"
+                                    [attr.aria-expanded]="!item.isSecondRowCollapsed"
+                                    [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></button>
+
+                                <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)"
+                                    (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;"></span>
+                                <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item"
+                                    [setting]="columnSetting" [cache]="cache" [itemValue]="columnSetting.getValue(item)"></app-detail-table-resolver>
                             </div>
-                            </td>
+                        </td>
                         </tr>
                         <!-- Optional second row -->
                         <ng-container *ngIf="!listSettings.secondRowCollapsible || (listSettings.secondRowCollapsible && !item.isSecondRowCollapsed)">
@@ -81,7 +86,7 @@
                                 <div 
                                     [ngClass]="{'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}">
                                     <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;"></span>
-                                    <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
+                                    <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" [cache]="cache" ></app-detail-table-resolver>
                                 </div>
                             </td>
                         </tr>

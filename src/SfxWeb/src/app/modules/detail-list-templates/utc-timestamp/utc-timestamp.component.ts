@@ -17,6 +17,6 @@ export class UtcTimestampComponent implements DetailBaseComponent, OnInit {
   constructor() { }
 
   ngOnInit() {
-    this.value = Utils.result(this.item, this.listSetting.propertyPath);
+    this.value = this.listSetting.getValue(this.item);
   }
 }

@@ -1,5 +1,7 @@
 import { Injectable } from '@angular/core';
-import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink, ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime, ListColumnSettingWithCustomComponent } from '../Models/ListSettings';
+import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink,
+         ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime, ListColumnSettingWithCustomComponent,
+         ListColumnSettingWithShorten } from '../Models/ListSettings';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 import { NodeLoadInformation } from '../Models/DataModels/Node';
@@ -187,7 +189,7 @@ export class SettingsService {
     [
         new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'Task Id'),
         new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
-        new ListColumnSetting('raw.Target.NodeNames', 'Target'),
+        new ListColumnSettingWithShorten('raw.Target.NodeNames', 'Target', 1),
         new ListColumnSetting('impactedNodes', 'Impact'),
         new ListColumnSetting('raw.ResultStatus', 'Result Status', {enableFilter: true}),
         new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created At'),
