@@ -1,7 +1,8 @@
-import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, OnChanges } from '@angular/core';
 import { IRawServiceNameInfo, IRawApplicationNameInfo, IRawPartition } from 'src/app/Models/RawDataTypes';
 import { RoutesService } from 'src/app/services/routes.service';
 import { DataService } from 'src/app/services/data.service';
+import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
   selector: 'app-partition-info',
@@ -9,9 +10,11 @@ import { DataService } from 'src/app/services/data.service';
   styleUrls: ['./partition-info.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class PartitionInfoComponent {
+export class PartitionInfoComponent implements OnChanges {
 
   @Input() partitionInfo: IPartitionData;
+
+  essentialItems: IEssentialListItem[] = [];
 
   constructor(private dataService: DataService,
               private routeService: RoutesService) {}
@@ -31,6 +34,32 @@ export class PartitionInfoComponent {
         this.routeService.navigate(routeLocation);
       });
     }
+  }
+
+
+  ngOnChanges() {
+    this.essentialItems = [
+      {
+        descriptionName: 'Minimum Replica Set Size',
+        copyTextValue: this.partitionInfo.partition.MinReplicaSetSize.toString(),
+        displayText: this.partitionInfo.partition.MinReplicaSetSize.toString(),
+      },
+      {
+        descriptionName: 'Target Replica Set Size',
+        copyTextValue: this.partitionInfo.partition.TargetReplicaSetSize.toString(),
+        displayText: this.partitionInfo.partition.TargetReplicaSetSize.toString(),
+      },
+      {
+        descriptionName: 'Application name',
+        copyTextValue: this.partitionInfo.applicationName.Id,
+        displayText: this.partitionInfo.applicationName.Id,
+      },
+      {
+        descriptionName: 'Service name',
+        copyTextValue: this.partitionInfo.serviceName.Id,
+        displayText: this.partitionInfo.serviceName.Id,
+      },
+    ]
   }
 }
 

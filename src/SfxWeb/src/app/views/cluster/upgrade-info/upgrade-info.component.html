@@ -1,6 +1,16 @@
 <div class="detail-pane essen-pane">
+    <div class="flex-center" style="width: 100%;">
+        <div style="flex: 1;">
+            <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="l"></app-essential-item>
+        </div>
+        <div class="spacer"></div>
+        <div style="flex: 1;">
+            <app-essential-item *ngFor="let item of essentialItems2; let l = last" [item]="item" [underline]="l"></app-essential-item>
+        </div>
+    </div>
+
     <div class="essential-container">
-        <div class="essential-item">
+        <!-- <div class="essential-item">
             <div class="essential-head">
                 Code Version
             </div>
@@ -23,16 +33,16 @@
             <div class="essential-body">
                 {{clusterUpgradeProgress.raw.UpgradeState}}
             </div>
-        </div>
-        <div class="essential-item">
+        </div> -->
+        <!-- <div class="essential-item">
             <div class="essential-head">
                 Upgrade Mode
             </div>
             <div class="essential-body">
                 {{clusterUpgradeProgress.raw.RollingUpgradeMode}}
             </div>
-        </div>
-        <div class="essential-item">
+        </div> -->
+        <!-- <div class="essential-item">
             <div class="essential-head">
                 Start Timestamp Utc
             </div>
@@ -47,7 +57,7 @@
             <div class="essential-body">
                 <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
             </div>
-        </div>
+        </div> -->
     </div>
 </div>
 

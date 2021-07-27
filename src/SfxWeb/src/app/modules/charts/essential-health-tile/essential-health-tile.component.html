@@ -6,7 +6,7 @@
                     <app-health-badge [badgeClass]="healthState.badgeClass" size="75px"></app-health-badge>
                 </div>
                 <div class="right-side-wrapper">
-                    <div class="row-item highlight-hover" *ngFor="let item of internalList; let l = last" [ngClass]="l ? '': 'underline'">
+                    <div class="essential-list-item highlight-hover" *ngFor="let item of internalList; let l = last" [ngClass]="l ? '': 'underline'">
                         <div class="text-wrapper tile-item">
                             <div class="tile-list-entry left-text" *ngIf="item.descriptionName">
                                 {{item.descriptionName}}
@@ -24,7 +24,6 @@
                         <app-clip-board [text]="item.copyTextValue" *ngIf="item.copyTextValue"></app-clip-board>
                     </div>
                 </div>
-
             </div>
         </div>
     </div>

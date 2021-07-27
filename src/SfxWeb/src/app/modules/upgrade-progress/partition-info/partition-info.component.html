@@ -1,5 +1,5 @@
 <div class="wrapper">
-    <div>
+    <!-- <div>
         <div>
             Minimum Replica Set Size : {{partitionInfo.partition.MinReplicaSetSize}}
         </div>
@@ -12,6 +12,9 @@
         <div>
             Service name : {{partitionInfo.serviceName.Id}}
         </div>
-    </div>
+    </div> -->
     <button (click)="view()" class="simple-button">View</button>
+
+    <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="l"></app-essential-item>
+
 </div>

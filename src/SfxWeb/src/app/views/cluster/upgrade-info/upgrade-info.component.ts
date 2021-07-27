@@ -1,5 +1,6 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
+import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
   selector: 'app-upgrade-info',
@@ -10,7 +11,47 @@ export class UpgradeInfoComponent implements OnInit {
 
   @Input() clusterUpgradeProgress: ClusterUpgradeProgress;
 
+  essentialItems: IEssentialListItem[] = [];
+  essentialItems2: IEssentialListItem[] = [];
+
   constructor() { }
+  ngOnChanges(): void {
+    this.essentialItems = [
+      {
+        descriptionName: 'Code Version',
+        copyTextValue: this.clusterUpgradeProgress.raw.CodeVersion,
+        displayText: this.clusterUpgradeProgress.raw.CodeVersion,
+      },
+      {
+        descriptionName: 'Config Version',
+        copyTextValue: this.clusterUpgradeProgress.raw.ConfigVersion,
+        displayText: this.clusterUpgradeProgress.raw.ConfigVersion,
+      },
+      {
+        descriptionName: 'Upgrade State',
+        copyTextValue: this.clusterUpgradeProgress.raw.UpgradeState,
+        displayText: this.clusterUpgradeProgress.raw.UpgradeState,
+      },
+      {
+        descriptionName: 'Upgrade Mode',
+        copyTextValue: this.clusterUpgradeProgress.raw.RollingUpgradeMode,
+        displayText: this.clusterUpgradeProgress.raw.RollingUpgradeMode,
+      },
+      {
+        descriptionName: 'Start Timestamp Utc',
+        copyTextValue: this.clusterUpgradeProgress.startTimestampUtc,
+        displayText: this.clusterUpgradeProgress.startTimestampUtc,
+      },
+      {
+        descriptionName: 'Upgrade Duration',
+        copyTextValue: this.clusterUpgradeProgress.upgradeDuration,
+        displayText: this.clusterUpgradeProgress.upgradeDuration,
+      },
+    ]
+    // this.essentialItems2 = [
+
+    // ]
+  }
 
   ngOnInit(): void {
   }
