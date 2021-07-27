@@ -38,7 +38,7 @@ export class UpgradeInfoComponent implements OnInit {
         displayText: this.clusterUpgradeProgress.raw.RollingUpgradeMode,
       },
       {
-        descriptionName: 'Start Timestamp Utc',
+        descriptionName: 'Start Timestamp UTC',
         copyTextValue: this.clusterUpgradeProgress.startTimestampUtc,
         displayText: this.clusterUpgradeProgress.startTimestampUtc,
       },
@@ -48,9 +48,19 @@ export class UpgradeInfoComponent implements OnInit {
         displayText: this.clusterUpgradeProgress.upgradeDuration,
       },
     ]
-    // this.essentialItems2 = [
 
-    // ]
+    this.essentialItems2 = [
+      {
+        descriptionName: 'Current Upgrade Domain',
+        copyTextValue: this.clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName,
+        displayText: this.clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName,
+      },
+      {
+        descriptionName: 'Current Upgrade Domain Duration',
+        copyTextValue: this.clusterUpgradeProgress.upgradeDomainDuration,
+        displayText: this.clusterUpgradeProgress.upgradeDomainDuration,
+      },
+    ]
   }
 
   ngOnInit(): void {
