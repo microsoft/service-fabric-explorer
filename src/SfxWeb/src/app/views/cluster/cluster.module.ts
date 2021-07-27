@@ -27,7 +27,6 @@ import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.com
 import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-deactivation.module';
 import { RepairJobChartComponent } from './repair-job-chart/repair-job-chart.component';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
-import { InfrastructureTasksComponent } from './infrastructure-tasks/infrastructure-tasks.component';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,

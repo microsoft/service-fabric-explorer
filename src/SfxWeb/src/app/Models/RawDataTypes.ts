@@ -1074,6 +1074,9 @@ export interface IRawInfrastructureJob {
     Id: string;
     ImpactAction: string;
     JobStatus: string; 
+    CurrentUD: string; 
+    DeadlineforResponse: string; 
+    ImpactStep: string;
     AcknowledgementStatus: string; 
     ActionStatus: string ;
     CurrentlyImpactedRoleInstances: IRawRoleInstaceImpact[];
