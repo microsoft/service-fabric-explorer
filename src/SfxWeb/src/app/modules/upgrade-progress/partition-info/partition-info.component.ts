@@ -67,4 +67,5 @@ export interface IPartitionData {
   serviceName: IRawServiceNameInfo;
   applicationName: IRawApplicationNameInfo;
   partition: IRawPartition;
+  loading: string;
 }

@@ -1,4 +1,5 @@
 <div class="wrapper">
+    <a (click)="view()" class="link" style="color: #70DAF8;">{{partitionInfo.partition.PartitionInformation.Id}}</a>
     <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="l"></app-essential-item>
-    <button (click)="view()" class="simple-button">View</button>
+    <!-- <button (click)="view()" class="simple-button">View</button> -->
 </div>

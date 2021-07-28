@@ -28,6 +28,7 @@ import { ToggleComponent } from './component/toggle/toggle.component';
 import { StatusResolverComponent } from './component/status-resolver/status-resolver.component';
 import { StateInfoComponent } from './component/state-info/state-info.component';
 import { EssentialItemComponent } from './component/essential-item/essential-item.component';
+import { DisplayDurationComponent } from './component/display-duration/display-duration.component';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
@@ -35,7 +36,8 @@ import { EssentialItemComponent } from './component/essential-item/essential-ite
                  ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
                  FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
                  StateInfoComponent,
-                 EssentialItemComponent],
+                 EssentialItemComponent,
+                 DisplayDurationComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -50,6 +52,6 @@ import { EssentialItemComponent } from './component/essential-item/essential-ite
             ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
             FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
-            StateInfoComponent, EssentialItemComponent]
+            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent]
 })
 export class SharedModule { }

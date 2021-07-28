@@ -221,6 +221,22 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
         return this.upgradeDomains.filter(upgradeDomain => upgradeDomain.stateName === UpgradeDomainStateNames.Completed).length;
     }
 
+    public getUpgradeDomainTimeout(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDescription.MonitoringPolicy.UpgradeDomainTimeoutInMilliseconds);
+    }
+
+    public get currentDomainTime(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDomainDurationInMilliseconds);
+    }
+
+    public getUpgradeTimeout(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDescription.MonitoringPolicy.UpgradeTimeoutInMilliseconds);
+    }
+
+    public get upgradeTime(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDurationInMilliseconds);
+    }
+
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> {
         return this.data.restClient.getClusterUpgradeProgress(messageHandler).pipe(mergeMap( data => {
             if (data.CodeVersion === '0.0.0.0') {
@@ -248,6 +264,7 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
             this.upgradeDescription = new UpgradeDescription(this.data, this.raw.UpgradeDescription);
         }
     }
+
 }
 
 export class ClusterLoadInformation extends DataModelBase<IRawClusterLoadInformation> {

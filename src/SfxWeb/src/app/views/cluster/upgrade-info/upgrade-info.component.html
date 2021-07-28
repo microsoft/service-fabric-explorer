@@ -1,32 +1,49 @@
 <div class="detail-pane essen-pane">
     <div style="display: flex; width: 100%;">
-        
-        <div *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
+
+        <div style="flex: 1; max-width: 350px; display:flex; flex-direction: column" *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
             <h5 style="margin-bottom: 0px;
             text-align: center;">Upgrade Domain Progress</h5>
-            <app-upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains" [showChart]="true"></app-upgrade-progress>
+            <app-upgrade-progress style="align-self: center;" [upgradeDomains]="clusterUpgradeProgress.upgradeDomains" [showChart]="true">
+            </app-upgrade-progress>
         </div>
-        
+
         <div class="spacer"></div>
-        <div style="flex: 1;">
+        <div style="flex: 1; max-width: 400px">
             <div>
                 <h5 style="margin-bottom: 0px;
                 text-align: center;">Overview</h5>
-                <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="l"></app-essential-item>
+                <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="false">
+                </app-essential-item>
+
+                <div class="duration">
+                    <app-display-duration topText="Upgrade Duration"
+                        [topInMilliseconds]="clusterUpgradeProgress.upgradeTime"
+                        bottomText="Upgrade timeout" [bottomInMilliseconds]="clusterUpgradeProgress.getUpgradeTimeout()">
+                    </app-display-duration>
+                </div>
             </div>
 
             <div data-cy="cud">
                 <h5 style="margin-bottom: 0px;
                 text-align: center; margin-top: 15px;">Current Domain</h5>
-                <app-essential-item *ngFor="let item of essentialItems2; let l = last" [item]="item" [underline]="l"></app-essential-item>
+                <app-essential-item *ngFor="let item of essentialItems2; let l = last" [item]="item" [underline]="false">
+                </app-essential-item>
+
+                <div class="duration">
+                    <app-display-duration topText="Upgrade Domain Duration"
+                    [topInMilliseconds]="clusterUpgradeProgress.currentDomainTime"
+                    bottomText="Upgrade Domain timeout" [bottomInMilliseconds]="clusterUpgradeProgress.getUpgradeDomainTimeout()">
+                </app-display-duration>
+                </div>
             </div>
         </div>
+        <div class="spacer"></div>
 
+        <div *ngIf="clusterUpgradeProgress.isUpgrading" data-cy="currentud" style="flex: 1;">
+            <h5 style="text-align: center;">Nodes status</h5>
+            <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress">
+            </app-upgrade-domain-progress>
+        </div>
     </div>
-</div>
-
-<div *ngIf="clusterUpgradeProgress.isUpgrading" data-cy="currentud">
-    <h5 style="text-align: center;">Nodes status</h5>
-    <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress">
-    </app-upgrade-domain-progress>
 </div>

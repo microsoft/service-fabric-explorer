@@ -1,36 +1,10 @@
-<table class="table detail-list" style="width: 100%">
-    <thead>
-    <tr>
-        <th>
-            Partition Id
-        </th>
-        <th>
-            Phase
-        </th>
-        <th></th>
-    </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let check of safetyChecks;trackBy: safetyCheck">
-            <td>
-                {{check.SafetyCheck?.PartitionId}}
-            </td>
-    
-            <td>
-                {{check.SafetyCheck.Kind}}
-            </td>
-    
-            <td>
-                <div *ngIf="partitions[check.SafetyCheck.PartitionId]; else elseBlock">
-                    <app-partition-info [partitionInfo]="partitions[check.SafetyCheck.PartitionId]"></app-partition-info>
-                </div>
+<div *ngFor="let check of safetyChecks;trackBy: safetyCheck" style="padding: 5px; max-width: 500px">
+    <h5 style="text-align: center;">Phase : {{check.SafetyCheck.Kind}}</h5>
+    <div
+        *ngIf="partitions[check.SafetyCheck.PartitionId] && partitions[check.SafetyCheck.PartitionId].loading === 'loaded'; else elseBlock">
+        <app-partition-info [partitionInfo]="partitions[check.SafetyCheck.PartitionId]"></app-partition-info>
+    </div>
+    <ng-template #elseBlock>
 
-                <ng-template #elseBlock>
-                    <button (click)="getPartitionInfo(check.SafetyCheck.PartitionId)" class="simple-button" *ngIf="check.SafetyCheck.PartitionId">
-                        Get Info
-                    </button>
-                </ng-template>
-            </td>
-        </tr>
-    </tbody>        
-</table>
+    </ng-template>
+</div>

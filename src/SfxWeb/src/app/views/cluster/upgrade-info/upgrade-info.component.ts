@@ -42,11 +42,6 @@ export class UpgradeInfoComponent implements OnInit {
         copyTextValue: this.clusterUpgradeProgress.startTimestampUtc,
         displayText: this.clusterUpgradeProgress.startTimestampUtc,
       },
-      {
-        descriptionName: 'Upgrade Duration',
-        copyTextValue: this.clusterUpgradeProgress.upgradeDuration,
-        displayText: this.clusterUpgradeProgress.upgradeDuration,
-      },
     ]
 
     this.essentialItems2 = [
@@ -54,11 +49,6 @@ export class UpgradeInfoComponent implements OnInit {
         descriptionName: 'Current Upgrade Domain',
         copyTextValue: this.clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName,
         displayText: this.clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName,
-      },
-      {
-        descriptionName: 'Current Upgrade Domain Duration',
-        copyTextValue: this.clusterUpgradeProgress.upgradeDomainDuration,
-        displayText: this.clusterUpgradeProgress.upgradeDomainDuration,
       },
     ]
   }

@@ -1,0 +1,12 @@
+<div style="flex: 1;">
+    <div>
+        {{topText}} : {{topInMilliseconds | formatDate}}
+    </div>
+    <div style="display: flex; margin-bottom: 5px; margin-top: 5px">
+        <div style="height: 5px; background-color: green;" [ngStyle]="{'flex': leftDuration }"></div>
+        <div style="height: 5px; background-color: grey;"[ngStyle]="{'flex': rightDuration }"></div>
+    </div>
+    <div>
+        {{bottomText}} : {{bottomInMilliseconds | formatDate}}
+    </div>
+</div>
