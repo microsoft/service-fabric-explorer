@@ -1072,13 +1072,14 @@ export interface IRawRepairTask {
 
 export interface IRawInfrastructureJob {
     Id: string;
+    IsActive: string;
     ImpactAction: string;
     JobStatus: string; 
-    CurrentUD: string; 
-    DeadlineforResponse: string; 
     ImpactStep: string;
     AcknowledgementStatus: string; 
-    ActionStatus: string ;
+    ActionStatus:string;
+    CurrentUD: string; 
+    DeadlineforResponse: string; 
     CurrentlyImpactedRoleInstances: IRawRoleInstaceImpact[];
     RepairTasks: IRawInfraRepairTask[];
 }

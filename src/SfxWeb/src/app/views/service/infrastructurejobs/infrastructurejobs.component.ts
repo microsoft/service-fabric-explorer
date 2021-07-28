@@ -20,30 +20,24 @@ import { IRawInfrastructureJob } from 'src/app/Models/RawDataTypes';
   styleUrls: ['./infrastructurejobs.component.scss']
 })
 export class InfrastructureJobsComponent extends ServiceBaseControllerDirective {
-  mrJobs: IRawInfrastructureJob[];
+  allManagementJobs: InfrastructureJob[];
+  executingManagementJob : InfrastructureJob; 
+
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) {
     super(data, injector);
   }
 
   setup() {
-    this.data.restClient.getInfrastructureJobs(this.serviceId).subscribe(mrJobdata => {
-      this.mrJobs = mrJobdata;
-    })
-
+    this.data.restClient.getInfrastructureJobs(this.serviceId).subscribe(mrJobdata =>  this.getInfrastructureData(mrJobdata));
   }
 
-  refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-
+  getInfrastructureData(mrJobdata: IRawInfrastructureJob[]): void {
     const dateRef = new Date();
-    //this.mrJobs =  this.data.restClient.getInfrastructureJobs(this.service.id, messageHandler).pipe(map(mrJobList => mrJobList.map(mrJob => new InfrastructureJob(this.service.id, this.data, mrJob, dateRef)) ))
-    return this.data.refreshBackupPolicies(messageHandler);
-  }
-
-  setupActions(){
-
-  }
-   
+     this.allManagementJobs = []
+      mrJobdata.forEach(rawMrJob => {
+        this.allManagementJobs.push(new InfrastructureJob(this.data, rawMrJob, dateRef));
+      })
+    this.executingManagementJob = this.allManagementJobs.find(job => Boolean(job.IsActive) == true);
+  };
 }
-
-
