@@ -18,8 +18,8 @@ export class InfrastructureJobCollection extends DataModelCollectionBase<Infrast
         super(data, parent);
     }
 
-     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        const dateRef = new Date();
+    //  protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
+    //     const dateRef = new Date();
         // this.data.restClient.getServices('System', messageHandler).
         //     pipe(map(systemServices => {
         //         this.infraServicesList = systemServices.filter(service => service.Id.startsWith('System/Infras'));
@@ -40,23 +40,23 @@ export class InfrastructureJobCollection extends DataModelCollectionBase<Infrast
 
         //base observable
 
-       return this.data.restClient.getServices('System', messageHandler)
-        //pipe into a mergemap to chain observables
-        .pipe(
-            mergeMap(systemServices => {
+    //    return this.data.restClient.getServices('System', messageHandler)
+    //     //pipe into a mergemap to chain observables
+    //     .pipe(
+    //         mergeMap(systemServices => {
         
-                this.infraServicesList = systemServices.filter(service => service.Id.startsWith('System/InfrastructureService'));
+    //             this.infraServicesList = systemServices.filter(service => service.Id.startsWith('System/InfrastructureService'));
         
-                return forkJoin(this.infraServicesList.map(service => {
+    //             return forkJoin(this.infraServicesList.map(service => {
         
-                this.data.restClient.getInfrastructureJobs(service.Id, messageHandler).
+    //             this.data.restClient.getInfrastructureJobs(service.Id, messageHandler).
         
-                    pipe(map(items => this.infraJobs.concat(items.map(raw => new InfrastructureJob(service.Id, this.data, raw, dateRef)))))
-                }));
+    //                 pipe(map(items => this.infraJobs.concat(items.map(raw => new InfrastructureJob(service.Id, this.data, raw, dateRef)))))
+    //             }));
         
-            })
-        );
-    }
+    //         })
+    //     );
+   // }
 
     public map2( mrJobs: InfrastructureJob[][]) : InfrastructureJob[]  {
         var ans: InfrastructureJob[]
