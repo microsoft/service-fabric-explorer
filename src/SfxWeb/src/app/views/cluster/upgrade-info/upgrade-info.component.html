@@ -1,6 +1,5 @@
 <div class="detail-pane essen-pane">
-    <div style="display: flex; width: 100%;">
-
+    <div style="display: flex; width: 100%; flex-wrap: wrap;">
         <div style="flex: 1; max-width: 350px; display:flex; flex-direction: column" *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
             <h5 style="margin-bottom: 0px;
             text-align: center;">Upgrade Domain Progress</h5>
@@ -9,10 +8,9 @@
         </div>
 
         <div class="spacer"></div>
-        <div style="flex: 1; max-width: 400px">
+        <div style="flex: 1; min-width: 400px; width: 400px;">
             <div>
-                <h5 style="margin-bottom: 0px;
-                text-align: center;">Overview</h5>
+                <h5 style="margin-bottom: 0px; text-align: center;">Overview</h5>
                 <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="false">
                 </app-essential-item>
 
@@ -40,7 +38,7 @@
         </div>
         <div class="spacer"></div>
 
-        <div *ngIf="clusterUpgradeProgress.isUpgrading" data-cy="currentud" style="flex: 1;">
+        <div *ngIf="clusterUpgradeProgress.isUpgrading" data-cy="currentud" style="flex: 1; min-width: 500px;">
             <h5 style="text-align: center;">Nodes status</h5>
             <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress">
             </app-upgrade-domain-progress>
