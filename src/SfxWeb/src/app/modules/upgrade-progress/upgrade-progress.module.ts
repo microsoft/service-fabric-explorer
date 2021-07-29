@@ -6,9 +6,10 @@ import { PartitionInfoComponent } from './partition-info/partition-info.componen
 import { UpgradeProgressComponent } from './upgrade-progress/upgrade-progress.component';
 import { SafetyChecksComponent } from './safety-checks/safety-checks.component';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { NodeProgressComponent } from './node-progress/node-progress.component';
 
 @NgModule({
-  declarations: [UpgradeDomainProgressComponent, PartitionInfoComponent, UpgradeProgressComponent, SafetyChecksComponent],
+  declarations: [UpgradeDomainProgressComponent, PartitionInfoComponent, UpgradeProgressComponent, SafetyChecksComponent, NodeProgressComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -18,6 +19,7 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
     UpgradeDomainProgressComponent,
     UpgradeProgressComponent,
     SafetyChecksComponent,
+    NodeProgressComponent,
   ]
 })
 export class UpgradeProgressModule { }

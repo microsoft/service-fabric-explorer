@@ -1,0 +1,25 @@
+<div style="font-size: 15px; padding: 5px; display: flex; align-items: top">Node : {{node.NodeName}} 
+    Safety Check(s) : {{node.PendingSafetyChecks.length}}
+
+        <div style="display: flex;">
+            <div class="progress-item done">
+                <div>PreUpgrade SafetyCheck</div>
+                <div class="progress-indicator">
+                    <span class="mif-check"></span>
+                </div>
+            </div>
+            <div class="progress-item inProgress">
+                <div>Upgrading</div>
+                <div class="progress-indicator">
+                    <span></span>
+                </div>
+            </div>
+            <div class="progress-item pending">
+                <div>PostUpgrade SafetyCheck</div>
+                <div class="progress-indicator">
+                    <span></span>
+                </div>
+            </div>
+        </div>
+</div>
+
