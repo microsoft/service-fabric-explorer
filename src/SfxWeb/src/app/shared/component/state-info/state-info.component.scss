@@ -33,19 +33,19 @@
 }
 
 .icon-item {
-    transform: rotate(90deg);
     position: absolute;
 
     &-left {
         @extend .icon-item;
         font-size: 29px;
-        left: -9px;
+        left: 20px;
+        bottom: -11px;
     }
 
     &-middle {
         @extend .icon-item;
         bottom: -8px;
-        font-size: 40px;            
+        font-size: 40px;
     }
 
     &-right {

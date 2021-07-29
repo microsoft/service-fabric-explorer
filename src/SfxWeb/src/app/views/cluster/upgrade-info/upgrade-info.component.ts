@@ -14,6 +14,8 @@ export class UpgradeInfoComponent implements OnInit {
   essentialItems: IEssentialListItem[] = [];
   essentialItems2: IEssentialListItem[] = [];
 
+  helpText = "";
+  link = "https://docs.microsoft.com/azure/service-fabric/service-fabric-application-upgrade#rolling-upgrades-overview";
   constructor() { }
   ngOnChanges(): void {
     this.essentialItems = [
@@ -51,6 +53,8 @@ export class UpgradeInfoComponent implements OnInit {
         displayText: this.clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName,
       },
     ]
+
+    this.helpText = 'Failure Action : ' + this.clusterUpgradeProgress.raw.UpgradeDescription.MonitoringPolicy.FailureAction;
   }
 
   ngOnInit(): void {

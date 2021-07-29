@@ -18,8 +18,8 @@
 
                 <div class="duration">
                     <app-display-duration topText="Upgrade Duration"
-                        [topInMilliseconds]="clusterUpgradeProgress.upgradeTime"
-                        bottomText="Upgrade timeout" [bottomInMilliseconds]="clusterUpgradeProgress.getUpgradeTimeout()">
+                        [topInMilliseconds]="clusterUpgradeProgress.upgradeTime" [bottomHelpText]="helpText" [bottomHelpTextLink]="link"
+                        bottomText="Time Left Until Failure" [bottomInMilliseconds]="clusterUpgradeProgress.getUpgradeTimeout()">
                     </app-display-duration>
                 </div>
             </div>
@@ -32,8 +32,8 @@
 
                 <div class="duration">
                     <app-display-duration topText="Upgrade Domain Duration"
-                    [topInMilliseconds]="clusterUpgradeProgress.currentDomainTime"
-                    bottomText="Upgrade Domain timeout" [bottomInMilliseconds]="clusterUpgradeProgress.getUpgradeDomainTimeout()">
+                    [topInMilliseconds]="clusterUpgradeProgress.currentDomainTime" [bottomHelpText]="helpText" [bottomHelpTextLink]="link"
+                    bottomText="Time Left Until Failure" [bottomInMilliseconds]="clusterUpgradeProgress.getUpgradeDomainTimeout()">
                 </app-display-duration>
                 </div>
             </div>

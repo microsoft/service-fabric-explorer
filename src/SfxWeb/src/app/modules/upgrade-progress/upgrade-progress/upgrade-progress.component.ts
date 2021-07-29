@@ -29,8 +29,8 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
       this.chart = chart(this.chartContainer.nativeElement, {
         chart: {
             type: 'pie',
-            width: 300,
-            height: 300,
+            width: 350,
+            height: 350,
             backgroundColor: null,
             borderRadius: 0
         },
@@ -44,8 +44,8 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
         },
         plotOptions: {
             pie: {
-                borderWidth: 4,
-                innerSize: '70%',
+                borderWidth: 2,
+                innerSize: '50%',
                 borderColor:  "#262626" //null//"rgba(0, 0, 0, .5)"
             },
             series: {
@@ -60,7 +60,7 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
               }
           }
         },
-    
+
         series: [{
           data: dataSet
         }]

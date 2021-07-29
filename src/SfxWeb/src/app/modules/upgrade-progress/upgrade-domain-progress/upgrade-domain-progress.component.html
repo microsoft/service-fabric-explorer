@@ -1,12 +1,14 @@
-<div *ngFor="let node of upgradeDomain.NodeUpgradeProgressList;trackBy: nodeTrackBy">
+<div *ngFor="let node of upgradeDomain.NodeUpgradeProgressList;trackBy: nodeTrackBy" style="border-bottom: 1px solid gray; ">
     <app-collapse-container collapsed="true" [sectionName]="node.NodeName + ' Progress '">
         <div collapse-header>
-            <div style="font-size: 15px; padding: 5px; border-bottom: 1px solid gray; ">Node : {{node.NodeName}} - {{node.UpgradePhase}}
+            <div style="font-size: 15px; padding: 5px; ">Node : {{node.NodeName}} - {{node.UpgradePhase}}
                     Safety Check(s) : {{node.PendingSafetyChecks.length}}
             </div>
         </div>
-        <div collapse-body class="table-responsive">
+        <div collapse-body class="table-responsive" >
+          <div style="max-width: 400px; border: 1px solid gray;">
             <app-safety-checks [safetyChecks]="node.PendingSafetyChecks" [partitions]="partitions"></app-safety-checks>
+          </div>
         </div>
     </app-collapse-container>
 </div>

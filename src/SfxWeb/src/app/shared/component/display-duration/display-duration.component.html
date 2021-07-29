@@ -3,10 +3,14 @@
         {{topText}} : {{topInMilliseconds | formatDate}}
     </div>
     <div style="display: flex; margin-bottom: 5px; margin-top: 5px">
-        <div style="height: 5px; background-color: green;" [ngStyle]="{'flex': leftDuration }"></div>
+        <div style="height: 5px;" [ngClass]="barColor" [ngStyle]="{'flex': leftDuration }"></div>
         <div style="height: 5px; background-color: grey;"[ngStyle]="{'flex': rightDuration }"></div>
     </div>
     <div>
-        {{bottomText}} : {{bottomInMilliseconds | formatDate}}
+        {{bottomText}} : {{timeLeft | formatDate}}
+
+        <a class="link" style="float: right;" target="_blank" [href]="bottomHelpTextLink">
+          {{bottomHelpText}}
+        </a>
     </div>
 </div>
