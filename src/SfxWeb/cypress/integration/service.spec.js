@@ -106,17 +106,17 @@ context('service', () => {
 
     describe("stateful - with auxiliary replicas", () => {
         beforeEach(() => {
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/$/GetDescription?*`), "fx:service-page/service-description-with-aux").as("descriptionWithAux");
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}?*`), "fx:service-page/service-info").as("serviceInfo");
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/$/GetPartitions?*`), "fx:service-page/service-partitions").as("partitions");
-            cy.route(apiUrl(`${routeFormatter(appName, serviceName)}/$/GetHealth?*`), "fx:service-page/service-health").as("health");
-
+            addRoute("descriptionWithAux", "service-page/service-description-with-aux", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetDescription?*`));
+            addRoute("serviceInfo", "service-page/service-info", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
+            addRoute("partitions", "service-page/service-partitions", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetPartitions?*`));
+            addRoute("health", "service-page/service-health", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetHealth?*`));
+ 
             cy.visit(urlFormatter(appName, serviceName))
         })
 
         it('view details - with auxiliary replicas', () => {
             cy.wait(waitRequest);
-            cy.wait("@descriptionWithAux");
+            cy.wait("@getdescriptionWithAux");
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
