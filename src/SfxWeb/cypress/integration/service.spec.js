@@ -58,7 +58,7 @@ context('service', () => {
 
         it('view details', () => {
             cy.wait(waitRequest);
-            cy.wait('@description');
+            cy.wait('@getdescription');
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
