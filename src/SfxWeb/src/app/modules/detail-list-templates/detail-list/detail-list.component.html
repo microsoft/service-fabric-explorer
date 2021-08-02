@@ -86,7 +86,7 @@
                                 <div 
                                     [ngClass]="{'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}">
                                     <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;"></span>
-                                    <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" [cache]="cache" ></app-detail-table-resolver>
+                                    <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" [cache]="cache" [itemValue]="columnSetting.getValue(item)"></app-detail-table-resolver>
                                 </div>
                             </td>
                         </tr>

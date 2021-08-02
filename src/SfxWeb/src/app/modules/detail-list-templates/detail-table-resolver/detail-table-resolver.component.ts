@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver, OnChanges, ComponentRef, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, Input, ViewChild, ComponentFactoryResolver, ChangeDetectorRef } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ResolverDirective } from '../resolver.directive';
 import { Type } from '@angular/core';
@@ -17,7 +17,6 @@ export class DetailTableResolverComponent implements OnInit {
   @Input() template: Type<any>;
   @Input() itemValue: any;
 
-  ref: ComponentRef<any>;
   @ViewChild(ResolverDirective, {static: true}) templateHost: ResolverDirective;
 
 
@@ -29,16 +28,16 @@ export class DetailTableResolverComponent implements OnInit {
 
 
   loadComponent() {
-
     const componentFactory = this.componentFactoryResolver.resolveComponentFactory(this.template);
 
     const viewContainerRef = this.templateHost.viewContainerRef;
     viewContainerRef.clear();
 
-    this.ref = viewContainerRef.createComponent(componentFactory);
+    const componentRef = viewContainerRef.createComponent(componentFactory);
+    (componentRef.instance as DetailBaseComponent).item = this.item;
+    (componentRef.instance as DetailBaseComponent).listSetting = this.setting;
+    (componentRef.instance as DetailBaseComponent).cache = this.cache;
+    componentRef.injector.get(ChangeDetectorRef).markForCheck(); // or detectChanges()
 
-    (this.ref.instance as DetailBaseComponent).item = this.item;
-    (this.ref.instance as DetailBaseComponent).listSetting = this.setting;
-    (this.ref.instance as DetailBaseComponent).cache = this.cache;
   }
 }
