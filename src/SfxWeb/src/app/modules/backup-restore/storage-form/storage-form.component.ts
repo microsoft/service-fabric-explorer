@@ -104,7 +104,7 @@ export class StorageFormComponent implements OnInit {
       storage.get('ManagedIdentityType').setValidators(null);
     }
 
-    if(storageKind === 'ManagedIdentityAzureBlobStore')
+    if (storageKind === 'ManagedIdentityAzureBlobStore')
     {
       storage.get('ConnectionString').setValidators(null);
 
