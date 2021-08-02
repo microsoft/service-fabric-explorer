@@ -37,7 +37,7 @@ export class DetailTableResolverComponent implements OnInit {
     (componentRef.instance as DetailBaseComponent).item = this.item;
     (componentRef.instance as DetailBaseComponent).listSetting = this.setting;
     (componentRef.instance as DetailBaseComponent).cache = this.cache;
-    componentRef.injector.get(ChangeDetectorRef).markForCheck(); // or detectChanges()
+    componentRef.injector.get(ChangeDetectorRef).detectChanges(); // or detectChanges()
 
   }
 }
