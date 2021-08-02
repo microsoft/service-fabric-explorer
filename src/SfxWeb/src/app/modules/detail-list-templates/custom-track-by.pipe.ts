@@ -5,11 +5,9 @@ import { ListColumnSetting } from 'src/app/Models/ListSettings';
   name: 'customTrackBy'
 })
 export class CustomTrackByPipe implements PipeTransform {
-
   transform(item: any): TrackByFunction<any> {
     return (index: number, setting: ListColumnSetting) => {
-      return setting.getValue(item).toString() + setting.displayName;
+      return (setting.getValue(item) || index).toString() + setting.displayName;
     };
   }
-
 }

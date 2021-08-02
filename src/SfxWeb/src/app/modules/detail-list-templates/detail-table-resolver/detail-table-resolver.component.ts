@@ -28,7 +28,6 @@ export class DetailTableResolverComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(data: any) {
-    console.log(data);
     this.loadComponent();
   }
 
@@ -45,9 +44,9 @@ export class DetailTableResolverComponent implements OnInit, OnChanges {
   }
 
   setData() {
-    if (!this.ref) {
-      return;
-    }
+    // if (!this.ref) {
+    //   return;
+    // }
 
     (this.ref.instance as DetailBaseComponent).item = this.item;
     (this.ref.instance as DetailBaseComponent).listSetting = this.setting;
