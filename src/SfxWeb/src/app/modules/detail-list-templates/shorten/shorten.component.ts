@@ -1,7 +1,6 @@
 import { ChangeDetectionStrategy, Component, OnChanges, OnInit } from '@angular/core';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { ListColumnSettingWithShorten } from 'src/app/Models/ListSettings';
-import { Utils } from 'src/app/Utils/Utils';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 
 @Component({
@@ -25,7 +24,6 @@ export class ShortenComponent implements DetailBaseComponent, OnInit {
     this.value = this.listSetting.getValue(this.item);
     this.overflow = this.value.length > this.listSetting.maxWidth;
     this.displayValue = this.value.slice(0, this.listSetting.maxWidth);
-    console.log('test');
   }
 
   flipState() {

@@ -58,7 +58,7 @@
                 <ng-container *ngFor="let item of sortedFilteredList.slice( (page - 1) * listSettings.limit , page * listSettings.limit)">
                     <tr class="hover-row">
                             <!-- track by columnSetting.propertyPath -->
-                        <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index; trackBy: (item | customTrackBy)">
+                        <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index;">
                             <div style="display: flex; flex-direction: row">
                                 <button
                                     class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button"

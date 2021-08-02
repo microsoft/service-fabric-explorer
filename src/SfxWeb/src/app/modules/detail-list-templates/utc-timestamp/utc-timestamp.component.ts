@@ -1,7 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSettingWithUtcTime } from 'src/app/Models/ListSettings';
-import { Utils } from 'src/app/Utils/Utils';
 
 @Component({
   selector: 'app-utc-timestamp',
@@ -17,7 +16,6 @@ export class UtcTimestampComponent implements DetailBaseComponent, OnInit {
   constructor() { }
 
   ngOnInit() {
-    console.log(this.item);
     this.value = this.listSetting.getValue(this.item);
   }
 }
