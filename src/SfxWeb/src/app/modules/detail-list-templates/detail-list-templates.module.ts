@@ -13,12 +13,14 @@ import { FormsModule } from '@angular/forms';
 import { UtcTimestampComponent } from './utc-timestamp/utc-timestamp.component';
 import { ExportModalComponent } from './export-modal/export-modal.component';
 import { QuestionToolTipComponent } from './question-tool-tip/question-tool-tip.component';
+import { ShortenComponent } from './shorten/shorten.component';
+import { CustomTrackByPipe } from './custom-track-by.pipe';
 
 
 
 @NgModule({
   declarations: [HyperLinkComponent, DetailTableResolverComponent, ResolverDirective, CopyTextComponent, ResolverDirective,
-                 DetailListComponent, PagerComponent, UtcTimestampComponent, ExportModalComponent, QuestionToolTipComponent],
+                 DetailListComponent, PagerComponent, UtcTimestampComponent, ExportModalComponent, QuestionToolTipComponent, ShortenComponent, CustomTrackByPipe],
   imports: [
     CommonModule,
     RouterModule,
@@ -28,6 +30,6 @@ import { QuestionToolTipComponent } from './question-tool-tip/question-tool-tip.
     NgbTooltipModule,
     FormsModule
   ],
-  exports: [DetailTableResolverComponent, HyperLinkComponent, CopyTextComponent, DetailListComponent, QuestionToolTipComponent]
+  exports: [DetailTableResolverComponent, HyperLinkComponent, CopyTextComponent, DetailListComponent, QuestionToolTipComponent, ShortenComponent]
 })
 export class DetailListTemplatesModule { }
