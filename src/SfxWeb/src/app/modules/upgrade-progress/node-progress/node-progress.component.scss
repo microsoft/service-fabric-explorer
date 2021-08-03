@@ -1,31 +1,34 @@
 .progress-item {
-    position: relative;
-    padding: 0px 5px 5px 5px;
-    display: flex;
-    align-items: center;
-    border-bottom: 3px solid;
-    margin-left: 5px;
-    margin-right: 5px;
+  position: relative;
+  padding: 0px 5px 5px 5px;
+  display: flex;
+  align-items: center;
+  border-bottom: 3px solid;
+  margin-left: 5px;
+  margin-right: 5px;
+  text-align: center;
 
-    
+  .text-description {
+    margin-right: 5px;
+  }
 }
 
 .progress-indicator {
-    display: block;
-    border-radius: 50%;
-    border: 3px solid white;
-    width: 15px;
-    height: 15px;
+  display: block;
+  border-radius: 50%;
+  border: 3px solid white;
+  width: 15px;
+  height: 15px;
 }
 
 .pending {
-    border-color: gray;
+  border-color: gray;
 }
 
-.inProgress {
-    border-color: #0075c9;
+.in-progress {
+  border-color: #0075c9;
 }
 
 .done {
-    border-color: green;
+  border-color: green;
 }

@@ -7,39 +7,39 @@ import { Component, Input, OnChanges, OnInit } from '@angular/core';
 })
 export class DisplayDurationComponent implements OnChanges {
 
-  @Input() topText: string = "";
+  @Input() topText = '';
   @Input() topInMilliseconds: number;
-  @Input() topHelpText: string = "";
+  @Input() topHelpText = '';
 
-  @Input() bottomText: string = "";
+  @Input() bottomText = '';
   @Input() bottomInMilliseconds: number;
-  @Input() bottomHelpText: string = "";
-  @Input() bottomHelpTextLink: string = "";
+  @Input() bottomHelpText = '';
+  @Input() bottomHelpTextLink = '';
 
   timeLeft = 0;
 
-  leftDuration: number = 0;
-  rightDuration: number = 0;
-  barColor: string = "";
+  leftDuration = 0;
+  rightDuration = 0;
+  barColor = '';
 
   constructor() { }
 
   ngOnChanges(): void {
     this.leftDuration = (this.topInMilliseconds / this.bottomInMilliseconds);
     this.rightDuration = 1 - this.leftDuration;
-    console.log(this)
+    console.log(this);
 
     this.timeLeft = this.bottomInMilliseconds - this.topInMilliseconds;
     this.barColor = this.setColorCode(this.leftDuration);
   }
 
   setColorCode(percent): string {
-    if(percent > .75) {
-      return "red";
-    }else if(percent > .5 ){
-      return "yellow";
+    if (percent > .75) {
+      return 'red';
+    }else if (percent > .5 ){
+      return 'yellow';
     }else {
-      return "blue";
+      return 'blue';
     }
   }
 

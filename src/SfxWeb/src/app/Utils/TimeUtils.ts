@@ -33,7 +33,7 @@ export class TimeUtils {
     }
 
     public static getDurationMilliseconds(duration: any): number{
-        
+
         let momentDuration;
         if (Number.isFinite(duration)) {
             // Finite number in milliseconds

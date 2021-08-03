@@ -1,4 +1,4 @@
-<div *ngFor="let check of safetyChecks;trackBy: safetyCheck" style="padding: 5px; max-width: 500px">
+<!-- <div *ngFor="let check of safetyChecks;trackBy: safetyCheck" style="padding: 5px; max-width: 500px">
     <h5 style="text-align: center;">Phase : {{check.SafetyCheck.Kind}}</h5>
     <div
         *ngIf="partitions[check.SafetyCheck.PartitionId] && partitions[check.SafetyCheck.PartitionId].loading === 'loaded'; else elseBlock">
@@ -7,4 +7,9 @@
     <ng-template #elseBlock>
 
     </ng-template>
+</div> -->
+
+<div style="border-top: 1px solid gray;">
+  <app-detail-list [list]="safetyChecksWithData" [listSettings]="settings"></app-detail-list>
 </div>
+

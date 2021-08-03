@@ -9,7 +9,7 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
 export class EssentialItemComponent implements OnInit {
 
   @Input() item: IEssentialListItem;
-  @Input() underline: boolean = false;
+  @Input() underline = false;
 
   constructor() { }
 

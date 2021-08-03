@@ -24,7 +24,7 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
   }
 
   ngAfterViewInit() {
-    if(this.showChart) {
+    if (this.showChart) {
       const dataSet = this.getDataSet();
       this.chart = chart(this.chartContainer.nativeElement, {
         chart: {
@@ -46,7 +46,7 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
             pie: {
                 borderWidth: 2,
                 innerSize: '50%',
-                borderColor:  "#262626" //null//"rgba(0, 0, 0, .5)"
+                borderColor:  '#262626' // null//"rgba(0, 0, 0, .5)"
             },
             series: {
               dataLabels: {
@@ -70,20 +70,20 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
 
   getDataSet(): PointOptionsObject[] {
     const colors = {
-      "badge-unknown": '#7FBA00',
-      "badge-ok": '#088105',
-      "badge-warning": '#0075c9'
+      'badge-unknown': '#7FBA00',
+      'badge-ok': '#088105',
+      'badge-warning': '#0075c9'
     };
 
     const data = this.upgradeDomains.map(p => {
       return {
         type: 'pie',
-        name: p.name,
+        name: 'UD : ' + p.name,
         y: 1,
         color: colors[p.badgeClass],
         dataLabels: {
           style: {
-              fontSize: '20px',
+              fontSize: '13px',
               fontColor: '#fff'
           }
       },

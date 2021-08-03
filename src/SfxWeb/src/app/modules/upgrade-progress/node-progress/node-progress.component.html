@@ -1,28 +1,20 @@
-<div style="font-size: 15px; padding: 5px; display: flex; align-items: top">Node : {{node.NodeName}} 
+<div style="font-size: 15px; padding: 5px; display: flex; align-items: center; justify-content: space-between;">
+  <span>
+    Node : {{node.NodeName}}
+  </span>
+  <span>
     Safety Check(s) : {{node.PendingSafetyChecks.length}}
-
-        <div style="display: flex; margin-left: 10px">
-            Phase :
-            <div class="progress-item done">
-                <!-- <div>PreUpgrade SafetyCheck</div> -->
-                <!-- <div class="progress-indicator">
-                </div> -->
-                <span class="mif-checkmark"></span>
-            </div>
-            <div class="progress-item inProgress">
-                <div>Upgrading</div>
-                <!-- <div class="progress-indicator">
-                    <span></span>
-                </div> -->
-                <div class="spacer"></div>
-                <span class="mif-spinner4 rotate"></span>
-            </div>
-            <div class="progress-item pending">
-                <!-- <div>PostUpgrade SafetyCheck</div> -->
-                <div class="progress-indicator">
-                    <span></span>
-                </div>
-            </div>
-        </div>
+  </span>
 </div>
 
+<div style="display: flex; margin-left: 10px; align-items: center; margin-bottom: 5px;">
+  Phase :
+  <ng-container  *ngFor="let phase of progress; let l = last;" >
+    <div class="progress-item" [ngClass]="cssClass[phase.state]">
+      <div class="text-description" >{{phase.name}}
+      </div>
+      <span [ngClass]="iconMap[phase.state]"></span>
+    </div>
+    <div class="mif-arrow-right" *ngIf="!l"></div>
+  </ng-container>
+</div>

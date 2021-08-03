@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
@@ -7,15 +7,15 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
   templateUrl: './upgrade-info.component.html',
   styleUrls: ['./upgrade-info.component.scss']
 })
-export class UpgradeInfoComponent implements OnInit {
+export class UpgradeInfoComponent implements OnInit, OnChanges {
 
   @Input() clusterUpgradeProgress: ClusterUpgradeProgress;
 
   essentialItems: IEssentialListItem[] = [];
   essentialItems2: IEssentialListItem[] = [];
 
-  helpText = "";
-  link = "https://docs.microsoft.com/azure/service-fabric/service-fabric-application-upgrade#rolling-upgrades-overview";
+  helpText = '';
+  link = 'https://docs.microsoft.com/azure/service-fabric/service-fabric-application-upgrade#rolling-upgrades-overview';
   constructor() { }
   ngOnChanges(): void {
     this.essentialItems = [
@@ -44,7 +44,7 @@ export class UpgradeInfoComponent implements OnInit {
         copyTextValue: this.clusterUpgradeProgress.startTimestampUtc,
         displayText: this.clusterUpgradeProgress.startTimestampUtc,
       },
-    ]
+    ];
 
     this.essentialItems2 = [
       {
@@ -52,7 +52,7 @@ export class UpgradeInfoComponent implements OnInit {
         copyTextValue: this.clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName,
         displayText: this.clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName,
       },
-    ]
+    ];
 
     this.helpText = 'Failure Action : ' + this.clusterUpgradeProgress.raw.UpgradeDescription.MonitoringPolicy.FailureAction;
   }
