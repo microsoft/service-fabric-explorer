@@ -26,7 +26,7 @@
     "donuts.node-settings": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-settings-1.0.3.tgz",
     "jquery": "^3.5.0",
     "semver": "^5.5.0",
-    "tar": "^4.4.4",
+    "tar": "^4.4.15",
     "tmp": "0.0.33",
     "uuid": "^3.3.2"
   },
