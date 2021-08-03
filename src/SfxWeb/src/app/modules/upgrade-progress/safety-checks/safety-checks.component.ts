@@ -23,7 +23,7 @@ export class SafetyChecksComponent implements OnChanges, OnInit {
 
   safetyChecksWithData: IRawSafetyCheckDescription[] = [];
 
-  ensureSeedNodeQuorumSafetyCheck = false;
+  tooManySafetyChecks = false;
 
   constructor(private restClientService: RestClientService,
               private cdr: ChangeDetectorRef,
@@ -44,22 +44,22 @@ export class SafetyChecksComponent implements OnChanges, OnInit {
   ngOnChanges(): void {
     console.log(this);
 
-    this.ensureSeedNodeQuorumSafetyCheck = this.safetyChecks.findIndex( (safety: IRawSafetyCheckDescription) => safety.SafetyCheck.Kind === 'EnsureSeedNodeQuorum') > -1;
+    this.tooManySafetyChecks = this.safetyChecks.length > 5;
 
-    this.safetyChecks.forEach(check => {
-      console.log(check);
-
-      if (check.SafetyCheck.PartitionId && !this.partitions[check.SafetyCheck.PartitionId]) {
-        this.partitions[check.SafetyCheck.PartitionId] = {
-          serviceName: null,
-          applicationName: null,
-          partition: null,
-          loading: 'inflight',
-          ...check
-        };
-        this.getPartitionInfo(check.SafetyCheck.PartitionId, check);
-      }
-    });
+    if (!this.tooManySafetyChecks) {
+      this.safetyChecks.forEach(check => {
+        if (check.SafetyCheck.PartitionId && !this.partitions[check.SafetyCheck.PartitionId]) {
+          this.partitions[check.SafetyCheck.PartitionId] = {
+            serviceName: null,
+            applicationName: null,
+            partition: null,
+            loading: 'inflight',
+            ...check
+          };
+          this.getPartitionInfo(check.SafetyCheck.PartitionId, check);
+        }
+      });
+    }
 
     this.setSafetyChecks();
   }
@@ -75,12 +75,10 @@ export class SafetyChecksComponent implements OnChanges, OnInit {
         app = await this.dataService.getSystemApp().toPromise();
       }else {
         app = await this.dataService.getApp(applicationName.Id).toPromise();
-
       }
 
       const route =  RoutesService.getPartitionViewPath(app.raw.TypeName, applicationName.Id,
         serviceName.Id, partition.PartitionInformation.Id);
-
 
       this.partitions[id] = {
         serviceName: serviceName.Id,

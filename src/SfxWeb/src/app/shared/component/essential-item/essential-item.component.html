@@ -9,7 +9,7 @@
                 {{item.displayText}}
             </span>
             <span *ngIf="item.displaySelector">
-                <!-- <ng-container *ngTemplateOutlet="item.ref"></ng-container> -->
+              <ng-content></ng-content>
             </span>
         </div>
     </div>

@@ -65,25 +65,27 @@ context('Cluster page', () => {
       cy.wait("@inprogres")
 
       cy.contains('Cluster Upgrade In Progress')
-      cy.get('[data-cy=currentud]').within(() => {
-        cy.contains('1 - Upgrading ').click();
 
-        cy.contains('guidID')
-        cy.contains('WaitForPrimarySwap')
-        cy.contains('Get Info').click();
+      cy.get('[data-cy=currentud]').within(() => {
+        cy.contains('Node : 1').click();
 
         cy.wait('@appinfo');
 
-        cy.contains('Application name : VisualObjectsApplicationType')
-        cy.contains('Minimum Replica Set Size : 2')
+        cy.contains('guidID')
+        cy.contains('WaitForPrimarySwap')
+        cy.contains('VisualObjectsApplicationType~VisualObjects.ActorService')
+      })
 
-        cy.get('[data-cy=cud]').within(() => {
-          cy.contains('4')
-        })
+      cy.get('[data-cy=upgrade-bar]').within(() => {
+        cy.contains('Upgrade Duration : 55:04 minutes')
+      })
+
+      cy.get('[data-cy=upgrade-bar-domain]').within(() => {
+        cy.contains('74 milliseconds')
       })
     })
 
-    it('upgrade completed', () => {
+    it.only('upgrade completed', () => {
       cy.visit('/#/details')
 
       cy.wait(FIXTURE_REF_UPGRADEPROGRESS)
@@ -250,9 +252,9 @@ context('Cluster page', () => {
         cy.contains(CLUSTER_TAB_NAME)
         cy.get('[text=Error]')
       })
-      
+
       cy.contains(FAILED_LOAD_TEXT);
-      checkTableErrorMessage(FAILED_TABLE_TEXT); 
+      checkTableErrorMessage(FAILED_TABLE_TEXT);
     })
   })
 

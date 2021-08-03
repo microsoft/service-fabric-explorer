@@ -14,8 +14,15 @@ export class UpgradeInfoComponent implements OnInit, OnChanges {
   essentialItems: IEssentialListItem[] = [];
   essentialItems2: IEssentialListItem[] = [];
 
+  startTimeEssentialItem: IEssentialListItem;
+
   helpText = '';
   link = 'https://docs.microsoft.com/azure/service-fabric/service-fabric-application-upgrade#rolling-upgrades-overview';
+
+  // When an upgrade is not in progress dont show a progress bar.
+  // this is to avoid confusion
+  upgradeDuration: IEssentialListItem;
+
   constructor() { }
   ngOnChanges(): void {
     this.essentialItems = [
@@ -38,23 +45,33 @@ export class UpgradeInfoComponent implements OnInit, OnChanges {
         descriptionName: 'Upgrade Mode',
         copyTextValue: this.clusterUpgradeProgress.raw.RollingUpgradeMode,
         displayText: this.clusterUpgradeProgress.raw.RollingUpgradeMode,
-      },
-      {
-        descriptionName: 'Start Timestamp UTC',
-        copyTextValue: this.clusterUpgradeProgress.startTimestampUtc,
-        displayText: this.clusterUpgradeProgress.startTimestampUtc,
-      },
+      }
     ];
 
-    this.essentialItems2 = [
-      {
-        descriptionName: 'Current Upgrade Domain',
-        copyTextValue: this.clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName,
-        displayText: this.clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName,
-      },
-    ];
+    this.startTimeEssentialItem = {
+      descriptionName: 'Start Timestamp UTC',
+      copyTextValue: this.clusterUpgradeProgress.startTimestampUtc,
+      displayText: this.clusterUpgradeProgress.startTimestampUtc,
+      displaySelector: true
+    };
 
-    this.helpText = 'Failure Action : ' + this.clusterUpgradeProgress.raw.UpgradeDescription.MonitoringPolicy.FailureAction;
+    if (this.clusterUpgradeProgress.isUpgrading) {
+      this.essentialItems2 = [
+        {
+          descriptionName: 'Current Upgrade Domain',
+          copyTextValue: this.clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName,
+          displayText: this.clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName,
+        },
+      ];
+
+      this.helpText = 'Failure Action : ' + this.clusterUpgradeProgress.raw.UpgradeDescription.MonitoringPolicy.FailureAction;
+    }else {
+      this.upgradeDuration = {
+        descriptionName: 'Duration',
+        copyTextValue: this.clusterUpgradeProgress.upgradeDuration,
+        displayText: this.clusterUpgradeProgress.upgradeDuration
+      };
+    }
   }
 
   ngOnInit(): void {
