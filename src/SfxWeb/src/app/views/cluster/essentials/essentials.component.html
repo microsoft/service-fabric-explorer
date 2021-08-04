@@ -1,5 +1,5 @@
 <div class="tile-container">
-  <app-essential-health-tile *ngIf="nodes.isInitialized && clusterUpgradeProgress.isInitialized" 
+  <app-essential-health-tile *ngIf="nodes.isInitialized && clusterUpgradeProgress.isInitialized"
   class="long" [listItems]="essentialItems">
   </app-essential-health-tile>
 
@@ -30,7 +30,7 @@
                 <h4>Cluster Upgrade In Progress</h4>
         </div>
         <div collapse-body>
-          <app-upgrade-info [clusterUpgradeProgress]="clusterUpgradeProgress"></app-upgrade-info>
+          <app-upgrade-info [upgradeProgress]="clusterUpgradeProgress"></app-upgrade-info>
         </div>
         <div closed-body>
           <app-upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></app-upgrade-progress>

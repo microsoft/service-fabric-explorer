@@ -8,9 +8,10 @@ import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NodeProgressComponent } from './node-progress/node-progress.component';
 import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
 import { LoadCellComponent } from './load-cell/load-cell.component';
+import { UpgradeInfoComponent } from './upgrade-info/upgrade-info.component';
 
 @NgModule({
-  declarations: [UpgradeDomainProgressComponent, UpgradeProgressComponent, SafetyChecksComponent, NodeProgressComponent, LoadCellComponent],
+  declarations: [UpgradeDomainProgressComponent, UpgradeProgressComponent, SafetyChecksComponent, NodeProgressComponent, LoadCellComponent, UpgradeInfoComponent],
   imports: [
     CommonModule,
     SharedModule,
@@ -22,6 +23,7 @@ import { LoadCellComponent } from './load-cell/load-cell.component';
     UpgradeProgressComponent,
     SafetyChecksComponent,
     NodeProgressComponent,
+    UpgradeInfoComponent
   ]
 })
 export class UpgradeProgressModule { }

@@ -53,7 +53,7 @@ context('Cluster page', () => {
 
   })
 
-  describe.only("details", () => {
+  describe("details", () => {
     beforeEach(() => {
       cy.intercept('GET', apiUrl('/Partitions/guidID?*'), { fixture: 'cluster-page/upgrade/get-partition-info.json' });
       cy.intercept('GET', apiUrl('/Partitions/guidID/$/GetServiceName?*'), { fixture: 'cluster-page/upgrade/get-service-name.json' });
