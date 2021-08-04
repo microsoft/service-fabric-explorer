@@ -60,11 +60,6 @@
   </app-collapse-container>
 </div>
 
-<!-- <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDescription">
-  <h4>Upgrade Parameters</h4>
-  <app-detail-view-part [data]="upgradeProgress.upgradeDescription"></app-detail-view-part>
-</div> -->
-
 <div class="detail-pane essen-pane" *ngIf="app && app.health" data-cy="health">
     <app-collapse-container sectionName="Unhealthy Evaluations">
         <div collapse-header>
