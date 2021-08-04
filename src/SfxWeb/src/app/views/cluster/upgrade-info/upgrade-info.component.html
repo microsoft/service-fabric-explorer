@@ -24,7 +24,7 @@
 
         <div class="duration" data-cy="upgrade-bar" *ngIf="clusterUpgradeProgress.isUpgrading">
           <app-display-duration topText="Upgrade Duration" [topInMilliseconds]="clusterUpgradeProgress.upgradeTime"
-            [bottomHelpText]="helpText" [bottomHelpTextLink]="link" bottomText="Time Left Until Failure"
+            [bottomHelpText]="helpText" [bottomHelpTextLink]="link" bottomText="Time Left Until Timeout"
             [bottomInMilliseconds]="clusterUpgradeProgress.getUpgradeTimeout()">
           </app-display-duration>
         </div>
@@ -38,7 +38,7 @@
         <div class="duration" data-cy="upgrade-bar-domain">
           <app-display-duration topText="Upgrade Domain Duration"
             [topInMilliseconds]="clusterUpgradeProgress.currentDomainTime" [bottomHelpText]="helpText"
-            [bottomHelpTextLink]="link" bottomText="Time Left Until Failure"
+            [bottomHelpTextLink]="link" bottomText="Time Left Until Timeout"
             [bottomInMilliseconds]="clusterUpgradeProgress.getUpgradeDomainTimeout()">
           </app-display-duration>
         </div>
