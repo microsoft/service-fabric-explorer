@@ -1,85 +1,56 @@
 <div class="detail-pane essen-pane">
-    <div class="essential-container">
-        <div class="essential-item">
-            <div class="essential-head">
-                Code Version
-            </div>
-            <div class="essential-body">
-                {{clusterUpgradeProgress.raw.CodeVersion}}
-            </div>
-        </div>
-        <div class="essential-item">
-            <div class="essential-head">
-                Config Version
-            </div>
-            <div class="essential-body">
-                {{clusterUpgradeProgress.raw.ConfigVersion}}
-            </div>
-        </div>
-        <div class="essential-item">
-            <div class="essential-head">
-                Upgrade State
-            </div>
-            <div class="essential-body">
-                {{clusterUpgradeProgress.raw.UpgradeState}}
-            </div>
-        </div>
-        <div class="essential-item">
-            <div class="essential-head">
-                Upgrade Mode
-            </div>
-            <div class="essential-body">
-                {{clusterUpgradeProgress.raw.RollingUpgradeMode}}
-            </div>
-        </div>
-        <div class="essential-item">
-            <div class="essential-head">
-                Start Timestamp Utc
-            </div>
-            <div class="essential-body">
-                <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
-            </div>
-        </div>
-        <div class="essential-item">
-            <div class="essential-head">
-                Upgrade Duration
-            </div>
-            <div class="essential-body">
-                <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
-            </div>
-        </div>
+  <div style="display: flex; width: 100%; flex-wrap: wrap; justify-content: space-around;">
+    <div class="domain-container" *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
+      <h5>Upgrade Domain Progress</h5>
+      <app-upgrade-progress style="align-self: center;" [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"
+        [showChart]="true">
+      </app-upgrade-progress>
     </div>
-</div>
 
-<div class="table-responsive">
-    <table class="essen-table" role="presentation">
-    </table>
-</div>
-<div *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
-    <h5 style="font-size: 16px;">Upgrade Domain Progress</h5>
-    <app-upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></app-upgrade-progress>
-</div>
+    <div class="spacer"></div>
 
-<div *ngIf="clusterUpgradeProgress.isUpgrading" data-cy="currentud">
-    <div class="essential-container">
-        <div class="essential-item" data-cy="cud">
-            <div class="essential-head">
-                Current Upgrade Domain
-            </div>
-            <div class="essential-body">
-                {{clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress.DomainName}}
-            </div>
+    <div class="overview-container">
+      <div>
+        <h5>Overview</h5>
+        <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="false">
+        </app-essential-item>
+
+        <app-essential-item [item]="startTimeEssentialItem" [underline]="false">
+          <app-display-time [time]="clusterUpgradeProgress.startTimestampUtc"></app-display-time>
+        </app-essential-item>
+
+        <app-essential-item [item]="upgradeDuration" *ngIf="!clusterUpgradeProgress.isUpgrading">
+        </app-essential-item>
+
+        <div class="duration" data-cy="upgrade-bar" *ngIf="clusterUpgradeProgress.isUpgrading">
+          <app-display-duration topText="Upgrade Duration" [topInMilliseconds]="clusterUpgradeProgress.upgradeTime"
+            [bottomHelpText]="helpText" [bottomHelpTextLink]="link" bottomText="Time Left Until Timeout"
+            [bottomInMilliseconds]="clusterUpgradeProgress.getUpgradeTimeout()">
+          </app-display-duration>
         </div>
-        <div class="essential-item">
-            <div class="essential-head">
-                Current Upgrade Domain Duration
-            </div>
-            <div class="essential-body">
-                {{clusterUpgradeProgress.upgradeDomainDuration}}
-            </div>
+      </div>
+
+      <div data-cy="cud" *ngIf="clusterUpgradeProgress.isUpgrading">
+        <h5>Current Domain</h5>
+        <app-essential-item *ngFor="let item of essentialItems2; let l = last" [item]="item" [underline]="false">
+        </app-essential-item>
+
+        <div class="duration" data-cy="upgrade-bar-domain">
+          <app-display-duration topText="Upgrade Domain Duration"
+            [topInMilliseconds]="clusterUpgradeProgress.currentDomainTime" [bottomHelpText]="helpText"
+            [bottomHelpTextLink]="link" bottomText="Time Left Until Timeout"
+            [bottomInMilliseconds]="clusterUpgradeProgress.getUpgradeDomainTimeout()">
+          </app-display-duration>
         </div>
+      </div>
     </div>
-    <h5 style="font-size: 15px; margin-top: 15px;">Nodes status</h5>
-    <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress">
-    </app-upgrade-domain-progress>
+
+    <div class="spacer"></div>
+
+    <div *ngIf="clusterUpgradeProgress.isUpgrading" data-cy="currentud" style="flex: 2; min-width: 500px;">
+      <h5 style="text-align: center;">Nodes status</h5>
+      <app-upgrade-domain-progress [upgradeDomain]="clusterUpgradeProgress.raw.CurrentUpgradeDomainProgress">
+      </app-upgrade-domain-progress>
+    </div>
+  </div>
 </div>

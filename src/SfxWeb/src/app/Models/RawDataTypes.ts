@@ -819,9 +819,11 @@ export interface IRawNodeUpgradeProgress {
     }
 
 export interface IRawSafetyCheckDescription {
+    SafetyCheck: {
         Kind: string;
         PartitionId: string;
-    }
+    };
+}
 
 export interface IRawApplicationEvent {
         PartitionKey: string;

@@ -32,6 +32,22 @@ export class TimeUtils {
         return date;
     }
 
+    public static getDurationMilliseconds(duration: any): number{
+
+        let momentDuration;
+        if (Number.isFinite(duration)) {
+            // Finite number in milliseconds
+            momentDuration = duration;
+        } else if (Utils.isNumeric(duration)) {
+            // Numeric representation in string
+            momentDuration = parseFloat(duration as string);
+        } else {
+            // ISO 8601 format string
+            momentDuration = Duration.fromISO(duration).as('milliseconds');
+        }
+        return momentDuration;
+    }
+
     /**
      * Format the input duration as ASP.NET time span format: "[days].[hours]:[minutes]:[seconds].[milliseconds].
      * If format is not numeric or ISO 8601, return as is.

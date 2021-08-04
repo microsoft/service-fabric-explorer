@@ -464,6 +464,14 @@ app-navbar {
     background-color: $azure-blue;
 }
 
+.yellow {
+  background-color: yellow;
+}
+
+.red {
+  background-color: red;
+}
+
 .dropdown-menu {
     background-color: black;
     border-radius: 0px;
@@ -847,6 +855,10 @@ app-navbar {
     font-size: 9pt;
 }
 
+.spacer {
+    width: 10px; height: 1px;
+}
+
 .essential-item {
     padding-right: 5px;
     text-align: left;
@@ -905,4 +917,59 @@ app-navbar {
 .flex-center {
     display: flex;
     align-items: center;
+}
+
+
+.underline {
+    border-bottom: 1px solid $table-border-color;
+}
+
+.centering-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.tile-item {
+    @extend .centering-row;
+    height: 35px;
+    position: relative;
+}
+
+.text-wrapper {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    .middle-text {
+        transition: .5s;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 800px;
+        float: left;
+    }
+
+    .left-text {
+        transition: .5s;
+        white-space: nowrap;
+        color: #c9c9c9;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+}
+
+.essential-list-item {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    &:hover {
+        .middle-text {
+            min-width: fit-content;
+            white-space: normal;
+        }
+
+        .left-text {
+            overflow: hidden;
+        }
+    }
+
 }
