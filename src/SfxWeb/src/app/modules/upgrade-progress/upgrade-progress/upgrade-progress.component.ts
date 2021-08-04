@@ -46,7 +46,7 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
             pie: {
                 borderWidth: 2,
                 innerSize: '50%',
-                borderColor:  '#262626' // null//"rgba(0, 0, 0, .5)"
+                borderColor:  '#262626'
             },
             series: {
               dataLabels: {
@@ -60,10 +60,16 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
               }
           }
         },
-
+        tooltip: {
+          formatter: (() => { const bind = this; return function(data) {
+            const ud = bind.upgradeDomains[this.point.index];
+            return `${this.key} <br> ${ud.stateName}`; };
+          })()
+        },
         series: [{
           data: dataSet
-        }]
+        }],
+
     } as Options);
     }
   }

@@ -26,20 +26,24 @@ export class PartitionCacheService {
 
   ensureInitialCache(check: IRawSafetyCheckDescription) {
     if (!this.checkCache(check.SafetyCheck.PartitionId)) {
-      console.log(this.partitions[check.SafetyCheck.PartitionId]);
+      console.log(check.SafetyCheck.PartitionId);
+
       this.partitions[check.SafetyCheck.PartitionId] = {
         loading: 'unstarted',
         ...check
       };
-    }
+  }
+
   }
 
   async getPartitionInfo(id: string, check: IRawSafetyCheckDescription) {
+    this.partitions[id].loading = 'inflight';
+
     try {
       const partition = await this.restClientService.getPartitionById(id).toPromise();
       const serviceName = await this.restClientService.getServiceNameInfo(id).toPromise();
       const applicationName = await this.restClientService.getApplicationNameInfo(serviceName.Id).toPromise();
-      console.log(serviceName, applicationName);
+
       let app;
       if (applicationName.Id === 'fabric:/System') {
         app = await this.dataService.getSystemApp().toPromise();
@@ -51,26 +55,23 @@ export class PartitionCacheService {
         serviceName.Id, partition.PartitionInformation.Id);
 
       this.partitions[id] = {
+        ...check,
         serviceName: serviceName.Id,
         applicationName: applicationName.Id,
         partition: partition.PartitionInformation.Id,
-        loading: 'loaded',
         link: route,
         applicationLink: RoutesService.getAppViewPath(app.raw.TypeName, applicationName.Id),
         serviceLink: RoutesService.getServiceViewPath(app.raw.TypeName, applicationName.Id, serviceName.Id),
-        ...check
+        loading: 'loaded',
       };
-      console.log(applicationName.Id);
 
-      console.log(this.partitions);
+      console.log(this.partitions[id]);
+
     } catch {
       this.messageService.showMessage('There was an issue getting partition info', MessageSeverity.Err);
       this.partitions[id] = {
-        serviceName: null,
-        applicationName: null,
-        partition: null,
+        ...check,
         loading: 'failed',
-        ...check
       };
     }
 

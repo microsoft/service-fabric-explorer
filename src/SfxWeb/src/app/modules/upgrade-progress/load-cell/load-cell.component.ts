@@ -17,7 +17,6 @@ export class LoadCellComponent implements OnInit {
   constructor(public cacheService: PartitionCacheService) { }
 
   ngOnInit() {
-
   }
 
   load() {

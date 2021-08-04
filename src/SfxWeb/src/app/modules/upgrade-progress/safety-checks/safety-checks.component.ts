@@ -15,9 +15,7 @@ export class SafetyChecksComponent implements OnChanges, OnInit {
   @Input() safetyChecks: IRawSafetyCheckDescription[];
 
   settings: ListSettings;
-
   safetyChecksWithData: IRawSafetyCheckDescription[] = [];
-
   tooManySafetyChecks = false;
 
   constructor(public partitionCache: PartitionCacheService,
@@ -32,7 +30,7 @@ export class SafetyChecksComponent implements OnChanges, OnInit {
         new ListColumnSettingForLink('SafetyCheck.PartitionId', 'Partition', (item) => item.link),
         new ListColumnSettingForLink('applicationName', 'Application', (item) => item.applicationLink),
         new ListColumnSettingForLink('serviceName', 'service', (item) => item.serviceLink),
-    ]);
+      ]);
 
     this.partitionCache.partitionDataChanges.subscribe(id => {
       this.setSafetyChecks();
@@ -41,20 +39,17 @@ export class SafetyChecksComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(): void {
-    console.log(this);
-
     this.tooManySafetyChecks = this.safetyChecks.length > 5;
 
     this.safetyChecks.forEach(check => {
+      if (check.SafetyCheck.PartitionId) {
         this.partitionCache.ensureInitialCache(check);
 
-        if (!this.tooManySafetyChecks) {
-          if (check.SafetyCheck.PartitionId && !this.partitionCache.checkCache(check.SafetyCheck.PartitionId)) {
-            this.getPartitionInfo(check.SafetyCheck.PartitionId, check);
-          }
+        if (!this.tooManySafetyChecks && this.partitionCache.partitions[check.SafetyCheck.PartitionId].loading === 'unstarted') {
+          this.getPartitionInfo(check.SafetyCheck.PartitionId, check);
         }
-      });
-
+      }
+    });
 
     this.setSafetyChecks();
   }
@@ -72,11 +67,10 @@ export class SafetyChecksComponent implements OnChanges, OnInit {
   }
 
   setSafetyChecks() {
-    console.log(this);
     this.safetyChecksWithData = this.safetyChecks.map(check => {
       if (check.SafetyCheck.PartitionId) {
         return this.partitionCache.partitions[check.SafetyCheck.PartitionId];
-      }else{
+      } else {
         return check;
       }
     });

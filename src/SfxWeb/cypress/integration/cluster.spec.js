@@ -10,6 +10,8 @@ const EVENT_TABS='[data-cy=eventtabs]'
 const OPTION_PICKER='[data-cy=option-picker]'
 const SELECT_EVENT_TYPES='[sectionName=select-event-types]'
 
+const serviceName = "VisualObjectsApplicationType~VisualObjects.ActorService";
+
 context('Cluster page', () => {
 
   beforeEach(() => {
@@ -51,14 +53,15 @@ context('Cluster page', () => {
 
   })
 
-  describe("details", () => {
-
-    it('upgrade in progress', () => {
-      cy.intercept('GET', upgradeProgress_route, { fixture: 'upgrade-in-progress.json' }).as("inprogres");
-
+  describe.only("details", () => {
+    beforeEach(() => {
       cy.intercept('GET', apiUrl('/Partitions/guidID?*'), { fixture: 'cluster-page/upgrade/get-partition-info.json' });
       cy.intercept('GET', apiUrl('/Partitions/guidID/$/GetServiceName?*'), { fixture: 'cluster-page/upgrade/get-service-name.json' });
       cy.intercept('GET', apiUrl('/Services/VisualObjectsApplicationType~VisualObjects.ActorService/$/GetApplicationName?*'), { fixture: 'cluster-page/upgrade/get-application-info.json' }).as('appinfo');
+    })
+
+    it('upgrade in progress', () => {
+      cy.intercept('GET', upgradeProgress_route, { fixture: 'upgrade-in-progress.json' }).as("inprogres");
 
       cy.visit('/#/details')
 
@@ -73,7 +76,7 @@ context('Cluster page', () => {
 
         cy.contains('guidID')
         cy.contains('WaitForPrimarySwap')
-        cy.contains('VisualObjectsApplicationType~VisualObjects.ActorService')
+        cy.contains(serviceName)
       })
 
       cy.get('[data-cy=upgrade-bar]').within(() => {
@@ -85,7 +88,30 @@ context('Cluster page', () => {
       })
     })
 
-    it.only('upgrade completed', () => {
+    it('upgrade in progress - no auto load safety checks', () => {
+      cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/upgrade-in-progress-many-safety-checks.json' }).as("inprogres");
+
+      cy.visit('/#/details')
+
+      cy.wait("@inprogres")
+
+      cy.get('[data-cy=currentud]').within(() => {
+        cy.contains('Node : 1').click();
+
+        cy.contains('guidID')
+        cy.contains('WaitForPrimarySwap')
+        cy.contains(serviceName).should('not.exist');
+
+        checkTableSize(7);
+
+        cy.contains('Load').click();
+        cy.wait('@appinfo');
+        cy.contains(serviceName)
+
+      })
+    })
+
+    it('upgrade completed', () => {
       cy.visit('/#/details')
 
       cy.wait(FIXTURE_REF_UPGRADEPROGRESS)
