@@ -44,7 +44,7 @@ context('app', () => {
             })
         })
 
-        it.only('upgrade in progress', () => {
+        it('upgrade in progress', () => {
           addRoute("upgradeProgress", "app-page/upgrade-in-progress.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
 
           cy.visit(`/#/apptype/${appName}/app/${appName}`)
