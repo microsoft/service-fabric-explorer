@@ -82,7 +82,7 @@ export interface IPartitionData extends IRawSafetyCheckDescription {
   serviceName?: string;
   applicationName?: string;
   partition?: string;
-  loading: string;
+  loading: 'loaded' | 'inflight' | 'failed' | 'unstarted';
   link?: string;
   applicationLink?: string;
   serviceLink?: string;

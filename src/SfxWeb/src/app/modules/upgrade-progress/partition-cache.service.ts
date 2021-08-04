@@ -26,8 +26,6 @@ export class PartitionCacheService {
 
   ensureInitialCache(check: IRawSafetyCheckDescription) {
     if (!this.checkCache(check.SafetyCheck.PartitionId)) {
-      console.log(check.SafetyCheck.PartitionId);
-
       this.partitions[check.SafetyCheck.PartitionId] = {
         loading: 'unstarted',
         ...check
@@ -64,8 +62,6 @@ export class PartitionCacheService {
         serviceLink: RoutesService.getServiceViewPath(app.raw.TypeName, applicationName.Id, serviceName.Id),
         loading: 'loaded',
       };
-
-      console.log(this.partitions[id]);
 
     } catch {
       this.messageService.showMessage('There was an issue getting partition info', MessageSeverity.Err);

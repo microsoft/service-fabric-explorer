@@ -13,7 +13,6 @@ export class LoadCellComponent implements OnInit {
   item: IPartitionData;
   listSetting: ListColumnSetting;
 
-  showLoad;
   constructor(public cacheService: PartitionCacheService) { }
 
   ngOnInit() {
