@@ -7,9 +7,10 @@ import { SafetyChecksComponent } from './safety-checks/safety-checks.component';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { NodeProgressComponent } from './node-progress/node-progress.component';
 import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
+import { LoadCellComponent } from './load-cell/load-cell.component';
 
 @NgModule({
-  declarations: [UpgradeDomainProgressComponent, UpgradeProgressComponent, SafetyChecksComponent, NodeProgressComponent],
+  declarations: [UpgradeDomainProgressComponent, UpgradeProgressComponent, SafetyChecksComponent, NodeProgressComponent, LoadCellComponent],
   imports: [
     CommonModule,
     SharedModule,

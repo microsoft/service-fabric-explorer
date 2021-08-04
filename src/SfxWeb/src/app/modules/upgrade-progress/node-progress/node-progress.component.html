@@ -1,4 +1,4 @@
-<div style="font-size: 15px; padding: 5px; display: flex; align-items: center; justify-content: space-between;">
+<div class="flex-center" style="font-size: 15px; padding: 5px; justify-content: space-between;">
   <span>
     Node : {{node.NodeName}}
   </span>
@@ -7,7 +7,7 @@
   </span>
 </div>
 
-<div style="display: flex; margin-left: 10px; align-items: center; margin-bottom: 5px;">
+<div class="flex-center" style="margin-left: 10px; margin-bottom: 5px;">
   Phase :
   <ng-container  *ngFor="let phase of progress; let l = last;" >
     <div class="progress-item" [ngClass]="cssClass[phase.state]">
