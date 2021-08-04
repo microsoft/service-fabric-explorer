@@ -6,9 +6,6 @@
         [showChart]="true">
       </app-upgrade-progress>
     </div>
-
-    <div class="spacer"></div>
-
     <div class="overview-container">
       <div>
         <h5>Overview</h5>
@@ -19,7 +16,7 @@
           <app-display-time [time]="upgradeProgress.startTimestampUtc"></app-display-time>
         </app-essential-item>
 
-        <app-essential-item [item]="upgradeDuration" *ngIf="!upgradeProgress.isUpgrading">
+        <app-essential-item [item]="upgradeDuration" *ngIf="!upgradeProgress.isUpgrading && upgradeDuration">
         </app-essential-item>
 
         <div class="duration" data-cy="upgrade-bar" *ngIf="upgradeProgress.isUpgrading">
@@ -45,9 +42,7 @@
       </div>
     </div>
 
-    <div class="spacer"></div>
-
-    <div *ngIf="upgradeProgress.isUpgrading" data-cy="currentud" style="flex: 2; min-width: 500px;">
+    <div *ngIf="upgradeProgress.isUpgrading && upgradeProgress?.raw?.CurrentUpgradeDomainProgress?.NodeUpgradeProgressList.length > 0" data-cy="currentud" style="flex: 2; min-width: 500px;">
       <h5 style="text-align: center;">Nodes status</h5>
       <app-upgrade-domain-progress [upgradeDomain]="upgradeProgress.raw.CurrentUpgradeDomainProgress">
       </app-upgrade-domain-progress>

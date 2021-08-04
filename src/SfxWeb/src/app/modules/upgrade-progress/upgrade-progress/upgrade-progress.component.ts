@@ -30,7 +30,7 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
         chart: {
             type: 'pie',
             width: 350,
-            height: 350,
+            height: 300,
             backgroundColor: null,
             borderRadius: 0
         },
@@ -76,7 +76,7 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
 
   getDataSet(): PointOptionsObject[] {
     const colors = {
-      'badge-unknown': '#7FBA00',
+      'badge-unknown': 'gray',
       'badge-ok': '#088105',
       'badge-warning': '#0075c9'
     };

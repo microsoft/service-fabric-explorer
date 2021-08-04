@@ -19,8 +19,8 @@
 <div data-cy="upgradeDetails" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container [sectionName]="app.isUpgrading ? 'Upgrade In Progress' : 'Latest Upgrade State'">
         <div collapse-header>
-            <h4 *ngIf="app.isUpgrading">Upgrade In Progress</h4>
-            <h4 *ngIf="!app.isUpgrading">Latest Upgrade State</h4>
+            <h4 *ngIf="upgradeProgress.isUpgrading">Upgrade In Progress</h4>
+            <h4 *ngIf="!upgradeProgress.isUpgrading">Latest Upgrade State</h4>
         </div>
         <div collapse-body>
           <app-upgrade-info [upgradeProgress]="upgradeProgress"></app-upgrade-info>
@@ -47,14 +47,23 @@
                 <h4>Unhealthy Evaluations (Upgrade)</h4>
                 <app-detail-list [list]="upgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
             </div>
-
-            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDescription">
-                <h4>Upgrade Parameters</h4>
-                <app-detail-view-part [data]="upgradeProgress.upgradeDescription"></app-detail-view-part>
-            </div>
         </div>
     </app-collapse-container>
 </div>
+
+<div class="detail-pane essen-pane" *ngIf="upgradeProgress?.upgradeDescription">
+  <app-collapse-container sectionName="Upgrade Description" collapsed="true">
+      <h4 collapse-header>Upgrade Parameters</h4>
+      <div class="detail-pane"  collapse-body>
+        <app-detail-view-part [data]="upgradeProgress.upgradeDescription"></app-detail-view-part>
+      </div>
+  </app-collapse-container>
+</div>
+
+<!-- <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDescription">
+  <h4>Upgrade Parameters</h4>
+  <app-detail-view-part [data]="upgradeProgress.upgradeDescription"></app-detail-view-part>
+</div> -->
 
 <div class="detail-pane essen-pane" *ngIf="app && app.health" data-cy="health">
     <app-collapse-container sectionName="Unhealthy Evaluations">
