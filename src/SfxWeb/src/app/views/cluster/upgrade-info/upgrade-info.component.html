@@ -1,18 +1,17 @@
 <div class="detail-pane essen-pane">
-  <div style="display: flex; width: 100%; flex-wrap: wrap;">
-    <div style="flex: 1; max-width: 350px; display:flex; flex-direction: column"
-      *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
-      <h5 style="margin-bottom: 0px;
-            text-align: center;">Upgrade Domain Progress</h5>
+  <div style="display: flex; width: 100%; flex-wrap: wrap; justify-content: space-around;">
+    <div class="domain-container" *ngIf="clusterUpgradeProgress.upgradeDomains.length > 0">
+      <h5>Upgrade Domain Progress</h5>
       <app-upgrade-progress style="align-self: center;" [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"
         [showChart]="true">
       </app-upgrade-progress>
     </div>
 
     <div class="spacer"></div>
-    <div style="flex: 1; min-width: 400px; width: 400px;">
+
+    <div class="overview-container">
       <div>
-        <h5 style="margin-bottom: 0px; text-align: center;">Overview</h5>
+        <h5>Overview</h5>
         <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="false">
         </app-essential-item>
 
@@ -32,8 +31,7 @@
       </div>
 
       <div data-cy="cud" *ngIf="clusterUpgradeProgress.isUpgrading">
-        <h5 style="margin-bottom: 0px;
-                text-align: center; margin-top: 15px;">Current Domain</h5>
+        <h5>Current Domain</h5>
         <app-essential-item *ngFor="let item of essentialItems2; let l = last" [item]="item" [underline]="false">
         </app-essential-item>
 
@@ -46,6 +44,7 @@
         </div>
       </div>
     </div>
+
     <div class="spacer"></div>
 
     <div *ngIf="clusterUpgradeProgress.isUpgrading" data-cy="currentud" style="flex: 2; min-width: 500px;">

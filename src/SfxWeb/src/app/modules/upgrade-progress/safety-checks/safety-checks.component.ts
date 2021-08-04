@@ -1,22 +1,25 @@
-import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges, OnInit } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, ChangeDetectorRef, OnChanges, SimpleChanges, OnInit, OnDestroy } from '@angular/core';
 import { IRawSafetyCheckDescription } from 'src/app/Models/RawDataTypes';
 import { SettingsService } from 'src/app/services/settings.service';
 import { ListColumnSetting, ListColumnSettingForLink, ListColumnSettingWithCustomComponent, ListSettings } from 'src/app/Models/ListSettings';
 import { PartitionCacheService } from '../partition-cache.service';
 import { LoadCellComponent } from '../load-cell/load-cell.component';
+import { Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-safety-checks',
   templateUrl: './safety-checks.component.html',
   styleUrls: ['./safety-checks.component.scss']
 })
-export class SafetyChecksComponent implements OnChanges, OnInit {
+export class SafetyChecksComponent implements OnChanges, OnInit, OnDestroy {
 
   @Input() safetyChecks: IRawSafetyCheckDescription[];
 
   settings: ListSettings;
   safetyChecksWithData: IRawSafetyCheckDescription[] = [];
   tooManySafetyChecks = false;
+
+  sub: Subscription = new Subscription();
 
   constructor(public partitionCache: PartitionCacheService,
               private cdr: ChangeDetectorRef,
@@ -32,10 +35,14 @@ export class SafetyChecksComponent implements OnChanges, OnInit {
         new ListColumnSettingForLink('serviceName', 'service', (item) => item.serviceLink),
       ]);
 
-    this.partitionCache.partitionDataChanges.subscribe(id => {
+    this.sub.add(this.partitionCache.partitionDataChanges.subscribe(id => {
       this.setSafetyChecks();
       this.cdr.detectChanges();
-    });
+    }));
+  }
+
+  ngOnDestroy() {
+    this.sub.unsubscribe();
   }
 
   ngOnChanges(): void {
