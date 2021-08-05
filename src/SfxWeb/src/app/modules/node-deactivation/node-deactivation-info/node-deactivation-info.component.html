@@ -3,7 +3,7 @@
     <h5 class="underline title">
       Deactivation Status
   </h5>
-    <app-phase-diagram [items]="progress" [currentIndex]="index"></app-phase-diagram>
+    <app-phase-diagram [items]="progress" [currentIndex]="index" [vertical]="true"></app-phase-diagram>
   </div>
 
   <div *ngIf="deactivationInfo.NodeDeactivationTask.length > 0" style="flex-grow: 1;

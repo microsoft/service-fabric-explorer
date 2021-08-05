@@ -8,11 +8,11 @@ import { Component, Input, OnChanges, OnInit } from '@angular/core';
 export class PhaseDiagramComponent implements OnChanges {
 
   @Input() items: IProgressStatus[];
-  @Input() currentIndex: number = 0;
-  @Input() vertical = true  ;
+  @Input() currentIndex = 0;
+  @Input() vertical = false;
 
   public progress: IProgressStatusWithIndex[] = [];
-  public wrapperClass = "";
+  public wrapperClass = '';
 
   // The following maps use
   // -1 - done
@@ -37,8 +37,8 @@ export class PhaseDiagramComponent implements OnChanges {
       return  {
         name: phase.name,
         state: this.getPhaseReference(this.currentIndex, index + 1)
-      }
-    })
+      };
+    });
 
     this.wrapperClass = this.vertical ? 'vertical' : '';
   }
