@@ -1,5 +1,6 @@
 import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { IRawNodeUpgradeProgress } from 'src/app/Models/RawDataTypes';
+import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-diagram.component';
 
 
 // PreUpgradeSafetyCheck - The upgrade has not started yet due to pending safety checks. The value is 1
@@ -16,21 +17,7 @@ export class NodeProgressComponent implements OnChanges {
   @Input()node: IRawNodeUpgradeProgress;
 
   public progress: IProgressStatus[] = [];
-
-  // The following maps use
-  // -1 - done
-  // 0 - inprogress
-  // 1 - not started
-  public iconMap = {
-    '-1': 'mif-checkmark',
-    0: 'mif-spinner4 rotate',
-  };
-
-  public cssClass = {
-    '-1': 'done',
-    0: 'in-progress',
-    1: 'pending'
-  };
+  public index = -1;
 
   constructor() { }
 
@@ -41,38 +28,24 @@ export class NodeProgressComponent implements OnChanges {
       PostUpgradeSafetyCheck: 3
     };
 
-    const index = phaseMap[this.node.UpgradePhase];
+    this.index = phaseMap[this.node.UpgradePhase];
+
+    //given the upgrading and post upgrade safety check phases refer to completed state
+    //set the index 1 further to consider them completed effectively
+    if(this.index > 1) {
+      this.index ++;
+    }
 
     this.progress = [
       {
         name: 'PreUpgrade SafetyCheck',
-        state: this.getPhaseReference(index, 1)
       },
       {
         name: 'Upgrading',
-        state: this.getPhaseReference(index, 2)
       },
       {
         name: 'PostUpgrade SafetyCheck',
-        state: this.getPhaseReference(index, 3)
       }
     ];
   }
-
-  getPhaseReference(index: number, currentPhase: number) {
-    const diff = currentPhase - index;
-    if (diff >= 1) {
-      return 1;
-    }else if (diff <= -1) {
-      return -1;
-    }else{
-      return 0;
-    }
-  }
-
-}
-
-interface IProgressStatus {
-  name: string;
-  state: number;
 }

@@ -9,12 +9,5 @@
 
 <div class="flex-center" style="margin-left: 10px; margin-bottom: 5px;">
   Phase :
-  <ng-container  *ngFor="let phase of progress; let l = last;" >
-    <div class="progress-item" [ngClass]="cssClass[phase.state]">
-      <div class="text-description" >{{phase.name}}
-      </div>
-      <span [ngClass]="iconMap[phase.state]"></span>
-    </div>
-    <div class="mif-arrow-right" *ngIf="!l"></div>
-  </ng-container>
+  <app-phase-diagram [items]="progress" [currentIndex]="index"></app-phase-diagram>
 </div>

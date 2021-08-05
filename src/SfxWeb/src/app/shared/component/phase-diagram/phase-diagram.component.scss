@@ -7,6 +7,7 @@
   margin-left: 5px;
   margin-right: 5px;
   text-align: center;
+  justify-content: space-between;
 
   .text-description {
     margin-right: 5px;
@@ -33,10 +34,20 @@
   border-color: green;
 }
 
+.arrow {
 
-.title {
-  text-align: center;
-    font-size: 16px;
-    margin-bottom: 10px; font-weight: initial;
-    padding-bottom: 10px;;
+}
+
+.vertical {
+  flex-direction: column;
+  align-items: stretch;
+
+  .progress {
+    flex: 1;
+  }
+
+  .arrow {
+    align-self: center;
+    transform: rotate(90deg);
+  }
 }
