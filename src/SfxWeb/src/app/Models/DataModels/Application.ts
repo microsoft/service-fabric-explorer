@@ -4,7 +4,7 @@ import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { ServiceTypeCollection, ApplicationBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IApplicationHealthStateFilter } from '../HealthChunkRawDataTypes';
-import { AppStatusConstants, Constants, HealthStateConstants, UpgradeDomainStateNames } from 'src/app/Common/Constants';
+import { AppStatusConstants, ClusterUpgradeStates, Constants, HealthStateConstants, UpgradeDomainStateNames, UpgradeDomainStateRegexes } from 'src/app/Common/Constants';
 import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
 import { HealthBase } from './HealthEvent';
@@ -291,6 +291,27 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
 
     public get upgradeDomainDuration(): string {
         return TimeUtils.getDuration(this.raw.UpgradeDomainDurationInMilliseconds);
+    }
+
+
+    public get isUpgrading() {
+      return UpgradeDomainStateRegexes.InProgress.test(this.raw.UpgradeState) || this.raw.UpgradeState === ClusterUpgradeStates.RollingForwardPending;
+    }
+
+    public getUpgradeDomainTimeout(): number {
+      return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDescription.MonitoringPolicy.UpgradeDomainTimeoutInMilliseconds);
+    }
+
+    public get currentDomainTime(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDomainDurationInMilliseconds);
+    }
+
+    public getUpgradeTimeout(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDescription.MonitoringPolicy.UpgradeTimeoutInMilliseconds);
+    }
+
+    public get upgradeTime(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDurationInMilliseconds);
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplicationUpgradeProgress> {

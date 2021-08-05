@@ -25,13 +25,12 @@ import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-resto
 import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
 import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.component';
 import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-deactivation.module';
-import { UpgradeInfoComponent } from './upgrade-info/upgrade-info.component';
 import { RepairJobChartComponent } from './repair-job-chart/repair-job-chart.component';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
                  ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent,
-                 StatusWarningsComponent, BackupsComponent, RepairTasksComponent, RepairTaskViewComponent, UpgradeInfoComponent, RepairJobChartComponent],
+                 StatusWarningsComponent, BackupsComponent, RepairTasksComponent, RepairTaskViewComponent, RepairJobChartComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,

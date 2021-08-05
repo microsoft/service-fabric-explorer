@@ -1,5 +1,5 @@
 <div class="tile-container">
-    <app-essential-health-tile [healthState]="app?.healthState" *ngIf="app && app.isInitialized" 
+    <app-essential-health-tile [healthState]="app?.healthState" *ngIf="app && app.isInitialized"
     class="long" [listItems]="essentialItems">
         <ng-template appEssentialTemplate id="typename">
             <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName">
@@ -19,42 +19,11 @@
 <div data-cy="upgradeDetails" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container [sectionName]="app.isUpgrading ? 'Upgrade In Progress' : 'Latest Upgrade State'">
         <div collapse-header>
-            <h4 *ngIf="app.isUpgrading">Upgrade In Progress</h4>
-            <h4 *ngIf="!app.isUpgrading">Latest Upgrade State</h4>
+            <h4 *ngIf="upgradeProgress.isUpgrading">Upgrade In Progress</h4>
+            <h4 *ngIf="!upgradeProgress.isUpgrading">Latest Upgrade State</h4>
         </div>
         <div collapse-body>
-            <div class="table-responsive">
-                <table class="table detail-list">
-                    <thead>
-                        <tr>
-                            <th>Target Version</th>
-                            <th>Start Timestamp UTC</th>
-                            <th title="Upgrade Duration">Upgrade Duration</th>
-                            <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>
-                            <th>Upgrade Mode</th>
-                            <th>Upgrade State</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td title="{{upgradeProgress.raw.TargetApplicationTypeVersion}}">{{upgradeProgress.raw.TargetApplicationTypeVersion}}</td>
-                            <td>
-                              <app-display-time [time]="upgradeProgress.startTimestampUtc"></app-display-time>
-                            </td>
-                            <td>{{upgradeProgress.upgradeDuration}}</td>
-                            <td>{{upgradeProgress.upgradeDomainDuration}}</td>
-                            <td>{{upgradeProgress.raw.RollingUpgradeMode}}</td>
-                            <td>{{upgradeProgress.raw.UpgradeState}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDomains.length > 0">
-                <h4>Progress by Upgrade Domain</h4>
-                <app-upgrade-progress [upgradeDomains]="upgradeProgress.upgradeDomains"></app-upgrade-progress>
-            </div>
-
+          <app-upgrade-info [upgradeProgress]="upgradeProgress"></app-upgrade-info>
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.raw.FailureReason !== 'None'">
                 <h4>Upgrade Failure</h4>
                 <div class="table-responsive">
@@ -78,13 +47,17 @@
                 <h4>Unhealthy Evaluations (Upgrade)</h4>
                 <app-detail-list [list]="upgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
             </div>
-
-            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDescription">
-                <h4>Upgrade Parameters</h4>
-                <app-detail-view-part [data]="upgradeProgress.upgradeDescription"></app-detail-view-part>
-            </div>
         </div>
     </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="upgradeProgress?.upgradeDescription">
+  <app-collapse-container sectionName="Upgrade Description" collapsed="true">
+      <h4 collapse-header>Upgrade Parameters</h4>
+      <div class="detail-pane"  collapse-body>
+        <app-detail-view-part [data]="upgradeProgress.upgradeDescription"></app-detail-view-part>
+      </div>
+  </app-collapse-container>
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="app && app.health" data-cy="health">

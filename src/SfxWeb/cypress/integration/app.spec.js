@@ -7,18 +7,18 @@ const waitRequest = "@getapp";
 context('app', () => {
     beforeEach(() => {
         addDefaultFixtures();
-
         addRoute("upgradeProgress", "app-page/upgrade-progress.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
         addRoute("services", "app-page/services.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
         addRoute("apphealth", "app-page/app-health.json", apiUrl(`/Applications/${appName}/$/GetHealth?*`))
         addRoute("app", "app-page/app-type.json", apiUrl(`/Applications/${appName}/?*`))
         addRoute("manifest", "app-page/manifest.json", apiUrl(`/Applications/${appName}/$/GetApplicationManifest?*`))
         addRoute("serviceTypes", "app-page/service-types.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`))
-        cy.visit(`/#/apptype/${appName}/app/${appName}`)
     })
 
     describe("essentials", () => {
         it('load essentials', () => {
+          cy.visit(`/#/apptype/${appName}/app/${appName}`)
+
             cy.wait(waitRequest);
             cy.get('[data-cy=header').within(() => {
                 cy.contains(appName).click();
@@ -44,10 +44,30 @@ context('app', () => {
             })
         })
 
+        it('upgrade in progress', () => {
+          addRoute("upgradeProgress", "app-page/upgrade-in-progress.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
+
+          cy.visit(`/#/apptype/${appName}/app/${appName}`)
+
+          cy.get('[data-cy=upgradeDetails]').within(() => {
+              cy.contains("Upgrade In Progress")
+
+              cy.get('[data-cy=upgrade-bar]').within(() => {
+                cy.contains('Upgrade Duration : 81 milliseconds')
+              })
+
+              cy.get('[data-cy=upgrade-bar-domain]').within(() => {
+                cy.contains('81 milliseconds')
+              })
+          })
+      })
+
     })
 
     describe("details", () => {
         it('view details', () => {
+          cy.visit(`/#/apptype/${appName}/app/${appName}`)
+
             cy.wait([waitRequest, "@getapphealth"]);
 
             cy.get('[data-cy=navtabs]').within(() => {
@@ -60,6 +80,8 @@ context('app', () => {
 
     describe("deployments", () => {
         it('view deployments', () => {
+          cy.visit(`/#/apptype/${appName}/app/${appName}`)
+
             cy.wait([waitRequest, "@getapphealth"]);
 
             cy.get('[data-cy=navtabs]').within(() => {
@@ -72,6 +94,8 @@ context('app', () => {
 
     describe("manifest", () => {
         it('view manifest', () => {
+          cy.visit(`/#/apptype/${appName}/app/${appName}`)
+
             cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
             addRoute("appManifest", "app-page/app-manifest.json", apiUrl(`/ApplicationTypes/${appName}/$/GetApplicationManifest?*`))
 
@@ -86,6 +110,8 @@ context('app', () => {
 
     describe("backups", () => {
         it('view backup', () => {
+          cy.visit(`/#/apptype/${appName}/app/${appName}`)
+
             cy.intercept(apiUrl(`/Applications/${appName}/$/GetBackupConfigurationInfo?*`)).as('backup');
             cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
 
@@ -102,6 +128,7 @@ context('app', () => {
     describe("events", () => {
         it('view events', () => {
             addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Applications/${appName}/$/Events?*`))
+            cy.visit(`/#/apptype/${appName}/app/${appName}`)
 
             cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
 
