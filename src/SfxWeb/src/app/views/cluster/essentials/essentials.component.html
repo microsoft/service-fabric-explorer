@@ -23,8 +23,8 @@
     </app-dashboard-text-tile>
 </div>
 
-<div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px;">
-  <div data-cy="upgradeDetails" *ngIf="clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading" class="detail-pane essen-pane" style="flex: 1; min-width: 600px;">
+<div style="display: flex; flex-direction: row; flex-wrap: wrap; gap: 15px; " class="detail-pane">
+  <div data-cy="upgradeDetails" *ngIf="clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading" class="essen-pane" style="flex: 1; min-width: 600px;">
     <app-collapse-container sectionName="Upgrade Status" collapsed="true">
         <div collapse-header>
                 <h4>Cluster Upgrade In Progress</h4>
@@ -38,7 +38,7 @@
       </app-collapse-container>
 </div>
 
-<div class="detail-pane essen-pane" *ngIf="nodes.isInitialized && nodes.disabledAndDisablingNodes.length > 0"  style="flex: 1; min-width: 600px;">
+<div class="essen-pane" *ngIf="nodes.isInitialized && nodes.disabledAndDisablingNodes.length > 0"  style="flex: 1; min-width: 600px;">
   <app-collapse-container [sectionName]="'Nodes Deactivation'" collapsed="true">
   <div collapse-header>
     <h4>
@@ -58,7 +58,7 @@
         </div>
         <div collapse-body class="table-responsive" style="padding: 5px;">
           <a [routerLink]="node.viewPath">View Node</a>
-          <app-node-deactivation-info [node]="node"></app-node-deactivation-info>
+          <app-node-deactivation-info [deactivationInfo]="node.raw.NodeDeactivationInfo"></app-node-deactivation-info>
         </div>
       </app-collapse-container>
     </div>
