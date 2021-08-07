@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
-import { map } from 'rxjs/operators';
-import { Observable, forkJoin } from 'rxjs';
+import { map, mergeMap } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { ListSettings, ListColumnSetting, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter } from 'src/app/Models/ListSettings';
@@ -25,12 +25,17 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   essentialItems: IEssentialListItem[] = [];
   ringInfo: IEssentialListItem[] = [];
 
+  repairJobs = [];
+  repairJobSettings: ListSettings;
+
+
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
   setup() {
     this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
+    this.repairJobSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
 
     this.listSettings = this.settings.getNewOrExistingListSettings('apps', ['name'], [
       new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
@@ -41,6 +46,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
 
     this.essentialItems = [];
     this.ringInfo = [];
+    this.repairJobs = [];
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
@@ -94,7 +100,18 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       this.node.loadInformation.refresh(messageHandler),
       this.node.deployedApps.refresh(messageHandler).pipe(map(() => {
         this.deployedApps = this.node.deployedApps;
+      })),
+      this.data.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
+        if(this.data.clusterManifest.isRepairManagerEnabled) {
+          return this.data.repairCollection.refresh().pipe(map(() => {
+            console.log(this.data.repairCollection.getRepairJobsForANode(this.node.name))
+            this.repairJobs = this.data.repairCollection.getRepairJobsForANode(this.node.name);
+          }))
+        }else {
+          return of(null);
+        }
       }))
+
     ]);
   }
 }

@@ -1,6 +1,6 @@
 <div style="white-space: nowrap;">
     <span *ngIf="!cache[item.id]">
-        {{displayValue}}
+      {{displayValue}}
     </span>
     <span *ngIf="overflow">
         <span *ngIf="!cache[item.id]" class="link" (click)="flipState()">

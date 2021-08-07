@@ -43,6 +43,18 @@
     </app-collapse-container>
   </div>
 
+  <div class="detail-pane essen-pane" *ngIf="repairJobs.length > 0">
+    <app-collapse-container sectionName="Unhealthy Evaluations">
+      <div collapse-header>
+        <h4>Repair jobs</h4>
+      </div>
+      <div collapse-body>
+        <app-detail-list *ngIf="node" [list]="repairJobs"
+          [listSettings]="repairJobSettings"></app-detail-list>
+      </div>
+    </app-collapse-container>
+  </div>
+
   <div class="detail-pane essen-pane">
     <app-collapse-container sectionName="Unhealthy Evaluations">
       <div collapse-header>
