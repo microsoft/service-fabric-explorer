@@ -103,7 +103,7 @@ context('node page', () => {
           cy.wait("@getrepairs");
 
           cy.get('[data-cy=repair-jobs]').within(() => {
-              cy.contains("86fa6852ad467a903afbbc67edc16b66");
+              cy.contains("Azure/TenantUpdate/441efe72-c74d-4cfa-84df-515b44c89060/4/1555");
           })
       })
 
