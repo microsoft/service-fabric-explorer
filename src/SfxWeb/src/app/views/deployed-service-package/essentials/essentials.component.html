@@ -10,7 +10,7 @@
     </div>
 
     <div class="detail-pane essen-pane" *ngIf="servicePackage.health">
-        <h4>Unhealthy Evaluations</h4>
-        <app-detail-list [list]="servicePackage.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
+        <h4>Health Evaluations</h4>
+        <app-health-viewer  [healthyEvaluations]="servicePackage.health.healthEvents" [unhealthyEvaluations]="servicePackage.health.unhealthyEvaluations" ></app-health-viewer>
     </div>
 </div>

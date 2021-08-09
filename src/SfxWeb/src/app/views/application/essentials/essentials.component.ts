@@ -6,7 +6,6 @@ import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSe
 import { SettingsService } from 'src/app/services/settings.service';
 import { forkJoin, of, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ClusterManifest } from 'src/app/Models/DataModels/Cluster';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { ListColumnSettingForApplicationServiceRow } from '../action-row/action-row.component';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
@@ -21,7 +20,6 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
   upgradeProgress: ApplicationUpgradeProgress;
   listSettings: ListSettings;
-  unhealthyEvaluationsListSettings: ListSettings;
   upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
   serviceTypesListSettings: ListSettings;
 
@@ -51,7 +49,6 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
         new ListColumnSettingForApplicationServiceRow(),
     ]);
 
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
     this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('upgradeProgressUnhealthyEvaluations');
 
     this.essentialItems = [];

@@ -26,9 +26,7 @@ export class DetailsComponent extends BaseControllerDirective {
   nodesStatuses: INodesStatusDetails[];
 
   nodeStatusListSettings: ListSettings;
-  unhealthyEvaluationsListSettings: ListSettings;
   upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
-  healthEventsListSettings: ListSettings;
 
   constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
     super(injector);
@@ -41,9 +39,7 @@ export class DetailsComponent extends BaseControllerDirective {
     this.nodes = this.data.nodes;
 
     this.nodeStatusListSettings = this.settings.getNewOrExistingNodeStatusListSetting();
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
     this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('clusterUpgradeProgressUnhealthyEvaluations');
-    this.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {

@@ -5,7 +5,6 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin, of } from 'rxjs';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
-import { map } from 'rxjs/operators';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
@@ -16,8 +15,6 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
 export class EssentialsComponent extends PartitionBaseControllerDirective {
 
   public hideReplicator = true;
-
-  unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
@@ -27,8 +24,6 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
   }
 
   setup() {
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-
     this.setEssentialData();
   }
 

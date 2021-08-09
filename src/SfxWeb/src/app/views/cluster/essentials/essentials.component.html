@@ -67,10 +67,8 @@
 </div>
 </div>
 
-
-
 <div class="detail-pane essen-pane" data-cy="health" style="position: relative;">
-    <h4>Unhealthy Evaluations</h4>
-    <app-detail-list [list]="clusterHealth.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
+  <h4>Health Evaluations</h4>
+  <app-health-viewer [healthyEvaluations]="clusterHealth.healthEvents" [unhealthyEvaluations]="clusterHealth.unhealthyEvaluations" ></app-health-viewer>
 </div>
 

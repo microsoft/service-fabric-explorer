@@ -1,9 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { ListSettings, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
-import { SettingsService } from 'src/app/services/settings.service';
-import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable } from 'rxjs';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 
 @Component({
@@ -13,17 +9,8 @@ import { ApplicationBaseControllerDirective } from '../applicationBase';
 })
 export class DetailsComponent extends ApplicationBaseControllerDirective {
 
-  healthEventsListSettings: ListSettings;
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
-  setup() {
-    this.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
-  }
-
-  refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    return this.app.health.refresh(messageHandler);
-  }
 }

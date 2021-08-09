@@ -17,11 +17,10 @@
 <div class="detail-pane essen-pane">
   <app-collapse-container sectionName="Unhealthy Evaluations">
     <div collapse-header>
-      <h4>Unhealthy Evaluations</h4>
+      <h4>Health Evaluations</h4>
     </div>
     <div collapse-body>
-      <app-detail-list [list]="service.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"
-        *ngIf="service && service.health"></app-detail-list>
+        <app-health-viewer *ngIf="service && service.health" [healthyEvaluations]="service.health.healthEvents" [unhealthyEvaluations]="service.health.unhealthyEvaluations" ></app-health-viewer>
     </div>
   </app-collapse-container>
 </div>
