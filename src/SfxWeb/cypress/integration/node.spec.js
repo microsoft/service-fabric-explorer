@@ -60,6 +60,8 @@ context('node page', () => {
             })
 
             cy.get('[data-cy=deactivated').should('not.exist');
+            cy.get('[data-cy=repair-jobs').should('not.exist');
+
         })
 
         it('down node', () => {
@@ -92,6 +94,18 @@ context('node page', () => {
                 cy.contains("86fa6852ad467a903afbbc67edc16b66");
             })
         })
+
+        it('repair jobs', () => {
+          addRoute('repairs', 'node-page/repair-jobs.json', apiUrl('/$/GetRepairTaskList?*'))
+
+          cy.visit(`/#/node/${nodeName}`);
+
+          cy.wait("@getrepairs");
+
+          cy.get('[data-cy=repair-jobs]').within(() => {
+              cy.contains("86fa6852ad467a903afbbc67edc16b66");
+          })
+      })
 
     })
 

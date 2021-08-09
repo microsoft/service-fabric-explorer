@@ -102,11 +102,10 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
         this.deployedApps = this.node.deployedApps;
       })),
       this.data.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
-        if(this.data.clusterManifest.isRepairManagerEnabled) {
+        if (this.data.clusterManifest.isRepairManagerEnabled) {
           return this.data.repairCollection.refresh().pipe(map(() => {
-            console.log(this.data.repairCollection.getRepairJobsForANode(this.node.name))
             this.repairJobs = this.data.repairCollection.getRepairJobsForANode(this.node.name);
-          }))
+          }));
         }else {
           return of(null);
         }

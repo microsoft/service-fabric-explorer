@@ -33,7 +33,7 @@
   </div>
 
   <div class="detail-pane essen-pane" *ngIf="node && node.isDeactivating" data-cy="deactivated">
-    <app-collapse-container sectionName="Unhealthy Evaluations">
+    <app-collapse-container sectionName="Deactivation Info">
       <div collapse-header>
         <h4>Deactivation Info</h4>
       </div>
@@ -43,8 +43,8 @@
     </app-collapse-container>
   </div>
 
-  <div class="detail-pane essen-pane" *ngIf="repairJobs.length > 0">
-    <app-collapse-container sectionName="Unhealthy Evaluations">
+  <div class="detail-pane essen-pane" *ngIf="repairJobs.length > 0" data-cy="repair-jobs">
+    <app-collapse-container sectionName="Repair Jobs">
       <div collapse-header>
         <h4>Repair jobs</h4>
       </div>
