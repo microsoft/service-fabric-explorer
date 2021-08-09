@@ -63,10 +63,10 @@
 <div class="detail-pane essen-pane" *ngIf="app && app.health" data-cy="health">
     <app-collapse-container sectionName="Unhealthy Evaluations">
         <div collapse-header>
-            <h4>Unhealthy Evaluations</h4>
+            <h4>Health Evaluations</h4>
         </div>
         <div collapse-body>
-            <app-detail-list [list]="app.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
+            <app-health-viewer  [healthyEvaluations]="app.health.healthEvents" [unhealthyEvaluations]="app.health.unhealthyEvaluations" ></app-health-viewer>
         </div>
     </app-collapse-container>
 </div>
@@ -92,8 +92,3 @@
         </div>
     </app-collapse-container>
 </div>
-
-<!-- <div class="detail-pane essen-pane" *ngIf="clusterManifest && clusterManifest.isNetworkInventoryManagerEnabled">
-    <h4>Networks</h4>
-    <app-detail-list [list]="networks" [listSettings]="networkListSettings"></app-detail-list>
-</div> -->

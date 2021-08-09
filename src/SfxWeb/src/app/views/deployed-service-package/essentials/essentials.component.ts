@@ -1,8 +1,6 @@
 import { Component, Injector } from '@angular/core';
 import { DeployedServicePackageBaseControllerDirective } from '../DeployedServicePackage';
 import { DataService } from 'src/app/services/data.service';
-import { SettingsService } from 'src/app/services/settings.service';
-import { ListSettings } from 'src/app/Models/ListSettings';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { of } from 'rxjs';
 
@@ -12,17 +10,13 @@ import { of } from 'rxjs';
   styleUrls: ['./essentials.component.scss']
 })
 export class EssentialsComponent extends DeployedServicePackageBaseControllerDirective {
-  unhealthyEvaluationsListSettings: ListSettings;
-
   essentialItems: IEssentialListItem[] = [];
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   setup() {
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
-
     this.essentialItems = [];
   }
 

@@ -15,7 +15,6 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
   styleUrls: ['./essentials.component.scss']
 })
 export class EssentialsComponent extends ReplicaBaseControllerDirective {
-  unhealthyEvaluationsListSettings: ListSettings;
   nodeView: string;
 
   essentialItems: IEssentialListItem[] = [];
@@ -25,8 +24,6 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
   }
 
   setup() {
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-
     this.essentialItems = [];
   }
 
