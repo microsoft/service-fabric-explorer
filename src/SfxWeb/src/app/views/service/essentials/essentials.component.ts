@@ -19,7 +19,6 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
 export class EssentialsComponent extends ServiceBaseControllerDirective {
 
   listSettings: ListSettings;
-  unhealthyEvaluationsListSettings: ListSettings;
   partitionsDashboard: IDashboardViewModel;
   replicasDashboard: IDashboardViewModel;
 
@@ -36,8 +35,6 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
       new ListColumnSettingForBadge('healthState', 'Health State'),
       new ListColumnSettingWithFilter('raw.PartitionStatus', 'Status'),
     ]);
-
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
 
     this.essentialItems = [];
   }

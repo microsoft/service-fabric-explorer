@@ -38,7 +38,7 @@
         <h4>Deactivation Info</h4>
       </div>
       <div collapse-body>
-        <app-node-deactivation-info [node]="node"></app-node-deactivation-info>
+        <app-node-deactivation-info [deactivationInfo]="node.raw.NodeDeactivationInfo"></app-node-deactivation-info>
       </div>
     </app-collapse-container>
   </div>
@@ -58,11 +58,10 @@
   <div class="detail-pane essen-pane">
     <app-collapse-container sectionName="Unhealthy Evaluations">
       <div collapse-header>
-        <h4>Unhealthy Evaluations</h4>
+        <h4>Health Evaluations</h4>
       </div>
       <div collapse-body>
-        <app-detail-list *ngIf="node" [list]="node.health.unhealthyEvaluations"
-          [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
+          <app-health-viewer *ngIf="node" [healthyEvaluations]="node.health.healthEvents" [unhealthyEvaluations]="node.health.unhealthyEvaluations" ></app-health-viewer>
       </div>
     </app-collapse-container>
   </div>

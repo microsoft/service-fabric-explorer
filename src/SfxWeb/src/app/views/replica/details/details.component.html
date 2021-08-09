@@ -23,17 +23,4 @@
             </div>
         </app-collapse-container>
     </div>
-
-    <div class="detail-pane essen-pane">
-        <app-collapse-container sectionName="Health Events">
-            <div collapse-header>
-                <h4>
-                    Health Events
-                </h4>
-            </div>
-            <div collapse-body>
-                <app-detail-list [list]="replica.health.healthEvents" [listSettings]="healthEventsListSettings" *ngIf="replica.health"></app-detail-list>
-            </div>
-        </app-collapse-container>
-    </div>
 </div>

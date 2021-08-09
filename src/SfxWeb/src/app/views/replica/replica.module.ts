@@ -11,6 +11,7 @@ import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
+import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 
 
 @NgModule({
@@ -22,7 +23,8 @@ import { ChartsModule } from 'src/app/modules/charts/charts.module';
     DetailListTemplatesModule,
     EventStoreModule,
     NgbTooltipModule,
-    ChartsModule
+    ChartsModule,
+    HealthStateModule
   ]
 })
 export class ReplicaModule { }

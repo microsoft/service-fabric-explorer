@@ -20,7 +20,6 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
 
   deployedApps: DeployedApplicationCollection;
   listSettings: ListSettings;
-  unhealthyEvaluationsListSettings: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
   ringInfo: IEssentialListItem[] = [];
@@ -34,7 +33,6 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   }
 
   setup() {
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
     this.repairJobSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
 
     this.listSettings = this.settings.getNewOrExistingListSettings('apps', ['name'], [

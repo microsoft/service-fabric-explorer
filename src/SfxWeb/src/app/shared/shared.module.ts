@@ -29,6 +29,7 @@ import { StatusResolverComponent } from './component/status-resolver/status-reso
 import { StateInfoComponent } from './component/state-info/state-info.component';
 import { EssentialItemComponent } from './component/essential-item/essential-item.component';
 import { DisplayDurationComponent } from './component/display-duration/display-duration.component';
+import { PhaseDiagramComponent } from './component/phase-diagram/phase-diagram.component';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
@@ -37,7 +38,8 @@ import { DisplayDurationComponent } from './component/display-duration/display-d
                  FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
                  StateInfoComponent,
                  EssentialItemComponent,
-                 DisplayDurationComponent],
+                 DisplayDurationComponent,
+                 PhaseDiagramComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -52,6 +54,6 @@ import { DisplayDurationComponent } from './component/display-duration/display-d
             ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
             FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
-            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent]
+            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent]
 })
 export class SharedModule { }

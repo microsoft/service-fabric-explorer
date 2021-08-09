@@ -5,7 +5,6 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DeployedAppBaseControllerDirective } from '../DeployedApplicationBase';
-import { map } from 'rxjs/operators';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
@@ -14,7 +13,6 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
   styleUrls: ['./essentials.component.scss']
 })
 export class EssentialsComponent extends DeployedAppBaseControllerDirective {
-  unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
@@ -50,8 +48,6 @@ export class EssentialsComponent extends DeployedAppBaseControllerDirective {
 
   setup(){
     this.essentialItems = [];
-
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
     this.listSettings = this.settings.getNewOrExistingListSettings('servicePackages', ['name'], [
       new ListColumnSettingForLink('uniqueId', 'Name', item => item.viewPath),
       new ListColumnSetting('raw.Version', 'Version'),
