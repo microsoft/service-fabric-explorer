@@ -12,6 +12,7 @@ import { EventStoreModule } from 'src/app/modules/event-store/event-store.module
 import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-progress.module';
 import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-deactivation.module';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
+import { ClusterModule } from '../cluster/cluster.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 
 @NgModule({
@@ -25,6 +26,7 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
     UpgradeProgressModule,
     NodeDeactivationModule,
     ChartsModule,
+    ClusterModule,
     HealthStateModule
   ]
 })
