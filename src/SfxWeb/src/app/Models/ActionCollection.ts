@@ -45,12 +45,12 @@ export class ActionCollection {
         const params: any[] = [
             // success handler
             (result: any) => {
-                this.telemetry.trackActionEvent(action.name, source, true);
+                // this.telemetry.trackActionEvent(action.name, source, true);
             },
             // error handler
             (reason: any) => {
                 const result = reason && reason.statusText && reason.status && reason.status + ': ' + reason.statusText || false;
-                this.telemetry.trackActionEvent(action.name, source, result);
+                // this.telemetry.trackActionEvent(action.name, source, result);
                 return throwError(reason);
             }];
 

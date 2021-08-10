@@ -21,7 +21,7 @@
                     Suppress Messages
                 </td>
                 <td class="centered">
-                    <input type="checkbox" [(ngModel)]="messageService.suppressMessage"
+                    <input type="checkbox" [(ngModel)]="messageService.suppressMessage" (ngModelChange)="suppressMessages($event)"
                         [attr.aria-checked]="messageService.suppressMessage">
                 </td>
             </tr>
@@ -43,7 +43,7 @@
                     Page Size
                 </td>
                 <td class="centered">
-                    <input type="number" min="5" [(ngModel)]="settingsService.paginationLimit" class="input-flat"
+                    <input type="number" min="5" [(ngModel)]="settingsService.paginationLimit" (ngModelChange)="pageSize($event)"  class="input-flat"
                         style="width: 50px; margin-left: 5px">
                 </td>
             </tr>

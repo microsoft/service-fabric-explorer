@@ -3,6 +3,7 @@ import { ApplicationInsights } from '@microsoft/applicationinsights-web';
 import { StorageService } from './storage.service';
 import { environment } from 'src/environments/environment';
 import { Router, NavigationEnd, ActivationEnd } from '@angular/router';
+import { StringUtils } from '../Utils/StringUtils';
 
 @Injectable({
   providedIn: 'root'
@@ -38,7 +39,16 @@ export class TelemetryService {
       }
       if (event instanceof NavigationEnd) {
         try {
-          const name = lastActivationEnd.snapshot.routeConfig.path;
+          let name =  '';
+          // build up the URL this way to avoid passing in PII about stuff running in the cluster
+          let snapshot = lastActivationEnd.snapshot;
+          while (snapshot) {
+            const path = snapshot.routeConfig.path;
+            if (path.length > 0) {
+              name +=  StringUtils.EnsureStartsWith(snapshot.routeConfig.path, '/');
+            }
+            snapshot = snapshot.firstChild;
+          }
           this.trackPageEvent(name);
         } catch {
 
@@ -49,6 +59,7 @@ export class TelemetryService {
   }
   static readonly localStorageKey = 'sfx-telemetry-enabled';
   static readonly localStoragePromptedTelemetryKey = 'sfx-telemetry-prompted';
+  private uniqueEmitCache: Set<string> = new Set();
 
   appInsights: ApplicationInsights;
   telemetryEnabled = true;
@@ -59,10 +70,18 @@ export class TelemetryService {
     this.appInsights.config.disableTelemetry = !state;
   }
 
-  trackActionEvent(name: string, source: string, data: any) {
+  trackActionEvent(name: string, data: any, uniqueSessionId?: string) {
+    if (uniqueSessionId && this.uniqueEmitCache.has(uniqueSessionId)) {
+      return;
+    }else{
+      this.uniqueEmitCache.add(uniqueSessionId);
+    }
+    console.log({name, ...data});
+    this.appInsights.trackEvent({name}, data);
   }
 
   trackPageEvent(name: string) {
+
     this.appInsights.trackPageView({
       name
     });
