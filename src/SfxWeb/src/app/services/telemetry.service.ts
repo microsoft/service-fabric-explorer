@@ -76,7 +76,7 @@ export class TelemetryService {
     }else{
       this.uniqueEmitCache.add(uniqueSessionId);
     }
-    console.log({name, ...data});
+
     this.appInsights.trackEvent({name}, data);
   }
 
