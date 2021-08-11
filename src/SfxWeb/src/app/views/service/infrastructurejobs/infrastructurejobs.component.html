@@ -1,20 +1,5 @@
-<p>infrastructurejobs works!</p>
-<table class="table table-striped table-bordered">
-    <thead>
-        <tr>
-            <th>Id</th>
-            <th>UD</th>
-            <th>IsActive</th>
-            <th>AcknowledgementStatus</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr *ngFor="let job of allManagementJobs">
-            <td>{{job.Id}} </td>
-            <td>{{job.CurrentUD}}</td>
-            <td>{{job.IsActive}}</td>
-            <td>{{job.AcknowledgementStatus}}</td>
-        </tr>
-    </tbody>
-</table>
+<app-dashboard-tile [data]="tiles" *ngIf="tiles" data-cy="nodesChart" class="tall"></app-dashboard-tile>
+<div class="detail-pane essen-pane">
+    <app-detail-list [listSettings]="listSettings" [list]="allManagementJobs" data-cy="nodesList"></app-detail-list>
+</div>
 

@@ -13,6 +13,7 @@ import { PartitionDisableBackUpComponent } from 'src/app/modules/backup-restore/
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { InfrastructureJob } from 'src/app/Models/DataModels/infrastructureJob';
 import { IRawInfrastructureJob } from 'src/app/Models/RawDataTypes';
+import { DashboardViewModel, IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 
 @Component({
   selector: 'app-infrastructurejobs',
@@ -22,6 +23,8 @@ import { IRawInfrastructureJob } from 'src/app/Models/RawDataTypes';
 export class InfrastructureJobsComponent extends ServiceBaseControllerDirective {
   allManagementJobs: InfrastructureJob[];
   executingManagementJob : InfrastructureJob; 
+  listSettings : ListSettings;
+  tiles: IDashboardViewModel;
 
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) {
@@ -38,6 +41,21 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
       mrJobdata.forEach(rawMrJob => {
         this.allManagementJobs.push(new InfrastructureJob(this.data, rawMrJob, dateRef));
       })
-    this.executingManagementJob = this.allManagementJobs.find(job => Boolean(job.IsActive) == true);
+
+      this.listSettings = this.settings.getNewOrExistingListSettings('nodes', ['name'], [
+        new ListColumnSetting('raw.IsActive', 'Active'),
+        new ListColumnSetting('raw.ActionStatus', 'Action Status'),
+        new ListColumnSetting('raw.CurrentUD', 'Upgrade Domain'),
+        new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
+        new ListColumnSetting('raw.ImpactStep', 'Impact Step'),
+        new ListColumnSetting('raw.Id', 'Job Id'),
+        new ListColumnSetting('RepairTask.TaskId', 'Repair Task')
+      ]);
+    this.executingManagementJob = this.allManagementJobs.find(job => Boolean(job.raw.IsActive) == true);
+    this.tiles = DashboardViewModel.fromHealthStateCount(this.executingManagementJob.id, this.executingManagementJob.raw.CurrentUD, false, {
+      ErrorCount: parseInt(this.executingManagementJob.raw.CurrentUD),
+      WarningCount: 0,
+      OkCount: 1,
+    })
   };
 }

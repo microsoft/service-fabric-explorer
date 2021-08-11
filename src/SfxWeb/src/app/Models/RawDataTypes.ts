@@ -1080,15 +1080,25 @@ export interface IRawInfrastructureJob {
     ActionStatus:string;
     CurrentUD: string; 
     DeadlineforResponse: string; 
-    CurrentlyImpactedRoleInstances: IRawRoleInstaceImpact[];
-    RepairTasks: IRawInfraRepairTask[];
+    CurrentlyImpactedRoleInstances: IRawRoleInstanceImpact[];
+    RepairTasks: InfraRepairTask[];
 }
 export interface IRawInfraRepairTask {
     TaskId: string;
     State: string;
 }
 
-export interface IRawRoleInstaceImpact {
+export class InfraRepairTask {
+
+    public constructor(taskId:string , state: string) {
+        this.State = state;
+        this.TaskId = taskId;
+    }
+    TaskId: string; 
+    State: string;
+}
+
+export interface IRawRoleInstanceImpact {
     Name: string;
     UD: string;
     ImpactTypes: string[];
