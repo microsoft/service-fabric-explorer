@@ -1,4 +1,4 @@
-import { IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstaceImpact } from '../RawDataTypes';
+import { IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact, InfraRepairTask } from '../RawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from './Base';
 import { Observable, of } from 'rxjs';
@@ -9,17 +9,9 @@ import { DataService } from 'src/app/services/data.service';
 
 export class InfrastructureJob extends DataModelBase<IRawInfrastructureJob> {
     
-    IsActive : string;
-    ImpactAction:string;
-    JobStatus: string;
-    ImpactStep: string;
-    AcknowlegementStatus: string;
-    ActionStatus: string;
-    DeadlineforResponse: string;
-    CurrentUD: string;
-    CurrentlyImpactedRoleInstances: IRawRoleInstaceImpact[];
-    RepairTasks: IRawInfraRepairTask[];
+   
     Id: string;
+    RepairTask:InfraRepairTask
 
    public get id(): string {
        return this.raw.Id;
@@ -30,17 +22,8 @@ export class InfrastructureJob extends DataModelBase<IRawInfrastructureJob> {
        this.updateInternal();
    }
 
-   updateInternal(): Observable<any> {
-    this.Id = this.raw.Id;
-    this.IsActive = this.raw.IsActive;
-    this.ImpactAction = this.raw.ImpactAction; 
-    this.ImpactStep = this.raw.ImpactStep; 
-    this.AcknowlegementStatus = this.raw.AcknowledgementStatus;
-    this.ActionStatus = this.raw.ActionStatus;
-    this.DeadlineforResponse = this.raw.DeadlineforResponse; 
-    this.CurrentUD = this.raw.CurrentUD; 
-    this.CurrentlyImpactedRoleInstances = this.raw.CurrentlyImpactedRoleInstances;
-    this.RepairTasks = this.raw.RepairTasks;
-    return of(null);
-}
+   updateInternal() {
+       this.RepairTask = this.raw.RepairTasks == null ? new InfraRepairTask("None", "None") : new InfraRepairTask(this.raw.RepairTasks[0].TaskId, this.raw.RepairTasks[0].State);
+       return of(null);
+   }
 }

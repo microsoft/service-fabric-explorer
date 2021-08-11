@@ -13,7 +13,6 @@ export class ServiceBaseControllerDirective extends BaseControllerDirective {
     appId: string;
     serviceId: string;
     appTypeName: string;
-
     service: Service;
 
     constructor(protected data: DataService, injector: Injector) {
