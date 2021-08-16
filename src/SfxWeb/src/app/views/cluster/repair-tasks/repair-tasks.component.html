@@ -53,7 +53,7 @@
                 Visualization
             </h4>
             <div collapse-body>
-                <div ngbNav #nav="ngbNav" [destroyOnHide]="false"  >
+                <div ngbNav #nav="ngbNav" [destroyOnHide]="false" (navChange)="changeChart()"  >
                     <div ngbNavItem>
                         <a ngbNavLink style="font-size: 12pt;">
                             Timeline
@@ -84,7 +84,7 @@
                                         </div>
                                     </app-collapse-container>
                                 </div>
-            
+
                                 <div style="margin-left: 15px;">
                                     <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" data-cy="timeline"
                                         [displayMoveToStart]="false" [displayMoveToEnd]="false">

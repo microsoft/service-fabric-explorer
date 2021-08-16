@@ -14,5 +14,12 @@ export class StringUtils {
         }
         return str;
     }
+
+    public static EnsureStartsWith(str: string, prefix: string): string {
+      if (!str.startsWith(prefix)) {
+          return prefix + str ;
+      }
+      return str;
+  }
 }
 
