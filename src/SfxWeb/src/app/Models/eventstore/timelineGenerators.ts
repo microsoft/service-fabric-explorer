@@ -499,44 +499,285 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
     }
 }
 
+/*
+cache of nodes -> roles
+
+on each event check if primary changes
+if yes add item for node
+
+*/
+
 export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionEvent> {
-    static readonly swapPrimaryLabel = 'Primary Swap';
-    static readonly swapPrimaryDurations = 'Swap Primary phases';
+  static readonly swapPrimaryLabel = 'Primary Swap';
+  static readonly swapPrimaryDurations = 'Swap Primary phases';
+  static readonly replication = 'ReplicationState';
+  static readonly activation = 'Replica Activation';
+  static readonly unhealthy = 'unhealthy';
 
-    consume(events: PartitionEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-        const items = new DataSet<DataItem>();
+  consume(events: PartitionEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+    const items = new DataSet<DataItem>();
 
-        events.forEach( event => {
-            if (event.category === 'StateTransition' && event.eventProperties.ReconfigType === 'SwapPrimary') {
-                const end = event.timeStamp;
-                const endDate = new Date(end);
-                const duration = event.eventProperties.TotalDurationMs;
-                const start = new Date(endDate.getTime() - duration).toISOString();
-                const label = event.eventProperties.NodeName;
+    // replication info
+    // let lastPartitionReconfigEvent = null;
+    const nodeChangepartitionEvents: Record<string, PartitionEvent> = {};
+    let primary = null;
+    const nodes: Record<string, DataGroup> = {};
 
-                items.add({
-                    id: event.eventInstanceId + label,
-                    content: label,
-                    start,
-                    end,
-                    group: PartitionTimelineGenerator.swapPrimaryLabel,
-                    type: 'range',
-                    title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, 'Primary swap to ' + label),
-                    className: 'green'
-                });
+    let previousClusterHealthReport: PartitionEvent;
 
-            }
+    events.forEach(event => {
+      if (event.category === 'StateTransition' && event.eventProperties.ReconfigType === 'SwapPrimary') {
+        const end = event.timeStamp;
+        const endDate = new Date(end);
+        const duration = event.eventProperties.TotalDurationMs;
+        const start = new Date(endDate.getTime() - duration).toISOString();
+        const label = event.eventProperties.NodeName;
+
+        items.add({
+          id: event.eventInstanceId + label,
+          content: label,
+          start,
+          end,
+          group: PartitionTimelineGenerator.swapPrimaryLabel,
+          type: 'range',
+          title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, 'Primary swap to ' + label),
+          className: 'green'
+        });
+      }
+
+      if (event.kind === 'PartitionNewHealthReport') {
+        this.parseSeedNodeStatus(event, items, previousClusterHealthReport, endOfRange);
+        previousClusterHealthReport = event;
+      }
+
+      // this.parseActivation(event).forEach(event => items.add(event));
+
+      if (event.category === 'StateTransition' && event.kind === 'PartitionReconfigurationStarted') {
+        const oldSet = new Set<string>(event.eventProperties.OldSecondaryNodeNames.split(' '));
+        const newSet = new Set<string>(event.eventProperties.NewSecondaryNodeNames.split(' '));
+
+        const added = Array.from(newSet).filter(item => !oldSet.has(item));
+        // const existed = Array.from(newSet).filter(item => oldSet.has(item));
+        const removed = Array.from(oldSet).filter(item => !newSet.has(item));
+
+        added.forEach(node => {
+          let end = endOfRange;
+          const previousEvent = nodeChangepartitionEvents[node];
+          if (previousEvent) {
+            end = new Date(previousEvent.timeStamp);
+          }
+
+          items.add({
+            id: event.eventInstanceId + node,
+            content: `secondary`,
+            start: event.timeStamp,
+            end,
+            group: node,
+            type: 'range',
+            title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, end.toString(), 'Secondary'),
+            className: 'purple'
+          });
+
+          delete nodeChangepartitionEvents[node];
         });
 
-        const groups = new DataSet<DataGroup>([
-            {id: PartitionTimelineGenerator.swapPrimaryLabel, content: PartitionTimelineGenerator.swapPrimaryLabel},
-        ]);
+        removed.forEach(node => {
+          nodeChangepartitionEvents[node] = event;
+        });
 
-        return {
-            groups,
-            items
-        };
+        nodes[event.eventProperties.OldPrimaryNodeName] = {id: event.eventProperties.OldPrimaryNodeName, content: event.eventProperties.OldPrimaryNodeName};
+        nodes[event.eventProperties.NewPrimaryNodeName] = {id: event.eventProperties.NewPrimaryNodeName, content: event.eventProperties.NewPrimaryNodeName};
+
+        if (event.eventProperties.OldPrimaryNodeName !== event.eventProperties.NewPrimaryNodeName) {
+          if (primary) {
+            items.add({
+              id: event.eventInstanceId + event.eventProperties.NewPrimaryNodeName,
+              content: `primary`,
+              start: event.timeStamp,
+              end: primary.timeStamp,
+              group: event.eventProperties.NewPrimaryNodeName,
+              type: 'range',
+              title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, endOfRange.toString(), 'Primary '),
+              className: 'green'
+            });
+          }else {
+            items.add({
+              id: event.eventInstanceId + event.eventProperties.NewPrimaryNodeName,
+              content: `primary`,
+              start: event.timeStamp,
+              end: endOfRange,
+              group: event.eventProperties.NewPrimaryNodeName,
+              type: 'range',
+              title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, endOfRange.toString(), 'Primary '),
+              className: 'green'
+            });
+          }
+          primary = event;
+        }
+      }
+    });
+
+    Object.keys(nodeChangepartitionEvents).forEach(key => {
+      const start = startOfRange;
+      const event = nodeChangepartitionEvents[key];
+
+      items.add({
+        id: event.eventInstanceId + key + 'start',
+        content: `secondary`,
+        start,
+        end: event.timeStamp,
+        group: key,
+        type: 'range',
+        title: EventStoreUtils.tooltipFormat(event.eventProperties, start.toString(), event.timeStamp, 'Secondary'),
+        className: 'purple'
+      });
+    });
+
+    if (primary) {
+      items.add({
+        id: primary.eventInstanceId + 'start',
+        content: `primary`,
+        start: startOfRange,
+        end: primary.timeStamp,
+        group: primary.eventProperties.OldPrimaryNodeName,
+        type: 'range',
+        title: EventStoreUtils.tooltipFormat(primary.eventProperties, startOfRange.toString(), primary.timeStamp.toString(), 'Primary '),
+        className: 'green'
+      });
     }
+
+    const groupsIds = [
+      { id: PartitionTimelineGenerator.swapPrimaryLabel, content: PartitionTimelineGenerator.swapPrimaryLabel },
+      { id: PartitionTimelineGenerator.activation, content: PartitionTimelineGenerator.activation },
+      {id: PartitionTimelineGenerator.unhealthy, content: PartitionTimelineGenerator.unhealthy}
+    ];
+
+    const nestedReplication: DataGroup = {
+      id: PartitionTimelineGenerator.replication,
+      nestedGroups: [],
+      content: PartitionTimelineGenerator.replication,
+    };
+
+    Object.keys(nodes).forEach(groupName => {
+      console.log(nodes[groupName]);
+      nestedReplication.nestedGroups.push(groupName);
+      groupsIds.push(nodes[groupName]);
+  });
+
+
+    groupsIds.push(nestedReplication);
+    console.log(groupsIds);
+    const groups = new DataSet<DataGroup>(groupsIds);
+    console.log(nodes);
+
+    return {
+      groups,
+      items
+    };
+  }
+
+  parseSeedNodeStatus(event: ClusterEvent, items: DataSet<DataItem>, previousClusterHealthReport: ClusterEvent, endOfRange: Date): void {
+    if (event.eventProperties.HealthState === 'Warning') {
+        // for end date if we dont have a previously seen health report(list iterates newest to oldest) then we know its still the ongoing state
+        const end = previousClusterHealthReport ? previousClusterHealthReport.timeStamp : endOfRange.toISOString();
+        const content = `${event.eventProperties.HealthState}`;
+
+        items.add({
+            id: event.eventInstanceId + content,
+            content,
+            start: event.timeStamp,
+            end,
+            group: PartitionTimelineGenerator.unhealthy,
+            type: 'range',
+            title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, end),
+            className: 'orange'
+        });
+    }
+}
+
+    /*
+    o	InBuild start
+o	Process / replica start
+o	StartAsync start
+o	Endpoint registrations
+o	StartAsync end
+o	InBuild end with success info
+*/
+
+  parseActivation(event: PartitionEvent): DataItem[] {
+    const items = [];
+
+    if (event.category === 'Activation') {
+      const replicaId = event.eventProperties.InBuildStartTime;
+
+      const inBuildStart = event.eventProperties.InBuildStartTime;
+      const replicaStart = event.eventProperties.replicaStartTime;
+      const startAsyncStart = event.eventProperties.startAsyncTime;
+
+      const endpointRegistration = event.eventProperties.endpointRegistration;
+
+      const startAsyncEnd = event.eventProperties.startAsyncEndTime;
+      const inBuildEnd = event.eventProperties.InBuildEndTime;
+
+      items.push({
+        id: event.eventInstanceId + replicaId + inBuildStart,
+        content: `${replicaId} build start`,
+        start: inBuildStart,
+        end: replicaStart,
+        group: PartitionTimelineGenerator.activation,
+        type: 'range',
+        title: EventStoreUtils.tooltipFormat(event.eventProperties, inBuildStart, replicaStart, `${replicaId} build start`),
+        className: 'green'
+      });
+
+      items.push({
+        id: event.eventInstanceId + replicaId + replicaStart,
+        content: `${replicaId} Start`,
+        start: replicaStart,
+        end: startAsyncStart,
+        group: PartitionTimelineGenerator.activation,
+        type: 'range',
+        title: EventStoreUtils.tooltipFormat(event.eventProperties, replicaStart, startAsyncStart, `${replicaId} Start`),
+        className: 'green'
+      });
+
+
+      items.push({
+        id: event.eventInstanceId + replicaId + startAsyncStart,
+        content: `${replicaId} StartAsync Start`,
+        start: startAsyncStart,
+        end: endpointRegistration,
+        group: PartitionTimelineGenerator.activation,
+        type: 'range',
+        title: EventStoreUtils.tooltipFormat(event.eventProperties, startAsyncStart, endpointRegistration, `${replicaId} StartAsync Start`),
+        className: 'green'
+      });
+
+
+      items.push({
+        id: event.eventInstanceId + replicaId + endpointRegistration,
+        content: `${replicaId} Endpoint registrations`,
+        start: endpointRegistration,
+        end: startAsyncEnd,
+        group: PartitionTimelineGenerator.activation,
+        type: 'range',
+        title: EventStoreUtils.tooltipFormat(event.eventProperties, endpointRegistration, startAsyncEnd, `${replicaId} Endpoint registrations`),
+        className: 'green'
+      });
+
+      items.push({
+        id: event.eventInstanceId + replicaId + endpointRegistration,
+        content: `${replicaId} StartAsync end`,
+        start: startAsyncEnd,
+        end: inBuildEnd,
+        group: PartitionTimelineGenerator.activation,
+        type: 'range',
+        title: EventStoreUtils.tooltipFormat(event.eventProperties, startAsyncEnd, inBuildEnd, `${replicaId} StartAsync end`),
+        className: 'green'
+      });
+    }
+    return items;
+  }
 }
 
 export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTask>{
