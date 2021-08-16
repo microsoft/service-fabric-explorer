@@ -3,7 +3,7 @@ import { IdGenerator } from '../Utils/IdGenerator';
 import { ITreeNode } from '../ViewModels/TreeTypes';
 import { IClusterHealthChunkQueryDescription, IClusterHealthChunk, HealthStateFilterFlags } from '../Models/HealthChunkRawDataTypes';
 import { DeployedReplicaCollection, DeployedCodePackageCollection } from '../Models/DataModels/collections/Collections';
-import { NodeStatusConstants, Constants } from '../Common/Constants';
+import { NodeStatusConstants, Constants, HealthStateConstants } from '../Common/Constants';
 import { ClusterHealth, ClusterManifest } from '../Models/DataModels/Cluster';
 import { TreeViewModel } from '../ViewModels/TreeViewModel';
 import { DataService } from './data.service';
@@ -12,12 +12,14 @@ import { of, Observable, forkJoin } from 'rxjs';
 import { mergeMap, map, finalize, catchError } from 'rxjs/operators';
 import { SettingsService } from './settings.service';
 import { RefreshService } from './refresh.service';
+import { ValueResolver } from '../Utils/ValueResolver';
+import { Node } from '../Models/DataModels/Node';
 
 @Injectable({
   providedIn: 'root'
 })
 export class TreeService {
-
+        public groupByNodeTypes = true;
         public containerRef: ElementRef;
         public tree: TreeViewModel;
         private clusterHealth: ClusterHealth;
@@ -170,50 +172,81 @@ export class TreeService {
             }));
         }
 
+        private getNodeTypes(): Observable<ITreeNode[]> {
+          return this.data.getNodes(true).pipe(map(nodes => {
+            return nodes.getNodeStateCounts(false, false).map(nodeType => {
+                let health: string = HealthStateConstants.OK;
+
+                if(nodeType.errorCount > 0) {
+                  health =  HealthStateConstants.Error
+                }else if(nodeType.warningCount > 0) {
+                  health =  HealthStateConstants.Warning
+                }
+
+                return {
+                    nodeId: IdGenerator.node(nodeType.nodeType),
+                    displayName: () => nodeType.nodeType,
+                    selectAction: () => this.routes.navigate(() => ""),
+                    childrenQuery: () => of(this.getNodesFromList(nodeType.nodes)),
+                    badge: () => new ValueResolver().resolveHealthStatus(health),
+                    sortBy: () => [nodeType.nodeType],
+                    addHealthStateFiltersForChildren: (clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription) => {
+                      nodeType.nodes.forEach(node => node.addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription))
+                    },
+                    listSettings: this.settings.getNewOrExistingTreeNodeListSettings(nodeType.nodeType),
+                };
+            });
+        }));
+      }
+
+  private getNodesFromList(nodes: Node[]): ITreeNode[] {
+    return nodes.map(node => {
+      return {
+        nodeId: IdGenerator.node(node.name),
+        displayName: () => {
+          let suffix = '';
+          if (node.raw.NodeStatus !== NodeStatusConstants.Up) {
+            if (node.raw.IsStopped) {
+              suffix = 'Down (Stopped)';
+            } else {
+              suffix = node.raw.NodeStatus;
+              if (node.raw.NodeDeactivationInfo.NodeDeactivationIntent !== NodeStatusConstants.Invalid) {
+                suffix += ' -> ' + node.raw.NodeDeactivationInfo.NodeDeactivationIntent;
+              }
+            }
+          }
+
+          if (node.raw.IsSeedNode) {
+            suffix = 'Seed Node' + (suffix === '' ? '' : ' - ' + suffix);
+          }
+
+          if (suffix !== '') {
+            return `${node.name} (${suffix})`;
+          }
+
+          return node.name;
+        },
+        selectAction: () => this.routes.navigate(() => node.viewPath),
+        childrenQuery: () => this.getDeployedApplications(node.name),
+        badge: () => node.healthState,
+        sortBy: () => [node.name],
+        actions: node.actions,
+        addHealthStateFiltersForChildren: (clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription) => {
+          node.addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription);
+        },
+        mergeClusterHealthStateChunk: (clusterHealthChunk: IClusterHealthChunk) => {
+          return node.deployedApps.mergeClusterHealthStateChunk(clusterHealthChunk);
+        },
+        listSettings: this.settings.getNewOrExistingTreeNodeListSettings(node.viewPath),
+      };
+    });
+  }
+
         private getNodes(): Observable<ITreeNode[]> {
             // For nodes we need more information like node status which is not available in health chunk API result.
             // Force refresh the data to update those information here.
             return this.data.getNodes(true).pipe(map(nodes => {
-                return nodes.collection.map(node => {
-                    return {
-                        nodeId: IdGenerator.node(node.name),
-                        displayName: () => {
-                            let suffix = '';
-                            if (node.raw.NodeStatus !== NodeStatusConstants.Up) {
-                                if (node.raw.IsStopped) {
-                                    suffix = 'Down (Stopped)';
-                                } else {
-                                    suffix = node.raw.NodeStatus;
-                                    if (node.raw.NodeDeactivationInfo.NodeDeactivationIntent !== NodeStatusConstants.Invalid) {
-                                        suffix += ' -> ' + node.raw.NodeDeactivationInfo.NodeDeactivationIntent;
-                                    }
-                                }
-                            }
-
-                            if (node.raw.IsSeedNode) {
-                                suffix = 'Seed Node' + (suffix === '' ? '' : ' - ' + suffix);
-                            }
-
-                            if (suffix !== '') {
-                                return `${node.name} (${suffix})`;
-                            }
-
-                            return node.name;
-                        },
-                        selectAction: () => this.routes.navigate(() => node.viewPath),
-                        childrenQuery: () => this.getDeployedApplications(node.name),
-                        badge: () => node.healthState,
-                        sortBy: () => [node.name],
-                        actions: node.actions,
-                        addHealthStateFiltersForChildren: (clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription) => {
-                            node.addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription);
-                        },
-                        mergeClusterHealthStateChunk: (clusterHealthChunk: IClusterHealthChunk) => {
-                            return node.deployedApps.mergeClusterHealthStateChunk(clusterHealthChunk);
-                        },
-                        listSettings: this.settings.getNewOrExistingTreeNodeListSettings(node.viewPath),
-                    };
-                });
+                return this.getNodesFromList(nodes.collection);
             }));
         }
 

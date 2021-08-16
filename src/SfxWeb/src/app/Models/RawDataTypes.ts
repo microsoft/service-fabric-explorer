@@ -1061,6 +1061,7 @@ export interface INodesStatusDetails {
         warningCount: number;
         errorCount: number;
         okCount: number;
+        nodes: Node[];
     }
 
 export class NodeStatusDetails implements INodesStatusDetails {
@@ -1073,6 +1074,7 @@ export class NodeStatusDetails implements INodesStatusDetails {
         public errorCount = 0;
         public totalCount = 0;
         public okCount = 0;
+        public nodes = [];
         public constructor(nodeType: string) {
             this.nodeType = nodeType;
 
@@ -1099,6 +1101,7 @@ export class NodeStatusDetails implements INodesStatusDetails {
             if (node.healthState.text === HealthStateConstants.OK) {
                 this.okCount++;
             }
+            this.nodes.push(node);
         }
     }
 
