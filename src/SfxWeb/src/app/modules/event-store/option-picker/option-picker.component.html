@@ -1,4 +1,4 @@
-<ul>
+<ul  data-cy="option-picker">
   <li role="menuitem" *ngFor="let option of options" class="item">
     <label style="margin-bottom: 0px; font-size: 15px;">
       <input type="checkbox" (change)="emitData(option,$event)" />

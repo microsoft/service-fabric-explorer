@@ -2,7 +2,7 @@
   <div class="flex-container" style="margin-bottom: 10px;">
     <div class="flex-container wrap">
       <div ngbDropdown style="margin-right: 10px;"  *ngIf="optionsConfig">
-        <button class="simple-button" ngbDropdownToggle>Event Types </button>
+        <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
         <div ngbDropdownMenu>
           <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)"></app-option-picker>
         </div>
