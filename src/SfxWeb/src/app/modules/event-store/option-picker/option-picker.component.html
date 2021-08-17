@@ -1,11 +1,23 @@
-<app-collapse-container collapsed="true" sectionName="select-event-types">
+<!-- <app-collapse-container collapsed="true" sectionName="select-event-types">
 	<h5 collapse-header>
 		Select event types
 	</h5>
 	<div collapse-body class="options-wrapper" data-cy="option-picker">
 		<div *ngFor="let option of options" >
-			{{ option.displayName }} 
+			{{ option.displayName }}
 			<app-toggle (stateChange)="emitData(option,$event)"></app-toggle>
 		</div>
 	</div>
-</app-collapse-container>
+</app-collapse-container> -->
+<!-- <div *ngFor="let option of options" >
+  {{ option.displayName }}
+  <app-toggle (stateChange)="emitData(option,$event)"></app-toggle> -->
+<ul>
+
+  <li role="menuitem"  *ngFor="let option of options" class="item">
+    <label style="margin-bottom: 0px; font-size: 15px;" >
+        <input type="checkbox" (change)="emitData(option,$event)" />
+        {{ option.displayName }}
+      </label>
+</li>
+</ul>
