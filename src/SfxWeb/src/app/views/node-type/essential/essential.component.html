@@ -1,0 +1,29 @@
+<app-navbar type="Node Type" [name]="nodeType"></app-navbar>
+
+<div class="tile-container" data-cy="tiles">
+  <app-essential-health-tile class="long" [listItems]="certEssentialItems" data-cy="node-ring-info">
+  </app-essential-health-tile>
+</div>
+
+<!-- <div>
+  <app-essential-item *ngFor="let item of endPoints " [item]="item.container" [underline]="false">
+    <app-essential-item *ngFor="let item2 of item.items; let l = last " [item]="item2" [underline]="l">
+    </app-essential-item>
+  </app-essential-item>
+
+</div> -->
+
+<div class="detail-pane essen-pane">
+  <app-detail-list [listSettings]="listSettings" [list]="nodess" data-cy="nodesList"></app-detail-list>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="repairJobs.length > 0" data-cy="repair-jobs">
+  <app-collapse-container sectionName="Repair Jobs">
+    <div collapse-header>
+      <h4>Repair jobs</h4>
+    </div>
+    <div collapse-body>
+      <app-detail-list [list]="repairJobs" [listSettings]="repairJobSettings"></app-detail-list>
+    </div>
+  </app-collapse-container>
+</div>

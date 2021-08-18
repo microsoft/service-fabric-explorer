@@ -43,6 +43,8 @@ const routes: Routes = [
   { path: 'node/:nodeName', loadChildren: () => import(`./views/node/node.module`).then(m => m.NodeModule) },
   { path: 'nodes', loadChildren: () => import(`./views/nodes/nodes.module`).then(m => m.NodesModule) },
 
+  { path: 'nodetype/:nodeType', loadChildren: () => import(`./views/node-type/node-type.module`).then(m => m.NodeTypeModule) },
+
   { path: 'networking', loadChildren: () => import(`./views/debugging/debugging.module`).then(m => m.DebuggingModule) },
 
   // system section(shares some routes with application)

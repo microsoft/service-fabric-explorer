@@ -932,7 +932,7 @@ app-navbar {
 
 .tile-item {
     @extend .centering-row;
-    height: 35px;
+    min-height: 35px;
     position: relative;
 }
 

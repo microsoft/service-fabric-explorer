@@ -77,7 +77,13 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         return of(null);
     }
 
-    public getRepairJobsForANode(nodeName: string) {
-      return this.collection.filter(task => task.raw.Target.NodeNames.includes(nodeName) || task.impactedNodes.includes(nodeName));
+    public getRepairJobsForANode(nodeName: string | string[]) {
+      if (!Array.isArray(nodeName)) {
+        nodeName = [nodeName];
+      }
+      const ids = new Set(nodeName);
+
+      console.log(ids);
+      return this.collection.filter(task => task.raw.Target.NodeNames.some(node => ids.has(node)) || task.impactedNodes.some(node => ids.has(node)));
     }
 }

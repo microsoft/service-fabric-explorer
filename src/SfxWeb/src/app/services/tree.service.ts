@@ -126,7 +126,7 @@ export class TreeService {
                     nodeId: IdGenerator.nodeGroup(),
                     displayName: () => 'Nodes',
                     selectAction: () => this.routes.navigate(() => nodes.viewPath),
-                    childrenQuery: () => this.getNodes(),
+                    childrenQuery: () => this.getNodeTypes(),
                     badge: () => nodes.healthState,
                     listSettings: this.settings.getNewOrExistingTreeNodeListSettings(nodes.viewPath),
                     alwaysVisible: true
@@ -177,21 +177,21 @@ export class TreeService {
             return nodes.getNodeStateCounts(false, false).map(nodeType => {
                 let health: string = HealthStateConstants.OK;
 
-                if(nodeType.errorCount > 0) {
-                  health =  HealthStateConstants.Error
-                }else if(nodeType.warningCount > 0) {
-                  health =  HealthStateConstants.Warning
+                if (nodeType.errorCount > 0) {
+                  health =  HealthStateConstants.Error;
+                }else if (nodeType.warningCount > 0) {
+                  health =  HealthStateConstants.Warning;
                 }
 
                 return {
                     nodeId: IdGenerator.node(nodeType.nodeType),
                     displayName: () => nodeType.nodeType,
-                    selectAction: () => this.routes.navigate(() => ""),
+                    selectAction: () => this.routes.navigate(() => RoutesService.getNodeTypeViewPath(nodeType.nodeType)),
                     childrenQuery: () => of(this.getNodesFromList(nodeType.nodes)),
                     badge: () => new ValueResolver().resolveHealthStatus(health),
                     sortBy: () => [nodeType.nodeType],
                     addHealthStateFiltersForChildren: (clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription) => {
-                      nodeType.nodes.forEach(node => node.addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription))
+                      nodeType.nodes.forEach(node => node.addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription));
                     },
                     listSettings: this.settings.getNewOrExistingTreeNodeListSettings(nodeType.nodeType),
                 };

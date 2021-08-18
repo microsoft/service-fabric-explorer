@@ -92,6 +92,10 @@ export class RoutesService {
       return '/node/' + this.doubleEncode(nodeName);
   }
 
+  public static getNodeTypeViewPath(nodeType: string): string {
+    return '/nodetype/' + this.doubleEncode(nodeType);
+}
+
   public static getNetworksViewPath(): string {
       return '/networks';
   }

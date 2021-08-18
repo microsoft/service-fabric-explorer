@@ -119,62 +119,126 @@ export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 }
 
 export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
-    public clusterManifestName: string;
+  public clusterManifestName: string;
 
-    public isSfrpCluster = false;
+  public isSfrpCluster = false;
 
-    public imageStoreConnectionString = '';
-    public isNetworkInventoryManagerEnabled = false;
-    public isBackupRestoreEnabled = false;
-    public isRepairManagerEnabled = false;
-    public isEventStoreEnabled = false;
-    public constructor(data: DataService) {
-        super(data);
+  public imageStoreConnectionString = '';
+  public isNetworkInventoryManagerEnabled = false;
+  public isBackupRestoreEnabled = false;
+  public isRepairManagerEnabled = false;
+  public isEventStoreEnabled = false;
+  public constructor(data: DataService) {
+      super(data);
+  }
+
+  protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> {
+      return this.data.restClient.getClusterManifest(messageHandler);
+  }
+
+  private getImageStoreConnectionString(element: Element) {
+      const params = element.getElementsByTagName('Parameter');
+      for (let i = 0; i < params.length; i ++) {
+          const item = params.item(i);
+          if (item.getAttribute('Name') === 'ImageStoreConnectionString'){
+              this.imageStoreConnectionString = item.getAttribute('Value');
+              break;
+          }
+      }
+  }
+
+  private getClusterManifestDomElement(): Element {
+      const parser = new DOMParser();
+      const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
+
+      return xml.getElementsByTagName('ClusterManifest')[0];
+  }
+
+  protected updateInternal(): Observable<any> | void {
+      const manifest = this.getClusterManifestDomElement();
+      this.clusterManifestName = manifest.getAttribute('Name');
+
+      const FabricSettings = manifest.getElementsByTagName('FabricSettings')[0];
+      const management = FabricSettings.getElementsByTagName('Section');
+
+      for (let i = 0; i < management.length; i ++) {
+          const item = management.item(i);
+          if (item.getAttribute('Name') === 'Management'){
+              this.getImageStoreConnectionString(item);
+          }else if (item.getAttribute('Name') === 'BackupRestoreService'){
+              this.isBackupRestoreEnabled = true;
+          }else if (item.getAttribute('Name') === 'UpgradeService'){
+              this.isSfrpCluster = true;
+          }else if (item.getAttribute('Name') === 'RepairManager'){
+              this.isRepairManagerEnabled = true;
+          }else if (item.getAttribute('Name') === 'EventStoreService'){
+              this.isEventStoreEnabled = true;
+          }
+      }
+  }
+
+  public getNodeTypeInformation(nodeType: string) {
+      const manifest = this.getClusterManifestDomElement();
+
+      const nodeTypes = manifest.getElementsByTagName('NodeTypes')[0].getElementsByTagName('NodeType');
+      console.log(nodeTypes);
+      let nodeTypeElement: Element = null;
+      for (let i = 0; i < nodeTypes.length; i ++) {
+          const item = nodeTypes.item(i);
+          console.log(item);
+          if (item.getAttribute('Name') === nodeType){
+              nodeTypeElement = item;
+          }
+      }
+
+      const nodeTypeInfo = {
+        endpoints: [],
+        certificates: [],
+        PlacementProperties: []
+      };
+
+      if (nodeTypeElement) {
+
+      const endpoints = nodeTypeElement.getElementsByTagName('Endpoints')[0];
+      const placement = nodeTypeElement.getElementsByTagName('PlacementProperties')[0];
+      const certs = nodeTypeElement.getElementsByTagName('Certificates')[0];
+
+      nodeTypeInfo.endpoints = this.parseListAndChildAttributes(endpoints);
+      nodeTypeInfo.certificates = this.parseListAndChildAttributes(certs, ['Name']);
+      nodeTypeInfo.PlacementProperties = this.parseListAndChildAttributes(placement, ['Name']);
+
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawClusterManifest> {
-        return this.data.restClient.getClusterManifest(messageHandler);
+      console.log(nodeTypeInfo);
+      return nodeTypeInfo;
     }
 
-    private getImageStoreConnectionString(element: Element) {
-        const params = element.getElementsByTagName('Parameter');
-        for (let i = 0; i < params.length; i ++) {
-            const item = params.item(i);
-            if (item.getAttribute('Name') === 'ImageStoreConnectionString'){
-                this.imageStoreConnectionString = item.getAttribute('Value');
-                break;
-            }
+  parseListAndChildAttributes(element: Element, excludeAttributes: string[] = []) {
+    const items = [];
+    for (let i = 0; i < element.children.length; i++) {
+      const item = element.children.item(i);
+
+      const info = {
+        name: item.nodeName,
+        values: []
+      };
+
+      for (let j = 0; j < item.attributes.length; j++) {
+        const attr = item.attributes.item(j);
+        if (!excludeAttributes.includes(attr.name)) {
+          info.values.push({
+            name: attr.name,
+            value: attr.value
+          });
         }
+      }
+
+      items.push(info);
     }
 
-    protected updateInternal(): Observable<any> | void {
-        const parser = new DOMParser();
-        const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
-
-        // let $xml = $($.parseXML(this.raw.Manifest));
-        const manifest = xml.getElementsByTagName('ClusterManifest')[0];
-        this.clusterManifestName = manifest.getAttribute('Name');
-
-        const FabricSettings = manifest.getElementsByTagName('FabricSettings')[0];
-        const management = FabricSettings.getElementsByTagName('Section');
-
-        for (let i = 0; i < management.length; i ++) {
-            const item = management.item(i);
-            if (item.getAttribute('Name') === 'Management'){
-                this.getImageStoreConnectionString(item);
-            }else if (item.getAttribute('Name') === 'BackupRestoreService'){
-                this.isBackupRestoreEnabled = true;
-            }else if (item.getAttribute('Name') === 'UpgradeService'){
-                this.isSfrpCluster = true;
-            }else if (item.getAttribute('Name') === 'RepairManager'){
-                this.isRepairManagerEnabled = true;
-            }else if (item.getAttribute('Name') === 'EventStoreService'){
-                this.isEventStoreEnabled = true;
-            }
-        }
-    }
+    return items;
+  }
 }
-
 export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProgress> {
     public decorators: IDecorators = {
         hideList: [

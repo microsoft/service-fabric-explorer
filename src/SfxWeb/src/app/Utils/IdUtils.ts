@@ -67,6 +67,10 @@ export class IdUtils {
         return decodeURIComponent(IdUtils.getParam(route, 'networkName'));
     }
 
+    public static getNodeType(route: ActivatedRouteSnapshot): string {
+      return decodeURIComponent(IdUtils.getParam(route, 'nodeType'));
+    }
+
     public static idToName(id: string): string {
         return Constants.FabricPrefix + id;
     }
