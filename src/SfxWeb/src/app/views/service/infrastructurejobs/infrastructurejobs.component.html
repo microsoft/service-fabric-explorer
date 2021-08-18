@@ -1,0 +1,5 @@
+<app-dashboard-tile [data]="tiles" *ngIf="tiles" data-cy="nodesChart" class="tall"></app-dashboard-tile>
+<div class="detail-pane essen-pane">
+    <app-detail-list [listSettings]="listSettings" [list]="allManagementJobs" data-cy="nodesList"></app-detail-list>
+</div>
+

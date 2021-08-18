@@ -28,6 +28,7 @@ export class Constants {
     public static SystemAppId = 'System';
     public static SystemAppName = 'fabric:/System';
     public static SystemAppTypeName = 'System';
+    public static InfrastructureServiceType = 'InfrastructureServiceType';
 
     // Version header
     public static SfxVersionMetadataName = 'SFX-Version';
