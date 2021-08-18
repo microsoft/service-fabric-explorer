@@ -1,6 +1,6 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { StorageService } from 'src/app/services/storage.service';
-import { Constants } from 'src/app/Common/Constants';
+import { Constants, TelemetryEventNames } from 'src/app/Common/Constants';
 import { MessageService } from 'src/app/services/message.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
@@ -32,12 +32,23 @@ export class AdvancedOptionComponent implements OnInit {
 
   change() {
     this.storage.setValue(Constants.AdvancedModeKey, this.status);
+    this.telemetryService.trackActionEvent(TelemetryEventNames.advancedMode, null, TelemetryEventNames.advancedMode);
   }
 
   closeChange(state: boolean) {
     if (!Utils.isIEOrEdge) {
       this.liveAnnouncer.announce(`Settings dropdown button is now ${state ? 'Expanded' : 'Collapsed'}`);
     }
+  }
+
+  pageSize(size) {
+    this.settingsService.paginationLimit = size;
+    this.telemetryService.trackActionEvent(TelemetryEventNames.listSize, {value: size.toString()});
+  }
+
+  suppressMessages(state) {
+    this.messageService.suppressMessage = state;
+    this.telemetryService.trackActionEvent(TelemetryEventNames.supressMessage, null, TelemetryEventNames.supressMessage);
   }
 
   telemetryChange() {

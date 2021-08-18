@@ -153,7 +153,10 @@ export class SortPriorities {
         None: 1,
         Primary: 2,
         ActiveSecondary: 3,
-        IdleSecondary: 4
+        IdleSecondary: 4,
+        PrimaryAuxiliary: 5,
+        ActiveAuxiliary: 6,
+        IdleAuxiliary: 7,
     };
 }
 
@@ -200,3 +203,12 @@ export class CertExpiraryHealthEventProperty {
     public static Server = 'Certificate_server';
 }
 
+
+export class TelemetryEventNames {
+  public static RepairChart = 'show repair job chart';
+  public static CombinedEventStore = 'combined event store';
+  public static SortByHealth = 'sort by health in tree';
+  public static supressMessage = 'supress messages';
+  public static listSize = 'set list size';
+  public static advancedMode = 'enable advanced mode';
+}

@@ -1,0 +1,53 @@
+{
+  "Name": "fabric:/VisualObjects",
+  "TypeName": "VisualObjectsApplicationType",
+  "TargetApplicationTypeVersion": "21.0.0",
+  "UpgradeDomains": [
+    { "Name": "0", "State": "InProgress" },
+    { "Name": "1", "State": "Pending" },
+    { "Name": "2", "State": "Pending" },
+    { "Name": "3", "State": "Pending" },
+    { "Name": "4", "State": "Pending" }
+  ],
+  "UpgradeState": "RollingForwardInProgress",
+  "NextUpgradeDomain": "1",
+  "RollingUpgradeMode": "Monitored",
+  "UpgradeDescription": {
+    "Name": "fabric:/VisualObjects",
+    "TargetApplicationTypeVersion": "21.0.0",
+    "Parameters": [
+      { "Key": "VisualObjects.ActorService_PartitionCount", "Value": "10" },
+      { "Key": "VisualObjects.WebService_InstanceCount", "Value": "-1" }
+    ],
+    "UpgradeKind": "Rolling",
+    "RollingUpgradeMode": "Monitored",
+    "UpgradeReplicaSetCheckTimeoutInSeconds": 4294967295,
+    "InstanceCloseDelayDurationInSeconds": 4294967295,
+    "ForceRestart": false,
+    "MonitoringPolicy": {
+      "FailureAction": "Rollback",
+      "HealthCheckWaitDurationInMilliseconds": "PT0H0M0S",
+      "HealthCheckStableDurationInMilliseconds": "PT0H2M0S",
+      "HealthCheckRetryTimeoutInMilliseconds": "PT0H10M0S",
+      "UpgradeTimeoutInMilliseconds": "P10675199DT2H48M5.4775807S",
+      "UpgradeDomainTimeoutInMilliseconds": "P10675199DT2H48M5.4775807S"
+    },
+    "ManagedApplicationIdentity": { "ManagedIdentities": [] },
+    "SortOrder": "Default"
+  },
+  "UpgradeDurationInMilliseconds": "PT0H0M0.0816586S",
+  "UpgradeDomainDurationInMilliseconds": "PT0H0M0.0816586S",
+  "UnhealthyEvaluations": [],
+  "CurrentUpgradeDomainProgress": {
+    "DomainName": "0",
+    "NodeUpgradeProgressList": []
+  },
+  "StartTimestampUtc": "2021-08-04T21:02:29.882Z",
+  "FailureTimestampUtc": "0001-01-01T00:00:00.000Z",
+  "FailureReason": "None",
+  "UpgradeDomainProgressAtFailure": {
+    "DomainName": "",
+    "NodeUpgradeProgressList": []
+  },
+  "UpgradeStatusDetails": "Upgrading node. Elapsed time: 00.000."
+}

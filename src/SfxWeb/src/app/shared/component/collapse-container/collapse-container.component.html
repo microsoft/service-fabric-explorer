@@ -1,5 +1,5 @@
 <div style="position: relative;">
-    <div (click)="changeCollapseState()" [ngClass]="{'base-header': !disabled}" [attr.aria-expanded]="!collapsed"
+    <div (click)="changeCollapseState()" [ngClass]="{'base-header': !disabled}" [attr.aria-expanded]="!collapsed" class="flex-center"
     [ngbTooltip]="(collapsed ? 'Open ': 'Close ')  + sectionName + ' Section'" placement="top" [disableTooltip]="disabled || hideTooltip">
         <button class="mif-2x status-icon {{collapsed ? 'mif-arrow-drop-down' : 'mif-arrow-drop-up' }}" *ngIf="!disabled"
                 tabindex="0" [attr.aria-label]=" (collapsed ? 'Open ': 'Close ')  + sectionName + ' Section'"></button>

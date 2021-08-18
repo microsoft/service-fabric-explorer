@@ -1,55 +1,16 @@
 <div *ngIf="servicePackage">
-    <div class="detail-pane essen-pane">
-      <div class="essential-container">
-        <div class="essential-item essential-half">
-          <div class="essential-head">
-            Name
-          </div>
-          <div class="essential-body">
-            {{servicePackage.raw.Name}}<app-clip-board [text]="servicePackage.raw.Name"></app-clip-board>
-          </div>
-        </div>
-
-        <div class="essential-item essential-half">
-          <div class="essential-head">
-            Version
-          </div>
-          <div class="essential-body">
-            {{servicePackage.raw.Version}}<app-clip-board [text]="servicePackage.raw.Version"></app-clip-board>
-          </div>
-        </div>
-
-        <div class="essential-item essential-half">
-          <div class="essential-head">
-            Health State
-          </div>
-          <div class="essential-body">
-            <app-health-badge *ngIf="servicePackage.health" [badgeClass]="servicePackage.health.healthState.badgeClass" [text]="servicePackage.health.healthState.text"></app-health-badge>
-          </div>
-        </div>
-
-        <div class="essential-item essential-half">
-          <div class="essential-head">
-            Status
-          </div>
-          <div class="essential-body">
-            {{servicePackage.raw.Status}}
-          </div>
-        </div>
-
-        <div class="essential-item essential-half" *ngIf="servicePackage.servicePackageActivationId">
-          <div class="essential-head">
-            Service Package Activation Id
-          </div>
-          <div class="essential-body">
-            {{servicePackage.servicePackageActivationId}}
-          </div>
-        </div>
-      </div>
+    <div class="tile-container">
+      <app-essential-health-tile [healthState]="servicePackage.health.healthState" *ngIf="servicePackage?.isInitialized"
+        class="long" [listItems]="essentialItems">
+    
+        <ng-template appEssentialTemplate id="status">
+          <app-status-resolver [status]="servicePackage.raw.Status"></app-status-resolver>
+        </ng-template>
+      </app-essential-health-tile>
     </div>
 
     <div class="detail-pane essen-pane" *ngIf="servicePackage.health">
-        <h4>Unhealthy Evaluations</h4>
-        <app-detail-list [list]="servicePackage.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
+        <h4>Health Evaluations</h4>
+        <app-health-viewer  [healthyEvaluations]="servicePackage.health.healthEvents" [unhealthyEvaluations]="servicePackage.health.unhealthyEvaluations" ></app-health-viewer>
     </div>
 </div>

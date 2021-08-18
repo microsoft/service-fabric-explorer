@@ -1,4 +1,4 @@
-<div style="min-height: 900px" *ngIf="repairTaskCollection">
+<div *ngIf="repairTaskCollection">
     <div class="tile-container" data-cy="tiles">
         <app-dashboard-text-tile
             [barClass]="repairTaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
@@ -53,7 +53,7 @@
                 Visualization
             </h4>
             <div collapse-body>
-                <div ngbNav #nav="ngbNav" >
+                <div ngbNav #nav="ngbNav" [destroyOnHide]="false" (navChange)="changeChart()"  >
                     <div ngbNavItem>
                         <a ngbNavLink style="font-size: 12pt;">
                             Timeline
@@ -84,7 +84,7 @@
                                         </div>
                                     </app-collapse-container>
                                 </div>
-            
+
                                 <div style="margin-left: 15px;">
                                     <app-event-store-timeline [events]="timelineData" [fitOnDataChange]="false" data-cy="timeline"
                                         [displayMoveToStart]="false" [displayMoveToEnd]="false">

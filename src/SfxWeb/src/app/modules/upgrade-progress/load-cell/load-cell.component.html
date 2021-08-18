@@ -1,0 +1,4 @@
+<button class="simple-button" *ngIf="item.SafetyCheck.PartitionId && (item.loading === 'unstarted' || item.loading === 'failed')" (click)="load()">Load</button>
+<div class="loader" *ngIf="item.loading === 'inflight'">
+  <span class="mif-spinner4 rotate"></span>
+</div>

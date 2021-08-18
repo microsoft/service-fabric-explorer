@@ -14,7 +14,7 @@ export class NavbarComponent {
   @Input() name = '';
   @Input() tabs: ITab[] = [];
   @Input() actions: ActionCollection;
-
+  @Input() showCopy = true;
   constructor(private router: Router) { }
 
   navigateBySpaceBar(route: string) {

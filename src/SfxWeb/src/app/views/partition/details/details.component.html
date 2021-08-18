@@ -1,18 +1,11 @@
-
 <div *ngIf="partition">
     <div class="detail-pane essen-pane">
         <app-detail-view-part [data]="partition"></app-detail-view-part>
     </div>
-    
-    <div class="detail-pane essen-pane">
-        <h4>
-            Health Events
-        </h4>
-        <app-detail-list [list]="partition.health.healthEvents" [listSettings]="healthEventsListSettings"></app-detail-list>
-    </div>
-    
+
     <div class="detail-pane essen-pane" *ngIf="partition.loadInformation && partition.loadInformation.isValid">
         <h4>Load Information</h4>
-        <app-detail-view-part [data]="partition.loadInformation.raw"  [parent]="partition.loadInformation"></app-detail-view-part>
+        <app-detail-view-part [data]="partition.loadInformation.raw" [parent]="partition.loadInformation">
+        </app-detail-view-part>
     </div>
 </div>

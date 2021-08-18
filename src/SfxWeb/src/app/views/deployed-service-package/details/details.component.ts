@@ -1,8 +1,6 @@
 import { Component, Injector } from '@angular/core';
 import { DeployedServicePackageBaseControllerDirective } from '../DeployedServicePackage';
-import { ListSettings } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
-import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
   selector: 'app-details',
@@ -10,13 +8,7 @@ import { SettingsService } from 'src/app/services/settings.service';
   styleUrls: ['./details.component.scss']
 })
 export class DetailsComponent extends DeployedServicePackageBaseControllerDirective {
-  healthEventsListSettings: ListSettings;
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
-  }
-
-  setup() {
-    this.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
   }
 }

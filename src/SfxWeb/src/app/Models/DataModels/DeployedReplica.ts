@@ -1,5 +1,5 @@
 import { DataModelBase, IDecorators } from './Base';
-import { IRawDeployedReplica, IRawPartition, IRawDeployedReplicaDetail, IRawLoadMetricReport, IRawReplicatorStatus, IRawRemoteReplicatorStatus } from '../RawDataTypes';
+import { IRawDeployedReplica, IRawPartition, IRawDeployedReplicaDetail, IRawLoadMetricReport, IRawReplicatorStatus, IRawRemoteReplicatorStatus, IRawReplicaInfo, IRawInstanceInfo } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { DeployedServicePackage } from './DeployedServicePackage';
 import { IdUtils } from 'src/app/Utils/IdUtils';
@@ -172,6 +172,15 @@ export class DeployedReplicaDetail extends DataModelBase<IRawDeployedReplicaDeta
         if (this.raw.ReplicatorStatus) {
             this.replicatorStatus = new ReplicatorStatus(this.data, this.raw.ReplicatorStatus);
         }
+    }
+
+    isStateful() {
+        return this.parent.isStatefulService;
+    }
+
+    public get processID() {
+        const info = this.isStateful() ? (this.raw as IRawReplicaInfo).DeployedServiceReplica : (this.raw as IRawInstanceInfo).DeployedServiceReplicaInstance;
+        return info.HostProcessId;
     }
 }
 

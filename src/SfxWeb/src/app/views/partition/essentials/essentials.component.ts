@@ -5,6 +5,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, forkJoin, of } from 'rxjs';
 import { PartitionBaseControllerDirective } from '../PartitionBase';
+import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
   selector: 'app-essentials',
@@ -14,21 +15,21 @@ import { PartitionBaseControllerDirective } from '../PartitionBase';
 export class EssentialsComponent extends PartitionBaseControllerDirective {
 
   public hideReplicator = true;
-
-  unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
 
+  essentialItems: IEssentialListItem[] = [];
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
   setup() {
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-
+    this.setEssentialData();
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    this.setEssentialData();
+
     if (!this.listSettings) {
         let defaultSortProperties = ['replicaRoleSortPriority', 'raw.NodeName'];
         const columnSettings = [
@@ -52,5 +53,54 @@ export class EssentialsComponent extends PartitionBaseControllerDirective {
       this.partition.health.refresh(messageHandler),
       this.partition.replicas.refresh(messageHandler)
     ]);
+  }
+
+  setEssentialData() {
+    this.essentialItems = [];
+
+    if (!this?.partition?.partitionInformation.isInitialized) {
+      return;
+    }
+
+    this.essentialItems = [
+      {
+        descriptionName: 'Status',
+        displayText: this.partition.raw.PartitionStatus,
+        copyTextValue: this.partition.raw.PartitionStatus,
+        selectorName: 'status',
+        displaySelector: true
+      },
+      {
+        descriptionName: 'Partition Kind',
+        displayText: this.partition.partitionInformation.raw.ServicePartitionKind,
+        copyTextValue: this.partition.partitionInformation.raw.ServicePartitionKind,
+      }
+    ];
+
+    if (this.partition.isStatefulService) {
+
+      if (this.partition.partitionInformation.isPartitionKindInt64Range) {
+        this.essentialItems.push({
+          descriptionName: 'High Key',
+          displayText: this.partition.partitionInformation.raw.HighKey,
+          copyTextValue: this.partition.partitionInformation.raw.HighKey
+        });
+        this.essentialItems.push({
+          descriptionName: 'Low Key',
+          displayText: this.partition.partitionInformation.raw.LowKey,
+          copyTextValue: this.partition.partitionInformation.raw.LowKey
+        });
+      }
+
+      if (this.partition.partitionInformation.isPartitionKindNamed) {
+        this.essentialItems.push({
+          descriptionName: 'Name',
+          displayText: this.partition.partitionInformation.raw.Name,
+          copyTextValue: this.partition.partitionInformation.raw.Name
+        });
+      }
+
+    }
+
   }
 }

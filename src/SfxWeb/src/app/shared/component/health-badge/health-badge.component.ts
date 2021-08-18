@@ -7,12 +7,13 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./health-badge.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class HealthBadgeComponent {
+export class HealthBadgeComponent{
   public assetBase = environment.assetBase;
 
   @Input() badgeClass;
   @Input() text: string;
   @Input() showText = true;
-  constructor() { }
+  @Input() size = '15px';
 
+  constructor() { }
 }

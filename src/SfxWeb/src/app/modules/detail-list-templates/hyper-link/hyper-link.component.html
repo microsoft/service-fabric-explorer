@@ -1,1 +1,9 @@
-<a style="white-space: pre;" [routerLink]="link" > {{value}} </a>
+
+
+<ng-template #internal>
+  <span style="white-space: pre;">{{value}}</span>
+</ng-template>
+
+<a *ngIf="link; else internal" [routerLink]="link">
+  <a style="white-space: pre;" [routerLink]="link" > {{value}} </a>
+</a>

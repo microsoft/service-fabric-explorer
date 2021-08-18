@@ -57,7 +57,7 @@ context('Network Page', () => {
             })
         })
 
-        it.only('clear log', () => {
+        it('clear log', () => {
             cy.get(requestCount).within(ele => {
                 expect(parseInt(ele.text())).to.be.greaterThan(0);
             })

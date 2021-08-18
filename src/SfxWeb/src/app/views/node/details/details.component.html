@@ -7,15 +7,6 @@
     </app-collapse-container>
 </div>
 
-<div class="detail-pane essen-pane" *ngIf="node && node.health">
-    <app-collapse-container sectionName="Health Events">
-        <h4 collapse-header>
-            Health Events
-        </h4>    
-        <app-detail-list [list]="node.health.healthEvents" [listSettings]="healthEventsListSettings" collapse-body></app-detail-list>
-    </app-collapse-container>
-</div>
-
 <div class="detail-pane essen-pane" *ngIf="node && node.loadInformation.isInitialized" data-cy="load">
     <app-detail-view-part [data]="node.loadInformation.raw" [parent]="node.loadInformation" collapse-body></app-detail-view-part>
 </div>

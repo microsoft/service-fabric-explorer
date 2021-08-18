@@ -1,130 +1,15 @@
-<div class="detail-pane essen-pane" *ngIf="service">
-  <div class="essential-container" data-cy="overview">
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Name
-      </div>
-      <div class="essential-body">
-        {{service?.name}}<app-clip-board [text]="service?.name"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Service Type
-      </div>
-      <div class="essential-body">
-        {{service?.raw.TypeName}}<app-clip-board [text]="service?.raw.TypeName"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Health State
-      </div>
-      <div class="essential-body">
-        <app-health-badge [badgeClass]="service?.healthState.badgeClass" [text]="service?.healthState.text">
-        </app-health-badge>
-      </div>
-    </div>
-
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Service Type Version
-      </div>
-      <div class="essential-body">
-        {{service?.raw.ManifestVersion}}<app-clip-board [text]="service.raw.ManifestVersion"></app-clip-board>
-      </div>
-    </div>
-  </div>
-  <div class="essential-container" *ngIf="service.isStatefulService" data-cy="stateful">
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Status
-      </div>
-      <div class="essential-body">
-        {{service.raw.ServiceStatus}}
-      </div>
-    </div>
-
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Minimum Replica Set Size
-      </div>
-      <div class="essential-body" *ngIf="service.description.raw">
-        {{service.description.raw.MinReplicaSetSize}}
-      </div>
-    </div>
-
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Service Kind
-      </div>
-      <div class="essential-body">
-        {{service.raw.ServiceKind}}
-      </div>
-    </div>
-
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Target Replica Set Size
-      </div>
-      <div class="essential-body" *ngIf="service.description.raw">
-        {{service.description.raw.TargetReplicaSetSize}}
-      </div>
-    </div>
-
-    <div class="essential-item essential-half"
-      *ngIf="service.description.raw && service.description.raw.ServiceDnsName">
-      <div class="essential-head">
-        Service Dns Name
-      </div>
-      <div class="essential-body">
-        {{service.description.raw.ServiceDnsName}}
-      </div>
-    </div>
-  </div>
-
-  <div class="essential-container" *ngIf="service.isStatelessService" data-cy="stateless">
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Status
-      </div>
-      <div class="essential-body">
-        {{service.raw.ServiceStatus}}
-      </div>
-    </div>
-
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Instance Count
-      </div>
-      <div class="essential-body" *ngIf="service.description.raw">
-        {{service.description.raw.InstanceCount}}
-      </div>
-    </div>
-
-    <div class="essential-item essential-half">
-      <div class="essential-head">
-        Service Kind
-      </div>
-      <div class="essential-body">
-        {{service.raw.ServiceKind}}
-      </div>
-    </div>
-  </div>
-
-  <div class="essential-item essential-half" *ngIf="service.description.raw && service.description.raw.ServiceDnsName">
-    <div class="essential-head">
-      Service Dns Name
-    </div>
-    <div class="essential-body">
-      {{service.description.raw.ServiceDnsName}}
-    </div>
-  </div>
-</div>
-
 <div class="tile-container">
+  <app-essential-health-tile [healthState]="service?.healthState" *ngIf="service && service.isInitialized" class="long"
+    [listItems]="essentialItems">
+    <ng-template appEssentialTemplate id="status">
+      <app-status-resolver [status]="service.raw.ServiceStatus"></app-status-resolver>
+    </ng-template>
+  </app-essential-health-tile>
+
+  <app-tile-wrapper *ngIf="service?.description.raw" data-cy="state-data">
+    <app-state-info [stateful]="service.isStatefulService" [data]="service.description.raw"></app-state-info>
+  </app-tile-wrapper>
+
   <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard"></app-dashboard-tile>
   <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
 </div>
@@ -132,11 +17,10 @@
 <div class="detail-pane essen-pane">
   <app-collapse-container sectionName="Unhealthy Evaluations">
     <div collapse-header>
-      <h4>Unhealthy Evaluations</h4>
+      <h4>Health Evaluations</h4>
     </div>
     <div collapse-body>
-      <app-detail-list [list]="service.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"
-        *ngIf="service && service.health"></app-detail-list>
+        <app-health-viewer *ngIf="service && service.health" [healthyEvaluations]="service.health.healthEvents" [unhealthyEvaluations]="service.health.unhealthyEvaluations" ></app-health-viewer>
     </div>
   </app-collapse-container>
 </div>

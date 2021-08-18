@@ -53,7 +53,7 @@ export class AppComponent implements OnInit{
 
     this.checkWidth(window.innerWidth);
 
-    if (!this.storageService.getValueBoolean(TelemetryService.localStoragePromptedTelemetryKey, false)) {
+    if (!this.storageService.getValueBoolean(TelemetryService.localStoragePromptedTelemetryKey, false) && environment.telemetryKey.length > 0) {
       const config = new MatSnackBarConfig();
       config.duration = 30000;
       this.snackBar.openFromComponent(TelemetrySnackBarComponent, config);

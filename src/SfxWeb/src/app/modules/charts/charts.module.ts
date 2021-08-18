@@ -5,14 +5,19 @@ import { DashboardTextTileComponent } from './dashboard-text-tile/dashboard-text
 import { BarChartComponent } from './bar-chart/bar-chart.component';
 import { RouterModule } from '@angular/router';
 import { DashboardTextScaleTileComponent } from './dashboard-text-scale-tile/dashboard-text-scale-tile.component';
+import { EssentialHealthTileComponent, EssentialTemplateDirective } from './essential-health-tile/essential-health-tile.component';
+import { SharedModule } from 'src/app/shared/shared.module';
+import { TileWrapperComponent } from './tile-wrapper/tile-wrapper.component';
 
 
 @NgModule({
-  declarations: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent],
+  declarations: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent, EssentialHealthTileComponent, EssentialTemplateDirective,
+                 TileWrapperComponent],
   imports: [
     CommonModule,
-    RouterModule
+    RouterModule,
+    SharedModule
   ],
-  exports: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent]
+  exports: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent, EssentialHealthTileComponent, EssentialTemplateDirective, TileWrapperComponent]
 })
 export class ChartsModule { }

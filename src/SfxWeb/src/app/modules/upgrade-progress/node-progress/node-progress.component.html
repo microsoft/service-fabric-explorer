@@ -1,0 +1,13 @@
+<div class="flex-center" style="font-size: 15px; padding: 5px; justify-content: space-between;">
+  <span>
+    Node : {{node.NodeName}}
+  </span>
+  <span>
+    Safety Check(s) : {{node.PendingSafetyChecks.length}}
+  </span>
+</div>
+
+<div class="flex-center" style="margin-left: 10px; margin-bottom: 5px;">
+  Phase :
+  <app-phase-diagram [items]="progress" [currentIndex]="index"></app-phase-diagram>
+</div>

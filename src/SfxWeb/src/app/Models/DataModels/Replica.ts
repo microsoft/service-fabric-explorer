@@ -55,6 +55,10 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         return this.data.restClient.restartReplica(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.ReplicaId);
     }
 
+    public deleteInstance(): Observable<any> {
+        return this.data.restClient.deleteReplica(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.InstanceId);
+    }
+
     public get isStatefulService(): boolean {
         return ServiceKindRegexes.Stateful.test(this.raw.ServiceKind);
     }
@@ -108,17 +112,32 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     private setUpActions(): void {
         const serviceName = this.parent.parent.raw.Name;
 
-        this.actions.add(new ActionWithConfirmationDialog(
-            this.data.dialog,
-            'Restart Replica',
-            'Restart Replica',
-            'Restarting',
-            () => this.restartReplica(),
-            () => true,
-            `Confirm Replica Restart`,
-            `Restart Replica for ${serviceName}`,
-            'confirm'
-        ));
+        if (this.isStatefulService) {
+          this.actions.add(new ActionWithConfirmationDialog(
+              this.data.dialog,
+              'Restart Replica',
+              'Restart Replica',
+              'Restarting',
+              () => this.restartReplica(),
+              () => true,
+              `Confirm Replica Restart`,
+              `Restart Replica for ${serviceName}`,
+              'confirm'
+          ));
+      } else if (this.isStatelessService) {
+          this.actions.add(new ActionWithConfirmationDialog(
+              this.data.dialog,
+              'Delete Instance',
+              'Delete Instance',
+              'Deleting',
+              () => this.deleteInstance(),
+              () => true,
+              `Confirm Instance Delete`,
+              `Delete Instance for ${serviceName}`,
+              'confirm'
+          ));
+      }
+
     }
 }
 

@@ -25,12 +25,21 @@ import { FormatDatePipe } from './pipes/format-date.pipe';
 import { LocalTimeComponent } from './component/local-time/local-time.component';
 import { DisplayTimeComponent } from './component/display-time/display-time.component';
 import { ToggleComponent } from './component/toggle/toggle.component';
+import { StatusResolverComponent } from './component/status-resolver/status-resolver.component';
+import { StateInfoComponent } from './component/state-info/state-info.component';
+import { EssentialItemComponent } from './component/essential-item/essential-item.component';
+import { DisplayDurationComponent } from './component/display-duration/display-duration.component';
+import { PhaseDiagramComponent } from './component/phase-diagram/phase-diagram.component';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
                  ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
                  ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
-                 FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent],
+                 FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
+                 StateInfoComponent,
+                 EssentialItemComponent,
+                 DisplayDurationComponent,
+                 PhaseDiagramComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -44,6 +53,7 @@ import { ToggleComponent } from './component/toggle/toggle.component';
             CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
             ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
-            FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent]
+            FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
+            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent]
 })
 export class SharedModule { }

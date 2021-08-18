@@ -75,10 +75,9 @@ $SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
         color: $detail-tab-color;
         margin-left: 0;
         font-size: $detail-tab-title-font-size;
-        // set padding instead of margin to avoid jumping of collapsed section
         margin-top: 0;
-        padding-top: 7px;
-        margin-bottom: 10px;
+        padding-top: 0px;
+        margin-bottom: 0px;
     }
 
     h4.no-uppercase {
@@ -94,12 +93,8 @@ $SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
 }
 
 .right-panel {
-    // position: absolute;
-    // left: $left-panel-width;
-    // right: 20px;
-    // top: 50px;
-    // bottom: 20px;
     padding-left: 20px;
+    padding-right: 15px;
     overflow: hidden;
     min-width: $right-panel-min-width;
     background-color: $right-panel-background-color;
@@ -382,7 +377,7 @@ table.detail-list {
 .badge-container {
     display: inline;
     white-space: nowrap;
-    overflow: hidden;
+    // overflow: hidden;
     text-overflow: ellipsis;
 }
 
@@ -467,6 +462,14 @@ app-navbar {
 
 .blue {
     background-color: $azure-blue;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.red {
+  background-color: red;
 }
 
 .dropdown-menu {
@@ -570,6 +573,9 @@ app-navbar {
   .vis-item.vis-dot {
     border-width: 10px;
     border-radius: 10px;
+  }
+  .vis-item.vis-range {
+      border-radius: 0px;
   }
   .vis-item.vis-selected {
     border-color: green;
@@ -694,6 +700,11 @@ app-navbar {
 
   .noUi-tooltip {
     display: none;
+    background-color: #262626;
+    border: 1px solid #0075c9;
+    color: white;
+    border-radius: 0px;
+    z-index: 2;
   }
   .noUi-handle {
       &:focus {
@@ -834,13 +845,18 @@ app-navbar {
     padding: 5px 5px 1px 0px;
     text-overflow: ellipsis;
     overflow: hidden;
-    font-size: 8pt;
-    font-weight: 400;
+    font-size: 10pt;
+    font-weight: 600;
 }
 
 .essential-body {
     text-overflow: ellipsis;
     overflow: hidden;
+    font-size: 9pt;
+}
+
+.spacer {
+    width: 10px; height: 1px;
 }
 
 .essential-item {
@@ -848,7 +864,7 @@ app-navbar {
     text-align: left;
     text-overflow: ellipsis;
     overflow: hidden;
-    min-width: 150px;
+    min-width: 180px;
 }
 
 .essential-container {
@@ -881,6 +897,7 @@ app-navbar {
 }
 
 .tile-container {
+    width: 100%;
     display: grid;
     grid-auto-flow: dense;
     grid-template-columns: repeat(auto-fit, $tile-width);
@@ -895,4 +912,71 @@ app-navbar {
         filter: brightness(100%);
         background-color: rgba(255, 255, 255, 0.1);
     }
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+}
+
+
+.underline {
+    border-bottom: 1px solid $table-border-color;
+}
+
+.centering-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.tile-item {
+    @extend .centering-row;
+    height: 35px;
+    position: relative;
+}
+
+.text-wrapper {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    .middle-text {
+        transition: .5s;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 800px;
+        float: left;
+    }
+
+    .left-text {
+        transition: .5s;
+        white-space: nowrap;
+        color: #c9c9c9;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+}
+
+.essential-list-item {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    &:hover {
+        .middle-text {
+            min-width: fit-content;
+            white-space: normal;
+        }
+
+        .left-text {
+            overflow: hidden;
+        }
+    }
+
+}
+
+.dropdown-menu {
+  list-style: none;
+  padding: 5px;
+  color: white;
+  margin-bottom: 0px;
 }

@@ -3,7 +3,7 @@ import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { DataService } from 'src/app/services/data.service';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { Service } from 'src/app/Models/DataModels/Service';
-import { IRawUpdateServiceDescription } from 'src/app/Models/RawDataTypes';
+import { IRawStatelessServiceDescription, IRawUpdateServiceDescription } from 'src/app/Models/RawDataTypes';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 
 @Component({
@@ -29,11 +29,11 @@ export class ScaleServiceComponent implements OnInit {
     this.updateServiceDescription = {
       ServiceKind: this.service.serviceKindInNumber,
       Flags: 0x01, // Update InstanceCount flag
-      InstanceCount: this.service.description.raw.InstanceCount
+      InstanceCount: (this.service.description.raw as IRawStatelessServiceDescription).InstanceCount
     };
 
     this.form = this.formBuilder.group({
-      count: [this.service.description.raw.InstanceCount, [Validators.required, Validators.pattern('^(?:-1|[1-9]\d*)$')]],
+      count: [(this.service.description.raw as IRawStatelessServiceDescription).InstanceCount, [Validators.required, Validators.pattern('^(?:-1|[1-9]\d*)$')]],
     });
   }
 

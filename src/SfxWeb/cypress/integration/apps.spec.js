@@ -27,7 +27,7 @@ context('apps list page', () => {
 
     describe("upgrades in progress", () => {
 
-        it.only('view upgrades', () => {
+        it('view upgrades', () => {
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('upgrades in progress').click();

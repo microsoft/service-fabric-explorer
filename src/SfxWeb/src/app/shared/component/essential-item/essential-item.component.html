@@ -1,0 +1,17 @@
+<div class="essential-list-item highlight-hover" [ngClass]="underline ? '': 'underline'">
+    <div class="text-wrapper tile-item">
+        <div class="tile-list-entry left-text" *ngIf="item.descriptionName">
+            {{item.descriptionName}}
+        </div>
+        <div class="spacer"></div>
+        <div class="middle-text">
+            <span *ngIf="!item.displaySelector">
+                {{item.displayText}}
+            </span>
+            <span *ngIf="item.displaySelector">
+              <ng-content></ng-content>
+            </span>
+        </div>
+    </div>
+    <app-clip-board [text]="item.copyTextValue" *ngIf="item.copyTextValue"></app-clip-board>
+</div>

@@ -6,11 +6,11 @@ import { ListSettings, ListColumnSettingForLink, ListColumnSetting, ListColumnSe
 import { SettingsService } from 'src/app/services/settings.service';
 import { forkJoin, of, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
-import { ClusterManifest } from 'src/app/Models/DataModels/Cluster';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { ListColumnSettingForApplicationServiceRow } from '../action-row/action-row.component';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
+import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
@@ -20,22 +20,19 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
 
   upgradeProgress: ApplicationUpgradeProgress;
   listSettings: ListSettings;
-  unhealthyEvaluationsListSettings: ListSettings;
   upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
   serviceTypesListSettings: ListSettings;
-  clusterManifest: ClusterManifest;
 
   servicesDashboard: IDashboardViewModel;
   partitionsDashboard: IDashboardViewModel;
   replicasDashboard: IDashboardViewModel;
+  essentialItems: IEssentialListItem[] = [];
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService, private cdr: ChangeDetectorRef) {
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
   setup() {
-    this.clusterManifest = new ClusterManifest(this.data);
-
     this.listSettings = this.settings.getNewOrExistingListSettings('services', ['name'], [
       new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
       new ListColumnSetting('raw.TypeName', 'Service Type'),
@@ -52,10 +49,9 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
         new ListColumnSettingForApplicationServiceRow(),
     ]);
 
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
     this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('upgradeProgressUnhealthyEvaluations');
-    this.cdr.detectChanges();
 
+    this.essentialItems = [];
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
@@ -65,8 +61,29 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
       }
     });
 
+    this.essentialItems = [
+      {
+        descriptionName: 'Application Type',
+        displayText: this.app.raw.TypeName,
+        copyTextValue: this.app.raw.TypeName,
+        selectorName: 'typename',
+        displaySelector: true
+      },
+      {
+        descriptionName: 'Version',
+        displayText: this.app.raw.TypeVersion,
+        copyTextValue: this.app.raw.TypeVersion
+      },
+      {
+        descriptionName: 'Status',
+        displayText: this.app.raw.Status,
+        copyTextValue: this.app.raw.Status,
+        selectorName: 'status',
+        displaySelector: true
+      }
+    ];
+
     return forkJoin([
-      this.clusterManifest.ensureInitialized(false),
       this.app.upgradeProgress.refresh(messageHandler).pipe(map(upgradeProgress => {
         this.upgradeProgress = upgradeProgress;
       })),
@@ -82,9 +99,7 @@ export class EssentialsComponent extends ApplicationBaseControllerDirective {
         const replicasHealthStateCount = HealthUtils.getHealthStateCount(appHealth.raw, HealthStatisticsEntityKind.Replica);
         this.replicasDashboard = DashboardViewModel.fromHealthStateCount('Replicas', 'Replica', false, replicasHealthStateCount);
       }))
-    ]).pipe(map( () => {
-      this.cdr.detectChanges();
-    }));
+    ]);
   }
 
 }

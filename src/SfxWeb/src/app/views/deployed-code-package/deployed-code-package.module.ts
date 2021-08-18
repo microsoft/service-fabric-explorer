@@ -8,6 +8,7 @@ import { DetailsComponent } from './details/details.component';
 import { ContainerLogsComponent } from './container-logs/container-logs.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates
     CommonModule,
     DeployedCodePackageRoutingModule,
     SharedModule,
-    DetailListTemplatesModule
+    DetailListTemplatesModule,
+    ChartsModule
   ]
 })
 export class DeployedCodePackageModule { }

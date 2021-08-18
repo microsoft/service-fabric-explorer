@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { NodeDeactivationInfoComponent } from './node-deactivation-info/node-deactivation-info.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { UpgradeProgressModule } from '../upgrade-progress/upgrade-progress.module';
+import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
 
 
 
@@ -14,7 +15,8 @@ import { UpgradeProgressModule } from '../upgrade-progress/upgrade-progress.modu
   imports: [
     CommonModule,
     SharedModule,
-    UpgradeProgressModule
+    UpgradeProgressModule,
+    DetailListTemplatesModule
   ]
 })
 export class NodeDeactivationModule { }

@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, addRoute } from './util';
+import { addDefaultFixtures, apiUrl, addRoute, checkActions } from './util';
 
 const appName = "VisualObjectsApplicationType";
 
@@ -39,6 +39,8 @@ context('replica', () => {
                 cy.contains(replicaId);
                 cy.contains("Replica");
             })
+
+            checkActions(['Restart Replica'])
         })
 
         it('view details', () => {
@@ -65,7 +67,7 @@ context('replica', () => {
         })
     })
 
-    describe("stateful", () => {
+    describe("stateless", () => {
         const serviceName = "VisualObjects.WebService";
         const partitionId = "18efefc0-c136-4ba4-b1ec-d075704e412b";
         const replicaId = "132429339499004157";
@@ -89,6 +91,8 @@ context('replica', () => {
                 cy.contains(replicaId);
                 cy.contains("Instance");
             })
+
+            checkActions(['Delete Instance'])
 
             cy.get('[data-cy=address]').within(() => {
                 cy.contains('http://10.0.0.7:8081/visualobjects/');

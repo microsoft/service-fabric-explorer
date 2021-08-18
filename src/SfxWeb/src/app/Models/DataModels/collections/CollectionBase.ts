@@ -41,6 +41,8 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     public isInitialized = false;
     public parent: any;
     public collection: T[] = [];
+    public lastRefreshWasSuccessful = false;
+    private clearOnFailureToUpdate = false;
 
     protected valueResolver: ValueResolver = new ValueResolver();
 
@@ -71,16 +73,25 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     }
 
     // Base refresh logic, do not override
-    public refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
+    public refresh(messageHandler?: IResponseMessageHandler): Observable<boolean> {
+        let success = true;
         if (!this.refreshingPromise) {
             this.refreshingPromise = new AsyncSubject<any>();
+            this.clearOnFailureToUpdate = true;
 
             this.retrieveNewCollection(messageHandler).pipe(mergeMap(collection => {
                 return this.update(collection);
             }),
-            catchError( err => of(err))
+            catchError( err => {
+                success = false;
+                return of(err);
+            })
             ).subscribe( () => {
-                this.refreshingPromise.next(this);
+                if (this.clearOnFailureToUpdate && this.lastRefreshWasSuccessful){
+                    this.collection = [];
+                }
+                this.lastRefreshWasSuccessful = success;
+                this.refreshingPromise.next(success);
                 this.refreshingPromise.complete();
                 this.refreshingPromise = null;
             });
@@ -110,7 +121,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
                 //     this.refreshingPromise = null;
                 // });
         }
-        return this.refreshingPromise ? this.refreshingPromise.asObservable() : of(null);
+        return this.refreshingPromise ? this.refreshingPromise.asObservable() : of(success);
     }
 
     public clear(): Observable<any> {
@@ -130,6 +141,7 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
 
     protected update(collection: T[]): Observable<any> {
         this.isInitialized = true;
+        this.clearOnFailureToUpdate = false;
 
         this.collection = CollectionUtils.updateDataModelCollection(this.collection, collection, this.appendOnly);
 
@@ -137,11 +149,11 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
         return this.updateInternal();
     }
 
-    public ensureInitialized(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<any> {
+    public ensureInitialized(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<boolean> {
         if (!this.isInitialized || forceRefresh) {
             return this.refresh(messageHandler);
         }
-        return of(this);
+        return of(this.lastRefreshWasSuccessful);
     }
 
     public find(uniqueId: string): T {

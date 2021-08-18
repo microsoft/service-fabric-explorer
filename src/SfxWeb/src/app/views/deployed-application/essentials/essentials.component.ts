@@ -5,6 +5,7 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { ListSettings, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter, ListColumnSetting } from 'src/app/Models/ListSettings';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DeployedAppBaseControllerDirective } from '../DeployedApplicationBase';
+import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
   selector: 'app-essentials',
@@ -12,8 +13,9 @@ import { DeployedAppBaseControllerDirective } from '../DeployedApplicationBase';
   styleUrls: ['./essentials.component.scss']
 })
 export class EssentialsComponent extends DeployedAppBaseControllerDirective {
-  unhealthyEvaluationsListSettings: ListSettings;
   listSettings: ListSettings;
+
+  essentialItems: IEssentialListItem[] = [];
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
       super(data, injector);
@@ -21,12 +23,31 @@ export class EssentialsComponent extends DeployedAppBaseControllerDirective {
 
 
    refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    this.essentialItems = [
+      {
+        descriptionName: 'Application Type',
+        copyTextValue: this.deployedApp.raw.TypeName,
+        selectorName: 'appTypeViewPath',
+        displaySelector: true
+      },
+      {
+        descriptionName: 'Disk Location',
+        displayText: this.deployedApp.diskLocation,
+        copyTextValue: this.deployedApp.diskLocation
+      },
+      {
+        descriptionName: 'Status',
+        copyTextValue: this.deployedApp.raw.Status,
+        selectorName: 'status',
+        displaySelector: true
+      }
+    ];
     return this.deployedApp.deployedServicePackages.refresh(messageHandler);
   }
 
 
   setup(){
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
+    this.essentialItems = [];
     this.listSettings = this.settings.getNewOrExistingListSettings('servicePackages', ['name'], [
       new ListColumnSettingForLink('uniqueId', 'Name', item => item.viewPath),
       new ListColumnSetting('raw.Version', 'Version'),

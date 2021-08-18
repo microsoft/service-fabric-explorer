@@ -12,14 +12,9 @@ import { ServiceBaseControllerDirective } from '../ServiceBase';
   styleUrls: ['./details.component.scss']
 })
 export class DetailsComponent extends ServiceBaseControllerDirective {
-  healthEventsListSettings: ListSettings;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
-  }
-
-  setup() {
-    this.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
@@ -28,7 +23,6 @@ export class DetailsComponent extends ServiceBaseControllerDirective {
     }
 
     return forkJoin([
-      this.service.health.refresh(messageHandler),
       this.service.description.refresh(messageHandler),
       this.service.partitions.refresh(messageHandler),
       this.data.refreshBackupPolicies(messageHandler)

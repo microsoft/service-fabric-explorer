@@ -6,7 +6,7 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 })
 export class FormatDatePipe implements PipeTransform {
 
-  transform(value: string): string {
+  transform(value: string | number): string {
     return TimeUtils.getDuration(value);
   }
 

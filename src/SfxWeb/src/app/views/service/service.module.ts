@@ -1,6 +1,5 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
-
 import { ServiceRoutingModule } from './service-routing.module';
 import { EssentialsComponent } from './essentials/essentials.component';
 import { BaseComponent } from './base/base.component';
@@ -15,6 +14,7 @@ import { BackupComponent } from './backup/backup.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { InfrastructureJobsComponent } from './infrastructurejobs/infrastructurejobs.component';
+import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 
 
 @NgModule({
@@ -28,6 +28,7 @@ import { InfrastructureJobsComponent } from './infrastructurejobs/infrastructure
     FormsModule,
     ReactiveFormsModule,
     ChartsModule,
+    HealthStateModule
   ],
   entryComponents: [ScaleServiceComponent]
 })

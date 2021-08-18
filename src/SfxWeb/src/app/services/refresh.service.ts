@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { StorageService } from './storage.service';
 import { Constants } from '../Common/Constants';
-import { Observable, interval, Subscription, forkJoin, timer, of } from 'rxjs';
+import { Observable, interval, Subscription, forkJoin, timer, of, Subject } from 'rxjs';
 import { catchError, take, finalize } from 'rxjs/operators';
 
 @Injectable({
@@ -11,11 +11,10 @@ export class RefreshService {
   public isRefreshing = false;
   public refreshRate = '';
   private autoRefreshInterval: Observable<any> = null;
+  public refreshSubject: Subject<number> = new Subject();
   private currentSync: Subscription;
   private previousRefreshSetting = 0;
-
-  private refreshSubjects: (() => Observable<any>)[] = [];
-  private refreshSubjectsMap: Record<string, () => Observable<any>> = {};
+  public refreshTick = 0; // used to test how many refreshes have been performed
 
   constructor(private storage: StorageService) { }
 
@@ -26,47 +25,14 @@ export class RefreshService {
     this.updateRefreshInterval(defaultRefreshInterval.toString(), true /* no refresh */);
   }
 
-  public insertRefreshSubject(key: string, func: () => Observable<any> ) {
-    if (key in this.refreshSubjectsMap) {
-      return;
-    }
-
-    this.refreshSubjectsMap[key] = func;
-    this.refreshSubjects.push(func);
-  }
-
-  public removeRefreshSubject(key: string) {
-    if (key in this.refreshSubjectsMap) {
-      this.refreshSubjects = this.refreshSubjects.filter( subject => subject !== this.refreshSubjectsMap[key]);
-      delete this.refreshSubjectsMap[key];
-    }
-  }
-
-  public hasRefreshSubject(key: string): boolean {
-    return key in this.refreshSubjectsMap;
-  }
-
-  public refreshSubjectCount(): number{
-    return this.refreshSubjects.length;
-  }
-
   public refreshAll(): void {
+    this.refreshSubject.next(this.refreshTick);
+    this.refreshTick++;
+    this.isRefreshing = true;
 
-      const refreshStartedTime = Date.now();
-      this.isRefreshing = true;
-
-      const subs = this.refreshSubjects.map(observeFunction => {
-         return observeFunction().pipe(take(1), catchError(err => of(null)));
-      });
-
-      try {
-        forkJoin(subs).pipe(
-          finalize(() => {
+    try {
             // Rotate the refreshing icon for at least 1 second
-            const remainingTime = Math.max(1000 - (Date.now() - refreshStartedTime), 0);
-            timer(remainingTime).subscribe( () => this.isRefreshing = false);
-          })
-        ).subscribe();
+            timer(1000).subscribe( () => this.isRefreshing = false);
       } catch {
         this.isRefreshing = false;
       }
