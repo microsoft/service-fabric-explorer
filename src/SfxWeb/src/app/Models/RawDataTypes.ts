@@ -1054,54 +1054,6 @@ export interface IRawRepairTask {
         ResultDetails?: string;
     }
 
-
-export interface INodesStatusDetails {
-        nodeType: string;
-        statusTypeCounts: Record<string, number>;
-        warningCount: number;
-        errorCount: number;
-        okCount: number;
-    }
-
-export class NodeStatusDetails implements INodesStatusDetails {
-        public static readonly allNodeText = 'All Nodes';
-        public static readonly allSeedNodesText = 'Seed Nodes';
-
-        public nodeType: string;
-        public statusTypeCounts: Record<string, number>;
-        public warningCount = 0;
-        public errorCount = 0;
-        public totalCount = 0;
-        public okCount = 0;
-        public constructor(nodeType: string) {
-            this.nodeType = nodeType;
-
-            // easiest way to initialize all possible values with Enum strings
-            this.statusTypeCounts = {};
-            this.statusTypeCounts[NodeStatusConstants.Up] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Down] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Enabling] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Disabling] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Disabled] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Unknown] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Invalid] = 0;
-        }
-
-        public add(node: Node): void {
-            this.statusTypeCounts[node.raw.NodeStatus]++;
-            this.totalCount++;
-            if (node.healthState.text === HealthStateConstants.Warning) {
-                this.warningCount++;
-            }
-            if (node.healthState.text === HealthStateConstants.Error) {
-                this.errorCount++;
-            }
-            if (node.healthState.text === HealthStateConstants.OK) {
-                this.okCount++;
-            }
-        }
-    }
-
 export enum NodeStatus {
         Invalid = 0,
         Up = 1,
