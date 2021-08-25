@@ -46,10 +46,10 @@ export class OptionPickerComponent implements OnInit {
     }
   }
 
-  emitData(data: IEventStoreData<any, any>, option: boolean) {
+  emitData(data: IEventStoreData<any, any>, option: any) {
     this.selectedOption.emit({
       data,
-      addToList: option
+      addToList: option.target.checked
     });
   }
 
