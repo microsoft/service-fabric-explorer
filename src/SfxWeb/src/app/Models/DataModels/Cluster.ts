@@ -20,6 +20,20 @@ import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
 
+export interface IXmlItemEntry {
+  name: string;
+  value: string;
+}
+export interface IXmlItem {
+  name: string;
+  values: IXmlItemEntry[];
+}
+
+export interface INodeTypeInfo {
+  endpoints: IXmlItem[];
+  PlacementProperties: IXmlItem[];
+  certificates: IXmlItem[]
+}
 
 export class ClusterHealth extends HealthBase<IRawClusterHealth> {
 
@@ -191,7 +205,7 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
           }
       }
 
-      const nodeTypeInfo = {
+      const nodeTypeInfo: INodeTypeInfo = {
         endpoints: [],
         certificates: [],
         PlacementProperties: []
@@ -213,12 +227,12 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
       return nodeTypeInfo;
     }
 
-  parseListAndChildAttributes(element: Element, excludeAttributes: string[] = []) {
+  parseListAndChildAttributes(element: Element, excludeAttributes: string[] = []): IXmlItem[] {
     const items = [];
     for (let i = 0; i < element.children.length; i++) {
       const item = element.children.item(i);
 
-      const info = {
+      const info: IXmlItem = {
         name: item.nodeName,
         values: []
       };

@@ -1,17 +1,35 @@
 <app-navbar type="Node Type" [name]="nodeType"></app-navbar>
 
-<div class="tile-container" data-cy="tiles">
-  <app-essential-health-tile class="long" [listItems]="certEssentialItems" data-cy="node-ring-info">
-  </app-essential-health-tile>
+<!-- class="tile-container"  -->
+<div data-cy="tiles" class="detail-pane" style="    display: flex;
+align-items: end;">
+  <div class="long essen-pane" style="width: fit-content;">
+    <h4 class="title-wrapper">End Points</h4>
+    <app-essential-item *ngFor="let item of endPoints " [item]="item.container" [underline]="false">
+      <app-essential-item *ngFor="let item2 of item.items; let l = last " [item]="item2" [underline]="true">
+      </app-essential-item>
+    </app-essential-item>
+  </div>
+
+  <div>
+    <div class="long essen-pane" style="width: fit-content; margin-bottom: 15px;">
+      <h4 class="title-wrapper">Certificates</h4>
+      <app-essential-item *ngFor="let item of certEssentialItems;  let l = last " [item]="item.container"
+        [underline]="false">
+        <app-essential-item *ngFor="let item2 of item.items " [item]="item2" [underline]="true">
+        </app-essential-item>
+      </app-essential-item>
+    </div>
+    <div class="long essen-pane">
+      <h4 class="title-wrapper">Placement Constraints</h4>
+      <app-essential-item *ngFor="let item of placementConstraints " [item]="item.container" [underline]="false">
+        <app-essential-item *ngFor="let item2 of item.items; let l = last " [item]="item2" [underline]="true">
+        </app-essential-item>
+      </app-essential-item>
+    </div>
+  </div>
 </div>
 
-<!-- <div>
-  <app-essential-item *ngFor="let item of endPoints " [item]="item.container" [underline]="false">
-    <app-essential-item *ngFor="let item2 of item.items; let l = last " [item]="item2" [underline]="l">
-    </app-essential-item>
-  </app-essential-item>
-
-</div> -->
 
 <div class="detail-pane essen-pane">
   <app-detail-list [listSettings]="listSettings" [list]="nodess" data-cy="nodesList"></app-detail-list>

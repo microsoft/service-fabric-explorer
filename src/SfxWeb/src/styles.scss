@@ -941,11 +941,12 @@ app-navbar {
     overflow: hidden;
     flex: 1;
     .middle-text {
+        flex: 1;
         transition: .5s;
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 800px;
-        float: left;
+        text-align: right;
     }
 
     .left-text {
@@ -979,4 +980,14 @@ app-navbar {
   padding: 5px;
   color: white;
   margin-bottom: 0px;
+}
+
+.title-wrapper {
+  font-size: 18pt;
+  line-height: 0.9;
+  color: #c9c9c9;
+  font-weight: 600;
+  border-bottom: 1px solid #4c4c4c;
+  padding-bottom: 8px;
+  text-align: center;
 }

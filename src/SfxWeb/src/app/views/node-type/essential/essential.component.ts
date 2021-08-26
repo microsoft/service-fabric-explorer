@@ -27,9 +27,17 @@ export class EssentialComponent extends BaseControllerDirective {
   repairJobs = [];
   repairJobSettings: ListSettings;
 
-  certEssentialItems: IEssentialListItem[] = [];
+  certEssentialItems: {
+    container: IEssentialListItem,
+    items: IEssentialListItem[]
+  }[] = [];
 
   endPoints: {
+    container: IEssentialListItem,
+    items: IEssentialListItem[]
+  }[] = [];
+
+  placementConstraints: {
     container: IEssentialListItem,
     items: IEssentialListItem[]
   }[] = [];
@@ -66,14 +74,23 @@ export class EssentialComponent extends BaseControllerDirective {
       const info = this.data.clusterManifest.getNodeTypeInformation(this.nodeType);
 
       this.certEssentialItems = info.certificates.map(certInfo => {
+        const items = certInfo.values.map(i => {
+          return {
+          descriptionName: i.name,
+          copyTextValue: i.value,
+          displayText: i.value,
+          };
+        });
         return {
-          descriptionName: certInfo.values[0].name,
-          copyTextValue: certInfo.values[0].value,
-          displayText: certInfo.values[0].value,
-        };
+          container: {
+            descriptionName: certInfo.name,
+            displaySelector: true
+          },
+          items
+        }
       });
 
-      this.endPoints = info.endpoints.map(endPoint => {
+      this.endPoints = info.endpoints.sort((a,b) => a.name.localeCompare(b.name)).map(endPoint => {
         const items = endPoint.values.map(i => {
           return {
           descriptionName: i.name,
@@ -90,6 +107,25 @@ export class EssentialComponent extends BaseControllerDirective {
           items
         };
       });
+
+      this.placementConstraints = info.PlacementProperties.sort((a,b) => a.name.localeCompare(b.name)).map(endPoint => {
+        const items = endPoint.values.map(i => {
+          return {
+          descriptionName: i.name,
+          copyTextValue: i.value,
+          displayText: i.value,
+          };
+        });
+
+        return {
+          container:  {
+            descriptionName: endPoint.name,
+            displaySelector: true
+          },
+          items
+        };
+      });
+
 
       if (this.data.clusterManifest.isRepairManagerEnabled) {
         return this.data.repairCollection.refresh().pipe(map(() => {
