@@ -16,13 +16,13 @@ export class StatusResolverComponent implements OnInit {
   constructor() { }
 
   ngOnInit(): void {
-    this.statusIconResolver.Active = 'mif-arrow-up green';
-    this.statusIconResolver.Ready = 'mif-arrow-up green';
+    this.statusIconResolver.Active = 'mif-arrow-up green-resolve';
+    this.statusIconResolver.Ready = 'mif-arrow-up green-resolve';
 
-    this.statusIconResolver[NodeStatusConstants.Up] = 'mif-arrow-up green';
-    this.statusIconResolver[NodeStatusConstants.Down] = 'mif-arrow-down red';
-    this.statusIconResolver[NodeStatusConstants.Disabled] = 'mif-blocked orange';
-    this.statusIconResolver[NodeStatusConstants.Disabling] = 'mif-blocked orange';
+    this.statusIconResolver[NodeStatusConstants.Up] = 'mif-arrow-up green-resolve';
+    this.statusIconResolver[NodeStatusConstants.Down] = 'mif-arrow-down red-resolve';
+    this.statusIconResolver[NodeStatusConstants.Disabled] = 'mif-blocked orange-resolve';
+    this.statusIconResolver[NodeStatusConstants.Disabling] = 'mif-blocked orange-resolve';
     this.statusIconResolver[NodeStatusConstants.Unknown] = '';
   }
 

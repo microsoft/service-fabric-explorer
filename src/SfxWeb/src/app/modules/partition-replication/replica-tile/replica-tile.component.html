@@ -1,0 +1,28 @@
+<div class="replica-container essen-pane" [ngClass]="leftBannerColor">
+  <div class="top-side">
+    <app-health-badge [badgeClass]="replica.healthState.badgeClass" size="25px"></app-health-badge>
+
+      <app-clip-board [text]="copyText" style="float: right"></app-clip-board>
+  </div>
+
+  <div>
+    <div class="replica-header">
+      <div style="width: 100%;">
+          <app-essential-item *ngFor="let item of overviewItems; let l = last; " [item]="item" [underline]="false">
+          </app-essential-item>
+          <app-essential-item [item]="status">
+              <app-status-resolver [status]="replica.raw.ReplicaStatus"></app-status-resolver>
+          </app-essential-item>
+      </div>
+    </div>
+
+    <app-collapse-container collapsed="true" *ngIf="replicator">
+      <div collapse-header>
+        Replicator Status
+      </div>
+      <div collapse-body>
+        <app-replica-status [replicator]="replicator"></app-replica-status>
+      </div>
+      </app-collapse-container>
+  </div>
+</div>

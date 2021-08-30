@@ -1,3 +1,14 @@
 .cell-wrapper {
     margin-bottom: 10px;
 }
+
+.replica-container {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, 250px);
+  grid-gap: 10px;
+  grid-auto-rows: 220px;
+  // display: flex;
+  // flex-wrap: wrap;
+  // justify-content: flex-start;
+  // align-items: flex-start;
+}

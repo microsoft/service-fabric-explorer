@@ -1,8 +1,7 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
-import { IRawReplicatorStatus, IRawRemoteReplicatorStatus, IRemoteReplicatorAcknowledgementDetail, IRemoteReplicatorAcknowledgementStatus } from 'src/app/Models/RawDataTypes';
+import { IRawRemoteReplicatorStatus, IRemoteReplicatorAcknowledgementDetail } from 'src/app/Models/RawDataTypes';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
-import { Utils } from 'src/app/Utils/Utils';
-import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
+import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
   selector: 'app-replica-status',
@@ -12,8 +11,9 @@ import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 export class ReplicaStatusComponent implements OnInit, OnChanges {
 
   @Input() replicator: IRawRemoteReplicatorStatus;
-  @Input() replica: ReplicaOnPartition;
-
+  copyItems: IEssentialListItem[] = [];
+  catchUpItems: IEssentialListItem[] = [];
+  lastItems: IEssentialListItem[] = [];
   isCopying = false;
   isReplicating = false;
 
@@ -22,16 +22,11 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
   overallStatus = '';
   stepsFinished = 0;
 
-  leftBannerColor = '';
-
   estimatedTime: string;
-
-  copyText = '';
 
   constructor() { }
 
   ngOnInit(): void {
-    console.log(this.replica);
   }
 
   ngOnChanges() {
@@ -39,7 +34,53 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
     this.isReplicating = this.inProgress(this.replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail);
     this.setCurrentStatus();
     this.replicationStatus = this.getReplicationStatus();
-    this.copyText = Utils.objectToFormattedText(this.replicator);
+
+    const copyRef = this.replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail;
+    this.copyItems = [
+      {
+        descriptionName: 'Average Receive Duration',
+        copyTextValue: copyRef.AverageReceiveDuration,
+        displayText: copyRef.AverageReceiveDuration,
+      },
+      {
+        descriptionName: 'Average Apply Duration',
+        copyTextValue: copyRef.AverageApplyDuration,
+        displayText: copyRef.AverageApplyDuration,
+      },
+      {
+        descriptionName: 'Not Received Count',
+        copyTextValue: copyRef.NotReceivedCount,
+        displayText: copyRef.NotReceivedCount,
+      },
+      {
+        descriptionName: 'Received And Not Applied Count ',
+        copyTextValue: copyRef.ReceivedAndNotAppliedCount,
+        displayText: copyRef.ReceivedAndNotAppliedCount,
+      },
+      {
+        descriptionName: 'Last Received CSN',
+        copyTextValue: this.replicator.LastReceivedCopySequenceNumber,
+        displayText: this.replicator.LastReceivedCopySequenceNumber,
+      },
+      {
+        descriptionName: 'Last Applied CSN',
+        copyTextValue: this.replicator.LastAppliedCopySequenceNumber,
+        displayText: this.replicator.LastAppliedCopySequenceNumber,
+      },
+    ];
+
+    this.lastItems = [
+      {
+        descriptionName: 'Last Received Replication LSN ',
+        copyTextValue: this.replicator.LastReceivedReplicationSequenceNumber,
+        displayText: this.replicator.LastReceivedReplicationSequenceNumber,
+      },
+      {
+        descriptionName: 'Last Applied Replication LSN ',
+        copyTextValue: this.replicator.LastAppliedReplicationSequenceNumber,
+        displayText: this.replicator.LastAppliedReplicationSequenceNumber,
+      },
+    ];
   }
 
   inProgress(details: IRemoteReplicatorAcknowledgementDetail): boolean {
@@ -59,19 +100,19 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
   }
 
   setCurrentStatus() {
-    this.leftBannerColor = 'blue-border';
 
-    if (this.isCopying) {
-      this.overallStatus = 'Copying';
-      this.estimatedTime = this.getEstimatedDuration(this.replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail);
-      this.stepsFinished = 0;
-    } else if (this.isReplicating) {
-      this.overallStatus = 'Replicating';
-      this.estimatedTime = this.getEstimatedDuration(this.replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail);
-      this.stepsFinished = 1;
-    } else {
+    if(this.replicator.IsInBuild) {
+      if (this.isCopying) {
+        this.overallStatus = 'Copying';
+        this.estimatedTime = this.getEstimatedDuration(this.replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail);
+        this.stepsFinished = 0;
+      } else if (this.isReplicating) {
+        this.overallStatus = 'Replicating';
+        this.estimatedTime = this.getEstimatedDuration(this.replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail);
+        this.stepsFinished = 1;
+      }
+    }else{
       this.overallStatus = 'Complete';
-      this.leftBannerColor = 'green-border';
       this.stepsFinished = 2;
     }
   }
