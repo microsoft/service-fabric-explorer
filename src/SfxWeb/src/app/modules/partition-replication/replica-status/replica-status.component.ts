@@ -12,7 +12,7 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
 
   @Input() replicator: IRawRemoteReplicatorStatus;
   copyItems: IEssentialListItem[] = [];
-  catchUpItems: IEssentialListItem[] = [];
+  replicationItems: IEssentialListItem[] = [];
   lastItems: IEssentialListItem[] = [];
   isCopying = false;
   isReplicating = false;
@@ -36,6 +36,30 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
     this.replicationStatus = this.getReplicationStatus();
 
     const copyRef = this.replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail;
+    const repRef = this.replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail;
+    this.replicationItems = [
+      {
+        descriptionName: 'Average Receive Duration',
+        copyTextValue: repRef.AverageReceiveDuration,
+        displayText: repRef.AverageReceiveDuration,
+      },
+      {
+        descriptionName: 'Average Apply Duration',
+        copyTextValue: repRef.AverageApplyDuration,
+        displayText: repRef.AverageApplyDuration,
+      },
+      {
+        descriptionName: 'Not Received Count',
+        copyTextValue: repRef.NotReceivedCount,
+        displayText: repRef.NotReceivedCount,
+      },
+      {
+        descriptionName: 'Received And Not Applied Count ',
+        copyTextValue: repRef.ReceivedAndNotAppliedCount,
+        displayText: repRef.ReceivedAndNotAppliedCount,
+      },
+    ]
+
     this.copyItems = [
       {
         descriptionName: 'Average Receive Duration',
@@ -71,12 +95,12 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
 
     this.lastItems = [
       {
-        descriptionName: 'Last Received Replication LSN ',
+        descriptionName: 'Last Received LSN ',
         copyTextValue: this.replicator.LastReceivedReplicationSequenceNumber,
         displayText: this.replicator.LastReceivedReplicationSequenceNumber,
       },
       {
-        descriptionName: 'Last Applied Replication LSN ',
+        descriptionName: 'Last Applied LSN ',
         copyTextValue: this.replicator.LastAppliedReplicationSequenceNumber,
         displayText: this.replicator.LastAppliedReplicationSequenceNumber,
       },

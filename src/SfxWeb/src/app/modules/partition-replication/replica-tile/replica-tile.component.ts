@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, Output, EventEmitter } from '@angular/core';
 import { HealthStateConstants } from 'src/app/Common/Constants';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
@@ -12,13 +12,17 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
 export class ReplicaTileComponent implements OnInit, OnChanges {
   @Input() replica: ReplicaOnPartition;
   @Input() replicator: IRawRemoteReplicatorStatus;
+  @Input() replicatorHistory: IRawRemoteReplicatorStatus[];
 
+  @Input() showReplication: boolean = false;
+  @Output() showReplicationChange = new EventEmitter<boolean>();
 
   overviewItems: IEssentialListItem[] = [];
   status: IEssentialListItem;
   copyText = '';
   leftBannerColor = '';
 
+  chartData = [];
 
   constructor() { }
 
@@ -59,5 +63,23 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
     }else {
       this.leftBannerColor = "gray"
     }
+    this.leftBannerColor = "banner-" + this.leftBannerColor
+
+    console.log(this.replicatorHistory)
+    if(this?.replicatorHistory?.length > 1) {
+      this.chartData = this.replicatorHistory.map( (value, index) => {
+        if(index > 0) {
+          return +value.LastAppliedReplicationSequenceNumber - +this.replicatorHistory[index - 1].LastAppliedReplicationSequenceNumber;
+        }else{
+          return 0
+        }
+      }).slice(1)
+
+    }
+  }
+
+  changeReplication() {
+    this.showReplication = !this.showReplication;
+    this.showReplicationChange.emit(this.showReplication)
   }
 }

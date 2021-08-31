@@ -4,6 +4,7 @@ import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { Utils } from 'src/app/Utils/Utils';
 import { Subscription } from 'rxjs';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
+import { ReplicatorStatus } from 'src/app/Models/DataModels/DeployedReplica';
 
 @Component({
   selector: 'app-replica-status-container',
@@ -15,10 +16,11 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
   @Input() replicas: ReplicaOnPartition[];
   sortedReplicas = [];
 
-  replicatorData: IRawReplicatorStatus;
   replicaDict = {};
+  expandedDict = {};
+  cachedData: Record<string, IRawRemoteReplicatorStatus[]> = {};
+
   primaryReplica: ReplicaOnPartition;
-  queueSize = '';
 
   overviewItems: IEssentialListItem[] = [];
   essentialItems: IEssentialListItem[] = [];
@@ -31,23 +33,30 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
     this.replicas.forEach(replica => {
       if (replica.raw.ReplicaRole === 'Primary') {
         this.primaryReplica = replica;
-        // console.log(this.primaryReplica.)
       }
     });
     // wrap check given primary starts as null
     if (this.primaryReplica) {
       this.sub.add(this.primaryReplica.detail.refresh().subscribe(() => {
 
-        this.queueSize = Utils.getFriendlyFileSize(+this.primaryReplica.detail.raw.ReplicatorStatus.ReplicationQueueStatus.QueueMemorySize);
+        const queueSize = Utils.getFriendlyFileSize(+this.primaryReplica.detail.raw.ReplicatorStatus.ReplicationQueueStatus.QueueMemorySize);
 
-        this.replicatorData = this.primaryReplica.detail.raw.ReplicatorStatus;
-        this.replicatorData.RemoteReplicators.sort( a => a.IsInBuild ? -1 : 1 );
+        const replicatorData = this.primaryReplica.detail.raw.ReplicatorStatus;
 
-        this.replicaDict = this.replicatorData.RemoteReplicators.reduce(( (data, replica) => {data[replica.ReplicaId] = replica; return data; }), {});
-        this.sortedReplicas = this.replicas.sort( (a,b) => a.replicaRoleSortPriority - b.replicaRoleSortPriority);
-        // this.replicaDict = this.replicas.reduce(( (data, replica) => {data[replica.id] = replica; return data; }), {});
+
+        this.replicaDict = replicatorData.RemoteReplicators.reduce(( (data, replica) => {data[replica.ReplicaId] = replica; return data; }), {});
+        replicatorData.RemoteReplicators.forEach(replicator => {
+          if(this.cachedData[replicator.ReplicaId]) {
+            this.cachedData[replicator.ReplicaId].push(replicator)
+          }else{
+            this.cachedData[replicator.ReplicaId] = [replicator]
+          }
+        })
+
+        this.sortedReplicas = this.replicas.sort( (a,b) => a.replicaRoleSortPriority - b.replicaRoleSortPriority) //.concat(this.replicas);
+
         const ref = this.primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus;
-
+        console.log(this.sortedReplicas)
         this.overviewItems = [
           {
             descriptionName: 'Queue Utilization Percentage',
@@ -56,8 +65,8 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
           },
           {
             descriptionName: 'Queue Memory Size',
-            copyTextValue: this.queueSize,
-            displayText: this.queueSize,
+            copyTextValue: queueSize,
+            displayText: queueSize,
           },
         ]
 
@@ -88,6 +97,6 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
   }
 
   trackByFn(index, replicaStatus: IRawRemoteReplicatorStatus) {
-    return replicaStatus.ReplicaId;
+    return replicaStatus.ReplicaId + index;
   }
 }

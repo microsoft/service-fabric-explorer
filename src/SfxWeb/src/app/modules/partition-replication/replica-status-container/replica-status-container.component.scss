@@ -4,11 +4,27 @@
 
 .replica-container {
   display: grid;
-  grid-template-columns: repeat(auto-fit, 250px);
+  grid-template-columns: repeat(auto-fit, 125px);
   grid-gap: 10px;
-  grid-auto-rows: 220px;
+  grid-auto-rows: 90px;
   // display: flex;
   // flex-wrap: wrap;
   // justify-content: flex-start;
   // align-items: flex-start;
+}
+
+
+.replica-tile {
+  grid-column: span 2;
+  grid-row: span 2;
+
+}
+
+.expanded-tall {
+  grid-row: span 4;
+  grid-column: span 4;
+}
+
+.long {
+  grid-column: span 2;
 }

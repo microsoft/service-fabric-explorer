@@ -1,148 +1,22 @@
-<app-collapse-container [collapsed]="!replicator.IsInBuild" [disabled]="!replicator.IsInBuild"> zxb
-  <div collapse-header>
-    <div [ngStyle]="{'margin-top' : replicator.IsInBuild ? '' : '7px'}">Build :
-      {{ (isCopying || isReplicating) ? ('In Progress (' + stepsFinished + '/2)' ): 'Done'}}
-      <span style="float: right; cursor: auto;" class="mif-info mif-lg"
-        title="Any time shown is only an estimate and is likely to change." (click)="$event.stopPropagation()"></span>
-    </div>
+<!-- <div collapse-header>
+  <div [ngStyle]="{'margin-top' : replicator.IsInBuild ? '' : '7px'}">Build :
+    {{ (isCopying || isReplicating) ? ('In Progress (' + stepsFinished + '/2)' ): 'Done'}}
+    <span style="float: right; cursor: auto;" class="mif-info mif-lg"
+      title="Any time shown is only an estimate and is likely to change." (click)="$event.stopPropagation()"></span>
   </div>
-  <div collapse-body class="collapse-inner-bar">
-    <app-collapse-container collapsed="true" [disabled]="!isCopying">
-      <div collapse-header>
-        <label>Copy Status : {{isCopying ? estimatedTime : 'Complete' }} <span class="mif-hour-glass" *ngIf="isCopying"
-            title="Estimated time left for this step. This is very likely to change"
-            (click)="$event.stopPropagation()"></span></label>
-      </div>
-      <div collapse-body>
-        <div class="row-container">
-          <div class="row-wrapper">
-            <div class="field">
-              <span class="mif-info mif-lg"
-                title="Represents the average duration it takes for the remote replicator to receive an operation. Higher is slower."></span>
-              Average Receive Duration :
-            </div>
-            <div>
-              {{replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.AverageReceiveDuration}}
-            </div>
-          </div>
-          <div class="row-wrapper">
-            <div class="field">
-              <span class="mif-info mif-lg"
-                title="Represents the average duration it takes for the replica to apply an operation. This usually entails writing the operation to disk. Higher is slower."></span>
-              Average Apply Duration :
-            </div>
-            <div>
-              {{replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.AverageApplyDuration}}
-            </div>
-          </div>
-          <div class="row-wrapper">
-            <div class="field">
-              <span class="mif-info mif-lg"
-                title="Represents the number of operations not yet received by a remote replicator. Lower is better."></span>
-              Not Received Count :
-            </div>
-            <div>
-              {{replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.NotReceivedCount}}
-            </div>
-          </div>
-          <div class="row-wrapper">
-            <div class="field">
-              <span class="mif-info mif-lg"
-                title="Represents the number of operations received and not yet applied by the replica yet."></span>
-              Received And Not Applied Count :
-            </div>
-            <div>
-              {{replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail.ReceivedAndNotAppliedCount}}
-            </div>
-          </div>
-          <div class="row-wrapper">
-            <div class="field">
-              <span class="mif-info mif-lg"
-                title="The highest copy operation sequence number that the secondary has received from the primary. A value of -1 implies that the secondary has received all copy operations."></span>
-              Last Received CSN :
-            </div>
-            <div>
-              {{replicator.LastReceivedCopySequenceNumber}}
-            </div>
-          </div>
-          <div class="row-wrapper">
-            <div class="field">
-              <span class="mif-info mif-lg"
-                title="The highest copy operation sequence number that the secondary has applied to its state. A value of -1 implies that the secondary has applied all copy operations and the copy process is complete. Higher is better."></span>
-              Last Applied CSN :
-            </div>
-            <div>
-              {{replicator.LastAppliedCopySequenceNumber}}
-            </div>
-          </div>
-        </div>
-      </div>
-    </app-collapse-container>
-
-    <app-collapse-container collapsed="true" [disabled]="isCopying">
-      <div collapse-header>
-        <label>Catch up Status : {{replicationStatus}} <span class="mif-hour-glass" style="cursor: pointer;"
-            *ngIf="isReplicating"
-            title="Estimated time left for this step. This is very likely to change"></span></label>
-      </div>
-      <div collapse-body>
-        <div class="row-container">
-          <div class="row-wrapper">
-            <div class="field">
-              <span class="mif-info mif-lg"
-                title="Represents the average duration it takes for the remote replicator to receive an operation. Higher is slower."></span>
-              Average Receive Duration :
-            </div>
-            <div>
-              {{replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.AverageReceiveDuration}}
-            </div>
-          </div>
-          <div class="row-wrapper">
-            <div class="field">
-              <span class="mif-info mif-lg"
-                title="Represents the average duration it takes for the replica to apply an operation. This usually entails writing the operation to disk. Higher is slower."></span>
-              Average Apply Duration :
-            </div>
-            <div>
-              {{replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.AverageApplyDuration}}
-            </div>
-          </div>
-          <div class="row-wrapper">
-            <div class="field">
-              <span class="mif-info mif-lg"
-                title="Represents the number of operations not yet received by a remote replicator. Lower is better."></span>
-              Not Received Count :
-            </div>
-            <div>
-              {{replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.NotReceivedCount}}
-            </div>
-          </div>
-          <div class="row-wrapper">
-            <div class="field">
-              <span class="mif-info mif-lg"
-                title="Represents the number of operations received and not yet applied by the replica yet."></span>
-              Received And Not Applied Count :
-            </div>
-            <div>
-              {{replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail.ReceivedAndNotAppliedCount}}
-            </div>
-          </div>
-        </div>
-      </div>
-    </app-collapse-container>
-  </div>
-</app-collapse-container>
-
-<app-collapse-container *ngIf="!replicator.IsInBuild" collapsed="true">
-  <div collapse-header>
-    <label style="width: 100%;">Active
-      <span *ngIf="!replicator.IsInBuild" style="float: right;">
-        <span class="field">LSN : </span>{{replicator.LastAppliedReplicationSequenceNumber}}
-      </span>
-    </label>
-  </div>
-  <div collapse-body>
-    <app-essential-item *ngFor="let item of lastItems; let l = last; " [item]="item" [underline]="l">
+</div> -->
+<div style="display: flex;flex-direction: column;justify-content: space-between;height: 100%;">
+  <div>
+    <app-essential-item *ngFor="let item of replicationItems; let l = last; " [item]="item" [underline]="l">
     </app-essential-item>
   </div>
-</app-collapse-container>
+
+  <div collapsed="false">
+    <h4 class="underline-title">Active</h4>
+
+    <div collapse-body>
+      <app-essential-item *ngFor="let item of lastItems; let l = last; " [item]="item" [underline]="l">
+      </app-essential-item>
+    </div>
+  </div>
+</div>

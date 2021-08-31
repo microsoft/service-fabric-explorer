@@ -5,11 +5,12 @@ import { ReplicaStatusContainerComponent } from './replica-status-container/repl
 import { SharedModule } from 'src/app/shared/shared.module';
 import { ReplicaTileComponent } from './replica-tile/replica-tile.component';
 import { ChartsModule } from '../charts/charts.module';
+import { ReplicationTrendLineComponent } from './replication-trend-line/replication-trend-line.component';
 
 
 
 @NgModule({
-  declarations: [ReplicaStatusComponent, ReplicaStatusContainerComponent, ReplicaTileComponent],
+  declarations: [ReplicaStatusComponent, ReplicaStatusContainerComponent, ReplicaTileComponent, ReplicationTrendLineComponent],
   imports: [
     CommonModule,
     SharedModule,

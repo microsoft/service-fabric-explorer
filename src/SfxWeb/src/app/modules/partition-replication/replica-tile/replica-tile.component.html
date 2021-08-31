@@ -1,28 +1,47 @@
 <div class="replica-container essen-pane" [ngClass]="leftBannerColor">
   <div class="top-side">
     <app-health-badge [badgeClass]="replica.healthState.badgeClass" size="25px"></app-health-badge>
-
-      <app-clip-board [text]="copyText" style="float: right"></app-clip-board>
-  </div>
-
-  <div>
-    <div class="replica-header">
-      <div style="width: 100%;">
-          <app-essential-item *ngFor="let item of overviewItems; let l = last; " [item]="item" [underline]="false">
-          </app-essential-item>
-          <app-essential-item [item]="status">
-              <app-status-resolver [status]="replica.raw.ReplicaStatus"></app-status-resolver>
-          </app-essential-item>
-      </div>
-    </div>
-
-    <app-collapse-container collapsed="true" *ngIf="replicator">
+    <!-- <app-collapse-container collapsed="true" *ngIf="replicator">
       <div collapse-header>
         Replicator Status
       </div>
       <div collapse-body>
-        <app-replica-status [replicator]="replicator"></app-replica-status>
       </div>
-      </app-collapse-container>
+    </app-collapse-container> -->
+
+    <button class="flat-button underline" style="display: flex;
+    align-items: center; height: 25px" *ngIf="replicator" (click)="changeReplication()">
+      <span class="mif-2x mif-arrow-drop-down status-icon"></span>
+      View Replication</button>
+    <app-clip-board [text]="copyText" style="float: right"></app-clip-board>
   </div>
+
+  <div style="display: flex;">
+    <div style="flex: 1">
+      <div class="replica-header">
+        <div style="width: 100%;">
+            <app-essential-item *ngFor="let item of overviewItems; let l = last; " [item]="item" [underline]="false">
+            </app-essential-item>
+            <app-essential-item [item]="status" [underline]="true">
+                <app-status-resolver [status]="replica.raw.ReplicaStatus"></app-status-resolver>
+            </app-essential-item>
+        </div>
+      </div>
+
+      <div *ngIf="showReplication">
+        <h4 class="underline-title">Replication</h4>
+        (This information is only recorded while on this tab and is cleared when leaving)
+
+        <span>LSN difference over time</span>
+        <app-replication-trend-line [data]="chartData"></app-replication-trend-line>
+
+      </div>
+    </div>
+    <div *ngIf="showReplication" style="margin-left: 10px; flex: 1">
+      <h4 class="underline-title">Replication</h4>
+      <app-replica-status [replicator]="replicator"></app-replica-status>
+
+    </div>
+  </div>
+
 </div>
