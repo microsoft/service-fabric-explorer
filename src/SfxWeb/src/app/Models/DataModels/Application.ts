@@ -1,4 +1,4 @@
-import { IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState, IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo } from '../RawDataTypes';
+import { IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState, IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo, IRawUpgradeDomainProgress } from '../RawDataTypes';
 import { DataModelBase, IDecorators } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { ServiceTypeCollection, ApplicationBackupConfigurationInfoCollection } from './collections/Collections';
@@ -318,11 +318,25 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
         return this.data.restClient.getApplicationUpgradeProgress(this.parent.id, messageHandler);
     }
 
+    public get isUDUpgrade(): boolean {
+      return !this.raw.IsNodeByNode;
+    }
+
+    public get nodesInProgress(): IRawUpgradeDomainProgress {
+      if(this.isUDUpgrade) {
+        return this.raw.CurrentUpgradeDomainProgress;
+      }else{
+        this.raw.CurrentUpgradeUnitsProgress;
+      }
+    }
+
     protected updateInternal(): Observable<any> | void {
                                                                                                 // set depth to 0 and parent ref to null
         this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);
 
-        const domains = this.raw.UpgradeDomains.map(ud => new UpgradeDomain(this.data, ud));
+        let upgradeUnits = this.isUDUpgrade? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
+
+        const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud));
         const groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
             .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.InProgress))
             .concat(domains.filter(ud => ud.name === this.raw.NextUpgradeDomain))

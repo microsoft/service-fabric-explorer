@@ -27,7 +27,7 @@
         </div>
       </div>
 
-      <div data-cy="cud" *ngIf="upgradeProgress.isUpgrading">
+      <div data-cy="cud" *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isUDUpgrade">
         <h5>Current Domain</h5>
         <app-essential-item *ngFor="let item of essentialItems2; let l = last" [item]="item" [underline]="false">
         </app-essential-item>
@@ -42,9 +42,9 @@
       </div>
     </div>
 
-    <div *ngIf="upgradeProgress.isUpgrading && upgradeProgress?.raw?.CurrentUpgradeDomainProgress?.NodeUpgradeProgressList.length > 0" data-cy="currentud" style="flex: 2; min-width: 500px;">
+    <div *ngIf="upgradeProgress.isUpgrading && upgradeProgress.nodesInProgress.NodeUpgradeProgressList.length > 0" data-cy="currentud" style="flex: 2; min-width: 500px;">
       <h5 style="text-align: center;">Nodes status</h5>
-      <app-upgrade-domain-progress [upgradeDomain]="upgradeProgress.raw.CurrentUpgradeDomainProgress">
+      <app-upgrade-domain-progress [upgradeDomain]="upgradeProgress.nodesInProgress">
       </app-upgrade-domain-progress>
     </div>
   </div>

@@ -1,5 +1,5 @@
 import { DataModelBase, IDecorators } from './Base';
-import { IRawHealthEvaluation, IRawLoadMetricInformation, IRawUpgradeDescription, IRawMonitoringPolicy, IRawUpgradeDomain, IRawClusterUpgradeDescription } from '../RawDataTypes';
+import { IRawHealthEvaluation, IRawLoadMetricInformation, IRawUpgradeDescription, IRawMonitoringPolicy, IRawUpgradeDomain, IRawClusterUpgradeDescription, IUpgradeUnitInfo } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { UpgradeDomainStateRegexes, UpgradeDomainStateNames, BadgeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
@@ -155,8 +155,8 @@ export class MonitoringPolicy extends DataModelBase<IRawMonitoringPolicy> {
     }
 }
 
-export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain> {
-    public constructor(data: DataService, raw: IRawUpgradeDomain) {
+export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain | IUpgradeUnitInfo > {
+    public constructor(data: DataService, raw: IRawUpgradeDomain | IUpgradeUnitInfo) {
         super(data, raw);
     }
 

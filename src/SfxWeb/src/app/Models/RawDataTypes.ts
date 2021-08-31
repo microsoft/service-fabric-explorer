@@ -262,6 +262,9 @@ export interface IRawApplicationUpgradeProgress {
         FailureReason: string;
         UpgradeDomainProgressAtFailure: IRawUpgradeDomainProgress;
         UpgradeStatusDetails: string;
+        UpgradeUnits: IUpgradeUnitInfo[];
+        CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
+        IsNodeByNode: boolean
     }
 
 export interface IRawClusterHealth extends IRawHealth {
@@ -274,6 +277,15 @@ export interface IRawClusterManifest {
         Manifest: string;
     }
 
+export interface ICurrentUpgradeUnitsProgressInfo{
+  NodeUpgradeProgressList: IRawNodeUpgradeProgress[];
+}
+
+export interface IUpgradeUnitInfo {
+  Name: string;
+  State: string;
+
+}
 export interface IRawClusterUpgradeProgress {
         CodeVersion: string;
         ConfigVersion: string;
@@ -290,6 +302,9 @@ export interface IRawClusterUpgradeProgress {
         FailureTimestampUtc: string;
         FailureReason: string;
         UpgradeDomainProgressAtFailure: IRawUpgradeDomainProgress;
+        UpgradeUnits: IUpgradeUnitInfo[];
+        CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
+        IsNodeByNode: boolean
     }
 
 export interface IRawClusterLoadInformation {
@@ -816,6 +831,7 @@ export interface IRawNodeUpgradeProgress {
         NodeName: string;
         UpgradePhase: string;
         PendingSafetyChecks: IRawSafetyCheckDescription[];
+        UpgradeDuration: string;
     }
 
 export interface IRawSafetyCheckDescription {
