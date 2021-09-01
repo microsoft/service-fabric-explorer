@@ -88,6 +88,26 @@ context('Cluster page', () => {
       })
     })
 
+    it.only('upgrade in progress - Node by Node', () => {
+      cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/upgrade-in-progress-node-by-node.json' }).as("inprogres");
+
+      cy.visit('/#/details')
+
+      cy.wait("@inprogres")
+
+      cy.contains('Cluster Upgrade In Progress')
+
+      cy.get('[data-cy=currentud]').within(() => {
+        cy.contains('MyNode2').click();
+      })
+
+      cy.contains('Node by Node')
+
+      cy.get('[data-cy=upgrade-bar]').should('not.exist')
+
+      cy.get('[data-cy=upgrade-bar-domain]').should('not.exist');
+    })
+
     it('upgrade in progress - no auto load safety checks', () => {
       cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/upgrade-in-progress-many-safety-checks.json' }).as("inprogres");
 

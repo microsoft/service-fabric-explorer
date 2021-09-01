@@ -191,9 +191,6 @@ export interface ICounterMostCommonEntry {
 
 export class Counter {
     private counts = {};
-    constructor() {
-
-    }
 
     public add(key: string | number, incrementalValue: number = 1): void {
         if (this.counts[key] === undefined) {
@@ -218,6 +215,15 @@ export class Counter {
 
     private sortFunction(a: ICounterMostCommonEntry, b: ICounterMostCommonEntry): -1 | 0 | 1 {
         return a.value > b.value ? -1 : 1;
+    }
+
+    public entries(): ICounterMostCommonEntry[] {
+      return Object.keys(this.counts).map(key => {
+          return {
+              key,
+              value: this.counts[key]
+          };
+      });
     }
 }
 

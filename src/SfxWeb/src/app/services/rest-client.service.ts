@@ -39,6 +39,7 @@ export class RestClientService {
   private static apiVersion65 = '6.5';
   private static apiVersion72 = '7.2';
   private static apiVersion80 = '8.0';
+  private static apiVersion82 = '8.2';
 
   private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -66,7 +67,7 @@ export class RestClientService {
   }
 
   public getClusterUpgradeProgress(messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> {
-      return this.get(this.getApiUrl('$/GetUpgradeProgress'), 'Get cluster upgrade progress', messageHandler);
+      return this.get(this.getApiUrl('$/GetUpgradeProgress', RestClientService.apiVersion82), 'Get cluster upgrade progress', messageHandler);
   }
 
   public getClusterLoadInformation(messageHandler?: IResponseMessageHandler): Observable<IRawClusterLoadInformation> {

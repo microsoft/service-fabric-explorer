@@ -172,6 +172,7 @@ export class ServiceKindRegexes {
 export class UpgradeDomainStateRegexes {
     public static InProgress: RegExp = /In.*Progress/i;
     public static Completed: RegExp = /Completed/i;
+    public static Failed: RegExp = /Failed/i;
 }
 
 export class ClusterUpgradeStates {
@@ -182,6 +183,7 @@ export class UpgradeDomainStateNames {
     public static InProgress = 'InProgress';
     public static Completed = 'Completed';
     public static Pending = 'Pending';
+    public static Failed = 'Failed';
 }
 
 export class StatusWarningLevel {

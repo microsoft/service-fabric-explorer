@@ -43,7 +43,7 @@ export class PartitionCacheService {
       const applicationName = await this.restClientService.getApplicationNameInfo(serviceName.Id).toPromise();
 
       let app;
-      if (applicationName.Id === 'fabric:/System') {
+      if (applicationName.Id === 'System') {
         app = await this.dataService.getSystemApp().toPromise();
       }else {
         app = await this.dataService.getApp(applicationName.Id).toPromise();
