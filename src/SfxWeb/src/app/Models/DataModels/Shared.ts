@@ -156,8 +156,12 @@ export class MonitoringPolicy extends DataModelBase<IRawMonitoringPolicy> {
 }
 
 export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain | IUpgradeUnitInfo > {
-    public constructor(data: DataService, raw: IRawUpgradeDomain | IUpgradeUnitInfo) {
+    public prefix = 'UD : ';
+    public constructor(data: DataService, raw: IRawUpgradeDomain | IUpgradeUnitInfo, nodeByNode: boolean = false) {
         super(data, raw);
+        if (nodeByNode) {
+          this.prefix = '';
+        }
     }
 
     public get stateName(): string {
@@ -165,6 +169,8 @@ export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain | IUpgradeUni
             return UpgradeDomainStateNames.Completed;
         } else if (UpgradeDomainStateRegexes.InProgress.test(this.raw.State)) {
             return UpgradeDomainStateNames.InProgress;
+        } else if (UpgradeDomainStateRegexes.Failed.test(this.raw.State)) {
+          return UpgradeDomainStateNames.Failed;
         }
 
         return UpgradeDomainStateNames.Pending;
@@ -175,6 +181,8 @@ export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain | IUpgradeUni
             return BadgeConstants.BadgeOK;
         } else if (UpgradeDomainStateRegexes.InProgress.test(this.raw.State)) {
             return BadgeConstants.BadgeWarning;
+        }else if (UpgradeDomainStateRegexes.Failed.test(this.raw.State)) {
+          return BadgeConstants.BadgeError;
         }
         return BadgeConstants.BadgeUnknown;
     }

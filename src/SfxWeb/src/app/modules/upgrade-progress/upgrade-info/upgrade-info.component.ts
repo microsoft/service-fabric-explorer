@@ -71,11 +71,11 @@ export class UpgradeInfoComponent implements OnInit, OnChanges {
       displaySelector: true
     };
 
-    if(!this.upgradeProgress.isUDUpgrade && this.upgradeProgress.isUpgrading) {
+    if (!this.upgradeProgress.isUDUpgrade && this.upgradeProgress.isUpgrading) {
       this.essentialItems.push({
         descriptionName: 'Upgrade Type',
-        displayText: "Node by Node",
-      })
+        displayText: 'Node by Node',
+      });
     }
 
     if (this.upgradeProgress.isUpgrading && this.upgradeProgress.isUDUpgrade) {

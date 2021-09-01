@@ -1,4 +1,5 @@
-import { IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState, IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo, IRawUpgradeDomainProgress } from '../RawDataTypes';
+import { IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState,
+         IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo, IRawUpgradeDomainProgress } from '../RawDataTypes';
 import { DataModelBase, IDecorators } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { ServiceTypeCollection, ApplicationBackupConfigurationInfoCollection } from './collections/Collections';
@@ -322,11 +323,11 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
       return !this.raw.IsNodeByNode;
     }
 
-    public get nodesInProgress(): IRawUpgradeDomainProgress {
-      if(this.isUDUpgrade) {
+    public get nodesInProgress() {
+      if (this.isUDUpgrade) {
         return this.raw.CurrentUpgradeDomainProgress;
       }else{
-        this.raw.CurrentUpgradeUnitsProgress;
+        return this.raw.CurrentUpgradeUnitsProgress;
       }
     }
 
@@ -334,9 +335,9 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
                                                                                                 // set depth to 0 and parent ref to null
         this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);
 
-        let upgradeUnits = this.isUDUpgrade? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
+        const upgradeUnits = this.isUDUpgrade ? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
 
-        const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud));
+        const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud, !this.isUDUpgrade));
         const groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
             .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.InProgress))
             .concat(domains.filter(ud => ud.name === this.raw.NextUpgradeDomain))

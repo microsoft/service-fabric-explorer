@@ -8,7 +8,7 @@
                     in Progress since {{clusterUpgradeProgress.startTimestampUtc | date:'medium'}}
                 </span>
                 <span>
-                    ({{clusterUpgradeProgress.getCompletedUpgradeDomains()}} / {{clusterUpgradeProgress.upgradeDomains.length}} UDs completed)
+                    ({{clusterUpgradeProgress.getCompletedUpgradeDomains()}} / {{clusterUpgradeProgress.upgradeDomains.length}} {{this.clusterUpgradeProgress.isUDUpgrade ? 'UDs': 'Nodes'}} completed)
                 </span>
             </span>
         </a>

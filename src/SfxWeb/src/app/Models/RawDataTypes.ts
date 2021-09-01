@@ -264,7 +264,7 @@ export interface IRawApplicationUpgradeProgress {
         UpgradeStatusDetails: string;
         UpgradeUnits: IUpgradeUnitInfo[];
         CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
-        IsNodeByNode: boolean
+        IsNodeByNode: boolean;
     }
 
 export interface IRawClusterHealth extends IRawHealth {
@@ -304,7 +304,7 @@ export interface IRawClusterUpgradeProgress {
         UpgradeDomainProgressAtFailure: IRawUpgradeDomainProgress;
         UpgradeUnits: IUpgradeUnitInfo[];
         CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
-        IsNodeByNode: boolean
+        IsNodeByNode: boolean;
     }
 
 export interface IRawClusterLoadInformation {

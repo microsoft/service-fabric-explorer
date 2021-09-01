@@ -1,5 +1,5 @@
 import { DataModelBase, IDecorators } from './Base';
-import { IRawClusterHealth, IRawHealthStateCount, IRawClusterManifest, IRawClusterUpgradeProgress, IRawClusterLoadInformation, IRawBackupPolicy, IUpgradeUnitInfo, IRawUpgradeDomain, IRawNodeUpgradeProgress, IRawUpgradeDomainProgress } from '../RawDataTypes';
+import { IRawClusterHealth, IRawClusterManifest, IRawClusterUpgradeProgress, IRawClusterLoadInformation, IRawBackupPolicy } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
 import { HealthStateConstants, StatusWarningLevel, BannerWarningID, UpgradeDomainStateRegexes, ClusterUpgradeStates, UpgradeDomainStateNames, CertExpiraryHealthEventProperty } from 'src/app/Common/Constants';
@@ -242,7 +242,7 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
     }
 
     public get nodesInProgress() {
-      if(this.isUDUpgrade) {
+      if (this.isUDUpgrade) {
         return this.raw.CurrentUpgradeDomainProgress;
       }else{
         return this.raw.CurrentUpgradeUnitsProgress;
@@ -265,9 +265,9 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
     protected updateInternal(): Observable<any> | void {
         this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
 
-        let upgradeUnits = this.isUDUpgrade? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
+        const upgradeUnits = this.isUDUpgrade ? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
+        const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud, !this.isUDUpgrade));
 
-        const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud));
         const groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
             .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.InProgress))
             .concat(domains.filter(ud => ud.name === this.raw.NextUpgradeDomain))
