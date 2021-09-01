@@ -8,6 +8,7 @@ import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
 import { Platform } from '@angular/cdk/platform';
 import { Utils } from 'src/app/Utils/Utils';
 import { TelemetryService } from 'src/app/services/telemetry.service';
+import { environment } from 'src/environments/environment';
 
 @Component({
   selector: 'app-advanced-option',
@@ -15,6 +16,7 @@ import { TelemetryService } from 'src/app/services/telemetry.service';
   styleUrls: ['./advanced-option.component.scss']
 })
 export class AdvancedOptionComponent implements OnInit {
+  public showBeta = environment.showBeta;
 
   status = false;
   @ViewChild(NgbDropdown, {static: true}) dropdown: NgbDropdown;
@@ -53,5 +55,10 @@ export class AdvancedOptionComponent implements OnInit {
 
   telemetryChange() {
     this.telemetryService.SetTelemetry(this.telemetryService.telemetryEnabled);
+  }
+
+  leaveBeta() {
+    const originalUrl =  location.href.replace('index.html', 'old.html');
+    window.location.assign(originalUrl);
   }
 }
