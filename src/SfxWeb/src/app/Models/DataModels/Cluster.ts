@@ -271,7 +271,8 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
         const groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
             .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.InProgress))
             .concat(domains.filter(ud => ud.name === this.raw.NextUpgradeDomain))
-            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain));
+            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain))
+            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Failed));
 
         this.upgradeDomains = groupedDomains;
 

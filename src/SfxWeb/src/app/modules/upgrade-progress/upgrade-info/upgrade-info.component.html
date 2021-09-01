@@ -19,7 +19,7 @@
         <app-essential-item [item]="upgradeDuration" *ngIf="!upgradeProgress.isUpgrading && upgradeDuration">
         </app-essential-item>
 
-        <div class="duration" data-cy="upgrade-bar" *ngIf="upgradeProgress.isUpgrading">
+        <div class="duration" data-cy="upgrade-bar" *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isUDUpgrade">
           <app-display-duration topText="Upgrade Duration" [topInMilliseconds]="upgradeProgress.upgradeTime"
             [bottomHelpText]="helpText" [bottomHelpTextLink]="link" bottomText="Time Left Until Timeout"
             [bottomInMilliseconds]="upgradeProgress.getUpgradeTimeout()">
@@ -42,7 +42,7 @@
       </div>
     </div>
 
-    <div *ngIf="upgradeProgress.isUpgrading && upgradeProgress.nodesInProgress.NodeUpgradeProgressList.length > 0" data-cy="currentud" style="flex: 2; min-width: 500px;">
+    <div *ngIf="upgradeProgress.isUpgrading && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length > 0" data-cy="currentud" style="flex: 2; min-width: 500px;">
       <h5 style="text-align: center;">Nodes status</h5>
       <app-upgrade-domain-progress [upgradeDomain]="upgradeProgress.nodesInProgress">
       </app-upgrade-domain-progress>

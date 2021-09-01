@@ -42,13 +42,14 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
             borderRadius: 0
         },
         title: {
-          text: 'test',
+          text: '',
           verticalAlign: 'middle',
           style: {
             color: '#1234',
             fontSize: '15pt'
           }
         },
+        credits: { enabled: false },
         plotOptions: {
             pie: {
                 borderWidth: 2,
@@ -91,7 +92,7 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
 
     let data = [];
 
-    if (this.upgradeDomains.length > 50) {
+    if (this.upgradeDomains.length > 30) {
       const counter = new Counter();
       // easier to add to the counter as statename/class and then pull them back given these will always map to the same
       this.upgradeDomains.forEach(p => counter.add(p.stateName + '---' + p.badgeClass));
@@ -102,7 +103,7 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
 
         return {
           type: 'pie',
-          name: stateName,
+          name: stateName + ' : ' + entry.value,
           y: entry.value,
           color: colors[badgeClass],
           dataLabels: {
