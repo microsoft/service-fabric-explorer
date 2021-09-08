@@ -339,14 +339,6 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     }
 
     public get queryStartDate() {
-        if (this.isInitialized) {
-            // Only retrieving the latest, including a period that allows refreshing
-            // previously retrieved events with new correlation information if any.
-            if ((this.endDate.getTime() - this.startDate.getTime()) / 1000 > this.latestRefreshPeriodInSecs) {
-                return TimeUtils.AddSeconds(this.endDate, (-1 * this.latestRefreshPeriodInSecs));
-            }
-        }
-
         return this.startDate;
     }
     public get queryEndDate() { return this.endDate; }
@@ -354,7 +346,7 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     public constructor(data: DataService, startDate?: Date, endDate?: Date) {
         // Using appendOnly, because we refresh by retrieving latest,
         // and collection gets cleared when dates window changes.
-        super(data, null, true);
+        super(data, null, false);
         this.settings = this.createListSettings();
         this.detailsSettings = this.createListSettings();
 
