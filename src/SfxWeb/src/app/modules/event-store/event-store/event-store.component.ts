@@ -107,7 +107,15 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
   private setNewDateWindow(forceRefresh: boolean = false): void {
       // If the data interface has that function implemented, we call it. If it doesn't we discard it by returning false.
-      const refreshData = this.listEventStoreData.some(data => data.setDateWindow ? data.setDateWindow(this.startDate, this.endDate) : false);
+      let refreshData = false;
+
+      this.listEventStoreData.forEach(data => {
+        if(data.setDateWindow) {
+          if(data.setDateWindow(this.startDate, this.endDate)) {
+            refreshData = true;
+          }
+        }
+      });
 
       if (refreshData || forceRefresh) {
           this.setTimelineData();
