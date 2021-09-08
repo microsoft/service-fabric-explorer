@@ -110,8 +110,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       let refreshData = false;
 
       this.listEventStoreData.forEach(data => {
-        if(data.setDateWindow) {
-          if(data.setDateWindow(this.startDate, this.endDate)) {
+        if (data.setDateWindow) {
+          if (data.setDateWindow(this.startDate, this.endDate)) {
             refreshData = true;
           }
         }
