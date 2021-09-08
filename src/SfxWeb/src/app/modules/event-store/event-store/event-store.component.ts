@@ -77,8 +77,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       this.debouncerHandlerSubscription = this.debounceHandler
           .pipe(debounceTime(400), distinctUntilChanged())
           .subscribe(dates => {
-              this.startDate = dates.startDate;
-              this.endDate = dates.endDate;
+              this.startDate = new Date(dates.startDate);
+              this.endDate = new Date(dates.endDate);
               this.setNewDateWindow();
           });
   }
