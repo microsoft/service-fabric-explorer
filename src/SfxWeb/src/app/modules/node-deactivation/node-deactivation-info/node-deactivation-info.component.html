@@ -1,4 +1,11 @@
 <div style="margin: 10px; display: flex; flex-wrap: wrap">
+  <div class="seed-node-warning" *ngIf="showSeedNodeTSG" data-cy="seedNodeQuorom">
+    <span class="mif-4x mif-notification seed-node-icon"></span><div>This node deactivation is waiting on a Seed Node Quorom safety check. If this deactivation is going for an irregular amount of time, consider referring to the following TSG to potentially continue progress for this deactivation.
+          <div class="seed-node-link">
+            <a href="https://aka.ms/tsg" target="_blank" class="link">Node deactivation - Seed node quorom TSG</a>
+          </div>
+    </div>
+  </div>
   <div style="width: 200px;">
     <h5 class="underline title">
       Deactivation Status
@@ -9,12 +16,12 @@
   <div *ngIf="deactivationInfo.NodeDeactivationTask.length > 0" style="flex-grow: 1;
     margin-left: 15px; min-width: 400px;">
     <h5 class="underline title" >Deactivation Tasks</h5>
-    <app-detail-list [list]="deactivationInfo.NodeDeactivationTask" [listSettings]="settings"></app-detail-list>
+    <app-detail-list [list]="deactivationInfo.NodeDeactivationTask" [listSettings]="settings" [showTopOptions]="false"></app-detail-list>
   </div>
 </div>
 
 
-<div style="margin-top: 30px;" *ngIf="deactivationInfo.PendingSafetyChecks.length > 0">
+<div *ngIf="deactivationInfo.PendingSafetyChecks.length > 0">
   <h5 style="font-size: 16px;">Safety Checks</h5>
   <app-safety-checks [safetyChecks]="deactivationInfo.PendingSafetyChecks"></app-safety-checks>
 </div>
