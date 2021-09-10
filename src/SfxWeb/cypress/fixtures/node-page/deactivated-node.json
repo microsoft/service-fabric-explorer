@@ -16,7 +16,7 @@
     "InstanceId": "132428526792306088",
     "NodeDeactivationInfo": {
         "NodeDeactivationIntent": "Pause",
-        "NodeDeactivationStatus": "Completed",
+        "NodeDeactivationStatus": "SafetyCheckInProgress",
         "NodeDeactivationTask": [
             {
                 "NodeDeactivationTaskId": {
