@@ -100,7 +100,7 @@ context('node page', () => {
 
         it('deactivated - show seed node quorom warning', () => {
           addRoute("deactivatedNode", "node-page/deactivated-node-seed-node-quorom.json", apiUrl(`/Nodes/${nodeName}/?*`));
-          addRoute(FIXTURE_NODES, "node-page/node-list.json", nodes_route);
+          addRoute(FIXTURE_NODES, "node-page/node-list-seed-node-quorom.json", nodes_route);
 
           cy.visit(`/#/node/${nodeName}`);
 
