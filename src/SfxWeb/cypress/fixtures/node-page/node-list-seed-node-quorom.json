@@ -29,7 +29,13 @@
                         "NodeDeactivationIntent": "Pause"
                     }
                 ],
-                "PendingSafetyChecks": []
+                "PendingSafetyChecks": [
+                  {
+                    "SafetyCheck": {
+                      "Kind": "EnsureSeedNodeQuorum"
+                    }
+                  }
+                ]
             },
             "IsStopped": false,
             "NodeDownTimeInSeconds": "0",
