@@ -29,17 +29,19 @@
       </div>
 
       <div *ngIf="showReplication">
-        <h4 class="underline-title">Replication</h4>
-        (This information is only recorded while on this tab and is cleared when leaving)
+        <h4 class="underline-title" style="margin-bottom: 0px;">LSN Difference Over Time
+        </h4>
+        <!-- (This information is only recorded on this tab and is cleared when left) -->
 
-        <span>LSN difference over time</span>
+        <!-- <span>LSN difference over time</span> -->
         <app-replication-trend-line [data]="chartData"></app-replication-trend-line>
 
       </div>
     </div>
-    <div *ngIf="showReplication" style="margin-left: 10px; flex: 1">
+    <div *ngIf="showReplication" style="margin-left: 10px; flex: 1; display: flex;
+    flex-direction: column;">
       <h4 class="underline-title">Replication</h4>
-      <app-replica-status [replicator]="replicator"></app-replica-status>
+      <app-replica-status [replicator]="replicator" style="flex: 1;"></app-replica-status>
 
     </div>
   </div>

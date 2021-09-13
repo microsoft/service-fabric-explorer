@@ -4,7 +4,10 @@ import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { Utils } from 'src/app/Utils/Utils';
 import { Subscription } from 'rxjs';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
-import { ReplicatorStatus } from 'src/app/Models/DataModels/DeployedReplica';
+
+export interface ITimedReplication extends IRawRemoteReplicatorStatus {
+  date: Date;
+}
 
 @Component({
   selector: 'app-replica-status-container',
@@ -18,7 +21,7 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
 
   replicaDict = {};
   expandedDict = {};
-  cachedData: Record<string, IRawRemoteReplicatorStatus[]> = {};
+  cachedData: Record<string, ITimedReplication[]> = {};
 
   primaryReplica: ReplicaOnPartition;
 
@@ -43,13 +46,15 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
 
         const replicatorData = this.primaryReplica.detail.raw.ReplicatorStatus;
 
-
         this.replicaDict = replicatorData.RemoteReplicators.reduce(( (data, replica) => {data[replica.ReplicaId] = replica; return data; }), {});
         replicatorData.RemoteReplicators.forEach(replicator => {
           if(this.cachedData[replicator.ReplicaId]) {
-            this.cachedData[replicator.ReplicaId].push(replicator)
+            if(this.cachedData[replicator.ReplicaId].length > 20) {
+              this.cachedData[replicator.ReplicaId].splice(0, 1);
+            }
+            this.cachedData[replicator.ReplicaId].push({...replicator, date: new Date()})
           }else{
-            this.cachedData[replicator.ReplicaId] = [replicator]
+            this.cachedData[replicator.ReplicaId] = [{...replicator, date: new Date()}]
           }
         })
 

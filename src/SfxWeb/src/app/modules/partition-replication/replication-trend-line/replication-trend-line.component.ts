@@ -1,5 +1,11 @@
 import { AfterViewInit, Component, ElementRef, Input, OnInit, ViewChild } from '@angular/core';
 import { Chart, Options, chart  } from 'highcharts';
+import { TimeUtils } from 'src/app/Utils/TimeUtils';
+
+export interface IChartData {
+  date: Date;
+  delta: number;
+}
 
 @Component({
   selector: 'app-replication-trend-line',
@@ -8,11 +14,15 @@ import { Chart, Options, chart  } from 'highcharts';
 })
 export class ReplicationTrendLineComponent implements AfterViewInit {
 
-  @Input() data: number[]
+  @Input() data: IChartData[]
 
   @ViewChild('chart') private chartContainer: ElementRef;
 
   private chart: Chart;
+
+  fontColor = {
+    color: '#fff'
+  };
 
   constructor() { }
 
@@ -20,14 +30,11 @@ export class ReplicationTrendLineComponent implements AfterViewInit {
     const testOptions: Options = {
       chart: {
           backgroundColor: null,
-          borderWidth: 0,
+          // borderWidth: 0,
           type: 'area',
-          margin: [2, 0, 2, 0],
+          // margin: [2, 0, 2, 0],
           width: 240,
-          height: 40,
-          style: {
-              overflow: 'visible'
-          },
+          height: 185,
       },
       title: {
           text: ''
@@ -36,27 +43,26 @@ export class ReplicationTrendLineComponent implements AfterViewInit {
           enabled: false
       },
       xAxis: {
-          labels: {
-              enabled: false
-          },
-          title: {
-              text: null
-          },
-          startOnTick: false,
-          endOnTick: false,
-          tickPositions: []
+        title: {
+          // text: 'LSN change',
+          style: this.fontColor
       },
+      lineColor: '#fff',
+      labels: {
+        style: this.fontColor,
+      },
+    },
       yAxis: {
-          endOnTick: false,
-          startOnTick: false,
-          labels: {
-              enabled: false
-          },
-          title: {
-              text: null
-          },
-          tickPositions: [0]
-      },
+        title: {
+            text: 'LSN change',
+            style: this.fontColor
+        },
+        lineColor: '#fff',
+        labels: {
+          style: this.fontColor,
+        },
+
+    },
       legend: {
           enabled: false
       },
@@ -109,7 +115,17 @@ export class ReplicationTrendLineComponent implements AfterViewInit {
 
   ngOnChanges() {
     if (this.chart) {
-      this.chart.series[0].setData(this.data);
+      this.chart.series[0].setData(this.data.map(item => item.delta));
+
+      // formatter() { console.log(this); const diff = this.value.getTime() - new Date().getTime(); return TimeUtils.getDuration(diff); }
+
+      const now = new Date();
+      now.setMilliseconds(0)
+      this.chart.xAxis[0].setCategories(this.data.map(item => {
+        item.date.setMilliseconds(0)
+        const diff = now.getTime() -  item.date.getTime();
+        return TimeUtils.getDuration(diff) + " ago"
+      }))
     }
   }
 

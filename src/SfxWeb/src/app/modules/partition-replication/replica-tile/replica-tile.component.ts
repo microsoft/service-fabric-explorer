@@ -3,6 +3,8 @@ import { HealthStateConstants } from 'src/app/Common/Constants';
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
+import { ITimedReplication } from '../replica-status-container/replica-status-container.component';
+import { IChartData } from '../replication-trend-line/replication-trend-line.component';
 
 @Component({
   selector: 'app-replica-tile',
@@ -12,7 +14,7 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
 export class ReplicaTileComponent implements OnInit, OnChanges {
   @Input() replica: ReplicaOnPartition;
   @Input() replicator: IRawRemoteReplicatorStatus;
-  @Input() replicatorHistory: IRawRemoteReplicatorStatus[];
+  @Input() replicatorHistory: ITimedReplication[];
 
   @Input() showReplication: boolean = false;
   @Output() showReplicationChange = new EventEmitter<boolean>();
@@ -22,7 +24,7 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
   copyText = '';
   leftBannerColor = '';
 
-  chartData = [];
+  chartData: IChartData[] = [];
 
   constructor() { }
 
@@ -66,15 +68,21 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
     this.leftBannerColor = "banner-" + this.leftBannerColor
 
     console.log(this.replicatorHistory)
-    if(this?.replicatorHistory?.length > 1) {
+    if(this.replicatorHistory && this.replicatorHistory.length > 1) {
       this.chartData = this.replicatorHistory.map( (value, index) => {
         if(index > 0) {
-          return +value.LastAppliedReplicationSequenceNumber - +this.replicatorHistory[index - 1].LastAppliedReplicationSequenceNumber;
+          const diff = +value.LastAppliedReplicationSequenceNumber - +this.replicatorHistory[index - 1].LastAppliedReplicationSequenceNumber;
+          return {
+            delta: diff,
+            date: value.date
+          };
         }else{
-          return 0
+          return {
+            delta: 0,
+            date: value.date
+          };
         }
       }).slice(1)
-
     }
   }
 

@@ -1,10 +1,3 @@
-<!-- <div collapse-header>
-  <div [ngStyle]="{'margin-top' : replicator.IsInBuild ? '' : '7px'}">Build :
-    {{ (isCopying || isReplicating) ? ('In Progress (' + stepsFinished + '/2)' ): 'Done'}}
-    <span style="float: right; cursor: auto;" class="mif-info mif-lg"
-      title="Any time shown is only an estimate and is likely to change." (click)="$event.stopPropagation()"></span>
-  </div>
-</div> -->
 <div style="display: flex;flex-direction: column;justify-content: space-between;height: 100%;">
   <div>
     <app-essential-item *ngFor="let item of replicationItems; let l = last; " [item]="item" [underline]="l">
@@ -12,7 +5,7 @@
   </div>
 
   <div collapsed="false">
-    <h4 class="underline-title">Active</h4>
+    <h4 class="underline-title">Current State</h4>
 
     <div collapse-body>
       <app-essential-item *ngFor="let item of lastItems; let l = last; " [item]="item" [underline]="l">
