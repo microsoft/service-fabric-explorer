@@ -18,6 +18,8 @@ export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
   public progress: IProgressStatus[] = [];
   public index = -1;
 
+  showSeedNodeTSG = false;
+
   settings: ListSettings;
 
   constructor(public settingsService: SettingsService) { }
@@ -32,15 +34,18 @@ export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    const phaseMap = {
+
+   this.showSeedNodeTSG =  this.deactivationInfo.PendingSafetyChecks.some(safetyCheckDescription => safetyCheckDescription.SafetyCheck.Kind === 'EnsureSeedNodeQuorum');
+
+   const phaseMap = {
       SafetyCheckInProgress: 1,
       SafetyCheckComplete: 2,
       Completed: 3
     };
 
-    this.index = phaseMap[this.deactivationInfo.NodeDeactivationStatus] + 1;
+   this.index = phaseMap[this.deactivationInfo.NodeDeactivationStatus] + 1;
 
-    this.progress = [
+   this.progress = [
       {
         name: 'Safety Check InProgress',
       },

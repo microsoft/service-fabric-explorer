@@ -16,7 +16,7 @@
     "InstanceId": "132428526792306088",
     "NodeDeactivationInfo": {
         "NodeDeactivationIntent": "Pause",
-        "NodeDeactivationStatus": "SafetyCheckInProgress",
+        "NodeDeactivationStatus": "Completed",
         "NodeDeactivationTask": [
             {
                 "NodeDeactivationTaskId": {
@@ -26,7 +26,13 @@
                 "NodeDeactivationIntent": "Pause"
             }
         ],
-        "PendingSafetyChecks": []
+        "PendingSafetyChecks": [
+          {
+            "SafetyCheck": {
+              "Kind": "EnsureSeedNodeQuorum"
+            }
+          }
+        ]
     },
     "IsStopped": false,
     "NodeDownTimeInSeconds": "0",
