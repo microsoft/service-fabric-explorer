@@ -60,18 +60,19 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
       this.leftBannerColor = "green";
     }else if(this.replica.healthState.text === "Warning") {
       this.leftBannerColor = "yellow"
-    }else if(this.replica.healthState.text === "Warning") {
+    }else if(this.replica.healthState.text === "Error") {
       this.leftBannerColor = "red"
     }else {
       this.leftBannerColor = "gray"
     }
     this.leftBannerColor = "banner-" + this.leftBannerColor
 
-    console.log(this.replicatorHistory)
     if(this.replicatorHistory && this.replicatorHistory.length > 1) {
       this.chartData = this.replicatorHistory.map( (value, index) => {
         if(index > 0) {
-          const diff = +value.LastAppliedReplicationSequenceNumber - +this.replicatorHistory[index - 1].LastAppliedReplicationSequenceNumber;
+          const previous = this.replicatorHistory[index - 1];
+          const duration = ( value.date.getTime() - previous.date.getTime() ) / 1000;
+          const diff = (+value.LastAppliedReplicationSequenceNumber - +previous.LastAppliedReplicationSequenceNumber) / duration;
           return {
             delta: diff,
             date: value.date

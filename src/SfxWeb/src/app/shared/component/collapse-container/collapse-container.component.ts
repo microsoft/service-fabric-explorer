@@ -1,11 +1,11 @@
-import { Component, Input, Output, EventEmitter } from '@angular/core';
+import { Component, Input, Output, EventEmitter, OnChanges } from '@angular/core';
 
 @Component({
   selector: 'app-collapse-container',
   templateUrl: './collapse-container.component.html',
   styleUrls: ['./collapse-container.component.scss']
 })
-export class CollapseContainerComponent {
+export class CollapseContainerComponent implements OnChanges {
 
   @Input() collapsed = false;
   @Input() disabled = false;
@@ -17,7 +17,11 @@ export class CollapseContainerComponent {
     if (!this.disabled) {
       this.collapsed = !this.collapsed;
       this.collapsedChange.emit(this.collapsed);
+      console.log(this.collapsed)
     }
   }
 
+  ngOnChanges() {
+    console.log(this)
+  }
 }

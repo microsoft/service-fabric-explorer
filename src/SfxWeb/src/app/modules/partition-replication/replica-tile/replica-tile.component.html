@@ -1,13 +1,6 @@
 <div class="replica-container essen-pane" [ngClass]="leftBannerColor">
   <div class="top-side">
     <app-health-badge [badgeClass]="replica.healthState.badgeClass" size="25px"></app-health-badge>
-    <!-- <app-collapse-container collapsed="true" *ngIf="replicator">
-      <div collapse-header>
-        Replicator Status
-      </div>
-      <div collapse-body>
-      </div>
-    </app-collapse-container> -->
 
     <button class="flat-button underline" style="display: flex;
     align-items: center; height: 25px" *ngIf="replicator" (click)="changeReplication()">
@@ -16,7 +9,9 @@
     <app-clip-board [text]="copyText" style="float: right"></app-clip-board>
   </div>
 
-  <div style="display: flex;">
+  <div style="display: flex;     flex: 1;
+  min-height: 0;
+">
     <div style="flex: 1">
       <div class="replica-header">
         <div style="width: 100%;">
@@ -29,7 +24,7 @@
       </div>
 
       <div *ngIf="showReplication">
-        <h4 class="underline-title" style="margin-bottom: 0px;">LSN Difference Over Time
+        <h4 class="underline-title" style="margin-bottom: 0px;">LSN Rate Over Time
         </h4>
         <!-- (This information is only recorded on this tab and is cleared when left) -->
 
@@ -38,11 +33,8 @@
 
       </div>
     </div>
-    <div *ngIf="showReplication" style="margin-left: 10px; flex: 1; display: flex;
-    flex-direction: column;">
-      <h4 class="underline-title">Replication</h4>
-      <app-replica-status [replicator]="replicator" style="flex: 1;"></app-replica-status>
-
+    <div *ngIf="showReplication" style="margin-left: 10px; flex: 1;">
+      <app-replica-status [replicator]="replicator"></app-replica-status>
     </div>
   </div>
 

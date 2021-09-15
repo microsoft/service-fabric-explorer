@@ -1,6 +1,5 @@
 import { Component, OnInit, Input, OnChanges } from '@angular/core';
-import { IRawRemoteReplicatorStatus, IRemoteReplicatorAcknowledgementDetail } from 'src/app/Models/RawDataTypes';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
@@ -14,15 +13,8 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
   copyItems: IEssentialListItem[] = [];
   replicationItems: IEssentialListItem[] = [];
   lastItems: IEssentialListItem[] = [];
-  isCopying = false;
-  isReplicating = false;
 
-  replicationStatus = '';
-
-  overallStatus = '';
-  stepsFinished = 0;
-
-  estimatedTime: string;
+  copy = false;
 
   constructor() { }
 
@@ -30,11 +22,6 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges() {
-    this.isCopying = this.inProgress(this.replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail);
-    this.isReplicating = this.inProgress(this.replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail);
-    this.setCurrentStatus();
-    this.replicationStatus = this.getReplicationStatus();
-
     const copyRef = this.replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail;
     const repRef = this.replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail;
     this.replicationItems = [
@@ -107,44 +94,8 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
     ];
   }
 
-  inProgress(details: IRemoteReplicatorAcknowledgementDetail): boolean {
-    return (+details.NotReceivedCount + +details.ReceivedAndNotAppliedCount) > 0;
-  }
-
-  getReplicationStatus() {
-    if (this.isCopying) {
-      return 'Not Started';
-    }
-
-    if (this.isReplicating) {
-      return this.estimatedTime;
-    }
-    return 'Complete';
-
-  }
-
-  setCurrentStatus() {
-
-    if(this.replicator.IsInBuild) {
-      if (this.isCopying) {
-        this.overallStatus = 'Copying';
-        this.estimatedTime = this.getEstimatedDuration(this.replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail);
-        this.stepsFinished = 0;
-      } else if (this.isReplicating) {
-        this.overallStatus = 'Replicating';
-        this.estimatedTime = this.getEstimatedDuration(this.replicator.RemoteReplicatorAcknowledgementStatus.ReplicationStreamAcknowledgementDetail);
-        this.stepsFinished = 1;
-      }
-    }else{
-      this.overallStatus = 'Complete';
-      this.stepsFinished = 2;
-    }
-  }
-
-  getEstimatedDuration(details: IRemoteReplicatorAcknowledgementDetail) {
-    // average apply duration * (received and not applied  +  not received) +  not received * average receive duration
-    return TimeUtils.getDuration(+details.AverageApplyDuration * (+details.ReceivedAndNotAppliedCount + +details.NotReceivedCount) +
-                                 +details.AverageReceiveDuration * +details.NotReceivedCount);
+  handleCollapseChange(state: boolean) {
+    this.copy = !state;
   }
 
 }
