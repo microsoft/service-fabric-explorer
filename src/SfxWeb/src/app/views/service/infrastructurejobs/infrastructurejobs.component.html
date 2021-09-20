@@ -1,5 +1,50 @@
-<app-dashboard-tile [data]="tiles" *ngIf="tiles" data-cy="nodesChart" class="tall"></app-dashboard-tile>
-<div class="detail-pane essen-pane">
-    <app-detail-list [listSettings]="listSettings" [list]="allManagementJobs" data-cy="nodesList"></app-detail-list>
+<div class="tile-container" >
+    <app-dashboard-text-tile
+        [barClass]="executingMRJobs.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
+        [count]="executingMRJobs.length"
+        *ngIf="executingMRJobs.length >=0" title="Active Infrastructure Jobs" style="display: block">
+    </app-dashboard-text-tile>
+
+    <app-dashboard-text-tile
+        [barClass]="allPendingMRJobs.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
+        [count]="allPendingMRJobs.length"
+        *ngIf="allPendingMRJobs.length >=0" title="Pending Infrastrucutre Jobs " style="display: block">
+    </app-dashboard-text-tile>
 </div>
 
+<h5>{{executingInfraJobsSuggestion}}</h5>
+
+<div class="detail-pane essen-pane" >
+    <app-collapse-container  sectionName="Active Infrastructure Jobs">
+        <h4 collapse-header>
+            Active Infrastructure Jobs
+        </h4>
+        
+        <app-detail-list [list]="executingMRJobs"
+            [listSettings]="executingMRJobsList" collapse-body  >
+        </app-detail-list>
+    </app-collapse-container>
+</div>
+
+<h5>{{pendingInfraJobsSuggestion}}</h5>
+<div class="detail-pane essen-pane" >
+    <app-collapse-container  sectionName="Pending Infrastructure Jobs">
+        <h4 collapse-header>
+            Pending Infrastructure Jobs
+        </h4>
+        <app-detail-list [list]="allPendingMRJobs"
+            [listSettings]="allPendingMRJobsList" collapse-body  >
+        </app-detail-list>
+    </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" >
+    <app-collapse-container collapsed=true sectionName="Completed Infrastructure Jobs">
+        <h4 collapse-header>
+            Completed Infrastructure Jobs
+        </h4>
+        <app-detail-list [list]="completedMRJobs"
+            [listSettings]="completedMRJobsList" collapse-body  >
+        </app-detail-list>
+    </app-collapse-container>
+</div>
