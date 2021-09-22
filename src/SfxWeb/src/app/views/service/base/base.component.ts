@@ -48,7 +48,7 @@ export class BaseComponent extends ServiceBaseControllerDirective {
           route: './manifest'
         });
       }
-     
+
       this.tree.selectTreeNode([
           IdGenerator.cluster(),
           IdGenerator.appGroup(),

@@ -1,11 +1,7 @@
 import { IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact, InfraRepairTask } from '../RawDataTypes';
-import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from './Base';
-import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { StatusWarningLevel } from 'src/app/Common/Constants';
-import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
+import { of } from 'rxjs';
 
 export class CompletedInfrastructureJob extends DataModelBase<IRawInfrastructureJob> {
     
@@ -23,8 +19,7 @@ export class CompletedInfrastructureJob extends DataModelBase<IRawInfrastructure
    }
 
    updateInternal() {
-       //this.RepairTask = this.raw.RepairTasks.length != 0 ?  new InfraRepairTask(this.raw.RepairTasks[0].TaskId, this.raw.RepairTasks[0].State) : new InfraRepairTask("None", "None");
        this.ImpactAction = this.raw.ImpactAction; 
-       //return of(null);
+       return of(null);
    }
 }

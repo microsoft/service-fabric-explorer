@@ -36,10 +36,8 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
     this.allPendingMRJobsList = this.settings.getNewOrExistingListSettings('allMRJobs', ['raw.CurrentUD'], [
       new ListColumnSetting('raw.Id', 'Job Id'),
       new ListColumnSettingWithFilter('raw.CurrentUD', 'Current UD'),
-      //new ListColumnSetting('raw.IsActive', 'Active'),
       new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
       new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
-     // new ListColumnSetting('raw.ImpactStep', 'Impact Step'),
       new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
       new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes',2),
      ]);
@@ -47,10 +45,8 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
      this.executingMRJobsList = this.settings.getNewOrExistingListSettings('executingMRJobs', ['raw.IsActive'], [
       new ListColumnSetting('raw.Id', 'Job Id'),
       new ListColumnSettingWithFilter('raw.CurrentUD', 'Current UD'),
-      //new ListColumnSetting('raw.IsActive', 'Active'),
       new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
       new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
-      //new ListColumnSetting('raw.ImpactStep', 'Impact Step'),
       new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
       new ListColumnSetting('RepairTask.State', 'Repair Task State'),
       new ListColumnSettingWithShorten('NodeImpact', 'Node Impact', 2)
@@ -58,12 +54,7 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
 
      this.completedMRJobsList = this.settings.getNewOrExistingListSettings('completedMRJobs', [], [
       new ListColumnSetting('raw.Id', 'Job Id'),
-     // new ListColumnSettingWithFilter('raw.CurrentUD', 'Current UD'),
-      //new ListColumnSetting('raw.IsActive', 'Active'),
-     // new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
       new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
-      //new ListColumnSetting('raw.ImpactStep', 'Impact Step'),
-     // new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
       new ListColumnSetting('raw.RoleInstancesToBeImpacted', 'Nodes'),
      ]);
 
@@ -72,7 +63,7 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
 
   getInfrastructureData(mrJobdata: IRawInfrastructureJob[]): void {
     const dateRef = new Date();
-
+    
     this.executingMRJobs = [];
     mrJobdata.filter(job => job.JobStatus == 'Executing' && Boolean(job.IsActive) == true).forEach(rawMrJob => {
       this.executingMRJobs.push( new InfrastructureJob(this.data, rawMrJob, dateRef))
@@ -87,15 +78,14 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
     mrJobdata.filter(job =>job.JobStatus == 'Completed').forEach(rawMrJob => {
       this.completedMRJobs.push( new CompletedInfrastructureJob(this.data, rawMrJob, dateRef))
     });
-    //this.infrastructureSuggestions = [];
-    //this.infrastructureSuggestions.push("Wow this is great");
+
     if (this.executingMRJobs.length >=2 && this.allPendingMRJobs.length >0)
     {
      this.pendingInfraJobsSuggestion = "Jobs wont get approved because of Throttling policy in Infrastructure Service.  To know more about it, read here."
     }
-    if (this.executingMRJobs.filter(job => job.raw.AcknowledgementStatus == 'WaitingForAcknowledgement').length >0)
+    if (this.executingMRJobs.filter(job => job.raw.AcknowledgementStatus == 'WaitingForAcknowledgement' && job.RepairTask.State == "Preparing").length >0)
     {
-      this.executingInfraJobsSuggestion = "Check if the Corresponding Repair Task to the executing Infrastructure Job has any issues."
+      this.executingInfraJobsSuggestion = "If the Repair Task corresponding to Infrastructure updates is stuck in Preparing for long, check the Repair Task page to find out."
     }
   };
 

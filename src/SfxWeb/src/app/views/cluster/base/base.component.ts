@@ -63,7 +63,7 @@ export class BaseComponent implements OnInit {
           name: 'repair jobs',
           route: '/repairtasks'
         });
-      }     
+      }
     });
 
     this.dataService.nodes.refresh().subscribe( () => {
