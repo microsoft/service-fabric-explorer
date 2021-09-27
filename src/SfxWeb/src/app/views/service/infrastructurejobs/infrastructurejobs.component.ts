@@ -20,13 +20,13 @@ import { Constants } from 'src/app/Common/Constants';
 })
 export class InfrastructureJobsComponent extends ServiceBaseControllerDirective {
   allPendingMRJobs: InfrastructureJob[];
-  executingMRJobs : InfrastructureJob[]; 
-  completedMRJobs : CompletedInfrastructureJob[];
+  executingMRJobs: InfrastructureJob[];
+  completedMRJobs: CompletedInfrastructureJob[];
   allPendingMRJobsList: ListSettings;
   executingMRJobsList: ListSettings;
-  completedMRJobsList : ListSettings;
+  completedMRJobsList: ListSettings;
   executingInfraJobsSuggestion: string;
-  pendingInfraJobsSuggestion: string
+  pendingInfraJobsSuggestion: string;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) {
     super(data, injector);
@@ -39,10 +39,10 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
       new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
       new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
       new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
-      new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes',2),
+      new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes', 2),
      ]);
 
-     this.executingMRJobsList = this.settings.getNewOrExistingListSettings('executingMRJobs', ['raw.IsActive'], [
+    this.executingMRJobsList = this.settings.getNewOrExistingListSettings('executingMRJobs', ['raw.IsActive'], [
       new ListColumnSetting('raw.Id', 'Job Id'),
       new ListColumnSettingWithFilter('raw.CurrentUD', 'Current UD'),
       new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
@@ -52,7 +52,7 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
       new ListColumnSettingWithShorten('NodeImpact', 'Node Impact', 2)
      ]);
 
-     this.completedMRJobsList = this.settings.getNewOrExistingListSettings('completedMRJobs', [], [
+    this.completedMRJobsList = this.settings.getNewOrExistingListSettings('completedMRJobs', [], [
       new ListColumnSetting('raw.Id', 'Job Id'),
       new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
       new ListColumnSetting('raw.RoleInstancesToBeImpacted', 'Nodes'),
@@ -63,31 +63,31 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
 
   getInfrastructureData(mrJobdata: IRawInfrastructureJob[]): void {
     const dateRef = new Date();
-    
+
     this.executingMRJobs = [];
-    mrJobdata.filter(job => job.JobStatus == 'Executing' && Boolean(job.IsActive) == true).forEach(rawMrJob => {
-      this.executingMRJobs.push( new InfrastructureJob(this.data, rawMrJob, dateRef))
+    mrJobdata.filter(job => job.JobStatus === 'Executing' && Boolean(job.IsActive) === true).forEach(rawMrJob => {
+      this.executingMRJobs.push( new InfrastructureJob(this.data, rawMrJob, dateRef));
     });
 
-    this.allPendingMRJobs = []
-    mrJobdata.filter(job => job.JobStatus != 'Completed'  && Boolean(job.IsActive) == false).forEach(rawMrJob => {
+    this.allPendingMRJobs = [];
+    mrJobdata.filter(job => job.JobStatus !== 'Completed'  && Boolean(job.IsActive) === false).forEach(rawMrJob => {
       this.allPendingMRJobs.push(new InfrastructureJob(this.data, rawMrJob, dateRef));
     });
 
-    this.completedMRJobs = []; 
-    mrJobdata.filter(job =>job.JobStatus == 'Completed').forEach(rawMrJob => {
-      this.completedMRJobs.push( new CompletedInfrastructureJob(this.data, rawMrJob, dateRef))
+    this.completedMRJobs = [];
+    mrJobdata.filter(job => job.JobStatus === 'Completed').forEach(rawMrJob => {
+      this.completedMRJobs.push( new CompletedInfrastructureJob(this.data, rawMrJob, dateRef));
     });
 
-    if (this.executingMRJobs.length >=2 && this.allPendingMRJobs.length >0)
+    if (this.executingMRJobs.length >= 2 && this.allPendingMRJobs.length > 0)
     {
-     this.pendingInfraJobsSuggestion = "Jobs wont get approved because of Throttling policy in Infrastructure Service.  To know more about it, read here."
+     this.pendingInfraJobsSuggestion = 'Jobs wont get approved because of Throttling policy in Infrastructure Service.  To know more about it, read here.';
     }
-    if (this.executingMRJobs.filter(job => job.raw.AcknowledgementStatus == 'WaitingForAcknowledgement' && job.RepairTask.State == "Preparing").length >0)
+    if (this.executingMRJobs.filter(job => job.raw.AcknowledgementStatus === 'WaitingForAcknowledgement' && job.RepairTask.State === 'Preparing').length > 0)
     {
-      this.executingInfraJobsSuggestion = "If the Repair Task corresponding to Infrastructure updates is stuck in Preparing for long, check the Repair Task page to find out."
+      this.executingInfraJobsSuggestion = 'If the Repair Task corresponding to Infrastructure updates is stuck in Preparing for long, check the Repair Task page to find out.';
     }
-  };
+  }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.data.restClient.getInfrastructureJobs(this.serviceId, messageHandler).pipe(map(data => this.getInfrastructureData(data)));

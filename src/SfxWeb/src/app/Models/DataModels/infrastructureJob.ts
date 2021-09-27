@@ -8,9 +8,9 @@ import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers'
 import { DataService } from 'src/app/services/data.service';
 
 export class InfrastructureJob extends DataModelBase<IRawInfrastructureJob> {
-    
+
     Id: string;
-    RepairTask:InfraRepairTask;
+    RepairTask: InfraRepairTask;
     NodeImpact: string[];
 
    public get id(): string {
@@ -23,9 +23,9 @@ export class InfrastructureJob extends DataModelBase<IRawInfrastructureJob> {
    }
 
    updateInternal() {
-       this.RepairTask = this.raw.RepairTasks.length != 0 ?  new InfraRepairTask(this.raw.RepairTasks[0].TaskId, this.raw.RepairTasks[0].State) : new InfraRepairTask("None", "None");
+       this.RepairTask = this.raw.RepairTasks.length !== 0 ?  new InfraRepairTask(this.raw.RepairTasks[0].TaskId, this.raw.RepairTasks[0].State) : new InfraRepairTask('None', 'None');
        this.NodeImpact = [];
-       this.raw.CurrentlyImpactedRoleInstances.forEach( nodeimpact =>this.NodeImpact.push(nodeimpact.Name + ':' + nodeimpact.ImpactTypes.toString()) );
+       this.raw.CurrentlyImpactedRoleInstances.forEach( nodeimpact => this.NodeImpact.push(nodeimpact.Name + ':' + nodeimpact.ImpactTypes.toString()) );
        return of(null);
    }
 }

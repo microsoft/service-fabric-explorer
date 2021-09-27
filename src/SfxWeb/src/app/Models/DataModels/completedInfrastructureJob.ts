@@ -4,8 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { of } from 'rxjs';
 
 export class CompletedInfrastructureJob extends DataModelBase<IRawInfrastructureJob> {
-    
-   
+
     Id: string;
     ImpactAction: string;
 
@@ -19,7 +18,7 @@ export class CompletedInfrastructureJob extends DataModelBase<IRawInfrastructure
    }
 
    updateInternal() {
-       this.ImpactAction = this.raw.ImpactAction; 
+       this.ImpactAction = this.raw.ImpactAction;
        return of(null);
-   }
+    }
 }
