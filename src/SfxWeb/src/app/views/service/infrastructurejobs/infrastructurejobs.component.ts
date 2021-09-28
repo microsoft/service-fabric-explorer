@@ -80,13 +80,6 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
     mrJobdata.filter(job => job.JobStatus === 'Completed').forEach(rawMrJob => {
       this.completedMRJobs.push( new CompletedInfrastructureJob(this.data, rawMrJob, dateRef));
     });
-
-   // if (this.executingMRJobs.length >= 2 && this.allPendingMRJobs.length > 0)
-    {
-    }
-    //if (this.executingMRJobs.filter(job => job.raw.AcknowledgementStatus === 'WaitingForAcknowledgement' && job.RepairTask.State === 'Preparing').length > 0)
-    {
-    }
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
