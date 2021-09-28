@@ -71,6 +71,9 @@ export class Constants {
     public static Empty = '(empty)';
     public static SvgTransitionDuration = 250;
     public static SvgTransitionDurationSlow = 600;
+
+    public static executingInfraJobsSuggestion = 'If the repair task corresponding to Infrastructure updates is stuck in Preparing for long, check the Repair Task page.'
+    public static pendingInfraJobsSuggestion = 'Pending jobs wont get approved because of throttling policy in Infrastructure Service.  To know more about it, read here'
 }
 
 export class FabricEnumValues {

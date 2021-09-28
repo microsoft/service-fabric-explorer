@@ -12,8 +12,7 @@
     </app-dashboard-text-tile>
 </div>
 
-<h5>{{executingInfraJobsSuggestion}}</h5>
-
+<div *ngIf="executingMRJobs.length >0"><h6>{{executingInfraJobsSuggestion}}</h6></div>
 <div class="detail-pane essen-pane" >
     <app-collapse-container  sectionName="Active Infrastructure Jobs">
         <h4 collapse-header>
@@ -26,7 +25,7 @@
     </app-collapse-container>
 </div>
 
-<h5>{{pendingInfraJobsSuggestion}}</h5>
+<div *ngIf="allPendingMRJobs.length >0 && executingMRJobs.length >=2"><h6>{{pendingInfraJobsSuggestion}}</h6></div>
 <div class="detail-pane essen-pane" >
     <app-collapse-container  sectionName="Pending Infrastructure Jobs">
         <h4 collapse-header>
