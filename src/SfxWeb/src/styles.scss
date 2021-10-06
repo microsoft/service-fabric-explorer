@@ -71,7 +71,7 @@ $SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
     display: block;
     margin-bottom: 15px;
 
-    h4 {
+    h4, h2 {
         color: $detail-tab-color;
         margin-left: 0;
         font-size: $detail-tab-title-font-size;
@@ -221,8 +221,8 @@ table.detail-list {
     td {
         vertical-align: middle !important;
         padding: 5px;
-        text-overflow: ellipsis;
-        overflow: hidden;
+        // text-overflow: ellipsis;
+        // overflow: hidden;
         white-space: normal;
 
         // Add transition to padding when the line is collapsing
@@ -231,8 +231,8 @@ table.detail-list {
 
     th {
         padding: 5px;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        // text-overflow: ellipsis;
+        // white-space: nowrap;
         color: $detail-table-header-color;
         border: 0px solid;
         border-bottom: 1px solid #4c4c4c;
@@ -254,6 +254,7 @@ table.detail-list {
     .sort-filter-th {
         // To show filters dropdown
         overflow: visible;
+        white-space: nowrap;
 
         .active {
             cursor: pointer;
@@ -274,7 +275,7 @@ table.detail-list {
         .sort-icon {
             position: relative;
             top: 2px;
-            font-size: $font-size-large;
+            font-size: 11pt;
             cursor: pointer;
 
             &.transparent-icon {
@@ -507,6 +508,7 @@ app-navbar {
 .page-item.disabled .page-link{
     background-color: #5a5a5a;
     color: white;
+    border: 1px solid #5a5a5a;
 }
 
 .flat-button {
@@ -896,3 +898,30 @@ app-navbar {
         background-color: rgba(255, 255, 255, 0.1);
     }
 }
+
+.page-item.active .page-link {
+  z-index: 3;
+  color: #fff;
+  background-color: #262626;
+  border-color: #0075c9;
+  border: 1px solid #0075c9;
+  box-sizing: border-box;
+}
+
+
+@media screen and (-ms-high-contrast: active) {
+  .highcharts-title {
+    color: black !important;
+    fill: black !important;
+  }
+
+  .highcharts-subtitle {
+    color: black !important;
+    fill: black !important;
+  }
+
+  .dropdown-item.disabled, .dropdown-item:disabled {
+    border: 1px solid black;
+  }
+}
+

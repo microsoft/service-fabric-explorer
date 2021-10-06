@@ -23,7 +23,7 @@ export class RefreshService {
     const defaultRefreshInterval = this.storage.getValueNumber(
         Constants.AutoRefreshIntervalStorageKey, Constants.DefaultAutoRefreshInterval);
 
-    this.updateRefreshInterval(defaultRefreshInterval.toString(), true /* no refresh */);
+    this.updateRefreshInterval("0", true /* no refresh */);
   }
 
   public insertRefreshSubject(key: string, func: () => Observable<any> ) {

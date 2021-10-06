@@ -404,6 +404,7 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
         const listSettings = new ListSettings(
             this.pageSize,
             ['raw.timeStamp'],
+            'Events results',
             [
                 new ListColumnSettingWithEventStoreRowDisplay(),
             new ListColumnSetting(

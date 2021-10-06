@@ -76,7 +76,7 @@
 
 <div class="essen-pane help-text-container">
   <a target="_blank" href="https://aka.ms/sf/loadinformation">
-  Learn more about these metrics <span class="mif-info" ></span>
+  Learn more about these metrics <span tabindex="0" class="mif-info" ></span>
   </a>
 </div>
 
@@ -85,7 +85,7 @@
     Count of all service objects (stateless and stateful) on the node
   </app-dashboard-text-tile>
   <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="Primary Count" middleMargin="5px 0">
-    Count of Primary replicas on the node    
+    Count of Primary replicas on the node
   </app-dashboard-text-tile>
   <app-dashboard-text-tile [count]="node.loadInformation.metrics.ReplicaCount" title="Replica Count" middleMargin="5px 0">
     Count of total stateful replicas on the node
@@ -106,7 +106,7 @@
 <div class="detail-pane essen-pane">
   <app-collapse-container sectionName="Unhealthy Evaluations">
     <div collapse-header>
-      <h4>Unhealthy Evaluations</h4>
+      <h2>Unhealthy Evaluations</h2>
     </div>
     <div collapse-body>
       <app-detail-list *ngIf="node" [list]="node.health.unhealthyEvaluations"

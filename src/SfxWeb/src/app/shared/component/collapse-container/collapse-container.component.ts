@@ -11,6 +11,7 @@ export class CollapseContainerComponent {
   @Input() disabled = false;
   @Input() hideTooltip = false;
   @Input() sectionName = 'this';
+  @Input() tooltipSouth = false;
   @Output() collapsedChange = new EventEmitter<boolean>();
 
   changeCollapseState() {

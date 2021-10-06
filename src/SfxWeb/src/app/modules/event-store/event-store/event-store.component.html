@@ -11,7 +11,7 @@
                 </div>
 
                 <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (dateChanged)="setNewDates($event)"
-                [currentStartDate]="startDate" [currentEndDate]="endDate" ></app-dual-date-picker>    
+                [currentStartDate]="startDate" [currentEndDate]="endDate" ></app-dual-date-picker>
             </div>
             <div style="min-width: 400px; flex: 1; padding-left: 15px;" >
                 <div style="width: 90%; margin-top: 15px; margin-bottom: 15px;">
@@ -28,7 +28,7 @@
                     <input ngbButton type="radio" [value]="true"> All
                 </label>
             </div>
-            <span class="mif-info mif-lg" style="vertical-align: middle; margin-left: 10px;" title="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
+            <span tabindex="0" class="mif-info mif-lg" style="vertical-align: middle; margin-left: 10px;" title="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
             <span *ngIf="dataService.isAdvancedModeEnabled() && showAllEvents">
                 <app-input placeholder="query string" [model]="transformText" (changed)="transformText = $event;"></app-input>
                 <button class="simple-button" (click)="setTimelineData()">filter</button>
@@ -39,12 +39,12 @@
             </p>
         </div>
 
-        <div *ngIf="timeLineEventsData">
+        <div *ngIf="timeLineEventsData" >
             <app-event-store-timeline [events]="timeLineEventsData" ></app-event-store-timeline>
         </div>
 
         <app-detail-list [list]="eventsList.collection" [listSettings]="eventsList.settings" [isLoading]="!eventsList.isInitialized"></app-detail-list>
-    
+
         <div>
             <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
                 <span class="dropdown-toggle dark-background-link bowtie-icon bowtie-status-error"

@@ -31,18 +31,18 @@
         </button>
 
         <div class="margined">
-            <app-toggle [(state)]="isUTC" (stateChange)="flipTimeZone()"></app-toggle><span>Set To {{isUTC ? 'Local Time' : 'UTC'}}</span>
+            <app-toggle [aria]="'Set To' + isUTC ? 'Local Time' : 'UTC'" [(state)]="isUTC" (stateChange)="flipTimeZone()"></app-toggle><span>Set To {{isUTC ? 'Local Time' : 'UTC'}}</span>
         </div>
 
         <ng-content select="[buttons]"></ng-content>
 
         <div style="margin-left: auto;">
             <a class="link"> Why is data missing?
-                <span class="mif-info" title="This timeline may present incomplete information and not fully represent the cluster for this date range. Events may also be missing due to data loss and lead to incomplete states. E.g.: A cluster upgrade starting before or ending after this time range will not be shown."></span>
+                <span tabindex="0" class="mif-info" title="This timeline may present incomplete information and not fully represent the cluster for this date range. Events may also be missing due to data loss and lead to incomplete states. E.g.: A cluster upgrade starting before or ending after this time range will not be shown."></span>
             </a>
         </div>
     </div>
-    <div role="img" alt="timeline visualization for the next table." aria-label="timeline visualization for the next table." >
+    <div role="img" alt="timeline visualization for the next table." aria-label="timeline visualization for the next table." aria-hidden="true">
       <div #visualization ></div>
 
     </div>

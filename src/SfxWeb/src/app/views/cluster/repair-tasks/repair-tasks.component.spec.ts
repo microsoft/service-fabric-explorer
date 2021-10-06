@@ -76,7 +76,7 @@ describe('RepairTasksComponent', () => {
         showSecondRow: (item) => boolean = (item) => true,
         searchable: boolean = true) {
 
-        return new ListSettings(this.paginationLimit, defaultSortProperties, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
+        return new ListSettings(this.paginationLimit, defaultSortProperties, listName, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
       }
     };
 

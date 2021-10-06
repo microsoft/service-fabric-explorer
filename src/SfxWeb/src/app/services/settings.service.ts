@@ -56,7 +56,7 @@ export class SettingsService {
       // Use URL + listName as unique key to track list settings on detail pages
       const key: string = listName; // TODO fix this this.$location.path() + "/" + listName;
       if (!this.listSettings[key]) {
-          this.listSettings[key] = new ListSettings(this.paginationLimit, defaultSortProperties, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
+          this.listSettings[key] = new ListSettings(this.paginationLimit, defaultSortProperties, listName, columnSettings, secondRowColumnSettings, secondRowCollapsible, showSecondRow, searchable);
       }
       return this.listSettings[key];
   }
@@ -67,12 +67,12 @@ export class SettingsService {
       columnSettings: ListColumnSetting[] = []) {
 
       if (!this.listSettings[listKey]) {
-          this.listSettings[listKey] = new ListSettings(this.paginationLimit, defaultSortProperties, columnSettings);
+          this.listSettings[listKey] = new ListSettings(this.paginationLimit, defaultSortProperties, 'Tree Node', columnSettings);
       }
       return this.listSettings[listKey];
   }
 
-  public getNewOrExistingUnhealthyEvaluationsListSettings(listKey: string = 'unhealthyEvaluations') {
+  public getNewOrExistingUnhealthyEvaluationsListSettings(listKey: string = 'unhealthy Evaluations') {
       return this.getNewOrExistingListSettings(listKey, null,
           [
               new ListColumnSettingForLink('kind', 'Kind', (item) =>  item.viewPath),
@@ -82,7 +82,7 @@ export class SettingsService {
           ]);
   }
 
-  public getNewOrExistingHealthEventsListSettings(listKey: string = 'healthEvents') {
+  public getNewOrExistingHealthEventsListSettings(listKey: string = 'health Events') {
       return this.getNewOrExistingListSettings(listKey, ['raw.SequenceNumber'],
           [
               new ListColumnSettingForBadge('healthState', 'Health State'),
@@ -104,7 +104,7 @@ export class SettingsService {
           );
   }
 
-  public getNewOrExistingNodeStatusListSetting(listKey: string = 'nodeStatus') {
+  public getNewOrExistingNodeStatusListSetting(listKey: string = 'node Status') {
       return this.getNewOrExistingListSettings(listKey, null,
           [
               new ListColumnSetting('nodeType', 'Node Type'),
@@ -120,7 +120,7 @@ export class SettingsService {
       );
   }
 
-  public getNewOrExistingBackupPolicyListSettings(listKey: string = 'backupPolicies') {
+  public getNewOrExistingBackupPolicyListSettings(listKey: string = 'backup Policies') {
       return this.getNewOrExistingListSettings(listKey, null, [
         new ListColumnSetting('raw.Name', 'Name', {
             enableFilter: false,
@@ -136,7 +136,7 @@ export class SettingsService {
   }
 
   public getNewOrExistingNetworkRequestListSettings(includeApiDesc: boolean = false) {
-    const listKey = 'requestsData';
+    const listKey = 'requests Data';
     const settings = [
         new ListColumnSetting('statusCode', 'Status Code'),
         new ListColumnSetting('errorMessage', 'Error Message'),

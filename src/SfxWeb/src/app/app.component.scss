@@ -107,7 +107,7 @@
 
 .sidenav-button {
     position: absolute;
-    left: 10px;
+    left: 0px;
     top: 50px;
     z-index: 12;
     padding: 0px;
@@ -120,7 +120,7 @@
     li {
         border-bottom: 1px solid white;
         padding: 5px;
-    
+
         &:last-child{
             border: 0;
         }

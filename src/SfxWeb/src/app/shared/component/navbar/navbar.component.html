@@ -8,7 +8,7 @@
         </h1>
     <div class="detail-view-navbar" role="tablist" [attr.aria-label]="name" data-cy="navtabs">
         <div class="detail-view-navbar-tab" *ngFor="let tab of tabs; let i = index">
-            <a [routerLink]="tab.route" [title]="tab.name" role="tab" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" [id]="i" (keydown.space)="navigateBySpaceBar(tab.route)">{{tab.name}}</a>
+            <a #rla="routerLinkActive" [attr.aria-selected]="rla.isActive" [routerLink]="tab.route" [title]="tab.name" role="tab" routerLinkActive="active" [routerLinkActiveOptions]="{ exact: true }" [id]="i" (keydown.space)="navigateBySpaceBar(tab.route)">{{tab.name}}</a>
             <!-- <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div> -->
         </div>
     </div>
