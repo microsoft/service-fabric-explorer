@@ -15,7 +15,12 @@
 /**
  * @type {Cypress.PluginConfig}
  */
-module.exports = (on, config) => {
-  // `on` is used to hook into various events Cypress emits
-  // `config` is the resolved Cypress config
-}
+ const cypressTypeScriptPreprocessor = require("./cy-ts-preprocessor");
+ const registerCodeCoverageTasks = require("@cypress/code-coverage/task");
+
+ module.exports = (on, config) => {
+   on("file:preprocessor", cypressTypeScriptPreprocessor);
+
+   // enable code coverage collection
+   return registerCodeCoverageTasks(on, config);
+ };

@@ -15,7 +15,7 @@
       "prefix": "app",
       "architect": {
         "build": {
-          "builder": "@angular-devkit/build-angular:browser",	
+          "builder": "@angular-devkit/build-angular:browser",
             "options": {
             "outputPath": "dist",
             "index": "src/index.html",
@@ -94,9 +94,10 @@
           "defaultConfiguration": ""
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",	
+          "builder": "ngx-build-plus:dev-server",
           "options": {
             "browserTarget": "SfxWeb:build",
+            "extraWebpackConfig": "./cypress/coverage.webpack.js",
             "proxyConfig": "proxy.conf.js"
           },
           "configurations": {
