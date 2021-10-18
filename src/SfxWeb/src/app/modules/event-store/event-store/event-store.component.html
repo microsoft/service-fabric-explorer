@@ -2,7 +2,7 @@
         <div style="display: flex; flex-direction: row; flex-wrap: wrap;">
             <div style="display: flex; flex-direction: row; align-items: center;">
                 <div ngbDropdown style="margin-right: 10px;">
-                    <button class="simple-button" ngbDropdownToggle>View Last </button>
+                    <button class="simple-button" ngbDropdownToggle placement="bottom">View Last </button>
                     <div ngbDropdownMenu>
                             <button *ngFor="let date of quickDates" style="border-bottom: 1px solid gray;" ngbDropdownItem (click)="setDate(date)" style="padding: 5px; ">
                                 {{date.display}}
