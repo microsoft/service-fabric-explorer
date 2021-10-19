@@ -14,7 +14,8 @@ export interface IChartData {
 })
 export class ReplicationTrendLineComponent implements AfterViewInit {
 
-  @Input() data: IChartData[]
+  @Input() data: IChartData[];
+  @Input() fullScreen: boolean;
 
   @ViewChild('chart') private chartContainer: ElementRef;
 

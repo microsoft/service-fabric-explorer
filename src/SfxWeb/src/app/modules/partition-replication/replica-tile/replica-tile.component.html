@@ -9,8 +9,8 @@
     <app-clip-board [text]="copyText" style="float: right"></app-clip-board>
   </div>
 
-  <div style="display: flex;flex: 1;min-height: 0;">
-    <div style="flex: 1; display: flex; flex-direction: column;">
+  <div style="display: flex;flex: 1;min-height: 0; gap: 10px;">
+    <div style="flex: 1; display: flex; flex-direction: column;" [ngStyle]="{'max-width': (showReplication ? 'calc(50% - 5px)' : '100%')}">
       <div class="replica-header">
         <div style="width: 100%;">
           <app-essential-item *ngFor="let item of overviewItems; let l = last; " [item]="item" [underline]="false">
@@ -21,12 +21,12 @@
         </div>
       </div>
 
-      <div *ngIf="showReplication" style="flex: 1; min-height: 0px; display: flex; flex-direction: column;" [ngClass]="{'fullscreen' :  fullScreen}"  >
+      <div *ngIf="showReplication" style="flex: 1; min-height: 0px; display: flex; flex-direction: column; margin-bottom: -20px;" [ngClass]="{'fullscreen' :  fullScreen}"  >
         <h4 class="underline-title" style="margin-bottom: 0px;
         margin-left: 5px;
-        margin-right: 5px;">LSN Rate Over Time
+        margin-right: 5px; margin-top: 5px;">LSN's Replicated Per Second
 
-          <span class="link {{ fullScreen ? 'mif-shrink' : 'mif-enlarge' }}" style="float: right; margin-top: 5px;" (click)="changeFullScreen()"></span>
+          <span class="link {{ fullScreen ? 'mif-shrink' : 'mif-enlarge' }}" style="float: right;" (click)="changeFullScreen()"></span>
         </h4>
         <p style="text-align: center; margin-bottom: 0px;">
           (This information is only recorded on this tab and is cleared when left)
@@ -34,14 +34,15 @@
 
         <div style="    flex: 1;
         min-height: 0px;">
-          <app-replication-trend-line [data]="chartData" style="height: 100%; width: 100%; padding-bottom: -10px;"></app-replication-trend-line>
+          <app-replication-trend-line [data]="chartData" style="height: 100%; width: 100%; padding-bottom: -10px;"
+          [fullScreen]="fullScreen"></app-replication-trend-line>
         </div>
 
       </div>
     </div>
 
 
-    <div *ngIf="showReplication" style="margin-left: 10px; flex: 1;">
+    <div *ngIf="showReplication" style="flex: 1;">
       <app-replica-status [replicator]="replicator"></app-replica-status>
     </div>
   </div>
