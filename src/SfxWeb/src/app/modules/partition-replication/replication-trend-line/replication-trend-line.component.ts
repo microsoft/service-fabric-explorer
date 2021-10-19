@@ -33,8 +33,8 @@ export class ReplicationTrendLineComponent implements AfterViewInit {
           // borderWidth: 0,
           type: 'area',
           // margin: [2, 0, 2, 0],
-          width: 240,
-          height: 185,
+          // width: 240,
+          // height: 145,
       },
       title: {
           text: ''
@@ -110,7 +110,10 @@ export class ReplicationTrendLineComponent implements AfterViewInit {
     // }
 
     this.chart = chart(this.chartContainer.nativeElement, testOptions);
+  setTimeout(() => {
+    window.dispatchEvent(new Event('resize'));
 
+  }, 50)
   }
 
   ngOnChanges() {
@@ -126,6 +129,9 @@ export class ReplicationTrendLineComponent implements AfterViewInit {
         const diff = now.getTime() -  item.date.getTime();
         return TimeUtils.getDuration(diff) + " ago"
       }))
+
+      window.dispatchEvent(new Event('resize'));
+
     }
   }
 

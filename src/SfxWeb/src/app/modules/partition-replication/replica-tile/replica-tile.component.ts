@@ -24,6 +24,8 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
   copyText = '';
   leftBannerColor = '';
 
+  fullScreen: boolean = false;
+
   chartData: IChartData[] = [];
 
   constructor() { }
@@ -90,5 +92,9 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
   changeReplication() {
     this.showReplication = !this.showReplication;
     this.showReplicationChange.emit(this.showReplication)
+  }
+
+  changeFullScreen() {
+    this.fullScreen = !this.fullScreen;
   }
 }
