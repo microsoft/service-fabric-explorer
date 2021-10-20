@@ -24,11 +24,6 @@ export class ClusterUpgradeBannerComponent implements OnInit {
     this.checkWidth(window.innerWidth);
   }
 
-  public getUpgradeDomainProgress(): string {
-    return `(${this.clusterUpgradeProgress.getCompletedUpgradeDomains()} / ${this.clusterUpgradeProgress.upgradeDomains.length} UDs completed)`;
-  }
-
-
   @HostListener('window:resize', ['$event.target'])
   onResize(event: Window) {
     this.checkWidth(event.innerWidth);

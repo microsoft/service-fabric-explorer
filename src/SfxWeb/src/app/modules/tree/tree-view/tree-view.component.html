@@ -1,13 +1,5 @@
 <div class="tree-wrapper">
     <div class="tree-header">
-        <div *ngIf="showBeta" style="padding: 10px;background-color: #fcf8e3; border-left: #FFC646 solid 8px; margin: 8px; min-width: 330px;">
-            <div style="vertical-align: middle; padding: 4px; color: black; padding-bottom: 8px;" (click)="leaveBeta();">
-                To leave beta <span style="cursor: pointer;">(Click here)</span>
-            </div>
-            <div style="border-top: 2px solid #b7b1b1; padding: 4px;">
-                <a href="https://aka.ms/sfxrepo" target="_blank" style="color: black;">You can report any issues you run into (Click here)</a>
-            </div>
-        </div>
         <div class="filter-items-container">
             <app-check-box [(state)]="treeService.tree.showOkItems" class="filter-item">
                 <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>

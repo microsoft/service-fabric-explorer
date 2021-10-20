@@ -23,3 +23,8 @@
 //
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
+
+import './commands';
+
+// Import cypress code-coverage collector plugin
+import '@cypress/code-coverage/support';

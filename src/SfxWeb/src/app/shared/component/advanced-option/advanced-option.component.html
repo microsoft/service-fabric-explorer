@@ -55,6 +55,12 @@
                     </a>
                 </td>
             </tr>
+
+            <tr>
+              <div class="link" *ngIf="showBeta" (click)="leaveBeta();">
+                    View old SFX
+                </div>
+            </tr>
         </table>
 
         <div style="width: 100%; background-color: gray; height: 1px; margin: 5px 0px;"></div>

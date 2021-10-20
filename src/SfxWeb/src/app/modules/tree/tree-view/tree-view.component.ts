@@ -1,6 +1,5 @@
 import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input, AfterViewInit } from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
-import { environment } from 'src/environments/environment';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
@@ -16,7 +15,6 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
   @Input() smallWindowSize = false;
   @Output() treeResize = new EventEmitter<number>();
 
-  public showBeta = environment.showBeta;
   public canExpand = false;
   @ViewChild('treeContainer') treeContainer: ElementRef;
   @ViewChild('tree') tree: ElementRef;
@@ -33,11 +31,6 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
     if (this.tree) {
       this.canExpand = this.tree.nativeElement.scrollWidth > this.tree.nativeElement.clientWidth;
     }
-  }
-
-  leaveBeta() {
-    const originalUrl =  location.href.replace('index.html', 'old.html');
-    window.location.assign(originalUrl);
   }
 
   setWidth() {

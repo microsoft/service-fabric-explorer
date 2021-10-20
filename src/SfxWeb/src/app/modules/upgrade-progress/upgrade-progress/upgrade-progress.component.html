@@ -1,6 +1,18 @@
-<div class="upgrade-progress" *ngIf="!showChart">
+<div *ngIf="!showChart">
+  <div *ngIf="upgradeDomains.length < 15" class="upgrade-progress">
     <div class="upgrade-domain-bar" *ngFor="let ud of upgradeDomains" [ngbTooltip]="ud.name + ' - ' + ud.stateName">
-        <div class="upgrade-domain-title " [ngClass]="ud.badgeClass">{{ud.name}}</div>
+      <div class="upgrade-domain-title " [ngClass]="ud.badgeClass">{{ud.name}}</div>
     </div>
+  </div>
+
+  <div *ngIf="upgradeDomains.length > 14">
+    <div class="dashboard-datapoints">
+      <div class="dashboard-datapoint" *ngFor="let tile of tiles">
+        <div class="dashboard-datapoint-leftbar" [ngClass]="tile.css"></div>
+        <div class="dashboard-datapoint-title">{{tile.name}}</div>
+        <div class="dashboard-datapoint-number">{{tile.uds.length}}</div>
+      </div>
+    </div>
+  </div>
 </div>
-<div #chart></div>            
+<div #chart></div>

@@ -288,3 +288,4 @@ __pycache__/
 *.xsd.cs
 
 playbackRecordings/
+src/sfxWeb/.nyc_output
