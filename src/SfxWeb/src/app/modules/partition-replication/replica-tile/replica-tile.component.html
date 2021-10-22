@@ -27,15 +27,19 @@
           <span class="link {{ fullScreen ? 'mif-shrink' : 'mif-enlarge' }}" style="float: right;"
             (click)="changeFullScreen()"></span>
         </h4>
-        <div style="text-align: center; margin-bottom: 0px; display: flex;">
-          <div>
+        <div class="description-container">
+          <div style="margin:auto">
             (This information is only recorded on this tab and is cleared when left)
           </div>
-          <app-toggle></app-toggle>
+          <div class="flex-column">
+            UTC
+            <app-toggle [(state)]="showUTC"></app-toggle>
+          </div>
+
         </div>
 
         <div class="flex-min">
-          <app-replication-trend-line [data]="chartData" s [fullScreen]="fullScreen"></app-replication-trend-line>
+          <app-replication-trend-line [data]="chartData" [showUTC]="showUTC" [fullScreen]="fullScreen"></app-replication-trend-line>
         </div>
 
       </div>

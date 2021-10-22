@@ -17,6 +17,7 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
 
   @Input() data: IChartData[];
   @Input() fullScreen: boolean;
+  @Input() showUTC = false;
 
   @ViewChild('chart') private chartContainer: ElementRef;
 
@@ -36,7 +37,7 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
 
   ngOnDestroy() {
     this.sub.unsubscribe();
-    if(this.chart) {
+    if (this.chart) {
       this.chart.destroy();
     }
   }
@@ -64,7 +65,7 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
       },
       yAxis: {
         title: {
-          text: 'LSN change',
+          text: 'LSN / Sec',
           style: this.fontColor
         },
         lineColor: '#fff',
@@ -115,7 +116,7 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
 
     this.chart = chart(this.chartContainer.nativeElement, testOptions);
 
-    //resize event needs to be triggered to properly default to container size
+    // resize event needs to be triggered to properly default to container size
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
     }, 50);
@@ -131,9 +132,13 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
       const now = new Date();
       now.setMilliseconds(0);
       this.chart.xAxis[0].setCategories(this.data.map(item => {
-        item.date.setMilliseconds(0);
-        const diff = now.getTime() - item.date.getTime();
-        return TimeUtils.getDuration(diff) + ' ago';
+        if (this.showUTC) {
+          return item.date.toUTCString();
+        }else {
+          item.date.setMilliseconds(0);
+          const diff = now.getTime() - item.date.getTime();
+          return TimeUtils.getDuration(diff) + ' ago';
+        }
       }));
 
       window.dispatchEvent(new Event('resize'));

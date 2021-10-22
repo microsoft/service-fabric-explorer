@@ -64,14 +64,13 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
             this.cachedData[replicator.ReplicaId] = [];
           }
 
-          if(this.cachedData[replicator.ReplicaId].length > 20) {
+          if (this.cachedData[replicator.ReplicaId].length > 20) {
             this.cachedData[replicator.ReplicaId].shift();
           }
 
           this.cachedData[replicator.ReplicaId].push(cacheData);
         });
 
-        console.log(this)
         this.sortedReplicas = this.replicas.sort((a, b) => a.replicaRoleSortPriority - b.replicaRoleSortPriority);
 
         // ref for shorter lines below

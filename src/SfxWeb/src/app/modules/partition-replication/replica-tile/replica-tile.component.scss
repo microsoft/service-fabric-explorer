@@ -45,6 +45,12 @@ app-replication-trend-line {
   padding-bottom: -10px;
 }
 
+.description-container {
+  text-align: center;
+  margin-bottom: 0px;
+  display: flex;
+}
+
 .fullscreen {
   position: absolute;
   left: 0;
@@ -54,6 +60,10 @@ app-replication-trend-line {
   background-color: #262626;
   z-index: 2;
   margin-bottom: 0px !important;
+
+  .description-container {
+    margin: 10px;
+  }
 }
 
 .flex-min {

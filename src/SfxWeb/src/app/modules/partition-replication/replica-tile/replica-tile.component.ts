@@ -26,6 +26,9 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
   fullScreen = false;
   chartData: IChartData[] = [];
   copyText = '';
+
+  showUTC = false;
+
   constructor() { }
 
   ngOnInit(): void {
@@ -85,9 +88,7 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
             date: value.date
           };
         }
-      });
-
-      console.log(this)
+      }).splice(1); //remove first one since it will always have a delta of 0 given its one data point
     }
   }
 
