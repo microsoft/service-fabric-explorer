@@ -9,6 +9,12 @@ export interface ITimedReplication extends IRawRemoteReplicatorStatus {
   date: Date;
 }
 
+
+const reduceReplicators = (data, replica) => {
+  data[replica.ReplicaId] = replica;
+  return data;
+};
+
 @Component({
   selector: 'app-replica-status-container',
   templateUrl: './replica-status-container.component.html',
@@ -26,18 +32,20 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
   primaryReplica: ReplicaOnPartition;
 
   overviewItems: IEssentialListItem[] = [];
-  essentialItems: IEssentialListItem[] = [];
+  replicationStatus: IEssentialListItem[] = [];
 
   sub: Subscription = new Subscription();
 
   constructor() { }
 
   ngOnChanges(): void {
+    // grab the primary on each reset
     this.replicas.forEach(replica => {
       if (replica.raw.ReplicaRole === 'Primary') {
         this.primaryReplica = replica;
       }
     });
+
     // wrap check given primary starts as null
     if (this.primaryReplica) {
       this.sub.add(this.primaryReplica.detail.refresh().subscribe(() => {
@@ -46,22 +54,29 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
 
         const replicatorData = this.primaryReplica.detail.raw.ReplicatorStatus;
 
-        this.replicaDict = replicatorData.RemoteReplicators.reduce(( (data, replica) => {data[replica.ReplicaId] = replica; return data; }), {});
+        this.replicaDict = replicatorData.RemoteReplicators.reduce(reduceReplicators, {});
+
         replicatorData.RemoteReplicators.forEach(replicator => {
-          if(this.cachedData[replicator.ReplicaId]) {
-            if(this.cachedData[replicator.ReplicaId].length > 20) {
-              this.cachedData[replicator.ReplicaId].splice(0, 1);
-            }
-            this.cachedData[replicator.ReplicaId].push({...replicator, date: new Date()})
-          }else{
-            this.cachedData[replicator.ReplicaId] = [{...replicator, date: new Date()}]
+          const cacheData = { ...replicator, date: new Date() };
+
+          // only retain last 20 timestamps
+          if (!this.cachedData[replicator.ReplicaId]) {
+            this.cachedData[replicator.ReplicaId] = [];
           }
-        })
 
-        this.sortedReplicas = this.replicas.sort( (a,b) => a.replicaRoleSortPriority - b.replicaRoleSortPriority) //.concat(this.replicas);
+          if(this.cachedData[replicator.ReplicaId].length > 20) {
+            this.cachedData[replicator.ReplicaId].shift();
+          }
 
+          this.cachedData[replicator.ReplicaId].push(cacheData);
+        });
+
+        console.log(this)
+        this.sortedReplicas = this.replicas.sort((a, b) => a.replicaRoleSortPriority - b.replicaRoleSortPriority);
+
+        // ref for shorter lines below
         const ref = this.primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus;
-        console.log(this.sortedReplicas)
+
         this.overviewItems = [
           {
             descriptionName: 'Queue Utilization Percentage',
@@ -73,9 +88,9 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
             copyTextValue: queueSize,
             displayText: queueSize,
           },
-        ]
+        ];
 
-        this.essentialItems = [
+        this.replicationStatus = [
           {
             descriptionName: 'Last Sequence Number(LSN) ',
             copyTextValue: ref.LastSequenceNumber,

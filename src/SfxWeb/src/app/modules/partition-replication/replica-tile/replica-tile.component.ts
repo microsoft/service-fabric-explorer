@@ -16,82 +16,84 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
   @Input() replicator: IRawRemoteReplicatorStatus;
   @Input() replicatorHistory: ITimedReplication[];
 
-  @Input() showReplication: boolean = false;
+  @Input() showReplication = false;
   @Output() showReplicationChange = new EventEmitter<boolean>();
 
   overviewItems: IEssentialListItem[] = [];
   status: IEssentialListItem;
-  copyText = '';
+
   leftBannerColor = '';
-
-  fullScreen: boolean = false;
-
+  fullScreen = false;
   chartData: IChartData[] = [];
-
+  copyText = '';
   constructor() { }
 
   ngOnInit(): void {
   }
 
   ngOnChanges() {
+    this.copyText = JSON.stringify(this.replica.raw, null, 4);
     this.overviewItems = [
       {
         descriptionName: 'ID',
         copyTextValue: this.replica.name,
-        displayText:  this.replica.name
+        displayText: this.replica.name
       },
       {
         descriptionName: 'Role',
         copyTextValue: this.replica.role,
-        displayText:  this.replica.role,
+        displayText: this.replica.role,
       },
       {
         descriptionName: 'Node',
         copyTextValue: this.replica.raw.NodeName,
-        displayText:  this.replica.raw.NodeName,
+        displayText: this.replica.raw.NodeName,
       },
-    ]
+    ];
 
-    this.status =       {
+    this.status = {
       descriptionName: 'Status',
       copyTextValue: this.replica.raw.HealthState,
       displaySelector: true
-    }
+    };
 
-    if(this.replica.healthState.text === HealthStateConstants.OK) {
-      this.leftBannerColor = "green";
-    }else if(this.replica.healthState.text === "Warning") {
-      this.leftBannerColor = "yellow"
-    }else if(this.replica.healthState.text === "Error") {
-      this.leftBannerColor = "red"
-    }else {
-      this.leftBannerColor = "gray"
+    let bannerColor = '';
+    if (this.replica.healthState.text === HealthStateConstants.OK) {
+      bannerColor = 'green';
+    } else if (this.replica.healthState.text === HealthStateConstants.Warning) {
+      bannerColor = 'yellow';
+    } else if (this.replica.healthState.text === HealthStateConstants.Error) {
+      bannerColor = 'red';
+    } else {
+      bannerColor = 'gray';
     }
-    this.leftBannerColor = "banner-" + this.leftBannerColor
+    this.leftBannerColor = 'banner-' + bannerColor;
 
-    if(this.replicatorHistory && this.replicatorHistory.length > 1) {
-      this.chartData = this.replicatorHistory.map( (value, index) => {
-        if(index > 0) {
+    if (this.replicatorHistory && this.replicatorHistory.length > 1) {
+      this.chartData = this.replicatorHistory.map((value, index) => {
+        if (index > 0) {
           const previous = this.replicatorHistory[index - 1];
-          const duration = ( value.date.getTime() - previous.date.getTime() ) / 1000;
+          const duration = (value.date.getTime() - previous.date.getTime()) / 1000;
           const diff = (+value.LastAppliedReplicationSequenceNumber - +previous.LastAppliedReplicationSequenceNumber) / duration;
           return {
             delta: diff,
             date: value.date
           };
-        }else{
+        } else {
           return {
             delta: 0,
             date: value.date
           };
         }
-      }).slice(1)
+      });
+
+      console.log(this)
     }
   }
 
   changeReplication() {
     this.showReplication = !this.showReplication;
-    this.showReplicationChange.emit(this.showReplication)
+    this.showReplicationChange.emit(this.showReplication);
   }
 
   changeFullScreen() {

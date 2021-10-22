@@ -17,11 +17,11 @@ export class CollapseContainerComponent implements OnChanges {
     if (!this.disabled) {
       this.collapsed = !this.collapsed;
       this.collapsedChange.emit(this.collapsed);
-      console.log(this.collapsed)
+      console.log(this.collapsed);
     }
   }
 
   ngOnChanges() {
-    console.log(this)
+    console.log(this);
   }
 }

@@ -8,7 +8,6 @@
   padding: 5px 10px 10px 10px;
   display: flex;
   flex-direction: column;
-  // margin: 5px;
   height: 100%;
   position: relative;
 }
@@ -40,6 +39,12 @@
   color: #c9c9c9;
 }
 
+app-replication-trend-line {
+  height: 100%;
+  width: 100%;
+  padding-bottom: -10px;
+}
+
 .fullscreen {
   position: absolute;
   left: 0;
@@ -49,4 +54,15 @@
   background-color: #262626;
   z-index: 2;
   margin-bottom: 0px !important;
+}
+
+.flex-min {
+  flex: 1;
+  min-height: 0px;
+}
+
+.show-replication {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: -20px;
 }

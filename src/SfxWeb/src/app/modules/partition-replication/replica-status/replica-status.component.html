@@ -1,19 +1,19 @@
-<div style="display: flex;flex-direction: column;justify-content: space-between;height: 100%;">
+<div style="justify-content: space-between;height: 100%;" class="flex-column">
   <div>
     <div class="underline">
 
-      <app-collapse-container [(collapsed)]="!copy" sectionName="1" (collapsedChange)="handleCollapseChange($event)">
+      <app-collapse-container [(collapsed)]="!copy" sectionName="Copy" (collapsedChange)="handleCollapseChange($event)">
         <div collapse-header class="center-text">
           Copy
         </div>
         <div collapse-body>
-          <app-essential-item *ngFor="let item of replicationItems; let l = last; " [item]="item" [underline]="l">
+          <app-essential-item *ngFor="let item of copyItems; let l = last; " [item]="item" [underline]="l">
           </app-essential-item>
         </div>
       </app-collapse-container>
     </div>
 
-    <app-collapse-container [(collapsed)]="copy" class="underline" sectionName="2">
+    <app-collapse-container [(collapsed)]="copy" class="underline" sectionName="Replication">
       <div collapse-header class="center-text">
         Replication
       </div>
@@ -26,7 +26,6 @@
 
   <div collapsed="false">
     <h4 class="underline-title">Current State</h4>
-
     <div collapse-body>
       <app-essential-item *ngFor="let item of lastItems; let l = last; " [item]="item" [underline]="l">
       </app-essential-item>

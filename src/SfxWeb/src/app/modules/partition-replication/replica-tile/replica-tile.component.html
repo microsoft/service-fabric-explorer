@@ -2,16 +2,15 @@
   <div class="top-side">
     <app-health-badge [badgeClass]="replica.healthState.badgeClass" size="25px"></app-health-badge>
 
-    <button class="flat-button underline" style="display: flex;
-    align-items: center; height: 25px" *ngIf="replicator" (click)="changeReplication()">
+    <button class="flat-button underline flex-center" style="height: 25px" *ngIf="replicator"
+      (click)="changeReplication()">
       <span class="mif-2x mif-arrow-drop-down status-icon"></span>
       {{showReplication ? 'Close' : 'View'}} Replication</button>
     <app-clip-board [text]="copyText" style="float: right"></app-clip-board>
   </div>
 
-  <div style="display: flex;flex: 1;min-height: 0; gap: 10px;">
-    <div style="flex: 1; display: flex; flex-direction: column;"
-      [ngStyle]="{'max-width': (showReplication ? 'calc(50% - 5px)' : '100%')}">
+  <div style="display: flex; gap: 10px;" class="flex-min">
+    <div style="flex: 1;" class="flex-column" [ngStyle]="{'max-width': (showReplication ? 'calc(50% - 5px)' : '100%')}">
       <div class="replica-header">
         <div style="width: 100%;">
           <app-essential-item *ngFor="let item of overviewItems; let l = last; " [item]="item" [underline]="false">
@@ -22,12 +21,8 @@
         </div>
       </div>
 
-      <div *ngIf="showReplication"
-        style="flex: 1; min-height: 0px; display: flex; flex-direction: column; margin-bottom: -20px;"
-        [ngClass]="{'fullscreen' :  fullScreen}">
-        <h4 class="underline-title" style="margin-bottom: 0px;
-        margin-left: 5px;
-        margin-right: 5px; margin-top: 5px;">LSN's Replicated Per Second
+      <div *ngIf="showReplication" class="flex-min show-replication" [ngClass]="{'fullscreen' :  fullScreen}">
+        <h4 class="underline-title" style="margin: 5px 5px 0px;">LSN's Replicated Per Second
 
           <span class="link {{ fullScreen ? 'mif-shrink' : 'mif-enlarge' }}" style="float: right;"
             (click)="changeFullScreen()"></span>
@@ -39,10 +34,8 @@
           <app-toggle></app-toggle>
         </div>
 
-        <div style="    flex: 1;
-        min-height: 0px;">
-          <app-replication-trend-line [data]="chartData" style="height: 100%; width: 100%; padding-bottom: -10px;"
-            [fullScreen]="fullScreen"></app-replication-trend-line>
+        <div class="flex-min">
+          <app-replication-trend-line [data]="chartData" s [fullScreen]="fullScreen"></app-replication-trend-line>
         </div>
 
       </div>

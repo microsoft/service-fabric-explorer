@@ -45,7 +45,7 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
         copyTextValue: repRef.ReceivedAndNotAppliedCount,
         displayText: repRef.ReceivedAndNotAppliedCount,
       },
-    ]
+    ];
 
     this.copyItems = [
       {

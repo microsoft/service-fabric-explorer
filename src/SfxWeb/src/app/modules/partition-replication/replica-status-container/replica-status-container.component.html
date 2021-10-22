@@ -1,5 +1,4 @@
-<div *ngIf="primaryReplica && primaryReplica.detail.raw"
-  style="display: flex; flex-direction: row; align-content: flex-start; margin-bottom: 20px;">
+<div *ngIf="primaryReplica && primaryReplica.detail.raw" class="overview-container">
   <div class="essen-pane" style="width: 330px;">
     <h4 class="underline-title">Primary Replica Queue Status</h4>
 
@@ -11,15 +10,17 @@
         Replicator Status
       </div>
       <div collapse-body>
-        <app-essential-item *ngFor="let item of essentialItems; let l = last; " [item]="item" [underline]="l">
+        <app-essential-item *ngFor="let item of replicationStatus; let l = last; " [item]="item" [underline]="l">
         </app-essential-item>
       </div>
-      </app-collapse-container>
+    </app-collapse-container>
   </div>
   <div style="flex: auto; margin-left: 20px;">
     <div class="replica-container">
-      <app-replica-tile class="replica-tile tall" [ngClass]="{'expanded-tall': expandedDict[replica.name]}" *ngFor="let replica of sortedReplicas" [(showReplication)]="expandedDict[replica.name]"
-       [replica]="replica" [replicator]="replicaDict[replica.name]" [replicatorHistory]="cachedData[replica.name]"></app-replica-tile>
+      <app-replica-tile class="replica-tile tall" *ngFor="let replica of sortedReplicas"
+        [ngClass]="{'expanded-tall': expandedDict[replica.name]}" [(showReplication)]="expandedDict[replica.name]"
+        [replica]="replica" [replicator]="replicaDict[replica.name]" [replicatorHistory]="cachedData[replica.name]">
+      </app-replica-tile>
     </div>
   </div>
 </div>
