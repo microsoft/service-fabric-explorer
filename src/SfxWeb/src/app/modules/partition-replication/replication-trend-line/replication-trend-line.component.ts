@@ -2,6 +2,8 @@ import { AfterViewInit, Component, ElementRef, Input, OnChanges, OnDestroy, OnIn
 import { Chart, Options, chart } from 'highcharts';
 import { interval, Subscription } from 'rxjs';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { ITimedReplication } from '../replica-status-container/replica-status-container.component';
+import { generateReplicationDeltas } from '../replication-utils';
 
 export interface IChartData {
   date: Date;
@@ -15,7 +17,7 @@ export interface IChartData {
 })
 export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, OnInit, OnDestroy {
 
-  @Input() data: IChartData[];
+  @Input() data: ITimedReplication[];
   @Input() fullScreen: boolean;
   @Input() showUTC = false;
 
@@ -127,22 +129,30 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
   }
 
   setData() {
-    if (this.chart) {
-      this.chart.series[0].setData(this.data.map(item => item.delta));
-      const now = new Date();
-      now.setMilliseconds(0);
-      this.chart.xAxis[0].setCategories(this.data.map(item => {
-        if (this.showUTC) {
-          return item.date.toUTCString();
-        }else {
-          item.date.setMilliseconds(0);
-          const diff = now.getTime() - item.date.getTime();
-          return TimeUtils.getDuration(diff) + ' ago';
-        }
-      }));
 
-      window.dispatchEvent(new Event('resize'));
+
+    if (this.data && this.data.length > 1) {
+      const chartData = generateReplicationDeltas(this.data);
+
+      if (this.chart) {
+        this.chart.series[0].setData(chartData.map(item => item.delta));
+        const now = new Date();
+        now.setMilliseconds(0);
+        this.chart.xAxis[0].setCategories(chartData.map(item => {
+          if (this.showUTC) {
+            return item.date.toUTCString();
+          }else {
+            item.date.setMilliseconds(0);
+            const diff = now.getTime() - item.date.getTime();
+            return TimeUtils.getDuration(diff) + ' ago';
+          }
+        }));
+
+        window.dispatchEvent(new Event('resize'));
+      }
+
     }
+
   }
 
 }

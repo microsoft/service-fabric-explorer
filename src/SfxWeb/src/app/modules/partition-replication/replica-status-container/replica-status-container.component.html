@@ -1,5 +1,5 @@
 <div *ngIf="primaryReplica && primaryReplica.detail.raw" class="overview-container">
-  <div class="essen-pane" style="width: 330px;">
+  <div class="essen-pane" style="width: 330px;" data-cy="essentials">
     <h4 class="underline-title">Primary Replica Queue Status</h4>
 
     <app-essential-item *ngFor="let item of overviewItems; let l = last; " [item]="item" [underline]="l">

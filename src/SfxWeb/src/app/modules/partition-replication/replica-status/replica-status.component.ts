@@ -41,7 +41,7 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
         displayText: repRef.NotReceivedCount,
       },
       {
-        descriptionName: 'Received And Not Applied Count ',
+        descriptionName: 'Received And Not Applied',
         copyTextValue: repRef.ReceivedAndNotAppliedCount,
         displayText: repRef.ReceivedAndNotAppliedCount,
       },
@@ -64,7 +64,7 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
         displayText: copyRef.NotReceivedCount,
       },
       {
-        descriptionName: 'Received And Not Applied Count ',
+        descriptionName: 'Received And Not Applied',
         copyTextValue: copyRef.ReceivedAndNotAppliedCount,
         displayText: copyRef.ReceivedAndNotAppliedCount,
       },

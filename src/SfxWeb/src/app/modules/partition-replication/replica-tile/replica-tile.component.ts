@@ -24,7 +24,6 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
 
   leftBannerColor = '';
   fullScreen = false;
-  chartData: IChartData[] = [];
   copyText = '';
 
   showUTC = false;
@@ -72,24 +71,6 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
     }
     this.leftBannerColor = 'banner-' + bannerColor;
 
-    if (this.replicatorHistory && this.replicatorHistory.length > 1) {
-      this.chartData = this.replicatorHistory.map((value, index) => {
-        if (index > 0) {
-          const previous = this.replicatorHistory[index - 1];
-          const duration = (value.date.getTime() - previous.date.getTime()) / 1000;
-          const diff = (+value.LastAppliedReplicationSequenceNumber - +previous.LastAppliedReplicationSequenceNumber) / duration;
-          return {
-            delta: diff,
-            date: value.date
-          };
-        } else {
-          return {
-            delta: 0,
-            date: value.date
-          };
-        }
-      }).splice(1); //remove first one since it will always have a delta of 0 given its one data point
-    }
   }
 
   changeReplication() {

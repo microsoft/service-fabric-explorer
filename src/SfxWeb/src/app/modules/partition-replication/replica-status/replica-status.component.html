@@ -1,6 +1,9 @@
 <div style="justify-content: space-between;height: 100%;" class="flex-column">
-  <div>
-    <div class="underline">
+  <div style="flex: 1;
+  min-height: 0px;
+  display: flex;
+  flex-direction: column;">
+    <div class="underline" style="min-height: 0px;overflow: auto;">
 
       <app-collapse-container [(collapsed)]="!copy" sectionName="Copy" (collapsedChange)="handleCollapseChange($event)">
         <div collapse-header class="center-text">
@@ -24,7 +27,7 @@
     </app-collapse-container>
   </div>
 
-  <div collapsed="false">
+  <div collapsed="false" data-cy="current-state">
     <h4 class="underline-title">Current State</h4>
     <div collapse-body>
       <app-essential-item *ngFor="let item of lastItems; let l = last; " [item]="item" [underline]="l">
