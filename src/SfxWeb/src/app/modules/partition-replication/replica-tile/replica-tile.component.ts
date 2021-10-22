@@ -11,7 +11,7 @@ import { IChartData } from '../replication-trend-line/replication-trend-line.com
   templateUrl: './replica-tile.component.html',
   styleUrls: ['./replica-tile.component.scss']
 })
-export class ReplicaTileComponent implements OnInit, OnChanges {
+export class ReplicaTileComponent implements OnChanges {
   @Input() replica: ReplicaOnPartition;
   @Input() replicator: IRawRemoteReplicatorStatus;
   @Input() replicatorHistory: ITimedReplication[];
@@ -25,13 +25,9 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
   leftBannerColor = '';
   fullScreen = false;
   copyText = '';
-
   showUTC = false;
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
   ngOnChanges() {
     this.copyText = JSON.stringify(this.replica.raw, null, 4);
@@ -70,7 +66,6 @@ export class ReplicaTileComponent implements OnInit, OnChanges {
       bannerColor = 'gray';
     }
     this.leftBannerColor = 'banner-' + bannerColor;
-
   }
 
   changeReplication() {

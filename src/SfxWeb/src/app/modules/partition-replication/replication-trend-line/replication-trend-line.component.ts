@@ -45,7 +45,7 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
   }
 
   ngAfterViewInit(): void {
-    const testOptions: Options = {
+    const options: Options = {
       chart: {
         backgroundColor: null,
         type: 'area',
@@ -110,14 +110,13 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
       }
     };
 
-    testOptions.series = [{
+    options.series = [{
       type: 'area',
       data: [],
       color: '#0075c9'
     }];
 
-    this.chart = chart(this.chartContainer.nativeElement, testOptions);
-
+    this.chart = chart(this.chartContainer.nativeElement, options);
     // resize event needs to be triggered to properly default to container size
     setTimeout(() => {
       window.dispatchEvent(new Event('resize'));
@@ -129,8 +128,6 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
   }
 
   setData() {
-
-
     if (this.data && this.data.length > 1) {
       const chartData = generateReplicationDeltas(this.data);
 
@@ -147,12 +144,8 @@ export class ReplicationTrendLineComponent implements AfterViewInit, OnChanges, 
             return TimeUtils.getDuration(diff) + ' ago';
           }
         }));
-
         window.dispatchEvent(new Event('resize'));
       }
-
     }
-
   }
-
 }

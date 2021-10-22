@@ -108,7 +108,6 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
         ];
       }));
     }
-
   }
 
   ngOnDestroy() {
