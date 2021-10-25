@@ -28,7 +28,7 @@ export class BaseComponent extends NodeBaseControllerDirective {
 
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.data.clusterManifest.isEventStoreEnabled &&
-        !this.tabs.some(tab => tab.name === Constants.EventsTab.name)) {
+        this.tabs.indexOf(Constants.EventsTab) === -1) {
         this.tabs.push(Constants.EventsTab);
       }
     });
