@@ -20,18 +20,21 @@ export class BaseComponent extends ReplicaBaseControllerDirective {
     {
       name: 'details',
       route: './details'
-    },
-    {
-      name: 'events',
-      route: './events'
     }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
-    super(data, injector);
+  constructor(protected dataService: DataService, injector: Injector, private tree: TreeService) {
+    super(dataService, injector);
   }
 
   setup() {
+    this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
+      if (this.data.clusterManifest.isEventStoreEnabled &&
+        !this.tabs.some(tab => tab.name === Constants.EventsTab.name)) {
+        this.tabs.push(Constants.EventsTab);
+      }
+    });
+
     this.isSystem = this.appTypeName === Constants.SystemAppTypeName;
     if (this.isSystem) {
         this.tree.selectTreeNode([

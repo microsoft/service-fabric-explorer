@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
+import { DataService } from 'src/app/services/data.service';
+import { Constants } from 'src/app/Common/Constants';
 
 @Component({
   selector: 'app-base',
@@ -18,16 +20,19 @@ export class BaseComponent implements OnInit {
     {
       name: 'upgrades in progress',
       route: './upgrades'
-    },
-    {
-      name: 'events',
-      route: './events'
     }
   ];
-  constructor(private tree: TreeService) {
+  constructor(private tree: TreeService, private dataService: DataService) {
   }
 
   ngOnInit() {
+
+    this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
+      if (this.dataService.clusterManifest.isEventStoreEnabled) {
+        this.tabs = this.tabs.concat(Constants.EventsTab);
+      }
+    });
+
     this.tree.selectTreeNode([
       IdGenerator.cluster(),
       IdGenerator.appGroup()
