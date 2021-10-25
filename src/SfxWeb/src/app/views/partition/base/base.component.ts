@@ -37,7 +37,7 @@ export class BaseComponent extends PartitionBaseControllerDirective {
       }
 
       if (this.dataService.clusterManifest.isBackupRestoreEnabled &&
-        !this.tabs.some(tab => tab.name === "backups")) {
+        !this.tabs.some(tab => tab.name === 'backups')) {
         this.tabs = this.tabs.concat({
           name: 'backups',
           route: '/backups'
