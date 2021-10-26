@@ -373,8 +373,8 @@ export class RestClientService {
 
   public getApplications(excludeParams: boolean = false, messageHandler?: IResponseMessageHandler): Observable<IRawApplication[]> {
     let url = 'Applications/';
-    if(excludeParams) {
-      url =  url + `?ExcludeApplicationParameters=true`
+    if (excludeParams) {
+      url =  url + `?ExcludeApplicationParameters=true`;
     }
 
     return this.getFullCollection<IRawApplication>(url, 'Get applications', null, messageHandler);
@@ -546,8 +546,8 @@ export class RestClientService {
   public getApplication(applicationId: string, excludeParams: boolean = false,  messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
       let url = 'Applications/' + encodeURIComponent(applicationId) + '/';
 
-      if(excludeParams) {
-        url =  url + `?ExcludeApplicationParameters=true`
+      if (excludeParams) {
+        url =  url + `?ExcludeApplicationParameters=true`;
       }
 
       return this.get(this.getApiUrl(url), 'Get application', messageHandler);
