@@ -23,7 +23,7 @@ export class BaseComponent implements OnInit {
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.data.clusterManifest.isEventStoreEnabled &&
         this.tabs.indexOf(Constants.EventsTab) === -1) {
-        this.tabs.push(Constants.EventsTab);
+        this.tabs = this.tabs.concat((Constants.EventsTab));
       }
     });
 

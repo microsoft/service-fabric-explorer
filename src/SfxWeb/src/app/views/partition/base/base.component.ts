@@ -33,8 +33,8 @@ export class BaseComponent extends PartitionBaseControllerDirective {
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.data.clusterManifest.isEventStoreEnabled &&
         this.tabs.indexOf(Constants.EventsTab) === -1) {
-        this.tabs.push(Constants.EventsTab);
-      }
+          this.tabs = this.tabs.concat(Constants.EventsTab);
+        }
 
       if (this.dataService.clusterManifest.isBackupRestoreEnabled &&
         !this.tabs.some(tab => tab.name === 'backups')) {

@@ -31,8 +31,8 @@ export class BaseComponent extends ReplicaBaseControllerDirective {
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.data.clusterManifest.isEventStoreEnabled &&
         this.tabs.indexOf(Constants.EventsTab) === -1) {
-        this.tabs.push(Constants.EventsTab);
-      }
+          this.tabs = this.tabs.concat(Constants.EventsTab);
+        }
     });
 
     this.isSystem = this.appTypeName === Constants.SystemAppTypeName;
