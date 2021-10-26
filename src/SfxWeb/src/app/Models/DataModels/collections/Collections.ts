@@ -58,7 +58,7 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getApplications(messageHandler).pipe(map(items => {
+        return this.data.restClient.getApplications(this.data.readOnlyHeader, messageHandler).pipe(map(items => {
             return items.map(raw => new Application(this.data, raw));
         }));
     }

@@ -3,10 +3,7 @@
   "TypeName": "VisualObjectsApplicationType",
   "TypeVersion": "16.0.0",
   "Status": "Ready",
-  "Parameters": [
-    { "Key": "VisualObjects.ActorService_PartitionCount", "Value": "10" },
-    { "Key": "VisualObjects.WebService_InstanceCount", "Value": "-1" }
-  ],
+  "Parameters": [],
   "HealthState": "Ok",
   "ApplicationDefinitionKind": "ServiceFabricApplicationDescription",
   "ManagedApplicationIdentity": {

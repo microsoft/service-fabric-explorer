@@ -371,8 +371,13 @@ export class RestClientService {
       return this.post(this.getApiUrl(url), 'Node state removal', null, messageHandler);
   }
 
-  public getApplications(messageHandler?: IResponseMessageHandler): Observable<IRawApplication[]> {
-      return this.getFullCollection<IRawApplication>('Applications/', 'Get applications', null, messageHandler);
+  public getApplications(excludeParams: boolean = false, messageHandler?: IResponseMessageHandler): Observable<IRawApplication[]> {
+    let url = 'Applications/';
+    if(excludeParams) {
+      url =  url + `?ExcludeApplicationParameters=true`
+    }
+
+    return this.getFullCollection<IRawApplication>(url, 'Get applications', null, messageHandler);
   }
 
   public getServices(applicationId: string, messageHandler?: IResponseMessageHandler): Observable<IRawService[]> {
@@ -538,8 +543,13 @@ export class RestClientService {
       return this.post(this.getApiUrl(url), 'Application type unprovision', { ApplicationTypeVersion: applicationTypeVersion }, messageHandler);
   }
 
-  public getApplication(applicationId: string, messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
-      const url = 'Applications/' + encodeURIComponent(applicationId) + '/';
+  public getApplication(applicationId: string, excludeParams: boolean = false,  messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
+      let url = 'Applications/' + encodeURIComponent(applicationId) + '/';
+
+      if(excludeParams) {
+        url =  url + `?ExcludeApplicationParameters=true`
+      }
+
       return this.get(this.getApiUrl(url), 'Get application', messageHandler);
   }
 
