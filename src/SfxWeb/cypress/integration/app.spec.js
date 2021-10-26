@@ -81,31 +81,27 @@ context('app', () => {
             cy.url().should('include', '/details')
 
             cy.contains(param).should('exist')
-
         })
 
-        it.only('view details - no params', () => {
+      it.only('view details - no params', () => {
+        cy.intercept('GET', aad_route,
+          {
+            fixture: "aad.json", headers: {
+              'sfx-readonly': '1'
+            }
+          })
 
-          cy.intercept('GET', aad_route,
-            {
-              fixture: "aad.json", headers: {
-                'sfx-readonly': '1'
-              }
-            })
+        cy.visit(`/#/apptype/${appName}/app/${appName}`)
 
+        cy.wait(["@getappParams", "@getapphealth"]);
 
-          cy.visit(`/#/apptype/${appName}/app/${appName}`)
-
-            cy.wait(["@getappParams", "@getapphealth"]);
-
-            cy.get('[data-cy=navtabs]').within(() => {
-                cy.contains('details').click();
-            })
-
-            cy.url().should('include', '/details')
-            cy.contains(param).should('not.exist')
-
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('details').click();
         })
+
+        cy.url().should('include', '/details')
+        cy.contains(param).should('not.exist')
+      })
     })
 
     describe("deployments", () => {

@@ -79,7 +79,7 @@ export class DataService {
    }
 
   public actionsEnabled(): boolean {
-    return !this.readOnlyHeader;
+    return this.readOnlyHeader !== true;
   }
 
   public actionsAdvancedEnabled(): boolean {
@@ -389,7 +389,7 @@ export class DataService {
     if (item) {
         return item.ensureInitialized(forceRefresh, messageHandler);
     } else {
-        return throwError('This item could not be found : ' + uniqueId);
+      return throwError('This item could not be found');
     }
   }
 
