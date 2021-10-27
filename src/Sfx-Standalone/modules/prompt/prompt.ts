@@ -6,7 +6,7 @@
 import { ISfxModuleManager } from "sfx.module-manager";
 import { IPrompt, IPromptService, IPromptOptions } from "sfx.prompt";
 
-import { Menu, BrowserWindow, ipcMain, BrowserWindowConstructorOptions } from "electron";
+import { Menu, BrowserWindow, ipcMain, BrowserWindowConstructorOptions  } from "electron";
 
 import { local } from "donuts.node/path";
 import * as utils from "donuts.node/utils";
@@ -52,11 +52,14 @@ class Prompt<TResult> implements IPrompt<TResult> {
                     modal: true,
                     fullscreenable: false,
                     useContentSize: true,
-                    resizable: utils.pick(this.promptOptions.resizable, false),
+                    resizable: utils.pick(this.promptOptions.resizable, true),
                     parent: this.promptOptions.parentWindowId ? electron.BrowserWindow.fromId(this.promptOptions.parentWindowId) : electron.BrowserWindow.getFocusedWindow(),
                     icon: utils.pick(this.promptOptions.icon, appUtils.getIconPath()),
                     webPreferences: {
-                        preload: local("./preload.js")
+                        preload: local("./preload.js"),
+                        nodeIntegration: true,
+                        contextIsolation: false,
+                        devTools: true
                     }
                 });
 
@@ -99,7 +102,7 @@ class Prompt<TResult> implements IPrompt<TResult> {
 
         ipcMain.once(
             utils.string.format(ChannelNameFormat, this.promptWindow.id, EventNames.RequestPromptOptions),
-            (event: Electron.Event) => event.returnValue = this.promptOptions);
+            (event: Electron.Event) => (event.returnValue as any) = this.promptOptions);
     }
 
     public openAsync(): Promise<TResult> {
@@ -109,7 +112,8 @@ class Prompt<TResult> implements IPrompt<TResult> {
             throw new Error("Prompt is not initialized.");
         }
 
-        this.promptWindow.loadURL(this.promptOptions.pageUrl);
+        this.promptWindow.loadFile(this.promptOptions.pageUrl, {query: {"promptId": this.promptWindow.id.toString() }});
+
         return this.promise;
     }
 

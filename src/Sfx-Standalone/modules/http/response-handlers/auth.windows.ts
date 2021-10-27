@@ -27,5 +27,5 @@ async function handleResponseAsync(handleRequestAsync: HttpRequestHandler, pipel
 }
 
 export default function createResponseHandler(): HttpResponseHandler {
-    return handleResponseAsync.bind(undefined, createRequestHandler(() => true));
+    return handleResponseAsync.bind(undefined, createRequestHandler(async () => true));
 }

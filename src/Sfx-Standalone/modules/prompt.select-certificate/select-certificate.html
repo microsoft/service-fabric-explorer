@@ -7,9 +7,7 @@
     <title></title>
 
     <!-- CSS imports -->
-    <link href="../../sfx/css/lib.min.css" rel="stylesheet" />
-    <link href="../../sfx/css/dark.min.css" rel="stylesheet" />
-    <link href="../../sfx/style.css" rel="stylesheet" />
+    <link href="../../sfx/styles.css" rel="stylesheet" />
 
     <style>
         a.list-group-item {
@@ -41,7 +39,7 @@
 </head>
 
 <body style="overflow:hidden" ng-app="select-certificate" ng-controller="selectCertController">
-    <div class="modal modal-content" style="display: block">
+    <div class="modal modal-content action-modal" style="display: block">
         <div class="modal-header">
             <h5 id="Title" class="modal-title">Which client certificate to connect with?</h5>
             <p>Please select a client certificate below to connect to the cluster.</p>
@@ -86,8 +84,8 @@
             </div>
         </div>
         <div class="modal-footer">
-            <button type="button" class="btn btn-primary" ng-click="selectCert()" ng-disabled="!certSelected()">Done</button>
-            <button type="button" class="btn btn-default" ng-click="cancel()">Close</button>
+            <button type="button" class="solid-button blue" ng-click="selectCert()" ng-disabled="!certSelected()">Done</button>
+            <button type="button" class="flat-button" ng-click="cancel()">Close</button>
         </div>
     </div>
 

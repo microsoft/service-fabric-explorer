@@ -5,8 +5,8 @@
 
 
 type HttpMethod =
-    "GET" | "POST" | "PUT" | "PATCH" | "DELETE" |
-    "HEAD" | "CONNECT" | "OPTIONS" | "TRACE";
+    'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' |
+    'HEAD' | 'CONNECT' | 'OPTIONS' | 'TRACE';
 
 interface IHttpHeader {
     name: string;

@@ -18,6 +18,7 @@ import { DebuggingModule } from './views/debugging/debugging.module';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppInsightsErrorHandler } from './error-handling';
+import { RestClientService } from './services/rest-client.service';
 
 @NgModule({
   declarations: [
@@ -43,11 +44,12 @@ import { AppInsightsErrorHandler } from './error-handling';
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     AdalService,
     DataService,
+    RestClientService,
     {
       provide: APP_INITIALIZER,
       useFactory: initApp,
       multi: true,
-      deps: [AdalService]
+      deps: [AdalService, RestClientService]
     },
     httpInterceptorProviders,
     { provide: ErrorHandler, useClass: AppInsightsErrorHandler }

@@ -63,7 +63,7 @@ export class ClusterList implements IClusterList {
             const $item = $(`
                 <li tabindex="0" class="cluster list-item" data-endpoint="${endpoint}" title="${ClusterList.encodeHtml(displayName)}">
                     <img src="../../icons/icon16x16.png" class="collapsed-show" /><span>${ClusterList.encodeHtml(displayName)}</span>
-                    <button tabindex="0" class="bowtie-icon bowtie-ellipsis collapsed-hidden"></button>
+                    <button tabindex="0" class="mif-more-vert collapsed-hidden flat-button" style="padding: 0px"></button>
                     <ul role="menu" class="dropdown-menu" uib-dropdown-menu>
                         <li role="menuitem"><a class="cluster-action" role="menuitem" href="#" data-action="connect">Re-connect</a></li>
                         <li role="menuitem"><a class="cluster-action" role="menuitem" href="#" data-action="remove">Remove Cluster</a></li>
@@ -132,8 +132,8 @@ export class ClusterList implements IClusterList {
                         <input id="input-cluster-label" type="text" class="input-flat" value="" />
                     </div>`,                
                 footerButtons: <IDialogFooterButtonOption[]>[
-                    <IDialogFooterButtonOption>{ text: "Connect", type: "submit", cssClass: "btn btn-primary", id: "btn-connect" },
-                    <IDialogFooterButtonOption>{ text: "Cancel", type: "button", cssClass: "btn btn-default" }
+                    <IDialogFooterButtonOption>{ text: "Connect", type: "submit", cssClass: "solid-button blue", id: "btn-connect" },
+                    <IDialogFooterButtonOption>{ text: "Cancel", type: "button", cssClass: "flat-button" }
                 ],
                 height: 440
             });
@@ -185,7 +185,7 @@ export class ClusterList implements IClusterList {
     }
 
     private async setupClusterListItemHandler($item, endpoint: string, name: string) {
-        $("button.bowtie-icon", $item).click(async (e) => {
+        $("button.mif-more-vert", $item).click(async (e) => {
             e.stopPropagation();
 
             if ($(e.target).next().hasClass("dropdown-menu-show")) {
@@ -227,8 +227,8 @@ export class ClusterList implements IClusterList {
                         title: `Remove cluster`,
                         bodyHtml: `<p>Are you sure you want to remove ${name}?</p>`,                        
                         footerButtons: <IDialogFooterButtonOption[]>[
-                            <IDialogFooterButtonOption>{ text: "Remove", type: "submit", cssClass: "btn btn-primary", id: "btn-delete-cluster", attributes: { "data-target": `${name}` } },
-                            <IDialogFooterButtonOption>{ text: "Cancel", type: "button", cssClass: "btn btn-default" }
+                            <IDialogFooterButtonOption>{ text: "Remove", type: "submit", cssClass: "solid-button blue", id: "btn-delete-cluster", attributes: { "data-target": `${name}` } },
+                            <IDialogFooterButtonOption>{ text: "Cancel", type: "button", cssClass: "flat-button" }
                         ],
                         height: 200
                     });
@@ -250,8 +250,8 @@ export class ClusterList implements IClusterList {
                         title: `Rename cluster`,
                         bodyHtml: `<p>New friendly name for cluster ${name}</p><p><i>Leave it blank to use the default name.</i></p><input id="input-cluster-label" type="text" class = "input-flat" placeholder="${url.host}" value="${name}"/>`,
                         footerButtons: <IDialogFooterButtonOption[]>[
-                            <IDialogFooterButtonOption>{ text: "Rename", type: "submit", cssClass: "btn btn-primary", id: "btn-new-label", attributes: { "data-target": `${name}` } },
-                            <IDialogFooterButtonOption>{ text: "Cancel", type: "button", cssClass: "btn btn-default" }
+                            <IDialogFooterButtonOption>{ text: "Rename", type: "submit", cssClass: "solid-button blue", id: "btn-new-label", attributes: { "data-target": `${name}` } },
+                            <IDialogFooterButtonOption>{ text: "Cancel", type: "button", cssClass: "flat-button" }
                         ],
                         height: 200
                     });

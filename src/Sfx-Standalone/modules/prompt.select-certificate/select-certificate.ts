@@ -73,9 +73,10 @@ declare const angular: angular.IAngularStatic;
                 }
 
                 promptContext.finish($scope.selectedCertInfo);
+                window.close();
             };
 
-            $scope.browseCertFiles = () => {
+            $scope.browseCertFiles = async () => {
                 const selectedFiles = electron.dialog.showOpenDialog({
                     title: "Open a client certificate ...",
                     filters: [
@@ -104,14 +105,16 @@ declare const angular: angular.IAngularStatic;
                     properties: ["openFile", "createDirectory"]
                 });
 
-                if (!selectedFiles || selectedFiles.length <= 0) {
+                const selectedFilesData = await selectedFiles; 
+
+                if (!selectedFilesData.filePaths || selectedFilesData.filePaths.length <= 0) {
                     return;
                 }
 
                 $scope.certFilePath = selectedFiles[0];
             };
 
-            $scope.browseKeyFiles = () => {
+            $scope.browseKeyFiles = async () => {
                 const selectedFiles = electron.dialog.showOpenDialog({
                     title: "Open a key file for the client certificate ...",
                     filters: [
@@ -124,7 +127,9 @@ declare const angular: angular.IAngularStatic;
                     properties: ["openFile", "createDirectory"]
                 });
 
-                if (!selectedFiles || selectedFiles.length <= 0) {
+                const selectedFilesData = await selectedFiles; 
+
+                if (!selectedFilesData.filePaths || selectedFilesData.filePaths.length <= 0) {
                     return;
                 }
 
@@ -139,7 +144,7 @@ declare const angular: angular.IAngularStatic;
                 return now >= startDate && now < expiryDate;
             };
 
-            $scope.cancel = () => promptContext.finish(null);
+            promptContext.finish(null);
         }
     }
 

@@ -3,9 +3,9 @@ import { MessageService, MessageSeverity } from './message.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription } from '../Models/HealthChunkRawDataTypes';
 import { IResponseMessageHandler, ResponseMessageHandlers } from '../Common/ResponseMessageHandlers';
-import { Observable, of, Observer, throwError, from } from 'rxjs';
-import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgradeProgress, IRawClusterLoadInformation, IRawNetwork, IRawNetworkOnApp,
-         IRawNetworkOnNode, IRawAppOnNetwork, IRawNodeOnNetwork, IRawDeployedContainerOnNetwork, IRawNode, IRawBackupPolicy, IRawApplicationBackupConfigurationInfo,
+import { from, Observable, of, throwError } from 'rxjs';
+import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgradeProgress, IRawClusterLoadInformation,
+        IRawDeployedContainerOnNetwork, IRawNode, IRawBackupPolicy, IRawApplicationBackupConfigurationInfo,
          IRawServiceBackupConfigurationInfo, IRawBackupProgressInfo, IRawRestoreProgressInfo, IRawPartitionBackupConfigurationInfo, IRawPartitionBackup, IRawNodeHealth,
          IRawNodeLoadInformation, IRawDeployedApplication, IRawApplicationHealth, IRawDeployedServicePackage, IRawDeployedServicePackageHealth, IRawServiceManifest,
          IRawDeployedReplica, IRawServiceType, IRawDeployedCodePackage, IRawContainerLogs, IRawDeployedReplicaDetail, IRawApplicationType, IRawApplicationManifest,
@@ -19,7 +19,7 @@ import { Service } from '../Models/DataModels/Service';
 import { Partition } from '../Models/DataModels/Partition';
 import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent,
          FabricEvent, EventsResponseAdapter, FabricEventBase } from '../Models/eventstore/Events';
-import { IHttpRequest, IHttpResponse, StandaloneIntegration } from '../Common/StandaloneIntegration';
+import { IHttpClient, IHttpRequest, IHttpResponse, StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
 import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger';
@@ -27,6 +27,8 @@ import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger'
   providedIn: 'root'
 })
 export class RestClientService {
+
+    standAloneClient: IHttpClient;
 
   constructor(private httpClient: HttpClient, private message: MessageService) {
 
@@ -848,7 +850,7 @@ export class RestClientService {
   }
 
   private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      let result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: "GET", url: url }) : this.httpClient.get<T>(environment.baseUrl + url);
+      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'GET', url }) : this.httpClient.get<T>(environment.baseUrl + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
       }
@@ -856,7 +858,7 @@ export class RestClientService {
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.post<T>(environment.baseUrl  + url, data);
+      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'POST', url }) : this.httpClient.post<T>(environment.baseUrl  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
@@ -864,7 +866,7 @@ export class RestClientService {
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.put<T>(environment.baseUrl  + url, data);
+      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'PUT', url }) : this.httpClient.put<T>(environment.baseUrl  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
@@ -872,30 +874,37 @@ export class RestClientService {
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.delete<T>(environment.baseUrl  + url);
+      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'DELETE', url }) : this.httpClient.delete<T>(environment.baseUrl  + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
       }
       return this.handleResponse<T>(apiDesc, result as any, messageHandler);
   }
 
+  public async getStandAloneClient(): Promise<IHttpClient> {
+    if(!this.standAloneClient) {
+        this.standAloneClient = await StandaloneIntegration.getHttpClient();
+    }
+
+    return Promise.resolve(this.standAloneClient);
+  }
+
     public requestAsync<T>(request: IHttpRequest): Observable<T> {
-        return from(<Promise<T>>new Promise( (resolve, reject) => {
-            StandaloneIntegration.getHttpClient()
-                .then((client) => client.requestAsync(request))
+        return from(new Promise( (resolve, reject) => {
+                this.getStandAloneClient().then((client) => client.requestAsync(request))
                 .then((response) => {
-                    //only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
+                    // only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
                     resolve(response.data);
                     }
-                ,(err: IHttpResponse) =>
+                , (err: IHttpResponse) =>
                 {
-                    let r = new HttpErrorResponse({
+                    const r = new HttpErrorResponse({
                         status: err.statusCode,
                         statusText: err.statusMessage,
-                    })
-                    reject(r) }
+                    });
+                    reject(r); }
                 );
-        }));
+        }) as Promise<T>);
 }
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
@@ -908,9 +917,8 @@ export class RestClientService {
         statusCode: 200
     };
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
-        console.log(JSON.stringify(err))
+        console.log(JSON.stringify(err));
         const header = `${err.status.toString()} : ${apiDesc}`;
-
         const message = messageHandler.getErrorMessage(apiDesc, err);
         let displayMessage = '';
         if (message) {

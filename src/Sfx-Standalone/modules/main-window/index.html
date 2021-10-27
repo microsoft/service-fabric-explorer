@@ -4,9 +4,11 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title></title>
+    <script type="text/javascript" src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
+    <script type="text/javascript" src="index.script.js"></script>
 
     <!-- CSS imports -->
-    <link href="../../sfx/css/dark.min.css" rel="stylesheet" />
+    <link href="../../sfx/styles.css" rel="stylesheet" />
 
     <style>
         label {
@@ -209,6 +211,7 @@
             width: 100%;
             height: 32px;
             text-align: left;
+            color: #fff;
         }
 
         #cluster-list img {
@@ -234,23 +237,41 @@
             margin: 0;
             border: none;
             background-color: #3C3C3C;;
-            padding: 2px 0px;
+            border-radius: 0px;
             z-index: 1100;
             top: auto;
             right: 0;
             left: auto;
         }
 
+        .dropdown-menu li {
+            padding: 2px 15px;
+            clear: both;
+            color: #fff;
+            white-space: nowrap;
+        }
+
+        .dropdown-menu li a {
+            color: #fff;
+            font-weight: 400;
+            line-height: 1.42857;
+            font-size: 14px;
+        }
+
         #cluster-list .dropdown-menu-show {
             display: block;
         }
 
-        li.list-item.current, li.list-item.current:focus, li.list-item.current:hover {
+        li.list-item.current, li.list-item.current:focus, li.list-item.current:hover, .dropdown-menu li:hover {
             background-color: #0075c9; 
         }
 
         .mb-12px {
             margin-bottom: 12px;
+        }
+
+        .action-modal .input-flat {
+            width: 100%;
         }
     </style>
 </head>
@@ -258,11 +279,11 @@
 <body>
     <div class="main">
         <div class="left-nav" id="left-panel" aria-expanded="true">
-            <div><button class="bowtie-icon bowtie-chevron-left-all" id="sidebar-collapse-button"></button></div>
+            <div><button class="mif-chevron-left" id="sidebar-collapse-button" style="color: #fff;"></button></div>
             <div class="menu">
                 <div class="menu-btn">
                     <button id="cluster-list-connect" title="Connect to a cluster">
-                        <span class="bowtie-icon bowtie-math-plus-heavy"></span><span class="collapsed-hidden"> Connect to a cluster </span>
+                        <span class="mif-plus"></span><span class="collapsed-hidden"> Connect to a cluster </span>
                     </button>
                 </div>
                 <ul id="cluster-list">
@@ -281,13 +302,11 @@
     </div>
 
     <div id="main-modal-dialog" class="modal" role="dialog">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content">
+        <div class="modal-dialog action-modal" role="document">
+            <div class="modal-content" style="background-color: initial;">
 
             </div>
         </div>
     </div>
 </body>
-<script type="text/javascript" src="../../node_modules/bootstrap/dist/js/bootstrap.min.js"></script>
-<script type="text/javascript" src="index.script.js"></script>
 </html>
