@@ -14,11 +14,14 @@ import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-resto
 import { PartitionReplicationModule } from 'src/app/modules/partition-replication/partition-replication.module';
 import { PartitionRestoreBackUpComponent } from './partition-restore-back-up/partition-restore-back-up.component';
 import { PartitionTriggerBackUpComponent } from './partition-trigger-back-up/partition-trigger-back-up.component';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { BackupinfoComponent } from './backupinfo/backupinfo.component';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
+import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, BackupsComponent, PartitionRestoreBackUpComponent, PartitionTriggerBackUpComponent],
+  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent, BackupsComponent, PartitionRestoreBackUpComponent, PartitionTriggerBackUpComponent, BackupinfoComponent],
   imports: [
     CommonModule,
     PartitionRoutingModule,
@@ -27,7 +30,11 @@ import { ReactiveFormsModule } from '@angular/forms';
     EventStoreModule,
     BackupRestoreModule,
     ReactiveFormsModule,
-    PartitionReplicationModule
-  ]
+    PartitionReplicationModule,
+    FormsModule,
+    ChartsModule,
+    HealthStateModule
+  ],
+  exports: [BackupinfoComponent]
 })
 export class PartitionModule { }

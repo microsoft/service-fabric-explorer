@@ -1,52 +1,59 @@
-﻿import { IClusterHealthChunkQueryDescription, IClusterHealthChunk } from '../Models/HealthChunkRawDataTypes';
-import { TreeNodeViewModel } from './TreeNodeViewModel';
+import { IClusterHealthChunkQueryDescription, IClusterHealthChunk } from '../Models/HealthChunkRawDataTypes';
 import { TreeNodeGroupViewModel } from './TreeNodeGroupViewModel';
 import { ITreeNode } from './TreeTypes';
 import { Observable } from 'rxjs';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class TreeViewModel {
     public childGroupViewModel: TreeNodeGroupViewModel;
-    public selectedNode: TreeNodeViewModel;
+    public selectedNode: TreeNodeGroupViewModel;
 
-    public showOkItems: boolean = true;
-    public showWarningItems: boolean = true;
-    public showErrorItems: boolean = true;
+    public showOkItems = true;
+    public showWarningItems = true;
+    public showErrorItems = true;
 
-    public searchTerm: string = "";
+    public searchTerm = '';
+    public orderbyHealthState = false;
 
-    public firstTreeSelect: boolean = true;
+    public firstTreeSelect = true;
 
     public get isLoading(): boolean {
         return !this.childGroupViewModel ||
             (this.childGroupViewModel.children.length === 0 && this.childGroupViewModel.loadingChildren);
-    };
+    }
 
     public get isEmpty(): boolean {
         return this.childGroupViewModel &&
             !this.childGroupViewModel.children.length;
-    };
+    }
 
-    private _childrenQuery: () => Observable<ITreeNode[]>;
-    private _selectTreeNodeOpId: number = 1;
+    private childrenQuery: () => Observable<ITreeNode[]>;
+    private selectTreeNodeOpId = 1;
 
     constructor(childrenQuery: () => Observable<ITreeNode[]>) {
-        this._childrenQuery = childrenQuery;
+        this.childrenQuery = childrenQuery;
         this.refreshChildren();
     }
 
     public refreshChildren() {
-        this.childGroupViewModel = new TreeNodeGroupViewModel(this, null, this._childrenQuery);
+        const baseNode: ITreeNode = {childrenQuery: this.childrenQuery,
+                                     displayName: () => '',
+                                    nodeId: 'base'};
+        this.childGroupViewModel = new TreeNodeGroupViewModel(this, baseNode, null);
         if (this.childGroupViewModel.isCollapsed) {
-            this.childGroupViewModel.toggle();
+            this.childGroupViewModel.toggle().subscribe(() => {
+                if (this.childGroupViewModel.children.length > 0) {
+                    this.childGroupViewModel.children[0].toggle();
+                }
+            });
         }
     }
 
-    public selectNode(node: TreeNodeViewModel): boolean {
+    public selectNode(node: TreeNodeGroupViewModel): boolean {
         if (this.selectedNode === node) {
             return false;
         }
@@ -64,18 +71,18 @@ export class TreeViewModel {
     }
 
     public onKeyDown(event: KeyboardEvent) {
-        let selectedNode = this.selectedNode;
-        switch (event.which) {
-            case 40: // Down
+        const selectedNode = this.selectedNode;
+        switch (event.key) {
+            case 'ArrowDown': // Down
                 this.selectedNode.selectNext();
                 break;
-            case 38: // Up
+            case 'ArrowUp': // Up
                 this.selectedNode.selectPrevious();
                 break;
-            case 39: // Right
+            case 'ArrowRight': // Right
                 this.selectedNode.expandOrMoveToChild();
                 break;
-            case 37: // Left
+            case 'ArrowLeft': // Left
                 this.selectedNode.collapseOrMoveToParent();
                 break;
         }
@@ -91,8 +98,8 @@ export class TreeViewModel {
     }
 
     public selectTreeNode(path: string[], skipSelectAction?: boolean): Observable<void> {
-        this._selectTreeNodeOpId++;
-        let opId = this._selectTreeNodeOpId;
+        this.selectTreeNodeOpId++;
+        const opId = this.selectTreeNodeOpId;
         return this.selectTreeNodeInternal(path, 0, this.childGroupViewModel, opId, skipSelectAction);
     }
 
@@ -101,22 +108,22 @@ export class TreeViewModel {
         return clusterHealthQueryDescription;
     }
 
-    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
+    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any[]> {
         return this.childGroupViewModel.updateDataModelFromHealthChunkRecursively(clusterHealthChunk);
     }
 
     private selectTreeNodeInternal(path: string[], currIndex: number, group: TreeNodeGroupViewModel, opId: number, skipSelectAction?: boolean): Observable<void> {
-        const observ = group.expand()
+        const observ = group.expand();
         observ.subscribe(() => {
-            if (opId !== this._selectTreeNodeOpId) {
+            if (opId !== this.selectTreeNodeOpId) {
                 return;
             }
 
-            let node: TreeNodeViewModel = null;
-            let nodes = group.children;
-            for (let i = 0; i < nodes.length; i++) {
-                if (nodes[i].nodeId === path[currIndex]) {
-                    node = nodes[i];
+            let node: TreeNodeGroupViewModel = null;
+            const nodes = group.children;
+            for (const n of nodes) {
+                if (n.nodeId === path[currIndex]) {
+                    node = n;
                     break;
                 }
             }
@@ -125,7 +132,7 @@ export class TreeViewModel {
 
                 // Scroll to the page which contains the current node
                 if (node.parent && node.parent.listSettings) {
-                    let index = nodes.indexOf(node);
+                    const index = nodes.indexOf(node);
                     if (index >= 0) {
                         node.parent.listSettings.setPageWithIndex(index);
                     }
@@ -137,7 +144,7 @@ export class TreeViewModel {
                         node.select(0, skipSelectAction);
                     }
                 } else {
-                    this.selectTreeNodeInternal(path, currIndex + 1, node.childGroupViewModel, opId, skipSelectAction).subscribe();
+                    this.selectTreeNodeInternal(path, currIndex + 1, node, opId, skipSelectAction).subscribe();
                 }
             }
         });

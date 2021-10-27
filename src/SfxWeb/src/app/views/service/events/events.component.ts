@@ -1,23 +1,25 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { ServiceBaseController } from '../ServiceBase';
+import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { DataService } from 'src/app/services/data.service';
-import { ServiceEventList } from 'src/app/Models/DataModels/collections/Collections';
+import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 
 @Component({
   selector: 'app-events',
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss']
 })
-export class EventsComponent extends ServiceBaseController {
+export class EventsComponent extends ServiceBaseControllerDirective {
 
-  serviceEvents: ServiceEventList;
+  listEventStoreData: IEventStoreData<any, any> [];
 
-  constructor(protected data: DataService, injector: Injector) { 
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   setup() {
-    this.serviceEvents = this.data.createServiceEventList(this.serviceId);
+    this.listEventStoreData = [
+      this.data.getServiceEventData(this.serviceId)
+    ];
   }
 
 }

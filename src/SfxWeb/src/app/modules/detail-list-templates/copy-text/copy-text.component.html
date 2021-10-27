@@ -1,8 +1,8 @@
 <div class="container">
-    <app-clip-board [text]="item[listSetting.propertyPath]" style="display: inline-block;"></app-clip-board>
+    <app-clip-board [text]="value" style="display: inline-block;"></app-clip-board>
     <div>
-        <p style="white-space: pre-wrap; display: inline-block;">
-            {{item[listSetting.propertyPath]}}
+        <p style="white-space: pre-wrap; display: inline-block;" [innerHtml]="value">
+
         </p>
     </div>
 </div>

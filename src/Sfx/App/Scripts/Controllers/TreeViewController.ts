@@ -19,7 +19,7 @@ module Sfx {
         }
 
         public enterBeta() {
-            const originalUrl = location.origin + '/Explorer/beta.html' + location.hash;
+            const originalUrl =  location.href.replace('old.html', 'index.html');
             window.location.assign(originalUrl);
         }
     }

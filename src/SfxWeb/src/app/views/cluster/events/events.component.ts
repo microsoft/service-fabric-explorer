@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
-import { ClusterEventList } from 'src/app/Models/DataModels/collections/Collections';
-import { ClusterTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 import { DataService } from 'src/app/services/data.service';
+import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
+import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
 
 @Component({
   selector: 'app-events',
@@ -10,14 +10,20 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class EventsComponent implements OnInit {
 
-  clusterEvents: ClusterEventList;
-  clusterTimelineGenerator: ClusterTimelineGenerator;
+  listEventStoreData: IEventStoreData<any, any> [];
+  optionsConfig: IOptionConfig;
 
   constructor(public data: DataService) { }
 
   ngOnInit() {
-    this.clusterEvents = this.data.createClusterEventList();
-    this.clusterTimelineGenerator = new ClusterTimelineGenerator();
+    this.listEventStoreData = [
+      this.data.getClusterEventData()
+    ];
+
+    this.optionsConfig = {
+      enableNodes: true,
+      enableRepairTasks: true
+    };
   }
 
 }

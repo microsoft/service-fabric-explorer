@@ -14,10 +14,10 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   @Input() currentStartDate: Date;
   @Input() currentEndDate: Date;
 
-  @Output() onDateChange = new EventEmitter<{endDate: Date, startDate: Date}>();
+  @Output() dateChanged = new EventEmitter<{endDate: Date, startDate: Date}>();
 
-  _minDate: NgbDateStruct;
-  _maxDate: NgbDateStruct;
+  private internalMinDate: NgbDateStruct;
+  private internalMaxDate: NgbDateStruct;
 
   hoveredDate: NgbDate;
 
@@ -34,8 +34,8 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   }
 
   ngOnInit(){
-    this._maxDate = this.dateToNgbDate(this.maxDate);
-    this._minDate = this.dateToNgbDate(this.minDate);
+    this.internalMaxDate = this.dateToNgbDate(this.maxDate);
+    this.internalMinDate = this.dateToNgbDate(this.minDate);
   }
 
   dateToNgbDate(date: Date): NgbDate {
@@ -43,26 +43,25 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
       year: date.getFullYear(),
       month: date.getMonth() + 1,
       day: date.getDate()
-    })
+    });
   }
 
   onDateSelection(date: NgbDate) {
     if (!this.fromDate && !this.toDate) {
       this.fromDate = date;
-    } else if (this.fromDate && !this.toDate && date.after(this.fromDate)) {
+    } else if (this.fromDate && !this.toDate && !date.before(this.fromDate)) {
       this.toDate = date;
     } else {
       this.toDate = null;
       this.fromDate = date;
     }
-
-    if(this.fromDate && this.toDate){
-      this.currentStartDate.setFullYear(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day)
-      this.currentEndDate.setFullYear(this.toDate.year, this.toDate.month - 1, this.toDate.day)
-      this.onDateChange.emit({
-        endDate: this.currentEndDate, 
+    if (this.fromDate && this.toDate){
+      this.currentStartDate.setFullYear(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
+      this.currentEndDate.setFullYear(this.toDate.year, this.toDate.month - 1, this.toDate.day);
+      this.dateChanged.emit({
+        endDate: this.currentEndDate,
         startDate: this.currentStartDate
-      })
+      });
     }
   }
 
@@ -84,6 +83,6 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   }
 
   isDisabled = (date: NgbDate, current: {month: number}) => {
-    return date.before(this._minDate) || date.after(this._maxDate);
+    return date.before(this.internalMinDate) || date.after(this.internalMaxDate);
   }
 }

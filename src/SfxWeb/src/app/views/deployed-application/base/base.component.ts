@@ -1,6 +1,6 @@
 import { Component, Injector } from '@angular/core';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
-import { DeployedAppBaseController } from '../DeployedApplicationBase';
+import { DeployedAppBaseControllerDirective } from '../DeployedApplicationBase';
 import { DataService } from 'src/app/services/data.service';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
@@ -10,19 +10,19 @@ import { IdGenerator } from 'src/app/Utils/IdGenerator';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends DeployedAppBaseController {
+export class BaseComponent extends DeployedAppBaseControllerDirective {
 
   tabs: ITab[] = [{
-    name: "essentials",
-    route: "./"
+    name: 'essentials',
+    route: './'
     },
     {
-      name: "details",
-      route: "./details"
+      name: 'details',
+      route: './details'
     }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) { 
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
     super(data, injector);
   }
 

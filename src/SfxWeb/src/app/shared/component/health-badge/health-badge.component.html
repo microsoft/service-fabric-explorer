@@ -1,4 +1,4 @@
 <div class="badge-container" [title]="text">
-    <img *ngIf="badgeClass" class="badge-icon" [src]="assetBase + 'assets/' + badgeClass + '.svg'" [alt]="text + 'badge'"/>
-    <span>{{text}}</span>
+    <img *ngIf="badgeClass" [ngStyle]="{'width': size, 'height': size}" [src]="assetBase + 'assets/' + badgeClass + '.svg'" [alt]="text + 'badge'"/>
+    <span *ngIf="showText">{{text}}</span>
 </div>

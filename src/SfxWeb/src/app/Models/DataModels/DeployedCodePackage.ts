@@ -1,4 +1,4 @@
-﻿import { DataModelBase } from './Base';
+import { DataModelBase } from './Base';
 import { IRawDeployedCodePackage, IRawCodePackageEntryPoint, IRawCodePackageEntryPointStatistics, IRawContainerLogs } from '../RawDataTypes';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
@@ -8,11 +8,12 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { ActionWithConfirmationDialog } from '../Action';
+import { RoutesService } from 'src/app/services/routes.service';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class DeployedCodePackage extends DataModelBase<IRawDeployedCodePackage> {
     public mainEntryPoint: CodePackageEntryPoint;
@@ -23,7 +24,7 @@ export class DeployedCodePackage extends DataModelBase<IRawDeployedCodePackage> 
     public constructor(data: DataService, raw: IRawDeployedCodePackage, public parent: DeployedServicePackage) {
         super(data, raw, parent);
 
-        this.containerLogsTail = "100";
+        this.containerLogsTail = '100';
         this.updateInternal();
         if (this.data.actionsEnabled()) {
             this.setUpActions();
@@ -39,7 +40,7 @@ export class DeployedCodePackage extends DataModelBase<IRawDeployedCodePackage> 
     }
 
     public get viewPath(): string {
-        return this.data.routes.getCodePackageViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId, this.name);
+        return RoutesService.getCodePackageViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId, this.name);
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawDeployedCodePackage> {
@@ -63,12 +64,12 @@ export class DeployedCodePackage extends DataModelBase<IRawDeployedCodePackage> 
     private setUpActions(): void {
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
-            "restartCodePackage",
-            "Restart",
-            "Restarting",
+            'restartCodePackage',
+            'Restart',
+            'Restarting',
             () => this.restart(),
             () => true,
-            "Confirm Code Package Restart",
+            'Confirm Code Package Restart',
             `Restart code package ${this.name}?`,
             this.name
         ));
@@ -118,8 +119,8 @@ export class ContainerLogs extends DataModelBase<IRawContainerLogs> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawContainerLogs> {
-        let deployedCodePackage = <DeployedCodePackage>(this.parent);
-        return this.data.restClient.getDeployedContainerLogs(deployedCodePackage.parent.parent.parent.name, deployedCodePackage.parent.parent.id, 
+        const deployedCodePackage = (this.parent) as DeployedCodePackage;
+        return this.data.restClient.getDeployedContainerLogs(deployedCodePackage.parent.parent.parent.name, deployedCodePackage.parent.parent.id,
             deployedCodePackage.parent.name, deployedCodePackage.name, deployedCodePackage.servicePackageActivationId, deployedCodePackage.containerLogsTail, messageHandler);
     }
 }

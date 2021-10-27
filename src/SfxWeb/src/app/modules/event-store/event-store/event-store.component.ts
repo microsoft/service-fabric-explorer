@@ -1,125 +1,212 @@
-import { Component, OnInit, Input } from '@angular/core';
-import { ITimelineData, ITimelineDataGenerator, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
-import { EventListBase } from 'src/app/Models/DataModels/collections/Collections';
-import { FabricEventBase } from 'src/app/Models/eventstore/Events';
+import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
-import { Subject, Subscription } from 'rxjs';
-import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
+import { Subject, Subscription, forkJoin, of } from 'rxjs';
+import { debounceTime, distinctUntilChanged, finalize, subscribeOn } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
+import { hostViewClassName } from '@angular/compiler';
+import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
+import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
+import { ListSettings } from 'src/app/Models/ListSettings';
+import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
+import { TelemetryService } from 'src/app/services/telemetry.service';
+import { TelemetryEventNames } from 'src/app/Common/Constants';
+
+export interface IQuickDates {
+    display: string;
+    hours: number;
+}
+
+export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
+    eventsList: T;
+    timelineGenerator?: TimeLineGeneratorBase<S>;
+    timelineData?: ITimelineData;
+    displayName: string;
+    listSettings?: ListSettings;
+    getEvents?(): S[];
+    setDateWindow?(startDate: Date, endDate: Date): boolean;
+}
 
 @Component({
-  selector: 'app-event-store',
-  templateUrl: './event-store.component.html',
-  styleUrls: ['./event-store.component.scss']
+    selector: 'app-event-store',
+    templateUrl: './event-store.component.html',
+    styleUrls: ['./event-store.component.scss']
 })
-export class EventStoreComponent implements OnInit {
+export class EventStoreComponent implements OnInit, OnDestroy {
 
-    debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
-    debouncerHandlerSubscription: Subscription;
-  
-  @Input() eventsList: EventListBase<any>;
-  @Input() timelineGenerator: TimeLineGeneratorBase<FabricEventBase>;
+  constructor(public dataService: DataService, private telemService: TelemetryService) { }
 
-  constructor(public dataService: DataService) { }
-
-  ngOnInit() {
-    //   this.dataService.isAdvancedModeEnabled()
-    this._showAllEvents = !this.timelineGenerator;
-    this.resetSelectionProperties();
-    this.setTimelineData();
-    this.debouncerHandlerSubscription = this.debounceHandler
-    .pipe(debounceTime(400), distinctUntilChanged())
-    .subscribe(dates => {
-        this.startDate = dates.startDate;
-        this.endDate = dates.endDate;
-        this.setNewDateWindow();
-     });
+  public get showAllEvents() { return this.pshowAllEvents; }
+  public set showAllEvents(state: boolean) {
+      this.pshowAllEvents = state;
+      this.timeLineEventsData = this.getTimelineData();
   }
 
-  public static MaxWindowInDays: number = 7;
-  public startDateMin: Date = this.eventsList.startDate;
-  public endDateMin: Date;
+  private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
+  private debouncerHandlerSubscription: Subscription;
+
+  public quickDates = [
+      { display: '1 Hour', hours: 1 },
+      { display: '3 Hours', hours: 3 },
+      { display: '6 Hours', hours: 6 },
+      { display: '1 Day', hours: 24 },
+      { display: '7 Days', hours: 168 }
+  ];
+
+  @Input() listEventStoreData: IEventStoreData<any, any>[];
+  @Input() optionsConfig: IOptionConfig;
+  public startDateMin: Date;
   public startDateMax: Date;
-  public endDateMax: Date;
-  public endDateInit: Date;
-  public isResetEnabled: boolean = false;
+  public failedRefresh = false;
   public timeLineEventsData: ITimelineData;
 
-  public transformText: string = "Category,Kind";
+  public transformText = 'Category,Kind';
 
-  private _showAllEvents: boolean = false;
+  private pshowAllEvents = false;
+  public showCorrelatedBtn = false;
 
   public startDate: Date;
   public endDate: Date;
 
-  public get showAllEvents() { return this._showAllEvents; };
-  public set showAllEvents(state: boolean) {
-      this._showAllEvents = state;
+  ngOnInit() {
+      this.pshowAllEvents = this.checkAllOption();
+      this.showCorrelatedBtn = !this.pshowAllEvents;
+      this.resetSelectionProperties();
       this.setTimelineData();
+      this.debouncerHandlerSubscription = this.debounceHandler
+          .pipe(debounceTime(400), distinctUntilChanged())
+          .subscribe(dates => {
+              this.startDate = new Date(dates.startDate);
+              this.endDate = new Date(dates.endDate);
+              this.setNewDateWindow();
+          });
   }
 
-  public reset(): void {
-      this.isResetEnabled = false;
-      if (this.eventsList.resetDateWindow()) {
-          this.resetSelectionProperties();
-          this.eventsList.reload().subscribe( data => {
-              this.setTimelineData();
-          });
-      } else {
-          this.resetSelectionProperties();
-      }
+  ngOnDestroy() {
+      this.debouncerHandlerSubscription.unsubscribe();
+  }
+
+  public checkAllOption(): boolean {
+      return this.listEventStoreData.some(data => !data.timelineGenerator);
   }
 
   private resetSelectionProperties(): void {
-      this.startDate = this.eventsList.startDate;
-      this.endDate = this.eventsList.endDate;
-      this.startDateMin = this.endDateMin = TimeUtils.AddDays(new Date(), -30);
-      this.startDateMax = this.endDateMax = new Date(); //Today
+      const todaysDate = new Date();
+      this.startDate = TimeUtils.AddDays(todaysDate, -7);
+      this.endDate = this.startDateMax = todaysDate;
+      this.startDateMin = TimeUtils.AddDays(todaysDate, -30);
   }
 
-  private setNewDateWindow(): void {
-      if (this.eventsList.setDateWindow(this.startDate, this.endDate)) {
-          this.resetSelectionProperties();
-          this.isResetEnabled = true;
-          this.eventsList.reload().subscribe( data => {
-              this.setTimelineData();
-          });
-      } else {
-          this.resetSelectionProperties();
+  public setDate(date: IQuickDates) {
+      this.setNewDates({
+          endDate: new Date(this.endDate),
+          startDate: TimeUtils.AddHours(this.endDate, -1 * date.hours)
+      });
+  }
+
+  private setNewDateWindow(forceRefresh: boolean = false): void {
+      // If the data interface has that function implemented, we call it. If it doesn't we discard it by returning false.
+      let refreshData = false;
+
+      this.listEventStoreData.forEach(data => {
+        if (data.setDateWindow) {
+          if (data.setDateWindow(this.startDate, this.endDate)) {
+            refreshData = true;
+          }
+        }
+      });
+
+      if (refreshData || forceRefresh) {
+          this.setTimelineData();
       }
   }
 
+  public mergeTimelineData(combinedData: ITimelineData, data: ITimelineData): void {
+      data.items.forEach(item => combinedData.items.add(item));
+
+      data.groups.forEach(group => combinedData.groups.add(group));
+
+      combinedData.potentiallyMissingEvents =
+          combinedData.potentiallyMissingEvents || data.potentiallyMissingEvents;
+  }
+
+  private initializeTimelineData(): ITimelineData {
+      return {
+          start: this.startDate,
+          end: this.endDate,
+          groups: new DataSet<DataGroup>(),
+          items: new DataSet<DataItem>()
+      };
+  }
+
+  private getTimelineData(): ITimelineData{
+      let rawEventlist = [];
+      let combinedTimelineData = this.initializeTimelineData();
+      this.failedRefresh = false;
+      const addNestedGroups = this.listEventStoreData.length > 1;
+
+      // only emit metrics when more than 1 event type is added
+      if (this.listEventStoreData.length > 1) {
+        const names = this.listEventStoreData.map(item => item.displayName).sort();
+        this.telemService.trackActionEvent(TelemetryEventNames.CombinedEventStore, {value: names.toString()}, names.toString());
+      }
+      for (const data of this.listEventStoreData) {
+          if (data.eventsList.lastRefreshWasSuccessful){
+              try {
+                  if (this.pshowAllEvents) {
+                      if (data.setDateWindow){
+                          rawEventlist = rawEventlist.concat(data.getEvents());
+                      }
+
+                  } else if (data.timelineGenerator) {
+                      // If we have more than one element in the timeline the events get grouped by the displayName of the element.
+                      data.timelineData = data.timelineGenerator.generateTimeLineData(data.getEvents(), this.startDate, this.endDate, addNestedGroups ? data.displayName : null);
+
+                      this.mergeTimelineData(combinedTimelineData, data.timelineData);
+                  }
+              } catch (e) {
+                  console.error(e);
+              }
+          }
+          else{
+              this.failedRefresh = true;
+          }
+      }
+
+      if (this.pshowAllEvents) {
+          const d = parseEventsGenerically(rawEventlist, this.transformText);
+
+          combinedTimelineData = {
+              start: this.startDate,
+              end: this.endDate,
+              items: d.items,
+              groups: d.groups
+          };
+      }
+
+      return combinedTimelineData;
+  }
+
   public setTimelineData(): void {
-    this.eventsList.ensureInitialized().subscribe( () => {
-        try {
-            if (this._showAllEvents) {
-                const d = parseEventsGenerically(this.eventsList.collection.map(event => event.raw), this.transformText);
+      const subs = this.listEventStoreData.map(data => data.eventsList.refresh());
 
-                this.timeLineEventsData = {
-                    groups: d.groups,
-                    items: d.items,
-                    start: this.startDate,
-                    end: this.endDate
-                };
+      forkJoin(subs).subscribe(() => {
+          this.timeLineEventsData = this.getTimelineData();
+      });
+  }
 
-            }else if (this.timelineGenerator) {
-                const d = this.timelineGenerator.generateTimeLineData(this.eventsList.collection.map(event => event.raw), this.startDate, this.endDate);
-
-                this.timeLineEventsData = {
-                    groups: d.groups,
-                    items: d.items,
-                    start: this.startDate,
-                    end: this.endDate
-                };
-            }
-        }catch (e) {
-            console.error(e);
-        }
-    });
+  processData(option: IOptionData){
+    if (option.addToList){
+      this.listEventStoreData.push(option.data);
     }
-
-    setNewDates(dates: IOnDateChange) {
-        this.debounceHandler.next(dates);
+    else{
+      this.listEventStoreData = this.listEventStoreData.filter(item => item !== option.data);
     }
+    this.setNewDateWindow(true);
+  }
+
+  setNewDates(dates: IOnDateChange) {
+      this.debounceHandler.next(dates);
+  }
 }

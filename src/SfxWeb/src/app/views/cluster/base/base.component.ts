@@ -3,6 +3,7 @@ import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
+import { Constants } from 'src/app/Common/Constants';
 
 @Component({
   selector: 'app-base',
@@ -11,35 +12,31 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class BaseComponent implements OnInit {
 
-  SFXClusterName: string = "";
-  
+  SFXClusterName = '';
+
   tabs: ITab[] = [{
-    name: "essentials",
-    route: ""
+    name: 'essentials',
+    route: ''
     },
     {
-      name: "details",
-      route: "/details"
+      name: 'details',
+      route: '/details'
     },
     {
-      name: "metrics",
-      route: "/metrics"
+      name: 'metrics',
+      route: '/metrics'
     },
     {
-      name: "cluster map",
-      route: "/clustermap"
+      name: 'cluster map',
+      route: '/clustermap'
     },
     {
-      name: "image store",
-      route: "/imagestore"
+      name: 'image store',
+      route: '/imagestore'
     },
     {
-      name: "manifest",
-      route: "/manifest"
-    },
-    {
-      name: "events",
-      route: "/events"
+      name: 'manifest',
+      route: '/manifest'
     }
   ];
   constructor(public tree: TreeService, public dataService: DataService) { }
@@ -50,30 +47,33 @@ export class BaseComponent implements OnInit {
     ], true);
 
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
-      if(this.dataService.clusterManifest.isBackupRestoreEnabled) {
-        this.tabs.push({
-          name: "backups",
-          route: "/backups"
-        })
+      if (this.dataService.clusterManifest.isEventStoreEnabled) {
+        this.tabs = this.tabs.concat(Constants.EventsTab);
       }
-      if(this.dataService.clusterManifest.isRepairManagerEnabled) {
-        this.tabs.push({
-          name: "repair jobs",
-          route: "/repairtasks"
-        })
+      if (this.dataService.clusterManifest.isBackupRestoreEnabled) {
+        this.tabs = this.tabs.concat({
+          name: 'backups',
+          route: '/backups'
+        });
       }
-    })
+      if (this.dataService.clusterManifest.isRepairManagerEnabled) {
+        this.tabs = this.tabs.concat({
+          name: 'repair jobs',
+          route: '/repairtasks'
+        });
+      }
+    });
 
     this.dataService.nodes.refresh().subscribe( () => {
-      this.dataService.clusterManifest.ensureInitialized().subscribe( ()=> {
-          //if < 5 seed nodes display warning for SFRP
-          if(this.dataService.clusterManifest.isSfrpCluster){
+      this.dataService.clusterManifest.ensureInitialized().subscribe( () => {
+          // if < 5 seed nodes display warning for SFRP
+          if (this.dataService.clusterManifest.isSfrpCluster){
               this.dataService.nodes.checkSeedNodeCount(5);
           }
-      })
-  })
+      });
+  });
 
-    this.SFXClusterName = window.location.host; //TODO FIX THIS
+    this.SFXClusterName = this.dataService.clusterNameMetadata || (window.location.protocol + '//' + window.location.hostname);
   }
 
 }

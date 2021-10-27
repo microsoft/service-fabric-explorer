@@ -1,50 +1,35 @@
-<div class="detail-pane essen-pane">
-        <div class="table-responsive">
-            <table class="essen-table">
-                <tr>
-                    <th>Name</th>
-                    <th>Application Type</th>
-                </tr>
-                <tr *ngIf="deployedApp">
-                    <td title="{{deployedApp.name}}">{{deployedApp.name}}<app-clip-board [text]="deployedApp.name"></app-clip-board></td>
-                    <td><a [routerLink]="deployedApp.appTypeViewPath" [title]="deployedApp.raw.TypeName">{{deployedApp.raw.TypeName}}</a></td>
-                </tr>
-                <tr>
-                    <th>Health State</th>
-                    <th>Disk Location</th>
-                </tr>
-                <tr *ngIf="deployedApp && deployedApp.health">
-                    <td><app-health-badge [badgeClass]="deployedApp.health.healthState.badgeClass" [text]="deployedApp.health.healthState.text"></app-health-badge></td>
-                    <td>{{deployedApp.diskLocation}}</td>
-                </tr>
-                <tr>
-                    <th>Status</th>
-                </tr>
-                <tr *ngIf="deployedApp">
-                    <td>{{deployedApp.raw.Status}}</td>
-                </tr>
-            </table>
-        </div>
+<div class="tile-container">
+  <app-essential-health-tile [healthState]="deployedApp.health.healthState" *ngIf="deployedApp?.isInitialized"
+    class="long" [listItems]="essentialItems">
+    <ng-template appEssentialTemplate id="appTypeViewPath">
+      <a [routerLink]="deployedApp.appTypeViewPath" [title]="deployedApp.raw.TypeName">{{deployedApp.raw.TypeName}}</a>
+    </ng-template>
+
+    <ng-template appEssentialTemplate id="status">
+      <app-status-resolver [status]="deployedApp.raw.Status"></app-status-resolver>
+    </ng-template>
+  </app-essential-health-tile>
+</div>
+
+<div class="detail-pane essen-pane" data-cy="health">
+  <app-collapse-container sectionName="Unhealthy Evaluations">
+    <div collapse-header>
+      <h4>Unhealthy Evaluations</h4>
     </div>
-    
-    <div class="detail-pane essen-pane">
-        <app-collapse-container>
-            <div collapse-header>
-                <h4>Unhealthy Evaluations</h4>
-            </div>
-            <div collapse-body>
-                <detail-list [list]="deployedApp.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings" *ngIf="deployedApp && deployedApp.health"></detail-list>
-            </div>
-        </app-collapse-container>
+    <div collapse-body>
+      <app-health-viewer *ngIf="deployedApp && deployedApp.health" [healthyEvaluations]="deployedApp.health.healthEvents" [unhealthyEvaluations]="deployedApp.health.unhealthyEvaluations" ></app-health-viewer>
     </div>
-    
-    <div class="detail-pane essen-pane">
-        <app-collapse-container>
-            <div collapse-header>
-                <h4>Deployed Service Packages</h4>
-            </div>
-            <div collapse-body>
-                <detail-list [list]="deployedServicePackages.collection" [listSettings]="listSettings" *ngIf="deployedServicePackages"></detail-list>
-            </div>
-        </app-collapse-container>
+  </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" data-cy="services">
+  <app-collapse-container sectionName="Deployed Service Packages">
+    <div collapse-header>
+      <h4>Deployed Service Packages</h4>
     </div>
+    <div collapse-body>
+      <app-detail-list [list]="deployedApp.deployedServicePackages" [listSettings]="listSettings"
+        *ngIf="deployedApp?.deployedServicePackages.isInitialized"></app-detail-list>
+    </div>
+  </app-collapse-container>
+</div>

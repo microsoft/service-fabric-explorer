@@ -1,4 +1,4 @@
-@import "src/styles.scss";
+@import "src/vars.scss";
 
 .navbar-brand {
     color: $navbar-color;
@@ -19,16 +19,16 @@
 }
 
 .header-bar {
-    height: 50px; 
+    height: 50px;
     background-color: black;
     color: white;
     position: fixed;
     right: 0;
-    left: 0; 
+    left: 0;
     z-index: 100;
 
-    display: flex; 
-    flex-direction: row; 
+    display: flex;
+    flex-direction: row;
     align-items: center;
 
 }
@@ -38,15 +38,26 @@
     position: absolute;
     top: 50px;
     bottom: 0;
+    z-index: 11;
 }
 
 .main-content {
     position: absolute;
     overflow: auto;
     left: 400px;
-    right: 20px;
+    right: 2px;
     top: 50px;
     bottom: 20px;
+}
+
+@media (max-width: 500px) {
+    .main-content {
+        right: 0px;
+    }
+
+    .right-panel {
+      bottom: 0px;
+    }
 }
 
 .slider-bar {
@@ -76,5 +87,42 @@
 .repress-highlight {
     &:hover {
         background-color: inherit;
+    }
+}
+
+.skip-to-content-link {
+    height: 30px;
+    left: 50%;
+    padding: 8px;
+    position: absolute;
+    transform: translateY(-100%);
+    transition: transform 0.3s;
+    z-index: 101;
+    color: white;
+    background-color: black;
+  }
+  .skip-to-content-link:focus {
+    transform: translateY(0%);
+  }
+
+.sidenav-button {
+    position: absolute;
+    left: 10px;
+    top: 50px;
+    z-index: 12;
+    padding: 0px;
+    border: 0px;
+    background-color: transparent;
+    color: white;
+}
+
+.report {
+    li {
+        border-bottom: 1px solid white;
+        padding: 5px;
+    
+        &:last-child{
+            border: 0;
+        }
     }
 }

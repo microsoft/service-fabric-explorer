@@ -1,4 +1,18 @@
 <div class="detail-pane">
+    <div data-cy="clustermap">
+        <app-input placeholder="Filter nodes" [model]="filter" (changed)="filter = $event;" ></app-input>
+
+        <div style="margin: 15px; display: block;">
+            <app-check-box [(state)]="healthFilter.OK">
+                <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+            </app-check-box>
+            <app-check-box [(state)]="healthFilter.Warning">
+                <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+            </app-check-box>
+            <app-check-box [(state)]="healthFilter.Error">
+                <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+            </app-check-box>
+        </div>
         <div class="table-responsive">
             <table class="table map-table" role="presentation">
                 <tbody>
@@ -14,7 +28,8 @@
                         <td class="header">{{upgradeDomain}}</td>
                         <td *ngFor="let faultDomain of nodes.faultDomains">
                             <div class="candybar-container">
-                                <div class="candybar-wrapper compact" *ngFor="let node of getNodesForDomains(upgradeDomain, faultDomain)">
+                                <div class="candybar-wrapper compact"
+                                    *ngFor="let node of getNodesForDomains(upgradeDomain, faultDomain)" data-cy="node">
                                     <app-candybar-compact [item]="node" [viewPath]="node.viewPath"></app-candybar-compact>
                                 </div>
                             </div>
@@ -24,3 +39,4 @@
             </table>
         </div>
     </div>
+</div>

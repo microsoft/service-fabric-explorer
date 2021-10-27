@@ -1,4 +1,4 @@
-﻿import { IRawReplicaOnPartition, IRawReplicaHealth } from '../RawDataTypes';
+import { IRawReplicaOnPartition, IRawReplicaHealth } from '../RawDataTypes';
 import { IDecorators, DataModelBase } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { DeployedReplicaDetail } from './DeployedReplica';
@@ -12,23 +12,24 @@ import { HealthBase } from './HealthEvent';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { ActionWithConfirmationDialog } from '../Action';
+import { RoutesService } from 'src/app/services/routes.service';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     public decorators: IDecorators = {
         decorators: {
-            "LastInBuildDurationInSeconds": {
-                displayName: (name) => "Last In Build Duration",
+            LastInBuildDurationInSeconds: {
+                displayName: (name) => 'Last In Build Duration',
                 displayValueInHtml: (value) => this.lastInBuildDuration
             },
-            "NodeName": {
+            NodeName: {
                 displayValueInHtml: (value) => HtmlUtils.getLinkHtml(value, this.nodeViewPath)
             },
-            "ReplicaRole": {
+            ReplicaRole: {
                 displayValueInHtml: (value) => this.role
             }
         }
@@ -54,6 +55,10 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
         return this.data.restClient.restartReplica(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.ReplicaId);
     }
 
+    public deleteInstance(): Observable<any> {
+        return this.data.restClient.deleteReplica(this.raw.NodeName, this.parent.raw.PartitionInformation.Id, this.raw.InstanceId);
+    }
+
     public get isStatefulService(): boolean {
         return ServiceKindRegexes.Stateful.test(this.raw.ServiceKind);
     }
@@ -71,7 +76,7 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     }
 
     public get role(): string {
-        if (this.parent.raw.PartitionStatus === "Reconfiguring") {
+        if (this.parent.raw.PartitionStatus === 'Reconfiguring') {
             return `Reconfiguring - Target Role: ${this.raw.ReplicaRole}`;
         }
 
@@ -79,11 +84,11 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getReplicaViewPath(this.parent.parent.parent.raw.TypeName, this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, this.id);
+        return RoutesService.getReplicaViewPath(this.parent.parent.parent.raw.TypeName, this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, this.id);
     }
 
     public get nodeViewPath(): string {
-        return this.data.routes.getNodeViewPath(this.raw.NodeName);
+        return RoutesService.getNodeViewPath(this.raw.NodeName);
     }
 
     public get lastInBuildDuration(): string {
@@ -100,24 +105,39 @@ export class ReplicaOnPartition extends DataModelBase<IRawReplicaOnPartition> {
             () => this.data.restClient.getReplicaOnPartition(this.parent.parent.parent.id, this.parent.parent.id, this.parent.id, this.id, messageHandler)));
     }
 
-    protected updateInternal():Observable<any> | void {
+    protected updateInternal(): Observable<any> | void {
         this.address = HtmlUtils.parseReplicaAddress(this.raw.Address);
     }
 
     private setUpActions(): void {
-        let serviceName = this.parent.parent.raw.Name;
+        const serviceName = this.parent.parent.raw.Name;
 
-        this.actions.add(new ActionWithConfirmationDialog(
-            this.data.dialog,
-            "Restart Replica",
-            "Restart Replica",
-            "Restarting",
-            () => this.restartReplica(),
-            () => true,
-            `Confirm Replica Restart`,
-            `Restart Replica for ${serviceName}`,
-            "confirm"
-        ));
+        if (this.isStatefulService) {
+          this.actions.add(new ActionWithConfirmationDialog(
+              this.data.dialog,
+              'Restart Replica',
+              'Restart Replica',
+              'Restarting',
+              () => this.restartReplica(),
+              () => true,
+              `Confirm Replica Restart`,
+              `Restart Replica for ${serviceName}`,
+              'confirm'
+          ));
+      } else if (this.isStatelessService) {
+          this.actions.add(new ActionWithConfirmationDialog(
+              this.data.dialog,
+              'Delete Instance',
+              'Delete Instance',
+              'Deleting',
+              () => this.deleteInstance(),
+              () => true,
+              `Confirm Instance Delete`,
+              `Delete Instance for ${serviceName}`,
+              'confirm'
+          ));
+      }
+
     }
 }
 

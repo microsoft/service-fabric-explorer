@@ -7,6 +7,7 @@ import { EssentialsComponent } from './essentials/essentials.component';
 import { DetailsComponent } from './details/details.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
 
 
 @NgModule({
@@ -15,7 +16,8 @@ import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates
     CommonModule,
     DeployedReplicaRoutingModule,
     SharedModule,
-    DetailListTemplatesModule
+    DetailListTemplatesModule,
+    ChartsModule
   ]
 })
 export class DeployedReplicaModule { }

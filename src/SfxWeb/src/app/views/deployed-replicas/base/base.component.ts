@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { BaseController } from 'src/app/ViewModels/BaseController';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DeployedReplicaCollection } from 'src/app/Models/DataModels/collections/Collections';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForLink } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
@@ -17,7 +17,7 @@ import { ActivatedRouteSnapshot } from '@angular/router';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends BaseController {
+export class BaseComponent extends BaseControllerDirective {
   nodeName: string;
   appId: string;
   serviceId: string;
@@ -28,7 +28,7 @@ export class BaseComponent extends BaseController {
 
   type: string;
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService, private settings: SettingsService) {
     super(injector);
   }
 
@@ -52,30 +52,30 @@ export class BaseComponent extends BaseController {
         this.type = replicas.isStatelessService ? 'Deployed Instances' : 'Deployed Replicas';
 
         if (!this.listSettings && replicas.length > 0) {
-            let replica = replicas.collection[0];
-            let defaultSortProperties = ["replicaRoleSortPriority", "id"];
-            let columnSettings = [
-                new ListColumnSettingForLink("id", "Id", item => item.viewPath),
-                new ListColumnSetting("raw.PartitionId", "Partition Id"),
-                new ListColumnSettingWithFilter("raw.ServiceKind", "Service Kind"),
-                new ListColumnSettingWithFilter("role", "Replica Role", defaultSortProperties),
-                new ListColumnSettingWithFilter("raw.ReplicaStatus", "Status")
+            const replica = replicas.collection[0];
+            let defaultSortProperties = ['replicaRoleSortPriority', 'id'];
+            const columnSettings = [
+                new ListColumnSettingForLink('id', 'Id', item => item.viewPath),
+                new ListColumnSetting('raw.PartitionId', 'Partition Id'),
+                new ListColumnSettingWithFilter('raw.ServiceKind', 'Service Kind'),
+                new ListColumnSettingWithFilter('role', 'Replica Role', {sortPropertyPaths: defaultSortProperties}),
+                new ListColumnSettingWithFilter('raw.ReplicaStatus', 'Status')
             ];
 
             if (replica.isStatelessService) {
                 columnSettings.splice(3, 1); // Remove replica role column
-                defaultSortProperties = ["id"];
+                defaultSortProperties = ['id'];
             }
 
             if (replicas.collection.some(cp => cp.servicePackageActivationId)) {
-                columnSettings.splice(1, 0, new ListColumnSetting("servicePackageActivationId", "Service Package Activation Id"));
+                columnSettings.splice(1, 0, new ListColumnSetting('servicePackageActivationId', 'Service Package Activation Id'));
             }
 
             this.listSettings = this.settings.getNewOrExistingListSettings(`replicas-${this.serviceId}${this.nodeName}`, defaultSortProperties, columnSettings);
         }
     }));
   }
-  
+
   getParams(route: ActivatedRouteSnapshot): void {
     this.nodeName = IdUtils.getNodeName(route);
     this.appId = IdUtils.getAppId(route);

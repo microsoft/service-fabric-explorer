@@ -1,19 +1,19 @@
-﻿import { NodeStatusConstants, HealthStateConstants } from '../Common/Constants';
+import { NodeStatusConstants, HealthStateConstants } from '../Common/Constants';
 import { Node } from './DataModels/Node';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
-    export interface IRawCollection<T> {
+// -----------------------------------------------------------------------------
+export interface IRawCollection<T> {
         ContinuationToken: string;
         Items: T[];
     }
 
-    export interface IRawList<T> extends Array<T> {
+export interface IRawList<T> extends Array<T> {
     }
 
-    export interface IRawApplication {
+export interface IRawApplication {
         Id: string;
         Name: string;
         TypeName: string;
@@ -23,15 +23,33 @@ import { Node } from './DataModels/Node';
         HealthState: string;
         ApplicationDefinitionKind: string;
     }
-
-    export interface IRawBackupConfigurationInfo {
+export class IRawBackupEntity{
+    EntityKind: BackupEntityKind;
+}
+export interface IRawApplicationBackupEntity extends IRawBackupEntity{
+    ApplicationName: string;
+}
+export interface IRawServiceBackupEntity extends IRawBackupEntity{
+    ServiceName: string;
+}
+export interface IRawPartitionBackupEntity extends IRawBackupEntity{
+    ServiceName: string;
+    PartitionId: string;
+}
+export enum BackupEntityKind{
+    Invalid,
+    Partition,
+    Service,
+    Application
+}
+export interface IRawBackupConfigurationInfo {
         Kind: string;
         PolicyName: string;
         PolicyInheritedFrom: string;
         SuspensionInfo: IRawSuspensionInfo;
     }
 
-    export interface IRawPartitionBackup {
+export interface IRawPartitionBackup {
         BackupId: string;
         BackupChainId: string;
         ApplicationName: string;
@@ -44,30 +62,30 @@ import { Node } from './DataModels/Node';
         EpochOfLastBackupRecord: IRawEpochOfLastBackupRecord;
     }
 
-    export interface IRawEpochOfLastBackupRecord {
+export interface IRawEpochOfLastBackupRecord {
         DataLossVersion: string;
         ConfigurationVersion: string;
     }
-    export interface IRawApplicationBackupConfigurationInfo extends IRawPartitionBackupConfigurationInfo {
+export interface IRawApplicationBackupConfigurationInfo extends IRawPartitionBackupConfigurationInfo {
         ApplicationName: string;
     }
 
-    export interface IRawServiceBackupConfigurationInfo extends IRawPartitionBackupConfigurationInfo {
+export interface IRawServiceBackupConfigurationInfo extends IRawPartitionBackupConfigurationInfo {
         ServiceName: string;
     }
 
-    export interface IRawPartitionBackupConfigurationInfo extends IRawBackupConfigurationInfo {
+export interface IRawPartitionBackupConfigurationInfo extends IRawBackupConfigurationInfo {
         PartitionId: string;
     }
 
-    export interface IRawBackupProgressInfo {
+export interface IRawBackupProgressInfo {
         RestoreState: string;
         TimeStampUtc: string;
         RestoredEpoch: IRawEpochOfLastBackupRecord;
         RestoredLsn: string;
     }
 
-    export interface IRawRestoreProgressInfo {
+export interface IRawRestoreProgressInfo {
         BackupState: string;
         TimeStampUtc: string;
         BackupId: string;
@@ -76,37 +94,38 @@ import { Node } from './DataModels/Node';
         LsnOfLastBackupRecord: string;
     }
 
-    export interface IRawSuspensionInfo {
+export interface IRawSuspensionInfo {
         IsSuspended: boolean;
         SuspensionInheritedFrom: string;
     }
 
-    export interface IRawApplicationManifest {
+export interface IRawApplicationManifest {
         Manifest: string;
     }
 
-    export interface IRawServiceManifest {
+export interface IRawServiceManifest {
         Manifest: string;
     }
 
-    export interface IRawHealth {
+export interface IRawHealth {
         HealthEvents: IRawHealthEvent[];
         AggregatedHealthState: string;
         UnhealthyEvaluations: IRawUnhealthyEvaluation[];
     }
 
-    export interface IRawApplicationHealth extends IRawHealth {
+export interface IRawApplicationHealth extends IRawHealth {
         Name: string;
         ServiceHealthStates: IRawServiceHealthState[];
         DeployedApplicationHealthStates: IRawDeployedApplicationHealthState[];
+        HealthStatistics: IRawHealthStatistics;
     }
 
-    export interface IRawApplicationHealthState {
+export interface IRawApplicationHealthState {
         Name: string;
         AggregatedHealthState: string;
     }
 
-    export interface IRawApplicationType {
+export interface IRawApplicationType {
         Name: string;
         Version: string;
         Status: string;
@@ -114,12 +133,12 @@ import { Node } from './DataModels/Node';
         DefaultParameterList: IRawParameter[];
     }
 
-    export interface IRawUpgradeDomain {
+export interface IRawUpgradeDomain {
         Name: string;
         State: string;
     }
 
-    export interface IRawMonitoringPolicy {
+export interface IRawMonitoringPolicy {
         FailureAction: string;
         HealthCheckWaitDurationInMilliseconds: string;
         HealthCheckStableDurationInMilliseconds: string;
@@ -128,7 +147,26 @@ import { Node } from './DataModels/Node';
         UpgradeDomainTimeoutInMilliseconds: string;
     }
 
-    export interface IRawUpgradeDescription {
+export interface IRawClusterHealthPolicy {
+        ConsiderWarningAsError: boolean;
+        MaxPercentUnhealthyNodes: number;
+        MaxPercentUnhealthyApplications: number;
+    }
+
+export interface IRawClusterUpgradeDescription {
+        CodeVersion: string;
+        ConfigVersion: string;
+        UpgradeKind: string;
+        RollingUpgradeMode: string;
+        UpgradeReplicaSetCheckTimeoutInSeconds: number;
+        ForceRestart: boolean;
+        MonitoringPolicy: IRawMonitoringPolicy;
+        ClusterHealthPolicy: IRawClusterHealthPolicy;
+        EnableDeltaHealthEvaluation: boolean;
+        SortOrder: string;
+    }
+
+export interface IRawUpgradeDescription {
         Name: string;
         TargetApplicationTypeVersion: string;
         Parameters: IRawParameter[];
@@ -139,11 +177,11 @@ import { Node } from './DataModels/Node';
         MonitoringPolicy: IRawMonitoringPolicy;
     }
 
-    export interface IRawUnhealthyEvaluation {
+export interface IRawUnhealthyEvaluation {
         HealthEvaluation: IRawHealthEvaluation;
     }
 
-    export interface IRawHealthEvaluation {
+export interface IRawHealthEvaluation {
         Kind: string;
         Description: string;
         AggregatedHealthState: string;
@@ -152,7 +190,48 @@ import { Node } from './DataModels/Node';
         ConsiderWarningAsError: boolean;
     }
 
-    export interface IRawUnhealthyEvent {
+export interface IRawApplicationHealthEvluation extends IRawHealthEvaluation {
+        ApplicationName: string;
+    }
+
+export interface IRawApplicationsHealthEvluation extends IRawHealthEvaluation {
+        MaxPercentUnhealthyApplications: number;
+        TotalCount: number;
+    }
+
+export interface IRawApplicationTypeHealthEvluation extends IRawHealthEvaluation {
+        ApplicationTypeName: string;
+        MaxPercentUnhealthyApplications: number;
+    }
+
+export interface IRawNodeHealthEvluation extends IRawHealthEvaluation {
+        NodeName: string;
+    }
+
+export interface IRawPartitionHealthEvaluation extends IRawHealthEvaluation {
+        PartitionId: string;
+    }
+
+export interface IRawServiceHealthEvaluation extends IRawHealthEvaluation {
+        ServiceName: string;
+    }
+
+export interface IRawReplicaHealthEvaluation extends IRawHealthEvaluation {
+        ReplicaOrInstanceId: string;
+        PartitionId: string;
+    }
+
+export interface IRawDeployedApplicationHealthEvaluation extends IRawHealthEvaluation {
+        NodeName: string;
+        ApplicationName: string;
+    }
+export interface IRawDeployedServicePackageHealthEvaluation extends IRawHealthEvaluation {
+        NodeName: string;
+        ApplicationName: string;
+        ServiceManifestName: string;
+        ServicePackageActivationId?: string;
+    }
+export interface IRawUnhealthyEvent {
         SourceId: string;
         Property: string;
         HealthState: string;
@@ -165,7 +244,7 @@ import { Node } from './DataModels/Node';
         IsExpired: boolean;
     }
 
-    export interface IRawApplicationUpgradeProgress {
+export interface IRawApplicationUpgradeProgress {
         Name: string;
         TypeName: string;
         TargetApplicationTypeVersion: string;
@@ -183,26 +262,38 @@ import { Node } from './DataModels/Node';
         FailureReason: string;
         UpgradeDomainProgressAtFailure: IRawUpgradeDomainProgress;
         UpgradeStatusDetails: string;
+        UpgradeUnits: IUpgradeUnitInfo[];
+        CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
+        IsNodeByNode: boolean;
     }
 
-    export interface IRawClusterHealth extends IRawHealth {
+export interface IRawClusterHealth extends IRawHealth {
         NodeHealthStates: IRawNodeHealthState[];
         ApplicationHealthStates: IRawApplicationHealthState[];
         HealthStatistics: IRawHealthStatistics;
     }
 
-    export interface IRawClusterManifest {
+export interface IRawClusterManifest {
         Manifest: string;
     }
 
-    export interface IRawClusterUpgradeProgress {
+export interface ICurrentUpgradeUnitsProgressInfo{
+  NodeUpgradeProgressList: IRawNodeUpgradeProgress[];
+}
+
+export interface IUpgradeUnitInfo {
+  Name: string;
+  State: string;
+
+}
+export interface IRawClusterUpgradeProgress {
         CodeVersion: string;
         ConfigVersion: string;
         UpgradeDomains: IRawUpgradeDomain[];
         UpgradeState: string;
         NextUpgradeDomain: string;
         RollingUpgradeMode: string;
-        UpgradeDescription: IRawUpgradeDescription;
+        UpgradeDescription: IRawClusterUpgradeDescription;
         UpgradeDurationInMilliseconds: string;
         UpgradeDomainDurationInMilliseconds: string;
         UnhealthyEvaluations: IRawUnhealthyEvaluation[];
@@ -211,15 +302,18 @@ import { Node } from './DataModels/Node';
         FailureTimestampUtc: string;
         FailureReason: string;
         UpgradeDomainProgressAtFailure: IRawUpgradeDomainProgress;
+        UpgradeUnits: IUpgradeUnitInfo[];
+        CurrentUpgradeUnitsProgress: ICurrentUpgradeUnitsProgressInfo;
+        IsNodeByNode: boolean;
     }
 
-    export interface IRawClusterLoadInformation {
+export interface IRawClusterLoadInformation {
         LastBalancingStartTimeUtc: string;
         LastBalancingEndTimeUtc: string;
         LoadMetricInformation: IRawLoadMetricInformation[];
     }
 
-    export interface IRawLoadMetricInformation {
+export interface IRawLoadMetricInformation {
         Name: string;
         IsBalancedBefore: boolean;
         IsBalancedAfter: boolean;
@@ -242,13 +336,13 @@ import { Node } from './DataModels/Node';
         MaxNodeLoadId: IRawId;
     }
 
-    export interface IRawDeployedApplicationHealthState {
+export interface IRawDeployedApplicationHealthState {
         ApplicationName: string;
         NodeName: string;
         AggregatedHealthState: string;
     }
 
-    export interface IRawHealthEvent {
+export interface IRawHealthEvent {
         SourceId: string;
         Property: string;
         HealthState: string;
@@ -261,38 +355,38 @@ import { Node } from './DataModels/Node';
         LastModifiedUtcTimestamp: string;
     }
 
-    export interface IRawId {
+export interface IRawId {
         Id: string;
     }
 
-    export interface IRawNetwork {
+export interface IRawNetwork {
         name: string;
         properties: IRawNetworkProperties;
     }
 
-    export interface IRawNetworkProperties {
+export interface IRawNetworkProperties {
         kind: string;
         networkAddressPrefix: string;
         networkStatus: string;
     }
 
-    export interface IRawNetworkOnApp {
+export interface IRawNetworkOnApp {
         networkName: string;
     }
 
-    export interface IRawNetworkOnNode {
+export interface IRawNetworkOnNode {
         NetworkName: string;
     }
 
-    export interface IRawAppOnNetwork {
+export interface IRawAppOnNetwork {
         ApplicationName: string;
     }
 
-    export interface IRawNodeOnNetwork {
+export interface IRawNodeOnNetwork {
         nodeName: string;
     }
 
-    export interface IRawDeployedContainerOnNetwork {
+export interface IRawDeployedContainerOnNetwork {
         ApplicationName: string;
         NetworkName: string;
         CodePackageName: string;
@@ -303,7 +397,7 @@ import { Node } from './DataModels/Node';
         ContainerId: string;
     }
 
-    export interface IRawNode {
+export interface IRawNode {
         Name: string;
         IpAddressOrFQDN: string;
         Type: string;
@@ -319,9 +413,13 @@ import { Node } from './DataModels/Node';
         InstanceId: string;
         NodeDeactivationInfo: IRawNodeDeactivationInfo;
         IsStopped: boolean;
+        NodeDownTimeInSeconds: string;
+        NodeUpAt: string;
+        NodeDownAt: string;
+        NodeTags: string[];
     }
 
-    export interface IRawBackupPolicy {
+export interface IRawBackupPolicy {
         Name: string;
         AutoRestoreOnDataLoss: boolean;
         MaxIncrementalBackups: number;
@@ -329,30 +427,31 @@ import { Node } from './DataModels/Node';
         Storage: IRawStorage;
     }
 
-    export interface IRawRetentionPolicy {
+export interface IRawRetentionPolicy {
         RetentionPolicyType: string;
         MinimumNumberOfBackups: number;
         RetentionDuration: string;
     }
 
-    export interface IRawNodeDeactivationInfo {
+export interface IRawNodeDeactivationInfo {
         NodeDeactivationIntent: string;
         NodeDeactivationStatus: string;
         NodeDeactivationTask: IRawNodeDeactivationTask[];
+        PendingSafetyChecks: IRawSafetyCheckDescription[];
     }
 
-    export interface IRawNodeDeactivationTask {
+export interface IRawNodeDeactivationTask {
         NodeDeactivationTaskId: IRawNodeDeactivationTaskId;
         NodeDeactivationIntent: string;
     }
-    export interface IRawSchedule {
+export interface IRawSchedule {
         ScheduleKind: string;
         ScheduleFrequencyType: string;
         RunDays: string[];
         RunTimes: string[];
         Interval: string;
-    };
-    export interface IRawStorage {
+    }
+export interface IRawStorage {
         StorageKind: string;
         FriendlyName: string;
         Path: string;
@@ -362,30 +461,30 @@ import { Node } from './DataModels/Node';
         PrimaryPassword: string;
         SecondaryUserName: string;
         SecondaryPassword: string;
-    };
+    }
 
-    export interface IRawNodeDeactivationTaskId {
+export interface IRawNodeDeactivationTaskId {
         Id: string;
         NodeDeactivationTaskType: string;
     }
 
-    export interface IRawNodeHealthState {
+export interface IRawNodeHealthState {
         Name: string;
         Id: IRawId;
         AggregatedHealthState: string;
     }
 
-    export interface IRawNodeHealth extends IRawHealth {
+export interface IRawNodeHealth extends IRawHealth {
         Name: string;
     }
 
-    export interface IRawNodeLoadInformation {
+export interface IRawNodeLoadInformation {
         NodeName: string;
         NodeLoadMetricInformation: IRawNodeLoadMetricInformation[];
     }
 
 
-    export interface IRawNodeLoadMetricInformation {
+export interface IRawNodeLoadMetricInformation {
         Name: string;
         NodeCapacity: number;
         NodeLoad: number;
@@ -395,23 +494,25 @@ import { Node } from './DataModels/Node';
         NodeRemainingBufferedCapacity: number;
     }
 
-    export interface IRawParameter {
+export interface IRawParameter {
         Key: string;
         Value: string;
     }
 
-    export interface IRawPartition {
+export interface IRawPartition {
         ServiceKind: string;
         PartitionInformation: IRawPartitionInformation;
         TargetReplicaSetSize: number;
         MinReplicaSetSize: number;
+        AuxiliaryReplicaCount: number;
         InstanceCount: number;
         HealthState: string;
         PartitionStatus: string;
         CurrentConfigurationEpoch: IRawConfigurationEpoch;
+        MinInstanceCount: number;
     }
 
-    export interface IRawPartitionDescription {
+export interface IRawPartitionDescription {
         PartitionScheme: string;
         Count: number;
         Names: string[];
@@ -419,17 +520,17 @@ import { Node } from './DataModels/Node';
         HighKey: string;
     }
 
-    export interface IRawPartitionHealth extends IRawHealth {
+export interface IRawPartitionHealth extends IRawHealth {
         PartitionId: string;
         ReplicaHealthStates: IRawReplicaHealthState[];
     }
 
-    export interface IRawPartitionHealthState {
+export interface IRawPartitionHealthState {
         PartitionId: string;
         AggregatedHealthState: string;
     }
 
-    export interface IRawPartitionInformation {
+export interface IRawPartitionInformation {
         Id: string;
         ServicePartitionKind: string;
 
@@ -441,68 +542,98 @@ import { Node } from './DataModels/Node';
         Name: string;
     }
 
-    export interface IRawPartitionLoadInformation {
+export interface IRawPartitionLoadInformation {
         PartitionId: string;
         PrimaryLoadMetricReports: IRawLoadMetricReport[];
         SecondaryLoadMetricReports: IRawLoadMetricReport[];
     }
 
-    export interface IRawLoadMetricReport {
+export interface IRawLoadMetricReport {
         Name: string;
         Value: string;
         LastReportedUtc: string;
     }
 
-    export interface IRawConfigurationEpoch {
+export interface IRawConfigurationEpoch {
         ConfigurationVersion: number;
         DataLossVersion: number;
     }
 
-    export interface IRawReplicaHealth extends IRawHealth {
+export interface IRawReplicaHealth extends IRawHealth {
         Kind: string;
         PartitionId: string;
         ReplicaId: string;
         InstanceId: string;
     }
 
-    export interface IRawDeployedReplica {
-        Address: string;
-        CodePackageName: string;
+export interface IRawDeployedReplica {
+    Address: string;
+    CodePackageName: string;
+    InstanceId: string;
+    LastInBuildDurationInSeconds: string;
+    ReplicaId: string;
+    PartitionId: string;
+    ReplicaRole: string;
+    ReplicaStatus: string;
+    ServiceKind: string;
+    ServiceManifestVersion: string;
+    ServiceName: string;
+    ServiceTypeName: string;
+    ServicePackageActivationId: string;
+}
+
+
+
+export interface IRawDeployedReplicaDetail {
+    PartitionId: string;
+    InstanceId: string;
+    ReplicaId: string;
+    ReadStatus: string;
+    WriteStatus: string;
+    CurrentServiceOperation: string;
+    CurrentServiceOperationStartTimeUtc: string;
+    CurrentReplicatorOperation: string;
+    ReportedLoad: IRawLoadMetricReport[];
+    ReplicatorStatus: IRawReplicatorStatus;
+    ReplicaStatus: IRawDeployedReplicaStatus;
+}
+
+export interface IRawReplicaInfo extends IRawDeployedReplicaDetail {
+    DeployedServiceReplica: IRawDeployedStatefulServiceReplicaInfo;
+}
+
+export interface IRawInstanceInfo extends IRawDeployedReplicaDetail {
+    DeployedServiceReplicaInstance: IRawDeployedStatelessServiceInstanceInfo;
+}
+export interface IRawSharedReplicaOrInstanceInfo {
+    ServiceName: string;
+    ServiceTypeName: string;
+    ServiceManifestName: string;
+    CodePackageName: string;
+    PartitionId: string;
+    ReplicaStatus: string; // TODO
+    Address: string;
+    ServicePackageActivationId: string;
+    HostProcessId: string;
+}
+
+export interface IRawDeployedStatefulServiceReplicaInfo extends IRawSharedReplicaOrInstanceInfo {
+    ReplicaId: string;
+    ReplicaRole: string; // TODO
+}
+
+export interface IRawDeployedStatelessServiceInstanceInfo extends IRawSharedReplicaOrInstanceInfo{
         InstanceId: string;
-        LastInBuildDurationInSeconds: string;
-        ReplicaId: string;
-        PartitionId: string;
-        ReplicaRole: string;
-        ReplicaStatus: string;
-        ServiceKind: string;
-        ServiceManifestVersion: string;
-        ServiceName: string;
-        ServiceTypeName: string;
-        ServicePackageActivationId: string;
     }
 
-    export interface IRawDeployedReplicaDetail {
-        PartitionId: string;
-        InstanceId: string;
-        ReplicaId: string;
-        ReadStatus: string;
-        WriteStatus: string;
-        CurrentServiceOperation: string;
-        CurrentServiceOperationStartTimeUtc: string;
-        CurrentReplicatorOperation: string;
-        ReportedLoad: IRawLoadMetricReport[];
-        ReplicatorStatus: IRawReplicatorStatus;
-        ReplicaStatus: IRawDeployedReplicaStatus;
-    }
-
-    export interface IRawDeployedReplicaStatus {
+export interface IRawDeployedReplicaStatus {
         Kind: string;
         DatabaseRowCountEstimate: string;
         DatabaseLogicalSizeEstimate: string;
         StatusDetails: string;
     }
 
-    export class IRawReplicatorStatus {
+export class IRawReplicatorStatus {
         Kind: string;
         IsInBuild: boolean;
         LastCopyOperationReceivedTimeUtc: string;
@@ -513,7 +644,7 @@ import { Node } from './DataModels/Node';
         RemoteReplicators: IRawRemoteReplicatorStatus[];
     }
 
-    export class IRawReplicatorQueueStatus {
+export class IRawReplicatorQueueStatus {
         QueueUtilizationPercentage: string;
         QueueMemorySize: boolean;
         FirstSequenceNumber: string;
@@ -522,7 +653,7 @@ import { Node } from './DataModels/Node';
         LastSequenceNumber: string;
     }
 
-    export class IRawRemoteReplicatorStatus {
+export class IRawRemoteReplicatorStatus {
         ReplicaId: string;
         IsInBuild: boolean;
         LastAcknowledgementProcessedTimeUtc: string;
@@ -533,19 +664,19 @@ import { Node } from './DataModels/Node';
         RemoteReplicatorAcknowledgementStatus: IRemoteReplicatorAcknowledgementStatus;
     }
 
-    export interface IRemoteReplicatorAcknowledgementStatus {
+export interface IRemoteReplicatorAcknowledgementStatus {
         ReplicationStreamAcknowledgementDetail: IRemoteReplicatorAcknowledgementDetail;
         CopyStreamAcknowledgementDetail: IRemoteReplicatorAcknowledgementDetail;
     }
 
-    export interface IRemoteReplicatorAcknowledgementDetail {
+export interface IRemoteReplicatorAcknowledgementDetail {
         AverageReceiveDuration: string;
         AverageApplyDuration: string;
         NotReceivedCount: string;
         ReceivedAndNotAppliedCount: string;
     }
 
-    export interface IRawReplicaOnPartition {
+export interface IRawReplicaOnPartition {
         Address: string;
         HealthState: string;
         ReplicaId: string;
@@ -557,14 +688,14 @@ import { Node } from './DataModels/Node';
         ServiceKind: string;
     }
 
-    export interface IRawReplicaHealthState {
+export interface IRawReplicaHealthState {
         ServiceKind: string;
         PartitionId: string;
         ReplicaId: string;
         AggregatedHealthState: string;
     }
 
-    export interface IRawService {
+export interface IRawService {
         Id: string;
         ServiceKind: string;
         Name: string;
@@ -576,64 +707,114 @@ import { Node } from './DataModels/Node';
         IsServiceGroup: boolean;
     }
 
-    export interface IRawServiceCorrelationDescription {
+export interface IRawServiceCorrelationDescription {
         ServiceName: string;
         Scheme: string;
     }
 
-    export interface IRawServicePlacementPolicy {
+export interface IRawServicePlacementPolicy {
         Type: string;
         DomainName?: string;
     }
 
-    export interface IRawServiceDescription {
-        ServiceKind: string;
-        ApplicationName: string;
-        ServiceName: string;
-        ServiceTypeName: string;
-        InitializationData: number[];
-        PartitionDescription: IRawPartitionDescription;
-        InstanceCount: number;
-        TargetReplicaSetSize: number;
-        MinReplicaSetSize: number;
-        HasPersistedState: boolean;
-        PlacementConstraints: string;
-        CorrelationScheme: IRawServiceCorrelationDescription[];
-        ReplicaRestartWaitDurationSeconds: number;
-        ServiceLoadMetrics: IRawServiceLoadMetricDescription[];
-        ServicePlacementPolicies: IRawServicePlacementPolicy[];
-        Flags: string;
-        DefaultMoveCost: string;
-        IsDefaultMoveCostSpecified: boolean;
-        ServicePackageActivationMode: string;
-        ServiceDnsName: string;
+export interface IRawServiceDescription {
+    ServiceKind: string;
+
+    ApplicationName: string;
+    ServiceName: string;
+    ServiceTypeName: string;
+    InitializationData: number[];
+    PartitionDescription: IRawPartitionDescription;
+    PlacementConstraints: string;
+    CorrelationScheme: IRawServiceCorrelationDescription[];
+    ServiceLoadMetrics: IRawServiceLoadMetricDescription[];
+    ServicePlacementPolicies: IRawServicePlacementPolicy[];
+    DefaultMoveCost: string;
+    IsDefaultMoveCostSpecified: boolean;
+    ServicePackageActivationMode: string;
+    ServiceDnsName: string;
+
+    // scaling policies
+    // tags required to place
+    // tags required to run
+
+    // STATEFUL
+    TargetReplicaSetSize: number;
+    MinReplicaSetSize: number;
+    AuxiliaryReplicaCount: number;
+    HasPersistedState: boolean;
+    ReplicaRestartWaitDurationSeconds: number;
+    QuorumLossWaitDurationSeconds: number;
+    StandByReplicaKeepDurationSeconds: number;
+    ServicePlacementTimeLimitSeconds: number;
+    DropSourceReplicaOnMove: boolean;
+    ReplicaLifecycleDescription: any; // TODO
+
+    // STATELESS
+    InstanceCount: number;
+    MinInstanceCount: number;
+    MinInstancePercentage: number;
+    InstanceCloseDelayDurationSeconds: number;
+    InstanceLifecycleDescription: any; // TODO
+    InstanceRestartWaitDurationSeconds: number;
+
+    Flags: string;
     }
 
-    export interface IRawServiceHealth extends IRawHealth {
+export interface IRawStatefulServiceDescription extends IRawServiceDescription {
+    TargetReplicaSetSize: number;
+    MinReplicaSetSize: number;
+    HasPersistedState: boolean;
+    ReplicaRestartWaitDurationSeconds: number;
+    QuorumLossWaitDurationSeconds: number;
+    StandByReplicaKeepDurationSeconds: number;
+    ServicePlacementTimeLimitSeconds: number;
+    DropSourceReplicaOnMove: boolean;
+    ReplicaLifecycleDescription: any; // TODO
+}
+
+export interface IRawReplicaLifecycleDescription {
+    IsSingletonReplicaMoveAllowedDuringUpgrade: boolean;
+    RestoreReplicaLocationAfterUpgrade: boolean;
+}
+
+export interface IRawStatelessServiceDescription extends IRawServiceDescription {
+    InstanceCount: number;
+    MinInstanceCount: number;
+    MinInstancePercentage: number;
+    InstanceCloseDelayDurationSeconds: number;
+    InstanceLifecycleDescription: any; // TODO
+    InstanceRestartWaitDurationSeconds: number;
+}
+
+
+export interface IRawServiceHealth extends IRawHealth {
         Name: string;
         PartitionHealthStates: IRawPartitionHealthState[];
+        HealthStatistics: IRawHealthStatistics;
     }
 
-    export interface IRawServiceHealthState {
+export interface IRawServiceHealthState {
         ServiceName: string;
         AggregatedHealthState: string;
     }
 
-    export interface IRawServiceLoadMetricDescription {
+export interface IRawServiceLoadMetricDescription {
         Name: string;
         Weight: string;
         PrimaryDefaultLoad: number;
         SecondaryDefaultLoad: number;
+        AuxiliaryDefaultLoad?: number;
     }
 
-    export interface IRawServiceType {
+export interface IRawServiceType {
         ServiceTypeDescription: IRawServiceTypeDescription;
         ServiceManifestVersion: string;
         ServiceManifestName: string;
         IsServiceGroup: boolean;
     }
 
-    export interface IRawServiceTypeDescription {
+export interface IRawServiceTypeDescription {
         IsStateful: boolean;
         ServiceTypeName: string;
         PlacementConstraints: string;
@@ -641,23 +822,26 @@ import { Node } from './DataModels/Node';
         UseImplicitHost: boolean;
     }
 
-    export interface IRawUpgradeDomainProgress {
+export interface IRawUpgradeDomainProgress {
         DomainName: string;
         NodeUpgradeProgressList: IRawNodeUpgradeProgress[];
     }
 
-    export interface IRawNodeUpgradeProgress {
+export interface IRawNodeUpgradeProgress {
         NodeName: string;
         UpgradePhase: string;
         PendingSafetyChecks: IRawSafetyCheckDescription[];
+        UpgradeDuration: string;
     }
 
-    export interface IRawSafetyCheckDescription {
+export interface IRawSafetyCheckDescription {
+    SafetyCheck: {
         Kind: string;
         PartitionId: string;
-    }
+    };
+}
 
-    export interface IRawApplicationEvent {
+export interface IRawApplicationEvent {
         PartitionKey: string;
         RowKey: string;
         EventType: string;
@@ -666,14 +850,14 @@ import { Node } from './DataModels/Node';
         Timestamp: string;
     }
 
-    export interface IRawDeployedServicePackage {
+export interface IRawDeployedServicePackage {
         Name: string;
         Version: string;
         Status: string;
         ServicePackageActivationId: string;
     }
 
-    export interface IRawDeployedApplication {
+export interface IRawDeployedApplication {
         Id: string;
         LogDirectory: string;
         Name: string;
@@ -683,18 +867,18 @@ import { Node } from './DataModels/Node';
         WorkDirectory: string;
     }
 
-    export interface IRawDeployedServicePackageHealth extends IRawHealth {
+export interface IRawDeployedServicePackageHealth extends IRawHealth {
         ApplicationName: string;
         ServiceManifestName: string;
         NodeName: string;
         ServicePackageActivationId: string;
     }
 
-    export interface IRawContainerLogs {
+export interface IRawContainerLogs {
         Content: string;
     }
 
-    export interface IRawDeployedCodePackage {
+export interface IRawDeployedCodePackage {
         Name: string;
         Version: string;
         ServiceManifestName: string;
@@ -708,7 +892,7 @@ import { Node } from './DataModels/Node';
         HostIsolationMode: string;
     }
 
-    export interface IRawCodePackageEntryPoint {
+export interface IRawCodePackageEntryPoint {
         EntryPointLocation: string;
         InstanceId: string;
         ProcessId: string;
@@ -718,7 +902,7 @@ import { Node } from './DataModels/Node';
         CodePackageEntryPointStatistics: IRawCodePackageEntryPointStatistics;
     }
 
-    export interface IRawCodePackageEntryPointStatistics {
+export interface IRawCodePackageEntryPointStatistics {
         LastExitCode: number;
         LastActivationTime: string;
         LastExitTime: string;
@@ -732,12 +916,12 @@ import { Node } from './DataModels/Node';
         ContinuousExitFailureCount: number;
     }
 
-    export interface IRawAadMetadata {
+export interface IRawAadMetadata {
         type: string;
-        metadata: IRawAadMetadataMetadata;  //Yes, there's a Metadata property on what's returned from GetAadMetadata.
+        metadata: IRawAadMetadataMetadata;  // Yes, there's a Metadata property on what's returned from GetAadMetadata.
     }
 
-    export interface IRawAadMetadataMetadata {
+export interface IRawAadMetadataMetadata {
         login: string;
         authority: string;
         client: string;
@@ -746,7 +930,7 @@ import { Node } from './DataModels/Node';
         tenant: string;
     }
 
-    export interface IRawCreateServiceFromTemplateDescription {
+export interface IRawCreateServiceFromTemplateDescription {
         ServiceName: string;
         ServiceTypeName: string;
         ApplicationName: string;
@@ -754,20 +938,22 @@ import { Node } from './DataModels/Node';
         InitializationData: any[];
     }
 
-    export interface IRawUpdateServiceDescription {
+export interface IRawUpdateServiceDescription {
         ServiceKind?: number;
         Flags?: number;
         TargetReplicaSetSize?: number;
         MinReplicaSetSize?: number;
+        AuxiliaryReplicaCount?: number;
         InstanceCount?: number;
         ReplicaRestartWaitDurationSeconds?: number;
         QuorumLossWaitDurationSeconds?: number;
         StandByReplicaKeepDurationSeconds?: number;
     }
 
-    export interface IRawCreateServiceDescription extends IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription {
+export interface IRawCreateServiceDescription extends IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription {
         PartitionDescription: IRawPartitionDescription;
         TargetReplicaSetSize: number;
+        AuxiliaryReplicaCount: number;
         HasPersistedState: boolean;
         PlacementConstraints: string;
         CorrelationScheme: IRawServiceCorrelationDescription[];
@@ -776,81 +962,81 @@ import { Node } from './DataModels/Node';
         ServiceDnsName: string;
     }
 
-    export interface IRawHealthStatistics {
+export interface IRawHealthStatistics {
         HealthStateCountList: IRawHealthStatisticsItem[];
     }
 
-    export interface IRawHealthStatisticsItem {
+export interface IRawHealthStatisticsItem {
         EntityKind: string;
         HealthStateCount: IRawHealthStateCount;
     }
 
-    export interface IRawHealthStateCount {
+export interface IRawHealthStateCount {
         OkCount: number;
         ErrorCount: number;
         WarningCount: number;
     }
 
-    export interface IRawRepositoryCredential {
+export interface IRawRepositoryCredential {
         RepositoryUserName?: string;
         RepositoryPassword?: string;
         PasswordEncrypted?: boolean;
     }
 
-    export interface IRawCreateComposeDeploymentDescription {
+export interface IRawCreateComposeDeploymentDescription {
         DeploymentName: string;
         ComposeFileContent: string;
         RepositoryCredential?: IRawRepositoryCredential;
     }
 
-    export interface IRawImageStoreContent {
+export interface IRawImageStoreContent {
         StoreFiles: IRawStoreFile[];
         StoreFolders: IRawStoreFolder[];
     }
 
-    export interface IRawStoreFile {
+export interface IRawStoreFile {
         FileSize: string;
         FileVersion: IRawFileVersion;
         ModifiedDate: string;
         StoreRelativePath: string;
     }
 
-    export interface IRawFileVersion {
+export interface IRawFileVersion {
         VersionNumber: string;
     }
 
-    export interface IRawStoreFolder {
+export interface IRawStoreFolder {
         StoreRelativePath: string;
         FileCount: string;
     }
 
-    export interface IRawStoreFolderSize {
+export interface IRawStoreFolderSize {
         StoreRelativePath: string;
         FolderSize: string;
     }
 
-    export interface IRawClusterVersion {
+export interface IRawClusterVersion {
         Version: string;
     }
 
-    export interface IRawNodeImpact {
-        NodeName : string;
+export interface IRawNodeImpact {
+        NodeName: string;
         ImpactLevel	?: number;
     }
 
-    export interface IRawNodeRepairImpactDescription {
-        Kind : string;
-        NodeImpactList : IRawNodeImpact[]
+export interface IRawNodeRepairImpactDescription {
+        Kind: string;
+        NodeImpactList: IRawNodeImpact[];
     }
 
-    export interface IRawNodeRepairTargetDescription {
-        Kind : string;
-        NodeNames : string[]
+export interface IRawNodeRepairTargetDescription {
+        Kind: string;
+        NodeNames: string[];
     }
-    export interface IRawRepairTaskHistory {
+export interface IRawRepairTaskHistory {
         CreatedUtcTimestamp ?: string;
         ClaimedUtcTimestamp ?: string;
-        PreparingUtcTimestamp ?: string; 
+        PreparingUtcTimestamp ?: string;
         ApprovedUtcTimestamp ?: string;
         ExecutingUtcTimestamp ?: string;
         RestoringUtcTimestamp ?: string;
@@ -861,17 +1047,17 @@ import { Node } from './DataModels/Node';
         RestoringHealthCheckEndUtcTimestamp ?: string;
     }
 
-    export interface IRawRepairTask {
+export interface IRawRepairTask {
         TaskId: string;
         Version?: string;
         Description?: string;
         State: string;
         Flags?: number;
         Action: string;
-        Target?: IRawNodeRepairTargetDescription; 
+        Target?: IRawNodeRepairTargetDescription;
         Executor?: string;
         ExecutorData?: string;
-        Impact?: IRawNodeRepairImpactDescription; 
+        Impact?: IRawNodeRepairImpactDescription;
         ResultStatus?: string;
         ResultCode?: number;
         ResultDetail?: string;
@@ -884,51 +1070,20 @@ import { Node } from './DataModels/Node';
         ResultDetails?: string;
     }
 
-
-    export interface INodesStatusDetails {
-        nodeType: string;
-        statusTypeCounts: Record<string, number>;
-        warningCount: number;
-        errorCount: number;
-    }
-
-    export class NodeStatusDetails implements INodesStatusDetails {
-        public nodeType: string;
-        public statusTypeCounts: Record<string, number>;
-        public warningCount: number = 0;
-        public errorCount: number = 0;
-        public totalCount: number = 0;
-        public constructor(nodeType: string) {
-            this.nodeType = nodeType;
-
-            //easiest way to initialize all possible values with Enum strings
-            this.statusTypeCounts = {};
-            this.statusTypeCounts[NodeStatusConstants.Up] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Down] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Enabling] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Disabling] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Disabled] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Unknown] = 0;
-            this.statusTypeCounts[NodeStatusConstants.Invalid] = 0;
-        }
-
-        public add(node: Node): void {
-            this.statusTypeCounts[node.raw.NodeStatus]++;
-            this.totalCount++;
-            if (node.healthState.text === HealthStateConstants.Warning) {
-                this.warningCount++;
-            }
-            if (node.healthState.text === HealthStateConstants.Error) {
-                this.errorCount++;
-            }
-        }
-    }
-
-    export enum NodeStatus {
+export enum NodeStatus {
         Invalid = 0,
         Up = 1,
         Down = 2,
         Enabling = 3,
         Disabling = 4,
         Disabled = 5
+    }
+
+export interface IRawApplicationNameInfo{
+        Id: string;
+        Name: string;
+    }
+export interface IRawServiceNameInfo{
+        Id: string;
+        Name: string;
     }

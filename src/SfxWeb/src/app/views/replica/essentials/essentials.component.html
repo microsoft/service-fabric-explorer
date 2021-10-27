@@ -1,40 +1,26 @@
 <div *ngIf="replica">
-    <div class="table-responsive detail-pane essen-pane">
-        <table class="essen-table" role="presentation">
-            <tr>
-                <th>Id</th>
-                <th>Node Name</th>
-            </tr>
-            <tr>
-                <td [title]="replica.id">{{replica.id}}<app-clip-board text="replica.id"></app-clip-board></td>
-                <td><a [routerLink]="replica.nodeViewPath">{{replica.raw.NodeName}}</a><app-clip-board text="replica.raw.NodeName"></app-clip-board></td>
-            </tr>
-            <tr>
-                <th>Health State</th>
-                <th>Status</th>
-            </tr>
-            <tr *ngIf="replica.healthState">
-                <td><app-health-badge [badgeClass]="replica.healthState.badgeClass" [text]="replica.healthState.text"></app-health-badge></td>
-                <td>{{replica.raw.ReplicaStatus}}</td>
-            </tr>
-            <tr>
-                <th *ngIf="replica.isStatefulService">Role</th>
-                <th></th>
-            </tr>
-            <tr>
-                <td *ngIf="replica.isStatefulService">{{replica.role}}</td>
-                <td></td>
-            </tr>
-        </table>
-        <div *ngIf="nodeView"><a [routerLink]="nodeView">View on Node</a></div>
-    </div>
 
-    <div class="detail-pane">    
-        <app-replica-address [address]="replica.address"></app-replica-address>
-    </div>
+  <div class="tile-container">
+    <app-essential-health-tile [healthState]="replica?.healthState" *ngIf="replica && replica.isInitialized"
+      class="long" [listItems]="essentialItems">
+      <ng-template appEssentialTemplate id="status">
+        <app-status-resolver [status]="replica.raw.ReplicaStatus"></app-status-resolver>
+      </ng-template>
+      <ng-template appEssentialTemplate id="nodeName">
+        <a [routerLink]="replica.nodeViewPath">{{replica.raw.NodeName}}</a>
+      </ng-template>
+      <ng-template appEssentialTemplate id="viewNode">
+        <a [routerLink]="nodeView">View on Node</a>
+      </ng-template>
+    </app-essential-health-tile>
+  </div>
 
-    <div class="detail-pane essen-pane" *ngIf="replica.health.isInitialized">
-        <h4>Unhealthy Evaluations</h4>
-        <detail-list [list]="replica.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></detail-list>
-    </div>
+  <div class="detail-pane" data-cy="address">
+    <app-replica-address [address]="replica.address"></app-replica-address>
+  </div>
+
+  <div class="detail-pane essen-pane" *ngIf="replica.health.isInitialized">
+    <h4>Health Evaluations</h4>
+    <app-health-viewer [healthyEvaluations]="replica.health.healthEvents" [unhealthyEvaluations]="replica.health.unhealthyEvaluations" ></app-health-viewer>
+  </div>
 </div>

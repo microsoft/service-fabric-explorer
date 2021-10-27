@@ -1,0 +1,7 @@
+<div style="border-top: 1px solid gray;">
+  <div *ngIf="tooManySafetyChecks">
+    Safety Check information is not loaded by default when there are more then 5 safey checks.
+  </div>
+  <app-detail-list [list]="safetyChecksWithData" [listSettings]="settings"></app-detail-list>
+</div>
+

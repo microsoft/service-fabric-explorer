@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { ServiceBaseController } from '../ServiceBase';
+import { ServiceBaseControllerDirective } from '../ServiceBase';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
@@ -10,17 +10,17 @@ import { map, mergeMap } from 'rxjs/operators';
   templateUrl: './manifest.component.html',
   styleUrls: ['./manifest.component.scss']
 })
-export class ManifestComponent extends ServiceBaseController {
+export class ManifestComponent extends ServiceBaseControllerDirective {
   serviceManifest: string;
 
-  constructor(protected data: DataService, injector: Injector) { 
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   setup() {}
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    let app = this.service.parent;
+    const app = this.service.parent;
     return this.data.getServiceType(app.raw.TypeName, app.raw.TypeVersion, this.service.description.raw.ServiceTypeName, true, messageHandler)
         .pipe(mergeMap(serviceType => {
             return serviceType.manifest.refresh(messageHandler).pipe(map(() => {

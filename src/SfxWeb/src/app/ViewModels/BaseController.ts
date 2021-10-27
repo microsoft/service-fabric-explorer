@@ -1,4 +1,4 @@
-import { OnDestroy, OnInit, Injector } from '@angular/core';
+import { OnDestroy, OnInit, Injector, Directive } from '@angular/core';
 import { Observable, Subscription, of } from 'rxjs';
 import { IResponseMessageHandler } from '../Common/ResponseMessageHandlers';
 import { ActivatedRoute, Router, ActivatedRouteSnapshot } from '@angular/router';
@@ -6,7 +6,8 @@ import { mergeMap } from 'rxjs/operators';
 import { RefreshService } from '../services/refresh.service';
 import { MessageService } from '../services/message.service';
 
-export abstract class BaseController implements  OnInit, OnDestroy {
+@Directive()
+export abstract class BaseControllerDirective implements  OnInit, OnDestroy {
 
     subscriptions: Subscription = new Subscription();
 
@@ -17,26 +18,24 @@ export abstract class BaseController implements  OnInit, OnDestroy {
 
     constructor(public injector: Injector) {}
 
-    
+
     ngOnInit(){
          this.activatedRoute = this.injector.get<ActivatedRoute>(ActivatedRoute);
          this.refreshService = this.injector.get<RefreshService>(RefreshService);
          this.messageService = this.injector.get<MessageService>(MessageService);
          this.router = this.injector.get<Router>(Router);
          this.subscriptions.add(this.activatedRoute.params.subscribe( () => {
-             //get params
+             // get params
              this.getParams(this.activatedRoute.snapshot);
 
              this.setup();
 
-             this.subscriptions.add(this.common().pipe(mergeMap( () => this.refresh())).subscribe(
-                 () => {
-                    this.refreshService.insertRefreshSubject("current controller" + this.getClassName(), this.refresh.bind(this, this.messageService));
-                 }
-             ));
-        }))
+             this.subscriptions.add(this.refreshService.refreshSubject.subscribe(() => this.fullRefresh().subscribe()));
 
-        console.log(this)
+             this.subscriptions.add(this.fullRefresh().subscribe());
+        }));
+
+         console.log(this);
     }
 
     getClassName() {
@@ -53,9 +52,11 @@ export abstract class BaseController implements  OnInit, OnDestroy {
 
     ngOnDestroy(){
         this.subscriptions.unsubscribe();
-        this.refreshService.removeRefreshSubject("current controller" + this.getClassName());
     }
 
+    fullRefresh(): Observable<any> {
+      return this.common().pipe(mergeMap(() => this.refresh(this.messageService)));
+    }
 
     /*
      Optional to get and set params from URL. called before common

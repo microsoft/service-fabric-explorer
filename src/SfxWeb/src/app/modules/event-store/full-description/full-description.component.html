@@ -1,12 +1,15 @@
 
 <div style="margin-left:20px">
+    <div style="float: left">
+        <app-clip-board [text]="copyText"></app-clip-board>
+    </div>
     EventInstanceId: {{item.raw.eventInstanceId}}
     <br>
     Additional Properties:
     <div style="margin-left: 20px;">
         <table>
             <tr *ngFor="let item of item.raw.eventProperties | keyvalue">
-                <td style="border: 0px; padding: 5px 5px 0px 0px;">{{item.key}}</td> <td style="border: 0px; padding: 5px 5px 0px 0px;">: {{item.value}}</td>
+                <td style="border: 0px; padding: 5px 5px 0px 0px;">{{item.key}}</td> <td class="value-wrapper">: {{item.value}}</td>
             </tr>
         </table>
     </div>

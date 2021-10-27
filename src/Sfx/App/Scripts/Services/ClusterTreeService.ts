@@ -141,6 +141,8 @@ module Sfx {
                         return systemApp.services.mergeClusterHealthStateChunk(clusterHealthChunk);
                     }
                 };
+            }).catch(err => {
+                systemAppNode = null;
             });
 
 
@@ -163,7 +165,11 @@ module Sfx {
                     });
                 }
                 return this.$q.all([getAppsPromise, getNodesPromise, systemNodePromise]).then(() => {
-                    return [appsNode, nodesNode, systemAppNode];
+                    let nodes = [appsNode, nodesNode];
+                    if(systemAppNode) {
+                        nodes.push(systemAppNode);
+                    }
+                    return nodes;
                 });
             });
         }
@@ -182,6 +188,9 @@ module Sfx {
                                     suffix = "Down (Stopped)";
                                 } else {
                                     suffix = node.raw.NodeStatus;
+                                    if (node.raw.NodeDeactivationInfo.NodeDeactivationIntent !== NodeStatusConstants.Invalid) {
+                                        suffix += "->" + node.raw.NodeDeactivationInfo.NodeDeactivationIntent;
+                                    }
                                 }
                             }
 

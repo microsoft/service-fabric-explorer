@@ -1,3 +1,24 @@
-.margined {
-  margin: 10px;
+
+.button-container {
+  margin-top: 5px;
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: center;
+}
+
+.button-container > * {
+  margin: 5px;
+  margin-right: 5px;
+}
+
+.rotated {
+  transform: rotate(180deg)
+}
+
+.flip-button {
+  display: flex;
+  align-items: center;
+  padding: 0 9px;
+  height: 29px;
 }

@@ -10,25 +10,25 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class PartitionDisableBackUpComponent implements OnInit {
 
-  cleanBackup: boolean = false;
+  cleanBackup = false;
 
   constructor(public dialogRef: MatDialogRef<PartitionDisableBackUpComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) { }
+              @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) { }
 
   ngOnInit() {
   }
 
   ok(){
     this.data.data.enable(this.cleanBackup).subscribe( () => {
-      this.dialogRef.close(false);          
+      this.dialogRef.close(false);
     },
     err => {
-      console.log(err)
-    })
+      console.log(err);
+    });
   }
 
   cancel() {
-    this.dialogRef.close(false);    
+    this.dialogRef.close(false);
   }
 
 }

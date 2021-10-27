@@ -1,19 +1,20 @@
-﻿import { DataModelBase, IDecorators } from './Base';
-import { IRawHealthEvaluation, IRawLoadMetricInformation, IRawUpgradeDescription, IRawMonitoringPolicy, IRawUpgradeDomain } from '../RawDataTypes';
+import { DataModelBase, IDecorators } from './Base';
+import { IRawHealthEvaluation, IRawLoadMetricInformation, IRawUpgradeDescription, IRawMonitoringPolicy, IRawUpgradeDomain, IRawClusterUpgradeDescription, IUpgradeUnitInfo } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { UpgradeDomainStateRegexes, UpgradeDomainStateNames, BadgeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
+import { checkForJson } from 'src/app/Utils/healthUtils';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
-    public viewPathUrl: string = "";
+    public viewPathUrl = '';
     public children: any[];
     public displayName: string;
-    public constructor(raw: IRawHealthEvaluation, public level: number = 0, parent: HealthEvaluation = null, viewPathUrl: string = "") {
+    public constructor(raw: IRawHealthEvaluation, public level: number = 0, parent: HealthEvaluation = null, viewPathUrl: string = '') {
         super(null, raw, parent);
         this.viewPathUrl = viewPathUrl;
     }
@@ -24,7 +25,7 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
 
     public get kind(): string {
         if (this.level > 0) {
-            return Array(this.level * 4).join(" ")  + this.raw.Kind;
+            return Array(this.level * 4).join(' ')  + this.raw.Kind;
         } else {
             return this.raw.Kind;
         }
@@ -35,30 +36,34 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
         return null;
     }
 
+    public get sourceTimeStamp(): string {
+        return this.raw?.UnhealthyEvent?.SourceUtcTimestamp;
+    }
+
     public get description(): string {
-        let description = "";
+        let description = '';
         if (this.raw.UnhealthyEvent) {
-            description = (this.raw.Description + "\n" + this.raw.UnhealthyEvent.Description).trim();
+            description = (checkForJson(this.raw.Description) + '\n' + checkForJson(this.raw.UnhealthyEvent.Description)).trim();
         } else {
-            description = this.raw.Description.trim();
+            description = checkForJson(this.raw.Description).trim();
         }
 
         // Temp solution for rendering a link instead of plain text
         // Long term solution would be an independent service which provides troubleshooting tips based on health report
-        return description.replace("http://aka.ms/sfhealth", "<a href='https://aka.ms/sfhealth' target='_blank'>https://aka.ms/sfhealth</a>");
+        return description.replace('http://aka.ms/sfhealth', '<a href=\'https://aka.ms/sfhealth\' target=\'_blank\'>https://aka.ms/sfhealth</a>');
     }
 }
 
 export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformation> {
     public decorators: IDecorators = {
         showList: [
-            "Name",
-            "BalancingThreshold",
-            "Action",
-            "IsBalancedBefore",
-            "DeviationBefore",
-            "IsBalancedAfter",
-            "DeviationAfter"
+            'Name',
+            'BalancingThreshold',
+            'Action',
+            'IsBalancedBefore',
+            'DeviationBefore',
+            'IsBalancedAfter',
+            'DeviationAfter'
         ]
     };
 
@@ -77,11 +82,11 @@ export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformati
     }
 
     public get isResourceGovernanceMetric(): boolean {
-        return this.raw.Name.startsWith("servicefabric:/_");
+        return this.raw.Name.startsWith('servicefabric:/_');
     }
 
     public get isSystemMetric(): boolean {
-        return this.raw.Name.startsWith("__") && this.raw.Name.endsWith("__");
+        return this.raw.Name.startsWith('__') && this.raw.Name.endsWith('__');
     }
 
     public get isLoadMetric(): boolean {
@@ -93,11 +98,11 @@ export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformati
     }
 
     public get loadCapacityRatioString(): string {
-        return (this.loadCapacityRatio * 100).toFixed(1) + "%";
+        return (this.loadCapacityRatio * 100).toFixed(1) + '%';
     }
 
     public get displayName(): string {
-        return this.name.replace(/^servicefabric:\/_/, "Reserved ");
+        return this.name.replace(/^servicefabric:\/_/, 'Reserved ');
     }
 
     public constructor(data: DataService, raw: IRawLoadMetricInformation) {
@@ -105,14 +110,14 @@ export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformati
     }
 }
 
-export class UpgradeDescription extends DataModelBase<IRawUpgradeDescription> {
+export class UpgradeDescription extends DataModelBase<IRawUpgradeDescription | IRawClusterUpgradeDescription> {
     public decorators: IDecorators = {
-        hideList: ["Name", "TargetApplicationTypeVersion", "UpgradeKind", "RollingUpgradeMode"]
+        hideList: ['Name', 'TargetApplicationTypeVersion', 'UpgradeKind', 'RollingUpgradeMode']
     };
 
     public monitoringPolicy: MonitoringPolicy;
 
-    public constructor(data: DataService, raw: IRawUpgradeDescription) {
+    public constructor(data: DataService, raw: IRawUpgradeDescription | IRawClusterUpgradeDescription) {
         super(data, raw);
 
         this.monitoringPolicy = new MonitoringPolicy(this.data, raw.MonitoringPolicy);
@@ -122,24 +127,24 @@ export class UpgradeDescription extends DataModelBase<IRawUpgradeDescription> {
 export class MonitoringPolicy extends DataModelBase<IRawMonitoringPolicy> {
     public decorators: IDecorators = {
         decorators: {
-            "HealthCheckWaitDurationInMilliseconds": {
-                displayName: (name) => "Health Check Wait Duration",
+            HealthCheckWaitDurationInMilliseconds: {
+                displayName: (name) => 'Health Check Wait Duration',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             },
-            "HealthCheckStableDurationInMilliseconds": {
-                displayName: (name) => "Health Check Stable Duration",
+            HealthCheckStableDurationInMilliseconds: {
+                displayName: (name) => 'Health Check Stable Duration',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             },
-            "HealthCheckRetryTimeoutInMilliseconds": {
-                displayName: (name) => "Health Check Retry Timeout",
+            HealthCheckRetryTimeoutInMilliseconds: {
+                displayName: (name) => 'Health Check Retry Timeout',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             },
-            "UpgradeTimeoutInMilliseconds": {
-                displayName: (name) => "Upgrade Timeout",
+            UpgradeTimeoutInMilliseconds: {
+                displayName: (name) => 'Upgrade Timeout',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             },
-            "UpgradeDomainTimeoutInMilliseconds": {
-                displayName: (name) => "Upgrade Domain Timeout",
+            UpgradeDomainTimeoutInMilliseconds: {
+                displayName: (name) => 'Upgrade Domain Timeout',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             }
         }
@@ -150,9 +155,13 @@ export class MonitoringPolicy extends DataModelBase<IRawMonitoringPolicy> {
     }
 }
 
-export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain> {
-    public constructor(data: DataService, raw: IRawUpgradeDomain) {
+export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain | IUpgradeUnitInfo > {
+    public prefix = 'UD : ';
+    public constructor(data: DataService, raw: IRawUpgradeDomain | IUpgradeUnitInfo, nodeByNode: boolean = false) {
         super(data, raw);
+        if (nodeByNode) {
+          this.prefix = '';
+        }
     }
 
     public get stateName(): string {
@@ -160,6 +169,8 @@ export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain> {
             return UpgradeDomainStateNames.Completed;
         } else if (UpgradeDomainStateRegexes.InProgress.test(this.raw.State)) {
             return UpgradeDomainStateNames.InProgress;
+        } else if (UpgradeDomainStateRegexes.Failed.test(this.raw.State)) {
+          return UpgradeDomainStateNames.Failed;
         }
 
         return UpgradeDomainStateNames.Pending;
@@ -170,6 +181,8 @@ export class UpgradeDomain extends DataModelBase<IRawUpgradeDomain> {
             return BadgeConstants.BadgeOK;
         } else if (UpgradeDomainStateRegexes.InProgress.test(this.raw.State)) {
             return BadgeConstants.BadgeWarning;
+        }else if (UpgradeDomainStateRegexes.Failed.test(this.raw.State)) {
+          return BadgeConstants.BadgeError;
         }
         return BadgeConstants.BadgeUnknown;
     }

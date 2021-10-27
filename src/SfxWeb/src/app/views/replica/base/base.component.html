@@ -1,4 +1,4 @@
-<app-navbar [tabs]="tabs" type="Replica" [name]="replicaId" [actions]="replica?.actions"></app-navbar>
+<app-navbar [tabs]="tabs" [type]="replica?.isStatelessService ? 'Instance' : 'Replica'" [name]="replicaId" [actions]="replica?.actions"></app-navbar>
 <div class="main-view">
     <div class="flex-child">
         <router-outlet></router-outlet>

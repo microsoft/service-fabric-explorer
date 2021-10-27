@@ -92,6 +92,12 @@ module Sfx {
             this.$scope.clusterTimelineGenerator = new ClusterTimelineGenerator();
             this.refresh();
 
+            this.$scope.clusterManifest.ensureInitialized().then( () => {
+                if(!this.$scope.clusterManifest.isBRSEnabled) {
+                    delete this.tabs["backupPolicies"]
+                }
+            })
+
             this.$scope.nodes.refresh().then( () => {
                 this.$scope.clusterManifest.ensureInitialized().then( ()=> {
                     //if < 5 seed nodes display warning for SFRP

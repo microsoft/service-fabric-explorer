@@ -1,6 +1,8 @@
 import { Injectable } from '@angular/core';
 import { SystemApplication, Application } from '../Models/DataModels/Application';
-import { ApplicationTypeGroupCollection, ApplicationCollection, BackupPolicyCollection, ServiceTypeCollection, DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, ReplicaOnPartitionCollection, PartitionCollection, ClusterEventList, NodeEventList, ApplicationEventList, ServiceEventList, PartitionEventList, ReplicaEventList, CorrelatedEventList } from '../Models/DataModels/collections/Collections';
+import { ApplicationTypeGroupCollection, ApplicationCollection, BackupPolicyCollection, ServiceTypeCollection,
+         DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, ReplicaOnPartitionCollection,
+         PartitionCollection, ClusterEventList, NodeEventList, ApplicationEventList, ServiceEventList, PartitionEventList, ReplicaEventList, CorrelatedEventList, EventListBase } from '../Models/DataModels/collections/Collections';
 import { RoutesService } from './routes.service';
 import { MessageService } from './message.service';
 import { TelemetryService } from './telemetry.service';
@@ -30,7 +32,13 @@ import { ServiceCollection } from '../Models/DataModels/collections/ServiceColle
 import { IDataModelCollection } from '../Models/DataModels/collections/CollectionBase';
 import { DeployedApplicationCollection } from '../Models/DataModels/collections/DeployedApplicationCollection';
 import { MatDialog } from '@angular/material/dialog';
-
+import { RepairTaskCollection } from '../Models/DataModels/collections/RepairTaskCollection';
+import { ApplicationEvent, ClusterEvent, FabricEventBase, NodeEvent, PartitionEvent, ReplicaEvent, ServiceEvent } from '../Models/eventstore/Events';
+import { IEventStoreData } from '../modules/event-store/event-store/event-store.component';
+import { SettingsService } from './settings.service';
+import { RepairTask } from '../Models/DataModels/repairTask';
+import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
+import groupBy from 'lodash/groupBy';
 @Injectable({
   providedIn: 'root'
 })
@@ -45,9 +53,10 @@ export class DataService {
   public nodes: NodeCollection;
   public imageStore: ImageStore;
   public backupPolicies: BackupPolicyCollection;
+  public repairCollection: RepairTaskCollection;
 
   public readOnlyHeader: boolean =  null;
-  public clusterNameMetadata: string =  null;
+  public clusterNameMetadata: string = null;
 
   constructor(
     public routes: RoutesService,
@@ -66,6 +75,7 @@ export class DataService {
     this.nodes = new NodeCollection(this);
     this.systemApp = new SystemApplication(this);
     this.backupPolicies = new BackupPolicyCollection(this);
+    this.repairCollection = new RepairTaskCollection(this);
    }
 
   public actionsEnabled(): boolean {
@@ -77,7 +87,7 @@ export class DataService {
   }
 
   public isAdvancedModeEnabled(): boolean {
-    return this.storage.getValueBoolean(Constants.AdvancedModeKey, false)
+    return this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
   }
 
   public getClusterHealth(
@@ -128,7 +138,7 @@ export class DataService {
 
   public getSystemServices(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ServiceCollection> {
       return this.getSystemApp(false, messageHandler).pipe(mergeMap(app => app.services.ensureInitialized(forceRefresh, messageHandler)
-      ),map(app => app.services));
+      ), map(() => this.systemApp.services));
   }
 
   public getApps(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationCollection> {
@@ -142,7 +152,7 @@ export class DataService {
   }
 
   public getNodes(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<NodeCollection> {
-      return this.nodes.ensureInitialized(forceRefresh, messageHandler);
+      return this.nodes.ensureInitialized(forceRefresh, messageHandler).pipe(map(() => this.nodes));
   }
 
   public getNode(name: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<Node> {
@@ -152,7 +162,7 @@ export class DataService {
   }
 
   public getAppTypeGroups(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationTypeGroupCollection> {
-    return this.appTypeGroups.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.appTypeGroups))
+    return this.appTypeGroups.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.appTypeGroups));
   }
 
   public getAppTypeGroup(name: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationTypeGroup> {
@@ -163,7 +173,7 @@ export class DataService {
 
   public getAppType(name: string, version: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationType> {
     return this.getAppTypeGroup(name, false, messageHandler).pipe(map(appTypeGroup => {
-        let filteredAppTypes = appTypeGroup.appTypes.filter(appType => appType.raw.Version === version);
+        const filteredAppTypes = appTypeGroup.appTypes.filter(appType => appType.raw.Version === version);
         return filteredAppTypes[0];
     }));
   }
@@ -181,7 +191,7 @@ export class DataService {
   }
 
   public getServices(appId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ServiceCollection> {
-    let getAppPromise = appId === Constants.SystemAppId
+    const getAppPromise = appId === Constants.SystemAppId
         ? this.getSystemApp(false, messageHandler)
         : this.getApp(appId, false, messageHandler);
 
@@ -214,6 +224,7 @@ export class DataService {
       }));
   }
 
+  // tslint:disable-next-line:max-line-length
   public getReplicaOnPartition(appId: string, serviceId: string, partitionId: string, replicaId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ReplicaOnPartition> {
       return this.getReplicasOnPartition(appId, serviceId, partitionId, false, messageHandler).pipe(mergeMap(collection => {
           return this.tryGetValidItem(collection, IdGenerator.replica(replicaId), forceRefresh, messageHandler);
@@ -222,7 +233,7 @@ export class DataService {
 
   public getDeployedApplications(nodeName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedApplicationCollection> {
       return this.getNode(nodeName, false, messageHandler).pipe(mergeMap(node => {
-          return node.deployedApps.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => node.deployedApps))
+          return node.deployedApps.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => node.deployedApps));
       }));
   }
 
@@ -238,30 +249,35 @@ export class DataService {
       }));
   }
 
+  // tslint:disable-next-line:max-line-length
   public getDeployedServicePackage(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedServicePackage> {
       return this.getDeployedServicePackages(nodeName, appId, false, messageHandler).pipe(mergeMap(collection => {
           return this.tryGetValidItem(collection, IdGenerator.deployedServicePackage(servicePackageName, servicePackageActivationId), forceRefresh, messageHandler);
       }));
   }
 
+  // tslint:disable-next-line:max-line-length
   public getDeployedCodePackages(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedCodePackageCollection> {
       return this.getDeployedServicePackage(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(deployedServicePackage => {
           return deployedServicePackage.deployedCodePackages.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => deployedServicePackage.deployedCodePackages));
       }));
   }
 
+  // tslint:disable-next-line:max-line-length
   public getDeployedCodePackage(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, codePackageName: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedCodePackage> {
       return this.getDeployedCodePackages(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(collection => {
           return this.tryGetValidItem(collection, IdGenerator.deployedCodePackage(codePackageName), forceRefresh, messageHandler);
       }));
   }
 
+// tslint:disable-next-line:max-line-length
   public getDeployedReplicas(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedReplicaCollection> {
       return this.getDeployedServicePackage(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(deployedServicePackage => {
           return deployedServicePackage.deployedReplicas.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => deployedServicePackage.deployedReplicas));
       }));
   }
 
+    // tslint:disable-next-line:max-line-length
   public getDeployedReplica(nodeName: string, appId: string, servicePackageName: string, servicePackageActivationId: string, partitionId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<DeployedReplica> {
     return this.getDeployedReplicas(nodeName, appId, servicePackageName, servicePackageActivationId, false, messageHandler).pipe(mergeMap(collection => {
         return this.tryGetValidItem(collection, IdGenerator.deployedReplica(partitionId), forceRefresh, messageHandler);
@@ -270,36 +286,98 @@ export class DataService {
 
   public refreshBackupPolicies(messageHandler: IResponseMessageHandler): Observable<any> {
     return this.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
-        if(this.clusterManifest.isBackupRestoreEnabled){
+        if (this.clusterManifest.isBackupRestoreEnabled){
             return this.backupPolicies.refresh(messageHandler);
         }else{
-            return of(null)
+            return of(null);
         }
-      }))
+      }));
   }
 
-  public createClusterEventList(): ClusterEventList {
-    return new ClusterEventList(this);
+    private addFabricEventData<T extends EventListBase<any>, S extends FabricEventBase>(data: IEventStoreData<T, S>){
+        data.listSettings = data.eventsList.settings;
+        data.getEvents = () => data.eventsList.collection.map(event => event.raw);
+        data.setDateWindow = (startDate: Date, endDate: Date) => data.eventsList.setDateWindow(startDate, endDate);
     }
 
-    public createNodeEventList(nodeName?: string): NodeEventList {
-        return new NodeEventList(this, nodeName);
+    public getRepairTasksData(settings: SettingsService): IEventStoreData<RepairTaskCollection, RepairTask>{
+        return {
+            eventsList: this.repairCollection,
+            timelineGenerator: new RepairTaskTimelineGenerator(),
+            displayName: 'Repair Tasks',
+            listSettings: settings.getNewOrExistingCompletedRepairTaskListSettings(),
+            getEvents: () => this.repairCollection.collection
+        };
     }
 
-    public createApplicationEventList(applicationId?: string): ApplicationEventList {
-        return new ApplicationEventList(this, applicationId);
+    public getClusterEventData(): IEventStoreData<ClusterEventList, ClusterEvent>{
+        const list = new ClusterEventList(this);
+        const d = {
+            eventsList : list,
+            timelineGenerator : new ClusterTimelineGenerator(),
+            displayName : 'Cluster',
+        };
+
+        this.addFabricEventData<ClusterEventList, ClusterEvent>(d);
+        return d;
     }
 
-    public createServiceEventList(serviceId?: string): ServiceEventList {
-        return new ServiceEventList(this, serviceId);
+    public getNodeEventData(nodeName?: string): IEventStoreData<NodeEventList, NodeEvent>{
+        const list = new NodeEventList(this, nodeName);
+        const d = {
+            eventsList: list,
+            timelineGenerator: new NodeTimelineGenerator(),
+            displayName: nodeName ? nodeName : 'Nodes',
+        };
+
+        this.addFabricEventData<NodeEventList, NodeEvent>(d);
+        return d;
     }
 
-    public createPartitionEventList(partitionId?: string): PartitionEventList {
-        return new PartitionEventList(this, partitionId);
+    public getApplicationEventData(applicationId?: string): IEventStoreData<ApplicationEventList, ApplicationEvent> {
+        const list = new ApplicationEventList(this, applicationId);
+        const d = {
+            eventsList : list,
+            timelineGenerator : applicationId ? new ApplicationTimelineGenerator() : null,
+            displayName : applicationId ? applicationId : 'Apps',
+        };
+
+        this.addFabricEventData<ApplicationEventList, ApplicationEvent>(d);
+        return d;
     }
 
-    public createReplicaEventList(partitionId: string, replicaId?: string): ReplicaEventList {
-        return new ReplicaEventList(this, partitionId, replicaId);
+    public getServiceEventData(serviceId?: string): IEventStoreData<ServiceEventList, ServiceEvent> {
+        const list = new ServiceEventList(this, serviceId);
+        const d = {
+            eventsList : list,
+            displayName : serviceId
+        };
+
+        this.addFabricEventData<ServiceEventList, ServiceEvent>(d);
+        return d;
+    }
+
+    public getPartitionEventData(partitionId?: string): IEventStoreData<PartitionEventList, PartitionEvent> {
+        const list = new PartitionEventList(this, partitionId);
+        const d = {
+            eventsList : list,
+            timelineGenerator : new PartitionTimelineGenerator(),
+            displayName : partitionId
+        };
+
+        this.addFabricEventData<PartitionEventList, PartitionEvent>(d);
+        return d;
+    }
+
+    public getReplicaEventData(partitionId: string, replicaId?: string): IEventStoreData<ReplicaEventList, ReplicaEvent> {
+        const list = new ReplicaEventList(this, partitionId, replicaId);
+        const d = {
+            eventsList : list,
+            displayName : replicaId
+        };
+
+        this.addFabricEventData<ReplicaEventList, ReplicaEvent>(d);
+        return d;
     }
 
     public createCorrelatedEventList(eventInstanceId: string) {
@@ -307,43 +385,34 @@ export class DataService {
     }
 
   private tryGetValidItem<T extends IDataModel<any>>(collection: IDataModelCollection<T>, uniqueId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<any> {
-    let item = collection.find(uniqueId);
+    const item = collection.find(uniqueId);
     if (item) {
         return item.ensureInitialized(forceRefresh, messageHandler);
     } else {
-        return throwError(null);
+      return throwError('This item could not be found');
     }
-  } 
+  }
 
   private preprocessHealthChunkData(clusterHealthChunk: IClusterHealthChunk): IClusterHealthChunk {
     // Move system app to be a standalone object to match the tree structure
     clusterHealthChunk.SystemApplicationHealthStateChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.filter(
         appHealthStateChunk => appHealthStateChunk.ApplicationName === Constants.SystemAppName)[0];
 
-    let deployedApps: IDeployedApplicationHealthStateChunk[] = [];
+    const deployedApps: IDeployedApplicationHealthStateChunk[] = [];
 
     // Add application name to deployed application health chunk
-    clusterHealthChunk.ApplicationHealthStateChunks.Items.forEach(appHealthStateChunk => 
+    clusterHealthChunk.ApplicationHealthStateChunks.Items.forEach(appHealthStateChunk =>
       appHealthStateChunk.DeployedApplicationHealthStateChunks.Items.forEach(deployedApp => {
             deployedApp.ApplicationName = appHealthStateChunk.ApplicationName;
             deployedApps.push(deployedApp);
         }));
 
-    // Assign deployed apps under their belonging nodes
-    let nodeDeployedAppsGroups = deployedApps.reduce( (previous, current) => { 
-        if( current.NodeName in previous){
-            previous[current.NodeName].push(current);
-        }else{
-            previous[current.NodeName] = [current]
-        }
-        return previous}, {});
-    
-    // TODO 
-    //let nodeDeployedAppsGroups = _.groupBy(deployedApps, deployedApp => deployedApp.NodeName);
+    // TODO
+    const nodeDeployedAppsGroups = groupBy(deployedApps, deployedApp => deployedApp.NodeName);
     Object.keys(nodeDeployedAppsGroups).forEach(key => {
         const group = nodeDeployedAppsGroups[key];
 
-        let nodeHealthChunk = clusterHealthChunk.NodeHealthStateChunks.Items.find(chunk => chunk.NodeName === key);
+        const nodeHealthChunk = clusterHealthChunk.NodeHealthStateChunks.Items.find(chunk => chunk.NodeName === key);
         if (nodeHealthChunk) {
             nodeHealthChunk.DeployedApplicationHealthStateChunks = {
                 Items: group,

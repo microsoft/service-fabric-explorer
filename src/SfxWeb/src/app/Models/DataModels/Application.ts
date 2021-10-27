@@ -1,32 +1,34 @@
-﻿import { IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState, IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo } from '../RawDataTypes';
+import { IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState,
+         IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo, IRawUpgradeDomainProgress } from '../RawDataTypes';
 import { DataModelBase, IDecorators } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { ServiceTypeCollection, ApplicationBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IApplicationHealthStateFilter } from '../HealthChunkRawDataTypes';
-import { AppStatusConstants, Constants, HealthStateConstants, UpgradeDomainStateNames } from 'src/app/Common/Constants';
+import { AppStatusConstants, ClusterUpgradeStates, Constants, HealthStateConstants, UpgradeDomainStateNames, UpgradeDomainStateRegexes } from 'src/app/Common/Constants';
 import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
 import { HealthBase } from './HealthEvent';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { HealthEvaluation, UpgradeDescription, UpgradeDomain } from './Shared';
 import { Utils } from 'src/app/Utils/Utils';
-import { Observable, forkJoin } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { Observable, forkJoin, of } from 'rxjs';
+import { map, catchError } from 'rxjs/operators';
 import { HealthUtils } from 'src/app/Utils/healthUtils';
 import { ServiceCollection } from './collections/ServiceCollection';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
-import   isEmpty from 'lodash/isEmpty';
+import isEmpty from 'lodash/isEmpty';
 import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
-//-----------------------------------------------------------------------------
+import { RoutesService } from 'src/app/services/routes.service';
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class Application extends DataModelBase<IRawApplication> {
     public decorators: IDecorators = {
         decorators: {
-            "TypeName": {
+            TypeName: {
                 displayValueInHtml: (value) => HtmlUtils.getLinkHtml(value, this.appTypeViewPath)
             }
         }
@@ -66,19 +68,19 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getAppViewPath(this.raw.TypeName, this.id);
+        return RoutesService.getAppViewPath(this.raw.TypeName, this.id);
     }
 
     public get appTypeViewPath(): string {
         if (this.raw.TypeName === Constants.SystemAppTypeName) {
-            return this.data.routes.getSystemAppsViewPath();
+            return RoutesService.getSystemAppsViewPath();
         }
-        return this.data.routes.getAppTypeViewPath(this.raw.TypeName);
+        return RoutesService.getAppTypeViewPath(this.raw.TypeName);
     }
 
     public delete(): Observable<any> {
-        let compose = this.raw.ApplicationDefinitionKind === Constants.ComposeApplicationDefinitionKind;
-        let action = compose ? this.data.restClient.deleteComposeApplication(this.id) : this.data.restClient.deleteApplication(this.id);
+        const compose = this.raw.ApplicationDefinitionKind === Constants.ComposeApplicationDefinitionKind;
+        const action = compose ? this.data.restClient.deleteComposeApplication(this.id) : this.data.restClient.deleteApplication(this.id);
 
         return action.pipe(map(() => {
             this.cleanUpApplicationReplicas();
@@ -103,11 +105,7 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
-        return this.data.restClient.getApplication(this.id, messageHandler);
-    }
-
-    public removeAdvancedActions(): void {
-        this.actions.collection = this.actions.collection.filter(action => ["enableApplicationBackup", "disableApplicationBackup", "suspendApplicationBackup", "suspendApplicationBackup"].indexOf(action.name) === -1);
+        return this.data.restClient.getApplication(this.id, this.data.readOnlyHeader, messageHandler);
     }
 
     private setUpActions(): void {
@@ -116,12 +114,12 @@ export class Application extends DataModelBase<IRawApplication> {
         }
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
-            "deleteApplication",
-            "Delete Application",
-            "Deleting...",
+            'deleteApplication',
+            'Delete Application',
+            'Deleting...',
             () => this.delete(),
             () => true,
-            "Confirm Application Deletion",
+            'Confirm Application Deletion',
             `Delete application ${this.name} from cluster ${window.location.host}?`,
             this.name));
     }
@@ -132,20 +130,23 @@ export class Application extends DataModelBase<IRawApplication> {
         }
     }
 
-    //TODO TEST AND FIND OUT WHAT THIS IS
+    // TODO TEST AND FIND OUT WHAT THIS IS
     private cleanUpApplicationReplicas() {
         this.data.getNodes(true)
             .subscribe(nodes => {
-                let replicas = [];
+                const replicas = [];
 
-                let replicaQueries = nodes.collection.map((node) =>
+                const replicaQueries = nodes.collection.map((node) =>
                     this.data.restClient.getReplicasOnNode(node.name, this.id)
-                        .subscribe((response) => response.forEach((replica) => {
-                            replicas.push({
-                                Replica: replica,
-                                NodeName: node.name
-                            });
-                        })));
+                        .pipe(catchError(err => of([])),
+                            map((response) => (response || []).forEach((replica) => {
+                                replicas.push({
+                                    Replica: replica,
+                                    NodeName: node.name
+                                });
+                            }))
+                        )
+                    );
 
                 forkJoin(replicaQueries).pipe(map(() => {
                     replicas.forEach(replicaInfo =>
@@ -154,7 +155,7 @@ export class Application extends DataModelBase<IRawApplication> {
                             replicaInfo.Replica.PartitionId,
                             replicaInfo.Replica.ReplicaId,
                             true /*force*/,
-                            ResponseMessageHandlers.silentResponseMessageHandler).subscribe() )
+                            ResponseMessageHandlers.silentResponseMessageHandler).subscribe() );
                 })).subscribe();
             });
     }
@@ -167,11 +168,11 @@ export class SystemApplication extends Application {
             Id: Constants.SystemAppId,
             Name: Constants.SystemAppName,
             TypeName: Constants.SystemAppTypeName,
-            TypeVersion: "",
+            TypeVersion: '',
             Parameters: [],
-            Status: "-1",
-            HealthState: "0",
-            ApplicationDefinitionKind: ""
+            Status: '-1',
+            HealthState: '0',
+            ApplicationDefinitionKind: ''
         });
 
         this.isInitialized = false;
@@ -183,7 +184,7 @@ export class SystemApplication extends Application {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getSystemAppsViewPath();
+        return RoutesService.getSystemAppsViewPath();
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
@@ -200,14 +201,14 @@ export class ApplicationHealth extends HealthBase<IRawApplicationHealth> {
     public deployedApplicationHealthStates: DeployedApplicationHealthState[] = [];
 
     public constructor(data: DataService, public parent: Application,
-        protected eventsHealthStateFilter: HealthStateFilterFlags,
-        protected servicesHealthStateFilter: HealthStateFilterFlags,
-        protected deployedApplicationsHealthStateFilter: HealthStateFilterFlags) {
+                       protected eventsHealthStateFilter: HealthStateFilterFlags,
+                       protected servicesHealthStateFilter: HealthStateFilterFlags,
+                       protected deployedApplicationsHealthStateFilter: HealthStateFilterFlags) {
         super(data, parent);
     }
 
     public get deploymentsHealthState(): ITextAndBadge {
-        let deployedAppsHealthStates = this.raw.DeployedApplicationHealthStates.map(app => this.valueResolver.resolveHealthStatus(app.AggregatedHealthState));
+        const deployedAppsHealthStates = this.raw.DeployedApplicationHealthStates.map(app => this.valueResolver.resolveHealthStatus(app.AggregatedHealthState));
         return this.valueResolver.resolveHealthStatus(Utils.max(deployedAppsHealthStates.map( healthState => HealthStateConstants.Values[healthState.text])).toString());
     }
 
@@ -224,7 +225,7 @@ export class ApplicationHealth extends HealthBase<IRawApplicationHealth> {
 
 export class DeployedApplicationHealthState extends DataModelBase<IRawDeployedApplicationHealthState> {
     public get viewPath(): string {
-        return this.data.routes.getDeployedAppViewPath(this.raw.NodeName, this.parent.parent.id);
+        return RoutesService.getDeployedAppViewPath(this.raw.NodeName, this.parent.parent.id);
     }
 
     public constructor(data: DataService, raw: IRawDeployedApplicationHealthState, public parent: ApplicationHealth) {
@@ -247,15 +248,15 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
     public decorators: IDecorators = {
         hideList: [
             // Unhealthy evaluations are displayed in seperate section in app detail page
-            "UnhealthyEvaluations"
+            'UnhealthyEvaluations'
         ],
         decorators: {
-            "UpgradeDurationInMilliseconds": {
-                displayName: (name) => "Upgrade Duration",
+            UpgradeDurationInMilliseconds: {
+                displayName: (name) => 'Upgrade Duration',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             },
-            "UpgradeDomainDurationInMilliseconds": {
-                displayName: (name) => "Upgrade Domain Duration",
+            UpgradeDomainDurationInMilliseconds: {
+                displayName: (name) => 'Upgrade Domain Duration',
                 displayValueInHtml: (value) => TimeUtils.getDuration(value)
             }
         }
@@ -274,7 +275,7 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
     }
 
     public get uniqueId(): string {
-        return this.name + "/" + this.raw.TypeName + "/" + this.raw.TargetApplicationTypeVersion;
+        return this.name + '/' + this.raw.TypeName + '/' + this.raw.TargetApplicationTypeVersion;
     }
 
     public get startTimestampUtc(): string {
@@ -293,19 +294,55 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
         return TimeUtils.getDuration(this.raw.UpgradeDomainDurationInMilliseconds);
     }
 
+
+    public get isUpgrading() {
+      return UpgradeDomainStateRegexes.InProgress.test(this.raw.UpgradeState) || this.raw.UpgradeState === ClusterUpgradeStates.RollingForwardPending;
+    }
+
+    public getUpgradeDomainTimeout(): number {
+      return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDescription.MonitoringPolicy.UpgradeDomainTimeoutInMilliseconds);
+    }
+
+    public get currentDomainTime(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDomainDurationInMilliseconds);
+    }
+
+    public getUpgradeTimeout(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDescription.MonitoringPolicy.UpgradeTimeoutInMilliseconds);
+    }
+
+    public get upgradeTime(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDurationInMilliseconds);
+    }
+
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplicationUpgradeProgress> {
         return this.data.restClient.getApplicationUpgradeProgress(this.parent.id, messageHandler);
     }
 
+    public get isUDUpgrade(): boolean {
+      return !this.raw.IsNodeByNode;
+    }
+
+    public get nodesInProgress() {
+      if (this.isUDUpgrade) {
+        return this.raw.CurrentUpgradeDomainProgress;
+      }else{
+        return this.raw.CurrentUpgradeUnitsProgress;
+      }
+    }
+
     protected updateInternal(): Observable<any> | void {
-                                                                                                //set depth to 0 and parent ref to null
+                                                                                                // set depth to 0 and parent ref to null
         this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);
 
-        let domains = this.raw.UpgradeDomains.map(ud => new UpgradeDomain(this.data, ud));
-        let groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
+        const upgradeUnits = this.isUDUpgrade ? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
+
+        const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud, !this.isUDUpgrade));
+        const groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
             .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.InProgress))
             .concat(domains.filter(ud => ud.name === this.raw.NextUpgradeDomain))
-            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain));
+            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain))
+            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Failed));
 
         this.upgradeDomains = groupedDomains;
 
@@ -317,7 +354,7 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
 export class ApplicationBackupConfigurationInfo extends DataModelBase<IRawApplicationBackupConfigurationInfo> {
     public decorators: IDecorators = {
         hideList: [
-            "action.Name",
+            'action.Name',
         ]
     };
 
@@ -326,17 +363,17 @@ export class ApplicationBackupConfigurationInfo extends DataModelBase<IRawApplic
         super(data, raw, parent);
         this.action = new IsolatedAction(
             data.dialog,
-            "deleteBackupPolicy",
-            "Delete Backup Policy",
-            "Deleting",
+            'deleteBackupPolicy',
+            'Delete Backup Policy',
+            'Deleting',
             {
                 backup: raw,
                 delete: () => data.restClient.deleteBackupPolicy(this.raw.PolicyName)
             },
             ViewBackupComponent,
             () => true,
-            () => this.data.restClient.getBackupPolicy(this.raw.PolicyName).pipe(map(data => {
-                this.action.data.backup = data;
+            () => this.data.restClient.getBackupPolicy(this.raw.PolicyName).pipe(map(resp => {
+                this.action.data.backup = resp;
             }))
             );
     }

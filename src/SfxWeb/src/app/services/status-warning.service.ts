@@ -36,23 +36,25 @@ export class StatusWarningService {
       return index;
   }
 
-  public addOrUpdateNotification(notification: IStatusWarning) {
-      const canBeShown = this.storage.getValueBoolean(this.getStorageId(notification.id), true);
-
-      if (canBeShown) {
-          let index = this.getIndex(notification.id);
-          if (index > -1) {
-              this.notifications[index] = notification;
-          }else {
-              this.notifications.push(notification);
-          }
-          this.notifications.sort((a, b) => a.priority > b.priority ? -1 : 1);
-      }
+  public addOrUpdateNotification(notification: IStatusWarning, ignoreCanBeShown = false) {
+    let canBeShown = this.storage.getValueBoolean(this.getStorageId(notification.id), true);
+    if (ignoreCanBeShown) {
+     canBeShown = true;
+    }
+    if (canBeShown) {
+        const index = this.getIndex(notification.id);
+        if (index > -1) {
+            this.notifications[index] = notification;
+        }else {
+            this.notifications.push(notification);
+        }
+        this.notifications.sort((a, b) => a.priority > b.priority ? -1 : 1);
+    }
   }
 
-  //hidePermanently will store the id in local storage so that it does not get put in the drop down again.
+  // hidePermanently will store the id in local storage so that it does not get put in the drop down again.
   public removeNotificationById(notificationId: string, hidePermanently = false) {
-      let index = this.getIndex(notificationId);
+      const index = this.getIndex(notificationId);
       if (index > -1) {
           this.notifications.splice(index, 1);
       }

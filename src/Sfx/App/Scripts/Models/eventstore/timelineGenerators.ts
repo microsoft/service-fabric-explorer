@@ -250,44 +250,101 @@ module Sfx {
     }
     export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         static readonly NodesDownLabel = "Node Down";
+        static readonly transitions = ['NodeDeactivateStarted'];
 
         consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-            let items = new vis.DataSet<vis.DataItem>();
+            const items = new vis.DataSet<vis.DataItem>();
 
-            let previousTransitions: Record<string, NodeEvent> = {};
-
+            // keep track of node up events incase we have nodes where they started in a down state before the selected time
+            // so that we know we need to chart a down node from the start of the timeline.
+            const nodeUpEvents: Record<string, NodeEvent> = {};
+            const previousTransitions: Record<string, NodeEvent> = {};
+            const nodeDownDataItems: Record<string, vis.DataItem> = {};
+    
+            let potentiallyMissingEvents = false;
+    
             events.forEach( event => {
-                if (event.category === "StateTransition") {
-                    //check for current state
-                    if (event.kind === "NodeDown") {
-                        const end = previousTransitions[event.nodeName] ? previousTransitions[event.nodeName].timeStamp : endOfRange.toISOString();
+                if (event.category === 'StateTransition') {
+                    // check for current state
+                    if (event.kind === 'NodeDown') {
+                        // we need to track for events that should not show up between node down and up events to know if data is missing
+                        const previousTransition = previousTransitions[event.nodeName];
+                        if (previousTransition && previousTransition.kind !== 'NodeUp') {
+                            potentiallyMissingEvents = true;
+                        }
+    
+                        // remove node up events if we find a node down event.
+                        if (event.nodeName in nodeUpEvents) {
+                            delete nodeUpEvents[event.nodeName];
+                        }
+                        const end = previousTransition ? previousTransition.timeStamp : endOfRange.toISOString();
                         const start = event.timeStamp;
-                        const label = "Node " + event.nodeName + " down";
-                        items.add({
+                        const label = `Node ${event.nodeName} down`;
+                        const item = {
                             id: event.eventInstanceId + label,
                             content: label,
-                            start: start,
-                            end: end,
+                            start,
+                            end,
                             group: NodeTimelineGenerator.NodesDownLabel,
-                            type: "range",
+                            type: 'range',
                             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
-                            className: "red"
-                        });
+                            className: 'red',
+                            subgroup: 'stack'
+                        };
+    
+                        if (event.eventProperties.NodeInstance in nodeDownDataItems) {
+                            items.add(nodeDownDataItems[event.eventProperties.NodeInstance]);
+                        }
+    
+                        nodeDownDataItems[event.eventProperties.NodeInstance] = item;
+                    }else if (event.kind === 'NodeDeactivateCompleted' && event.eventProperties.EffectiveDeactivateIntent === 'RemoveNode') {
+                        const nodeDownEvent = nodeDownDataItems[event.eventProperties.NodeInstance];
+    
+                        if (nodeDownEvent) {
+                          delete nodeDownDataItems[event.eventProperties.NodeInstance];
+                          potentiallyMissingEvents = true;
+                        }
                     }
-
-                    if (event.kind === "NodeUp") {
+    
+                    if (event.kind === 'NodeUp' && event.eventProperties.LastNodeDownAt !== '1601-01-01T00:00:00Z') {
                         previousTransitions[event.nodeName] = event;
+                        nodeUpEvents[event.nodeName] = event;
                     }
-                };
+                }
+    
+                if (NodeTimelineGenerator.transitions.indexOf(event.kind) > -1 ) {
+                    previousTransitions[event.nodeName] = event;
+                }
             });
-
-            let groups = new vis.DataSet<vis.DataGroup>([
-                {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel},
+    
+            Object.keys(nodeDownDataItems).forEach(key => {
+                const item = nodeDownDataItems[key];
+                items.add(item);
+            });
+            // add any left over node up events to the chart.
+            Object.keys(nodeUpEvents).forEach(key => {
+                const event = nodeUpEvents[key];
+                const label = `Node ${event.nodeName} down`;
+                items.add({
+                    id: event.eventInstanceId + label,
+                    content: label,
+                    start: event.eventProperties.LastNodeDownAt,
+                    end: event.timeStamp,
+                    group: NodeTimelineGenerator.NodesDownLabel,
+                    type: 'range',
+                    title: EventStoreUtils.tooltipFormat(event.eventProperties, event.eventProperties.LastNodeDownAt, event.timeStamp, label),
+                    className: 'red',
+                    subgroup: 'stack'
+                });
+            });
+    
+            const groups = new vis.DataSet<vis.DataGroup>([
+                {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {stack: true}},
             ]);
-
+    
             return {
                 groups,
-                items
+                items,
             };
         }
     }

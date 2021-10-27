@@ -1,8 +1,6 @@
 import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges, ChangeDetectionStrategy } from '@angular/core';
-// import * as vis from 'vis';
 import { ITimelineData } from 'src/app/Models/eventstore/timelineGenerators';
-import { Timeline, DataItem, DataSet, DataGroup, moment } from 'vis-timeline/standalone';
-
+import { Timeline, DataItem, DataGroup, moment, DataSet } from 'vis-timeline/standalone/esm';
 @Component({
   selector: 'app-event-store-timeline',
   templateUrl: './event-store-timeline.component.html',
@@ -13,17 +11,20 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
 
   @Input() events: ITimelineData;
 
-  @Input() fitOnDataChange: boolean = true;
-  @Input() displayMoveToStart: boolean = true;
-  @Input() displayMoveToEnd: boolean = true;
-  
-  public isUTC: boolean = false;
+  @Input() fitOnDataChange = true;
+  @Input() displayMoveToStart = true;
+  @Input() displayMoveToEnd = true;
 
-  private _timeline: Timeline;
-  private _start: Date;
-  private _end: Date;
-  private _oldestEvent: DataItem;
-  private _mostRecentEvent: DataItem;
+  public isUTC = false;
+
+  public showControls = false;
+
+  private timeline: Timeline;
+  private start: Date;
+  private end: Date;
+  private oldestEvent: DataItem;
+  private mostRecentEvent: DataItem;
+  private firstEventsSet = true;
 
   @ViewChild('visualization') container: ElementRef;
 
@@ -31,115 +32,127 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
   constructor() { }
 
   ngOnChanges() {
-    if(this._timeline)
-    this.updateList(this.events);
+    if (this.timeline) {
+        this.updateList(this.events);
+        this.firstEventsSet = false;
+    }
   }
 
   ngAfterViewInit() {
 
-    let groups = new DataSet<DataGroup>([]);
-    let items = new DataSet<DataItem>();
-  
+    const groups = new DataSet<DataGroup>([]);
+    const items = new DataSet<DataItem>();
+
     // create visualization
-    this._timeline = new Timeline(this.container.nativeElement, items, groups);
+    this.timeline = new Timeline(this.container.nativeElement, items, groups, {
+        locale: 'en_US'
+    });
     this.updateList(this.events);
   }
 
   public flipTimeZone() {
-    this._timeline.setOptions({
+    this.timeline.setOptions({
         moment: this.isUTC ? moment : moment.utc
-    })
-
-    this.isUTC = !this.isUTC;
+    });
   }
 
   public fitData() {
-    this._timeline.fit();
+    this.timeline.fit();
   }
 
   public fitWindow() {
-      this._timeline.setWindow(this._start, this._end);
+      this.timeline.setWindow(this.start, this.end);
   }
 
   public moveStart() {
-      this._timeline.moveTo(this._start);
+      this.timeline.moveTo(this.start);
   }
 
   public moveEnd() {
-      this._timeline.moveTo(this._end);
+      this.timeline.moveTo(this.end);
   }
 
   public moveToOldestEvent() {
-      if (this._oldestEvent) {
-          this._timeline.setWindow(this._oldestEvent.start, this._oldestEvent.end);
+      if (this.oldestEvent) {
+          this.timeline.setWindow(this.oldestEvent.start, this.oldestEvent.end);
       }
   }
 
   public moveToNewestEvent() {
-      if (this._mostRecentEvent) {
-          this._timeline.setWindow(this._mostRecentEvent.start, this._mostRecentEvent.end);
+      if (this.mostRecentEvent) {
+          this.timeline.setWindow(this.mostRecentEvent.start, this.mostRecentEvent.end);
       }
   }
 
-  public updateList(events: ITimelineData) {
-      if (events) {
-          this._timeline.setData({
-              groups: events.groups,
-              items: events.items
+    public updateList(events: ITimelineData) {
+        if (events.start) {
+            this.timeline.setOptions({
+                min: events.start,
             });
-          this._timeline.setOptions({
-              selectable: false,
-              margin: {
-                  item : {
-                      horizontal : -1 //this makes it so items dont stack up when zoomed out too far.,
-                  }
-              },
-              tooltip: {
-                  overflowMethod: "flip"
-              }, stack: true,
-              stackSubgroups: true,
-              maxHeight: "700px",
-              verticalScroll: true,
-              width: "95%"
-          });
-
-          if(this.fitOnDataChange){
-            this._timeline.fit();
-          }
-
-          if(events.start){
-            this._start = events.start;
-          }          
-          if(events.end){
-            this._end = events.end;
-            this._timeline.setOptions({
+            this.start = events.start;
+        }
+        if (events.end) {
+            this.end = events.end;
+            this.timeline.setOptions({
                 max: events.end,
             });
-          }
+        }
 
-          if (events.items.length > 0) {
-              let oldest = null;
-              let newest = null;
+        if (events) {
+            this.timeline.setData({
+                groups: events.groups,
+                items: events.items
+            });
 
-              events.items.forEach(item => {
-                  //cant easily grab the first elements of the collection, easier to set here
-                  if (!oldest  && !newest) {
-                      oldest = item;
-                      newest = item;
-                  }
-                  if (oldest.start > item.start) {
-                      oldest = item;
-                  }
-                  if (newest.end < item.end) {
-                      newest = item;
-                  }
-              });
-              this._mostRecentEvent = newest;
-              this._oldestEvent = oldest;
-          }
-      }else {
-          this._mostRecentEvent = null;
-          this._oldestEvent = null;
-      }
-  }
+            this.timeline.setOptions({
+                selectable: false,
+                margin: {
+                    item: {
+                        horizontal: -1 // this makes it so items dont stack up when zoomed out too far.,
+                    }
+                },
+                tooltip: {
+                    overflowMethod: 'flip'
+                }, stack: true,
+                stackSubgroups: true,
+                maxHeight: '700px',
+                verticalScroll: true,
+                width: '95%',
+                zoomMin: this.firstEventsSet ? 10800000 : 60000
+            });
+
+            if (this.fitOnDataChange) {
+                this.timeline.fit();
+            }
+
+            if (events.items.length > 0) {
+                let oldest = null;
+                let newest = null;
+
+                events.items.forEach(item => {
+                    // cant easily grab the first elements of the collection, easier to set here
+                    if (!oldest && !newest) {
+                        oldest = item;
+                        newest = item;
+                    }
+                    if (oldest.start > item.start) {
+                        oldest = item;
+                    }
+                    if (newest.end < item.end) {
+                        newest = item;
+                    }
+                });
+                this.mostRecentEvent = newest;
+                this.oldestEvent = oldest;
+            }
+        } else {
+            this.mostRecentEvent = null;
+            this.oldestEvent = null;
+            this.timeline.zoomOut(1);
+        }
+    }
+
+    flipShowControls() {
+        this.showControls = !this.showControls;
+    }
 }

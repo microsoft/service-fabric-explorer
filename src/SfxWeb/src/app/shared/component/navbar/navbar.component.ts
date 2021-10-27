@@ -1,20 +1,24 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy } from '@angular/core';
 import { ActionCollection } from 'src/app/Models/ActionCollection';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
-  styleUrls: ['./navbar.component.scss']
+  styleUrls: ['./navbar.component.scss'],
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent {
 
-  @Input() type: string = "";
-  @Input() name: string = "";
+  @Input() type = '';
+  @Input() name = '';
   @Input() tabs: ITab[] = [];
   @Input() actions: ActionCollection;
-  constructor() { }
+  @Input() showCopy = true;
+  constructor(private router: Router) { }
 
-  ngOnInit() {
+  navigateBySpaceBar(route: string) {
+    this.router.navigate([route]);
   }
 
 }

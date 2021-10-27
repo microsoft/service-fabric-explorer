@@ -6,12 +6,12 @@ import { DataModelBase, IDecorators } from './Base';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { IsolatedAction } from '../Action';
-import { ViewBackupComponent } from 'src/app/modules/backup-restore/view-backup/view-backup.component';
+import { BackupinfoComponent } from 'src/app/views/partition/backupinfo/backupinfo.component';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class PartitionBackupInfo {
     public partitionBackupConfigurationInfo: PartitionBackupConfigurationInfo;
@@ -41,8 +41,8 @@ export class PartitionBackupInfo {
 export class PartitionBackupConfigurationInfo extends DataModelBase<IRawPartitionBackupConfigurationInfo> {
     public decorators: IDecorators = {
         hideList: [
-            "ServiceName",
-            "PartitionId"
+            'ServiceName',
+            'PartitionId'
         ]
     };
 
@@ -80,9 +80,9 @@ export class PartitionRestoreProgress extends DataModelBase<IRawRestoreProgressI
 export class PartitionBackup extends DataModelBase<IRawPartitionBackup> {
     public decorators: IDecorators = {
         hideList: [
-            "ApplicationName",
-            "ServiceName",
-            "PartitionInformation",
+            'ApplicationName',
+            'ServiceName',
+            'PartitionInformation',
         ]
     };
     public action: IsolatedAction;
@@ -94,8 +94,8 @@ export class PartitionBackup extends DataModelBase<IRawPartitionBackup> {
                 raw.BackupId,
                 raw.BackupId,
                 raw.BackupId,
-                {},
-                ViewBackupComponent,
+                raw,
+                BackupinfoComponent,
                 () => true
             );
         } else {

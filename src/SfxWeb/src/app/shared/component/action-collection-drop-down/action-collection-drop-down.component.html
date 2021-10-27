@@ -1,11 +1,11 @@
-<div ngbDropdown container="body">
-    <button class="simple-button" ngbDropdownToggle [ngClass]="{'tree-view': treeView}" (click)="$event.stopPropagation()"
-    aria-label="Possible commands to perform">{{treeView ? '' : ( (displayText || actionCollection.title) | uppercase)}}</button>
-    <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-        <div *ngFor="let action of actionCollection.collection">
+<div ngbDropdown [placement]="treeView ? 'left' : 'bottom-right' " #myDrop="ngbDropdown" (openChange)="closeChange($event)">
+    <button class="simple-button" ngbDropdownToggle [ngClass]="{'tree-view': treeView}" (click)="$event.stopPropagation()" tabindex="0" [attr.aria-haspopup]="false"
+        aria-label="Actions" placement="left" ngbTooltip="Possible commands to perform">{{treeView ? '' : ( (displayText || actionCollection.title))}}</button>
+    <div ngbDropdownMenu>
+        <div *ngFor="let action of actionCollection.collection; let last = last;">
             <button *ngIf="!action.isAdvanced || dataService.actionsAdvancedEnabled()" ngbDropdownItem
                 (click)="actionCollection.runWithTelemetry(action, 'ActionsButton')"
-                [disabled]="!action.canRun()">
+                [disabled]="!action.canRun()" (keydown.tab)="last ? myDrop.close() : null" >
                 {{action.title}}
             </button>
         </div>

@@ -1,24 +1,26 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { PartitionBaseController } from '../PartitionBase';
+import { PartitionBaseControllerDirective } from '../PartitionBase';
 import { DataService } from 'src/app/services/data.service';
-import { PartitionEventList } from 'src/app/Models/DataModels/collections/Collections';
 import { PartitionTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
+import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 
 @Component({
   selector: 'app-events',
   templateUrl: './events.component.html',
   styleUrls: ['./events.component.scss']
 })
-export class EventsComponent extends PartitionBaseController {
-  partitionEvents: PartitionEventList;
-  partitionTimeLineGenerator: PartitionTimelineGenerator;
+export class EventsComponent extends PartitionBaseControllerDirective {
 
-  constructor(protected data: DataService, injector: Injector) { 
+  listEventStoreData: IEventStoreData<any, any> [];
+
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   setup() {
-    this.partitionEvents = this.data.createPartitionEventList(this.partitionId);
-    this.partitionTimeLineGenerator = new PartitionTimelineGenerator();
+    this.listEventStoreData = [
+      this.data.getPartitionEventData(this.partitionId)
+    ];
   }
+
 }

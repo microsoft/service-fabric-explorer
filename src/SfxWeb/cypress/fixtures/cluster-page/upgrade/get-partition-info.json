@@ -1,0 +1,18 @@
+{
+    "ServiceKind": "Stateful",
+    "PartitionInformation": {
+        "ServicePartitionKind": "Int64Range",
+        "Id": "guidID",
+        "LowKey": "3689348814741910325",
+        "HighKey": "5534023222112865485"
+    },
+    "TargetReplicaSetSize": 3,
+    "MinReplicaSetSize": 2,
+    "HealthState": "Ok",
+    "PartitionStatus": "Ready",
+    "LastQuorumLossDurationInSeconds": "0",
+    "CurrentConfigurationEpoch": {
+        "ConfigurationVersion": "85899345920",
+        "DataLossVersion": "132399270145364138"
+    }
+}

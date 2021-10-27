@@ -1,14 +1,26 @@
 
-const config = require("./appsettings.json");
 const axios = require('axios');
 const { promises: fs } = require("fs");
+const fsBase = require("fs");
 
 const https = require("https");
 const express = require('express');
 const path = require('path');
+
+let config;
+try {
+    config = require("./localsettings.json");
+    console.log("config loaded from localSettings")
+} catch {
+    config = require("./appsettings.json");
+    console.log("config loaded from defaultSettings")
+}
+
 //get flags
 let recordRequest = process.argv.includes("-r");
 let replayRequest = process.argv.includes("-p");
+let serveSFXV1Files = process.argv.includes("-s");
+let stripEventSToreRequests = !process.argv.includes("-e");
 
 console.log("record requests : " + recordRequest);
 console.log("replay requests : " + replayRequest);
@@ -18,7 +30,7 @@ httpsAgent = null;
 if(config.TargetCluster.PFXLocation){
     httpsAgent = new https.Agent({
         rejectUnauthorized: false,
-        pfx: fs.readFileSync(config.TargetCluster.PFXLocation),
+        pfx: fsBase.readFileSync(config.TargetCluster.PFXLocation),
         passphrase: config.TargetCluster.PFXPassPhrase
       })
 }
@@ -80,19 +92,25 @@ const proxyRequest = async (req) => {
 }
 
 const app = express()
-const port = 2500
+const port = process.env.PORT || 2500;
 
 //need to be set to accept certs from secure clusters when certs cant be trusted
 //this is mainly for SFRP clusters to test against.
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
-app.use(express.static(__dirname + '/../Sfx/wwwroot/'))
+const basePath = __dirname +  serveSFXV1Files ? '../Sfx' : ''
+app.use(express.static(basePath + '/wwwroot/'))
 app.use(express.json())
 app.get('/', function(req, res) {
-    res.sendFile(path.join(__dirname + '/../Sfx/wwwroot/index.html'));
+    res.sendFile(path.join(basePath + 'wwwroot/index.html'));
 });
 app.all('/*', async (req, res) => {
     let resp = null;
+
+    if(stripEventSToreRequests) {
+        delete req.query['starttimeutc'];
+        delete req.query['endtimeutc'];
+    }
 
     if(replayRequest && await checkFile(req)){
         resp =  await loadRequest(req);

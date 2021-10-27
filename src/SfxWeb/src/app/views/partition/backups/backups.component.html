@@ -4,9 +4,12 @@
 </div>
 
 <div *ngIf="partition">
-    <div class="detail-pane essen-pane">
+    <div class="detail-pane essen-pane"  *ngIf="partition.partitionBackupInfo.latestPartitionBackup.collection.length > 0">
         <h4>Latest Backup</h4>
         <app-detail-view-part [data]="partition.partitionBackupInfo.latestPartitionBackup.collection[0]"></app-detail-view-part>
+        <div class="text-right">
+            <button (click)="restore()" class="solid-button">Restore</button>
+        </div>
     </div>
     
     <div *ngIf="partition && partition.partitionBackupInfo">
@@ -26,8 +29,18 @@
         </div>
     </div>
     
-    <div *ngIf="partition && partition.replicas.isInitialized" class="detail-pane essen-pane">
-        <detail-list [list]="partition.partitionBackupInfo.partitionBackupList.collection" [listSettings]="partitionBackupListSettings" ></detail-list>
+    <div *ngIf="partition" class="detail-pane essen-pane">
+        <app-detail-list [list]="backupList" [listSettings]="partitionBackupListSettings" >
+            <app-dual-date-picker [minDate]="minDate" [maxDate]="maxDate"
+            [currentStartDate]="startDate" [currentEndDate]="endDate" (dateChanged)="setNewDates($event)">
+            <div startTime>
+                <input type="time" [(ngModel)]="startTime" placeholder="HH:mm:ss" class="input-flat clear-disabled" ng-model-options="{ timezone: 'UTC' }" (change)="startTimeChange()" />
+            </div>
+            <div toTime>
+                <input type="time" [(ngModel)]="endTime" placeholder="HH:mm:ss" class="input-flat clear-disabled" ng-model-options="{ timezone: 'UTC' }" (change)="endTimeChange()" />
+            </div>
+        </app-dual-date-picker>
+        </app-detail-list>
     </div>
     
 </div>

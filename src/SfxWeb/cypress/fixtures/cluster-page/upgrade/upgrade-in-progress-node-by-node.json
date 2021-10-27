@@ -1,0 +1,92 @@
+{
+  "CodeVersion": "8.2.180.9494",
+  "ConfigVersion": "v2",
+  "UpgradeDomains": [
+  ],
+  "UpgradeUnits":
+      [
+        { "Name": "N000", "State": "Completed" },
+        { "Name": "N001", "State": "Pending" },
+        { "Name": "N002", "State": "Pending" },
+        { "Name": "N003", "State": "Pending" },
+        { "Name": "N004", "State": "Failed" },
+        { "Name": "N005", "State": "Completed" },
+        { "Name": "N006", "State": "Pending" },
+        { "Name": "N007", "State": "InProgress" },
+        { "Name": "N008", "State": "Failed" },
+        { "Name": "N009", "State": "Completed" },
+        { "Name": "N0010", "State": "Failed" },
+        { "Name": "N0011", "State": "Failed" },
+        { "Name": "N0012", "State": "InProgress" },
+        { "Name": "N0013", "State": "Pending" },
+        { "Name": "N0014", "State": "Pending" },
+        { "Name": "N0015", "State": "Pending" },
+        { "Name": "N0016", "State": "Failed" },
+        { "Name": "N0017", "State": "Pending" },
+        { "Name": "N0018", "State": "Pending" },
+        { "Name": "N0019", "State": "Completed" },
+        { "Name": "N0020", "State": "Completed" },
+        { "Name": "N0021", "State": "Pending" },
+        { "Name": "N0022", "State": "Failed" },
+        { "Name": "N0023", "State": "Completed" }
+
+      ]
+
+  ,
+  "UpgradeState": "RollingForwardPending",
+  "NextUpgradeDomain": "",
+  "RollingUpgradeMode": "UnmonitoredDeferred",
+  "UpgradeDescription": {
+      "CodeVersion": "8.2.180.9494",
+      "ConfigVersion": "v2",
+      "UpgradeKind": "Rolling",
+      "RollingUpgradeMode": "UnmonitoredDeferred",
+      "UpgradeReplicaSetCheckTimeoutInSeconds": 10,
+      "InstanceCloseDelayDurationInSeconds": 4294967295,
+      "ForceRestart": false,
+      "MonitoringPolicy": {
+          "FailureAction": "Manual",
+          "HealthCheckWaitDurationInMilliseconds": "PT0H0M0S",
+          "HealthCheckStableDurationInMilliseconds": "PT0H2M0S",
+          "HealthCheckRetryTimeoutInMilliseconds": "PT0H10M0S",
+          "UpgradeTimeoutInMilliseconds": "P10675199DT2H48M5.4775807S",
+          "UpgradeDomainTimeoutInMilliseconds": "P10675199DT2H48M5.4775807S"
+      },
+      "EnableDeltaHealthEvaluation": false,
+      "SortOrder": "Default"
+  },
+  "UpgradeDurationInMilliseconds": "PT0H2M52.5361S",
+  "UpgradeDomainDurationInMilliseconds": "PT0H2M52.5361S",
+  "UnhealthyEvaluations": [],
+  "CurrentUpgradeDomainProgress": {
+      "DomainName": "",
+      "NodeUpgradeProgressList": []
+  },
+  "CurrentUpgradeUnitsProgress": {
+      "DomainName": "",
+      "NodeUpgradeProgressList": [
+          {
+              "NodeName": "MyNode2",
+              "UpgradePhase": "Upgrading",
+              "PendingSafetyChecks": []
+          },
+          {
+              "NodeName": "MyNode3",
+              "UpgradePhase": "PreUpgradeSafetyCheck",
+              "PendingSafetyChecks": []
+          },
+          {
+              "NodeName": "MyNode4",
+              "UpgradePhase": "PostUpgradeSafetyCheck",
+              "PendingSafetyChecks": []
+          }
+      ]
+  },
+  "StartTimestampUtc": "2021-08-31T01:09:32.428Z",
+  "FailureTimestampUtc": "0001-01-01T00:00:00.000Z",
+  "FailureReason": "None",
+  "UpgradeDomainProgressAtFailure": {
+      "NodeUpgradeProgressList": []
+  },
+  "IsNodeByNode": true
+}

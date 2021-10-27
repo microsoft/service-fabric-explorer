@@ -1,32 +1,30 @@
-import { AdalService } from './services/adal.service';
 import { of } from 'rxjs';
 import { StandaloneIntegration } from './Common/StandaloneIntegration';
+import { AdalService } from './services/adal.service';
 
 export function initApp(aadService: AdalService) {
-    return async () => {
-        try {
-            console.log(StandaloneIntegration.isStandalone())
+  return async () => {
+    try {
 
-            console.log(StandaloneIntegration.clusterUrl)
+      console.log(StandaloneIntegration.isStandalone())
 
-            if(StandaloneIntegration.isStandalone()) {
-              return of(null);
-            }
+      console.log(StandaloneIntegration.clusterUrl)
 
-            await aadService.load().toPromise();
+      if(StandaloneIntegration.isStandalone()) {
+        return of(null);
+      }
 
-            if(aadService.aadEnabled){
-                if(!aadService.isAuthenticated){
-                    aadService.login();
-                }
-                aadService.handleWindowCallback()
 
-                return of(null)
-            }else{
-                return of(null);
-            }
-        } catch {
-            return of(null);
+      await aadService.load().toPromise();
+
+      if (aadService.aadEnabled) {
+        aadService.handleWindowCallback();
+        if (!aadService.isAuthenticated) {
+          aadService.login();
         }
-    };
-  }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}

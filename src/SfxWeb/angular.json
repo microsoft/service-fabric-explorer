@@ -16,13 +16,12 @@
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
-          "options": {
+            "options": {
             "outputPath": "dist",
-            "index": "src/beta.html",
+            "index": "src/index.html",
             "main": "src/main.ts",
             "polyfills": "src/polyfills.ts",
             "tsConfig": "tsconfig.app.json",
-            "aot": true,
             "assets": [
               "src/favicon.png",
               "src/assets"
@@ -31,19 +30,39 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/vis-timeline/dist/vis-timeline-graph2d.min.css",
               "node_modules/nouislider/distribute/nouislider.css",
-              "node_modules/metro4/build/css/metro-icons.min.css",
+              "src/mif/icons.min.css",
               "src/styles.scss",
               "src/modal.scss",
               "src/calender.scss",
               "src/_candybar.scss"
             ],
+            "allowedCommonJsDependencies": [
+              "lodash",
+              "nouislider",
+              "highcharts"
+           ],
             "scripts": [],
             "stylePreprocessorOptions": {
               "includePaths": [
               ]
-            }
+            },
+            "vendorChunk": true,
+            "extractLicenses": false,
+            "buildOptimizer": false,
+            "sourceMap": true,
+            "optimization": false,
+            "namedChunks": true
           },
           "configurations": {
+            "accesstesting": {
+              "fileReplacements": [
+                {
+                  "replace": "src/environments/environment.ts",
+                  "with": "src/environments/environment.accesstesting.ts"
+                }
+              ],
+              "index": "src/index.html"
+            },
             "production": {
               "fileReplacements": [
                 {
@@ -54,7 +73,6 @@
               "optimization": true,
               "outputHashing": "all",
               "sourceMap": false,
-              "extractCss": true,
               "namedChunks": false,
               "extractLicenses": true,
               "vendorChunk": false,
@@ -82,19 +100,24 @@
               "index": "src/index.html"
 
             }
-          }
+          },
+          "defaultConfiguration": ""
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "ngx-build-plus:dev-server",
           "options": {
             "browserTarget": "SfxWeb:build",
+            "extraWebpackConfig": "./cypress/coverage.webpack.js",
             "proxyConfig": "proxy.conf.js"
           },
           "configurations": {
             "production": {
               "browserTarget": "SfxWeb:build:production"
             }
-          }
+          },
+          "allowedCommonJsDependencies": [
+            "lodash"
+          ]
         },
         "extract-i18n": {
           "builder": "@angular-devkit/build-angular:extract-i18n",

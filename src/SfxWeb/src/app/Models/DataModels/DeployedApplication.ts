@@ -1,4 +1,4 @@
-﻿import { DataModelBase, IDecorators } from './Base';
+import { DataModelBase, IDecorators } from './Base';
 import { IRawDeployedApplication, IRawApplicationHealth } from '../RawDataTypes';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { DeployedServicePackageCollection } from './collections/Collections';
@@ -8,16 +8,17 @@ import { Node } from './Node';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { HealthBase } from './HealthEvent';
+import { RoutesService } from 'src/app/services/routes.service';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class DeployedApplication extends DataModelBase<IRawDeployedApplication> {
     public decorators: IDecorators = {
         decorators: {
-            "TypeName": {
+            TypeName: {
                 displayValueInHtml: (value) => HtmlUtils.getLinkHtml(value, this.appTypeViewPath)
             }
         }
@@ -34,23 +35,23 @@ export class DeployedApplication extends DataModelBase<IRawDeployedApplication> 
     }
 
     public get viewPath(): string {
-        return this.data.routes.getDeployedAppViewPath(this.parent.name, this.id);
+        return RoutesService.getDeployedAppViewPath(this.parent.name, this.id);
     }
 
     public get appTypeViewPath(): string {
-        return this.data.routes.getAppTypeViewPath(this.raw.TypeName);
+        return RoutesService.getAppTypeViewPath(this.raw.TypeName);
     }
 
     public get diskLocation(): string {
         if (this.raw.WorkDirectory) {
-            return this.raw.WorkDirectory.substring(0, this.raw.WorkDirectory.lastIndexOf("\\"));
+            return this.raw.WorkDirectory.substring(0, this.raw.WorkDirectory.lastIndexOf('\\'));
         } else {
             return this.raw.WorkDirectory;
         }
     }
 
     public addHealthStateFiltersForChildren(clusterHealthChunkQueryDescription: IClusterHealthChunkQueryDescription): IDeployedApplicationHealthStateFilter {
-        let appFilter = clusterHealthChunkQueryDescription.ApplicationFilters.find(appFilter => appFilter.ApplicationNameFilter === this.name);
+        let appFilter = clusterHealthChunkQueryDescription.ApplicationFilters.find(aFilter => aFilter.ApplicationNameFilter === this.name);
         if (!appFilter) {
             // Add one filter for current application and node
             appFilter = {
@@ -86,8 +87,8 @@ export class DeployedApplication extends DataModelBase<IRawDeployedApplication> 
 
 export class DeployedApplicationHealth extends HealthBase<IRawApplicationHealth> {
     public constructor(data: DataService, public parent: DeployedApplication,
-        protected eventsHealthStateFilter: HealthStateFilterFlags,
-        protected deployedServicePackagesHealthFilter: HealthStateFilterFlags) {
+                       protected eventsHealthStateFilter: HealthStateFilterFlags,
+                       protected deployedServicePackagesHealthFilter: HealthStateFilterFlags) {
         super(data, parent);
     }
 

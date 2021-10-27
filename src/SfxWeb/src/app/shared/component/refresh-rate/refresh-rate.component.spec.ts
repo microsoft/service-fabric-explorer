@@ -1,4 +1,4 @@
-import { async, ComponentFixture, TestBed } from '@angular/core/testing';
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 
 import { RefreshRateComponent } from './refresh-rate.component';
 
@@ -6,7 +6,7 @@ describe('RefreshRateComponent', () => {
   let component: RefreshRateComponent;
   let fixture: ComponentFixture<RefreshRateComponent>;
 
-  beforeEach(async(() => {
+  beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       declarations: [ RefreshRateComponent ]
     })

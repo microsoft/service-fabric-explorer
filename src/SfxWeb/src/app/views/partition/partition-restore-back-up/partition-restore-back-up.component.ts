@@ -3,6 +3,7 @@ import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { DataService } from 'src/app/services/data.service';
 import { Partition } from 'src/app/Models/DataModels/Partition';
 import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { IsolatedAction } from 'src/app/Models/Action';
 
 @Component({
   selector: 'app-partition-restore-back-up',
@@ -11,26 +12,30 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 })
 export class PartitionRestoreBackUpComponent implements OnInit {
 
-  form: FormGroup
+  form: FormGroup;
 
   constructor(private formBuilder: FormBuilder,
               private data: DataService,
-              @Inject(MAT_DIALOG_DATA) public partition: Partition,
+              @Inject(MAT_DIALOG_DATA) public partition: IsolatedAction,
               public dialogRef: MatDialogRef<PartitionRestoreBackUpComponent>) { }
 
   ngOnInit() {
     this.form = this.formBuilder.group({
-      BackupId: ["", [Validators.required]],
-      BackupLocation: ["", [Validators.required]],
-      RestoreTimeout: [""]
-    })
+      BackupId: ['', [Validators.required]],
+      BackupLocation: ['', [Validators.required]],
+      RestoreTimeout: ['']
+    });
   }
 
   ok() {
+    if (this.form.value.Storage.StorageKind === '')
+    {
+      this.form.value.Storage = null;
+    }
     const values = this.form.value;
-    this.data.restClient.restorePartitionBackup(this.partition, values.Storage, values.RestoreTimeout, values.BackupId, values.BackupLocation).subscribe( () => {
+    this.data.restClient.restorePartitionBackup(this.partition.data.id, values.Storage, values.RestoreTimeout, values.BackupId, values.BackupLocation).subscribe( () => {
       this.cancel();
-    }, 
+    },
     err => console.log(err));
   }
 

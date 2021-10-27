@@ -1,5 +1,5 @@
 import { Component, OnInit, Injector } from '@angular/core';
-import { DeployedCodePackageBaseController } from '../DeployedCodePackageBase';
+import { DeployedCodePackageBaseControllerDirective } from '../DeployedCodePackageBase';
 import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { DataService } from 'src/app/services/data.service';
 import { TreeService } from 'src/app/services/tree.service';
@@ -13,21 +13,21 @@ import { Observable, of } from 'rxjs';
   templateUrl: './base.component.html',
   styleUrls: ['./base.component.scss']
 })
-export class BaseComponent extends DeployedCodePackageBaseController {
+export class BaseComponent extends DeployedCodePackageBaseControllerDirective {
 
-  containerLogTabName = "container logs";
+  containerLogTabName = 'container logs';
 
   tabs: ITab[] = [{
-    name: "essentials",
-    route: "./"
+    name: 'essentials',
+    route: './'
     },
     {
-      name: "details",
-      route: "./details"
+      name: 'details',
+      route: './details'
     }
   ];
 
-  constructor(protected data: DataService, injector: Injector, private tree: TreeService) { 
+  constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
     super(data, injector);
   }
 
@@ -44,14 +44,14 @@ export class BaseComponent extends DeployedCodePackageBaseController {
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
-    //make sure tab exists for containers otherwise make sure it doesnt display.
+    // make sure tab exists for containers otherwise make sure it doesnt display.
     if (this.deployedCodePackage.raw.HostType === Constants.ContainerHostTypeName) {
       // only add tab if it hasnt been added yet
-      if(!this.tabs.some(tab => tab.name === this.containerLogTabName)) {
+      if (!this.tabs.some(tab => tab.name === this.containerLogTabName)) {
         this.tabs.push(    {
           name: this.containerLogTabName,
-          route: "./containerlogs"
-        })
+          route: './containerlogs'
+        });
       }
     }else{
       this.tabs = this.tabs.filter(tab => tab.name !== this.containerLogTabName);

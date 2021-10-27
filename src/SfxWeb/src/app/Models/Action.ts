@@ -1,23 +1,19 @@
-﻿import { Observable, of } from 'rxjs';
-import { mergeMap, map } from 'rxjs/operators';
+import { Observable, of } from 'rxjs';
+import { mergeMap, finalize } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { ActionDialogComponent } from '../shared/component/action-dialog/action-dialog.component';
 import { ComponentType } from '@angular/cdk/portal';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class Action {
-    private _running: boolean;
-
-    public get running(): boolean {
-        return this._running;
-    }
+    public running: boolean;
 
     public get displayTitle(): string {
-        return this._running ? this.runningTitle : this.title;
+        return this.running ? this.runningTitle : this.title;
     }
 
     constructor(
@@ -28,7 +24,7 @@ export class Action {
         public canRun: () => boolean,
         public isAdvanced: boolean = false) {
 
-        this._running = false;
+        this.running = false;
     }
 
     public run(...params: any[]) {
@@ -40,15 +36,13 @@ export class Action {
     }
 
     protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
-        
-        if (this.canRun()) {
-            this._running = true;
-            const executing = this.execute();
-            executing.pipe(map( ()=> {
-                this._running = false;
-            })).subscribe();
-            return executing;
 
+        if (this.canRun()) {
+            this.running = true;
+            const executing = this.execute();
+            return executing.pipe(finalize( () => {
+                this.running = false;
+            }));
         }
     }
 }
@@ -81,13 +75,13 @@ export class ActionWithDialog extends Action {
     protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
         if (this.canRun()) {
             return of(this.beforeOpen ? this.beforeOpen() : true).pipe(mergeMap(() => {
-                let dialogRef = this.dialog.open(this.template, {data: this, panelClass: "mat-dialog-container-wrapper"});
+                const dialogRef = this.dialog.open(this.template, {data: this, panelClass: 'mat-dialog-container-wrapper'});
                 return dialogRef.afterClosed().pipe(mergeMap( (data: boolean) => {
-                    if(data){
+                    if (data){
                         return super.runInternal(success, error, params);
                     }
-                    return of(null)
-                }))
+                    return of(null);
+                }));
             }));
         }else{
             return of(null);
@@ -129,8 +123,8 @@ export class IsolatedAction extends Action {
     protected runInternal(success: (result: any) => void, error: (reason: string) => void, ...params: any[]): Observable<any> {
         if (this.canRun()) {
             return (!!this.beforeOpen ? this.beforeOpen() : of(null)).pipe(mergeMap(() => {
-                let dialogRef = this.dialog.open(this.template, {data: this, panelClass: "mat-dialog-container-wrapper"});
-                return dialogRef.afterClosed()
+                const dialogRef = this.dialog.open(this.template, {data: this, panelClass: 'mat-dialog-container-wrapper'});
+                return dialogRef.afterClosed();
             }));
         }else{
             return of(null);

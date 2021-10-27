@@ -5,27 +5,27 @@ import { Directive, Output, EventEmitter, HostListener } from '@angular/core';
 })
 export class DragDirective {
 
-  down: boolean = false;
+  down = false;
 
-  @Output() onDrag = new EventEmitter();
+  @Output() dragFinish = new EventEmitter();
 
   @HostListener('document:mousemove', ['$event'])
   handleDrag($event: MouseEvent){
-    if(this.down){
-      this.onDrag.emit($event.clientX);
+    if (this.down){
+      this.dragFinish.emit($event.clientX);
     }
   }
 
   @HostListener('mousedown', ['$event'])
-  startDrag($event:any){
+  startDrag($event: any){
     this.down = true;
     $event.preventDefault();
   }
 
   @HostListener('document:mouseup', ['$event'])
-  endDrag($event:any){
-    if(this.down){
-      this.onDrag.emit($event.clientX);
+  endDrag($event: any){
+    if (this.down){
+      this.dragFinish.emit($event.clientX);
     }
     this.down = false;
   }

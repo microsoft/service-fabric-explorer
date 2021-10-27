@@ -6,26 +6,26 @@ import { SettingsService } from 'src/app/services/settings.service';
 import { DeployedApplicationHealthState } from 'src/app/Models/DataModels/Application';
 import { ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink } from 'src/app/Models/ListSettings';
 import { map } from 'rxjs/operators';
-import { ApplicationBaseController } from '../applicationBase';
+import { ApplicationBaseControllerDirective } from '../applicationBase';
 
 @Component({
   selector: 'app-deployments',
   templateUrl: './deployments.component.html',
   styleUrls: ['./deployments.component.scss']
 })
-export class DeploymentsComponent extends ApplicationBaseController {
+export class DeploymentsComponent extends ApplicationBaseControllerDirective {
 
   deployedApplicationsHealthStatesListSettings: ListSettings;
   deployedApplicationsHealthStates: DeployedApplicationHealthState[] = [];
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) { 
+  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
   setup() {
-    this.deployedApplicationsHealthStatesListSettings = this.settings.getNewOrExistingListSettings("deployedApps", ["raw.NodeName"], [
-        new ListColumnSettingForLink("raw.NodeName", "Node Name", item => item.viewPath),
-        new ListColumnSettingForBadge("healthState", "Health State"),
+    this.deployedApplicationsHealthStatesListSettings = this.settings.getNewOrExistingListSettings('deployedApps', ['raw.NodeName'], [
+        new ListColumnSettingForLink('raw.NodeName', 'Node Name', item => item.viewPath),
+        new ListColumnSettingForBadge('healthState', 'Health State'),
     ]);
   }
 

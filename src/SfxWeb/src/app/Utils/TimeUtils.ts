@@ -1,32 +1,51 @@
-﻿import { Constants } from '../Common/Constants';
+import { Constants } from '../Common/Constants';
 import { Utils } from './Utils';
 import dayjs from 'dayjs';
-import Duration from 'luxon/src/duration'
+import Duration from 'luxon/src/duration';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
-// TODO:
-//   1. Upgrade moment and remove this when issue https://github.com/moment/moment/issues/3763 gets resolved
-//   2. Import moment from tsconfig.json
 
 export class TimeUtils {
     // Per email thread, this is:
     //     int64.max / 10000000 = 922337203685477.5807;
-    public static MaxDurationInMilliseconds: number = 922337203685477.5807;
+    public static MaxDurationInMilliseconds = 922337203685477.5807;
 
     public static AddSeconds(toDate: Date, seconds: number): Date {
-        let date = new Date(toDate.valueOf());
+        const date = new Date(toDate.valueOf());
         date.setTime(date.getTime() + (seconds * 1000));
         return date;
     }
 
+    public static AddHours(toDate: Date, hours: number): Date {
+        const date = new Date(toDate.valueOf());
+        date.setTime(date.getTime() + (hours * 1000 * 60 * 60));
+        return date;
+    }
+
     public static AddDays(toDate: Date, days: number): Date {
-        let date = new Date(toDate.valueOf());
+        const date = new Date(toDate.valueOf());
         date.setDate(date.getDate() + days);
         return date;
+    }
+
+    public static getDurationMilliseconds(duration: any): number{
+
+        let momentDuration;
+        if (Number.isFinite(duration)) {
+            // Finite number in milliseconds
+            momentDuration = duration;
+        } else if (Utils.isNumeric(duration)) {
+            // Numeric representation in string
+            momentDuration = parseFloat(duration as string);
+        } else {
+            // ISO 8601 format string
+            momentDuration = Duration.fromISO(duration).as('milliseconds');
+        }
+        return momentDuration;
     }
 
     /**
@@ -39,10 +58,10 @@ export class TimeUtils {
         let momentDuration;
         if (Number.isFinite(duration)) {
             // Finite number in milliseconds
-            momentDuration = duration
+            momentDuration = duration;
         } else if (Utils.isNumeric(duration)) {
             // Numeric representation in string
-            momentDuration = parseFloat(<string>duration);
+            momentDuration = parseFloat(duration as string);
         } else {
             // ISO 8601 format string
             momentDuration = Duration.fromISO(duration).as('milliseconds');
@@ -65,7 +84,7 @@ export class TimeUtils {
      */
     public static datetimeToString(datetime: string): string {
         const d = new Date(datetime);
-        return  d.toLocaleString() + `(${-1 * (d.getTimezoneOffset() / 60)}00)` //moment(datetime).format("MMM D, YYYY [at] h:mm:ss A (ZZ)");
+        return  d.toLocaleString() + `(${-1 * (d.getTimezoneOffset() / 60)}00)`; // moment(datetime).format("MMM D, YYYY [at] h:mm:ss A (ZZ)");
     }
 
     /**
@@ -74,31 +93,56 @@ export class TimeUtils {
      */
     public static timestampToUTCString(timestamp: string): string {
         return dayjs(timestamp).toISOString();
-        //TODO test
-        // return !date.isValid() || date.year() === 1 ? Constants.InvalidTimestamp : date.toDate().toUTCString();
     }
 
     /**
      * Format the input duration as ASP.NET time span format: "[days].[hours]:[minutes]:[seconds].[milliseconds].
      * @param duration number
      */
-    private static formatDurationAsAspNetTimespan(duration: number): string {
+    public static formatDurationAsAspNetTimespan(duration: number): string {
         if (duration >= TimeUtils.MaxDurationInMilliseconds) {
             return Constants.DurationInfinity;
-        }  
+        }
 
         const milliseconds = duration % 1000;
         const seconds = duration / 1000;
         const minutes = seconds / 60;
-        const hours = minutes / 60
+        const hours = minutes / 60;
         const days = hours / 24;
 
+        if ( duration < 1000) {
+            return `${milliseconds} milliseconds`;
+        }
 
-        return `${Math.floor(days)}.`
-            + `${Math.floor(hours).toString().padStart(2, "0")}:`
-            + `${Math.floor(minutes).toString().padStart(2, "0")}:`
-            + `${Math.floor(seconds).toString().substring(0, 2).padStart(2, "0")}.`
-            + `${milliseconds}`;
+        if ( duration < (60 * 1000) ) {
+            return `${seconds} seconds`;
+        }
+
+
+        if ( duration < (60 * 60 * 1000) ) {
+            return `${this.formatIndividualTime(minutes % 60, 0)}:`
+            + `${this.formatIndividualTime(seconds % 60, 2, 2)} minutes`;
+        }
+
+        if ( duration < (60 * 60 * 1000 * 24) ) {
+            return `${Math.floor(hours % 24)}:`
+            + `${this.formatIndividualTime(minutes % 60)}:`
+            + `${this.formatIndividualTime(seconds % 60, 2, 2)}`
+            + ` hours`;
+        }
+
+        return `${Math.floor(days) > 0 ? Math.floor(days) + ' days ' : ''}`
+            + `${this.formatIndividualTime(hours % 24)}:`
+            + `${this.formatIndividualTime(minutes % 60)}:`
+            + `${this.formatIndividualTime(seconds % 60, 2, 2)}`;
+    }
+
+    private static formatIndividualTime(duration: number, padStart = 2, substringSize: number = 0) {
+        let floored = Math.floor(duration).toString();
+        if (substringSize > 0) {
+            floored = floored.substring(0, substringSize);
+        }
+        return floored.padStart(padStart, '0');
     }
 }
 

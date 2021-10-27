@@ -1,0 +1,16 @@
+{
+  "Name": "fabric:/VisualObjectsApplicationType",
+  "TypeName": "VisualObjectsApplicationType",
+  "TypeVersion": "16.0.0",
+  "Status": "Ready",
+  "Parameters": [
+    { "Key": "VisualObjects.ActorService_PartitionCount", "Value": "10" },
+    { "Key": "VisualObjects.WebService_InstanceCount", "Value": "-1" }
+  ],
+  "HealthState": "Ok",
+  "ApplicationDefinitionKind": "ServiceFabricApplicationDescription",
+  "ManagedApplicationIdentity": {
+    "ManagedIdentities": []
+},
+"Id": "VisualObjectsApplicationType"
+}

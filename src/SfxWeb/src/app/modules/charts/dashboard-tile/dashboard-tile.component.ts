@@ -1,105 +1,164 @@
-import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit } from '@angular/core';
-import { scaleOrdinal } from 'd3-scale';
+import { Component, OnInit, ViewChild, ElementRef, Input, AfterViewInit, OnChanges } from '@angular/core';
 import { IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
-import { pie, arc } from 'd3-shape';
-import { select } from 'd3-selection';
-import { entries } from 'd3-collection';
+import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'highcharts';
+
 @Component({
   selector: 'app-dashboard-tile',
   templateUrl: './dashboard-tile.component.html',
   styleUrls: ['./dashboard-tile.component.scss']
 })
-export class DashboardTileComponent implements OnInit, AfterViewInit {
+export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() data: IDashboardViewModel;
 
   @ViewChild('chart') private chartContainer: ElementRef;
 
+  private chart: Chart;
+
+  fontColor = {
+    color: '#fff'
+  };
+
+  public options: Options = {
+    chart: {
+      type: 'pie',
+      backgroundColor: null,
+      borderRadius: 0,
+    },
+    title: {
+      text: 'test',
+      align: 'left',
+      verticalAlign: 'middle',
+      y: 0,
+      x: 10,
+      style: {
+        color: '#fff',
+        fontSize: '15pt'
+      }
+    },
+    subtitle: {
+      text: '5',
+      align: 'left',
+      verticalAlign: 'middle',
+      x: 25,
+      y: 50,
+      style: {
+        color: '#fff',
+        fontSize: '28pt'
+      }
+    },
+    tooltip: {
+      enabled: false,
+      animation: false,
+      formatter() {
+        return `${this.point.name} : ${this.y}`;
+      }
+    },
+    credits: { enabled: false },
+    loading: {
+      showDuration: 0
+    },
+    plotOptions: {
+      pie: {
+        borderColor: '#191919',
+        borderWidth: 2,
+        dataLabels: {
+          enabled: false,
+          distance: -50,
+          style: {
+            fontWeight: 'bold',
+            color: 'white'
+          }
+        },
+        innerSize: '85%',
+        startAngle: -50,
+        endAngle: 230,
+      }
+    },
+    series: [{
+      animation: false,
+      type: 'pie',
+      data:
+        [
+          {
+            name: '',
+            y: 1,
+            color: 'gray'
+          }
+        ],
+      states: {
+        inactive: {
+          opacity: 1
+        },
+        hover: {
+          opacity: 1
+        }
+      }
+    }]
+  };
 
   constructor() { }
 
-  ngOnInit() {}
-  
-  ngAfterViewInit(){
+  ngOnInit() {
+    const margin = 3;
+    const width = (this.data.largeTile ? 230 : 150) + margin * 2;
+    this.options.chart.height = width;
+    this.options.chart.width = width;
 
-    let margin = 3;
-    let width = (this.data.largeTile ? 200 : 120) + margin * 2;
-    let height = width;
-    let arcWidth = (this.data.largeTile ? 10 : 8);
-    let outerRadius = width / 2 - margin;
-    let innerRadius = width / 2 - arcWidth - margin;
+    this.options.title.text = this.data.displayTitle;
+    this.options.subtitle.text = this.data.count.toString();
 
-    const svg = select(this.chartContainer.nativeElement)
-      .append("svg")
-        .attr("width", width)
-        .attr("height", height)
-      .append("g")
-        .attr("transform", "translate(" + width / 2 + "," + height / 2 + ")");
+    const data = this.getDataSet();
+    this.options.tooltip.enabled = data.length === 3;
+    (this.options.series[0] as SeriesPieOptions).data = data;
 
-    // Create dummy data
-    const data = this.data.dataPoints.map(p => p.count);
-
-    if(data.some(d => d > 0)) {
-      data.push(0);
-    }else{
-      data.push(1);
+    if (!this.data.largeTile) {
+      this.options.title.style.fontSize = '13pt';
+      this.options.title.y = 9;
+      this.options.subtitle.style.fontSize = '13pt';
+      this.options.subtitle.y = 30;
     }
-        // const data = this.data.dataPoints.reduce((data, p, i) => { data[i] = p.count; return data} , {});
+  }
 
-    // set the color scale
-    const color = scaleOrdinal()
-      .domain(["0","1","2", "3"])
-      .range(["red", "yellow", "green", "gray"])
+  ngAfterViewInit() {
+    this.chart = chart(this.chartContainer.nativeElement, this.options);
+  }
 
-    // Compute the position of each group on the pie:
-    const p = pie()
-    .startAngle(-.2 * Math.PI)
-      .endAngle(1.2 * Math.PI)
-      .value(d => d['value'] )
-      // @ts-ignore
-      const data_ready = p(entries(data))
+  getDataSet(): PointOptionsObject[] {
+    const colors = {
+      Healthy: '#7FBA00',
+      Warning: '#FCD116',
+      Error: '#E81123'
+    };
 
-    svg
-      .selectAll('whatever')
-      .data(data_ready)
-      .enter()
-      .append('path')
-      .attr('d', arc()
-        .innerRadius(innerRadius)         // This is the size of the donut hole
-        .outerRadius(outerRadius)
-      )
-      .attr('fill', (d, i) => (color(i.toString()).toString() ))
-      .attr("stroke", "transparent")
-      .style("stroke-width", "2px")
-      .style("opacity", 0.7)
+    const data = this.data.dataPoints.map(p => {
+      return {
+        name: p.title,
+        y: p.count,
+        color: colors[p.title]
+      };
+    });
 
+    // if there is no data we want gray rings.
+    // so we need to push a gray entry
+    if (data.every(d => d.y === 0)) {
+      data.push({
+        name: '',
+        y: 1,
+        color: 'gray'
+      });
+    }
+    return data;
+  }
 
-      let textOffset = this.data.largeTile ? 40 : 32;
-      let textGroup = svg.append("g")
-          .attr("transform", "translate(-" + width / 2 + ", -6)");
-      let number = textGroup.append("text")
-          .attr("class", "dashboard-number").style("fill", "white");
-      let title = textGroup.append("text")
-          .attr("transform", "translate(8, " + textOffset + ")")
-          .attr("class", "dashboard-title").style("fill", "white");
-
-      // Need to match $dashboard-number-font-size, $dashboard-small-number-font-size in _dashboard.scss
-      let fontSize = this.data.largeTile ? 72 : 50;
-      let fontSizeFactor = this.data.largeTile ? 160 : 112;
-
-      // Change title and number
-      title.text(this.data.displayTitle.toUpperCase());
-      number.text(this.data.count)
-          .style("font-size", (d) => {
-              // Resize the number based on the string length
-              return Math.min(fontSize, Math.floor(fontSizeFactor / this.data.count.toString().length) * 1.9) + "px";
-          });
-      if (this.data.count.toString().length > 6) {
-          number.attr("transform", "translate(6, 10)");
-      } else {
-          number.attr("transform", "translate(6, 18)");
-      }
-
+  ngOnChanges() {
+    if (this.chart) {
+      const data = this.getDataSet();
+      this.chart.tooltip.update({ enabled: data.length === 3 });
+      this.chart.series[0].setData(data);
+      this.chart.title.update({ text: this.data.displayTitle });
+      this.chart.subtitle.update({text: this.data.count.toString()});
+    }
   }
 
 }

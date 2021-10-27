@@ -3,12 +3,13 @@
         <h4 class="modal-title">{{data.confirmationDialogTitle}}</h4>
     </div>
     <div class="modal-body">
-        <p>{{data.confirmationDialogMessage}}</p>
-        <input class="input-flat" type="text" [placeholder]="placeHolderText" name="userInput" style="width: 100%;"
-               *ngIf="data.confirmationKeyword" [(ngModel)]="userInput" aria-label="placeHolderText">
+        <label>{{data.confirmationDialogMessage}}
+            <input class="input-flat" type="text" [placeholder]="placeHolderText" name="userInput" style="width: 100%;"
+            *ngIf="data.confirmationKeyword" [(ngModel)]="userInput">
+        </label>
     </div>
     <div class="modal-footer">
-        <button type="submit" class="solid-button blue" [disabled]="data.confirmationKeyword !== userInput" (click)="ok()">{{data.title}}</button>
+        <button type="submit" class="solid-button blue" [disabled]="data.confirmationKeyword !== userInput.trim()" (click)="ok()">{{data.title}}</button>
         <button type="button" class="flat-button" (click)="cancel()">Cancel</button>
     </div>
 </form>

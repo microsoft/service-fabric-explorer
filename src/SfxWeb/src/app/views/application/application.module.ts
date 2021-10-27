@@ -11,11 +11,14 @@ import { ManifestComponent } from './manifest/manifest.component';
 import { EventsComponent } from './events/events.component';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
+import { UpgradeProgressModule } from 'src/app/modules/upgrade-progress/upgrade-progress.module';
 import { CreateServiceComponent } from './create-service/create-service.component';
 import { FormsModule } from '@angular/forms';
 import { NgbTypeaheadModule, NgbDropdownModule, NgbButtonsModule } from '@ng-bootstrap/ng-bootstrap';
 import { ActionRowComponent } from './action-row/action-row.component';
 import { BackupComponent } from './backup/backup.component';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
+import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 
 @NgModule({
   declarations: [BaseComponent, EssentialsComponent, DetailsComponent, DeploymentsComponent, ManifestComponent, EventsComponent, CreateServiceComponent, ActionRowComponent, BackupComponent],
@@ -28,7 +31,10 @@ import { BackupComponent } from './backup/backup.component';
     FormsModule,
     NgbTypeaheadModule,
     NgbDropdownModule,
-    NgbButtonsModule
+    NgbButtonsModule,
+    UpgradeProgressModule,
+    ChartsModule,
+    HealthStateModule
   ]
 })
 export class ApplicationModule { }

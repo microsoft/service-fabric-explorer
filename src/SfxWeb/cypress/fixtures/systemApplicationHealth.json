@@ -1,0 +1,78 @@
+{
+    "HealthEvents": [],
+    "AggregatedHealthState": "Ok",
+    "UnhealthyEvaluations": [],
+    "HealthStatistics": {
+        "HealthStateCountList": [
+            {
+                "EntityKind": "Replica",
+                "HealthStateCount": {
+                    "OkCount": 63,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            },
+            {
+                "EntityKind": "Partition",
+                "HealthStateCount": {
+                    "OkCount": 13,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            },
+            {
+                "EntityKind": "Service",
+                "HealthStateCount": {
+                    "OkCount": 11,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            },
+            {
+                "EntityKind": "DeployedServicePackage",
+                "HealthStateCount": {
+                    "OkCount": 38,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            },
+            {
+                "EntityKind": "DeployedApplication",
+                "HealthStateCount": {
+                    "OkCount": 5,
+                    "ErrorCount": 0,
+                    "WarningCount": 0
+                }
+            }
+        ]
+    },
+    "Name": "fabric:/System",
+    "ServiceHealthStates": [],
+    "DeployedApplicationHealthStates": [
+        {
+            "ApplicationName": "fabric:/System",
+            "NodeName": "_nt_4",
+            "AggregatedHealthState": "Ok"
+        },
+        {
+            "ApplicationName": "fabric:/System",
+            "NodeName": "_nt_2",
+            "AggregatedHealthState": "Ok"
+        },
+        {
+            "ApplicationName": "fabric:/System",
+            "NodeName": "_nt_3",
+            "AggregatedHealthState": "Ok"
+        },
+        {
+            "ApplicationName": "fabric:/System",
+            "NodeName": "_nt_1",
+            "AggregatedHealthState": "Ok"
+        },
+        {
+            "ApplicationName": "fabric:/System",
+            "NodeName": "_nt_0",
+            "AggregatedHealthState": "Ok"
+        }
+    ]
+}

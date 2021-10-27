@@ -1,32 +1,15 @@
-<div class="detail-pane essen-pane" *ngIf="deployedCodePackage">
-        <div class="table-responsive">
-            <table class="essen-table" role="presentation">
-                <tr>
-                    <th>Name</th>
-                    <th>Version</th>
-                </tr>
-                <tr *ngIf="deployedCodePackage">
-                    <td>{{deployedCodePackage.name}}<app-clip-board [text]="deployedCodePackage.name"></app-clip-board></td>
-                    <td>{{deployedCodePackage.raw.Version}}</td>
-                </tr>
-    
-                <tr>
-                    <th>Host Type</th>
-                    <th>Host Isolation Mode</th>
-                </tr>
-                <tr>
-                    <td>{{deployedCodePackage.raw.HostType}}</td>
-                    <td>{{deployedCodePackage.raw.HostIsolationMode}}</td>
-                </tr>
-    
-                <tr>
-                    <th>Status</th>
-                    <th *ngIf="deployedCodePackage && deployedCodePackage.servicePackageActivationId">Service Package Activation Id</th>
-                </tr>
-                <tr *ngIf="deployedCodePackage">
-                    <td>{{deployedCodePackage.raw.Status}}</td>
-                    <td *ngIf="deployedCodePackage.servicePackageActivationId">{{deployedCodePackage.servicePackageActivationId}}</td>
-                </tr>
-            </table>
-        </div>
-    </div>
+
+<div class="tile-container" *ngIf="deployedCodePackage">
+  
+  <app-essential-health-tile *ngIf="deployedCodePackage?.isInitialized"
+  class="long" [listItems]="essentialItems">
+</app-essential-health-tile>
+
+  <app-essential-health-tile *ngIf="deployedCodePackage?.isInitialized"
+    class="long" [listItems]="essentialItems2">
+
+    <ng-template appEssentialTemplate id="status">
+      <app-status-resolver [status]="deployedCodePackage.raw.Status"></app-status-resolver>
+    </ng-template>
+  </app-essential-health-tile>
+</div>

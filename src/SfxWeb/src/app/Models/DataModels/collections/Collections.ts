@@ -1,14 +1,12 @@
-﻿import { IDataModel } from '../Base';
-import { IClusterHealthChunk, IHealthStateChunk, IHealthStateChunkList, IServiceHealthStateChunk, IDeployedApplicationHealthStateChunk, IDeployedServicePackageHealthStateChunk } from '../../HealthChunkRawDataTypes';
+import { IClusterHealthChunk, IDeployedServicePackageHealthStateChunk } from '../../HealthChunkRawDataTypes';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable, Subject, of, throwError, forkJoin } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { ValueResolver, ITextAndBadge } from 'src/app/Utils/ValueResolver';
-import { INodesStatusDetails, NodeStatusDetails, IRawDeployedApplication, IRawDeployedServicePackage } from '../../RawDataTypes';
+import { IRawDeployedServicePackage } from '../../RawDataTypes';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
-import { HealthStateConstants, NodeStatusConstants, StatusWarningLevel, BannerWarningID, Constants } from 'src/app/Common/Constants';
+import { HealthStateConstants } from 'src/app/Common/Constants';
 import { mergeMap, map } from 'rxjs/operators';
-import { Utils } from 'src/app/Utils/Utils';
 import { BackupPolicy } from '../Cluster';
 import { ApplicationBackupConfigurationInfo, Application } from '../Application';
 import { ApplicationTypeGroup, ApplicationType } from '../ApplicationType';
@@ -24,14 +22,13 @@ import { FabricEventBase, FabricEventInstanceModel, ClusterEvent, NodeEvent, App
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingWithEventStoreFullDescription, ListColumnSettingWithEventStoreRowDisplay } from '../../ListSettings';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { PartitionBackup, PartitionBackupInfo } from '../PartitionBackupInfo';
-
 import { DataModelCollectionBase, IDataModelCollection } from './CollectionBase';
-
-import   groupBy  from 'lodash/groupBy';
-//-----------------------------------------------------------------------------
+import groupBy from 'lodash/groupBy';
+import { RoutesService } from 'src/app/services/routes.service';
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy> {
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -42,7 +39,7 @@ export class BackupPolicyCollection extends DataModelCollectionBase<BackupPolicy
 }
 
 export class ApplicationCollection extends DataModelCollectionBase<Application> {
-    public upgradingAppCount: number = 0;
+    public upgradingAppCount = 0;
     public healthState: ITextAndBadge;
 
     public constructor(data: DataService) {
@@ -50,7 +47,7 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     public get viewPath(): string {
-        return this.data.routes.getAppsViewPath();
+        return RoutesService.getAppsViewPath();
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
@@ -61,7 +58,7 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        return this.data.restClient.getApplications(messageHandler).pipe(map(items => {
+        return this.data.restClient.getApplications(this.data.readOnlyHeader, messageHandler).pipe(map(items => {
             return items.map(raw => new Application(this.data, raw));
         }));
     }
@@ -73,10 +70,10 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 
     private updateAppsHealthState(): void {
-        this.collection.map(app => HealthStateConstants.Values[app.healthState.text])
+        this.collection.map(app => HealthStateConstants.Values[app.healthState.text]);
         // calculates the applications health state which is the max state value of all applications
         this.healthState = this.length > 0
-            ? this.valueResolver.resolveHealthStatus(Math.max(...<number[]>this.collection.map(app => HealthStateConstants.Values[app.healthState.text])).toString())
+            ? this.valueResolver.resolveHealthStatus(Math.max(...this.collection.map(app => HealthStateConstants.Values[app.healthState.text]) as number[]).toString())
             : ValueResolver.healthStatuses[1];
     }
 
@@ -85,7 +82,7 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
         return this.data.getAppTypeGroups(false).pipe(map(appTypeGroups => {
             appTypeGroups.collection.forEach(appTypeGroup => appTypeGroup.refreshAppTypeApps(this));
             return appTypeGroups;
-        }))
+        }));
     }
 }
 
@@ -95,15 +92,15 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
     }
 
     public get viewPath(): string {
-        return this.data.routes.getAppTypesViewPath();
+        return RoutesService.getAppTypesViewPath();
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getApplicationTypes(null, messageHandler).pipe(map(response => {
-            let appTypes = response.map(item => new ApplicationType(this.data, item));
-            let groups = groupBy(appTypes, item => item.raw.Name);
+            const appTypes = response.map(item => new ApplicationType(this.data, item));
+            const groups = groupBy(appTypes, item => item.raw.Name);
             return Object.keys(groups).map(g => new ApplicationTypeGroup(this.data, groups[g]));
-        }))
+        }));
     }
 }
 
@@ -172,11 +169,11 @@ export class ServiceTypeCollection extends DataModelCollectionBase<ServiceType> 
         let appTypeName = null;
         let appTypeVersion = null;
         if (this.parent instanceof ApplicationType) {
-            appTypeName = (<ApplicationType>(this.parent)).raw.Name;
-            appTypeVersion = (<ApplicationType>(this.parent)).raw.Version;
+            appTypeName = ((this.parent) as ApplicationType).raw.Name;
+            appTypeVersion = ((this.parent) as ApplicationType).raw.Version;
         } else {
-            appTypeName = (<Application>(this.parent)).raw.TypeName;
-            appTypeVersion = (<Application>(this.parent)).raw.TypeVersion;
+            appTypeName = ((this.parent) as Application).raw.TypeName;
+            appTypeVersion = ((this.parent) as Application).raw.TypeVersion;
         }
 
         return this.data.restClient.getServiceTypes(appTypeName, appTypeVersion, messageHandler)
@@ -192,9 +189,9 @@ export class PartitionCollection extends DataModelCollectionBase<Partition> {
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        let appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.parent.name);
+        const appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.parent.name);
         if (appHealthChunk) {
-            let serviceHealthChunk = appHealthChunk.ServiceHealthStateChunks.Items.find(item => item.ServiceName === this.parent.name);
+            const serviceHealthChunk = appHealthChunk.ServiceHealthStateChunks.Items.find(item => item.ServiceName === this.parent.name);
             if (serviceHealthChunk) {
                 return this.updateCollectionFromHealthChunkList(serviceHealthChunk.PartitionHealthStateChunks, item => IdGenerator.partition(item.PartitionId));
             }
@@ -237,10 +234,10 @@ export class DeployedServicePackageCollection extends DataModelCollectionBase<De
     }
 
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
-        let appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.name);
+        const appHealthChunk = clusterHealthChunk.ApplicationHealthStateChunks.Items.find(item => item.ApplicationName === this.parent.name);
         if (appHealthChunk) {
-            let deployedAppHealthChunk = appHealthChunk.DeployedApplicationHealthStateChunks.Items.find(
-                deployedAppHealthChunk => deployedAppHealthChunk.NodeName === this.parent.parent.name);
+            const deployedAppHealthChunk = appHealthChunk.DeployedApplicationHealthStateChunks.Items.find(
+                deployedAppHealth => deployedAppHealth.NodeName === this.parent.parent.name);
             if (deployedAppHealthChunk) {
                 return this.updateCollectionFromHealthChunkList<IDeployedServicePackageHealthStateChunk>(
                     deployedAppHealthChunk.DeployedServicePackageHealthStateChunks,
@@ -261,7 +258,7 @@ export class DeployedServicePackageCollection extends DataModelCollectionBase<De
         // The deployed application does not include "HealthState" information by default.
         // Trigger a health chunk query to fill the health state information.
         if (this.length > 0) {
-            let healthChunkQueryDescription = this.data.getInitialClusterHealthChunkQueryDescription();
+            const healthChunkQueryDescription = this.data.getInitialClusterHealthChunkQueryDescription();
             this.parent.addHealthStateFiltersForChildren(healthChunkQueryDescription);
             return this.data.getClusterHealthChunk(healthChunkQueryDescription).pipe(mergeMap(healthChunk => {
                 return this.mergeClusterHealthStateChunk(healthChunk);
@@ -278,7 +275,7 @@ export class DeployedCodePackageCollection extends DataModelCollectionBase<Deplo
     }
 
     public get viewPath(): string {
-        return this.data.routes.getDeployedCodePackagesViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId);
+        return RoutesService.getDeployedCodePackagesViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId);
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -296,7 +293,7 @@ export class DeployedReplicaCollection extends DataModelCollectionBase<DeployedR
     }
 
     public get viewPath(): string {
-        return this.data.routes.getDeployedReplicasViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId);
+        return RoutesService.getDeployedReplicasViewPath(this.parent.parent.parent.name, this.parent.parent.id, this.parent.id, this.parent.servicePackageActivationId);
     }
 
     public get isStatefulService(): boolean {
@@ -319,25 +316,21 @@ export class DeployedReplicaCollection extends DataModelCollectionBase<DeployedR
 export abstract class EventListBase<T extends FabricEventBase> extends DataModelCollectionBase<FabricEventInstanceModel<T>> {
     public readonly settings: ListSettings;
     public readonly detailsSettings: ListSettings;
-    // This will skip refreshing if period is set to be too quick by user, as currently events
-    // requests take ~3 secs, and so we shouldn't be delaying every global refresh.
-    public readonly minimumRefreshTimeInSecs: number = 10;
     public readonly pageSize: number = 15;
     public readonly defaultDateWindowInDays: number = 7;
     public readonly latestRefreshPeriodInSecs: number = 60 * 60;
 
     protected readonly optionalColsStartIndex: number = 2;
 
-    private lastRefreshTime?: Date;
-    private _startDate: Date;
-    private _endDate: Date;
+    private iStartDate: Date;
+    private iEndDate: Date;
 
     public get startDate() {
-        return new Date(this._startDate.valueOf());
+        return new Date(this.iStartDate.valueOf());
     }
     public get endDate() {
-        let endDate = new Date(this._endDate.valueOf());
-        let timeNow = new Date();
+        let endDate = new Date(this.iEndDate.valueOf());
+        const timeNow = new Date();
         if (endDate > timeNow) {
             endDate = timeNow;
         }
@@ -346,14 +339,6 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     }
 
     public get queryStartDate() {
-        if (this.isInitialized) {
-            // Only retrieving the latest, including a period that allows refreshing
-            // previously retrieved events with new correlation information if any.
-            if ((this.endDate.getTime() - this.startDate.getTime()) / 1000 > this.latestRefreshPeriodInSecs) {
-                return TimeUtils.AddSeconds(this.endDate, (-1 * this.latestRefreshPeriodInSecs));
-            }
-        }
-
         return this.startDate;
     }
     public get queryEndDate() { return this.endDate; }
@@ -361,7 +346,7 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     public constructor(data: DataService, startDate?: Date, endDate?: Date) {
         // Using appendOnly, because we refresh by retrieving latest,
         // and collection gets cleared when dates window changes.
-        super(data, null, true);
+        super(data, null, false);
         this.settings = this.createListSettings();
         this.detailsSettings = this.createListSettings();
 
@@ -377,20 +362,12 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     }
 
     public reload(messageHandler?: IResponseMessageHandler): Observable<any> {
-        this.lastRefreshTime = null;
         return this.clear().pipe(map(() => {
             return this.refresh(messageHandler);
         }));
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        // Use existing collection if a refresh is called in less than minimumRefreshTimeInSecs.
-        if (this.lastRefreshTime &&
-            (new Date().getTime() - this.lastRefreshTime.getTime()) < (this.minimumRefreshTimeInSecs * 1000)) {
-            return of(this.collection);
-        }
-
-        this.lastRefreshTime = new Date();
         return this.retrieveEvents(messageHandler);
     }
 
@@ -404,29 +381,26 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
     }
 
     private createListSettings(): ListSettings {
-        let listSettings = new ListSettings(
+        const listSettings = new ListSettings(
             this.pageSize,
-            ["raw.timeStamp"],
+            ['raw.timeStamp'],
             [
                 new ListColumnSettingWithEventStoreRowDisplay(),
             new ListColumnSetting(
-                "raw.category",
-                "Event Category",
-                ["raw.category"],
-                true,
-                (item) => (!item.raw.category ? "Operational" : item.raw.category)),
-            new ListColumnSetting("raw.timeStampString", "Timestamp", ["raw.timeStamp"]),
-            new ListColumnSetting("raw.timeStamp", "Timestamp(UTC)", ["raw.timeStamp"])],
+                'raw.category',
+                'Event Category',
+                {
+                    enableFilter: true,
+                    getDisplayHtml: (item) => (!item.raw.category ? 'Operational' : item.raw.category)
+                }),
+            new ListColumnSetting('raw.timeStampString', 'Timestamp', {sortPropertyPaths: ['raw.timestamp']}),
+            new ListColumnSetting('raw.timeStamp', 'Timestamp(UTC)')],
             [
                 new ListColumnSettingWithEventStoreFullDescription()
             ],
             true,
             (item) => (Object.keys(item.raw.eventProperties).length > 0),
             true);
-
-        listSettings.columnSettings[0].fixedWidthPx = 320;
-        listSettings.columnSettings[1].fixedWidthPx = 200;
-        listSettings.sortReverse = true;
 
         return listSettings;
     }
@@ -444,10 +418,10 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
                 this.defaultDateWindowInDays);
         }
 
-        if (!this._startDate || this._startDate.getTime() !== startDate.getTime() ||
-            !this._endDate || this._endDate.getTime() !== endDate.getTime()) {
-            this._startDate = startDate;
-            this._endDate = endDate;
+        if (!this.iStartDate || this.iStartDate.getTime() !== startDate.getTime() ||
+            !this.iEndDate || this.iEndDate.getTime() !== endDate.getTime()) {
+            this.iStartDate = startDate;
+            this.iEndDate = endDate;
             return true;
         }
 
@@ -480,8 +454,8 @@ export class NodeEventList extends EventListBase<NodeEvent> {
                 this.optionalColsStartIndex,
                 0,
                 new ListColumnSettingWithFilter(
-                    "raw.nodeName",
-                    "Node Name"));
+                    'raw.nodeName',
+                    'Node Name'));
         }
     }
 
@@ -499,7 +473,7 @@ export class ApplicationEventList extends EventListBase<ApplicationEvent> {
     public constructor(data: DataService, applicationId?: string) {
         super(data);
         if (applicationId) {
-            this.applicationId = applicationId.replace(new RegExp("/", "g"), "~");
+            this.applicationId = applicationId.replace(new RegExp('/', 'g'), '~');
         }
 
         if (!this.applicationId) {
@@ -508,8 +482,8 @@ export class ApplicationEventList extends EventListBase<ApplicationEvent> {
                 this.optionalColsStartIndex,
                 0,
                 new ListColumnSettingWithFilter(
-                    "raw.applicationId",
-                    "Application Id"));
+                    'raw.applicationId',
+                    'Application Id'));
         }
     }
 
@@ -527,7 +501,7 @@ export class ServiceEventList extends EventListBase<ServiceEvent> {
     public constructor(data: DataService, serviceId?: string) {
         super(data);
         if (serviceId) {
-            this.serviceId = serviceId.replace(new RegExp("/", "g"), "~");
+            this.serviceId = serviceId.replace(new RegExp('/', 'g'), '~');
         }
         if (!this.serviceId) {
             // Show ServiceId as the first column.
@@ -535,8 +509,8 @@ export class ServiceEventList extends EventListBase<ServiceEvent> {
                 this.optionalColsStartIndex,
                 0,
                 new ListColumnSettingWithFilter(
-                    "raw.serviceId",
-                    "Service Id"));
+                    'raw.serviceId',
+                    'Service Id'));
         }
     }
 
@@ -560,8 +534,8 @@ export class PartitionEventList extends EventListBase<PartitionEvent> {
                 this.optionalColsStartIndex,
                 0,
                 new ListColumnSettingWithFilter(
-                    "raw.partitionId",
-                    "Partition Id"));
+                    'raw.partitionId',
+                    'Partition Id'));
         }
     }
 
@@ -587,8 +561,8 @@ export class ReplicaEventList extends EventListBase<ReplicaEvent> {
                 this.optionalColsStartIndex,
                 0,
                 new ListColumnSettingWithFilter(
-                    "raw.replicaId",
-                    "Replica Id"));
+                    'raw.replicaId',
+                    'Replica Id'));
         }
     }
 

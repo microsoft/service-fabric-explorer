@@ -1,4 +1,4 @@
-﻿import { DataModelBase } from './Base';
+import { DataModelBase } from './Base';
 import { IRawApplicationType } from '../RawDataTypes';
 import { ServiceTypeCollection, ApplicationCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
@@ -12,13 +12,16 @@ import { map } from 'rxjs/operators';
 import { Utils } from 'src/app/Utils/Utils';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { CreateApplicationComponent } from 'src/app/views/application-type/create-application/create-application.component';
+import { RoutesService } from 'src/app/services/routes.service';
 
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
-//-----------------------------------------------------------------------------
+// -----------------------------------------------------------------------------
 
 export class ApplicationType extends DataModelBase<IRawApplicationType> {
+    /*IsInUse is only set on the AppType on the appType Essential page*/
+    public isInUse: boolean = null;
     public serviceTypes: ServiceTypeCollection;
 
     public constructor(data: DataService, raw?: IRawApplicationType) {
@@ -31,11 +34,11 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
     }
 
     public get id(): string {
-        return this.raw.Name + " " + this.raw.Version;
+        return this.raw.Name + ' ' + this.raw.Version;
     }
 
     public get viewPath(): string {
-        return this.data.routes.getAppTypeViewPath(this.name);
+        return RoutesService.getAppTypeViewPath(this.name);
     }
 
     public unprovision(): Observable<any> {
@@ -50,27 +53,27 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
 
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
-            "unprovisionAppType",
-            "Unprovision",
-            "Unprovisioning",
+            'unprovisionAppType',
+            'Unprovision',
+            'Unprovisioning',
             () => this.unprovision(),
             () => true,
-            "Confirm Type Unprovision",
+            'Confirm Type Unprovision',
             `Unprovision application type ${this.name}@${this.raw.Version} from cluster ${window.location.host}?`,
             `${this.name}@${this.raw.Version}`
         ));
 
         this.actions.add(new IsolatedAction(
             this.data.dialog,
-            "createAppInstance",
-            "create",
-            "Creating",
+            'createAppInstance',
+            'Create',
+            'Creating',
             {
                 appType: this,
             },
             CreateApplicationComponent,
             () => true)
-            )
+            );
     }
 }
 
@@ -79,7 +82,7 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
 export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
     public apps: Application[] = [];
     public appTypes: ApplicationType[] = [];
-    public appsHealthState: ITextAndBadge;
+    public appsHealthState: ITextAndBadge = ValueResolver.healthStatuses[4];
 
     public constructor(data: DataService, appTypes: ApplicationType[]) {
         super(data, appTypes[0].raw);
@@ -91,7 +94,7 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
     }
 
     public get viewPath(): string {
-        return this.data.routes.getAppTypeViewPath(this.name);
+        return RoutesService.getAppTypeViewPath(this.name);
     }
 
     // Whenever the data.apps get refreshed, it will call this method to
@@ -110,9 +113,9 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplicationType> {
         return this.data.restClient.getApplicationTypes(this.name, messageHandler).pipe(map(response => {
-            CollectionUtils.updateDataModelCollection(this.appTypes, response.map( rawAppType => new ApplicationType(this.data, rawAppType)))
+            this.appTypes = CollectionUtils.updateDataModelCollection(this.appTypes, response.map( rawAppType => new ApplicationType(this.data, rawAppType)));
             return response[0];
-            }))
+            }));
     }
 
 
@@ -120,12 +123,12 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
         // TODO
         this.actions.add(new ActionWithConfirmationDialog(
             this.data.dialog,
-            "unprovisionType",
-            "Unprovision Type",
-            "Unprovisioning",
+            'unprovisionType',
+            'Unprovision Type',
+            'Unprovisioning',
             () => this.unprovision(),
             () => true,
-            "Confirm Type Unprovision",
+            'Confirm Type Unprovision',
             `Unprovision all versions of application type ${this.name} from cluster ${window.location.host}?`,
             this.name
         ));
@@ -133,7 +136,7 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
 
     private unprovision(): Observable<any> {
         return this.data.getAppTypeGroup(this.name, true).pipe(map(appTypeGroup => {
-            let unprovisonPromises = [];
+            const unprovisonPromises = [];
             appTypeGroup.appTypes.forEach(applicationType => {
                 unprovisonPromises.push(applicationType.unprovision());
             });
