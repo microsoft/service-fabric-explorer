@@ -4,6 +4,7 @@ import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { DataService } from 'src/app/services/data.service';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
+import { Constants } from 'src/app/Common/Constants';
 
 @Component({
   selector: 'app-base',
@@ -15,23 +16,19 @@ export class BaseComponent extends ApplicationBaseControllerDirective {
   tabs: ITab[] = [{
     name: 'essentials',
     route: './'
-    },
-    {
-      name: 'details',
-      route: './details'
-    },
-    {
-      name: 'deployments',
-      route: './deployments'
-    },
-    {
-      name: 'manifest',
-      route: './manifest'
-    },
-    {
-      name: 'events',
-      route: './events'
-    }
+  },
+  {
+    name: 'details',
+    route: './details'
+  },
+  {
+    name: 'deployments',
+    route: './deployments'
+  },
+  {
+    name: 'manifest',
+    route: './manifest'
+  }
   ];
 
   constructor(protected data: DataService, injector: Injector, private tree: TreeService) {
@@ -47,13 +44,17 @@ export class BaseComponent extends ApplicationBaseControllerDirective {
     ]);
 
     this.data.clusterManifest.ensureInitialized().subscribe(() => {
-      if (this.data.clusterManifest.isBackupRestoreEnabled) {
-        if (!this.tabs.some(tab => tab.name === 'backup')) {
-          this.tabs.push({
-            name: 'backup',
-            route: './backup'
-          });
-        }
+      if (this.data.clusterManifest.isBackupRestoreEnabled &&
+        !this.tabs.some(tab => tab.name === 'backup')) {
+        this.tabs.push({
+          name: 'backup',
+          route: './backup'
+        });
+      }
+
+      if (this.data.clusterManifest.isEventStoreEnabled &&
+        this.tabs.indexOf(Constants.EventsTab) === -1) {
+        this.tabs.push(Constants.EventsTab);
       }
     });
   }
