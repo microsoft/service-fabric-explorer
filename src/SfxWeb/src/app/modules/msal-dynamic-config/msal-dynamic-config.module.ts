@@ -47,7 +47,7 @@ export function MSALInstanceFactory(config: ConfigServiceService): IPublicClient
 
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
-  // protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['user.read']);
+  protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['user.read']);
 
   return {
     interactionType: InteractionType.Popup,
@@ -71,7 +71,6 @@ export class MsalConfigDynamicModule {
             ngModule: MsalConfigDynamicModule,
             providers: [
               ConfigServiceService,
-                // { provide: AUTH_CONFIG_URL_TOKEN, useValue: configFile },
                 { provide: APP_INITIALIZER, useFactory: initializerFactory,
                      deps: [ConfigServiceService], multi: true },
                 {
