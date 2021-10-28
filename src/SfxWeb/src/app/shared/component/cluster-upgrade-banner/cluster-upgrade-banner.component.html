@@ -3,12 +3,12 @@
         <a routerLink="/details" style="margin: auto;" class="essen-pane" >
             <span class="dark-background-link mif-info"></span>
             <span *ngIf="displayAllText">
-                <span> Cluster Upgrade </span>
+                <span style="padding-left: 2px;">{{clusterUpgradeProgress.isUDUpgrade ? '': 'Node by Node '}} Cluster Upgrade </span>
                 <span *ngIf="displayMiddleText">
                     in Progress since {{clusterUpgradeProgress.startTimestampUtc | date:'medium'}}
                 </span>
                 <span>
-                    ({{clusterUpgradeProgress.getCompletedUpgradeDomains()}} / {{clusterUpgradeProgress.upgradeDomains.length}} UDs completed)
+                    ({{clusterUpgradeProgress.getCompletedUpgradeDomains()}} / {{clusterUpgradeProgress.upgradeDomains.length}} {{clusterUpgradeProgress.isUDUpgrade ? 'UDs': 'Nodes'}} completed)
                 </span>
             </span>
         </a>

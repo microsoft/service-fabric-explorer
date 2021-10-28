@@ -1,10 +1,11 @@
 <div class="detail-list-container flex-child" style="margin-top: 15px;">
     <ng-content></ng-content>
-        <app-input [placeholder]="searchText" [model]="listSettings.search" (changed)="listSettings.search = $event; updateList()"></app-input>
-        <button class="simple-button"  (click)="resetAll()">Reset All</button>
+    <div *ngIf="showTopOptions">
+      <app-input [placeholder]="searchText" [model]="listSettings.search" (changed)="listSettings.search = $event; updateList()"></app-input>
+      <button class="simple-button"  (click)="resetAll()">Reset All</button>
 
-        <button class="simple-button" style="float: right;" (click)="export()"> <span class="mif-download2"></span> Export</button>
-
+      <button class="simple-button" style="float: right;" (click)="export()"> <span class="mif-download2"></span> Export</button>
+    </div>
         <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
         <div class="table-responsive">
             <table class="table detail-list">
@@ -20,7 +21,7 @@
                       </button>
 
                         <div ngbDropdown *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle"
-                            (openChange)="closeChange($event)">
+                            (openChange)="closeChange($event)" container="body" display="dynamic">
                             <button class="flat-button supress-hover" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" [title]="'filter by ' + columnSetting.displayName + ' options'" [attr.aria-haspopup]="false">
                                 <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}"></span>
                             </button>
@@ -55,19 +56,24 @@
                 <tbody>
                         <!-- track by (item.uniqueId || $id(item)) -->
                         <!-- | slice: listSettings.limit: listSettings.begin; -->
-                <ng-container *ngFor="let item of sortedFilteredList.slice( (page - 1) * listSettings.limit , page * listSettings.limit); ">
+                <ng-container *ngFor="let item of sortedFilteredList.slice( (page - 1) * listSettings.limit , page * listSettings.limit)">
                     <tr class="hover-row">
                             <!-- track by columnSetting.propertyPath -->
-                            <!-- ng-mousedown="handleClickRow(item, $event)" -->
-                        <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index; trackBy: trackByColumnSetting;">
+                        <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index;">
                             <div style="display: flex; flex-direction: row">
-                                <button class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button" (click)="handleClickRow(item, $event)"
-                                *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)" [attr.aria-expanded]="!item.isSecondRowCollapsed"
-                                [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></button>
-                                <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;"></span>
-                                <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>                                
+                                <button
+                                    class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button"
+                                    (click)="handleClickRow(item, $event)"
+                                    *ngIf="i === 0 && listSettings.secondRowCollapsible && listSettings.showSecondRow(item)"
+                                    [attr.aria-expanded]="!item.isSecondRowCollapsed"
+                                    [title]="item.isSecondRowCollapsed ? 'Expand the row' : 'Collapse the row'"></button>
+
+                                <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)"
+                                    (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;"></span>
+                                <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item"
+                                    [setting]="columnSetting" [cache]="cache" [itemValue]="columnSetting.getValue(item)"></app-detail-table-resolver>
                             </div>
-                            </td>
+                        </td>
                         </tr>
                         <!-- Optional second row -->
                         <ng-container *ngIf="!listSettings.secondRowCollapsible || (listSettings.secondRowCollapsible && !item.isSecondRowCollapsed)">
@@ -75,35 +81,38 @@
                         <tr *ngIf="listSettings.secondRowColumnSettings.length > 0 && listSettings.showSecondRow(item)">
                             <!-- TODO  track by columnSetting.propertyPath -->
                                 <td class="no-border"
-                                *ngFor="let columnSetting of listSettings.secondRowColumnSettings; trackBy: trackByColumnSetting; let i = index;"
+                                *ngFor="let columnSetting of listSettings.secondRowColumnSettings; let i = index; trackBy: (item | customTrackBy)"
                                 [colSpan]="columnSetting.config.colspan === -1 ? (listSettings.columnSettings.length - listSettings.secondRowColumnSettings.length + 1) : columnSetting.config.colspan"
                                 [ngClass]="{'no-padding': listSettings.secondRowCollapsible && item.isSecondRowCollapsed}">
-                                <div 
+                                <div
                                     [ngClass]="{'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}">
                                     <span *ngIf="!columnSetting.template" [innerHtml]="columnSetting.getDisplayContentsInHtml(item)" (click)="columnSetting.config.clickEvent(item);" style="cursor: auto;"></span>
-                                    <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" ></app-detail-table-resolver>
+                                    <app-detail-table-resolver *ngIf="columnSetting.template" [template]="columnSetting.template" [item]="item" [setting]="columnSetting" [cache]="cache" [itemValue]="columnSetting.getValue(item)"></app-detail-table-resolver>
                                 </div>
                             </td>
                         </tr>
                     </ng-container>
 
                     </ng-container>
-                    <tr *ngIf="isLoading">
+                    <tr *ngIf="isLoading && successfulLoad">
                         <td [attr.colspan]="listSettings.columnSettings.length">Loading...</td>
                     </tr>
-                    <tr *ngIf="sortedFilteredList.length === 0 && !list && !isLoading">
+                    <tr *ngIf="sortedFilteredList.length === 0 && !list && !isLoading && successfulLoad">
                         <td [attr.colspan]="listSettings.columnSettings.length">No items to display.</td>
+                    </tr>
+                    <tr *ngIf="!successfulLoad">
+                        <td [attr.colspan]="listSettings.columnSettings.length">Items failed to load.</td>
                     </tr>
                 </tbody>
             </table>
         </div>
 
-        <div style="margin-top: 10px;">
+        <div style="margin-top: 10px;" *ngIf="sortedFilteredList.length > listSettings.limit">
             <ngb-pagination [collectionSize]="sortedFilteredList.length" [(page)]="page" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
                             (pageChange)="pageChange($event)" style="display: inline-block;" [pageSize]="listSettings.limit"></ngb-pagination>
             <div style="float: right; margin-top: 10px;">
                 <span *ngIf="sortedFilteredList.length > listSettings.limit">
-                    Showing {{(page - 1) * listSettings.limit + 1}} - {{page * listSettings.limit}} of {{sortedFilteredList.length}} items 
+                    Showing {{(page - 1) * listSettings.limit + 1}} - {{page * listSettings.limit}} of {{sortedFilteredList.length}} items
                 </span>
             </div>
         </div>

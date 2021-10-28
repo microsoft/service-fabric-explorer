@@ -1,4 +1,4 @@
-import { Injectable } from '@angular/core';
+import { ElementRef, Injectable } from '@angular/core';
 import { IdGenerator } from '../Utils/IdGenerator';
 import { ITreeNode } from '../ViewModels/TreeTypes';
 import { IClusterHealthChunkQueryDescription, IClusterHealthChunk, HealthStateFilterFlags } from '../Models/HealthChunkRawDataTypes';
@@ -18,9 +18,9 @@ import { RefreshService } from './refresh.service';
 })
 export class TreeService {
 
+        public containerRef: ElementRef;
         public tree: TreeViewModel;
         private clusterHealth: ClusterHealth;
-        private cm: ClusterManifest;
         // controller views can get instantiated before this service and so a request to set the tree location might
         // get requested before the init function is called and so it needs to be cached.
         private cachedTreeSelection: {path: string[], skipSelectAction?: boolean};
@@ -40,8 +40,7 @@ export class TreeService {
                 this.tree.selectTreeNode(this.cachedTreeSelection.path, this.cachedTreeSelection.skipSelectAction);
             }
 
-            this.cm = new ClusterManifest(this.data);
-            this.refreshService.insertRefreshSubject('tree', () => this.refresh() );
+            this.refreshService.refreshSubject.subscribe( () => this.refresh().subscribe());
         }
 
         public selectTreeNode(path: string[], skipSelectAction?: boolean): Observable<any> {
@@ -72,11 +71,11 @@ export class TreeService {
             const clusterHealthQueryDescription = this.tree.addHealthChunkFiltersRecursively(this.data.getInitialClusterHealthChunkQueryDescription());
             return this.data.getClusterHealthChunk(clusterHealthQueryDescription)
                 .pipe(mergeMap(healthChunk => {
-                    return forkJoin([
+                  return forkJoin([
                         // cluster health needs to be refreshed even when the root node is collapsed
                         this.clusterHealth.mergeHealthStateChunk(healthChunk),
                         this.tree.mergeClusterHealthStateChunk(healthChunk)
-                    ]).pipe(mergeMap( () => this.tree.refresh()) );
+                    ]).pipe(mergeMap(() => this.tree.refresh()) );
                 }));
         }
 

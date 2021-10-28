@@ -17,6 +17,7 @@ export class TreeViewModel {
     public showErrorItems = true;
 
     public searchTerm = '';
+    public orderbyHealthState = false;
 
     public firstTreeSelect = true;
 
@@ -107,7 +108,7 @@ export class TreeViewModel {
         return clusterHealthQueryDescription;
     }
 
-    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
+    public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any[]> {
         return this.childGroupViewModel.updateDataModelFromHealthChunkRecursively(clusterHealthChunk);
     }
 

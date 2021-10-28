@@ -1,10 +1,14 @@
 import { Injectable } from '@angular/core';
-import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink, ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime } from '../Models/ListSettings';
+import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink,
+         ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime, ListColumnSettingWithCustomComponent,
+         ListColumnSettingWithShorten } from '../Models/ListSettings';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 import { NodeLoadInformation } from '../Models/DataModels/Node';
 import { MetricsViewModel } from '../ViewModels/MetricsViewModel';
 import { StorageService } from './storage.service';
+import { RepairTaskViewComponent } from '../views/cluster/repair-task-view/repair-task-view.component';
+import { QuestionToolTipComponent } from '../modules/detail-list-templates/question-tool-tip/question-tool-tip.component';
 
 @Injectable({
   providedIn: 'root'
@@ -151,6 +155,60 @@ export class SettingsService {
 
     return this.getNewOrExistingListSettings(listKey, [], settings);
 
+  }
+
+  public getNewOrExistingPendingRepairTaskListSettings(listKey: string = 'pendingRepair'){
+    return this.getNewOrExistingListSettings(listKey, ['raw.History.CreatedUtcTimestamp'],
+    [
+        new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'Task Id'),
+        new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
+        new ListColumnSettingWithShorten('raw.Target.NodeNames', 'Target', 2),
+        new ListColumnSetting('impactedNodes', 'Impact'),
+        new ListColumnSetting('raw.State', 'State', {enableFilter: true}),
+        new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created At'),
+        new ListColumnSetting('displayDuration', 'Duration', {
+            sortPropertyPaths: ['duration']
+        }),
+    ],
+    [
+        new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
+        '',
+        '',
+        {
+            enableFilter: false,
+            colspan: -1
+        })
+    ],
+    true,
+    (item) => (Object.keys(item).length > 0),
+    true);
+  }
+
+  public getNewOrExistingCompletedRepairTaskListSettings(listKey: string = 'completedRepair'){
+    return this.getNewOrExistingListSettings(listKey, ['raw.History.CreatedUtcTimestamp'],
+    [
+        new ListColumnSettingWithCustomComponent(QuestionToolTipComponent, 'raw.TaskId', 'Task Id'),
+        new ListColumnSetting('raw.Action', 'Action', {enableFilter: true}),
+        new ListColumnSettingWithShorten('raw.Target.NodeNames', 'Target', 2),
+        new ListColumnSetting('impactedNodes', 'Impact'),
+        new ListColumnSetting('raw.ResultStatus', 'Result Status', {enableFilter: true}),
+        new ListColumnSettingWithUtcTime('raw.History.CreatedUtcTimestamp', 'Created At'),
+        new ListColumnSetting('displayDuration', 'Duration', {
+            sortPropertyPaths: ['duration']
+        }),
+    ],
+    [
+        new ListColumnSettingWithCustomComponent(RepairTaskViewComponent,
+        '',
+        '',
+        {
+            enableFilter: false,
+            colspan: -1
+        })
+    ],
+    true,
+    (item) => true,
+    true);
   }
 
   // Update all existing list settings to use new limit

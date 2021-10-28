@@ -1,113 +1,25 @@
-<div *ngIf="partition">
-  <div class="detail-pane essen-pane">
-    <div class="essential-container">
+<div *ngIf="partition" >
+  <div class="tile-container">
+    <app-essential-health-tile [healthState]="partition?.healthState" *ngIf="partition && partition.isInitialized" 
+    class="long" [listItems]="essentialItems">
+    <ng-template appEssentialTemplate id="status">
+      <app-status-resolver [status]="partition.raw.PartitionStatus"></app-status-resolver>
+    </ng-template>
+  </app-essential-health-tile>
 
-      <div class="essential-item essential-half">
-        <div class="essential-head">
-          Id
-        </div>
-        <div class="essential-body">
-          {{partitionId}}<app-clip-board [text]="partitionId"></app-clip-board>
-        </div>
-      </div>
-
-      <div class="essential-item essential-half">
-        <div class="essential-head">
-          Partition Kind
-        </div>
-        <div class="essential-body">
-          {{partition.partitionInformation.raw.ServicePartitionKind}}
-        </div>
-      </div>
-
-      <div class="essential-item essential-half">
-        <div class="essential-head">
-          Health State
-        </div>
-        <div class="essential-body">
-          <app-health-badge [badgeClass]="partition.healthState.badgeClass" [text]="partition.healthState.text">
-          </app-health-badge>
-        </div>
-      </div>
-
-      <div class="essential-item essential-half" *ngIf="partition.isStatelessService">
-        <div class="essential-head">
-          Instance Count
-        </div>
-        <div class="essential-body">
-          {{partition.raw.InstanceCount}}
-        </div>
-      </div>
-
-      <div class="essential-item essential-half"
-        *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">
-        <div class="essential-head">
-          Low Key
-        </div>
-        <div class="essential-body">
-          {{partition.partitionInformation.raw.LowKey}}
-        </div>
-      </div>
-
-      <div class="essential-item essential-half"
-        *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindNamed">
-        <div class="essential-head">
-          Name
-        </div>
-        <div class="essential-body">
-          {{partition.partitionInformation.raw.Name}}
-        </div>
-      </div>
-
-      <div class="essential-item essential-half">
-        <div class="essential-head">
-          Status
-        </div>
-        <div class="essential-body">
-          {{partition.raw.PartitionStatus}}
-        </div>
-      </div>
-
-      <div class="essential-item essential-half"
-        *ngIf="partition.isStatefulService && partition.partitionInformation.isPartitionKindInt64Range">
-        <div class="essential-head">
-          High Key
-        </div>
-        <div class="essential-body">
-          {{partition.partitionInformation.raw.HighKey}}
-        </div>
-      </div>
-
-      <div class="essential-item essential-half">
-        <div class="essential-head">
-          Minimum Replica Set Size
-        </div>
-        <div class="essential-body">
-          {{partition.raw.MinReplicaSetSize}}
-        </div>
-      </div>
-
-      <div class="essential-item essential-half">
-        <div class="essential-head">
-          Target Replica Set Size
-        </div>
-        <div class="essential-body">
-          {{partition.raw.TargetReplicaSetSize}}
-        </div>
-      </div>
-
-    </div>
+    <app-tile-wrapper *ngIf="partition?.raw">
+      <app-state-info [stateful]="!partition.isStatelessService" [data]="partition.raw"></app-state-info>
+    </app-tile-wrapper>
   </div>
 
 
   <div class="detail-pane essen-pane" data-cy="health">
     <app-collapse-container sectionName="Unhealthy Evaluations">
       <div collapse-header>
-        <h4>Unhealthy Evaluations</h4>
+        <h4>health Evaluations</h4>
       </div>
       <div collapse-body>
-        <app-detail-list [list]="partition.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings">
-        </app-detail-list>
+        <app-health-viewer  [healthyEvaluations]="partition.health.healthEvents" [unhealthyEvaluations]="partition.health.unhealthyEvaluations" ></app-health-viewer>
       </div>
     </app-collapse-container>
   </div>

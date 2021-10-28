@@ -14,6 +14,7 @@ import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/Dash
 import { RoutesService } from 'src/app/services/routes.service';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
+import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
 
 @Component({
@@ -27,7 +28,6 @@ export class EssentialsComponent extends BaseControllerDirective {
   nodes: NodeCollection;
   clusterHealth: ClusterHealth;
   systemApp: SystemApplication;
-  unhealthyEvaluationsListSettings: ListSettings;
   clusterManifest: ClusterManifest;
   repairtaskCollection: RepairTaskCollection;
 
@@ -38,6 +38,8 @@ export class EssentialsComponent extends BaseControllerDirective {
   replicasDashboard: IDashboardViewModel;
   upgradesDashboard: IDashboardViewModel;
   upgradeAppsCount = 0;
+
+  essentialItems: IEssentialListItem[] = [];
 
   constructor(public data: DataService,
               public injector: Injector,
@@ -52,7 +54,6 @@ export class EssentialsComponent extends BaseControllerDirective {
     this.nodes = this.data.nodes;
     this.systemApp = this.data.systemApp;
     this.repairtaskCollection = this.data.repairCollection;
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -78,7 +79,7 @@ export class EssentialsComponent extends BaseControllerDirective {
                 .pipe(map(apps => {
                     this.upgradeAppsCount = apps.collection.filter(app => app.isUpgrading).length;
                 })),
-      this.nodes.refresh(messageHandler),
+      this.nodes.refresh(messageHandler).pipe(map(() => {this.updateItemInEssentials(); })),
       this.systemApp.refresh(messageHandler).pipe(catchError(err => of(null))),
       this.clusterUpgradeProgress.refresh(messageHandler),
       this.data.getClusterManifest().pipe(map((manifest) => {
@@ -88,7 +89,34 @@ export class EssentialsComponent extends BaseControllerDirective {
           return of(null);
         }
       }))
-    ]);
+    ]).pipe(map(() => {
+      this.updateItemInEssentials();
+    }));
   }
 
+
+  updateItemInEssentials() {
+    this.essentialItems = [
+      {
+        descriptionName: 'Code Version',
+        copyTextValue: this.clusterUpgradeProgress?.raw?.CodeVersion,
+        displayText: this.clusterUpgradeProgress?.raw?.CodeVersion,
+      },
+      {
+        descriptionName: 'Fault Domains',
+        displayText: this.nodes.faultDomains.length.toString(),
+        copyTextValue: this.nodes.faultDomains.length.toString()
+      },
+      {
+        descriptionName: 'Upgrade Domains',
+        displayText: this.nodes.upgradeDomains.length.toString(),
+        copyTextValue: this.nodes.upgradeDomains.length.toString()
+      },
+      {
+        descriptionName: 'Healthy Seed Nodes',
+        displayText: this.nodes.healthySeedNodes,
+        copyTextValue: this.nodes.healthySeedNodes
+      }
+    ];
+  }
 }

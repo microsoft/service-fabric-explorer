@@ -3,8 +3,6 @@ import { ReplicaBaseControllerDirective } from '../ReplicaBase';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
-import { ListSettings } from 'src/app/Models/ListSettings';
-import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
   selector: 'app-details',
@@ -13,14 +11,8 @@ import { SettingsService } from 'src/app/services/settings.service';
 })
 export class DetailsComponent extends ReplicaBaseControllerDirective {
 
-  healthEventsListSettings: ListSettings;
-
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
-  }
-
-  setup() {
-    this.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{

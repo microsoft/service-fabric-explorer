@@ -9,6 +9,7 @@ import { map } from 'rxjs/operators';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { ServiceHealth } from 'src/app/Models/DataModels/Service';
+import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
   selector: 'app-essentials',
@@ -18,9 +19,10 @@ import { ServiceHealth } from 'src/app/Models/DataModels/Service';
 export class EssentialsComponent extends ServiceBaseControllerDirective {
 
   listSettings: ListSettings;
-  unhealthyEvaluationsListSettings: ListSettings;
   partitionsDashboard: IDashboardViewModel;
   replicasDashboard: IDashboardViewModel;
+
+  essentialItems: IEssentialListItem[] = [];
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -34,11 +36,30 @@ export class EssentialsComponent extends ServiceBaseControllerDirective {
       new ListColumnSettingWithFilter('raw.PartitionStatus', 'Status'),
     ]);
 
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
-
+    this.essentialItems = [];
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    this.essentialItems = [
+      {
+        descriptionName: 'Service Type Version',
+        displayText: this.service.raw.ManifestVersion,
+        copyTextValue: this.service.raw.ManifestVersion,
+      },
+      {
+        descriptionName: 'Service Type',
+        displayText: this.service.raw.TypeName,
+        copyTextValue: this.service.raw.TypeName
+      },
+      {
+        descriptionName: 'Status',
+        displayText: this.service.raw.ServiceStatus,
+        copyTextValue: this.service.raw.ServiceStatus,
+        selectorName: 'status',
+        displaySelector: true
+      }
+    ];
+
     this.service.description.refresh(messageHandler).subscribe();
 
     return forkJoin([

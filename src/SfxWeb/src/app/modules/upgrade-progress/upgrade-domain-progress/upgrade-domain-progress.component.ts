@@ -1,6 +1,6 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
-import { IRawUpgradeDomainProgress, IRawNodeUpgradeProgress } from 'src/app/Models/RawDataTypes';
-import { IPartitionData } from '../partition-info/partition-info.component';
+import { IRawUpgradeDomainProgress, IRawNodeUpgradeProgress, ICurrentUpgradeUnitsProgressInfo } from 'src/app/Models/RawDataTypes';
+import { IPartitionData } from '../safety-checks/safety-checks.component';
 
 @Component({
   selector: 'app-upgrade-domain-progress',
@@ -12,7 +12,7 @@ export class UpgradeDomainProgressComponent{
 
   partitions: Record<string, IPartitionData> = {};
 
-  @Input() upgradeDomain: IRawUpgradeDomainProgress;
+  @Input() upgradeDomain: IRawUpgradeDomainProgress | ICurrentUpgradeUnitsProgressInfo;
 
   constructor() { }
 

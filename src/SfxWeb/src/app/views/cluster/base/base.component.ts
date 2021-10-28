@@ -3,6 +3,7 @@ import { ITab } from 'src/app/shared/component/navbar/navbar.component';
 import { TreeService } from 'src/app/services/tree.service';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { DataService } from 'src/app/services/data.service';
+import { Constants } from 'src/app/Common/Constants';
 
 @Component({
   selector: 'app-base',
@@ -47,10 +48,7 @@ export class BaseComponent implements OnInit {
 
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.dataService.clusterManifest.isEventStoreEnabled) {
-        this.tabs = this.tabs.concat({
-          name: 'events',
-          route: '/events'
-        });
+        this.tabs = this.tabs.concat(Constants.EventsTab);
       }
       if (this.dataService.clusterManifest.isBackupRestoreEnabled) {
         this.tabs = this.tabs.concat({

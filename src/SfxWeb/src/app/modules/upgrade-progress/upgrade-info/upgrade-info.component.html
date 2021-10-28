@@ -1,0 +1,51 @@
+<div class="detail-pane essen-pane">
+  <div style="display: flex; width: 100%; flex-wrap: wrap; justify-content: space-around;">
+    <div class="domain-container" *ngIf="upgradeProgress.upgradeDomains.length > 0">
+      <h5>{{upgradeProgress.isUDUpgrade ? 'Upgrade Domain' : 'Node'}} Progress</h5>
+      <app-upgrade-progress style="align-self: center;" [upgradeDomains]="upgradeProgress.upgradeDomains"
+        [showChart]="true">
+      </app-upgrade-progress>
+    </div>
+    <div class="overview-container">
+      <div>
+        <h5>Overview</h5>
+        <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="false">
+        </app-essential-item>
+
+        <app-essential-item [item]="startTimeEssentialItem" [underline]="false">
+          <app-display-time [time]="upgradeProgress.startTimestampUtc"></app-display-time>
+        </app-essential-item>
+
+        <app-essential-item [item]="upgradeDuration" *ngIf="!upgradeProgress.isUpgrading && upgradeDuration">
+        </app-essential-item>
+
+        <div class="duration" data-cy="upgrade-bar" *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isUDUpgrade">
+          <app-display-duration topText="Upgrade Duration" [topInMilliseconds]="upgradeProgress.upgradeTime"
+            [bottomHelpText]="helpText" [bottomHelpTextLink]="link" bottomText="Time Left Until Timeout"
+            [bottomInMilliseconds]="upgradeProgress.getUpgradeTimeout()">
+          </app-display-duration>
+        </div>
+      </div>
+
+      <div data-cy="cud" *ngIf="upgradeProgress.isUpgrading && upgradeProgress.isUDUpgrade">
+        <h5>Current Domain</h5>
+        <app-essential-item *ngFor="let item of essentialItems2; let l = last" [item]="item" [underline]="false">
+        </app-essential-item>
+
+        <div class="duration" data-cy="upgrade-bar-domain">
+          <app-display-duration topText="Upgrade Domain Duration"
+            [topInMilliseconds]="upgradeProgress.currentDomainTime" [bottomHelpText]="helpText"
+            [bottomHelpTextLink]="link" bottomText="Time Left Until Timeout"
+            [bottomInMilliseconds]="upgradeProgress.getUpgradeDomainTimeout()">
+          </app-display-duration>
+        </div>
+      </div>
+    </div>
+
+    <div *ngIf="upgradeProgress.isUpgrading && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length > 0" data-cy="currentud" style="flex: 2; min-width: 500px;">
+      <h5 style="text-align: center;">Nodes status</h5>
+      <app-upgrade-domain-progress [upgradeDomain]="upgradeProgress.nodesInProgress">
+      </app-upgrade-domain-progress>
+    </div>
+  </div>
+</div>

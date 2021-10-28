@@ -117,17 +117,30 @@ If proxying requests to a secure cluster adding a file called localsettings.json
 ## Testing
 
 ### Run unit tests
-Navigate to  `sfx/SfxWeb` folder and run 
+Navigate to  `src/SfxWeb` folder and run 
 ```
 npm test
 ```
 
 ### Run E2E tests
-Navigate to sfx/SfxWeb folder and run
+Navigate to src/SfxWeb folder and run
 ```
 npm run cypress:local
 ```
 This assumes that the angular local dev server is running
+
+### Generate test coverage report
+(see the following for reference https://lukas-klement.medium.com/implementing-code-coverage-with-angular-and-cypress-6ed08ed7e617)
+
+Run a full E2E suite above and this will generate a code coverage report.
+Navigate to src/SfxWeb folder and run
+```
+npm run test:coverage
+```
+Then you can also view a full report at
+```
+sfxWeb/coverage/lcov-report/index.html
+```
 
 ### CI overview
 The CI will run the following

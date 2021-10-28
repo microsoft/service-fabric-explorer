@@ -64,5 +64,9 @@ export function initApp(aadService: AdalService, msalService: MsalService, restC
           console.log(e)
             return of(null);
         }
-    };
-  }
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+}

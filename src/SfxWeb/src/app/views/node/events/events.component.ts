@@ -1,8 +1,8 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { DataService } from 'src/app/services/data.service';
 import { NodeBaseControllerDirective } from '../NodeBase';
-import { NodeTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
-import { NodeEventList } from 'src/app/Models/DataModels/collections/Collections';
+import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
+import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
 
 @Component({
   selector: 'app-events',
@@ -10,16 +10,23 @@ import { NodeEventList } from 'src/app/Models/DataModels/collections/Collections
   styleUrls: ['./events.component.scss']
 })
 export class EventsComponent extends NodeBaseControllerDirective {
-  nodeEvents: NodeEventList;
-  nodeEventTimelineGenerator: NodeTimelineGenerator;
+
+  listEventStoreData: IEventStoreData<any, any> [];
+  optionsConfig: IOptionConfig;
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
   setup() {
-    this.nodeEvents = this.data.createNodeEventList(this.nodeName);
-    this.nodeEventTimelineGenerator = new NodeTimelineGenerator();
+    this.listEventStoreData = [
+      this.data.getNodeEventData(this.nodeName)
+    ];
+
+    this.optionsConfig = {
+      enableCluster: true,
+      enableRepairTasks: true
+    };
   }
 
 }

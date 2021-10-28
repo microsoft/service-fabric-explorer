@@ -5,10 +5,13 @@ import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, nodes_ro
 const nodeName = "_nt_0"
 const nodeInfoRef = "@getnodeInfo"
 
+const seedNodeQuoromRef = '[data-cy=seedNodeQuorom]';
+
 context('node page', () => {
     beforeEach(() => {
         addDefaultFixtures();
 
+        addRoute(FIXTURE_NODES, "node-page/Ok-nodes-list.json", nodes_route);
         addRoute("nodeInfo", "node-page/node-info.json", apiUrl(`/Nodes/${nodeName}/?*`));
         addRoute("nodehealthInfo", "node-page/health.json", apiUrl(`/Nodes/${nodeName}/$/GetHealth?*`));
         addRoute("apps", "node-page/apps.json", apiUrl(`/Nodes/${nodeName}/$/GetApplications?*`));
@@ -26,7 +29,7 @@ context('node page', () => {
         it('load essentials', () => {
             cy.visit(`/#/node/${nodeName}`);
 
-            cy.wait(FIXTURE_REF_NODES);
+            cy.wait(nodeInfoRef);
 
             cy.get('[data-cy=header]').within(() => {
                 cy.contains('_nt_0').click();
@@ -38,11 +41,47 @@ context('node page', () => {
                 cy.contains('5').click();
             });
 
+            cy.get('[data-cy=essential-info').within(() => {
+                cy.contains('10.0.0.8');
+                cy.contains('Up Time');
+                cy.contains('22 days');
+            })
+
+            cy.get('[data-cy=status]').within(() => {
+                cy.contains('Up');
+            })
+
+            cy.get('[data-cy=node-ring-info]').within(() => {
+                cy.contains('3');
+                cy.contains('fd:/0');
+                cy.contains('Yes');
+            })
+
             cy.get('[data-cy=appsList]').within(() => {
                 checkTableSize(1);
             })
 
             cy.get('[data-cy=deactivated').should('not.exist');
+            cy.get('[data-cy=repair-jobs').should('not.exist');
+
+        })
+
+        it('down node', () => {
+            addRoute(FIXTURE_NODES, "node-page/Error-nodes-list.json", nodes_route);
+            addRoute("nodeInfo", "node-page/Error-node-info.json", apiUrl(`/Nodes/${nodeName}/?*`));
+
+            cy.visit(`/#/node/${nodeName}`);
+
+            cy.get('[data-cy=essential-info').within(() => {
+                cy.contains('10.0.0.8');
+                cy.contains('Down Time');
+                cy.contains('17');
+            })
+
+            cy.get('[data-cy=status]').within(() => {
+                cy.contains('Down');
+            })
+
         })
 
         it('deactivated', () => {
@@ -55,8 +94,34 @@ context('node page', () => {
 
             cy.get('[data-cy=deactivated]').within(() => {
                 cy.contains("86fa6852ad467a903afbbc67edc16b66");
+                cy.get(seedNodeQuoromRef).should('not.exist');
             })
         })
+
+        it('deactivated - show seed node quorom warning', () => {
+          addRoute("deactivatedNode", "node-page/deactivated-node-seed-node-quorom.json", apiUrl(`/Nodes/${nodeName}/?*`));
+          addRoute(FIXTURE_NODES, "node-page/node-list-seed-node-quorom.json", nodes_route);
+
+          cy.visit(`/#/node/${nodeName}`);
+
+          cy.wait("@getdeactivatedNode");
+
+          cy.get('[data-cy=deactivated]').within(() => {
+            cy.get(seedNodeQuoromRef);
+          })
+      })
+
+        it('repair jobs', () => {
+          addRoute('repairs', 'node-page/repair-jobs.json', apiUrl('/$/GetRepairTaskList?*'))
+
+          cy.visit(`/#/node/${nodeName}`);
+
+          cy.wait("@getrepairs");
+
+          cy.get('[data-cy=repair-jobs]').within(() => {
+              cy.contains("Azure/TenantUpdate/441efe72-c74d-4cfa-84df-515b44c89060/4/1555");
+          })
+      })
 
     })
 

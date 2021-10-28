@@ -4,13 +4,59 @@ import { Node } from '../Node';
 import { IClusterHealthChunk } from '../../HealthChunkRawDataTypes';
 import { IdGenerator } from 'src/app/Utils/IdGenerator';
 import { map } from 'rxjs/operators';
-import { INodesStatusDetails, NodeStatusDetails } from '../../RawDataTypes';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { Observable, of } from 'rxjs';
 import { Utils } from 'src/app/Utils/Utils';
 import { HealthStateConstants, NodeStatusConstants, StatusWarningLevel, BannerWarningID } from 'src/app/Common/Constants';
 import { DataModelCollectionBase } from './CollectionBase';
 import { RoutesService } from 'src/app/services/routes.service';
+
+
+export interface INodesStatusDetails {
+  nodeType: string;
+  statusTypeCounts: Record<string, number>;
+  warningCount: number;
+  errorCount: number;
+  okCount: number;
+}
+export class NodeStatusDetails implements INodesStatusDetails {
+  public static readonly allNodeText = 'All Nodes';
+  public static readonly allSeedNodesText = 'Seed Nodes';
+
+  public nodeType: string;
+  public statusTypeCounts: Record<string, number>;
+  public warningCount = 0;
+  public errorCount = 0;
+  public totalCount = 0;
+  public okCount = 0;
+  public constructor(nodeType: string) {
+      this.nodeType = nodeType;
+
+      // easiest way to initialize all possible values with Enum strings
+      this.statusTypeCounts = {};
+      this.statusTypeCounts[NodeStatusConstants.Up] = 0;
+      this.statusTypeCounts[NodeStatusConstants.Down] = 0;
+      this.statusTypeCounts[NodeStatusConstants.Enabling] = 0;
+      this.statusTypeCounts[NodeStatusConstants.Disabling] = 0;
+      this.statusTypeCounts[NodeStatusConstants.Disabled] = 0;
+      this.statusTypeCounts[NodeStatusConstants.Unknown] = 0;
+      this.statusTypeCounts[NodeStatusConstants.Invalid] = 0;
+  }
+
+  public add(node: Node): void {
+      this.statusTypeCounts[node.raw.NodeStatus]++;
+      this.totalCount++;
+      if (node.healthState.text === HealthStateConstants.Warning) {
+          this.warningCount++;
+      }
+      if (node.healthState.text === HealthStateConstants.Error) {
+          this.errorCount++;
+      }
+      if (node.healthState.text === HealthStateConstants.OK) {
+          this.okCount++;
+      }
+  }
+}
 
 export class NodeCollection extends DataModelCollectionBase<Node> {
     // make sure we only check once per session and this object will get destroyed/recreated
@@ -62,7 +108,10 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         if (includeSeedNoddes) {
             resultList.push(seedNodes);
         }
-        return resultList.concat(Object.keys(counts).map(key => counts[key]));
+
+        const nodeTypes = Object.keys(counts).map(key => counts[key]).sort((a: INodesStatusDetails, b: INodesStatusDetails) => a.nodeType.localeCompare(b.nodeType));
+
+        return resultList.concat(nodeTypes);
     }
 
     protected get indexPropery(): string {

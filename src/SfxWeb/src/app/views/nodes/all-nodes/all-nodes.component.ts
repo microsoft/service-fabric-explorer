@@ -7,7 +7,6 @@ import { Observable } from 'rxjs';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { map } from 'rxjs/operators';
-import { INodesStatusDetails } from 'src/app/Models/RawDataTypes';
 import { DashboardViewModel, IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 
 @Component({
@@ -19,7 +18,6 @@ export class AllNodesComponent extends BaseControllerDirective {
 
   nodes: NodeCollection;
   listSettings: ListSettings;
-  nodesStatuses: INodesStatusDetails[];
   tiles: IDashboardViewModel[] = [];
 
   constructor(private data: DataService, private settings: SettingsService, injector: Injector) {

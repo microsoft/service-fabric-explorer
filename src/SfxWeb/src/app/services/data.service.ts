@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { SystemApplication, Application } from '../Models/DataModels/Application';
 import { ApplicationTypeGroupCollection, ApplicationCollection, BackupPolicyCollection, ServiceTypeCollection,
          DeployedReplicaCollection, DeployedCodePackageCollection, DeployedServicePackageCollection, ReplicaOnPartitionCollection,
-         PartitionCollection, ClusterEventList, NodeEventList, ApplicationEventList, ServiceEventList, PartitionEventList, ReplicaEventList, CorrelatedEventList } from '../Models/DataModels/collections/Collections';
+         PartitionCollection, ClusterEventList, NodeEventList, ApplicationEventList, ServiceEventList, PartitionEventList, ReplicaEventList, CorrelatedEventList, EventListBase } from '../Models/DataModels/collections/Collections';
 import { RoutesService } from './routes.service';
 import { MessageService } from './message.service';
 import { TelemetryService } from './telemetry.service';
@@ -33,7 +33,12 @@ import { IDataModelCollection } from '../Models/DataModels/collections/Collectio
 import { DeployedApplicationCollection } from '../Models/DataModels/collections/DeployedApplicationCollection';
 import { MatDialog } from '@angular/material/dialog';
 import { RepairTaskCollection } from '../Models/DataModels/collections/RepairTaskCollection';
-
+import { ApplicationEvent, ClusterEvent, FabricEventBase, NodeEvent, PartitionEvent, ReplicaEvent, ServiceEvent } from '../Models/eventstore/Events';
+import { IEventStoreData } from '../modules/event-store/event-store/event-store.component';
+import { SettingsService } from './settings.service';
+import { RepairTask } from '../Models/DataModels/repairTask';
+import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
+import groupBy from 'lodash/groupBy';
 @Injectable({
   providedIn: 'root'
 })
@@ -133,7 +138,7 @@ export class DataService {
 
   public getSystemServices(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ServiceCollection> {
       return this.getSystemApp(false, messageHandler).pipe(mergeMap(app => app.services.ensureInitialized(forceRefresh, messageHandler)
-      ), map(app => app.services));
+      ), map(() => this.systemApp.services));
   }
 
   public getApps(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<ApplicationCollection> {
@@ -147,7 +152,7 @@ export class DataService {
   }
 
   public getNodes(forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<NodeCollection> {
-      return this.nodes.ensureInitialized(forceRefresh, messageHandler);
+      return this.nodes.ensureInitialized(forceRefresh, messageHandler).pipe(map(() => this.nodes));
   }
 
   public getNode(name: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<Node> {
@@ -289,32 +294,90 @@ export class DataService {
       }));
   }
 
-  public getRepairTasks(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler): Observable<RepairTaskCollection> {
-    return this.repairCollection.ensureInitialized(forceRefresh, messageHandler).pipe(map( () => this.repairCollection));
-  }
-
-  public createClusterEventList(): ClusterEventList {
-    return new ClusterEventList(this);
+    private addFabricEventData<T extends EventListBase<any>, S extends FabricEventBase>(data: IEventStoreData<T, S>){
+        data.listSettings = data.eventsList.settings;
+        data.getEvents = () => data.eventsList.collection.map(event => event.raw);
+        data.setDateWindow = (startDate: Date, endDate: Date) => data.eventsList.setDateWindow(startDate, endDate);
     }
 
-    public createNodeEventList(nodeName?: string): NodeEventList {
-        return new NodeEventList(this, nodeName);
+    public getRepairTasksData(settings: SettingsService): IEventStoreData<RepairTaskCollection, RepairTask>{
+        return {
+            eventsList: this.repairCollection,
+            timelineGenerator: new RepairTaskTimelineGenerator(),
+            displayName: 'Repair Tasks',
+            listSettings: settings.getNewOrExistingCompletedRepairTaskListSettings(),
+            getEvents: () => this.repairCollection.collection
+        };
     }
 
-    public createApplicationEventList(applicationId?: string): ApplicationEventList {
-        return new ApplicationEventList(this, applicationId);
+    public getClusterEventData(): IEventStoreData<ClusterEventList, ClusterEvent>{
+        const list = new ClusterEventList(this);
+        const d = {
+            eventsList : list,
+            timelineGenerator : new ClusterTimelineGenerator(),
+            displayName : 'Cluster',
+        };
+
+        this.addFabricEventData<ClusterEventList, ClusterEvent>(d);
+        return d;
     }
 
-    public createServiceEventList(serviceId?: string): ServiceEventList {
-        return new ServiceEventList(this, serviceId);
+    public getNodeEventData(nodeName?: string): IEventStoreData<NodeEventList, NodeEvent>{
+        const list = new NodeEventList(this, nodeName);
+        const d = {
+            eventsList: list,
+            timelineGenerator: new NodeTimelineGenerator(),
+            displayName: nodeName ? nodeName : 'Nodes',
+        };
+
+        this.addFabricEventData<NodeEventList, NodeEvent>(d);
+        return d;
     }
 
-    public createPartitionEventList(partitionId?: string): PartitionEventList {
-        return new PartitionEventList(this, partitionId);
+    public getApplicationEventData(applicationId?: string): IEventStoreData<ApplicationEventList, ApplicationEvent> {
+        const list = new ApplicationEventList(this, applicationId);
+        const d = {
+            eventsList : list,
+            timelineGenerator : applicationId ? new ApplicationTimelineGenerator() : null,
+            displayName : applicationId ? applicationId : 'Apps',
+        };
+
+        this.addFabricEventData<ApplicationEventList, ApplicationEvent>(d);
+        return d;
     }
 
-    public createReplicaEventList(partitionId: string, replicaId?: string): ReplicaEventList {
-        return new ReplicaEventList(this, partitionId, replicaId);
+    public getServiceEventData(serviceId?: string): IEventStoreData<ServiceEventList, ServiceEvent> {
+        const list = new ServiceEventList(this, serviceId);
+        const d = {
+            eventsList : list,
+            displayName : serviceId
+        };
+
+        this.addFabricEventData<ServiceEventList, ServiceEvent>(d);
+        return d;
+    }
+
+    public getPartitionEventData(partitionId?: string): IEventStoreData<PartitionEventList, PartitionEvent> {
+        const list = new PartitionEventList(this, partitionId);
+        const d = {
+            eventsList : list,
+            timelineGenerator : new PartitionTimelineGenerator(),
+            displayName : partitionId
+        };
+
+        this.addFabricEventData<PartitionEventList, PartitionEvent>(d);
+        return d;
+    }
+
+    public getReplicaEventData(partitionId: string, replicaId?: string): IEventStoreData<ReplicaEventList, ReplicaEvent> {
+        const list = new ReplicaEventList(this, partitionId, replicaId);
+        const d = {
+            eventsList : list,
+            displayName : replicaId
+        };
+
+        this.addFabricEventData<ReplicaEventList, ReplicaEvent>(d);
+        return d;
     }
 
     public createCorrelatedEventList(eventInstanceId: string) {
@@ -326,7 +389,7 @@ export class DataService {
     if (item) {
         return item.ensureInitialized(forceRefresh, messageHandler);
     } else {
-        return throwError(null);
+      return throwError('This item could not be found');
     }
   }
 
@@ -344,17 +407,8 @@ export class DataService {
             deployedApps.push(deployedApp);
         }));
 
-    // Assign deployed apps under their belonging nodes
-    const nodeDeployedAppsGroups = deployedApps.reduce( (previous, current) => {
-        if ( current.NodeName in previous){
-            previous[current.NodeName].push(current);
-        }else{
-            previous[current.NodeName] = [current];
-        }
-        return previous; }, {});
-
     // TODO
-    // let nodeDeployedAppsGroups = _.groupBy(deployedApps, deployedApp => deployedApp.NodeName);
+    const nodeDeployedAppsGroups = groupBy(deployedApps, deployedApp => deployedApp.NodeName);
     Object.keys(nodeDeployedAppsGroups).forEach(key => {
         const group = nodeDeployedAppsGroups[key];
 

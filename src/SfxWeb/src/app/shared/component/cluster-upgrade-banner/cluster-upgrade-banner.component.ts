@@ -1,7 +1,7 @@
 import { Component, Input, HostListener, OnInit } from '@angular/core';
 import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable } from 'rxjs';
+import { Observable, Subscription } from 'rxjs';
 import { RefreshService } from 'src/app/services/refresh.service';
 
 @Component({
@@ -20,14 +20,9 @@ export class ClusterUpgradeBannerComponent implements OnInit {
   }
 
   ngOnInit() {
-    this.refreshService.insertRefreshSubject('upgradeBanner', () => this.refresh());
+    this.refreshService.refreshSubject.subscribe(() => this.refresh().subscribe());
     this.checkWidth(window.innerWidth);
   }
-
-  public getUpgradeDomainProgress(): string {
-    return `(${this.clusterUpgradeProgress.getCompletedUpgradeDomains()} / ${this.clusterUpgradeProgress.upgradeDomains.length} UDs completed)`;
-  }
-
 
   @HostListener('window:resize', ['$event.target'])
   onResize(event: Window) {

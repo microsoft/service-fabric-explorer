@@ -1,10 +1,11 @@
-import { IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState, IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo } from '../RawDataTypes';
+import { IRawApplication, IRawApplicationHealth, IRawApplicationManifest, IRawDeployedApplicationHealthState,
+         IRawApplicationUpgradeProgress, IRawApplicationBackupConfigurationInfo, IRawUpgradeDomainProgress } from '../RawDataTypes';
 import { DataModelBase, IDecorators } from './Base';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { ServiceTypeCollection, ApplicationBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IApplicationHealthStateFilter } from '../HealthChunkRawDataTypes';
-import { AppStatusConstants, Constants, HealthStateConstants, UpgradeDomainStateNames } from 'src/app/Common/Constants';
+import { AppStatusConstants, ClusterUpgradeStates, Constants, HealthStateConstants, UpgradeDomainStateNames, UpgradeDomainStateRegexes } from 'src/app/Common/Constants';
 import { IResponseMessageHandler, ResponseMessageHandlers } from 'src/app/Common/ResponseMessageHandlers';
 import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
 import { HealthBase } from './HealthEvent';
@@ -104,7 +105,7 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
-        return this.data.restClient.getApplication(this.id, messageHandler);
+        return this.data.restClient.getApplication(this.id, this.data.readOnlyHeader, messageHandler);
     }
 
     private setUpActions(): void {
@@ -293,19 +294,55 @@ export class ApplicationUpgradeProgress extends DataModelBase<IRawApplicationUpg
         return TimeUtils.getDuration(this.raw.UpgradeDomainDurationInMilliseconds);
     }
 
+
+    public get isUpgrading() {
+      return UpgradeDomainStateRegexes.InProgress.test(this.raw.UpgradeState) || this.raw.UpgradeState === ClusterUpgradeStates.RollingForwardPending;
+    }
+
+    public getUpgradeDomainTimeout(): number {
+      return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDescription.MonitoringPolicy.UpgradeDomainTimeoutInMilliseconds);
+    }
+
+    public get currentDomainTime(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDomainDurationInMilliseconds);
+    }
+
+    public getUpgradeTimeout(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDescription.MonitoringPolicy.UpgradeTimeoutInMilliseconds);
+    }
+
+    public get upgradeTime(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDurationInMilliseconds);
+    }
+
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplicationUpgradeProgress> {
         return this.data.restClient.getApplicationUpgradeProgress(this.parent.id, messageHandler);
+    }
+
+    public get isUDUpgrade(): boolean {
+      return !this.raw.IsNodeByNode;
+    }
+
+    public get nodesInProgress() {
+      if (this.isUDUpgrade) {
+        return this.raw.CurrentUpgradeDomainProgress;
+      }else{
+        return this.raw.CurrentUpgradeUnitsProgress;
+      }
     }
 
     protected updateInternal(): Observable<any> | void {
                                                                                                 // set depth to 0 and parent ref to null
         this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, 0, null, this.data);
 
-        const domains = this.raw.UpgradeDomains.map(ud => new UpgradeDomain(this.data, ud));
+        const upgradeUnits = this.isUDUpgrade ? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
+
+        const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud, !this.isUDUpgrade));
         const groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
             .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.InProgress))
             .concat(domains.filter(ud => ud.name === this.raw.NextUpgradeDomain))
-            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain));
+            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain))
+            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Failed));
 
         this.upgradeDomains = groupedDomains;
 

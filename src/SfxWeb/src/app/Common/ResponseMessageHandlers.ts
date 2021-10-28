@@ -26,7 +26,7 @@ export class GetResponseMessageHandler implements IResponseMessageHandler {
 
     protected getErrorMessageInternal(apiDesc: string, response: HttpErrorResponse): string {
         let message = `${apiDesc} failed`;
-        if (response.error.Error.Code && response.error.Error.Message) {
+        if (response.error?.Error?.Code && response.error?.Error?.Message) {
             message += `.\r\nCode: ${response.error.Error.Code}\r\nMessage: ${response.error.Error.Message}`;
         } else if (response.statusText) {
             message += ` (${response.statusText})`;

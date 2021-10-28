@@ -8,6 +8,7 @@ import { DetailBaseComponent } from '../ViewModels/detail-table-base.component';
 import { Type } from '@angular/core';
 import { UtcTimestampComponent } from '../modules/detail-list-templates/utc-timestamp/utc-timestamp.component';
 import { ITextAndBadge } from '../Utils/ValueResolver';
+import { ShortenComponent } from '../modules/detail-list-templates/shorten/shorten.component';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -245,6 +246,10 @@ export class ListColumnSetting {
           value.isChecked = false;
         });
       }
+
+    getValue(item: any) {
+        return Utils.result(item, this.propertyPath);
+    }
 }
 
 export class ListColumnSettingForBadge extends ListColumnSetting {
@@ -335,6 +340,18 @@ export class ListColumnSettingWithCustomComponent extends ListColumnSetting impl
                        public propertyPath: string = '',
                        public displayName: string = '',
                        config?: IListColumnAdditionalSettings) {
+
+        super(propertyPath, displayName, config);
+    }
+}
+
+export class ListColumnSettingWithShorten extends ListColumnSetting {
+    template = ShortenComponent;
+    public constructor(
+        propertyPath: string,
+        displayName: string,
+        public maxWidth: number,
+        config?: IListColumnAdditionalSettings) {
 
         super(propertyPath, displayName, config);
     }
