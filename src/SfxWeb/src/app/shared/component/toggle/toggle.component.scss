@@ -56,3 +56,20 @@
   label {
       margin-bottom: 0px;
   }
+
+
+  @media screen and (-ms-high-contrast: active) {
+    .slider {
+      border: 1px solid;
+
+      &:focus {
+        border: 2px solid;
+      }
+    }
+
+    .slider:before {
+      border: 1px solid;
+    }
+
+
+  }

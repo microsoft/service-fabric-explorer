@@ -5,7 +5,7 @@
         <div *ngFor="let action of actionCollection.collection; let last = last;">
             <button *ngIf="!action.isAdvanced || dataService.actionsAdvancedEnabled()" ngbDropdownItem
                 (click)="actionCollection.runWithTelemetry(action, 'ActionsButton')"
-                [disabled]="!action.canRun()" (keydown.tab)="last ? myDrop.close() : null" [attr.aria-disabled]="!action.canRun()">
+                [disabled]="!action.canRun()" [attr.disabled]="action.canRun() ? null: ''" (keydown.tab)="last ? myDrop.close() : null" [attr.aria-disabled]="!action.canRun()">
                 {{action.title}}
             </button>
         </div>

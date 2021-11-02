@@ -1,5 +1,7 @@
 
 // Custom Theming for Angular Material
+@use '~@angular/cdk';
+@use '~@angular/material' as mat;
 // For more information: https://material.angular.io/guide/theming
 @import '~@angular/material/theming';
 @import 'vars.scss';
@@ -8,24 +10,24 @@
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
-@include mat-core();
+@include mat.core();
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$SfxWeb-primary: mat-palette($mat-indigo);
-$SfxWeb-accent: mat-palette($mat-pink, A200, A100, A400);
+$SfxWeb-primary: mat.define-palette(mat.$indigo-palette);
+$SfxWeb-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
-$SfxWeb-warn: mat-palette($mat-red);
+$SfxWeb-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object (a Sass map containing all of the palettes).
-$SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
+$SfxWeb-theme: mat.define-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include angular-material-theme($SfxWeb-theme);
+@include mat.all-component-themes($SfxWeb-theme);
 
 //--------------------------------------------------------------
 // Mixins
@@ -600,7 +602,7 @@ app-navbar {
   }
 
   .vis-panel.vis-left {
-    background-color: #0075c9;
+    background-color: $azure-blue;
   }
   .vis-ltr .vis-label.vis-nested-group .vis-inner {
     padding-left: 0px;
@@ -608,7 +610,7 @@ app-navbar {
   }
 
   .vis-group-level-unknown-but-gte1 {
-    background-color: #0075c9 !important;
+    background-color: $azure-blue !important;
     border: 1px solid white;
   }
 
@@ -638,7 +640,7 @@ app-navbar {
   }
 
   .vis-item.blue {
-    background-color: #0075c9;
+    background-color: $azure-blue;
   }
 
   .vis-item.red-point {
@@ -684,13 +686,13 @@ app-navbar {
 
   .timeline-button {
     background-color: #262626;
-    border: 1px solid #0075c9;
+    border: 1px solid $azure-blue;
     margin-bottom: 10px;
     margin-top: 10px;
   }
 
   .vis-label{
-    background-color: #0075c9;
+    background-color: $azure-blue;
     color: #dad7d7;
   }
 
@@ -722,7 +724,7 @@ app-navbar {
   }
 
   .noUi-connect{
-    background-color: #0075c9;
+    background-color: $azure-blue;
   }
 
   .noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip {
@@ -804,7 +806,7 @@ app-navbar {
 }
 
 .nav-item > .active {
-    border-bottom-color: #0075c9;
+    border-bottom-color: $azure-blue;
     border-bottom-style: solid;
     color: #FFFFFF;
     padding-bottom: 2px;
@@ -903,8 +905,8 @@ app-navbar {
   z-index: 3;
   color: #fff;
   background-color: #262626;
-  border-color: #0075c9;
-  border: 1px solid #0075c9;
+  border-color: $azure-blue;
+  border: 1px solid $azure-blue;
   box-sizing: border-box;
 }
 
@@ -923,5 +925,33 @@ app-navbar {
   .dropdown-item.disabled, .dropdown-item:disabled {
     border: 1px solid black;
   }
+
+  .page-item {
+    .page-link {
+    border: 1px solid gray !important;
+    box-sizing: border-box;
+
+    &:focus {
+      border: 2px solid gray !important;
+    }
+  }
+  }
 }
 
+.page-item.active {
+  @include cdk.high-contrast() {
+    .page-link {
+      border: 2px dotted orange !important;
+    }
+  }
+}
+
+button.disabled {
+  // forced-color-adjust: none;
+  color: initial !important;
+    border: 1px dotted orange !important;
+  }
+
+:checked {
+  accent-color: $azure-blue;
+}

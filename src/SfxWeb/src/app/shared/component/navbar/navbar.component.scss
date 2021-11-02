@@ -72,7 +72,7 @@
                 color: $detail-tab-color;
                 font-size: $detail-tab-title-font-size;
 
-                &.active {
+                &.current {
                     border-bottom-color: $detail-tab-active-border-color !important;
                     color: $detail-tab-active-color;
                     padding-bottom: 2px;

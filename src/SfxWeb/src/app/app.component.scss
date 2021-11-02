@@ -126,3 +126,15 @@
         }
     }
 }
+
+.utc-time {
+  position: absolute;
+  right: 5px;
+  bottom: 0px;
+}
+
+@media only screen and (max-width: 600px) {
+  .utc-time {
+    display: none;
+  }
+}
