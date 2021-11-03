@@ -1,5 +1,6 @@
 import { of } from 'rxjs';
 import { StandaloneIntegration } from './Common/StandaloneIntegration';
+import { AdalService } from './services/adal.service';
 import { RestClientService } from './services/rest-client.service';
 
 export function initApp(aadService: AdalService, restClient: RestClientService) {
