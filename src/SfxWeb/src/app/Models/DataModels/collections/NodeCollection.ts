@@ -18,6 +18,7 @@ export interface INodesStatusDetails {
   warningCount: number;
   errorCount: number;
   okCount: number;
+  totalCount: number;
 }
 export class NodeStatusDetails implements INodesStatusDetails {
   public static readonly allNodeText = 'All Nodes';

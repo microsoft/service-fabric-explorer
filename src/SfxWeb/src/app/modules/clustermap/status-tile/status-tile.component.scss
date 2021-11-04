@@ -1,0 +1,25 @@
+.dashboard-datapoints {
+  margin: 0px;
+  display: flex;
+  flex-direction: column;
+}
+
+.dashboard-datapoint {
+  height: 36px;
+  margin: 4px;
+}
+
+.dashboard-datapoint-number {
+  font-size: 16pt;
+  // width: 54px;
+}
+
+.dashboard-datapoint-title {
+  font-size: 11pt;
+}
+
+.essen-pane {
+  padding: 0px;
+}
+
+
