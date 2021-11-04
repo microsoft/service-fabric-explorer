@@ -22,6 +22,30 @@
         Count of total stateful replicas on the node
       </app-dashboard-text-tile>
     </ng-container>
+
+    <app-dashboard-text-scale-tile barClass="badge-upgrade-active" title="Last Impacting Repair Job"
+    *ngIf="1 > 0" class="long" style="display: block" data-cy="long">
+    <!-- <div>
+        <div *ngFor="let line of longestRunning; let l = last" style="padding-bottom: 5px;"
+            [ngClass]="l ? '': 'bottom'" class="highlight-hover" [attr.data-cy]="line.primaryText">
+            <div class="tile-item">
+                <div style="font-size: 15px;" class="overflow-text">{{line.primaryText}}</div>
+                <div class="left-auto centering-row">
+                    <span class="mif-watch mif-lg"></span>
+                    {{line.topCorner}}
+                </div>
+            </div>
+            <div style="display: flex; flex-direction: row">
+                <div>
+                    {{line.secondaryText}}
+                </div>
+                <div class="left-auto">
+                    <app-clip-board [text]="line.secondaryText"></app-clip-board>
+                </div>
+            </div>
+        </div>
+    </div> -->
+</app-dashboard-text-scale-tile>
   </div>
 
   <div style="width: 100%;">

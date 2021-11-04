@@ -113,8 +113,12 @@
             <h4 collapse-header>
                 Pending Repair Tasks
             </h4>
-            <app-detail-list [list]="repairTaskCollection.repairTasks" [listSettings]="repairTaskListSettings"
-                collapse-body (sorted)="sorted($event, false)"></app-detail-list>
+            <div collapse-body>
+              <app-toggle [(state)]="impactingOnly"></app-toggle>
+              <app-detail-list [list]="repairTaskCollection.repairTasks" [listSettings]="repairTaskListSettings"
+               (sorted)="sorted($event, false)"></app-detail-list>
+            </div>
+
         </app-collapse-container>
     </div>
 
@@ -123,9 +127,12 @@
             <h4 collapse-header>
                 Completed Repair Tasks
             </h4>
-            <app-detail-list [list]="repairTaskCollection.completedRepairTasks"
-                [listSettings]="completedRepairTaskListSettings" collapse-body (sorted)="sorted($event)" (sortOrdering)="setSortOrdering($event)">
-            </app-detail-list>
+            <div collapse-body>
+              <app-toggle [(state)]="impactingOnly"></app-toggle>
+              <app-detail-list [list]="repairTaskCollection.completedRepairTasks"
+                  [listSettings]="completedRepairTaskListSettings" (sorted)="sorted($event)" (sortOrdering)="setSortOrdering($event)">
+              </app-detail-list>
+            </div>
         </app-collapse-container>
     </div>
 </div>

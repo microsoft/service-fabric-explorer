@@ -45,6 +45,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
 
   // will be initially set by detail list component.
   ordering: ISortOrdering;
+  impactingOnly = false;
 
   constructor(private data: DataService, injector: Injector, private settings: SettingsService, private telemService: TelemetryService) {
     super(injector);

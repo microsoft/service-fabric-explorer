@@ -10,6 +10,7 @@ import { NodeBaseControllerDirective } from '../NodeBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
+import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 
 @Component({
   selector: 'app-essentials',
@@ -24,9 +25,9 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   essentialItems: IEssentialListItem[] = [];
   ringInfo: IEssentialListItem[] = [];
 
-  repairJobs = [];
+  repairJobs: RepairTask[] = [];
   repairJobSettings: ListSettings;
-
+  mostRecentImpactingJob: RepairTask;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -103,6 +104,10 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
         if (this.data.clusterManifest.isRepairManagerEnabled) {
           return this.data.repairCollection.refresh().pipe(map(() => {
             this.repairJobs = this.data.repairCollection.getRepairJobsForANode(this.node.name);
+
+            const mostRecentImpacting = this.repairJobs.filter(job => job.impactedNodes.length > 0).sort( (a,b) => a.startTime.getTime() - b.startTime.getTime())[0];
+            console.log(mostRecentImpacting.raw.Impact.NodeImpactList.filter(impact => impact.NodeName === this.nodeName)[0])
+            this.mostRecentImpactingJob = mostRecentImpacting;
           }));
         }else {
           return of(null);
