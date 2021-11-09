@@ -19,6 +19,21 @@
         <app-toggle [(state)]="healthFilter.Error"></app-toggle>
       </label>
     </div>
+
+    <!-- (openChange)="closeChange($event)" -->
+    <div ngbDropdown class="hidden-toggle"  container="body" display="dynamic">
+      <button class="flat-button supress-hover" ngbDropdownToggle>node Types</button>
+      <ul ngbDropdownMenu role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;">
+        <li role="menuitem" *ngFor="let type of nodes.nodeTypes; let last = last;" class="item">
+          <label style="margin-bottom: 0px; font-size: 15px;">
+            <input type="checkbox" (click)=" $event.stopPropagation()" />
+            <!-- [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList();" (keydown.tab)="last ? closeDropDown() : null" -->
+            {{type}}
+          </label>
+        </li>
+      </ul>
+    </div>
+
     <div class="table-responsive" *ngIf="nodes.collection.length > 0 && matrix">
       <table class="table map-table" role="presentation">
         <tbody>

@@ -6,6 +6,7 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { SectionOverviewComponent } from './section-overview/section-overview.component';
 import { ChartsModule } from '../charts/charts.module';
 import { RouterModule } from '@angular/router';
+import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 
@@ -19,7 +20,8 @@ import { RouterModule } from '@angular/router';
     CommonModule,
     SharedModule,
     ChartsModule,
-    RouterModule
+    RouterModule,
+    NgbDropdownModule
   ],
   exports: [
     StatusTileComponent,
