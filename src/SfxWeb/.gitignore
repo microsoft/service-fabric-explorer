@@ -55,3 +55,4 @@ coverage.json
 /coverage-results
 /coverage-karma
 /coverage
+/cypress-coverage
