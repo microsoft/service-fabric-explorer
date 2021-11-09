@@ -69,6 +69,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     public seedNodeCount: number;
     public disabledAndDisablingCount: number;
     public disabledAndDisablingNodes: Node[];
+    public nodeTypes: string[];
 
     public constructor(data: DataService) {
         super(data);
@@ -138,6 +139,8 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         const seedNodes = this.collection.filter(node => node.raw.IsSeedNode);
         const healthyNodes = seedNodes.filter(node => node.healthState.text === HealthStateConstants.OK);
 
+        let nodeTypes = new Set<string>();
+
         let disabledNodes = 0;
         let disablingNodes = 0;
 
@@ -152,6 +155,8 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
                 disablingNodes++;
                 disabling.push(node);
             }
+
+            nodeTypes.add(node.raw.Type);
         });
 
         this.disabledAndDisablingNodes = disabling.concat(disabled);
@@ -163,6 +168,8 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
 
         this.healthySeedNodes = seedNodes.length.toString() + ' (' +
             Math.round(healthyNodes.length / seedNodes.length * 100).toString() + '%)';
+
+        this.nodeTypes = Array.from(nodeTypes);
 
         return of(true);
     }

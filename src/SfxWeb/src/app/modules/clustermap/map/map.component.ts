@@ -1,6 +1,7 @@
 import { Component, Injector, OnInit } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
+import { HealthStateConstants } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { DataService } from 'src/app/services/data.service';
@@ -28,6 +29,10 @@ export class MapComponent extends BaseControllerDirective {
 
    setup() {
     this.nodes = this.data.nodes;
+    this.nodes = this.data.nodes;
+    this.healthFilter[HealthStateConstants.OK] = true;
+    this.healthFilter[HealthStateConstants.Warning] = true;
+    this.healthFilter[HealthStateConstants.Error] = true;
    }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
