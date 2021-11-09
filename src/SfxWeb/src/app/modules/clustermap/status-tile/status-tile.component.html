@@ -1,41 +1,19 @@
-<div *ngIf="info" class="essen-pane" style="color: white; margin: 2px;">
-  <div  class="underline" style="display: flex; margin: 3px; align-items: center;">
-    <div style="
-    margin-right: auto;    font-size: 15px;">
-      {{title}}
-    </div>
-    <div style="display: flex; align-items: center;">
-      <div style="font-size: 30px; margin: 3px; line-height: 1;">
-        {{info.totalCount}}
-      </div>
-      Nodes
-    </div>
-  </div>
+<!-- <app-essential-item *ngFor="let item of item; let l = last" [item]="item" [underline]="false">
 
-  <div style="display: flex; align-items: center;">
+</app-essential-item>
 
-    <div class="dashboard-datapoints" [ngStyle]="{'flex-direction': (vertical || moreInfo ? 'column' : 'row')}">
-      <div class="dashboard-datapoint">
-        <div class="dashboard-datapoint-leftbar badge-ok"></div>
-        <div class="dashboard-datapoint-title">Ok</div>
-        <div class="dashboard-datapoint-number">{{info.okCount}}</div>
-      </div>
+<app-essential-item [item]="startTimeEssentialItem" [underline]="false">
+  <app-display-time [time]="upgradeProgress.startTimestampUtc"></app-display-time>
+</app-essential-item> -->
 
-      <div class="dashboard-datapoint">
-        <div class="dashboard-datapoint-leftbar badge-warning"></div>
-        <div class="dashboard-datapoint-title">Warning</div>
-        <div class="dashboard-datapoint-number">{{info.warningCount}}</div>
-      </div>
+<div>
+  <div class="essential-list-item underline" *ngFor="let item of nodes; let l = last" style="height: 30px;">
+    <app-status-resolver [status]="item.nodeStatus" [showText]="false" class="space-right"></app-status-resolver>
+    <a [routerLink]="item.viewPath" style="margin: auto;">{{item.name}}</a>
 
-      <div class="dashboard-datapoint">
-        <div class="dashboard-datapoint-leftbar badge-error"></div>
-        <div class="dashboard-datapoint-title">Error</div>
-        <div class="dashboard-datapoint-number">{{info.errorCount}}</div>
-      </div>
-    </div>
-    <div *ngIf="moreInfo" style="margin-left: auto;">
-      <app-essential-item *ngFor="let item of item; let l = last" [item]="item" [underline]="l">
-      </app-essential-item>
-    </div>
   </div>
 </div>
+
+<!-- <app-essential-item *ngFor="let item of items; let l = last; let i = index;" [item]="item" [underline]="false">
+  <app-status-resolver [status]="nodes[i].nodeStatus" [showText]="false" class="space-right"></app-status-resolver>
+</app-essential-item> -->

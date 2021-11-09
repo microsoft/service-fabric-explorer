@@ -16,7 +16,10 @@ export class MapComponent extends BaseControllerDirective {
   nodes: NodeCollection;
   filter = '';
   healthFilter: Record<string, boolean> = {};
-  matrix: Record<string, Node[]> = {};
+  matrix: Record<string, Node[]>;
+
+  averageUD: number = 0;
+  averageFD: number = 0;
 
   constructor(private data: DataService, injector: Injector) {
 

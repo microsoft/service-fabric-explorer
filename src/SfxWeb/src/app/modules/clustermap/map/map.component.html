@@ -1,32 +1,47 @@
 <div class="detail-pane">
   <div data-cy="clustermap">
+    <app-input placeholder="Filter nodes" [model]="filter" (changed)="filter = $event;"></app-input>
 
-      <div class="table-responsive" *ngIf="nodes.collection.length > 0">
-          <table class="table map-table" role="presentation">
-              <tbody>
-                  <tr>
-                      <td class="legend" colspan="2" rowspan="2"></td>
-                      <td [colSpan]="nodes.faultDomains.length" class="legend">Fault Domain</td>
-                  </tr>
-                  <tr>
-                      <td *ngFor="let faultDomain of nodes.faultDomains" class="header top-side">
-                        <app-status-tile [nodes]="matrix[faultDomain]" [moreInfo]="false" [vertical]="false" [title]="faultDomain"></app-status-tile>
+    <div style="margin: 15px; display: block;">
+      <app-check-box [(state)]="healthFilter.OK">
+        <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+      </app-check-box>
+      <app-check-box [(state)]="healthFilter.Warning">
+        <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+      </app-check-box>
+      <app-check-box [(state)]="healthFilter.Error">
+        <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+      </app-check-box>
+    </div>
+    <div class="table-responsive" *ngIf="nodes.collection.length > 0 && matrix">
+      <table class="table map-table" role="presentation">
+        <tbody>
+          <tr>
+            <td class="legend" colspan="2" rowspan="2"></td>
+            <td [colSpan]="nodes.faultDomains.length" class="legend">Fault Domain</td>
+          </tr>
+          <tr>
+            <td *ngFor="let faultDomain of nodes.faultDomains" class="header top-side">
+              <app-section-overview [nodes]="matrix[faultDomain]" [moreInfo]="false" [vertical]="false"
+                [title]="faultDomain"></app-section-overview>
 
-                      </td>
-                  </tr>
-                  <tr *ngFor="let upgradeDomain of nodes.upgradeDomains; first as isFirst">
-                      <td class="legend" [rowSpan]="nodes.upgradeDomains.length" *ngIf="isFirst">Upgrade<br />Domain</td>
-                      <td class="header sticky left-side">
-                        <app-status-tile [nodes]="matrix[upgradeDomain]" [moreInfo]="false" [title]="upgradeDomain" [vertical]="true"></app-status-tile>
-                      </td>
-                      <td *ngFor="let faultDomain of nodes.faultDomains" style="color: white;">
-                          <div style="color: white;" *ngIf="matrix[faultDomain + upgradeDomain].length > 0">
-                              <app-status-tile [nodes]="matrix[faultDomain + upgradeDomain]" [title]="faultDomain + ' : ' + upgradeDomain" [vertical]="false"></app-status-tile>
-                          </div>
-                      </td>
-                  </tr>
-              </tbody>
-          </table>
-      </div>
+            </td>
+          </tr>
+          <tr *ngFor="let upgradeDomain of nodes.upgradeDomains; first as isFirst">
+            <td class="legend" [rowSpan]="nodes.upgradeDomains.length" *ngIf="isFirst">Upgrade<br />Domain</td>
+            <td class="header sticky left-side">
+              <app-section-overview [nodes]="matrix[upgradeDomain]" [moreInfo]="false" [title]="upgradeDomain"
+                [vertical]="true"></app-section-overview>
+            </td>
+            <td *ngFor="let faultDomain of nodes.faultDomains" style="color: white;">
+              <div style="color: white;" *ngIf="matrix[faultDomain + upgradeDomain].length > 0">
+                <app-status-tile [nodes]="matrix[faultDomain + upgradeDomain]"
+                  [title]="faultDomain + ' : ' + upgradeDomain"></app-status-tile>
+              </div>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
   </div>
 </div>

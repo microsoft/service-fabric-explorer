@@ -3,17 +3,23 @@ import { CommonModule } from '@angular/common';
 import { StatusTileComponent } from './status-tile/status-tile.component';
 import { MapComponent } from './map/map.component';
 import { SharedModule } from 'src/app/shared/shared.module';
+import { SectionOverviewComponent } from './section-overview/section-overview.component';
+import { ChartsModule } from '../charts/charts.module';
+import { RouterModule } from '@angular/router';
 
 
 
 @NgModule({
   declarations: [
     StatusTileComponent,
-    MapComponent
+    MapComponent,
+    SectionOverviewComponent
   ],
   imports: [
     CommonModule,
-    SharedModule
+    SharedModule,
+    ChartsModule,
+    RouterModule
   ],
   exports: [
     StatusTileComponent,

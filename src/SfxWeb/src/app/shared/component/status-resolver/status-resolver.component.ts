@@ -9,7 +9,7 @@ import { NodeStatusConstants } from 'src/app/Common/Constants';
 export class StatusResolverComponent implements OnInit {
 
   @Input() status: string;
-
+  @Input() showText: boolean = true;
 
   statusIconResolver: Record<string, string> = {};
 
@@ -20,7 +20,7 @@ export class StatusResolverComponent implements OnInit {
     this.statusIconResolver.Ready = 'mif-arrow-up green';
 
     this.statusIconResolver[NodeStatusConstants.Up] = 'mif-arrow-up green';
-    this.statusIconResolver[NodeStatusConstants.Down] = 'mif-arrow-down red';
+    this.statusIconResolver[NodeStatusConstants.Down] = 'mif-arrow-down red-resolver';
     this.statusIconResolver[NodeStatusConstants.Disabled] = 'mif-blocked orange';
     this.statusIconResolver[NodeStatusConstants.Disabling] = 'mif-blocked orange';
     this.statusIconResolver[NodeStatusConstants.Unknown] = '';
