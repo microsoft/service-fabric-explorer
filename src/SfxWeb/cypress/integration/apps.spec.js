@@ -12,7 +12,13 @@ context('apps list page', () => {
     })
 
     describe("essentials", () => {
-        it('load essentials', () => {
+      it('accessibility', () => {
+        cy.visit('/#/apps')
+        cy.injectAxe();
+        cy.checkA11y();
+      })
+
+      it('load essentials', () => {
 
             cy.get('[data-cy=header').within(() => {
                 cy.contains('Applications').click();

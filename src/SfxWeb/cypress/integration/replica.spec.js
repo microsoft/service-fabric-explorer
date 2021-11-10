@@ -32,6 +32,11 @@ context('replica', () => {
             cy.visit(`/#/apptype/${appName}/app/${appName}/service/${appName}%252F${serviceName}/partition/${partitionId}/replica/${replicaId}`)
         })
 
+        it('accessibility', () => {
+          cy.injectAxe();
+          cy.checkA11y();
+        })
+
         it('load essentials', () => {
             cy.wait(waitRequest);
 

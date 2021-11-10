@@ -20,8 +20,15 @@ context('Cluster page', () => {
   })
 
   describe("essentials", () => {
+    it.only('accessibility', () => {
+      cy.visit('')
+      cy.injectAxe();
+      cy.checkA11y();
+    })
+
     it('load essentials', () => {
       cy.visit('')
+
 
       cy.wait(FIXTURE_REF_CLUSTERHEALTH)
 

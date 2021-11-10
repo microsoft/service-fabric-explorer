@@ -18,6 +18,12 @@ context('app', () => {
     })
 
     describe("essentials", () => {
+        it('accessibility', () => {
+          cy.visit(`/#/apptype/${appName}/app/${appName}`)
+          cy.injectAxe();
+          cy.checkA11y();
+        })
+
         it('load essentials', () => {
           cy.visit(`/#/apptype/${appName}/app/${appName}`)
 

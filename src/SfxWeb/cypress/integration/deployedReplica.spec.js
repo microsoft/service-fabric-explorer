@@ -18,6 +18,13 @@ context('deployed replica', () => {
     })
 
     describe("list page", () => {
+
+      it('accessibility', () => {
+        cy.visit(`/#/node/${nodeName}/deployedapp/${appName}/deployedservice/${serviceName}/replicas`)
+        cy.injectAxe();
+        cy.checkA11y();
+      })
+
         it('load', () => {
             cy.visit(`/#/node/${nodeName}/deployedapp/${appName}/deployedservice/${serviceName}/replicas`)
 

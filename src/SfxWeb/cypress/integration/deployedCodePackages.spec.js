@@ -17,6 +17,12 @@ context('deployed code package', () => {
         cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetReplicas?*`), { fixture: 'deployed-code-package/replicas.json' }).as('replicas');
     })
 
+    it('accessibility', () => {
+      cy.visit(`/#/node/${nodeName}/deployedapp/${appName}/deployedservice/${serviceName}/codepackages`)
+      cy.injectAxe();
+      cy.checkA11y();
+    })
+
     describe("list page", () => {
         it('load', () => {
             cy.visit(`/#/node/${nodeName}/deployedapp/${appName}/deployedservice/${serviceName}/codepackages`)

@@ -11,6 +11,11 @@ context('app', () => {
         cy.visit(`/#/apptype/${appTypeName}`)
     })
 
+    it('accessibility', () => {
+      cy.injectAxe();
+      cy.checkA11y();
+    })
+
     describe("essentials", () => {
         it('load essentials', () => {
             cy.get('[data-cy=header').within(() => {
@@ -36,7 +41,7 @@ context('app', () => {
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
             })
-    
+
             cy.url().should('include', `/#/apptype/${appTypeName}/details`)
         })
     })

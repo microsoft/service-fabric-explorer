@@ -26,6 +26,12 @@ context('node page', () => {
     })
 
     describe("essentials", () => {
+      it('accessibility', () => {
+        cy.visit(`/#/node/${nodeName}`);
+        cy.injectAxe();
+        cy.checkA11y();
+      })
+
         it('load essentials', () => {
             cy.visit(`/#/node/${nodeName}`);
 

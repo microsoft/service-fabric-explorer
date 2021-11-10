@@ -22,6 +22,12 @@ context('app', () => {
     })
 
     describe("essentials", () => {
+
+      it('accessibility', () => {
+        cy.injectAxe();
+        cy.checkA11y();
+      })
+
         it('load essentials', () => {
             cy.wait(waitRequest);
             cy.get('[data-cy=header').within(() => {

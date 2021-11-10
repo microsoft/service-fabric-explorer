@@ -28,6 +28,11 @@ context('service', () => {
             cy.visit(urlFormatter(appName, serviceName, partitionId))
         })
 
+        it('accessibility', () => {
+          cy.injectAxe();
+          cy.checkA11y();
+        })
+
         it('load essentials', () => {
             cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
 
