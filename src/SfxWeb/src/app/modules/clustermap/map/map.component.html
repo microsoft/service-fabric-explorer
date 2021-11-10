@@ -1,37 +1,40 @@
 <div class="detail-pane">
   <div data-cy="clustermap">
-    <app-input placeholder="Filter nodes" [model]="filter" (changed)="filter = $event;"></app-input>
+    <div style="display: flex; padding: 15px;  width: fit-content;" class="essen-pane">
+      <div>
+        <app-input placeholder="Filter nodes" [model]="filter" (changed)="filter = $event;"></app-input>
 
-    <div style="margin: 15px; display: flex; gap: 10px;">
-      <label>
-        <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+        <!-- (openChange)="closeChange($event)" -->
+        <div ngbDropdown container="body" display="dynamic" style="margin: 14px; margin-bottom: 0px">
+          <button class="simple-button" ngbDropdownToggle>node Types</button>
+          <ul ngbDropdownMenu role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;">
+            <li role="menuitem" *ngFor="let type of nodes.nodeTypes; let last = last;" class="item">
+              <label style="margin-bottom: 0px; font-size: 15px;">
+                <input type="checkbox" (click)=" $event.stopPropagation()" />
+                <!-- [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList();" (keydown.tab)="last ? closeDropDown() : null" -->
+                {{type}}
+              </label>
+            </li>
+          </ul>
+        </div>
+      </div>
+      <div style="display: flex; flex-direction: column;">
+        <label>
+          <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
 
-        <app-toggle [(state)]="healthFilter.OK"></app-toggle>
-      </label>
+          <app-toggle [(state)]="healthFilter.OK" color="green"></app-toggle>
+        </label>
 
-      <label>
-        <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
-        <app-toggle [(state)]="healthFilter.Warning"></app-toggle>
-      </label>
+        <label>
+          <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+          <app-toggle [(state)]="healthFilter.Warning" color="#f19d03"></app-toggle>
+        </label>
 
-      <label>
-        <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
-        <app-toggle [(state)]="healthFilter.Error"></app-toggle>
-      </label>
-    </div>
-
-    <!-- (openChange)="closeChange($event)" -->
-    <div ngbDropdown class="hidden-toggle"  container="body" display="dynamic">
-      <button class="flat-button supress-hover" ngbDropdownToggle>node Types</button>
-      <ul ngbDropdownMenu role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;">
-        <li role="menuitem" *ngFor="let type of nodes.nodeTypes; let last = last;" class="item">
-          <label style="margin-bottom: 0px; font-size: 15px;">
-            <input type="checkbox" (click)=" $event.stopPropagation()" />
-            <!-- [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList();" (keydown.tab)="last ? closeDropDown() : null" -->
-            {{type}}
-          </label>
-        </li>
-      </ul>
+        <label>
+          <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+          <app-toggle [(state)]="healthFilter.Error" color="red"></app-toggle>
+        </label>
+      </div>
     </div>
 
     <div class="table-responsive" *ngIf="nodes.collection.length > 0 && matrix">
