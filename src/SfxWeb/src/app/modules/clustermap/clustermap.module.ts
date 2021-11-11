@@ -6,7 +6,8 @@ import { SharedModule } from 'src/app/shared/shared.module';
 import { SectionOverviewComponent } from './section-overview/section-overview.component';
 import { ChartsModule } from '../charts/charts.module';
 import { RouterModule } from '@angular/router';
-import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
+import { FormsModule } from '@angular/forms';
 
 
 
@@ -21,7 +22,9 @@ import { NgbDropdownModule } from '@ng-bootstrap/ng-bootstrap';
     SharedModule,
     ChartsModule,
     RouterModule,
-    NgbDropdownModule
+    NgbDropdownModule,
+    FormsModule,
+    NgbTooltipModule
   ],
   exports: [
     StatusTileComponent,

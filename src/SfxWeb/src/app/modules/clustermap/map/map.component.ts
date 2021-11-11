@@ -18,7 +18,7 @@ export class MapComponent extends BaseControllerDirective {
   nodes: NodeCollection;
   filter = '';
   healthFilter: Record<string, boolean> = {};
-  healthFilter: Record<string, boolean> = {};
+  nodeTypeFilter: Record<string, boolean> = {};
   matrix: Record<string, Node[]>;
 
   averageUD: number = 0;
@@ -41,33 +41,36 @@ export class MapComponent extends BaseControllerDirective {
     this.nodes = this.data.nodes;
 
     return this.nodes.refresh(messageHandler).pipe(map(() => {
-      const matrix = {};
-
-      console.log(this.nodes)
-
-      this.nodes.faultDomains.forEach(fd => {
-        matrix[fd] = [];
-
-        this.nodes.upgradeDomains.forEach(ud => {
-          matrix[`${fd}${ud}`] = [];
-          matrix[ud] = [];
-        })
+      this.nodes.nodeTypes.forEach(type => {
+        this.nodeTypeFilter[type] = true;
       })
-
-      this.nodes.collection.forEach(node => {
-        matrix[node.faultDomain + node.upgradeDomain].push(node);
-        matrix[node.faultDomain].push(node);
-        matrix[node.upgradeDomain].push(node);
-      })
-
-      this.matrix = matrix;
-
-      console.log(matrix)
+      this.updateNodes();
     }))
   }
 
+  public updateNodes() {
+    const matrix = {};
+
+    this.nodes.faultDomains.forEach(fd => {
+      matrix[fd] = [];
+
+      this.nodes.upgradeDomains.forEach(ud => {
+        matrix[`${fd}${ud}`] = [];
+        matrix[ud] = [];
+      })
+    })
+
+    this.getNodesForDomains().forEach(node => {
+      matrix[node.faultDomain + node.upgradeDomain].push(node);
+      matrix[node.faultDomain].push(node);
+      matrix[node.upgradeDomain].push(node);
+    })
+
+    this.matrix = matrix;
+  }
+
   public getNodesForDomains(): Node[] {
-    return this.nodes.collection.filter((node) =>
+    return this.nodes.collection.filter((node) => (node.raw.Type in this.healthFilter ? this.healthFilter[node.raw.Type] : true) &&
                                                   (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter) : true) &&
                                                   (node.healthState.badgeId in this.healthFilter ? this.healthFilter[node.healthState.badgeId] : true));
   }

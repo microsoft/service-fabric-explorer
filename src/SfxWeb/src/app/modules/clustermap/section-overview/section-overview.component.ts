@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { of } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
@@ -15,7 +15,7 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
   templateUrl: './section-overview.component.html',
   styleUrls: ['./section-overview.component.scss']
 })
-export class SectionOverviewComponent implements OnInit {
+export class SectionOverviewComponent implements OnChanges {
   @Input() nodes: Node[];
   @Input() repairJobs: RepairTaskCollection;
   @Input() title: string = '';
@@ -30,33 +30,33 @@ export class SectionOverviewComponent implements OnInit {
 
   constructor(public dataService: DataService) { }
 
-  ngOnInit(): void {
+  ngOnChanges(): void {
     const nodeInfo = new NodeStatusDetails("");
     this.nodes.forEach(node => nodeInfo.add(node));
     this.info = nodeInfo;
 
-    this.item = [
-      {
-        descriptionName: 'Disabled',
-        copyTextValue: this.info.statusTypeCounts[NodeStatusConstants.Disabled].toString(),
-        displayText: this.info.statusTypeCounts[NodeStatusConstants.Disabled].toString()
-      },
-      {
-        descriptionName: 'Disabling',
-        copyTextValue: this.info.statusTypeCounts[NodeStatusConstants.Disabling].toString(),
-        displayText: this.info.statusTypeCounts[NodeStatusConstants.Disabled].toString()
-      },
-      {
-        descriptionName: 'Down',
-        copyTextValue: this.info.statusTypeCounts[NodeStatusConstants.Down].toString(),
-        displayText: this.info.statusTypeCounts[NodeStatusConstants.Down].toString()
-      },
-      {
-        descriptionName: 'Repair jobs',
-        copyTextValue: this.info.statusTypeCounts[NodeStatusConstants.Down].toString(),
-        displayText: this.info.statusTypeCounts[NodeStatusConstants.Down].toString()
-      },
-    ]
+    // this.item = [
+    //   {
+    //     descriptionName: 'Disabled',
+    //     copyTextValue: this.info.statusTypeCounts[NodeStatusConstants.Disabled].toString(),
+    //     displayText: this.info.statusTypeCounts[NodeStatusConstants.Disabled].toString()
+    //   },
+    //   {
+    //     descriptionName: 'Disabling',
+    //     copyTextValue: this.info.statusTypeCounts[NodeStatusConstants.Disabling].toString(),
+    //     displayText: this.info.statusTypeCounts[NodeStatusConstants.Disabled].toString()
+    //   },
+    //   {
+    //     descriptionName: 'Down',
+    //     copyTextValue: this.info.statusTypeCounts[NodeStatusConstants.Down].toString(),
+    //     displayText: this.info.statusTypeCounts[NodeStatusConstants.Down].toString()
+    //   },
+    //   {
+    //     descriptionName: 'Repair jobs',
+    //     copyTextValue: this.info.statusTypeCounts[NodeStatusConstants.Down].toString(),
+    //     displayText: this.info.statusTypeCounts[NodeStatusConstants.Down].toString()
+    //   },
+    // ]
 
     const dps: DashboardDataPointViewModel[] = [];
     dps.push(new DashboardDataPointViewModel('Error', nodeInfo.errorCount, ValueResolver.healthStatuses[3]));

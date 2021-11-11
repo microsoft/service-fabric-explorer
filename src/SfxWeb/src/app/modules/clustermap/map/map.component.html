@@ -2,7 +2,7 @@
   <div data-cy="clustermap">
     <div style="display: flex; padding: 15px;  width: fit-content;" class="essen-pane">
       <div>
-        <app-input placeholder="Filter nodes" [model]="filter" (changed)="filter = $event;"></app-input>
+        <app-input placeholder="Filter nodes" [model]="filter" (changed)="filter = $event; updateNodes();"></app-input>
 
         <!-- (openChange)="closeChange($event)" -->
         <div ngbDropdown container="body" display="dynamic" style="margin: 14px; margin-bottom: 0px">
@@ -10,8 +10,8 @@
           <ul ngbDropdownMenu role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;">
             <li role="menuitem" *ngFor="let type of nodes.nodeTypes; let last = last;" class="item">
               <label style="margin-bottom: 0px; font-size: 15px;">
-                <input type="checkbox" (click)=" $event.stopPropagation()" />
-                <!-- [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList();" (keydown.tab)="last ? closeDropDown() : null" -->
+                <input type="checkbox" (click)=" $event.stopPropagation()" [(ngModel)]="nodeTypeFilter[type]"  (ngModelChange)="updateNodes();"/>
+                <!-- (ngModelChange)="updateList();" (keydown.tab)="last ? closeDropDown() : null" -->
                 {{type}}
               </label>
             </li>
@@ -22,17 +22,17 @@
         <label>
           <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
 
-          <app-toggle [(state)]="healthFilter.OK" color="green"></app-toggle>
+          <app-toggle [(state)]="healthFilter.OK" color="green" (stateChange)="updateNodes();"></app-toggle>
         </label>
 
         <label>
           <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
-          <app-toggle [(state)]="healthFilter.Warning" color="#f19d03"></app-toggle>
+          <app-toggle [(state)]="healthFilter.Warning" color="#f19d03" (stateChange)="updateNodes();"></app-toggle>
         </label>
 
         <label>
           <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
-          <app-toggle [(state)]="healthFilter.Error" color="red"></app-toggle>
+          <app-toggle [(state)]="healthFilter.Error" color="red" (stateChange)="updateNodes();"></app-toggle>
         </label>
       </div>
     </div>
@@ -52,7 +52,16 @@
             </td>
           </tr>
           <tr *ngFor="let upgradeDomain of nodes.upgradeDomains; first as isFirst">
-            <td class="legend" [rowSpan]="nodes.upgradeDomains.length" *ngIf="isFirst">Upgrade<br />Domain</td>
+            <td class="legend" [rowSpan]="nodes.upgradeDomains.length" *ngIf="isFirst" [ngClass]="{'first': isFirst}">
+              <div style="    transform: rotate(270deg);
+                    margin: auto;
+                    position: absolute;
+                    transform-origin: left;
+                    top: 25%;
+                    width: 120px;">
+                Upgrade Domain
+              </div>
+            </td>
             <td class="header sticky left-side">
               <app-section-overview [nodes]="matrix[upgradeDomain]" [moreInfo]="false" [title]="upgradeDomain"
                 [vertical]="true"></app-section-overview>

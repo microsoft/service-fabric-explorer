@@ -15,14 +15,14 @@
     <app-health-chart [data]="dataPoints" [title]="info.totalCount" style="margin: auto;"></app-health-chart>
 
     <div>
-      <div style="display: flex; flex-direction: column; align-items: center;">
-        <div class="essential-list-item" *ngIf="repairInfo">
+      <div style="display: flex; flex-direction: column; align-items: center;" >
+        <div class="essential-list-item" *ngIf="repairInfo" ngbTooltip="The count of Repair Jobs in progress / Recently finished Repair Job counts" container="body">
           <span class="mif-cog link space-right"></span> <span class="small-icon-text">{{repairInfo.inProgress}}/{{repairInfo.recent}}</span>
         </div>
-        <div class="essential-list-item">
+        <div class="essential-list-item" ngbTooltip="The count of disabled nodes / Nodes that are in the process of disabling" container="body">
           <app-status-resolver status="Disabling" [showText]="false" class="space-right"></app-status-resolver> <span class="small-icon-text">{{info.statusTypeCounts[constants.Disabled]}}/{{info.statusTypeCounts[constants.Disabling]}}</span>
         </div>
-        <div class="essential-list-item">
+        <div class="essential-list-item"  ngbTooltip="The count of down nodes" container="body">
           <app-status-resolver status="Down" [showText]="false" class="space-right"></app-status-resolver><span class="small-icon-text">{{info.statusTypeCounts[constants.Down]}}</span>
         </div>
       </div>
