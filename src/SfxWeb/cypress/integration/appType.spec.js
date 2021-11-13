@@ -42,12 +42,9 @@ context('app', () => {
           }).type('VisualObjectsApplicationType')
 
           cy.get('[data-cy=submit]').click();
-           // Type 'Hello, World' into the 'input'
         })
 
         cy.wait('@getunprovision').then(interception => {
-
-          console.log(interception);    // take a look at the properties
           cy.wrap(interception.request.body)
             .should("have.property", "ApplicationTypeVersion", "16.0.0")
         })
