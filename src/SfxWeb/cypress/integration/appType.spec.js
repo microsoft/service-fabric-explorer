@@ -27,7 +27,7 @@ context('app', () => {
             })
         })
 
-      it('unprovision', () => {
+      it.only('unprovision', () => {
         cy.intercept('POST', apiUrl('/ApplicationTypes/VisualObjectsApplicationType/$/Unprovision?*'), {
           statusCode: 200,
           body: {},
@@ -47,6 +47,11 @@ context('app', () => {
         cy.wait('@getunprovision').then(interception => {
           cy.wrap(interception.request.body)
             .should("have.property", "ApplicationTypeVersion", "16.0.0")
+        })
+
+        cy.wait('@getunprovision').then(interception => {
+          cy.wrap(interception.request.body)
+            .should("have.property", "ApplicationTypeVersion", "17.0.0")
         })
       })
 
