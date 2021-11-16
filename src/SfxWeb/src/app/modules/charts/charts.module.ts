@@ -20,6 +20,7 @@ import { HealthChartComponent } from './health-chart/health-chart.component';
     RouterModule,
     SharedModule
   ],
-  exports: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent, EssentialHealthTileComponent, EssentialTemplateDirective, TileWrapperComponent, HealthChartComponent]
+  exports: [DashboardTileComponent, DashboardTextTileComponent, BarChartComponent, DashboardTextScaleTileComponent,
+            EssentialHealthTileComponent, EssentialTemplateDirective, TileWrapperComponent, HealthChartComponent]
 })
 export class ChartsModule { }

@@ -20,9 +20,7 @@ export class MapComponent extends BaseControllerDirective {
   healthFilter: Record<string, boolean> = {};
   nodeTypeFilter: Record<string, boolean> = {};
   matrix: Record<string, Node[]>;
-
-  averageUD: number = 0;
-  averageFD: number = 0;
+  groupByNodeType = false;
 
   constructor(private data: DataService, injector: Injector) {
 
@@ -42,10 +40,12 @@ export class MapComponent extends BaseControllerDirective {
 
     return this.nodes.refresh(messageHandler).pipe(map(() => {
       this.nodes.nodeTypes.forEach(type => {
-        this.nodeTypeFilter[type] = true;
-      })
+        if ( !(type in this.nodeTypeFilter) ) {
+          this.nodeTypeFilter[type] = true;
+        }
+      });
       this.updateNodes();
-    }))
+    }));
   }
 
   public updateNodes() {
@@ -57,20 +57,20 @@ export class MapComponent extends BaseControllerDirective {
       this.nodes.upgradeDomains.forEach(ud => {
         matrix[`${fd}${ud}`] = [];
         matrix[ud] = [];
-      })
-    })
+      });
+    });
 
     this.getNodesForDomains().forEach(node => {
       matrix[node.faultDomain + node.upgradeDomain].push(node);
       matrix[node.faultDomain].push(node);
       matrix[node.upgradeDomain].push(node);
-    })
+    });
 
     this.matrix = matrix;
   }
 
   public getNodesForDomains(): Node[] {
-    return this.nodes.collection.filter((node) => (node.raw.Type in this.healthFilter ? this.healthFilter[node.raw.Type] : true) &&
+    return this.nodes.collection.filter((node) => (node.raw.Type in this.nodeTypeFilter ? this.nodeTypeFilter[node.raw.Type] : true) &&
                                                   (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter) : true) &&
                                                   (node.healthState.badgeId in this.healthFilter ? this.healthFilter[node.healthState.badgeId] : true));
   }

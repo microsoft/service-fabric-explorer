@@ -1,10 +1,8 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
-import { INodesStatusDetails, NodeStatusDetails } from 'src/app/Models/DataModels/collections/NodeCollection';
+import { NodeStatusDetails } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { Node } from 'src/app/Models/DataModels/Node';
-import { ValueResolver } from 'src/app/Utils/ValueResolver';
-import { DashboardDataPointViewModel, IDashboardDataPointViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
@@ -12,32 +10,35 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
   templateUrl: './status-tile.component.html',
   styleUrls: ['./status-tile.component.scss']
 })
-export class StatusTileComponent implements OnInit {
+export class StatusTileComponent implements OnChanges {
 
   @Input() nodes: Node[];
   @Input() repairJobs: RepairTaskCollection;
-  @Input() title: string = '';
+  @Input() groupByNodeType = false;
+  @Input() title = '';
   items: IEssentialListItem[] = [];
+
+  nodeTypes = {};
+  public constants = NodeStatusConstants;
 
   constructor() { }
 
-  ngOnInit(): void {
-    // this.nodes[0].viewPath
-    this.items = this.nodes.map(item => {
-      return {
-        descriptionName: item.name,
-        // copyTextValue: this.info.statusTypeCounts[NodeStatusConstants.Disabled].toString(),
-        // displayText: this.info.statusTypeCounts[NodeStatusConstants.Disabled].toString(),
-        displaySelector: true
-      }
-    })
-    // [
-    //   {
-    //     descriptionName: 'Disabled',
-    //     copyTextValue: this.info.statusTypeCounts[NodeStatusConstants.Disabled].toString(),
-    //     displayText: this.info.statusTypeCounts[NodeStatusConstants.Disabled].toString()
-    //   },
-    // ]
-
+  ngOnChanges(): void {
+    if (this.groupByNodeType) {
+      this.nodeTypes = {};
+      this.nodes.forEach(node => {
+        if (!this.nodeTypes[node.raw.Type]) {
+          this.nodeTypes[node.raw.Type] = new NodeStatusDetails(node.raw.Type);
+        }
+        this.nodeTypes[node.raw.Type].add(node);
+      });
+    }else{
+      this.items = this.nodes.map(item => {
+        return {
+          descriptionName: item.name,
+          displaySelector: true
+        };
+      });
+    }
   }
 }

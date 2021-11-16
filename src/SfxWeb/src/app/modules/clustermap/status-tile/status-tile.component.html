@@ -1,19 +1,35 @@
-<!-- <app-essential-item *ngFor="let item of item; let l = last" [item]="item" [underline]="false">
+<div *ngIf="groupByNodeType">
+  <div  class="underline" *ngFor="let item of nodeTypes | keyvalue; let l = last" style="width: 100%;">
+    <app-collapse-container [collapsed]="true">
+      <div collapse-header>
+        <div style="margin: auto; display: flex; flex-direction: column; text-align: center;" >
+          <div style="display: flex; justify-content: space-between;">
+            <div>{{item.value.nodeType}}</div> <div>({{item.value.nodes.length}})</div>
+          </div>
+        </div>
+      </div>
+      <div collapse-body style="margin-left: 10px;">
+        <div class="underline" style="display: flex;
+        align-content: center;
+        height: 25px;
+        gap: 5px;">
+          <div ngbTooltip="The count of up nodes" container="body">
+            <app-status-resolver status="Up" [showText]="false" class="space-right"></app-status-resolver> <span class="small-icon-text">{{item.value.statusTypeCounts[constants.Up]}}</span>
+          </div>
 
-</app-essential-item>
-
-<app-essential-item [item]="startTimeEssentialItem" [underline]="false">
-  <app-display-time [time]="upgradeProgress.startTimestampUtc"></app-display-time>
-</app-essential-item> -->
-
-<div>
-  <div class="essential-list-item underline" *ngFor="let item of nodes; let l = last" style="height: 30px;">
-    <app-status-resolver [status]="item.nodeStatus" [showText]="false" class="space-right"></app-status-resolver>
-    <a [routerLink]="item.viewPath" style="margin: auto;">{{item.name}}</a>
-
+          <div ngbTooltip="The count of disabled nodes / Nodes that are in the process of disabling" container="body">
+            <app-status-resolver status="Disabling" [showText]="false" class="space-right"></app-status-resolver> <span class="small-icon-text">{{item.value.statusTypeCounts[constants.Disabled]}}/{{item.value.statusTypeCounts[constants.Disabling]}}</span>
+          </div>
+          <div ngbTooltip="The count of down nodes" container="body">
+            <app-status-resolver status="Down" [showText]="false" class="space-right"></app-status-resolver><span class="small-icon-text">{{item.value.statusTypeCounts[constants.Down]}}</span>
+          </div>
+        </div>
+        <app-node-list [nodes]="item.value.nodes" [underlineLast]="false"></app-node-list>
+      </div>
+    </app-collapse-container>
   </div>
 </div>
 
-<!-- <app-essential-item *ngFor="let item of items; let l = last; let i = index;" [item]="item" [underline]="false">
-  <app-status-resolver [status]="nodes[i].nodeStatus" [showText]="false" class="space-right"></app-status-resolver>
-</app-essential-item> -->
+<div *ngIf="!groupByNodeType">
+  <app-node-list [nodes]="nodes"></app-node-list>
+</div>

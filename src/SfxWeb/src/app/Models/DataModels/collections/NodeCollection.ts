@@ -30,6 +30,7 @@ export class NodeStatusDetails implements INodesStatusDetails {
   public errorCount = 0;
   public totalCount = 0;
   public okCount = 0;
+  public nodes: Node[] = [];
   public constructor(nodeType: string) {
       this.nodeType = nodeType;
 
@@ -56,6 +57,8 @@ export class NodeStatusDetails implements INodesStatusDetails {
       if (node.healthState.text === HealthStateConstants.OK) {
           this.okCount++;
       }
+
+      this.nodes.push(node);
   }
 }
 
@@ -139,7 +142,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         const seedNodes = this.collection.filter(node => node.raw.IsSeedNode);
         const healthyNodes = seedNodes.filter(node => node.healthState.text === HealthStateConstants.OK);
 
-        let nodeTypes = new Set<string>();
+        const nodeTypes = new Set<string>();
 
         let disabledNodes = 0;
         let disablingNodes = 0;

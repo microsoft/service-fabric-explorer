@@ -8,6 +8,7 @@ import { ChartsModule } from '../charts/charts.module';
 import { RouterModule } from '@angular/router';
 import { NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { FormsModule } from '@angular/forms';
+import { NodeListComponent } from './node-list/node-list.component';
 
 
 
@@ -15,7 +16,8 @@ import { FormsModule } from '@angular/forms';
   declarations: [
     StatusTileComponent,
     MapComponent,
-    SectionOverviewComponent
+    SectionOverviewComponent,
+    NodeListComponent
   ],
   imports: [
     CommonModule,

@@ -9,7 +9,7 @@ import { NodeStatusConstants } from 'src/app/Common/Constants';
 export class StatusResolverComponent implements OnInit {
 
   @Input() status: string;
-  @Input() showText: boolean = true;
+  @Input() showText = true;
 
   statusIconResolver: Record<string, string> = {};
 

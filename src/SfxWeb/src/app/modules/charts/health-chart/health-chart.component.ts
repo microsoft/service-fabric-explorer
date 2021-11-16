@@ -7,9 +7,9 @@ import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'hig
   templateUrl: './health-chart.component.html',
   styleUrls: ['./health-chart.component.scss']
 })
-export class HealthChartComponent implements OnInit {
+export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
   @Input() data: IDashboardDataPointViewModel[];
-  @Input() width = "80";
+  @Input() width = '80';
   @Input() title: number | string = '';
 
   @ViewChild('chart') private chartContainer: ElementRef;
@@ -109,23 +109,16 @@ export class HealthChartComponent implements OnInit {
 
   ngOnInit() {
     const margin = 3;
-    // const width = (this.data.largeTile ? 230 : 150) + margin * 2;
     this.options.chart.height = this.width;
     this.options.chart.width = this.width;
-
-    // this.options.title.text = this.data.displayTitle;
     this.options.subtitle.text = this.title.toString();
 
     const data = this.getDataSet();
     this.options.tooltip.enabled = data.length === 3;
     (this.options.series[0] as SeriesPieOptions).data = data;
 
-    // if (!this.data.largeTile) {
-      this.options.title.style.fontSize =  +this.width * .2 + 'pt';
-      // this.options.title.y = 9;
-      this.options.subtitle.style.fontSize =  +this.width * .2 + 'pt';
-      // this.options.subtitle.y = 30;
-    // }
+    this.options.title.style.fontSize =  +this.width * .2 + 'pt';
+    this.options.subtitle.style.fontSize =  +this.width * .2 + 'pt';
   }
 
   ngAfterViewInit() {
