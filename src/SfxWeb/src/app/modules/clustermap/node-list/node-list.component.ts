@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { Node } from 'src/app/Models/DataModels/Node';
 
 @Component({
@@ -6,13 +6,9 @@ import { Node } from 'src/app/Models/DataModels/Node';
   templateUrl: './node-list.component.html',
   styleUrls: ['./node-list.component.scss']
 })
-export class NodeListComponent implements OnInit {
+export class NodeListComponent {
   @Input() underlineLast = true;
   @Input() nodes: Node[];
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
-
 }

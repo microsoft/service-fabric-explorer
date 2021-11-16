@@ -4,15 +4,15 @@
       <div>
         <app-input placeholder="Filter nodes" [model]="filter" (changed)="filter = $event; updateNodes();"></app-input>
 
-        <!-- (openChange)="closeChange($event)" -->
-        <div style="display: flex; flex-direction: row; align-items: center; margin: 14px; margin-bottom: 0px; justify-content: space-between;">
+        <div
+          style="display: flex; flex-direction: row; align-items: center; margin: 14px; margin-bottom: 0px; justify-content: space-between;">
           <div ngbDropdown container="body" display="dynamic">
             <button class="simple-button" ngbDropdownToggle>node Types</button>
             <ul ngbDropdownMenu role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;">
               <li role="menuitem" *ngFor="let type of nodes.nodeTypes; let last = last;" class="item">
                 <label style="margin-bottom: 0px; font-size: 15px;">
-                  <input type="checkbox" (click)=" $event.stopPropagation()" [(ngModel)]="nodeTypeFilter[type]"  (ngModelChange)="updateNodes();"/>
-                  <!-- (ngModelChange)="updateList();" (keydown.tab)="last ? closeDropDown() : null" -->
+                  <input type="checkbox" (click)=" $event.stopPropagation()" [(ngModel)]="nodeTypeFilter[type]"
+                    (ngModelChange)="updateNodes();" />
                   {{type}}
                 </label>
               </li>

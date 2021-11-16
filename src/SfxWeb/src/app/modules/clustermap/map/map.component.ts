@@ -25,22 +25,22 @@ export class MapComponent extends BaseControllerDirective {
   constructor(private data: DataService, injector: Injector) {
 
     super(injector);
-   }
+  }
 
-   setup() {
+  setup() {
     this.nodes = this.data.nodes;
     this.nodes = this.data.nodes;
     this.healthFilter[HealthStateConstants.OK] = true;
     this.healthFilter[HealthStateConstants.Warning] = true;
     this.healthFilter[HealthStateConstants.Error] = true;
-   }
+  }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     this.nodes = this.data.nodes;
 
     return this.nodes.refresh(messageHandler).pipe(map(() => {
       this.nodes.nodeTypes.forEach(type => {
-        if ( !(type in this.nodeTypeFilter) ) {
+        if (!(type in this.nodeTypeFilter)) {
           this.nodeTypeFilter[type] = true;
         }
       });
@@ -71,7 +71,7 @@ export class MapComponent extends BaseControllerDirective {
 
   public getNodesForDomains(): Node[] {
     return this.nodes.collection.filter((node) => (node.raw.Type in this.nodeTypeFilter ? this.nodeTypeFilter[node.raw.Type] : true) &&
-                                                  (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter) : true) &&
-                                                  (node.healthState.badgeId in this.healthFilter ? this.healthFilter[node.healthState.badgeId] : true));
+      (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter) : true) &&
+      (node.healthState.badgeId in this.healthFilter ? this.healthFilter[node.healthState.badgeId] : true));
   }
 }

@@ -46,8 +46,6 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
       text: '5',
       align: 'left',
       verticalAlign: 'middle',
-      // x: 0,
-      // y: 100,
       style: {
         color: '#fff',
         fontSize: '28pt'
@@ -108,7 +106,6 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
   constructor() { }
 
   ngOnInit() {
-    const margin = 3;
     this.options.chart.height = this.width;
     this.options.chart.width = this.width;
     this.options.subtitle.text = this.title.toString();
@@ -157,7 +154,6 @@ export class HealthChartComponent implements OnInit, AfterViewInit, OnChanges {
       const data = this.getDataSet();
       this.chart.tooltip.update({ enabled: data.length === 3 });
       this.chart.series[0].setData(data);
-      // this.chart.title.update({ text: this.data.displayTitle });
       this.chart.subtitle.update({text: this.title.toString()});
     }
   }

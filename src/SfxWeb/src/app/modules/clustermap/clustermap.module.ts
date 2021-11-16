@@ -10,8 +10,6 @@ import { NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap'
 import { FormsModule } from '@angular/forms';
 import { NodeListComponent } from './node-list/node-list.component';
 
-
-
 @NgModule({
   declarations: [
     StatusTileComponent,
