@@ -72,7 +72,7 @@ export const addDefaultFixtures = () => {
     addRoute(FIXTURE_UPGRADEPROGRESS, 'upgradeProgress.json', upgradeProgress_route)
     addRoute(FIXTURE_UPGRADEREPAIRTASK, 'emptyRepairJobs.json', repairTask_route)
 
-    addRoute('visualObjectsApplicationType', 'visualObjectsApplicationType.json', apiUrl('/Applications/VisualObjectsApplicationType/*'))
+    addRoute('visualObjectsApplicationType', 'visualObjectsApplicationType.json', apiUrl('/Applications/VisualObjectsApplicationType/?*'))
 }
 
 
@@ -108,7 +108,7 @@ Used to validate detail lists on the events page.
 export const checkTableErrorMessage = (message) => {
     checkTableSize(1);
     cy.get('tbody > tr').first().within(() => {
-       cy.contains(message) 
+       cy.contains(message)
     });
 }
 
@@ -119,13 +119,13 @@ export const FAILED_TABLE_TEXT = "Items failed to load.";
 export const checkActions = (actionsText) => {
     cy.get('[data-cy=actions]').within(() => {
       cy.contains("Actions").click();
-  
+
       actionsText.forEach( actionName => {
         cy.contains(actionName)
       })
   })
 }
-  
+
 // Tabs names
 export const REPAIR_TASK_TAB_NAME = "Repair Tasks";
 export const CLUSTER_TAB_NAME = "Cluster";
