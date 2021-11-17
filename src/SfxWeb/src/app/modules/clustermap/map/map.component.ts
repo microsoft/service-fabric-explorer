@@ -74,4 +74,8 @@ export class MapComponent extends BaseControllerDirective {
       (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter) : true) &&
       (node.healthState.badgeId in this.healthFilter ? this.healthFilter[node.healthState.badgeId] : true));
   }
+
+  trackByFn(index, udOrFd: string) {
+    return udOrFd;
+  }
 }

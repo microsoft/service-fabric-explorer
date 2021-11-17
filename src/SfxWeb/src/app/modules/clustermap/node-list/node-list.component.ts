@@ -11,4 +11,8 @@ export class NodeListComponent {
   @Input() nodes: Node[];
 
   constructor() { }
+
+  trackByFn(index, node: Node) {
+    return node.uniqueId;
+  }
 }

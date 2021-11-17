@@ -158,7 +158,7 @@ context('Cluster page', () => {
   })
 
   describe("clustermap", () => {
-    it('load clustermap', () => {
+    it.only('load clustermap', () => {
       cy.visit('/#/clustermap')
 
       cy.get('[data-cy=clustermap]').within(() => {
