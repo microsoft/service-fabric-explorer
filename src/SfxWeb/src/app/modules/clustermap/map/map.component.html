@@ -2,10 +2,11 @@
   <div data-cy="clustermap">
     <div style="display: flex; padding: 15px;  width: fit-content;" class="essen-pane">
       <div>
-        <app-input data-cy="filter" placeholder="Filter nodes" [model]="filter" (changed)="filter = $event; updateNodes();"></app-input>
+        <app-input data-cy="filter" placeholder="Filter nodes" [model]="filter"
+          (changed)="filter = $event; updateNodes();"></app-input>
 
-        <div
-          style="display: flex; flex-direction: row; align-items: center; margin: 14px; margin-bottom: 0px; justify-content: space-between;">
+        <div class="flex-center"
+          style="margin: 14px; margin-bottom: 0px; justify-content: space-between;">
           <div ngbDropdown container="body" display="dynamic">
             <button class="simple-button" ngbDropdownToggle>node Types</button>
             <ul ngbDropdownMenu role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;">
@@ -61,12 +62,7 @@
           </tr>
           <tr *ngFor="let upgradeDomain of nodes.upgradeDomains; first as isFirst; trackBy: trackByFn">
             <td class="legend" [rowSpan]="nodes.upgradeDomains.length" *ngIf="isFirst" [ngClass]="{'first': isFirst}">
-              <div style="    transform: rotate(270deg);
-                    margin: auto;
-                    position: absolute;
-                    transform-origin: left;
-                    top: 25%;
-                    width: 120px;">
+              <div class="upgrade-domain">
                 Upgrade Domain
               </div>
             </td>

@@ -8,15 +8,6 @@ table {
   margin: 0px;
 }
 
-
-// .left-side {
-//   border-right: 10px solid transparent !important;
-// }
-
-// .top-side {
-//     border-bottom: 10px solid transparent !important;
-// }
-
 app-toggle {
   float: right;
   margin-left: 10px;
@@ -32,4 +23,13 @@ app-toggle {
 .first {
   padding: 10px !important;
   position: relative;
+}
+
+.upgrade-domain {
+  transform: rotate(270deg);
+  margin: auto;
+  position: absolute;
+  transform-origin: left;
+  top: 25%;
+  width: 120px;
 }
