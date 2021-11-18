@@ -925,6 +925,10 @@ app-navbar {
     border-bottom: 1px solid $table-border-color;
 }
 
+.aboveline {
+  border-top: 1px solid $table-border-color;
+}
+
 .centering-row {
     display: flex;
     flex-direction: row;

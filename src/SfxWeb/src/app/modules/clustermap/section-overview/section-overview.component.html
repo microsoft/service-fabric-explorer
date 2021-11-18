@@ -14,11 +14,11 @@
             class="small-icon-text">{{repairInfo.inProgress}}/{{repairInfo.recent}}</span>
         </div>
         <div class="essential-list-item"
-          ngbTooltip="The count of disabled nodes / Nodes that are in the process of disabling" container="body">
+          ngbTooltip="The count of disabled nodes / Nodes that are in the process of disabling" container="body" data-cy="disabling-nodes">
           <app-status-resolver status="Disabling" [showText]="false" class="space-right"></app-status-resolver> <span
             class="small-icon-text">{{info.statusTypeCounts[constants.Disabled]}}/{{info.statusTypeCounts[constants.Disabling]}}</span>
         </div>
-        <div class="essential-list-item" ngbTooltip="The count of down nodes" container="body">
+        <div class="essential-list-item" ngbTooltip="The count of down nodes" container="body"  data-cy="down-nodes">
           <app-status-resolver status="Down" [showText]="false" class="space-right"></app-status-resolver><span
             class="small-icon-text">{{info.statusTypeCounts[constants.Down]}}</span>
         </div>
