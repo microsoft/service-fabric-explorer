@@ -158,7 +158,7 @@ context('Cluster page', () => {
   })
 
   describe("clustermap", () => {
-    it.only('load clustermap', () => {
+    it('load clustermap', () => {
       const checkNodes = (ref, expectedCount) => {
 
         let count = 0;
