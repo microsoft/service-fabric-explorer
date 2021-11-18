@@ -1,17 +1,16 @@
 <div class="detail-pane">
   <div data-cy="clustermap">
-    <div style="display: flex; padding: 15px;  width: fit-content;" class="essen-pane">
+    <div class="essen-pane layout">
       <div>
         <app-input data-cy="filter" placeholder="Filter nodes" [model]="filter"
           (changed)="filter = $event; updateNodes();"></app-input>
 
-        <div class="flex-center"
-          style="margin: 14px; margin-bottom: 0px; justify-content: space-between;">
+        <div class="flex-center" style="margin: 14px; margin-bottom: 0px; justify-content: space-between;">
           <div ngbDropdown container="body" display="dynamic">
             <button class="simple-button" ngbDropdownToggle>node Types</button>
-            <ul ngbDropdownMenu role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;">
+            <ul ngbDropdownMenu role="menu" class="dropdown-layout">
               <li role="menuitem" *ngFor="let type of nodes.nodeTypes; let last = last;" class="item">
-                <label style="margin-bottom: 0px; font-size: 15px;">
+                <label>
                   <input type="checkbox" (click)=" $event.stopPropagation()" [(ngModel)]="nodeTypeFilter[type]"
                     (ngModelChange)="updateNodes();" />
                   {{type}}

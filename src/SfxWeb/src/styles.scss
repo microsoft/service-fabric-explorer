@@ -1033,3 +1033,16 @@ $dashboard-datapoint-leftbar-width: 3px;
       }
   }
 }
+
+
+.dropdown-layout {
+  list-style: none;
+  padding: 5px;
+  color: white;
+  margin-bottom: 0px;
+
+   label {
+    margin-bottom: 0px;
+    font-size: 15px;
+   }
+}
