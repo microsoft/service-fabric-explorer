@@ -920,6 +920,10 @@ app-navbar {
     align-items: center;
 }
 
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
 
 .underline {
     border-bottom: 1px solid $table-border-color;
@@ -950,7 +954,8 @@ app-navbar {
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 800px;
-        float: left;
+        text-align: right;
+        flex: 1;
     }
 
     .left-text {
@@ -984,6 +989,20 @@ app-navbar {
   padding: 5px;
   color: white;
   margin-bottom: 0px;
+}
+
+.underline-title {
+  @extend .underline;
+
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: initial;
+    padding-bottom: 10px;
+}
+
+.center-text {
+  text-align: center;
 }
 
 $dashboard-datapoint-leftbar-width: 3px;
