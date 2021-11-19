@@ -25,7 +25,7 @@
                             <button class="flat-button supress-hover" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" [title]="'filter by ' + columnSetting.displayName + ' options'" [attr.aria-haspopup]="false">
                                 <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}"></span>
                             </button>
-                            <ul ngbDropdownMenu role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;"  >
+                            <ul ngbDropdownMenu role="menu"  class="dropdown-layout" >
                                 <li role="menuitem" class="check-options item" *ngIf="!columnSetting.allChecked" (click)="columnSetting.checkAll(); updateList()">
                                     Check All
                                 </li>
@@ -33,7 +33,7 @@
                                     Uncheck All
                                 </li>
                                 <li role="menuitem"  *ngFor="let filterValue of columnSetting.filterValues; let last = last;" class="item">
-                                    <label style="margin-bottom: 0px; font-size: 15px;" >
+                                    <label>
                                         <input type="checkbox" [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList();" (click)=" $event.stopPropagation()"   (keydown.tab)="last ? closeDropDown() : null"/>
                                         {{filterValue.value}}
                                     </label>

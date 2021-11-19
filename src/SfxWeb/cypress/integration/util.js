@@ -126,6 +126,22 @@ export const checkActions = (actionsText) => {
   })
 }
 
+export const typeIntoInput = (inputRef, text = "") => {
+  cy.get(inputRef).within(() => {
+    if(text.length === 0) {
+      cy.get('input').clear()
+    }else {
+      cy.get('input').type(text);
+    }
+  })
+}
+
+export const checkCheckBox = (inputRef) => {
+  cy.get(inputRef).within(() => {
+      cy.get('input').check()
+  })
+}
+
 // Tabs names
 export const REPAIR_TASK_TAB_NAME = "Repair Tasks";
 export const CLUSTER_TAB_NAME = "Cluster";
