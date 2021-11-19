@@ -8,7 +8,7 @@ import { Observable, forkJoin} from 'rxjs';
 import { Application } from './Application';
 import { ITextAndBadge, ValueResolver } from 'src/app/Utils/ValueResolver';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { map } from 'rxjs/operators';
+import { map, mergeMap } from 'rxjs/operators';
 import { Utils } from 'src/app/Utils/Utils';
 import { ActionWithConfirmationDialog, IsolatedAction } from '../Action';
 import { CreateApplicationComponent } from 'src/app/views/application-type/create-application/create-application.component';
@@ -135,7 +135,7 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
     }
 
     private unprovision(): Observable<any> {
-        return this.data.getAppTypeGroup(this.name, true).pipe(map(appTypeGroup => {
+        return this.data.getAppTypeGroup(this.name, true).pipe(mergeMap(appTypeGroup => {
             const unprovisonPromises = [];
             appTypeGroup.appTypes.forEach(applicationType => {
                 unprovisonPromises.push(applicationType.unprovision());

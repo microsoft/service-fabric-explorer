@@ -3,6 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
 
+import { ITab } from '../shared/component/navbar/navbar.component';
+
 
 export class Constants {
 
@@ -70,6 +72,11 @@ export class Constants {
     public static Empty = '(empty)';
     public static SvgTransitionDuration = 250;
     public static SvgTransitionDurationSlow = 600;
+
+    public static readonly EventsTab: ITab = {
+      name: 'events',
+      route: './events'
+    };
 }
 
 export class FabricEnumValues {

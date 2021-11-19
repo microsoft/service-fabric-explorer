@@ -47,3 +47,12 @@ Thumbs.db
 
 /cypress/screenshots*
 /cypress/videos*
+
+
+#coverage reports
+coverage.json
+/reports
+/coverage-results
+/coverage-karma
+/coverage
+/cypress-coverage
