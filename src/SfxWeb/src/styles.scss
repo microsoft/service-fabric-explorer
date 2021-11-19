@@ -925,6 +925,10 @@ app-navbar {
     border-bottom: 1px solid $table-border-color;
 }
 
+.aboveline {
+  border-top: 1px solid $table-border-color;
+}
+
 .centering-row {
     display: flex;
     flex-direction: row;
@@ -980,4 +984,65 @@ app-navbar {
   padding: 5px;
   color: white;
   margin-bottom: 0px;
+}
+
+$dashboard-datapoint-leftbar-width: 3px;
+
+.dashboard-datapoints {
+  vertical-align: top;
+  text-align: left;
+  margin: 10px 0 0 25px;
+
+  .dashboard-datapoint {
+      position: relative;
+      padding: 0 0 0 $dashboard-datapoint-leftbar-width + 5px;
+
+      .dashboard-datapoint-leftbar {
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: $dashboard-datapoint-leftbar-width;
+
+          &.badge-ok {
+              background: $dashboard-ok-color;
+          }
+
+          &.badge-warning {
+              background: $dashboard-warning-color;
+          }
+
+          &.badge-error {
+              background: $dashboard-error-color;
+          }
+
+          &.badge-unknown {
+              background: $dashboard-unknown-color;
+          }
+      }
+
+      .dashboard-datapoint-title {
+          display: block;
+          line-height: 1;
+          margin-top: -2px;
+      }
+
+      .dashboard-datapoint-number {
+          display: block;
+          line-height: 1;
+      }
+  }
+}
+
+
+.dropdown-layout {
+  list-style: none;
+  padding: 5px;
+  color: white;
+  margin-bottom: 0px;
+
+   label {
+    margin-bottom: 0px;
+    font-size: 15px;
+   }
 }
