@@ -64,7 +64,6 @@ export class MapComponent extends BaseControllerDirective {
       matrix[node.faultDomain + node.upgradeDomain].push(node);
       matrix[node.faultDomain].push(node);
       matrix[node.upgradeDomain].push(node);
-      // node.healthState.text
     });
 
     this.matrix = matrix;

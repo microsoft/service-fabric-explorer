@@ -43,7 +43,6 @@ export class StatusTileComponent implements OnChanges {
   }
 
   trackByFn(index, node: any) {
-  //  console.log(node)
     return node.key;
   }
 }
