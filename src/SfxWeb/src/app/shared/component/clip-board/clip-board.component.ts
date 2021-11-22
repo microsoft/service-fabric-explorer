@@ -1,5 +1,5 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { Component, OnInit, Input, ChangeDetectionStrategy, ViewChild, ElementRef, ContentChild } from '@angular/core';
+import { Component, OnInit, Input, ChangeDetectionStrategy, ViewChild, ElementRef, ContentChild, OnChanges } from '@angular/core';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
@@ -8,16 +8,16 @@ import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
   styleUrls: ['./clip-board.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ClipBoardComponent {
+export class ClipBoardComponent implements OnChanges {
 
   @Input() text = '';
   @ViewChild('ref') ref: ElementRef;
   @ViewChild(NgbTooltip) tooltip: NgbTooltip; // First
+  public ariaLabel = "";
 
   constructor(private liveAnnouncer: LiveAnnouncer) { }
 
   copy(){
-    console.log(this)
     const selBox = document.createElement('textarea');
     selBox.style.position = 'fixed';
     selBox.style.left = '0';
@@ -43,5 +43,9 @@ export class ClipBoardComponent {
 
     this.ref.nativeElement.focus()
 
+  }
+
+  ngOnChanges() {
+    this.ariaLabel = this.text.split(" ").join("-");
   }
 }
