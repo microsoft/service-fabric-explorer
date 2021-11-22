@@ -45,6 +45,13 @@ test - runs standard angular unit tests
 cypress:local - opens E2E testing dashboard and is pointed at the local angular dev server.
 ```
 
+### code coverage
+```
+run both tests.
+test and cypress:local to generate coverage files and once both are generated run
+npm run test-coverage
+```
+
 ### CI scripts
 
 ```

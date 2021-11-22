@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute } from './util';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, refresh, aad_route } from './util';
 
 const appName = "VisualObjectsApplicationType";
 const waitRequest = "@getapp";
@@ -10,7 +10,9 @@ context('app', () => {
         addRoute("upgradeProgress", "app-page/upgrade-progress.json", apiUrl(`/Applications/${appName}/$/GetUpgradeProgress?*`))
         addRoute("services", "app-page/services.json", apiUrl(`/Applications/${appName}/$/GetServices?*`))
         addRoute("apphealth", "app-page/app-health.json", apiUrl(`/Applications/${appName}/$/GetHealth?*`))
-        addRoute("app", "app-page/app-type.json", apiUrl(`/Applications/${appName}/?*`))
+        addRoute("app", "app-page/app-type.json", apiUrl(`/Applications/${appName}/?a*`))
+        addRoute("appParams", "app-page/app-type-excluded-params.json", apiUrl(`/Applications/${appName}/?ExcludeApplicationParameters=true*`))
+
         addRoute("manifest", "app-page/manifest.json", apiUrl(`/Applications/${appName}/$/GetApplicationManifest?*`))
         addRoute("serviceTypes", "app-page/service-types.json", apiUrl(`/ApplicationTypes/${appName}/$/GetServiceTypes?ApplicationTypeVersion=16.0.0*`))
     })
@@ -65,6 +67,8 @@ context('app', () => {
     })
 
     describe("details", () => {
+        const param = "Parameters"
+
         it('view details', () => {
           cy.visit(`/#/apptype/${appName}/app/${appName}`)
 
@@ -75,7 +79,29 @@ context('app', () => {
             })
 
             cy.url().should('include', '/details')
+
+            cy.contains(param).should('exist')
         })
+
+      it('view details - no params', () => {
+        cy.intercept('GET', aad_route,
+          {
+            fixture: "aad.json", headers: {
+              'sfx-readonly': '1'
+            }
+          })
+
+        cy.visit(`/#/apptype/${appName}/app/${appName}`)
+
+        cy.wait(["@getappParams", "@getapphealth"]);
+
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('details').click();
+        })
+
+        cy.url().should('include', '/details')
+        cy.contains(param).should('not.exist')
+      })
     })
 
     describe("deployments", () => {

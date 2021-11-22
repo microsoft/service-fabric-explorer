@@ -1,0 +1,82 @@
+.row-container {
+  border-bottom: solid 2px white;
+  border-top: solid 2px white;
+}
+
+.replica-container {
+  display: inline-block;
+  padding: 5px 10px 10px 10px;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.left-side {
+  width: 250px;
+
+}
+
+.top-side {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.banner-green {
+  border-left: 8px solid green;
+}
+
+.banner-blue {
+  border-left: 8px solid #0075c9;
+}
+
+.banner-yellow {
+  border-left: 8px solid yellow;
+}
+
+.banner-red {
+  border-left: 8px solid red;
+}
+
+.field {
+  color: #c9c9c9;
+}
+
+app-replication-trend-line {
+  height: 100%;
+  width: 100%;
+  padding-bottom: -10px;
+}
+
+.description-container {
+  text-align: center;
+  margin-bottom: 0px;
+  display: flex;
+}
+
+.fullscreen {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  top: 0;
+  background-color: #262626;
+  z-index: 2;
+  margin-bottom: 0px !important;
+
+  .description-container {
+    margin: 10px;
+  }
+}
+
+.flex-min {
+  flex: 1;
+  min-height: 0px;
+}
+
+.show-replication {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: -20px;
+}

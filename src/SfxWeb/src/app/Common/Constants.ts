@@ -3,6 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
 
+import { ITab } from '../shared/component/navbar/navbar.component';
+
 
 export class Constants {
 
@@ -74,6 +76,11 @@ export class Constants {
 
     public static executingInfraJobsSuggestion = 'If the repair task corresponding to Infrastructure updates is stuck in Preparing for long, check the Repair Task page.';
     public static pendingInfraJobsSuggestion = 'Pending jobs wont get approved because of throttling policy in Infrastructure Service.  To know more about it, read here';
+
+    public static readonly EventsTab: ITab = {
+      name: 'events',
+      route: './events'
+    };
 }
 
 export class FabricEnumValues {

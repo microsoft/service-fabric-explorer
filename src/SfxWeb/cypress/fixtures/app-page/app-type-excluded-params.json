@@ -1,0 +1,13 @@
+{
+  "Name": "fabric:/VisualObjectsApplicationType",
+  "TypeName": "VisualObjectsApplicationType",
+  "TypeVersion": "16.0.0",
+  "Status": "Ready",
+  "Parameters": [],
+  "HealthState": "Ok",
+  "ApplicationDefinitionKind": "ServiceFabricApplicationDescription",
+  "ManagedApplicationIdentity": {
+    "ManagedIdentities": []
+},
+"Id": "VisualObjectsApplicationType"
+}

@@ -19,5 +19,4 @@ export class CollapseContainerComponent {
       this.collapsedChange.emit(this.collapsed);
     }
   }
-
 }

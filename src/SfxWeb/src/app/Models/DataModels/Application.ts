@@ -105,7 +105,7 @@ export class Application extends DataModelBase<IRawApplication> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
-        return this.data.restClient.getApplication(this.id, messageHandler);
+        return this.data.restClient.getApplication(this.id, this.data.readOnlyHeader, messageHandler);
     }
 
     private setUpActions(): void {

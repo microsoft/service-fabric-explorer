@@ -1,5 +1,6 @@
 
 // Custom Theming for Angular Material
+@use '~@angular/material' as mat;
 // For more information: https://material.angular.io/guide/theming
 @import '~@angular/material/theming';
 @import 'vars.scss';
@@ -8,24 +9,24 @@
 // Include the common styles for Angular Material. We include this here so that you only
 // have to load a single css file for Angular Material in your app.
 // Be sure that you only ever include this mixin once!
-@include mat-core();
+@include mat.core();
 
 // Define the palettes for your theme using the Material Design palettes available in palette.scss
 // (imported above). For each palette, you can optionally specify a default, lighter, and darker
 // hue. Available color palettes: https://material.io/design/color/
-$SfxWeb-primary: mat-palette($mat-indigo);
-$SfxWeb-accent: mat-palette($mat-pink, A200, A100, A400);
+$SfxWeb-primary: mat.define-palette(mat.$indigo-palette);
+$SfxWeb-accent: mat.define-palette(mat.$pink-palette, A200, A100, A400);
 
 // The warn palette is optional (defaults to red).
-$SfxWeb-warn: mat-palette($mat-red);
+$SfxWeb-warn: mat.define-palette(mat.$red-palette);
 
 // Create the theme object (a Sass map containing all of the palettes).
-$SfxWeb-theme: mat-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
+$SfxWeb-theme: mat.define-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-warn);
 
 // Include theme styles for core and each component used in your app.
 // Alternatively, you can import and @include the theme mixins for each component
 // that you are using.
-@include angular-material-theme($SfxWeb-theme);
+@include mat.all-component-themes($SfxWeb-theme);
 
 //--------------------------------------------------------------
 // Mixins
@@ -919,9 +920,17 @@ app-navbar {
     align-items: center;
 }
 
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
 
 .underline {
     border-bottom: 1px solid $table-border-color;
+}
+
+.aboveline {
+  border-top: 1px solid $table-border-color;
 }
 
 .centering-row {
@@ -945,7 +954,8 @@ app-navbar {
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 800px;
-        float: left;
+        text-align: right;
+        flex: 1;
     }
 
     .left-text {
@@ -979,4 +989,79 @@ app-navbar {
   padding: 5px;
   color: white;
   margin-bottom: 0px;
+}
+
+.underline-title {
+  @extend .underline;
+
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: initial;
+    padding-bottom: 10px;
+}
+
+.center-text {
+  text-align: center;
+}
+
+$dashboard-datapoint-leftbar-width: 3px;
+
+.dashboard-datapoints {
+  vertical-align: top;
+  text-align: left;
+  margin: 10px 0 0 25px;
+
+  .dashboard-datapoint {
+      position: relative;
+      padding: 0 0 0 $dashboard-datapoint-leftbar-width + 5px;
+
+      .dashboard-datapoint-leftbar {
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: $dashboard-datapoint-leftbar-width;
+
+          &.badge-ok {
+              background: $dashboard-ok-color;
+          }
+
+          &.badge-warning {
+              background: $dashboard-warning-color;
+          }
+
+          &.badge-error {
+              background: $dashboard-error-color;
+          }
+
+          &.badge-unknown {
+              background: $dashboard-unknown-color;
+          }
+      }
+
+      .dashboard-datapoint-title {
+          display: block;
+          line-height: 1;
+          margin-top: -2px;
+      }
+
+      .dashboard-datapoint-number {
+          display: block;
+          line-height: 1;
+      }
+  }
+}
+
+
+.dropdown-layout {
+  list-style: none;
+  padding: 5px;
+  color: white;
+  margin-bottom: 0px;
+
+   label {
+    margin-bottom: 0px;
+    font-size: 15px;
+   }
 }
