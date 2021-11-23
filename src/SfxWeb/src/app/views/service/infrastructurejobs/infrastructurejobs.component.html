@@ -12,13 +12,17 @@
     </app-dashboard-text-tile>
 </div>
 
+<div *ngIf="executingMRJobs.length >= 1">
+  <app-infrastructure-job-tile  *ngFor="let job of executingMRJobs" [job]="job.raw"></app-infrastructure-job-tile>
+</div>
+
 <div *ngIf="executingMRJobs.length >0"><h6>{{executingInfraJobsSuggestion}}</h6></div>
 <div class="detail-pane essen-pane" >
     <app-collapse-container  sectionName="Active Infrastructure Jobs">
         <h4 collapse-header>
             Active Infrastructure Jobs
         </h4>
-        
+
         <app-detail-list [list]="executingMRJobs"
             [listSettings]="executingMRJobsList" collapse-body  >
         </app-detail-list>

@@ -1082,6 +1082,7 @@ export interface IRawInfrastructureJob {
     DeadlineforResponse: string;
     CurrentlyImpactedRoleInstances: IRawRoleInstanceImpact[];
     RepairTasks: InfraRepairTask[];
+    RoleInstancesToBeImpacted: string[];
 }
 export interface IRawInfraRepairTask {
     TaskId: string;

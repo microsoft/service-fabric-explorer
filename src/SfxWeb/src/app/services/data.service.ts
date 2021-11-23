@@ -295,6 +295,12 @@ export class DataService {
       }));
   }
 
+  public getRepairJobById(id: string): Observable<RepairTask> {
+    return this.repairCollection.ensureInitialized().pipe(mergeMap((collection) => {
+      return this.tryGetValidItem(this.repairCollection, id)
+    }));
+  }
+
     private addFabricEventData<T extends EventListBase<any>, S extends FabricEventBase>(data: IEventStoreData<T, S>){
         data.listSettings = data.eventsList.settings;
         data.getEvents = () => data.eventsList.collection.map(event => event.raw);
