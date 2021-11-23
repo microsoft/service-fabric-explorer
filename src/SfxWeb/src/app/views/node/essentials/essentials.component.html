@@ -10,26 +10,19 @@
     </app-essential-health-tile>
 
     <ng-container *ngIf="node?.loadInformation?.isInitialized" >
-      <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="0px 0">
+      <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="0px 0"
+      helpTextLink="https://aka.ms/sf/loadinformation">
         Count of all service objects (stateless and stateful) on the node
       </app-dashboard-text-tile>
       <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="Primary Count"
-        middleMargin="0px 0">
+        middleMargin="0px 0" helpTextLink="https://aka.ms/sf/loadinformation">
         Count of Primary replicas on the node
       </app-dashboard-text-tile>
       <app-dashboard-text-tile [count]="node.loadInformation.metrics.ReplicaCount" title="Replica Count"
-        middleMargin="0px 0">
+        middleMargin="0px 0" helpTextLink="https://aka.ms/sf/loadinformation">
         Count of total stateful replicas on the node
       </app-dashboard-text-tile>
     </ng-container>
-  </div>
-
-  <div style="width: 100%;">
-    <div class="essen-pane help-text-container">
-      <a target="_blank" href="https://aka.ms/sf/loadinformation">
-        Learn more about these metrics <span class="mif-info"></span>
-      </a>
-    </div>
   </div>
 
   <div class="detail-pane essen-pane" *ngIf="node && node.isDeactivating" data-cy="deactivated">
