@@ -19,8 +19,15 @@ export class ContainerLogsComponent extends DeployedCodePackageBaseControllerDir
 
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
+    console.log(this.deployedCodePackage.containerLogsTail);
     return this.deployedCodePackage.containerLogs.refresh(messageHandler).pipe(map(containerLogs => {
       this.containerLogs = containerLogs.raw.Content;
-  }));
+    }));
+  }
+
+  getLogs() {
+    console.log(this.deployedCodePackage.containerLogsTail);
+
+    this.refresh().subscribe();
   }
 }
