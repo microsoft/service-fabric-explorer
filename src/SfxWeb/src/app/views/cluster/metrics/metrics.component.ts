@@ -10,13 +10,8 @@ import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollec
 import { IMetricsViewModel, MetricsViewModel } from 'src/app/ViewModels/MetricsViewModel';
 import { LoadMetricInformation } from 'src/app/Models/DataModels/Shared';
 
-interface IChartSeries {
-  label: string;
-  data: number[];
-}
-
 interface IChartData {
-  dataPoints: IChartSeries[];
+  dataPoints: number[];
   categories: string[];
   title: string;
   subtitle: string;
@@ -60,27 +55,11 @@ export class MetricsComponent extends BaseControllerDirective {
       subtitle: ''
     };
 
-    console.log(this.metricsViewModel.selectedMetrics);
-
-    let metric1: IChartSeries[] =  this.metricsViewModel.selectedMetrics.map(metric => {
-      return {
-        label: metric.name,
-        data: []
-      }
-    })
-    console.log(metric1)
     this.metricsViewModel.filteredNodeLoadInformation.forEach(metric => {
-      this.metricsViewModel.selectedMetrics.forEach( (selectedmetric, index) => {
-        // console.log(metric1[index], index)
-        metric1[index].data.push(metric.metrics[selectedmetric.name]);
-
-      })
+      this.tableData.dataPoints.push(metric.metrics[this.metricsViewModel.selectedMetrics[0].name]);
       this.tableData.categories.push(metric.raw.NodeName);
     });
 
-    console.log(metric1)
-
-    this.tableData.dataPoints = metric1;
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {

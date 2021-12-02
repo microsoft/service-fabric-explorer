@@ -926,7 +926,7 @@ app-navbar {
 }
 
 .underline {
-    border-bottom: 1px solid $table-border-color !important;
+    border-bottom: 1px solid $table-border-color;
 }
 
 .aboveline {
@@ -1064,9 +1064,4 @@ $dashboard-datapoint-leftbar-width: 3px;
     margin-bottom: 0px;
     font-size: 15px;
    }
-}
-
-
-label {
-  margin-bottom: 0px;
 }

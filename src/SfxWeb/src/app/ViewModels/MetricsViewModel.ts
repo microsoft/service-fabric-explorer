@@ -23,7 +23,6 @@ export interface IMetricsViewModel {
     isExpanderEnabled: boolean;
     isFullScreen: boolean;
     refresh(): void;
-    getLegendColor(value: string): string;
 }
 
 export class MetricsViewModel implements IMetricsViewModel {
@@ -207,8 +206,8 @@ export class MetricsViewModel implements IMetricsViewModel {
     }
 
     public toggleMetric(metric: LoadMetricInformation) {
-        // this.metrics.forEach(m => m.selected = false);
-        metric.selected = !metric.selected;
+        this.metrics.forEach(m => m.selected = false);
+        metric.selected = true;
         this.refresh();
     }
 
@@ -232,10 +231,6 @@ export class MetricsViewModel implements IMetricsViewModel {
             this.showSystemMetrics = true;
             this.systemMetrics[0].selected = true;
         }
-    }
-
-    public getLegendColor(value: string): string {
-      return "#ff8418"
     }
 }
 
