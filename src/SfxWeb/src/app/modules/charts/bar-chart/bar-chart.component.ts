@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
-import { Chart, Options, chart  } from 'highcharts';
+import { Chart, Options, chart, SeriesOptionsType  } from 'highcharts';
 
 @Component({
   selector: 'app-bar-chart',
@@ -21,6 +21,7 @@ export class BarChartComponent implements OnInit, OnChanges {
 
   public options: Options = {
     chart: {
+      type: 'column',
       height: '50%',
       inverted: false,
       polar: false,
@@ -48,8 +49,8 @@ export class BarChartComponent implements OnInit, OnChanges {
     }
    },
    legend: {
-    enabled: false
-   },
+      itemStyle: this.fontColor
+    },
     xAxis: {
       categories: [],
       lineColor: '#fff',
@@ -60,26 +61,45 @@ export class BarChartComponent implements OnInit, OnChanges {
     colorAxis: [{
       gridLineColor: '#fff'
     }],
-    series: [
-      {
-        name: '',
-        type: 'column',
-        data: [],
-        dataLabels: {
-          style: this.fontColor
-        }
-      }
-    ]
+    series: []
+
   };
   constructor() { }
 
   ngOnChanges(changes: SimpleChanges) {
     if (this.chart){
-      this.chart.series[0].setData(this.dataSet);
+
+      this.chart.series.forEach(series => {
+        if (this.dataSet.every(set => set.label !== series.name)) {
+          series.remove();
+        }else{
+          series.update(this.dataSet.find(set => set.label === series.name));
+        }
+      });
+
+      this.mapData().forEach(item => {
+        if (this.chart.series.every(set => set.name !== item.name)) {
+          this.chart.addSeries(item);
+        }
+      });
+
       this.chart.title.update({text: this.title});
       this.chart.subtitle.update({text: this.subtitle});
       this.chart.xAxis[0].update({categories: this.xAxisCategories});
     }
+  }
+
+  mapData(): SeriesOptionsType[] {
+    return this.dataSet.map<SeriesOptionsType>( (data, index) => {
+      return {
+        name: data.label,
+        type: 'column',
+        data: data.data,
+        dataLabels: {
+          style: this.fontColor
+        }
+      };
+    });
   }
 
   ngOnInit() {

@@ -1,1 +1,10 @@
 <app-map></app-map>
+
+  <!-- <ng-template #customWrapperTemplate let-data="data">
+    <div>
+      {{data.name}}
+    </div>
+  </ng-template> -->
+  <!-- [listTemplate]="customWrapperTemplate" -->
+<app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)"></app-node-filter>
+<app-map  [nodes]="filteredNodes"></app-map>

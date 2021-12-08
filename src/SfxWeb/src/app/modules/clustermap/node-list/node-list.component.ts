@@ -1,4 +1,4 @@
-import { Component, Input } from '@angular/core';
+import { Component, Input, TemplateRef } from '@angular/core';
 import { Node } from 'src/app/Models/DataModels/Node';
 
 @Component({
@@ -7,6 +7,8 @@ import { Node } from 'src/app/Models/DataModels/Node';
   styleUrls: ['./node-list.component.scss']
 })
 export class NodeListComponent {
+  @Input() listTemplate: TemplateRef<any>;
+
   @Input() underlineLast = true;
   @Input() nodes: Node[];
 

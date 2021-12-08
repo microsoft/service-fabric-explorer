@@ -1,66 +1,21 @@
 <div class="detail-pane">
   <div data-cy="clustermap">
-    <div class="essen-pane layout">
-      <div>
-        <app-input data-cy="filter" placeholder="Filter nodes" [model]="filter"
-          (changed)="filter = $event; updateNodes();"></app-input>
-
-        <div class="flex-center" style="margin: 14px; margin-bottom: 0px; justify-content: space-between;">
-          <div ngbDropdown container="body" display="dynamic">
-            <button class="simple-button" ngbDropdownToggle>node Types</button>
-            <ul ngbDropdownMenu role="menu" class="dropdown-layout">
-              <li role="menuitem" *ngFor="let type of nodes.nodeTypes; let last = last;" class="item">
-                <label>
-                  <input type="checkbox" (click)=" $event.stopPropagation()" [(ngModel)]="nodeTypeFilter[type]"
-                    (ngModelChange)="updateNodes();" />
-                  {{type}}
-                </label>
-              </li>
-            </ul>
-          </div>
-
-          <label data-cy="nodetype-filter">
-            Group By NodeType
-
-            <app-toggle [(state)]="groupByNodeType" (stateChange)="updateNodes();"></app-toggle>
-          </label>
-        </div>
-      </div>
-      <div style="display: flex; flex-direction: column;" class="label-group">
-        <label>
-          <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
-
-          <app-toggle [(state)]="healthFilter.OK" color="green" (stateChange)="updateNodes();"></app-toggle>
-        </label>
-
-        <label>
-          <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
-          <app-toggle [(state)]="healthFilter.Warning" color="#f19d03" (stateChange)="updateNodes();"></app-toggle>
-        </label>
-
-        <label>
-          <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
-          <app-toggle [(state)]="healthFilter.Error" color="red" (stateChange)="updateNodes();"></app-toggle>
-        </label>
-      </div>
-    </div>
-
-    <div class="table-responsive" *ngIf="nodes.collection.length > 0 && matrix">
+    <div class="table-responsive" *ngIf="nodes.length > 0 && matrix">
       <table class="table map-table" role="presentation">
         <tbody>
           <tr>
             <td class="legend" colspan="2" rowspan="2"></td>
-            <td [colSpan]="nodes.faultDomains.length" class="legend">Fault Domain</td>
+            <td [colSpan]="data.nodes.faultDomains.length" class="legend">Fault Domain</td>
           </tr>
           <tr>
-            <td *ngFor="let faultDomain of nodes.faultDomains; trackBy: trackByFn" class="header top-side">
+            <td *ngFor="let faultDomain of data.nodes.faultDomains; trackBy: trackByFn" class="header top-side">
               <app-section-overview [nodes]="matrix[faultDomain]" [moreInfo]="false" [vertical]="false"
                 [title]="faultDomain"></app-section-overview>
 
             </td>
           </tr>
-          <tr *ngFor="let upgradeDomain of nodes.upgradeDomains; first as isFirst; trackBy: trackByFn">
-            <td class="legend" [rowSpan]="nodes.upgradeDomains.length" *ngIf="isFirst" [ngClass]="{'first': isFirst}">
+          <tr *ngFor="let upgradeDomain of data.nodes.upgradeDomains; first as isFirst; trackBy: trackByFn">
+            <td class="legend" [rowSpan]="data.nodes.upgradeDomains.length" *ngIf="isFirst" [ngClass]="{'first': isFirst}">
               <div class="upgrade-domain">
                 Upgrade Domain
               </div>
@@ -69,9 +24,9 @@
               <app-section-overview [nodes]="matrix[upgradeDomain]" [moreInfo]="false" [title]="upgradeDomain"
                 [vertical]="true"></app-section-overview>
             </td>
-            <td *ngFor="let faultDomain of nodes.faultDomains; trackBy: trackByFn" style="color: white;">
+            <td *ngFor="let faultDomain of data.nodes.faultDomains; trackBy: trackByFn" style="color: white;">
               <div style="color: white;" *ngIf="matrix[faultDomain + upgradeDomain].length > 0">
-                <app-status-tile [nodes]="matrix[faultDomain + upgradeDomain]"
+                <app-status-tile [nodes]="matrix[faultDomain + upgradeDomain]" [listTemplate]="listTemplate"
                   [title]="faultDomain + ' : ' + upgradeDomain" [groupByNodeType]="groupByNodeType"></app-status-tile>
               </div>
             </td>

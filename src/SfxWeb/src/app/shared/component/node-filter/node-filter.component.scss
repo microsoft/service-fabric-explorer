@@ -1,0 +1,19 @@
+
+
+
+.label-group {
+  label:not(:last-child) {
+    margin-bottom: 5px;
+  }
+
+  app-toggle {
+    float: right;
+    margin-left: 10px;
+  }
+}
+
+
+.first {
+  padding: 10px !important;
+  position: relative;
+}
