@@ -38,6 +38,9 @@ export class MetricsComponent extends BaseControllerDirective {
     title: '',
     subtitle: ''
   };
+
+  showOptions = true;
+
   constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
     super(injector);
    }
@@ -62,25 +65,29 @@ export class MetricsComponent extends BaseControllerDirective {
 
     console.log(this.metricsViewModel.selectedMetrics);
 
-    let metric1: IChartSeries[] =  this.metricsViewModel.selectedMetrics.map(metric => {
+    const metric1: IChartSeries[] =  this.metricsViewModel.selectedMetrics.map(metric => {
       return {
-        label: metric.name,
+        label: metric.displayName,
         data: []
-      }
-    })
-    console.log(metric1)
+      };
+    });
+    console.log(metric1);
     this.metricsViewModel.filteredNodeLoadInformation.forEach(metric => {
       this.metricsViewModel.selectedMetrics.forEach( (selectedmetric, index) => {
         // console.log(metric1[index], index)
         metric1[index].data.push(metric.metrics[selectedmetric.name]);
 
-      })
+      });
       this.tableData.categories.push(metric.raw.NodeName);
     });
 
-    console.log(metric1)
+    console.log(metric1);
 
     this.tableData.dataPoints = metric1;
+  }
+
+  public toggleSide() {
+    this.showOptions = !this.showOptions;
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {

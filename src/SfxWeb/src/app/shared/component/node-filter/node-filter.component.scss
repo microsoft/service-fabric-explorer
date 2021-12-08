@@ -1,0 +1,16 @@
+
+.layout {
+  display: flex;
+  width: fit-content;
+}
+
+app-toggle {
+  float: right;
+  margin-left: 10px;
+}
+
+.label-group {
+  label:not(:last-child) {
+    margin-bottom: 5px;
+  }
+}

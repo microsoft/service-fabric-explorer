@@ -7,7 +7,7 @@ import { LoadMetricInformation } from 'src/app/Models/DataModels/Shared';
   styleUrls: ['./metric-tile.component.scss']
 })
 export class MetricTileComponent implements OnInit {
-  @Input() metric: LoadMetricInformation
+  @Input() metric: LoadMetricInformation;
 
   constructor() { }
 

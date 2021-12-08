@@ -1,56 +1,86 @@
 <div *ngIf="metricsViewModel">
   <div style="display: flex;">
     <div>
-      <span class="metric-column-message" *ngIf="metricsViewModel.filteredMetrics.length === 0">
-        No items to display.
-      </span>
+      <div><button (click)="toggleSide()">Hide </button></div>
+      <!-- *ngIf="showOptions" -->
+      <div *ngIf="showOptions">
+        <span class="metric-column-message" *ngIf="metricsViewModel.filteredMetrics.length === 0">
+          No items to display.
+        </span>
 
-      <app-collapse-container buttonClass="underline" class="metrics-column">
-        <div collapse-header class="underline text-center" style="height: 28px;">
-          Resource Capacity
-        </div>
-        <div collapse-body>
-          <label style="margin-top: 10px;">
-            <app-toggle [(state)]="metricsViewModel.normalizeMetricsData"></app-toggle> Normalize metric
-            data
-          </label>
-          <div class="metrics-column">
-            <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.metricsWithCapacities"
-              (click)="updateSelectedMetric(metric)">
-            </app-metric-tile>
+        <app-collapse-container buttonClass="underline" class="metrics-column">
+          <div collapse-header class="underline text-center" style="height: 28px;">
+            Resource Capacity
           </div>
-        </div>
-      </app-collapse-container>
+          <div collapse-body>
+            <label style="margin-top: 10px;">
+              <app-toggle [(state)]="metricsViewModel.normalizeMetricsData"></app-toggle> Normalize metric
+              data
+            </label>
+            <div class="metrics-column">
+              <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.metricsWithCapacities"
+                (click)="updateSelectedMetric(metric)">
+              </app-metric-tile>
+            </div>
+          </div>
+        </app-collapse-container>
 
-      <app-collapse-container buttonClass="underline" class="metrics-column">
-        <div collapse-header class="underline text-center" style="height: 28px;">
-          Load metrics
-        </div>
-        <div collapse-body>
-          <div class="metrics-column">
-            <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.metricsWithoutCapacities"
-              (click)="updateSelectedMetric(metric)">
-            </app-metric-tile>
+        <app-collapse-container buttonClass="underline" class="metrics-column">
+          <div collapse-header class="underline text-center" style="height: 28px;">
+            Load metrics
           </div>
-        </div>
-      </app-collapse-container>
+          <div collapse-body>
+            <div class="metrics-column">
+              <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.metricsWithoutCapacities"
+                (click)="updateSelectedMetric(metric)">
+              </app-metric-tile>
+            </div>
+          </div>
+        </app-collapse-container>
 
-      <app-collapse-container buttonClass="underline" class="metrics-column">
-        <div collapse-header class="underline text-center" style="height: 28px;">
-          system Metrics
-        </div>
-        <div collapse-body>
-          <div class="metrics-column">
-            <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.systemMetrics"
-              (click)="updateSelectedMetric(metric)">
-            </app-metric-tile>
+        <app-collapse-container buttonClass="underline" class="metrics-column" [collapsed]="true">
+          <div collapse-header class="underline text-center" style="height: 28px;">
+            system Metrics
           </div>
-        </div>
-      </app-collapse-container>
+          <div collapse-body>
+            <div class="metrics-column">
+              <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.systemMetrics"
+                (click)="updateSelectedMetric(metric)">
+              </app-metric-tile>
+            </div>
+          </div>
+        </app-collapse-container>
+      </div>
     </div>
 
-    <app-bar-chart style="flex: 1;min-width: 0px;" [xAxisCategories]="tableData.categories" [dataSet]="tableData.dataPoints" [title]="tableData.title"
-      [subtitle]="tableData.subtitle"></app-bar-chart>
+    <div style="display: flex; flex-direction: column; flex: 1; margin-left: 15px;">
+
+      <div ngbNav #nav="ngbNav">
+        <div [ngbNavItem]="1">
+            <a ngbNavLink style="font-size: 12pt;">
+                Chart
+            </a>
+            <ng-template ngbNavContent>
+              <app-bar-chart style="flex: 1;min-width: 0px;" [xAxisCategories]="tableData.categories" [dataSet]="tableData.dataPoints" [title]="tableData.title"
+              [subtitle]="tableData.subtitle"></app-bar-chart>
+            </ng-template>
+        </div>
+        <div [ngbNavItem]="2">
+            <a ngbNavLink style="font-size: 12pt;">
+                Map
+            </a>
+            <ng-template ngbNavContent>
+              <ng-template #customWrapperTemplate let-data="data">
+                <div *ngFor="let metric of metricsViewModel.selectedMetrics">
+                  {{metric.displayName}} :  {{data.loadInformation.metrics[metric.name]}}
+                </div>
+              </ng-template>
+            <app-map [listTemplate]="customWrapperTemplate"></app-map>
+            </ng-template>
+        </div>
+      </div>
+      <div [ngbNavOutlet]="nav"></div>
+    </div>
   </div>
 </div>
 

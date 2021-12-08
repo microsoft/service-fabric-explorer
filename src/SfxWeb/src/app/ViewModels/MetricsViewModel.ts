@@ -235,7 +235,7 @@ export class MetricsViewModel implements IMetricsViewModel {
     }
 
     public getLegendColor(value: string): string {
-      return "#ff8418"
+      return '#ff8418';
     }
 }
 
