@@ -5,7 +5,7 @@
                 <table class="table detail-table table-layout-fixed" role="presentation" style="width: 100%;">
                     <tr>
                         <th>Connection String <a title="Understand the Image Store connection string setting" aria-label="Understand the Image Store connection string setting"
-                                href="https://aka.ms/sfx-help-imagestore-connectionstring" target="_blank"><span class="mif-info"></span></a></th>
+                                href="https://aka.ms/sfx-help-imagestore-connectionstring" target="_blank"><span tabindex="0" class="mif-info"></span></a></th>
                         <td>{{imagestoreRoot.connectionString}}
                         </td>
                     </tr>
@@ -18,7 +18,7 @@
         <div class="alert alert-warning" *ngIf="imagestoreRoot.isNative && !imagestoreRoot.isAvailable">
             <strong>Image store viewer does not appear to be supported on this cluster.</strong>
         </div>
-    
+
         <div class="detail-pane store-content-pane" *ngIf="imagestoreRoot.isNative && imagestoreRoot.isAvailable">
             <h4>Store Content</h4>
             <div class="image-store-breadcrumb essen-pane">
@@ -28,23 +28,23 @@
                 <span><button class="clear-button" (click)="openFolder(imagestoreRoot.pathBreadcrumbItems[0].path)" [disabled]="imagestoreRoot.currentFolder.path === imagestoreRoot.pathBreadcrumbItems[0].path"
                         aria-label="click to go to root of image store">
                         {{imagestoreRoot.pathBreadcrumbItems[0].name}} </button> </span>
-                <span  *ngFor="let item of imagestoreRoot.pathBreadcrumbItems.slice(1, imagestoreRoot.pathBreadcrumbItems.length)"> 
+                <span  *ngFor="let item of imagestoreRoot.pathBreadcrumbItems.slice(1, imagestoreRoot.pathBreadcrumbItems.length)">
                     <span class="dividing-slash">/</span>
-                    <button (click)="openFolder(item.path)" [disabled]="item === imagestoreRoot.pathBreadcrumbItems[imagestoreRoot.pathBreadcrumbItems.length - 1]" 
+                    <button (click)="openFolder(item.path)" [disabled]="item === imagestoreRoot.pathBreadcrumbItems[imagestoreRoot.pathBreadcrumbItems.length - 1]"
                     aria-label="click to open folder" class="clear-button">
                         {{item.name}}
-                    </button> 
+                    </button>
                 </span>
             </div>
             <!-- search-text="'Search confined to current directory'" TODO add this input -->
-            <app-detail-list [list]="imagestoreRoot.currentFolder.allChildren" [listSettings]="fileListSettings"></app-detail-list>	
+            <app-detail-list [list]="imagestoreRoot.currentFolder.allChildren" [listSettings]="fileListSettings"></app-detail-list>
             <div>
                 <div style="float: right; padding: 15px 0 0 0; margin: 0px;">
-                    <span class="mif-info" 
+                    <span tabindex="0" class="mif-info"
                     style="margin-right: 2px; vertical-align: top;"></span>
                     <div style="display: inline-block;">
                         Large folders can take longer to load. <br>
-                        Folder sizes loaded are snapshots at that time and only updated by reloading that folder size.        
+                        Folder sizes loaded are snapshots at that time and only updated by reloading that folder size.
                     </div>
                 </div>
             </div>

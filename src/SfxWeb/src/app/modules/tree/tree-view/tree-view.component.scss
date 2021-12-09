@@ -32,6 +32,8 @@
 .tree-body {
     bottom: $page-padding-bottom;
     color: $tree-color;
+    width: fit-content;
+    width: 100%;
 
     .informative {
         margin-left: 20px;
