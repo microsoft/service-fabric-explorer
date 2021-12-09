@@ -5,11 +5,10 @@ import { tap, map } from 'rxjs/operators';
 import { forkJoin, Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { HealthStateFilterFlags } from 'src/app/Models/HealthChunkRawDataTypes';
-import { INodesStatusDetails } from 'src/app/Models/RawDataTypes';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
-import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
+import { INodesStatusDetails, NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 
 
 @Component({
@@ -26,9 +25,7 @@ export class DetailsComponent extends BaseControllerDirective {
   nodesStatuses: INodesStatusDetails[];
 
   nodeStatusListSettings: ListSettings;
-  unhealthyEvaluationsListSettings: ListSettings;
   upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
-  healthEventsListSettings: ListSettings;
 
   constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
     super(injector);
@@ -41,9 +38,7 @@ export class DetailsComponent extends BaseControllerDirective {
     this.nodes = this.data.nodes;
 
     this.nodeStatusListSettings = this.settings.getNewOrExistingNodeStatusListSetting();
-    this.unhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings();
     this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('clusterUpgradeProgressUnhealthyEvaluations');
-    this.healthEventsListSettings = this.settings.getNewOrExistingHealthEventsListSettings();
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {

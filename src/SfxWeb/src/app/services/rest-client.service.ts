@@ -39,6 +39,7 @@ export class RestClientService {
   private static apiVersion65 = '6.5';
   private static apiVersion72 = '7.2';
   private static apiVersion80 = '8.0';
+  private static apiVersion82 = '8.2';
 
   private cacheAllowanceToken: number = Date.now().valueOf();
 
@@ -66,7 +67,7 @@ export class RestClientService {
   }
 
   public getClusterUpgradeProgress(messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> {
-      return this.get(this.getApiUrl('$/GetUpgradeProgress'), 'Get cluster upgrade progress', messageHandler);
+      return this.get(this.getApiUrl('$/GetUpgradeProgress', RestClientService.apiVersion82), 'Get cluster upgrade progress', messageHandler);
   }
 
   public getClusterLoadInformation(messageHandler?: IResponseMessageHandler): Observable<IRawClusterLoadInformation> {
@@ -326,7 +327,7 @@ export class RestClientService {
           + '/$/GetReplicas/' + encodeURIComponent(replicaId)
           + '/$/GetDetail';
 
-      return this.get(this.getApiUrl(url), 'Get deployed replica detail', messageHandler);
+      return this.get(this.getApiUrl(url, RestClientService.apiVersion60), 'Get deployed replica detail', messageHandler);
   }
 
   public getApplicationTypes(appTypeName?: string, messageHandler?: IResponseMessageHandler): Observable<IRawApplicationType[]> {
@@ -370,8 +371,13 @@ export class RestClientService {
       return this.post(this.getApiUrl(url), 'Node state removal', null, messageHandler);
   }
 
-  public getApplications(messageHandler?: IResponseMessageHandler): Observable<IRawApplication[]> {
-      return this.getFullCollection<IRawApplication>('Applications/', 'Get applications', null, messageHandler);
+  public getApplications(excludeParams: boolean = false, messageHandler?: IResponseMessageHandler): Observable<IRawApplication[]> {
+    let url = 'Applications/';
+    if (excludeParams) {
+      url =  url + `?ExcludeApplicationParameters=true`;
+    }
+
+    return this.getFullCollection<IRawApplication>(url, 'Get applications', null, messageHandler);
   }
 
   public getServices(applicationId: string, messageHandler?: IResponseMessageHandler): Observable<IRawService[]> {
@@ -537,8 +543,13 @@ export class RestClientService {
       return this.post(this.getApiUrl(url), 'Application type unprovision', { ApplicationTypeVersion: applicationTypeVersion }, messageHandler);
   }
 
-  public getApplication(applicationId: string, messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
-      const url = 'Applications/' + encodeURIComponent(applicationId) + '/';
+  public getApplication(applicationId: string, excludeParams: boolean = false,  messageHandler?: IResponseMessageHandler): Observable<IRawApplication> {
+      let url = 'Applications/' + encodeURIComponent(applicationId) + '/';
+
+      if (excludeParams) {
+        url =  url + `?ExcludeApplicationParameters=true`;
+      }
+
       return this.get(this.getApiUrl(url), 'Get application', messageHandler);
   }
 

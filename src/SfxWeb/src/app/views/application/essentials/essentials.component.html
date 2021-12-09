@@ -1,63 +1,16 @@
-<div class="detail-pane essen-pane">
-  <div class="essential-container" *ngIf="app && app.isInitialized">
-    <div class="essential-item essential-fourth">
-      <div class="essential-head">
-        Name
-      </div>
-      <div class="essential-body">
-        {{app?.name}}<app-clip-board [text]="app?.name"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item essential-fourth">
-      <div class="essential-head">
-        Application Type
-      </div>
-      <div class="essential-body">
-        <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName">{{app?.raw.TypeName}}</a>
-        <app-clip-board [text]="app?.raw.TypeName"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item essential-fourth">
-      <div class="essential-head">
-        Health State
-      </div>
-      <div class="essential-body">
-        <app-health-badge [badgeClass]="app?.healthState.badgeClass" [text]="app?.healthState.text"></app-health-badge>
-      </div>
-    </div>
-
-    <div class="essential-item essential-fourth">
-      <div class="essential-head">
-        Version
-      </div>
-      <div class="essential-body">
-        {{app?.raw.TypeVersion}}<app-clip-board [text]="app?.raw.TypeVersion"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item essential-fourth">
-      <div class="essential-head">
-        Status
-      </div>
-      <div class="essential-body">
-        {{app.raw.Status}}
-      </div>
-    </div>
-
-    <div class="essential-item essential-fourth" *ngIf="app && app.isUpgrading">
-      <div class="essential-head">
-        Upgrade status Details
-      </div>
-      <div class="essential-body" *ngIf="upgradeProgress && upgradeProgress.isInitialized">
-        {{upgradeProgress.raw.UpgradeStatusDetails}}
-      </div>
-    </div>
-  </div>
-</div>
-
 <div class="tile-container">
+    <app-essential-health-tile [healthState]="app?.healthState" *ngIf="app && app.isInitialized"
+    class="long" [listItems]="essentialItems">
+        <ng-template appEssentialTemplate id="typename">
+            <a [routerLink]="app?.appTypeViewPath" title="app?.raw.TypeName">
+                {{app?.raw.TypeName}}
+            </a>
+        </ng-template>
+
+        <ng-template appEssentialTemplate id="status">
+            <app-status-resolver [status]="app.raw.Status"></app-status-resolver>
+          </ng-template>
+  </app-essential-health-tile>
   <app-dashboard-tile [data]="servicesDashboard" *ngIf="servicesDashboard"></app-dashboard-tile>
   <app-dashboard-tile [data]="partitionsDashboard" *ngIf="partitionsDashboard"></app-dashboard-tile>
   <app-dashboard-tile [data]="replicasDashboard" *ngIf="replicasDashboard"></app-dashboard-tile>
@@ -66,42 +19,11 @@
 <div data-cy="upgradeDetails" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container [sectionName]="app.isUpgrading ? 'Upgrade In Progress' : 'Latest Upgrade State'">
         <div collapse-header>
-            <h4 *ngIf="app.isUpgrading">Upgrade In Progress</h4>
-            <h4 *ngIf="!app.isUpgrading">Latest Upgrade State</h4>
+            <h4 *ngIf="upgradeProgress.isUpgrading">Upgrade In Progress</h4>
+            <h4 *ngIf="!upgradeProgress.isUpgrading">Latest Upgrade State</h4>
         </div>
         <div collapse-body>
-            <div class="table-responsive">
-                <table class="table detail-list">
-                    <thead>
-                        <tr>
-                            <th>Target Version</th>
-                            <th>Start Timestamp UTC</th>
-                            <th title="Upgrade Duration">Upgrade Duration</th>
-                            <th title="Upgrade Domain Duration">Upgrade Domain Duration</th>
-                            <th>Upgrade Mode</th>
-                            <th>Upgrade State</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr>
-                            <td title="{{upgradeProgress.raw.TargetApplicationTypeVersion}}">{{upgradeProgress.raw.TargetApplicationTypeVersion}}</td>
-                            <td>
-                              <app-display-time [time]="upgradeProgress.startTimestampUtc"></app-display-time>
-                            </td>
-                            <td>{{upgradeProgress.upgradeDuration}}</td>
-                            <td>{{upgradeProgress.upgradeDomainDuration}}</td>
-                            <td>{{upgradeProgress.raw.RollingUpgradeMode}}</td>
-                            <td>{{upgradeProgress.raw.UpgradeState}}</td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
-
-            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDomains.length > 0">
-                <h4>Progress by Upgrade Domain</h4>
-                <app-upgrade-progress [upgradeDomains]="upgradeProgress.upgradeDomains"></app-upgrade-progress>
-            </div>
-
+          <app-upgrade-info [upgradeProgress]="upgradeProgress"></app-upgrade-info>
             <div class="detail-pane essen-pane" *ngIf="upgradeProgress.raw.FailureReason !== 'None'">
                 <h4>Upgrade Failure</h4>
                 <div class="table-responsive">
@@ -125,22 +47,26 @@
                 <h4>Unhealthy Evaluations (Upgrade)</h4>
                 <app-detail-list [list]="upgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
             </div>
-
-            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.upgradeDescription">
-                <h4>Upgrade Parameters</h4>
-                <app-detail-view-part [data]="upgradeProgress.upgradeDescription"></app-detail-view-part>
-            </div>
         </div>
     </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="upgradeProgress?.upgradeDescription">
+  <app-collapse-container sectionName="Upgrade Description" collapsed="true">
+      <h4 collapse-header>Upgrade Parameters</h4>
+      <div class="detail-pane"  collapse-body>
+        <app-detail-view-part [data]="upgradeProgress.upgradeDescription"></app-detail-view-part>
+      </div>
+  </app-collapse-container>
 </div>
 
 <div class="detail-pane essen-pane" *ngIf="app && app.health" data-cy="health">
     <app-collapse-container sectionName="Unhealthy Evaluations">
         <div collapse-header>
-            <h4>Unhealthy Evaluations</h4>
+            <h4>Health Evaluations</h4>
         </div>
         <div collapse-body>
-            <app-detail-list [list]="app.health.unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
+            <app-health-viewer  [healthyEvaluations]="app.health.healthEvents" [unhealthyEvaluations]="app.health.unhealthyEvaluations" ></app-health-viewer>
         </div>
     </app-collapse-container>
 </div>
@@ -166,8 +92,3 @@
         </div>
     </app-collapse-container>
 </div>
-
-<!-- <div class="detail-pane essen-pane" *ngIf="clusterManifest && clusterManifest.isNetworkInventoryManagerEnabled">
-    <h4>Networks</h4>
-    <app-detail-list [list]="networks" [listSettings]="networkListSettings"></app-detail-list>
-</div> -->

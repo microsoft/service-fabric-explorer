@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, addRoute } from './util';
+import { apiUrl, addDefaultFixtures, checkTableSize, FIXTURE_REF_NODES, addRoute, FIXTURE_REF_MANIFEST } from './util';
 
 context('nodes list page', () => {
     beforeEach(() => {
@@ -27,7 +27,7 @@ context('nodes list page', () => {
         it('view events', () => {
             addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/Events?*`));
 
-            cy.wait(FIXTURE_REF_NODES);
+            cy.wait([FIXTURE_REF_NODES, FIXTURE_REF_MANIFEST]);
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('events').click();

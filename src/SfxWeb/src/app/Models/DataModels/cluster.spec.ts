@@ -246,6 +246,11 @@ describe('Cluster', () => {
                 UpgradeDomainProgressAtFailure: {
                     DomainName: '',
                     NodeUpgradeProgressList: []
+                },
+                IsNodeByNode: false,
+                UpgradeUnits: [],
+                CurrentUpgradeUnitsProgress: {
+                  NodeUpgradeProgressList: []
                 }
             });
 
@@ -323,6 +328,11 @@ describe('Cluster', () => {
                 UpgradeDomainProgressAtFailure: {
                     DomainName: '',
                     NodeUpgradeProgressList: []
+                },
+                IsNodeByNode: false,
+                UpgradeUnits: [],
+                CurrentUpgradeUnitsProgress: {
+                  NodeUpgradeProgressList: []
                 }
             });
 

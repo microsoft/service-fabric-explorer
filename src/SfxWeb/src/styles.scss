@@ -77,10 +77,9 @@ $SfxWeb-theme: mat.define-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-w
         color: $detail-tab-color;
         margin-left: 0;
         font-size: $detail-tab-title-font-size;
-        // set padding instead of margin to avoid jumping of collapsed section
         margin-top: 0;
-        padding-top: 7px;
-        margin-bottom: 10px;
+        padding-top: 0px;
+        margin-bottom: 0px;
     }
 
     h4.no-uppercase {
@@ -96,12 +95,8 @@ $SfxWeb-theme: mat.define-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-w
 }
 
 .right-panel {
-    // position: absolute;
-    // left: $left-panel-width;
-    // right: 20px;
-    // top: 50px;
-    // bottom: 20px;
     padding-left: 20px;
+    padding-right: 15px;
     overflow: hidden;
     min-width: $right-panel-min-width;
     background-color: $right-panel-background-color;
@@ -385,7 +380,7 @@ table.detail-list {
 .badge-container {
     display: inline;
     white-space: nowrap;
-    overflow: hidden;
+    // overflow: hidden;
     text-overflow: ellipsis;
 }
 
@@ -470,6 +465,14 @@ app-navbar {
 
 .blue {
     background-color: $azure-blue;
+}
+
+.yellow {
+  background-color: yellow;
+}
+
+.red {
+  background-color: red;
 }
 
 .dropdown-menu {
@@ -574,6 +577,9 @@ app-navbar {
   .vis-item.vis-dot {
     border-width: 10px;
     border-radius: 10px;
+  }
+  .vis-item.vis-range {
+      border-radius: 0px;
   }
   .vis-item.vis-selected {
     border-color: green;
@@ -698,6 +704,11 @@ app-navbar {
 
   .noUi-tooltip {
     display: none;
+    background-color: #262626;
+    border: 1px solid #0075c9;
+    color: white;
+    border-radius: 0px;
+    z-index: 2;
   }
   .noUi-handle {
       &:focus {
@@ -838,13 +849,18 @@ app-navbar {
     padding: 5px 5px 1px 0px;
     text-overflow: ellipsis;
     overflow: hidden;
-    font-size: 8pt;
-    font-weight: 400;
+    font-size: 10pt;
+    font-weight: 600;
 }
 
 .essential-body {
     text-overflow: ellipsis;
     overflow: hidden;
+    font-size: 9pt;
+}
+
+.spacer {
+    width: 10px; height: 1px;
 }
 
 .essential-item {
@@ -852,7 +868,7 @@ app-navbar {
     text-align: left;
     text-overflow: ellipsis;
     overflow: hidden;
-    min-width: 150px;
+    min-width: 180px;
 }
 
 .essential-container {
@@ -885,6 +901,7 @@ app-navbar {
 }
 
 .tile-container {
+    width: 100%;
     display: grid;
     grid-auto-flow: dense;
     grid-template-columns: repeat(auto-fit, $tile-width);
@@ -949,9 +966,160 @@ app-navbar {
 button.disabled {
   // forced-color-adjust: none;
   color: initial !important;
-    border: 1px dotted orange !important;
-  }
+  border: 1px dotted orange !important;
+}
 
 :checked {
   accent-color: $azure-blue;
+}
+
+.flex-center {
+    display: flex;
+    align-items: center;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.underline {
+    border-bottom: 1px solid $table-border-color;
+}
+
+.aboveline {
+  border-top: 1px solid $table-border-color;
+}
+
+.centering-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+}
+
+.tile-item {
+    @extend .centering-row;
+    height: 35px;
+    position: relative;
+}
+
+.text-wrapper {
+    position: relative;
+    overflow: hidden;
+    flex: 1;
+    .middle-text {
+        transition: .5s;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 800px;
+        text-align: right;
+        flex: 1;
+    }
+
+    .left-text {
+        transition: .5s;
+        white-space: nowrap;
+        color: #c9c9c9;
+        font-weight: 500;
+        font-size: 14px;
+    }
+
+}
+
+.essential-list-item {
+    display: flex; align-items: center;
+    justify-content: space-between;
+    &:hover {
+        .middle-text {
+            min-width: fit-content;
+            white-space: normal;
+        }
+
+        .left-text {
+            overflow: hidden;
+        }
+    }
+
+}
+
+.dropdown-menu {
+  list-style: none;
+  padding: 5px;
+  color: white;
+  margin-bottom: 0px;
+}
+
+.underline-title {
+  @extend .underline;
+
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: initial;
+    padding-bottom: 10px;
+}
+
+.center-text {
+  text-align: center;
+}
+
+$dashboard-datapoint-leftbar-width: 3px;
+
+.dashboard-datapoints {
+  vertical-align: top;
+  text-align: left;
+  margin: 10px 0 0 25px;
+
+  .dashboard-datapoint {
+      position: relative;
+      padding: 0 0 0 $dashboard-datapoint-leftbar-width + 5px;
+
+      .dashboard-datapoint-leftbar {
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: $dashboard-datapoint-leftbar-width;
+
+          &.badge-ok {
+              background: $dashboard-ok-color;
+          }
+
+          &.badge-warning {
+              background: $dashboard-warning-color;
+          }
+
+          &.badge-error {
+              background: $dashboard-error-color;
+          }
+
+          &.badge-unknown {
+              background: $dashboard-unknown-color;
+          }
+      }
+
+      .dashboard-datapoint-title {
+          display: block;
+          line-height: 1;
+          margin-top: -2px;
+      }
+
+      .dashboard-datapoint-number {
+          display: block;
+          line-height: 1;
+      }
+  }
+}
+
+
+.dropdown-layout {
+  list-style: none;
+  padding: 5px;
+  color: white;
+  margin-bottom: 0px;
+
+   label {
+    margin-bottom: 0px;
+    font-size: 15px;
+   }
 }

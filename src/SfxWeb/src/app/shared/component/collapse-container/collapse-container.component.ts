@@ -41,5 +41,4 @@ export class CollapseContainerComponent implements OnChanges, OnInit{
   setText() {
     this.displayText = (this.collapsed ? 'Open ': 'Close ')  + this.sectionName + ' Section';
   }
-
 }

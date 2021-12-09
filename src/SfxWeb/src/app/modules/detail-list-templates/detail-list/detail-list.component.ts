@@ -34,6 +34,8 @@ export class DetailListComponent implements OnInit, OnDestroy {
   @Input() listSettings: ListSettings;
   @Input() searchText = 'Search list';
   @Input() isLoading = false;
+  @Input() successfulLoad = true;
+  @Input() showTopOptions = true;
   @Output() sorted = new EventEmitter<any[]>();
   @Output() sortOrdering = new EventEmitter<ISortOrdering>();
 
@@ -43,6 +45,7 @@ export class DetailListComponent implements OnInit, OnDestroy {
   page = 1;
   totalListSize = 0;
   displayPath = '';
+  cache = {}; // is injected into each cell and allows for settings to persist between refreshs
 
   debounceHandler: Subject<any[]> = new Subject<any[]>();
   debouncerHandlerSubscription: Subscription;
@@ -54,8 +57,8 @@ export class DetailListComponent implements OnInit, OnDestroy {
   @Input()
   set list(data: any[] | DataModelCollectionBase<any>) {
     if (data instanceof DataModelCollectionBase){
-      data.ensureInitialized().subscribe(resp => {
-        this.iList = [].concat(resp.collection);
+      data.ensureInitialized().subscribe(() => {
+        this.iList = [].concat(data.collection);
         this.updateList();
       });
     }else{

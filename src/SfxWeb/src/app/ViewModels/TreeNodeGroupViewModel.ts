@@ -9,21 +9,13 @@ import { ListSettings } from '../Models/ListSettings';
 import { ActionCollection } from '../Models/ActionCollection';
 import { ITextAndBadge } from '../Utils/ValueResolver';
 import orderBy from 'lodash/orderBy';
+import { HealthUtils } from '../Utils/healthUtils';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
-export class TreeNodeGroupViewModel {
-    public parent: TreeNodeGroupViewModel;
-    public sortBy: () => any[];
-    public selected = false;
-    public leafNode: boolean;
-    public displayName: () => string;
-    public listSettings: ListSettings;
-    public badge: () => ITextAndBadge;
-    public actions: ActionCollection;
-    public canExpandAll = false;
+export class TreeNodeGroupViewModel implements ITreeNode {
 
     public get depth(): number {
         if (this.parent) {
@@ -33,19 +25,20 @@ export class TreeNodeGroupViewModel {
         }
     }
 
-    public tree: TreeViewModel;
-    public node: ITreeNode;
-
-    public children: TreeNodeGroupViewModel[] = [];
-    public loadingChildren = false;
-    public childrenLoaded = false;
-
     public get displayedChildren(): TreeNodeGroupViewModel[] {
         let result = this.children.filter(node => node.isVisibleByBadge);
 
         if (this.node && this.node.listSettings) {
             this.node.listSettings.count = result.length;
             result = result.slice(this.node.listSettings.begin, this.node.listSettings.begin + this.node.listSettings.limit);
+        }
+
+        if (this.tree.orderbyHealthState) {
+            result = result.sort( (child1, child2) => {
+                const badgeState1 = child1.badge ? HealthUtils.resolveHealthStateToValue(child1.badge()) : 0;
+                const badgeState2 = child2.badge ? HealthUtils.resolveHealthStateToValue(child2.badge()) : 0;
+                return badgeState2 - badgeState1;
+            });
         }
         return result;
     }
@@ -55,7 +48,7 @@ export class TreeNodeGroupViewModel {
     }
 
     public get isExpanded(): boolean {
-        return  this.internalIsExpanded && !!this.node.childrenQuery;
+        return  this.internalIsExpanded && this.hasChildren;
     }
 
     public get isCollapsed(): boolean {
@@ -70,10 +63,6 @@ export class TreeNodeGroupViewModel {
         }
     }
 
-    private keyboardSelectActionDelayInMilliseconds = 200;
-    private internalIsExpanded = false;
-    private currentGetChildrenPromise: Subject<any>;
-
     constructor(tree: TreeViewModel, node: ITreeNode, parent: TreeNodeGroupViewModel) {
         this.tree = tree;
         this.node = node;
@@ -86,6 +75,104 @@ export class TreeNodeGroupViewModel {
         }
         this.update(node);
     }
+
+    public get nonRootpaddingLeftPx(): string {
+        // 18px is the total width of the expander icon
+       return (18 * (this.depth - .5)) + 'px';
+   }
+
+   public get isVisibleByBadge(): boolean {
+       const badgeState = this.node.badge ? this.node.badge() : null;
+       let isVisible = this.node.alwaysVisible ||
+                       badgeState === null ||
+                       !badgeState?.badgeClass;
+
+       if (!isVisible) {
+           switch (badgeState.badgeClass) {
+               case BadgeConstants.BadgeUnknown:
+               case BadgeConstants.BadgeOK:
+                   isVisible = this.tree.showOkItems;
+                   break;
+               case BadgeConstants.BadgeWarning:
+                   isVisible = this.tree.showWarningItems;
+                   break;
+               case BadgeConstants.BadgeError:
+                   isVisible = this.tree.showErrorItems;
+                   break;
+               default:
+                   break;
+           }
+       }
+
+       if (this.selected && !isVisible) {
+            this.tree.selectTreeNode([IdGenerator.cluster()]);
+        }
+
+       return isVisible;
+    }
+
+    public get allChildrenInvisibleByBadge(): boolean {
+        return !this.children.every(child => child.isVisibleByBadge);
+    }
+
+    public get hasExpander(): boolean {
+        return !this.leafNode && this.hasChildren && !this.allChildrenInvisibleByBadge;
+    }
+
+    public get displayHtml(): string {
+        const name = this.node.displayName();
+        if (this.tree && this.tree.searchTerm && this.tree.searchTerm.trim()) {
+            const searchTerm = this.tree.searchTerm;
+            const matchIndex = name.toLowerCase().indexOf(searchTerm.toLowerCase());
+
+            if (matchIndex !== -1) {
+                return name.substring(0, matchIndex) + '<span class=\'search-match\'>' + name.substr(matchIndex, searchTerm.length) + '</span>' + name.substring(matchIndex + searchTerm.length);
+            }
+        }
+
+        return name;
+    }
+
+    private get hasExpandedAndLoadedChildren(): boolean {
+        return this.hasChildren && this.isExpanded && this.children.length !== 0;
+    }
+
+    public get nodeId() {
+        return this.node.nodeId;
+    }
+
+    public get filtered(): number {
+        if (this.tree.searchTerm.length === 0) {
+            return 0;
+        }else {
+            let count = 0;
+            if (this.displayName().toLowerCase().indexOf(this.tree.searchTerm.toLowerCase()) > -1) {
+                count ++;
+            }
+            this.children.forEach(child => count += child.filtered );
+            return count;
+        }
+    }
+    public parent: TreeNodeGroupViewModel;
+    public sortBy: () => any[];
+    public selected = false;
+    public leafNode: boolean;
+    public displayName: () => string;
+    public listSettings: ListSettings;
+    public badge: () => ITextAndBadge;
+    public actions: ActionCollection;
+    public canExpandAll = false;
+
+    public tree: TreeViewModel;
+    public node: ITreeNode;
+
+    public children: TreeNodeGroupViewModel[] = [];
+    public loadingChildren = false;
+    public childrenLoaded = false;
+
+    private keyboardSelectActionDelayInMilliseconds = 200;
+    private internalIsExpanded = false;
+    private currentGetChildrenPromise: Subject<any>;
 
     public toggle(): Observable<any> {
         this.internalIsExpanded = !this.internalIsExpanded;
@@ -115,19 +202,22 @@ export class TreeNodeGroupViewModel {
         });
     }
 
-    public updateDataModelFromHealthChunkRecursively(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
+    public updateDataModelFromHealthChunkRecursively(clusterHealthChunk: IClusterHealthChunk): Observable<any[]> {
         if (!this.internalIsExpanded) {
-            return of(true);
+            return of([]);
         }
 
-        return of(this.node && this.node.mergeClusterHealthStateChunk
-            ? this.node.mergeClusterHealthStateChunk(clusterHealthChunk)
-            : true).pipe(map( () => {
-                const updateChildrenPromises = this.children.map(child => {
-                    return child.updateDataModelFromHealthChunkRecursively(clusterHealthChunk);
-                });
-                return forkJoin(updateChildrenPromises);
-            } ));
+        return (this.node && this.node.mergeClusterHealthStateChunk ?
+        this.node.mergeClusterHealthStateChunk(clusterHealthChunk)
+        : of([])).pipe(mergeMap(() => {
+          const updateChildrenPromises = this.children.map(child => child.updateDataModelFromHealthChunkRecursively(clusterHealthChunk));
+
+          if (updateChildrenPromises.length > 0) {
+            return forkJoin(updateChildrenPromises);
+          } else {
+            return of([]);
+          }
+        }));
     }
 
     public refreshExpandedChildrenRecursively(): Observable<any> {
@@ -200,67 +290,6 @@ export class TreeNodeGroupViewModel {
         return this.currentGetChildrenPromise ? this.currentGetChildrenPromise.asObservable() : of(null);
     }
 
-    public get nonRootpaddingLeftPx(): string {
-        // 18px is the total width of the expander icon
-       return (18 * (this.depth - .5)) + 'px';
-   }
-
-   public get isVisibleByBadge(): boolean {
-       const badgeState = this.node.badge ? this.node.badge() : null;
-       let isVisible = this.node.alwaysVisible ||
-                       badgeState === null ||
-                       !badgeState?.badgeClass;
-
-       if (!isVisible) {
-           switch (badgeState.badgeClass) {
-               case BadgeConstants.BadgeUnknown:
-               case BadgeConstants.BadgeOK:
-                   isVisible = this.tree.showOkItems;
-                   break;
-               case BadgeConstants.BadgeWarning:
-                   isVisible = this.tree.showWarningItems;
-                   break;
-               case BadgeConstants.BadgeError:
-                   isVisible = this.tree.showErrorItems;
-                   break;
-               default:
-                   break;
-           }
-       }
-
-       if (this.selected && !isVisible) {
-            this.tree.selectTreeNode([IdGenerator.cluster()]);
-        }
-
-       return isVisible;
-    }
-
-    public get allChildrenInvisibleByBadge(): boolean {
-        return !this.children.every(child => child.isVisibleByBadge);
-    }
-
-    public get hasExpander(): boolean {
-        return !this.leafNode && this.hasChildren && !this.allChildrenInvisibleByBadge;
-    }
-
-    public get displayHtml(): string {
-        const name = this.node.displayName();
-        if (this.tree && this.tree.searchTerm && this.tree.searchTerm.trim()) {
-            const searchTerm = this.tree.searchTerm;
-            const matchIndex = name.toLowerCase().indexOf(searchTerm.toLowerCase());
-
-            if (matchIndex !== -1) {
-                return name.substring(0, matchIndex) + '<span class=\'search-match\'>' + name.substr(matchIndex, searchTerm.length) + '</span>' + name.substring(matchIndex + searchTerm.length);
-            }
-        }
-
-        return name;
-    }
-
-    private get hasExpandedAndLoadedChildren(): boolean {
-        return this.hasChildren && this.isExpanded && this.children.length !== 0;
-    }
-
     public toggleAll() {
         if (!this.isExpanded) {
             this.expand().subscribe( () => {
@@ -290,10 +319,6 @@ export class TreeNodeGroupViewModel {
                 }, actionDelay || 0);
             }
         }
-    }
-
-    public get nodeId() {
-        return this.node.nodeId;
     }
 
     public selectNext(actionDelay?: number) {
@@ -417,19 +442,6 @@ export class TreeNodeGroupViewModel {
             parentsChildren[myIndex + 1].select(this.keyboardSelectActionDelayInMilliseconds);
         }
         return myIndex;
-    }
-
-    public get filtered(): number {
-        if (this.tree.searchTerm.length === 0) {
-            return 0;
-        }else {
-            let count = 0;
-            if (this.displayName().toLowerCase().indexOf(this.tree.searchTerm.toLowerCase()) > -1) {
-                count ++;
-            }
-            this.children.forEach(child => count += child.filtered );
-            return count;
-        }
     }
 }
 

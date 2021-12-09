@@ -3,6 +3,8 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
 
+import { ITab } from '../shared/component/navbar/navbar.component';
+
 
 export class Constants {
 
@@ -70,6 +72,11 @@ export class Constants {
     public static Empty = '(empty)';
     public static SvgTransitionDuration = 250;
     public static SvgTransitionDurationSlow = 600;
+
+    public static readonly EventsTab: ITab = {
+      name: 'events',
+      route: './events'
+    };
 }
 
 export class FabricEnumValues {
@@ -152,7 +159,10 @@ export class SortPriorities {
         None: 1,
         Primary: 2,
         ActiveSecondary: 3,
-        IdleSecondary: 4
+        IdleSecondary: 4,
+        PrimaryAuxiliary: 5,
+        ActiveAuxiliary: 6,
+        IdleAuxiliary: 7,
     };
 }
 
@@ -169,6 +179,7 @@ export class ServiceKindRegexes {
 export class UpgradeDomainStateRegexes {
     public static InProgress: RegExp = /In.*Progress/i;
     public static Completed: RegExp = /Completed/i;
+    public static Failed: RegExp = /Failed/i;
 }
 
 export class ClusterUpgradeStates {
@@ -179,6 +190,7 @@ export class UpgradeDomainStateNames {
     public static InProgress = 'InProgress';
     public static Completed = 'Completed';
     public static Pending = 'Pending';
+    public static Failed = 'Failed';
 }
 
 export class StatusWarningLevel {
@@ -199,3 +211,12 @@ export class CertExpiraryHealthEventProperty {
     public static Server = 'Certificate_server';
 }
 
+
+export class TelemetryEventNames {
+  public static RepairChart = 'show repair job chart';
+  public static CombinedEventStore = 'combined event store';
+  public static SortByHealth = 'sort by health in tree';
+  public static supressMessage = 'supress messages';
+  public static listSize = 'set list size';
+  public static advancedMode = 'enable advanced mode';
+}

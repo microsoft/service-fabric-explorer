@@ -4,6 +4,8 @@ import { IRawUnhealthyEvaluation, IRawHealthEvaluation, IRawNodeHealthEvluation,
 import { HealthEvaluation } from '../Models/DataModels/Shared';
 import { DataService } from '../services/data.service';
 import { RoutesService } from '../services/routes.service';
+import { ITextAndBadge } from './ValueResolver';
+import { BadgeConstants } from '../Common/Constants';
 
 export enum HealthStatisticsEntityKind {
     Node,
@@ -173,6 +175,25 @@ export class HealthUtils {
             ErrorCount: 0,
             WarningCount: 0
         };
+    }
+
+    public static resolveHealthStateToValue(badge: ITextAndBadge) {
+        let value = 0;
+        switch (badge.badgeClass) {
+            case BadgeConstants.BadgeUnknown:
+            case BadgeConstants.BadgeOK:
+                value = 0;
+                break;
+            case BadgeConstants.BadgeWarning:
+                value = 1;
+                break;
+            case BadgeConstants.BadgeError:
+                value = 2;
+                break;
+            default:
+                break;
+        }
+        return value;
     }
 }
 

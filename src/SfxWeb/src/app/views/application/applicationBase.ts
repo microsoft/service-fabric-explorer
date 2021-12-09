@@ -21,7 +21,7 @@ export class ApplicationBaseControllerDirective extends BaseControllerDirective 
 
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getApp(this.appId, true, messageHandler).pipe(map(data => {
-            this.app = data;
+          this.app = data;
         }));
     }
 

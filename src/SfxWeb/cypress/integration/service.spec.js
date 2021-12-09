@@ -40,7 +40,7 @@ context('service', () => {
         it('stateful information', () => {
             cy.wait(waitRequest);
 
-            cy.get('[data-cy=stateful]').within(() => {
+            cy.get('[data-cy=state-data]').within(() => {
                 cy.contains("Stateful")
                 cy.contains("Minimum Replica Set Size")
                 cy.contains("Target Replica Set Size")
@@ -58,9 +58,14 @@ context('service', () => {
 
         it('view details', () => {
             cy.wait(waitRequest);
+            cy.wait('@getdescription');
 
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
+            })
+
+            cy.get('[data-cy=serviceDescription]').within(() => {
+                cy.contains("Auxiliary Replica Count").should('not.exist');
             })
 
             cy.url().should('include', '/details')
@@ -99,6 +104,33 @@ context('service', () => {
         })
     })
 
+    describe("stateful - with auxiliary replicas", () => {
+        beforeEach(() => {
+            addRoute("descriptionWithAux", "service-page/service-description-with-aux", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetDescription?*`));
+            addRoute("serviceInfo", "service-page/service-info", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
+            addRoute("partitions", "service-page/service-partitions", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetPartitions?*`));
+            addRoute("health", "service-page/service-health", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetHealth?*`));
+ 
+            cy.visit(urlFormatter(appName, serviceName))
+        })
+
+        it('view details - with auxiliary replicas', () => {
+            cy.wait(waitRequest);
+            cy.wait("@getdescriptionWithAux");
+
+            cy.get('[data-cy=navtabs]').within(() => {
+                cy.contains('details').click();
+            })
+
+            cy.get('[data-cy=serviceDescription]').within(() => {
+                cy.contains("Auxiliary Replica Count")
+            })
+
+            cy.url().should('include', '/details')
+        })
+
+    })
+
     describe("stateless", () => {
         beforeEach(() => {
             addRoute("description", "service-page/service-stateless-description.json", apiUrl(`${routeFormatter(appName, statelessServiceName)}/$/GetDescription?*`))
@@ -112,7 +144,7 @@ context('service', () => {
         it('stateless information', () => {
             cy.wait(waitRequest);
 
-            cy.get('[data-cy=stateless]').within(() => {
+            cy.get('[data-cy=state-data]').within(() => {
                 cy.contains("Stateless")
                 cy.contains("Instance Count")
             })

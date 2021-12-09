@@ -1,0 +1,15 @@
+<div ngbNav #nav="ngbNav">
+    <div ngbNavItem>
+        <a ngbNavLink>Unhealthy</a>
+        <ng-template ngbNavContent>
+            <app-detail-list [list]="unhealthyEvaluations" [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
+        </ng-template>
+    </div>
+    <div ngbNavItem>
+        <a ngbNavLink>All</a>
+        <ng-template ngbNavContent>
+            <app-detail-list [list]="healthyEvaluations" [listSettings]="healthEventsListSettings"></app-detail-list>
+        </ng-template>
+    </div>
+</div>
+<div [ngbNavOutlet]="nav"></div>

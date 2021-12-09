@@ -1,127 +1,72 @@
-<div class="detail-pane essen-pane" *ngIf="node">
-  <div class="essential-container">
-    <div class="essential-item ">
-      <div class="essential-head">
-        Name
-      </div>
-      <div class="essential-body">
-        {{node.name}}<app-clip-board [text]="node.name"></app-clip-board>
-      </div>
-    </div>
+<div *ngIf="node">
+  <div class="tile-container" data-cy="tiles">
+    <app-essential-health-tile [healthState]="node.healthState" class="long" [listItems]="essentialItems" data-cy="essential-info">
+      <ng-template appEssentialTemplate id="status">
+        <app-status-resolver [status]="node.nodeStatus"  data-cy="status"></app-status-resolver>
+      </ng-template>
+    </app-essential-health-tile>
 
-    <div class="essential-item ">
-      <div class="essential-head">
-        Upgrade Domain
-      </div>
-      <div class="essential-body">
-        {{node.raw.UpgradeDomain}}
-      </div>
-    </div>
+    <app-essential-health-tile [listItems]="ringInfo" data-cy="node-ring-info">
+    </app-essential-health-tile>
 
-    <div class="essential-item ">
-      <div class="essential-head">
-        Fault Domain
-      </div>
-      <div class="essential-body">
-        {{node.raw.FaultDomain}}<app-clip-board [text]="node.raw.FaultDomain"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item ">
-      <div class="essential-head">
-        Status
-      </div>
-      <div class="essential-body">
-        {{node.nodeStatus}}
-      </div>
-    </div>
-
-    <div class="essential-item ">
-      <div class="essential-head">
-        Health State
-      </div>
-      <div class="essential-body">
-        <app-health-badge [badgeClass]="node.healthState.badgeClass" [text]="node.healthState.text"></app-health-badge>
-      </div>
-    </div>
-
-    <div class="essential-item ">
-      <div class="essential-head">
-        IP Address or Domain Name
-      </div>
-      <div class="essential-body">
-        {{node.raw.IpAddressOrFQDN}}<app-clip-board [text]="node.raw.IpAddressOrFQDN"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item ">
-      <div class="essential-head">
-        Type
-      </div>
-      <div class="essential-body">
-        {{node.raw.Type}}<app-clip-board [text]="node.raw.Type"></app-clip-board>
-      </div>
-    </div>
-
-    <div class="essential-item ">
-      <div class="essential-head">
-        Is Seed Node
-      </div>
-      <div class="essential-body">
-        {{node.raw.IsSeedNode}}
-      </div>
-    </div>
+    <ng-container *ngIf="node?.loadInformation?.isInitialized" >
+      <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="0px 0"
+      helpTextLink="https://aka.ms/sf/loadinformation">
+        Count of all service objects (stateless and stateful) on the node
+      </app-dashboard-text-tile>
+      <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="Primary Count"
+        middleMargin="0px 0" helpTextLink="https://aka.ms/sf/loadinformation">
+        Count of Primary replicas on the node
+      </app-dashboard-text-tile>
+      <app-dashboard-text-tile [count]="node.loadInformation.metrics.ReplicaCount" title="Replica Count"
+        middleMargin="0px 0" helpTextLink="https://aka.ms/sf/loadinformation">
+        Count of total stateful replicas on the node
+      </app-dashboard-text-tile>
+    </ng-container>
   </div>
-</div>
 
-<div class="essen-pane help-text-container">
-  <a target="_blank" href="https://aka.ms/sf/loadinformation">
-  Learn more about these metrics <span tabindex="0" class="mif-info" ></span>
-  </a>
-</div>
+  <div class="detail-pane essen-pane" *ngIf="node && node.isDeactivating" data-cy="deactivated">
+    <app-collapse-container sectionName="Deactivation Info">
+      <div collapse-header>
+        <h4>Deactivation Info</h4>
+      </div>
+      <div collapse-body>
+        <app-node-deactivation-info [deactivationInfo]="node.raw.NodeDeactivationInfo"></app-node-deactivation-info>
+      </div>
+    </app-collapse-container>
+  </div>
 
-<div *ngIf="node?.loadInformation?.isInitialized" class="tile-container" data-cy="tiles">
-  <app-dashboard-text-tile [count]="node.loadInformation.metrics.Count" title="Total Count" middleMargin="5px 0">
-    Count of all service objects (stateless and stateful) on the node
-  </app-dashboard-text-tile>
-  <app-dashboard-text-tile [count]="node.loadInformation.metrics.PrimaryCount" title="Primary Count" middleMargin="5px 0">
-    Count of Primary replicas on the node
-  </app-dashboard-text-tile>
-  <app-dashboard-text-tile [count]="node.loadInformation.metrics.ReplicaCount" title="Replica Count" middleMargin="5px 0">
-    Count of total stateful replicas on the node
-  </app-dashboard-text-tile>
-</div>
+  <div class="detail-pane essen-pane" *ngIf="repairJobs.length > 0" data-cy="repair-jobs">
+    <app-collapse-container sectionName="Repair Jobs">
+      <div collapse-header>
+        <h4>Repair jobs</h4>
+      </div>
+      <div collapse-body>
+        <app-detail-list *ngIf="node" [list]="repairJobs"
+          [listSettings]="repairJobSettings"></app-detail-list>
+      </div>
+    </app-collapse-container>
+  </div>
 
-<div class="detail-pane essen-pane" *ngIf="node && node.isDeactivating" data-cy="deactivated">
-  <app-collapse-container sectionName="Unhealthy Evaluations">
-    <div collapse-header>
-      <h4>Deactivation Info</h4>
-    </div>
-    <div collapse-body>
-      <app-node-deactivation-info [node]="node"></app-node-deactivation-info>
-    </div>
-  </app-collapse-container>
-</div>
+  <div class="detail-pane essen-pane">
+    <app-collapse-container sectionName="Unhealthy Evaluations">
+      <div collapse-header>
+        <h4>Health Evaluations</h4>
+      </div>
+      <div collapse-body>
+          <app-health-viewer *ngIf="node" [healthyEvaluations]="node.health.healthEvents" [unhealthyEvaluations]="node.health.unhealthyEvaluations" ></app-health-viewer>
+      </div>
+    </app-collapse-container>
+  </div>
 
-<div class="detail-pane essen-pane">
-  <app-collapse-container sectionName="Unhealthy Evaluations">
-    <div collapse-header>
-      <h2>Unhealthy Evaluations</h2>
-    </div>
-    <div collapse-body>
-      <app-detail-list *ngIf="node" [list]="node.health.unhealthyEvaluations"
-        [listSettings]="unhealthyEvaluationsListSettings"></app-detail-list>
-    </div>
-  </app-collapse-container>
-</div>
-
-<div class="detail-pane essen-pane" *ngIf="deployedApps">
-  <app-collapse-container sectionName="Deployed Applications">
-    <div collapse-header>
-      <h4>Deployed Applications</h4>
-    </div>
-    <div collapse-body>
-      <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings" data-cy="appsList"></app-detail-list>
-    </div>
-  </app-collapse-container>
-</div>
+  <div class="detail-pane essen-pane" *ngIf="deployedApps">
+    <app-collapse-container sectionName="Deployed Applications">
+      <div collapse-header>
+        <h4>Deployed Applications</h4>
+      </div>
+      <div collapse-body>
+        <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings" data-cy="appsList">
+        </app-detail-list>
+      </div>
+    </app-collapse-container>
+  </div>

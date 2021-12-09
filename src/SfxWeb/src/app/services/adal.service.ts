@@ -4,6 +4,7 @@ import { Observable, Subscriber, of, Subject, ReplaySubject } from 'rxjs';
 import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import AuthenticationContext, { Options } from 'adal-angular';
+import { StringUtils } from '../Utils/StringUtils';
 
 @Injectable({
   providedIn: 'root'
@@ -26,8 +27,12 @@ export class AdalService {
           const config: Options = {
             tenant: data.raw.metadata.tenant,
             clientId: data.raw.metadata.cluster,
-            cacheLocation: 'localStorage',
-        };
+            cacheLocation: 'localStorage'
+          };
+
+          if (data.raw.metadata.login) {
+            config.instance = StringUtils.EnsureEndsWith(data.raw.metadata.login, '/');
+          }
 
           this.context = new AuthenticationContext(config);
           this.aadEnabled = true;

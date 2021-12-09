@@ -30,7 +30,7 @@
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
               "node_modules/vis-timeline/dist/vis-timeline-graph2d.min.css",
               "node_modules/nouislider/dist/nouislider.min.css",
-              "node_modules/metro4/build/css/metro-icons.min.css",
+              "src/mif/icons.min.css",
               "src/styles.scss",
               "src/modal.scss",
               "src/calender.scss",
@@ -94,9 +94,10 @@
           "defaultConfiguration": ""
         },
         "serve": {
-          "builder": "@angular-devkit/build-angular:dev-server",
+          "builder": "ngx-build-plus:dev-server",
           "options": {
             "browserTarget": "SfxWeb:build",
+            "extraWebpackConfig": "./cypress/coverage.webpack.js",
             "proxyConfig": "proxy.conf.js"
           },
           "configurations": {

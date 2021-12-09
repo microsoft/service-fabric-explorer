@@ -20,7 +20,7 @@
         },
         {
             "Name": "4",
-            "State": "Completed"
+            "State": "InProgress"
         }
     ],
     "UpgradeState": "RollingForwardInProgress",
@@ -67,7 +67,7 @@
                         "SafetyCheck" : {
                             "Kind": "WaitForPrimarySwap",
                             "PartitionId": "guidID"
-    
+
                         }
                     }
                 ],

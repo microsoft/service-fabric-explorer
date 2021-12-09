@@ -40,6 +40,13 @@
         </label>
       </li>
 
+
+      <li ngbDropdownItem>
+        <div class="link" *ngIf="showBeta" (click)="leaveBeta();">
+          View old SFX
+        </div>
+      </li>
+
       <li ngbDropdownItem>
         <a routerLink="/networking">
           View Network Tab

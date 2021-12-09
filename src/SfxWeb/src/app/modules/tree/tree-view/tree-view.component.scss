@@ -89,3 +89,14 @@
     overflow: auto;
   }
 }
+
+.filter-items-container {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+}
+
+.filter-item {
+    margin-top: 2.5px;
+    margin-bottom: 2.5px;
+}

@@ -1,5 +1,5 @@
 import { DataModelBase, IDecorators } from './Base';
-import { IRawClusterHealth, IRawHealthStateCount, IRawClusterManifest, IRawClusterUpgradeProgress, IRawClusterLoadInformation, IRawBackupPolicy } from '../RawDataTypes';
+import { IRawClusterHealth, IRawClusterManifest, IRawClusterUpgradeProgress, IRawClusterLoadInformation, IRawBackupPolicy } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags } from '../HealthChunkRawDataTypes';
 import { HealthStateConstants, StatusWarningLevel, BannerWarningID, UpgradeDomainStateRegexes, ClusterUpgradeStates, UpgradeDomainStateNames, CertExpiraryHealthEventProperty } from 'src/app/Common/Constants';
@@ -221,6 +221,34 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
         return this.upgradeDomains.filter(upgradeDomain => upgradeDomain.stateName === UpgradeDomainStateNames.Completed).length;
     }
 
+    public getUpgradeDomainTimeout(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDescription.MonitoringPolicy.UpgradeDomainTimeoutInMilliseconds);
+    }
+
+    public get currentDomainTime(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDomainDurationInMilliseconds);
+    }
+
+    public getUpgradeTimeout(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDescription.MonitoringPolicy.UpgradeTimeoutInMilliseconds);
+    }
+
+    public get upgradeTime(): number {
+        return TimeUtils.getDurationMilliseconds(this.raw.UpgradeDurationInMilliseconds);
+    }
+
+    public get isUDUpgrade(): boolean {
+      return !this.raw.IsNodeByNode;
+    }
+
+    public get nodesInProgress() {
+      if (this.isUDUpgrade) {
+        return this.raw.CurrentUpgradeDomainProgress;
+      }else{
+        return this.raw.CurrentUpgradeUnitsProgress;
+      }
+    }
+
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawClusterUpgradeProgress> {
         return this.data.restClient.getClusterUpgradeProgress(messageHandler).pipe(mergeMap( data => {
             if (data.CodeVersion === '0.0.0.0') {
@@ -236,11 +264,15 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
 
     protected updateInternal(): Observable<any> | void {
         this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
-        const domains = this.raw.UpgradeDomains.map(ud => new UpgradeDomain(this.data, ud));
+
+        const upgradeUnits = this.isUDUpgrade ? this.raw.UpgradeDomains : this.raw.UpgradeUnits;
+        const domains = upgradeUnits.map(ud => new UpgradeDomain(this.data, ud, !this.isUDUpgrade));
+
         const groupedDomains = domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Completed)
             .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.InProgress))
             .concat(domains.filter(ud => ud.name === this.raw.NextUpgradeDomain))
-            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain));
+            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Pending && ud.name !== this.raw.NextUpgradeDomain))
+            .concat(domains.filter(ud => ud.stateName === UpgradeDomainStateNames.Failed));
 
         this.upgradeDomains = groupedDomains;
 
@@ -248,6 +280,9 @@ export class ClusterUpgradeProgress extends DataModelBase<IRawClusterUpgradeProg
             this.upgradeDescription = new UpgradeDescription(this.data, this.raw.UpgradeDescription);
         }
     }
+
+
+
 }
 
 export class ClusterLoadInformation extends DataModelBase<IRawClusterLoadInformation> {
