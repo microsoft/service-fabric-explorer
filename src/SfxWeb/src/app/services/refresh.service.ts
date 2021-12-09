@@ -22,8 +22,8 @@ export class RefreshService {
     const defaultRefreshInterval = this.storage.getValueNumber(
         Constants.AutoRefreshIntervalStorageKey, Constants.DefaultAutoRefreshInterval);
 
-    this.updateRefreshInterval("0", true /* no refresh */);
-  }
+        this.updateRefreshInterval(defaultRefreshInterval.toString(), true /* no refresh */);
+    }
 
   public refreshAll(): void {
     this.refreshSubject.next(this.refreshTick);

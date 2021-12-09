@@ -52,9 +52,7 @@ export class DoubleSliderComponent implements OnChanges, AfterViewInit {
       ],
       ariaFormat: {
         to : num => {
-          console.log(num)
           const date = new Date(num);
-          console.log( date.toISOString())
           return date.toISOString();
       },
       },
@@ -91,7 +89,6 @@ export class DoubleSliderComponent implements OnChanges, AfterViewInit {
   ngOnChanges(changes: SimpleChanges) {
     if (this.slider){
       this.slider.set([new Date(this.startDate).getTime(), new Date(this.endDate).getTime()]);
-      // this.slider.updateOptions
     }
   }
 
