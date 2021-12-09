@@ -27,6 +27,7 @@ export class InputComponent implements OnInit, OnDestroy {
 
 
   @Output() changed: EventEmitter<string> = new EventEmitter<string>();
+  @Output() modelChange: EventEmitter<string> = new EventEmitter<string>();
 
   constructor() { }
 
@@ -35,6 +36,7 @@ export class InputComponent implements OnInit, OnDestroy {
    .pipe(debounceTime(200), distinctUntilChanged())
    .subscribe(val => {
       this.changed.emit(val);
+      this.modelChange.emit(val);
    });
   }
 

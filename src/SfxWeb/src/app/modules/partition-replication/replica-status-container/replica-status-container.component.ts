@@ -3,6 +3,17 @@ import { IRawReplicatorStatus, IRawRemoteReplicatorStatus } from 'src/app/Models
 import { ReplicaOnPartition } from 'src/app/Models/DataModels/Replica';
 import { Utils } from 'src/app/Utils/Utils';
 import { Subscription } from 'rxjs';
+import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
+
+export interface ITimedReplication extends IRawRemoteReplicatorStatus {
+  date: Date;
+}
+
+
+const reduceReplicators = (data, replica) => {
+  data[replica.ReplicaId] = replica;
+  return data;
+};
 
 @Component({
   selector: 'app-replica-status-container',
@@ -12,35 +23,91 @@ import { Subscription } from 'rxjs';
 export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
 
   @Input() replicas: ReplicaOnPartition[];
+  sortedReplicas = [];
 
-  replicatorData: IRawReplicatorStatus;
   replicaDict = {};
+  expandedDict = {};
+  cachedData: Record<string, ITimedReplication[]> = {};
+
   primaryReplica: ReplicaOnPartition;
-  queueSize = '';
+
+  overviewItems: IEssentialListItem[] = [];
+  replicationStatus: IEssentialListItem[] = [];
 
   sub: Subscription = new Subscription();
 
   constructor() { }
 
   ngOnChanges(): void {
+    // grab the primary on each reset
     this.replicas.forEach(replica => {
       if (replica.raw.ReplicaRole === 'Primary') {
         this.primaryReplica = replica;
       }
     });
+
     // wrap check given primary starts as null
     if (this.primaryReplica) {
       this.sub.add(this.primaryReplica.detail.refresh().subscribe(() => {
 
-        this.queueSize = Utils.getFriendlyFileSize(+this.primaryReplica.detail.raw.ReplicatorStatus.ReplicationQueueStatus.QueueMemorySize);
+        const queueSize = Utils.getFriendlyFileSize(+this.primaryReplica.detail.raw.ReplicatorStatus.ReplicationQueueStatus.QueueMemorySize);
 
-        this.replicatorData = this.primaryReplica.detail.raw.ReplicatorStatus;
-        this.replicatorData.RemoteReplicators.sort( a => a.IsInBuild ? -1 : 1 );
+        const replicatorData = this.primaryReplica.detail.raw.ReplicatorStatus;
 
-        this.replicaDict = this.replicas.reduce(( (data, replica) => {data[replica.id] = replica; return data; }), {});
+        this.replicaDict = replicatorData.RemoteReplicators.reduce(reduceReplicators, {});
+
+        replicatorData.RemoteReplicators.forEach(replicator => {
+          const cacheData = { ...replicator, date: new Date() };
+
+          // only retain last 20 timestamps
+          if (!this.cachedData[replicator.ReplicaId]) {
+            this.cachedData[replicator.ReplicaId] = [];
+          }
+
+          if (this.cachedData[replicator.ReplicaId].length > 20) {
+            this.cachedData[replicator.ReplicaId].shift();
+          }
+
+          this.cachedData[replicator.ReplicaId].push(cacheData);
+        });
+
+        this.sortedReplicas = this.replicas.sort((a, b) => a.replicaRoleSortPriority - b.replicaRoleSortPriority);
+
+        // ref for shorter lines below
+        const ref = this.primaryReplica.detail.replicatorStatus.raw.ReplicationQueueStatus;
+
+        this.overviewItems = [
+          {
+            descriptionName: 'Queue Utilization Percentage',
+            copyTextValue: ref.QueueUtilizationPercentage,
+            displayText: ref.QueueUtilizationPercentage + '%',
+          },
+          {
+            descriptionName: 'Queue Memory Size',
+            copyTextValue: queueSize,
+            displayText: queueSize,
+          },
+        ];
+
+        this.replicationStatus = [
+          {
+            descriptionName: 'Last Sequence Number(LSN) ',
+            copyTextValue: ref.LastSequenceNumber,
+            displayText: ref.LastSequenceNumber,
+          },
+          {
+            descriptionName: 'Completed Sequence Number',
+            copyTextValue: ref.CompletedSequenceNumber,
+            displayText: ref.CompletedSequenceNumber,
+          },
+          {
+            descriptionName: 'Committed Sequence Number',
+            copyTextValue: ref.CommittedSequenceNumber,
+            displayText: ref.CommittedSequenceNumber,
+          },
+        ];
       }));
     }
-
   }
 
   ngOnDestroy() {
@@ -48,6 +115,6 @@ export class ReplicaStatusContainerComponent implements OnChanges, OnDestroy {
   }
 
   trackByFn(index, replicaStatus: IRawRemoteReplicatorStatus) {
-    return replicaStatus.ReplicaId;
+    return replicaStatus.ReplicaId + index;
   }
 }

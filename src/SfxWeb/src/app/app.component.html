@@ -43,7 +43,7 @@
     </div>
 
     <div ngbDropdown display="'static'" placement="'bottom-right'" class="report">
-      <button ngbDropdownToggle class="mif-bug mif-lg flat-button link" style="color: #70daf8"></button>
+      <button ngbDropdownToggle class="mif-bug mif-lg flat-button link" style="color: #70daf8" aria-label="Issue reporting options"></button>
       <ul ngbDropdownMenu style="padding: 10px;">
         <li ngbDropdownItem>
           <a href="https://aka.ms/servicefabric/issues" target="_blank">Report Service Fabric Bug</a>
@@ -81,7 +81,7 @@
   </div>
   <app-toast-container aria-live="polite" aria-atomic="true"></app-toast-container>
 
-  <div style="position: absolute; right: 5px; bottom: 0px;">
+  <div class="utc-time">
     <app-local-time></app-local-time>
   </div>
 </div>

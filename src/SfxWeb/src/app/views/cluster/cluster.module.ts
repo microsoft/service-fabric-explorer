@@ -27,6 +27,7 @@ import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.com
 import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-deactivation.module';
 import { RepairJobChartComponent } from './repair-job-chart/repair-job-chart.component';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
+import { ClustermapModule } from 'src/app/modules/clustermap/clustermap.module';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
@@ -47,7 +48,8 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
     NgbNavModule,
     UpgradeProgressModule,
     NodeDeactivationModule,
-    HealthStateModule
+    HealthStateModule,
+    ClustermapModule
   ]
 })
 export class ClusterModule { }

@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, checkTableSize } from './util';
+import { addDefaultFixtures, apiUrl, checkTableSize, typeIntoInput } from './util';
 
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
@@ -40,18 +40,18 @@ context('deployed code package', () => {
     })
 
     describe("code package page", () => {
-        beforeEach(() => {
-            cy.visit(`/#/node/${nodeName}/deployedapp/${appName}/deployedservice/${serviceName}/codepackage/Code`);
-        })
+      const visit = () => cy.visit(`/#/node/${nodeName}/deployedapp/${appName}/deployedservice/${serviceName}/codepackage/Code`);
 
         it('essentials', () => {
-            cy.wait(waitRequest);
+          visit();
+          cy.wait(waitRequest);
             cy.get('[data-cy=header').within(() => {
                 cy.contains("Code").click();
             })
         })
 
         it('details', () => {
+          visit();
             cy.wait(waitRequest);
 
             cy.get('[data-cy=navtabs]').within(() => {
@@ -60,5 +60,28 @@ context('deployed code package', () => {
 
             cy.url().should('include', '/details')
         })
+
+        it('container logs', () => {
+          cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetCodePackages?*`), { fixture: 'deployed-code-package/code-packages-container.json' }).as('codePackages');
+          cy.intercept(apiUrl(`/Nodes/${nodeName}/$/GetApplications/${appName}/$/GetCodePackages/$/ContainerLogs*`), { fixture: 'deployed-code-package/container-logs.json' }).as('containerLogs');
+
+          visit();
+
+          cy.get('[data-cy=navtabs]').within(() => {
+              cy.contains('container logs').click();
+          })
+
+          const containerRef = '[data-cy=container-logs]';
+          cy.url().should('include', '/containerlogs');
+
+          cy.wait("@containerLogs").its("request.url").should("contain", "Tail=100")
+
+          typeIntoInput(containerRef);
+          typeIntoInput(containerRef ,'500')
+
+          cy.wait(1000)
+          cy.get('[data-cy=get-logs').click();
+          cy.wait("@containerLogs").its("request.url").should("contain", "Tail=500")
+      })
     })
 })

@@ -1,5 +1,6 @@
 
 // Custom Theming for Angular Material
+@use '~@angular/cdk';
 @use '~@angular/material' as mat;
 // For more information: https://material.angular.io/guide/theming
 @import '~@angular/material/theming';
@@ -72,7 +73,7 @@ $SfxWeb-theme: mat.define-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-w
     display: block;
     margin-bottom: 15px;
 
-    h4 {
+    h4, h2 {
         color: $detail-tab-color;
         margin-left: 0;
         font-size: $detail-tab-title-font-size;
@@ -217,8 +218,8 @@ table.detail-list {
     td {
         vertical-align: middle !important;
         padding: 5px;
-        text-overflow: ellipsis;
-        overflow: hidden;
+        // text-overflow: ellipsis;
+        // overflow: hidden;
         white-space: normal;
 
         // Add transition to padding when the line is collapsing
@@ -227,8 +228,8 @@ table.detail-list {
 
     th {
         padding: 5px;
-        text-overflow: ellipsis;
-        white-space: nowrap;
+        // text-overflow: ellipsis;
+        // white-space: nowrap;
         color: $detail-table-header-color;
         border: 0px solid;
         border-bottom: 1px solid #4c4c4c;
@@ -250,6 +251,7 @@ table.detail-list {
     .sort-filter-th {
         // To show filters dropdown
         overflow: visible;
+        white-space: nowrap;
 
         .active {
             cursor: pointer;
@@ -270,7 +272,7 @@ table.detail-list {
         .sort-icon {
             position: relative;
             top: 2px;
-            font-size: $font-size-large;
+            font-size: 11pt;
             cursor: pointer;
 
             &.transparent-icon {
@@ -511,6 +513,7 @@ app-navbar {
 .page-item.disabled .page-link{
     background-color: #5a5a5a;
     color: white;
+    border: 1px solid #5a5a5a;
 }
 
 .flat-button {
@@ -605,7 +608,7 @@ app-navbar {
   }
 
   .vis-panel.vis-left {
-    background-color: #0075c9;
+    background-color: $azure-blue;
   }
   .vis-ltr .vis-label.vis-nested-group .vis-inner {
     padding-left: 0px;
@@ -613,7 +616,7 @@ app-navbar {
   }
 
   .vis-group-level-unknown-but-gte1 {
-    background-color: #0075c9 !important;
+    background-color: $azure-blue !important;
     border: 1px solid white;
   }
 
@@ -643,7 +646,7 @@ app-navbar {
   }
 
   .vis-item.blue {
-    background-color: #0075c9;
+    background-color: $azure-blue;
   }
 
   .vis-item.red-point {
@@ -689,13 +692,13 @@ app-navbar {
 
   .timeline-button {
     background-color: #262626;
-    border: 1px solid #0075c9;
+    border: 1px solid $azure-blue;
     margin-bottom: 10px;
     margin-top: 10px;
   }
 
   .vis-label{
-    background-color: #0075c9;
+    background-color: $azure-blue;
     color: #dad7d7;
   }
 
@@ -732,7 +735,7 @@ app-navbar {
   }
 
   .noUi-connect{
-    background-color: #0075c9;
+    background-color: $azure-blue;
   }
 
   .noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip {
@@ -814,7 +817,7 @@ app-navbar {
 }
 
 .nav-item > .active {
-    border-bottom-color: #0075c9;
+    border-bottom-color: $azure-blue;
     border-bottom-style: solid;
     color: #FFFFFF;
     padding-bottom: 2px;
@@ -915,14 +918,77 @@ app-navbar {
     }
 }
 
+.page-item.active .page-link {
+  z-index: 3;
+  color: #fff;
+  background-color: #262626;
+  border-color: $azure-blue;
+  border: 1px solid $azure-blue;
+  box-sizing: border-box;
+}
+
+
+@media screen and (-ms-high-contrast: active) {
+  .highcharts-title {
+    color: black !important;
+    fill: black !important;
+  }
+
+  .highcharts-subtitle {
+    color: black !important;
+    fill: black !important;
+  }
+
+  .dropdown-item.disabled, .dropdown-item:disabled {
+    border: 1px solid black;
+  }
+
+  .page-item {
+    .page-link {
+    border: 1px solid gray !important;
+    box-sizing: border-box;
+
+    &:focus {
+      border: 2px solid gray !important;
+    }
+  }
+  }
+}
+
+.page-item.active {
+  @include cdk.high-contrast() {
+    .page-link {
+      border: 2px dotted orange !important;
+    }
+  }
+}
+
+button.disabled {
+  // forced-color-adjust: none;
+  color: initial !important;
+  border: 1px dotted orange !important;
+}
+
+:checked {
+  accent-color: $azure-blue;
+}
+
 .flex-center {
     display: flex;
     align-items: center;
 }
 
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
 
 .underline {
     border-bottom: 1px solid $table-border-color;
+}
+
+.aboveline {
+  border-top: 1px solid $table-border-color;
 }
 
 .centering-row {
@@ -946,7 +1012,8 @@ app-navbar {
         overflow: hidden;
         text-overflow: ellipsis;
         max-width: 800px;
-        float: left;
+        text-align: right;
+        flex: 1;
     }
 
     .left-text {
@@ -980,4 +1047,79 @@ app-navbar {
   padding: 5px;
   color: white;
   margin-bottom: 0px;
+}
+
+.underline-title {
+  @extend .underline;
+
+    text-align: center;
+    font-size: 16px;
+    margin-bottom: 10px;
+    font-weight: initial;
+    padding-bottom: 10px;
+}
+
+.center-text {
+  text-align: center;
+}
+
+$dashboard-datapoint-leftbar-width: 3px;
+
+.dashboard-datapoints {
+  vertical-align: top;
+  text-align: left;
+  margin: 10px 0 0 25px;
+
+  .dashboard-datapoint {
+      position: relative;
+      padding: 0 0 0 $dashboard-datapoint-leftbar-width + 5px;
+
+      .dashboard-datapoint-leftbar {
+          position: absolute;
+          left: 0;
+          top: 0;
+          bottom: 0;
+          width: $dashboard-datapoint-leftbar-width;
+
+          &.badge-ok {
+              background: $dashboard-ok-color;
+          }
+
+          &.badge-warning {
+              background: $dashboard-warning-color;
+          }
+
+          &.badge-error {
+              background: $dashboard-error-color;
+          }
+
+          &.badge-unknown {
+              background: $dashboard-unknown-color;
+          }
+      }
+
+      .dashboard-datapoint-title {
+          display: block;
+          line-height: 1;
+          margin-top: -2px;
+      }
+
+      .dashboard-datapoint-number {
+          display: block;
+          line-height: 1;
+      }
+  }
+}
+
+
+.dropdown-layout {
+  list-style: none;
+  padding: 5px;
+  color: white;
+  margin-bottom: 0px;
+
+   label {
+    margin-bottom: 0px;
+    font-size: 15px;
+   }
 }
