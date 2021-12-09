@@ -15,13 +15,6 @@ interface IChartSeries {
   data: number[];
 }
 
-interface IChartData {
-  dataPoints: IChartSeries[];
-  categories: string[];
-  title: string;
-  subtitle: string;
-}
-
 @Component({
   selector: 'app-metrics',
   templateUrl: './metrics.component.html',
@@ -32,20 +25,20 @@ export class MetricsComponent extends BaseControllerDirective {
   clusterLoadInformation: ClusterLoadInformation;
   nodes: NodeCollection;
   metricsViewModel: MetricsViewModel;
-  tableData: IChartData = {
+  tableData = {
     dataPoints: [],
     categories: [],
     title: '',
-    subtitle: ''
   };
 
   showOptions = true;
+  filteredNodes = [];
 
   constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
     super(injector);
-   }
+  }
 
-  setup(){
+  setup() {
     this.clusterLoadInformation = this.data.clusterLoadInformation;
     this.nodes = this.data.nodes;
   }
@@ -59,29 +52,23 @@ export class MetricsComponent extends BaseControllerDirective {
     this.tableData = {
       dataPoints: [],
       categories: [],
-      title: this.metricsViewModel.selectedMetrics[0].displayName,
-      subtitle: ''
+      title: 'Metrics',
     };
 
-    console.log(this.metricsViewModel.selectedMetrics);
-
-    const metric1: IChartSeries[] =  this.metricsViewModel.selectedMetrics.map(metric => {
+    const metric1: IChartSeries[] = this.metricsViewModel.selectedMetrics.map(metric => {
       return {
         label: metric.displayName,
         data: []
       };
     });
-    console.log(metric1);
-    this.metricsViewModel.filteredNodeLoadInformation.forEach(metric => {
-      this.metricsViewModel.selectedMetrics.forEach( (selectedmetric, index) => {
-        // console.log(metric1[index], index)
+
+    this.metricsViewModel.filteredNodeLoadInformation(this.filteredNodes).forEach(metric => {
+      this.metricsViewModel.selectedMetrics.forEach((selectedmetric, index) => {
         metric1[index].data.push(metric.metrics[selectedmetric.name]);
 
       });
       this.tableData.categories.push(metric.raw.NodeName);
     });
-
-    console.log(metric1);
 
     this.tableData.dataPoints = metric1;
   }
@@ -92,18 +79,23 @@ export class MetricsComponent extends BaseControllerDirective {
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
-        this.nodes.refresh(messageHandler),
-        this.clusterLoadInformation.refresh(messageHandler)
-      ]).pipe(mergeMap( () => {
-          if (!this.metricsViewModel) {
-              this.metricsViewModel = this.settings.getNewOrExistingMetricsViewModel(this.clusterLoadInformation, this.nodes.collection.map(node => node.loadInformation));
-          }
+      this.nodes.refresh(messageHandler),
+      this.clusterLoadInformation.refresh(messageHandler)
+    ]).pipe(mergeMap(() => {
+      if (!this.metricsViewModel) {
+        this.metricsViewModel = this.settings.getNewOrExistingMetricsViewModel(this.clusterLoadInformation);
+      }
 
-          const promises = this.nodes.collection.map(node => node.loadInformation.refresh(messageHandler));
-          return forkJoin(promises).pipe(map(() => {
-              this.metricsViewModel.refresh();
-              this.updateViewMetric();
-            }));
+      const promises = this.nodes.collection.map(node => node.loadInformation.refresh(messageHandler));
+      return forkJoin(promises).pipe(map(() => {
+        this.metricsViewModel.refresh();
+        this.updateViewMetric();
       }));
+    }));
+  }
+
+  setNodes(nodes: Node[]) {
+    this.filteredNodes = nodes;
+    this.updateViewMetric();
   }
 }

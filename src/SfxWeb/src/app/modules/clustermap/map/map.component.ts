@@ -1,4 +1,4 @@
-import { Component, Injector, Input, OnInit, TemplateRef } from '@angular/core';
+import { Component, Injector, Input, OnChanges, TemplateRef } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { HealthStateConstants } from 'src/app/Common/Constants';
@@ -13,37 +13,37 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
   templateUrl: './map.component.html',
   styleUrls: ['./map.component.scss']
 })
-export class MapComponent extends BaseControllerDirective {
+export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   @Input() listTemplate: TemplateRef<any>;
+  @Input() nodes: Node[] = [];
 
   groupByNodeType = false;
-  nodes: NodeCollection;
+  // nodes: NodeCollection;
   matrix: Record<string, Node[]>;
 
-  constructor(private data: DataService, injector: Injector) {
-
+  constructor(public data: DataService, injector: Injector) {
     super(injector);
   }
 
-  setup() {
-    this.nodes = this.data.nodes;
+  ngOnChanges() {
+    this.updateNodes(this.nodes);
   }
 
-  refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    this.nodes = this.data.nodes;
 
-    return this.nodes.refresh(messageHandler);
+
+  refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
+    return this.data.nodes.refresh(messageHandler);
   }
 
   public updateNodes(nodes: Node[]) {
 
     const matrix = {};
 
-    this.nodes.faultDomains.forEach(fd => {
+    this.data.nodes.faultDomains.forEach(fd => {
       matrix[fd] = [];
 
-      this.nodes.upgradeDomains.forEach(ud => {
+      this.data.nodes.upgradeDomains.forEach(ud => {
         matrix[`${fd}${ud}`] = [];
         matrix[ud] = [];
       });

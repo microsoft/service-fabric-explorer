@@ -72,6 +72,8 @@ export class BarChartComponent implements OnInit, OnChanges {
       this.chart.series.forEach(series => {
         if (this.dataSet.every(set => set.label !== series.name)) {
           series.remove();
+        }else{
+          series.update(this.dataSet.find(set => set.label === series.name));
         }
       });
 

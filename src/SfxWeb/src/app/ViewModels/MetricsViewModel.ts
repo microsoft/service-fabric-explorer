@@ -1,5 +1,5 @@
 import { LoadMetricInformation } from '../Models/DataModels/Shared';
-import { NodeLoadInformation } from '../Models/DataModels/Node';
+import { Node, NodeLoadInformation } from '../Models/DataModels/Node';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 
 // -----------------------------------------------------------------------------
@@ -8,20 +8,13 @@ import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 // -----------------------------------------------------------------------------
 
 export interface IMetricsViewModel {
-    filteredNodeLoadInformation: NodeLoadInformation[];
     selectedMetrics: LoadMetricInformation[];
     metrics: LoadMetricInformation[];
-    filteredMetrics: LoadMetricInformation[];
     systemMetrics: LoadMetricInformation[];
     metricsWithCapacities: LoadMetricInformation[];
     metricsWithoutCapacities: LoadMetricInformation[];
-    showResourceGovernanceMetrics: boolean;
-    showLoadMetrics: boolean;
-    showSystemMetrics: boolean;
     normalizeMetricsData: boolean;
-    refreshToken: number;
-    isExpanderEnabled: boolean;
-    isFullScreen: boolean;
+    filteredNodeLoadInformation(node: Node[]): NodeLoadInformation[];
     refresh(): void;
     getLegendColor(value: string): string;
 }
@@ -31,9 +24,6 @@ export class MetricsViewModel implements IMetricsViewModel {
     public iShowLoadMetrics = true;
     public iShowSystemMetrics = false;
     public iNormalizeMetricsData = true;
-    public refreshToken = 0;
-    public isExpanderEnabled = false;
-    public isFullScreen = false;
 
     private iMetrics: LoadMetricInformation[] = null;
 
@@ -101,17 +91,18 @@ export class MetricsViewModel implements IMetricsViewModel {
         return metricsWithResourceGov;
     }
 
-    public get filteredNodeLoadInformation(): NodeLoadInformation[] {
+    public filteredNodeLoadInformation(nodes: Node[]): NodeLoadInformation[] {
         if (this.selectedMetrics.length > 0) {
             if (this.selectedMetrics[0].hasCapacity) {
                 // If selected metric has capacity defined only display nodes with non-zero capacity defined or non-zero load reported
-                return this.nodesLoadInformation.filter(nli => {
+                return nodes.filter(node => {
+                    const nli = node.loadInformation;
                     // tslint:disable-next-line:max-line-length
                     return nli.isInitialized && nli.nodeLoadMetricInformation.some(lmi => this.selectedMetrics.some(m => m.name === lmi.name && (+lmi.raw.NodeCapacity !== -1 || +lmi.raw.NodeLoad > 0)));
-                });
+                }).map(node => node.loadInformation);
             } else {
                 // If selected metric has no capacity defined return all initialized nodes
-                return this.nodesLoadInformation.filter(nli => nli.isInitialized);
+                return nodes.map(node => node.loadInformation).filter(nli => nli.isInitialized);
             }
         } else {
             return [];
@@ -124,18 +115,6 @@ export class MetricsViewModel implements IMetricsViewModel {
             this.iMetrics = MetricsViewModel.ensureResourceGovernanceMetrics(this.clusterLoadInformation.loadMetricInformation);
         }
         return this.iMetrics;
-    }
-
-    public get filteredMetrics(): LoadMetricInformation[] {
-        return this.metrics.filter(m => {
-            if (m.isSystemMetric) {
-                return this.showSystemMetrics;
-            } else if (m.isResourceGovernanceMetric) {
-                return this.showResourceGovernanceMetrics;
-            } else {
-                return this.showLoadMetrics;
-            }
-        });
     }
 
     public get metricsWithCapacities(): LoadMetricInformation[] {
@@ -154,43 +133,6 @@ export class MetricsViewModel implements IMetricsViewModel {
         return this.metrics.filter(m => m.selected);
     }
 
-    public get showResourceGovernanceMetrics(): boolean {
-        return this.iShowResourceGovernanceMetrics;
-    }
-
-    public set showResourceGovernanceMetrics(value: boolean) {
-        this.iShowResourceGovernanceMetrics = value;
-        if (!value) {
-            this.refresh();
-        }
-    }
-
-    public get showLoadMetrics(): boolean {
-        return this.iShowLoadMetrics;
-    }
-
-    public set showLoadMetrics(value: boolean) {
-        this.iShowLoadMetrics = value;
-        if (!value) {
-            this.refresh();
-        }
-    }
-
-    public get showSystemMetrics(): boolean {
-        return this.iShowSystemMetrics;
-    }
-
-    public set showSystemMetrics(value: boolean) {
-        this.iShowSystemMetrics = value;
-        if (!value) {
-            this.selectedMetrics.forEach(m => {
-                if (m.isSystemMetric) { m.selected = false; }
-            });
-
-            this.refresh();
-        }
-    }
-
     public get normalizeMetricsData(): boolean {
         return this.iNormalizeMetricsData;
     }
@@ -201,37 +143,18 @@ export class MetricsViewModel implements IMetricsViewModel {
     }
 
     public refresh(): void {
-        this.refreshToken = (this.refreshToken + 1) % 10000;
+        // this.refreshToken = (this.refreshToken + 1) % 10000;
         // Clear copied list of metrics
         this.iMetrics = null;
     }
 
     public toggleMetric(metric: LoadMetricInformation) {
-        // this.metrics.forEach(m => m.selected = false);
         metric.selected = !metric.selected;
         this.refresh();
     }
 
-    public toggleFullScreen(fullScreen: boolean) {
-        if (this.isFullScreen !== fullScreen) {
-            this.isFullScreen = fullScreen;
-            this.refresh();
-        }
-    }
-
     constructor(
-        private clusterLoadInformation: ClusterLoadInformation,
-        private nodesLoadInformation: NodeLoadInformation[]) {
-
-        // Select default capacity
-        if (this.metricsWithCapacities.length > 0) {
-            this.metricsWithCapacities[0].selected = true;
-        } else if (this.metricsWithoutCapacities.length > 0) {
-            this.metricsWithoutCapacities[0].selected = true;
-        } else if (this.systemMetrics.length > 0) {
-            this.showSystemMetrics = true;
-            this.systemMetrics[0].selected = true;
-        }
+        private clusterLoadInformation: ClusterLoadInformation) {
     }
 
     public getLegendColor(value: string): string {

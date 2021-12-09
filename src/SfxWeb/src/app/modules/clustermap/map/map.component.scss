@@ -8,18 +8,6 @@ table {
   margin: 0px;
 }
 
-app-toggle {
-  float: right;
-  margin-left: 10px;
-}
-
-.label-group {
-  label {
-    margin-bottom: 5px;
-  }
-}
-
-
 .first {
   padding: 10px !important;
   position: relative;
@@ -32,9 +20,4 @@ app-toggle {
   transform-origin: left;
   top: 25%;
   width: 120px;
-}
-
-.layout {
-  padding: 15px;
-  width: fit-content;
 }

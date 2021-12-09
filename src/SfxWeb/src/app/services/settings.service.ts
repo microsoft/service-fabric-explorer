@@ -41,9 +41,9 @@ export class SettingsService {
       this.iPaginationLimit = storage.getValueNumber(Constants.PaginationLimitStorageKey, Constants.DefaultPaginationLimit);
   }
 
-  public getNewOrExistingMetricsViewModel(clusterLoadInformation: ClusterLoadInformation, nodesLoadInformation: NodeLoadInformation[]): MetricsViewModel {
+  public getNewOrExistingMetricsViewModel(clusterLoadInformation: ClusterLoadInformation): MetricsViewModel {
       if (!this.iMetricsViewModel) {
-          this.iMetricsViewModel = new MetricsViewModel(clusterLoadInformation, nodesLoadInformation);
+          this.iMetricsViewModel = new MetricsViewModel(clusterLoadInformation);
       }
       return this.iMetricsViewModel;
   }
