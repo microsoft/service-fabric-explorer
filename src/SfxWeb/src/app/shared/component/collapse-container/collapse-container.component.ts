@@ -15,7 +15,7 @@ export class CollapseContainerComponent implements OnChanges, OnInit{
   @Input() tooltipSouth = false;
   @Output() collapsedChange = new EventEmitter<boolean>();
 
-  displayText = "";
+  displayText = '';
 
   constructor(private liveAnnouncer: LiveAnnouncer) {}
 
@@ -30,7 +30,7 @@ export class CollapseContainerComponent implements OnChanges, OnInit{
   changeCollapseState() {
 
     if (!this.disabled) {
-      this.liveAnnouncer.announce(this.sectionName + ' Section has been ' + this.collapsed ? 'Opened': 'Closed' );
+      this.liveAnnouncer.announce(this.sectionName + ' Section has been ' + this.collapsed ? 'Opened' : 'Closed' );
       this.collapsed = !this.collapsed;
       this.collapsedChange.emit(this.collapsed);
     }
@@ -39,6 +39,6 @@ export class CollapseContainerComponent implements OnChanges, OnInit{
   }
 
   setText() {
-    this.displayText = (this.collapsed ? 'Open ': 'Close ')  + this.sectionName + ' Section';
+    this.displayText = (this.collapsed ? 'Open ' : 'Close ')  + this.sectionName + ' Section';
   }
 }

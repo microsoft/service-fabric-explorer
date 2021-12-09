@@ -13,7 +13,7 @@ export class ClipBoardComponent implements OnChanges {
   @Input() text = '';
   @ViewChild('ref') ref: ElementRef;
   @ViewChild(NgbTooltip) tooltip: NgbTooltip; // First
-  public ariaLabel = "";
+  public ariaLabel = '';
 
   constructor(private liveAnnouncer: LiveAnnouncer) { }
 
@@ -32,20 +32,20 @@ export class ClipBoardComponent implements OnChanges {
 
     this.tooltip.close();
     setTimeout(() => {
-      this.tooltip.ngbTooltip = "copied!"
+      this.tooltip.ngbTooltip = 'copied!';
       this.tooltip.autoClose = false;
-      this.tooltip.triggers = "manual";
+      this.tooltip.triggers = 'manual';
       this.tooltip.closeDelay = 2000;
       this.tooltip.open();
-      this.tooltip.ngbTooltip = "copy to clipboard";
-      this.liveAnnouncer.announce("Copied to clipboard")
-    }, 250)
+      this.tooltip.ngbTooltip = 'copy to clipboard';
+      this.liveAnnouncer.announce('Copied to clipboard');
+    }, 250);
 
-    this.ref.nativeElement.focus()
+    this.ref.nativeElement.focus();
 
   }
 
   ngOnChanges() {
-    this.ariaLabel = this.text.split(" ").join("-");
+    this.ariaLabel = this.text.split(' ').join('-');
   }
 }
