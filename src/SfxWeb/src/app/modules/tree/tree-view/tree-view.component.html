@@ -11,7 +11,7 @@
                 <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
             </app-check-box>
             <div class="filter-item" style="display: inline-block;">
-                <app-toggle [(state)]="treeService.tree.orderbyHealthState" (stateChange)="sendHealthStateTelem()"></app-toggle>
+                <app-toggle [(state)]="treeService.tree.orderbyHealthState" (stateChange)="sendHealthStateTelem()" aria="sort by health"></app-toggle>
                 Sort by Health
             </div>
         </div>
