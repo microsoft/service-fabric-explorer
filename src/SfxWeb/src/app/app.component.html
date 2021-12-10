@@ -1,9 +1,9 @@
 
 <div>
-  <button class="skip-to-content-link" click="setMainFocus()" (keyup.enter)="setMainFocus()" role="button">
-    Skip to content
-  </button>
   <header class="header-bar">
+    <button class="skip-to-content-link" click="setMainFocus()" (keyup.enter)="setMainFocus()" role="button">
+      Skip to content
+    </button>
     <a href="https://aka.ms/portalsfx" target="_blank" tabindex="0" sfx-tree-set-focus selected="true" *ngIf="!hideAzure">
       <div class="navbar-brand navbar-brand-azure">
         <span>
@@ -12,7 +12,7 @@
       </div>
       </a>
     <a class="navbar-brand navbar-brand-title" [routerLink]="['/']" *ngIf="!hideSFXLogo" >
-      <img style="width: 32px" [src]="assetBase + 'assets/favicon.svg'" title="Service Fabric Explorer" class="navbar-brand-icon"/>
+      <img style="width: 32px" [src]="assetBase + 'assets/favicon.svg'" class="navbar-brand-icon" alt="image of service fabric logo"/>
       <span style="vertical-align: middle;" *ngIf="!hideSFXTest">
         Service Fabric Explorer
       </span>
@@ -78,10 +78,11 @@
         </div>
       </main>
     </div>
-  </div>
-  <app-toast-container aria-live="polite" aria-atomic="true"></app-toast-container>
+    <app-toast-container aria-live="polite" aria-atomic="true"></app-toast-container>
 
-  <div class="utc-time">
-    <app-local-time></app-local-time>
+    <div class="utc-time" aria-hidden="true">
+      <app-local-time></app-local-time>
+    </div>
   </div>
+
 </div>

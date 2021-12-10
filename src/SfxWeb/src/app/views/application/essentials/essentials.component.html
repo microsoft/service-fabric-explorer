@@ -19,8 +19,8 @@
 <div data-cy="upgradeDetails" *ngIf="upgradeProgress && upgradeProgress.isInitialized" class="detail-pane essen-pane">
     <app-collapse-container [sectionName]="app.isUpgrading ? 'Upgrade In Progress' : 'Latest Upgrade State'">
         <div collapse-header>
-            <h4 *ngIf="upgradeProgress.isUpgrading">Upgrade In Progress</h4>
-            <h4 *ngIf="!upgradeProgress.isUpgrading">Latest Upgrade State</h4>
+            <h3 *ngIf="upgradeProgress.isUpgrading">Upgrade In Progress</h3>
+            <h3 *ngIf="!upgradeProgress.isUpgrading">Latest Upgrade State</h3>
         </div>
         <div collapse-body>
           <app-upgrade-info [upgradeProgress]="upgradeProgress"></app-upgrade-info>

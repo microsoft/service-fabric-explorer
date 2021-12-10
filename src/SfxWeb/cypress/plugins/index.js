@@ -20,14 +20,7 @@
 
  module.exports = (on, config) => {
    on("file:preprocessor", cypressTypeScriptPreprocessor);
-
-   // enable code coverage collection
-   return registerCodeCoverageTasks(on, config);
- };
-
-
- module.exports = (on, config) => {
-  on('task', {
+   on('task', {
     log(message) {
       console.log(message)
 
@@ -39,4 +32,6 @@
       return null
     }
   })
-}
+   // enable code coverage collection
+   return registerCodeCoverageTasks(on, config);
+ };

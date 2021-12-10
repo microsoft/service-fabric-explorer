@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, refresh, aad_route } from './util';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, refresh, aad_route, terminalLog } from './util';
 
 const appName = "VisualObjectsApplicationType";
 const waitRequest = "@getapp";
@@ -18,10 +18,10 @@ context('app', () => {
     })
 
     describe("essentials", () => {
-        it('accessibility', () => {
+        it.only('accessibility', () => {
           cy.visit(`/#/apptype/${appName}/app/${appName}`)
           cy.injectAxe();
-          cy.checkA11y();
+          cy.checkA11y(null, null, terminalLog)
         })
 
         it('load essentials', () => {

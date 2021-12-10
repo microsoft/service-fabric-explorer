@@ -27,7 +27,7 @@
   <div data-cy="upgradeDetails" *ngIf="clusterUpgradeProgress.isInitialized && clusterUpgradeProgress.isUpgrading" class="essen-pane" style="flex: 1; min-width: 600px;">
     <app-collapse-container sectionName="Upgrade Status" collapsed="true">
         <div collapse-header>
-                <h4>Cluster Upgrade In Progress</h4>
+                <h3>Cluster Upgrade In Progress</h3>
         </div>
         <div collapse-body>
           <app-upgrade-info [upgradeProgress]="clusterUpgradeProgress"></app-upgrade-info>
