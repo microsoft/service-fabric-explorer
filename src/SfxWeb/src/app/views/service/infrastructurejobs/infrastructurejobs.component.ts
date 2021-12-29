@@ -82,7 +82,7 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
       this.completedMRJobs.push( new CompletedInfrastructureJob(this.data, rawMrJob, dateRef));
     });
     this.executingInfraJobsSuggestion  = this.executingMRJobs.filter(job => job.RepairTask.State === 'Preparing').length !== 0 ? Constants.executingInfraJobsSuggestion : '' ;
-    this.pendingInfraJobsSuggestion = this.pendingInfraJobsSuggestion.length != 0 && this.executingMRJobs.length >0 ? Constants.pendingInfraJobsSuggestion : '' ;
+    this.pendingInfraJobsSuggestion = this.pendingInfraJobsSuggestion.length !== 0 && this.executingMRJobs.length > 0 ? Constants.pendingInfraJobsSuggestion : '' ;
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
