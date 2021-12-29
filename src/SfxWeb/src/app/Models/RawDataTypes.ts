@@ -1021,7 +1021,7 @@ export interface IRawClusterVersion {
 
 export interface IRawNodeImpact {
         NodeName: string;
-        ImpactLevel	?: string;
+        ImpactLevel	?: number;
     }
 
 export interface IRawNodeRepairImpactDescription {
