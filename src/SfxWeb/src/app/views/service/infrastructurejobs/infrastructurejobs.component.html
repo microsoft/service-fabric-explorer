@@ -12,7 +12,7 @@
     </app-dashboard-text-tile>
 </div>
 
-<div *ngIf="executingMRJobs.length >0"><h6>{{executingInfraJobsSuggestion}}</h6></div>
+<div *ngIf="executingInfraJobsSuggestion !=''"><h6>{{executingInfraJobsSuggestion}} Learn More.</h6></div>
 <div class="detail-pane essen-pane" >
     <app-collapse-container  sectionName="Active Infrastructure Jobs">
         <h4 collapse-header>
@@ -25,7 +25,7 @@
     </app-collapse-container>
 </div>
 
-<div *ngIf="allPendingMRJobs.length >0 && executingMRJobs.length >=2"><h6>{{pendingInfraJobsSuggestion}}</h6></div>
+<div *ngIf="allPendingMRJobs.length >0 && executingMRJobs.length != 0"><h6>{{pendingInfraJobsSuggestion}} Learn more.</h6></div>
 <div class="detail-pane essen-pane" >
     <app-collapse-container  sectionName="Pending Infrastructure Jobs">
         <h4 collapse-header>
@@ -40,7 +40,7 @@
 <div class="detail-pane essen-pane" >
     <app-collapse-container collapsed=true sectionName="Completed Infrastructure Jobs">
         <h4 collapse-header>
-            Completed Infrastructure Jobs
+            Recently Completed Infrastructure Jobs
         </h4>
         <app-detail-list [list]="completedMRJobs"
             [listSettings]="completedMRJobsList" collapse-body  >

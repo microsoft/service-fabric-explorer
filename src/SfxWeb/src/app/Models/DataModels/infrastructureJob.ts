@@ -11,6 +11,7 @@ export class InfrastructureJob extends DataModelBase<IRawInfrastructureJob> {
 
     Id: string;
     RepairTask: InfraRepairTask;
+    VmImpact: string[];
     NodeImpact: string[];
 
    public get id(): string {
@@ -24,8 +25,18 @@ export class InfrastructureJob extends DataModelBase<IRawInfrastructureJob> {
 
    updateInternal() {
        this.RepairTask = this.raw.RepairTasks.length !== 0 ?  new InfraRepairTask(this.raw.RepairTasks[0].TaskId, this.raw.RepairTasks[0].State) : new InfraRepairTask('None', 'None');
-       this.NodeImpact = [];
-       this.raw.CurrentlyImpactedRoleInstances.forEach( nodeimpact => this.NodeImpact.push(nodeimpact.Name + ':' + nodeimpact.ImpactTypes.toString()) );
+       var repairTaskActual = this.data.repairCollection.collection.find(rt => rt.id === this.RepairTask.TaskId);
+       this.VmImpact = [];
+       this.NodeImpact = []
+       if (repairTaskActual != null && repairTaskActual.raw.Impact != null)
+       {
+           repairTaskActual.raw.Impact.NodeImpactList.forEach(nt => this.NodeImpact.push(nt.NodeName + ':' + nt.ImpactLevel) );
+       }
+       if (this.RepairTask.State == 'Approved' || this.RepairTask.State == 'Executing' || this.RepairTask.State == 'Completed')
+       {
+           this.raw.AcknowledgementStatus = 'Acknowledged';
+       }
+       this.raw.CurrentlyImpactedRoleInstances.forEach( nodeimpact => this.VmImpact.push(nodeimpact.Name + ':' + nodeimpact.ImpactTypes.toString()) );
        return of(null);
    }
 }
