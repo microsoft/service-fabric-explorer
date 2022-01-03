@@ -1,11 +1,10 @@
 @import "src/vars.scss";
 
 .main-header {
-    padding-top: 20px;
     position: sticky;
     background-color: #191919;
     width: inherit;
-    top: 0px;
+    top: 20px;
     z-index: 10;
     ul {
         list-style: none;

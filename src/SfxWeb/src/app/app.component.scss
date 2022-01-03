@@ -138,3 +138,29 @@
     display: none;
   }
 }
+
+
+.expander-container {
+  position: sticky;
+  top: 0px;
+  height: 20px;
+  z-index: 2;
+  background-color: $right-panel-background-color;
+}
+
+.expander-icon {
+  transform: rotate(
+    90deg);
+        font-size: 27px;
+        position: absolute;
+        left: -21px;
+        cursor: pointer;
+        top: -7px;
+  &:hover {
+    color: $navbar-brand-background-color;
+  }
+
+  &.flip {
+    transform: rotate(270deg);
+  }
+}
