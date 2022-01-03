@@ -185,14 +185,14 @@ export class Utils {
 
     private static randomInt(min: number, max: number) {
       return Math.floor(Math.random() * (max - min + 1)) + min;
-    };
+    }
 
     public static randomColor() {
         const h = this.randomInt(0, 360);
         const s = this.randomInt(42, 98);
         const l = this.randomInt(40, 90);
         return `hsl(${h},${s}%,${l}%)`;
-    };
+    }
 
 }
 
