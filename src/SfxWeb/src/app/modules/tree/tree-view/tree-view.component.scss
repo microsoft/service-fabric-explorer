@@ -54,6 +54,9 @@
 }
 
 .tree-view {
+  position: relative;
+  height: 100%;
+
     &:focus {
         outline: 0;
 
@@ -94,9 +97,16 @@
     display: flex;
     flex-wrap: wrap;
     align-items: center;
-}
+    gap: 0px 10px;
 
-.filter-item {
-    margin-top: 2.5px;
-    margin-bottom: 2.5px;
+    label {
+      display: flex;
+      justify-content: space-between;
+      gap: 5px;
+    }
+  }
+
+.input-wrapper {
+  padding: 5px 10px 0px 0px;
+  margin-left: -15px;
 }

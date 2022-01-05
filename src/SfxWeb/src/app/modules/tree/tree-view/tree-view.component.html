@@ -1,21 +1,28 @@
 <div class="tree-wrapper">
     <div class="tree-header">
         <div class="filter-items-container">
-            <app-check-box [(state)]="treeService.tree.showOkItems" class="filter-item">
-                <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
-            </app-check-box>
-            <app-check-box [(state)]="treeService.tree.showWarningItems" class="filter-item">
-                <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
-            </app-check-box>
-            <app-check-box [(state)]="treeService.tree.showErrorItems" class="filter-item">
-                <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
-            </app-check-box>
-            <div class="filter-item" style="display: inline-block;">
-                <app-toggle [(state)]="treeService.tree.orderbyHealthState" (stateChange)="sendHealthStateTelem()"></app-toggle>
-                Sort by Health
-            </div>
+          <label>
+            <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+
+            <app-toggle [(state)]="treeService.tree.showOkItems" color="green"></app-toggle>
+          </label>
+
+          <label>
+            <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+            <app-toggle [(state)]="treeService.tree.showWarningItems" color="#f19d03"></app-toggle>
+          </label>
+
+          <label>
+            <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+            <app-toggle [(state)]="treeService.tree.showErrorItems" color="red"></app-toggle>
+          </label>
+
+          <label>
+            Sort by Health
+            <app-toggle [(state)]="treeService.tree.orderbyHealthState" (stateChange)="sendHealthStateTelem()"></app-toggle>
+          </label>
         </div>
-        <div style="padding: 5px 10px 0px 0px; margin-left: -15px;">
+        <div class="input-wrapper">
             <app-input (changed)="setSearchText($event)"></app-input>
         </div>
     </div>
@@ -26,7 +33,7 @@
             </button>
         </span>
         <div class="tree-body" #tree style="height: 100%" >
-            <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view" style="position: relative; height: 100%">
+            <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view">
                 <div class="tree" style="list-style: none" *ngIf="treeService.tree.childGroupViewModel" role="group">
                     <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
                 </div>
