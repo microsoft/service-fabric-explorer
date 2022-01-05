@@ -244,7 +244,6 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             this.duration = new Date(this.raw.History.CompletedUtcTimestamp).getTime() - start;
         }
         this.displayDuration = TimeUtils.formatDurationAsAspNetTimespan(this.duration);
-        console.log(this.displayDuration);
 
         try {
             this.executorData = JSON.parse(this.raw.ExecutorData);
