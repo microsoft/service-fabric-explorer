@@ -51,7 +51,7 @@
         </div>
 
         <span *ngIf="dataService.isAdvancedModeEnabled() && showAllEvents">
-          <app-input placeholder="query string" [model]="transformText" (changed)="transformText = $event;">
+          <app-input placeholder="query string" [(model)]="transformText">
           </app-input>
           <button class="simple-button" (click)="setTimelineData()">filter</button>
         </span>

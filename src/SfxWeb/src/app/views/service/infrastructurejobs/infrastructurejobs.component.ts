@@ -4,7 +4,7 @@ import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColum
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { Observable } from 'rxjs';
+import { forkJoin, Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { InfrastructureJob } from 'src/app/Models/DataModels/infrastructureJob';
@@ -48,13 +48,14 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
       new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
       new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
       new ListColumnSetting('RepairTask.State', 'Repair Task State'),
-      new ListColumnSettingWithShorten('NodeImpact', 'Node Impact', 2)
+      new ListColumnSettingWithShorten('NodeImpact', 'Node Impact', 2),
+      new ListColumnSettingWithShorten('VmImpact', 'VM Impact', 2)
      ]);
 
     this.completedMRJobsList = this.settings.getNewOrExistingListSettings('completedMRJobs', [], [
       new ListColumnSetting('raw.Id', 'Job Id'),
       new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
-      new ListColumnSetting('raw.RoleInstancesToBeImpacted', 'Nodes'),
+      new ListColumnSetting('raw.RoleInstancesToBeImpacted', 'Impacted Nodes'),
     ]);
 
     this.pendingInfraJobsSuggestion = Constants.pendingInfraJobsSuggestion;
@@ -80,9 +81,15 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
     mrJobdata.filter(job => job.JobStatus === 'Completed').forEach(rawMrJob => {
       this.completedMRJobs.push( new CompletedInfrastructureJob(this.data, rawMrJob, dateRef));
     });
+    this.executingInfraJobsSuggestion  = this.executingMRJobs.filter(job => job.RepairTask.State === 'Preparing').length !== 0 ? Constants.executingInfraJobsSuggestion : '' ;
+    this.pendingInfraJobsSuggestion = this.pendingInfraJobsSuggestion.length !== 0 && this.executingMRJobs.length > 0 ? Constants.pendingInfraJobsSuggestion : '' ;
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.data.restClient.getInfrastructureJobs(this.serviceId, messageHandler).pipe(map(data => this.getInfrastructureData(data)));
+
+    return forkJoin([
+      this.data.repairCollection.refresh(messageHandler),
+      this.data.restClient.getInfrastructureJobs(this.serviceId, messageHandler).pipe(map(data => this.getInfrastructureData(data)))
+    ]);
   }
 }

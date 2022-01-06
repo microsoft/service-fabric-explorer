@@ -25,6 +25,9 @@ export class AppComponent implements OnInit{
 
   public assetBase = environment.assetBase;
   treeWidth = '450px';
+  // preserve the existing size for using
+  previousTreeWidth = this.treeWidth;
+
   rightOffset: string = this.treeWidth;
   tabIndex = -1;
   hideAzure = false;
@@ -80,11 +83,21 @@ export class AppComponent implements OnInit{
       this.smallScreenLeftPanelWidth = `${$event}px`;
       return;
     }
+
+    this.previousTreeWidth = this.treeWidth;
     // have to subtract the offset
     const offsetWidth = $event + 8;
     this.treeWidth = offsetWidth.toString() + 'px';
     this.rightOffset = this.treeWidth;
     this.storageService.setValue('treeWidth', this.treeWidth);
+  }
+
+  collapseSide()  {
+    if (this.treeWidth === '8px') {
+      this.resize(+this.previousTreeWidth.split('px')[0]);
+    }else{
+      this.resize(0);
+    }
   }
 
   changeSmallScreenSizePanelState() {

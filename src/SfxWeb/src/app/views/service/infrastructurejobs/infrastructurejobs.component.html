@@ -2,21 +2,17 @@
     <app-dashboard-text-tile
         [barClass]="executingMRJobs.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
         [count]="executingMRJobs.length"
-        *ngIf="executingMRJobs.length >=0" title="Active Infrastructure Jobs" style="display: block">
+        *ngIf="executingMRJobs.length >= 0" title="Active Infrastructure Jobs" style="display: block">
     </app-dashboard-text-tile>
 
     <app-dashboard-text-tile
         [barClass]="allPendingMRJobs.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
         [count]="allPendingMRJobs.length"
-        *ngIf="allPendingMRJobs.length >=0" title="Pending Infrastrucutre Jobs " style="display: block">
+        *ngIf="allPendingMRJobs.length >= 0" title="Pending Infrastrucutre Jobs " style="display: block">
     </app-dashboard-text-tile>
 </div>
 
-<div *ngIf="executingMRJobs.length >= 1">
-  <app-infrastructure-job-tile  *ngFor="let job of executingMRJobs" [job]="job.raw"></app-infrastructure-job-tile>
-</div>
-
-<div *ngIf="executingMRJobs.length >0"><h6>{{executingInfraJobsSuggestion}}</h6></div>
+<div *ngIf="executingInfraJobsSuggestion"><h6>{{executingInfraJobsSuggestion}} Learn More.</h6></div>
 <div class="detail-pane essen-pane" >
     <app-collapse-container  sectionName="Active Infrastructure Jobs">
         <h4 collapse-header>
@@ -29,7 +25,7 @@
     </app-collapse-container>
 </div>
 
-<div *ngIf="allPendingMRJobs.length >0 && executingMRJobs.length >=2"><h6>{{pendingInfraJobsSuggestion}}</h6></div>
+<div *ngIf="allPendingMRJobs.length > 0 && executingMRJobs.length !== 0"><h6>{{pendingInfraJobsSuggestion}} Learn more.</h6></div>
 <div class="detail-pane essen-pane" >
     <app-collapse-container  sectionName="Pending Infrastructure Jobs">
         <h4 collapse-header>
@@ -44,7 +40,7 @@
 <div class="detail-pane essen-pane" >
     <app-collapse-container collapsed=true sectionName="Completed Infrastructure Jobs">
         <h4 collapse-header>
-            Completed Infrastructure Jobs
+            Recently Completed Infrastructure Jobs
         </h4>
         <app-detail-list [list]="completedMRJobs"
             [listSettings]="completedMRJobsList" collapse-body  >
