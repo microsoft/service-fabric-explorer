@@ -955,20 +955,6 @@ app-navbar {
   }
 }
 
-.page-item.active {
-  @include cdk.high-contrast() {
-    .page-link {
-      border: 2px dotted orange !important;
-    }
-  }
-}
-
-button.disabled {
-  // forced-color-adjust: none;
-  color: initial !important;
-  border: 1px dotted orange !important;
-}
-
 :checked {
   accent-color: $azure-blue;
 }

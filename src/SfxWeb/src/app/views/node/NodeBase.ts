@@ -20,7 +20,7 @@ export class NodeBaseControllerDirective extends BaseControllerDirective {
     common(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.getNode(this.nodeName, true, messageHandler).pipe(mergeMap( node => {
                 this.node = node;
-                return this.node.health.refresh(messageHandler).pipe(map( () => console.log(this)));
+                return this.node.health.refresh(messageHandler);
             }));
     }
 

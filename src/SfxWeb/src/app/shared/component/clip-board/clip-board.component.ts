@@ -46,6 +46,8 @@ export class ClipBoardComponent implements OnChanges {
   }
 
   ngOnChanges() {
-    this.ariaLabel = this.text.split(' ').join('-');
+    if (this.text) {
+      this.ariaLabel = this.text.split(' ').join('-');
+    }
   }
 }
