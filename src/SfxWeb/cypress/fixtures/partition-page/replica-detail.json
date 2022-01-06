@@ -1,0 +1,92 @@
+{
+  "ServiceKind": "Stateful",
+  "ServiceName": "fabric:/VisualObjects/VisualObjects.ActorService",
+  "PartitionId": "064421b1-215a-43b5-b0a6-e8b68b5d8943",
+  "CurrentServiceOperation": "None",
+  "CurrentServiceOperationStartTimeUtc": "2021-10-05T22:31:26.244Z",
+  "ReportedLoad": [],
+  "ReplicaId": "132429154475414363",
+  "CurrentReplicatorOperation": "None",
+  "ReadStatus": "Granted",
+  "WriteStatus": "Granted",
+  "ReplicatorStatus": {
+    "Kind": "Primary",
+    "ReplicationQueueStatus": {
+      "QueueUtilizationPercentage": 13,
+      "QueueMemorySize": "1039",
+      "FirstSequenceNumber": "0",
+      "CompletedSequenceNumber": "519513853",
+      "CommittedSequenceNumber": "519513853",
+      "LastSequenceNumber": "519513853"
+    },
+    "RemoteReplicators": [
+      {
+        "ReplicaId": "132422367823912071",
+        "LastAcknowledgementProcessedTimeUtc": "2021-10-22T18:25:34.203Z",
+        "LastReceivedReplicationSequenceNumber": "519513853",
+        "LastAppliedReplicationSequenceNumber": "519513853",
+        "IsInBuild": false,
+        "LastReceivedCopySequenceNumber": "0",
+        "LastAppliedCopySequenceNumber": "0",
+        "RemoteReplicatorAcknowledgementStatus": {
+          "ReplicationStreamAcknowledgementDetail": {
+            "AverageReceiveDuration": "123",
+            "AverageApplyDuration": "456",
+            "NotReceivedCount": "789",
+            "ReceivedAndNotAppliedCount": "321"
+          },
+          "CopyStreamAcknowledgementDetail": {
+            "AverageReceiveDuration": "423",
+            "AverageApplyDuration": "645",
+            "NotReceivedCount": "879",
+            "ReceivedAndNotAppliedCount": "432"
+          }
+        }
+      },
+      {
+        "ReplicaId": "132431356665040624",
+        "LastAcknowledgementProcessedTimeUtc": "2021-10-22T18:25:34.203Z",
+        "LastReceivedReplicationSequenceNumber": "519513853",
+        "LastAppliedReplicationSequenceNumber": "519513853",
+        "IsInBuild": false,
+        "LastReceivedCopySequenceNumber": "0",
+        "LastAppliedCopySequenceNumber": "0",
+        "RemoteReplicatorAcknowledgementStatus": {
+          "ReplicationStreamAcknowledgementDetail": {
+            "AverageReceiveDuration": "8",
+            "AverageApplyDuration": "9",
+            "NotReceivedCount": "0",
+            "ReceivedAndNotAppliedCount": "0"
+          },
+          "CopyStreamAcknowledgementDetail": {
+            "AverageReceiveDuration": "0",
+            "AverageApplyDuration": "0",
+            "NotReceivedCount": "0",
+            "ReceivedAndNotAppliedCount": "0"
+          }
+        }
+      }
+    ]
+  },
+  "DeployedServiceReplica": {
+    "ServiceKind": "Stateful",
+    "ServiceName": "fabric:/VisualObjects/VisualObjects.ActorService",
+    "ServiceTypeName": "VisualObjects.ActorServiceType",
+    "ServiceManifestVersion": "",
+    "ServiceManifestName": "VisualObjects.ActorServicePkg",
+    "CodePackageName": "Code",
+    "PartitionId": "28bfaf73-37b0-467d-9d47-d011b0aedbc0",
+    "ReplicaId": "132429154475414363",
+    "ReplicaRole": "Primary",
+    "ReplicaStatus": "Ready",
+    "Address": "{\"Endpoints\":{\"\":\"10.0.0.7:20000+28bfaf73-37b0-467d-9d47-d011b0aedbc0-132429154475414363\"}}",
+    "ServicePackageActivationId": "",
+    "HostProcessId": "4020",
+    "ReconfigurationInformation": {
+      "PreviousConfigurationRole": "None",
+      "ReconfigurationPhase": "None",
+      "ReconfigurationType": "None",
+      "ReconfigurationStartTimeUtc": "0001-01-01T00:00:00.000Z"
+    }
+  }
+}
