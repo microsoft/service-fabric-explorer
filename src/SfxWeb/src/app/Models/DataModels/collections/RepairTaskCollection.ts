@@ -21,10 +21,9 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
     }
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
-        const dateRef = new Date();
         return this.data.restClient.getRepairTasks(messageHandler)
             .pipe(map(items => {
-                return items.map(raw => new RepairTask(this.data, raw, dateRef));
+                return items.map(raw => new RepairTask(this.data, raw));
             }));
     }
 

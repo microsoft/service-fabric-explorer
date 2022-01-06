@@ -6,6 +6,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
   styleUrls: ['./toggle.component.scss']
 })
 export class ToggleComponent {
+  @Input() aria = '';
   @Input() color: string;
   @Input() state = false;
   @Output() stateChange: EventEmitter<boolean> = new EventEmitter<boolean>();
