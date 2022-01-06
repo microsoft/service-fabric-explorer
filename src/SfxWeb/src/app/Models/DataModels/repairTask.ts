@@ -92,7 +92,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
     public executorData: any;
 
-    constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef: Date = new Date()) {
+    constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef?: Date) {
         super(dataService, raw);
         this.updateInternal();
     }
@@ -103,6 +103,10 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
     public get startTime(): Date {
         return new Date(this.raw.History.ExecutingUtcTimestamp === RepairTask.NonStartedTimeStamp ? this.raw.History.CreatedUtcTimestamp :
             this.raw.History.ExecutingUtcTimestamp);
+    }
+
+    private getRefDate() {
+      return this.dateRef || new Date();
     }
 
     private parseHistory() {
@@ -140,7 +144,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
                     duration = TimeUtils.formatDurationAsAspNetTimespan(phaseDuration);
                     displayInfo = FinishedStatus;
                 } else if (phase.timestamp !== RepairTask.NonStartedTimeStamp) {
-                    phaseDuration = this.dateRef.getTime() - new Date(phase.timestamp).getTime();
+                    phaseDuration = this.getRefDate().getTime() - new Date(phase.timestamp).getTime();
                     duration = TimeUtils.formatDurationAsAspNetTimespan(phaseDuration);
                     displayInfo = InProgressStatus;
                 }
@@ -234,7 +238,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
         const start = new Date(this.createdAt).getTime();
         if (this.inProgress) {
-            const now = this.dateRef.getTime();
+            const now = this.getRefDate().getTime();
             this.duration = now - start;
         } else {
             this.duration = new Date(this.raw.History.CompletedUtcTimestamp).getTime() - start;

@@ -28,7 +28,7 @@ export class GetBackupEnabledEntitiesComponent implements OnInit {
 
   ngOnInit(){
     this.rawdata = this.data.data.backupEntity;
-    this.backupEnabledEntitiesInfoListSettings = new ListSettings(10, null, [
+    this.backupEnabledEntitiesInfoListSettings = new ListSettings(10, null, 'Back up enabled entities', [
       new ListColumnSetting('EntityKind', 'Entity Kind'),
       new ListColumnSetting('ApplicationName', 'Application Name'),
       new ListColumnSetting('ServiceName', 'Service Name'),

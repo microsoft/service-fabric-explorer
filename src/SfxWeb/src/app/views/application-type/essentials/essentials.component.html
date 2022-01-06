@@ -2,15 +2,15 @@
     <app-collapse-container sectionName="Application Type versions">
         <h4 collapse-header>
             Application Type versions
-        </h4>    
+        </h4>
         <div collapse-body>
             <div ngbNav #nav="ngbNav" >
                 <div ngbNavItem>
                     <a ngbNavLink style="font-size: 12pt;">
-                        In Use <span class="mif-info" ngbTooltip="Application Types which have at least 1 application instance." style="font-size: small;" container="body"></span>
+                        In Use <span tabindex="0" class="mif-info" ngbTooltip="Application Types which have at least 1 application instance." style="font-size: small;" container="body"></span>
                     </a>
                     <ng-template ngbNavContent>
-                        <app-detail-list [list]="activeAppTypes" [listSettings]="activeAppTypesListSettings" data-cy="appTypeVersions"></app-detail-list>	
+                        <app-detail-list [list]="activeAppTypes" [listSettings]="activeAppTypesListSettings" data-cy="appTypeVersions"></app-detail-list>
                     </ng-template>
                 </div>
                 <div ngbNavItem>
@@ -18,7 +18,7 @@
                         All
                     </a>
                     <ng-template ngbNavContent>
-                        <app-detail-list [list]="appTypeGroup.appTypes" [listSettings]="appTypesListSettings"></app-detail-list>	
+                        <app-detail-list [list]="appTypeGroup.appTypes" [listSettings]="appTypesListSettings"></app-detail-list>
                     </ng-template>
                 </div>
             </div>
@@ -31,7 +31,7 @@
     <app-collapse-container sectionName="Applications">
         <h4 collapse-header>
             Applications
-        </h4>    
-        <app-detail-list [list]="appTypeGroup.apps" [listSettings]="appsListSettings" collapse-body data-cy="applicationsList"></app-detail-list>	
+        </h4>
+        <app-detail-list [list]="appTypeGroup.apps" [listSettings]="appsListSettings" collapse-body data-cy="applicationsList"></app-detail-list>
     </app-collapse-container>
 </div>

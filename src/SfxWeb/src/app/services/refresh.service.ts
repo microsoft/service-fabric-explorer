@@ -1,8 +1,7 @@
 import { Injectable } from '@angular/core';
 import { StorageService } from './storage.service';
 import { Constants } from '../Common/Constants';
-import { Observable, interval, Subscription, forkJoin, timer, of, Subject } from 'rxjs';
-import { catchError, take, finalize } from 'rxjs/operators';
+import { Observable, interval, Subscription, timer, Subject } from 'rxjs';
 
 @Injectable({
   providedIn: 'root'
@@ -23,7 +22,7 @@ export class RefreshService {
         Constants.AutoRefreshIntervalStorageKey, Constants.DefaultAutoRefreshInterval);
 
     this.updateRefreshInterval(defaultRefreshInterval.toString(), true /* no refresh */);
-  }
+    }
 
   public refreshAll(): void {
     this.refreshSubject.next(this.refreshTick);

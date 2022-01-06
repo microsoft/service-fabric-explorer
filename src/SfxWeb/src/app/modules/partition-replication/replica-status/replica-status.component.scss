@@ -4,10 +4,11 @@
 }
 
 .replica-container {
-    width: 300px;
+    width: 320px;
     display: inline-block;
     padding: 10px;
     margin: 5px;
+    min-height: 250px;
 }
 
 .green-border {
@@ -24,5 +25,5 @@
 }
 
 .field {
-    color: #939393;
+    color: #c9c9c9;
 }

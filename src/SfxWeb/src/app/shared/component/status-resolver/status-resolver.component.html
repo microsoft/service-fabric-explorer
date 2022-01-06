@@ -1,5 +1,5 @@
 <div style="display: inline-block;">
     <span style="display: flex;">
-        <span style="margin-right: 5px;" class="mif-lg" [ngClass]="statusIconResolver[status]"></span> {{status}}
+        <span [ngStyle]="{'margin-right': (showText ? '5px' : '0px')}" class="mif-lg" [ngClass]="displayClass"></span> <span *ngIf="showText">{{status}}</span>
     </span>
 </div>

@@ -23,10 +23,6 @@ export class BaseComponent extends ServiceBaseControllerDirective {
     {
       name: 'details',
       route: './details'
-    },
-    {
-      name: 'events',
-      route: './events'
     }
   ];
   constructor(protected dataService: DataService, injector: Injector, private tree: TreeService) {

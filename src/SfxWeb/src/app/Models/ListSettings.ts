@@ -82,6 +82,7 @@ export class ListSettings {
     public constructor(
         public limit: number,
         public defaultSortPropertyPaths: string[],
+        public tableName: string,
         public columnSettings: ListColumnSetting[],
         public secondRowColumnSettings: ListColumnSetting[] = [],
         public secondRowCollapsible: boolean = false,

@@ -18,6 +18,7 @@ export interface INodesStatusDetails {
   warningCount: number;
   errorCount: number;
   okCount: number;
+  totalCount: number;
 }
 export class NodeStatusDetails implements INodesStatusDetails {
   public static readonly allNodeText = 'All Nodes';
@@ -29,6 +30,7 @@ export class NodeStatusDetails implements INodesStatusDetails {
   public errorCount = 0;
   public totalCount = 0;
   public okCount = 0;
+  public nodes: Node[] = [];
   public constructor(nodeType: string) {
       this.nodeType = nodeType;
 
@@ -55,6 +57,8 @@ export class NodeStatusDetails implements INodesStatusDetails {
       if (node.healthState.text === HealthStateConstants.OK) {
           this.okCount++;
       }
+
+      this.nodes.push(node);
   }
 }
 
@@ -68,6 +72,7 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
     public seedNodeCount: number;
     public disabledAndDisablingCount: number;
     public disabledAndDisablingNodes: Node[];
+    public nodeTypes: string[];
 
     public constructor(data: DataService) {
         super(data);
@@ -137,6 +142,8 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         const seedNodes = this.collection.filter(node => node.raw.IsSeedNode);
         const healthyNodes = seedNodes.filter(node => node.healthState.text === HealthStateConstants.OK);
 
+        const nodeTypes = new Set<string>();
+
         let disabledNodes = 0;
         let disablingNodes = 0;
 
@@ -151,6 +158,8 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
                 disablingNodes++;
                 disabling.push(node);
             }
+
+            nodeTypes.add(node.raw.Type);
         });
 
         this.disabledAndDisablingNodes = disabling.concat(disabled);
@@ -162,6 +171,8 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
 
         this.healthySeedNodes = seedNodes.length.toString() + ' (' +
             Math.round(healthyNodes.length / seedNodes.length * 100).toString() + '%)';
+
+        this.nodeTypes = Array.from(nodeTypes);
 
         return of(true);
     }

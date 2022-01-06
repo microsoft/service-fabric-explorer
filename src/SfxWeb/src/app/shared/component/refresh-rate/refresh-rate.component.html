@@ -4,10 +4,10 @@
   </div>
   <button (click)="change(0)" class="flat-button rounded-button" ngbTooltip="Turn off refresh rate"> Off </button>
   <input [(ngModel)]="refreshRate" type="range" list="tickmarks" step="1" min="0" max="5" (click)="changed()"
-    ngbTooltip="Set the refresh rate">
+    ngbTooltip="Set the refresh rate" aria-label="The rate at which content is refreshed">
   <button (click)="change(5)" class="flat-button rounded-button" ngbTooltip="Set refresh rate to 5 seconds."> Fast </button>
   <button (click)="forceRefresh()" class="flat-button" data-cy="refresh"
-    [attr.aria-polite]="refresh ? 'polite' : 'off'" aria-label="Force a refresh"
+    aria-label="Force a refresh"
     [ngbTooltip]="refresh ? 'Refreshing' : 'Force a refresh'"> <i class="mif-refresh mif-2x " [ngClass]="{'rotate': refresh}"></i> </button>
 </div>
 
@@ -18,4 +18,4 @@
   <option value="3"></option>
   <option value="4"></option>
   <option value="5"></option>
-</datalist> 
+</datalist>
