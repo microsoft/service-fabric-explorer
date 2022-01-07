@@ -60,28 +60,16 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
 
     this.pendingInfraJobsSuggestion = Constants.pendingInfraJobsSuggestion;
     this.executingInfraJobsSuggestion = Constants.executingInfraJobsSuggestion;
-
-    this.data.restClient.getInfrastructureJobs(this.serviceId).subscribe(mrJobdata =>  this.getInfrastructureData(mrJobdata));
   }
 
   getInfrastructureData(mrJobdata: IRawInfrastructureJob[]): void {
     const dateRef = new Date();
 
-    this.executingMRJobs = [];
-    mrJobdata.filter(job => job.JobStatus === 'Executing' && Boolean(job.IsActive) === true).forEach(rawMrJob => {
-      this.executingMRJobs.push( new InfrastructureJob(this.data, rawMrJob, dateRef));
-    });
+    this.executingMRJobs = mrJobdata.filter(job => job.JobStatus === 'Executing' && Boolean(job.IsActive)).map(rawMrJob => new InfrastructureJob(this.data, rawMrJob, dateRef));
+    this.allPendingMRJobs = mrJobdata.filter(job => job.JobStatus !== 'Completed' && !Boolean(job.IsActive)).map(rawMrJob => new InfrastructureJob(this.data, rawMrJob, dateRef));
+    this.completedMRJobs = mrJobdata.filter(job => job.JobStatus === 'Completed').map(rawMrJob => new CompletedInfrastructureJob(this.data, rawMrJob, dateRef));
 
-    this.allPendingMRJobs = [];
-    mrJobdata.filter(job => job.JobStatus !== 'Completed'  && Boolean(job.IsActive) === false).forEach(rawMrJob => {
-      this.allPendingMRJobs.push(new InfrastructureJob(this.data, rawMrJob, dateRef));
-    });
-
-    this.completedMRJobs = [];
-    mrJobdata.filter(job => job.JobStatus === 'Completed').forEach(rawMrJob => {
-      this.completedMRJobs.push( new CompletedInfrastructureJob(this.data, rawMrJob, dateRef));
-    });
-    this.executingInfraJobsSuggestion  = this.executingMRJobs.filter(job => job.RepairTask.State === 'Preparing').length !== 0 ? Constants.executingInfraJobsSuggestion : '' ;
+    this.executingInfraJobsSuggestion  = this.executingMRJobs.some(job => job.RepairTask.State === 'Preparing') ? Constants.executingInfraJobsSuggestion : '' ;
     this.pendingInfraJobsSuggestion = this.pendingInfraJobsSuggestion.length !== 0 && this.executingMRJobs.length > 0 ? Constants.pendingInfraJobsSuggestion : '' ;
   }
 
