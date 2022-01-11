@@ -28,15 +28,15 @@
     </div>
     <app-advanced-option></app-advanced-option>
 
-    <div ngbDropdown *ngIf="adalService.aadEnabled" display="'static'" placement="'bottom-left'">
+    <div ngbDropdown *ngIf="AadService.aadEnabled" display="'static'" placement="'bottom-left'">
         <button class="simple-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
             <span class="mif-user"></span>
         </button>
         <div ngbDropdownMenu style="padding: 10px;" *ngIf="dataService.actionsEnabled()">
           <div ngbDropdownItem style="padding-bottom: 10px;" class="repress-highlight">
-            {{adalService?.userInfo?.profile?.name}}
+            {{AadService?.username}}
           </div>
-          <button class="simple-button" (click)="adalService.logout()" ngbDropdownItem>
+          <button class="simple-button" (click)="AadService.logout()" ngbDropdownItem>
             Log Out
           </button>
         </div>

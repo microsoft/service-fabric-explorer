@@ -1,13 +1,13 @@
 import { TestBed } from '@angular/core/testing';
 
-import { AadConfigService } from './config-service.service';
+import { AadWrapperService } from './aad-wrapper.service';
 
-describe('ConfigServiceService', () => {
-  let service: AadConfigService;
+describe('AadWrapperService', () => {
+  let service: AadWrapperService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({});
-    service = TestBed.inject(AadConfigService);
+    service = TestBed.inject(AadWrapperService);
   });
 
   it('should be created', () => {

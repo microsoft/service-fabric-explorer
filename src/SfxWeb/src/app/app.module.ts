@@ -1,6 +1,6 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, ErrorHandler } from '@angular/core';
-import { HttpClientModule } from '@angular/common/http';
+import { NgModule, ErrorHandler, APP_INITIALIZER } from '@angular/core';
+import { HttpClientModule, HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
 import { DataService } from './services/data.service';
@@ -16,7 +16,7 @@ import { DebuggingModule } from './views/debugging/debugging.module';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppInsightsErrorHandler } from './error-handling';
-import { MsalRedirectComponent } from '@azure/msal-angular';
+import { MsalInterceptor, MsalRedirectComponent } from '@azure/msal-angular';
 import { RestClientService } from './services/rest-client.service';
 import { MsalConfigDynamicModule } from './modules/msal-dynamic-config/msal-dynamic-config.module';
 
@@ -42,10 +42,10 @@ import { MsalConfigDynamicModule } from './modules/msal-dynamic-config/msal-dyna
   ],
 
   providers: [
+    httpInterceptorProviders,
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     DataService,
     RestClientService,
-    httpInterceptorProviders,
     { provide: ErrorHandler, useClass: AppInsightsErrorHandler }
   ],
   bootstrap: [AppComponent, MsalRedirectComponent],

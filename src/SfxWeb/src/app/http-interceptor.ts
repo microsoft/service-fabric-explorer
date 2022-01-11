@@ -6,22 +6,26 @@ import { finalize, map, mergeMap } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
 import { environment } from 'src/environments/environment';
+import { MsalService } from '@azure/msal-angular';
+import { AadConfigService } from './modules/msal-dynamic-config/config-service.service';
 
 /*
 The will intercept and allow the modification of every http request going in and out.
 */
 @Injectable()
 export class AuthInterceptor implements HttpInterceptor {
-  constructor(private adalService: AdalService) {}
+  constructor(private configService: AadConfigService, private msalService: MsalService) {}
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
-    if (this.adalService.aadEnabled){
-        return this.adalService.acquireTokenResilient(this.adalService.config.raw.metadata.cluster)
+    if (this.configService.aadEnabled){
+      return this.msalService.acquireTokenPopup({scopes: ['user.read']})
+        // return this.adalService.acquireTokenResilient(this.adalService.config.raw.metadata.cluster)
         .pipe(mergeMap((token) => {
+          console.log(token)
             if (token) {
             req = req.clone({
                 setHeaders: {
-                Authorization: 'Bearer ' + token
+                Authorization: 'Bearer ' + token.idToken
                 }
             });
             }

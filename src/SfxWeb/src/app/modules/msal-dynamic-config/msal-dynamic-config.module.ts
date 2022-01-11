@@ -6,14 +6,12 @@ import { MsalGuard, MsalInterceptor, MsalBroadcastService,
       MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG,
       MsalGuardConfiguration, MsalRedirectComponent } from '@azure/msal-angular';
 import { HTTP_INTERCEPTORS } from '@angular/common/http';
-import { ConfigServiceService } from './config-service.service';
+import { AadConfigService } from './config-service.service';
 
-const AUTH_CONFIG_URL_TOKEN = new InjectionToken<string>('AUTH_CONFIG_URL');
-
-export function initializerFactory(env: ConfigServiceService, configUrl: string): any {
+export function initializerFactory(env: AadConfigService): any {
     // APP_INITIALIZER, except a function return which will return a promise
     // APP_INITIALIZER, angular doesnt starts application untill it completes
-    const promise = env.init().then((value) => {
+    const promise = env.init().then(() => {
         console.log('finished getting configurations dynamically.');
     });
     return () => promise;
@@ -24,12 +22,12 @@ const isIE = window.navigator.userAgent.indexOf("MSIE ") > -1 || window.navigato
 export function loggerCallback(logLevel: LogLevel, message: string) {
   console.log(message);
 }
-export function MSALInstanceFactory(config: ConfigServiceService): IPublicClientApplication {
+export function MSALInstanceFactory(config: AadConfigService): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
       clientId: config.metaData.metadata.cluster,
       authority:  config.metaData.metadata.authority,
-      redirectUri: config.metaData.metadata.redirect,
+      redirectUri: 'http://localhost:3000/'//config.metaData.metadata.redirect,
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,
@@ -48,7 +46,6 @@ export function MSALInstanceFactory(config: ConfigServiceService): IPublicClient
 export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
   protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['user.read']);
-
   return {
     interactionType: InteractionType.Popup,
     protectedResourceMap
@@ -70,23 +67,23 @@ export class MsalConfigDynamicModule {
         return {
             ngModule: MsalConfigDynamicModule,
             providers: [
-              ConfigServiceService,
+              AadConfigService,
                 { provide: APP_INITIALIZER, useFactory: initializerFactory,
-                     deps: [ConfigServiceService], multi: true },
+                     deps: [AadConfigService], multi: true },
                 {
                     provide: MSAL_INSTANCE,
                     useFactory: MSALInstanceFactory,
-                    deps: [ConfigServiceService]
+                    deps: [AadConfigService]
                 },
                 {
                     provide: MSAL_GUARD_CONFIG,
                     useFactory: MSALGuardConfigFactory,
-                    deps: [ConfigServiceService]
+                    deps: [AadConfigService]
                 },
                 {
                     provide: MSAL_INTERCEPTOR_CONFIG,
                     useFactory: MSALInterceptorConfigFactory,
-                    deps: [ConfigServiceService]
+                    deps: [AadConfigService]
                 },
                 MsalService,
                 MsalGuard,
