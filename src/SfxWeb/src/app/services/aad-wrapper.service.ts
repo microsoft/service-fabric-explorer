@@ -4,7 +4,7 @@ import { AadConfigService } from '../modules/msal-dynamic-config/config-service.
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
 import { AuthenticationResult, BrowserUtils, EventMessage, EventType, InteractionStatus, InteractionType, PopupRequest, RedirectRequest } from '@azure/msal-browser';
 import { filter, map } from 'rxjs/operators';
-
+import { AccountInfo } from '@azure/msal-common';
 /*
 Wrapping around the config service in the MSAL module.
 This is done to make dependency easier given we are trying to avoid http interceptor issues and circular dependency
@@ -16,7 +16,7 @@ but not bloat other components by wrapping over the MSAL services here.
 })
 export class AadWrapperService {
 
-  public username: string;
+  public user: AccountInfo;
 
   constructor(private aadConfigService: AadConfigService,
     private msalService: MsalService,
@@ -25,14 +25,20 @@ export class AadWrapperService {
 
     init(): Observable<any> {
       if(this.aadEnabled) {
-        this.msalBroadcastService.inProgress$
-        .pipe(
-          filter((status: InteractionStatus) => status === InteractionStatus.None),
-        ).pipe(map(() => {
-          this.checkAndSetActiveAccount();
-        }))
+        return new Observable( sub => {
+          this.msalBroadcastService.inProgress$
+          .pipe(
+            filter((status: InteractionStatus) => status === InteractionStatus.None),
+          ).pipe(map(() => {
+            this.checkAndSetActiveAccount();
 
-        this.loginPopup();
+            console.log(this)
+            sub.complete();
+          })).subscribe();
+
+          this.loginPopup();
+        })
+
       }else{
         return of(null);
       }
@@ -41,17 +47,15 @@ export class AadWrapperService {
   checkAndSetActiveAccount(){
     /**
      * If no active account set but there are accounts signed in, sets first account to active account
-     * To use active account set here, subscribe to inProgress$ first in your component
-     * Note: Basic usage demonstrated. Your app may require more complicated account selection logic
      */
     let activeAccount = this.msalService.instance.getActiveAccount();
 
     if (!activeAccount && this.msalService.instance.getAllAccounts().length > 0) {
       let accounts = this.msalService.instance.getAllAccounts();
       this.msalService.instance.setActiveAccount(accounts[0]);
-
-      this.username = this.msalService.instance.getActiveAccount().username;
     }
+
+    this.user = this.msalService.instance.getActiveAccount();
   }
 
   loginPopup() {

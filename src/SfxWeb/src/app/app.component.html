@@ -32,9 +32,14 @@
         <button class="simple-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
             <span class="mif-user"></span>
         </button>
-        <div ngbDropdownMenu style="padding: 10px;" *ngIf="dataService.actionsEnabled()">
+        <div ngbDropdownMenu style="padding: 10px;" *ngIf="AadService.user">
           <div ngbDropdownItem style="padding-bottom: 10px;" class="repress-highlight">
-            {{AadService?.username}}
+            <div>
+              User: {{AadService.user.name}}
+            </div>
+            <div>
+              Roles: {{AadService.user.idTokenClaims['roles']}}
+            </div>
           </div>
           <button class="simple-button" (click)="AadService.logout()" ngbDropdownItem>
             Log Out
