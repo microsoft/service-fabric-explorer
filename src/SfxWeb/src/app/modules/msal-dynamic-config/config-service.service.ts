@@ -26,9 +26,11 @@ export class AadConfigService {
           this.metaData = data;
           this.aadEnabled = true;
           resolve(true);
+        }else{
+          resolve(false);
         }
-      })
-     })
+      });
+     });
   }
 
   public getAADmetadata(): Observable<AadMetadata> {

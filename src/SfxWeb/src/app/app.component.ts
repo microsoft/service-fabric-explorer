@@ -53,7 +53,7 @@ export class AppComponent implements OnInit{
 
     this.AadService.init().subscribe(() => {
       this.initializeView();
-    })
+    });
 
     this.treeWidth = this.storageService.getValueString('treeWidth', '450px');
     this.rightOffset =  this.treeWidth;
@@ -70,8 +70,8 @@ export class AppComponent implements OnInit{
 
   initializeView() {
 
-    if(true) {
-      return
+    if (true) {
+      return;
     }
 
     this.treeService.init();

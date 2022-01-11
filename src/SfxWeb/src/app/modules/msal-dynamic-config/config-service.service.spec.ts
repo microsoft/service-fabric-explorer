@@ -1,49 +1,45 @@
-import { TestBed } from '@angular/core/testing';
+import { HttpBackend, HttpClient } from '@angular/common/http';
+import { of } from 'rxjs';
 
 import { AadConfigService } from './config-service.service';
 
 describe('ConfigServiceService', () => {
   let service: AadConfigService;
-  const adalService: Partial<AdalService> = {
-    aadEnabled: false,
-    acquireTokenResilient: (resource) => of('aad-token'),
-    config: new AadMetadata({
-        type: 'aad',
-        metadata: {
-            login: 'login',
-            authority: 'auth',
-            client: 'client-id',
-            cluster: 'cluster-id',
-            redirect: 'redirect',
-            tenant: 'tenant-id'
-        }
-    })
-};
+  let httpClientSpy: jasmine.SpyObj<HttpClient>;
+
   beforeEach(() => {
-    TestBed.configureTestingModule({});
-    service = TestBed.inject(AadConfigService);
+    httpClientSpy = jasmine.createSpyObj('HttpClient', ['get']);
+
+    service = new AadConfigService({} as HttpBackend);
+    service.http = httpClientSpy;
   });
 
-  it('should be created', () => {
+  fit('should be created', () => {
     expect(service).toBeTruthy();
   });
 
-//   fit('aad auth not enabled', async () => {
-//     adalService.aadEnabled = false;
+  fit('aad auth not enabled', async () => {
+    httpClientSpy.get.and.returnValue(of({ type: '', metadata: {} }));
 
-//     httpClient.get('/test').subscribe();
+    await service.init();
+    expect(service.aadEnabled).toBeFalse();
+  });
 
-//     const requests = httpMock.match({ method: 'get' });
-//     expect(requests[0].request.headers.get('Authorization')).toBeNull();
-// });
+  fit('aad auth enabled', async () => {
+    httpClientSpy.get.and.returnValue(of({
+      type: 'aad',
+      metadata: {
+        login: 'login',
+        authority: 'auth',
+        client: 'client-id',
+        cluster: 'cluster-id',
+        redirect: 'redirect',
+        tenant: 'tenant-id'
+      }
+    }));
 
-// fit('aad auth enabled', async () => {
-//     adalService.aadEnabled = true;
-
-//     httpClient.get('/test').subscribe();
-
-//     const requests = httpMock.match({ method: 'get' });
-//     expect(requests[0].request.headers.get('Authorization')).toBe('Bearer aad-token');
-// });
+    await service.init();
+    expect(service.aadEnabled).toBeTrue();
+  });
 
 });

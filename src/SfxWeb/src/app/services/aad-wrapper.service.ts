@@ -19,12 +19,12 @@ export class AadWrapperService {
   public user: AccountInfo;
 
   constructor(private aadConfigService: AadConfigService,
-    private msalService: MsalService,
-    private msalBroadcastService: MsalBroadcastService,
-    @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration) { }
+              private msalService: MsalService,
+              private msalBroadcastService: MsalBroadcastService,
+              @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration) { }
 
     init(): Observable<any> {
-      if(this.aadEnabled) {
+      if (this.aadEnabled) {
         return new Observable( sub => {
           this.msalBroadcastService.inProgress$
           .pipe(
@@ -32,12 +32,12 @@ export class AadWrapperService {
           ).pipe(map(() => {
             this.checkAndSetActiveAccount();
 
-            console.log(this)
+            console.log(this);
             sub.complete();
           })).subscribe();
 
           this.loginPopup();
-        })
+        });
 
       }else{
         return of(null);
@@ -48,10 +48,10 @@ export class AadWrapperService {
     /**
      * If no active account set but there are accounts signed in, sets first account to active account
      */
-    let activeAccount = this.msalService.instance.getActiveAccount();
+    const activeAccount = this.msalService.instance.getActiveAccount();
 
     if (!activeAccount && this.msalService.instance.getAllAccounts().length > 0) {
-      let accounts = this.msalService.instance.getAllAccounts();
+      const accounts = this.msalService.instance.getAllAccounts();
       this.msalService.instance.setActiveAccount(accounts[0]);
     }
 

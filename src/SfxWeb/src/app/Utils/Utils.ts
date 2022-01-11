@@ -6,7 +6,7 @@ export class Utils {
     private static SingleUrlRegExp = new RegExp('^https?:\/\/[^;,]+');
 
     public static isIEOrEdge = /msie\s|trident\/|edg\//i.test(window.navigator.userAgent);
-
+    public static isIE = window.navigator.userAgent.indexOf('MSIE ') > -1 || window.navigator.userAgent.indexOf('Trident/') > -1; // Remove this line to use Angular Universal
     /**
      * checks if two arrays have the same primitives;
      */

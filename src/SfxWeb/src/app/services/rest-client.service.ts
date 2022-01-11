@@ -889,12 +889,12 @@ export class RestClientService {
         statusCode: 200
     };
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
-      console.log(err)
-        const header = `${err?.status?.toString()} : ${apiDesc}`;
+      console.log(err);
+      const header = `${err?.status?.toString()} : ${apiDesc}`;
 
-        const message = messageHandler.getErrorMessage(apiDesc, err);
-        let displayMessage = '';
-        if (message) {
+      const message = messageHandler.getErrorMessage(apiDesc, err);
+      let displayMessage = '';
+      if (message) {
             displayMessage = message;
         }
 
@@ -908,14 +908,14 @@ export class RestClientService {
             displayMessage = err.message;
         }
 
-        this.message.showMessage(displayMessage, MessageSeverity.Err, header);
-        data.errorMessage = displayMessage;
-        data.statusCode = err.status;
+      this.message.showMessage(displayMessage, MessageSeverity.Err, header);
+      data.errorMessage = displayMessage;
+      data.statusCode = err.status;
         // ...optionally return a default fallback value so app can continue (pick one)
         // which could be a default value (which has to be a HttpResponse here)
         // return Observable.of(new HttpResponse({body: [{name: "Default value..."}]}));
         // or simply an empty observable
-        return throwError(err);
+      return throwError(err);
     }), finalize(() => {
         data.duration = new Date().getTime() - new Date(data.startTime).getTime();
         this.networkDebugger.addRequest(data);

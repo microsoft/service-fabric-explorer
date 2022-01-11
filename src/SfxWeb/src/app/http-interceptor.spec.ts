@@ -4,9 +4,6 @@ import { httpInterceptorProviders } from './http-interceptor';
 import { HttpClient } from '@angular/common/http';
 import { DataService } from './services/data.service';
 import { environment } from 'src/environments/environment';
-import { AdalService } from './services/adal.service';
-import { of } from 'rxjs';
-import { AadMetadata } from './Models/DataModels/Aad';
 
 describe('Http interceptors', () => {
     let httpClient: HttpClient;
@@ -18,7 +15,8 @@ describe('Http interceptors', () => {
             imports: [HttpClientTestingModule],
             providers: [httpInterceptorProviders,
                 { provide: DataService, useValue: dataService },
-                { provide: AdalService, useValue: adalService }]
+                // { provide: AdalService, useValue: adalService }
+              ]
         });
 
         httpMock = TestBed.inject(HttpTestingController);
