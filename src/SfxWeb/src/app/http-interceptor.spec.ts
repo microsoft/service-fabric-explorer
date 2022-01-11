@@ -12,21 +12,7 @@ describe('Http interceptors', () => {
     let httpClient: HttpClient;
     let httpMock: HttpTestingController;
     const dataService: Partial<DataService> = { readOnlyHeader: null, clusterNameMetadata: 'old-name' };
-    const adalService: Partial<AdalService> = {
-        aadEnabled: false,
-        acquireTokenResilient: (resource) => of('aad-token'),
-        config: new AadMetadata({
-            type: 'aad',
-            metadata: {
-                login: 'login',
-                authority: 'auth',
-                client: 'client-id',
-                cluster: 'cluster-id',
-                redirect: 'redirect',
-                tenant: 'tenant-id'
-            }
-        })
-    };
+
     beforeEach(() => {
         TestBed.configureTestingModule({
             imports: [HttpClientTestingModule],
@@ -73,25 +59,4 @@ describe('Http interceptors', () => {
         expect(requests[0].request.headers.get('x-servicefabricclienttype')).toBe('SFX');
         expect(requests[0].request.headers.get('sfx-build')).toBe(environment.version);
     });
-
-    fit('aad auth not enabled', async () => {
-        adalService.aadEnabled = false;
-
-        httpClient.get('/test').subscribe();
-
-        const requests = httpMock.match({ method: 'get' });
-        expect(requests[0].request.headers.get('Authorization')).toBeNull();
-    });
-
-    fit('aad auth enabled', async () => {
-        adalService.aadEnabled = true;
-
-        httpClient.get('/test').subscribe();
-
-        const requests = httpMock.match({ method: 'get' });
-        expect(requests[0].request.headers.get('Authorization')).toBe('Bearer aad-token');
-    });
-
-
-
 });

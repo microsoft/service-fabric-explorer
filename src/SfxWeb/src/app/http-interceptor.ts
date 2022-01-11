@@ -1,42 +1,10 @@
 import { HttpRequest, HttpInterceptor, HttpHandler, HttpEvent, HTTP_INTERCEPTORS, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
-import { AdalService } from './services/adal.service';
-import { finalize, map, mergeMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
 import { environment } from 'src/environments/environment';
-import { MsalService } from '@azure/msal-angular';
-import { AadConfigService } from './modules/msal-dynamic-config/config-service.service';
-
-/*
-The will intercept and allow the modification of every http request going in and out.
-*/
-@Injectable()
-export class AuthInterceptor implements HttpInterceptor {
-  constructor(private configService: AadConfigService, private msalService: MsalService) {}
-  intercept(req: HttpRequest<any>, next: HttpHandler):
-    Observable<HttpEvent<any>> {
-    if (this.configService.aadEnabled){
-      return this.msalService.acquireTokenPopup({scopes: ['user.read']})
-        // return this.adalService.acquireTokenResilient(this.adalService.config.raw.metadata.cluster)
-        .pipe(mergeMap((token) => {
-          console.log(token)
-            if (token) {
-            req = req.clone({
-                setHeaders: {
-                Authorization: 'Bearer ' + token.idToken
-                }
-            });
-            }
-            return next.handle(req);
-        }));
-    }else{
-        return next.handle(req);
-    }
-  }
-}
-
+import { Observable } from 'rxjs';
 
 @Injectable()
 export class ReadOnlyHeaderInterceptor implements HttpInterceptor {
@@ -75,7 +43,6 @@ export class GlobalHeaderInterceptor implements HttpInterceptor {
 
 /** Http interceptor providers in outside-in order */
 export const httpInterceptorProviders = [
-  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: ReadOnlyHeaderInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: GlobalHeaderInterceptor, multi: true },
 ];

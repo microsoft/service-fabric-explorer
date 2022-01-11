@@ -43,9 +43,9 @@ export function MSALInstanceFactory(config: AadConfigService): IPublicClientAppl
     })
 }
 
-export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
+export function MSALInterceptorConfigFactory(config: AadConfigService): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
-  protectedResourceMap.set('https://graph.microsoft.com/v1.0/me', ['user.read']);
+  protectedResourceMap.set(config.aadEnabled ? '/' : '', ['user.read']);
   return {
     interactionType: InteractionType.Popup,
     protectedResourceMap
