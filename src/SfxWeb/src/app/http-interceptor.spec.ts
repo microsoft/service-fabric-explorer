@@ -15,7 +15,6 @@ describe('Http interceptors', () => {
             imports: [HttpClientTestingModule],
             providers: [httpInterceptorProviders,
                 { provide: DataService, useValue: dataService },
-                // { provide: AdalService, useValue: adalService }
               ]
         });
 

@@ -7,9 +7,7 @@ import { DataModelBase } from './Base';
 // -----------------------------------------------------------------------------
 
 export class AuthenticationBootstrapConstants {
-    public static GetAadMetadataUriPart = '/$/GetAadMetadata?api-version=1.0';
     public static AadAuthType = 'aad'; // Currently, this is the only known authentication type.  However, the cluster returns a field that may be used for expandability.
-    public static AdalCacheType = 'localStorage'; // This may be localStorage, or it may be sessionStorage
 }
 
 export class AadMetadata extends DataModelBase<IRawAadMetadata> {
