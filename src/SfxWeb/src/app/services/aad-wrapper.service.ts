@@ -31,8 +31,7 @@ export class AadWrapperService {
             filter((status: InteractionStatus) => status === InteractionStatus.None),
           ).pipe(map(() => {
             this.checkAndSetActiveAccount();
-
-            console.log(this);
+            sub.next(true);
             sub.complete();
           })).subscribe();
 

@@ -69,11 +69,6 @@ export class AppComponent implements OnInit{
   }
 
   initializeView() {
-
-    if (true) {
-      return;
-    }
-
     this.treeService.init();
     this.treeService.refresh().subscribe();
     this.refreshService.init();
