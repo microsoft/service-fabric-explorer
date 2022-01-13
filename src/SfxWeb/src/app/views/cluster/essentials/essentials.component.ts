@@ -9,12 +9,13 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
-import { map, catchError } from 'rxjs/operators';
+import { map, catchError, finalize } from 'rxjs/operators';
 import { IDashboardViewModel, DashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { RoutesService } from 'src/app/services/routes.service';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { ChartConfiguration, ChartConfigurationType } from 'src/app/modules/dynamic-data-viewer/chartConfig.interface';
 
 
 @Component({
@@ -40,6 +41,30 @@ export class EssentialsComponent extends BaseControllerDirective {
   upgradeAppsCount = 0;
 
   essentialItems: IEssentialListItem[] = [];
+
+  testConfig: ChartConfiguration[] =
+  // [{
+  //   type: "barChart",
+  //   id: 'chart',
+  //   url: 'api/testEndpoint',
+  //   x: 'x',
+  //   y: 'y'
+  // } as any,
+  // {
+  //   type: ChartConfigurationType.barChart,
+  //   id: 'chart2',
+  //   url: 'api/2testEndpoint',
+  //   x: 'x',
+  //   y: 'y'
+  // } as any,
+  // {
+  //   type: 'badchart',
+  //   id: 'chart2',
+  //   url: 'api/2testEndpoint',
+  //   x: 'x',
+  //   y: 'y'
+  // } as any]
+  []
 
   constructor(public data: DataService,
               public injector: Injector,
@@ -74,6 +99,8 @@ export class EssentialsComponent extends BaseControllerDirective {
         const replicasHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Replica);
         this.replicasDashboard = DashboardViewModel.fromHealthStateCount('Replicas', 'Replica', false, replicasHealthStateCount);
         clusterHealth.checkExpiredCertStatus();
+
+        this.testConfig = this.clusterHealth.getPotentialCharts();
     })),
       this.data.getApps(true, messageHandler)
                 .pipe(map(apps => {
@@ -81,7 +108,7 @@ export class EssentialsComponent extends BaseControllerDirective {
                 })),
       this.nodes.refresh(messageHandler).pipe(map(() => {this.updateItemInEssentials(); })),
       this.systemApp.refresh(messageHandler).pipe(catchError(err => of(null))),
-      this.clusterUpgradeProgress.refresh(messageHandler),
+      this.clusterUpgradeProgress.refresh(messageHandler).pipe(catchError(err => of(null))),
       this.data.getClusterManifest().pipe(map((manifest) => {
         if (manifest.isRepairManagerEnabled) {
           return this.repairtaskCollection.refresh(messageHandler);
@@ -89,7 +116,7 @@ export class EssentialsComponent extends BaseControllerDirective {
           return of(null);
         }
       }))
-    ]).pipe(map(() => {
+    ]).pipe(finalize(() => {
       this.updateItemInEssentials();
     }));
   }

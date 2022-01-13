@@ -1,0 +1,10 @@
+.charts-container {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+
+  .chart {
+    width: 400px;
+    height: 400px;
+  }
+}

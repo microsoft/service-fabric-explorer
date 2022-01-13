@@ -197,6 +197,15 @@ export class HealthUtils {
     }
 }
 
+export function isJson(text: string): boolean  {
+  try {
+     JSON.parse(text);
+     return true;
+} catch (e) {
+    return false;
+}
+}
+
 export function checkForJson(text: string) {
     try {
         return JSON.stringify(JSON.parse(text), null, 4);

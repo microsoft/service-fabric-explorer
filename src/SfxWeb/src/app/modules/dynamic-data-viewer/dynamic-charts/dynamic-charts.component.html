@@ -1,0 +1,5 @@
+<div class="charts-container">
+  <div *ngFor="let config of configs; trackBy: trackByFn" class="chart">
+    <app-resolve-component [configuration]="config"></app-resolve-component>
+  </div>
+</div>

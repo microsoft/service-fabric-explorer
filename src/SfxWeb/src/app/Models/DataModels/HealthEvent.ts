@@ -6,12 +6,17 @@ import { IHealthStateChunk } from '../HealthChunkRawDataTypes';
 import { HealthEvaluation } from './Shared';
 import { Observable, of } from 'rxjs';
 import { CollectionUtils } from 'src/app/Utils/CollectionUtils';
-import { checkForJson, HealthUtils } from 'src/app/Utils/healthUtils';
+import { checkForJson, HealthUtils, isJson } from 'src/app/Utils/healthUtils';
 import { map, tap } from 'rxjs/operators';
+import { ChartConfiguration, checkIfValidReport } from 'src/app/modules/dynamic-data-viewer/chartConfig.interface';
 
 export class HealthEvent extends DataModelBase<IRawHealthEvent> {
+
+  public isJson = false;
+
     public constructor(data: DataService, raw: IRawHealthEvent) {
         super(data, raw);
+        this.isJson = isJson(this.raw.Description.trim())
     }
 
     public get uniqueId(): string {
@@ -57,5 +62,20 @@ export class HealthBase<T extends IRawHealth> extends DataModelBase<T> {
         return this.data.apps.ensureInitialized().pipe(map( () => {
             this.unhealthyEvaluations = HealthUtils.getParsedHealthEvaluations(this.raw.UnhealthyEvaluations, null, null, this.data);
         }));
+    }
+
+    public getPotentialCharts() {
+      const potential = [];
+
+      this.healthEvents.forEach(event => {
+        if(event.isJson) {
+          const parsed = JSON.parse(event.description);
+          if (checkIfValidReport(parsed)) {
+            potential.push(parsed as ChartConfiguration);
+          }
+        }
+      })
+
+      return potential
     }
 }

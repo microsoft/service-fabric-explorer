@@ -28,6 +28,7 @@ import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-d
 import { RepairJobChartComponent } from './repair-job-chart/repair-job-chart.component';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 import { ClustermapModule } from 'src/app/modules/clustermap/clustermap.module';
+import { DynamicDataViewerModule } from 'src/app/modules/dynamic-data-viewer/dynamic-data-viewer.module';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
@@ -49,7 +50,8 @@ import { ClustermapModule } from 'src/app/modules/clustermap/clustermap.module';
     UpgradeProgressModule,
     NodeDeactivationModule,
     HealthStateModule,
-    ClustermapModule
+    ClustermapModule,
+    DynamicDataViewerModule
   ]
 })
 export class ClusterModule { }

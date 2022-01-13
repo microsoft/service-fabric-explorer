@@ -1,3 +1,6 @@
+<div style="margin-top: 50px; margin-bottom: 500px;">
+  <app-dynamic-charts [configs]="testConfig"></app-dynamic-charts>
+</div>
 <div class="tile-container">
   <app-essential-health-tile *ngIf="nodes.isInitialized && clusterUpgradeProgress.isInitialized"
   class="long" [listItems]="essentialItems">

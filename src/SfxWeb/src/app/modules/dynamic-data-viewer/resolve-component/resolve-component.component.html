@@ -1,0 +1,39 @@
+<div class="essen-pane">
+  <div class="underline">{{configuration.id}}
+    <div style="float: right;">
+      {{refreshingState}}
+      <app-display-time [time]="refreshingTimeStamp"></app-display-time>
+
+    </div>
+  </div>
+  <div *ngIf="dataLoadError">
+    <div>
+      Error Loading Data
+    </div>
+    {{dataLoadError}}
+  </div>
+
+  <ng-template appChartRef></ng-template>
+  <app-collapse-container [collapsed]="true">
+    <div collapse-header>Configuration</div>
+    <div collapse-body style="white-space: break-spaces; padding: 15px">
+      {{configuration | json}}
+    </div>
+  </app-collapse-container>
+
+  <app-collapse-container [collapsed]="true" *ngIf="lastError">
+    <div collapse-header>Last Error</div>
+    <div collapse-body style="white-space: break-spaces; padding: 15px">
+      <div>
+        <app-display-time [time]="lastErrorTimeStamp"></app-display-time>
+      </div>
+      <div>
+        {{lastError.status}}
+      </div>
+      <div>
+        {{lastError.message}}
+
+      </div>
+    </div>
+  </app-collapse-container>
+</div>
