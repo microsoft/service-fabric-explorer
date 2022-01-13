@@ -19,7 +19,7 @@ export function initializerFactory(env: AadConfigService): any {
   // });
   // return () => promise;
 
-  return () => env.init()
+  return () => env.init();
 }
 
 export function MSALInstanceFactory(config: AadConfigService): IPublicClientApplication {
@@ -37,7 +37,7 @@ export function MSALInstanceFactory(config: AadConfigService): IPublicClientAppl
 
 export function MSALInterceptorConfigFactory(config: AadConfigService): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
-  if(config.aadEnabled) {
+  if (config.aadEnabled) {
     protectedResourceMap.set('/', ['user.read']);
   }
   return {

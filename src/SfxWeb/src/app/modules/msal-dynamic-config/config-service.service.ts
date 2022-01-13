@@ -37,11 +37,10 @@ export class AadConfigService {
   }
 
   public getCluster() {
-    console.log(this)
-    return this.metaData.metadata?.cluster || "";
+    return this.metaData.metadata.cluster || '';
   }
 
   public getAuthority() {
-    return this.metaData.metadata?.authority || "";
+    return this.metaData.metadata.authority || '';
   }
 }
