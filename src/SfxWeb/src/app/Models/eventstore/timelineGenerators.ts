@@ -65,7 +65,7 @@ export class EventStoreUtils {
 
         const outline = EventStoreUtils.internalToolTipFormatterObject(data);
 
-        // tslint:disable-next-line:max-line-length
+        // eslint-disable-next-line max-len
         return `<div class="tooltip-test">${title.length > 0 ? title + '<br>' : ''}Start: ${start} <br>${ end ? 'End: ' + end + '<br>' : ''}<b style="text-align: center;">Details</b><br>${outline}</div>`;
     }
 

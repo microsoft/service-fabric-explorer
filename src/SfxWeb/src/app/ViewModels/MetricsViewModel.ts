@@ -105,7 +105,7 @@ export class MetricsViewModel implements IMetricsViewModel {
             if (this.selectedMetrics[0].hasCapacity) {
                 // If selected metric has capacity defined only display nodes with non-zero capacity defined or non-zero load reported
                 return this.nodesLoadInformation.filter(nli => {
-                    // tslint:disable-next-line:max-line-length
+                    // eslint-disable-next-line max-len
                     return nli.isInitialized && nli.nodeLoadMetricInformation.some(lmi => this.selectedMetrics.some(m => m.name === lmi.name && (+lmi.raw.NodeCapacity !== -1 || +lmi.raw.NodeLoad > 0)));
                 });
             } else {
