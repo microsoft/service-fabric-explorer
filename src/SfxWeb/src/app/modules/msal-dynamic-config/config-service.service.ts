@@ -13,7 +13,7 @@ export class AadConfigService {
 
   public aadEnabled = false;
   public metaData: AadMetadata;
-  private http: HttpClient;
+  public http: HttpClient;
 
   constructor(private readonly httpHandler: HttpBackend) {
     this.http = new HttpClient(httpHandler);
@@ -25,10 +25,8 @@ export class AadConfigService {
         if (data.isAadAuthType){
           this.metaData = data;
           this.aadEnabled = true;
-          resolve(true);
-        }else{
-          resolve(false);
         }
+        resolve(true);
       });
      });
   }
