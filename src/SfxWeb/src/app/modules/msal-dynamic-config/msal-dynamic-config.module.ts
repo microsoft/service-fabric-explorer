@@ -14,14 +14,19 @@ import { AadConfigService } from './config-service.service';
 import { Utils } from 'src/app/Utils/Utils';
 
 export function initializerFactory(env: AadConfigService): any {
-  return () => env.init();
+  // const promise = env.init().then(() => {
+  //   console.log('finished getting configurations dynamically.');
+  // });
+  // return () => promise;
+
+  return () => env.init()
 }
 
 export function MSALInstanceFactory(config: AadConfigService): IPublicClientApplication {
   return new PublicClientApplication({
     auth: {
-      clientId: config.metaData.metadata.cluster,
-      authority: config.metaData.metadata.authority,
+      clientId: config.getCluster(),
+      authority: config.getAuthority(),
     },
     cache: {
       cacheLocation: BrowserCacheLocation.LocalStorage,
@@ -32,7 +37,9 @@ export function MSALInstanceFactory(config: AadConfigService): IPublicClientAppl
 
 export function MSALInterceptorConfigFactory(config: AadConfigService): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
-  protectedResourceMap.set(config.aadEnabled ? '/' : '', ['user.read']);
+  if(config.aadEnabled) {
+    protectedResourceMap.set('/', ['user.read']);
+  }
   return {
     interactionType: InteractionType.Popup,
     protectedResourceMap

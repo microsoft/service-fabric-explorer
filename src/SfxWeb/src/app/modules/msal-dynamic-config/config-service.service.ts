@@ -22,8 +22,9 @@ export class AadConfigService {
    init(): Promise<boolean> {
      return new Promise( (resolve, reject) => {
       this.getAADmetadata().subscribe(data => {
+        this.metaData = data;
+
         if (data.isAadAuthType){
-          this.metaData = data;
           this.aadEnabled = true;
         }
         resolve(true);
@@ -33,5 +34,14 @@ export class AadConfigService {
 
   public getAADmetadata(): Observable<AadMetadata> {
     return this.http.get<IRawAadMetadata>(environment.baseUrl + '$/GetAadMetadata/?api-version=6.0').pipe(map(data => new AadMetadata(data)));
+  }
+
+  public getCluster() {
+    console.log(this)
+    return this.metaData.metadata?.cluster || "";
+  }
+
+  public getAuthority() {
+    return this.metaData.metadata?.authority || "";
   }
 }
