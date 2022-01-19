@@ -4,6 +4,7 @@ import { InfrastructureJobTileComponent } from './infrastructure-job-tile/infras
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
 import { ClusterModule } from 'src/app/views/cluster/cluster.module';
+import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 
@@ -15,7 +16,8 @@ import { ClusterModule } from 'src/app/views/cluster/cluster.module';
     CommonModule,
     SharedModule,
     DetailListTemplatesModule,
-    ClusterModule
+    ClusterModule,
+    NgbNavModule
   ],
   exports: [
     InfrastructureJobTileComponent

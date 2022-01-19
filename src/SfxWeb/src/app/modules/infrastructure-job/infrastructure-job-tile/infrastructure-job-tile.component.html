@@ -1,60 +1,70 @@
-<div class="essen-pane" >
-  <div style="display: flex;">
+<div class="essen-pane">
+  <div style="display: flex; justify-content: space-between;">
     <div class="underline title">
-    Job : {{job.Id}}
-  </div>
-  </div>
-  <div style="display: flex; gap: 10px;">
-    <div>
-      <div class="underline title">
-        Phase
-      </div>
-      <app-phase-diagram [items]="progress" [currentIndex]="index" [vertical]="true"></app-phase-diagram>
+      Job : {{job.Id}} <app-clip-board [text]="job.Id"></app-clip-board>
+    </div>
 
+    <div class="underline title">
+      Job Status : {{job.JobStatus}} <app-clip-board [text]="job.JobStatus"></app-clip-board>
     </div>
-    <div style="max-width: 300px;">
-      <div class="underline title">
-        Overview
-      </div>
-      <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="false">
-      </app-essential-item>
-    </div>
-    <div>
-      <!-- <app-collapse-container>
-        <div collapse-header class="underline title">
-          <div>All Impacted Nodes</div>
-        </div>
-        <div collapse-body>
-          <div *ngFor="let node of job.RoleInstancesToBeImpacted">
-            {{node}}
+  </div>
+
+  <div>
+    <div ngbNav #nav="ngbNav">
+      <div [ngbNavItem]="1">
+        <a ngbNavLink style="font-size: 12pt;">
+          Condensed
+        </a>
+        <ng-template ngbNavContent>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            <div>
+              <div class="underline title">
+                Phase
+              </div>
+              <app-phase-diagram [items]="progress" [currentIndex]="index" [vertical]="true"></app-phase-diagram>
+
+            </div>
+            <div style="max-width: 300px;">
+              <div class="underline title">
+                Overview
+              </div>
+              <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="false">
+              </app-essential-item>
+            </div>
+            <div>
+              <div>
+                <div class="underline title">
+                  <div>Currently Impacted Nodes</div>
+                </div>
+                <div>
+                  <app-detail-list [list]="job.CurrentlyImpactedRoleInstances" [listSettings]="impactingNodes"
+                    [showTopOptions]="false"></app-detail-list>
+                </div>
+              </div>
+            </div>
+
+            <div style="flex: 1; min-width: 600px;">
+              <div collapse-header class="underline title">
+                Pending Repair Tasks
+              </div>
+              <app-detail-list [list]="jobs" [listSettings]="repairJobs" [showTopOptions]="false" collapse-body>
+              </app-detail-list>
+            </div>
           </div>
-        </div>
-      </app-collapse-container> -->
-
-      <div>
-        <div class="underline title">
-          <div>Currently Impacted Nodes</div>
-        </div>
-        <div>
-          <app-detail-list [list]="job.CurrentlyImpactedRoleInstances" [listSettings]="impactingNodes" [showTopOptions]="false"></app-detail-list>
-        </div>
+        </ng-template>
       </div>
-
-      <app-collapse-container>
-        <div collapse-header class="underline title">
-          <div>Currently Impacted Nodes</div>
-        </div>
-        <div collapse-body>
-          <app-detail-list [list]="job.CurrentlyImpactedRoleInstances" [listSettings]="impactingNodes" [showTopOptions]="false"></app-detail-list>
-        </div>
-      </app-collapse-container>
+      <div [ngbNavItem]="2">
+        <a ngbNavLink style="font-size: 12pt;">
+          Full Description
+        </a>
+        <ng-template ngbNavContent>
+          <div style="width: 80%">
+            <app-detail-view-part [data]="job"></app-detail-view-part>
+          </div>
+        </ng-template>
+      </div>
     </div>
+    <div [ngbNavOutlet]="nav"></div>
   </div>
-  <app-collapse-container sectionName="Pending Repair Tasks">
-    <div collapse-header class="underline title">
-        Pending Repair Tasks
-    </div>
-    <app-detail-list [list]="jobs" [listSettings]="repairJobs" [showTopOptions]="false"
-        collapse-body ></app-detail-list>
-</app-collapse-container>
+
 </div>

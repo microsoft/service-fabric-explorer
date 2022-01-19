@@ -12,8 +12,15 @@
     </app-dashboard-text-tile>
 </div>
 
+<div style="margin-bottom: 20px;">
+  <app-infrastructure-job-tile *ngFor="let job of jobs" [job]="job"
+  ></app-infrastructure-job-tile>
+</div>
+
 <div *ngIf="executingInfraJobsSuggestion"><h6>{{executingInfraJobsSuggestion}} Learn More.</h6></div>
-<div class="detail-pane essen-pane" >
+<div *ngIf="allPendingMRJobs.length > 0 && executingMRJobs.length !== 0"><h6>{{pendingInfraJobsSuggestion}} Learn more.</h6></div>
+
+<!-- <div class="detail-pane essen-pane" >
     <app-collapse-container  sectionName="Active Infrastructure Jobs">
         <h4 collapse-header>
             Active Infrastructure Jobs
@@ -23,9 +30,9 @@
             [listSettings]="executingMRJobsList" collapse-body  >
         </app-detail-list>
     </app-collapse-container>
-</div>
+</div> -->
 
-<div *ngIf="allPendingMRJobs.length > 0 && executingMRJobs.length !== 0"><h6>{{pendingInfraJobsSuggestion}} Learn more.</h6></div>
+<!-- <div *ngIf="allPendingMRJobs.length > 0 && executingMRJobs.length !== 0"><h6>{{pendingInfraJobsSuggestion}} Learn more.</h6></div>
 <div class="detail-pane essen-pane" >
     <app-collapse-container  sectionName="Pending Infrastructure Jobs">
         <h4 collapse-header>
@@ -46,4 +53,4 @@
             [listSettings]="completedMRJobsList" collapse-body  >
         </app-detail-list>
     </app-collapse-container>
-</div>
+</div> -->

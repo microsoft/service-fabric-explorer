@@ -43,11 +43,6 @@ export class InfrastructureJobTileComponent implements OnChanges {
   ngOnChanges(): void {
     this.essentialItems = [
       {
-        descriptionName: 'Job Status',
-        copyTextValue: this.job.JobStatus,
-        displayText: this.job.JobStatus,
-      },
-      {
         descriptionName: 'Current UD',
         copyTextValue: this.job.CurrentUD,
         displayText: this.job.CurrentUD,
@@ -63,8 +58,6 @@ export class InfrastructureJobTileComponent implements OnChanges {
         displayText: this.job.ImpactAction,
       },
     ]
-
-    // this.job.Rol
 
     const phaseMap = {
       Preparing: 1,

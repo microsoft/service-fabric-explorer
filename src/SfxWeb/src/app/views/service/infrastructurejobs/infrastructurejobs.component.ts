@@ -18,9 +18,12 @@ import { Constants } from 'src/app/Common/Constants';
   styleUrls: ['./infrastructurejobs.component.scss']
 })
 export class InfrastructureJobsComponent extends ServiceBaseControllerDirective {
-  allPendingMRJobs: InfrastructureJob[];
-  executingMRJobs: InfrastructureJob[];
-  completedMRJobs: CompletedInfrastructureJob[];
+
+  jobs = [];
+
+  allPendingMRJobs: InfrastructureJob[] = [];
+  executingMRJobs: InfrastructureJob[] = [];
+  completedMRJobs: CompletedInfrastructureJob[] = [];
   allPendingMRJobsList: ListSettings;
   executingMRJobsList: ListSettings;
   completedMRJobsList: ListSettings;
@@ -64,6 +67,8 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
 
   getInfrastructureData(mrJobdata: IRawInfrastructureJob[]): void {
     const dateRef = new Date();
+
+    this.jobs = mrJobdata;
 
     this.executingMRJobs = mrJobdata.filter(job => job.JobStatus === 'Executing' && Boolean(job.IsActive)).map(rawMrJob => new InfrastructureJob(this.data, rawMrJob, dateRef));
     this.allPendingMRJobs = mrJobdata.filter(job => job.JobStatus !== 'Completed' && !Boolean(job.IsActive)).map(rawMrJob => new InfrastructureJob(this.data, rawMrJob, dateRef));
