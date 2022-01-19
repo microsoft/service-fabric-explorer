@@ -43,8 +43,8 @@ export class MetricsComponent extends BaseControllerDirective {
     this.nodes = this.data.nodes;
   }
 
-  updateSelectedMetric(metric: LoadMetricInformation) {
-    this.metricsViewModel.toggleMetric(metric);
+  updateSelectedMetric(metric: LoadMetricInformation, metricArray: LoadMetricInformation[]) {
+    this.metricsViewModel.toggleMetric(metric, metricArray);
     this.updateViewMetric();
   }
 
@@ -55,7 +55,7 @@ export class MetricsComponent extends BaseControllerDirective {
       title: 'Metrics',
     };
 
-    const metric1: IChartSeries[] = this.metricsViewModel.selectedMetrics.map(metric => {
+    const metricDataPoints: IChartSeries[] = this.metricsViewModel.selectedMetrics.map(metric => {
       return {
         label: metric.displayName,
         data: []
@@ -64,13 +64,22 @@ export class MetricsComponent extends BaseControllerDirective {
 
     this.metricsViewModel.filteredNodeLoadInformation(this.filteredNodes).forEach(metric => {
       this.metricsViewModel.selectedMetrics.forEach((selectedmetric, index) => {
-        metric1[index].data.push(metric.metrics[selectedmetric.name]);
+        let normalize = selectedmetric.hasCapacity && this.metricsViewModel.normalizeMetricsData;
+        let selectedNodeLoadMetricInfo = metric.nodeLoadMetricInformation.find(lmi => lmi.name === selectedmetric.name);
+        let dataPoint = +selectedNodeLoadMetricInfo.raw.NodeLoad
 
+        if (normalize) {
+          dataPoint = selectedNodeLoadMetricInfo.loadCapacityRatio;
+        } else if (selectedmetric.hasCapacity) {
+          dataPoint = Math.max(+selectedNodeLoadMetricInfo.raw.NodeLoad, +selectedNodeLoadMetricInfo.raw.NodeCapacity);
+        }
+
+        metricDataPoints[index].data.push(dataPoint)
       });
       this.tableData.categories.push(metric.raw.NodeName);
     });
 
-    this.tableData.dataPoints = metric1;
+    this.tableData.dataPoints = metricDataPoints;
   }
 
   public toggleSide() {

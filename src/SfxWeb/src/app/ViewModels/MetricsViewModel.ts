@@ -25,6 +25,10 @@ export class MetricsViewModel implements IMetricsViewModel {
     public iShowSystemMetrics = false;
     public iNormalizeMetricsData = true;
 
+    public metricsWithCapacities = [];
+    public metricsWithoutCapacities = [];
+    public systemMetrics = [];
+
     private iMetrics: LoadMetricInformation[] = null;
 
     private static ensureResourceGovernanceMetrics(metrics: LoadMetricInformation[]): LoadMetricInformation[] {
@@ -117,18 +121,6 @@ export class MetricsViewModel implements IMetricsViewModel {
         return this.iMetrics;
     }
 
-    public get metricsWithCapacities(): LoadMetricInformation[] {
-        return this.metrics.filter(m => !m.isSystemMetric && m.hasCapacity);
-    }
-
-    public get metricsWithoutCapacities(): LoadMetricInformation[] {
-        return this.metrics.filter(m => !m.isSystemMetric && !m.hasCapacity);
-    }
-
-    public get systemMetrics(): LoadMetricInformation[] {
-        return this.metrics.filter(m => m.isSystemMetric);
-    }
-
     public get selectedMetrics(): LoadMetricInformation[] {
         return this.metrics.filter(m => m.selected);
     }
@@ -143,13 +135,22 @@ export class MetricsViewModel implements IMetricsViewModel {
     }
 
     public refresh(): void {
+      this.metricsWithCapacities = this.metrics.filter(m => !m.isSystemMetric && m.hasCapacity);
+      this.metricsWithoutCapacities = this.metrics.filter(m => !m.isSystemMetric && !m.hasCapacity);
+      this.systemMetrics = this.metrics.filter(m => m.isSystemMetric);
         // this.refreshToken = (this.refreshToken + 1) % 10000;
         // Clear copied list of metrics
         this.iMetrics = null;
     }
 
-    public toggleMetric(metric: LoadMetricInformation) {
+    public toggleMetric(metric: LoadMetricInformation, type: LoadMetricInformation[]) {
         metric.selected = !metric.selected;
+        this.selectedMetrics.forEach(selectedMetric => {
+          if(!type.includes(selectedMetric)) {
+            selectedMetric.selected = false;
+          }
+        })
+
         this.refresh();
     }
 

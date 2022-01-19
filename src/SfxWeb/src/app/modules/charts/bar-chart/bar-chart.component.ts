@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
+import { Component, OnInit, Input, OnChanges } from '@angular/core';
 import { Chart, Options, chart, SeriesOptionsType  } from 'highcharts';
 
 @Component({
@@ -66,7 +66,7 @@ export class BarChartComponent implements OnInit, OnChanges {
   };
   constructor() { }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges() {
     if (this.chart){
 
       this.chart.series.forEach(series => {
@@ -105,5 +105,4 @@ export class BarChartComponent implements OnInit, OnChanges {
   ngOnInit() {
     this.chart = chart('container', this.options);
   }
-
 }
