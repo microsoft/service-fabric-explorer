@@ -1,9 +1,6 @@
-import { Component, Injector, Input, OnChanges, TemplateRef } from '@angular/core';
+import { Component, ElementRef, HostListener, Injector, Input, OnChanges, TemplateRef, ViewChild } from '@angular/core';
 import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { HealthStateConstants } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { Node } from 'src/app/Models/DataModels/Node';
 import { DataService } from 'src/app/services/data.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
@@ -17,20 +14,43 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   @Input() listTemplate: TemplateRef<any>;
   @Input() nodes: Node[] = [];
+  @Input() groupByNodeType = false;
 
-  groupByNodeType = false;
-  // nodes: NodeCollection;
   matrix: Record<string, Node[]>;
+
+  showScaleButton = false;
+  scaleToFit = false;
+  scale = 'scale(1)';
+
+  @ViewChild('container') private container: ElementRef;
+  @ViewChild('map') private map: ElementRef;
 
   constructor(public data: DataService, injector: Injector) {
     super(injector);
   }
 
   ngOnChanges() {
+    console.log(this);
     this.updateNodes(this.nodes);
+    this.onResize();
   }
 
+  @HostListener('window:resize', ['$event'])
+  onResize() {
+    if (this.map && this.container) {
+      const scale = Math.min(1, this.container.nativeElement.clientWidth / (this.map.nativeElement.clientWidth + 20));
 
+      this.showScaleButton = scale < 1;
+
+      if (this.showScaleButton && this.scaleToFit) {
+        this.scale = `scale(${scale})`;
+      }else{
+        this.scale = 'scale(1)';
+      }
+    }else{
+      this.scale = 'scale(1)';
+    }
+  }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.data.nodes.refresh(messageHandler);
@@ -38,24 +58,27 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   public updateNodes(nodes: Node[]) {
 
-    const matrix = {};
+    this.data.nodes.ensureInitialized().subscribe(() => {
+      const matrix = {};
 
-    this.data.nodes.faultDomains.forEach(fd => {
-      matrix[fd] = [];
+      this.data.nodes.faultDomains.forEach(fd => {
+        matrix[fd] = [];
 
-      this.data.nodes.upgradeDomains.forEach(ud => {
-        matrix[`${fd}${ud}`] = [];
-        matrix[ud] = [];
+        this.data.nodes.upgradeDomains.forEach(ud => {
+          matrix[`${fd}${ud}`] = [];
+          matrix[ud] = [];
+        });
       });
+
+      nodes.forEach(node => {
+        matrix[node.faultDomain + node.upgradeDomain].push(node);
+        matrix[node.faultDomain].push(node);
+        matrix[node.upgradeDomain].push(node);
+      });
+
+      this.matrix = matrix;
     });
 
-    nodes.forEach(node => {
-      matrix[node.faultDomain + node.upgradeDomain].push(node);
-      matrix[node.faultDomain].push(node);
-      matrix[node.upgradeDomain].push(node);
-    });
-
-    this.matrix = matrix;
   }
 
   trackByFn(index, udOrFd: string) {

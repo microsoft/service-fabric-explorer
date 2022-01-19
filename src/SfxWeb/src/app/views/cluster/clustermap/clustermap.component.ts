@@ -13,6 +13,8 @@ export class ClustermapComponent extends BaseControllerDirective {
   nodes: NodeCollection;
   filteredNodes = [];
 
+  groupByNodeType = false;
+
   constructor(injector: Injector, private dataService: DataService) {
     super(injector);
    }

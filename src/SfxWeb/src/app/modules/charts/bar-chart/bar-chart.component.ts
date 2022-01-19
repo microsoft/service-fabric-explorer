@@ -22,11 +22,11 @@ export class BarChartComponent implements OnInit, OnChanges {
   public options: Options = {
     chart: {
       type: 'column',
-      height: '50%',
+      // height: '50%',
       inverted: false,
       polar: false,
       animation: true,
-      backgroundColor: '#191919'
+      backgroundColor: '#191919',
     },
     title: {
       text: '',

@@ -6,7 +6,7 @@
       </div>
       <div *ngIf="showOptions">
         <div class="essen-pane" style="margin-bottom: 10px; margin-top: 10px;">
-          <app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)"></app-node-filter>
+          <app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)" [(groupByNodeType)]="groupByNodeType"></app-node-filter>
         </div>
 
         <app-collapse-container buttonClass="underline" class="metrics-column">
@@ -76,7 +76,7 @@
                 {{metric.displayName}} : {{data.loadInformation.metrics[metric.name]}}
               </div>
             </ng-template>
-            <app-map [listTemplate]="customWrapperTemplate" [nodes]="filteredNodes"></app-map>
+            <app-map [listTemplate]="customWrapperTemplate" [nodes]="filteredNodes"  [groupByNodeType]="groupByNodeType"></app-map>
           </ng-template>
         </div>
       </div>

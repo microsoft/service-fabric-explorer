@@ -31,6 +31,7 @@ export class MetricsComponent extends BaseControllerDirective {
     title: '',
   };
 
+  groupByNodeType = false;
   showOptions = true;
   filteredNodes = [];
 
@@ -62,11 +63,19 @@ export class MetricsComponent extends BaseControllerDirective {
       };
     });
 
-    this.metricsViewModel.filteredNodeLoadInformation(this.filteredNodes).forEach(metric => {
+    const nodeTypeMap = {};
+
+    if (this.groupByNodeType) {
+      this.nodes.nodeTypes.forEach(nodeType => {
+        nodeTypeMap[nodeType] = this.metricsViewModel.selectedMetrics.map(() => 0);
+      });
+    }
+
+    this.metricsViewModel.filteredNodeLoadInformation(this.filteredNodes).sort((a, b) => a.name.localeCompare(b.name)).forEach(metric => {
       this.metricsViewModel.selectedMetrics.forEach((selectedmetric, index) => {
-        let normalize = selectedmetric.hasCapacity && this.metricsViewModel.normalizeMetricsData;
-        let selectedNodeLoadMetricInfo = metric.nodeLoadMetricInformation.find(lmi => lmi.name === selectedmetric.name);
-        let dataPoint = +selectedNodeLoadMetricInfo.raw.NodeLoad
+        const normalize = selectedmetric.hasCapacity && this.metricsViewModel.normalizeMetricsData;
+        const selectedNodeLoadMetricInfo = metric.nodeLoadMetricInformation.find(lmi => lmi.name === selectedmetric.name);
+        let dataPoint = +selectedNodeLoadMetricInfo.raw.NodeLoad;
 
         if (normalize) {
           dataPoint = selectedNodeLoadMetricInfo.loadCapacityRatio;
@@ -74,10 +83,28 @@ export class MetricsComponent extends BaseControllerDirective {
           dataPoint = Math.max(+selectedNodeLoadMetricInfo.raw.NodeLoad, +selectedNodeLoadMetricInfo.raw.NodeCapacity);
         }
 
-        metricDataPoints[index].data.push(dataPoint)
+        if (this.groupByNodeType) {
+          nodeTypeMap[metric.parent.raw.Type][index] += dataPoint;
+        } else {
+          metricDataPoints[index].data.push(dataPoint);
+        }
       });
-      this.tableData.categories.push(metric.raw.NodeName);
+
+      if (!this.groupByNodeType) {
+        this.tableData.categories.push(metric.raw.NodeName);
+      }
     });
+
+
+    if (this.groupByNodeType) {
+      this.tableData.categories = Object.keys(nodeTypeMap);
+
+      this.metricsViewModel.selectedMetrics.forEach((_, index) => {
+        Object.keys(nodeTypeMap).forEach(key => {
+          metricDataPoints[index].data.push(nodeTypeMap[key][index]);
+        });
+      });
+    }
 
     this.tableData.dataPoints = metricDataPoints;
   }

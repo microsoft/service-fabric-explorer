@@ -140,16 +140,16 @@ export class MetricsViewModel implements IMetricsViewModel {
       this.systemMetrics = this.metrics.filter(m => m.isSystemMetric);
         // this.refreshToken = (this.refreshToken + 1) % 10000;
         // Clear copied list of metrics
-        this.iMetrics = null;
+      this.iMetrics = null;
     }
 
     public toggleMetric(metric: LoadMetricInformation, type: LoadMetricInformation[]) {
         metric.selected = !metric.selected;
         this.selectedMetrics.forEach(selectedMetric => {
-          if(!type.includes(selectedMetric)) {
+          if (!type.includes(selectedMetric)) {
             selectedMetric.selected = false;
           }
-        })
+        });
 
         this.refresh();
     }
