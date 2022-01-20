@@ -142,7 +142,7 @@ context('Cluster page', () => {
   })
 
   describe("metrics", () => {
-    it('load metrics', () => {
+    it.only('load metrics', () => {
       cy.intercept('GET', nodes_route, { fixture: 'cluster-page/nodes-1-warning.json' })
       cy.intercept('GET', apiUrl('/Nodes/_nt_0/$/GetLoadInformation?*'), { fixture: 'node-load/get-node-load-information.json' }).as("nodeLoad")
       cy.intercept(apiUrl('/Nodes/_nt_0/$/GetHealth?EventsHealthStateFilter=0&api-version=3.0'), { fixture: 'cluster-page/node-health.json' }).as('getnodeHealth')

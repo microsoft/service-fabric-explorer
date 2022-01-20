@@ -55,8 +55,8 @@
       </div>
     </div>
 
-    <div class="layout-container">
-      <div ngbNav #nav="ngbNav">
+    <div class="layout-container" data-cy="tabs">
+      <div ngbNav #nav="ngbNav" [destroyOnHide]="false">
         <div [ngbNavItem]="1">
           <a ngbNavLink style="font-size: 12pt;">
             Chart

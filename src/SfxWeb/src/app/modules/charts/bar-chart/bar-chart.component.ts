@@ -1,19 +1,21 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
-import { Chart, Options, chart, SeriesOptionsType  } from 'highcharts';
+import { Component, OnInit, Input, OnChanges, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Chart, Options, chart, SeriesOptionsType, TooltipFormatterCallbackFunction  } from 'highcharts';
 
 @Component({
   selector: 'app-bar-chart',
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss']
 })
-export class BarChartComponent implements OnInit, OnChanges {
+export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @Input() xAxisCategories: string[];
   @Input() dataSet: any[] = [];
   @Input() title = '';
   @Input() subtitle = '';
+  @Input() tooltip: TooltipFormatterCallbackFunction;
 
   private chart: Chart;
+  @ViewChild('container') private container: ElementRef;
 
   fontColor = {
                 color: '#fff'
@@ -85,6 +87,10 @@ export class BarChartComponent implements OnInit, OnChanges {
       this.chart.title.update({text: this.title});
       this.chart.subtitle.update({text: this.subtitle});
       this.chart.xAxis[0].update({categories: this.xAxisCategories});
+
+      if(this.tooltip) {
+        this.chart.tooltip.update({formatter: this.tooltip});
+      }
     }
   }
 
@@ -101,7 +107,13 @@ export class BarChartComponent implements OnInit, OnChanges {
     });
   }
 
-  ngOnInit() {
-    this.chart = chart('container', this.options);
+  ngAfterViewInit() {
+    this.chart = chart(this.container.nativeElement, this.options);
+  }
+
+  ngOnDestroy() {
+    if(this.chart) {
+      this.chart.destroy();
+    }
   }
 }

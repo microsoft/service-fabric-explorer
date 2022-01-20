@@ -72,6 +72,10 @@ export class MetricsComponent extends BaseControllerDirective {
       });
     }
 
+    //for some of the metrics, we normailize and show their value so its necessary to have both.
+    let addNormalizationTooltip = false;
+    const tooltipMap =  {};
+
     this.metricsViewModel.filteredNodeLoadInformation(this.filteredNodes).sort((a, b) => a.name.localeCompare(b.name)).forEach(metric => {
       this.metricsViewModel.selectedMetrics.forEach((selectedmetric, index) => {
         const normalize = selectedmetric.hasCapacity && this.metricsViewModel.normalizeMetricsData;
@@ -79,7 +83,13 @@ export class MetricsComponent extends BaseControllerDirective {
         let dataPoint = +selectedNodeLoadMetricInfo.raw.NodeLoad;
 
         if (normalize) {
+          addNormalizationTooltip = true;
           dataPoint = selectedNodeLoadMetricInfo.loadCapacityRatio;
+
+          const d = selectedNodeLoadMetricInfo;
+          const tooltip = `${d.parent.name}: ${d.raw.NodeLoad}${d.hasCapacity ? ` / ${d.raw.NodeCapacity} (${d.loadCapacityRatioString})` : ""}`;
+          tooltipMap[`${selectedmetric}`]
+
         } else if (selectedmetric.hasCapacity) {
           dataPoint = Math.max(+selectedNodeLoadMetricInfo.raw.NodeLoad, +selectedNodeLoadMetricInfo.raw.NodeCapacity);
         }
@@ -107,6 +117,10 @@ export class MetricsComponent extends BaseControllerDirective {
           chartMetricSeriesList[index].data.push(nodeTypeMap[key][index]);
         });
       });
+    }
+
+    if (addNormalizationTooltip) {
+
     }
 
     this.tableData.dataPoints = chartMetricSeriesList;
