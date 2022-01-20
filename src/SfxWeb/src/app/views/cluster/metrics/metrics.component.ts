@@ -29,9 +29,10 @@ export class MetricsComponent extends BaseControllerDirective {
     dataPoints: [],
     categories: [],
     title: '',
+    tooltipFunction: null
   };
 
-  groupByNodeType = false;
+  // groupByNodeType = false;
   showOptions = true;
   filteredNodes = [];
 
@@ -54,6 +55,7 @@ export class MetricsComponent extends BaseControllerDirective {
       dataPoints: [],
       categories: [],
       title: 'Metrics',
+      tooltipFunction: null
     };
 
     const chartMetricSeriesList: IChartSeries[] = this.metricsViewModel.selectedMetrics.map(metric => {
@@ -62,15 +64,6 @@ export class MetricsComponent extends BaseControllerDirective {
         data: []
       };
     });
-
-    //when grouping by node type keep track of each group to add them at the end
-    const nodeTypeMap = {};
-
-    if (this.groupByNodeType) {
-      this.nodes.nodeTypes.forEach(nodeType => {
-        nodeTypeMap[nodeType] = this.metricsViewModel.selectedMetrics.map(() => 0);
-      });
-    }
 
     //for some of the metrics, we normailize and show their value so its necessary to have both.
     let addNormalizationTooltip = false;
@@ -88,39 +81,23 @@ export class MetricsComponent extends BaseControllerDirective {
 
           const d = selectedNodeLoadMetricInfo;
           const tooltip = `${d.parent.name}: ${d.raw.NodeLoad}${d.hasCapacity ? ` / ${d.raw.NodeCapacity} (${d.loadCapacityRatioString})` : ""}`;
-          tooltipMap[`${selectedmetric}`]
+          tooltipMap[`${metric.raw.NodeName}-${selectedmetric.displayName}`] = tooltip;
 
         } else if (selectedmetric.hasCapacity) {
           dataPoint = Math.max(+selectedNodeLoadMetricInfo.raw.NodeLoad, +selectedNodeLoadMetricInfo.raw.NodeCapacity);
         }
 
-        //when grouping by nodetype wait to the end to add them to the chartMetricSeries otherwise can push them directly
-        if (this.groupByNodeType) {
-          nodeTypeMap[metric.parent.raw.Type][index] += dataPoint;
-        } else {
           chartMetricSeriesList[index].data.push(dataPoint);
-        }
+
       });
 
-      if (!this.groupByNodeType) {
         this.tableData.categories.push(metric.raw.NodeName);
-      }
     });
 
-
-    if (this.groupByNodeType) {
-      this.tableData.categories = Object.keys(nodeTypeMap);
-
-      //add each selected metric for each node type.
-      this.metricsViewModel.selectedMetrics.forEach((_, index) => {
-        Object.keys(nodeTypeMap).forEach(key => {
-          chartMetricSeriesList[index].data.push(nodeTypeMap[key][index]);
-        });
-      });
-    }
-
     if (addNormalizationTooltip) {
-
+      this.tableData.tooltipFunction = function() {
+        return tooltipMap[`${this.x}-${this.series.name}`]
+      }
     }
 
     this.tableData.dataPoints = chartMetricSeriesList;

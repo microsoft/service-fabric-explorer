@@ -17,7 +17,7 @@
         </ul>
       </div>
 
-      <label data-cy="nodetype-filter">
+      <label data-cy="nodetype-filter" *ngIf="showGroupByNodeType">
         Group By NodeType
         <br>
         <app-toggle [(state)]="groupByNodeType" (stateChange)="updateNodes();" style="float: left;"></app-toggle>

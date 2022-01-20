@@ -6,8 +6,7 @@
       </div>
       <div *ngIf="showOptions">
         <div class="essen-pane filter-container">
-          <app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)"
-            [(groupByNodeType)]="groupByNodeType"></app-node-filter>
+          <app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)" [showGroupByNodeType]="false" ></app-node-filter>
         </div>
 
         <app-collapse-container buttonClass="underline" class="metrics-column">
@@ -63,7 +62,7 @@
           </a>
           <ng-template ngbNavContent>
             <app-bar-chart class="dynamic-bar-chart" [xAxisCategories]="tableData.categories"
-              [dataSet]="tableData.dataPoints" [title]="tableData.title">
+              [dataSet]="tableData.dataPoints" [title]="tableData.title" [tooltip]="tableData.tooltipFunction">
             </app-bar-chart>
           </ng-template>
         </div>
@@ -77,7 +76,7 @@
                 {{metric.displayName}} : {{data.loadInformation.metrics[metric.name]}}
               </div>
             </ng-template>
-            <app-map [listTemplate]="customWrapperTemplate" [nodes]="filteredNodes" [groupByNodeType]="groupByNodeType">
+            <app-map [listTemplate]="customWrapperTemplate" [nodes]="filteredNodes">
             </app-map>
           </ng-template>
         </div>

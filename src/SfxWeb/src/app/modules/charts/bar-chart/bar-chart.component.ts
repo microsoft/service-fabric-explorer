@@ -88,9 +88,7 @@ export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
       this.chart.subtitle.update({text: this.subtitle});
       this.chart.xAxis[0].update({categories: this.xAxisCategories});
 
-      if(this.tooltip) {
         this.chart.tooltip.update({formatter: this.tooltip});
-      }
     }
   }
 

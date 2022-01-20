@@ -10,6 +10,8 @@ import { DataService } from 'src/app/services/data.service';
 })
 export class NodeFilterComponent implements OnInit, OnChanges {
 
+  @Input() showGroupByNodeType = true;
+
   @Input() nodes: Node[];
   @Input() groupByNodeType = false;
   @Output() groupByNodeTypeChange = new EventEmitter();
