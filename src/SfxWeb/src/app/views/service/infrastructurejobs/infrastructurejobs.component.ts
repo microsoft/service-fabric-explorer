@@ -19,16 +19,15 @@ import { Constants } from 'src/app/Common/Constants';
 })
 export class InfrastructureJobsComponent extends ServiceBaseControllerDirective {
 
-  jobs = [];
-
   allPendingMRJobs: InfrastructureJob[] = [];
   executingMRJobs: InfrastructureJob[] = [];
   completedMRJobs: CompletedInfrastructureJob[] = [];
+
   allPendingMRJobsList: ListSettings;
-  executingMRJobsList: ListSettings;
   completedMRJobsList: ListSettings;
-  executingInfraJobsSuggestion: string;
-  pendingInfraJobsSuggestion: string;
+
+  // executingInfraJobsSuggestion: string;
+  // pendingInfraJobsSuggestion: string;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) {
     super(data, injector);
@@ -44,38 +43,25 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
       new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes', 2),
      ]);
 
-    this.executingMRJobsList = this.settings.getNewOrExistingListSettings('executingMRJobs', ['raw.IsActive'], [
-      new ListColumnSetting('raw.Id', 'Job Id'),
-      new ListColumnSettingWithFilter('raw.CurrentUD', 'Current UD'),
-      new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
-      new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
-      new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
-      new ListColumnSetting('RepairTask.State', 'Repair Task State'),
-      new ListColumnSettingWithShorten('NodeImpact', 'Node Impact', 2),
-      new ListColumnSettingWithShorten('VmImpact', 'VM Impact', 2)
-     ]);
-
     this.completedMRJobsList = this.settings.getNewOrExistingListSettings('completedMRJobs', [], [
       new ListColumnSetting('raw.Id', 'Job Id'),
       new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
       new ListColumnSetting('raw.RoleInstancesToBeImpacted', 'Impacted Nodes'),
     ]);
 
-    this.pendingInfraJobsSuggestion = Constants.pendingInfraJobsSuggestion;
-    this.executingInfraJobsSuggestion = Constants.executingInfraJobsSuggestion;
+    // this.pendingInfraJobsSuggestion = Constants.pendingInfraJobsSuggestion;
+    // this.executingInfraJobsSuggestion = Constants.executingInfraJobsSuggestion;
   }
 
   getInfrastructureData(mrJobdata: IRawInfrastructureJob[]): void {
     const dateRef = new Date();
 
-    this.jobs = mrJobdata;
-
     this.executingMRJobs = mrJobdata.filter(job => job.JobStatus === 'Executing' && Boolean(job.IsActive)).map(rawMrJob => new InfrastructureJob(this.data, rawMrJob, dateRef));
     this.allPendingMRJobs = mrJobdata.filter(job => job.JobStatus !== 'Completed' && !Boolean(job.IsActive)).map(rawMrJob => new InfrastructureJob(this.data, rawMrJob, dateRef));
     this.completedMRJobs = mrJobdata.filter(job => job.JobStatus === 'Completed').map(rawMrJob => new CompletedInfrastructureJob(this.data, rawMrJob, dateRef));
 
-    this.executingInfraJobsSuggestion  = this.executingMRJobs.some(job => job.RepairTask.State === 'Preparing') ? Constants.executingInfraJobsSuggestion : '' ;
-    this.pendingInfraJobsSuggestion = this.pendingInfraJobsSuggestion.length !== 0 && this.executingMRJobs.length > 0 ? Constants.pendingInfraJobsSuggestion : '' ;
+    // this.executingInfraJobsSuggestion  = this.executingMRJobs.some(job => job.RepairTask.State === 'Preparing') ? Constants.executingInfraJobsSuggestion : Constants.executingInfraJobsSuggestion  ;
+    // this.pendingInfraJobsSuggestion = this.pendingInfraJobsSuggestion.length !== 0 && this.executingMRJobs.length > 0 ? Constants.pendingInfraJobsSuggestion : Constants.pendingInfraJobsSuggestion ;
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
