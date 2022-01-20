@@ -3,7 +3,7 @@
     <label *ngIf="showScaleButton">
       Scale to Fit <app-toggle [(state)]="scaleToFit" (stateChange)="onResize()"></app-toggle>
     </label>
-    <div class="table-responsive" *ngIf="nodes.length > 0 && matrix" #container>
+    <div class="table-responsive" *ngIf="nodes.length >= 0 && matrix" #container>
       <table class="table map-table" role="presentation" #map style="transform-origin: 0 0;" [ngStyle]="{'transform': scale}">
         <tbody>
           <tr>
@@ -14,7 +14,6 @@
             <td *ngFor="let faultDomain of data.nodes.faultDomains; trackBy: trackByFn" class="header top-side">
               <app-section-overview [nodes]="matrix[faultDomain]" [moreInfo]="false" [vertical]="false"
                 [title]="faultDomain"></app-section-overview>
-
             </td>
           </tr>
           <tr *ngFor="let upgradeDomain of data.nodes.upgradeDomains; first as isFirst; trackBy: trackByFn">

@@ -27,6 +27,25 @@ $metric-container-padding: 8px;
   overflow-x: hidden;
   width: 300px;
   margin-top: 10px;
-  // padding: $metric-container-margin;
+}
 
+.filter-container {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.title-container {
+  height: 28px;
+}
+
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-left: 15px;
+  min-width: 1px;
+
+  .dynamic-bar-chart {
+    flex: 1;min-width: 0px;
+  }
 }

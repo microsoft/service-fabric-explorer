@@ -16,7 +16,6 @@ export interface IMetricsViewModel {
     normalizeMetricsData: boolean;
     filteredNodeLoadInformation(node: Node[]): NodeLoadInformation[];
     refresh(): void;
-    getLegendColor(value: string): string;
 }
 
 export class MetricsViewModel implements IMetricsViewModel {
@@ -138,8 +137,6 @@ export class MetricsViewModel implements IMetricsViewModel {
       this.metricsWithCapacities = this.metrics.filter(m => !m.isSystemMetric && m.hasCapacity);
       this.metricsWithoutCapacities = this.metrics.filter(m => !m.isSystemMetric && !m.hasCapacity);
       this.systemMetrics = this.metrics.filter(m => m.isSystemMetric);
-        // this.refreshToken = (this.refreshToken + 1) % 10000;
-        // Clear copied list of metrics
       this.iMetrics = null;
     }
 
@@ -156,9 +153,5 @@ export class MetricsViewModel implements IMetricsViewModel {
 
     constructor(
         private clusterLoadInformation: ClusterLoadInformation) {
-    }
-
-    public getLegendColor(value: string): string {
-      return '#ff8418';
     }
 }

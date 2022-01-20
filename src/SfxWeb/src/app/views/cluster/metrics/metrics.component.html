@@ -5,12 +5,13 @@
         <button (click)="toggleSide()" class="simple-button">Hide </button>
       </div>
       <div *ngIf="showOptions">
-        <div class="essen-pane" style="margin-bottom: 10px; margin-top: 10px;">
-          <app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)" [(groupByNodeType)]="groupByNodeType"></app-node-filter>
+        <div class="essen-pane filter-container">
+          <app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)"
+            [(groupByNodeType)]="groupByNodeType"></app-node-filter>
         </div>
 
         <app-collapse-container buttonClass="underline" class="metrics-column">
-          <div collapse-header class="underline text-center" style="height: 28px;">
+          <div collapse-header class="underline text-center title-container">
             Resource Capacity
           </div>
           <div collapse-body>
@@ -27,7 +28,7 @@
         </app-collapse-container>
 
         <app-collapse-container buttonClass="underline" class="metrics-column">
-          <div collapse-header class="underline text-center" style="height: 28px;">
+          <div collapse-header class="underline text-center title-container">
             Load metrics
           </div>
           <div collapse-body>
@@ -40,7 +41,7 @@
         </app-collapse-container>
 
         <app-collapse-container buttonClass="underline" class="metrics-column" [collapsed]="true">
-          <div collapse-header class="underline text-center" style="height: 28px;">
+          <div collapse-header class="underline text-center title-container">
             system Metrics
           </div>
           <div collapse-body>
@@ -54,14 +55,14 @@
       </div>
     </div>
 
-    <div style="display: flex; flex-direction: column; flex: 1; margin-left: 15px; min-width: 1px;">
+    <div class="layout-container">
       <div ngbNav #nav="ngbNav">
         <div [ngbNavItem]="1">
           <a ngbNavLink style="font-size: 12pt;">
             Chart
           </a>
           <ng-template ngbNavContent>
-            <app-bar-chart style="flex: 1;min-width: 0px;" [xAxisCategories]="tableData.categories"
+            <app-bar-chart class="dynamic-bar-chart" [xAxisCategories]="tableData.categories"
               [dataSet]="tableData.dataPoints" [title]="tableData.title">
             </app-bar-chart>
           </ng-template>
@@ -76,7 +77,8 @@
                 {{metric.displayName}} : {{data.loadInformation.metrics[metric.name]}}
               </div>
             </ng-template>
-            <app-map [listTemplate]="customWrapperTemplate" [nodes]="filteredNodes"  [groupByNodeType]="groupByNodeType"></app-map>
+            <app-map [listTemplate]="customWrapperTemplate" [nodes]="filteredNodes" [groupByNodeType]="groupByNodeType">
+            </app-map>
           </ng-template>
         </div>
       </div>

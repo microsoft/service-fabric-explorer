@@ -11,6 +11,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
   styleUrls: ['./map.component.scss']
 })
 export class MapComponent extends BaseControllerDirective implements OnChanges {
+  static readonly baseScale = 'scale(1)';
 
   @Input() listTemplate: TemplateRef<any>;
   @Input() nodes: Node[] = [];
@@ -20,7 +21,7 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
 
   showScaleButton = false;
   scaleToFit = false;
-  scale = 'scale(1)';
+  scale = MapComponent.baseScale;
 
   @ViewChild('container') private container: ElementRef;
   @ViewChild('map') private map: ElementRef;
@@ -30,12 +31,11 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
   }
 
   ngOnChanges() {
-    console.log(this);
     this.updateNodes(this.nodes);
     this.onResize();
   }
 
-  @HostListener('window:resize', ['$event'])
+  @HostListener('window:resize')
   onResize() {
     if (this.map && this.container) {
       const scale = Math.min(1, this.container.nativeElement.clientWidth / (this.map.nativeElement.clientWidth + 20));
@@ -45,10 +45,10 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
       if (this.showScaleButton && this.scaleToFit) {
         this.scale = `scale(${scale})`;
       }else{
-        this.scale = 'scale(1)';
+        this.scale = MapComponent.baseScale;
       }
     }else{
-      this.scale = 'scale(1)';
+      this.scale = MapComponent.baseScale;
     }
   }
 
@@ -57,7 +57,6 @@ export class MapComponent extends BaseControllerDirective implements OnChanges {
   }
 
   public updateNodes(nodes: Node[]) {
-
     this.data.nodes.ensureInitialized().subscribe(() => {
       const matrix = {};
 

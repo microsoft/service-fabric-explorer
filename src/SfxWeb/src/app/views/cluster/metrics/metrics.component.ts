@@ -56,13 +56,14 @@ export class MetricsComponent extends BaseControllerDirective {
       title: 'Metrics',
     };
 
-    const metricDataPoints: IChartSeries[] = this.metricsViewModel.selectedMetrics.map(metric => {
+    const chartMetricSeriesList: IChartSeries[] = this.metricsViewModel.selectedMetrics.map(metric => {
       return {
         label: metric.displayName,
         data: []
       };
     });
 
+    //when grouping by node type keep track of each group to add them at the end
     const nodeTypeMap = {};
 
     if (this.groupByNodeType) {
@@ -83,10 +84,11 @@ export class MetricsComponent extends BaseControllerDirective {
           dataPoint = Math.max(+selectedNodeLoadMetricInfo.raw.NodeLoad, +selectedNodeLoadMetricInfo.raw.NodeCapacity);
         }
 
+        //when grouping by nodetype wait to the end to add them to the chartMetricSeries otherwise can push them directly
         if (this.groupByNodeType) {
           nodeTypeMap[metric.parent.raw.Type][index] += dataPoint;
         } else {
-          metricDataPoints[index].data.push(dataPoint);
+          chartMetricSeriesList[index].data.push(dataPoint);
         }
       });
 
@@ -99,14 +101,15 @@ export class MetricsComponent extends BaseControllerDirective {
     if (this.groupByNodeType) {
       this.tableData.categories = Object.keys(nodeTypeMap);
 
+      //add each selected metric for each node type.
       this.metricsViewModel.selectedMetrics.forEach((_, index) => {
         Object.keys(nodeTypeMap).forEach(key => {
-          metricDataPoints[index].data.push(nodeTypeMap[key][index]);
+          chartMetricSeriesList[index].data.push(nodeTypeMap[key][index]);
         });
       });
     }
 
-    this.tableData.dataPoints = metricDataPoints;
+    this.tableData.dataPoints = chartMetricSeriesList;
   }
 
   public toggleSide() {

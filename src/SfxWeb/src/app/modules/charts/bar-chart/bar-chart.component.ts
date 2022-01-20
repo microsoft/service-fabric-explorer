@@ -22,7 +22,6 @@ export class BarChartComponent implements OnInit, OnChanges {
   public options: Options = {
     chart: {
       type: 'column',
-      // height: '50%',
       inverted: false,
       polar: false,
       animation: true,
