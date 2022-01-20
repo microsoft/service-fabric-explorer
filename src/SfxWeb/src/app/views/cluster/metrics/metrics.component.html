@@ -73,7 +73,7 @@
           </a>
           <ng-template ngbNavContent>
             <ng-template #customWrapperTemplate let-data="data">
-              <div *ngFor="let metric of metricsViewModel.selectedMetrics">
+              <div *ngFor="let metric of metricsViewModel.selectedMetrics" style="white-space: nowrap;"  >
                 {{metric.displayName}} : {{data.loadInformation.metrics[metric.name]}}
               </div>
             </ng-template>

@@ -114,7 +114,9 @@ export class MetricsComponent extends BaseControllerDirective {
 
   public toggleSide() {
     this.showOptions = !this.showOptions;
-    window.dispatchEvent(new Event('resize'));
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 10)
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
