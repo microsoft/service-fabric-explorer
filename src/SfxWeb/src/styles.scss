@@ -42,7 +42,7 @@ $SfxWeb-theme: mat.define-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-w
 
 .essen-pane {
     background-color: $essen-pane-background-color;
-    padding: 5px 15px 10px 15px;
+    padding: 10px;
 
     .essen-table {
         width: 100%;
@@ -1108,4 +1108,13 @@ $dashboard-datapoint-leftbar-width: 3px;
     margin-bottom: 0px;
     font-size: 15px;
    }
+}
+
+label {
+  margin-bottom: 0px;
+}
+
+.input-wrapper {
+  margin-left: 15px;
+  margin-right: 15px;
 }
