@@ -1,7 +1,7 @@
 <div class="detail-pane">
   <div data-cy="clustermap">
     <label *ngIf="showScaleButton">
-      Scale to Fit <app-toggle [(state)]="scaleToFit" (stateChange)="onResize()"></app-toggle>
+      Scale Width <app-toggle [(state)]="scaleToFit" (stateChange)="onResize()"></app-toggle>
     </label>
     <div class="table-responsive" *ngIf="nodes.length >= 0 && matrix" #container>
       <table class="table map-table" role="presentation" #map style="transform-origin: 0 0;" [ngStyle]="{'transform': scale}">
