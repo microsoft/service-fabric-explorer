@@ -26,8 +26,7 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
   allPendingMRJobsList: ListSettings;
   completedMRJobsList: ListSettings;
 
-  // executingInfraJobsSuggestion: string;
-  // pendingInfraJobsSuggestion: string;
+  infrastructureJobsSuggestion: string;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) {
     super(data, injector);
@@ -48,9 +47,7 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
       new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
       new ListColumnSetting('raw.RoleInstancesToBeImpacted', 'Impacted Nodes'),
     ]);
-
-    // this.pendingInfraJobsSuggestion = Constants.pendingInfraJobsSuggestion;
-    // this.executingInfraJobsSuggestion = Constants.executingInfraJobsSuggestion;
+    this.infrastructureJobsSuggestion = '';
   }
 
   getInfrastructureData(mrJobdata: IRawInfrastructureJob[]): void {
@@ -60,8 +57,8 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
     this.allPendingMRJobs = mrJobdata.filter(job => job.JobStatus !== 'Completed' && !Boolean(job.IsActive)).map(rawMrJob => new InfrastructureJob(this.data, rawMrJob, dateRef));
     this.completedMRJobs = mrJobdata.filter(job => job.JobStatus === 'Completed').map(rawMrJob => new CompletedInfrastructureJob(this.data, rawMrJob, dateRef));
 
-    // this.executingInfraJobsSuggestion  = this.executingMRJobs.some(job => job.RepairTask.State === 'Preparing') ? Constants.executingInfraJobsSuggestion : Constants.executingInfraJobsSuggestion  ;
-    // this.pendingInfraJobsSuggestion = this.pendingInfraJobsSuggestion.length !== 0 && this.executingMRJobs.length > 0 ? Constants.pendingInfraJobsSuggestion : Constants.pendingInfraJobsSuggestion ;
+    this.infrastructureJobsSuggestion  = this.executingMRJobs.some(job => job.RepairTask.State === 'Preparing') ? Constants.executingInfraJobsSuggestion : ''  ;
+    this.infrastructureJobsSuggestion  = this.allPendingMRJobs.length !== 0 && this.executingMRJobs.length > 1 ? this.infrastructureJobsSuggestion + Constants.pendingInfraJobsSuggestion : this.infrastructureJobsSuggestion ;
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {

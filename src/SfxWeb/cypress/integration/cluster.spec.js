@@ -413,4 +413,75 @@ context('Cluster page', () => {
       });
     })
   })
+
+  describe("infrastructure jobs", () => {
+    const setup = (file) => {
+      addRoute('infrastructurejobs', file, apiUrl('/$/GetRepairTaskList?*'))
+      cy.visit('/#/repairtasks')
+
+      cy.wait("@getrepairs")
+    }
+
+    it('loads properly', () => {
+      setup('cluster-page/repair-jobs/simple.json')
+
+      cy.get('[data-cy=timeline]');
+      cy.get('[data-cy=pendingjobs]');
+      cy.get('[data-cy=completedjobs]').within(() => {
+        cy.contains('Completed Repair Tasks').click();
+        checkTableSize(6);
+      });
+    })
+
+    it('view completed repair job', () => {
+      setup('cluster-page/repair-jobs/simple.json')
+
+      cy.get('[data-cy=Executing]').should('not.exist')
+
+
+      cy.get('[data-cy=completedjobs]').within(() => {
+        cy.contains('Completed Repair Tasks').click();
+
+        cy.get('tbody > tr').first().within(() => {
+          cy.get('button').click();
+        });
+
+        cy.get('[data-cy=history]').within(() => {
+          cy.contains('Preparing : Done');
+          cy.contains('Executing : Done');
+          cy.contains('Restoring : Done');
+        })
+      });
+    })
+
+    it('view in progress repair job', () => {
+      setup('cluster-page/repair-jobs/in-progress.json')
+
+
+      cy.get('[data-cy=Executing]').within(() => {
+        cy.contains('Azure/TenantUpdate/441efe72-c74d-4cfa-84df-515b44c89060/4/1555')
+      })
+
+      cy.get('[data-cy=Approving]').within(() => {
+        cy.contains('Azure/TenantUpdate/441efe72-c74d-4cfa-84df-515b44c89060/4/1145')
+      })
+
+      cy.get('[data-cy=top]').within(() => {
+        cy.contains(2)
+        cy.contains('System.Azure.Job.TenantUpdate')
+      })
+
+      cy.get('[data-cy=pendingjobs]').within(() => {
+        cy.get('tbody > tr').first().within(() => {
+          cy.get('button').click();
+        });
+
+        cy.get('[data-cy=history]').within(() => {
+          cy.contains('Preparing : Done');
+          cy.contains('Executing : In Progress');
+          cy.contains('Restoring : Not Started');
+        })
+      });
+    })
+  })
 })
