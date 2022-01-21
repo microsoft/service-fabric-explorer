@@ -1,5 +1,7 @@
-
-<div style="max-width: 400px;" class="essen-pane">
-  <app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)" [(groupByNodeType)]="groupByNodeType"></app-node-filter>
+<div data-cy="clustermap-container">
+  <div style="max-width: 400px;" class="essen-pane">
+    <app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)"
+      [(groupByNodeType)]="groupByNodeType"></app-node-filter>
+  </div>
+  <app-map [nodes]="filteredNodes" [groupByNodeType]="groupByNodeType"></app-map>
 </div>
-<app-map  [nodes]="filteredNodes" [groupByNodeType]="groupByNodeType"></app-map>
