@@ -29,7 +29,7 @@ export class InfrastructureJobTileComponent implements OnChanges {
   constructor(public settings: SettingsService,
               public dataService: DataService) { }
 
-  ngOnInit() {
+  ngOnInit()  {
     this.impactingNodes = this.settings.getNewOrExistingListSettings('impactingNodes', [], [
       new ListColumnSetting('Name', 'Name'),
       new ListColumnSetting('UD', 'UD'),
@@ -57,7 +57,7 @@ export class InfrastructureJobTileComponent implements OnChanges {
         copyTextValue: this.job.ImpactAction,
         displayText: this.job.ImpactAction,
       },
-    ]
+    ];
 
     const phaseMap = {
       Preparing: 1,
@@ -80,10 +80,7 @@ export class InfrastructureJobTileComponent implements OnChanges {
     ];
 
     forkJoin(this.job.RepairTasks.map(info => this.dataService.getRepairJobById(info.TaskId))).subscribe(job => {
-      console.log(job)
-
       this.jobs = job;
-    })
-  }
-
+    });
+  };
 }

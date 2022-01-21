@@ -297,7 +297,7 @@ export class DataService {
 
   public getRepairJobById(id: string): Observable<RepairTask> {
     return this.repairCollection.ensureInitialized().pipe(mergeMap((collection) => {
-      return this.tryGetValidItem(this.repairCollection, id)
+      return this.tryGetValidItem(this.repairCollection, id);
     }));
   }
 
