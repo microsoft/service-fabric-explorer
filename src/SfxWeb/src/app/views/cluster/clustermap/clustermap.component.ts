@@ -1,11 +1,8 @@
-import { Component, Injector, OnInit } from '@angular/core';
-import { DataService } from 'src/app/services/data.service';
+import { Component, Injector } from '@angular/core';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { forkJoin, Observable } from 'rxjs';
-import { Node } from 'src/app/Models/DataModels/Node';
-import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollection';
-import { HealthStateConstants } from 'src/app/Common/Constants';
+import { DataService } from 'src/app/services/data.service';
+import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 
 @Component({
   selector: 'app-clustermap',
@@ -13,33 +10,24 @@ import { HealthStateConstants } from 'src/app/Common/Constants';
   styleUrls: ['./clustermap.component.scss']
 })
 export class ClustermapComponent extends BaseControllerDirective {
-
   nodes: NodeCollection;
-  filter = '';
-  healthFilter: Record<string, boolean> = {};
+  filteredNodes = [];
 
-  constructor(private data: DataService, injector: Injector) {
+  groupByNodeType = false;
 
+  constructor(injector: Injector, private dataService: DataService) {
     super(injector);
    }
 
-   setup(){
-    this.nodes = this.data.nodes;
-    this.healthFilter[HealthStateConstants.OK] = true;
-    this.healthFilter[HealthStateConstants.Warning] = true;
-    this.healthFilter[HealthStateConstants.Error] = true;
+   setup() {
+     this.nodes = this.dataService.nodes;
    }
 
-  refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return forkJoin([
-      this.nodes.refresh(messageHandler)
-    ]);
-  }
+   refresh(messageHandler: IResponseMessageHandler) {
+    return this.nodes.refresh(messageHandler);
+   }
 
-  public getNodesForDomains(upgradeDomain: string, faultDomain: string): Node[] {
-    return this.nodes.collection.filter((node) => node.upgradeDomain === upgradeDomain &&
-                                                  node.faultDomain === faultDomain &&
-                                                  (this.filter.length > 0 ? node.name.toLowerCase().includes(this.filter) : true) &&
-                                                  (node.healthState.badgeId in this.healthFilter ? this.healthFilter[node.healthState.badgeId] : true));
-  }
+   setNodes(nodes: Node[]) {
+    this.filteredNodes = nodes;
+   }
 }

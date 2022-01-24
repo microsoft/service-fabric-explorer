@@ -1,23 +1,26 @@
 <div class="detail-list-container flex-child" style="margin-top: 15px;">
     <ng-content></ng-content>
     <div *ngIf="showTopOptions">
-      <app-input [placeholder]="searchText" [model]="listSettings.search" (changed)="listSettings.search = $event; updateList()"></app-input>
+      <app-input class="input-wrapper" [placeholder]="searchText" [model]="listSettings.search" (changed)="listSettings.search = $event; updateList()"></app-input>
       <button class="simple-button"  (click)="resetAll()">Reset All</button>
 
       <button class="simple-button" style="float: right;" (click)="export()"> <span class="mif-download2"></span> Export</button>
     </div>
         <label aria-live="off" aria-atomic="true" class="sr-only">There are {{sortedFilteredList.length}} items in the search result    </label>
         <div class="table-responsive">
-            <table class="table detail-list">
+            <table class="table detail-list" [attr.aria-label]="listSettings.tableName">
                 <thead aria-live="polite">
                     <tr>
                     <th class="sort-filter-th hover-row" *ngFor="let columnSetting of listSettings.columnSettings; let i = index"
                         [ngStyle]="{'width': columnSetting.fixedWidthPx ? columnSetting.fixedWidthPx + 'px' : ''}"
-                        [attr.aria-sort]="listSettings.isSortedByColumn(columnSetting) ? listSettings.sortReverse ? 'ascending' : 'descending' : 'none'">
+                        [attr.aria-sort]="listSettings.isSortedByColumn(columnSetting) ? listSettings.sortReverse ? 'descending' : 'ascending' : 'none'">
                         <!-- Header label -->
                         <button  class="flat-button supress-hover" [ngClass]="{'active': columnSetting.sortable, 'shift-expander-col': i === 0 && listSettings.secondRowCollapsible}" tabindex="0"
-                            style="padding-left: 0px;" (click)="sort(columnSetting);" [title]="'Sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'">
+                            style="padding-left: 0px;" (click)="sort(columnSetting);" [title]="'Sort by ' + columnSetting.displayName + (listSettings.sortReverse ? ' descending' : ' ascending')">
                             {{columnSetting.displayName}}
+
+                            <span class="bowtie-icon sort-icon" [ngClass]="{'mif-arrow-up': listSettings.sortReverse, 'mif-arrow-down': !listSettings.sortReverse}"  *ngIf="columnSetting.sortable && listSettings.isSortedByColumn(columnSetting)">
+                            </span>
                       </button>
 
                         <div ngbDropdown *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle"
@@ -25,31 +28,21 @@
                             <button class="flat-button supress-hover" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" [title]="'filter by ' + columnSetting.displayName + ' options'" [attr.aria-haspopup]="false">
                                 <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}"></span>
                             </button>
-                            <ul ngbDropdownMenu role="menu" style="list-style: none; padding: 5px; color: white; margin-bottom: 0px;"  >
-                                <li role="menuitem" class="check-options item" *ngIf="!columnSetting.allChecked" (click)="columnSetting.checkAll(); updateList()">
-                                    Check All
+                            <ul ngbDropdownMenu role="menu" class="dropdown-layout"  >
+                                <li role="menuitem" class="check-options item" *ngIf="!columnSetting.allChecked">
+                                  <button aria-label="Check all options" class="flat-button" (click)="columnSetting.checkAll(); updateList()">Check All</button>
                                 </li>
-                                <li role="menuitem" class="check-options item" *ngIf="!columnSetting.noneChecked" (click)="columnSetting.uncheckAll(); updateList()">
-                                    Uncheck All
+                                <li role="menuitem" class="check-options item" *ngIf="!columnSetting.noneChecked">
+                                  <button aria-label="unCheck all options" class="flat-button" (click)="columnSetting.uncheckAll(); updateList()">Uncheck All</button>
                                 </li>
                                 <li role="menuitem"  *ngFor="let filterValue of columnSetting.filterValues; let last = last;" class="item">
-                                    <label style="margin-bottom: 0px; font-size: 15px;" >
+                                    <label>
                                         <input type="checkbox" [(ngModel)]="filterValue.isChecked" (ngModelChange)="updateList();" (click)=" $event.stopPropagation()"   (keydown.tab)="last ? closeDropDown() : null"/>
                                         {{filterValue.value}}
                                     </label>
                                 </li>
                             </ul>
                         </div>
-
-                            <!-- Sort direction icon -->
-                            <!-- Use transparent color to hide the icon instead of using ng-show to avoid the table layout changes when the icon showed up -->
-                            <button class="flat-button" (click)="sort(columnSetting);"
-                            *ngIf="columnSetting.sortable && listSettings.isSortedByColumn(columnSetting)" style="font-size: 12pt;"
-                                    [attr.tabIndex]="listSettings.isSortedByColumn(columnSetting) ? 0 : -1" [title]="'sort by' + columnSetting.displayName + listSettings.sortReverse ? 'ascending' : 'descending'"
-                                    [attr.ariaHidden]="!listSettings.isSortedByColumn(columnSetting)">
-                                <span class="bowtie-icon sort-icon" [ngClass]="{'mif-arrow-up': listSettings.sortReverse, 'mif-arrow-down': !listSettings.sortReverse}">
-                                </span>
-                            </button>
                         </th>
                     </tr>
                 </thead>

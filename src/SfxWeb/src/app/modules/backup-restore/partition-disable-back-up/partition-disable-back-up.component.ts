@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, Inject } from '@angular/core';
 import { MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { IsolatedAction } from 'src/app/Models/Action';
 import { DataService } from 'src/app/services/data.service';
@@ -8,15 +8,12 @@ import { DataService } from 'src/app/services/data.service';
   templateUrl: './partition-disable-back-up.component.html',
   styleUrls: ['./partition-disable-back-up.component.scss']
 })
-export class PartitionDisableBackUpComponent implements OnInit {
+export class PartitionDisableBackUpComponent {
 
   cleanBackup = false;
 
   constructor(public dialogRef: MatDialogRef<PartitionDisableBackUpComponent>,
               @Inject(MAT_DIALOG_DATA) public data: IsolatedAction, public dataService: DataService) { }
-
-  ngOnInit() {
-  }
 
   ok(){
     this.data.data.enable(this.cleanBackup).subscribe( () => {

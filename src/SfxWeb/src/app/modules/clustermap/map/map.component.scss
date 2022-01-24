@@ -1,0 +1,23 @@
+.sticky {
+  position: sticky;
+  left: 0px;
+  z-index: 3;
+}
+
+table {
+  margin: 0px;
+}
+
+.first {
+  padding: 10px !important;
+  position: relative;
+}
+
+.upgrade-domain {
+  transform: rotate(270deg);
+  margin: auto;
+  position: absolute;
+  transform-origin: left;
+  top: 25%;
+  width: 120px;
+}

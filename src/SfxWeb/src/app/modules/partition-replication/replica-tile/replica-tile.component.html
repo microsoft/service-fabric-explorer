@@ -1,0 +1,53 @@
+<div class="replica-container essen-pane" [ngClass]="leftBannerColor" [attr.data-cy]="replica.id">
+  <div class="top-side">
+    <app-health-badge [badgeClass]="replica.healthState.badgeClass" size="25px"></app-health-badge>
+
+    <button class="flat-button underline flex-center" style="height: 25px" *ngIf="replicator"
+      (click)="changeReplication()" data-cy="view-replication">
+      <span class="mif-2x mif-arrow-drop-down status-icon"></span>
+      {{showReplication ? 'Close' : 'View'}} Replication</button>
+    <app-clip-board [text]="copyText" style="float: right"></app-clip-board>
+  </div>
+
+  <div style="display: flex; gap: 10px;" class="flex-min">
+    <div style="flex: 1;" class="flex-column" [ngStyle]="{'max-width': (showReplication ? 'calc(50% - 5px)' : '100%')}">
+      <div class="replica-header">
+        <div style="width: 100%;" data-cy="main-info">
+          <app-essential-item *ngFor="let item of overviewItems; let l = last; " [item]="item" [underline]="false">
+          </app-essential-item>
+          <app-essential-item [item]="status" [underline]="true">
+            <app-status-resolver [status]="replica.raw.ReplicaStatus"></app-status-resolver>
+          </app-essential-item>
+        </div>
+      </div>
+
+      <div *ngIf="showReplication" class="flex-min show-replication" [ngClass]="{'fullscreen' :  fullScreen}">
+        <h4 class="underline-title" style="margin: 5px 5px 0px;">LSN's Replicated Per Second
+
+          <span class="link {{ fullScreen ? 'mif-shrink' : 'mif-enlarge' }}" style="float: right;"
+            (click)="changeFullScreen()"></span>
+        </h4>
+        <div class="description-container">
+          <div style="margin:auto">
+            (This information is only recorded on this tab and is cleared when left)
+          </div>
+          <div class="flex-column">
+            UTC
+            <app-toggle [(state)]="showUTC"></app-toggle>
+          </div>
+
+        </div>
+
+        <div class="flex-min">
+          <app-replication-trend-line [data]="replicatorHistory" [showUTC]="showUTC" [fullScreen]="fullScreen"></app-replication-trend-line>
+        </div>
+
+      </div>
+    </div>
+
+    <div *ngIf="showReplication" style="flex: 1;" data-cy="replicator-info">
+      <app-replica-status [replicator]="replicator"></app-replica-status>
+    </div>
+  </div>
+
+</div>

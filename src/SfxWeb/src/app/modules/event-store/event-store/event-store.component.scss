@@ -12,6 +12,13 @@
     }
 }
 
+
+.btn-group {
+  &:focus-within {
+    border: 2px solid #70daf8  !important;
+  }
+}
+
 .active {
     background-color: #0075c9 !important;
     border-width: 2px;

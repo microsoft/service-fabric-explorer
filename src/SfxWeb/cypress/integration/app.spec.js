@@ -69,7 +69,7 @@ context('app', () => {
     describe("details", () => {
         const param = "Parameters"
 
-        it.only('view details', () => {
+        it('view details', () => {
           cy.visit(`/#/apptype/${appName}/app/${appName}`)
 
             cy.wait([waitRequest, "@getapphealth"]);
@@ -83,7 +83,7 @@ context('app', () => {
             cy.contains(param).should('exist')
         })
 
-      it.only('view details - no params', () => {
+      it('view details - no params', () => {
         cy.intercept('GET', aad_route,
           {
             fixture: "aad.json", headers: {

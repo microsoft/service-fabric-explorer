@@ -2,7 +2,7 @@
 
 import {
   apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, checkTableSize,
-  upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute, checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT, repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME
+  upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute, checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT, repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME, FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh
 } from './util';
 
 const LOAD_INFO = "getloadinfo"
@@ -159,15 +159,55 @@ context('Cluster page', () => {
 
   describe("clustermap", () => {
     it('load clustermap', () => {
+      const checkNodes = (ref, expectedCount) => {
+
+        let count = 0;
+        cy.get(ref).each(item => {
+          if(item.text().trim() !== "0") {
+            count += parseInt(item.text().trim());
+          }
+        }).then(($lis) => {
+          expect(count).to.equal(expectedCount)
+        })
+      }
+
+      const filter_id = '[data-cy=filter]';
+      const filter_nodetype_id = '[data-cy=nodetype-filter]';
+
+      const node_ref = '[data-cy=node]';
+      const node_type_ref = '[data-cy=nodetype-group]';
+
+      const down_node_ref = '[data-cy=down-nodes]';
+
       cy.visit('/#/clustermap')
 
-      cy.get('[data-cy=clustermap]').within(() => {
+      checkNodes(down_node_ref, 0);
 
-        cy.get('[data-cy=node]').should('have.length', 5);
+      cy.intercept('GET', nodes_route, { fixture: 'cluster-page/clustermap/nodes.json' })
+
+      refresh();
+      cy.wait(FIXTURE_REF_NODES);
+      cy.wait(200)
+
+      checkNodes(down_node_ref, 2);
+
+      cy.get('[data-cy=clustermap-container]').within(() => {
 
         //filter
-        cy.get('input').type("_nt_0");
-        cy.get('[data-cy=node]').should('have.length', 1);
+        cy.get(node_ref).should('have.length', 5);
+        typeIntoInput(filter_id, "_nt_0");
+        cy.get(node_ref).should('have.length', 1);
+        typeIntoInput(filter_id);
+
+
+        cy.get(node_type_ref).should('have.length', 0);
+        cy.get(filter_nodetype_id).click();
+        cy.get(node_type_ref).should('have.length', 5);
+
+        //expand one of the node types
+        cy.get(node_type_ref).first().click();
+        cy.get(node_ref).should('have.length', 1);
+
       })
     })
 

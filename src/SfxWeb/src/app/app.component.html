@@ -43,7 +43,7 @@
     </div>
 
     <div ngbDropdown display="'static'" placement="'bottom-right'" class="report">
-      <button ngbDropdownToggle class="mif-bug mif-lg flat-button link" style="color: #70daf8"></button>
+      <button ngbDropdownToggle class="mif-bug mif-lg flat-button link" style="color: #70daf8" aria-label="Issue reporting options"></button>
       <ul ngbDropdownMenu style="padding: 10px;">
         <li ngbDropdownItem>
           <a href="https://aka.ms/servicefabric/issues" target="_blank">Report Service Fabric Bug</a>
@@ -68,12 +68,17 @@
           <nav class="tree-container" [attr.aria-hidden]="smallScreenSize ? smallScreenLeftPanelWidth === '0px' : false" role="navigation">
             <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize"  ></app-tree-view>
           </nav>
-        <div class="slider-bar" appDrag (dragFinish)="resize($event)" *ngIf="!smallScreenSize"></div>
+          <div class="slider-bar" appDrag (dragFinish)="resize($event)" *ngIf="!smallScreenSize">
+        </div>
         <div class="slider-bar" style="cursor: initial;" *ngIf="smallScreenSize"></div>
     </div>
     <div [ngStyle]="{'left': smallScreenSize ? '0px' : rightOffset }" class="right-panel main-content" (click)="smallScreenSize ? resize(0): null" (focusin)="smallScreenSize ? resize(0): null">
       <main>
         <div class="view-container" #main>
+          <div class="expander-container">
+            <span class=" expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right"
+                  [ngbTooltip]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'" (click)="collapseSide()"></span>
+          </div>
           <router-outlet id="view-container" ></router-outlet>
         </div>
       </main>
@@ -81,7 +86,7 @@
   </div>
   <app-toast-container aria-live="polite" aria-atomic="true"></app-toast-container>
 
-  <div style="position: absolute; right: 5px; bottom: 0px;">
+  <div class="utc-time">
     <app-local-time></app-local-time>
   </div>
 </div>
