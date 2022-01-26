@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, TemplateRef } from '@angular/core';
 
 @Component({
   selector: 'app-phase-diagram',
@@ -7,6 +7,7 @@ import { Component, Input, OnChanges, OnInit } from '@angular/core';
 })
 export class PhaseDiagramComponent implements OnChanges {
 
+  @Input() middleItem: TemplateRef<any>;
   @Input() items: IProgressStatus[];
   @Input() currentIndex = 0;
   @Input() vertical = false;
@@ -35,8 +36,10 @@ export class PhaseDiagramComponent implements OnChanges {
 
     this.progress = this.items.map( (phase, index) => {
       return  {
+        ...phase,
         name: phase.name,
-        state: this.getPhaseReference(this.currentIndex, index + 1)
+        state: this.getPhaseReference(this.currentIndex, index + 1),
+        textRight: phase.textRight,
       };
     });
 
@@ -59,6 +62,7 @@ export class PhaseDiagramComponent implements OnChanges {
 
 export interface IProgressStatus {
   name: string;
+  textRight?: string;
 }
 
 interface IProgressStatusWithIndex extends IProgressStatus {

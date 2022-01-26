@@ -115,7 +115,6 @@ $SfxWeb-theme: mat.define-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-w
 
 .main-view {
     padding-right: 5px;
-    overflow: auto;
     flex: 1;
     display: flex;
     flex-direction: column;
