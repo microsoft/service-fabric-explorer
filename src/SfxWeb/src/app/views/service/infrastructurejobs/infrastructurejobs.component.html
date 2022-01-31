@@ -10,8 +10,10 @@
   </app-dashboard-text-tile>
 </div>
 
-<a href="https://aka.ms/servicefabric" target="_blank" class="essen-pane info-box">
-  <span class="mif-info link"></span> {{this.infrastructureJobsSuggestion}}To learn more about Infrastructure Jobs read here
+<a href="https://docs.microsoft.com/azure/service-fabric/infrastructure-service-faq#faqs" target="_blank" class="essen-pane info-box">
+  {{this.infrastructureJobsSuggestion}}
+  <!--  this.InfrastrucutreJobSuggestion would contain specific messages . This should be presented just before Click to learn more box so that users can get a small context within SFX only.-->
+  <span class="mif-info link"></span> Click here to learn more.
 </a>
 
 <div class="detail-pane">

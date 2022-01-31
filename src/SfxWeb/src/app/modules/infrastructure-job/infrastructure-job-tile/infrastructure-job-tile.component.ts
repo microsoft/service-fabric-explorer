@@ -16,7 +16,7 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
 })
 export class InfrastructureJobTileComponent implements OnChanges {
 
-  @Input() job: IRawInfrastructureJob;
+  @Input() job: InfrastructureJob;
 
   essentialItems: IEssentialListItem[] = [];
   public progress: IProgressStatus[] = [];
@@ -24,7 +24,7 @@ export class InfrastructureJobTileComponent implements OnChanges {
   impactingNodes: ListSettings;
 
   repairJobs: ListSettings;
-  jobs: RepairTask[] = [];
+  repairTask: RepairTask;
 
   constructor(public settings: SettingsService,
               public dataService: DataService) { }
@@ -44,18 +44,18 @@ export class InfrastructureJobTileComponent implements OnChanges {
     this.essentialItems = [
       {
         descriptionName: 'Current UD',
-        copyTextValue: this.job.CurrentUD,
-        displayText: this.job.CurrentUD,
+        copyTextValue: this.job.raw.CurrentUD,
+        displayText: this.job.raw.CurrentUD,
       },
       {
         descriptionName: 'Ack Status',
-        copyTextValue: this.job.AcknowledgementStatus,
-        displayText: this.job.AcknowledgementStatus,
+        copyTextValue: this.job.raw.AcknowledgementStatus,
+        displayText: this.job.raw.AcknowledgementStatus,
       },
       {
         descriptionName: 'Impact Action',
-        copyTextValue: this.job.ImpactAction,
-        displayText: this.job.ImpactAction,
+        copyTextValue: this.job.VmImpact.join(","),
+        displayText: this.job.VmImpact.join(","),
       },
     ];
 
@@ -65,7 +65,7 @@ export class InfrastructureJobTileComponent implements OnChanges {
       Completed: 3
     };
 
-    this.index = phaseMap[this.job.JobStatus];
+    this.index = phaseMap[this.job.raw.JobStatus];
 
     this.progress = [
       {
@@ -79,8 +79,8 @@ export class InfrastructureJobTileComponent implements OnChanges {
       }
     ];
 
-    forkJoin(this.job.RepairTasks.map(info => this.dataService.getRepairJobById(info.TaskId))).subscribe(job => {
-      this.jobs = job;
+    this.dataService.getRepairJobById(this.job.RepairTask.TaskId).subscribe(job => {
+      this.repairTask = job;
     });
-  };
+  }
 }
