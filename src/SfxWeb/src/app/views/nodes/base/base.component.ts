@@ -12,10 +12,15 @@ import { Constants } from 'src/app/Common/Constants';
 })
 export class BaseComponent implements OnInit {
 
-  tabs: ITab[] = [{
+  tabs: ITab[] = [
+    {
     name: 'all nodes',
     route: './'
-    }
+    },
+    {
+      name: 'observer',
+      route: './observer'
+      }
   ];
   constructor(public tree: TreeService, private data: DataService) { }
 

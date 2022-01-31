@@ -9,10 +9,11 @@ import { EventsComponent } from './events/events.component';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { EventStoreModule } from 'src/app/modules/event-store/event-store.module';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
+import { FabricObserverComponent } from './fabric-observer/fabric-observer.component';
 
 
 @NgModule({
-  declarations: [BaseComponent, AllNodesComponent, EventsComponent],
+  declarations: [BaseComponent, AllNodesComponent, EventsComponent, FabricObserverComponent],
   imports: [
     CommonModule,
     NodesRoutingModule,

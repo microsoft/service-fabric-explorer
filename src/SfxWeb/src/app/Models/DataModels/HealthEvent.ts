@@ -78,4 +78,9 @@ export class HealthBase<T extends IRawHealth> extends DataModelBase<T> {
 
       return potential
     }
+
+
+    public getHealthEventBySource(source: string) {
+      return this.healthEvents.filter(event => event.raw.SourceId === source);
+    }
 }
