@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, TemplateRef } from '@angular/core';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
 import { NodeStatusDetails } from 'src/app/Models/DataModels/collections/NodeCollection';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
@@ -11,6 +11,8 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
   styleUrls: ['./status-tile.component.scss']
 })
 export class StatusTileComponent implements OnChanges {
+
+  @Input() listTemplate: TemplateRef<any>;
 
   @Input() nodes: Node[];
   @Input() repairJobs: RepairTaskCollection;

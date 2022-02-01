@@ -10,11 +10,9 @@ import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollec
 import { IMetricsViewModel, MetricsViewModel } from 'src/app/ViewModels/MetricsViewModel';
 import { LoadMetricInformation } from 'src/app/Models/DataModels/Shared';
 
-interface IChartData {
-  dataPoints: number[];
-  categories: string[];
-  title: string;
-  subtitle: string;
+interface IChartSeries {
+  label: string;
+  data: number[];
 }
 
 @Component({
@@ -27,23 +25,28 @@ export class MetricsComponent extends BaseControllerDirective {
   clusterLoadInformation: ClusterLoadInformation;
   nodes: NodeCollection;
   metricsViewModel: MetricsViewModel;
-  tableData: IChartData = {
+  tableData = {
     dataPoints: [],
     categories: [],
     title: '',
-    subtitle: ''
+    tooltipFunction: null
   };
+
+  // groupByNodeType = false;
+  showOptions = true;
+  filteredNodes = [];
+
   constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
     super(injector);
-   }
+  }
 
-  setup(){
+  setup() {
     this.clusterLoadInformation = this.data.clusterLoadInformation;
     this.nodes = this.data.nodes;
   }
 
-  updateSelectedMetric(metric: LoadMetricInformation) {
-    this.metricsViewModel.toggleMetric(metric);
+  updateSelectedMetric(metric: LoadMetricInformation, metricArray: LoadMetricInformation[]) {
+    this.metricsViewModel.toggleMetric(metric, metricArray);
     this.updateViewMetric();
   }
 
@@ -51,31 +54,81 @@ export class MetricsComponent extends BaseControllerDirective {
     this.tableData = {
       dataPoints: [],
       categories: [],
-      title: this.metricsViewModel.selectedMetrics[0].displayName,
-      subtitle: ''
+      title: 'Metrics',
+      tooltipFunction: null
     };
 
-    this.metricsViewModel.filteredNodeLoadInformation.forEach(metric => {
-      this.tableData.dataPoints.push(metric.metrics[this.metricsViewModel.selectedMetrics[0].name]);
-      this.tableData.categories.push(metric.raw.NodeName);
+    const chartMetricSeriesList: IChartSeries[] = this.metricsViewModel.selectedMetrics.map(metric => {
+      return {
+        label: metric.displayName,
+        data: []
+      };
     });
 
+    //for some of the metrics, we normailize and show their value so its necessary to have both.
+    let addNormalizationTooltip = false;
+    const tooltipMap =  {};
+
+    this.metricsViewModel.filteredNodeLoadInformation(this.filteredNodes).sort((a, b) => a.name.localeCompare(b.name)).forEach(metric => {
+      this.metricsViewModel.selectedMetrics.forEach((selectedmetric, index) => {
+        const normalize = selectedmetric.hasCapacity && this.metricsViewModel.normalizeMetricsData;
+        const selectedNodeLoadMetricInfo = metric.nodeLoadMetricInformation.find(lmi => lmi.name === selectedmetric.name);
+        let dataPoint = +selectedNodeLoadMetricInfo.raw.NodeLoad;
+
+        if (normalize) {
+          addNormalizationTooltip = true;
+          dataPoint = selectedNodeLoadMetricInfo.loadCapacityRatio;
+
+          const d = selectedNodeLoadMetricInfo;
+          const tooltip = `${d.parent.name}: ${d.raw.NodeLoad}${d.hasCapacity ? ` / ${d.raw.NodeCapacity} (${d.loadCapacityRatioString})` : ""}`;
+          tooltipMap[`${metric.raw.NodeName}-${selectedmetric.displayName}`] = tooltip;
+
+        } else if (selectedmetric.hasCapacity) {
+          dataPoint = Math.max(+selectedNodeLoadMetricInfo.raw.NodeLoad, +selectedNodeLoadMetricInfo.raw.NodeCapacity);
+        }
+
+          chartMetricSeriesList[index].data.push(dataPoint);
+
+      });
+
+        this.tableData.categories.push(metric.raw.NodeName);
+    });
+
+    if (addNormalizationTooltip) {
+      this.tableData.tooltipFunction = function() {
+        return tooltipMap[`${this.x}-${this.series.name}`]
+      }
+    }
+
+    this.tableData.dataPoints = chartMetricSeriesList;
+  }
+
+  public toggleSide() {
+    this.showOptions = !this.showOptions;
+    setTimeout(() => {
+      window.dispatchEvent(new Event('resize'));
+    }, 10)
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
-        this.nodes.refresh(messageHandler),
-        this.clusterLoadInformation.refresh(messageHandler)
-      ]).pipe(mergeMap( () => {
-          if (!this.metricsViewModel) {
-              this.metricsViewModel = this.settings.getNewOrExistingMetricsViewModel(this.clusterLoadInformation, this.nodes.collection.map(node => node.loadInformation));
-          }
+      this.nodes.refresh(messageHandler),
+      this.clusterLoadInformation.refresh(messageHandler)
+    ]).pipe(mergeMap(() => {
+      if (!this.metricsViewModel) {
+        this.metricsViewModel = this.settings.getNewOrExistingMetricsViewModel(this.clusterLoadInformation);
+      }
 
-          const promises = this.nodes.collection.map(node => node.loadInformation.refresh(messageHandler));
-          return forkJoin(promises).pipe(map(() => {
-              this.metricsViewModel.refresh();
-              this.updateViewMetric();
-            }));
+      const promises = this.nodes.collection.map(node => node.loadInformation.refresh(messageHandler));
+      return forkJoin(promises).pipe(map(() => {
+        this.metricsViewModel.refresh();
+        this.updateViewMetric();
       }));
+    }));
+  }
+
+  setNodes(nodes: Node[]) {
+    this.filteredNodes = nodes;
+    this.updateViewMetric();
   }
 }

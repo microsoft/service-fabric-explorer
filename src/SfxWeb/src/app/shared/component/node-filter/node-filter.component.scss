@@ -1,0 +1,27 @@
+.label-group {
+  label:not(:last-child) {
+    margin-bottom: 5px;
+  }
+
+  app-toggle {
+    float: right;
+    margin-left: 10px;
+  }
+}
+
+.first {
+  padding: 10px !important;
+  position: relative;
+}
+
+.layout-wrapper {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 10px;
+}
+
+.type-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { MessageService } from 'src/app/services/message.service';
 
 @Component({
@@ -6,11 +6,8 @@ import { MessageService } from 'src/app/services/message.service';
   templateUrl: './toast-container.component.html',
   styleUrls: ['./toast-container.component.scss']
 })
-export class ToastContainerComponent implements OnInit {
+export class ToastContainerComponent {
 
   constructor(public toastService: MessageService) {}
-
-  ngOnInit() {
-  }
 
 }

@@ -1,4 +1,4 @@
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Input } from '@angular/core';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
 @Component({
@@ -6,14 +6,10 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
   templateUrl: './essential-item.component.html',
   styleUrls: ['./essential-item.component.scss']
 })
-export class EssentialItemComponent implements OnInit {
+export class EssentialItemComponent {
 
   @Input() item: IEssentialListItem;
   @Input() underline = false;
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
-
 }

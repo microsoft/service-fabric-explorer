@@ -28,11 +28,12 @@ import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-d
 import { RepairJobChartComponent } from './repair-job-chart/repair-job-chart.component';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 import { ClustermapModule } from 'src/app/modules/clustermap/clustermap.module';
+import { MetricTileComponent } from './metric-tile/metric-tile.component';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
                  ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent,
-                 StatusWarningsComponent, BackupsComponent, RepairTasksComponent, RepairTaskViewComponent, RepairJobChartComponent],
+                 StatusWarningsComponent, BackupsComponent, RepairTasksComponent, RepairTaskViewComponent, RepairJobChartComponent, MetricTileComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,

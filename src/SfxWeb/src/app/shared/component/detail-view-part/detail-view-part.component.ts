@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { Constants } from 'src/app/Common/Constants';
 import { Utils } from 'src/app/Utils/Utils';
@@ -24,7 +24,7 @@ export class ResolvedObject {
   templateUrl: './detail-view-part.component.html',
   styleUrls: ['./detail-view-part.component.scss']
 })
-export class DetailViewPartComponent implements OnInit, OnChanges {
+export class DetailViewPartComponent implements OnChanges {
 
   @Input() noFixedLayout = false;
 
@@ -35,9 +35,6 @@ export class DetailViewPartComponent implements OnInit, OnChanges {
   // with parent added it will assume data is from data.raw and this allows to run change detection.
   @Input() parent: any;
   constructor() { }
-
-  ngOnInit() {
-  }
 
   ngOnChanges() {
       if (this.parent){
