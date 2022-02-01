@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, ChangeDetectionStrategy, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
+import { Component, Input, ChangeDetectionStrategy, AfterViewInit, ViewChild, ElementRef, OnChanges } from '@angular/core';
 import { UpgradeDomain } from 'src/app/Models/DataModels/Shared';
 import { Chart, Options, chart, PointOptionsObject } from 'highcharts';
 import { Counter } from 'src/app/Utils/Utils';
@@ -15,7 +15,7 @@ interface ITileCount {
   styleUrls: ['./upgrade-progress.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChanges {
+export class UpgradeProgressComponent implements AfterViewInit, OnChanges {
 
   @Input() upgradeDomains: UpgradeDomain[];
   @Input() showChart = false;
@@ -26,9 +26,6 @@ export class UpgradeProgressComponent implements OnInit, AfterViewInit, OnChange
 
   tiles: ITileCount[] = [];
   displayUd: UpgradeDomain[] = [];
-
-  ngOnInit() {
-  }
 
   ngAfterViewInit() {
     if (this.showChart) {

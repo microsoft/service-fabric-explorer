@@ -187,10 +187,11 @@ context('Cluster page', () => {
 
       refresh();
       cy.wait(FIXTURE_REF_NODES);
+      cy.wait(200)
 
       checkNodes(down_node_ref, 2);
 
-      cy.get('[data-cy=clustermap]').within(() => {
+      cy.get('[data-cy=clustermap-container]').within(() => {
 
         //filter
         cy.get(node_ref).should('have.length', 5);

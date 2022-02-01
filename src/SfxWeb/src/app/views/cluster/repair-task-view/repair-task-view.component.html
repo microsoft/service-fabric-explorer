@@ -42,29 +42,20 @@
                         Phase <div style="float: right">Duration</div>
                     </div>
                     <app-collapse-container *ngFor="let phase of item.historyPhases" [collapsed]="phase.startCollapsed" hideTooltip="true" (collapsedChange)="item.changePhaseCollapse(phase.name,$event)">
-                        <div style="margin-bottom: .5em;" collapse-header [ngClass]='phase.statusCss'>
+                        <div collapse-header [ngClass]='phase.statusCss'>
                             {{phase.name}} : {{phase.status}} <span *ngIf="phase.durationMilliseconds > 0" style="float: right;">{{phase.duration}}</span>
                         </div>
                         <div collapse-body class="collapse-inner-bar">
-                            <table class="" style="color: white; width: 100%">
-                                <thead>
-                                    <tr>
-                                        <th>Phase</th>
-                                        <th>Start (UTC)</th>
-                                        <th>Duration</th>
-                                    </tr>
-                                </thead>
-                                <tbody>
-                                    <tr *ngFor="let point of phase.phases">
-                                        <td [ngClass]='point.displayInfo.statusCss'>
-                                            <span [ngClass]="point.displayInfo.badgeIcon" [title]="point.displayInfo.status"></span>
-                                            {{point.phase}}
-                                        </td>
-                                        <td style="white-space: nowrap;"><app-display-time [time]="point.timestamp"></app-display-time></td>
-                                        <td style="white-space: pre-line; text-align: center;">{{point.duration}}</td>
-                                    </tr>
-                                </tbody>
-                            </table>
+
+                          <ng-template #customWrapperTemplate let-data="data">
+                            <div *ngIf="data.timestamp" >
+                              <div  style="margin-left: 10px" >
+                                <app-display-time [time]="data.timestamp"></app-display-time>
+                              </div>
+                            </div>
+                          </ng-template>
+                          <app-phase-diagram [currentIndex]="phase.currentPhase" [items]="phase.phases" [vertical]="true"
+                          [middleItem]="customWrapperTemplate"></app-phase-diagram>
                         </div>
                     </app-collapse-container>
                 </div>

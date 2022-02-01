@@ -1,0 +1,49 @@
+<div class="tile-container">
+  <app-dashboard-text-tile [barClass]="executingMRJobs.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
+    [count]="executingMRJobs.length" *ngIf="executingMRJobs.length >= 0" title="Active Infrastructure Jobs"
+    style="display: block">
+  </app-dashboard-text-tile>
+
+  <app-dashboard-text-tile [barClass]="allPendingMRJobs.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
+    [count]="allPendingMRJobs.length" *ngIf="allPendingMRJobs.length >= 0" title="Pending Infrastrucutre Jobs "
+    style="display: block">
+  </app-dashboard-text-tile>
+</div>
+
+<a href="https://docs.microsoft.com/azure/service-fabric/infrastructure-service-faq#faqs" target="_blank" class="essen-pane info-box">
+  {{this.infrastructureJobsSuggestion}}
+  <!--  this.InfrastrucutreJobSuggestion would contain specific messages . This should be presented just before Click to learn more box so that users can get a small context within SFX only.-->
+  <span class="mif-info link"></span> Click here to learn more.
+</a>
+
+<div class="detail-pane">
+  <app-collapse-container sectionName="Active Infrastructure Jobs">
+    <h4 collapse-header>
+      Active Infrastructure Jobs
+    </h4>
+
+    <div style="margin-bottom: 20px;" collapse-body>
+      <app-infrastructure-job-tile *ngFor="let job of executingMRJobs" [job]="job" style="margin-bottom: 15px;"></app-infrastructure-job-tile>
+    </div>
+  </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane">
+  <app-collapse-container sectionName="Pending Infrastructure Jobs">
+    <h4 collapse-header>
+      Pending Infrastructure Jobs
+    </h4>
+    <app-detail-list [list]="allPendingMRJobs" [listSettings]="allPendingMRJobsList" collapse-body>
+    </app-detail-list>
+  </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane">
+  <app-collapse-container collapsed=true sectionName="Completed Infrastructure Jobs">
+    <h4 collapse-header data-cy="completed">
+      Recently Completed Infrastructure Jobs
+    </h4>
+    <app-detail-list [list]="completedMRJobs" [listSettings]="completedMRJobsList" collapse-body>
+    </app-detail-list>
+  </app-collapse-container>
+</div>

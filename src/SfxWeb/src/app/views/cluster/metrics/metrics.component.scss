@@ -1,0 +1,51 @@
+@import "src/vars.scss";
+
+$metric-container-margin: 12px;
+$metric-container-padding: 8px;
+
+.checkbox-container {
+  display: inline-block;
+  margin-bottom: $metric-container-margin;
+
+  &:not(:first-child) {
+    margin-left: 130px;
+  }
+
+  label {
+    display: block;
+  }
+}
+
+.metric-column-title {
+  margin-bottom: $metric-container-margin;
+  padding-bottom: $metric-container-padding;
+  border-bottom: 1px solid $input-border-color;
+  margin-right: $metric-container-margin;
+}
+
+.metrics-column {
+  overflow-x: hidden;
+  width: 300px;
+  margin-top: 10px;
+}
+
+.filter-container {
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.title-container {
+  height: 28px;
+}
+
+.layout-container {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  margin-left: 15px;
+  min-width: 1px;
+
+  .dynamic-bar-chart {
+    flex: 1;min-width: 0px;
+  }
+}

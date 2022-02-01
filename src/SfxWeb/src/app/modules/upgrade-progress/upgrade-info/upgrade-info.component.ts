@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { ApplicationUpgradeProgress } from 'src/app/Models/DataModels/Application';
 import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
@@ -8,7 +8,7 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
   templateUrl: './upgrade-info.component.html',
   styleUrls: ['./upgrade-info.component.scss']
 })
-export class UpgradeInfoComponent implements OnInit, OnChanges {
+export class UpgradeInfoComponent implements OnChanges {
 
   @Input() upgradeProgress: ClusterUpgradeProgress | ApplicationUpgradeProgress;
 
@@ -96,8 +96,4 @@ export class UpgradeInfoComponent implements OnInit, OnChanges {
       };
     }
   }
-
-  ngOnInit(): void {
-  }
-
 }
