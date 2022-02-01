@@ -39,6 +39,7 @@ import { SettingsService } from './settings.service';
 import { RepairTask } from '../Models/DataModels/repairTask';
 import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 import groupBy from 'lodash/groupBy';
+
 @Injectable({
   providedIn: 'root'
 })
@@ -294,6 +295,12 @@ export class DataService {
       }));
   }
 
+  public getRepairJobById(id: string): Observable<RepairTask> {
+    return this.repairCollection.ensureInitialized().pipe(mergeMap((collection) => {
+      return this.tryGetValidItem(this.repairCollection, id);
+    }));
+  }
+
     private addFabricEventData<T extends EventListBase<any>, S extends FabricEventBase>(data: IEventStoreData<T, S>){
         data.listSettings = data.eventsList.settings;
         data.getEvents = () => data.eventsList.collection.map(event => event.raw);
@@ -389,7 +396,7 @@ export class DataService {
     if (item) {
         return item.ensureInitialized(forceRefresh, messageHandler);
     } else {
-      return throwError('This item could not be found');
+      return throwError('This item could not be found ' + uniqueId);
     }
   }
 
