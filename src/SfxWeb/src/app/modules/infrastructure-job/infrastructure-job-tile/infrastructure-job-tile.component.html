@@ -1,11 +1,11 @@
-<div class="essen-pane">
+<div class="essen-pane" [attr.data-cy]="job.id">
   <div style="display: flex; justify-content: space-between;">
-    <div class="underline title">
-      Job : {{job.Id}} <app-clip-board [text]="job.Id"></app-clip-board>
+    <div class="underline title" data-cy="job-id">
+      Job : {{job.id}} <app-clip-board [text]="job.id"></app-clip-board>
     </div>
 
-    <div class="underline title">
-      Job Status : {{job.JobStatus}} <app-clip-board [text]="job.JobStatus"></app-clip-board>
+    <div class="underline title" data-cy="job-status">
+      Job Status : {{job.raw.JobStatus}} <app-clip-board [text]="job.raw.JobStatus"></app-clip-board>
     </div>
   </div>
 
@@ -24,8 +24,8 @@
               <app-phase-diagram [items]="progress" [currentIndex]="index" [vertical]="true"></app-phase-diagram>
 
             </div>
-            <div style="max-width: 300px;">
-              <div class="underline title">
+            <div style="max-width: 300px;" data-cy="overview">
+              <div class="underline title" >
                 Overview
               </div>
               <app-essential-item *ngFor="let item of essentialItems; let l = last" [item]="item" [underline]="false">
@@ -37,7 +37,7 @@
                   <div>Currently Impacted Nodes</div>
                 </div>
                 <div>
-                  <app-detail-list [list]="job.CurrentlyImpactedRoleInstances" [listSettings]="impactingNodes"
+                  <app-detail-list [list]="job.raw.CurrentlyImpactedRoleInstances" [listSettings]="impactingNodes"
                     [showTopOptions]="false"></app-detail-list>
                 </div>
               </div>
@@ -48,7 +48,7 @@
                 Pending Repair Task
               </div>
               <!--  There would only be 1 repair Task. -->
-              <app-detail-list [list]="jobs" [listSettings]="repairJobs" [showTopOptions]="false" collapse-body>
+              <app-detail-list [list]="repairTask" [listSettings]="repairJobs" [showTopOptions]="false" collapse-body>
               </app-detail-list>
             </div>
           </div>

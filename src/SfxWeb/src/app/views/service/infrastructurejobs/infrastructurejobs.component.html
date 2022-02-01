@@ -23,7 +23,7 @@
     </h4>
 
     <div style="margin-bottom: 20px;" collapse-body>
-      <app-infrastructure-job-tile *ngFor="let job of executingMRJobs" [job]="job.raw" style="margin-bottom: 15px;"></app-infrastructure-job-tile>
+      <app-infrastructure-job-tile *ngFor="let job of executingMRJobs" [job]="job" style="margin-bottom: 15px;"></app-infrastructure-job-tile>
     </div>
   </app-collapse-container>
 </div>
@@ -40,7 +40,7 @@
 
 <div class="detail-pane essen-pane">
   <app-collapse-container collapsed=true sectionName="Completed Infrastructure Jobs">
-    <h4 collapse-header>
+    <h4 collapse-header data-cy="completed">
       Recently Completed Infrastructure Jobs
     </h4>
     <app-detail-list [list]="completedMRJobs" [listSettings]="completedMRJobsList" collapse-body>
