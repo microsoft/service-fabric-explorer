@@ -6,6 +6,10 @@ import { NodeCollection } from 'src/app/Models/DataModels/collections/NodeCollec
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
+import { Injectable } from '@angular/core';
+import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink,
+         ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime, ListColumnSettingWithCustomComponent,
+         ListColumnSettingWithShorten } from 'src/app/Models/ListSettings';
 
 @Component({
   selector: 'app-fabric-observer',
@@ -15,8 +19,8 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 export class FabricObserverComponent extends BaseControllerDirective {
 
   nodes: NodeCollection;
-  // listSettings: ListSettings;
-  // tiles: IDashboardViewModel[] = [];
+  listSettings: ListSettings;
+  list = [];
 
   constructor(private data: DataService, private settings: SettingsService, injector: Injector) {
     super(injector);
@@ -24,7 +28,6 @@ export class FabricObserverComponent extends BaseControllerDirective {
 
    setup() {
     this.nodes = this.data.nodes;
-
    };
 
 
@@ -42,14 +45,22 @@ export class FabricObserverComponent extends BaseControllerDirective {
                       current[split[0]] = split[1];
                       properties.add(split[0]);
                     }
-                    return current;
+                    return {...current, node: node.name};
                   }, {})
                 }else{
-                  return {};
+                  return {node: node.name};
                 }
-
               })
 
+              const items = [];
+              properties.forEach(entry => {
+                items.push(entry)
+              })
+              console.log(items)
+
+              this.listSettings = this.settings.getNewOrExistingListSettings("FO-node", null,
+              [new ListColumnSetting("node", "node")].concat(items.map(entry => new ListColumnSetting(entry, entry))))
+              this.list = states;
         console.log(properties, states)
       // console.log(t)
     }))
