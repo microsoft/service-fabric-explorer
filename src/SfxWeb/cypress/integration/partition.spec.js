@@ -70,7 +70,7 @@ context('service', () => {
             cy.url().should('include', '/events')
         })
 
-        it.only('replicator', () => {
+        it('replicator', () => {
           cy.get('[data-cy=replicator]').within(() => {
             // cy.contains('events').click();
 

@@ -27,7 +27,7 @@ context('app', () => {
             })
         })
 
-      it.only('unprovision', () => {
+      it('unprovision', () => {
         cy.intercept('POST', apiUrl('/ApplicationTypes/VisualObjectsApplicationType/$/Unprovision?*'), {
           statusCode: 200,
           body: {},
