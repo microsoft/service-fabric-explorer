@@ -104,7 +104,7 @@
     </div>
     <div class="modal-footer">
         <!-- TODO handle all of the validation somewhere -->
-        <button class="solid-button blue" [disabled]="!form.valid"
+        <button class="solid-button blue" [disabled]="!form.valid" data-cy="submit"
             (click)="saveBackupPolicy()">{{isUpdateOperation ? 'Update backup policy' : 'Create backup policy'}}</button>
         <button class="flat-button" (click)="dialogRef.close()">Cancel</button>
     </div>

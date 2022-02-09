@@ -68,7 +68,7 @@ context('copy to clipboard', () => {
   })
 
   describe("copy ", () => {
-    it.only('copy', () => {
+    it('copy', () => {
       const copyvalue = '7.1.456.9590';
       cy.get('.right-side-wrapper > :nth-child(1) > app-clip-board').click();
 
