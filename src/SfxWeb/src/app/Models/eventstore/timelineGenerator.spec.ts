@@ -211,7 +211,7 @@ describe('TimelineGenerators', () => {
             const data = [deactivate, down];
 
             const events = generator.consume(data, startDate, endDateRange);
-            expect(events.items.length).toBe(2);
+            expect(events.items.length).toBe(1);
             expect(events.potentiallyMissingEvents).toBeFalse();
         });
     });
