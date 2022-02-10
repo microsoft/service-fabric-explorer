@@ -37,7 +37,7 @@
   <div *ngIf="timeLineEventsData">
     <app-event-store-timeline [events]="timeLineEventsData">
       <div buttons>
-        <span class="mif-info mif-lg correlated-icon" placement="right"
+        <span class="mif-info mif-lg correlated-icon" placement="right"  tooltipClass="styled-tooltip"
           ngbTooltip="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
 
         <div class="btn-group btn-group-toggle" ngbRadioGroup [(ngModel)]="showAllEvents" name="radioBasic"

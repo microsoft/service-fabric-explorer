@@ -7,7 +7,7 @@
     <ul style="margin: 0px; padding: 0px; min-width: 200px;">
       <li ngbDropdownItem>
         <label>
-          <span tabindex="0" class="mif-info"
+          <span tabindex="0" class="mif-info"  tooltipClass="styled-tooltip"
             ngbTooltip="Advanced mode is only meant to be turned on to perform potentially dangerous operations. Use with caution."></span>
           Advanced Mode
           <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()" [attr.aria-checked]="status">
@@ -16,7 +16,7 @@
 
       <li ngbDropdownItem>
         <label>
-          <span tabindex="0" class="mif-info" ngbTooltip="Hide all messages in the bottom right."></span>
+          <span tabindex="0" class="mif-info" ngbTooltip="Hide all messages in the bottom right."  tooltipClass="styled-tooltip"></span>
           Suppress Messages
           <input type="checkbox" [(ngModel)]="messageService.suppressMessage"
             [attr.aria-checked]="messageService.suppressMessage">

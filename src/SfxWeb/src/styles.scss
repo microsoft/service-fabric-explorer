@@ -40,9 +40,24 @@ $SfxWeb-theme: mat.define-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-w
     transition: $transition;
 }
 
+:root {
+  --primary-box-shadow: 0 2px 6px rgb(0 0 0 / 20%);
+  --heavy-box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
+  --primary-border-radius: 5px;
+  --primary-background-color: #262626;
+  --accent-background-color: #191919;
+  --font-accent-color: #D4D4D4;
+}
+
+label {
+  margin-bottom: 0px;
+}
+
 .essen-pane {
     background-color: $essen-pane-background-color;
     padding: 10px;
+    box-shadow: var(--primary-border-radius);
+    border-radius: var(--primary-border-radius);
 
     .essen-table {
         width: 100%;
@@ -379,7 +394,6 @@ table.detail-list {
 .badge-container {
     display: inline;
     white-space: nowrap;
-    // overflow: hidden;
     text-overflow: ellipsis;
 }
 
@@ -441,9 +455,15 @@ app-navbar {
 .simple-button {
     border: $azure-blue 1px solid;
     color: white;
-    padding: 4px 12px;
+    border-radius: var(--primary-border-radius);
+    padding: 6px 12px;
     cursor: pointer;
     background-color: $detail-pane-pre-background-color;
+    transition: .25s box-shadow;
+
+    &:focus, &:hover {
+      box-shadow: var(--heavy-box-shadow);
+    }
 
     &:disabled {
         border-color: #727272;
@@ -474,19 +494,16 @@ app-navbar {
   background-color: red;
 }
 
-.dropdown-menu {
-    background-color: black;
-    border-radius: 0px;
-}
-
 .dropdown-item {
-    color: white;
+    color: var(--font-accent-color);
     font-size: 14px;
     padding: 2px 4px;
 }
 .dropdown-item:hover {
     background-color: $azure-blue;
-    color: white;
+    box-shadow: var(--heavy-box-shadow);
+    border-radius: var(--primary-border-radius);
+    color: var(--font-accent-color)
 }
 
 .link {
@@ -521,11 +538,14 @@ app-navbar {
     padding: 4px 12px;
     cursor: pointer;
     background-color: transparent;
-    border-radius: 2px;
+    border-radius: var(--primary-border-radius);
+
+    &.round {
+      border-radius: 50px;
+    }
 
     &:hover {
         background-color: rgba(0, 0, 0, 0.25);
-        // border: $azure-blue 1px solid;
     }
 }
 
@@ -547,13 +567,6 @@ app-navbar {
         display: none;
     }
 }
-
-
-
-
-
-
-
 
 //needs to be placed in a globel css file due to how css in components work and vis timeline uses
 // global css names
@@ -1030,8 +1043,11 @@ app-navbar {
 .dropdown-menu {
   list-style: none;
   padding: 5px;
-  color: white;
-  margin-bottom: 0px;
+  color: var(--font-accent-color);
+  border-radius: var(--primary-border-radius);
+  box-shadow: var(--primary-box-shadow);
+  background-color: var(--primary-background-color);
+  margin-top: 5px
 }
 
 .underline-title {
@@ -1096,7 +1112,6 @@ $dashboard-datapoint-leftbar-width: 3px;
   }
 }
 
-
 .dropdown-layout {
   list-style: none;
   padding: 5px;
@@ -1104,16 +1119,29 @@ $dashboard-datapoint-leftbar-width: 3px;
   margin-bottom: 0px;
 
    label {
-    margin-bottom: 0px;
     font-size: 15px;
    }
 }
 
-label {
-  margin-bottom: 0px;
+.input-wrapper {
+  margin-right: 15px;
 }
 
-.input-wrapper {
-  margin-left: 15px;
-  margin-right: 15px;
+
+.styled-tooltip {
+
+  opacity: 1 !important;
+  z-index: 2;
+
+  .tooltip-inner {
+    border-radius: var(--primary-border-radius);
+    box-shadow: var(--heavy-box-shadow);
+    background-color: var(--primary-background-color);
+    border: 1px solid var(--accent-background-color);
+  }
+
+  .arrow::before {
+    border-top-color: var(--primary-background-color)
+  }
+
 }

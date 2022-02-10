@@ -12,6 +12,7 @@ $metric-container-padding: 8px;
   border-color: transparent;
   border-width: 1px;
   border-style: solid;
+  border-radius: var(--primary-border-radius);
 
   &.selected {
     border-color: $azure-blue;
@@ -28,6 +29,7 @@ $metric-container-padding: 8px;
     height: 16px;
     margin-top: 2px;
     float: left;
+    border-radius: 50px;
   }
 
   .metric-title {

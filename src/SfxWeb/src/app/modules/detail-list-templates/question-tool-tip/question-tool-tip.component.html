@@ -1,6 +1,6 @@
 <ng-template #tipContent>
     <div style="border-bottom: 1px solid white; padding: 3px;">{{tooltipText.type}}</div>
-    
+
     {{tooltipText.tooltip}}
 </ng-template>
-{{item.raw.TaskId}} <span class="mif-info" *ngIf="tooltipText?.tooltip.length > 0" style="color: #70daf8;" [ngbTooltip]="tipContent" container="body"></span>
+{{item.raw.TaskId}} <span class="mif-info" *ngIf="tooltipText?.tooltip.length > 0" style="color: #70daf8;"  tooltipClass="styled-tooltip" [ngbTooltip]="tipContent" container="body"></span>

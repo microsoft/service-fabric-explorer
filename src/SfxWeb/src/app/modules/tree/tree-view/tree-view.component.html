@@ -1,23 +1,23 @@
 <div class="tree-wrapper">
     <div class="tree-header">
         <div class="filter-items-container">
-          <label>
+          <label class="tree-toggle-wrapper ">
             <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
 
             <app-toggle [(state)]="treeService.tree.showOkItems" color="green"></app-toggle>
           </label>
 
-          <label>
+          <label class="tree-toggle-wrapper ">
             <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
             <app-toggle [(state)]="treeService.tree.showWarningItems" color="#f19d03"></app-toggle>
           </label>
 
-          <label>
+          <label class="tree-toggle-wrapper ">
             <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
             <app-toggle [(state)]="treeService.tree.showErrorItems" color="red"></app-toggle>
           </label>
 
-          <label>
+          <label class="tree-toggle-wrapper ">
             Sort by Health
             <app-toggle [(state)]="treeService.tree.orderbyHealthState" (stateChange)="sendHealthStateTelem()"></app-toggle>
           </label>

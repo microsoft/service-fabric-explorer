@@ -43,6 +43,8 @@ $dashboard-small-padding-horizontal: 12px;
     }
 
     .dashboard {
+        box-shadow: var(--primary-box-shadow);
+        border-radius: var(--primary-border-radius);
         color: $dashboard-color;
         padding: $dashboard-padding;
         background: $dashboard-background-color;
@@ -107,6 +109,8 @@ $dashboard-small-padding-horizontal: 12px;
 
         .dashboard-datapoints {
             margin: 20px 0 0 0;
+            display: flex;
+            justify-content: space-between;
 
             .dashboard-datapoint {
                 display: inline-block;
