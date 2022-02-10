@@ -331,7 +331,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
   };
 
   generateNodeDisablingEvent(event: NodeEvent) {
-    const label = `Node ${event.nodeName} Disabling`;
+    const label = `Node ${event.nodeName} Disabling with intent ${event.eventProperties.EffectiveDeactivateIntent}`;
     const start = event.eventProperties.StartTime;
     const end = event.timeStamp;
     const item = {
@@ -349,6 +349,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
   };
 
     consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
+        events = events.sort((a,b) => Date.parse(b.timeStamp) - Date.parse(a.timeStamp))
 
         const nodeEventMap: Record<string, NodeEvent[]> = {};
 
