@@ -9,6 +9,7 @@ import { Type } from '@angular/core';
 import { UtcTimestampComponent } from '../modules/detail-list-templates/utc-timestamp/utc-timestamp.component';
 import { ITextAndBadge } from '../Utils/ValueResolver';
 import { ShortenComponent } from '../modules/detail-list-templates/shorten/shorten.component';
+import { HealthbadgeComponent } from '../modules/detail-list-templates/healthbadge/healthbadge.component';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -254,24 +255,16 @@ export class ListColumnSetting {
 }
 
 export class ListColumnSettingForBadge extends ListColumnSetting {
+    template = HealthbadgeComponent;
+
     public constructor(
         propertyPath: string,
         displayName: string) {
 
         super(propertyPath, displayName, {
             enableFilter: true,
-            sortPropertyPaths: [propertyPath + '.text'],
-            getDisplayHtml: (item, property) => HtmlUtils.getBadgeHtml(property),
-            alternateExportFormat: (item: ITextAndBadge) => item.text
+            sortPropertyPaths: [propertyPath + '.text']
         });
-    }
-
-    public getTextValue(item: any): string {
-        const property = this.getProperty(item);
-        if (property) {
-            return property.text;
-        }
-        return '';
     }
 }
 

@@ -46,6 +46,23 @@ $metric-container-padding: 8px;
   min-width: 1px;
 
   .dynamic-bar-chart {
-    flex: 1;min-width: 0px;
+    flex: 1;
+    min-width: 0px;
   }
+}
+
+
+.options-panel {
+  overflow: hidden;
+  transition: .25s max-width;
+  max-width: 100%;
+}
+
+.node-row-item {
+  white-space: nowrap;
+  display: flex;
+  justify-content: space-between;
+  margin: 2px;
+  padding: 2px;
+  border-radius: var(--primary-border-radius);
 }

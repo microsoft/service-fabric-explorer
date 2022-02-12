@@ -4,7 +4,7 @@
       <div>
         <button (click)="toggleSide()" class="simple-button">Hide </button>
       </div>
-      <div *ngIf="showOptions">
+      <div class="options-panel" [ngStyle]="{'max-width': (showOptions ? '100%' : '0')}">
         <div class="essen-pane filter-container">
           <app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)" [showGroupByNodeType]="false" ></app-node-filter>
         </div>
@@ -72,8 +72,9 @@
           </a>
           <ng-template ngbNavContent>
             <ng-template #customWrapperTemplate let-data="data">
-              <div *ngFor="let metric of metricsViewModel.selectedMetrics" style="white-space: nowrap;"  >
-                {{metric.displayName}} : {{data.loadInformation.metrics[metric.name]}}
+              <div *ngFor="let metric of metricsViewModel.selectedMetrics" class="node-row-item hover-row">
+                <span>{{metric.displayName}} :</span>
+                <span>{{data.loadInformation.metrics[metric.name]}}</span>
               </div>
             </ng-template>
             <app-map [listTemplate]="customWrapperTemplate" [nodes]="filteredNodes">

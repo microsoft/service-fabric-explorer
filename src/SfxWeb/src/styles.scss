@@ -46,7 +46,17 @@ $SfxWeb-theme: mat.define-light-theme($SfxWeb-primary, $SfxWeb-accent, $SfxWeb-w
   --primary-border-radius: 5px;
   --primary-background-color: #262626;
   --accent-background-color: #191919;
+
+  --font-primary-color: #fff;
   --font-accent-color: #D4D4D4;
+  --accent-underline: #4c4c4c;
+
+  --accent-darkblue: #0075c9;
+  --accent-lightblue: #70DAF8;
+
+  --badge-ok: #7FBA00;
+  --badge-warning: #FCD116;
+  --badge-error: #E81123;
 }
 
 label {
@@ -56,7 +66,7 @@ label {
 .essen-pane {
     background-color: $essen-pane-background-color;
     padding: 10px;
-    box-shadow: var(--primary-border-radius);
+    box-shadow: var(--primary-box-shadow);
     border-radius: var(--primary-border-radius);
 
     .essen-table {
@@ -150,7 +160,7 @@ a, a:active, a:focus, a:hover {
     text-decoration: none !important;
 }
 a {
-    color: #70DAF8;
+    color: var(--accent-lightblue);
 }
 a[disabled], a.disabled {
     color: $link-disabled-color;
@@ -221,7 +231,7 @@ table.detail-list {
     width: 100%;
     margin-bottom: 1px; // Setting this to 0 will cause IE to cut off table header when there is no contents
     border-bottom: 1px solid $table-border-color;
-    color: white;
+    color: var(--font-primary-color);
     overflow-x: inherit;
     min-height: 72px;
 
@@ -246,7 +256,7 @@ table.detail-list {
         // white-space: nowrap;
         color: $detail-table-header-color;
         border: 0px solid;
-        border-bottom: 1px solid #4c4c4c;
+        border-bottom: 1px solid var(--accent-underline);
         a {
             color: $detail-table-header-color;
         }
@@ -337,72 +347,53 @@ table.detail-list {
 }
 
 .detail-table {
-    font-size: $font-size-default;
-    // border-bottom: 1px solid $table-border-color;
+  font-size: $font-size-default;
 
-    th {
-        color: $detail-table-header-color;
-    }
+  th {
+      color: $detail-table-header-color;
+  }
 
-    td {
-        color: $detail-table-cell-color;
-    }
+  td {
+      color: $detail-table-cell-color;
+  }
 
-    &.table {
-        margin-bottom: 0;
-    }
+  &.table {
+      margin-bottom: 0;
+  }
 
-    td, th {
-        text-overflow: ellipsis;
-        overflow: hidden;
-        border-bottom: 1px solid #4c4c4c;
-    }
+  td, th {
+      text-overflow: ellipsis;
+      overflow: hidden;
+      border-bottom: 1px solid #4c4c4c;
+  }
 
-    // td:last-child, th :last-child {
-    //     border-bottom: 0px solid #4c4c4c;
-    // }
+  tbody > tr {
+      &:first-child {
+          th {
+              border-top: 0;
+          }
 
-    tbody > tr {
-        &:first-child {
-            th {
-                border-top: 0;
-            }
+          td {
+              border-top: 0;
+          }
+      }
 
-            td {
-                border-top: 0;
-            }
-        }
+      th.sub-title {
+          color: $details-pane-table-sub-title-color;
+          border-bottom: 1px solid $table-section-divider-color;
+      }
+  }
 
-        th.sub-title {
-            color: $details-pane-table-sub-title-color;
-            border-bottom: 1px solid $table-section-divider-color;
-        }
-    }
+  .detail-param-table {
+      margin-bottom: 0;
+      font-size: $font-size-default;
+      font-weight: $font-weight-normal;
 
-    .detail-param-table {
-        margin-bottom: 0;
-        font-size: $font-size-default;
-        font-weight: $font-weight-normal;
-
-        td, th {
-            text-overflow: ellipsis;
-            overflow: hidden;
-        }
-    }
-}
-
-.badge-container {
-    display: inline;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-}
-
-.badge-icon {
-    display: inline-block;
-    position: relative;
-    bottom: 1px;
-    width: 16px;
-    height: 16px;
+      td, th {
+          text-overflow: ellipsis;
+          overflow: hidden;
+      }
+  }
 }
 
 .btn:disabled {
@@ -433,7 +424,7 @@ html,body {
 .table>tbody>tr>td {
         line-height: 1.42857;
     vertical-align: top;
-    border-top: 1px solid #4c4c4c;
+    border-top: 1px solid var(--accent-underline);
 }
 
 app-navbar {
@@ -453,8 +444,8 @@ app-navbar {
 }
 
 .simple-button {
-    border: $azure-blue 1px solid;
-    color: white;
+    border: var(--accent-darkblue) 1px solid;
+    color: var(--font-primary-color);
     border-radius: var(--primary-border-radius);
     padding: 6px 12px;
     cursor: pointer;
@@ -471,11 +462,11 @@ app-navbar {
 }
 
 .solid-button {
-    border: $azure-blue 1px solid;
-    color: white;
+    border: var(--accent-darkblue) 1px solid;
+    color: var(--font-primary-color);
     padding: 4px 12px;
     cursor: pointer;
-    background-color: $azure-blue;
+    background-color: var(--accent-darkblue);
 
     &:disabled {
         opacity: .65;
@@ -483,15 +474,15 @@ app-navbar {
 }
 
 .blue {
-    background-color: $azure-blue;
+    background-color: var(--accent-darkblue);
 }
 
 .yellow {
-  background-color: yellow;
+  background-color: var(--badge-warning);
 }
 
 .red {
-  background-color: red;
+  background-color: var(--badge-error);
 }
 
 .dropdown-item {
@@ -500,20 +491,20 @@ app-navbar {
     padding: 2px 4px;
 }
 .dropdown-item:hover {
-    background-color: $azure-blue;
+    background-color: var(--accent-darkblue);
     box-shadow: var(--heavy-box-shadow);
     border-radius: var(--primary-border-radius);
     color: var(--font-accent-color)
 }
 
 .link {
-    color: #70DAF8;
+    color: var(--accent-lightblue);
     cursor: pointer;
 }
 
 .page-link {
     background-color: $detail-pane-pre-background-color;
-    color: #70DAF8;
+    color: var(--accent-lightblue);
     border: 0px;
     border-top-left-radius: 0px !important;
     border-top-right-radius: 0px !important;
@@ -522,19 +513,19 @@ app-navbar {
 }
 
 .page-link:active {
-    background-color: $azure-blue;
-    color: white;
+    background-color: var(--accent-darkblue);
+    color: var(--font-primary-color);
 }
 
 .page-item.disabled .page-link{
     background-color: #5a5a5a;
-    color: white;
+    color: var(--font-primary-color);
     border: 1px solid #5a5a5a;
 }
 
 .flat-button {
     border: transparent 1px solid;
-    color: white;
+    color: var(--font-primary-color);
     padding: 4px 12px;
     cursor: pointer;
     background-color: transparent;
@@ -550,8 +541,8 @@ app-navbar {
 }
 
 .empty-button {
-    border: $azure-blue 0px solid;
-    color: white;
+    border: var(--accent-darkblue) 0px solid;
+    color: var(--font-primary-color);
     padding: 4px 12px;
     cursor: pointer;
     background-color: transparent;
@@ -583,7 +574,7 @@ app-navbar {
   .vis-item,
   .vis-item.vis-line {
     border-width: 0px;
-    color: white;
+    color: var(--font-primary-color);
     font-family: monospace;
   }
   .vis-item.vis-dot {
@@ -620,7 +611,7 @@ app-navbar {
   }
 
   .vis-panel.vis-left {
-    background-color: $azure-blue;
+    background-color: var(--accent-darkblue);
   }
   .vis-ltr .vis-label.vis-nested-group .vis-inner {
     padding-left: 0px;
@@ -628,7 +619,7 @@ app-navbar {
   }
 
   .vis-group-level-unknown-but-gte1 {
-    background-color: $azure-blue !important;
+    background-color: var(--accent-darkblue) !important;
     border: 1px solid white;
   }
 
@@ -638,7 +629,7 @@ app-navbar {
   }
 
   .vis-item.red {
-    background-color: red;
+    background-color: var(--badge-error);
     border-color: darkred;
   }
 
@@ -653,16 +644,16 @@ app-navbar {
   }
 
   .vis-item.yellow {
-      background-color: yellow;
+      background-color: var(--badge-warning);
       color: black;
   }
 
   .vis-item.blue {
-    background-color: $azure-blue;
+    background-color: var(--accent-darkblue);
   }
 
   .vis-item.red-point {
-    border-color: red;
+    border-color: var(--badge-error);
     border-width: 5px;
   }
 
@@ -682,19 +673,21 @@ app-navbar {
   }
 
   .tooltip-test{
-    padding: 5px;
-    border: solid;
-    border-width: 2px;
-    border-color: #0057c9;
-    background-color: $essen-pane-background-color;
     font-size: $font-size-small;
     color: $dashboard-color;
+    padding: 5px;
+    border: 1px solid var(--accent-darkblue);
     white-space: pre-wrap;
-    box-shadow: none;
+    background-color: var(--primary-background-color);
+    border-radius: var(--primary-border-radius);
   }
 
   .vis-tooltip {
-    padding: 0px !important;
+    border: 0px solid !important;
+    white-space: nowrap;
+    background-color: var(--primary-background-color) !important;
+    border-radius: var(--primary-border-radius) !important;
+    box-shadow: var(--heavy-box-shadow) !important;
     max-width: 50%;
   }
 
@@ -704,22 +697,23 @@ app-navbar {
 
   .timeline-button {
     background-color: #262626;
-    border: 1px solid $azure-blue;
+    border: 1px solid var(--accent-darkblue);
     margin-bottom: 10px;
     margin-top: 10px;
   }
 
   .vis-label{
-    background-color: $azure-blue;
+    background-color: var(--accent-darkblue);
     color: #dad7d7;
   }
 
   .noUi-tooltip {
     display: none;
-    background-color: #262626;
-    border: 1px solid #0075c9;
-    color: white;
-    border-radius: 0px;
+    background-color: var(--primary-background-color);
+    box-shadow: var(--heavy-box-shadow);
+    color: var(--font-primary-color);
+    border-radius: var(--primary-border-radius);
+    border: 0px;
     z-index: 2;
   }
   .noUi-handle {
@@ -727,7 +721,6 @@ app-navbar {
         .noUi-tooltip {
             display: initial;
           }
-
       }
   }
 
@@ -747,7 +740,7 @@ app-navbar {
   }
 
   .noUi-connect{
-    background-color: $azure-blue;
+    background-color: var(--accent-darkblue);
   }
 
   .noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip {
@@ -791,7 +784,7 @@ app-navbar {
     border-width: 1px;
     border-color: #727272;
     background-color: transparent;
-    color: white;
+    color: var(--font-primary-color);
 }
 
 
@@ -829,7 +822,7 @@ app-navbar {
 }
 
 .nav-item > .active {
-    border-bottom-color: $azure-blue;
+    border-bottom-color: var(--accent-darkblue);
     border-bottom-style: solid;
     color: #FFFFFF;
     padding-bottom: 2px;
@@ -934,8 +927,8 @@ app-navbar {
   z-index: 3;
   color: #fff;
   background-color: #262626;
-  border-color: $azure-blue;
-  border: 1px solid $azure-blue;
+  border-color: var(--accent-darkblue);
+  border: 1px solid var(--accent-darkblue);
   box-sizing: border-box;
 }
 
@@ -968,7 +961,7 @@ app-navbar {
 }
 
 :checked {
-  accent-color: $azure-blue;
+  accent-color: var(--accent-darkblue);
 }
 
 .flex-center {
@@ -1045,9 +1038,9 @@ app-navbar {
   padding: 5px;
   color: var(--font-accent-color);
   border-radius: var(--primary-border-radius);
-  box-shadow: var(--primary-box-shadow);
+  box-shadow: var(--heavy-box-shadow);
   background-color: var(--primary-background-color);
-  margin-top: 5px
+  margin: 5px
 }
 
 .underline-title {
@@ -1062,6 +1055,13 @@ app-navbar {
 
 .center-text {
   text-align: center;
+}
+
+.hover-row {
+  &:hover, &:focus-within {
+    filter: brightness(100%);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 }
 
 $dashboard-datapoint-leftbar-width: 3px;
@@ -1115,11 +1115,18 @@ $dashboard-datapoint-leftbar-width: 3px;
 .dropdown-layout {
   list-style: none;
   padding: 5px;
-  color: white;
+  color: var(--font-primary-color);
   margin-bottom: 0px;
 
    label {
+    @extend .hover-row;
     font-size: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+    border-top: 1px solid var(--accent-underline);
+    margin: 4px;
    }
 }
 
@@ -1144,4 +1151,12 @@ $dashboard-datapoint-leftbar-width: 3px;
     border-top-color: var(--primary-background-color)
   }
 
+}
+
+.toggle-wrapper {
+  background-color: var(--accent-background-color);
+  border-radius: 50px;
+  padding: 5px;
+  padding-left: 10px;
+  box-shadow: var(--primary-box-shadow);
 }

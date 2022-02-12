@@ -13,19 +13,17 @@ table {
 .item {
   &:hover {
     background-color: #262626;
-    transition: .5s;
   }
 }
 
-.hover-row {
-  &:hover, &:focus-within {
-    filter: brightness(100%);
-    background-color: rgba(255, 255, 255, 0.1);
-  }
-}
-
-.supress-hover{
+.supress-hover {
   &:hover {
     background-color: initial;
   }
+}
+
+.item-wrapper {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }
