@@ -14,10 +14,13 @@ import { BackupComponent } from './backup/backup.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
+import { InfrastructureJobsComponent } from './infrastructurejobs/infrastructurejobs.component';
+import { InfrastructureJobModule } from 'src/app/modules/infrastructure-job/infrastructure-job.module';
+import { ClusterModule } from '../cluster/cluster.module';
 
 
 @NgModule({
-  declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent],
+  declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent, InfrastructureJobsComponent],
   imports: [
     CommonModule,
     ServiceRoutingModule,
@@ -27,7 +30,9 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
     FormsModule,
     ReactiveFormsModule,
     ChartsModule,
-    HealthStateModule
+    HealthStateModule,
+    InfrastructureJobModule,
+    ClusterModule
   ],
   entryComponents: [ScaleServiceComponent]
 })

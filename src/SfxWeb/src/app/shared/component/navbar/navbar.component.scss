@@ -1,8 +1,6 @@
-@import "src/vars.scss";
-
 .main-header {
     position: sticky;
-    background-color: #191919;
+    background-color: var(--accent-background-color);
     width: inherit;
     top: 20px;
     z-index: 10;
@@ -11,77 +9,35 @@
     }
 
     .detail-view-title-bar {
-        margin-bottom: 18px;
-        position: relative;
+      padding-bottom: 18px;
+      position: relative;
 
         .detail-view-title {
             overflow: hidden;
             text-overflow: ellipsis;
             white-space: nowrap;
-            font-size: $font-size-title;
-            font-weight: $font-weight-semilight;
-            color: $detail-pane-main-title-color;
-
-            b {
-                font-weight: $font-weight-semibold;
-                color: $detail-pane-sub-title-color;
-                font-size: $font-size-title;
-            }
-        }
-
-        .detail-view-actions {
-            position: absolute;
-            right : 0;
-            top: 50%;
-            transform: translateY(-50%);
+            font-size: var(--font-size-large-title);
+            color: var(--font-primary-color);
+            font-weight: 300;
         }
     }
 
     .detail-view-navbar {
         clear: left;
-        margin-top: 4px;
-        margin-bottom: 6px;
         display: flex;
-        flex-direction: row;
-        white-space: nowrap;
         justify-content: flex-start;
-
-        .spacer {
-            max-width: 50px;
-            width: 5%;
-            display: inline-block;
-        }
+        gap: 10px;
 
         .detail-view-navbar-tab {
-            display: inline-block;
-            padding-top: 2px;
-            padding-bottom: 6px;
-            margin-top: 8px;
-            margin-right: 15px;
             white-space: nowrap;
-            overflow: hidden;
             text-overflow: ellipsis;
-            min-width: 0;
 
             a {
-                text-align: right;
-                text-decoration: none;
-                text-transform: capitalize;
-                padding-bottom: 6px;
-                color: $detail-tab-color;
-                font-size: $detail-tab-title-font-size;
-
-                &.current {
-                    border-bottom-color: $detail-tab-active-border-color !important;
-                    color: $detail-tab-active-color;
-                    padding-bottom: 2px;
-                    border-bottom-width: 4px !important;
-                    border-bottom-style: solid !important;
-                }
-            }
-
-            &:focus-within {
-              border: white 1px solid;
+              text-align: right;
+              text-decoration: none;
+              text-transform: capitalize;
+              color: var(--font-accent-color);
+              font-size: var(--font-size-large);
             }
 
             .tab-superscript {
@@ -93,9 +49,8 @@
 
             .tab-superscript-number {
                 border-radius: 50% !important;
-                background-color: $azure-blue;
-                font-size: $font-size-small;
-                font-weight: $font-weight-semibold;
+                background-color:var(--accent-darkblue);
+                font-size: var(--font-sze-small);
                 text-align: center;
                 height: 16px;
                 min-width: 16px;

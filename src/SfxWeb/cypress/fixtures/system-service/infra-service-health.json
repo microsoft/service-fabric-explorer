@@ -1,0 +1,60 @@
+{
+  "HealthEvents": [
+      {
+          "SourceId": "System.FM",
+          "Property": "State",
+          "HealthState": "Ok",
+          "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+          "Description": "Service has been created.",
+          "SequenceNumber": "7",
+          "RemoveWhenExpired": false,
+          "HealthReportId": "FM_7.0_1008",
+          "SourceUtcTimestamp": "2021-11-30T19:57:37.688Z",
+          "LastModifiedUtcTimestamp": "2021-11-30T19:58:10.855Z",
+          "IsExpired": false,
+          "LastOkTransitionAt": "2021-11-30T19:58:10.855Z",
+          "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+          "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+      },
+      {
+          "SourceId": "System.InfrastructureService",
+          "Property": "CoordinatorStatus",
+          "HealthState": "Ok",
+          "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+          "Description": "Azure coordinator is operating normally.",
+          "SequenceNumber": "132827758906863307",
+          "RemoveWhenExpired": false,
+          "HealthReportId": "",
+          "SourceUtcTimestamp": "2021-11-30T19:58:10.686Z",
+          "LastModifiedUtcTimestamp": "2022-01-31T20:33:36.890Z",
+          "IsExpired": false,
+          "LastOkTransitionAt": "2021-11-30T19:58:25.033Z",
+          "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+          "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+      }
+  ],
+  "AggregatedHealthState": "Ok",
+  "UnhealthyEvaluations": [],
+  "HealthStatistics": {
+      "HealthStateCountList": [
+          {
+              "EntityKind": "Replica",
+              "HealthStateCount": {
+                  "OkCount": 3,
+                  "ErrorCount": 0,
+                  "WarningCount": 0
+              }
+          },
+          {
+              "EntityKind": "Partition",
+              "HealthStateCount": {
+                  "OkCount": 1,
+                  "ErrorCount": 0,
+                  "WarningCount": 0
+              }
+          }
+      ]
+  },
+  "Name": "fabric:/System/InfrastructureService/Type134",
+  "PartitionHealthStates": []
+}

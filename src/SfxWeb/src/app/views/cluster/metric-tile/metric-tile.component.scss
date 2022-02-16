@@ -1,20 +1,19 @@
-@import "src/vars.scss";
-
 $metric-container-margin: 12px;
 $metric-container-padding: 8px;
 
 .metric-container {
   margin-bottom: $metric-container-margin;
   padding: $metric-container-padding;
-  background-color: $essen-pane-background-color;
+  background-color: var(--primary-background-color);
   cursor: pointer;
   position: relative;
   border-color: transparent;
   border-width: 1px;
   border-style: solid;
+  border-radius: var(--primary-border-radius);
 
   &.selected {
-    border-color: $azure-blue;
+    border-color: var(--accent-darkblue);
     border-width: 3px;
     padding: $metric-container-padding - 2px;
 
@@ -28,6 +27,7 @@ $metric-container-padding: 8px;
     height: 16px;
     margin-top: 2px;
     float: left;
+    border-radius: 50px;
   }
 
   .metric-title {
@@ -43,9 +43,5 @@ $metric-container-padding: 8px;
     right: $metric-container-padding;
     top: 50%;
     transform: translate(0, -50%);
-
-    &[is-capacity-violation="true"] {
-      color: $badge-error-color;
-    }
   }
 }

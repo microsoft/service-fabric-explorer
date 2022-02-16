@@ -29,7 +29,7 @@
     <app-advanced-option></app-advanced-option>
 
     <div ngbDropdown *ngIf="adalService.aadEnabled" display="'static'" placement="'bottom-left'">
-        <button class="simple-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
+        <button class="flat-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
             <span class="mif-user"></span>
         </button>
         <div ngbDropdownMenu style="padding: 10px;" *ngIf="dataService.actionsEnabled()">
@@ -43,7 +43,7 @@
     </div>
 
     <div ngbDropdown display="'static'" placement="'bottom-right'" class="report">
-      <button ngbDropdownToggle class="mif-bug mif-lg flat-button link" style="color: #70daf8" aria-label="Issue reporting options"></button>
+      <button ngbDropdownToggle class="mif-bug mif-lg flat-button round link" style="color: #70daf8" aria-label="Issue reporting options"></button>
       <ul ngbDropdownMenu style="padding: 10px;">
         <li ngbDropdownItem>
           <a href="https://aka.ms/servicefabric/issues" target="_blank">Report Service Fabric Bug</a>
@@ -77,7 +77,7 @@
         <div class="view-container" #main>
           <div class="expander-container">
             <span class=" expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right"
-                  [ngbTooltip]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'" (click)="collapseSide()"></span>
+                  [ngbTooltip]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'"  tooltipClass="styled-tooltip" (click)="collapseSide()"></span>
           </div>
           <router-outlet id="view-container" ></router-outlet>
         </div>

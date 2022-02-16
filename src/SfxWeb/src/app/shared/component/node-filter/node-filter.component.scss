@@ -1,11 +1,13 @@
 .label-group {
   label:not(:last-child) {
     margin-bottom: 5px;
+
   }
 
-  app-toggle {
-    float: right;
-    margin-left: 10px;
+  label {
+    width: 120px;
+    display: flex;
+    justify-content: space-between;
   }
 }
 

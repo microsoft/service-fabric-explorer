@@ -30,6 +30,7 @@ export class Constants {
     public static SystemAppId = 'System';
     public static SystemAppName = 'fabric:/System';
     public static SystemAppTypeName = 'System';
+    public static InfrastructureServiceType = 'InfrastructureServiceType';
 
     // Version header
     public static SfxVersionMetadataName = 'SFX-Version';
@@ -73,6 +74,8 @@ export class Constants {
     public static SvgTransitionDuration = 250;
     public static SvgTransitionDurationSlow = 600;
 
+    public static executingInfraJobsSuggestion = 'If the repair task corresponding to Infrastructure updates is stuck in Preparing for long, check the Repair Task page.';
+    public static pendingInfraJobsSuggestion = 'Pending jobs when other jobs are executing are not executed because of throttling policy in Infrastructure Service.';
     public static readonly EventsTab: ITab = {
       name: 'events',
       route: './events'

@@ -31,10 +31,7 @@
               "node_modules/vis-timeline/dist/vis-timeline-graph2d.min.css",
               "node_modules/nouislider/dist/nouislider.min.css",
               "src/mif/icons.min.css",
-              "src/styles.scss",
-              "src/modal.scss",
-              "src/calender.scss",
-              "src/_candybar.scss"
+              "src/styles.scss"
             ],
             "allowedCommonJsDependencies": [
               "lodash",
