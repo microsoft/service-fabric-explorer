@@ -14,9 +14,9 @@
             <div (click)="node.pageFirst()" style="padding-left: 10px;" class="expander icon mif-vertical-align-top link" [title]="'First ' + node.listSettings.limit + ' items'" aria-hidden="true"></div>
         </div>
     </li>
-    <li *ngFor="let child of node.displayedChildren; trackBy: trackById" class="node" [ngClass]="{ 'selected': child.selected }" appScrollIntoView [selected]="child.selected" role="treeitem"
+    <li *ngFor="let child of node.displayedChildren; trackBy: trackById; let i = index" class="node" [ngClass]="{ 'selected': child.selected}" appScrollIntoView [selected]="child.selected" role="treeitem"
     (click)="child.select(); $event.stopPropagation()" tabindex="0"  (keyup)="node.tree.onKeyDown($event)"  [attr.aria-level]="child.depth">
-        <div class="self hide-nested">
+        <div class="self hide-nested hover-row flex-center" [ngClass]="{ 'raised-z-index': i === higherZIndex}">
             <span  [ngStyle]="{ 'paddingLeft': child.paddingLeftPx }"></span>
             <div class="expander" *ngIf="!child.hasExpander"></div>
             <button tabindex="0" class="expander icon mif-chevron-thin-down" aria-hidden="false" role="button"
@@ -36,7 +36,8 @@
             <div class="tree-label" [innerHTML]="child.displayHtml"  [title]="child.displayName()" ></div>
 
             <div *ngIf="child.actions" class="hidden right-action">
-                <app-action-collection-drop-down *ngIf="child.actions.length > 0" [actionCollection]="child.actions" [treeView]="true"></app-action-collection-drop-down>
+                <app-action-collection-drop-down *ngIf="child.actions.length > 0" [actionCollection]="child.actions"
+                                                  [treeView]="true" (changedState)="changeZIndez(i, $event)"></app-action-collection-drop-down>
             </div>
           </div>
 

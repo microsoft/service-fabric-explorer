@@ -1,4 +1,5 @@
-@import "src/vars.scss";
+$tree-node-search-highlight-background-color: #FDFBAC;
+$tree-node-search-highlight-color: black !default;
 
 button {
   background-color: transparent;
@@ -10,35 +11,25 @@ button {
   }
 }
 
+.raised-z-index {
+  z-index: 5;
+}
+
 .node {
-  color: $tree-color;
+  color: var(--font-primary-color);
   .more-children {
     margin-left: 46px;
-
-    .icon {
-      margin-right: 2px;
-    }
   }
 
   > .self {
     white-space: nowrap;
     cursor: pointer;
     position: relative;
-    height: $tree-node-line-height;
 
     width: calc(100% - 10px);
+    min-width: fit-content;
     margin-left: 5px;
     border-radius: var(--primary-border-radius);
-    display: flex;
-    align-items: center;
-    &:hover,
-    &:focus {
-      background-color: $tree-node-hover-background-color;
-
-      .actions-menu .actions-expander {
-        display: inline-block;
-      }
-    }
 
     .expander {
       cursor: default;
@@ -50,42 +41,11 @@ button {
         transform: rotate(-90deg);
       }
     }
-
-    .actions-menu {
-      position: absolute;
-      padding: 3px 6px;
-      right: 0px;
-      cursor: pointer;
-
-      .actions-expander {
-        display: none;
-      }
-    }
-
-    .tree-badge {
-      font-size: $font-size-small;
-      position: relative;
-      width: 14px;
-      height: 14px;
-      margin-right: 5px;
-    }
-
-    .tree-label {
-      .search-match {
-        color: $tree-node-search-highlight-color;
-        background-color: $tree-node-search-highlight-background-color;
-      }
-    }
   }
 
   &.selected > .self {
-    background-color: $tree-node-selected-background-color;
+    background-color: var(--accent-darkblue);
     box-shadow: var(--heavy-box-shadow);
-
-    .actions-expander {
-      display: inline-block;
-      color: $tree-color;
-    }
   }
 }
 

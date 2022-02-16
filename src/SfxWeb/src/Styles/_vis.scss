@@ -1,0 +1,148 @@
+//needs to be placed in a globel css file due to how css in components work and vis timeline uses
+// global css names
+.vis-timeline {
+  font-size: var(--font-size-default);
+  background-color: var(--primary-background-color);
+}
+
+.vis-item {
+  background-color: var(--light-background-color);
+  font-size: var(--font-size-small);
+  color: var(--font-primary-color);
+}
+.vis-item,
+.vis-item.vis-line {
+  border-width: 0px;
+  color: var(--font-primary-color);
+  font-family: monospace;
+}
+.vis-item.vis-dot {
+  border-width: 10px;
+  border-radius: 10px;
+}
+.vis-item.vis-range {
+    border-radius: 0px;
+}
+.vis-item.vis-selected {
+  border-color: green;
+  background-color: lightgreen;
+}
+.vis-time-axis .vis-text {
+  color: var(--font-primary-color);
+  padding-top: 10px;
+  padding-left: 10px;
+}
+.vis-time-axis .vis-text.vis-major {
+  font-weight: bold;
+}
+.vis-time-axis .vis-grid.vis-minor {
+  border-width: 2px;
+  border-color: var(--font-primary-color);
+}
+.vis-time-axis .vis-grid.vis-major {
+  border-width: 2px;
+  border-color: var(--font-primary-color);
+}
+
+.vis-labelset .vis-label {
+  font-size: var(--font-size-medium);
+  border-color: var(--font-primary-color);
+  color: var(--font-primary-color);
+}
+
+.vis-panel.vis-left {
+  background-color: var(--accent-darkblue);
+}
+.vis-ltr .vis-label.vis-nested-group .vis-inner {
+  padding-left: 0px;
+  white-space: pre;
+}
+
+.vis-group-level-unknown-but-gte1 {
+  background-color: var(--accent-darkblue) !important;
+  border: 1px solid white;
+}
+
+.vis-item.white {
+  background-color: #ffffff;
+  color: black;
+}
+
+.vis-item.red {
+  background-color: var(--badge-error);
+  border-color: darkred;
+}
+
+.vis-item.green {
+  background-color: var(--badge-ok);
+  color: black;
+}
+
+.vis-item.orange {
+  background-color: var(--badge-warning);
+  color: black;
+}
+
+.vis-item.yellow {
+    background-color: yellow;
+    color: black;
+}
+
+.vis-item.blue {
+  background-color: var(--accent-darkblue);
+}
+
+.vis-item.red-point {
+  border-color: var(--badge-error);
+  border-width: 5px;
+}
+
+.vis-item.orange-point {
+  border-color: var(--badge-warning);
+  border-width: 5px;
+}
+
+.vis-item.white-point {
+  border-color: var(--font-primary-color);
+  border-width: 5px;
+}
+
+.vis-item.green-point {
+  border-color: var(--badge-ok);
+  border-width: 5px;
+}
+
+.tooltip-test{
+  font-size: var(--font-size-small);
+  color: var(--font-primary-color);
+  padding: 5px;
+  border: 1px solid var(--accent-darkblue);
+  white-space: pre-wrap;
+  background-color: var(--primary-background-color);
+  border-radius: var(--primary-border-radius);
+}
+
+.vis-tooltip {
+  border: 0px solid !important;
+  white-space: nowrap;
+  background-color: var(--primary-background-color) !important;
+  border-radius: var(--primary-border-radius) !important;
+  box-shadow: var(--heavy-box-shadow) !important;
+  max-width: 50%;
+}
+
+.vis-timeline {
+  overflow:visible !important;
+}
+
+.timeline-button {
+  background-color: #262626;
+  border: 1px solid var(--accent-darkblue);
+  margin-bottom: 10px;
+  margin-top: 10px;
+}
+
+.vis-label{
+  background-color: var(--accent-darkblue);
+  color: #dad7d7;
+}

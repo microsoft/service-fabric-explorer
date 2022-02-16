@@ -1,5 +1,3 @@
-@import "src/vars.scss";
-
 .tree-wrapper {
     display: flex;
     flex-direction: column;
@@ -12,60 +10,22 @@
 }
 
 .tree-header {
-    color: $tree-color;
-    position: sticky;
-    padding: 10px;
-
-    .toolbar {
-        margin-top: 16px;
-        padding: 0;
-        position: relative;
-    }
-
-    .tree-search-bar {
-        margin-top: 16px;
-        padding: 0;
-        width: 100%;
-    }
+  color: var(--font-accent-color);
+  position: sticky;
+  padding: 10px;
 }
 
 .tree-body {
-    bottom: $page-padding-bottom;
-    color: $tree-color;
+    color: var(--font-accent-color);
     width: fit-content;
     width: 100%;
-
-    .informative {
-        margin-left: 20px;
-    }
-
-    #treeview-loading-glyph {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        font-size: 40px;
-    }
-}
-
-.tree {
-    margin: 0;
-    padding: 0;
+    height: 100%
 }
 
 .tree-view {
   position: relative;
   height: 100%;
-
-    &:focus {
-        outline: 0;
-
-        .tree .node.selected > .self {
-            background-color: $tree-node-selected-background-color;
-        }
-    }
 }
-
 
 .expand-panel-button {
     padding: 0px;
@@ -98,6 +58,7 @@
     flex-wrap: wrap;
     align-items: center;
     gap: 5px 10px;
+    margin-bottom: 10px;
 
     label {
       display: flex;
@@ -105,7 +66,3 @@
       gap: 5px;
     }
   }
-
-.input-wrapper {
-  padding: 5px 10px 0px 0px;
-}

@@ -263,9 +263,18 @@ export class ListColumnSettingForBadge extends ListColumnSetting {
 
         super(propertyPath, displayName, {
             enableFilter: true,
-            sortPropertyPaths: [propertyPath + '.text']
+            sortPropertyPaths: [propertyPath + '.text'],
+            alternateExportFormat: (item: ITextAndBadge) => item.text
         });
     }
+
+    public getTextValue(item: any): string {
+      const property = this.getProperty(item);
+      if (property) {
+          return property.text;
+      }
+      return '';
+  }
 }
 
 export class ListColumnSettingWithFilter extends ListColumnSetting {

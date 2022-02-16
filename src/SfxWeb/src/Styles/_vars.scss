@@ -1,41 +1,70 @@
-﻿//--------------------------------------------------------------
-// Base theme config file. If you change anything in this file,
-// make sure you change all the theme files in Themes folder.
-//--------------------------------------------------------------
+$detail-pane-pre-color: #d1d1d1 !default;
 
-//--------------------------------------------------------------
-// Mixins
-//--------------------------------------------------------------
+:root {
+  --primary-box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  --heavy-box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
+  --primary-border-radius: 5px;
 
-@mixin transition($transition...) {
-    -webkit-transition: $transition;
-    -moz-transition: $transition;
-    -o-transition: $transition;
-    transition: $transition;
+  --primary-background-color: #262626;
+  --accent-background-color: #191919;
+  --light-background-color: #7d9494;
+
+  --font-primary-color: #fff;
+  --font-accent-color: #D4D4D4;
+
+  --accent-underline: #4c4c4c;
+
+  --accent-darkblue: #0075c9;
+  --accent-lightblue: #70DAF8;
+
+  --link-color: #00BCF2;
+
+  --badge-ok: #7FBA00;
+  --badge-warning: #FCD116;
+  --badge-error: #E81123;
+  --badge-unknown: #3C3C3C;
+  //fonts
+  --font-size-default: 10pt;
+  --font-size-small: 8pt;
+  --font-size-medium: 12pt;
+  --font-size-large: 14pt;
+  --font-size-large-title: 18pt;
+
+  --font-weight-normal: 400;
+  --font-weight-semibold: 600;
+
+  --chart-text-color: #6C7074;
+
+  --disabled: gray;
 }
 
-$global-transition-time: 0.15s !default;
 
-//--------------------------------------------------------------
-// Layouts
-//--------------------------------------------------------------
-$splitter-width: 5px !default;
-// Keep this in sync with value of DefaultSplitterLeftWidth in Constants.ts
-$left-panel-width: 400px !default;
-$right-panel-min-width: 200px !default;
-$page-padding-bottom: 20px !default;
 
-//--------------------------------------------------------------
-// Colors
-//--------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // common
-$font-color: white !default;
-$font-color-invert: black !default;
-$input-border-color: #727272 !default;
-$input-border-color-dark-bg: $input-border-color !default;
+$font-color: white;
+$font-color-invert: black;
+$input-border-color: #727272;
+$input-border-color-dark-bg: $input-border-color;
+$dialog-input-bg-color: #242424;
 $azure-blue: #0075c9 !default;
-$dialog-input-bg-color: #242424 !default;
 
 // badges
 $badge-ok-color: #7FBA00 !default;
@@ -45,7 +74,7 @@ $badge-unknown-color: #3C3C3C !default;
 
 // navbar
 $navbar-color: white !default;
-$navbar-background-color: #000000 !default;
+$navbar-background-color: #000000;
 $navbar-brand-background-color: $azure-blue !default;
 $slider-background-color: #939393 !default;
 $slider-handler-color: #F1F1F1 !default;
@@ -59,34 +88,37 @@ $navbar-dropdown-menu-background-color: #262626 !default;
 $navbar-dropdown-menu-item-hover-color: #3C3C3C !default;
 
 // tree
-$tree-color: white !default;
 $tree-background-color: #262626 !default;
+$tree-color: white !default;
 $tree-node-selected-background-color: $azure-blue !default;
-$tree-node-hover-background-color: #3C3C3C !default;
 $tree-searchbox-border-color: $input-border-color !default;
 $tree-searchbox-background-color: $tree-background-color !default;
 $tree-node-search-highlight-background-color: #FDFBAC;
 $tree-node-search-highlight-color: black !default;
+$tree-background-color: #262626;
+$tree-node-hover-background-color: #3C3C3C;
+$tree-node-line-height: 23px;
 
 // detail view area
 $right-panel-background-color: #191919 !default;
 $action-hover-color: white !default;
 $action-hover-background-color: $azure-blue !default;
 $details-pane-table-sub-title-color: #939393 !default;
-$table-border-color: #4c4c4c !default;
-$table-vertical-group-left-border-color: #727272 !default;
-$table-section-divider-color: #727272 !default;
-$detail-tab-color: #D4D4D4 !default;
-$detail-tab-active-color: #FFFFFF !default;
+$table-border-color: #4c4c4c;
+$table-vertical-group-left-border-color: #727272;
+$table-section-divider-color: #727272;
+$detail-tab-color: #D4D4D4;
+$detail-tab-active-color: #FFFFFF;
 $detail-tab-active-border-color: $azure-blue !default;
 $detail-pane-pre-background-color: #262626 !default;
 $detail-pane-pre-color: #d1d1d1 !default;
-$detail-pane-main-title-color: #FFFFFF !default;
-$detail-pane-sub-title-color: #808080 !default;
-$detail-table-header-color: #FFFFFF !default;
+$detail-pane-main-title-color: #FFFFFF;
+$details-pane-table-sub-title-color: #FFFFFF;
+$detail-table-header-color: #939393 !default;
 $detail-table-cell-color: #A6A6A6 !default;
 $essen-pane-background-color: #262626 !default;
 $upgrade-domain-progress-color: #59B4D9 !default;
+$detail-pane-sub-title-color: #DED9D9;
 
 // Candybar
 $candybar-ok-color: $badge-ok-color !default;
@@ -134,7 +166,7 @@ $font-size-medium: 12pt !default;
 $font-size-default: 10pt !default;
 $font-size-small: 8pt !default;
 
-$detail-tab-title-font-size: $font-size-medium !default;
+$detail-tab-title-font-size: $font-size-large !default;
 $candybar-view-switcher-font-size: $font-size-medium !default;
 $navbar-font-size: $font-size-default !default;
 
@@ -144,6 +176,7 @@ $navbar-font-size: $font-size-default !default;
 $body-bg: $right-panel-background-color !default;
 $text-color: $font-color !default;
 $link-color: #00BCF2 !default;
+$light-link-color: #70DAF8 !default;
 $link-hover-color: $link-color !default;
 $link-light-background-color: $link-color !default;
 $link-light-background-hover-color: $link-hover-color !default;
@@ -202,4 +235,4 @@ $tooltip-bg: $tooltip-background !default;
 $tooltip-opacity: 1 !default;
 $tooltip-max-width: 100% !default;
 
-@import "../../../node_modules/bootstrap-sass/assets/stylesheets/bootstrap/variables";
+$tile-width: 240px;

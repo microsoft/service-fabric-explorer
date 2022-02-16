@@ -1,9 +1,9 @@
 .rounded-button {
     border: #202223 1px solid;
-    color: white;
-    padding: 4px 4px;
+    color: var(--primary-font-color);
+    padding: 6px;
     cursor: pointer;
-    background-color: #3b4044;
+    background-color: var(--accent-underline);
     border-radius: 5px;
     margin: 2px;
 }

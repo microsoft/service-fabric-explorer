@@ -1,5 +1,3 @@
-@import "src/vars.scss";
-
 $metric-container-margin: 12px;
 $metric-container-padding: 8px;
 
@@ -19,7 +17,7 @@ $metric-container-padding: 8px;
 .metric-column-title {
   margin-bottom: $metric-container-margin;
   padding-bottom: $metric-container-padding;
-  border-bottom: 1px solid $input-border-color;
+  border-bottom: 1px solid var(--accent-underline);
   margin-right: $metric-container-margin;
 }
 

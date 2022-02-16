@@ -32,9 +32,9 @@
                 <span class=" mif-chevron-right mif-3x"></span>
             </button>
         </span>
-        <div class="tree-body" #tree style="height: 100%" >
+        <div class="tree-body" #tree >
             <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view">
-                <div class="tree" style="list-style: none" *ngIf="treeService.tree.childGroupViewModel" role="group">
+                <div class="tree" *ngIf="treeService.tree.childGroupViewModel" role="group">
                     <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
                 </div>
             </div>
