@@ -29,7 +29,7 @@
     <app-advanced-option></app-advanced-option>
 
     <div ngbDropdown *ngIf="adalService.aadEnabled" display="'static'" placement="'bottom-left'">
-        <button class="simple-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
+        <button class="flat-button" ngbDropdownToggle title="Contains the toggle for setting advanced mode">
             <span class="mif-user"></span>
         </button>
         <div ngbDropdownMenu style="padding: 10px;" *ngIf="dataService.actionsEnabled()">
