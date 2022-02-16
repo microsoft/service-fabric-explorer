@@ -26,7 +26,6 @@
     <div class="label-group flex-column">
       <label>
         <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
-
         <app-toggle [(state)]="healthFilter.OK" color="green" (stateChange)="updateNodes();"></app-toggle>
       </label>
 

@@ -1,13 +1,8 @@
-@import "src/vars.scss";
-
 $dashboard-margin: 12px;
 $dashboard-padding: 7px;
 $dashboard-datapoint-leftbar-width: 3px;
-$dashboard-title-font-size: $font-size-medium;
-$dashboard-number-font-size: 72px;
 $dashboard-tile-title-font-size: 11pt;
-$dashboard-tile-number-font-size: $dashboard-number-font-size;
-$dashboard-datapoint-title-font-size: $font-size-default;
+$dashboard-tile-number-font-size:72px;
 $dashboard-datapoint-number-font-size: 24pt;
 $dashboard-datapoint-large-width: 72px;
 
@@ -39,13 +34,15 @@ $dashboard-small-padding-horizontal: 12px;
     width: 100%;
     a {
         text-decoration: none;
-        color: $font-color !important;
+        color: var(--font-primary-color) !important;
     }
 
     .dashboard {
-        color: $dashboard-color;
+        box-shadow: var(--primary-box-shadow);
+        border-radius: var(--primary-border-radius);
+        color: var(--font-primary-color);
         padding: $dashboard-padding;
-        background: $dashboard-background-color;
+        background: var(--primary-background-color);
         text-align: center;
         height: 100%;
         width: 100%;
@@ -75,11 +72,11 @@ $dashboard-small-padding-horizontal: 12px;
                     bottom: 0;
 
                     &.badge-upgrade-active {
-                        background: $dashboard-upgrade-active-color;
+                        background: var(--accent-darkblue);
                     }
 
                     &.badge-upgrade-inactive {
-                        background: $dashboard-upgrade-inactive-color;
+                        background: var(--accent-background-color);
                     }
                 }
 
@@ -106,14 +103,15 @@ $dashboard-small-padding-horizontal: 12px;
         flex-direction: column-reverse;
 
         .dashboard-datapoints {
-            margin: 20px 0 0 0;
+          margin: 20px 5px 0 5px;
+          display: flex;
+          justify-content: space-evenly;
 
             .dashboard-datapoint {
-                display: inline-block;
-                width: $dashboard-datapoint-large-width;
+                flex: 1;
 
                 .dashboard-datapoint-title {
-                    font-size: $dashboard-datapoint-title-font-size;
+                    font-size: var(--font-size-default);
                 }
 
                 .dashboard-datapoint-number {

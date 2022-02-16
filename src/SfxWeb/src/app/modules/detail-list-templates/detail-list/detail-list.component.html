@@ -26,7 +26,7 @@
                         <div ngbDropdown *ngIf="columnSetting.hasFilters" [attr.aria-hidden]="!columnSetting.hasFilters" style="display: inline-block;" class="hidden-toggle"
                             (openChange)="closeChange($event)" container="body" display="dynamic">
                             <button class="flat-button supress-hover" style="background-color: transparent;" ngbDropdownToggle aria-label="Filter" [title]="'filter by ' + columnSetting.displayName + ' options'" [attr.aria-haspopup]="false">
-                                <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}"></span>
+                                <span  class="mif-filter" [ngClass]="{'link': columnSetting.hasEffectiveFilters}" placement="bottom-left"></span>
                             </button>
                             <ul ngbDropdownMenu role="menu" class="dropdown-layout"  >
                                 <li role="menuitem" class="check-options item" *ngIf="!columnSetting.allChecked">
@@ -53,7 +53,7 @@
                     <tr class="hover-row">
                             <!-- track by columnSetting.propertyPath -->
                         <td *ngFor="let columnSetting of listSettings.columnSettings; let i = index;">
-                            <div style="display: flex; flex-direction: row">
+                            <div class="item-wrapper">
                                 <button
                                     class="row-expander {{item.isSecondRowCollapsed ? 'mif-chevron-thin-down' : 'mif-chevron-thin-up' }} flat-button"
                                     (click)="handleClickRow(item, $event)"

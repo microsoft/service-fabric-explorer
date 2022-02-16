@@ -23,6 +23,15 @@
                     </td>
                 </tr>
 
+                <tr *ngSwitchCase="'HealthState'">
+                  <th [title]="item.key">
+                      {{item.key}}
+                  </th>
+                  <td>
+                      <app-health-badge [badgeClass]="item.value['Badge Class']" [text]="item.value.Text"></app-health-badge>
+                  </td>
+              </tr>
+
                 <!-- Render html property (one row) -->
                 <tr *ngSwitchCase="'Html'">
                     <!-- Render property name -->

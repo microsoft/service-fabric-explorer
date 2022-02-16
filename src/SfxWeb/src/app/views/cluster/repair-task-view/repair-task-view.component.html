@@ -27,7 +27,7 @@
     </div>
 </div>
 
-<div ngbNav #nav="ngbNav" [(activeId)]="item.activeTab">
+<div ngbNav #nav="ngbNav" [(activeId)]="item.activeTab" class="nav-wrapper">
     <div [ngbNavItem]="1">
         <a ngbNavLink style="font-size: 12pt;">
             Condensed
@@ -64,7 +64,7 @@
                         <h5>
                             Job Info
                         </h5>
-                        <table class="table detail-table" style="margin-bottom: 14px; width: 100%">
+                        <table class="table detail-table" style="margin-bottom: 14px; width: 100%; color: var(--font-primary-color);">
                             <tbody>
                                 <tr>
                                     <th>Executor</th>
