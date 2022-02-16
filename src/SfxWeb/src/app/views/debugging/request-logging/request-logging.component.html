@@ -34,7 +34,7 @@
 <div class="essen-pane detail-pane nav-wrapper">
   <div ngbNav #nav="ngbNav">
     <span ngbNavItem>
-      <a ngbNavLink style="font-size: 12pt;">
+      <a ngbNavLink>
         Last (<span data-cy="lastxrequests">{{networkService.networkDebugger.overall.requests.length}}</span>) Requests
       </a>
       <ng-template ngbNavContent>
@@ -44,7 +44,7 @@
       </ng-template>
     </span>
     <span ngbNavItem>
-      <a ngbNavLink style="font-size: 12pt;">
+      <a ngbNavLink>
         Request Per Api
       </a>
       <ng-template ngbNavContent>

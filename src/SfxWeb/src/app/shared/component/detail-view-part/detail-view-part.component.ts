@@ -50,7 +50,6 @@ export class DetailViewPartComponent implements OnChanges {
 
   public getResolvedPropertyType(value: any): string {
     if(ValueResolver.isHealthBadgeForDetailView(value) ){
-      console.log("health", value)
       return 'HealthState';
     }else if (this.isResolvedObject(value)) {
         return 'Object';

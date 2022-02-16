@@ -1,3 +1,5 @@
+$detail-table-header-color: #939393;
+
 .sticky {
   position: sticky;
   left: 0px;
@@ -21,9 +23,6 @@ table {
   top: 25%;
   width: 120px;
 }
-
-
-@import "src/Styles/vars.scss";
 
 table.table.map-table {
     width: auto;
