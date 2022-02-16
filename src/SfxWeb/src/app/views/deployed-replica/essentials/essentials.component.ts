@@ -55,7 +55,7 @@ export class EssentialsComponent extends DeployedReplicaBaseControllerDirective 
     }
 
     if (this.replica.servicePackageActivationId) {
-      this.essentialItems.push({
+      this.essentialItems.splice(1, 0,{
         descriptionName: 'Service Package Activation Id',
         copyTextValue: this.replica.servicePackageActivationId,
         displayText: this.replica.servicePackageActivationId

@@ -7,6 +7,7 @@ import { BaseComponent } from './base/base.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DetailListTemplatesModule } from 'src/app/modules/detail-list-templates/detail-list-templates.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
+import { ChartsModule } from 'src/app/modules/charts/charts.module';
 
 
 @NgModule({
@@ -16,7 +17,8 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
     SystemApplicationsRoutingModule,
     SharedModule,
     DetailListTemplatesModule,
-    HealthStateModule
+    HealthStateModule,
+    ChartsModule
   ]
 })
 export class SystemApplicationsModule { }
