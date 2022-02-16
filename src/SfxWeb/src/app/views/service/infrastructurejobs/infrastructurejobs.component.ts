@@ -11,6 +11,7 @@ import { InfrastructureJob } from 'src/app/Models/DataModels/infrastructureJob';
 import { IRawInfrastructureJob } from 'src/app/Models/RawDataTypes';
 import { CompletedInfrastructureJob } from 'src/app/Models/DataModels/completedInfrastructureJob';
 import { Constants } from 'src/app/Common/Constants';
+import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 
 @Component({
   selector: 'app-infrastructurejobs',
@@ -57,7 +58,18 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
     this.allPendingMRJobs = mrJobdata.filter(job => job.JobStatus !== 'Completed' && !Boolean(job.IsActive)).map(rawMrJob => new InfrastructureJob(this.data, rawMrJob, dateRef));
     this.completedMRJobs = mrJobdata.filter(job => job.JobStatus === 'Completed').map(rawMrJob => new CompletedInfrastructureJob(this.data, rawMrJob, dateRef));
 
-    this.infrastructureJobsSuggestion  = this.executingMRJobs.some(job => job.RepairTask.State === 'Preparing') ? Constants.executingInfraJobsSuggestion : ''  ;
+    this.infrastructureJobsSuggestion = '';
+
+    this.executingMRJobs.forEach(job => 
+      {
+        var repairTask = this.data.repairCollection.collection.find(rt => rt.id === job.RepairTask.TaskId);
+        if(repairTask != null && repairTask.raw.State == RepairTask.ExecutingStatus && repairTask.getPhase('Executing').durationMilliseconds >= Constants.MaxExecutingInfraJobDuration)
+        {
+          this.infrastructureJobsSuggestion = Constants.longExecutingInfraJobsSuggestion;
+        }
+      });
+
+    this.infrastructureJobsSuggestion  = this.executingMRJobs.some(job => job.RepairTask.State === 'Preparing') ? this.infrastructureJobsSuggestion + Constants.executingInfraJobsSuggestion : ''  ;
     this.infrastructureJobsSuggestion  = this.allPendingMRJobs.length !== 0 && this.executingMRJobs.length > 1 ?
                                                                 this.infrastructureJobsSuggestion + Constants.pendingInfraJobsSuggestion : this.infrastructureJobsSuggestion ;
   }
