@@ -1,4 +1,5 @@
-@import "src/vars.scss";
+$tree-node-search-highlight-background-color: #FDFBAC;
+$tree-node-search-highlight-color: black !default;
 
 button {
   background-color: transparent;
@@ -10,106 +11,76 @@ button {
   }
 }
 
-.node {
-    color: $tree-color;
-    .more-children {
-        margin-left: 46px;
-
-        .icon {
-            margin-right: 2px;
-        }
-    }
-
-    > .self {
-        white-space: nowrap;
-        cursor: pointer;
-        width: 100%;
-        position: relative;
-        height: $tree-node-line-height;
-
-        &:hover, &:focus {
-            background-color: $tree-node-hover-background-color;
-
-            .actions-menu .actions-expander {
-                display: inline-block;
-            }
-        }
-
-        .expander {
-            cursor: default;
-            padding: 2px 2px;
-            min-width: 20px;
-        }
-
-        .actions-menu {
-            position: absolute;
-            padding: 3px 6px;
-            right: 0px;
-            cursor: pointer;
-
-            .actions-expander {
-                display: none;
-            }
-        }
-
-        .tree-badge {
-            font-size: $font-size-small;
-            position: relative;
-            width: 14px;
-            height: 14px;
-            margin-right: 5px;
-        }
-
-        .tree-label {
-            .search-match {
-                color: $tree-node-search-highlight-color;
-                background-color: $tree-node-search-highlight-background-color;
-            }
-        }
-    }
-
-    &.selected > .self {
-        background-color: $tree-node-selected-background-color;
-
-        .actions-expander {
-            display: inline-block;
-            color: $tree-color;
-        }
-    }
+.raised-z-index {
+  z-index: 5;
 }
 
-.hide-nested{
+.node {
+  color: var(--font-primary-color);
+  .more-children {
+    margin-left: 46px;
+  }
 
-    &:hover, &:focus-within {
-        .hidden {
-            visibility: visible;
-        }
+  > .self {
+    white-space: nowrap;
+    cursor: pointer;
+    position: relative;
+
+    width: calc(100% - 10px);
+    min-width: fit-content;
+    margin-left: 5px;
+    border-radius: var(--primary-border-radius);
+
+    .expander {
+      cursor: default;
+      padding: 2px 2px;
+      min-width: 20px;
+      transition: 0.25s transform;
+
+      &.rotated {
+        transform: rotate(-90deg);
+      }
     }
+  }
 
+  &.selected > .self {
+    background-color: var(--accent-darkblue);
+    box-shadow: var(--heavy-box-shadow);
+  }
+}
+
+.hide-nested {
+  &:hover,
+  &:focus-within {
     .hidden {
-        visibility: hidden;
+      visibility: visible;
     }
+  }
+
+  .hidden {
+    visibility: hidden;
+  }
 }
 
 .right-action {
-    position: absolute;
-    right: 0;
-    padding: 1px;
+  position: absolute;
+  right: 0;
+  padding: 1px;
 }
 
 .icon {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .disabled {
-    .icon {
-        cursor: auto;
-        color: gray;
-    }
+  .icon {
+    cursor: auto;
+    color: gray;
+  }
 }
 
 ul {
-    margin: 0px;
-    list-style: none;
-    padding: 0px;
+  margin: 0px;
+  list-style: none;
+  padding: 0px;
 }

@@ -10,3 +10,8 @@
     flex-direction: row;
     justify-content: space-between;
 }
+
+a {
+  width: fit-content;
+  font-size: var(--font-size-medium);
+}

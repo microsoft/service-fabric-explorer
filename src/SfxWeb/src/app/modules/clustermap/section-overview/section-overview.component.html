@@ -1,4 +1,4 @@
-<div *ngIf="info" class="essen-pane no-padding" style="color: white; margin: 2px;"
+<div *ngIf="info" class="no-padding" style="color: white; margin: 2px;"
   [attr.data-cy]="'sectionoverview' + title">
   <div class="underline title-display">
     {{title}}
@@ -9,18 +9,18 @@
 
     <div>
       <div class="flex-center" style="flex-direction: column;">
-        <div class="essential-list-item" *ngIf="repairInfo"
+        <div class="essential-list-item" *ngIf="repairInfo"  tooltipClass="styled-tooltip"
           ngbTooltip="The count of Repair Jobs in progress / Recently finished Repair Job counts" container="body">
           <span class="mif-cog link space-right"></span> <span
             class="small-icon-text">{{repairInfo.inProgress}}/{{repairInfo.recent}}</span>
         </div>
-        <div class="essential-list-item"
+        <div class="essential-list-item"  tooltipClass="styled-tooltip"s
           ngbTooltip="The count of disabled nodes / Nodes that are in the process of disabling" container="body"
           data-cy="disabling-nodes">
           <app-status-resolver status="Disabling" [showText]="false" class="space-right"></app-status-resolver> <span
             class="small-icon-text">{{info.statusTypeCounts[constants.Disabled]}}/{{info.statusTypeCounts[constants.Disabling]}}</span>
         </div>
-        <div class="essential-list-item" ngbTooltip="The count of down nodes" container="body" data-cy="down-nodes">
+        <div class="essential-list-item" ngbTooltip="The count of down nodes"  tooltipClass="styled-tooltip" container="body" data-cy="down-nodes">
           <app-status-resolver status="Down" [showText]="false" class="space-right"></app-status-resolver><span
             class="small-icon-text">{{info.statusTypeCounts[constants.Down]}}</span>
         </div>

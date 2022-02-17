@@ -8,13 +8,22 @@ import { environment } from 'src/environments/environment';
   styleUrls: ['./tree-node.component.scss']
 })
 export class TreeNodeComponent {
-  public assetBase = environment.assetBase;
-
   @Input() node: TreeNodeGroupViewModel;
+
+  public assetBase = environment.assetBase;
+  higherZIndex = -1;
 
   constructor() { }
 
   trackById(index: number, node: TreeNodeGroupViewModel) {
     return node.nodeId;
+  }
+
+  changeZIndez(index: number, state: boolean) {
+    if(state) {
+      this.higherZIndex = index;
+    }else if(index === this.higherZIndex && !state){
+      this.higherZIndex = -1;
+    }
   }
 }
