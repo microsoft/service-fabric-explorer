@@ -60,14 +60,16 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
 
     this.infrastructureJobsSuggestion = [];
 
-    this.executingMRJobs.forEach(job => 
-      {
-        var repairTask = this.data.repairCollection.collection.find(rt => rt.id === job.RepairTask.TaskId);
-        if(repairTask != null && repairTask.raw.State == RepairTask.ExecutingStatus && repairTask.getPhase('Executing').durationMilliseconds >= Constants.MaxExecutingInfraJobDuration)
-        {
-          this.infrastructureJobsSuggestion .push(Constants.longExecutingInfraJobsSuggestion);
-        }
-      });
+    if (this.executingMRJobs.some(job => {
+      const repairTask = this.data.repairCollection.collection.find(rt => rt.id === job.RepairTask.TaskId);
+      if (repairTask && repairTask.raw.State === RepairTask.ExecutingStatus && repairTask.getPhase('Executing').durationMilliseconds >= Constants.MaxExecutingInfraJobDuration) {
+        return true;
+      } else {
+        return false;
+      }
+    })) {
+      this.infrastructureJobsSuggestion.push(Constants.longExecutingInfraJobsSuggestion);
+    };
 
     if(this.executingMRJobs.some(job => job.RepairTask.State === 'Preparing'))
     {
@@ -76,7 +78,7 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
     if (this.allPendingMRJobs.length !== 0 && this.executingMRJobs.length > 1)
     {
       this.infrastructureJobsSuggestion.push(Constants.pendingInfraJobsSuggestion);
-    }                                             
+    }
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
