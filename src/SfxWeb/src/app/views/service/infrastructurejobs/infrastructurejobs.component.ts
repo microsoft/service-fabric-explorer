@@ -27,7 +27,7 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
   allPendingMRJobsList: ListSettings;
   completedMRJobsList: ListSettings;
 
-  infrastructureJobsSuggestion: string;
+  infrastructureJobsSuggestion: string[] = [];
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService, public telemetry: TelemetryService) {
     super(data, injector);
@@ -48,7 +48,7 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
       new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
       new ListColumnSetting('raw.RoleInstancesToBeImpacted', 'Impacted Nodes'),
     ]);
-    this.infrastructureJobsSuggestion = '';
+    this.infrastructureJobsSuggestion = [];
   }
 
   getInfrastructureData(mrJobdata: IRawInfrastructureJob[]): void {
@@ -58,20 +58,25 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
     this.allPendingMRJobs = mrJobdata.filter(job => job.JobStatus !== 'Completed' && !Boolean(job.IsActive)).map(rawMrJob => new InfrastructureJob(this.data, rawMrJob, dateRef));
     this.completedMRJobs = mrJobdata.filter(job => job.JobStatus === 'Completed').map(rawMrJob => new CompletedInfrastructureJob(this.data, rawMrJob, dateRef));
 
-    this.infrastructureJobsSuggestion = '';
+    this.infrastructureJobsSuggestion = [];
 
     this.executingMRJobs.forEach(job => 
       {
         var repairTask = this.data.repairCollection.collection.find(rt => rt.id === job.RepairTask.TaskId);
         if(repairTask != null && repairTask.raw.State == RepairTask.ExecutingStatus && repairTask.getPhase('Executing').durationMilliseconds >= Constants.MaxExecutingInfraJobDuration)
         {
-          this.infrastructureJobsSuggestion = Constants.longExecutingInfraJobsSuggestion;
+          this.infrastructureJobsSuggestion .push(Constants.longExecutingInfraJobsSuggestion);
         }
       });
 
-    this.infrastructureJobsSuggestion  = this.executingMRJobs.some(job => job.RepairTask.State === 'Preparing') ? this.infrastructureJobsSuggestion + Constants.executingInfraJobsSuggestion : ''  ;
-    this.infrastructureJobsSuggestion  = this.allPendingMRJobs.length !== 0 && this.executingMRJobs.length > 1 ?
-                                                                this.infrastructureJobsSuggestion + Constants.pendingInfraJobsSuggestion : this.infrastructureJobsSuggestion ;
+    if(this.executingMRJobs.some(job => job.RepairTask.State === 'Preparing'))
+    {
+      this.infrastructureJobsSuggestion.push(Constants.executingInfraJobsSuggestion);
+    }
+    if (this.allPendingMRJobs.length !== 0 && this.executingMRJobs.length > 1)
+    {
+      this.infrastructureJobsSuggestion.push(Constants.pendingInfraJobsSuggestion);
+    }                                             
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
