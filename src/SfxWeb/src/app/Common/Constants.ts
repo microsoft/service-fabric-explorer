@@ -76,7 +76,7 @@ export class Constants {
 
     public static executingInfraJobsSuggestion = 'If the repair task corresponding to Infrastructure updates is stuck in Preparing for long, check the Repair Task page.';
     public static pendingInfraJobsSuggestion = 'Pending updates when 2 or more updates are in Active state are not executed because of throttling policy in Infrastructure Service.';
-    public static longExecutingInfraJobsSuggestion = 'Infrastructure Jobs are in Executing state for more than 1 hour. Engage Compute platform teams if its taking too much time.';
+    public static longExecutingInfraJobsSuggestion = 'Infrastructure Jobs are in Executing state for more than 1 hour after approval from Service Fabric. Engage Compute platform teams if its taking too much time.';
     public static readonly  MaxExecutingInfraJobDuration= 1000 * 60 * 60;
     public static readonly EventsTab: ITab = {
       name: 'events',
