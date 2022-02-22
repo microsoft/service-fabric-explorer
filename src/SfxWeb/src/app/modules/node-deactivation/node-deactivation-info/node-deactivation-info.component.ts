@@ -12,6 +12,8 @@ import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-di
 })
 export class NodeDeactivationInfoComponent implements OnInit, OnChanges {
 
+  public readonly seedNodeQuorumMessage = "This node deactivation is waiting on a Seed Node Quorom safety check. If this deactivation is going for an irregular amount of time, consider referring to the following TSG to potentially continue progress for this deactivation."
+
   @Input() node: Node;
   @Input() deactivationInfo: IRawNodeDeactivationInfo;
 
