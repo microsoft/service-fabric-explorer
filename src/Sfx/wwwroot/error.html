@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Service Fabric Explorer</title>
+    <link rel="icon" type="image/png" href="images/favicon.png" />
+
+    <style>
+        body {
+            font-family: "Segoe UI", -apple-system, "Helvetica Neue", "Lucida Grande", Trebuchet, Arial, sans-serif;
+        }
+
+        p.key {
+            margin-top: 50px;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        p.value {
+            margin-top: 0px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Error</h1>
+
+    <p class="key"></p>
+    <p class="value"></p>
+
+    <script>
+        function getUrlParams() {
+            var url = document.location.href;
+            var re = /(?:[\?&#])([^=&#]+)(?:=?([^&#]*))/g;
+            var match, params = {};
+            var decode = function (s) {
+                return decodeURIComponent(s.replace(/\+/g, " "));
+            };
+            while (match = re.exec(url)) {
+                params[decode(match[1])] = decode(match[2]);
+            }
+            return params;
+        }
+
+        var params = getUrlParams();
+        for (var paramKey in params) {
+            var key = document.createElement("p");
+            key.className = "key";
+            var value = document.createElement("p");
+            value.className = "value";
+
+            key.textContent = paramKey;
+            value.textContent = params[paramKey];
+
+            document.body.appendChild(key);
+            document.body.appendChild(value);
+        }
+    </script>
+</body>
+</html>
