@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { electron } from "../../utilities/electron-adapter";
+import * as electron from "electron";
 
 process.argv.push(electron.remote.getCurrentWindow()["rendered.process.args"]);
 
@@ -13,8 +13,5 @@ import * as appUtils from "../../utilities/appUtils";
 appUtils.logUnhandledRejection();
 
 process.once("loaded", () => {
-    // TODO: Remove global.exports when the node v10 is integrated with electron.
-    global["exports"] = exports;
-
     return bootstrap();
 });

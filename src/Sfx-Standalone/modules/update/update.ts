@@ -131,21 +131,22 @@ export default class UpdateService implements IUpdateService {
         return this.httpClient.getAsync(versionInfoUrl);
     }
 
-    private async requestConfirmationAsync(versionInfo: IVersionInfo): Promise<boolean> {
-        const buttons = ["Yes", "No"];
+    private requestConfirmationAsync(versionInfo: IVersionInfo): Promise<boolean> {
+        return new Promise<boolean>((resolve) => {
+            const buttons = ["Yes", "No"];
 
-        this.log.writeVerboseAsync("Requesting update confirmation from the user ...");
-        const closed = dialog.showMessageBox(null, {
-            message: `A newer version, ${versionInfo.version}, is found. Would you like to update now?`,
-            detail: versionInfo.description ? versionInfo.description : undefined,
-            buttons: buttons,
-            defaultId: 1
-        });
+            this.log.writeVerboseAsync("Requesting update confirmation from the user ...");
+            const response = dialog.showMessageBoxSync(null,
+                {
+                    message: `A newer version, ${versionInfo.version}, is found. Would you like to update now?`,
+                    detail: versionInfo.description ? versionInfo.description : undefined,
+                    buttons: buttons,
+                    defaultId: 1
+                });
 
-        const response = await closed;
-
-        this.log.writeInfoAsync("Update confirmation result: {} ({})", buttons[response.response], response);
-        return response.response === 0;
+                this.log.writeInfoAsync("Update confirmation result: {} ({})", buttons[response], response);
+                resolve(response === 0);
+            });
     }
 
     private getPackagePath(packageInfo: IPackageInfo): string {

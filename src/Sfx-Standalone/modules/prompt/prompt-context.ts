@@ -22,8 +22,9 @@ export class PromptContext implements IPromptContext {
     }
 
     constructor() {
-        this.id = window.location.search.split("?promptId=")[0];
+        this.id = window.location.search.split("=")[1];
         this.options = ipcRenderer.sendSync(utils.string.format(ChannelNameFormat, this.id, EventNames.RequestPromptOptions));
+        console.log(this)
     }
 
     public get promptOptions(): IPromptOptions {

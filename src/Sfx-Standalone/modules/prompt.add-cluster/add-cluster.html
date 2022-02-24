@@ -1,0 +1,107 @@
+<html>
+
+<head>
+    <meta charset="utf-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title></title>
+
+    <!-- CSS imports -->
+    <link href="../../sfx/styles.css" rel="stylesheet" />
+    <style>
+        .hidden {
+            display: none;
+        }
+
+        .modal-body {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+    </style>
+
+    <!-- <script type="text/javascript" src="add-cluster.js"></script> -->
+    <script>
+        require("./add-cluster.js")
+    </script>
+</head>
+
+<body style="overflow:hidden">
+    <form class="modal modal-content action-modal" id="cluster-form">
+        <div class="modal-header">
+            <h4 class="modal-title">Connect to Service Fabric cluster</h4>
+        </div>
+        <div class="modal-body">
+            <div class="mb-12px">
+                <label for="input-cluster-url">Cluster URL</label>
+                <input id="input-cluster-url" name="endpoint" type="text" class="input-flat"
+                    placeholder="http://localhost:19080" />
+            </div>
+            <div class="mb-12px">
+                <label for="input-cluster-label">Friendly name (Optional)</label>
+                <input id="input-cluster-label" name="displayName" type="text" class="input-flat" value="" />
+            </div>
+        
+            <div>
+                <div>Authentication Type</div>
+    
+                <input type="radio" id="unsecure" name="auth" value="unsecure" checked>
+                <label for="unsecure">unsecure</label>
+    
+                <input type="radio" id="certificate" name="auth" value="certificate">
+                <label for="certificate">certificate</label>
+    
+                <input type="radio" id="aad" name="auth" value="aad">
+                <label for="aad">aad</label>
+            </div>
+    
+            <div class="hidden" id="cert-info">
+                <div>
+                    Certificate Information
+                </div>
+    
+                <div>
+                    <div>
+                        <input type="radio" id="current-user" name="storeLocation" value="Current User" checked>
+                        <label for="current-user">Current User</label>
+    
+                        <input type="radio" id="local-machine" name="storeLocation" value="Local Machine">
+                        <label for="local-machine">Local Machine</label>
+                    </div>
+    
+                    <div class="mb-12px">
+                        <label for="store-name">Store Name</label>
+                        <input id="store-name" type="text" name="storeName" class="input-flat" placeholder="MY" />
+                    </div>
+    
+                    <div>
+                        <input type="radio" id="thumbprint" name="findType" value="thumbprint" checked>
+                        <label for="thumbprint">thumbprint</label>
+    
+                        <input type="radio" id="subjectname" name="findType" value="subjectname">
+                        <label for="subjectname">Subject Name</label>
+                    </div>
+    
+                    <div class="mb-12px">
+                        <label for="findvalue">Find Value</label>
+                        <input id="findvalue" type="text" name="findValue" class="input-flat" value="" />
+                    </div>
+    
+    
+                    <div class="mb-12px">
+                        <label for="commonnames">Server common names</label>
+                        <input id="commonnames" type="text" name="serverCommonNames" class="input-flat" value="" />
+                    </div>
+    
+                </div>
+            </div>
+        </div>
+
+        <div class="modal-footer">
+            <button id="btn-connect" type="submit" class="solid-button blue">Connect</button>
+            <button id="btn-exit" type="button" class="flat-button">Cancel</button>
+        </div>
+    </form>
+</body>
+
+</html>

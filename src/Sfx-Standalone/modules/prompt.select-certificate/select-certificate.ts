@@ -5,7 +5,7 @@
 
 import { ICertificateInfo, ICertificate } from "sfx.cert";
 
-import { electron } from "../../utilities/electron-adapter";
+import * as electron from "electron";
 
 // JQuery & angular already referenced in select-certificate.html.
 declare const angular: angular.IAngularStatic;
@@ -76,8 +76,8 @@ declare const angular: angular.IAngularStatic;
                 window.close();
             };
 
-            $scope.browseCertFiles = async () => {
-                const selectedFiles = electron.dialog.showOpenDialog({
+            $scope.browseCertFiles = () => {
+                const selectedFiles = electron.dialog.showOpenDialogSync({
                     title: "Open a client certificate ...",
                     filters: [
                         {
@@ -105,17 +105,15 @@ declare const angular: angular.IAngularStatic;
                     properties: ["openFile", "createDirectory"]
                 });
 
-                const selectedFilesData = await selectedFiles; 
-
-                if (!selectedFilesData.filePaths || selectedFilesData.filePaths.length <= 0) {
+                if (!selectedFiles || selectedFiles.length <= 0) {
                     return;
                 }
 
                 $scope.certFilePath = selectedFiles[0];
             };
 
-            $scope.browseKeyFiles = async () => {
-                const selectedFiles = electron.dialog.showOpenDialog({
+            $scope.browseKeyFiles = () => {
+                const selectedFiles = electron.dialog.showOpenDialogSync({
                     title: "Open a key file for the client certificate ...",
                     filters: [
                         {
@@ -127,9 +125,7 @@ declare const angular: angular.IAngularStatic;
                     properties: ["openFile", "createDirectory"]
                 });
 
-                const selectedFilesData = await selectedFiles; 
-
-                if (!selectedFilesData.filePaths || selectedFilesData.filePaths.length <= 0) {
+                if (!selectedFiles || selectedFiles.length <= 0) {
                     return;
                 }
 
@@ -144,7 +140,7 @@ declare const angular: angular.IAngularStatic;
                 return now >= startDate && now < expiryDate;
             };
 
-            promptContext.finish(null);
+            $scope.cancel = () => promptContext.finish(null);
         }
     }
 

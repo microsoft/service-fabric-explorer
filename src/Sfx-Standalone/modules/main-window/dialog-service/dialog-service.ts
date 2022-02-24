@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import * as $ from "jquery";
-import { electron } from "../../../utilities/electron-adapter";
+import * as electron from "electron";
 import { WebviewTag } from "electron";
 import { IDialogService, IDialogRenderingOption } from "sfx.main-window";
 

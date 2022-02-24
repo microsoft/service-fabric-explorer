@@ -48,13 +48,38 @@ declare module "sfx.module-manager" {
 
 declare module "sfx.sfx-view-container" {
     export interface ISfxContainer {
-        loadSfxAsync(targetServiceEndpoint: string, clusterDisplayName: string): Promise<void>;
+        loadSfxAsync(cluster: ICluster): Promise<void>;
         unloadSfxAsync(targetServiceEndpoint: string): Promise<void>;
         reloadSfxAsync(targetServiceEndpoint: string): Promise<void>;
     }
 }
 
 declare module "sfx.cluster-list" {
+    import { ICluster } from "sfx.cluster-list";
+
+    export interface ICertInfoAuth {
+        storeLocation: "Current User" | "Local Machine";
+        storeName: string;
+        findType: "Thumbprint" | "SubjectName";
+        findValue: string;
+        serverCommonNames: string;
+    }
+    
+    export interface IClusterAuth {
+        type: "Unsecure" | "aad" | "certificate";
+        certInfo?: ICertInfoAuth;
+    }
+    
+    
+    export interface ICluster {
+        displayName: string;
+        endpoint: string;
+        folder?: string;
+        currentInView: boolean;
+    
+        authentication: IClusterAuth;
+    }
+
     export interface IClusterList {
         newClusterListItemAsync(endpoint: string, name?: string, folder?: string, isCurrentInView?: boolean): Promise<void>;
         removeClusterListItem(label: string): Promise<void>;
@@ -64,7 +89,7 @@ declare module "sfx.cluster-list" {
 
     export interface IClusterListDataModel {
         addFolder(label: string);
-        addCluster(label: string, url: string, folder: string);
+        addCluster(label: string, url: string, authInfo: IClusterAuth, folder: string);
         removeFolder(label: string);
         removeCluster(cluster_label: string, folder_label: string);
         renameFolder(old_name: string, new_name: string);

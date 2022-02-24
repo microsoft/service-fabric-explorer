@@ -23,13 +23,11 @@ import createAuthWindowsResponseHandler from "./response-handlers/auth.windows";
 export default class ServiceFabricHttpClient extends HttpClient {
 
     private readonly trustedCerts: Donuts.IStringKeyDictionary<boolean>;
-    private readonly trustedCertsInProgress: Donuts.IStringKeyDictionary<Promise<any>>;
     
     constructor(log: Donuts.Logging.ILog, pkiSvc: IPkiCertificateService) {
         super(log, [], []);
 
         this.trustedCerts = Object.create(null);
-        this.trustedCertsInProgress = Object.create(null);
 
         const certResponseHandler = createAuthCertResponseHandler(pkiSvc, this.selectClientCertAsync);
 
@@ -53,46 +51,42 @@ export default class ServiceFabricHttpClient extends HttpClient {
             createJsonFileResponseHandler());
     }
 
-    private checkServerCert = async (serverName: string, cert: ICertificateInfo): Promise<boolean> => {
-        const record = this.trustedCerts[cert.thumbprint];
+    private checkServerCert = (serverName: string, cert: ICertificateInfo): boolean => {
+        return true;
+        // const record = this.trustedCerts[cert.thumbprint];
 
-        if (typeof record === "boolean") {
-            return record;
-        }
+        // if (typeof record === "boolean") {
+        //     return record;
+        // }
 
-        if (this.trustedCertsInProgress[cert.thumbprint] !== undefined) {
-            return await this.trustedCertsInProgress[cert.thumbprint];
-        }
+        // const response = dialog.showMessageBoxSync(
+        //     BrowserWindow.getFocusedWindow(),
+        //     {
+        //         type: "warning",
+        //         buttons: ["Yes", "No"],
+        //         title: "Untrusted certificate",
+        //         message: "Do you want to trust this certificate?",
+        //         detail:
+        //             `Site: ${serverName} \r\n` +
+        //             `Subject: ${cert.subjectName}\r\n` +
+        //             `Issuer: ${cert.issuerName}\r\n` +
+        //             `Serial: ${cert.serialNumber}\r\n` +
+        //             `Starts: ${cert.validStart.toLocaleString()}\r\n` +
+        //             `Util: ${cert.validExpiry.toLocaleString()}\r\n` +
+        //             `Thumbprint: ${cert.thumbprint}`,
+        //         cancelId: 1,
+        //         defaultId: 0,
+        //         noLink: true,
+        //     });
 
-        this.trustedCertsInProgress[cert.thumbprint] = dialog.showMessageBox(
-                BrowserWindow.getFocusedWindow(),
-                {
-                    type: "warning",
-                    buttons: ["Yes", "No"],
-                    title: "Untrusted certificate",
-                    message: "Do you want to trust this certificate?",
-                    detail:
-                        `Site: ${serverName} \r\n` +
-                        `Subject: ${cert.subjectName}\r\n` +
-                        `Issuer: ${cert.issuerName}\r\n` +
-                        `Serial: ${cert.serialNumber}\r\n` +
-                        `Starts: ${cert.validStart.toLocaleString()}\r\n` +
-                        `Util: ${cert.validExpiry.toLocaleString()}\r\n` +
-                        `Thumbprint: ${cert.thumbprint}`,
-                    cancelId: 1,
-                    defaultId: 0,
-                    noLink: true,
-                }).then(responseData => {
-                    return this.trustedCerts[cert.thumbprint] = responseData.response === 0;
-                });
-        
-        return await this.trustedCertsInProgress[cert.thumbprint];
+        // return this.trustedCerts[cert.thumbprint] = response === 0;
     }
 
     private selectClientCertAsync =
-        async (urlString: string, certInfos: Array<ICertificateInfo>): Promise<ICertificate | ICertificateInfo> => {
-            const prompt = await sfxModuleManager.getComponentAsync("prompt.select-certificate", certInfos);
+        async (urlString: string, certInfos: Array<ICertificateInfo>): Promise<string> => {
+            // const prompt = await sfxModuleManager.getComponentAsync("prompt.select-certificate", certInfos);
 
-            return await prompt.openAsync();
+            // return await prompt.openAsync();
+            return this.clusterAuthenticationMap[urlString];
         }
 }

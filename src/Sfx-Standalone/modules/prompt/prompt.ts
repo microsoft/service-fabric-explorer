@@ -10,7 +10,7 @@ import { Menu, BrowserWindow, ipcMain, BrowserWindowConstructorOptions  } from "
 
 import { local } from "donuts.node/path";
 import * as utils from "donuts.node/utils";
-import { electron } from "../../utilities/electron-adapter";
+import * as electron from "electron";
 import * as appUtils from "../../utilities/appUtils";
 import { ChannelNameFormat, EventNames } from "./constants";
 
@@ -27,6 +27,8 @@ class Prompt<TResult> implements IPrompt<TResult> {
     private promise_reject: (reason?: any) => void;
     private promptWindow: BrowserWindow;
     private promptResult: TResult;
+
+    private id = Math.round(Math.random() * 100).toString();
 
     constructor(moduleManager: ISfxModuleManager, promptOptions: IPromptOptions) {
         this.moduleManager = moduleManager;
@@ -66,6 +68,8 @@ class Prompt<TResult> implements IPrompt<TResult> {
         this.promptOptions.showMenu = utils.pick(this.promptOptions.showMenu, false);
         this.promptWindow.setMenuBarVisibility(this.promptOptions.showMenu);
 
+        this.promptWindow.webContents.openDevTools();
+
         if (this.promptOptions.showMenu && utils.isObject(this.promptOptions.menuTemplate)) {
             if (process.platform !== "darwin") {
                 this.promptWindow.setMenu(Menu.buildFromTemplate(this.promptOptions.menuTemplate));
@@ -97,12 +101,14 @@ class Prompt<TResult> implements IPrompt<TResult> {
         });
 
         ipcMain.once(
-            utils.string.format(ChannelNameFormat, this.promptWindow.id, EventNames.Finished),
+            utils.string.format(ChannelNameFormat, this.id, EventNames.Finished),
             (event: Electron.Event, result: any) => this.promptResult = result);
 
         ipcMain.once(
-            utils.string.format(ChannelNameFormat, this.promptWindow.id, EventNames.RequestPromptOptions),
+            utils.string.format(ChannelNameFormat, this.id, EventNames.RequestPromptOptions),
             (event: Electron.Event) => (event.returnValue as any) = this.promptOptions);
+
+            console.log(this, this.id);
     }
 
     public openAsync(): Promise<TResult> {
@@ -112,14 +118,15 @@ class Prompt<TResult> implements IPrompt<TResult> {
             throw new Error("Prompt is not initialized.");
         }
 
-        this.promptWindow.loadFile(this.promptOptions.pageUrl, {query: {"promptId": this.promptWindow.id.toString() }});
+        console.log(this)
 
+        this.promptWindow.loadFile(this.promptOptions.pageUrl, {query: {"promptId": this.id.toString() }});
         return this.promise;
     }
 
     private cleanupIpcListeners() {
         for (const eventName in EventNames) {
-            ipcMain.removeAllListeners(utils.string.format(ChannelNameFormat, this.promptWindow.id, eventName));
+            ipcMain.removeAllListeners(utils.string.format(ChannelNameFormat, this.id, eventName));
         }
     }
 
@@ -145,7 +152,7 @@ export class PromptService implements IPromptService {
         const prompt = new Prompt<TResult>(this.moduleManager, promptOptions);
 
         await prompt.initializeAsync();
-
+        console.log(prompt)
         return prompt;
     }
 }

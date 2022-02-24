@@ -11,8 +11,12 @@ import createRouterRequestHandler from "./request-handlers/router";
 import createRedirectionResponseHandler from "./response-handlers/redirection";
 import createJsonResponseHandler from "./response-handlers/json";
 import createJsonFileResponseHandler from "./response-handlers/json-file";
+import { ICluster } from "sfx.cluster-list";
 
 export default class HttpClient extends HttpPipeline implements IHttpClient {
+
+    protected clusterAuthenticationMap: Record<string,string> = {};
+
     private static createHttpError(response: IHttpResponse): Error {
         const err = new Error(response.statusMessage);
 
@@ -114,5 +118,11 @@ export default class HttpClient extends HttpPipeline implements IHttpClient {
                 response.statusCode >= 300
                     ? Promise.reject(HttpClient.createHttpError(response))
                     : Promise.resolve(response.data));
+    }
+
+    public registerClusterConfiguration(cluster: ICluster) {
+        if(cluster.authentication.type === "certificate") {
+            this.clusterAuthenticationMap[cluster.endpoint] = cluster.authentication.certInfo.findValue; 
+        }
     }
 }

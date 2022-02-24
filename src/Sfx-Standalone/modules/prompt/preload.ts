@@ -9,9 +9,6 @@ import * as appUtils from "../../utilities/appUtils";
 import { bootstrap } from "../../bootstrap.module-manager";
 
 (async () => {
-    // TODO: Remove global.exports when the node v10 is integrated with electron.
-    global["exports"] = exports;
-
     appUtils.logUnhandledRejection();
 
     const moduleManager = await bootstrap();

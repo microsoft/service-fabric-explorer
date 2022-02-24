@@ -904,6 +904,7 @@ export class RestClientService {
                     }
                 , (err: IHttpResponse) =>
                 {
+                  console.log(JSON.stringify(err))
                     const r = new HttpErrorResponse({
                         status: err.statusCode,
                         statusText: err.statusMessage,

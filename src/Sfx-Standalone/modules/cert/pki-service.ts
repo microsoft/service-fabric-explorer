@@ -41,14 +41,13 @@ export class PkiService implements IPkiCertificateService {
         return certJsonObjects;
     }
 
-    public async getCertificateAsync(certInfo: ICertificateInfo): Promise<IPfxCertificate> {
-        if (!certInfo
-            || !certInfo.thumbprint
-            || !utils.isString(certInfo.thumbprint)) {
+    public async getCertificateAsync(thumbprint: string): Promise<IPfxCertificate> {
+        if (!thumbprint
+            || !utils.isString(thumbprint)) {
             throw new Error("Invalid certInfo: missing thumbprint.");
         }
 
-        const cmdOutputs = await execAsync(`powershell -ExecutionPolicy Bypass -File "${local("./windows/Get-PfxCertificateData.ps1")}" -Thumbprint "${certInfo.thumbprint}"`, { encoding: "utf8" });
+        const cmdOutputs = await execAsync(`powershell -ExecutionPolicy Bypass -File "${local("./windows/Get-PfxCertificateData.ps1")}" -Thumbprint "${thumbprint}"`, { encoding: "utf8" });
         const pfxBase64Data = cmdOutputs.stdout;
 
         if (pfxBase64Data === "undefined") {
