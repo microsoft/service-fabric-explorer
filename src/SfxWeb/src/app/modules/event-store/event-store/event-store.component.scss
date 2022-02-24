@@ -31,6 +31,10 @@ $border-radius: 5px;
       border-bottom-right-radius: $border-radius !important;
       border-top-right-radius: $border-radius !important;
      }
+
+     &.active {
+       background-color: var(--accent-darkblue);;
+     }
    }
 }
 

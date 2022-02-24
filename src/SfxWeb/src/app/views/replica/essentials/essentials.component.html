@@ -15,7 +15,7 @@
     </app-essential-health-tile>
   </div>
 
-  <div class="detail-pane essen-pane" data-cy="address">
+  <div class="detail-pane essen-pane" data-cy="address" *ngIf="replica.address">
     <app-replica-address [address]="replica.address"></app-replica-address>
   </div>
 
