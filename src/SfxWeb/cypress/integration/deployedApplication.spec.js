@@ -5,7 +5,7 @@ import { addDefaultFixtures, apiUrl, checkTableSize } from './util';
 const nodeName = "_nt_2"
 const appName = "VisualObjectsApplicationType";
 const waitRequest = "@appInfo";
-context('app', () => {
+context('deployed app', () => {
     beforeEach(() => {
         addDefaultFixtures();
 

@@ -13,7 +13,7 @@ const waitRequest = "@getpartitionInfo";
 const routeFormatter = (appName, serviceName) => `/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}/$/GetPartitions`;
 const urlFormatter = (app, service, partition) => `/#/apptype/${app}/app/${app}/service/${app}%252F${service}/partition/${partition}`;
 
-context('service', () => {
+context('partition', () => {
     beforeEach(() => {
         addDefaultFixtures();
         addRoute("services", "app-page/services.json", apiUrl(`/Applications/${appName}/$/GetServices?*`));
@@ -70,7 +70,7 @@ context('service', () => {
             cy.url().should('include', '/events')
         })
 
-        it.only('replicator', () => {
+        it('replicator', () => {
           cy.get('[data-cy=replicator]').within(() => {
             // cy.contains('events').click();
 
@@ -112,4 +112,26 @@ context('service', () => {
         })
         })
     })
+
+    describe("backups", () => {
+      it('view backup', () => {
+        cy.get('[data-cy=navtabs]').within(() => {
+          cy.contains('backups').click();
+        })
+
+        cy.url().should('include', `${partitionId}/backups`)
+        // cy.visit(`/#/apptype/${appName}/app/${appName}`)
+
+        //   cy.intercept(apiUrl(`/Applications/${appName}/$/GetBackupConfigurationInfo?*`)).as('backup');
+        //   cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
+
+        //   cy.get('[data-cy=navtabs]').within(() => {
+        //       cy.contains('backup').click();
+        //   })
+
+        //   cy.wait("@backup")
+
+        //   cy.url().should('include', '/backup')
+      })
+  })
 })

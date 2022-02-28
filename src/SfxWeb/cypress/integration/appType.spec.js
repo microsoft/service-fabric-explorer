@@ -5,7 +5,7 @@ import { addDefaultFixtures, FIXTURE_REF_APPS, apiUrl } from './util';
 const appTypeName = "VisualObjectsApplicationType";
 const appname = "fabric:/VisualObjectsApplicationType";
 
-context('app', () => {
+context('app type', () => {
     beforeEach(() => {
         addDefaultFixtures();
         cy.visit(`/#/apptype/${appTypeName}`)
@@ -27,7 +27,7 @@ context('app', () => {
             })
         })
 
-      it.only('unprovision', () => {
+      it('unprovision', () => {
         cy.intercept('POST', apiUrl('/ApplicationTypes/VisualObjectsApplicationType/$/Unprovision?*'), {
           statusCode: 200,
           body: {},
