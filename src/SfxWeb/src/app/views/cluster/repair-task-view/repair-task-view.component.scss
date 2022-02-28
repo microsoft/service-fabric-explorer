@@ -44,3 +44,8 @@ table.detail-list {
 .badge-ok {
     background-color: $green;
 }
+
+.collapse-inner-bar {
+  margin-left: 11px;
+  border-left: var(--accent-underline) 2px solid;
+}

@@ -4,10 +4,11 @@
             Application Type versions
         </h4>
         <div collapse-body>
-            <div ngbNav #nav="ngbNav" >
+            <div ngbNav #nav="ngbNav" class="nav-wrapper" >
                 <div ngbNavItem>
                     <a ngbNavLink style="font-size: 12pt;">
-                        In Use <span tabindex="0" class="mif-info" ngbTooltip="Application Types which have at least 1 application instance." style="font-size: small;" container="body"></span>
+                      In Use <span tabindex="0" class="mif-info" ngbTooltip="Application Types which have at least 1 application instance."
+                        placement="bottom" tooltipClass="styled-tooltip" style="font-size: small;" container="body"></span>
                     </a>
                     <ng-template ngbNavContent>
                         <app-detail-list [list]="activeAppTypes" [listSettings]="activeAppTypesListSettings" data-cy="appTypeVersions"></app-detail-list>

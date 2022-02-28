@@ -37,11 +37,11 @@
   <div *ngIf="timeLineEventsData">
     <app-event-store-timeline [events]="timeLineEventsData">
       <div buttons>
-        <span class="mif-info mif-lg correlated-icon" placement="right"
+        <span class="mif-info mif-lg correlated-icon" placement="right"  tooltipClass="styled-tooltip"
           ngbTooltip="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
 
         <div class="btn-group btn-group-toggle" ngbRadioGroup [(ngModel)]="showAllEvents" name="radioBasic"
-          style="margin-right: 5px; height: 29px;">
+          style="margin-right: 5px;">
           <label class="flat-button checkbox-push solid-grey" ngbButtonLabel *ngIf="showCorrelatedBtn">
             <input ngbButton type="radio" [value]="false"> Correlated
           </label>
@@ -72,7 +72,7 @@
   <app-health-badge *ngIf="failedRefresh" text=" Some items failed to load." badgeClass="badge-warning">
   </app-health-badge>
 
-  <div ngbNav #nav="ngbNav" data-cy="eventtabs">
+  <div ngbNav #nav="ngbNav" data-cy="eventtabs" class="nav-wrapper">
     <div ngbNavItem *ngFor="let data of listEventStoreData">
       <a ngbNavLink class="bar-name">
         <app-health-badge *ngIf="!data.eventsList.lastRefreshWasSuccessful" text="Error" [showText]="false"

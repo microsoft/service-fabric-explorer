@@ -33,6 +33,7 @@ import { PhaseDiagramComponent } from './component/phase-diagram/phase-diagram.c
 import { NodeFilterComponent } from './component/node-filter/node-filter.component';
 import {ClipboardModule} from '@angular/cdk/clipboard';
 
+import { WarningComponent } from './component/warning/warning.component';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
@@ -43,7 +44,8 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
                  EssentialItemComponent,
                  DisplayDurationComponent,
                  PhaseDiagramComponent,
-                 NodeFilterComponent],
+                 NodeFilterComponent,
+                 WarningComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -59,6 +61,6 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
             ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
             FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
-            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent]
+            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent, WarningComponent]
 })
 export class SharedModule { }

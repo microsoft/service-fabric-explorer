@@ -1,0 +1,39 @@
+$detail-pane-pre-color: #d1d1d1 !default;
+
+:root {
+  --primary-box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+  --heavy-box-shadow: rgb(0 0 0 / 35%) 0px 5px 15px;
+  --primary-border-radius: 5px;
+
+  --primary-background-color: #262626;
+  --accent-background-color: #191919;
+  --light-background-color: #7d9494;
+
+  --font-primary-color: #fff;
+  --font-accent-color: #D4D4D4;
+
+  --accent-underline: #4c4c4c;
+
+  --accent-darkblue: #0075c9;
+  --accent-lightblue: #70DAF8;
+
+  --link-color: #00BCF2;
+
+  --badge-ok: #7FBA00;
+  --badge-warning: #FCD116;
+  --badge-error: #E81123;
+  --badge-unknown: #3C3C3C;
+  //fonts
+  --font-size-default: 10pt;
+  --font-size-small: 8pt;
+  --font-size-medium: 12pt;
+  --font-size-large: 14pt;
+  --font-size-large-title: 18pt;
+
+  --font-weight-normal: 400;
+  --font-weight-semibold: 600;
+
+  --chart-text-color: #6C7074;
+
+  --disabled: gray;
+}

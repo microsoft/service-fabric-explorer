@@ -1,11 +1,9 @@
 <div style="margin: 10px; display: flex; flex-wrap: wrap">
-  <div class="seed-node-warning" *ngIf="showSeedNodeTSG" data-cy="seedNodeQuorom">
-    <span class="mif-4x mif-notification seed-node-icon"></span><div>This node deactivation is waiting on a Seed Node Quorom safety check. If this deactivation is going for an irregular amount of time, consider referring to the following TSG to potentially continue progress for this deactivation.
-          <div class="seed-node-link">
-            <a href="https://aka.ms/sfseednodequoromtsg" target="_blank" class="link">Node deactivation - Seed node quorom TSG</a>
-          </div>
-    </div>
+  <div *ngIf="showSeedNodeTSG" data-cy="seedNodeQuorom" style="margin-bottom: 10px;">
+    <app-warning [description]="seedNodeQuorumMessage" link="https://aka.ms/sfseednodequoromtsg"
+      linkText="Node deactivation - Seed node quorom TSG"></app-warning>
   </div>
+
   <div style="width: 200px;">
     <h5 class="underline title">
       Deactivation Status

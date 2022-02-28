@@ -1,64 +1,91 @@
-
 .alert-wrapper {
-    display: flex;
-    flex-direction: column;
-    width: 90%;
-    max-width: 800px;
-    margin: auto;
-    margin-bottom: 5px
+  display: flex;
+  flex-direction: column;
+  width: 90%;
+  max-width: 800px;
+  margin: auto;
+  margin-bottom: 5px;
+  gap: 10px;
+  margin-top: 5px;
 }
 
 .nested-wrapper {
-    @extend .alert-wrapper;
-    // align-items: center;
+  @extend .alert-wrapper;
 }
 
 .alert {
+  display: flex;
+  flex-direction: row;
+  border-radius: 5px !important;
+  padding: 0px;
+  min-height: 60px;
+  border: 0px;
+  margin-bottom: 0px;
+
+  .alert-left-bar {
+    min-width: 80px;
+    height: unset;
+    filter: brightness(0.8);
+    border-radius: 5px 0px 0px 5px;
     display: flex;
-    flex-direction: column;
-    justify-content: space-between;
-    padding: 10px;
-    color: black;
-    border: none;
-    flex-grow: 1;
-    border-radius: 0px !important;
-    margin-bottom: 0px;
-    margin-top: 10px;
+    align-items: center;
+    justify-content: center;
+    text-transform: capitalize;
+    font-size: var(--font-size-large-title);
+  }
+
+  .inner-content {
+    padding: 5px;
+    display: flex;
+    align-items: center;
+    flex: 1;
+    font-weight: var(--font-weight-semibold);
+  }
+
+  .link-out {
+    margin: auto;
+    width: fit-content;
+    border-radius: 15px !important;
+    margin-top: 5px;
+    padding: 5px 11px;
+    display: flex;
+    align-items: center;
+    background-color: var(--primary-background-color);
+  }
 }
 
 .alert-warning {
-    background-color: yellow;
+  background-color: yellow;
 }
 
 .alert-info {
-    background-color: lightblue;
+  background-color: lightblue;
 }
 
 .alert-error {
-    background-color: #f2dede;
-    border-left: #CB444A solid 8px;
+  background-color: var(--badge-error);
 }
 
 .alert-warning {
-    background-color: #fcf8e3;
-    border-left: #FFC646 solid 8px;
+  background-color: var(--badge-warning);
 }
 
 .remove-placement {
-    font-size: 15pt;
-    vertical-align: bottom;
-    float: right;
+  cursor: pointer;
+  font-size: var(--font-size-large);
+  align-self: flex-start;
+  margin-left: auto;
 }
 
 .show-more-color {
-    background-color: #3b4044;
+  background-color: #3b4044;
 }
 
 .show-more {
-    width: 120px;
-    padding: 3px 5px 5px 5px;
-    margin: auto;
-    text-align: center;
-    border-radius: 0px 0px 5px 5px;
-    cursor: pointer;
+  width: 120px;
+  padding: 3px 5px 5px 5px;
+  margin: auto;
+  text-align: center;
+  border-radius: 0px 0px 5px 5px;
+  cursor: pointer;
 }

@@ -1,3 +1,6 @@
+
+$border-radius: 50px;
+
 /* The switch - the box around the slider */
 .switch {
     position: relative;
@@ -24,6 +27,7 @@
     background-color: #ccc;
     -webkit-transition: .25s;
     transition: .25s;
+    border-radius: $border-radius;
   }
 
   .slider:before {
@@ -36,6 +40,7 @@
     background-color: white;
     -webkit-transition: .25s;
     transition: .25s;
+    border-radius: $border-radius;
   }
 
   input:checked + .slider {

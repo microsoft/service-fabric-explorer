@@ -225,7 +225,7 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
     static readonly seedNodeStatus = 'Seed Node Warnings';
 
     consume(events: ClusterEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-        const items = new DataSet<DataItem>();
+        const items: DataSet<DataItem> = new DataSet<DataItem>();
 
         // state necessary for some events
         let previousClusterHealthReport: ClusterEvent;
@@ -302,97 +302,142 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         }
     }
 }
+
+const NodeUp = 'NodeUp';
+const NodeDown = 'NodeDown';
+const NodeDeactivateCompleted = 'NodeDeactivateCompleted';
+
 export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     static readonly NodesDownLabel = 'Node Down';
     static readonly NodesRemoved = 'Node Removed';
     static readonly NodesAdded = 'Node Added';
-    static readonly transitions = ['NodeDeactivateStarted'];
+    static readonly transitions = [NodeUp, NodeDown, NodeDeactivateCompleted];
+
+  generateDownNodeEvent(event: NodeEvent, start: string, end: string, intent?: string) {
+    const intentLabel = intent? `with intent disabled ${intent}` : '';
+    const label = `Node ${event.nodeName} down${intentLabel}`;
+    const item = {
+      id: event.eventInstanceId + label,
+      content: label,
+      start: start,
+      end: end,
+      group: NodeTimelineGenerator.NodesDownLabel,
+      type: 'range',
+      title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
+      className: intent ? ' darkorange' : 'red',
+      subgroup: 'stack'
+    };
+    return item;
+  };
+
+  generateNodeDisablingEvent(event: NodeEvent) {
+    const label = `Node ${event.nodeName} Disabling with intent ${event.eventProperties.EffectiveDeactivateIntent}`;
+    const start = event.eventProperties.StartTime;
+    const end = event.timeStamp;
+    const item = {
+      id: event.eventInstanceId + label,
+      content: label,
+      start,
+      end,
+      group: NodeTimelineGenerator.NodesDownLabel,
+      type: 'range',
+      title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
+      className: 'yellow',
+      subgroup: 'stack'
+    };
+    return item;
+  };
 
     consume(events: NodeEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
-        const items = new DataSet<DataItem>();
+        events = events.sort((a,b) => Date.parse(b.timeStamp) - Date.parse(a.timeStamp))
 
-        // keep track of node up events incase we have nodes where they started in a down state before the selected time
-        // so that we know we need to chart a down node from the start of the timeline.
-        const nodeUpEvents: Record<string, NodeEvent> = {};
-        const previousTransitions: Record<string, NodeEvent> = {};
-        const nodeDownDataItems: Record<string, DataItem> = {};
+        const nodeEventMap: Record<string, NodeEvent[]> = {};
 
-        let potentiallyMissingEvents = false;
+        //split node events by nodename, much simpler since we dont do any cross node checks
+        events.forEach(event => {
+          if(!(event.nodeName in nodeEventMap)) {
+            nodeEventMap[event.nodeName] = [];
+          }
+          nodeEventMap[event.nodeName].push(event);
+        });
 
-        events.forEach( event => {
-            if (event.category === 'StateTransition') {
-                // check for current state
-                if (event.kind === 'NodeDown') {
-                    // we need to track for events that should not show up between node down and up events to know if data is missing
-                    const previousTransition = previousTransitions[event.nodeName];
-                    if (previousTransition && previousTransition.kind !== 'NodeUp') {
-                        potentiallyMissingEvents = true;
-                    }
+        const items: DataSet<DataItem> = new DataSet<DataItem>();
 
-                    // remove node up events if we find a node down event.
-                    if (event.nodeName in nodeUpEvents) {
-                        delete nodeUpEvents[event.nodeName];
-                    }
-                    const end = previousTransition ? previousTransition.timeStamp : endOfRange.toISOString();
-                    const start = event.timeStamp;
-                    const label = `Node ${event.nodeName} down`;
-                    const item = {
-                        id: event.eventInstanceId + label,
-                        content: label,
-                        start,
-                        end,
-                        group: NodeTimelineGenerator.NodesDownLabel,
-                        type: 'range',
-                        title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
-                        className: 'red',
-                        subgroup: 'stack'
-                    };
 
-                    if (event.eventProperties.NodeInstance in nodeDownDataItems) {
-                        items.add(nodeDownDataItems[event.eventProperties.NodeInstance]);
-                    }
+        Object.keys(nodeEventMap).forEach(nodeName => {
+          const nodeEvents = nodeEventMap[nodeName];
 
-                    nodeDownDataItems[event.eventProperties.NodeInstance] = item;
-                }else if (event.kind === 'NodeDeactivateCompleted' && event.eventProperties.EffectiveDeactivateIntent === 'RemoveNode') {
-                    const nodeDownEvent = nodeDownDataItems[event.eventProperties.NodeInstance];
+          let lastUpEvent: NodeEvent;
+          let lastDownEvent: {event: NodeEvent, end: string} = null;
 
-                    if (nodeDownEvent) {
-                      delete nodeDownDataItems[event.eventProperties.NodeInstance];
-                      potentiallyMissingEvents = true;
-                    }
-                }
+          //repeat item filter
+          const seenIds = new Set();
 
-                if (event.kind === 'NodeUp' && event.eventProperties.LastNodeDownAt !== '1601-01-01T00:00:00Z') {
-                    previousTransitions[event.nodeName] = event;
-                    nodeUpEvents[event.nodeName] = event;
-                }
+          //we only care about transitionevents and specific ones, reverse order to make node events easier to parse and filter out repeat deactivate events
+          nodeEvents.filter(event => event.category === 'StateTransition' && NodeTimelineGenerator.transitions.includes(event.kind)).reverse().filter(event => {
+            //remove duplicates until the runtime does not produce them.
+            if(event.kind === NodeDeactivateCompleted) {
+              const uniqueId = event.eventProperties.BatchIdsWithDeactivateIntent;
+              if(seenIds.has(event.eventProperties.BatchIdsWithDeactivateIntent) ) {
+                return false;
+              }else{
+                seenIds.add(uniqueId);
+                return true;
+              }
+            }else{
+              return true;
+            }
+          }).reverse().forEach(event => {
+            if (event.kind === 'NodeDown') {
+              //push a node down event because we are sure it didnt have a deactivation event
+              if(lastDownEvent) {
+                items.add(this.generateDownNodeEvent(lastDownEvent.event, lastDownEvent.event.timeStamp, lastDownEvent.end));
+                lastUpEvent = null;
+              }
+
+              if(lastUpEvent) {
+                lastDownEvent = {event, end: lastUpEvent.timeStamp};
+                lastUpEvent = null;
+              }else{
+                lastDownEvent = {event, end: endOfRange.toISOString()};
+              }
             }
 
-            if (NodeTimelineGenerator.transitions.includes(event.kind) ) {
-                previousTransitions[event.nodeName] = event;
-            }
-        });
+            if(event.kind === 'NodeUp') {
+              if(lastDownEvent) {
+                items.add(this.generateDownNodeEvent(lastDownEvent.event, lastDownEvent.event.timeStamp, lastDownEvent.end));
+                lastDownEvent = null;
+              }
 
-        Object.keys(nodeDownDataItems).forEach(key => {
-            const item = nodeDownDataItems[key];
-            items.add(item);
-        });
-        // add any left over node up events to the chart.
-        Object.keys(nodeUpEvents).forEach(key => {
-            const event = nodeUpEvents[key];
-            const label = `Node ${event.nodeName} down`;
-            items.add({
-                id: event.eventInstanceId + label,
-                content: label,
-                start: event.eventProperties.LastNodeDownAt,
-                end: event.timeStamp,
-                group: NodeTimelineGenerator.NodesDownLabel,
-                type: 'range',
-                title: EventStoreUtils.tooltipFormat(event.eventProperties, event.eventProperties.LastNodeDownAt, event.timeStamp, label),
-                className: 'red',
-                subgroup: 'stack'
-            });
-        });
+              lastUpEvent = event;
+            }
+
+            if(event.kind === NodeDeactivateCompleted) {
+              //dont show node down if its expected
+              if(event.eventProperties.EffectiveDeactivateIntent === 'RemoveNode') {
+                //TODO add a removed and down event?
+                items.add(this.generateNodeDisablingEvent(event));
+
+                lastDownEvent = null;
+              }else {
+                if(lastDownEvent) {
+                  items.add(this.generateDownNodeEvent(lastDownEvent.event, lastDownEvent.event.timeStamp, lastDownEvent.end, event.eventProperties.EffectiveDeactivateIntent));
+                  items.add(this.generateNodeDisablingEvent(event));
+                  lastDownEvent = null;
+                  lastUpEvent = null;
+                }
+              }
+            }
+          })
+
+          if(lastDownEvent) {
+            items.add(this.generateDownNodeEvent(lastDownEvent.event, lastDownEvent.event.timeStamp, lastDownEvent.end));
+          }
+
+          if(lastUpEvent) {
+            items.add(this.generateDownNodeEvent(lastUpEvent, lastUpEvent.eventProperties.LastNodeDownAt, lastUpEvent.timeStamp));
+          }
+        })
 
         const groups = new DataSet<DataGroup>([
             {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {stack: true}},
@@ -401,7 +446,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         return {
             groups,
             items,
-            potentiallyMissingEvents
+            potentiallyMissingEvents: false
         };
     }
 }

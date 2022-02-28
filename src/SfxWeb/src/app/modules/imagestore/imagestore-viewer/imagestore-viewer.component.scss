@@ -1,4 +1,17 @@
 .dividing-slash {
-    color: white;
-    font-size: large;
+  color: var(--font-primary-color);
+  font-size: large;
+}
+
+.image-store-breadcrumb {
+  padding: 10px;
+  box-shadow: var(--primary-box-shadow);
+  border-radius: 5px;
+  margin-top: 5px;
+  background-color: var(--accent-background-color);
+  color: var(--font-primary-color);
+}
+
+h4 {
+  padding-bottom: 10px;
 }
