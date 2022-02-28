@@ -7,7 +7,7 @@ import * as $ from "jquery";
 import * as Url from "url";
 import * as electron from 'electron';
 import { IClusterList, IClusterListDataModel } from "sfx.cluster-list";
-import { IDialogService, IDialogFooterButtonOption } from "sfx.main-window";
+import { IDialogService, IDialogFooterButtonOption, IMainWindow } from "sfx.main-window";
 import { ClusterListDataModel } from "./data-model";
 import { ISettings } from "sfx.settings";
 import { DialogService } from "../dialog-service/dialog-service";
@@ -27,7 +27,7 @@ export class ClusterList implements IClusterList {
             name: "cluster-list",
             version: electron.app.getVersion(),
             singleton: true,
-            descriptor: async (settings: ISettings, http: IHttpClient) => new ClusterList(settings, http),
+            descriptor: async (settings: ISettings, http: IHttpClient, mainWindow: IMainWindow) => new ClusterList(settings, http, mainWindow),
             deps: ["sfx.settings", "sfx.http"]
         };
     }
@@ -36,13 +36,13 @@ export class ClusterList implements IClusterList {
         return str.replace(/&/g, "&amp;").replace(/"/g, "&quot;").replace(/'/g, "&#39;").replace(/</g, "&lt;").replace(/>/g, "&gt;");
     }
 
-    constructor(settings: ISettings, http: IHttpClient) {
+    constructor(settings: ISettings, http: IHttpClient, private mainWindow: IMainWindow) {
         this.settings = settings;
         this.http = http;
         this.parseSettings();
 
         this.dialogService = new DialogService();
-        this.sfxContainer = new SfxContainer(this.http);
+        this.sfxContainer = new SfxContainer(this.http, mainWindow);
     }
 
     public async getDataModel(): Promise<IClusterListDataModel> {

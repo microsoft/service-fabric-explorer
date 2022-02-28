@@ -19,17 +19,15 @@ import { Service } from '../Models/DataModels/Service';
 import { Partition } from '../Models/DataModels/Partition';
 import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent,
          FabricEvent, EventsResponseAdapter, FabricEventBase } from '../Models/eventstore/Events';
-import { IHttpClient, IHttpRequest, IHttpResponse, StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
 import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger';
+import { StandaloneIntegration } from '../Common/StandaloneIntegration';
+import { IHttpRequest, IHttpResponse } from 'src/global';
 @Injectable({
   providedIn: 'root'
 })
 export class RestClientService {
-
-    standAloneClient: IHttpClient;
-
   constructor(private httpClient: HttpClient, private message: MessageService) {
 
   }
@@ -864,7 +862,7 @@ export class RestClientService {
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'POST', url }) : this.httpClient.post<T>(environment.baseUrl  + url, data);
+      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'POST', url, body: data }) : this.httpClient.post<T>(environment.baseUrl  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
@@ -872,7 +870,7 @@ export class RestClientService {
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'PUT', url }) : this.httpClient.put<T>(environment.baseUrl  + url, data);
+      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'PUT', url, body: data }) : this.httpClient.put<T>(environment.baseUrl  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
@@ -887,18 +885,17 @@ export class RestClientService {
       return this.handleResponse<T>(apiDesc, result as any, messageHandler);
   }
 
-  public async getStandAloneClient(): Promise<IHttpClient> {
-    if(!this.standAloneClient) {
-        this.standAloneClient = await StandaloneIntegration.getHttpClient();
-    }
+  // public async getStandAloneClient(): Promise<IHttpClient> {
+  //   if(!this.standAloneClient) {
+  //       this.standAloneClient = await StandaloneIntegration.getHttpClient();
+  //   }
 
-    return Promise.resolve(this.standAloneClient);
-  }
+  //   return Promise.resolve(this.standAloneClient);
+  // }
 
     public requestAsync<T>(request: IHttpRequest): Observable<T> {
         return from(new Promise( (resolve, reject) => {
-                this.getStandAloneClient().then((client) => client.requestAsync(request))
-                .then((response) => {
+                window.httpModule.sendHttpRequest(request).then((response) => {
                     // only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
                     resolve(response.data);
                     }

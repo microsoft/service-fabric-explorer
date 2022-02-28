@@ -8,13 +8,15 @@ import * as $ from "jquery";
 // const uuidv5 = require("uuid/v3");
 import { v5 as uuidv5 } from "uuid";
 
-import { WebviewTag } from "electron";
+import { WebviewTag, ipcMain } from "electron";
 import * as electron from "electron";
 import { ISfxContainer } from "sfx.sfx-view-container";
 import { resolve } from "donuts.node/path";
 import * as shell from "donuts.node/shell";
 import { ICluster } from "sfx.cluster-list";
 import { IHttpClient } from "sfx.http";
+import { IMainWindow } from "sfx.main-window";
+import { MainWindow } from "../main-window";
 
 interface IClusterWithId extends ICluster {
     id: string;
@@ -28,12 +30,12 @@ export class SfxContainer implements ISfxContainer {
             name: "page-sfx-container",
             version: electron.app.getVersion(),
             singleton: true,
-            descriptor: async (http: IHttpClient) => new SfxContainer(http),
-            deps: ["sfx.http"]
+            descriptor: async (http: IHttpClient, mainWindow: MainWindow) => new SfxContainer(http, mainWindow),
+            deps: ["http-client.service-fabric", 'sfx.main-window']
         };
     }
 
-    constructor(private http: IHttpClient) {}
+    constructor(private http: IHttpClient, private mainWindow: IMainWindow) {}
 
     public async reloadSfxAsync(targetServiceEndpoint: string): Promise<void> {
         const container = $("div.right-container");
@@ -67,10 +69,11 @@ export class SfxContainer implements ISfxContainer {
             return Promise.resolve();
         }
                 
-        const sfxUrl = resolve({ path: "../../../sfx/index.html", search: "?targetcluster=" + cluster.endpoint });
-
         this.endpoints.push({ ...cluster, id: id });
         this.http.registerClusterConfiguration(cluster);
+        console.log(window)
+        this.mainWindow.addWindow({id, url: "./sfx/index.html", queryParam: {"targetcluster": cluster.endpoint} })
+        // window['remoteWindow'].addWindow({id, url: sfxUrl})
 
         //TODO requrest a browser view be added by RPC to something in the main thread.
 

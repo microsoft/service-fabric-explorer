@@ -1,8 +1,9 @@
 export const environment = {
   production: true,
   baseUrl: "",
-  version: "7.0",
+  version: "8.2",
   assetBase: "",
   showBeta: false,
-  telemetryKey: ""
+  telemetryKey: "",
+  electronWindow: true
 };

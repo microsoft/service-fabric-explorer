@@ -11,7 +11,7 @@ export function initApp(aadService: AdalService, restClient: RestClientService) 
       console.log(StandaloneIntegration.clusterUrl);
 
       if (StandaloneIntegration.isStandalone()) {
-        await restClient.getStandAloneClient();
+        // await restClient.getStandAloneClient();
         return of(null);
       }
 

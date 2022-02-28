@@ -49,6 +49,7 @@ export default class HttpPipeline implements IHttpPipeline {
     }
 
     public async requestAsync(request: IHttpRequest): Promise<IHttpResponse> {
+        console.log(request);
         const requestId = random.generateUid(8);
 
         if (this.requestTemplate) {

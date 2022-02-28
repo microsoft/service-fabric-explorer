@@ -4,5 +4,6 @@ export const environment = {
   version: "test",
   assetBase: "",
   showBeta: false,
-  telemetryKey: ""
+  telemetryKey: "",
+  electronWindow: true
 };

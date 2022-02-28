@@ -3,12 +3,23 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
+
 declare module "sfx.main-window" {
     import { BrowserWindow } from "electron";
     import { IDictionary } from "sfx.common";
+    import { WindowManager } from "./main-window";
+
+    export interface AddWindowEvent {
+        id: string;
+        url: string;
+        queryParam?: Record<string, string>;
+    }
 
     export interface IMainWindow {
         loadAsync(): void;
+        addWindow(data: AddWindowEvent): void;
+        removeWindow(id: string): void;
+        setActiveWindow(id: string): void;
     }
 
     export interface IDialogService {
