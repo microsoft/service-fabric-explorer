@@ -40,7 +40,7 @@ export class BaseComponent extends PartitionBaseControllerDirective {
         !this.tabs.some(tab => tab.name === 'backups')) {
         this.tabs = this.tabs.concat({
           name: 'backups',
-          route: '/backups'
+          route: './backups'
         });
       }
     });

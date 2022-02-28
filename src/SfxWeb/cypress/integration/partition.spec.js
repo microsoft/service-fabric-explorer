@@ -13,7 +13,7 @@ const waitRequest = "@getpartitionInfo";
 const routeFormatter = (appName, serviceName) => `/Applications/${appName}/$/GetServices/${appName}%2F${serviceName}/$/GetPartitions`;
 const urlFormatter = (app, service, partition) => `/#/apptype/${app}/app/${app}/service/${app}%252F${service}/partition/${partition}`;
 
-context('service', () => {
+context('partition', () => {
     beforeEach(() => {
         addDefaultFixtures();
         addRoute("services", "app-page/services.json", apiUrl(`/Applications/${appName}/$/GetServices?*`));
@@ -70,7 +70,7 @@ context('service', () => {
             cy.url().should('include', '/events')
         })
 
-        it.only('replicator', () => {
+        it('replicator', () => {
           cy.get('[data-cy=replicator]').within(() => {
             // cy.contains('events').click();
 
@@ -111,5 +111,15 @@ context('service', () => {
           cy.get('[data-cy=132431356665040624]').should('have.css', 'border-left-color', 'rgb(255, 0, 0)')
         })
         })
+
+        describe("backups", () => {
+          it('view backup', () => {
+            cy.get('[data-cy=navtabs]').within(() => {
+              cy.contains('backups').click();
+            })
+
+            cy.url().should('include', `${partitionId}/backups`)
+          })
+      })
     })
 })
