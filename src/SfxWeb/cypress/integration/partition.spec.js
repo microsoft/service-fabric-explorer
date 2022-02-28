@@ -111,27 +111,15 @@ context('partition', () => {
           cy.get('[data-cy=132431356665040624]').should('have.css', 'border-left-color', 'rgb(255, 0, 0)')
         })
         })
-    })
 
-    describe("backups", () => {
-      it('view backup', () => {
-        cy.get('[data-cy=navtabs]').within(() => {
-          cy.contains('backups').click();
-        })
+        describe("backups", () => {
+          it('view backup', () => {
+            cy.get('[data-cy=navtabs]').within(() => {
+              cy.contains('backups').click();
+            })
 
-        cy.url().should('include', `${partitionId}/backups`)
-        // cy.visit(`/#/apptype/${appName}/app/${appName}`)
-
-        //   cy.intercept(apiUrl(`/Applications/${appName}/$/GetBackupConfigurationInfo?*`)).as('backup');
-        //   cy.wait([waitRequest, FIXTURE_REF_MANIFEST]);
-
-        //   cy.get('[data-cy=navtabs]').within(() => {
-        //       cy.contains('backup').click();
-        //   })
-
-        //   cy.wait("@backup")
-
-        //   cy.url().should('include', '/backup')
+            cy.url().should('include', `${partitionId}/backups`)
+          })
       })
-  })
+    })
 })
