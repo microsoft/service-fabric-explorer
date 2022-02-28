@@ -1,6 +1,0 @@
-{
-    "TargetCluster": {
-      "Url": "https://winlrc-sfrp-00.eastus.cloudapp.azure.com:19080"
-    },
-    "recordFileBase": "playbackRecordings/temp/"
-  }

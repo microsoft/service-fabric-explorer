@@ -57,29 +57,6 @@ context('table', () => {
         })
     })
 })
-
-context('copy to clipboard', () => {
-
-  beforeEach(() => {
-      addDefaultFixtures();
-      cy.visit('')
-
-      cy.wait(FIXTURE_REF_CLUSTERHEALTH)
-  })
-
-  describe("copy ", () => {
-    it('copy', () => {
-      const copyvalue = '7.1.456.9590';
-      cy.get('.right-side-wrapper > :nth-child(1) > app-clip-board').click();
-
-      cy.task('getClipboard').should('contain', copyvalue);
-
-    //   cy.window().its('navigator.clipboard')
-    // .invoke('readText').should('equal', copyvalue)
-    })
-  })
-})
-
 /*
 test TODO
 paged data
