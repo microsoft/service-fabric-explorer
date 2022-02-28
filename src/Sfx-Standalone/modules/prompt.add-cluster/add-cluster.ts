@@ -86,6 +86,9 @@ window.onload = async () => {
 
     console.log(returnData);
 
+    // data.endpoint = "https://jejarryus6.eastus.cloudapp.azure.com:19080"
+    // data.auth === "certificate";
+
     promptContext.finish(returnData);
     window.close();
 

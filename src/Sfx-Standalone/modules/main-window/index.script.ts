@@ -40,7 +40,7 @@ import { IMainWindow } from "sfx.main-window";
         });
 
         const settings = await sfxModuleManager.getComponentAsync<ISettings>("settings.default");
-        const http = await sfxModuleManager.getComponentAsync<IHttpClient>("http.http-client");
+        const http = await sfxModuleManager.getComponentAsync<IHttpClient>("http.http-client.service-fabric");
         const mw = await sfxModuleManager.getComponentAsync<IMainWindow>("sfx.main-window");
         const clusterListComponent = new ClusterList(settings, http, mw);
         await clusterListComponent.setupAsync();

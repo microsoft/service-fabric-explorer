@@ -33,9 +33,4 @@ export interface IHttpRequest {
 
 export interface HttpModule {
   sendHttpRequest(request: IHttpRequest): Promise<IHttpResponse>;
-
-  // sendGetRequest<T>(url: string): Promise<T>;
-  // sendPostRequest<T>(url: string, data: any): Promise<T>;
-  // sendPutRequest<T>(url: string, data: any): Promise<T>;
-  // sendDeketeRequest<T>(url: string): Promise<T>;
 }

@@ -7,7 +7,11 @@ const { contextBridge, ipcRenderer } = require('electron')
 // })
 
 contextBridge.exposeInMainWorld('httpModule', {
-    sendHttpRequest: (data) => ipcRenderer.invoke('http-request', data),
+    sendHttpRequest: async (data) => {   
+        const res = await ipcRenderer.invoke('http-request', data)
+        console.log(res);
+        return res;
+    },
     test: (data) => ipcRenderer.invoke('test', data)
 
 })

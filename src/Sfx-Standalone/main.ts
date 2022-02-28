@@ -23,20 +23,9 @@ async function startup(): Promise<void> {
     const http = await sfxModuleManager.getComponentAsync("http.http-client.service-fabric");
 
     ipcMain.handle('http-request', async (e, data) => {
-        console.log(e, data)
-        try {
-            const res = await http.requestAsync(data);
-            return res;
-        } catch(e) {
-            console.log(e);
-            return undefined
-        }
+        return await http.requestAsync(data);
     })
 
-    ipcMain.handle('test', async (e, data) => {
-        console.log(e, data)
-        return 'roundtrip'
-    })
     await mainWindow.loadAsync();
 
     // Handle "window-all-closed" event.

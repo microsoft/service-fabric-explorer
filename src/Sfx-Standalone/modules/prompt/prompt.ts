@@ -68,7 +68,7 @@ class Prompt<TResult> implements IPrompt<TResult> {
         this.promptOptions.showMenu = utils.pick(this.promptOptions.showMenu, false);
         this.promptWindow.setMenuBarVisibility(this.promptOptions.showMenu);
 
-        this.promptWindow.webContents.openDevTools();
+        // this.promptWindow.webContents.openDevTools();
 
         if (this.promptOptions.showMenu && utils.isObject(this.promptOptions.menuTemplate)) {
             if (process.platform !== "darwin") {

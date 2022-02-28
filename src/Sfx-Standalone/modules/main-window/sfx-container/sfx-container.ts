@@ -31,7 +31,7 @@ export class SfxContainer implements ISfxContainer {
             version: electron.app.getVersion(),
             singleton: true,
             descriptor: async (http: IHttpClient, mainWindow: MainWindow) => new SfxContainer(http, mainWindow),
-            deps: ["http-client.service-fabric", 'sfx.main-window']
+            deps: ["http.http-client.service-fabric", 'sfx.main-window']
         };
     }
 
@@ -73,43 +73,6 @@ export class SfxContainer implements ISfxContainer {
         this.http.registerClusterConfiguration(cluster);
         console.log(window)
         this.mainWindow.addWindow({id, url: "./sfx/index.html", queryParam: {"targetcluster": cluster.endpoint} })
-        // window['remoteWindow'].addWindow({id, url: sfxUrl})
-
-        //TODO requrest a browser view be added by RPC to something in the main thread.
-
-        // const window = new electron.BrowserWindow({
-        //     webPreferences: {
-        //         preload: "./preload.js",
-        //         nodeIntegration: true,
-        //         webviewTag: true,
-        //         contextIsolation: false,
-        //     },
-        // });
-        
-        // await window.loadURL(sfxUrl)
-
-        // container.append(`<div id="treeview-loading-glyph" class="bowtie-icon bowtie-spinner rotate"></div>`);
-        // $(`<div id="view-container-${id}" class="view-container current"><webview tabindex="1" src="${sfxUrl}" id="view-${id}" autosize="on" nodeintegration="true" preload="./preload.js" ></webview></div>`).appendTo(container);
-
-        // const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
-
-
-        // sfxWebView.addEventListener("dom-ready", async () => {
-        //     container.children("#treeview-loading-glyph").remove();
-        // });
-
-        // console.log("test");
-        // sfxWebView.addEventListener("console-message", (e) => {
-        //     console.log(`${sfxUrl} : `, e);
-        // });
-
-        // sfxWebView.addEventListener("new-window",
-        //     (event) => {
-        //     event.preventDefault();
-        //     shell.start(event.url);
-        // });
-
-
         return Promise.resolve();
     }
 
