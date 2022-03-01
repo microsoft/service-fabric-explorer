@@ -27,7 +27,7 @@ context('app', () => {
             })
         })
 
-      it('unprovision', () => {
+      it.only('unprovision', () => {
         cy.intercept('POST', apiUrl('/ApplicationTypes/VisualObjectsApplicationType/$/Unprovision?*'), {
           statusCode: 200,
           body: {},
@@ -44,15 +44,18 @@ context('app', () => {
           cy.get('[data-cy=submit]').click();
         })
 
-        cy.wait('@getunprovision').then(interception => {
-          cy.wrap(interception.request.body)
-            .should("have.property", "ApplicationTypeVersion", "16.0.0")
+
+        //given we dont know exactly which request will go first, we need to wait for both and then check both requests
+        cy.wait('@getunprovision');
+        cy.wait('@getunprovision');
+
+        cy.get('@getunprovision.0').then(request1 => {
+          cy.get('@getunprovision.1').then(request2 => {
+            const versionsSeen = [request1.request.body.ApplicationTypeVersion, request2.request.body.ApplicationTypeVersion];
+            expect(versionsSeen).to.include.members(["16.0.0", "17.0.0"])
+          })
         })
 
-        cy.wait('@getunprovision').then(interception => {
-          cy.wrap(interception.request.body)
-            .should("have.property", "ApplicationTypeVersion", "17.0.0")
-        })
       })
 
     })
