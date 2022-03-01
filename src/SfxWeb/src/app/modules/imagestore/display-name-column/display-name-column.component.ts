@@ -16,7 +16,7 @@ export class DisplayNameColumnComponent implements DetailBaseComponent {
   constructor() { }
 
     openFolder(): void {
-      this.listSetting.imagestore.expandFolder(this.item.path).subscribe();
+      this.listSetting.imagestore.expandFolder(this.item.path);
     }
 }
 
