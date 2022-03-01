@@ -145,13 +145,7 @@ context('node page', () => {
         it('view events', () => {
             addRoute("events", "empty-list.json", apiUrl(`/EventsStore/Nodes/${nodeName}/$/Events?*`));
 
-            cy.visit(`/#/node/${nodeName}`);
-
-            cy.wait(nodeInfoRef);
-
-            cy.get('[data-cy=navtabs]').within(() => {
-                cy.contains('events').click();
-            })
+            cy.visit(`/#/node/${nodeName}/events`);
 
             cy.wait("@getevents");
             cy.url().should('include', 'events');
