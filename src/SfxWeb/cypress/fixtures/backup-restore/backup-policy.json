@@ -1,0 +1,25 @@
+{
+  "Items": [
+    {
+      "AutoRestoreOnDataLoss": false,
+      "Name": "MyBackupPolicy",
+      "MaxIncrementalBackups": 20,
+      "Schedule": {
+        "ScheduleKind": "FrequencyBased",
+        "Interval": "PT15M"
+      },
+      "Storage": {
+        "StorageKind": "AzureBlobStore",
+        "ConnectionString": "",
+        "ContainerName": "backup-since-2021-0401-001946",
+        "FriendlyName": ""
+      },
+      "RetentionPolicy": {
+        "RetentionPolicyType": "Basic",
+        "RetentionDuration": "P10D",
+        "MinimumNumberOfBackups": 0
+      }
+    }
+  ],
+  "ContinuationToken": null
+}

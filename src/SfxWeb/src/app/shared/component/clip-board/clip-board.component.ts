@@ -1,4 +1,5 @@
 import { LiveAnnouncer } from '@angular/cdk/a11y';
+import { Clipboard } from '@angular/cdk/clipboard';
 import { Component, OnInit, Input, ChangeDetectionStrategy, ViewChild, ElementRef, ContentChild, OnChanges } from '@angular/core';
 import { NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 
@@ -15,20 +16,11 @@ export class ClipBoardComponent implements OnChanges {
   @ViewChild(NgbTooltip) tooltip: NgbTooltip; // First
   public ariaLabel = '';
 
-  constructor(private liveAnnouncer: LiveAnnouncer) { }
+  constructor(private liveAnnouncer: LiveAnnouncer,
+              private clipboard: Clipboard) { }
 
   copy(){
-    const selBox = document.createElement('textarea');
-    selBox.style.position = 'fixed';
-    selBox.style.left = '0';
-    selBox.style.top = '0';
-    selBox.style.opacity = '0';
-    selBox.value = this.text;
-    document.body.appendChild(selBox);
-    selBox.focus();
-    selBox.select();
-    document.execCommand('copy');
-    document.body.removeChild(selBox);
+    this.clipboard.copy(this.text)
 
     this.tooltip.close();
     setTimeout(() => {
@@ -42,7 +34,6 @@ export class ClipBoardComponent implements OnChanges {
     }, 250);
 
     this.ref.nativeElement.focus();
-
   }
 
   ngOnChanges() {
