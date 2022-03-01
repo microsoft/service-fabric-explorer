@@ -31,6 +31,9 @@ import { EssentialItemComponent } from './component/essential-item/essential-ite
 import { DisplayDurationComponent } from './component/display-duration/display-duration.component';
 import { PhaseDiagramComponent } from './component/phase-diagram/phase-diagram.component';
 import { NodeFilterComponent } from './component/node-filter/node-filter.component';
+import {ClipboardModule} from '@angular/cdk/clipboard';
+
+import { WarningComponent } from './component/warning/warning.component';
 @NgModule({
   declarations: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
                  CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
@@ -41,7 +44,8 @@ import { NodeFilterComponent } from './component/node-filter/node-filter.compone
                  EssentialItemComponent,
                  DisplayDurationComponent,
                  PhaseDiagramComponent,
-                 NodeFilterComponent],
+                 NodeFilterComponent,
+                 WarningComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -49,13 +53,14 @@ import { NodeFilterComponent } from './component/node-filter/node-filter.compone
     NgbDropdownModule,
     NgbToastModule,
     NgbDatepickerModule,
-    NgbTooltipModule
+    NgbTooltipModule,
+    ClipboardModule
   ],
   exports: [NavbarComponent, ClipBoardComponent, HealthBadgeComponent, CandyBarCompactComponent, DetailViewPartComponent,
             CollapseContainerComponent, RefreshRateComponent, DragDirective, ActionDialogComponent, ManifestComponent,
             ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
             FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
-            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent]
+            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent, WarningComponent]
 })
 export class SharedModule { }

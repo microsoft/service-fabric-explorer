@@ -55,6 +55,21 @@ describe('Http interceptors', () => {
         expect(dataService.clusterNameMetadata).toBe('test-cluster');
     });
 
+    fit('SFRP headers lowercase', async () => {
+      httpClient.get('/test').subscribe();
+
+      const request = httpMock.expectOne('/test');
+
+      const headers = {
+          'sfx-readonly': '1',
+          'sfx-clustername': 'test-cluster'
+      };
+      request.flush(null, { headers });
+
+      expect(dataService.readOnlyHeader).toBeTruthy();
+      expect(dataService.clusterNameMetadata).toBe('test-cluster');
+  });
+
     fit('readonly off', async () => {
         httpClient.get('/test').subscribe();
 

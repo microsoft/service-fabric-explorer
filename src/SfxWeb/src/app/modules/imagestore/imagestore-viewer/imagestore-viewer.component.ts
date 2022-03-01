@@ -34,7 +34,7 @@ export class ImagestoreViewerComponent implements OnInit {
   }
 
   openFolder(relativePath: string): void {
-    this.imagestoreRoot.expandFolder(relativePath).subscribe();
+    this.imagestoreRoot.expandFolder(relativePath);
   }
 
 }

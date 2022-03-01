@@ -11,10 +11,13 @@
 </div>
 
 <a href="https://docs.microsoft.com/azure/service-fabric/infrastructure-service-faq#faqs" target="_blank" class="essen-pane info-box">
-  {{this.infrastructureJobsSuggestion}}
-  <!--  this.InfrastrucutreJobSuggestion would contain specific messages . This should be presented just before Click to learn more box so that users can get a small context within SFX only.-->
-  <span class="mif-info link"></span> Click here to learn more.
+  <span class="mif-info link"></span> Click here to learn more about Infrastructure jobs.
 </a>
+
+<div class="essen-pane" style="margin-bottom: 10px;" *ngIf="infrastructureJobsSuggestion.length > 0">
+  <app-warning [descriptionList]="infrastructureJobsSuggestion"></app-warning>
+</div>
+
 
 <div class="detail-pane">
   <app-collapse-container sectionName="Active Infrastructure Jobs">
