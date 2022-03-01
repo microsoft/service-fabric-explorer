@@ -35,6 +35,10 @@
                         {{item.name}}
                     </button>
                 </span>
+                <br>
+                <div *ngIf="imagestoreRoot.isLoadingFolderContent">
+                  Loading folder: {{imagestoreRoot.currentDirectoryBeingLoaded || 'root'}}
+                </div>
             </div>
             <!-- search-text="'Search confined to current directory'" TODO add this input -->
             <app-detail-list [list]="imagestoreRoot.currentFolder.allChildren" [listSettings]="fileListSettings"></app-detail-list>
