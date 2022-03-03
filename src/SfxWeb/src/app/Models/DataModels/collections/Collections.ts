@@ -87,6 +87,7 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
 }
 
 export class ApplicationTypeGroupCollection extends DataModelCollectionBase<ApplicationTypeGroup> {
+    public appTypeCount = 0;
     public constructor(data: DataService) {
         super(data);
     }
@@ -97,11 +98,33 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
 
     protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
         return this.data.restClient.getApplicationTypes(null, messageHandler).pipe(map(response => {
+            this.appTypeCount = response.length;
             const appTypes = response.map(item => new ApplicationType(this.data, item));
             const groups = groupBy(appTypes, item => item.raw.Name);
             return Object.keys(groups).map(g => new ApplicationTypeGroup(this.data, groups[g]));
         }));
     }
+
+    public getAppTypeUsage() {
+      return this.data.getApps(true).pipe(map(() => {
+          // check on refresh which appTypes are being used by at least one application
+          const activeAppTypes = [];
+          const inactiveTypes = [];
+          this.collection.forEach(appTypeGroup => appTypeGroup.appTypes.forEach(appType => {
+            if (appType.isInUse) {
+              activeAppTypes.push(appType);
+            }else{
+              inactiveTypes.push(appType);
+            }
+          }))
+
+          return {
+            activeAppTypes,
+            inactiveTypes
+          }
+      }))
+    }
+
 }
 
 export class ApplicationBackupConfigurationInfoCollection extends DataModelCollectionBase<ApplicationBackupConfigurationInfo> {

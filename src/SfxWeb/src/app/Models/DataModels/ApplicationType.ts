@@ -101,14 +101,19 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
     // update all applications for all application type group to keep the
     // applications in sync.
     public refreshAppTypeApps(apps: ApplicationCollection): void {
-        this.apps = apps.collection.filter(app => app.raw.TypeName === this.name);
+      this.apps = apps.collection.filter(app => app.raw.TypeName === this.name);
 
-        if (this.apps.length > 0) {
-            this.appsHealthState = this.valueResolver.resolveHealthStatus(Utils.max(this.apps.map(app => HealthStateConstants.Values[app.healthState.text])).toString());
-        } else {
-            // When there are no apps in this apptype, treat it as healthy
-            this.appsHealthState = ValueResolver.healthStatuses[1];
-        }
+      if (this.apps.length > 0) {
+        this.appsHealthState = this.valueResolver.resolveHealthStatus(Utils.max(this.apps.map(app => HealthStateConstants.Values[app.healthState.text])).toString());
+      } else {
+        // When there are no apps in this apptype, treat it as healthy
+        this.appsHealthState = ValueResolver.healthStatuses[1];
+      }
+
+      this.appTypes.forEach(appType => {
+        const used = this.apps.some(app => app.raw.TypeVersion === appType.raw.Version);
+        appType.isInUse = used;
+      });
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawApplicationType> {

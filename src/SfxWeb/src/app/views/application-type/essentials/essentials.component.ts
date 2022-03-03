@@ -29,8 +29,8 @@ export class EssentialsComponent extends ApplicationTypeBaseControllerDirective 
   }
 
   setup() {
-    this.activeAppTypesListSettings = this.getNewOrExistingAppTypeListSettings();
-    this.appTypesListSettings = this.getNewOrExistingAppTypeListSettings(true);
+    this.activeAppTypesListSettings = this.settings.getNewOrExistingAppTypeListSettings();
+    this.appTypesListSettings = this.settings.getNewOrExistingAppTypeListSettings(true);
 
     this.appsListSettings = this.settings.getNewOrExistingListSettings('appTypeApps', ['name'], [
       new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
@@ -42,51 +42,7 @@ export class EssentialsComponent extends ApplicationTypeBaseControllerDirective 
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.data.getApps(true, messageHandler).pipe(map(() => {
-      try {
-        // check on refresh which appTypes are being used by at least one application
-        this.activeAppTypes = [];
-        this.appTypeGroup.appTypes.forEach(appType => {
-          const used = this.appTypeGroup.apps.some(app => app.raw.TypeVersion === appType.raw.Version);
-          appType.isInUse = used;
-          if (used) {
-            this.activeAppTypes.push(appType);
-          }
-        });
-      } catch (e) {
-        console.log(e);
-      }
-    })
-    );
-  }
-
-  public getNewOrExistingAppTypeListSettings(includeIsUsedColumn: boolean = false) {
-    let listKey = 'appTypeAppTypes';
-    const settings = [
-      new ListColumnSetting('name', 'Name'),
-      new ListColumnSetting('raw.Version', 'Version'),
-      new ListColumnSettingWithFilter('raw.Status', 'Status'),
-      new ListColumnSettingForApplicationType()
-    ];
-
-    const nestedList = [
-      new ListColumnSetting('placeholder', 'placeholder', { enableFilter: false }), // Empty column
-      new ListColumnSetting('raw.StatusDetails', 'Status Details', {
-        enableFilter: false,
-        getDisplayHtml: (item) => HtmlUtils.getSpanWithCustomClass('preserve-whitespace-wrap', item.raw.StatusDetails),
-        colspan: 100
-      })
-    ];
-
-    if (includeIsUsedColumn) {
-      settings.splice(3, 0, new ListColumnSetting('isInUse', 'In Use'));
-      listKey += 'andUsedCol';
-    }
-
-    return this.settings.getNewOrExistingListSettings(listKey, ['raw.Version'], settings, nestedList,
-      false,
-      (item) => item.raw.StatusDetails,
-      false);
+    return this.data.getApps(true, messageHandler);
   }
 
 }
