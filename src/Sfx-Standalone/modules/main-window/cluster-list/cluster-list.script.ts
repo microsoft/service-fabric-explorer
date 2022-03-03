@@ -186,11 +186,11 @@ export class ClusterList implements IClusterList {
             const action = $(e.target).data("action");
             switch (action) {
                 case "connect":
-                    let $button = $('#cluster-list li[data-endpoint="' + endpoint + '"]');
-                    if (!$button.hasClass("current")) {
-                        $("#cluster-list li").removeClass("current");
-                        $button.addClass("current");
-                    }
+                    // let $button = $('#cluster-list li[data-endpoint="' + endpoint + '"]');
+                    // if (!$button.hasClass("current")) {
+                    //     $("#cluster-list li").removeClass("current");
+                    //     $button.addClass("current");
+                    // }
 
                     await this.sfxContainer.reloadSfxAsync(endpoint);
                     break;

@@ -38,20 +38,24 @@ export class SfxContainer implements ISfxContainer {
     constructor(private http: IHttpClient, private mainWindow: IMainWindow) {}
 
     public async reloadSfxAsync(targetServiceEndpoint: string): Promise<void> {
-        const container = $("div.right-container");
-        $("#instructions", container).hide();
-        $(".view-container", container).css({ top: `${0 - container.height()}px` }).removeClass("current");
-        $("webview", container).attr("tabindex", "-1");
+        const cluster = this.endpoints.find(e => e.endpoint === targetServiceEndpoint);
+        this.mainWindow.removeWindow(cluster.id);
+        this.mainWindow.addWindow({id: cluster.id, url: "./sfx/index.html", queryParam: {"targetcluster": cluster.endpoint} })
 
-        const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
-        const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
-        if (sfxWebView) {
-            sfxWebView.reload();            
-            $(`#view-container-${id}`, container).css({ top: 0 }).addClass("current");
-            $("webview", $(`#view-container-${id}`, container)).attr("tabindex", "1");
-        }
+        // const container = $("div.right-container");
+        // $("#instructions", container).hide();
+        // $(".view-container", container).css({ top: `${0 - container.height()}px` }).removeClass("current");
+        // $("webview", container).attr("tabindex", "-1");
 
-        return Promise.resolve();
+        // const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
+        // const sfxWebView = <WebviewTag>document.getElementById(`view-${id}`);
+        // if (sfxWebView) {
+        //     sfxWebView.reload();            
+        //     $(`#view-container-${id}`, container).css({ top: 0 }).addClass("current");
+        //     $("webview", $(`#view-container-${id}`, container)).attr("tabindex", "1");
+        // }
+
+        // return Promise.resolve();
     }
 
     public async loadSfxAsync(cluster: ICluster): Promise<void> {
@@ -77,24 +81,25 @@ export class SfxContainer implements ISfxContainer {
     }
 
     public async unloadSfxAsync(targetServiceEndpoint: string): Promise<void> {
-        const container = $("div.right-container");
-        const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
-        const index = this.endpoints.findIndex(e => e.endpoint === targetServiceEndpoint);
-        if (index >= 0) {
-            this.endpoints.splice(index, 1);
-        }
+        // const container = $("div.right-container");
+        // const id = uuidv5(targetServiceEndpoint, SfxContainer.UrlUuidNameSpace);
+        const cluster = this.endpoints.find(e => e.endpoint === targetServiceEndpoint);
+        this.mainWindow.removeWindow(cluster.id);
+        // if (index >= 0) {
+        //     this.endpoints.splice(index, 1);
+        // }
 
-        container.children("#view-container-" + id).remove();
+        // container.children("#view-container-" + id).remove();
 
-        if (this.endpoints.length === 0) {
-            $("#instructions", container).show();
-        }
+        // if (this.endpoints.length === 0) {
+        //     $("#instructions", container).show();
+        // }
     }
 }
 
-$(window).on("resize", () => {
-    // Bug from Electron: when <webview> is hidden, its webcontents won't auto resize to fill the whole view when window is resizing
-    // Instead of hiding the <webview> tags which are not current, pushing it out of view so it always fills the whole view
-    const container = $("div.right-container");
-    $(".view-container:not(.current)", container).css({ top: `${0 - container.height()}px` });
-});
+// $(window).on("resize", () => {
+//     // Bug from Electron: when <webview> is hidden, its webcontents won't auto resize to fill the whole view when window is resizing
+//     // Instead of hiding the <webview> tags which are not current, pushing it out of view so it always fills the whole view
+//     const container = $("div.right-container");
+//     $(".view-container:not(.current)", container).css({ top: `${0 - container.height()}px` });
+// });
