@@ -5,7 +5,7 @@
 
 
 declare module "sfx.main-window" {
-    import { BrowserWindow } from "electron";
+    import { BrowserWindow, OpenDialogOptions, OpenDialogReturnValue } from "electron";
     import { IDictionary } from "sfx.common";
     import { WindowManager } from "./main-window";
 
@@ -20,6 +20,7 @@ declare module "sfx.main-window" {
         addWindow(data: AddWindowEvent): void;
         removeWindow(id: string): void;
         setActiveWindow(id: string): void;
+        requestDialogOpen(options: MessageBoxOptions): Promise<MessageBoxReturnValue> 
     }
 
     export interface IDialogService {

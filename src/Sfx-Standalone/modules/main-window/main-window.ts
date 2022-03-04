@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import { AddWindowEvent, IMainWindow } from "sfx.main-window";
-import { BrowserView, BrowserWindow, ipcMain } from "electron";
+import { BrowserView, BrowserWindow, dialog, ipcMain, MessageBoxOptions, MessageBoxReturnValue, OpenDialogOptions, OpenDialogReturnValue } from "electron";
 import { resolve } from "donuts.node/path";
 import { IComponentConfiguration } from "sfx.common";
 import * as shell from "donuts.node/shell";
@@ -86,6 +86,12 @@ export class MainWindow implements IMainWindow {
 
     async removeWindow(id: string) {
         this.browserWindow.removeBrowserView(this.windows[id]);
-        delete this.windows[id]
+        console.log(this.windows[id])
+        delete this.windows[id];
     }
+
+    async requestDialogOpen(options: MessageBoxOptions): Promise<MessageBoxReturnValue> {
+        return await dialog.showMessageBox(options);
+    }
+
 }
