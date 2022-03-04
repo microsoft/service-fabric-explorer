@@ -9,7 +9,7 @@ export const environment = {
   assetBase: '',
   showBeta: true,
   telemetryKey: '',
-  electronWindow: true
+  electronWindow: false
 };
 
 /*

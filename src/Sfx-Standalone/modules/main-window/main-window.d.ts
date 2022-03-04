@@ -93,7 +93,7 @@ declare module "sfx.cluster-list" {
     }
 
     export interface IClusterList {
-        newClusterListItemAsync(endpoint: string, name?: string, folder?: string, isCurrentInView?: boolean): Promise<void>;
+        newClusterListItemAsync(endpoint: string, authentication: IClusterAuth, name?: string, folder?: string, isCurrentInView?: boolean): Promise<void>;
         removeClusterListItem(label: string): Promise<void>;
         renameClusterListItem(old_cluster: string, new_cluster: string): Promise<void>;
         getDataModel(): Promise<IClusterListDataModel>;

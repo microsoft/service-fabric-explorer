@@ -6,8 +6,9 @@
 import * as $ from "jquery";
 import * as Url from "url";
 import {app, dialog} from 'electron';
-console.log(app,dialog)
-import { IClusterList, IClusterListDataModel } from "sfx.cluster-list";
+const electorn = require('electron')
+console.log(electorn, app,dialog)
+import { IClusterAuth, IClusterList, IClusterListDataModel } from "sfx.cluster-list";
 import { IDialogService, IDialogFooterButtonOption, IMainWindow } from "sfx.main-window";
 import { ClusterListDataModel } from "./data-model";
 import { ISettings } from "sfx.settings";
@@ -50,7 +51,8 @@ export class ClusterList implements IClusterList {
         return Promise.resolve(this.clusterListDataModel);
     }
 
-    async newClusterListItemAsync(endpoint: string, displayName?: string, folder?: string, isCurrentInView?: boolean): Promise<void> {
+    async newClusterListItemAsync(endpoint: string, authentication: IClusterAuth, displayName?: string, folder?: string, isCurrentInView?: boolean): Promise<void> {
+        console.log(endpoint, authentication, displayName, folder)
         $("#cluster-list .current").removeClass("current");
         if (!displayName) {
             displayName = endpoint;
@@ -81,7 +83,7 @@ export class ClusterList implements IClusterList {
             }
 
             //TODO FIX
-            this.clusterListDataModel.addCluster(displayName, endpoint, null,folder);
+            this.clusterListDataModel.addCluster(displayName, endpoint, authentication,folder);
             await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
             this.setupClusterListItemHandler($item, endpoint, displayName);
         }
@@ -128,7 +130,7 @@ export class ClusterList implements IClusterList {
             const prompt = await sfxModuleManager.getComponentAsync("prompt.add-cluster");
             const data = await prompt.openAsync()
             
-            await this.newClusterListItemAsync(data.endpoint, data.name, "", true);
+            await this.newClusterListItemAsync(data.endpoint, data.authentication, data.name, "", true);
             await this.sfxContainer.loadSfxAsync(data)
             
             console.log(data);
@@ -139,7 +141,7 @@ export class ClusterList implements IClusterList {
 
     private async parseSettings() {
         const res = await this.settings.getAsync<string>("cluster-list-folders");
-
+        console.log(res);
         this.clusterListDataModel = new ClusterListDataModel();
         if (res === undefined || res === null) {
             await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
@@ -147,7 +149,7 @@ export class ClusterList implements IClusterList {
             let json = JSON.parse(res);
             for (let folder of json.folders) {
                 for (let cluster of folder.clusters) {
-                    await this.newClusterListItemAsync(cluster.endpoint, cluster.displayName, cluster.folder);
+                    await this.newClusterListItemAsync(cluster.endpoint, cluster.authentication, cluster.displayName, cluster.folder);
                 }
             }
         }
@@ -259,7 +261,7 @@ export class ClusterList implements IClusterList {
             }
 
             $(".current").removeClass("current");
-            await this.sfxContainer.loadSfxAsync(endpoint);
+            await this.sfxContainer.loadSfxAsync(cluster);
             cluster.currentInView = true;
             await this.settings.setAsync<string>("cluster-list-folders", JSON.stringify(this.clusterListDataModel));
             $target.addClass("current");

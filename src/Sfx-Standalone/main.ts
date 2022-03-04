@@ -18,7 +18,7 @@ async function startup(): Promise<void> {
                 await settings.getAsync<Array<MenuItemConstructorOptions>>("defaultMenu/" + process.platform)));
     }
 
-    log.writeInfoAsync("Starting up connect-cluster prompt.");
+    // log.writeInfoAsync("Starting up connect-cluster prompt.");
     const mainWindow = await sfxModuleManager.getComponentAsync("sfx.main-window");
     const http = await sfxModuleManager.getComponentAsync("http.http-client.service-fabric");
 
