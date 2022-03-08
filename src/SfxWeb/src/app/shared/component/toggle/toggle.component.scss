@@ -5,8 +5,14 @@ $border-radius: 50px;
 .switch {
     position: relative;
     display: inline-block;
-    width: 40px;
+    width: 44px;
     height: 24px;
+    border: 2px solid #ccc;
+    border-radius: $border-radius;
+
+    &:focus-within {
+      border: orange 2px dotted;
+    }
   }
 
   /* Hide default HTML checkbox */
@@ -33,10 +39,10 @@ $border-radius: 50px;
   .slider:before {
     position: absolute;
     content: "";
-    height: 16px;
-    width: 16px;
+    height: 18px;
+    width: 18px;
     left: 4px;
-    bottom: 4px;
+    bottom: 1px;
     background-color: white;
     -webkit-transition: .25s;
     transition: .25s;
@@ -44,7 +50,7 @@ $border-radius: 50px;
   }
 
   input:checked + .slider {
-    background-color: #2196F3;
+    background-color: var(--accent-darkblue);
   }
 
   input:checked + .slider:before {
@@ -53,6 +59,3 @@ $border-radius: 50px;
     transform: translateX(16px);
   }
 
-  label {
-      margin-bottom: 0px;
-  }
