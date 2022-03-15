@@ -1,6 +1,6 @@
 declare global {
   interface Window {
-      httpModule: HttpModule
+    electronInterop: HttpModule
   }
 }
 

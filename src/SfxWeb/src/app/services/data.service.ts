@@ -39,6 +39,7 @@ import { SettingsService } from './settings.service';
 import { RepairTask } from '../Models/DataModels/repairTask';
 import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 import groupBy from 'lodash/groupBy';
+import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 
 @Injectable({
   providedIn: 'root'
@@ -77,6 +78,10 @@ export class DataService {
     this.systemApp = new SystemApplication(this);
     this.backupPolicies = new BackupPolicyCollection(this);
     this.repairCollection = new RepairTaskCollection(this);
+
+    if(StandaloneIntegration.isStandalone()) {
+      this.clusterNameMetadata = StandaloneIntegration.clusterUrl;
+    }
    }
 
   public actionsEnabled(): boolean {

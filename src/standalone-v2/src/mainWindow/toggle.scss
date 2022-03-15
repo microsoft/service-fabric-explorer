@@ -1,0 +1,51 @@
+$border-radius: 5px;
+
+.multi-option-container {
+    border-radius: 10px;
+    // border: 2px solid #fff;
+    width: fit-content;
+
+    button {
+        border: 0px;
+        border-radius: 0px;
+
+        &:first-child {
+            border-bottom-left-radius: $border-radius !important;
+            border-top-left-radius: $border-radius !important;
+        }
+
+        &:last-child {
+            border-bottom-right-radius: $border-radius !important;
+            border-top-right-radius: $border-radius !important;
+        }
+    }
+
+
+    &.active {
+        button {
+            border: 0px;
+            background-color: #616161;
+
+            &:hover {
+                background-color: var(--accent-underline);
+            }
+
+            &.active {
+                background-color: var(--accent-darkblue);
+            }
+        }
+    }
+
+    &.disabled {
+        border-color: var(--disabled-color);
+        cursor: initial;
+
+        button {
+            cursor: initial;
+        }
+
+        button.active {
+            background-color: gray;
+        }
+    }
+}

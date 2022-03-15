@@ -1,0 +1,51 @@
+.add-cluster {
+    margin: 5px;
+}
+
+.input-item {
+    display: flex;
+    gap: 10px;
+    padding-bottom: 5px;
+    margin-bottom: 5px;
+}
+
+.bottom-buttons {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+}
+
+.list-item {
+    padding: 10px;
+    background-color: var(--primary-background-color);
+    border-radius: 10px;
+    margin: 5px;
+    box-shadow: var(--primary-box-shadow);
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+}
+
+
+.list-item.active {
+    background-color: var(--accent-darkblue) !important;
+    box-shadow: var(--heavy-box-shadow);
+
+}
+
+.add-button {
+    float: right;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    line-height: .8;
+    font-size: 26px;
+}
+
+.cert-container {
+    padding: 10px 0px;
+}
+
+.auth-container {
+    margin: 10px 0px;
+}

@@ -12,6 +12,7 @@ export class StandaloneIntegration {
     }
 
     public static get clusterUrl(): string {
+      console.log(this.isStandalone());
         if (StandaloneIntegration.iclusterUrl == null) {
             if (StandaloneIntegration.isStandalone()) {
                 StandaloneIntegration.iclusterUrl = StandaloneIntegration.extractQueryItem(window.location.search, 'targetcluster');

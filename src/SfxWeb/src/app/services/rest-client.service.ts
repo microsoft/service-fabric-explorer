@@ -811,8 +811,7 @@ export class RestClientService {
           skipCacheToken = true;
       }
       // token to allow for invalidation of browser api call cache
-      return StandaloneIntegration.clusterUrl +
-          `/${path}${path.indexOf('?') === -1 ? '?' : '&'}api-version=${apiVersion ? apiVersion : RestClientService.defaultApiVersion}${skipCacheToken === true ? '' : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ''}`;
+      return `/${path}${path.indexOf('?') === -1 ? '?' : '&'}api-version=${apiVersion ? apiVersion : RestClientService.defaultApiVersion}${skipCacheToken === true ? '' : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ''}`;
   }
 
   // eslint-disable-next-line max-len
@@ -894,8 +893,9 @@ export class RestClientService {
   // }
 
     public requestAsync<T>(request: IHttpRequest): Observable<T> {
+      console.log(request);
         return from(new Promise( (resolve, reject) => {
-                window.httpModule.sendHttpRequest(request).then((response) => {
+                window.electronInterop.sendHttpRequest(request).then((response) => {
                     // only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
                     resolve(response.data);
                     }
