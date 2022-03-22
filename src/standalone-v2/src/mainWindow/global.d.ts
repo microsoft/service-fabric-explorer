@@ -47,11 +47,15 @@ declare global {
     sendHttpRequest(request: IHttpRequest): Promise<IHttpResponse>;
 
     addCluster(cluster: ICluster): Promise<any>;
-    removeCluster(cluster: ICluster): Promise<any>; //TODO
+    removeCluster(cluster: ICluster): Promise<any>;
     editCluster(cluster: ICluster): Promise<any>; //TODO
-    reconnectCluster(cluster: ICluster): Promise<any>; //TODO
+    reconnectCluster(cluster: ICluster): Promise<any>;
+    disconnectCluster(cluster: ICluster): Promise<any>;
+    clearClusterLog(cluster: ICluster): Promise<any>;
 
-    onClusterListChange(callback: onClusterListChange)
+
+    requestClusterState();
+    onClusterListChange(callback: onClusterListChange);
     requestFileDialog(data: any): Promise<any>;
 }
 

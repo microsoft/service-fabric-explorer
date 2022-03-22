@@ -884,31 +884,32 @@ export class RestClientService {
       return this.handleResponse<T>(apiDesc, result as any, messageHandler);
   }
 
-  // public async getStandAloneClient(): Promise<IHttpClient> {
-  //   if(!this.standAloneClient) {
-  //       this.standAloneClient = await StandaloneIntegration.getHttpClient();
-  //   }
-
-  //   return Promise.resolve(this.standAloneClient);
-  // }
-
     public requestAsync<T>(request: IHttpRequest): Observable<T> {
       console.log(request);
-        return from(new Promise( (resolve, reject) => {
-                window.electronInterop.sendHttpRequest(request).then((response) => {
-                    // only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
-                    resolve(response.data);
-                    }
-                , (err: IHttpResponse) =>
-                {
-                  console.log(JSON.stringify(err))
-                    const r = new HttpErrorResponse({
-                        status: err.statusCode,
-                        statusText: err.statusMessage,
-                    });
-                    reject(r); }
-                );
-        }) as Promise<T>);
+      return from(new Promise((resolve, reject) => {
+        window.electronInterop.sendHttpRequest(request).then((response) => {
+          if (response.statusCode.toString().startsWith("2")) {
+            resolve(response.data);
+          } else {
+            const r = new HttpErrorResponse({
+              status: response.statusCode,
+              statusText: response.statusMessage,
+              error: response.data
+            });
+            reject(r);
+          }
+          // only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
+        }
+        ).catch(err => {
+          console.log(err)
+          const r = new HttpErrorResponse({
+            status: 500,
+            // statusText: err.,
+            // error: response.data
+          });
+          reject(r);
+        });
+      }) as Promise<T>);
 }
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {

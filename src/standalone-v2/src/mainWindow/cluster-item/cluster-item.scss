@@ -1,0 +1,12 @@
+.edit-cluster {
+    background-color: var(--primary-background-color);
+    border-radius: 0px 0px 10px 10px;
+    cursor: default;
+}
+
+.dropdown-item {
+    display: flex !important;
+    align-items: center;
+    justify-content: space-between;
+    gap: 5px;
+}

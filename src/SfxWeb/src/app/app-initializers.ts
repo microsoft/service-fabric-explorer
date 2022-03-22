@@ -1,10 +1,13 @@
 
+import { StandaloneIntegration } from './Common/StandaloneIntegration';
 import { AdalService } from './services/adal.service';
-import { RestClientService } from './services/rest-client.service';
 
 export function initApp(aadService: AdalService) {
   return async () => {
     try {
+      if(StandaloneIntegration.isStandalone()) {
+        return;
+      }
       await aadService.load().toPromise();
 
       if (aadService.aadEnabled) {

@@ -1,6 +1,6 @@
 import { IpcRendererEvent } from "electron";
 import { ICluster, IClusterListState } from "./cluster-manager";
-import { MainWindowEvents } from "./events";
+import { MainWindowEvents } from "./constants";
 import { IHttpRequest } from "./mainWindow/global";
 
 const { contextBridge, ipcRenderer } = require('electron')
@@ -30,6 +30,12 @@ contextBridge.exposeInMainWorld('electronInterop', {
     },
     reconnectCluster: async (cluster: ICluster) => {
         ipcRenderer.send(MainWindowEvents.reconnectCluster, cluster)
+    },
+    disconnectCluster: async (cluster: ICluster) => {
+        ipcRenderer.send(MainWindowEvents.disconnectCLuster, cluster)
+    },
+    requestClusterState: async () => {
+        ipcRenderer.send(MainWindowEvents.requestClusterState)
     },
     onClusterListChange: (callback: onClusterListChange) => ipcRenderer.on(MainWindowEvents.clusterStatesChange, callback),
 

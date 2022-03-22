@@ -5,11 +5,13 @@
   "description": "My Electron application description",
   "main": ".webpack/main",
   "scripts": {
-    "start": "electron-forge start",
+    "start": "electron-forge start -- devtools",
     "package": "electron-forge package",
     "make": "electron-forge make",
+    "make:windows": "electron-forge make --platform=win32",
     "publish": "electron-forge publish",
-    "lint": "eslint --ext .ts,.tsx ."
+    "lint": "eslint --ext .ts,.tsx .",
+    "debug": "electron-forge start --inspect-electron"
   },
   "keywords": [],
   "author": {
@@ -19,12 +21,14 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "iconUrl": "./src/icon.ico"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "sfx_standalone"
+            "name": "Service-Fabric-Explorer-Standalone"
           }
         },
         {
@@ -74,6 +78,7 @@
     "@electron-forge/plugin-webpack": "^6.0.0-beta.63",
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.13",
+    "@types/yaireo__relative-time": "^1.0.0",
     "@typescript-eslint/eslint-plugin": "^5.13.0",
     "@typescript-eslint/parser": "^5.13.0",
     "@vercel/webpack-asset-relocator-loader": "^1.7.0",
@@ -89,6 +94,8 @@
     "typescript": "^4.5.5"
   },
   "dependencies": {
+    "@azure/msal-node": "^1.7.0",
+    "@yaireo/relative-time": "^1.0.1",
     "axios": "^0.26.1",
     "electron-squirrel-startup": "^1.0.0",
     "electron-store": "^8.0.1",

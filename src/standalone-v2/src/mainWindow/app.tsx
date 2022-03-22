@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react"
-import { ICluster } from "../cluster-manager";
-import AddCluster from "./add-cluster";
-import './app.css';
-import ClusterListItem from "./cluster-item";
+import { ICluster, IloadedCluster } from "../cluster-manager";
+import AddCluster from "./add-cluster/add-cluster";
+import ClusterListItem from "./cluster-item/cluster-item";
+
+import './app.scss';
+import './icons.min.css';
+
 
 export const addWindow = (state: ICluster) => {
     window.electronInterop.addCluster(state)
@@ -16,9 +19,13 @@ export const reconnect = (cluster: ICluster) => {
     window.electronInterop.reconnectCluster(cluster);
 }
 
-export default function App() {
-    const [options, setOptions] = useState<ICluster[]>([])
+export const disconnect = (cluster: ICluster) => {
+    window.electronInterop.disconnectCluster(cluster);
+}
 
+export default function App() {
+    const [clusters, setOptions] = useState<IloadedCluster[]>([])
+    const [filterList, setFilerList] = useState<string>("");
 
     const [showAddCluster, setAddCluster] = useState(false);
     const [activeCluster, setActiveCluster] = useState("-1");
@@ -28,23 +35,39 @@ export default function App() {
             setOptions(data.clusters)
             setActiveCluster(data.focusedCluster);
         })
+
+        window.electronInterop.requestClusterState();
     }, [])
 
-    return (<div style={{ width: '300px' }}>
+    const filteredList = filterList.length > 0 ? clusters.filter(cluster => cluster.url.includes(filterList) || cluster.displayName.includes(filterList)) : clusters;
+
+    return (<div className="left-panel">
         <div>
-            <h5 className="center-text">Clusters
-            <button className="flat-button round add-button">
-                <span onClick={() => {setAddCluster(!showAddCluster)}}>{showAddCluster ? '' : '+'}</span>
-            </button>
-            </h5>
+            <h4 className="center-text cluster-title">Clusters
+                {!showAddCluster &&
+                    <button className="flat-button round add-button" onClick={() => { setAddCluster(true) }} >
+                        <span className='mif-plus'></span>
+                    </button>
+                }
+            </h4>
 
-            {showAddCluster && <div className="add-cluster essen-pane">
-                <div>Add Cluster
+            <div className="filter-list">
+                <div className="input-item">
+                    <span>Filter List</span>
+                    <input className="input-flat" onChange={(input) => setFilerList(input.currentTarget.value)} value={filterList}></input>
                 </div>
-                <AddCluster onAddCluster={addWindow} onCloseWindow={() => setAddCluster(false)}></AddCluster>
+            </div>
+        </div>
 
-            </div>}
-            {options.map(option => <ClusterListItem isFocused={activeCluster === option.id} cluster={option} ></ClusterListItem>}
+        {showAddCluster && <div className="add-cluster essen-pane slide-open">
+            <h5>Add Cluster
+            </h5>
+            <AddCluster clusterList={clusters} onAddCluster={addWindow} onCloseWindow={() => setAddCluster(false)}></AddCluster>
+        </div>}
+
+        <div className="cluster-list">
+            {filteredList.map((option, index) =>
+                <ClusterListItem key={option.id} clusterList={clusters} isFocused={activeCluster === option.id} cluster={option} ></ClusterListItem>)}
         </div>
     </div>)
 } 

@@ -34,7 +34,7 @@ export interface MultiToggleProps {
 }
 
 export function MultiOptionToggle(props: MultiToggleProps) {
-    const [active, setActive] = useState<MultiOptionToggleValue>(props.defaultIndex ? props.values[props.defaultIndex] : {display: 'default', value: null})
+    const [active, setActive] = useState<MultiOptionToggleValue>(props.defaultIndex !== null ? props.values[props.defaultIndex] : {display: 'default', value: null})
 
     const setNewActive = (value: MultiOptionToggleValue) => {
         setActive(value);
