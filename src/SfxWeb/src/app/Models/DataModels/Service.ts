@@ -1,6 +1,6 @@
 import { DataModelBase, IDecorators } from './Base';
 import { IRawService, IRawUpdateServiceDescription, IRawServiceHealth, IRawServiceDescription, IRawServiceType, IRawServiceManifest,
-         IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription } from '../RawDataTypes';
+         IRawCreateServiceDescription, IRawServiceBackupConfigurationInfo, IRawCreateServiceFromTemplateDescription, IRawServiceBlockList } from '../RawDataTypes';
 import { PartitionCollection, ServiceBackupConfigurationInfoCollection } from './collections/Collections';
 import { DataService } from 'src/app/services/data.service';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription, IServiceHealthStateFilter } from '../HealthChunkRawDataTypes';
@@ -37,6 +37,7 @@ export class Service extends DataModelBase<IRawService> {
     public serviceBackupConfigurationInfoCollection: ServiceBackupConfigurationInfoCollection;
     public backupPolicyName: string;
     public cleanBackup: boolean;
+    public serviceBlockList: ServiceBlockList;
 
     public constructor(data: DataService, raw: IRawService, public parent: Application) {
         super(data, raw, parent);
@@ -45,11 +46,12 @@ export class Service extends DataModelBase<IRawService> {
         this.health = new ServiceHealth(this.data, this, HealthStateFilterFlags.Default, HealthStateFilterFlags.None);
         this.description = new ServiceDescription(this.data, this);
         this.serviceBackupConfigurationInfoCollection = new ServiceBackupConfigurationInfoCollection(data, this);
+        this.serviceBlockList = new ServiceBlockList(this.data,this,this.raw.Name);
 
         if (this.data.actionsEnabled()) {
             this.setUpActions();
         }
-
+        
 
         this.cleanBackup = false;
     }
@@ -93,6 +95,12 @@ export class Service extends DataModelBase<IRawService> {
     }
 
     protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawService> {
+        
+        return this.data.restClient.getService(this.parent.id, this.id, messageHandler);
+    }
+
+    public getService(messageHandler?: IResponseMessageHandler): Observable<IRawService> {
+        
         return this.data.restClient.getService(this.parent.id, this.id, messageHandler);
     }
 
@@ -142,8 +150,37 @@ export class ServiceHealth extends HealthBase<IRawServiceHealth> {
         super(data, parent);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceHealth> {
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceHealth> {   
         return this.data.restClient.getServiceHealth(this.parent.parent.id, this.parent.id, this.eventsHealthStateFilter, this.partitionsHealthStateFilter, messageHandler);
+    }
+}
+
+// all types of block list should extend this class
+class BlockList extends DataModelBase<IRawServiceBlockList>  {
+    public static readonly serviceListType:string = "Service";
+    public static readonly overallListType:string = "Overall";
+    public static readonly preferredPrimaryListType:string = "PreferredPrimary";
+    public static readonly placementTagsListType:string = "PlacementTags";
+    public static readonly runningTagsListType:string = "RunningTags";
+
+    protected serviceName:string;
+    protected listType : string;
+
+    public constructor(data: DataService, public parent: Service,name: string, listType: string) {
+        super(data, {}  as IRawServiceBlockList, parent);
+        this.serviceName = name;
+        this.listType = listType;
+    }
+
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceBlockList> {      
+        return this.data.restClient.getServiceBlockList(this.serviceName, this.listType, messageHandler) ;
+    }
+}
+
+export class ServiceBlockList extends BlockList  {
+
+    public constructor(data:DataService, public parent: Service,name: string) {
+        super(data, parent, name, BlockList.serviceListType);
     }
 }
 
@@ -168,10 +205,12 @@ export class ServiceDescription extends DataModelBase<IRawServiceDescription> {
         super(data, null, parent);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceDescription> {
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceDescription> {      
         return this.data.restClient.getServiceDescription(this.parent.parent.id, this.parent.id, messageHandler);
     }
 }
+
+
 
 export class ServiceType extends DataModelBase<IRawServiceType> {
     public manifest: ServiceManifest;

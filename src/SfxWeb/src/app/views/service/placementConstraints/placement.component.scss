@@ -1,0 +1,24 @@
+@import ".\\..\\..\\..\\modules\\charts\\chart.scss";
+
+h4 {
+  color: whitesmoke;
+}
+
+code {
+  color: #0075c9;
+}
+
+.inline {
+  display: flex;
+  flex-direction: row;
+  
+}
+
+.margin-panel {
+  margin-top: 1%;
+  margin-bottom: 1%;
+  margin-right: 2%;
+}
+
+
+

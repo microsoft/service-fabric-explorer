@@ -19,6 +19,10 @@ import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snac
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppInsightsErrorHandler } from './error-handling';
 
+import { FormsModule } from '@angular/forms';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
+
 @NgModule({
   declarations: [
     AppComponent,
@@ -36,7 +40,10 @@ import { AppInsightsErrorHandler } from './error-handling';
     ReactiveFormsModule,
     NgbTooltipModule,
     MatSnackBarModule,
-    DebuggingModule
+    DebuggingModule,
+    FormsModule,
+    NgbModule,
+    NgbPaginationModule
   ],
 
   providers: [

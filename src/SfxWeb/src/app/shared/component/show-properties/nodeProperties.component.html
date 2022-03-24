@@ -1,0 +1,30 @@
+<div class="table-responsive">
+    <table class="table detail-list" >
+        <tr>
+            <td colspan="2">
+                <app-input class="input-wrapper" placeholder="Search values" [model]="this.search_query"  (changed)="this.search_query = $event;this.search()" ></app-input>
+                <button class="simple-button" type="button" (click)="reset()">
+                    Reset All
+                </button>
+            </td>
+        </tr>
+        <tr>
+            <th>
+                Property Name
+            </th>
+            <th>
+                Value
+            </th>
+        </tr>
+        <tr *ngFor = "let prop of this.current_properties;let i = index"  class="props hover-row"   [(ngModel)]="this.current_index"   ngDefaultControl>
+            <td *ngIf = "i < this.current_index">{{prop[0]}}</td>
+            <td *ngIf = "i < this.current_index">{{prop[1]}}</td>
+        </tr>
+        <tr>
+            <td colspan="2" class="center">
+                <button class="simple-button" type="button" (click)="showMoreOrLess()" *ngIf="this.current_properties.length > NumShowedValues()">{{this.current_index < this.current_properties.length?'Show more':'Show less'}}
+                </button>
+            </td>
+        </tr>
+    </table>
+</div>

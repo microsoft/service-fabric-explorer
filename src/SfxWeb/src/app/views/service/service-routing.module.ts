@@ -7,6 +7,7 @@ import { EventsComponent } from './events/events.component';
 import { ManifestComponent } from './manifest/manifest.component';
 import { BackupComponent } from './backup/backup.component';
 import { InfrastructureJobsComponent } from './infrastructurejobs/infrastructurejobs.component';
+import { PlacementComponent } from './placementConstraints/placement.component'; 
 
 
 const routes: Routes = [{
@@ -16,8 +17,9 @@ const routes: Routes = [{
     { path: 'manifest', component: ManifestComponent },
     { path: 'events', component: EventsComponent },
     { path: 'backup', component: BackupComponent },
-    { path: 'infrastructurejobs', component: InfrastructureJobsComponent}
-    ]
+    { path: 'infrastructurejobs', component: InfrastructureJobsComponent},
+    { path : 'placement' , component: PlacementComponent}  
+  ]
   }
 ];
 

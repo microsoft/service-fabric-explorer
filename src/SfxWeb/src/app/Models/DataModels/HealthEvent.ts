@@ -39,6 +39,7 @@ export class HealthBase<T extends IRawHealth> extends DataModelBase<T> {
         // Use {} instead of null because health information may be merged into this object
         // before the object gets fully refreshed from server.
         super(data, {} as T, parent);
+        
     }
 
     public mergeHealthStateChunk(healthChunk: IHealthStateChunk): Observable<any> {
@@ -47,7 +48,7 @@ export class HealthBase<T extends IRawHealth> extends DataModelBase<T> {
     }
 
     protected updateInternal(): Observable<any> | void {
-        this.parseCommonHealthProperties().subscribe();
+        this.parseCommonHealthProperties().subscribe();   
     }
 
     protected parseCommonHealthProperties(): Observable<any> {

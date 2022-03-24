@@ -12,7 +12,8 @@ import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgr
          IRawApplication, IRawService, IRawCreateServiceDescription, IRawCreateServiceFromTemplateDescription, IRawUpdateServiceDescription, IRawServiceDescription,
          IRawServiceHealth, IRawApplicationUpgradeProgress, IRawCreateComposeDeploymentDescription, IRawPartition, IRawPartitionHealth, IRawPartitionLoadInformation,
          IRawReplicaOnPartition, IRawReplicaHealth, IRawImageStoreContent, IRawStoreFolderSize, IRawClusterVersion, IRawList, IRawAadMetadata, IRawStorage, IRawRepairTask,
-         IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity, IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact } from '../Models/RawDataTypes';
+         IRawServiceNameInfo, IRawApplicationNameInfo, IRawBackupEntity, IRawInfrastructureJob, IRawInfraRepairTask, IRawRoleInstanceImpact,
+         IRawServiceBlockList } from '../Models/RawDataTypes';
 import { mergeMap, map, catchError, finalize, skip } from 'rxjs/operators';
 import { Application } from '../Models/DataModels/Application';
 import { Service } from '../Models/DataModels/Service';
@@ -514,8 +515,14 @@ export class RestClientService {
       const url = 'Applications/' + encodeURIComponent(applicationId)
           + '/$/GetServices/' + encodeURIComponent(serviceId)
           + '/$/GetDescription';
-
+      
       return this.get(this.getApiUrl(url), 'Get service description', messageHandler);
+  }
+
+  public getServiceBlockList(serviceName: string, listType: string , messageHandler?: IResponseMessageHandler): Observable<IRawServiceBlockList> {
+      const url = `$/GetBlockList?ServiceName=${serviceName}&BlockListType=${listType}`;
+      
+      return this.get(this.getApiUrl(url), 'Get service block list', messageHandler);
   }
 
   public getServiceHealth(applicationId: string, serviceId: string,
@@ -524,8 +531,7 @@ export class RestClientService {
                           messageHandler?: IResponseMessageHandler): Observable<IRawServiceHealth> {
 
       const url = `Applications/${encodeURIComponent(applicationId)}/$/GetServices/${encodeURIComponent(serviceId)}`
-          + `/$/GetHealth?EventsHealthStateFilter=${eventsHealthStateFilter}&PartitionsHealthStateFilter=${partitionsHealthStateFilter}`;
-
+          + `/$/GetHealth?EventsHealthStateFilter=${eventsHealthStateFilter}&PartitionsHealthStateFilter=${partitionsHealthStateFilter}`;                     
       return this.get(this.getApiUrl(url), 'Get service health', messageHandler);
   }
 
@@ -886,6 +892,7 @@ export class RestClientService {
   }
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
+      
     const data: IRequest = {
         startTime: new Date().toISOString(),
         apiDesc,

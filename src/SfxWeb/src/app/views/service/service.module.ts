@@ -17,10 +17,11 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
 import { InfrastructureJobsComponent } from './infrastructurejobs/infrastructurejobs.component';
 import { InfrastructureJobModule } from 'src/app/modules/infrastructure-job/infrastructure-job.module';
 import { ClusterModule } from '../cluster/cluster.module';
-
+import { PlacementComponent } from './placementConstraints/placement.component';
+import { NgbPaginationModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
-  declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent, InfrastructureJobsComponent],
+  declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent, InfrastructureJobsComponent,PlacementComponent],
   imports: [
     CommonModule,
     ServiceRoutingModule,
@@ -32,7 +33,10 @@ import { ClusterModule } from '../cluster/cluster.module';
     ChartsModule,
     HealthStateModule,
     InfrastructureJobModule,
-    ClusterModule
+    ClusterModule,
+    NgbPaginationModule,
+    NgbDropdownModule,
+    NgbTooltipModule
   ],
   entryComponents: [ScaleServiceComponent]
 })

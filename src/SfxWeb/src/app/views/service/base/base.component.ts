@@ -65,6 +65,24 @@ export class BaseComponent extends ServiceBaseControllerDirective {
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
     return this.data.clusterManifest.ensureInitialized().pipe(map(() => {
       this.tabs = this.tabs.filter(tab => tab.name !== 'backup' && tab.name !== 'infrastructure jobs');
+      
+      if (this.service.description.raw.PlacementConstraints.length > 0) {
+        if (! this.tabs.some(tab => tab.name === 'Placement Constraints')) this.tabs.push({
+          name: 'Placement Constraints',
+          route: './placement'
+        });
+        
+      }
+      else {
+        // remove placement tab
+        for(let index=0; index < this.tabs.length ; ++index) {
+          if (this.tabs[index]['name'] == 'Placement Constraints' && this.tabs[index]['route'] == './placement')
+            {
+              this.tabs.splice(index,1);
+              break;
+            }
+        }
+      }
 
       if (this.data.clusterManifest.isBackupRestoreEnabled && this.service.isStatefulService
           && this.appTypeName !== Constants.SystemAppTypeName) {

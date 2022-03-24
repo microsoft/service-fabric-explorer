@@ -1,0 +1,40 @@
+<div *ngIf = "this.placementConstraints!=undefined; else elseBlock">
+  <div *ngFor>
+
+  </div>
+  
+  <div class="inline">
+    <app-dashboard-service-placement title="Service constraint" [placementConstraint]="[
+    this.placementConstraints]" class="margin-panel"></app-dashboard-service-placement> 
+
+    <app-dashboard-text-tile [count]="this.goodConstraintResults.length" title="Count of nodes that satisfy constraints" middleMargin="0px 0" class="margin-panel">
+      
+    </app-dashboard-text-tile>
+  
+    <app-dashboard-text-tile [count]="this.badConstraintResults.length" title="Count of nodes that do not satisfy constraints" middleMargin="0px 0" class="margin-panel">
+    </app-dashboard-text-tile>
+  </div>
+
+  <nodes-list title="Nodes satisfying constraints"  titleColor = 'rgb(127,186,0)' [nodes] = "this.goodConstraintResults" [nodesProperty]="this.nodesProperty" ></nodes-list> 
+
+  <nodes-list title="Nodes violating constraints" titleColor = 'red'  [nodes] = "this.badConstraintResults" [nodesProperty]="this.nodesProperty"></nodes-list>
+</div>
+<ng-template #elseBlock>
+
+  <!--Loading block-->
+
+  <div class="inline">
+    <app-dashboard-service-placement title="Service constraint" class="margin-panel" [placementConstraint]="''"></app-dashboard-service-placement> 
+
+    <app-dashboard-text-tile  title="Count of nodes that satisfy constraints" middleMargin="0px 0" class="margin-panel" [count]="0">
+    </app-dashboard-text-tile>
+  
+    <app-dashboard-text-tile  title="Count of nodes that do not satisfy constraints" middleMargin="0px 0" class="margin-panel" [count]="0">
+    </app-dashboard-text-tile>
+  </div>
+
+  <nodes-list title="Nodes satisfying constraints"  titleColor = 'rgb(127,186,0)' [nodes] = "[]" [nodesProperty]="[]" ></nodes-list> 
+
+  <nodes-list title="Nodes violating constraints" titleColor = 'red'  [nodes] = "[]" [nodesProperty]="[]"></nodes-list>
+
+</ng-template>

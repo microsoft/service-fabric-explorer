@@ -1,0 +1,45 @@
+<div class="detail-pane essen-pane">
+  <app-collapse-container sectionName = "this.title" [collapsed]="false">
+    <div collapse-header>
+      <div class="inline">
+          <h4  [style.color] ="this.titleColor">{{ this.title }}</h4>  
+      </div>
+    </div>
+    <div collapse-body>
+      <app-input class="input-wrapper" placeholder="Search nodes" [model]="this.search_query"  (changed)="this.search_query = $event;this.searchNodes()" ></app-input> 
+      <button class="simple-button" type="button" (click)="reset()"> 
+        Reset All
+      </button> <br><br>
+      <div *ngFor = "let node of this.nodes;let i=index; "  >
+        <div class="detail-pane essen-pane " *ngIf = "i >= start_index && i < end_index">
+          <app-collapse-container sectionName="{{ node.name }}" [collapsed]="true">
+            <div collapse-header>
+              <div>
+                <h4>{{ node.name }}</h4>
+              </div>
+            </div>
+            <div collapse-body>
+              <div  *ngIf = "! node.result; else noProblems">
+                <h6 class="redFont">Constraints not satisfied</h6>
+              </div>
+              <ng-template #noProblems>
+                <h6 class="greenFont">Constraints satisfied</h6> 
+              </ng-template>
+              <app-collapse-container sectionName="Values" [collapsed]="false">
+                <div collapse-header> 
+                  <h6>Values</h6>
+                </div>
+                <div collapse-body>
+                  
+                  <node-properties [(properties)]= "this.nodesProperty[node.index].property"></node-properties>
+                </div>
+              </app-collapse-container>
+            </div>
+          </app-collapse-container>
+        </div>
+      </div>
+      <ngb-pagination [collectionSize]="nodes.length" [(page)]="page" [maxSize]="3" [rotate]="true" [boundaryLinks]="true"
+                                (pageChange)="onChangePage($event)" style="display: inline-block;" [pageSize]="PageSize()"></ngb-pagination>
+    </div>
+  </app-collapse-container>
+</div>
