@@ -1,16 +1,20 @@
-import { Component, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges, OnInit } from '@angular/core';
 import { ApplicationUpgradeProgress } from 'src/app/Models/DataModels/Application';
 import { ClusterUpgradeProgress } from 'src/app/Models/DataModels/Cluster';
+import { ListSettings } from 'src/app/Models/ListSettings';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
   selector: 'app-upgrade-info',
   templateUrl: './upgrade-info.component.html',
   styleUrls: ['./upgrade-info.component.scss']
 })
-export class UpgradeInfoComponent implements OnChanges {
+export class UpgradeInfoComponent implements OnChanges, OnInit {
 
   @Input() upgradeProgress: ClusterUpgradeProgress | ApplicationUpgradeProgress;
+
+  upgradeProgressUnhealthyEvaluationsListSettings: ListSettings;
 
   essentialItems: IEssentialListItem[] = [];
   essentialItems2: IEssentialListItem[] = [];
@@ -24,7 +28,12 @@ export class UpgradeInfoComponent implements OnChanges {
   // this is to avoid confusion
   upgradeDuration: IEssentialListItem;
 
-  constructor() { }
+  constructor(private settings: SettingsService) { }
+
+  ngOnInit() {
+    this.upgradeProgressUnhealthyEvaluationsListSettings = this.settings.getNewOrExistingUnhealthyEvaluationsListSettings('clusterUpgradeProgressUnhealthyEvaluations');
+  }
+
   ngOnChanges(): void {
     let entitySpecificInformation = [];
     if (this.upgradeProgress instanceof  ClusterUpgradeProgress) {

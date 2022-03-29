@@ -7,7 +7,7 @@
         <div collapse-body>
             <app-upgrade-info [upgradeProgress]="clusterUpgradeProgress"></app-upgrade-info>
 
-            <div *ngIf="clusterUpgradeProgress.raw.FailureReason !== 'None'">
+            <!-- <div *ngIf="clusterUpgradeProgress.raw.FailureReason !== 'None'">
                 <h4>Upgrade Failure</h4>
                 <div class="table-responsive">
                     <table class="table detail-table">
@@ -27,7 +27,7 @@
             <div class="detail-pane" *ngIf="clusterUpgradeProgress.unhealthyEvaluations.length > 0">
                 <h4>Unhealthy Evaluations (Upgrade)</h4>
                 <app-detail-list [list]="clusterUpgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
-            </div>
+            </div> -->
         </div>
     </app-collapse-container>
 </div>
