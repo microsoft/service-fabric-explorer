@@ -4,26 +4,20 @@ import {
   InteractionType, BrowserCacheLocation
 } from '@azure/msal-browser';
 import {
-  MsalGuard, MsalInterceptor, MsalBroadcastService,
-  MsalInterceptorConfiguration, MsalModule, MsalService,
-  MSAL_GUARD_CONFIG, MSAL_INSTANCE, MSAL_INTERCEPTOR_CONFIG,
+  MsalGuard, MsalBroadcastService,
+  MsalModule, MsalService,
+  MSAL_GUARD_CONFIG, MSAL_INSTANCE,
   MsalGuardConfiguration
 } from '@azure/msal-angular';
-import { HTTP_INTERCEPTORS } from '@angular/common/http';
 import { AadConfigService } from './config-service.service';
 import { Utils } from 'src/app/Utils/Utils';
 
 export function initializerFactory(env: AadConfigService): any {
-  // const promise = env.init().then(() => {
-  //   console.log('finished getting configurations dynamically.');
-  // });
-  // return () => promise;
-
   return () => env.init();
 }
 
 export function MSALInstanceFactory(config: AadConfigService): IPublicClientApplication {
-  return new PublicClientApplication({
+  const client = new PublicClientApplication({
     auth: {
       clientId: config.getCluster(),
       authority: config.getAuthority(),
@@ -33,17 +27,7 @@ export function MSALInstanceFactory(config: AadConfigService): IPublicClientAppl
       storeAuthStateInCookie: Utils.isIE
     },
   });
-}
-
-export function MSALInterceptorConfigFactory(config: AadConfigService): MsalInterceptorConfiguration {
-  const protectedResourceMap = new Map<string, Array<string>>();
-  if (config.aadEnabled) {
-    protectedResourceMap.set('/', ['user.read']);
-  }
-  return {
-    interactionType: InteractionType.Popup,
-    protectedResourceMap
-  };
+  return client;
 }
 
 export function MSALGuardConfigFactory(): MsalGuardConfiguration {
@@ -76,19 +60,9 @@ export class MsalConfigDynamicModule {
           useFactory: MSALGuardConfigFactory,
           deps: [AadConfigService]
         },
-        {
-          provide: MSAL_INTERCEPTOR_CONFIG,
-          useFactory: MSALInterceptorConfigFactory,
-          deps: [AadConfigService]
-        },
         MsalService,
         MsalGuard,
         MsalBroadcastService,
-        {
-          provide: HTTP_INTERCEPTORS,
-          useClass: MsalInterceptor,
-          multi: true
-        }
       ]
     };
   }

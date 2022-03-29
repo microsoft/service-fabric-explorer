@@ -2,7 +2,7 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { AadConfigService } from '../modules/msal-dynamic-config/config-service.service';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
-import { AuthenticationResult, BrowserUtils, EventMessage, EventType, InteractionStatus, InteractionType, PopupRequest, RedirectRequest } from '@azure/msal-browser';
+import { AuthenticationResult, EventMessage, EventType, InteractionStatus, PopupRequest } from '@azure/msal-browser';
 import { filter, map } from 'rxjs/operators';
 import { AccountInfo } from '@azure/msal-common';
 /*
@@ -23,25 +23,38 @@ export class AadWrapperService {
               private msalBroadcastService: MsalBroadcastService,
               @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration) { }
 
-    init(): Observable<any> {
-      if (this.aadEnabled) {
-        return new Observable( sub => {
-          this.msalBroadcastService.inProgress$
+  init(): Observable<any> {
+    if (this.aadEnabled) {
+      this.msalBroadcastService.inProgress$
+        .pipe(
+          filter((status: InteractionStatus) => status === InteractionStatus.None),
+        ).pipe(map(() => {
+          this.checkAndSetActiveAccount();
+        })).subscribe();
+
+      return new Observable(sub => {
+        this.msalBroadcastService.msalSubject$
           .pipe(
-            filter((status: InteractionStatus) => status === InteractionStatus.None),
-          ).pipe(map(() => {
+            filter((msg: EventMessage) => msg.eventType === EventType.LOGIN_SUCCESS),
+          )
+          .subscribe((result: EventMessage) => {
             this.checkAndSetActiveAccount();
             sub.next(true);
             sub.complete();
-          })).subscribe();
+          });
 
+        if (this.msalService.instance.getAllAccounts().length === 0) {
           this.loginPopup();
-        });
+        } else {
+          sub.next(true);
+          sub.complete();
+        }
+      });
 
-      }else{
-        return of(null);
-      }
+    } else {
+      return of(null);
     }
+  }
 
   checkAndSetActiveAccount(){
     /**

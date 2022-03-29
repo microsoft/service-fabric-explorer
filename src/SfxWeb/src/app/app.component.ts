@@ -9,8 +9,6 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { TelemetryService } from './services/telemetry.service';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
-
-import { AadConfigService } from './modules/msal-dynamic-config/config-service.service';
 import { AadWrapperService } from './services/aad-wrapper.service';
 
 @Component({

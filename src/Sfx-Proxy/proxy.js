@@ -74,21 +74,17 @@ const proxyRequest = async (req) => {
         method,
         url: `${config.TargetCluster.Url}${url}`,
         data, 
-        headers
+        headers,
+        validateStatus: function () {
+            return true;
+        }
     }
 
     if(httpsAgent){
         conf.httpsAgent = httpsAgent;
     }
 
-    try {
-        res = await axios(conf)
-        return res;
-    }
-    //handle axios throwing an error(like 400 level issues) which should just be passed through
-    catch(e){
-        return e.response;
-    }
+    return await axios(conf)
 }
 
 const app = express()
