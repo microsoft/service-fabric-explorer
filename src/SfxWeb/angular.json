@@ -16,7 +16,7 @@
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
-            "options": {
+          "options": {
             "outputPath": "dist",
             "index": "src/index.html",
             "main": "src/main.ts",
@@ -31,20 +31,16 @@
               "node_modules/vis-timeline/dist/vis-timeline-graph2d.min.css",
               "node_modules/nouislider/dist/nouislider.min.css",
               "src/mif/icons.min.css",
-              "src/styles.scss",
-              "src/modal.scss",
-              "src/calender.scss",
-              "src/_candybar.scss"
+              "src/styles.scss"
             ],
             "allowedCommonJsDependencies": [
               "lodash",
               "nouislider",
               "highcharts"
-           ],
+            ],
             "scripts": [],
             "stylePreprocessorOptions": {
-              "includePaths": [
-              ]
+              "includePaths": []
             },
             "vendorChunk": true,
             "extractLicenses": false,
@@ -133,15 +129,11 @@
           }
         },
         "lint": {
-          "builder": "@angular-devkit/build-angular:tslint",
+          "builder": "@angular-eslint/builder:lint",
           "options": {
-            "tsConfig": [
-              "tsconfig.app.json",
-              "tsconfig.spec.json",
-              "e2e/tsconfig.json"
-            ],
-            "exclude": [
-              "**/node_modules/**"
+            "lintFilePatterns": [
+              "src/**/*.ts",
+              "src/**/*.html"
             ]
           }
         },
@@ -162,6 +154,7 @@
   },
   "defaultProject": "SfxWeb",
   "cli": {
-    "analytics": false
+    "analytics": false,
+    "defaultCollection": "@angular-eslint/schematics"
   }
 }

@@ -110,7 +110,7 @@ context('service', () => {
             addRoute("serviceInfo", "service-page/service-info", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
             addRoute("partitions", "service-page/service-partitions", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetPartitions?*`));
             addRoute("health", "service-page/service-health", apiUrl(`${routeFormatter(appName, serviceName)}/$/GetHealth?*`));
- 
+
             cy.visit(urlFormatter(appName, serviceName))
         })
 
@@ -159,6 +159,32 @@ context('service', () => {
                 cy.contains("Scale Service")
             })
         })
+
+      it('action - scale service', () => {
+        cy.wait(waitRequest);
+
+        cy.intercept('POST', apiUrl(`${routeFormatter(appName, statelessServiceName)}/$/Update?*`), { statusCode: 200 }).as('updateService')
+
+        cy.get('[data-cy=actions]').within(() => {
+          cy.contains("Actions").click();
+          cy.contains("Scale Service").click();
+        })
+
+        cy.get('[formcontrolname=count').clear().type(2);
+        cy.get('[type=submit').click();
+
+        cy.wait('@updateService')
+
+        cy.get('@updateService').its('request.body')
+          .should(
+            'deep.equal',
+            {
+              Flags: 1,
+              InstanceCount: 2,
+              ServiceKind: 1
+            }
+          )
+      })
 
         it('can not view backup', () => {
             cy.wait(FIXTURE_REF_MANIFEST);

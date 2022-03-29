@@ -22,8 +22,9 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
     public currentFolder: ImageStoreFolder;
     public pathBreadcrumbItems: IStorePathBreadcrumbItem[] = [];
     public allChildren: ImageStoreItem[];
-    public isLoadingFolderContent = false;
 
+    public isLoadingFolderContent = false;
+    public currentDirectoryBeingLoaded: string = null;
 
     // helper to determine which way for slashes to be added in.
     public static slashDirection(path: string): boolean {
@@ -53,63 +54,58 @@ export class ImageStore extends DataModelBase<IRawImageStoreContent> {
 
             if (this.isNative) {
                     // if we get an actual request error. i.e a 400 that means this cluster does not have the API
-                    this.expandFolder(this.currentFolder.path).subscribe( () => {
-                        this.isAvailable = true;
-                        this.initialized = true;
-                    }, err => {
-                        this.isAvailable = false;
-                        this.initialized = true;
-                    });
+                    this.expandFolder(this.currentFolder.path)
+                    this.isAvailable = true;
+                    this.initialized = true;
             }
         });
-
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawImageStoreContent> {
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<any> {
         if (!this.isNative || this.isLoadingFolderContent || !this.initialized) {
             return of(null);
         }
-        return this.expandFolder(this.currentFolder.path);
+        this.expandFolder(this.currentFolder.path);
+        return of(null);
     }
 
     protected updateInternal(): Observable<any> | void {
         return of(true);
     }
 
-    public expandFolder(path: string, clearCache: boolean = false): Observable<IRawImageStoreContent> {
-        if (this.isLoadingFolderContent) {
+    public expandFolder(path: string, clearCache: boolean = false) {
+        if (this.currentDirectoryBeingLoaded === path) {
             return;
         }
 
-        return new Observable(observer => {
-            this.isLoadingFolderContent = true;
-            this.loadFolderContent(path).subscribe(raw => {
-                this.setCurrentFolder(path, raw, clearCache);
+        this.isLoadingFolderContent = true;
+        this.currentDirectoryBeingLoaded = path;
 
-                const index = this.pathBreadcrumbItems.findIndex(item => item.path === this.currentFolder.path);
-                if (index > -1) {
-                    this.pathBreadcrumbItems = this.pathBreadcrumbItems.slice(0, index + 1);
-                } else {
-                    this.pathBreadcrumbItems.push({ path: this.currentFolder.path, name: this.currentFolder.displayName } as IStorePathBreadcrumbItem);
-                }
+        this.loadFolderContent(path).subscribe(raw => {
+          if(this.currentDirectoryBeingLoaded === path) {
+            this.setCurrentFolder(path, raw, clearCache);
 
-                this.isLoadingFolderContent = false;
-                observer.next(raw);
-            }, err => {
-                this.isLoadingFolderContent = false;
-                if (err.status === 400) {
-                    observer.error(err);
-                }else if (err.status === 404) {
-                    this.data.message.showMessage(
-                        `Directory ${path} does not appear to exist anymore. Navigating back to the base of the image store directory.`, MessageSeverity.Warn);
-                    // go to the base directory
-                    return this.expandFolder(this.root.path).subscribe( raw => {
-                        observer.next(raw);
-                    });
-                }else{
-                    observer.next(null);
-                }
-            });
+            const index = this.pathBreadcrumbItems.findIndex(item => item.path === this.currentFolder.path);
+            if (index > -1) {
+                this.pathBreadcrumbItems = this.pathBreadcrumbItems.slice(0, index + 1);
+            } else {
+                this.pathBreadcrumbItems.push({ path: this.currentFolder.path, name: this.currentFolder.displayName } as IStorePathBreadcrumbItem);
+            }
+
+            this.isLoadingFolderContent = false;
+            this.currentDirectoryBeingLoaded = null;
+          }
+        }, err => {
+          if (this.currentDirectoryBeingLoaded !== path) {
+            return;
+          }
+          this.isLoadingFolderContent = false;
+          if (err.status === 404) {
+            this.data.message.showMessage(
+              `Directory ${path} does not appear to exist anymore. Navigating back to the base of the image store directory.`, MessageSeverity.Warn);
+            // go to the base directory
+            this.expandFolder(this.root.path);
+          }
         });
     }
 

@@ -131,44 +131,6 @@ describe('TimelineGenerators', () => {
 
         });
 
-        fit('potentiallyMissingEvents', () => {
-            const timeStamp = '2020-05-09T17:43:36.0823982Z';
-            const deactivateEvent = new NodeEvent();
-            deactivateEvent.fillFromJSON({
-                Kind: 'NodeDeactivateStarted',
-                NodeInstance: 132327707667996470,
-                BatchId: 'RM/Azure/TenantUpdate/07d8ad2/2/405',
-                DeactivateIntent: 'Restart',
-                NodeName: '_dis-svc-test-BackEnd-vmss_2',
-                EventInstanceId: '0939d0ed-9b44-4c65-9da6-1ef71f88f9f2',
-                TimeStamp: timeStamp,
-                Category: 'StateTransition',
-                HasCorrelatedEvents: false
-              });
-
-            const data = [deactivateEvent, downEvent];
-            const events = generator.consume(data, startDate, endDate);
-
-            expect(events.items.length).toBe(1);
-            expect(events.items.get(id)).toEqual({
-                id,
-                content: 'Node _dis-svc-test-BackEnd-vmss_2 down',
-                start: downEvent.timeStamp,
-                end: timeStamp,
-                group: NodeTimelineGenerator.NodesDownLabel,
-                type: 'range',
-                title: EventStoreUtils.tooltipFormat(downEvent.eventProperties, downEvent.timeStamp, timeStamp, 'Node _dis-svc-test-BackEnd-vmss_2 down'),
-                className: 'red',
-                subgroup: 'stack'
-            });
-
-            expect(events.groups.length).toBe(1);
-            expect(events.groups.get(groupId)).toEqual(nodeDownGroups);
-
-            expect(events.potentiallyMissingEvents).toBeTruthy();
-
-        });
-
         fit('node goes down, up, and down (2 total events)', () => {
             const secondUpEvent = new NodeEvent();
 
@@ -185,7 +147,6 @@ describe('TimelineGenerators', () => {
 
             const data = [upEvent, downEvent, secondUpEvent];
             const events = generator.consume(data, startDate, endDate);
-
             expect(events.items.length).toBe(2);
             expect(events.items.get(id)).toEqual({
                 id,
@@ -247,11 +208,11 @@ describe('TimelineGenerators', () => {
                 HasCorrelatedEvents: false
             });
 
-            const data = [down, deactivate];
+            const data = [deactivate, down];
 
             const events = generator.consume(data, startDate, endDateRange);
-            expect(events.items.length).toBe(0);
-            expect(events.potentiallyMissingEvents).toBeTruthy();
+            expect(events.items.length).toBe(1);
+            expect(events.potentiallyMissingEvents).toBeFalse();
         });
     });
   });

@@ -3,3 +3,23 @@
     padding-left: 10px;
     padding-right: 5px;
 }
+
+$border-radius: 5px;
+
+.disabled-node-list {
+
+    .disabled-node-item {
+        border: 1px solid gray;
+
+        &:first-child {
+            border-top-left-radius: $border-radius;
+            border-top-right-radius: $border-radius;
+        }
+    
+        &:last-child {
+            border-bottom-left-radius: $border-radius;
+            border-bottom-right-radius: $border-radius;
+        }
+        
+    }
+}

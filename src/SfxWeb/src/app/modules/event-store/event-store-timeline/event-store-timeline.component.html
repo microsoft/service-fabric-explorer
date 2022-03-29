@@ -18,32 +18,32 @@
         </div>
 
         <ng-container  *ngIf="showControls">
-            <button type="button" class="simple-button margined" (click)="fitData()"
+            <button type="button" class="simple-button margined" (click)="fitData()"  tooltipClass="styled-tooltip"
             ngbTooltip="Fit the timeline to only display the time range that has events.">
                 Fit Events
             </button>
 
-            <button type="button" class="simple-button margined" (click)="fitWindow()"
+            <button type="button" class="simple-button margined" (click)="fitWindow()"  tooltipClass="styled-tooltip"
                 title="Fit the timeline to display the whole time range.">
                 Fit Range
             </button>
 
-            <button type="button" class="simple-button margined" (click)="moveStart()"
+            <button type="button" class="simple-button margined" (click)="moveStart()"  tooltipClass="styled-tooltip"
             ngbTooltip="Move to the start of the timeline." *ngIf="displayMoveToStart">
                 Move To Start
             </button>
 
-            <button type="button" class="simple-button margined" (click)="moveEnd()"
+            <button type="button" class="simple-button margined" (click)="moveEnd()"  tooltipClass="styled-tooltip"
             ngbTooltip="Move to the end of the timeline." *ngIf="displayMoveToEnd">
                 Move To End
             </button>
 
-            <button type="button" class="simple-button margined" (click)="moveToOldestEvent()"
+            <button type="button" class="simple-button margined" (click)="moveToOldestEvent()"  tooltipClass="styled-tooltip"
             ngbTooltip="Move to the oldest event in the time range.">
                 Move To Oldest Event
             </button>
 
-            <button type="button" class="simple-button margined" (click)="moveToNewestEvent()"
+            <button type="button" class="simple-button margined" (click)="moveToNewestEvent()"  tooltipClass="styled-tooltip"
             ngbTooltip="Move to the newest event in the time range.">
                 Move To Newest Event
             </button>

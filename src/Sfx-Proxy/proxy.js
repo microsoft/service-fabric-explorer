@@ -24,7 +24,7 @@ let stripEventSToreRequests = !process.argv.includes("-e");
 
 console.log("record requests : " + recordRequest);
 console.log("replay requests : " + replayRequest);
-
+console.log("record playbackLocation: " + config.recordFileBase)
 //if PFX location provided for cluster
 httpsAgent = null;
 if(config.TargetCluster.PFXLocation){
@@ -49,7 +49,6 @@ const writeRequest = async (req, resp) => {
     delete resp.request;
     delete resp.config;
     const replacedFile = reformatUrl(req);
-
     //confirm base folder exists
     if (!(await fileExists(config.recordFileBase))){
         await fs.mkdir(config.recordFileBase);
@@ -134,6 +133,6 @@ app.all('/*', async (req, res) => {
 console.log(`Target cluster url : ${config.TargetCluster.Url}`);
 
 if(httpsAgent){
-    console.log(`Certificate was Provided \n\t location: D:test ${config.TargetCluster.PFXLocation}`);
+    console.log(`Certificate was Provided \n\t location: ${config.TargetCluster.PFXLocation}`);
 }
 app.listen(port, () => console.log(`proxy listening on port ${port}`))

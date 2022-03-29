@@ -7,7 +7,7 @@ const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorServicePkg";
 const waitRequest = "@getinfo";
 
-context('app', () => {
+context('deployed service package', () => {
     beforeEach(() => {
         addDefaultFixtures();
 

@@ -10,7 +10,7 @@
       </div>
       <div collapse-body class="aboveline">
         <div style="margin-left: 10px;">
-          <app-node-list [nodes]="item.value.nodes" [underlineLast]="false"></app-node-list>
+          <app-node-list [nodes]="item.value.nodes" [underlineLast]="false" [listTemplate]="listTemplate"></app-node-list>
         </div>
       </div>
     </app-collapse-container>
@@ -18,5 +18,5 @@
 </div>
 
 <div *ngIf="!groupByNodeType">
-  <app-node-list [nodes]="nodes"></app-node-list>
+  <app-node-list [nodes]="nodes" [listTemplate]="listTemplate"></app-node-list>
 </div>

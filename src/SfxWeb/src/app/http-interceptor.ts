@@ -49,7 +49,7 @@ export class ReadOnlyHeaderInterceptor implements HttpInterceptor {
                 }
 
                 if (res.headers.has(Constants.SfxClusterNameHeaderName)) {
-                    this.dataService.clusterNameMetadata = res.headers.get(Constants.SfxClusterNameHeaderName);
+                    this.dataService.clusterNameMetadata = (res.headers.get(Constants.SfxClusterNameHeaderName) || res.headers.get(Constants.SfxClusterNameHeaderName).toLowerCase());
                 }
 
               }

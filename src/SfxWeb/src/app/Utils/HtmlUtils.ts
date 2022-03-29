@@ -134,20 +134,8 @@ export class HtmlUtils {
         return `<span title="${text}">${text}</span>`;
     }
 
-    public static getUpgradeProgressHtml(upgradeDomainsPropertyPath: string): string {
-        return `<${Constants.DirectiveNameUpgradeProgress} upgrade-domains="${upgradeDomainsPropertyPath}"></${Constants.DirectiveNameUpgradeProgress}>`;
-    }
-
     public static getLinkHtml(text: string, url: string, targetBlank: boolean = false): string {
         return `<a routerLink="${url}" ${targetBlank ? ` target="_blank"` : ''}>${text}</a>`;
-    }
-
-    public static getBadgeHtml(badge: ITextAndBadge): string {
-        if (!badge.badgeClass) {
-            return this.getSpanWithTitleHtml(badge.text);
-        }
-        // Keep the template here in sync with badge.html
-        return `<div class="badge-container" title="${badge.text}"><img class="badge-icon" src="${environment.assetBase}assets/${badge.badgeClass}.svg" alt="${badge.text} badge"></img><span> ${badge.text}</span></div>`;
     }
 
     public static getLinkOutHtml(text: string, url: string, targetBlank: boolean = false): string {

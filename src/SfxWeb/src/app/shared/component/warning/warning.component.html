@@ -1,0 +1,19 @@
+<div class="warning-message">
+  <span class="mif-4x mif-notification warning-icon"></span>
+  <div>
+    <div>
+      {{description}}
+    </div>
+    <div>
+      <ul>
+        <li *ngFor="let lineItem of descriptionList">
+          {{lineItem}}
+        </li>
+      </ul>
+
+    </div>
+        <div class="warning-link" *ngIf="linkText">
+          <a [href]="link" target="_blank" class="link">{{linkText}}</a>
+        </div>
+  </div>
+</div>

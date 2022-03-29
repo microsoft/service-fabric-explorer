@@ -59,12 +59,15 @@ export class EssentialsComponent extends ReplicaBaseControllerDirective {
           copyTextValue: this.replica.raw.ReplicaStatus,
           selectorName: 'status',
           displaySelector: true
-        },
-        {
-          selectorName: 'viewNode',
-          displaySelector: true
         }
       ];
+
+      if(!this.isSystem) {
+        this.essentialItems.push(        {
+          selectorName: 'viewNode',
+          displaySelector: true
+        })
+      }
     }));
   }
 }

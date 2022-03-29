@@ -1,0 +1,5 @@
+<div class="metric-container" [ngClass]="{'selected': metric.selected}" tabindex="0">
+  <div class="metric-legend" [ngStyle]="{'background-color': metric.color}"></div>
+  <div class="metric-title">{{metric.displayName}}</div>
+  <div class="metric-ratio">{{metric.hasCapacity? metric.loadCapacityRatioString : "N/A"}}</div>
+</div>

@@ -1,5 +1,5 @@
 <div class="detail-pane" data-cy="imagestore">
-        <div class="detail-pane">
+        <div class="detail-pane essen-pane">
             <h4>Configuration</h4>
             <div class="table-responsive">
                 <table class="table detail-table table-layout-fixed" role="presentation" style="width: 100%;">
@@ -19,9 +19,9 @@
             <strong>Image store viewer does not appear to be supported on this cluster.</strong>
         </div>
 
-        <div class="detail-pane store-content-pane" *ngIf="imagestoreRoot.isNative && imagestoreRoot.isAvailable">
+        <div class="detail-pane store-content-pane essen-pane" *ngIf="imagestoreRoot.isNative && imagestoreRoot.isAvailable">
             <h4>Store Content</h4>
-            <div class="image-store-breadcrumb essen-pane">
+            <div class="image-store-breadcrumb">
                 <span *ngIf="imagestoreRoot.isLoadingFolderContent" style="padding-right: 5px;">
                     <span  class="mif-refresh mif-large rotate" aria-label="refresh" title="Loading folder content"></span>
                 </span>
@@ -35,6 +35,10 @@
                         {{item.name}}
                     </button>
                 </span>
+                <br>
+                <div *ngIf="imagestoreRoot.isLoadingFolderContent">
+                  Loading folder: {{imagestoreRoot.currentDirectoryBeingLoaded || 'root'}}
+                </div>
             </div>
             <!-- search-text="'Search confined to current directory'" TODO add this input -->
             <app-detail-list [list]="imagestoreRoot.currentFolder.allChildren" [listSettings]="fileListSettings"></app-detail-list>

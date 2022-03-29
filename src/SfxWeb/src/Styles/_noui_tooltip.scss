@@ -1,0 +1,39 @@
+.noUi-tooltip {
+  display: none;
+  background-color: var(--primary-background-color);
+  box-shadow: var(--heavy-box-shadow);
+  color: var(--font-primary-color);
+  border-radius: var(--primary-border-radius);
+  border: 0px;
+  z-index: 2;
+}
+.noUi-handle {
+    &:focus {
+      .noUi-tooltip {
+          display: initial;
+        }
+    }
+}
+
+
+.noUi-active .noUi-tooltip {
+  display: block;
+}
+
+.noUi-target{
+  background-color: #bfbfbf;
+  box-shadow: none;
+  border: 1px solid black;
+}
+
+.noUi-touch-area {
+  border: 1px solid var(--chart-text-color);
+}
+
+.noUi-connect{
+  background-color: var(--accent-darkblue);
+}
+
+.noUi-horizontal .noUi-handle-upper .noUi-tooltip, .noUi-horizontal .noUi-handle-lower .noUi-tooltip {
+  bottom:-32px
+}

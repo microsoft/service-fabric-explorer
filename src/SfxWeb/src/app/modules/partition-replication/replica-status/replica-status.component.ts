@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnChanges } from '@angular/core';
+import { Component, Input, OnChanges } from '@angular/core';
 import { IRawRemoteReplicatorStatus } from 'src/app/Models/RawDataTypes';
 import { IEssentialListItem } from '../../charts/essential-health-tile/essential-health-tile.component';
 
@@ -7,7 +7,7 @@ import { IEssentialListItem } from '../../charts/essential-health-tile/essential
   templateUrl: './replica-status.component.html',
   styleUrls: ['./replica-status.component.scss']
 })
-export class ReplicaStatusComponent implements OnInit, OnChanges {
+export class ReplicaStatusComponent implements OnChanges {
 
   @Input() replicator: IRawRemoteReplicatorStatus;
   copyItems: IEssentialListItem[] = [];
@@ -17,9 +17,6 @@ export class ReplicaStatusComponent implements OnInit, OnChanges {
   copy = false;
 
   constructor() { }
-
-  ngOnInit(): void {
-  }
 
   ngOnChanges() {
     const copyRef = this.replicator.RemoteReplicatorAcknowledgementStatus.CopyStreamAcknowledgementDetail;

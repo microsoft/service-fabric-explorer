@@ -1,39 +1,31 @@
 <div *ngIf="systemApp">
-    <div class="detail-pane essen-pane">
-        <div class="table-responsive">
-            <table class="essen-table" role="presentation">
-                <tr>
-                    <th>Name</th>
-                    <th>Health State</th>
-                </tr>
-    
-                <tr *ngIf="systemApp.healthState">
-                    <td>fabric:/System</td>
-                    <td><app-health-badge [badgeClass]="systemApp.healthState.badgeClass" [text]="systemApp.healthState.text"></app-health-badge></td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    
-    <div class="detail-pane essen-pane" *ngIf="systemApp.health.isInitialized">
-        <app-collapse-container sectionName="Unhealthy Evaluations">
-            <div collapse-header>
-                <h4>Health Evaluations</h4>
-            </div>
-            <div collapse-body>
-                <app-health-viewer  [healthyEvaluations]="systemApp.health.healthEvents" [unhealthyEvaluations]="systemApp.health.unhealthyEvaluations" ></app-health-viewer>
-            </div>
-        </app-collapse-container>
-    </div>
-    
-    <div class="detail-pane essen-pane" *ngIf="systemApp.services">
-        <app-collapse-container sectionName="System">
-            <div collapse-header>
-                <h4>System</h4>
-            </div>
-            <div collapse-body>
-                <app-detail-list [list]="systemApp.services.collection" [listSettings]="listSettings"></app-detail-list>
-            </div>
-        </app-collapse-container>
-    </div>
+
+  <div class="tile-container">
+    <app-essential-health-tile [healthState]="systemApp?.healthState" *ngIf="systemApp && systemApp.isInitialized"
+      class="long" [listItems]="essentialItems">
+    </app-essential-health-tile>
+  </div>
+
+  <div class="detail-pane essen-pane" *ngIf="systemApp.health.isInitialized">
+    <app-collapse-container sectionName="Unhealthy Evaluations">
+      <div collapse-header>
+        <h4>Health Evaluations</h4>
+      </div>
+      <div collapse-body>
+        <app-health-viewer [healthyEvaluations]="systemApp.health.healthEvents"
+          [unhealthyEvaluations]="systemApp.health.unhealthyEvaluations"></app-health-viewer>
+      </div>
+    </app-collapse-container>
+  </div>
+
+  <div class="detail-pane essen-pane" *ngIf="systemApp.services">
+    <app-collapse-container sectionName="System">
+      <div collapse-header>
+        <h4>System</h4>
+      </div>
+      <div collapse-body>
+        <app-detail-list [list]="systemApp.services.collection" [listSettings]="listSettings"></app-detail-list>
+      </div>
+    </app-collapse-container>
+  </div>
 </div>
