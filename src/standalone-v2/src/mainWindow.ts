@@ -35,9 +35,10 @@ export class MainWindow {
 
     async loadAsync(): Promise<void> {
         return new Promise(async (resolve) => {
-            await this.browserWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
+            this.browserWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY);
 
-            this.browserWindow.once("ready-to-show", async () => {
+            this.browserWindow.once("ready-to-show", () => {
+
                 this.browserWindow.show();
                 resolve();
             });
@@ -86,16 +87,14 @@ export class MainWindow {
     }
 
     async removeWindow(id: string) {
-        this.browserWindow.removeBrowserView(this.windows[id]);
-        (this.windows[id].webContents as any).destroy()
-        this.windows[id] = null;
-
+        if(this.windows[id]) {
+            this.browserWindow.removeBrowserView(this.windows[id]);
+            (this.windows[id].webContents as any).destroy()
+            this.windows[id] = null;    
+        }
     }
 
-    async getWindowAsync(): Promise<BrowserWindow> {
+    getWindow() {
         return this.browserWindow;
     }
-
-
-    
 }

@@ -5,6 +5,7 @@ import ClusterListItem from "./cluster-item/cluster-item";
 
 import './app.scss';
 import './icons.min.css';
+import BulkClusterList from "./import-export-clusters/bulk-cluster-list";
 
 
 export const addWindow = (state: ICluster) => {
@@ -28,6 +29,7 @@ export default function App() {
     const [filterList, setFilerList] = useState<string>("");
 
     const [showAddCluster, setAddCluster] = useState(false);
+    const [showBulk, setBulk] = useState(false);
     const [activeCluster, setActiveCluster] = useState("-1");
     useEffect(() => {
         window.electronInterop.onClusterListChange((event: any, data: any) => {
@@ -49,6 +51,12 @@ export default function App() {
                         <span className='mif-plus'></span>
                     </button>
                 }
+
+                {!showBulk &&
+                    <button className="flat-button round add-button" onClick={() => { setBulk(true) }} >
+                        <span className='mif-plus'></span>
+                    </button>
+                }
             </h4>
 
             <div className="filter-list">
@@ -62,7 +70,13 @@ export default function App() {
         {showAddCluster && <div className="add-cluster essen-pane slide-open">
             <h5>Add Cluster
             </h5>
-            <AddCluster clusterList={clusters} onAddCluster={addWindow} onCloseWindow={() => setAddCluster(false)}></AddCluster>
+            <AddCluster clusterList={clusters} onAddCluster={data => {addWindow(data); setAddCluster(false) }} onCloseWindow={() => setAddCluster(false)}></AddCluster>
+        </div>}
+
+        {showBulk && <div className="add-cluster essen-pane slide-open">
+            <h5>Import/Export
+            </h5>
+            <BulkClusterList clusterList={clusters} onImport={(clusters) => {console.log(clusters)}}></BulkClusterList>
         </div>}
 
         <div className="cluster-list">

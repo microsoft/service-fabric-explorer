@@ -1,4 +1,6 @@
 import React, { useState } from "react"
+import { secureClusterAuthType, aadClusterAuthType, unsecureClusterAuthType } from "../../constants";
+
 import { ICluster } from "../../cluster-manager";
 import { MultiOptionToggle, MultiOptionToggleValue } from "../toggle/toggle";
 
@@ -10,7 +12,7 @@ export interface AddClusterProps {
     onCloseWindow: () => void;
 }
 
-const options: MultiOptionToggleValue[] = [{ display: 'Unsecure', value: 'unsecure' }, { display: 'Certificate', value: 'certificate' }, { display: 'AAD', value: 'aad' }]
+const options: MultiOptionToggleValue[] = [{ display: 'Unsecure', value: unsecureClusterAuthType }, { display: 'Certificate', value: secureClusterAuthType }, { display: 'AAD', value: aadClusterAuthType }]
 
 export default function AddCluster(props: AddClusterProps) {
     let authType = null;

@@ -1,3 +1,4 @@
+import { AuthenticationManager } from "./auth/authenticationManager";
 import { httpHandler } from "./httpHandler";
 import { MainWindow } from "./mainWindow";
 import { Subject } from "./observable";
@@ -63,10 +64,10 @@ export class ClusterManager {
 
     public observable = new Subject<IClusterListState>();
 
-    constructor(private settings: SettingsService, private mainWindow: MainWindow) {
+    constructor(private settings: SettingsService, private mainWindow: MainWindow, private authManager: AuthenticationManager) {
         const existingList = this.settings.getClusters();
         if(existingList) {
-            this.clusters = existingList;
+            // this.clusters = existingList;
         }
     }
 
@@ -77,19 +78,38 @@ export class ClusterManager {
             this.clusters = clusters;
         }
 
+        let setActive = true;
+
         if(!this.loadedClusters.has(cluster.id)) {
             this.updateClusterData(cluster.id, {loaded: true})
 
-            this.httpHandlers[cluster.id] = new httpHandler(cluster, this);
-            await this.httpHandlers[cluster.id].initialize();
-
-            const id = await this.mainWindow.addWindow(cluster);
-            this.windowToCluster[id] = cluster;
-
-            this.loadedClusters.add(cluster.id);
+            try {
+                this.httpHandlers[cluster.id] = new httpHandler(cluster, this, this.authManager.getHttpHandlerTransform(cluster.authType.authType));
+                await this.httpHandlers[cluster.id].initialize();
+                const success = await this.httpHandlers[cluster.id].testConnection();
+                if(success) {
+                    const id = await this.mainWindow.addWindow(cluster);
+                    this.windowToCluster[id] = cluster;
+        
+                    this.loadedClusters.add(cluster.id);
+                }
+            } catch(e) {
+                setActive = false;
+            }
         }
  
-        this.setActiveCluster(cluster.id);
+        if(setActive) {
+            this.setActiveCluster(cluster.id);
+        }
+    }
+
+    async bulkImport(clusters: ICluster[]) {
+        this.clusters.forEach(cluster => {
+            this.discconnectCluster(cluster);
+        })
+
+        this.clusters = clusters;
+        this.saveData();
     }
 
     async removeCluster(id: string) {
@@ -98,22 +118,19 @@ export class ClusterManager {
 
         this.mainWindow.removeWindow(id);
         this.loadedClusters.delete(id);
-
-        this.emitState();
     }
 
     async updateCluster(cluster: ICluster) {
         const index = this.clusters.findIndex(c => c.id === cluster.id);
 
         this.clusters[index] = cluster;
-        this.httpHandlers[cluster.id] = new httpHandler(cluster, this);
+        this.httpHandlers[cluster.id] =new httpHandler(cluster, this, this.authManager.getHttpHandlerTransform(cluster.authType.authType));
 
         this.saveData();
-        this.emitState();
     }
 
     async reconnectCluster(cluster: ICluster) {
-        this.httpHandlers[cluster.id] = new httpHandler(cluster, this);
+        this.httpHandlers[cluster.id] = new httpHandler(cluster, this, this.authManager.getHttpHandlerTransform(cluster.authType.authType));
         await this.httpHandlers[cluster.id].initialize();
 
         this.mainWindow.restartWindow(cluster.id);
@@ -129,14 +146,12 @@ export class ClusterManager {
             this.focusedCluster = "unset";
         }
         this.updateClusterData(cluster.id, {loaded: false})
-        this.emitState();
     }
 
 
     async setActiveCluster(id: string) {
         this.mainWindow.setActiveWindow(id);
         this.focusedCluster = id;
-        this.emitState();
     }
 
     async saveData() {
