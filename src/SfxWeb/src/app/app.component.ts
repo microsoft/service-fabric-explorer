@@ -46,7 +46,7 @@ export class AppComponent implements OnInit{
 
   }
 
-  async ngOnInit() {
+  ngOnInit() {
     console.log(`SFX VERSION : ${environment.version}`);
 
     this.AadService.init().subscribe(() => {
@@ -77,7 +77,6 @@ export class AppComponent implements OnInit{
   onResize(event: Window) {
     this.checkWidth(event.innerWidth);
   }
-
 
   checkWidth(width: number) {
     const widthReduction = this.dataService.clusterUpgradeProgress.isInitialized && this.dataService.clusterUpgradeProgress.isUpgrading ? 300 : 0;
