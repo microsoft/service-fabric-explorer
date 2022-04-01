@@ -33,7 +33,7 @@ export class AadConfigService {
   }
 
   public getAADmetadata(): Observable<AadMetadata> {
-    return this.http.get<IRawAadMetadata>(environment.baseUrl + '$/GetAadMetadata/?api-version=6.0').pipe(map(data => new AadMetadata(data)));
+    return this.http.get<IRawAadMetadata>(environment.baseUrl + '/$/GetAadMetadata/?api-version=6.0').pipe(map(data => new AadMetadata(data)));
   }
 
   public getCluster() {

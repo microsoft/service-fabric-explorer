@@ -31,7 +31,7 @@ export function MSALInstanceFactory(config: AadConfigService): IPublicClientAppl
 }
 
 export function MSALGuardConfigFactory(): MsalGuardConfiguration {
-  return { interactionType: InteractionType.Popup };
+  return { interactionType: InteractionType.Redirect };
 }
 
 @NgModule({

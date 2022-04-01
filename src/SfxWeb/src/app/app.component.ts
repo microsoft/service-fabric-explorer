@@ -34,6 +34,8 @@ export class AppComponent implements OnInit{
   hideSFXLogo = false;
   showTree = false;
 
+  isIframe = false;
+
   constructor(public treeService: TreeService,
               public refreshService: RefreshService,
               private storageService: StorageService,
@@ -47,6 +49,8 @@ export class AppComponent implements OnInit{
   }
 
   ngOnInit() {
+    this.isIframe = window !== window.parent && !window.opener;
+    
     console.log(`SFX VERSION : ${environment.version}`);
 
     this.AadService.init().subscribe(() => {
