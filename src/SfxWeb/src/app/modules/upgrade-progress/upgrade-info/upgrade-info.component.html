@@ -1,16 +1,22 @@
 <div class="detail-pane">
-  <div *ngIf="upgradeProgress.raw.FailureReason !== 'None'">
-    <h5>Upgrade Failure</h5>
+  <div *ngIf="failed">
+    <div class="layout-container failed">
+      <div class="overview-container">
+        <h5>Upgrade Failure Overview</h5>
+        <app-essential-item *ngFor="let item of failedUpgradeItems; let l = last" [item]="item" [underline]="false">
+        </app-essential-item>
+      </div>
 
-    <!-- {{}} -->
+      <div *ngIf="upgradeProgress.raw.UpgradeDomainProgressAtFailure?.NodeUpgradeProgressList.length > 0"
+        data-cy="failedud" class="node-list">
+        <h5 style="text-align: center;">Nodes Upgrading Status at Failure</h5>
+        <app-upgrade-domain-progress [failed]="true"
+          [upgradeDomain]="upgradeProgress.raw.UpgradeDomainProgressAtFailure">
+        </app-upgrade-domain-progress>
+      </div>
 
-    <div *ngIf="upgradeProgress.raw.UpgradeDomainProgressAtFailure?.NodeUpgradeProgressList.length > 0"
-      data-cy="failedud" style="flex: 2; min-width: 500px;">
-      <h5 style="text-align: center;">Nodes status</h5>
-      <app-upgrade-domain-progress
-        [upgradeDomain]="upgradeProgress.raw.UpgradeDomainProgressAtFailure">
-      </app-upgrade-domain-progress>
     </div>
+
 
     <div class="detail-pane" *ngIf="upgradeProgress.unhealthyEvaluations.length > 0">
       <h4>Unhealthy Evaluations (Upgrade)</h4>
@@ -19,7 +25,10 @@
     </div>
   </div>
 
-  <div style="display: flex; width: 100%; flex-wrap: wrap; justify-content: space-around;">
+  <div class="layout-container">
+    <app-warning *ngIf="manual" description="Unmonitored manual mode needs manual intervention after every upgrade on an update domain,
+                              to kick off the upgrade on the next update domain. No Service Fabric health checks are performed.
+                              The administrator performs the health or status checks before starting the upgrade in the next update domain."></app-warning>
     <div class="domain-container" *ngIf="upgradeProgress.upgradeDomains.length > 0">
       <h5>{{upgradeProgress.isUDUpgrade ? 'Upgrade Domain' : 'Node'}} Progress</h5>
       <app-upgrade-progress style="align-self: center;" [upgradeDomains]="upgradeProgress.upgradeDomains"
@@ -62,8 +71,14 @@
       </div>
     </div>
 
+    <div *ngIf="healthPolicy.length > 0">
+      <h5>Monitoring Policy</h5>
+      <app-essential-item *ngFor="let item of healthPolicy; let l = last" [item]="item" [underline]="false">
+      </app-essential-item>
+    </div>
+
     <div *ngIf="upgradeProgress.isUpgrading && upgradeProgress.nodesInProgress?.NodeUpgradeProgressList.length > 0"
-      data-cy="currentud" style="flex: 2; min-width: 500px;">
+      data-cy="currentud" class="node-list">
       <h5 style="text-align: center;">Nodes status</h5>
       <app-upgrade-domain-progress [upgradeDomain]="upgradeProgress.nodesInProgress">
       </app-upgrade-domain-progress>
