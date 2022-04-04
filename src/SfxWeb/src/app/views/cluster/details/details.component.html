@@ -6,28 +6,6 @@
         </div>
         <div collapse-body>
             <app-upgrade-info [upgradeProgress]="clusterUpgradeProgress"></app-upgrade-info>
-
-            <!-- <div *ngIf="clusterUpgradeProgress.raw.FailureReason !== 'None'">
-                <h4>Upgrade Failure</h4>
-                <div class="table-responsive">
-                    <table class="table detail-table">
-                        <tbody>
-                            <tr>
-                                <th>Failure Timestamp UTC</th>
-                                <td>{{clusterUpgradeProgress.failureTimestampUtc}}</td>
-                            </tr>
-                            <tr>
-                                <th>Failure Reason</th>
-                                <td><img class="badge-icon" src="images/badge-error.svg"><span> {{clusterUpgradeProgress.raw.FailureReason}}</span></td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-            <div class="detail-pane" *ngIf="clusterUpgradeProgress.unhealthyEvaluations.length > 0">
-                <h4>Unhealthy Evaluations (Upgrade)</h4>
-                <app-detail-list [list]="clusterUpgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
-            </div> -->
         </div>
     </app-collapse-container>
 </div>

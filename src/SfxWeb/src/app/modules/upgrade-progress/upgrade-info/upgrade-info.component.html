@@ -1,7 +1,7 @@
 <div class="detail-pane">
-  <div *ngIf="failed">
+  <div *ngIf="failed" data-cy="failedupgrade">
     <div class="layout-container failed">
-      <div class="overview-container">
+      <div class="overview-container" data-cy="failureoverview">
         <h5>Upgrade Failure Overview</h5>
         <app-essential-item *ngFor="let item of failedUpgradeItems; let l = last" [item]="item" [underline]="false">
         </app-essential-item>
@@ -26,9 +26,11 @@
   </div>
 
   <div class="layout-container">
-    <app-warning *ngIf="manual" description="Unmonitored manual mode needs manual intervention after every upgrade on an update domain,
-                              to kick off the upgrade on the next update domain. No Service Fabric health checks are performed.
-                              The administrator performs the health or status checks before starting the upgrade in the next update domain."></app-warning>
+    <app-warning *ngIf="manual" data-cy="manualmode"
+      description="Unmonitored manual mode needs manual intervention after every upgrade on an update domain,
+                                  to kick off the upgrade on the next update domain. No Service Fabric health checks are performed.
+                                  The administrator performs the health or status checks before starting the upgrade in the next update domain.">
+    </app-warning>
     <div class="domain-container" *ngIf="upgradeProgress.upgradeDomains.length > 0">
       <h5>{{upgradeProgress.isUDUpgrade ? 'Upgrade Domain' : 'Node'}} Progress</h5>
       <app-upgrade-progress style="align-self: center;" [upgradeDomains]="upgradeProgress.upgradeDomains"
@@ -72,7 +74,7 @@
     </div>
 
     <div *ngIf="healthPolicy.length > 0">
-      <h5>Monitoring Policy</h5>
+      <h5>Monitoring And Health Policies</h5>
       <app-essential-item *ngFor="let item of healthPolicy; let l = last" [item]="item" [underline]="false">
       </app-essential-item>
     </div>

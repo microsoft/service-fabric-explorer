@@ -86,9 +86,21 @@ context('Cluster page', () => {
       cy.get('[data-cy=upgrade-bar-domain]').within(() => {
         cy.contains('74 milliseconds')
       })
+
+      cy.get('[data-cy=manualmode]').should('not.exist')
+
     })
 
-    it('upgrade in progress - Node by Node', () => {
+    it('upgrade in progress - manual mode', () => {
+      cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/manual-mode-upgrade.json' }).as("upgrade");
+      cy.visit('/#/details')
+
+      cy.wait("@upgrade")
+
+      cy.get('[data-cy=manualmode]').should('exist')
+    })
+
+    it.only('upgrade in progress - Node by Node', () => {
       cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/upgrade-in-progress-node-by-node.json' }).as("inprogres");
 
       cy.visit('/#/details')
@@ -128,6 +140,27 @@ context('Cluster page', () => {
         cy.wait('@appinfo');
         cy.contains(serviceName)
 
+      })
+    })
+
+    it('failed upgrade', () => {
+      cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/failed-upgrade.json' }).as("inprogres");
+
+      cy.visit('/#/details')
+
+      cy.wait("@inprogres")
+
+      cy.get('[data-cy=failedupgrade]').within(() => {
+
+        cy.get('[data-cy=failureoverview]').within(() => {
+          cy.contains('UpgradeDomainTimeout');
+          cy.contains('2022-03-10T16:13:59.906Z');
+        })
+
+        cy.get('[data-cy=failedud]').within(() => {
+          cy.contains('b-hrs-1_2');
+          cy.get('[data-cy=failedphase]')
+        })
       })
     })
 

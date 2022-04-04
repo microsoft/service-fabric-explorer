@@ -43,7 +43,7 @@ export class UpgradeInfoComponent implements OnChanges, OnInit {
   }
 
   ngOnChanges(): void {
-    this.manual = this.upgradeProgress.raw.RollingUpgradeMode === "UnmonitoredManual ";
+    this.manual = this.upgradeProgress.raw.RollingUpgradeMode === "UnmonitoredManual";
     this.failed = this.upgradeProgress.raw.FailureReason !== 'None';
 
     if(this.failed) {
@@ -112,29 +112,31 @@ export class UpgradeInfoComponent implements OnChanges, OnInit {
         }
       ];
 
-      const clusterHealthPolicy = this.upgradeProgress.raw.UpgradeDescription.ClusterHealthPolicy;
+      const clusterHealthPolicy = this.upgradeProgress.raw?.UpgradeDescription?.ClusterHealthPolicy;
 
-      const considerWarningAsError = clusterHealthPolicy.ConsiderWarningAsError;
-      const maxPercentUnhealthyNodes = `${clusterHealthPolicy.MaxPercentUnhealthyNodes}%`;
-      const maxPercentUnhealthyApps = `${clusterHealthPolicy.MaxPercentUnhealthyApplications}%`;
+      if(clusterHealthPolicy) {
+        const considerWarningAsError = clusterHealthPolicy.ConsiderWarningAsError;
+        const maxPercentUnhealthyNodes = `${clusterHealthPolicy.MaxPercentUnhealthyNodes}%`;
+        const maxPercentUnhealthyApps = `${clusterHealthPolicy.MaxPercentUnhealthyApplications}%`;
 
-      this.healthPolicy = this.healthPolicy.concat([
-        {
-          descriptionName: 'Treat Warnings As Errors',
-          copyTextValue: considerWarningAsError.toString(),
-          displayText: considerWarningAsError.toString()
-        },
-        {
-          descriptionName: 'Max Unhealthy Nodes %',
-          copyTextValue: maxPercentUnhealthyNodes,
-          displayText: maxPercentUnhealthyNodes
-        },
-        {
-          descriptionName: 'Max Unhealthy Applications %',
-          copyTextValue: maxPercentUnhealthyApps,
-          displayText: maxPercentUnhealthyApps
-        },
-      ])
+        this.healthPolicy = this.healthPolicy.concat([
+          {
+            descriptionName: 'Treat Warnings As Errors',
+            copyTextValue: considerWarningAsError.toString(),
+            displayText: considerWarningAsError.toString()
+          },
+          {
+            descriptionName: 'Max Unhealthy Nodes %',
+            copyTextValue: maxPercentUnhealthyNodes,
+            displayText: maxPercentUnhealthyNodes
+          },
+          {
+            descriptionName: 'Max Unhealthy Applications %',
+            copyTextValue: maxPercentUnhealthyApps,
+            displayText: maxPercentUnhealthyApps
+          },
+        ])
+      }
     }else if (this.upgradeProgress instanceof ApplicationUpgradeProgress) {
       entitySpecificInformation = [
         {
