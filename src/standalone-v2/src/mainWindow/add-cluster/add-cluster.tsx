@@ -42,7 +42,7 @@ export default function AddCluster(props: AddClusterProps) {
             errors.push("two clusters can not have the same url");
         }
         
-        if(props.clusterList.some(cluster => cluster.displayName.toLowerCase() === url.toLowerCase()  && cluster !== props.initialState)) {
+        if(props.clusterList.some(cluster => cluster.displayName.toLowerCase() === name.toLowerCase()  && cluster !== props.initialState)) {
             errors.push("two clusters can not have the same name");
         }
 
