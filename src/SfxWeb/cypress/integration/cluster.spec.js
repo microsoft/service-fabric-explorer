@@ -100,7 +100,7 @@ context('Cluster page', () => {
       cy.get('[data-cy=manualmode]').should('exist')
     })
 
-    it.only('upgrade in progress - Node by Node', () => {
+    it('upgrade in progress - Node by Node', () => {
       cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/upgrade-in-progress-node-by-node.json' }).as("inprogres");
 
       cy.visit('/#/details')
