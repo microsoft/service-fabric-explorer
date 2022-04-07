@@ -30,6 +30,7 @@ export interface IHttpRequest {
 }
 
 export interface IHTTPRequestTransformer {
+    type: string;
     initialize: (cluster: ICluster) => Promise<boolean>;
     transformRequest: (request: AxiosRequestConfig) => Promise<AxiosRequestConfig>;
 }
@@ -50,7 +51,7 @@ export class httpHandler {
 
     public failiedToInitialize: boolean = true;
 
-    constructor(private cluster: ICluster, private clusterManager: ClusterManager, private transformer: IHTTPRequestTransformer) {
+    constructor(private cluster: ICluster, private clusterManager: ClusterManager, public transformer: IHTTPRequestTransformer) {
 
     }
 
@@ -75,7 +76,6 @@ export class httpHandler {
                 method: 'GET',
                 url: '/$/GetClusterHealthChunk?api-version=3.0'
             }, true)
-            console.log(health)
         } catch (e) {
             if (e.toString().includes("connect ECONNREFUSED")) {
                 this.clusterManager.addClusterLogMessage(this.cluster.id, "Failed to load cluster health. This could mean the cluster is not reachable.")

@@ -4,6 +4,7 @@ import { ICluster } from '../cluster-manager';
 import { IAuthOption, IHTTPRequestTransformer } from '../httpHandler';
 
 export class UnsecureHttpHandler implements IHTTPRequestTransformer {
+    type = unsecureClusterAuthType;
     constructor() {}
 
     async initialize(cluster: ICluster) {

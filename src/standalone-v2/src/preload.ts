@@ -1,21 +1,21 @@
 import { IpcRendererEvent } from "electron";
+import { ILoggedInAccounts } from "./auth/aad";
 import { ICluster, IClusterListState } from "./cluster-manager";
 import { MainWindowEvents } from "./constants";
 import { IHttpRequest } from "./mainWindow/global";
 
 const { contextBridge, ipcRenderer } = require('electron')
 
-type onClusterListChange = (event: IpcRendererEvent, clusters: IClusterListState) => void;
+export type onClusterListChange = (event: IpcRendererEvent, clusters: IClusterListState) => void;
+export type onAADConfigurationsChange = (event: IpcRendererEvent, clusters: ILoggedInAccounts[]) => void;
 
 contextBridge.exposeInMainWorld('electronInterop', {
     sendHttpRequest: async (data: IHttpRequest) => {
         const res = await ipcRenderer.invoke(MainWindowEvents.sendHttpRequest, data)
-        console.log(res);
         return res;
     },
     requestFileDialog: async (data: any) => {
         const res = await ipcRenderer.invoke(MainWindowEvents.requestFileDialog, data)
-        console.log(res);
         return res;
     },
 
@@ -37,6 +37,12 @@ contextBridge.exposeInMainWorld('electronInterop', {
     requestClusterState: async () => {
         ipcRenderer.send(MainWindowEvents.requestClusterState)
     },
+    requestAADState: async () => {
+        ipcRenderer.send(MainWindowEvents.requestAADConfigurations)
+    },
     onClusterListChange: (callback: onClusterListChange) => ipcRenderer.on(MainWindowEvents.clusterStatesChange, callback),
-
+    onAADConfigurationsChange: (callback: onAADConfigurationsChange) => ipcRenderer.on(MainWindowEvents.AADConfigurationsChange, callback),
+    logoutOfAad: async (tenant: string) => {
+        ipcRenderer.send(MainWindowEvents.logoutOfAadAccount, tenant)
+    },
 })

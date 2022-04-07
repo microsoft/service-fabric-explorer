@@ -1,23 +1,232 @@
-import { PublicClientApplication, LogLevel, CryptoProvider, AuthorizationCodeRequest, Configuration, SilentFlowRequest, AuthenticationResult } from '@azure/msal-node';
+import { PublicClientApplication, LogLevel, CryptoProvider, AuthorizationCodeRequest, Configuration, SilentFlowRequest, AuthenticationResult, AccountInfo, AuthorizationUrlRequest } from '@azure/msal-node';
 import axios, { AxiosRequestConfig } from 'axios';
-import { Cluster } from 'cluster';
-import { BrowserWindow, protocol } from 'electron';
+import { BrowserWindow } from 'electron';
 import { Agent } from 'https';
-import path from 'path';
-import url from'url';
+import { Subject } from '../observable';
 import { ClusterManager, ICluster } from '../cluster-manager';
 import { aadClusterAuthType } from '../constants';
 import { IAuthOption, IHTTPRequestTransformer } from '../httpHandler';
-import { MainWindow } from '../mainWindow';
-const CUSTOM_FILE_PROTOCOL_NAME = "msal904df931-49c6-404f-ad6c-4fd84a25d1bb";
+import { cachePlugin } from './CachePlugin';
+import { CustomFileProtocolListener } from './customFileProtocol';
 
+export default class AuthProvider2 {
+    activeTokenRquest: Promise<string>;
 
-/**
- * To demonstrate best security practices, this Electron sample application makes use of
- * a custom file protocol instead of a regular web (https://) redirect URI in order to
- * handle the redirection step of the authorization flow, as suggested in the OAuth2.0 specification for Native Apps.
- */
+    private clientApplication: PublicClientApplication;
+    private account: AccountInfo;
+    private authCodeUrlParams: AuthorizationUrlRequest;
+    private authCodeRequest: AuthorizationCodeRequest;
+    constructor(private metaData: ISfAadMetadata) {
 
+        const MSAL_CONFIG: Configuration = {
+                auth: {
+                    clientId: metaData.metadata.cluster,
+                    authority: metaData.metadata.authority
+                },
+                cache: {
+                    cachePlugin: cachePlugin(metaData.metadata.cluster)
+                },
+                system: {
+                    loggerOptions: {
+                        loggerCallback(loglevel, message, containsPii) {
+                            console.log(message);
+                        },
+                        piiLoggingEnabled: false,
+                        logLevel: LogLevel.Info,
+                    }
+                }
+            };
+
+        this.clientApplication = new PublicClientApplication(MSAL_CONFIG);
+        this.account = null;
+        this.setRequestObjects();
+    }
+
+    public get currentAccount(): AccountInfo {
+        return this.account;
+    }
+
+    /**
+     * Initialize request objects used by this AuthModule.
+     */
+    private setRequestObjects(): void {
+        const redirect = "msal://redirect"; //`msal${this.metaData.metadata.cluster}://auth`
+
+        this.authCodeUrlParams = {
+            "scopes": ["user.read", ],
+            "redirectUri": redirect
+        },
+
+        this.authCodeRequest = {
+            "redirectUri": redirect, //`msal${this.metaData.metadata.cluster}://auth`,
+            "scopes": ["User.Read"],
+            code: null
+        };
+
+    }
+
+    // Creates a  "popup" window for interactive authentication
+    private static createAuthWindow(): BrowserWindow {
+        return new BrowserWindow({
+            width: 400,
+            height: 600
+        });
+    }
+
+    async getToken(): Promise<string> {
+        const request: SilentFlowRequest = {
+            account: null, 
+            forceRefresh: false,
+            scopes: []
+        };
+
+        let resolve: (value: string) => void;
+
+        if(this.activeTokenRquest) {
+            return this.activeTokenRquest;
+        }else{
+            this.activeTokenRquest = new Promise((r) => {
+                resolve = r;
+            });
+        }
+        let authResponse: AuthenticationResult;
+        const account = this.account || await this.getAccount();
+
+        if (account) {
+            request.account = account;
+            authResponse = await this.getTokenSilent(request);
+        } else {
+            const authCodeRequest = {...this.authCodeUrlParams, ...request };
+            authResponse = await this.getTokenInteractive(authCodeRequest);
+        }
+
+        resolve(authResponse.accessToken || null);
+        this.activeTokenRquest = null;
+
+        return authResponse.accessToken || null;
+    }
+
+    async getTokenSilent(tokenRequest: SilentFlowRequest): Promise<AuthenticationResult> {
+        try {
+            const result = await this.clientApplication.acquireTokenSilent(tokenRequest);
+            this.handleResponse(result)
+            return result;
+        } catch (error) {
+            console.log("Silent token acquisition failed, acquiring token using pop up");
+            const authCodeRequest = {...this.authCodeUrlParams, ...tokenRequest };
+            const result = await this.getTokenInteractive(authCodeRequest);
+            this.handleResponse(result)
+            return result
+        }
+    }
+
+    async getTokenInteractive(tokenRequest: AuthorizationUrlRequest): Promise<AuthenticationResult> {
+        // Generate PKCE Challenge and Verifier before request
+        const cryptoProvider = new CryptoProvider();
+        const { challenge, verifier } = await cryptoProvider.generatePkceCodes();
+        const authWindow = AuthProvider2.createAuthWindow();
+
+        // Add PKCE params to Auth Code URL request
+        const authCodeUrlParams = { 
+            ...this.authCodeUrlParams,
+            scopes: tokenRequest.scopes,
+            codeChallenge: challenge,
+            codeChallengeMethod: "S256" 
+        };
+
+        try {
+            // Get Auth Code URL
+            const authCodeUrl = await this.clientApplication.getAuthCodeUrl(authCodeUrlParams);
+
+            const authCode = await this.listenForAuthCode(authCodeUrl, authWindow);
+
+            // Use Authorization Code and PKCE Code verifier to make token request
+            const authResult: AuthenticationResult = await this.clientApplication.acquireTokenByCode({
+                ...this.authCodeRequest,
+                code: authCode,
+                codeVerifier: verifier
+            });
+            
+            authWindow.close();
+            return authResult;
+        } catch (error) {
+            console.log(error)
+            authWindow.close();
+            throw error;
+        }
+    }
+
+    async login(): Promise<AccountInfo> {
+        const authResult = await this.getTokenInteractive(this.authCodeUrlParams);
+        return this.handleResponse(authResult);
+    }
+
+    async loginSilent(): Promise<AccountInfo> {
+        if (!this.account) {
+            this.account = await this.getAccount();
+        }
+
+        return this.account;
+    }
+
+    async logout(): Promise<void> {
+        const account = await this.getAccount();
+        if (account) {
+            await this.clientApplication.getTokenCache().removeAccount(account);
+            this.account = null;
+        }
+    }
+
+    private async listenForAuthCode(navigateUrl: string, authWindow: BrowserWindow): Promise<string> {
+        // Set up custom file protocol to listen for redirect response
+        const authCodeListener = new CustomFileProtocolListener('msal'); //`msal${this.metaData.metadata.cluster}`
+
+        const codePromise = authCodeListener.start();
+        authWindow.loadURL(navigateUrl);
+        const code = await codePromise;
+        authCodeListener.close();
+        return code;
+    }
+
+        /**
+     * Handles the response from a popup or redirect. If response is null, will check if we have any accounts and attempt to sign in.
+     * @param response 
+     */
+    private async handleResponse(response: AuthenticationResult) {
+        if (response !== null) {
+            this.account = response.account;
+        } else {
+            this.account = await this.getAccount();
+        }
+
+        return this.account;
+    }
+
+    /**
+     * Calls getAllAccounts and determines the correct account to sign into, currently defaults to first account found in cache.     * 
+     * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
+     */
+    public async getAccount(): Promise<AccountInfo> {
+        const cache = this.clientApplication.getTokenCache();
+
+        const currentAccounts = await cache.getAllAccounts();
+        if (currentAccounts === null) {
+            console.log("No accounts detected");
+            return null;
+        }
+
+        if (currentAccounts.length > 1) {
+            // Add choose account code here
+            console.log("Multiple accounts detected, need to add choose account code.");
+            return currentAccounts[0];
+        } else if (currentAccounts.length === 1) {
+            return currentAccounts[0];
+        } else {
+            console.log("no account")
+            return null;
+        }
+    }
+}
 export interface ISfAadMetadata {
     type: string;
     metadata: {
@@ -30,224 +239,13 @@ export interface ISfAadMetadata {
     };
 }
 
-export default class AuthProvider {
-
-    clientApplication;
-    cryptoProvider;
-    authCodeUrlParams: any;
-    authCodeRequest: AuthorizationCodeRequest;
-    pkceCodes: any;
-    account: any;
-
-    constructor(private metaData: ISfAadMetadata) {
-
-        const MSAL_CONFIG: Configuration = {
-                auth: {
-                    clientId: metaData.metadata.cluster,
-                    authority: metaData.metadata.authority
-                },
-                // cache: {
-                //     cachePlugin
-                // },
-                system: {
-                    loggerOptions: {
-                        loggerCallback(loglevel, message, containsPii) {
-                            console.log(message);
-                        },
-                        piiLoggingEnabled: false,
-                        logLevel: LogLevel.Info,
-                    }
-                }
-            };
-        this.clientApplication = new PublicClientApplication(MSAL_CONFIG);
-
-        this.account = null;
-
-        // Initialize CryptoProvider instance
-        this.cryptoProvider = new CryptoProvider();
-
-        this.setRequestObjects();
-    }
-
-    /**
-     * Initialize request objects used by this AuthModule.
-     */
-    //TODO SET THE REDIRECTURI correctly
-    setRequestObjects() {
-        const requestScopes = ['openid', 'profile', 'User.Read'];
-        const redirectUri = "msal://redirect"; //`msal${this.metaData.metadata.cluster}://auth`
-
-        this.authCodeUrlParams = {
-            scopes: requestScopes,
-            redirectUri: redirectUri
-        };
-
-        this.authCodeRequest = {
-            scopes: requestScopes,
-            redirectUri: redirectUri,
-            code: null
-        }
-
-        this.pkceCodes = {
-            challengeMethod: "S256", // Use SHA256 Algorithm
-            verifier: "", // Generate a code verifier for the Auth Code Request first
-            challenge: "" // Generate a code challenge from the previously generated code verifier
-        };
-    }
-
-    async login() {
-        const authResult = await this.getTokenInteractive(this.authCodeUrlParams);
-        return this.handleResponse(authResult);
-    }
-
-    async logout() {
-        if (this.account) {
-            await this.clientApplication.getTokenCache().removeAccount(this.account);
-            this.account = null;
-        }
-    }
-
-    async getToken(request: SilentFlowRequest) {
-        let authResponse;
-
-        let account = this.account;
-        if(!account) {
-            account =  await this.getAccount();
-        }
-
-        console.log("acount" + JSON.stringify(account))
-        if (account) {
-            console.log("silent request")
-            request.account = account;
-            authResponse = await this.getTokenSilent(request);
-        } else {
-            console.log("token interactive")
-
-            const authCodeRequest = {...this.authCodeUrlParams, ...request };
-            authResponse = await this.getTokenInteractive(authCodeRequest);
-        }
-
-        return authResponse.accessToken || null;
-    }
-
-    async getTokenSilent(tokenRequest: SilentFlowRequest): Promise<AuthenticationResult> {
-        try {
-            return await this.clientApplication.acquireTokenSilent(tokenRequest);
-        } catch (error) {
-            console.log("Silent token acquisition failed, acquiring token using pop up");
-            const authCodeRequest = {...this.authCodeUrlParams, ...tokenRequest };
-            return await this.getTokenInteractive(authCodeRequest);
-        }
-    }
-
-    // This method contains an implementation of access token acquisition in authorization code flow
-    async getTokenInteractive(tokenRequest: any) {
-        const authWindow = new BrowserWindow({
-            width: 400,
-            height: 600
-        });
-
-        const {verifier, challenge} = await this.cryptoProvider.generatePkceCodes();
-
-        this.pkceCodes.verifier = verifier;
-        this.pkceCodes.challenge = challenge;
-
-        const authCodeUrlParams = {
-            ...this.authCodeUrlParams,
-            scopes: tokenRequest.scopes,
-            codeChallenge: this.pkceCodes.challenge, // PKCE Code Challenge
-            codeChallengeMethod: this.pkceCodes.challengeMethod // PKCE Code Challenge Method
-        };
-
-        // Get Auth Code URL
-        const authCodeUrl = await this.clientApplication.getAuthCodeUrl(authCodeUrlParams);
-
-        const protocolUrl = 'msal' //`msal${this.metaData.metadata.cluster}`
-
-        protocol.registerFileProtocol(protocolUrl, (req, callback) => {
-            const requestUrl = url.parse(req.url, true);
-            callback(path.normalize(`${__dirname}/${requestUrl.path}`));
-        });
-
-        const authCode = await this.listenForAuthCode(authCodeUrl, authWindow);
-
-        const authResponse = await this.clientApplication.acquireTokenByCode({
-            ...this.authCodeRequest,
-            scopes: tokenRequest.scopes,
-            code: authCode,
-            codeVerifier: this.pkceCodes.verifier // PKCE Code Verifier
-        });
-
-        authWindow.close();
-
-        return authResponse;
-    }
-
-       private async listenForAuthCode(navigateUrl: string, authWindow: BrowserWindow): Promise<string> {
-        authWindow.loadURL(navigateUrl, {
-            extraHeaders: `Content-Security-Policy: default-src 'self'`
-        });
-
-        return new Promise((resolve, reject) => {
-            authWindow.webContents.on('will-redirect', (event, responseUrl) => {
-                console.log("REDIRECTING WOOO")
-                try {
-                    const parsedUrl = new URL(responseUrl);
-                    const authCode = parsedUrl.searchParams.get('code');
-                    resolve(authCode);
-                } catch (err) {
-                    reject(err);
-                }
-            });
-        });
-    }
-
-    /**
-     * Handles the response from a popup or redirect. If response is null, will check if we have any accounts and attempt to sign in.
-     * @param response
-     */
-    async handleResponse(response: any) {
-        if (response !== null) {
-            this.account = response.account;
-        } else {
-            this.account = await this.getAccount();
-        }
-
-        return this.account;
-    }
-
-    /**
-     * Calls getAllAccounts and determines the correct account to sign into, currently defaults to first account found in cache.
-     * https://github.com/AzureAD/microsoft-authentication-library-for-js/blob/dev/lib/msal-common/docs/Accounts.md
-     */
-    async getAccount() {
-        const cache = this.clientApplication.getTokenCache();
-        const currentAccounts = await cache.getAllAccounts();
-
-        if (currentAccounts === null) {
-            console.log('No accounts detected');
-            return null;
-        }
-
-        if (currentAccounts.length > 1) {
-            // Add choose account code here
-            console.log('Multiple accounts detected, need to add choose account code.');
-            return currentAccounts[0];
-        } else if (currentAccounts.length === 1) {
-            return currentAccounts[0];
-        } else {
-            return null;
-        }
-    }
-}
-
 export class AADHandler implements IHTTPRequestTransformer {
-    private aadProvider: AuthProvider;
+    type: string = aadClusterAuthType;
+    private metaData: ISfAadMetadata;
+    private aadProvider: AuthProvider2;
     private cluster: ICluster;
 
-    constructor(private clusterManager: ClusterManager, private AADFactory: AADFactory, private mainWindow: MainWindow) {
-
-    }
+    constructor(private clusterManager: ClusterManager, private AADFactory: AADFactory) {}
 
     async initialize(cluster: ICluster) {
         this.cluster = cluster;
@@ -262,34 +260,27 @@ export class AADHandler implements IHTTPRequestTransformer {
                 })
             });
 
-            this.aadProvider = this.AADFactory.getAuthProvider(res.data);
+            this.metaData = res.data;
+            this.aadProvider = await this.AADFactory.getAuthProvider(res.data);
+            await this.aadProvider.getToken();
 
+            this.AADFactory.emitAccountsAndTenants();
         } catch (e) {
             succesful = false;
             this.clusterManager.addClusterLogMessage(this.cluster.id, "Failed to initialize AAD configuration. This could mean the cluster is not reachable.")
         }
 
-        // await this.aadProvider.login(AADHandler.createAuthWindow());
-
         return succesful;
     }
 
-    private static createAuthWindow(): BrowserWindow {
-        return new BrowserWindow({
-            width: 400,
-            height: 600
-        });
+    getMetaData() {
+        return this.metaData;
     }
 
     async transformRequest(request: AxiosRequestConfig) {
-        const tokenRequest: any = {
-            account: null, 
-            forceRefresh: false,
-            // scopes: ['User.Read'],
-        };
-        const token = await this.aadProvider.getTokenSilent(tokenRequest);
-        // console.log(token)
-        request.headers['Authorization'] = 'Bearer ' + token
+        const token = await this.aadProvider.getToken();
+
+        request.headers['Authorization'] = `Bearer ${token}`
 
         request.httpsAgent = new Agent({
             rejectUnauthorized: false
@@ -300,29 +291,64 @@ export class AADHandler implements IHTTPRequestTransformer {
 
 }
 
+export interface ILoggedInAccounts {
+    account: AccountInfo;
+    tenant: string;
+}
+
 export class AADFactory implements IAuthOption {
         id = aadClusterAuthType;
-        displayName = "Secure";
+        displayName = "AAD";
 
-        private existingAuthProviders: Record<string, AuthProvider> = {};
+        public observable = new Subject<ILoggedInAccounts[]>();
 
-        constructor(private clusterManager: ClusterManager, private mainWindow: MainWindow) {
+        private existingAuthProviders: Record<string, AuthProvider2> = {};
 
+        constructor(private clusterManager: ClusterManager) {}
+
+        async emitAccountsAndTenants() {
+            const data = await this.getAadAccountsAndTenants();
+            this.observable.emit(data);
         }
 
-        getHandler() { 
-            return new AADHandler(this.clusterManager, this, this.mainWindow) 
+        async getAadAccountsAndTenants(): Promise<ILoggedInAccounts[]> {
+            const accounts = await Promise.all(Object.keys(this.existingAuthProviders).map(key => this.existingAuthProviders[key]).map(authProvider => {
+                return authProvider.getAccount()
+            }));
+
+            return accounts.filter(account => account).map(account => {
+                return {
+                    tenant: account?.tenantId,
+                    account
+                }
+            })
         }
 
-        getAuthProvider(metaData: ISfAadMetadata) {
-            if(metaData.metadata.authority in this.existingAuthProviders) {
-                return this.existingAuthProviders[metaData.metadata.authority];
+        getHandler() {
+            return new AADHandler(this.clusterManager, this) 
+        }
+
+        async getAuthProvider(metaData: ISfAadMetadata) {
+            if(metaData.metadata.tenant in this.existingAuthProviders) {
+                return this.existingAuthProviders[metaData.metadata.tenant];
             }
-            console.log(metaData.metadata)
-            const newProvider = new AuthProvider(metaData);
 
-            this.existingAuthProviders[metaData.metadata.authority] = newProvider;
+            const newProvider = new AuthProvider2(metaData);
+
+            this.existingAuthProviders[metaData.metadata.tenant] = newProvider;
+
+            this.emitAccountsAndTenants();
 
             return newProvider;
+        }
+
+        async logout(tenant: string) {
+            if(tenant in this.existingAuthProviders) {
+                await this.existingAuthProviders[tenant].logout();
+                this.existingAuthProviders[tenant] = null;
+                delete this.existingAuthProviders[tenant];
+
+                this.emitAccountsAndTenants();
+            }
         }
 }

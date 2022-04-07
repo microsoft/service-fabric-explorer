@@ -1,6 +1,5 @@
 import { ICluster } from 'src/cluster-manager';
-import { AddWindowEvent } from '../mainWindow';
-import { onClusterListChange} from '../preload';
+import { onAADConfigurationsChange, onClusterListChange} from '../preload';
 
 declare global {
     interface Window {
@@ -53,9 +52,13 @@ declare global {
     disconnectCluster(cluster: ICluster): Promise<any>;
     clearClusterLog(cluster: ICluster): Promise<any>;
 
-
     requestClusterState();
     onClusterListChange(callback: onClusterListChange);
+    
+    requestAADState();
+    onAADConfigurationsChange(callback: onAADConfigurationsChange);
+    logoutOfAad(tenant: string): Promise<any>;
+
     requestFileDialog(data: any): Promise<any>;
 }
 

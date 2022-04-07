@@ -105,7 +105,7 @@ export class ClusterManager {
 
     async bulkImport(clusters: ICluster[]) {
         this.clusters.forEach(cluster => {
-            this.discconnectCluster(cluster);
+            this.discconnectCluster(cluster.id);
         })
 
         this.clusters = clusters;
@@ -138,14 +138,19 @@ export class ClusterManager {
     }
 
     
-    async discconnectCluster(cluster: ICluster) {
-        this.httpHandlers[cluster.id] = null;
-        this.mainWindow.removeWindow(cluster.id);
-        this.loadedClusters.delete(cluster.id);
-        if(this.focusedCluster == cluster.id) {
+    async discconnectCluster(clusterId: string) {
+        this.httpHandlers[clusterId] = null;
+        delete this.httpHandlers[clusterId];
+
+        const id = await this.mainWindow.removeWindow(clusterId);
+        this.loadedClusters.delete(clusterId);
+        this.windowToCluster[id] = null;
+        delete this.windowToCluster[id];
+
+        if(this.focusedCluster == clusterId) {
             this.focusedCluster = "unset";
         }
-        this.updateClusterData(cluster.id, {loaded: false})
+        this.updateClusterData(clusterId, {loaded: false})
     }
 
 

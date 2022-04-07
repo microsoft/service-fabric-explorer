@@ -2,42 +2,42 @@
  * Copyright (c) Microsoft Corporation. All rights reserved.
  * Licensed under the MIT License.
  */
-const fs = require('fs');
+// { fs }from 
+import { TokenCacheContext } from '@azure/msal-node';
+import * as fs from 'fs';
 
-const CACHE_LOCATION = "./data/cache.json";
+const getCacheLocation = (client: string) => `./cache-${client}.json`;
 
-const beforeCacheAccess = async (cacheContext: any) => {
-    return new Promise<void>(async (resolve, reject) => {
-        if (fs.existsSync(CACHE_LOCATION)) {
-            fs.readFile(CACHE_LOCATION, "utf-8", (err: any, data: any) => {
-                if (err) {
-                    reject();
-                } else {
-                    cacheContext.tokenCache.deserialize(data);
-                    resolve();
-                }
-            });
-        } else {
-           fs.writeFile(CACHE_LOCATION, cacheContext.tokenCache.serialize(), (err: any) => {
-                if (err) {
-                    reject();
-                }
-            });
-        }
-    });
-};
-
-const afterCacheAccess = async (cacheContext: any) => {
-    if(cacheContext.cacheHasChanged){
-        await fs.writeFile(CACHE_LOCATION, cacheContext.tokenCache.serialize(), (err: any) => {
-            if (err) {
-                console.log(err);
+const getBeforeCacheAccess = (clientId: string) => {
+    return async (cacheContext: TokenCacheContext) => {
+        if(fs.existsSync(getCacheLocation(clientId))) {
+            const data = await fs.promises.readFile(getCacheLocation(clientId), 'utf-8');
+            cacheContext.tokenCache.deserialize(data);
+        }else{
+            try {
+                await fs.promises.writeFile(getCacheLocation(clientId), cacheContext.tokenCache.serialize())
+            }catch(e) {
+                console.log(e)
             }
-        });
-    }
-};
+        }
+    };
+}
 
-export const cachePlugin = {
-    beforeCacheAccess,
-    afterCacheAccess
+const getAfterCacheAccess = (clientId: string) => {
+    return async (cacheContext: TokenCacheContext) => {
+        if(cacheContext.cacheHasChanged){
+            try {
+                await fs.promises.writeFile(getCacheLocation(clientId), cacheContext.tokenCache.serialize())
+            } catch(error) {
+                console.log(error)
+            }
+        }
+    };
+}
+
+export const cachePlugin = (clientId: string) => {
+    return {
+        beforeCacheAccess: getBeforeCacheAccess(clientId),
+        afterCacheAccess: getAfterCacheAccess(clientId)
+    }
 }

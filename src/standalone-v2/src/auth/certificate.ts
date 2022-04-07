@@ -6,12 +6,12 @@ import { ClusterManager, ICluster, IClustherAuthCertificate } from '../cluster-m
 import { IAuthOption, IHTTPRequestTransformer } from '../httpHandler';
 
 export class CertificateHandler implements IHTTPRequestTransformer {
+    type: string = secureClusterAuthType;
+
     private httpsAgent: Agent;
     private cluster: ICluster;
 
-    constructor(private clusterManager: ClusterManager) {
-
-    }
+    constructor(private clusterManager: ClusterManager) {}
 
     async initialize(cluster: ICluster) {
         let succesful = true;

@@ -10,20 +10,14 @@ import * as path from 'path';
  * their structure and members.
  */
 export abstract class AuthCodeListener {
-    private hostName: string;
     public host: string;
     /**
      * Constructor
      * @param hostName - A string that represents the host name that should be listened on (i.e. 'msal' or '127.0.0.1')
      */
     constructor(hostName: string) {
-        this.hostName = hostName;
         this.host = hostName;
     }
-
-    // public get host(): string {
-    //     return this.hostName;
-    // }
 
     public abstract start(): Promise<string>;
     public abstract close(): void;
@@ -45,7 +39,6 @@ export class CustomFileProtocolListener extends AuthCodeListener {
      * listen for Auth Code response.
      */
     public start(): Promise<string> {
-        console.log("host:" + this.host)
         const codePromise = new Promise<string>((resolve, reject) => {
             protocol.registerFileProtocol(this.host, (req, callback) => {
                 const requestUrl = new URL(req.url);

@@ -89,3 +89,6 @@ typings/
 out/
 
 sfx/
+
+# dont upload aad cache info.
+cache**.json
