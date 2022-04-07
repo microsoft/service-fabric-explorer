@@ -1,11 +1,13 @@
 import React, { useEffect, useState } from "react"
 import { ICluster, IloadedCluster } from "../cluster-manager";
 import AddCluster from "./add-cluster/add-cluster";
+import AadProfiles from './aad-profile/aad-profiles';
 import ClusterListItem from "./cluster-item/cluster-item";
 
 import './app.scss';
 import './icons.min.css';
 import BulkClusterList from "./import-export-clusters/bulk-cluster-list";
+import { ILoggedInAccounts } from "../auth/aad";
 
 
 export const addWindow = (state: ICluster) => {
@@ -24,8 +26,13 @@ export const disconnect = (cluster: ICluster) => {
     window.electronInterop.disconnectCluster(cluster);
 }
 
+export const logoutOfAad = (tenant: string) => {
+    window.electronInterop.logoutOfAad(tenant);
+}
+
 export default function App() {
-    const [clusters, setOptions] = useState<IloadedCluster[]>([])
+    const [clusters, setClustersList] = useState<IloadedCluster[]>([])
+    const [aadAccounts, setAadAccounts] = useState<ILoggedInAccounts[]>([])
     const [filterList, setFilerList] = useState<string>("");
 
     const [showAddCluster, setAddCluster] = useState(false);
@@ -34,11 +41,17 @@ export default function App() {
     useEffect(() => {
         window.electronInterop.onClusterListChange((event: any, data: any) => {
             console.log(data)
-            setOptions(data.clusters)
+            setClustersList(data.clusters)
             setActiveCluster(data.focusedCluster);
         })
 
+        window.electronInterop.onAADConfigurationsChange((event: any, data: any) => {
+            console.log(data)
+            setAadAccounts(data);
+        })
+
         window.electronInterop.requestClusterState();
+        window.electronInterop.requestAADState();
     }, [])
 
     const filteredList = filterList.length > 0 ? clusters.filter(cluster => cluster.url.includes(filterList) || cluster.displayName.includes(filterList)) : clusters;
@@ -71,6 +84,11 @@ export default function App() {
             <h5>Add Cluster
             </h5>
             <AddCluster clusterList={clusters} onAddCluster={data => {addWindow(data); setAddCluster(false) }} onCloseWindow={() => setAddCluster(false)}></AddCluster>
+        </div>}
+
+        {aadAccounts.length > 0 && <div className="essen-pane slide-open add-cluster">
+            <h4 className="aad-profiles">Azure Active Directory Accounts</h4>
+            <AadProfiles accounts={aadAccounts}></AadProfiles>
         </div>}
 
         {showBulk && <div className="add-cluster essen-pane slide-open">

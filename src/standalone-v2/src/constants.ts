@@ -11,6 +11,10 @@ export enum MainWindowEvents {
 
     clusterStatesChange = "clusterStatesChange",
     requestClusterState = "requestClusterState",
+
+    requestAADConfigurations = "requestAADConfigurations",
+    AADConfigurationsChange = "AADConfigurationsChange",
+    logoutOfAadAccount = "logoutOfAadAccount",
 }
 
 export const ClusterStateError = "Error";

@@ -88,9 +88,11 @@ export class MainWindow {
 
     async removeWindow(id: string) {
         if(this.windows[id]) {
+            const windowId = this.windows[id].webContents.id;
             this.browserWindow.removeBrowserView(this.windows[id]);
             (this.windows[id].webContents as any).destroy()
-            this.windows[id] = null;    
+            this.windows[id] = null;
+            return windowId;
         }
     }
 
