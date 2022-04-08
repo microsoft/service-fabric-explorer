@@ -52,8 +52,8 @@ const createWindow = async () => {
   authenticationManager.registerAuthOption(certificateAuth);
 
   //CLUSTER DATA OPERATIONS
-  ipcMain.on(MainWindowEvents.addCluster, (_, data: ICluster) => {
-    clusterManager.addCluster(data);
+  ipcMain.on(MainWindowEvents.addCluster, async (_, data: ICluster) => {
+    await clusterManager.addCluster(data);
     clusterManager.emitState();
   })
 
