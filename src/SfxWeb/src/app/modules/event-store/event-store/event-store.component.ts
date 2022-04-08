@@ -47,11 +47,11 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   private debouncerHandlerSubscription: Subscription;
 
   public quickDates = [
-      { display: '1 Hour', hours: 1 },
-      { display: '3 Hours', hours: 3 },
-      { display: '6 Hours', hours: 6 },
-      { display: '1 Day', hours: 24 },
-      { display: '7 Days', hours: 168 }
+      { display: 'Last 1 Hour', hours: 1 },
+      { display: 'Last 3 Hours', hours: 3 },
+      { display: 'Last 6 Hours', hours: 6 },
+      { display: 'Last 1 Day', hours: 24 },
+      { display: 'Last 7 Days', hours: 168 }
   ];
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
@@ -201,7 +201,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       this.listEventStoreData.push(option.data);
     }
     else{
-      this.listEventStoreData = this.listEventStoreData.filter(item => item !== option.data);
+      this.listEventStoreData = this.listEventStoreData.filter(item => item.displayName !== option.data.displayName);
     }
     this.setNewDateWindow(true);
   }

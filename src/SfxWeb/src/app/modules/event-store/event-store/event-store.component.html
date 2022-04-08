@@ -4,7 +4,7 @@
       <div ngbDropdown style="margin-right: 10px;"  *ngIf="optionsConfig">
         <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
         <div ngbDropdownMenu>
-          <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)"></app-option-picker>
+          <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
         </div>
       </div>
       <div ngbDropdown style="margin-right: 10px;">
