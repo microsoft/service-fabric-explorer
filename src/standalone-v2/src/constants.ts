@@ -4,6 +4,7 @@ export enum MainWindowEvents {
     
     addCluster = "addCluster",
     removeCluster = "removeCluster",
+    connectCluster = "connectCluster",
     reconnectCluster = "reconnectCluster",
     editCluster = "editCluster",
     disconnectCLuster = "disconnectCLuster",

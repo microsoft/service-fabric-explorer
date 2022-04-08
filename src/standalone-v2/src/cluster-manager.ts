@@ -16,10 +16,10 @@ export interface IClustherAuthCertificate extends IClusterAuth{
 }
 
 export interface ICluster {
-    displayName: string;
+    name: string;
     url: string;
     id: string;
-    authType: IClusterAuth;
+    authentication: IClusterAuth;
 }
 
 export interface ILog {
@@ -49,8 +49,8 @@ export class ClusterManager {
         {
             id: "1",
             url: "http://localhost:19080",
-            displayName: "Localhost",
-            authType: {
+            name: "Localhost",
+            authentication: {
                 authType: "unsecure"
             }
         },
@@ -71,20 +71,14 @@ export class ClusterManager {
         }
     }
 
-    async addCluster(cluster: IloadedCluster) {
-        if(!this.getCluster(cluster.id)) {
-            const clusters = this.clusters.concat(cluster);
-            this.saveData();
-            this.clusters = clusters;
-        }
-
+    async connectCluster(cluster: IloadedCluster) {
         let setActive = true;
 
         if(!this.loadedClusters.has(cluster.id)) {
             this.updateClusterData(cluster.id, {loaded: true})
 
             try {
-                this.httpHandlers[cluster.id] = new httpHandler(cluster, this, this.authManager.getHttpHandlerTransform(cluster.authType.authType));
+                this.httpHandlers[cluster.id] = new httpHandler(cluster, this, this.authManager.getHttpHandlerTransform(cluster.authentication.authType));
                 await this.httpHandlers[cluster.id].initialize();
                 const success = await this.httpHandlers[cluster.id].testConnection();
                 if(success) {
@@ -103,13 +97,23 @@ export class ClusterManager {
         }
     }
 
+    async addCluster(cluster: IloadedCluster) {
+        console.log(this)
+        if(!this.getCluster(cluster.id)) {
+            const clusters = this.clusters.concat(cluster);
+            this.saveData();
+            this.clusters = clusters;
+        }
+    }
+
     async bulkImport(clusters: ICluster[]) {
-        this.clusters.forEach(cluster => {
-            this.discconnectCluster(cluster.id);
-        })
+        await Promise.all(this.clusters.map(cluster => {
+            return this.discconnectCluster(cluster.id);
+        }))
 
         this.clusters = clusters;
         this.saveData();
+        console.log(this)
     }
 
     async removeCluster(id: string) {
@@ -124,13 +128,13 @@ export class ClusterManager {
         const index = this.clusters.findIndex(c => c.id === cluster.id);
 
         this.clusters[index] = cluster;
-        this.httpHandlers[cluster.id] =new httpHandler(cluster, this, this.authManager.getHttpHandlerTransform(cluster.authType.authType));
+        this.httpHandlers[cluster.id] =new httpHandler(cluster, this, this.authManager.getHttpHandlerTransform(cluster.authentication.authType));
 
         this.saveData();
     }
 
     async reconnectCluster(cluster: ICluster) {
-        this.httpHandlers[cluster.id] = new httpHandler(cluster, this, this.authManager.getHttpHandlerTransform(cluster.authType.authType));
+        this.httpHandlers[cluster.id] = new httpHandler(cluster, this, this.authManager.getHttpHandlerTransform(cluster.authentication.authType));
         await this.httpHandlers[cluster.id].initialize();
 
         this.mainWindow.restartWindow(cluster.id);
@@ -163,8 +167,8 @@ export class ClusterManager {
         this.settings.setData('clusters', this.clusters.map(cluster => { return {
             id: cluster.id,
             url: cluster.url,
-            displayName: cluster.displayName,
-            authType: cluster.authType
+            name: cluster.name,
+            authentication: cluster.authentication
         }}));
     }
 

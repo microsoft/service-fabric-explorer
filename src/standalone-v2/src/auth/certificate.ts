@@ -18,7 +18,7 @@ export class CertificateHandler implements IHTTPRequestTransformer {
 
         this.cluster = cluster;
 
-        const auth = cluster.authType as IClustherAuthCertificate;
+        const auth = cluster.authentication as IClustherAuthCertificate;
 
         try {
             let cert = await promises.readFile(auth.certificatePath);

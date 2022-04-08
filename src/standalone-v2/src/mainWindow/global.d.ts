@@ -48,9 +48,11 @@ declare global {
     addCluster(cluster: ICluster): Promise<any>;
     removeCluster(cluster: ICluster): Promise<any>;
     editCluster(cluster: ICluster): Promise<any>; //TODO
+    connectCluster(cluster: ICluster): Promise<any>;
     reconnectCluster(cluster: ICluster): Promise<any>;
     disconnectCluster(cluster: ICluster): Promise<any>;
     clearClusterLog(cluster: ICluster): Promise<any>;
+    bulkImportCluster(cluster: ICluster[]): Promise<any>;
 
     requestClusterState();
     onClusterListChange(callback: onClusterListChange);

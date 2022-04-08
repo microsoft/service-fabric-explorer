@@ -63,7 +63,7 @@ export class MainWindow {
         const offSetX = 300;
         const offsetY = 0;
         view.setBounds({ x: offSetX, y: offsetY, width: (bounds.width - offSetX - 15), height: (bounds.height - offsetY) })
-        view.webContents.loadFile(join(__dirname, "sfx", 'index.html'), {query: {'targetcluster': data.displayName}});
+        view.webContents.loadFile(join(__dirname, "sfx", 'index.html'), {query: {'targetcluster': data.name}});
 
         if(this.config.isDevTools) {
             view.webContents.toggleDevTools();
