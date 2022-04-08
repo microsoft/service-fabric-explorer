@@ -5,7 +5,6 @@ import { isRequired, isString, isUnique, isUrl, minLength, validate, ValidatePro
 import './bulk-cluster-list.scss'
 export interface BulkClusterListProps {
     clusterList: ICluster[];
-    onImport: (clusters: ICluster[]) => void;
     onClose: () => void;
 }
 
@@ -25,7 +24,6 @@ export default function BulkClusterList(props: BulkClusterListProps) {
     const [importErrors, setErrors] = useState([]);
 
     const importData = () => {
-        console.log(data);
         let deserializedData;
         let validationErrors: IValidationErrors[] = [];
 
@@ -38,7 +36,7 @@ export default function BulkClusterList(props: BulkClusterListProps) {
                 errors: ["The import must be well formatted JSON."]
             })
         }
-        console.log(validationErrors);
+
         setErrors(validationErrors);
         if(validationErrors.length === 0) {
             bulkImport(deserializedData.map((item: ICluster) => { return {...item, id: Math.random()}}));
@@ -53,7 +51,7 @@ export default function BulkClusterList(props: BulkClusterListProps) {
                 propertyPath: 'name',
                 propertyName: 'name',
                 failQuickly: true,
-                validators: [isRequired, isString, minLength(2), isUnique(() => items, (a,b) => { console.log(a,b);return a.toLowerCase() === b?.name?.toLowerCase()})]
+                validators: [isRequired, isString, minLength(2), isUnique(() => items, (a,b) => { ;return a.toLowerCase() === b?.name?.toLowerCase()})]
             },
             {
                 propertyPath: 'url',

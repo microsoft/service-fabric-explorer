@@ -64,8 +64,6 @@ export const isUrl: validateFunction = (url) => {
 export const isUnique = (getter: () => any[], compare: (a: any,b: any) => boolean): validateFunction => {
     return (item) => {
         const allItems = getter();
-
-        console.log(allItems, item)
         return allItems.filter((item2: any) => compare(item, item2)).length > 1 ? ['must be unique']: [];
     }
 }

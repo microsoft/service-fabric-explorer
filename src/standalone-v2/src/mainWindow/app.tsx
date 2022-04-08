@@ -97,11 +97,11 @@ export default function App() {
 
         {showBulk && <div className="add-cluster essen-pane slide-open">
             <h5>Import</h5>
-            <BulkClusterList clusterList={clusters} onImport={(clusters) => {console.log(clusters)}} onClose={() => {setBulk(false)}}></BulkClusterList>
+            <BulkClusterList clusterList={clusters} onClose={() => {setBulk(false)}}></BulkClusterList>
         </div>}
 
         <div className="cluster-list">
-            {filteredList.map((option, index) =>
+            {filteredList.map((option) =>
                 <ClusterListItem key={option.id} clusterList={clusters} isFocused={activeCluster === option.id} cluster={option} ></ClusterListItem>)}
         </div>
     </div>)
