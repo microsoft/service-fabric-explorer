@@ -11,7 +11,7 @@ import { IPartitionData } from '../safety-checks/safety-checks.component';
 export class UpgradeDomainProgressComponent{
 
   partitions: Record<string, IPartitionData> = {};
-
+  @Input() failed = false;
   @Input() upgradeDomain: IRawUpgradeDomainProgress | ICurrentUpgradeUnitsProgressInfo;
 
   constructor() { }
