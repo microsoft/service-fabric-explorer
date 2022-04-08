@@ -137,6 +137,6 @@ app.all('/*', async (req, res) => {
 console.log(`Target cluster url : ${config.TargetCluster.Url}`);
 
 if(httpsAgent){
-    console.log(`Certificate was Provided \n\t location: D:test ${config.TargetCluster.PFXLocation}`);
+    console.log(`Certificate was Provided \n\t location: ${config.TargetCluster.PFXLocation}`);
 }
 app.listen(port, () => console.log(`proxy listening on port ${port}`))

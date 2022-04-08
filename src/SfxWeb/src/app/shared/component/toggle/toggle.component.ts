@@ -7,7 +7,7 @@ import { Component, OnInit, Input, Output, EventEmitter } from '@angular/core';
 })
 export class ToggleComponent {
   @Input() aria = '';
-  @Input() color: string;
+  @Input() color: string = "var(--accent-darkblue)";
   @Input() state = false;
   @Output() stateChange: EventEmitter<boolean> = new EventEmitter<boolean>();
 
