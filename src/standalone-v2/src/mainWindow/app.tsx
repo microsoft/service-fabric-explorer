@@ -11,7 +11,7 @@ import { ILoggedInAccounts } from "../auth/aad";
 
 
 export const addWindow = (state: ICluster) => {
-    window.electronInterop.addCluster(state)
+    window.electronInterop.connectCluster(state)
 }
 
 export const removeCluster = (cluster: ICluster) => {
@@ -28,6 +28,10 @@ export const disconnect = (cluster: ICluster) => {
 
 export const logoutOfAad = (tenant: string) => {
     window.electronInterop.logoutOfAad(tenant);
+}
+
+export const bulkImport = (clusters: ICluster[]) => {
+    window.electronInterop.bulkImportCluster(clusters);
 }
 
 export default function App() {
@@ -54,7 +58,7 @@ export default function App() {
         window.electronInterop.requestAADState();
     }, [])
 
-    const filteredList = filterList.length > 0 ? clusters.filter(cluster => cluster.url.includes(filterList) || cluster.displayName.includes(filterList)) : clusters;
+    const filteredList = filterList.length > 0 ? clusters.filter(cluster => cluster.url.includes(filterList) || cluster.name.includes(filterList)) : clusters;
 
     return (<div className="left-panel">
         <div>
@@ -67,7 +71,7 @@ export default function App() {
 
                 {!showBulk &&
                     <button className="flat-button round add-button" onClick={() => { setBulk(true) }} >
-                        <span className='mif-plus'></span>
+                        <span className='mif-import-export'></span>
                     </button>
                 }
             </h4>
@@ -92,13 +96,12 @@ export default function App() {
         </div>}
 
         {showBulk && <div className="add-cluster essen-pane slide-open">
-            <h5>Import/Export
-            </h5>
-            <BulkClusterList clusterList={clusters} onImport={(clusters) => {console.log(clusters)}}></BulkClusterList>
+            <h5>Import</h5>
+            <BulkClusterList clusterList={clusters} onClose={() => {setBulk(false)}}></BulkClusterList>
         </div>}
 
         <div className="cluster-list">
-            {filteredList.map((option, index) =>
+            {filteredList.map((option) =>
                 <ClusterListItem key={option.id} clusterList={clusters} isFocused={activeCluster === option.id} cluster={option} ></ClusterListItem>)}
         </div>
     </div>)

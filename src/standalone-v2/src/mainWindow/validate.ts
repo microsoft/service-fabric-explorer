@@ -1,13 +1,15 @@
 export interface ValidateProperty {
     propertyPath: string;
     propertyName: string;
-    validators: validateFunction[]
+    validators: validateFunction[];
+    failQuickly?: boolean;
 }
 
 export type validateFunction = (item:any) => string[];
 
 export interface ValidationError {
-
+    index: string;
+    errors: string[];
 }
 
 export function validate(item: any, validators: ValidateProperty[]): string[] {
@@ -16,18 +18,20 @@ export function validate(item: any, validators: ValidateProperty[]): string[] {
     validators.forEach(validator => {
         //TODO fix
         const propertyValue = item[validator.propertyPath];
-
-        let validatorErrors: string[] = []
+        let failed = false;
         validator.validators.forEach(validate => {
-            const validationErrors = validate(propertyValue);
-            errors = errors.concat(validatorErrors);
+            if(!failed) {
+                const validationErrors = validate(propertyValue);
 
-            if (validationErrors.length > 0) {
-                validatorErrors = validationErrors.concat(validationErrors.map(item => `${validator.propertyName} : ${item}`));
+                if(validationErrors.length > 0) {
+                    errors = errors.concat(validate(propertyValue).map(error => `${validator.propertyName} ${error}`));            
+                    
+                    if(validator.failQuickly) {
+                        failed = true;
+                    }
+                }
             }
         })
-
-        errors = errors.concat(validatorErrors);
     })
 
     return errors;
@@ -43,7 +47,7 @@ export const isString: validateFunction = (item) => {
 
 export const minLength = (length: number): validateFunction => {
     return (item) => {
-        return item.length > length ? [] : ['is not long enough']
+        return item?.length > length ? [] : ['is not long enough']
     }
 }
 
@@ -55,10 +59,11 @@ export const isUrl: validateFunction = (url) => {
     return [];
 }
 
-export const isUnique = (getter: () => any[], compare: (a: any,b: any) => boolean): validateFunction => {
-    const allItems = getter();
+//The compare function should expect the single property for a and the whole object for b.
 
+export const isUnique = (getter: () => any[], compare: (a: any,b: any) => boolean): validateFunction => {
     return (item) => {
-        return allItems.includes( (item2: any) => compare(item, item2)) ? ['must be unique']: [];
+        const allItems = getter();
+        return allItems.filter((item2: any) => compare(item, item2)).length > 1 ? ['must be unique']: [];
     }
 }

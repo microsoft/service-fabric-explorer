@@ -18,9 +18,11 @@ contextBridge.exposeInMainWorld('electronInterop', {
         const res = await ipcRenderer.invoke(MainWindowEvents.requestFileDialog, data)
         return res;
     },
-
     addCluster: async (cluster: ICluster) => {
         ipcRenderer.send(MainWindowEvents.addCluster, cluster)
+    },
+    connectCluster: async (cluster: ICluster) => {
+        ipcRenderer.send(MainWindowEvents.connectCluster, cluster)
     },
     removeCluster: async (cluster: ICluster) => {
         ipcRenderer.send(MainWindowEvents.removeCluster, cluster)
@@ -39,6 +41,9 @@ contextBridge.exposeInMainWorld('electronInterop', {
     },
     requestAADState: async () => {
         ipcRenderer.send(MainWindowEvents.requestAADConfigurations)
+    },
+    bulkImportCluster: async (cluster: ICluster[]) => {
+        ipcRenderer.send(MainWindowEvents.importCLusters, cluster)
     },
     onClusterListChange: (callback: onClusterListChange) => ipcRenderer.on(MainWindowEvents.clusterStatesChange, callback),
     onAADConfigurationsChange: (callback: onAADConfigurationsChange) => ipcRenderer.on(MainWindowEvents.AADConfigurationsChange, callback),

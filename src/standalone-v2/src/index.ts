@@ -52,33 +52,38 @@ const createWindow = async () => {
   authenticationManager.registerAuthOption(certificateAuth);
 
   //CLUSTER DATA OPERATIONS
-  ipcMain.on(MainWindowEvents.addCluster, (_, data: ICluster) => {
-    clusterManager.addCluster(data);
+  ipcMain.on(MainWindowEvents.addCluster, async (_, data: ICluster) => {
+    await clusterManager.addCluster(data);
     clusterManager.emitState();
   })
 
-  ipcMain.on(MainWindowEvents.removeCluster, (_, data: ICluster) => {
-    clusterManager.removeCluster(data.id);
+  ipcMain.on(MainWindowEvents.connectCluster, async (_, data: ICluster) => {
+    await clusterManager.connectCluster(data);
     clusterManager.emitState();
   })
 
-  ipcMain.on(MainWindowEvents.editCluster, (_, data: ICluster) => {
-    clusterManager.updateCluster(data);
+  ipcMain.on(MainWindowEvents.removeCluster,  async (_, data: ICluster) => {
+    await clusterManager.removeCluster(data.id);
     clusterManager.emitState();
   })
 
-  ipcMain.on(MainWindowEvents.reconnectCluster, (_, data: ICluster) => {
-    clusterManager.reconnectCluster(data);
+  ipcMain.on(MainWindowEvents.editCluster, async (_, data: ICluster) => {
+    await clusterManager.updateCluster(data);
     clusterManager.emitState();
   })
 
-  ipcMain.on(MainWindowEvents.disconnectCLuster, (_, data: ICluster) => {
-    clusterManager.discconnectCluster(data.id);
+  ipcMain.on(MainWindowEvents.reconnectCluster, async (_, data: ICluster) => {
+    await clusterManager.reconnectCluster(data);
     clusterManager.emitState();
   })
 
-  ipcMain.on(MainWindowEvents.importCLusters, (_, data: ICluster[]) => {
-    clusterManager.bulkImport(data);
+  ipcMain.on(MainWindowEvents.disconnectCLuster, async (_, data: ICluster) => {
+    await clusterManager.discconnectCluster(data.id);
+    clusterManager.emitState();
+  })
+
+  ipcMain.on(MainWindowEvents.importCLusters, async (_, data: ICluster[]) => {
+    await clusterManager.bulkImport(data);
     clusterManager.emitState();
   })
 

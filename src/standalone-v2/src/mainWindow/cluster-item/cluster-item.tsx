@@ -19,10 +19,10 @@ export default function ClusterListItem(props: ClusterListItemProp) {
         <div className="flex-between list-item-inner">
             <div>
                 <div>
-                    {props.cluster.displayName}
+                    {props.cluster.name}
                 </div>
                 <div>
-                    {props.cluster.authType.authType}
+                    {props.cluster.authentication.authType}
                 </div>
             </div>
             <div onClick={(e) => e.stopPropagation()}>

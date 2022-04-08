@@ -17,10 +17,10 @@ const options: MultiOptionToggleValue[] = [{ display: 'Unsecure', value: unsecur
 export default function AddCluster(props: AddClusterProps) {
     let authType = null;
     if(props.initialState) {
-        authType = props.initialState.authType
+        authType = props.initialState.authentication
     }
 
-    const [name, setName] = useState(props.initialState?.displayName || "");
+    const [name, setName] = useState(props.initialState?.name || "");
     const [url, setUrl] = useState(props.initialState?.url || "");
     const [auth, setAuth] = useState(authType?.authType || "unsecure");
     const [certificatePath, setCertificatePath] = useState(authType?.certificatePath || "");
@@ -42,7 +42,7 @@ export default function AddCluster(props: AddClusterProps) {
             errors.push("two clusters can not have the same url");
         }
         
-        if(props.clusterList.some(cluster => cluster.displayName.toLowerCase() === name.toLowerCase()  && cluster !== props.initialState)) {
+        if(props.clusterList.some(cluster => cluster.name.toLowerCase() === name.toLowerCase()  && cluster !== props.initialState)) {
             errors.push("two clusters can not have the same name");
         }
 
@@ -117,10 +117,10 @@ export default function AddCluster(props: AddClusterProps) {
             <div style={{ marginLeft: 'auto' }}></div>
             <button onClick={() => clear()} className="flat-button">Clear</button>
             <button onClick={() => props.onAddCluster({
-                displayName: name,
+                name,
                 url,
                 id: Math.random().toString(),
-                authType: {
+                authentication: {
                     authType: auth as any,
                     certificatePath: certificatePath
                 }
