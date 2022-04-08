@@ -11,7 +11,7 @@ export class PhaseDiagramComponent implements OnChanges {
   @Input() items: IProgressStatus[];
   @Input() currentIndex = 0;
   @Input() vertical = false;
-
+  @Input() failed: boolean = false; //treat in progress phases as failed
   public progress: IProgressStatusWithIndex[] = [];
   public wrapperClass = '';
 
@@ -27,6 +27,7 @@ export class PhaseDiagramComponent implements OnChanges {
   public cssClass = {
     '-1': 'done',
     0: 'in-progress',
+    '-2': 'failed',
     1: 'pending'
   };
 
@@ -53,7 +54,7 @@ export class PhaseDiagramComponent implements OnChanges {
     }else if (diff <= -1) {
       return -1;
     }else{
-      return 0;
+      return this.failed ? -2 : 0;
     }
   }
 

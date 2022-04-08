@@ -27,11 +27,15 @@
 }
 
 .in-progress {
-  border-color: #0075c9;
+  border-color: var(--accent-darkblue);
 }
 
 .done {
   border-color: green;
+}
+
+.failed {
+  border-color: var(--badge-error);
 }
 
 .arrow {
