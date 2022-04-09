@@ -1,7 +1,7 @@
 export interface ValidateProperty {
     propertyPath: string;
-    propertyName: string;
     validators: validateFunction[];
+    required?: boolean;
     failQuickly?: boolean;
 }
 
@@ -19,12 +19,16 @@ export function validate(item: any, validators: ValidateProperty[]): string[] {
         //TODO fix
         const propertyValue = item[validator.propertyPath];
         let failed = false;
+        if((propertyValue === null || propertyValue === undefined) && validator.required ) {
+            return [`${validator.propertyPath} is required`];
+        }
+
         validator.validators.forEach(validate => {
             if(!failed) {
                 const validationErrors = validate(propertyValue);
 
                 if(validationErrors.length > 0) {
-                    errors = errors.concat(validate(propertyValue).map(error => `${validator.propertyName} ${error}`));            
+                    errors = errors.concat(validate(propertyValue).map(error => `${validator.propertyPath} ${error}`));            
                     
                     if(validator.failQuickly) {
                         failed = true;

@@ -1,4 +1,4 @@
-import {  IAuthOption, IHTTPRequestTransformer } from "../httpHandler";
+import {  IAuthOption, IHttpHandler, IHTTPRequestTransformer } from "../httpHandler";
 
 export class AuthenticationManager {
     public authOptions: IAuthOption[] = [];
@@ -7,13 +7,18 @@ export class AuthenticationManager {
         this.authOptions.push(option);
     }
 
-    getHttpHandlerTransform(authType: string): IHTTPRequestTransformer {
+    getHttpHandler(authType: string): IHttpHandler {
         const auth = this.authOptions.find(option => option.id === authType);
 
         if(!auth) {
+            //TODO find a way to surface errors.
             throw new Error(`${authType} is not a registered authorization option`)
         }
 
         return auth.getHandler();
+    }
+
+    validateConfiguration(data: any) {
+        //TODO add proper validation.
     }
 }

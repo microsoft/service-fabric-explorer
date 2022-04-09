@@ -49,15 +49,15 @@ export default function BulkClusterList(props: BulkClusterListProps) {
         const validation: ValidateProperty[] = [
             {
                 propertyPath: 'name',
-                propertyName: 'name',
                 failQuickly: true,
-                validators: [isRequired, isString, minLength(2), isUnique(() => items, (a,b) => { ;return a.toLowerCase() === b?.name?.toLowerCase()})]
+                required: true,
+                validators: [isString, minLength(2), isUnique(() => items, (a,b) => { ;return a.toLowerCase() === b?.name?.toLowerCase()})]
             },
             {
                 propertyPath: 'url',
-                propertyName: 'url',
                 failQuickly: true,
-                validators: [isRequired, isString, isUrl, isUnique(() => items, (a,b) => { return a.toLowerCase() === b?.url?.toLowerCase()})]
+                required: true,
+                validators: [isString, isUrl, isUnique(() => items, (a,b) => { return a.toLowerCase() === b?.url?.toLowerCase()})]
             }
         ]
 

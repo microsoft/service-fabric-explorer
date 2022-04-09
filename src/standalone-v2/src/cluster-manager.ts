@@ -1,5 +1,5 @@
 import { AuthenticationManager } from "./auth/authenticationManager";
-import { httpHandler } from "./httpHandler";
+import { IHttpHandler } from "./httpHandler";
 import { MainWindow } from "./mainWindow";
 import { Subject } from "./observable";
 import { SettingsService } from "./settings";
@@ -57,7 +57,7 @@ export class ClusterManager {
     ];
     private loadedClusters = new Set();
 
-    public httpHandlers: Record<string, httpHandler> = {};
+    public httpHandlers: Record<string, IHttpHandler> = {};
     public windowToCluster: Record<number, ICluster> = {};
 
     private focusedCluster: string;
@@ -78,8 +78,8 @@ export class ClusterManager {
             this.updateClusterData(cluster.id, {loaded: true})
 
             try {
-                this.httpHandlers[cluster.id] = new httpHandler(cluster, this, this.authManager.getHttpHandlerTransform(cluster.authentication.authType));
-                await this.httpHandlers[cluster.id].initialize();
+                this.httpHandlers[cluster.id] = this.authManager.getHttpHandler(cluster.authentication.authType);
+                await this.httpHandlers[cluster.id].initialize(cluster);
                 const success = await this.httpHandlers[cluster.id].testConnection();
                 if(success) {
                     const id = await this.mainWindow.addWindow(cluster);
@@ -128,14 +128,15 @@ export class ClusterManager {
         const index = this.clusters.findIndex(c => c.id === cluster.id);
 
         this.clusters[index] = cluster;
-        this.httpHandlers[cluster.id] =new httpHandler(cluster, this, this.authManager.getHttpHandlerTransform(cluster.authentication.authType));
+        this.httpHandlers[cluster.id] = this.authManager.getHttpHandler(cluster.authentication.authType);
+        await this.httpHandlers[cluster.id].initialize(cluster);
 
         this.saveData();
     }
 
     async reconnectCluster(cluster: ICluster) {
-        this.httpHandlers[cluster.id] = new httpHandler(cluster, this, this.authManager.getHttpHandlerTransform(cluster.authentication.authType));
-        await this.httpHandlers[cluster.id].initialize();
+        this.httpHandlers[cluster.id] = this.authManager.getHttpHandler(cluster.authentication.authType);
+        await this.httpHandlers[cluster.id].initialize(cluster);
 
         this.mainWindow.restartWindow(cluster.id);
         this.setActiveCluster(cluster.id);
