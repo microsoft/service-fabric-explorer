@@ -1,3 +1,4 @@
+import { validate } from "../mainWindow/validate";
 import {  IAuthOption, IHttpHandler, IHTTPRequestTransformer } from "../httpHandler";
 
 export class AuthenticationManager {
@@ -18,7 +19,13 @@ export class AuthenticationManager {
         return auth.getHandler();
     }
 
-    validateConfiguration(data: any) {
-        //TODO add proper validation.
+    validateConfiguration(authType: string, data: any): string[] {
+        const auth = this.authOptions.find(option => option.id === authType);
+
+        if(!auth) {
+            return [`The authentication type provided is not valid : ${authType}. If this type is provided by an extension, check it initialized succesfully`]
+        }
+
+        return validate(data, auth.validators);
     }
 }

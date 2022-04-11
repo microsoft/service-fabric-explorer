@@ -2,7 +2,7 @@ import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import { MainWindow } from './mainWindow';
 import { aadClusterAuthType, MainWindowEvents } from "./constants";
 import { SettingsService } from './settings';
-import { ClusterManager, ICluster } from './cluster-manager';
+import { ClusterManager, ICluster, IClusterAuth } from './cluster-manager';
 import { IHttpHandler } from './httpHandler';
 import { ConfigLoader } from './configLoader';
 import { AADFactory, AADHttpHandler } from './auth/aad';
@@ -101,6 +101,15 @@ const createWindow = async () => {
     })
     await aadAuth.logout(data);
   })
+
+  ipcMain.handle(MainWindowEvents.validateAuthConfig, (_, data: IClusterAuth) => {
+    try {
+      return authenticationManager.validateConfiguration(data.authType, data);
+    } catch(e) {
+      return [`There was an issue validating authentication configuration. ${e}`]
+    }
+  })
+
 
   ipcMain.on(MainWindowEvents.requestAADConfigurations, (_) => {
     aadAuth.emitAccountsAndTenants();

@@ -4,7 +4,7 @@ import { Agent } from 'https';
 import { secureClusterAuthType } from '../constants';
 import { ClusterManager, ICluster, IClustherAuthCertificate } from '../cluster-manager';
 import { BaseHttpHandler, IAuthOption, IHTTPRequestTransformer } from '../httpHandler';
-import { minLength, isString } from '../mainWindow/validate';
+import { minLength, isString, endsWith } from '../mainWindow/validate';
 
 export class CertificateHandler implements IHTTPRequestTransformer {
     type: string = secureClusterAuthType;
@@ -53,7 +53,8 @@ export function CertificateHandlerFactory(clusterManager: ClusterManager): IAuth
         validators: [{
             propertyPath: 'certificatePath',
             required: true,
-            validators: [isString, minLength(3)]
+            failQuickly: true,
+            validators: [isString, minLength(3), endsWith('.pfx')]
         },
         {
             propertyPath: 'certificatePassword',

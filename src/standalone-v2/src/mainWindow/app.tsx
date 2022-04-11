@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { ICluster, IloadedCluster } from "../cluster-manager";
+import { ICluster, IClusterAuth, IloadedCluster } from "../cluster-manager";
 import AddCluster from "./add-cluster/add-cluster";
 import AadProfiles from './aad-profile/aad-profiles';
 import ClusterListItem from "./cluster-item/cluster-item";
@@ -32,6 +32,10 @@ export const logoutOfAad = (tenant: string) => {
 
 export const bulkImport = (clusters: ICluster[]) => {
     window.electronInterop.bulkImportCluster(clusters);
+}
+
+export const validateAuthType = (data: IClusterAuth) => {
+    return window.electronInterop.validateAuthConfiguration(data);
 }
 
 export default function App() {

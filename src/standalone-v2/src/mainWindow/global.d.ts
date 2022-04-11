@@ -1,3 +1,4 @@
+import { IClusterAuth } from 'src/cluster-manager';
 import { ICluster } from 'src/cluster-manager';
 import { onAADConfigurationsChange, onClusterListChange} from '../preload';
 
@@ -53,6 +54,8 @@ declare global {
     disconnectCluster(cluster: ICluster): Promise<any>;
     clearClusterLog(cluster: ICluster): Promise<any>;
     bulkImportCluster(cluster: ICluster[]): Promise<any>;
+
+    validateAuthConfiguration(auth: IClusterAuth): Promise<string[]>;
 
     requestClusterState();
     onClusterListChange(callback: onClusterListChange);
