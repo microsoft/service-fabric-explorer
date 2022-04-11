@@ -1,5 +1,6 @@
 import { ClusterManager, ICluster, IClustherAuthCertificate } from "./cluster-manager";
 import axios, { AxiosRequestConfig } from 'axios';
+import { ValidateProperty } from "./mainWindow/validate";
 
 export type SslVersion =
     "TLS" | "TLS1.2" | "TLS1.1" | "TLS1.0" | "SSL3.0";
@@ -38,35 +39,32 @@ export interface IHTTPRequestTransformer {
 export interface IAuthOption {
     id: string;
     displayName: string;
-
-    getHandler: () => IHTTPRequestTransformer;
+    getHandler: () => IHttpHandler;
+    validators: ValidateProperty[]; 
 }
 
-export interface IHttpPipeline {
-    requestTemplate: IHttpRequest;
-    requestAsync(request: IHttpRequest): Promise<IHttpResponse>;
+export interface IHttpHandler {
+    type: string;
+    initialize: (cluster: ICluster) => Promise<boolean>;
+    requestAsync(request: IHttpRequest, normalErrorResolution: boolean): Promise<IHttpResponse>;
+    testConnection(): Promise<boolean>;
 }
 
-export class httpHandler {
+export class BaseHttpHandler implements IHttpHandler {
+    type: string = "unsecure";
 
-    public failiedToInitialize: boolean = true;
+    protected cluster: ICluster;
 
-    constructor(private cluster: ICluster, private clusterManager: ClusterManager, public transformer: IHTTPRequestTransformer) {
+    constructor(protected clusterManager: ClusterManager) {
 
     }
 
-    public async initialize() {
-        try {
-            await this.transformer.initialize(this.cluster);
-            await this.testConnection();
-
-        } catch(e) {
-
-        }
-
+    public async initialize(cluster: ICluster) {
+        this.cluster = cluster;
+        return true
     }
 
-    /*
+        /*
     Tests if the cluster is reachable by querying for the health state
     */
     public async testConnection() {
@@ -89,7 +87,7 @@ export class httpHandler {
         return success;
     }
 
-    public async requestAsync(request: IHttpRequest, normalErrorResolution = false): Promise<IHttpResponse> {
+    protected formatRequest(request: IHttpRequest, normalErrorResolution = false): AxiosRequestConfig {
         const headers: Record<string, string> = {};
 
         if (request.headers) {
@@ -111,10 +109,18 @@ export class httpHandler {
             }
         }
 
-        const updatedConfig = await this.transformer.transformRequest(config);
+        return config;
+    }
 
+    protected async authenticateRequest(request: AxiosRequestConfig): Promise<AxiosRequestConfig> {
+        return request;
+    }
+
+    public async requestAsync(request: IHttpRequest, normalErrorResolution = false): Promise<IHttpResponse> {
+        const config = this.formatRequest(request, normalErrorResolution);
+
+        const updatedConfig = await this.authenticateRequest(config,)
         const res = await axios.request(updatedConfig);
-
         return {
             statusCode: res.status,
             statusMessage: res.statusText,
@@ -122,4 +128,5 @@ export class httpHandler {
             headers: res.headers,
         }
     }
+
 }

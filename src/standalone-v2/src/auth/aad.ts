@@ -5,9 +5,10 @@ import { Agent } from 'https';
 import { Subject } from '../observable';
 import { ClusterManager, ICluster } from '../cluster-manager';
 import { aadClusterAuthType } from '../constants';
-import { IAuthOption, IHTTPRequestTransformer } from '../httpHandler';
+import { BaseHttpHandler, IAuthOption, IHTTPRequestTransformer } from '../httpHandler';
 import { cachePlugin } from './CachePlugin';
 import { CustomFileProtocolListener } from './customFileProtocol';
+import { ValidateProperty } from '../mainWindow/validate';
 
 export default class AuthProvider2 {
     activeTokenRquest: Promise<string>;
@@ -299,6 +300,7 @@ export interface ILoggedInAccounts {
 export class AADFactory implements IAuthOption {
         id = aadClusterAuthType;
         displayName = "AAD";
+        validators: ValidateProperty[] = [];
 
         public observable = new Subject<ILoggedInAccounts[]>();
 
@@ -325,7 +327,7 @@ export class AADFactory implements IAuthOption {
         }
 
         getHandler() {
-            return new AADHandler(this.clusterManager, this) 
+            return new AADHttpHandler(this.clusterManager, this);
         }
 
         async getAuthProvider(metaData: ISfAadMetadata) {
@@ -351,4 +353,61 @@ export class AADFactory implements IAuthOption {
                 this.emitAccountsAndTenants();
             }
         }
+
+
+}
+
+
+export class AADHttpHandler extends BaseHttpHandler {
+
+    type: string = aadClusterAuthType;
+    private metaData: ISfAadMetadata;
+    private aadProvider: AuthProvider2;
+
+    constructor(clusterManager: ClusterManager, private AADFactory: AADFactory) {
+        super(clusterManager);
+    }
+
+    async initialize(cluster: ICluster) {
+        this.cluster = cluster;
+        let succesful = true;
+        this.clusterManager.addClusterLogMessage(this.cluster.id, "Fetching AAD configuration")
+
+        try {
+            const url = `${this.cluster.url}/$/GetAadMetadata?api-version=1.0`;
+            const res = await axios.get<ISfAadMetadata>(url, {
+                httpsAgent: new Agent({
+                    rejectUnauthorized: false
+                })
+            });
+
+            this.metaData = res.data;
+            this.aadProvider = await this.AADFactory.getAuthProvider(res.data);
+            await this.aadProvider.getToken();
+
+            this.AADFactory.emitAccountsAndTenants();
+        } catch (e) {
+            succesful = false;
+            this.clusterManager.addClusterLogMessage(this.cluster.id, "Failed to initialize AAD configuration. This could mean the cluster is not reachable.")
+        }
+
+        return succesful;
+    }
+
+    getMetaData() {
+        return this.metaData;
+    }
+
+    async authenticateRequest(request: AxiosRequestConfig) {
+        const token = await this.aadProvider.getToken();
+
+        request.headers['Authorization'] = `Bearer ${token}`
+
+        request.httpsAgent = new Agent({
+            rejectUnauthorized: false
+        })
+
+        return request;
+    }
+
 }

@@ -1,24 +1,12 @@
-import { AxiosRequestConfig } from 'axios';
 import { unsecureClusterAuthType } from '../constants';
-import { ICluster } from '../cluster-manager';
-import { IAuthOption, IHTTPRequestTransformer } from '../httpHandler';
+import { ClusterManager } from '../cluster-manager';
+import { BaseHttpHandler, IAuthOption } from '../httpHandler';
 
-export class UnsecureHttpHandler implements IHTTPRequestTransformer {
-    type = unsecureClusterAuthType;
-    constructor() {}
-
-    async initialize(cluster: ICluster) {
-        return true;
+export const unsecureAuthOption = (clusterManager: ClusterManager): IAuthOption => {
+    return {
+        id: unsecureClusterAuthType,
+        displayName: "Unsecure",
+        getHandler: () => new BaseHttpHandler(clusterManager),
+        validators: []
     }
-
-    async transformRequest(request: AxiosRequestConfig) {
-        return request;
-    }
-
-}
-
-export const unsecureAuthOption: IAuthOption = {
-    id: unsecureClusterAuthType,
-    displayName: "Unsecure",
-    getHandler: () => new UnsecureHttpHandler()
 }

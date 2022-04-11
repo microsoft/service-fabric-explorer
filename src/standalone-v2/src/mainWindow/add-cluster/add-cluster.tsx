@@ -32,6 +32,7 @@ export default function AddCluster(props: AddClusterProps) {
     }
 
     const checkValidty = () => {
+        //TODO move to validator
         let errors = [];
 
         if(name.length === 0) {

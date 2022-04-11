@@ -1,6 +1,6 @@
 import { IpcRendererEvent } from "electron";
 import { ILoggedInAccounts } from "./auth/aad";
-import { ICluster, IClusterListState } from "./cluster-manager";
+import { ICluster, IClusterAuth, IClusterListState } from "./cluster-manager";
 import { MainWindowEvents } from "./constants";
 import { IHttpRequest } from "./mainWindow/global";
 
@@ -45,6 +45,11 @@ contextBridge.exposeInMainWorld('electronInterop', {
     bulkImportCluster: async (cluster: ICluster[]) => {
         ipcRenderer.send(MainWindowEvents.importCLusters, cluster)
     },
+
+    validateAuthConfiguration: async (auth: IClusterAuth) => {
+        return ipcRenderer.invoke(MainWindowEvents.validateAuthConfig, auth);
+    },
+
     onClusterListChange: (callback: onClusterListChange) => ipcRenderer.on(MainWindowEvents.clusterStatesChange, callback),
     onAADConfigurationsChange: (callback: onAADConfigurationsChange) => ipcRenderer.on(MainWindowEvents.AADConfigurationsChange, callback),
     logoutOfAad: async (tenant: string) => {

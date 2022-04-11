@@ -13,6 +13,8 @@ export enum MainWindowEvents {
     clusterStatesChange = "clusterStatesChange",
     requestClusterState = "requestClusterState",
 
+    validateAuthConfig = "validateAuthConfig",
+
     requestAADConfigurations = "requestAADConfigurations",
     AADConfigurationsChange = "AADConfigurationsChange",
     logoutOfAadAccount = "logoutOfAadAccount",

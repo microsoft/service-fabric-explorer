@@ -1,7 +1,7 @@
 export interface ValidateProperty {
     propertyPath: string;
-    propertyName: string;
     validators: validateFunction[];
+    required?: boolean;
     failQuickly?: boolean;
 }
 
@@ -18,20 +18,28 @@ export function validate(item: any, validators: ValidateProperty[]): string[] {
     validators.forEach(validator => {
         //TODO fix
         const propertyValue = item[validator.propertyPath];
+        console.log(validator.propertyPath, propertyValue)
         let failed = false;
-        validator.validators.forEach(validate => {
-            if(!failed) {
-                const validationErrors = validate(propertyValue);
-
-                if(validationErrors.length > 0) {
-                    errors = errors.concat(validate(propertyValue).map(error => `${validator.propertyName} ${error}`));            
-                    
-                    if(validator.failQuickly) {
-                        failed = true;
+        if((propertyValue === null || propertyValue === undefined)) {
+            if(validator.required) {
+                errors.push(`${validator.propertyPath} is required`);
+                failed = true;
+            }
+        }else{
+            validator.validators.forEach(validate => {
+                if(!failed) {
+                    const validationErrors = validate(propertyValue);
+    
+                    if(validationErrors.length > 0) {
+                        errors = errors.concat(validate(propertyValue).map(error => `${validator.propertyPath} ${error}`));            
+                        
+                        if(validator.failQuickly) {
+                            failed = true;
+                        }
                     }
                 }
-            }
-        })
+            })    
+        }
     })
 
     return errors;
@@ -48,6 +56,12 @@ export const isString: validateFunction = (item) => {
 export const minLength = (length: number): validateFunction => {
     return (item) => {
         return item?.length > length ? [] : ['is not long enough']
+    }
+}
+
+export const endsWith = (ending: string): validateFunction => {
+    return (item: string) => {
+        return item.endsWith(ending) ? [] : [`must end with ${ending}`]
     }
 }
 

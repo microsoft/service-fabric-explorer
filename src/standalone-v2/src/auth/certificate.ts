@@ -3,7 +3,8 @@ import { promises }  from 'fs';
 import { Agent } from 'https';
 import { secureClusterAuthType } from '../constants';
 import { ClusterManager, ICluster, IClustherAuthCertificate } from '../cluster-manager';
-import { IAuthOption, IHTTPRequestTransformer } from '../httpHandler';
+import { BaseHttpHandler, IAuthOption, IHTTPRequestTransformer } from '../httpHandler';
+import { minLength, isString, endsWith } from '../mainWindow/validate';
 
 export class CertificateHandler implements IHTTPRequestTransformer {
     type: string = secureClusterAuthType;
@@ -48,6 +49,51 @@ export function CertificateHandlerFactory(clusterManager: ClusterManager): IAuth
     return {
         id: secureClusterAuthType,
         displayName: "Secure",
-        getHandler: () => new CertificateHandler(clusterManager)
+        getHandler: () => new CertificateHttpHandler(clusterManager),
+        validators: [{
+            propertyPath: 'certificatePath',
+            required: true,
+            failQuickly: true,
+            validators: [isString, minLength(3), endsWith('.pfx')]
+        },
+        {
+            propertyPath: 'certificatePassword',
+            validators: [isString]
+        }
+    ]
+    }
+}
+
+
+export class CertificateHttpHandler extends BaseHttpHandler {
+    protected httpsAgent: Agent;
+
+    async initialize(cluster: ICluster) {
+        let succesful = true;
+
+        this.cluster = cluster;
+
+        const auth = cluster.authentication as IClustherAuthCertificate;
+
+        try {
+            let cert = await promises.readFile(auth.certificatePath);
+
+            this.httpsAgent = new Agent({
+                rejectUnauthorized: false,
+                pfx: cert,
+                passphrase: auth.certificatePassword || ""
+            })
+
+        } catch (e) {
+            this.clusterManager.addClusterLogMessage(this.cluster.id, "Failed to load certificate.");
+            succesful = false;
+        }
+
+        return succesful;
+    }
+
+    protected async authenticateRequest(request: AxiosRequestConfig): Promise<AxiosRequestConfig> {
+        request.httpsAgent = this.httpsAgent;
+        return request;
     }
 }

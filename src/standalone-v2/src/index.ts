@@ -2,10 +2,10 @@ import { app, BrowserWindow, dialog, ipcMain } from 'electron';
 import { MainWindow } from './mainWindow';
 import { aadClusterAuthType, MainWindowEvents } from "./constants";
 import { SettingsService } from './settings';
-import { ClusterManager, ICluster } from './cluster-manager';
-import { httpHandler } from './httpHandler';
+import { ClusterManager, ICluster, IClusterAuth } from './cluster-manager';
+import { IHttpHandler } from './httpHandler';
 import { ConfigLoader } from './configLoader';
-import { AADFactory, AADHandler } from './auth/aad';
+import { AADFactory, AADHttpHandler } from './auth/aad';
 import { AuthenticationManager } from './auth/authenticationManager';
 import { unsecureAuthOption } from './auth/unsecure';
 import { CertificateHandlerFactory } from './auth/certificate';
@@ -45,10 +45,12 @@ const createWindow = async () => {
   const clusterManager = new ClusterManager(settingService, mainWindow, authenticationManager);
 
   //configure default auth options
-  const aadAuth = new AADFactory(clusterManager);
+  const unsecureAuth = unsecureAuthOption(clusterManager);
   const certificateAuth = CertificateHandlerFactory(clusterManager);
+  const aadAuth = new AADFactory(clusterManager);
+
   authenticationManager.registerAuthOption(aadAuth);
-  authenticationManager.registerAuthOption(unsecureAuthOption);
+  authenticationManager.registerAuthOption(unsecureAuth);
   authenticationManager.registerAuthOption(certificateAuth);
 
   //CLUSTER DATA OPERATIONS
@@ -91,14 +93,23 @@ const createWindow = async () => {
   ipcMain.on(MainWindowEvents.logoutOfAadAccount, async (_, data: string) => {
     Object.keys(clusterManager.httpHandlers).forEach(clusterId => {
       const httpHandler = clusterManager.httpHandlers[clusterId];
-      if(httpHandler.transformer.type === aadClusterAuthType) {
-        if ((httpHandler.transformer as AADHandler).getMetaData().metadata.tenant === data) {
+      if(httpHandler.type === aadClusterAuthType) {
+        if ((httpHandler as AADHttpHandler).getMetaData().metadata.tenant === data) {
           clusterManager.discconnectCluster(clusterId)
         }
       }
     })
     await aadAuth.logout(data);
   })
+
+  ipcMain.handle(MainWindowEvents.validateAuthConfig, (_, data: IClusterAuth) => {
+    try {
+      return authenticationManager.validateConfiguration(data.authType, data);
+    } catch(e) {
+      return [`There was an issue validating authentication configuration. ${e}`]
+    }
+  })
+
 
   ipcMain.on(MainWindowEvents.requestAADConfigurations, (_) => {
     aadAuth.emitAccountsAndTenants();
@@ -112,8 +123,8 @@ const createWindow = async () => {
   ipcMain.handle(MainWindowEvents.sendHttpRequest, async (event, data: any) => {
     try {
       const cluster = clusterManager.windowToCluster[event.sender.id];
-      const hh: httpHandler = clusterManager.httpHandlers[cluster.id];
-      return await hh.requestAsync(data)
+      const hh: IHttpHandler = clusterManager.httpHandlers[cluster.id];
+      return await hh.requestAsync(data, false)
     } catch(e) {
       throw e;
     }
