@@ -2,6 +2,8 @@ import { BrowserView, BrowserWindow, IpcMainEvent } from "electron";
 import { join } from 'path';
 import { ICluster } from "./cluster-manager";
 import { ConfigLoader } from "./configLoader";
+import { ILogger } from "./logger";
+import { NotificationTypes } from "./notificationManager";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 
@@ -23,7 +25,7 @@ export class MainWindow {
     private browserWindow: BrowserWindow;
     private windows: Record<string, BrowserView> = {};
 
-    constructor(browserWindow: BrowserWindow, private config: ConfigLoader) {
+    constructor(browserWindow: BrowserWindow, private config: ConfigLoader, private logger: ILogger) {
         this.browserWindow = browserWindow;
         browserWindow.setPosition(100, 100);
         browserWindow.setSize(1500, 1200);
@@ -31,6 +33,8 @@ export class MainWindow {
         if(this.config.isDevTools) {
             browserWindow.webContents.openDevTools({mode: 'detach'});
         }
+        
+        this.logger.log(NotificationTypes.Info, 'initialized browser Window')
     }
 
     async loadAsync(): Promise<void> {
@@ -59,10 +63,10 @@ export class MainWindow {
         })
 
         view.setAutoResize({ width: true, height: true });
-        const bounds = this.browserWindow.getBounds()
+        const bounds = this.browserWindow.getContentBounds()
         const offSetX = 300;
         const offsetY = 0;
-        view.setBounds({ x: offSetX, y: offsetY, width: (bounds.width - offSetX - 15), height: (bounds.height - offsetY) })
+        view.setBounds({ x: offSetX, y: offsetY, width: (bounds.width - offSetX), height: (bounds.height - offsetY) })
         view.webContents.loadFile(join(__dirname, "sfx", 'index.html'), {query: {'targetcluster': data.name}});
 
         if(this.config.isDevTools) {

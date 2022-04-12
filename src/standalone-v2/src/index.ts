@@ -9,6 +9,8 @@ import { AADFactory, AADHttpHandler } from './auth/aad';
 import { AuthenticationManager } from './auth/authenticationManager';
 import { unsecureAuthOption } from './auth/unsecure';
 import { CertificateHandlerFactory } from './auth/certificate';
+import { NotificationManager } from './notificationManager';
+import { Logger } from './logger';
 
 //TODO TEMP
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -36,8 +38,10 @@ const createWindow = async () => {
     }
   });
 
-  const configLoader = new ConfigLoader(process.argv);
-  const mainWindow = new MainWindow(bw, configLoader);
+  const logger = new Logger()
+  const configLoader = new ConfigLoader(process.argv, logger);
+  const notificationManager = new NotificationManager();
+  const mainWindow = new MainWindow(bw, configLoader, logger);
 
   const settingService = new SettingsService();
   const authenticationManager = new AuthenticationManager();
@@ -119,6 +123,10 @@ const createWindow = async () => {
     clusterManager.emitState();
   })
   
+  ipcMain.handle(MainWindowEvents.getNotifications, (_) => {
+    return notificationManager.notifications;
+  })
+
   //EXPOSED ELECTRON OPERATIONS
   ipcMain.handle(MainWindowEvents.sendHttpRequest, async (event, data: any) => {
     try {
@@ -143,6 +151,11 @@ const createWindow = async () => {
 
   aadAuth.observable.subscribe(data => {
     bw.webContents.send(MainWindowEvents.AADConfigurationsChange, data);
+  })
+
+
+  notificationManager.observable.subscribe(data => {
+    bw.webContents.send(MainWindowEvents.notificationEvent, data);
   })
 
   //TODO load extensions here

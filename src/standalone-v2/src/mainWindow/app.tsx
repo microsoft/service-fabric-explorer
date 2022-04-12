@@ -14,6 +14,10 @@ export const addWindow = (state: ICluster) => {
     window.electronInterop.connectCluster(state)
 }
 
+export const updateCluster = (cluster: ICluster) => {
+    window.electronInterop.editCluster(cluster);
+}
+
 export const removeCluster = (cluster: ICluster) => {
     window.electronInterop.removeCluster(cluster);
 }
@@ -66,7 +70,13 @@ export default function App() {
 
     return (<div className="left-panel">
         <div>
-            <h4 className="center-text cluster-title">Clusters
+            <h4 className="cluster-header cluster-title">
+                <button className="flat-button round add-button">
+                    <span className="mif-home"></span>
+                </button>
+                <div style={{flex: '1'}} className="text-center">
+                    Clusters
+                </div>
                 {!showAddCluster &&
                     <button className="flat-button round add-button" onClick={() => { setAddCluster(true) }} >
                         <span className='mif-plus'></span>

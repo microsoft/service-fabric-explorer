@@ -1,5 +1,6 @@
 import { IClusterAuth } from 'src/cluster-manager';
 import { ICluster } from 'src/cluster-manager';
+import { INotification } from 'src/notificationManager';
 import { onAADConfigurationsChange, onClusterListChange} from '../preload';
 
 declare global {
@@ -60,6 +61,9 @@ declare global {
     requestClusterState();
     onClusterListChange(callback: onClusterListChange);
     
+    requestNotifications(): INotification[];
+    onNotificationEvent(callback: onNotificationEvent);
+
     requestAADState();
     onAADConfigurationsChange(callback: onAADConfigurationsChange);
     logoutOfAad(tenant: string): Promise<any>;

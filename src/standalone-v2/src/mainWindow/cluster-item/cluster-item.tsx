@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ICluster, IloadedCluster } from "../../cluster-manager";
 import AddCluster from "../add-cluster/add-cluster";
-import { addWindow, disconnect, reconnect, removeCluster } from "../app";
+import { addWindow, disconnect, reconnect, removeCluster, updateCluster } from "../app";
 import { DropDown } from "../dropdown/dropdown";
 import './cluster-item.scss';
 import Message from './message'; 
@@ -49,20 +49,12 @@ export default function ClusterListItem(props: ClusterListItemProp) {
             </div>
         </div>
         {props.cluster?.data?.log && <div className=" list-item-inner">
-            {/* <div className="flex-between">
-                <button className="flat-button" onClick={() => setShowLog(!showLog)}>
-                    {showLog ? 'Hide logs' : 'Show logs'}
-                </button>
-                <button className="flat-button" onClick={() => setShowLog(!showLog)}>
-                    Clear Logs
-                </button>
-            </div> */}
             {showLog && props.cluster.data.log.map(log => (<div key={log.timestamp.toUTCString() + log.message}>
                 <Message message={log.message} timestamp={log.timestamp} ></Message>
             </div>))}
         </div>}
         {editing && <div className="edit-cluster list-item-inner">
-            <AddCluster clusterList={props.clusterList} initialState={props.cluster} onAddCluster={(cluster) => { console.log(cluster) }} onCloseWindow={() => setEditing(false)}></AddCluster>
+            <AddCluster clusterList={props.clusterList} initialState={props.cluster} onAddCluster={() => updateCluster(props.cluster)} onCloseWindow={() => setEditing(false)} emitButtonText={'update'}></AddCluster>
         </div>}
     </div>)
 }

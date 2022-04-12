@@ -2,6 +2,9 @@ export enum MainWindowEvents {
     sendHttpRequest = "sendHttpRequest",
     requestFileDialog = "requestFileDialog",
     
+    notificationEvent = "NotificationEvent",
+    getNotifications = "getNotifications",
+
     addCluster = "addCluster",
     removeCluster = "removeCluster",
     connectCluster = "connectCluster",

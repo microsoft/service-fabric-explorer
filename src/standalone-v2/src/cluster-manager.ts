@@ -45,7 +45,6 @@ export interface IClusterListState {
 
 export class ClusterManager {
     private clusters: IloadedCluster[] = [
-
         {
             id: "1",
             url: "http://localhost:19080",
@@ -55,6 +54,7 @@ export class ClusterManager {
             }
         },
     ];
+
     private loadedClusters = new Set();
 
     public httpHandlers: Record<string, IHttpHandler> = {};
@@ -67,7 +67,7 @@ export class ClusterManager {
     constructor(private settings: SettingsService, private mainWindow: MainWindow, private authManager: AuthenticationManager) {
         const existingList = this.settings.getClusters();
         if(existingList) {
-            // this.clusters = existingList;
+            this.clusters = existingList;
         }
     }
 
@@ -86,6 +86,7 @@ export class ClusterManager {
                     this.windowToCluster[id] = cluster;
         
                     this.loadedClusters.add(cluster.id);
+                    this.addClusterLogMessage(cluster.id, "connected");
                 }
             } catch(e) {
                 setActive = false;
@@ -98,7 +99,6 @@ export class ClusterManager {
     }
 
     async addCluster(cluster: IloadedCluster) {
-        console.log(this)
         if(!this.getCluster(cluster.id)) {
             const clusters = this.clusters.concat(cluster);
             this.saveData();
@@ -113,7 +113,6 @@ export class ClusterManager {
 
         this.clusters = clusters;
         this.saveData();
-        console.log(this)
     }
 
     async removeCluster(id: string) {
@@ -155,7 +154,8 @@ export class ClusterManager {
         if(this.focusedCluster == clusterId) {
             this.focusedCluster = "unset";
         }
-        this.updateClusterData(clusterId, {loaded: false})
+        this.updateClusterData(clusterId, {loaded: false});
+        this.addClusterLogMessage(clusterId, "disconnected");
     }
 
 

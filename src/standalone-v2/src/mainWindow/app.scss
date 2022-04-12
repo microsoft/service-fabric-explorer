@@ -97,8 +97,16 @@ h5 {
 
 }
 
+.cluster-header {
+    display: flex;
+    align-items: center;
+
+    h5 {
+        margin: auto;
+    }
+}
+
 .add-button {
-    float: right;
     display: flex;
     justify-content: center;
     align-content: center;
@@ -150,4 +158,8 @@ h5 {
     width: 15px;
     display: flex;
     justify-content: center;
+}
+
+input {
+    border-radius: 5px;
 }
