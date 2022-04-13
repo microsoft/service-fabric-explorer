@@ -46,7 +46,7 @@ const createWindow = async () => {
   const settingService = new SettingsService();
   const authenticationManager = new AuthenticationManager();
 
-  const clusterManager = new ClusterManager(settingService, mainWindow, authenticationManager);
+  const clusterManager = new ClusterManager(settingService, mainWindow, authenticationManager, logger);
 
   //configure default auth options
   const unsecureAuth = unsecureAuthOption(clusterManager);

@@ -11,6 +11,10 @@ import { ILoggedInAccounts } from "../auth/aad";
 
 
 export const addWindow = (state: ICluster) => {
+    window.electronInterop.addCluster(state)
+}
+
+export const connectCluster = (state: ICluster) => {
     window.electronInterop.connectCluster(state)
 }
 

@@ -78,7 +78,7 @@ export default class AuthProvider2 {
         const request: SilentFlowRequest = {
             account: null, 
             forceRefresh: false,
-            scopes: []
+            scopes: [`${this.metaData.metadata.cluster}/.default`]
         };
 
         let resolve: (value: string) => void;
@@ -400,7 +400,6 @@ export class AADHttpHandler extends BaseHttpHandler {
 
     async authenticateRequest(request: AxiosRequestConfig) {
         const token = await this.aadProvider.getToken();
-
         request.headers['Authorization'] = `Bearer ${token}`
 
         request.httpsAgent = new Agent({

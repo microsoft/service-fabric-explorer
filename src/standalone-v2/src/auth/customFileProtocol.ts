@@ -38,18 +38,13 @@ export class CustomFileProtocolListener extends AuthCodeListener {
      * Registers a custom file protocol on which the library will
      * listen for Auth Code response.
      */
-    public start(): Promise<string> {
+     public start(): Promise<string> {
         const codePromise = new Promise<string>((resolve, reject) => {
-            protocol.registerFileProtocol(this.host, (req, callback) => {
+            protocol.registerStringProtocol(this.host, (req, callback) => {
                 const requestUrl = new URL(req.url);
                 const authCode = requestUrl.searchParams.get('code');
-                if (authCode) {
-                    resolve(authCode);
-                }
-                else {
-                    reject(new Error("no code in URL"));
-                }
-                callback(path.normalize(`${__dirname}/${requestUrl.pathname}`));
+
+                (authCode) ? resolve(authCode) : reject(new Error("No code found in URL"));
             });
         });
 

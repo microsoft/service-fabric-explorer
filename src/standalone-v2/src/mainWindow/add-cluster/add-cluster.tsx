@@ -25,6 +25,7 @@ export default function AddCluster(props: AddClusterProps) {
     const [auth, setAuth] = useState(authType?.authType || "unsecure");
     const [certificatePath, setCertificatePath] = useState(authType?.certificatePath || "");
     const [certificatePassword, setCertificatePassword] = useState(authType?.certificatePath || "");
+    const [id] = useState(props.initialState?.id ||  Math.random().toString());
     const clear = () => {
         setName("");
         setUrl("");
@@ -120,7 +121,7 @@ export default function AddCluster(props: AddClusterProps) {
             <button onClick={() => props.onAddCluster({
                 name,
                 url,
-                id: Math.random().toString(),
+                id,
                 authentication: {
                     authType: auth as any,
                     certificatePath: certificatePath

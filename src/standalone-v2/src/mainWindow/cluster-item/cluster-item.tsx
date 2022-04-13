@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { ICluster, IloadedCluster } from "../../cluster-manager";
 import AddCluster from "../add-cluster/add-cluster";
-import { addWindow, disconnect, reconnect, removeCluster, updateCluster } from "../app";
+import { connectCluster, disconnect, reconnect, removeCluster, updateCluster } from "../app";
 import { DropDown } from "../dropdown/dropdown";
 import './cluster-item.scss';
 import Message from './message'; 
@@ -13,9 +13,8 @@ export interface ClusterListItemProp {
 
 export default function ClusterListItem(props: ClusterListItemProp) {
     const [editing, setEditing] = useState(false);
-    const [showLog, setShowLog] = useState(true);
 
-    return (<div className={`list-item  ${props.isFocused ? 'active' : ''}`} onClick={() => addWindow(props.cluster)}>
+    return (<div className={`list-item  ${props.isFocused ? 'active' : ''}`} onClick={() => connectCluster(props.cluster)}>
         <div className="flex-between list-item-inner">
             <div>
                 <div>
@@ -49,12 +48,12 @@ export default function ClusterListItem(props: ClusterListItemProp) {
             </div>
         </div>
         {props.cluster?.data?.log && <div className=" list-item-inner">
-            {showLog && props.cluster.data.log.map(log => (<div key={log.timestamp.toUTCString() + log.message}>
+            {props.cluster.data.log.map(log => (<div key={log.timestamp.toUTCString() + log.message}>
                 <Message message={log.message} timestamp={log.timestamp} ></Message>
             </div>))}
         </div>}
-        {editing && <div className="edit-cluster list-item-inner">
-            <AddCluster clusterList={props.clusterList} initialState={props.cluster} onAddCluster={() => updateCluster(props.cluster)} onCloseWindow={() => setEditing(false)} emitButtonText={'update'}></AddCluster>
+        {editing && <div className="edit-cluster list-item-inner" onClick={(e) => e.stopPropagation()}>
+            <AddCluster clusterList={props.clusterList} initialState={props.cluster} onAddCluster={(cluster) => { updateCluster(cluster); setEditing(false)}} onCloseWindow={() => setEditing(false)} emitButtonText={'update'}></AddCluster>
         </div>}
     </div>)
 }

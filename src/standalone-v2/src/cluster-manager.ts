@@ -1,6 +1,8 @@
 import { AuthenticationManager } from "./auth/authenticationManager";
 import { IHttpHandler } from "./httpHandler";
+import { Logger } from "./logger";
 import { MainWindow } from "./mainWindow";
+import { NotificationTypes } from "./notificationManager";
 import { Subject } from "./observable";
 import { SettingsService } from "./settings";
 
@@ -64,7 +66,7 @@ export class ClusterManager {
 
     public observable = new Subject<IClusterListState>();
 
-    constructor(private settings: SettingsService, private mainWindow: MainWindow, private authManager: AuthenticationManager) {
+    constructor(private settings: SettingsService, private mainWindow: MainWindow, private authManager: AuthenticationManager, private logger: Logger) {
         const existingList = this.settings.getClusters();
         if(existingList) {
             this.clusters = existingList;
@@ -101,7 +103,7 @@ export class ClusterManager {
     async addCluster(cluster: IloadedCluster) {
         if(!this.getCluster(cluster.id)) {
             const clusters = this.clusters.concat(cluster);
-            this.saveData();
+            await this.saveData();
             this.clusters = clusters;
         }
     }
@@ -124,11 +126,12 @@ export class ClusterManager {
     }
 
     async updateCluster(cluster: ICluster) {
-        const index = this.clusters.findIndex(c => c.id === cluster.id);
+        await this.discconnectCluster(cluster.id);
 
+        this.logger.log(NotificationTypes.Info, `updating cluster ${cluster.id}`)
+
+        const index = this.clusters.findIndex(c => c.id === cluster.id);
         this.clusters[index] = cluster;
-        this.httpHandlers[cluster.id] = this.authManager.getHttpHandler(cluster.authentication.authType);
-        await this.httpHandlers[cluster.id].initialize(cluster);
 
         this.saveData();
     }
@@ -143,9 +146,12 @@ export class ClusterManager {
 
     
     async discconnectCluster(clusterId: string) {
+        this.logger.log(NotificationTypes.Info, `disconnecting cluster ${clusterId}`);
+
         this.httpHandlers[clusterId] = null;
         delete this.httpHandlers[clusterId];
 
+        this.logger.log(NotificationTypes.Info, `removing window for cluster ${clusterId}`);
         const id = await this.mainWindow.removeWindow(clusterId);
         this.loadedClusters.delete(clusterId);
         this.windowToCluster[id] = null;
@@ -153,6 +159,7 @@ export class ClusterManager {
 
         if(this.focusedCluster == clusterId) {
             this.focusedCluster = "unset";
+            this.logger.log(NotificationTypes.Info, `removing cluster ${clusterId} as focus`);
         }
         this.updateClusterData(clusterId, {loaded: false});
         this.addClusterLogMessage(clusterId, "disconnected");
