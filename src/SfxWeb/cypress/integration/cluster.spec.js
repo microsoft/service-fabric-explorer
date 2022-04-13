@@ -51,6 +51,18 @@ context('Cluster page', () => {
       cy.contains('Thumbprint : 52b0278d37cbfe68f8cdf04f423a994d66ceb932')
     })
 
+    it('long running job in approval', () => {
+      cy.intercept(repairTask_route, { fixture: 'cluster-page/repair-jobs/long-running-approval.json' })
+
+      cy.visit('')
+
+      cy.contains('Action Required: There is a repair job (longrunningapprovaljobid) waiting for approval for')
+
+      cy.get('[title="Repair Jobs In Progress"]').within(() => {
+        cy.contains('1');
+      })
+    })
+
   })
 
   describe("details", () => {
@@ -88,6 +100,10 @@ context('Cluster page', () => {
       })
 
       cy.get('[data-cy=manualmode]').should('not.exist')
+
+      cy.get('[data-cy=upgradeHealthEvents]').within(() => {
+        checkTableSize(4);
+      })
 
     })
 
