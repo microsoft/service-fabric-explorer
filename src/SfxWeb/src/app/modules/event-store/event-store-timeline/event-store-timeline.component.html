@@ -48,9 +48,11 @@
                 Move To Newest Event
             </button>
 
-            <div class="margined"  style="width: 105px;">
-                <app-toggle [(state)]="isUTC" (stateChange)="flipTimeZone()"></app-toggle><span>{{isUTC ? 'Local
-                    Time' : 'UTC'}}</span>
+            <div class="margined">
+              <label style="width: 105px; display: flex; gap: 10px; align-items: center;">
+                <input type="checkbox" [(ngModel)]="isUTC" (ngModelChange)="flipTimeZone()">
+                {{isUTC ? 'Local
+                Time' : 'UTC'}}</label>
             </div>
         </ng-container>
     </div>
