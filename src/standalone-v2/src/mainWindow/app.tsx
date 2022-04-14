@@ -75,22 +75,24 @@ export default function App() {
     return (<div className="left-panel">
         <div>
             <h4 className="cluster-header cluster-title">
-                <button className="flat-button round add-button">
+                {/* <button className="flat-button round add-button">
                     <span className="mif-home"></span>
-                </button>
-                <div style={{flex: '1'}} className="text-center">
+                </button> */}
+                <div style={{flex: '1', marginLeft: '10px'}}>
                     Clusters
                 </div>
                 {!showAddCluster &&
-                    <button className="flat-button round add-button" onClick={() => { setAddCluster(true) }} >
-                        <span className='mif-plus'></span>
+                    <button className="flat-button round add-button text-show" onClick={() => { setAddCluster(true) }} >
+                        <span className='mif-plus icon'></span>
+                        <span className="text">Add Cluster</span>
                     </button>
                 }
 
                 {!showBulk &&
-                    <button className="flat-button round add-button" onClick={() => { setBulk(true) }} >
-                        <span className='mif-import-export'></span>
-                    </button>
+                <button className="flat-button round add-button text-show" onClick={() => { setBulk(true) }} >
+                    <span className='mif-import-export icon'></span>
+                    <span className="text">Import Clusters</span>
+                </button>
                 }
             </h4>
 

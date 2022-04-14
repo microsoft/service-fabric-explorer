@@ -100,7 +100,7 @@ h5 {
 .cluster-header {
     display: flex;
     align-items: center;
-
+    overflow: hidden;
     h5 {
         margin: auto;
     }
@@ -162,4 +162,34 @@ h5 {
 
 input {
     border-radius: 5px;
+}
+
+
+.text-show {
+    width: auto;
+    display: inline-flex;
+    transition: .3s all;
+
+    .icon {
+        z-index: 2;
+    }
+
+    .text {
+        width: 0;
+        transition: .3s all;
+        overflow: hidden;
+        color: var(--font-primary-color);
+        white-space: nowrap;
+        font-size: 16px;
+        padding-left: 10px;
+    }
+
+    &:hover,
+    &:focus {
+        max-width: 100%;
+
+        .text {
+            width: 100%;
+        }
+    }
 }
