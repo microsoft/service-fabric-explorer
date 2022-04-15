@@ -77,19 +77,24 @@ export class ClusterManager {
         let setActive = true;
 
         if(!this.loadedClusters.has(cluster.id)) {
-            this.updateClusterData(cluster.id, {loaded: true})
-
             try {
                 this.httpHandlers[cluster.id] = this.authManager.getHttpHandler(cluster.authentication.authType);
-                await this.httpHandlers[cluster.id].initialize(cluster);
-                const success = await this.httpHandlers[cluster.id].testConnection();
-                if(success) {
-                    const id = await this.mainWindow.addWindow(cluster);
-                    this.windowToCluster[id] = cluster;
-        
-                    this.loadedClusters.add(cluster.id);
-                    this.addClusterLogMessage(cluster.id, "connected");
+                const couldInitialize = await this.httpHandlers[cluster.id].initialize(cluster);
+                if(couldInitialize) {
+                    const success = await this.httpHandlers[cluster.id].testConnection();
+                    if(success) {
+                        const id = await this.mainWindow.addWindow(cluster);
+                        this.windowToCluster[id] = cluster;
+            
+                        this.loadedClusters.add(cluster.id);
+                        this.addClusterLogMessage(cluster.id, "connected");
+
+                        this.updateClusterData(cluster.id, {loaded: true})
+                    }else{
+                        setActive = false;
+                    }
                 }
+
             } catch(e) {
                 setActive = false;
             }
@@ -204,13 +209,6 @@ export class ClusterManager {
                 message
             }
         ]
-
-        // cluster.data.log.splice(0,0, {
-        //     timestamp: new Date(),
-        //     message
-        // })
-
-        
         this.emitState();
     }
 

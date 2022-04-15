@@ -5,51 +5,15 @@ import { secureClusterAuthType } from '../constants';
 import { ClusterManager, ICluster, IClustherAuthCertificate } from '../cluster-manager';
 import { BaseHttpHandler, IAuthOption, IHTTPRequestTransformer } from '../httpHandler';
 import { minLength, isString, endsWith } from '../mainWindow/validate';
+import { X509Certificate } from 'crypto';
+import { Logger } from '../logger';
+import { NotificationTypes } from '../notificationManager';
 
-export class CertificateHandler implements IHTTPRequestTransformer {
-    type: string = secureClusterAuthType;
-
-    private httpsAgent: Agent;
-    private cluster: ICluster;
-
-    constructor(private clusterManager: ClusterManager) {}
-
-    async initialize(cluster: ICluster) {
-        let succesful = true;
-
-        this.cluster = cluster;
-
-        const auth = cluster.authentication as IClustherAuthCertificate;
-
-        try {
-            let cert = await promises.readFile(auth.certificatePath);
-
-            this.httpsAgent = new Agent({
-                rejectUnauthorized: false,
-                pfx: cert,
-                passphrase: auth.certificatePassword || ""
-            })
-
-        } catch (e) {
-            this.clusterManager.addClusterLogMessage(this.cluster.id, "Failed to load certificate.");
-            succesful = false;
-        }
-
-        return succesful;
-    }
-
-    async transformRequest(request: AxiosRequestConfig) {
-        request.httpsAgent = this.httpsAgent;
-        return request;
-    }
-
-}
-
-export function CertificateHandlerFactory(clusterManager: ClusterManager): IAuthOption {
+export function CertificateHandlerFactory(clusterManager: ClusterManager, logger: Logger): IAuthOption {
     return {
         id: secureClusterAuthType,
         displayName: "Secure",
-        getHandler: () => new CertificateHttpHandler(clusterManager),
+        getHandler: () => new CertificateHttpHandler(clusterManager, logger),
         validators: [{
             propertyPath: 'certificatePath',
             required: true,
@@ -68,15 +32,24 @@ export function CertificateHandlerFactory(clusterManager: ClusterManager): IAuth
 export class CertificateHttpHandler extends BaseHttpHandler {
     protected httpsAgent: Agent;
 
+    constructor(clusterManager: ClusterManager, private logger: Logger) {
+        super(clusterManager);
+    }
+
     async initialize(cluster: ICluster) {
         let succesful = true;
 
         this.cluster = cluster;
 
         const auth = cluster.authentication as IClustherAuthCertificate;
+        this.logger.log(NotificationTypes.Info, `Loading certificate for cluster ${cluster.id} with auth type ${this.type}`)
 
         try {
             let cert = await promises.readFile(auth.certificatePath);
+
+            new X509Certificate(cert)
+            
+            this.logger.log(NotificationTypes.Info, `Loaded certificate for cluster ${cluster.id} from ${auth.certificatePath}`)
 
             this.httpsAgent = new Agent({
                 rejectUnauthorized: false,
@@ -85,7 +58,10 @@ export class CertificateHttpHandler extends BaseHttpHandler {
             })
 
         } catch (e) {
-            this.clusterManager.addClusterLogMessage(this.cluster.id, "Failed to load certificate.");
+            console.log(e.toString());
+            this.clusterManager.addClusterLogMessage(this.cluster.id, `Failed to load certificate. ${e.toString()}`);
+            this.logger.log(NotificationTypes.Error, `Failed to load certificate ${e.toString()}`);
+
             succesful = false;
         }
 

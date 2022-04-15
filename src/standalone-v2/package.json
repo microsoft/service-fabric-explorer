@@ -76,6 +76,7 @@
     "@electron-forge/maker-squirrel": "^6.0.0-beta.63",
     "@electron-forge/maker-zip": "^6.0.0-beta.63",
     "@electron-forge/plugin-webpack": "^6.0.0-beta.63",
+    "@types/node": "^17.0.24",
     "@types/react": "^17.0.39",
     "@types/react-dom": "^17.0.13",
     "@types/yaireo__relative-time": "^1.0.0",

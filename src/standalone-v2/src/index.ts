@@ -50,7 +50,7 @@ const createWindow = async () => {
 
   //configure default auth options
   const unsecureAuth = unsecureAuthOption(clusterManager);
-  const certificateAuth = CertificateHandlerFactory(clusterManager);
+  const certificateAuth = CertificateHandlerFactory(clusterManager, logger);
   const aadAuth = new AADFactory(clusterManager);
 
   authenticationManager.registerAuthOption(aadAuth);
