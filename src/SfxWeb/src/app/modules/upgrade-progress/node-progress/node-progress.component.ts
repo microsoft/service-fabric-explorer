@@ -13,8 +13,8 @@ import { IProgressStatus } from 'src/app/shared/component/phase-diagram/phase-di
   styleUrls: ['./node-progress.component.scss']
 })
 export class NodeProgressComponent implements OnChanges {
-
-  @Input()node: IRawNodeUpgradeProgress;
+  @Input() failed = false;
+  @Input() node: IRawNodeUpgradeProgress;
 
   public progress: IProgressStatus[] = [];
   public index = -1;
@@ -32,7 +32,7 @@ export class NodeProgressComponent implements OnChanges {
 
     // given the upgrading and post upgrade safety check phases refer to completed state
     // set the index 1 further to consider them completed effectively
-    if (this.index > 1) {
+    if (this.index > 1 && !this.failed) {
       this.index ++;
     }
 

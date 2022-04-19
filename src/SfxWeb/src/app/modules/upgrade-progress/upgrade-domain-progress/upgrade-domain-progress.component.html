@@ -1,7 +1,7 @@
 <div *ngFor="let node of upgradeDomain.NodeUpgradeProgressList;trackBy: nodeTrackBy" style="border-bottom: 1px solid gray; ">
     <app-collapse-container collapsed="true" [sectionName]="node.NodeName + ' Progress '">
         <div collapse-header>
-            <app-node-progress [node]="node"></app-node-progress>
+            <app-node-progress [node]="node" [failed]="failed"></app-node-progress>
         </div>
         <div collapse-body class="table-responsive" >
             <app-safety-checks [safetyChecks]="node.PendingSafetyChecks"></app-safety-checks>
