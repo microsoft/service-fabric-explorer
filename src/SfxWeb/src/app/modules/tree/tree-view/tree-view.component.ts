@@ -1,9 +1,10 @@
-import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input, AfterViewInit, Inject } from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { RestClientService } from 'src/app/services/rest-client.service';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
+import { DOCUMENT } from '@angular/common';
 
 @Component({
   selector: 'app-tree-view',
@@ -21,7 +22,8 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
   constructor(public treeService: TreeService,
               private liveAnnouncer: LiveAnnouncer,
               public restClientService: RestClientService,
-              private telemService: TelemetryService) { }
+              private telemService: TelemetryService,
+              @Inject(DOCUMENT) private document: Document) { }
 
   ngAfterViewInit() {
     this.treeService.containerRef = this.treeContainer;
@@ -49,5 +51,10 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
 
   sendHealthStateTelem() {
     this.telemService.trackActionEvent(TelemetryEventNames.SortByHealth, null, TelemetryEventNames.SortByHealth);
+  }
+
+  goToTroubleshootingGuides(): void {
+    window.open('https://github.com/Azure/Service-Fabric-Troubleshooting-Guides', '_blank');
+    this.telemService.trackActionEvent(TelemetryEventNames.TroubleShootingGuides, null, TelemetryEventNames.TroubleShootingGuides);
   }
 }

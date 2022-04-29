@@ -4,6 +4,14 @@
     height: 100%;
 }
 
+.tree-guide {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px 10px;
+  margin-bottom: 10px;
+}
+
 .tree-list {
   flex: 1;
   overflow: auto;
