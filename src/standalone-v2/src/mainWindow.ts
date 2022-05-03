@@ -21,9 +21,19 @@ export interface IWindowIPCItems {
     callBack: IPCWindowCallback;
 }
 
+export interface IWindowConfig {
+    id: string;
+    url: string;
+    queryParams?: Record<string, string>;
+    preload?: string;
+}
+
+
 export class MainWindow {
     private browserWindow: BrowserWindow;
     private windows: Record<string, BrowserView> = {};
+
+    private registeredSingletonPages: IWindowConfig[] = [];
 
     constructor(browserWindow: BrowserWindow, private config: ConfigLoader, private logger: ILogger) {
         this.browserWindow = browserWindow;
@@ -49,8 +59,8 @@ export class MainWindow {
         })
     }
 
-    async addWindow(data: ICluster) {
-        const { id, url } = data;
+    async addWindow(config:  IWindowConfig) {
+        const { id, url, queryParams } = config;
         if (this.windows[id]) {
             this.setActiveWindow(id);
             return;
@@ -58,7 +68,7 @@ export class MainWindow {
 
         let view = new BrowserView({
             webPreferences: {
-                preload: join(__dirname,'..', 'renderer', 'main_window', 'preload.js')
+                preload: config.preload || join(__dirname,'..', 'renderer', 'main_window', 'preload.js')
             }
         })
 
@@ -67,7 +77,7 @@ export class MainWindow {
         const offSetX = 300;
         const offsetY = 0;
         view.setBounds({ x: offSetX, y: offsetY, width: (bounds.width - offSetX), height: (bounds.height - offsetY) })
-        view.webContents.loadFile(join(__dirname, "sfx", 'index.html'), {query: {'targetcluster': data.name}});
+        view.webContents.loadFile(url, {query: queryParams});
 
         if(this.config.isDevTools) {
             view.webContents.toggleDevTools();
@@ -103,4 +113,6 @@ export class MainWindow {
     getWindow() {
         return this.browserWindow;
     }
+
+    
 }

@@ -193,3 +193,13 @@ input {
         }
     }
 }
+
+.folder {
+    border: 2px solid var(--accent-underline);
+    border-radius: 10px;
+
+    .folder-name {
+        margin: 5px;
+        font-size: 20px;
+    }
+}

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react"
-import { ICluster, IClusterAuth, IloadedCluster } from "../cluster-manager";
+import { ICluster, IClusterAuth, IloadedCluster, ILoadedClusterData } from "../cluster-manager";
 import AddCluster from "./add-cluster/add-cluster";
 import AadProfiles from './aad-profile/aad-profiles';
 import ClusterListItem from "./cluster-item/cluster-item";
@@ -8,6 +8,7 @@ import './app.scss';
 import './icons.min.css';
 import BulkClusterList from "./import-export-clusters/bulk-cluster-list";
 import { ILoggedInAccounts } from "../auth/aad";
+import { groupBy, objectToList } from "../utils/utils";
 
 
 export const addWindow = (state: ICluster) => {
@@ -46,6 +47,11 @@ export const validateAuthType = (data: IClusterAuth) => {
     return window.electronInterop.validateAuthConfiguration(data);
 }
 
+export interface IFolder {
+    key: string;
+    value: IloadedCluster[];
+}
+
 export default function App() {
     const [clusters, setClustersList] = useState<IloadedCluster[]>([])
     const [aadAccounts, setAadAccounts] = useState<ILoggedInAccounts[]>([])
@@ -72,6 +78,9 @@ export default function App() {
 
     const filteredList = filterList.length > 0 ? clusters.filter(cluster => cluster.url.includes(filterList) || cluster.name.includes(filterList)) : clusters;
 
+    const folders: IFolder[] = objectToList(groupBy(filteredList, ['folder']));
+
+    console.log(folders)
     return (<div className="left-panel">
         <div>
             <h4 className="cluster-header cluster-title">
@@ -121,8 +130,18 @@ export default function App() {
         </div>}
 
         <div className="cluster-list">
-            {filteredList.map((option) =>
-                <ClusterListItem key={option.id} clusterList={clusters} isFocused={activeCluster === option.id} cluster={option} ></ClusterListItem>)}
+            {folders.map(folder => (
+                <div key={folder.key} className="folder">
+                    <div className="folder-name">
+                        {folder.key}
+                    </div>
+                    <div>
+                        {folder.value.map((option) =>
+                            <ClusterListItem key={option.id} clusterList={clusters} isFocused={activeCluster === option.id} cluster={option} ></ClusterListItem>)}
+                    </div>
+                </div>
+            ))}
         </div>
+
     </div>)
 } 

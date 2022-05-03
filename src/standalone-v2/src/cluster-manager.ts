@@ -1,3 +1,4 @@
+import { join } from "path";
 import { AuthenticationManager } from "./auth/authenticationManager";
 import { IHttpHandler } from "./httpHandler";
 import { Logger } from "./logger";
@@ -21,6 +22,7 @@ export interface ICluster {
     name: string;
     url: string;
     id: string;
+    folder: string;
     authentication: IClusterAuth;
 }
 
@@ -53,7 +55,8 @@ export class ClusterManager {
             name: "Localhost",
             authentication: {
                 authType: "unsecure"
-            }
+            },
+            folder: 'default'
         },
     ];
 
@@ -68,9 +71,10 @@ export class ClusterManager {
 
     constructor(private settings: SettingsService, private mainWindow: MainWindow, private authManager: AuthenticationManager, private logger: Logger) {
         const existingList = this.settings.getClusters();
-        if(existingList) {
-            this.clusters = existingList;
-        }
+        //TODO check integrity here
+        // if(existingList) {
+        //     this.clusters = existingList;
+        // }
     }
 
     async connectCluster(cluster: IloadedCluster) {
@@ -83,7 +87,11 @@ export class ClusterManager {
                 if(couldInitialize) {
                     const success = await this.httpHandlers[cluster.id].testConnection();
                     if(success) {
-                        const id = await this.mainWindow.addWindow(cluster);
+                        const id = await this.mainWindow.addWindow({
+                            id: cluster.id,
+                            url: join(__dirname, "sfx", 'index.html'),
+                            queryParams: {'targetcluster': cluster.name},
+                        });
                         this.windowToCluster[id] = cluster;
             
                         this.loadedClusters.add(cluster.id);

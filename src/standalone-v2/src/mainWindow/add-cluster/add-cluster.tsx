@@ -23,6 +23,7 @@ export default function AddCluster(props: AddClusterProps) {
     const [name, setName] = useState(props.initialState?.name || "");
     const [url, setUrl] = useState(props.initialState?.url || "");
     const [auth, setAuth] = useState(authType?.authType || "unsecure");
+    const [folder, setFolder] = useState("default");
     const [certificatePath, setCertificatePath] = useState(authType?.certificatePath || "");
     const [certificatePassword, setCertificatePassword] = useState(authType?.certificatePath || "");
     const [id] = useState(props.initialState?.id ||  Math.random().toString());
@@ -87,6 +88,11 @@ export default function AddCluster(props: AddClusterProps) {
             <span>Url</span>
             <input className="input-flat" onChange={(input) => setUrl(input.currentTarget.value)} value={url}></input>
         </div>
+        <div className="input-item underline">
+            <span>Folder</span>
+            <input className="input-flat" onChange={(input) => setFolder(input.currentTarget.value)} value={folder}></input>
+        </div>
+
 
         <div className="auth-container">
             <MultiOptionToggle values={options} toggle={changeType} defaultIndex={options.findIndex(option => option.value === auth)}></MultiOptionToggle>
@@ -125,7 +131,8 @@ export default function AddCluster(props: AddClusterProps) {
                 authentication: {
                     authType: auth as any,
                     certificatePath: certificatePath
-                }
+                },
+                folder
             })} className="simple-button" disabled={errors.length > 0}>{props.emitButtonText || 'Add' }</button>
         </div>
     </div>)

@@ -97,11 +97,12 @@ const port = process.env.PORT || 2500;
 //this is mainly for SFRP clusters to test against.
 process.env['NODE_TLS_REJECT_UNAUTHORIZED'] = '0';
 
-const basePath = __dirname  +  serveSFXV1Files ? '../Sfx' : ''
+const basePath = path.join(__dirname, serveSFXV1Files ? '../Sfx/' : '')
 app.use(express.static(basePath + '/wwwroot/'))
 app.use(express.json())
 app.get('/', function(req, res) {
-    res.sendFile(path.join(basePath + 'wwwroot/index.html'));
+    console.log(path.join(basePath + `wwwroot/${serveSFXV1Files ? 'old': 'index' }.html`))
+    res.sendFile(path.join(basePath + `wwwroot/${serveSFXV1Files ? 'old': 'index' }.html`));
 });
 app.all('/*', async (req, res) => {
     let resp = null;
