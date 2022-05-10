@@ -23,6 +23,7 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
 
   fromDate: NgbDate;
   toDate: NgbDate;
+  currentTime = new Date().toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false });
 
   constructor(public calendar: NgbCalendar, public formatter: NgbDateParserFormatter) {
 
@@ -56,13 +57,35 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
       this.fromDate = date;
     }
     if (this.fromDate && this.toDate){
-      this.currentStartDate.setFullYear(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
-      this.currentEndDate.setFullYear(this.toDate.year, this.toDate.month - 1, this.toDate.day);
-      this.dateChanged.emit({
-        endDate: this.currentEndDate,
-        startDate: this.currentStartDate
-      });
+      this.emitState();
     }
+  }
+
+  onTimeSelection(date: string, isStartTime: boolean) {
+    if(isStartTime){
+      let newTime = date.split(":");
+      let hour = parseInt(newTime[0]);
+      let minute = parseInt(newTime[1]);
+      this.currentStartDate.setHours(hour);
+      this.currentStartDate.setMinutes(minute); 
+      this.emitState();
+    } else {
+      let newTime = date.split(":");
+      let hour = parseInt(newTime[0]);
+      let minute = parseInt(newTime[1]);
+      this.currentEndDate.setHours(hour);
+      this.currentEndDate.setMinutes(minute);
+    }
+    this.emitState();
+  }
+
+  emitState() {
+    this.currentStartDate.setFullYear(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
+    this.currentEndDate.setFullYear(this.toDate.year, this.toDate.month - 1, this.toDate.day);
+    this.dateChanged.emit({
+      endDate: this.currentEndDate,
+      startDate: this.currentStartDate
+    });
   }
 
   isHovered(date: NgbDate) {

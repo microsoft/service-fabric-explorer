@@ -312,6 +312,20 @@ table.detail-list {
     }
 }
 
+.simple-button-calendar {
+    border: #727272 1px solid;
+    color: var(--accent-darkblue);
+    border-radius: 0px 5px 5px 0px;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: var(--primary-background-color);
+    transition: .25s box-shadow;
+
+    &:focus, &:hover {
+      box-shadow: var(--heavy-box-shadow);
+    }
+}
+
 .solid-button {
     border: var(--accent-darkblue) 1px solid;
     color: var(--font-primary-color);
@@ -432,6 +446,17 @@ table.detail-list {
     border-style: solid;
     border-width: 1px;
     border-color: #727272;
+    background-color: transparent;
+    color: var(--font-primary-color);
+}
+
+.input-flat-time {
+    padding: 3px 6px;
+    font-size: 8pt;
+    border-style: solid;
+    border-width: 1px;
+    border-color: #727272;
+    border-radius: 5px 0px 0px 5px;
     background-color: transparent;
     color: var(--font-primary-color);
 }
