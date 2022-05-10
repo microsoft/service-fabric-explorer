@@ -27,6 +27,17 @@
     </div>
     <div class="form-group">
         <div class="input-group">
+        <ng-content select="[startTime]"></ng-content>
+        <div style="margin-left: 5px;">
+        <span style="color:  var(--font-primary-color); font-size: 105%;">Start:  </span>
+        <input #dpFromTime
+                type="time"
+                name="dpFromTime"
+                class="input-flat-time clear-disabled height" placeholder="HH:mm" ng-model-options="{ timezone: 'UTC' }"
+                [value]="currentTime"
+                (input)="onTimeSelection(dpFromTime.value, true)"
+                aria-label="set start time" />
+        </div>
         <input #dpFromDate
                 class="input-flat" placeholder="yyyy-mm-dd"
                 name="dpFromDate"
@@ -34,13 +45,23 @@
                 (input)="fromDate = validateInput(fromDate, dpFromDate.value)"
                 aria-label="set start date">
         <div class="input-group-append">
-            <button class="mif-calendar simple-button" (click)="datepicker.toggle()" type="button" aria-label="Toggle start date calender date picker"></button>
+            <button class="mif-calendar simple-button-calendar" (click)="datepicker.toggle()" type="button" aria-label="Toggle start date calender date picker" style="margin-right: 8px"></button>
         </div>
-        <ng-content select="[startTime]"></ng-content>
         </div>
     </div>
     <div class="form-group">
         <div class="input-group">
+        <ng-content select="[toTime]"></ng-content>
+        <div style="margin-left: 5px;">
+        <span style="color:  var(--font-primary-color); font-size: 105%;">End:  </span>
+        <input #dpToTime
+                type="time"
+                name="dpToTime"
+                class="input-flat-time clear-disabled height" placeholder="HH:mm" ng-model-options="{ timezone: 'UTC' }"
+                [value]="currentTime"
+                (input)="onTimeSelection(dpToTime.value, false)"
+                aria-label="set end time" />
+        </div>
         <input #dpToDate
                 class="input-flat" placeholder="yyyy-mm-dd"
                 name="dpToDate"
@@ -48,9 +69,9 @@
                 (input)="toDate = validateInput(toDate, dpToDate.value)"
                 aria-label="set end date">
         <div class="input-group-append">
-            <button class="mif-calendar simple-button" (click)="datepicker.toggle()" type="button" aria-label="Toggle end date calender date picker"></button>
+            <button class="mif-calendar simple-button-calendar" (click)="datepicker.toggle()" type="button" aria-label="Toggle end date calender date picker" style="margin-right: 8px"></button>
         </div>
-        <ng-content select="[toTime]"></ng-content>
         </div>
     </div>
+
 </form>

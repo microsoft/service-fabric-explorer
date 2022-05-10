@@ -74,3 +74,12 @@
       gap: 5px;
     }
   }
+
+  .toggle-button {
+    border: transparent 1px solid;
+    background-color: var(--accent-background-color);
+    color: var(--accent-lightblue);
+    border-radius: 50px;
+    padding: 3px 10px 5px 10px;
+    box-shadow: var(--primary-box-shadow);
+  }
