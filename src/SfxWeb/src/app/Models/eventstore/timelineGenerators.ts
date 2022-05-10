@@ -306,25 +306,40 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
 const NodeUp = 'NodeUp';
 const NodeDown = 'NodeDown';
 const NodeDeactivateCompleted = 'NodeDeactivateCompleted';
-
+const NodeRemovedFromCluster = 'NodeRemovedFromCluster';
+const NodeAddedToCluster = 'NodeAddedToCluster';
+const NodeOpenFailed = "NodeOpenFailed";
 export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     static readonly NodesDownLabel = 'Node Down';
     static readonly NodesRemoved = 'Node Removed';
     static readonly NodesAdded = 'Node Added';
-    static readonly transitions = [NodeUp, NodeDown, NodeDeactivateCompleted];
+    static readonly NodesFailedToOpenLabel = 'Nodes Failed to Open';
+    static readonly transitions = [NodeUp, NodeDown, NodeDeactivateCompleted, NodeRemovedFromCluster, NodeAddedToCluster, NodeOpenFailed];
 
-  generateDownNodeEvent(event: NodeEvent, start: string, end: string, intent?: string) {
-    const intentLabel = intent? `with intent disabled ${intent}` : '';
-    const label = `Node ${event.nodeName} down${intentLabel}`;
+  generateNodeOpenFailedEvent(event: NodeEvent) {
     const item = {
-      id: event.eventInstanceId + label,
+      id: event.eventInstanceId + "nodeOpenFailed",
+      start: event.timeStamp,
+      group: NodeTimelineGenerator.NodesFailedToOpenLabel,
+      type: 'point',
+      title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, `${event.nodeName} failed to open with ${event.eventProperties['Error']}.`),
+      className: 'red-point',
+      subgroup: 'stack'
+    };
+    return item;
+  }
+
+  generateDownNodeEvent(event: NodeEvent, start: string, end: string, additionalContext?: string) {
+    const label = `Node ${event.nodeName} down ${additionalContext ? additionalContext : ''}`;
+    const item = {
+      id: event.eventInstanceId + label + event.eventProperties['NodeInstance'],
       content: label,
       start: start,
       end: end,
       group: NodeTimelineGenerator.NodesDownLabel,
       type: 'range',
       title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
-      className: intent ? ' darkorange' : 'red',
+      className: additionalContext ? ' darkorange' : 'red',
       subgroup: 'stack'
     };
     return item;
@@ -352,7 +367,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         events = events.sort((a,b) => Date.parse(b.timeStamp) - Date.parse(a.timeStamp))
 
         const nodeEventMap: Record<string, NodeEvent[]> = {};
-
+        let failedToOpen = false; //only add the failed to open events group if we see any
         //split node events by nodename, much simpler since we dont do any cross node checks
         events.forEach(event => {
           if(!(event.nodeName in nodeEventMap)) {
@@ -367,9 +382,12 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         Object.keys(nodeEventMap).forEach(nodeName => {
           const nodeEvents = nodeEventMap[nodeName];
 
+          //hold onto the last "state" node i.e up or down to put bounds on unexpected down events
+          let lastTransitionEvent: NodeEvent = null;
+
           let lastUpEvent: NodeEvent;
           let lastDownEvent: {event: NodeEvent, end: string} = null;
-
+          let lastRemoved: NodeEvent;
           //repeat item filter
           const seenIds = new Set();
 
@@ -388,19 +406,33 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
               return true;
             }
           }).reverse().forEach(event => {
-            if (event.kind === 'NodeDown') {
-              //push a node down event because we are sure it didnt have a deactivation event
-              if(lastDownEvent) {
-                items.add(this.generateDownNodeEvent(lastDownEvent.event, lastDownEvent.event.timeStamp, lastDownEvent.end));
-                lastUpEvent = null;
-              }
+            if (event.kind === NodeDown) {
+              // if (lastRemoved) {
+              //   items.add(this.generateDownNodeEvent(event, event.timeStamp, lastRemoved.timeStamp, `and removed`));
+              //   lastDownEvent = null;
+              // } else {
+                //push a node down event because we are sure it didnt have a deactivation event
 
-              if(lastUpEvent) {
-                lastDownEvent = {event, end: lastUpEvent.timeStamp};
-                lastUpEvent = null;
-              }else{
-                lastDownEvent = {event, end: endOfRange.toISOString()};
-              }
+                if (lastDownEvent) {
+                  console.log(event, lastDownEvent)
+                  items.add(this.generateDownNodeEvent(event, event.timeStamp, lastDownEvent.end));
+                  lastUpEvent = null;
+                  lastDownEvent = null;
+                }else if (lastUpEvent) {
+                  lastDownEvent = { event, end: lastUpEvent.timeStamp };
+                  lastUpEvent = null;
+                } else {
+                  let end = endOfRange.toISOString()
+                  if(lastTransitionEvent) {
+                    console.log(lastTransitionEvent)
+                    end = lastTransitionEvent.timeStamp;
+                  }
+
+                  lastDownEvent = { event, end };
+
+                }
+              // }
+                lastTransitionEvent = event;
             }
 
             if(event.kind === 'NodeUp') {
@@ -410,6 +442,17 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
               }
 
               lastUpEvent = event;
+              lastTransitionEvent = event;
+            }
+
+            if(event.kind === NodeRemovedFromCluster) {
+              lastRemoved = event;
+            }
+
+            if(event.kind === NodeAddedToCluster) {
+              if(lastDownEvent) {
+                lastDownEvent = null;
+              }
             }
 
             if(event.kind === NodeDeactivateCompleted) {
@@ -421,12 +464,19 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                 lastDownEvent = null;
               }else {
                 if(lastDownEvent) {
-                  items.add(this.generateDownNodeEvent(lastDownEvent.event, lastDownEvent.event.timeStamp, lastDownEvent.end, event.eventProperties.EffectiveDeactivateIntent));
+                  items.add(this.generateDownNodeEvent(lastDownEvent.event, lastDownEvent.event.timeStamp, lastDownEvent.end, `with intent disabled ${event.eventProperties.EffectiveDeactivateIntent}`));
                   items.add(this.generateNodeDisablingEvent(event));
                   lastDownEvent = null;
                   lastUpEvent = null;
+                }else{
+                  items.add(this.generateDownNodeEvent(event, event.eventProperties['StartTime'], event.timeStamp, `with intent disabled ${event.eventProperties.EffectiveDeactivateIntent}`));
                 }
               }
+            }
+
+            if(event.kind === NodeOpenFailed) {
+              items.add(this.generateNodeOpenFailedEvent(event));
+              failedToOpen = true;
             }
           })
 
@@ -442,6 +492,12 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
         const groups = new DataSet<DataGroup>([
             {id: NodeTimelineGenerator.NodesDownLabel, content: NodeTimelineGenerator.NodesDownLabel, subgroupStack: {stack: true}},
         ]);
+
+        if(failedToOpen) {
+          groups.add({
+            id: NodeTimelineGenerator.NodesFailedToOpenLabel, content: NodeTimelineGenerator.NodesFailedToOpenLabel
+          })
+        }
 
         return {
             groups,
