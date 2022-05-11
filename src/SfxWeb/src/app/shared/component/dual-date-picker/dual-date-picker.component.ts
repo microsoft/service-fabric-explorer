@@ -33,8 +33,8 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   ngOnChanges(simple: SimpleChanges) {
     this.toDate = this.dateToNgbDate(this.currentEndDate);
     this.fromDate = this.dateToNgbDate(this.currentStartDate);
-    this.currentStartTime = this.currentStartDate.toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false }); 
-    this.currentEndTime = this.currentEndDate.toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false }); 
+    this.currentStartTime = this.currentStartDate.toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false });
+    this.currentEndTime = this.currentEndDate.toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false });
   }
 
   ngOnInit(){
@@ -65,7 +65,7 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   }
 
   onTimeSelection(date: string, isStartTime: boolean) {
-    const timeToBeUpdated = isStartTime ? this.currentStartDate : this.currentEndDate; let newTime = date.split(":"); let hour = parseInt(newTime[0]); let minute = parseInt(newTime[1]); timeToBeUpdated.setHours(hour); timeToBeUpdated .setMinutes(minute);
+    const timeToBeUpdated = isStartTime ? this.currentStartDate : this.currentEndDate; let newTime = date.split(":"); let hour = parseInt(newTime[0]); let minute = parseInt(newTime[1]); timeToBeUpdated.setHours(hour); timeToBeUpdated.setMinutes(minute);
     this.emitState();
   }
 
