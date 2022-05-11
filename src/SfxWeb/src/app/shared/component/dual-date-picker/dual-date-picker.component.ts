@@ -23,7 +23,8 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
 
   fromDate: NgbDate;
   toDate: NgbDate;
-  currentTime: string;
+  currentStartTime: string;
+  currentEndTime: string;
 
   constructor(public calendar: NgbCalendar, public formatter: NgbDateParserFormatter) {
 
@@ -32,12 +33,13 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   ngOnChanges(simple: SimpleChanges) {
     this.toDate = this.dateToNgbDate(this.currentEndDate);
     this.fromDate = this.dateToNgbDate(this.currentStartDate);
+    this.currentStartTime = this.currentStartDate.toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false }); 
+    this.currentEndTime = this.currentEndDate.toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false }); 
   }
 
   ngOnInit(){
     this.internalMaxDate = this.dateToNgbDate(this.maxDate);
     this.internalMinDate = this.dateToNgbDate(this.minDate);
-    this.currentTime = this.currentStartDate.toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false }); 
   }
 
   dateToNgbDate(date: Date): NgbDate {
@@ -63,7 +65,8 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   }
 
   onTimeSelection(date: string, isStartTime: boolean) {
-    const timeToBeUpdated = isStartTime ? this.currentStartDate : this.currentEndDate; let newTime = date.split(":"); let hour = parseInt(newTime[0]); let minute = parseInt(newTime[1]); timeToBeUpdated.setHours(hour); timeToBeUpdated .setMinutes(minute);
+    const timeToBeUpdated = isStartTime ? this.currentStartDate : this.currentEndDate; let newTime = date.split(":"); 
+    let hour = parseInt(newTime[0]); let minute = parseInt(newTime[1]); timeToBeUpdated.setHours(hour); timeToBeUpdated .setMinutes(minute);
     this.emitState();
   }
 
