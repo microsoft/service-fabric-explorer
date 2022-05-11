@@ -24,7 +24,7 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   fromDate: NgbDate;
   toDate: NgbDate;
   currentStartTime: string;
-  currentEndTime; string;
+  currentEndTime: string;
 
   constructor(public calendar: NgbCalendar, public formatter: NgbDateParserFormatter) {
 
@@ -65,7 +65,11 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   }
 
   onTimeSelection(date: string, isStartTime: boolean) {
-    const timeToBeUpdated = isStartTime ? this.currentStartDate : this.currentEndDate; let newTime = date.split(":"); let hour = parseInt(newTime[0]); let minute = parseInt(newTime[1]); timeToBeUpdated.setHours(hour); timeToBeUpdated.setMinutes(minute);
+    const timeToBeUpdated = isStartTime ? this.currentStartDate : this.currentEndDate; let newTime = date.split(":");
+    let hour = parseInt(newTime[0]);
+    let minute = parseInt(newTime[1]);
+    timeToBeUpdated.setHours(hour);
+    timeToBeUpdated.setMinutes(minute);
     this.emitState();
   }
 
