@@ -26,7 +26,7 @@
   </div>
   <div *ngIf="timeLineEventsData">
     <app-event-store-timeline [events]="timeLineEventsData">
-      <div buttons>
+      <div buttons class="flex-center">
         <span class="mif-info mif-lg correlated-icon" placement="right"  tooltipClass="styled-tooltip"
           ngbTooltip="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
 
@@ -38,16 +38,16 @@
           <label class="flat-button checkbox-push solid-grey" ngbButtonLabel>
             <input ngbButton type="radio" [value]="true"> All
           </label>
+        </div>
 
-          <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
-            <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
-            <div ngbDropdownMenu>
-              <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
-            </div>
+        <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
+          <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
+          <div ngbDropdownMenu>
+            <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
           </div>
         </div>
 
-        <span *ngIf="dataService.isAdvancedModeEnabled() && showAllEvents">
+        <span *ngIf="dataService.isAdvancedModeEnabled() && showAllEvents" class="flex-center">
           <app-input placeholder="query string" [(model)]="transformText">
           </app-input>
           <button class="simple-button" (click)="setTimelineData()">filter</button>
