@@ -22,3 +22,10 @@ input {
     width: 30%;
   }
 }
+
+
+.rate-picker {
+  &:focus {
+    border-color: white;
+  }
+}

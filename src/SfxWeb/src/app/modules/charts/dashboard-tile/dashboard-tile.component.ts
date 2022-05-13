@@ -108,6 +108,8 @@ export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges 
     this.options.title.text = this.data.displayTitle;
     this.options.subtitle.text = this.data.count.toString();
 
+    this.options.accessibility.description = this.data.acessibilityText;
+
     const data = this.getDataSet();
     this.options.tooltip.enabled = data.length === 3;
     (this.options.series[0] as SeriesPieOptions).data = data;

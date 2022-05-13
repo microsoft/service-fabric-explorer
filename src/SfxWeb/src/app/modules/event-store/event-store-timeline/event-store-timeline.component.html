@@ -9,13 +9,11 @@
         <ng-content select="[buttons]"></ng-content>
 
 
-        <div (click)="flipShowControls();" >
-            <div class="simple-button flip-button">
-                <span class="mif-arrow-drop-up mif-2x" style="transition: .5s;"
-                    [ngClass]="{'rotated': showControls}"></span>
-                {{showControls ? '' : 'Show Controls'}}
-            </div>
-        </div>
+        <button class="simple-button flip-button" (click)="flipShowControls();">
+            <span class="mif-arrow-drop-up mif-2x" style="transition: .5s;"
+                [ngClass]="{'rotated': showControls}"></span>
+            {{showControls ? '' : 'Show Controls'}}
+        </button>
 
         <ng-container  *ngIf="showControls">
             <button type="button" class="simple-button margined" (click)="fitData()"  tooltipClass="styled-tooltip"
@@ -49,7 +47,7 @@
             </button>
 
             <div class="margined">
-              <label style="width: 105px; display: flex; gap: 10px; align-items: center;">
+              <label style="width: 105px; display: flex; gap: 10px; align-items: center;" aria-label="Use UTC timezone">
                 <input type="checkbox" [(ngModel)]="isUTC" (ngModelChange)="flipTimeZone()">
                 {{isUTC ? 'Local
                 Time' : 'UTC'}}</label>

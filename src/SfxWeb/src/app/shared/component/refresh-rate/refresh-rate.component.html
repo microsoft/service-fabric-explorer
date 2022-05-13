@@ -3,7 +3,7 @@
     Refresh Rate : {{displayRate === "0" ? 'Off' : displayRate}}
   </div>
   <button (click)="change(0)" class="flat-button rounded-button" ngbTooltip="Turn off refresh rate"  tooltipClass="styled-tooltip"> Off </button>
-  <input [(ngModel)]="refreshRate" type="range" list="tickmarks" step="1" min="0" max="5" (click)="changed()"
+  <input [(ngModel)]="refreshRate" type="range" list="tickmarks" step="1" min="0" max="5" (click)="changed()" class="rate-picker"
     ngbTooltip="Set the refresh rate" aria-label="The rate at which content is refreshed" tooltipClass="styled-tooltip">
   <button (click)="change(5)" class="flat-button rounded-button" ngbTooltip="Set refresh rate to 5 seconds."  tooltipClass="styled-tooltip"> Fast </button>
   <button (click)="forceRefresh()" class="flat-button" data-cy="refresh"
