@@ -1,4 +1,4 @@
-import { Component, OnInit, Injector } from '@angular/core';
+import { Component, OnInit, Injector, Input } from '@angular/core';
 import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -39,7 +39,7 @@ export class RepairTasksComponent extends BaseControllerDirective {
   completedRepairTaskListSettings: ListSettings;
 
   timelineData: ITimelineData;
-  chartJobs: RepairTask[] = [];
+  chartJobs: RepairTask[] = []; 
 
   timelineGenerator: RepairTaskTimelineGenerator;
 

@@ -22,18 +22,16 @@ import { StatusWarningsComponent } from './status-warnings/status-warnings.compo
 import { BackupsComponent } from './backups/backups.component';
 import { NgbDropdownModule, NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { BackupRestoreModule } from 'src/app/modules/backup-restore/backup-restore.module';
-import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
-import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.component';
 import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-deactivation.module';
-import { RepairJobChartComponent } from './repair-job-chart/repair-job-chart.component';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 import { ClustermapModule } from 'src/app/modules/clustermap/clustermap.module';
 import { MetricTileComponent } from './metric-tile/metric-tile.component';
+import { RepairJobsModule } from 'src/app/modules/repair-jobs/repair-jobs.module';
 
 @NgModule({
   declarations: [EssentialsComponent, DetailsComponent, BaseComponent, MetricsComponent, ClustermapComponent,
                  ImagestoreComponent, ManifestComponent, EventsComponent, ActionCreateBackupPolicyComponent,
-                 StatusWarningsComponent, BackupsComponent, RepairTasksComponent, RepairTaskViewComponent, RepairJobChartComponent, MetricTileComponent],
+                 StatusWarningsComponent, BackupsComponent, MetricTileComponent],
   imports: [
     CommonModule,
     ClusterRoutingModule,
@@ -50,7 +48,8 @@ import { MetricTileComponent } from './metric-tile/metric-tile.component';
     UpgradeProgressModule,
     NodeDeactivationModule,
     HealthStateModule,
-    ClustermapModule
+    ClustermapModule,
+    RepairJobsModule
   ]
 })
 export class ClusterModule { }
