@@ -587,7 +587,7 @@ context('Cluster page', () => {
         cy.contains('Completed Repair Tasks').click();
 
         cy.get('tbody > tr').first().within(() => {
-          cy.get('button').click();
+          cy.get('button').first().click();
         });
 
         cy.get('[data-cy=history]').within(() => {
@@ -617,7 +617,7 @@ context('Cluster page', () => {
 
       cy.get('[data-cy=pendingjobs]').within(() => {
         cy.get('tbody > tr').first().within(() => {
-          cy.get('button').click();
+          cy.get('button').first().click();
         });
 
         cy.get('[data-cy=history]').within(() => {
