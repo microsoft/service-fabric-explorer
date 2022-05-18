@@ -14,6 +14,7 @@ import { NodeDeactivationModule } from 'src/app/modules/node-deactivation/node-d
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { ClusterModule } from '../cluster/cluster.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
+import { RepairJobsModule } from 'src/app/modules/repair-jobs/repair-jobs.module';
 
 @NgModule({
   declarations: [BaseComponent, EssentialsComponent, DetailsComponent, EventsComponent],
@@ -27,7 +28,8 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
     NodeDeactivationModule,
     ChartsModule,
     ClusterModule,
-    HealthStateModule
+    HealthStateModule,
+    RepairJobsModule,
   ]
 })
 export class NodeModule { }

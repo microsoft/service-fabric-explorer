@@ -36,17 +36,8 @@
     </app-collapse-container>
   </div>
 
-  <div class="detail-pane essen-pane" *ngIf="repairJobs.length > 0" data-cy="repair-jobs">
-    <app-collapse-container sectionName="Repair Jobs">
-      <div collapse-header>
-        <h4>Repair jobs</h4>
-      </div>
-      <div collapse-body>
-        <app-detail-list *ngIf="node" [list]="repairJobs"
-          [listSettings]="repairJobSettings"></app-detail-list>
-      </div>
-    </app-collapse-container>
-  </div>
+  <a class="mif-info link" routerLink="./events" style="float: right;" title="More Events"></a>
+  <app-repair-tasks *ngIf="node" [chartJobs]="repairJobs" [timelineData]="timelineData" [isShown]="false"></app-repair-tasks>
 
   <div class="detail-pane essen-pane">
     <app-collapse-container sectionName="Unhealthy Evaluations">

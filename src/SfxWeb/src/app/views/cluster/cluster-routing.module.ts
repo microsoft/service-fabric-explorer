@@ -9,7 +9,7 @@ import { ImagestoreComponent } from './imagestore/imagestore.component';
 import { ManifestComponent } from './manifest/manifest.component';
 import { EventsComponent } from './events/events.component';
 import { BackupsComponent } from './backups/backups.component';
-import { RepairTasksComponent } from './repair-tasks/repair-tasks.component';
+import { RepairTasksComponent } from 'src/app/modules/repair-jobs/repair-tasks/repair-tasks.component';
 
 
 const routes: Routes = [{

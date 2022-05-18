@@ -10,6 +10,7 @@ import { NodeBaseControllerDirective } from '../NodeBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
+import { ITimelineData, RepairTaskTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 
 @Component({
   selector: 'app-essentials',
@@ -26,6 +27,8 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
 
   repairJobs = [];
   repairJobSettings: ListSettings;
+  timelineGenerator: RepairTaskTimelineGenerator;
+  timelineData: ITimelineData;
 
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
@@ -34,6 +37,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
 
   setup() {
     this.repairJobSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
+    this.timelineGenerator = new RepairTaskTimelineGenerator();
 
     this.listSettings = this.settings.getNewOrExistingListSettings('apps', ['name'], [
       new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
@@ -103,6 +107,7 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
         if (this.data.clusterManifest.isRepairManagerEnabled) {
           return this.data.repairCollection.refresh().pipe(map(() => {
             this.repairJobs = this.data.repairCollection.getRepairJobsForANode(this.node.name);
+            this.timelineData = this.timelineGenerator.generateTimeLineData(this.repairJobs);
           }));
         }else {
           return of(null);

@@ -1,5 +1,5 @@
 <div *ngIf="repairTaskCollection">
-    <div class="tile-container" data-cy="tiles">
+    <div class="tile-container" data-cy="tiles" *ngIf="isShown">
         <app-dashboard-text-tile
             [barClass]="repairTaskCollection.repairTasks.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
             [count]="repairTaskCollection.repairTasks.length"
@@ -108,7 +108,7 @@
     </div>
 
 
-    <div class="detail-pane essen-pane" data-cy="pendingjobs">
+    <div class="detail-pane essen-pane" data-cy="pendingjobs" *ngIf="isShown">
         <app-collapse-container sectionName="Pending Repair Tasks">
             <h4 collapse-header>
                 Pending Repair Tasks
@@ -118,7 +118,7 @@
         </app-collapse-container>
     </div>
 
-    <div class="detail-pane essen-pane" data-cy="completedjobs">
+    <div class="detail-pane essen-pane" data-cy="completedjobs" *ngIf="isShown">
         <app-collapse-container collapsed=true sectionName="Completed Repair Tasks">
             <h4 collapse-header>
                 Completed Repair Tasks
