@@ -34,8 +34,8 @@
                 type="time"
                 name="dpFromTime"
                 class="input-flat-time clear-disabled height" placeholder="HH:mm" ng-model-options="{ timezone: 'UTC' }"
-                [value]="currentStartTime"
-                (input)="onTimeSelection(dpFromTime.value, true)"
+                [(ngModel)]="currentStartTime"
+                (ngModelChange)="onTimeSelection($event, true)"
                 aria-label="set start time" />
         </div>
         <input #dpFromDate
@@ -58,8 +58,8 @@
                 type="time"
                 name="dpToTime"
                 class="input-flat-time clear-disabled height" placeholder="HH:mm" ng-model-options="{ timezone: 'UTC' }"
-                [value]="currentEndTime"
-                (input)="onTimeSelection(dpToTime.value, false)"
+                [(ngModel)]="currentEndTime"
+                (ngModelChange)="onTimeSelection($event, false)"
                 aria-label="set end time" />
         </div>
         <input #dpToDate
