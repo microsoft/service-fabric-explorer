@@ -455,6 +455,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
     static readonly upgradeDomainLabel = 'Application Upgrade Domains';
     static readonly applicationUpgradeLabel = 'Application Upgrades';
     static readonly applicationPrcoessExitedLabel = 'Application Process Exited';
+    static readonly applicationContainerExitedLabel = 'Container Process Exited';
 
     consume(events: ApplicationEvent[], startOfRange: Date, endOfRange: Date): ITimelineData {
         const items = new DataSet<DataItem>();
@@ -464,6 +465,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         let upgradeApplicationStarted: ApplicationEvent;
         const applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
         const processExitedGroups: Record<string, DataGroup> = {};
+        const containerExitedGroups: Record<string, DataGroup> = {};
 
         events.forEach( event => {
             // we want the oldest upgrade started before finding any previousApplicationUpgrade
@@ -477,6 +479,8 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
                 previousApplicationUpgrade = event;
             }else if (event.kind === 'ApplicationProcessExited') {
                 this.parseApplicationProcessExited(event, items, processExitedGroups);
+            }else if(event.kind === "ApplicationContainerInstanceExited") {
+              this.parseApplicationProcessExited(event, items, containerExitedGroups);
             }
 
             // handle roll backs alone
@@ -517,6 +521,19 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
 
         groups.add(nestedApplicationProcessExited);
 
+        const nestedContainerProcessExited: DataGroup = {
+            id: ApplicationTimelineGenerator.applicationContainerExitedLabel,
+            nestedGroups: [],
+            content: ApplicationTimelineGenerator.applicationContainerExitedLabel,
+        };
+
+          Object.keys(containerExitedGroups).forEach(groupName => {
+            nestedContainerProcessExited.nestedGroups.push(groupName);
+            groups.add(containerExitedGroups[groupName]);
+        });
+
+        groups.add(nestedContainerProcessExited);
+
         return {
             groups,
             items
@@ -542,6 +559,25 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, null, 'Primary swap to ' + label),
         });
     }
+
+    parseContainerExited(event: FabricEventBase, items: DataSet<DataItem>, processExitedGroups: Record<string, DataGroup>) {
+
+      const groupLabel = `${event.eventProperties.ServicePackageName}`;
+      processExitedGroups[groupLabel] = {id: groupLabel, content: groupLabel};
+
+      const start = event.timeStamp;
+      const label = event.eventProperties.ExeName;
+
+      items.add({
+          id: event.eventInstanceId + label,
+          content: '',
+          start,
+          group: groupLabel,
+          type: 'point',
+          className: event.eventProperties.UnexpectedTermination ? 'red-point' : 'green-point',
+          title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp),
+      });
+  }
 }
 
 export class PartitionTimelineGenerator extends TimeLineGeneratorBase<PartitionEvent> {
