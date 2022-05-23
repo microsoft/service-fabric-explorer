@@ -37,7 +37,7 @@ context('Cluster page', () => {
         cy.contains('1')
       })
 
-      cy.get('[title="Repair Jobs In Progress"]').should('not.exist')
+      cy.get('[role="alert"]').should('not.exist')
     })
 
     it('certificate expiring banner', () => {
