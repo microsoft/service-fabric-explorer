@@ -536,7 +536,8 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
 
         return {
             groups,
-            items
+            items,
+            potentiallyMissingEvents: false
         };
     }
 

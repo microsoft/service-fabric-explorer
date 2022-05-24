@@ -1,5 +1,5 @@
-import { NodeTimelineGenerator, EventStoreUtils } from './timelineGenerators';
-import { NodeEvent } from './Events';
+import { NodeTimelineGenerator, EventStoreUtils, ApplicationTimelineGenerator } from './timelineGenerators';
+import { ApplicationEvent, NodeEvent } from './Events';
 
 
 describe('TimelineGenerators', () => {
@@ -215,5 +215,46 @@ describe('TimelineGenerators', () => {
             expect(events.potentiallyMissingEvents).toBeFalse();
         });
     });
-  });
+
+    describe('Application', () => {
+
+      const generator = new ApplicationTimelineGenerator();
+
+      fit('container exit', () => {
+        const endDateRange = new Date('2020-10-17T05:41:22.8992645Z');
+
+        const containerExitEvent = new ApplicationEvent();
+        containerExitEvent.fillFromJSON({
+            "ServiceName": "fabric:/test",
+            "ServicePackageName": "test.HostPkg",
+            "ServicePackageActivationId": "b8505a1e-ac6f-43be-a76a-bc4652c98975",
+            "IsExclusive": true,
+            "CodePackageName": "Code",
+            "EntryPointType": "ContainerHost",
+            "ImageName": "somecontainer.net/image",
+            "ContainerName": "b8505a1e-ac6f-43be-a76a-bc4652c98975",
+            "HostId": "ffa6bc13-b8a2-44e8-8a00-fe707c9b63d7",
+            "ExitCode": 7147,
+            "UnexpectedTermination": false,
+            "StartTime": "2022-05-18T16:42:13Z",
+            "ExitReason": "The process/container terminated with exit code:7147. Restarting the container because HEALTHCHECK for Docker container ContainerName=-a76a-bc4652c98975, reported health_status=unhealthy, TimeStamp=2022-05-23 12:43:48.000.. For information about common termination errors, please visit https://aka.ms/service-fabric-termination-errors",
+            "ApplicationId": "testapp",
+            "Kind": "ApplicationContainerInstanceExited",
+            "EventInstanceId": "0dbbfb66-5e0c-40f0-af6b-249ffb4d5770",
+            "TimeStamp": "2022-05-23T12:44:30.929434Z",
+            "Category": "StateTransition",
+            "HasCorrelatedEvents": false
+        })
+
+        const data = [containerExitEvent];
+        const events = generator.consume(data, startDate, endDateRange);
+        console.log(events)
+
+        expect(events.items.length).toBe(1);
+        expect(events.potentiallyMissingEvents).toBeFalse();
+    });
+    })
+
+});
+
 
