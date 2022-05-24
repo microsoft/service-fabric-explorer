@@ -248,8 +248,6 @@ describe('TimelineGenerators', () => {
 
         const data = [containerExitEvent];
         const events = generator.consume(data, startDate, endDateRange);
-        console.log(events)
-
         expect(events.items.length).toBe(1);
         expect(events.potentiallyMissingEvents).toBeFalse();
     });
