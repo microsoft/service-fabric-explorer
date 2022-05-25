@@ -1,5 +1,5 @@
 <!-- the last tabbed element needs to close the drop down for accessability compliance -->
-<div ngbDropdown placement="bottom-right" (openChange)="closeChange($event)" #myDrop="ngbDropdown">
+<div ngbDropdown placement="bottom-right" (openChange)="closeChange($event)" #myDrop="ngbDropdown" [autoClose]="'outside'">
   <button class="flat-button" ngbDropdownToggle aria-label="settings drop down">
     <span class="mif-tools"></span>
   </button>
@@ -7,8 +7,7 @@
     <ul style="margin: 0px; padding: 0px; min-width: 200px;">
       <li ngbDropdownItem>
         <label>
-          <span tabindex="0" class="mif-info"  tooltipClass="styled-tooltip"
-            ngbTooltip="Advanced mode is only meant to be turned on to perform potentially dangerous operations. Use with caution."></span>
+          <span  tabindex="0" class="mif-info" title="Advanced mode is only meant to be turned on to perform potentially dangerous operations. Use with caution."></span>
           Advanced Mode
           <input type="checkbox" [(ngModel)]="status" (ngModelChange)="change()" [attr.aria-checked]="status">
         </label>
@@ -16,7 +15,7 @@
 
       <li ngbDropdownItem>
         <label>
-          <span tabindex="0" class="mif-info" ngbTooltip="Hide all messages in the bottom right."  tooltipClass="styled-tooltip"></span>
+          <span tabindex="0" class="mif-info" title="Hide all messages in the bottom right."  ></span>
           Suppress Messages
           <input type="checkbox" [(ngModel)]="messageService.suppressMessage"
             [attr.aria-checked]="messageService.suppressMessage">
@@ -25,7 +24,7 @@
 
       <li ngbDropdownItem>
         <label>
-          <span tabindex="0" class="mif-info" title="Set whether telemetry is enabled." style="padding-right: 5px;"></span>
+          <span tabindex="0" class="mif-info" title="Set whether telemetry is enabled." style="padding-right: 5px;" ></span>
           Enable Telemetry
           <input type="checkbox" [(ngModel)]="telemetryService.telemetryEnabled" (ngModelChange)="telemetryChange()">
         </label>

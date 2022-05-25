@@ -17,6 +17,6 @@
   </div>
 </ng-template>
 
-<a *ngIf="data.viewPath; else internal" [routerLink]="data.viewPath">
+<a *ngIf="data.viewPath; else internal" [routerLink]="data.viewPath" [attr.aria-label]="data.acessibilityText">
   <ng-container *ngTemplateOutlet="internal"></ng-container>
 </a>
