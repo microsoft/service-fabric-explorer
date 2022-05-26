@@ -57,12 +57,7 @@ context('node page', () => {
                 cy.contains('Yes');
             })
 
-            cy.get('[data-cy=appsList]').within(() => {
-                checkTableSize(1);
-            })
-
             cy.get('[data-cy=deactivated').should('not.exist');
-            cy.get('[data-cy=repair-jobs').should('not.exist');
 
         })
 
@@ -110,19 +105,6 @@ context('node page', () => {
             cy.get(seedNodeQuoromRef);
           })
       })
-
-        it('repair jobs', () => {
-          addRoute('repairs', 'node-page/repair-jobs.json', apiUrl('/$/GetRepairTaskList?*'))
-
-          cy.visit(`/#/node/${nodeName}`);
-
-          cy.wait("@getrepairs");
-
-          cy.get('[data-cy=repair-jobs]').within(() => {
-              cy.contains("Azure/TenantUpdate/441efe72-c74d-4cfa-84df-515b44c89060/4/1555");
-          })
-      })
-
     })
 
     describe("details", () => {
@@ -134,6 +116,10 @@ context('node page', () => {
             cy.get('[data-cy=navtabs]').within(() => {
                 cy.contains('details').click();
             });
+
+            cy.get('[data-cy=appsList]').within(() => {
+                checkTableSize(1);
+            })
 
             cy.wait("@getnodeLoad");
             cy.url().should('include', 'details');

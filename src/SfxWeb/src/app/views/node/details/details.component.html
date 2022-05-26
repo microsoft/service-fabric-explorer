@@ -1,3 +1,26 @@
+<div class="detail-pane essen-pane">
+    <app-collapse-container sectionName="Unhealthy Evaluations">
+      <div collapse-header>
+        <h4>Health Evaluations</h4>
+      </div>
+      <div collapse-body>
+          <app-health-viewer *ngIf="node" [healthyEvaluations]="node.health.healthEvents" [unhealthyEvaluations]="node.health.unhealthyEvaluations" ></app-health-viewer>
+      </div>
+    </app-collapse-container>
+</div>
+
+<div class="detail-pane essen-pane" *ngIf="deployedApps">
+    <app-collapse-container sectionName="Deployed Applications">
+      <div collapse-header>
+        <h4>Deployed Applications</h4>
+      </div>
+      <div collapse-body>
+        <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings" data-cy="appsList">
+        </app-detail-list>
+      </div>
+    </app-collapse-container>
+</div>
+
 <div class="detail-pane essen-pane" *ngIf="node">
     <app-collapse-container sectionName="Node">
         <h4 collapse-header>

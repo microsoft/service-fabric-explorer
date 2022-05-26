@@ -22,6 +22,14 @@
         middleMargin="0px 0" helpTextLink="https://aka.ms/sf/loadinformation">
         Count of total stateful replicas on the node
       </app-dashboard-text-tile>
+      <app-dashboard-text-tile [count]="node.health.unhealthyEvaluations.length" title="Unhealthy Evaluations"
+      middleMargin="0px 0" route="./details"> 
+      Count of total unhealthy evaluations on the node
+      </app-dashboard-text-tile>
+      <app-dashboard-text-tile [count]="deployedApps.collection.length" title="Deployed Applications"
+      middleMargin="0px 0" route="./details">
+      Count of total deployed applications on the node
+      </app-dashboard-text-tile>
     </ng-container>
   </div>
 
@@ -36,28 +44,5 @@
     </app-collapse-container>
   </div>
 
-  <a class="mif-info link" routerLink="./events" style="float: right;" title="More Events"></a>
-  <app-repair-tasks *ngIf="node" [chartJobs]="repairJobs" [timelineData]="timelineData" [isShown]="false"></app-repair-tasks>
-
-  <div class="detail-pane essen-pane">
-    <app-collapse-container sectionName="Unhealthy Evaluations">
-      <div collapse-header>
-        <h4>Health Evaluations</h4>
-      </div>
-      <div collapse-body>
-          <app-health-viewer *ngIf="node" [healthyEvaluations]="node.health.healthEvents" [unhealthyEvaluations]="node.health.unhealthyEvaluations" ></app-health-viewer>
-      </div>
-    </app-collapse-container>
-  </div>
-
-  <div class="detail-pane essen-pane" *ngIf="deployedApps">
-    <app-collapse-container sectionName="Deployed Applications">
-      <div collapse-header>
-        <h4>Deployed Applications</h4>
-      </div>
-      <div collapse-body>
-        <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings" data-cy="appsList">
-        </app-detail-list>
-      </div>
-    </app-collapse-container>
-  </div>
+  <a class="mif-info link mif-lg" routerLink="./events" style="float: right;" title="More Events"></a>
+  <app-events [isShown]="false"></app-events>

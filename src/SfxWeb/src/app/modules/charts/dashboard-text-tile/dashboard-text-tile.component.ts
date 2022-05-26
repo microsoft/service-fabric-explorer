@@ -13,6 +13,7 @@ export class DashboardTextTileComponent {
   @Input() link: string;
   @Input() middleMargin = '15px 0';
   @Input() helpTextLink = '';
+  @Input() route = '';
   constructor() { }
 
 }
