@@ -3,14 +3,13 @@ import { map, mergeMap } from 'rxjs/operators';
 import { Observable, forkJoin, of } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
-import { ListSettings, ListColumnSetting, ListColumnSettingForLink, ListColumnSettingForBadge, ListColumnSettingWithFilter } from 'src/app/Models/ListSettings';
+import { ListSettings} from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { DeployedApplicationCollection } from 'src/app/Models/DataModels/collections/DeployedApplicationCollection';
 import { NodeBaseControllerDirective } from '../NodeBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { NodeStatusConstants } from 'src/app/Common/Constants';
-import { ITimelineData, RepairTaskTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 
 @Component({
   selector: 'app-essentials',
@@ -25,30 +24,13 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   essentialItems: IEssentialListItem[] = [];
   ringInfo: IEssentialListItem[] = [];
 
-  repairJobs = [];
-  repairJobSettings: ListSettings;
-  timelineGenerator: RepairTaskTimelineGenerator;
-  timelineData: ITimelineData;
-
-
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
   }
 
   setup() {
-    this.repairJobSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
-    this.timelineGenerator = new RepairTaskTimelineGenerator();
-
-    this.listSettings = this.settings.getNewOrExistingListSettings('apps', ['name'], [
-      new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
-      new ListColumnSetting('raw.TypeName', 'Application Type'),
-      new ListColumnSettingForBadge('health.healthState', 'Health State'),
-      new ListColumnSettingWithFilter('raw.Status', 'Status'),
-    ]);
-
     this.essentialItems = [];
     this.ringInfo = [];
-    this.repairJobs = [];
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any>{
@@ -102,16 +84,6 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       this.node.loadInformation.refresh(messageHandler),
       this.node.deployedApps.refresh(messageHandler).pipe(map(() => {
         this.deployedApps = this.node.deployedApps;
-      })),
-      this.data.clusterManifest.ensureInitialized().pipe(mergeMap(() => {
-        if (this.data.clusterManifest.isRepairManagerEnabled) {
-          return this.data.repairCollection.refresh().pipe(map(() => {
-            this.repairJobs = this.data.repairCollection.getRepairJobsForANode(this.node.name);
-            this.timelineData = this.timelineGenerator.generateTimeLineData(this.repairJobs);
-          }));
-        }else {
-          return of(null);
-        }
       }))
 
     ]);

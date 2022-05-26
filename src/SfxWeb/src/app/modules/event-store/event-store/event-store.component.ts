@@ -68,6 +68,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
   public startDate: Date;
   public endDate: Date;
+  @Input() isShown = true;
 
   ngOnInit() {
       this.pshowAllEvents = this.checkAllOption();

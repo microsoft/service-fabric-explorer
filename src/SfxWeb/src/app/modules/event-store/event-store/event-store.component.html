@@ -38,13 +38,6 @@
           <label class="flat-button checkbox-push solid-grey" ngbButtonLabel>
             <input ngbButton type="radio" [value]="true"> All
           </label>
-
-          <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
-            <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
-            <div ngbDropdownMenu>
-              <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
-            </div>
-          </div>
         </div>
 
         <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
@@ -65,7 +58,7 @@
   </div>
 </div>
 
-<div class="essen-pane">
+<div *ngIf="isShown" class="essen-pane">
   <div style="height: 20px;">
     <a class="link" style="float: right;"> Why is data missing?
       <span class="mif-info"

@@ -10,11 +10,6 @@ import { RepairTaskViewComponent } from './repair-task-view/repair-task-view.com
 import { RepairJobChartComponent } from './repair-job-chart/repair-job-chart.component';
 import { RouterModule } from '@angular/router';
 
-//Move RepairTasksComponent, RepairTaskViewComponent, RepairJobChartComponent all to this module folder and declare those 3 components under declaration
-//Remove these 3 components from clusterModule as well
-//Also make sure to export the 3 components as well
-// Will mostly likely insert code for Repair jobs charts in essentials.component.html and will have to import in node.module.ts
-
 @NgModule({
   declarations: [RepairTasksComponent, RepairTaskViewComponent, RepairJobChartComponent],
   imports: [

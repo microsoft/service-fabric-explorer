@@ -9,6 +9,9 @@
                       <a target="_blank" style="float: right;" [href]="helpTextLink" *ngIf="helpTextLink" [attr.aria-label]="'learn about' + title">
                         <span class="mif-info link"></span>
                       </a>
+                      <a [routerLink]="route" style="float: right;" *ngIf="route" [attr.aria-label]="title">
+                        <span class="mif-info link"></span>
+                      </a>
                     </div>
                     <div class="dashboard-tile-number" [style.margin]="middleMargin">{{count}}</div>
                     <ng-content></ng-content>
