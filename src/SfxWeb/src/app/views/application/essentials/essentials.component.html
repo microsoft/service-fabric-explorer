@@ -24,29 +24,6 @@
         </div>
         <div collapse-body>
           <app-upgrade-info [upgradeProgress]="upgradeProgress"></app-upgrade-info>
-            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.raw.FailureReason !== 'None'">
-                <h4>Upgrade Failure</h4>
-                <div class="table-responsive">
-                    <table class="table detail-table">
-                        <tbody>
-                            <tr>
-                                <th>Failure Reason</th>
-                                <td><img class="badge-icon" src="images/badge-error.svg"><span> {{upgradeProgress.raw.FailureReason}}</span></td>
-                            </tr>
-                            <tr>
-                                <th>Failure Timestamp UTC</th>
-                                <td>{{upgradeProgress.failureTimestampUtc}}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                </div>
-                <h5>Upgrade Domain Progress At Failure</h5>
-                <app-detail-view-part [data]="upgradeProgress.raw.UpgradeDomainProgressAtFailure"></app-detail-view-part>
-            </div>
-            <div class="detail-pane essen-pane" *ngIf="upgradeProgress.unhealthyEvaluations.length > 0">
-                <h4>Unhealthy Evaluations (Upgrade)</h4>
-                <app-detail-list [list]="upgradeProgress.unhealthyEvaluations" [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
-            </div>
         </div>
     </app-collapse-container>
 </div>
