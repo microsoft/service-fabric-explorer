@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, Output, EventEmitter, DoCheck, Input, AfterViewInit} from '@angular/core';
 import { TreeService } from 'src/app/services/tree.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { RestClientService } from 'src/app/services/rest-client.service';
@@ -49,5 +49,10 @@ export class TreeViewComponent implements DoCheck, AfterViewInit {
 
   sendHealthStateTelem() {
     this.telemService.trackActionEvent(TelemetryEventNames.SortByHealth, null, TelemetryEventNames.SortByHealth);
+  }
+
+  goToTroubleshootingGuides(): void {
+    window.open('https://aka.ms/sfxtroubleshootingguides', '_blank');
+    this.telemService.trackActionEvent(TelemetryEventNames.TroubleShootingGuides, null, TelemetryEventNames.TroubleShootingGuides);
   }
 }
