@@ -27,6 +27,7 @@ export class DoubleSliderComponent implements OnChanges, AfterViewInit {
   constructor() { }
 
   ngAfterViewInit() {
+
     this.slider = create(this.container.nativeElement, {
         format: {
             to : num => {

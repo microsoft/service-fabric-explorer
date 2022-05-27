@@ -445,11 +445,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                     console.log(lastTransitionEvent)
                     end = lastTransitionEvent.timeStamp;
                   }
-
                   lastDownEvent = { event, end };
-
                 }
-
                 lastTransitionEvent = event;
             }
 
