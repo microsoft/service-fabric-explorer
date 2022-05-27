@@ -48,6 +48,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
         locale: 'en_US'
     });
 
+    //dont let the window go below 3 hours on initial load, but allow scrolling in after that.
     const cb = () => {
       this.firstEventsSet = false;
       this.timeline.setOptions({
@@ -127,7 +128,7 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
                 maxHeight: '700px',
                 verticalScroll: true,
                 width: '95%',
-                zoomMin: this.firstEventsSet ? 10800000 : 60000,
+                zoomMin: this.firstEventsSet ? 10800000 : 60000
             });
 
             if (this.fitOnDataChange) {

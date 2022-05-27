@@ -38,7 +38,7 @@ export class DoubleSliderComponent implements OnChanges, AfterViewInit {
         tooltips: true,
         connect: true,
         range: {
-            min: TimeUtils.AddDays(new Date(), -60).getTime(),
+            min: TimeUtils.AddDays(new Date(), -30).getTime(),
             max: new Date().getTime(),
         },
         handleAttributes: [

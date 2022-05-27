@@ -95,7 +95,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       const todaysDate = new Date();
       this.startDate = TimeUtils.AddDays(todaysDate, -7);
       this.endDate = this.startDateMax = todaysDate;
-      this.startDateMin = TimeUtils.AddDays(todaysDate, -60);
+      this.startDateMin = TimeUtils.AddDays(todaysDate, -30);
   }
 
   public setDate(date: IQuickDates) {

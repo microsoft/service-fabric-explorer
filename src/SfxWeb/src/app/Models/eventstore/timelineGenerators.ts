@@ -335,7 +335,6 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
     const label = `Node ${event.nodeName} ${added ? 'added to' : 'removed from'} cluster`;
     const item = {
       id: event.eventInstanceId + label + event.eventProperties['NodeInstance'],
-      // content: label,
       start: event.timeStamp,
       group: added ? NodeTimelineGenerator.NodesAddedToClusterLabel : NodeTimelineGenerator.NodesRemovedFromClusterLabel,
       type: 'point',
@@ -348,7 +347,6 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
 
   generateDownNodeEvent(event: NodeEvent, start: string, end: string, additionalContext?: string) {
     const label = `Node ${event.nodeName} down${additionalContext ? (" " + additionalContext) : ''}`;
-    // console.log(event.eventInstanceId + label + event.eventProperties['NodeInstance']);
     const item = {
       id: event.eventInstanceId + label + event.eventProperties['NodeInstance'],
       content: label,
@@ -451,7 +449,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
                   lastDownEvent = { event, end };
 
                 }
-              // }
+
                 lastTransitionEvent = event;
             }
 
