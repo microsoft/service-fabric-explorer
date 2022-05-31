@@ -17,7 +17,8 @@ export default function BulkClusterList(props: BulkClusterListProps) {
     const [formattedList, setList] = useState(JSON.stringify(props.clusterList.map(cluster => ({
         name: cluster.name,
         url: cluster.url,
-        authentication: cluster.authentication
+        authentication: cluster.authentication,
+        folder: cluster.folder
     })), null, 4));
 
     const [data, setData] = useState(formattedList);

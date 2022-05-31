@@ -63,6 +63,10 @@ export default function AddCluster(props: AddClusterProps) {
             }
         }
 
+        if(folder.length === 0 ) {
+            errors.push("Folder name must not be empty")
+        }
+
         return errors;
     }
 
@@ -84,7 +88,7 @@ export default function AddCluster(props: AddClusterProps) {
             <span>Name</span>
             <input className="input-flat" onChange={(input) => setName(input.currentTarget.value)} value={name}></input>
         </div>
-        <div className="input-item underline">
+        <div className="input-item">
             <span>Url</span>
             <input className="input-flat" onChange={(input) => setUrl(input.currentTarget.value)} value={url}></input>
         </div>

@@ -11,6 +11,7 @@ import { unsecureAuthOption } from './auth/unsecure';
 import { CertificateHandlerFactory } from './auth/certificate';
 import { NotificationManager } from './notificationManager';
 import { Logger } from './logger';
+import { ExtensionsLoader } from './extensionLoader';
 
 //TODO TEMP
 process.env.NODE_TLS_REJECT_UNAUTHORIZED = '0';
@@ -158,7 +159,9 @@ const createWindow = async () => {
     bw.webContents.send(MainWindowEvents.notificationEvent, data);
   })
 
-  //TODO load extensions here
+  const extensionLoader = new ExtensionsLoader(logger, "D:\\sfx-repo\\src\\standalone-v2\\src\\extensions", {});
+  const extensionResults = await extensionLoader.loadExtensions();
+  console.log(extensionResults);
 
   await mainWindow.loadAsync();
   clusterManager.emitState();
