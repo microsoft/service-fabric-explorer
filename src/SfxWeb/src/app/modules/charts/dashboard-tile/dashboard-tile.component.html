@@ -3,6 +3,9 @@
         <div class="dashboard-donut-chart chart-wrapper">
             <div #chart></div>            
         </div>
+        <a [routerLink]="route" style="float: right;" *ngIf="route" [attr.aria-label]="title">
+            <span class="mif-info link"></span>
+        </a>
         <div class="dashboard-datapoints">
             <div class="dashboard-datapoint" *ngFor="let dataPoint of data.dataPoints; let i = index">
                 <div class="dashboard-datapoint-leftbar" [ngClass]="dataPoint.state.badgeClass"></div>

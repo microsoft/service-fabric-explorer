@@ -15,7 +15,7 @@
         <h4>Deployed Applications</h4>
       </div>
       <div collapse-body>
-        <app-detail-list [list]="deployedApps.collection" [listSettings]="listSettings" data-cy="appsList">
+        <app-detail-list [list]="deployedApps.data.apps.collection" [listSettings]="listSettings" data-cy="appsList">
         </app-detail-list>
       </div>
     </app-collapse-container>

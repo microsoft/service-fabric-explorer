@@ -35,6 +35,7 @@ export class RestClientService {
   private static defaultApiVersion = '3.0';
   private static apiVersion40 = '4.0';
   private static apiVersion60 = '6.0';
+  private static apiVersion61 = '6.1';
   private static apiVersion64 = '6.4';
   private static apiVersion65 = '6.5';
   private static apiVersion72 = '7.2';
@@ -164,8 +165,8 @@ export class RestClientService {
   }
 
   public getDeployedApplications(nodeName: string, messageHandler?: IResponseMessageHandler): Observable<IRawDeployedApplication[]> {
-      const url = 'Nodes/' + encodeURIComponent(nodeName) + '/$/GetApplications';
-      return this.get(this.getApiUrl(url), 'Get applications', messageHandler);
+      const url = 'Nodes/' + encodeURIComponent(nodeName) + '/$/GetApplications?IncludeHealthState=true';
+      return this.get(this.getApiUrl(url, RestClientService.apiVersion61), 'Get applications', messageHandler);
   }
 
   public getDeployedApplication(nodeName: string, applicationId: string, messageHandler?: IResponseMessageHandler): Observable<IRawDeployedApplication> {

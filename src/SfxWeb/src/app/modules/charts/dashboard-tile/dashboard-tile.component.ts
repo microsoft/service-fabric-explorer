@@ -10,6 +10,8 @@ import { Chart, Options, chart, PointOptionsObject, SeriesPieOptions } from 'hig
 export class DashboardTileComponent implements OnInit, AfterViewInit, OnChanges {
 
   @Input() data: IDashboardViewModel;
+  @Input() route = '';
+  @Input() title: string;
 
   @ViewChild('chart') private chartContainer: ElementRef;
 

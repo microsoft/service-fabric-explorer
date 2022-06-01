@@ -1,5 +1,5 @@
 import { Component, Injector } from '@angular/core';
-import { map, mergeMap } from 'rxjs/operators';
+import { map } from 'rxjs/operators';
 import { Observable, forkJoin, of } from 'rxjs';
 import { DataService } from 'src/app/services/data.service';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -9,7 +9,8 @@ import { DeployedApplicationCollection } from 'src/app/Models/DataModels/collect
 import { NodeBaseControllerDirective } from '../NodeBase';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
-import { NodeStatusConstants } from 'src/app/Common/Constants';
+import { DashboardViewModel, IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
+import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
 
 @Component({
   selector: 'app-essentials',
@@ -23,6 +24,9 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
 
   essentialItems: IEssentialListItem[] = [];
   ringInfo: IEssentialListItem[] = [];
+
+  deployedDashboard: IDashboardViewModel;
+  healthStatus: ITextAndBadge;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -84,6 +88,25 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       this.node.loadInformation.refresh(messageHandler),
       this.node.deployedApps.refresh(messageHandler).pipe(map(() => {
         this.deployedApps = this.node.deployedApps;
+        let warning = 0;
+        let ok = 0;
+        let error = 0;
+        for(let i = 0; i <  this.deployedApps.data.apps.collection.length; i++) {
+          this.healthStatus = this.deployedApps.data.apps.collection[i].data.apps.healthState;
+          if(this.healthStatus.text == 'Error') {
+            error++;
+          } else if(this.healthStatus.text == 'Warning') {
+            warning++;
+            console.log('Warning: ', warning);
+          } else if(this.healthStatus.text == 'OK') {
+            ok++;
+          }
+        }
+        this.deployedDashboard = DashboardViewModel.fromHealthStateCount("Deployed", "Deployed", false, {
+          ErrorCount: error,
+          WarningCount: warning,
+          OkCount: ok
+       });
       }))
 
     ]);

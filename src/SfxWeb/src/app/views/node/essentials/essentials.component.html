@@ -26,10 +26,8 @@
       middleMargin="0px 0" route="./details"> 
       Count of total unhealthy evaluations on the node
       </app-dashboard-text-tile>
-      <app-dashboard-text-tile [count]="deployedApps.collection.length" title="Deployed Applications"
-      middleMargin="0px 0" route="./details">
-      Count of total deployed applications on the node
-      </app-dashboard-text-tile>
+      <app-dashboard-tile [data]="deployedDashboard" *ngIf="deployedDashboard" route="./details"
+      title="Deployed Applications"></app-dashboard-tile>
     </ng-container>
   </div>
 
