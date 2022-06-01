@@ -1,14 +1,23 @@
-import { Component, OnInit, ViewChild } from '@angular/core';
+import { Component, ElementRef, HostListener, OnInit, QueryList, ViewChild, ViewChildren } from '@angular/core';
 import { StorageService } from 'src/app/services/storage.service';
 import { Constants, TelemetryEventNames } from 'src/app/Common/Constants';
 import { MessageService } from 'src/app/services/message.service';
 import { SettingsService } from 'src/app/services/settings.service';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
-import { NgbDropdown } from '@ng-bootstrap/ng-bootstrap';
+import { NgbDropdown, NgbTooltip } from '@ng-bootstrap/ng-bootstrap';
 import { Platform } from '@angular/cdk/platform';
 import { Utils } from 'src/app/Utils/Utils';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { environment } from 'src/environments/environment';
+
+// let isParent = (element: Element, s: Element) => {
+//   let el = element;
+//   do {
+//     if (Element.prototype.matches.call(element, s)) return element;
+//     el = (element.parentElement || element.parentNode) as Element;
+//   } while (element !== null && element.nodeType === 1);
+//   return null;
+// };
 
 @Component({
   selector: 'app-advanced-option',
@@ -20,13 +29,15 @@ export class AdvancedOptionComponent implements OnInit {
 
   status = false;
   @ViewChild(NgbDropdown, {static: true}) dropdown: NgbDropdown;
+  @ViewChildren(NgbTooltip) tooltips: QueryList<NgbTooltip>;
 
   constructor(public storage: StorageService,
               public messageService: MessageService,
               public settingsService: SettingsService,
               private liveAnnouncer: LiveAnnouncer,
               public platform: Platform,
-              public telemetryService: TelemetryService) { }
+              public telemetryService: TelemetryService,
+              private elRef: ElementRef) { }
 
   ngOnInit() {
     this.status = this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
@@ -41,6 +52,22 @@ export class AdvancedOptionComponent implements OnInit {
     if (!Utils.isIEOrEdge) {
       this.liveAnnouncer.announce(`Settings dropdown button is now ${state ? 'Expanded' : 'Collapsed'}`);
     }
+  }
+
+  @HostListener("document:click", ["$event"])
+  handleClickEvent(event: PointerEvent) {
+    if(this.dropdown.isOpen() && event.target['closest']("#container") &&
+       this.tooltips.toArray().every(tooltip => !tooltip.isOpen())) {
+        this.dropdown.close();
+    }
+
+  }
+
+  @HostListener("document:keyup", ["$event"])
+  handleEscapeKey(event: KeyboardEvent) {
+    if(event.key == "Escape") {
+    }
+    console.log(event.key)
   }
 
   pageSize(size) {
