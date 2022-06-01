@@ -1,30 +1,20 @@
 <div class="essen-pane detail-pane">
   <div class="flex-container" style="margin-bottom: 10px; flex-wrap: wrap; gap: 10px;">
     <div class="flex-container wrap">
-      <div ngbDropdown style="margin-right: 10px;"  *ngIf="optionsConfig">
-        <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
-        <div ngbDropdownMenu>
-          <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
-        </div>
-      </div>
+        <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (dateChanged)="setNewDates($event)"
+              [currentStartDate]="startDate" [currentEndDate]="endDate"></app-dual-date-picker>
       <div ngbDropdown style="margin-right: 10px;">
-        <button class="simple-button" ngbDropdownToggle>Date Picker </button>
+        <button class="simple-button" ngbDropdownToggle>Quick Dates </button>
         <div ngbDropdownMenu>
           <button *ngFor="let date of quickDates" ngbDropdownItem (click)="setDate(date)">
             {{date.display}}
           </button>
-          <div class="underline" style="width: 100%; height: 2px;"></div>
-          <div style="width: 180px; margin: 5px;">
-            <app-dual-date-picker [minDate]="startDateMin" [maxDate]="startDateMax" (dateChanged)="setNewDates($event)"
-              [currentStartDate]="startDate" [currentEndDate]="endDate"></app-dual-date-picker>
-          </div>
-
         </div>
       </div>
-    </div>
-    <div class="slider-wrapper">
-      <app-double-slider [startDate]="startDate" [endDate]="endDate" (dateChanged)="setNewDates($event)">
-      </app-double-slider>
+      <div class="slider-wrapper">
+        <app-double-slider [startDate]="startDate" [endDate]="endDate" (dateChanged)="setNewDates($event)">
+        </app-double-slider>
+      </div>
     </div>
 
     <div>
@@ -36,7 +26,7 @@
   </div>
   <div *ngIf="timeLineEventsData">
     <app-event-store-timeline [events]="timeLineEventsData">
-      <div buttons>
+      <div buttons class="flex-center">
         <span class="mif-info mif-lg correlated-icon" placement="right"  tooltipClass="styled-tooltip"
           ngbTooltip="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
 
@@ -50,7 +40,14 @@
           </label>
         </div>
 
-        <span *ngIf="dataService.isAdvancedModeEnabled() && showAllEvents">
+        <div ngbDropdown style="margin-left: 10px;"  *ngIf="optionsConfig">
+          <button class="simple-button" ngbDropdownToggle sectionName="select-event-types">Event Types </button>
+          <div ngbDropdownMenu>
+            <app-option-picker [optionsConfig]="optionsConfig" (selectedOption)="processData($event)" [listEventStoreData]="listEventStoreData"></app-option-picker>
+          </div>
+        </div>
+
+        <span *ngIf="dataService.isAdvancedModeEnabled() && showAllEvents" class="flex-center">
           <app-input placeholder="query string" [(model)]="transformText">
           </app-input>
           <button class="simple-button" (click)="setTimelineData()">filter</button>
