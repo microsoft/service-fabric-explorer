@@ -33,7 +33,7 @@
       "CreatedUtcTimestamp": "2022-03-28T22:28:05.954Z",
       "ClaimedUtcTimestamp": "2022-03-28T22:28:05.954Z",
       "PreparingUtcTimestamp": "2022-03-28T22:28:05.954Z",
-      "ApprovedUtcTimestamp": "2022-03-28T22:28:06.220Z",
+      "ApprovedUtcTimestamp": "0001-01-01T00:00:00.000Z",
       "ExecutingUtcTimestamp": "0001-01-01T00:00:00.000Z",
       "RestoringUtcTimestamp": "0001-01-01T00:00:00.000Z",
       "CompletedUtcTimestamp": "0001-01-01T00:00:00.000Z",

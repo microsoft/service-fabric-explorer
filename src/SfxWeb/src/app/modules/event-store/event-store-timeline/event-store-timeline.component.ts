@@ -47,6 +47,16 @@ export class EventStoreTimelineComponent implements AfterViewInit, OnChanges {
     this.timeline = new Timeline(this.container.nativeElement, items, groups, {
         locale: 'en_US'
     });
+
+    //dont let the window go below 3 hours on initial load, but allow scrolling in after that.
+    const cb = () => {
+      this.firstEventsSet = false;
+      this.timeline.setOptions({
+        zoomMin: 60000,
+      });
+      this.timeline.off('rangechange', cb)
+    }
+    this.timeline.on('rangechange', cb)
     this.updateList(this.events);
   }
 
