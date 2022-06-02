@@ -6,6 +6,7 @@ import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { Data } from '@microsoft/applicationinsights-common';
 
 /*
     NOTES:
@@ -552,10 +553,6 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         let previousApplicationUpgrade: ApplicationEvent;
         let upgradeApplicationStarted: ApplicationEvent;
         
-        if (events.length > 0) {
-            let random_idx = Math.floor(Math.random() * events.length);
-            let simulEvents = this.getSimultaneousEventsForEvent(events[random_idx], events);
-        }
         const applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
         const processExitedGroups: Record<string, DataGroup> = {};
         const containerExitedGroups: Record<string, DataGroup> = {};
@@ -627,6 +624,16 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
 
         groups.add(nestedContainerProcessExited);
 
+        if (events.length > 0) {
+            let randomIdx = Math.floor(Math.random() * events.length);
+            let simulEvents = this.getSimultaneousEventsForEvent(events[randomIdx], items);
+            let visEvents = [];
+            simulEvents.forEach(event => {
+                visEvents.push(event);
+            });
+            console.log(visEvents);
+        }
+
         return {
             groups,
             items,
@@ -634,78 +641,26 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         };
     }
 
-    getSimultaneousEventsForEvent(currAppEvent: ApplicationEvent, appEvents: ApplicationEvent[]) {
+    getSimultaneousEventsForEvent(currAppEvent: ApplicationEvent, appEvents: DataSet<DataItem>) {
         let simulEvents = new DataSet<DataItem>();
-        let currTimestamp = currAppEvent.timeStamp;
-        
-        let upgradeApplicationStarted: ApplicationEvent;
-        let previousApplicationUpgrade: ApplicationEvent;
-        let applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
+        let currDate = new Date(currAppEvent.timeStamp);
 
-        appEvents.forEach(appEvent => {
-            if ( (appEvent.kind === "ApplicationUpgradeStarted")) {
-                upgradeApplicationStarted = appEvent;
-            } else if (appEvent.kind === "ApplicationUpgradeDomainCompleted") {
-                let [start, end] = this.getUpgradeDomainTimes(appEvent);
-                if (start <= currTimestamp && currTimestamp <= end) simulEvents.add(appEvent);
-            } else if (appEvent.kind === "ApplicationUpgradeCompleted") {
-                let [start, end] = this.getUpgradeTimes(appEvent);
-                if (start <= currTimestamp && currTimestamp <= end) simulEvents.add(appEvent);
-                upgradeApplicationStarted = null;
-            } else if (appEvent.kind === "ApplicationProcessExited" || appEvent.kind === "ApplicationDeleted") {
-                // configurable window in milliseconds
-                let timeWindowInMs = 10000;
-                let currDate = new Date(currTimestamp);
-                let start = new Date((currDate).getTime() - timeWindowInMs).toISOString();
-                let end = new Date((currDate).getTime() + timeWindowInMs).toISOString();
-                if (start <= appEvent.timeStamp && appEvent.timeStamp <= end) simulEvents.add(appEvent);
+        appEvents.forEach(appEvent => {            
+            if (appEvent.start) {
+                let startDate = new Date(appEvent.start);                
+                if (appEvent.end) {
+                    let endDate = new Date(appEvent.end);
+                    if (startDate <= currDate && currDate <= endDate) simulEvents.add(appEvent);
+                } else {
+                    let timeWindowInMs = 10000;
+                    let start = new Date(currDate.getTime() - timeWindowInMs).toISOString();
+                    let end = new Date(currDate.getTime() + timeWindowInMs).toISOString();
+                    if (start <= appEvent.timeStamp && appEvent.timeStamp <= end) simulEvents.add(appEvent);
+                }
             }
-
-            //handle roll backs alone                
-            if (appEvent.kind === "ApplicationUpgradeRollbackCompleted") {
-                previousApplicationUpgrade = appEvent;
-                applicationRollBacks[appEvent.eventInstanceId] = {complete: appEvent};
-            }else if (appEvent.kind === "ApplicationUpgradeRollbackStarted" && appEvent.eventInstanceId in applicationRollBacks) {
-                applicationRollBacks[appEvent.eventInstanceId]["start"] = appEvent;
-            }
-        })
-
-        Object.keys(applicationRollBacks).forEach(eventInstanceId => {
-            const data = applicationRollBacks[eventInstanceId];
-            let start = data.start.timeStamp;
-            let end = data.complete.timeStamp;
-            if (start <= currTimestamp && currTimestamp <= end) simulEvents.add(data);
         });
 
-        // if an application has started but there has been no completion (and its timestamp is before current one), add it!
-        if (upgradeApplicationStarted && upgradeApplicationStarted.timeStamp < currTimestamp) {
-            simulEvents.add(upgradeApplicationStarted)
-        }
-
-        let vis_arr = [];
-        simulEvents.forEach(event => {
-            vis_arr.push(event);
-        });
-        
         return simulEvents;
-    }
-
-    getUpgradeDomainTimes(event: ApplicationEvent) {
-        const end = event.timeStamp;
-        const endDate = new Date(end);
-        const duration = event.eventProperties["UpgradeDomainElapsedTimeInMs"];
-
-        const start = new Date(endDate.getTime() - duration).toISOString();
-        const label = event.eventProperties["UpgradeDomains"];
-        return [start, end];
-    }
-
-    getUpgradeTimes(event: ApplicationEvent) {
-        const end = event.timeStamp;
-        const endDate = new Date(end);
-        const duration = event.eventProperties["OverallUpgradeElapsedTimeInMs"];
-        const start = new Date(endDate.getTime() - duration).toISOString();
-        return [start, end];
     }
 
     parseApplicationProcessExited(event: FabricEventBase, items: DataSet<DataItem>, processExitedGroups: Record<string, DataGroup>) {
