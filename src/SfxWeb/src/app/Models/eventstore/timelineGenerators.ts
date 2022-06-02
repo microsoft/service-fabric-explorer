@@ -551,6 +551,10 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         // state necessary for some events
         let previousApplicationUpgrade: ApplicationEvent;
         let upgradeApplicationStarted: ApplicationEvent;
+        
+        if (events.length > 0) {
+            let simulEvents = this.getSimultaneousEventsForEvent(events[0], events);
+        }
         const applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
         const processExitedGroups: Record<string, DataGroup> = {};
         const containerExitedGroups: Record<string, DataGroup> = {};
@@ -629,6 +633,64 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         };
     }
 
+    getSimultaneousEventsForEvent(currAppEvent: ApplicationEvent, appEvents: ApplicationEvent[]) {
+        let simulEvents = new DataSet<DataItem>();
+        let timestamp = currAppEvent.timeStamp;
+        
+        let upgradeApplicationStarted: ApplicationEvent;
+        let previousApplicationUpgrade: ApplicationEvent;
+        let applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
+
+        appEvents.forEach(appEvent => {
+            if ( (appEvent.kind === "ApplicationUpgradeStarted")) {
+                upgradeApplicationStarted = appEvent;
+            } else if (appEvent.kind === "ApplicationUpgradeDomainCompleted") {
+                let [start, end] = this.getUpgradeDomainTimes(appEvent);
+                if (start <= timestamp && timestamp <= end) simulEvents.add(appEvent);
+            } else if (appEvent.kind === "ApplicationUpgradeCompleted") {
+                let [start, end] = this.getUpgradeTimes(appEvent);
+                if (start <= timestamp && timestamp <= end) simulEvents.add(appEvent);
+                upgradeApplicationStarted = null;
+            } else if (appEvent.kind === "ApplicationProcessExited") {
+                // not sure how to handle this yet
+            }
+
+            //handle roll backs alone                
+            if (appEvent.kind === "ApplicationUpgradeRollbackCompleted") {
+                previousApplicationUpgrade = appEvent;
+                applicationRollBacks[appEvent.eventInstanceId] = {complete: appEvent};
+            }else if (appEvent.kind === "ApplicationUpgradeRollbackStarted" && appEvent.eventInstanceId in applicationRollBacks) {
+                applicationRollBacks[appEvent.eventInstanceId]["start"] = appEvent;
+            }
+        })
+
+        Object.keys(applicationRollBacks).forEach(eventInstanceId => {
+            const data = applicationRollBacks[eventInstanceId];
+            let start = data.start.timeStamp;
+            let end = data.complete.timeStamp;
+            if (start <= timestamp && timestamp <= end) simulEvents.add(data);
+        });
+        
+        return simulEvents;
+    }
+
+    getUpgradeDomainTimes(event: ApplicationEvent) {
+        const end = event.timeStamp;
+        const endDate = new Date(end);
+        const duration = event.eventProperties["UpgradeDomainElapsedTimeInMs"];
+
+        const start = new Date(endDate.getTime() - duration).toISOString();
+        const label = event.eventProperties["UpgradeDomains"];
+        return [start, end];
+    }
+
+    getUpgradeTimes(event: ApplicationEvent) {
+        const end = event.timeStamp;
+        const endDate = new Date(end);
+        const duration = event.eventProperties["OverallUpgradeElapsedTimeInMs"];
+        const start = new Date(endDate.getTime() - duration).toISOString();
+        return [start, end];
+    }
 
     parseApplicationProcessExited(event: FabricEventBase, items: DataSet<DataItem>, processExitedGroups: Record<string, DataGroup>) {
 
