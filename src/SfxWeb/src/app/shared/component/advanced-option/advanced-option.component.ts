@@ -56,18 +56,18 @@ export class AdvancedOptionComponent implements OnInit {
 
   @HostListener("document:click", ["$event"])
   handleClickEvent(event: PointerEvent) {
-    if(this.dropdown.isOpen() && event.target['closest']("#container") &&
-       this.tooltips.toArray().every(tooltip => !tooltip.isOpen())) {
+    if(this.dropdown.isOpen() && !event.target['closest']("#container")) {
         this.dropdown.close();
     }
-
   }
 
   @HostListener("document:keyup", ["$event"])
   handleEscapeKey(event: KeyboardEvent) {
-    if(event.key == "Escape") {
+    if (event.key == "Escape") {
+      if (this.dropdown.isOpen() && this.tooltips.toArray().every(tooltip => !tooltip.isOpen())) {
+        this.dropdown.close();
+      }
     }
-    console.log(event.key)
   }
 
   pageSize(size) {

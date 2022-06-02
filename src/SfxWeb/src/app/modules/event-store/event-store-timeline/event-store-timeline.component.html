@@ -47,10 +47,9 @@
             </button>
 
             <div class="margined">
-              <label style="width: 105px; display: flex; gap: 10px; align-items: center;" [attr.aria-label]="'Toggle to use ' + isUTC ? 'Local Time' : 'UTC time' ">
+              <label style="width: 105px; display: flex; gap: 10px; align-items: center;" [attr.aria-label]="(isUTC ? 'Untoggle' : 'Toggle') + ' to use ' + (isUTC ? 'Local Time' : 'UTC time') ">
                 <input type="checkbox" [(ngModel)]="isUTC" (ngModelChange)="flipTimeZone()">
-                {{isUTC ? 'Local
-                Time' : 'UTC'}}</label>
+                Use UTC time</label>
             </div>
         </ng-container>
     </div>
