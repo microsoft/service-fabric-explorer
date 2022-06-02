@@ -450,7 +450,7 @@ describe('TimelineGenerators', () => {
         "className": "green"
       });
 
-      expect(events.groups.length).toBe(3);
+      expect(events.groups.length).toBe(4);
       expect(events.potentiallyMissingEvents).toBeFalsy();
     });
   });
