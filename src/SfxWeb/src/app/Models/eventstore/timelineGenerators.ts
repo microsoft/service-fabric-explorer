@@ -553,7 +553,8 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         let upgradeApplicationStarted: ApplicationEvent;
         
         if (events.length > 0) {
-            let simulEvents = this.getSimultaneousEventsForEvent(events[0], events);
+            let random_idx = Math.floor(Math.random() * events.length);
+            let simulEvents = this.getSimultaneousEventsForEvent(events[random_idx], events);
         }
         const applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
         const processExitedGroups: Record<string, DataGroup> = {};
@@ -635,7 +636,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
 
     getSimultaneousEventsForEvent(currAppEvent: ApplicationEvent, appEvents: ApplicationEvent[]) {
         let simulEvents = new DataSet<DataItem>();
-        let timestamp = currAppEvent.timeStamp;
+        let currTimestamp = currAppEvent.timeStamp;
         
         let upgradeApplicationStarted: ApplicationEvent;
         let previousApplicationUpgrade: ApplicationEvent;
@@ -646,13 +647,18 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
                 upgradeApplicationStarted = appEvent;
             } else if (appEvent.kind === "ApplicationUpgradeDomainCompleted") {
                 let [start, end] = this.getUpgradeDomainTimes(appEvent);
-                if (start <= timestamp && timestamp <= end) simulEvents.add(appEvent);
+                if (start <= currTimestamp && currTimestamp <= end) simulEvents.add(appEvent);
             } else if (appEvent.kind === "ApplicationUpgradeCompleted") {
                 let [start, end] = this.getUpgradeTimes(appEvent);
-                if (start <= timestamp && timestamp <= end) simulEvents.add(appEvent);
+                if (start <= currTimestamp && currTimestamp <= end) simulEvents.add(appEvent);
                 upgradeApplicationStarted = null;
-            } else if (appEvent.kind === "ApplicationProcessExited") {
-                // not sure how to handle this yet
+            } else if (appEvent.kind === "ApplicationProcessExited" || appEvent.kind === "ApplicationDeleted") {
+                // configurable window in milliseconds
+                let timeWindowInMs = 10000;
+                let currDate = new Date(currTimestamp);
+                let start = new Date((currDate).getTime() - timeWindowInMs).toISOString();
+                let end = new Date((currDate).getTime() + timeWindowInMs).toISOString();
+                if (start <= appEvent.timeStamp && appEvent.timeStamp <= end) simulEvents.add(appEvent);
             }
 
             //handle roll backs alone                
@@ -668,7 +674,17 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
             const data = applicationRollBacks[eventInstanceId];
             let start = data.start.timeStamp;
             let end = data.complete.timeStamp;
-            if (start <= timestamp && timestamp <= end) simulEvents.add(data);
+            if (start <= currTimestamp && currTimestamp <= end) simulEvents.add(data);
+        });
+
+        // if an application has started but there has been no completion (and its timestamp is before current one), add it!
+        if (upgradeApplicationStarted && upgradeApplicationStarted.timeStamp < currTimestamp) {
+            simulEvents.add(upgradeApplicationStarted)
+        }
+
+        let vis_arr = [];
+        simulEvents.forEach(event => {
+            vis_arr.push(event);
         });
         
         return simulEvents;
