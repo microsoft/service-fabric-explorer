@@ -159,7 +159,7 @@ const createWindow = async () => {
     bw.webContents.send(MainWindowEvents.notificationEvent, data);
   })
 
-  const extensionLoader = new ExtensionsLoader(logger, "D:\\sfx-repo\\src\\standalone-v2\\src\\extensions", {});
+  const extensionLoader = new ExtensionsLoader(logger, "D:\\sfx-repo\\src\\standalone-v2\\src\\extensions", {clusterManager, authenticationManager, mainWindow});
   const extensionResults = await extensionLoader.loadExtensions();
   console.log(extensionResults);
 

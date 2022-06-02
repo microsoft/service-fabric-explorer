@@ -1,9 +1,14 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
+import { AuthenticationManager } from './auth/authenticationManager';
+import { ClusterManager } from './cluster-manager';
 import { Logger } from './logger';
+import { MainWindow } from './mainWindow';
 
 export interface IContext {
-
+  clusterManager: ClusterManager;
+  mainWindow: MainWindow;
+  authenticationManager: AuthenticationManager;
 }
 
 export class ExtensionsLoader {
