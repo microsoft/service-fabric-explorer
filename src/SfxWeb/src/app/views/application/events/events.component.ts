@@ -28,7 +28,8 @@ export class EventsComponent extends ApplicationBaseControllerDirective {
 
     this.visEventStoreData = [
       this.data.getApplicationEventData(this.appId),
-      this.data.getNodeEventData()
+      this.data.getNodeEventData(),
+      this.data.getClusterEventData()
     ]
 
     this.optionsConfig = {

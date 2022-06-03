@@ -207,7 +207,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
               let consumed = data.timelineGenerator.consume(data.getEvents(), this.startDate, this.endDate);
               consumed.items.forEach(item => parsedEvents.add(item));
           }
-      }
+        }
     }
     
     let idx = Math.floor(Math.random() * appEvents.length);
