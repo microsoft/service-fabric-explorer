@@ -13,16 +13,23 @@ import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-
 export class EventsComponent extends ApplicationBaseControllerDirective {
 
   listEventStoreData: IEventStoreData<any, any> [];
+  visEventStoreData: IEventStoreData<any, any> [];
   optionsConfig: IOptionConfig;
 
   constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
-  setup() {
+  setup() {    
+    // grab event data for all nodes for concurrent events visualization tool    
     this.listEventStoreData = [
-      this.data.getApplicationEventData(this.appId)
+      this.data.getApplicationEventData(this.appId)   
     ];
+
+    this.visEventStoreData = [
+      this.data.getApplicationEventData(this.appId),
+      this.data.getNodeEventData()
+    ]
 
     this.optionsConfig = {
       enableCluster: true,

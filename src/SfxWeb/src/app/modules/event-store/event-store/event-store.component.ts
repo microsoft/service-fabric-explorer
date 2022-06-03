@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
+import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineDataGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
 import { Subject, Subscription, forkJoin, of } from 'rxjs';
@@ -56,6 +56,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() optionsConfig: IOptionConfig;
+  @Input() visEventStoreData: IEventStoreData<any, any>[];
   public startDateMin: Date;
   public startDateMax: Date;
   public failedRefresh = false;
@@ -188,12 +189,44 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       return combinedTimelineData;
   }
 
-  public setTimelineData(): void {
-      const subs = this.listEventStoreData.map(data => data.eventsList.refresh());
+  private getConcurrentEventsData(): DataSet<DataItem> {
+    let appEvents = [];
+    let parsedEvents = new DataSet<DataItem>();
 
-      forkJoin(subs).subscribe(() => {
+    let appEventGenerator = this.visEventStoreData[0];
+    if (appEventGenerator.eventsList.lastRefreshWasSuccessful) {
+        if (appEventGenerator.timelineGenerator) {
+            let consumed = appEventGenerator.timelineGenerator.consume(appEventGenerator.getEvents(), this.startDate, this.endDate);
+            consumed.items.forEach(item => appEvents.push(item));
+        }
+    }
+
+    for (const data of this.visEventStoreData) {    
+        if (data.eventsList.lastRefreshWasSuccessful) {
+          if (data.timelineGenerator) {
+              let consumed = data.timelineGenerator.consume(data.getEvents(), this.startDate, this.endDate);
+              consumed.items.forEach(item => parsedEvents.add(item));
+          }
+      }
+    }
+    
+    let idx = Math.floor(Math.random() * appEvents.length);
+    let simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(appEvents[idx], parsedEvents);
+    return simulEvents;
+  }
+
+  public setTimelineData(): void {
+    if (this.visEventStoreData) {  
+        const visEventSubs = this.visEventStoreData.map(data => data.eventsList.refresh());    
+        forkJoin(visEventSubs).subscribe(() => {
+            let concurrentEvents = this.getConcurrentEventsData();
+        }); 
+      }
+
+      const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());            
+      forkJoin(timelineEventSubs).subscribe(() => {
           this.timeLineEventsData = this.getTimelineData();
-      });
+      });           
   }
 
   processData(option: IOptionData){

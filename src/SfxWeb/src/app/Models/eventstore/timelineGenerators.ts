@@ -187,6 +187,32 @@ export abstract class TimeLineGeneratorBase<T> {
          throw new Error('NotImplementedError');
     }
 
+    getSimultaneousEventsForEvent(currEvent: DataItem, events: DataSet<DataItem>) {
+        /*
+            Grab the events that occur concurrently with an inputted current event.
+        */
+        let simulEvents = new DataSet<DataItem>();
+        let currDate = new Date(currEvent.start);
+
+        events.forEach(iterEvent => {
+            if (iterEvent.start) {
+                let startDate = new Date(iterEvent.start);                
+                if (iterEvent.end) {
+                    let endDate = new Date(iterEvent.end);
+                    if (startDate <= currDate && currDate <= endDate) simulEvents.add(iterEvent);
+                } else {
+                    // this time window will be configurable, used for instantaneous current events
+                    let timeWindowInMs = 10000;
+                    let start = new Date(currDate.getTime() - timeWindowInMs).toISOString();
+                    let end = new Date(currDate.getTime() + timeWindowInMs).toISOString();
+                    if (start <= iterEvent.timeStamp && iterEvent.timeStamp <= end) simulEvents.add(iterEvent);                        
+                }
+            }
+        });
+
+        return simulEvents;
+    }
+
     generateTimeLineData(events: T[], startOfRange?: Date, endOfRange?: Date, nestedGroupLabel?: string): ITimelineData {
         const data = this.consume(events, startOfRange, endOfRange);
         EventStoreUtils.addSubGroups(data.groups);
@@ -624,43 +650,11 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
 
         groups.add(nestedContainerProcessExited);
 
-        if (events.length > 0) {
-            let randomIdx = Math.floor(Math.random() * events.length);
-            let simulEvents = this.getSimultaneousEventsForEvent(events[randomIdx], items);
-            let visEvents = [];
-            simulEvents.forEach(event => {
-                visEvents.push(event);
-            });
-            console.log(visEvents);
-        }
-
         return {
             groups,
             items,
             potentiallyMissingEvents: false
         };
-    }
-
-    getSimultaneousEventsForEvent(currAppEvent: ApplicationEvent, appEvents: DataSet<DataItem>) {
-        let simulEvents = new DataSet<DataItem>();
-        let currDate = new Date(currAppEvent.timeStamp);
-
-        appEvents.forEach(appEvent => {            
-            if (appEvent.start) {
-                let startDate = new Date(appEvent.start);                
-                if (appEvent.end) {
-                    let endDate = new Date(appEvent.end);
-                    if (startDate <= currDate && currDate <= endDate) simulEvents.add(appEvent);
-                } else {
-                    let timeWindowInMs = 10000;
-                    let start = new Date(currDate.getTime() - timeWindowInMs).toISOString();
-                    let end = new Date(currDate.getTime() + timeWindowInMs).toISOString();
-                    if (start <= appEvent.timeStamp && appEvent.timeStamp <= end) simulEvents.add(appEvent);
-                }
-            }
-        });
-
-        return simulEvents;
     }
 
     parseApplicationProcessExited(event: FabricEventBase, items: DataSet<DataItem>, processExitedGroups: Record<string, DataGroup>) {
