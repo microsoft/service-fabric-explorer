@@ -18,6 +18,16 @@ export interface IQuickDates {
     hours: number;
 }
 
+export interface IConcurrentEventsConfig {
+    eventType: string; // the event type we are investigating
+    eventsList: DataSet<DataItem>; // events we are investigating
+    relevantEventsType: string[]; // possible causes we are considering
+}
+
+export interface IConcurrentEvents extends IConcurrentEventsConfig {
+    related: IConcurrentEvents[] // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
+}
+
 export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
     eventsList: T;
     timelineGenerator?: TimeLineGeneratorBase<S>;
@@ -187,9 +197,32 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       }
 
       return combinedTimelineData;
+  }  
+
+  private addKindToEvents(events: DataSet<DataItem>, consumedEvents: DataSet<DataItem>, parsedEvents: DataSet<DataItem>): DataSet<DataItem> {
+    /*
+        Consumed events (the ones returned by consume of timelineGenerator) do not have a kind attached to them - this function adds the kind
+        to each object so that events can be compared with the IConcurrentEventsConfig objects.
+    */
+    consumedEvents.items.forEach(consumedEvent => {
+        let idx = 0;
+        for (let event of events) {
+            if (consumedEvent.id.indexOf(event.eventInstanceId) == 0) {
+                break;
+            }
+            idx++;
+        }
+        let removedEvent = events[idx];
+        events.splice(idx, 1);
+        consumedEvent['kind'] = removedEvent.kind;                  
+        parsedEvents.add(consumedEvent);
+    });
   }
 
   private getConcurrentEventsData(): DataSet<DataItem> {
+    /*
+        Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
+    */
     let appEvents = [];
     let parsedEvents = new DataSet<DataItem>();
 
@@ -201,17 +234,45 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         }
     }
 
-    for (const data of this.visEventStoreData) {    
+    for (const data of this.visEventStoreData) {
         if (data.eventsList.lastRefreshWasSuccessful) {
           if (data.timelineGenerator) {
-              let consumed = data.timelineGenerator.consume(data.getEvents(), this.startDate, this.endDate);
-              consumed.items.forEach(item => parsedEvents.add(item));
+              let events = [];
+              data.getEvents().forEach(dataEvent => events.push(dataEvent));
+              let consumedEvents = data.timelineGenerator.consume(events, this.startDate, this.endDate);             
+              this.addKindToEvents(events, consumedEvents, parsedEvents);          
           }
         }
     }
+
+    let visItems = [];
+    parsedEvents.forEach(parsedEvent => {
+        visItems.push(parsedEvent);
+    });
     
-    let idx = Math.floor(Math.random() * appEvents.length);
-    let simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(appEvents[idx], parsedEvents);
+    let concurrentEventsConfig: IConcurrentEventsConfig[] = [];
+    
+    /*
+        Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
+        which events happen concurrently with these random events.
+    */
+    let randomItems = 3;
+    let randomAppEvents = new DataSet<DataItem>();
+    while (randomItems) {
+        let idx = Math.floor(Math.random() * appEvents.length);
+        randomAppEvents.add(appEvents[idx]);   
+        randomItems--;
+    } 
+
+    let newAppEventConfig: IConcurrentEventsConfig = {
+        eventType: "ApplicationProcessExited",
+        eventsList: randomAppEvents,
+        relevantEventsType: ["ApplicationUpgradeStarted", "ApplicationUpgradeCompleted"]
+    };
+
+    concurrentEventsConfig.push(newAppEventConfig);
+
+    let simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(concurrentEventsConfig, parsedEvents);
     return simulEvents;
   }
 

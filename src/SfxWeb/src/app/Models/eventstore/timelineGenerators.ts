@@ -7,6 +7,7 @@ import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { Data } from '@microsoft/applicationinsights-common';
+import { IConcurrentEventsConfig, IConcurrentEvents } from 'src/app/modules/event-store/event-store/event-store.component';
 
 /*
     NOTES:
@@ -187,27 +188,40 @@ export abstract class TimeLineGeneratorBase<T> {
          throw new Error('NotImplementedError');
     }
 
-    getSimultaneousEventsForEvent(currEvent: DataItem, events: DataSet<DataItem>) {
+    getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], events: DataSet<DataItem>) : IConcurrentEvents[] {
         /*
             Grab the events that occur concurrently with an inputted current event.
         */
-        let simulEvents = new DataSet<DataItem>();
-        let currDate = new Date(currEvent.start);
+        let simulEvents : IConcurrentEvents[] = [];
 
-        events.forEach(iterEvent => {
-            if (iterEvent.start) {
-                let startDate = new Date(iterEvent.start);                
-                if (iterEvent.end) {
-                    let endDate = new Date(iterEvent.end);
-                    if (startDate <= currDate && currDate <= endDate) simulEvents.add(iterEvent);
-                } else {
-                    // this time window will be configurable, used for instantaneous current events
-                    let timeWindowInMs = 10000;
-                    let start = new Date(currDate.getTime() - timeWindowInMs).toISOString();
-                    let end = new Date(currDate.getTime() + timeWindowInMs).toISOString();
-                    if (start <= iterEvent.timeStamp && iterEvent.timeStamp <= end) simulEvents.add(iterEvent);                        
-                }
-            }
+        // going through each config
+        configs.forEach(config => {
+
+            // iterating through each inputted event for the config
+            config.eventsList.forEach(currEvent => {
+                let currDate = new Date(currEvent.start);
+
+                // iterating through all events
+                let newConcurrentEvents : IConcurrentEvents[] = [];
+                events.forEach(iterEvent => {       
+                    if (!config.relevantEventsType.includes(iterEvent.kind)) {
+                        return;
+                    }             
+                    if (iterEvent.start) {
+                        let startDate = new Date(iterEvent.start);
+                        if (iterEvent.end) {
+                            let endDate = new Date(iterEvent.end);
+                            if (startDate <= currDate && currDate <= endDate) simulEvents.push(iterEvent);
+                        } else {
+                            // this time window will be configurable, used for instantaneous current events
+                            let timeWindowInMs = 10000;
+                            let start = new Date(currDate.getTime() - timeWindowInMs).toISOString();
+                            let end = new Date(currDate.getTime() + timeWindowInMs).toISOString();
+                            if (start <= iterEvent.timeStamp && iterEvent.timeStamp <= end) simulEvents.push(iterEvent);
+                        }
+                    }
+                });
+            })
         });
 
         return simulEvents;
