@@ -17,6 +17,7 @@ export enum MainWindowEvents {
     requestClusterState = "requestClusterState",
 
     validateAuthConfig = "validateAuthConfig",
+    authConfigOptionsChanges = "authConfigOptionsChanges",
 
     requestAADConfigurations = "requestAADConfigurations",
     AADConfigurationsChange = "AADConfigurationsChange",

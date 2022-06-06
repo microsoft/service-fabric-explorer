@@ -1,11 +1,14 @@
 import { validate } from "../mainWindow/validate";
-import {  IAuthOption, IHttpHandler, IHTTPRequestTransformer } from "../httpHandler";
+import {  IAuthOption, IHttpHandler } from "../httpHandler";
+import { Subject } from "../observable";
 
 export class AuthenticationManager {
     public authOptions: IAuthOption[] = [];
+    public authOptionsChanges = new Subject<IAuthOption[]>();
 
     registerAuthOption(option: IAuthOption) {
         this.authOptions.push(option);
+        this.authOptionsChanges.emit(this.authOptions);
     }
 
     getHttpHandler(authType: string): IHttpHandler {

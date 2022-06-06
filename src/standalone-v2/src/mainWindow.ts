@@ -1,9 +1,9 @@
 import { BrowserView, BrowserWindow, IpcMainEvent } from "electron";
 import { join } from 'path';
-import { ICluster } from "./cluster-manager";
 import { ConfigLoader } from "./configLoader";
 import { ILogger } from "./logger";
 import { NotificationTypes } from "./notificationManager";
+import { Subject } from "./observable";
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string;
 
@@ -34,6 +34,7 @@ export class MainWindow {
     private windows: Record<string, BrowserView> = {};
 
     private registeredSingletonPages: IWindowConfig[] = [];
+    public registeredSingletonPagesChanges = new Subject<IWindowConfig[]>();
 
     constructor(browserWindow: BrowserWindow, private config: ConfigLoader, private logger: ILogger) {
         this.browserWindow = browserWindow;
@@ -114,5 +115,8 @@ export class MainWindow {
         return this.browserWindow;
     }
 
-    
+    registerSingletonView(view:IWindowConfig) {
+        this.registeredSingletonPages.push(view);
+        this.registeredSingletonPagesChanges.emit(this.registeredSingletonPages);
+    }
 }

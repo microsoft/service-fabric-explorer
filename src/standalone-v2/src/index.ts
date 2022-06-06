@@ -154,6 +154,13 @@ const createWindow = async () => {
     bw.webContents.send(MainWindowEvents.AADConfigurationsChange, data);
   })
 
+  aadAuth.observable.subscribe(data => {
+    bw.webContents.send(MainWindowEvents.AADConfigurationsChange, data);
+  })
+
+  authenticationManager.authOptionsChanges.subscribe(data => {
+    bw.webContents.send(MainWindowEvents.authConfigOptionsChanges, data);
+  })
 
   notificationManager.observable.subscribe(data => {
     bw.webContents.send(MainWindowEvents.notificationEvent, data);
