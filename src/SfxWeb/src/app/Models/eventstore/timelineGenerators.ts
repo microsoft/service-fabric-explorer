@@ -28,10 +28,14 @@ import { IConcurrentEventsConfig, IConcurrentEvents } from 'src/app/modules/even
 
 export interface ITimelineData {
     groups: DataSet<DataGroup>;
-    items: DataSet<DataItem>;
+    items: DataSet<ITimelineItem>;
     start?: Date;
     end?: Date;
     potentiallyMissingEvents?: boolean;
+}
+
+export interface ITimelineItem extends DataItem {
+    kind: string
 }
 
 export interface ITimelineDataGenerator<T extends FabricEventBase>{
@@ -74,7 +78,7 @@ export class EventStoreUtils {
                                           startOfRange: Date, group: string, targetVersionProperty: string) {
         const rollbackEnd = rollbackCompleteEvent.timeStamp;
 
-        let rollbackStarted = startOfRange.toISOString();
+        let rollbackStarted = startOfRange.toISOString();        
         // wont always get this event because of the time range that can be selected where we only get the
         // rollback completed which leaves us missing some of the info.
         if (rollbackStartedEvent) {
@@ -89,6 +93,7 @@ export class EventStoreUtils {
                 content: 'Upgrade rolling forward failed',
                 start: upgradeStart,
                 end: rollbackStarted,
+                kind: rollbackCompleteEvent.kind,
                 group,
                 type: 'range',
                 className: 'red'
@@ -103,6 +108,7 @@ export class EventStoreUtils {
             content: label,
             start: rollbackStarted,
             end: rollbackEnd,
+            kind: rollbackCompleteEvent.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(rollbackCompleteEvent.eventProperties, rollbackStarted, rollbackEnd),
@@ -118,11 +124,13 @@ export class EventStoreUtils {
 
         const start = new Date(endDate.getTime() - duration).toISOString();
         const label = event.eventProperties.UpgradeDomains;
+
         items.add({
             id: event.eventInstanceId + label + event.eventProperties[targetVersionProperty],
             content: label,
             start,
             end,
+            kind: event.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
@@ -142,6 +150,7 @@ export class EventStoreUtils {
             content,
             start,
             end,
+            kind: event.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
@@ -164,6 +173,7 @@ export class EventStoreUtils {
             content,
             start,
             end,
+            kind: event.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
@@ -327,13 +337,14 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         if (event.eventProperties.HealthState === 'Warning') {
             // for end date if we dont have a previously seen health report(list iterates newest to oldest) then we know its still the ongoing state
             const end = previousClusterHealthReport ? previousClusterHealthReport.timeStamp : endOfRange.toISOString();
-            const content = `${event.eventProperties.HealthState}`;
+            const content = `${event.eventProperties.HealthState}`;            
 
             items.add({
                 id: event.eventInstanceId + content,
                 content,
                 start: event.timeStamp,
                 end,
+                kind: event.kind,
                 group: ClusterTimelineGenerator.seedNodeStatus,
                 type: 'range',
                 title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, end),
@@ -682,6 +693,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
             id: event.eventInstanceId + label,
             content: '',
             start,
+            kind: event.kind,
             group: groupLabel,
             type: 'point',
             className: event.eventProperties.UnexpectedTermination ? 'red-point' : 'green-point',
@@ -701,6 +713,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
           id: event.eventInstanceId + label,
           content: '',
           start,
+          event.kind,
           group: groupLabel,
           type: 'point',
           className: event.eventProperties.UnexpectedTermination ? 'red-point' : 'green-point',
@@ -869,6 +882,7 @@ export function parseEventsGenerically(events: FabricEvent[], textSearch: string
             content: '',
             id: index,
             start: event.timeStamp,
+            kind: event.kind,
             group: groupId,
             type: 'point',
             title: EventStoreUtils.tooltipFormat(event.raw, event.timeStamp),
