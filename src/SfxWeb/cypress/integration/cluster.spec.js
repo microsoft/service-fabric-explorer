@@ -37,6 +37,7 @@ context('Cluster page', () => {
         cy.contains('1')
       })
 
+      cy.get('[role="alert"]').should('not.exist')
     })
 
     it('certificate expiring banner', () => {
