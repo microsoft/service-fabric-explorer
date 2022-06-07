@@ -24,8 +24,12 @@ export interface IConcurrentEventsConfig {
     relevantEventsType: string[]; // possible causes we are considering
 }
 
-export interface IConcurrentEvents extends IConcurrentEventsConfig {
+export interface IConcurrentEvents {
     related: IConcurrentEvents[] // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
+    type: string,
+    timestamp?: string,
+    start?: Date,
+    end?: Date
 }
 
 export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
@@ -66,7 +70,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() optionsConfig: IOptionConfig;
-  @Input() visEventStoreData: IEventStoreData<any, any>[];
   public startDateMin: Date;
   public startDateMax: Date;
   public failedRefresh = false;
@@ -199,24 +202,16 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       return combinedTimelineData;
   }  
 
-  private addKindToEvents(events: DataSet<DataItem>, consumedEvents: DataSet<DataItem>, parsedEvents: DataSet<DataItem>): DataSet<DataItem> {
-    /*
-        Consumed events (the ones returned by consume of timelineGenerator) do not have a kind attached to them - this function adds the kind
-        to each object so that events can be compared with the IConcurrentEventsConfig objects.
-    */
-    consumedEvents.items.forEach(consumedEvent => {
-        let idx = 0;
-        for (let event of events) {
-            if (consumedEvent.id.indexOf(event.eventInstanceId) == 0) {
-                break;
-            }
-            idx++;
-        }
-        let removedEvent = events[idx];
-        events.splice(idx, 1);
-        consumedEvent['kind'] = removedEvent.kind;                  
-        parsedEvents.add(consumedEvent);
-    });
+  private makeIConcurrentEvent(event: DataItem) : IConcurrentEvents {      
+      let type = event.kind;
+      if (!type) type = event.group;
+      return {          
+          type: type,
+          start: event.start,
+          end: event.end,
+          timestamp: event.start,
+          related: []
+      }
   }
 
   private getConcurrentEventsData(): DataSet<DataItem> {
@@ -224,31 +219,24 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
     */
     let appEvents = [];
-    let parsedEvents = new DataSet<DataItem>();
+    let parsedEvents : IConcurrentEvents[] = [];
 
-    let appEventGenerator = this.visEventStoreData[0];
+    let appEventGenerator = this.listEventStoreData[0];
     if (appEventGenerator.eventsList.lastRefreshWasSuccessful) {
         if (appEventGenerator.timelineGenerator) {
             let consumed = appEventGenerator.timelineGenerator.consume(appEventGenerator.getEvents(), this.startDate, this.endDate);
             consumed.items.forEach(item => appEvents.push(item));
         }
     }
-
-    for (const data of this.visEventStoreData) {
+    
+    for (const data of this.listEventStoreData) {
         if (data.eventsList.lastRefreshWasSuccessful) {
-          if (data.timelineGenerator) {
-              let events = [];
-              data.getEvents().forEach(dataEvent => events.push(dataEvent));
-              let consumedEvents = data.timelineGenerator.consume(events, this.startDate, this.endDate);             
-              this.addKindToEvents(events, consumedEvents, parsedEvents);          
-          }
+            if (data.timelineGenerator) {
+                let consumed = data.timelineGenerator.consume(data.getEvents(), this.startDate, this.endDate);
+                consumed.items.forEach(item => parsedEvents.push(this.makeIConcurrentEvent(item)));
+            }
         }
     }
-
-    let visItems = [];
-    parsedEvents.forEach(parsedEvent => {
-        visItems.push(parsedEvent);
-    });
     
     let concurrentEventsConfig: IConcurrentEventsConfig[] = [];
     
@@ -256,13 +244,11 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
         which events happen concurrently with these random events.
     */
-    let randomItems = 3;
-    let randomAppEvents = new DataSet<DataItem>();
-    while (randomItems) {
-        let idx = Math.floor(Math.random() * appEvents.length);
-        randomAppEvents.add(appEvents[idx]);   
-        randomItems--;
-    } 
+    let randomItems = 1;
+    let randomAppEvents : IConcurrentEvents[] = [];    
+    for (let idx = 0; idx < appEvents.length; idx++) {
+        if (appEvents[idx].kind == "ApplicationProcessExited") randomAppEvents.push(this.makeIConcurrentEvent(appEvents[idx]));
+    }
 
     let newAppEventConfig: IConcurrentEventsConfig = {
         eventType: "ApplicationProcessExited",
@@ -272,22 +258,20 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
     concurrentEventsConfig.push(newAppEventConfig);
 
-    let simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(concurrentEventsConfig, parsedEvents);
+    let simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(concurrentEventsConfig, randomAppEvents, parsedEvents);
     return simulEvents;
   }
 
   public setTimelineData(): void {
-    if (this.visEventStoreData) {  
-        const visEventSubs = this.visEventStoreData.map(data => data.eventsList.refresh());    
-        forkJoin(visEventSubs).subscribe(() => {
-            let concurrentEvents = this.getConcurrentEventsData();
-        }); 
-      }
-
       const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());            
       forkJoin(timelineEventSubs).subscribe(() => {
           this.timeLineEventsData = this.getTimelineData();
-      });           
+      });
+
+      forkJoin(timelineEventSubs).subscribe(() => {
+          let concurrentEvents = this.getConcurrentEventsData();
+          console.log(concurrentEvents);
+      })
   }
 
   processData(option: IOptionData){

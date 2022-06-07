@@ -197,40 +197,48 @@ export abstract class TimeLineGeneratorBase<T> {
          throw new Error('NotImplementedError');
     }
 
-    getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], events: DataSet<DataItem>) : IConcurrentEvents[] {
+    checkOverlappingTime(inputEvent : IConcurrentEvents, iterEvent: IConcurrentEvents) : boolean {  
+        let currDate = new Date(inputEvent.start);       
+        if (iterEvent.start) {                            
+            let startDate = new Date(iterEvent.start);
+            if (iterEvent.end) {
+                let endDate = new Date(iterEvent.end);
+                if (startDate <= currDate && currDate <= endDate) {
+                    // add new concurrent event
+                    return true;
+                }
+            }             
+            // this time window will be configurable, used for instantaneous current events
+            let timeWindowInMs = 10000000;
+            let start = new Date(currDate.getTime() - timeWindowInMs).toISOString();
+            let end = new Date(currDate.getTime() + timeWindowInMs).toISOString();
+            if (start <= iterEvent.timestamp && iterEvent.timestamp <= end) {
+                return true;
+            }            
+        }
+        return false;
+    }
+
+    getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: IConcurrentEvents[], events: IConcurrentEvents[]) : IConcurrentEvents[] {
         /*
             Grab the events that occur concurrently with an inputted current event.
         */
         let simulEvents : IConcurrentEvents[] = [];
-
-        // going through each config
-        configs.forEach(config => {
-
-            // iterating through each inputted event for the config
-            config.eventsList.forEach(currEvent => {
-                let currDate = new Date(currEvent.start);
-
-                // iterating through all events
-                let newConcurrentEvents : IConcurrentEvents[] = [];
-                events.forEach(iterEvent => {       
-                    if (!config.relevantEventsType.includes(iterEvent.kind)) {
-                        return;
-                    }             
-                    if (iterEvent.start) {
-                        let startDate = new Date(iterEvent.start);
-                        if (iterEvent.end) {
-                            let endDate = new Date(iterEvent.end);
-                            if (startDate <= currDate && currDate <= endDate) simulEvents.push(iterEvent);
-                        } else {
-                            // this time window will be configurable, used for instantaneous current events
-                            let timeWindowInMs = 10000;
-                            let start = new Date(currDate.getTime() - timeWindowInMs).toISOString();
-                            let end = new Date(currDate.getTime() + timeWindowInMs).toISOString();
-                            if (start <= iterEvent.timeStamp && iterEvent.timeStamp <= end) simulEvents.push(iterEvent);
+        // iterate through all the input events
+        inputEvents.forEach(inputEvent => {
+            // iterate through all configuration
+            configs.forEach(config => {
+                if (config.eventType == inputEvent.type) {                                        
+                    // iterate through all events to find relevant ones
+                    events.forEach(iterEvent => {
+                        if (!config.relevantEventsType.includes(iterEvent.type)) {
+                            return;
                         }
-                    }
-                });
-            })
+                        if (this.checkOverlappingTime(inputEvent, iterEvent)) inputEvent.related.push(iterEvent);
+                    });
+                }
+            });
+            simulEvents.push(inputEvent);
         });
 
         return simulEvents;
@@ -713,7 +721,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
           id: event.eventInstanceId + label,
           content: '',
           start,
-          event.kind,
+          kind: event.kind,
           group: groupLabel,
           type: 'point',
           className: event.eventProperties.UnexpectedTermination ? 'red-point' : 'green-point',
