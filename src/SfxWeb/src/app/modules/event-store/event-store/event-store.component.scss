@@ -58,6 +58,12 @@ $border-radius: 5px;
     }
 }
 
+@media (max-width: 400px) {
+  .slider-wrapper {
+    min-width: 200px;
+  }
+}
+
 .flex-container {
     display: flex;
     flex-direction: row;
