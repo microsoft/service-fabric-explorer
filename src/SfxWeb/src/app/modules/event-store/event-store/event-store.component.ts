@@ -24,9 +24,8 @@ export interface IConcurrentEventsConfig {
     relevantEventsType: string[]; // possible causes we are considering
 }
 
-export interface IConcurrentEvents {
+export interface IConcurrentEvents extends DataItem {
     related: IConcurrentEvents[] // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
-    type: string,
     timestamp?: string,
     start?: Date,
     end?: Date
@@ -200,18 +199,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       }
 
       return combinedTimelineData;
-  }  
-
-  private makeIConcurrentEvent(event: DataItem) : IConcurrentEvents {      
-      let type = event.kind;
-      if (!type) type = event.group;
-      return {          
-          type: type,
-          start: event.start,
-          end: event.end,
-          timestamp: event.start,
-          related: []
-      }
   }
 
   private getConcurrentEventsData(): DataSet<DataItem> {
@@ -233,7 +220,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         if (data.eventsList.lastRefreshWasSuccessful) {
             if (data.timelineGenerator) {
                 let consumed = data.timelineGenerator.consume(data.getEvents(), this.startDate, this.endDate);
-                consumed.items.forEach(item => parsedEvents.push(this.makeIConcurrentEvent(item)));
+                consumed.items.forEach(item => parsedEvents.push(item));
             }
         }
     }
@@ -247,7 +234,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     let randomItems = 1;
     let randomAppEvents : IConcurrentEvents[] = [];    
     for (let idx = 0; idx < appEvents.length; idx++) {
-        if (appEvents[idx].kind == "ApplicationProcessExited") randomAppEvents.push(this.makeIConcurrentEvent(appEvents[idx]));
+        if (appEvents[idx].kind == "ApplicationProcessExited") randomAppEvents.push(appEvents[idx]);
     }
 
     let newAppEventConfig: IConcurrentEventsConfig = {

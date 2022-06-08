@@ -197,7 +197,7 @@ export abstract class TimeLineGeneratorBase<T> {
          throw new Error('NotImplementedError');
     }
 
-    checkOverlappingTime(inputEvent : IConcurrentEvents, iterEvent: IConcurrentEvents) : boolean {  
+    checkOverlappingTime(inputEvent: DataItem, iterEvent: DataItem) : boolean {  
         let currDate = new Date(inputEvent.start);       
         if (iterEvent.start) {                            
             let startDate = new Date(iterEvent.start);
@@ -212,14 +212,14 @@ export abstract class TimeLineGeneratorBase<T> {
             let timeWindowInMs = 10000000;
             let start = new Date(currDate.getTime() - timeWindowInMs).toISOString();
             let end = new Date(currDate.getTime() + timeWindowInMs).toISOString();
-            if (start <= iterEvent.timestamp && iterEvent.timestamp <= end) {
+            if (start <= iterEvent.start && iterEvent.start <= end) {
                 return true;
             }            
         }
         return false;
     }
 
-    getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: IConcurrentEvents[], events: IConcurrentEvents[]) : IConcurrentEvents[] {
+    getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: DataItem[], events: DataItem[]) : IConcurrentEvents[] {
         /*
             Grab the events that occur concurrently with an inputted current event.
         */
@@ -228,13 +228,18 @@ export abstract class TimeLineGeneratorBase<T> {
         inputEvents.forEach(inputEvent => {
             // iterate through all configuration
             configs.forEach(config => {
-                if (config.eventType == inputEvent.type) {                                        
+                if (config.eventType == inputEvent.kind) {                                        
                     // iterate through all events to find relevant ones
                     events.forEach(iterEvent => {
-                        if (!config.relevantEventsType.includes(iterEvent.type)) {
+                        if (!config.relevantEventsType.includes(iterEvent.kind)) {
                             return;
                         }
-                        if (this.checkOverlappingTime(inputEvent, iterEvent)) inputEvent.related.push(iterEvent);
+                        if (this.checkOverlappingTime(inputEvent, iterEvent)) {
+                            if (!inputEvent.related) {
+                                inputEvent.related = [];
+                            }
+                            inputEvent.related.push(iterEvent);
+                        }
                     });
                 }
             });
