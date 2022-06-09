@@ -11,6 +11,7 @@ import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DashboardViewModel, IDashboardViewModel } from 'src/app/ViewModels/DashboardViewModels';
 import { ITextAndBadge } from 'src/app/Utils/ValueResolver';
+import { IRawHealthStateCount } from 'src/app/Models/RawDataTypes';
 
 @Component({
   selector: 'app-essentials',
@@ -26,7 +27,6 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
   ringInfo: IEssentialListItem[] = [];
 
   deployedDashboard: IDashboardViewModel;
-  healthStatus: ITextAndBadge;
 
   constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
     super(data, injector);
@@ -88,25 +88,22 @@ export class EssentialsComponent extends NodeBaseControllerDirective {
       this.node.loadInformation.refresh(messageHandler),
       this.node.deployedApps.refresh(messageHandler).pipe(map(() => {
         this.deployedApps = this.node.deployedApps;
-        let warning = 0;
-        let ok = 0;
-        let error = 0;
-        for(let i = 0; i <  this.deployedApps.data.apps.collection.length; i++) {
-          this.healthStatus = this.deployedApps.data.apps.collection[i].data.apps.healthState;
-          if(this.healthStatus.text == 'Error') {
-            error++;
-          } else if(this.healthStatus.text == 'Warning') {
-            warning++;
-            console.log('Warning: ', warning);
-          } else if(this.healthStatus.text == 'OK') {
-            ok++;
+        let healthCount:IRawHealthStateCount = {
+          ErrorCount: 0,
+          WarningCount: 0,
+          OkCount: 0
+       };
+        for(let i in this.deployedApps.data.apps.collection) {
+          let healthStatus:ITextAndBadge = this.deployedApps.data.apps.collection[i].data.apps.healthState;
+          if(healthStatus.text == 'Error') {
+            healthCount["ErrorCount"]++;
+          } else if(healthStatus.text == 'Warning') {
+            healthCount["WarningCount"]++;
+          } else if(healthStatus.text == 'OK') {
+            healthCount["OkCount"]++;
           }
         }
-        this.deployedDashboard = DashboardViewModel.fromHealthStateCount("Deployed", "Deployed", false, {
-          ErrorCount: error,
-          WarningCount: warning,
-          OkCount: ok
-       });
+        this.deployedDashboard = DashboardViewModel.fromHealthStateCount("Deployed", "Deployed", false, healthCount);
       }))
 
     ]);

@@ -22,10 +22,6 @@
         middleMargin="0px 0" helpTextLink="https://aka.ms/sf/loadinformation">
         Count of total stateful replicas on the node
       </app-dashboard-text-tile>
-      <app-dashboard-text-tile [count]="node.health.unhealthyEvaluations.length" title="Unhealthy Evaluations"
-      middleMargin="0px 0" route="./details"> 
-      Count of total unhealthy evaluations on the node
-      </app-dashboard-text-tile>
       <app-dashboard-tile [data]="deployedDashboard" *ngIf="deployedDashboard" route="./details"
       title="Deployed Applications"></app-dashboard-tile>
     </ng-container>
@@ -42,5 +38,14 @@
     </app-collapse-container>
   </div>
 
-  <a class="mif-info link mif-lg" routerLink="./events" style="float: right;" title="More Events"></a>
-  <app-events [isShown]="false"></app-events>
+  <div class="detail-pane essen-pane">
+    <app-collapse-container sectionName="Events Table">
+      <div collapse-header>
+        <h4>Events Table</h4>
+      </div>
+      <div collapse-body>
+        <a class="mif-info link mif-lg" routerLink="./events" style="float: right; padding: 5px 10px 0px 0px;" title="More Events"></a>
+        <app-events [isEventListShown]="false"></app-events>
+      </div>
+    </app-collapse-container>
+  </div>

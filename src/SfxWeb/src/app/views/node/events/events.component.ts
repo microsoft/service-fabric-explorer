@@ -3,7 +3,6 @@ import { DataService } from 'src/app/services/data.service';
 import { NodeBaseControllerDirective } from '../NodeBase';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
-import { SettingsService } from 'src/app/services/settings.service';
 
 @Component({
   selector: 'app-events',
@@ -14,9 +13,9 @@ export class EventsComponent extends NodeBaseControllerDirective {
 
   listEventStoreData: IEventStoreData<any, any> [];
   optionsConfig: IOptionConfig;
-  @Input() isShown = true;
+  @Input() isEventListShown = true;
 
-  constructor(protected data: DataService, injector: Injector, private settings: SettingsService) {
+  constructor(protected data: DataService, injector: Injector) {
     super(data, injector);
   }
 
@@ -25,14 +24,6 @@ export class EventsComponent extends NodeBaseControllerDirective {
       this.data.getNodeEventData(this.nodeName),
       this.data.getClusterEventData(),
     ];
-
-    this.data.clusterManifest.ensureInitialized().subscribe(() => {
-      if (this.data.clusterManifest.isRepairManagerEnabled) {
-        this.data.repairCollection.ensureInitialized().subscribe(() => {
-          this.listEventStoreData.push(this.data.getRepairTasksData(this.settings));
-        });
-      }
-    });
 
     this.optionsConfig = {
       enableCluster: true,

@@ -38,8 +38,8 @@ export class RepairTasksComponent extends BaseControllerDirective {
   repairTaskListSettings: ListSettings;
   completedRepairTaskListSettings: ListSettings;
 
-  @Input() timelineData: ITimelineData;
-  @Input() chartJobs: RepairTask[] = []; 
+  timelineData: ITimelineData;
+  chartJobs: RepairTask[] = []; 
 
   timelineGenerator: RepairTaskTimelineGenerator;
 

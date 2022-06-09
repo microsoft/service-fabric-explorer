@@ -12,6 +12,7 @@ import { ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
+import { SettingsService } from 'src/app/services/settings.service';
 
 export interface IQuickDates {
     display: string;
@@ -35,7 +36,7 @@ export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
 })
 export class EventStoreComponent implements OnInit, OnDestroy {
 
-  constructor(public dataService: DataService, private telemService: TelemetryService) { }
+  constructor(public dataService: DataService, private telemService: TelemetryService, private settings: SettingsService) { }
 
   public get showAllEvents() { return this.pshowAllEvents; }
   public set showAllEvents(state: boolean) {
@@ -68,7 +69,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
   public startDate: Date;
   public endDate: Date;
-  @Input() isShown = true;
+  @Input() isEventListShown = true;
 
   ngOnInit() {
       this.pshowAllEvents = this.checkAllOption();
@@ -82,6 +83,14 @@ export class EventStoreComponent implements OnInit, OnDestroy {
               this.endDate = new Date(dates.endDate);
               this.setNewDateWindow();
           });
+          
+      this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
+          if (this.dataService.clusterManifest.isRepairManagerEnabled) {
+              this.dataService.repairCollection.ensureInitialized().subscribe(() => {
+                this.listEventStoreData.push(this.dataService.getRepairTasksData(this.settings));
+              });
+            }
+        });
   }
 
   ngOnDestroy() {
