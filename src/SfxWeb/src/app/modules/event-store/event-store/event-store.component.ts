@@ -245,6 +245,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
     concurrentEventsConfig.push(newAppEventConfig);
 
+    if (!appEventGenerator.timelineGenerator) return;
     let simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(concurrentEventsConfig, randomAppEvents, parsedEvents);
     return simulEvents;
   }
