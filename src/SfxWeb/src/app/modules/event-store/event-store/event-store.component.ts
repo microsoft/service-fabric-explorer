@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
+import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineDataGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
 import { Subject, Subscription, forkJoin, of } from 'rxjs';
@@ -16,6 +16,19 @@ import { TelemetryEventNames } from 'src/app/Common/Constants';
 export interface IQuickDates {
     display: string;
     hours: number;
+}
+
+export interface IConcurrentEventsConfig {
+    eventType: string; // the event type we are investigating
+    eventsList: DataSet<DataItem>; // events we are investigating
+    relevantEventsType: string[]; // possible causes we are considering
+}
+
+export interface IConcurrentEvents extends DataItem {
+    related: IConcurrentEvents[] // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
+    timestamp?: string,
+    start?: Date,
+    end?: Date
 }
 
 export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
@@ -188,12 +201,65 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       return combinedTimelineData;
   }
 
-  public setTimelineData(): void {
-      const subs = this.listEventStoreData.map(data => data.eventsList.refresh());
+  private getConcurrentEventsData(): DataSet<DataItem> {
+    /*
+        Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
+    */
+    let appEvents = [];
+    let parsedEvents : IConcurrentEvents[] = [];
 
-      forkJoin(subs).subscribe(() => {
+    let appEventGenerator = this.listEventStoreData[0];
+    if (appEventGenerator.eventsList.lastRefreshWasSuccessful) {
+        if (appEventGenerator.timelineGenerator) {
+            let consumed = appEventGenerator.timelineGenerator.consume(appEventGenerator.getEvents(), this.startDate, this.endDate);
+            consumed.items.forEach(item => appEvents.push(item));
+        }
+    }
+    
+    for (const data of this.listEventStoreData) {
+        if (data.eventsList.lastRefreshWasSuccessful) {
+            if (data.timelineGenerator) {
+                let consumed = data.timelineGenerator.consume(data.getEvents(), this.startDate, this.endDate);
+                consumed.items.forEach(item => parsedEvents.push(item));
+            }
+        }
+    }
+    
+    let concurrentEventsConfig: IConcurrentEventsConfig[] = [];
+    
+    /*
+        Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
+        which events happen concurrently with these random events.
+    */
+    let randomItems = 1;
+    let randomAppEvents : IConcurrentEvents[] = [];    
+    for (let idx = 0; idx < appEvents.length; idx++) {
+        if (appEvents[idx].kind == "ApplicationProcessExited") randomAppEvents.push(appEvents[idx]);
+    }
+
+    let newAppEventConfig: IConcurrentEventsConfig = {
+        eventType: "ApplicationProcessExited",
+        eventsList: randomAppEvents,
+        relevantEventsType: ["ApplicationUpgradeStarted", "ApplicationUpgradeCompleted"]
+    };
+
+    concurrentEventsConfig.push(newAppEventConfig);
+
+    if (!appEventGenerator.timelineGenerator) return;
+    let simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(concurrentEventsConfig, randomAppEvents, parsedEvents);
+    return simulEvents;
+  }
+
+  public setTimelineData(): void {
+      const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());            
+      forkJoin(timelineEventSubs).subscribe(() => {
           this.timeLineEventsData = this.getTimelineData();
       });
+
+      forkJoin(timelineEventSubs).subscribe(() => {
+          let concurrentEvents = this.getConcurrentEventsData();
+          console.log(concurrentEvents);
+      })
   }
 
   processData(option: IOptionData){

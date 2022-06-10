@@ -6,6 +6,7 @@ import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
+import { IConcurrentEventsConfig, IConcurrentEvents } from 'src/app/modules/event-store/event-store/event-store.component';
 
 /*
     NOTES:
@@ -27,10 +28,14 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 
 export interface ITimelineData {
     groups: DataSet<DataGroup>;
-    items: DataSet<DataItem>;
+    items: DataSet<ITimelineItem>;
     start?: Date;
     end?: Date;
     potentiallyMissingEvents?: boolean;
+}
+
+export interface ITimelineItem extends DataItem {
+    kind: string
 }
 
 export interface ITimelineDataGenerator<T extends FabricEventBase>{
@@ -73,7 +78,7 @@ export class EventStoreUtils {
                                           startOfRange: Date, group: string, targetVersionProperty: string) {
         const rollbackEnd = rollbackCompleteEvent.timeStamp;
 
-        let rollbackStarted = startOfRange.toISOString();
+        let rollbackStarted = startOfRange.toISOString();        
         // wont always get this event because of the time range that can be selected where we only get the
         // rollback completed which leaves us missing some of the info.
         if (rollbackStartedEvent) {
@@ -88,6 +93,7 @@ export class EventStoreUtils {
                 content: 'Upgrade rolling forward failed',
                 start: upgradeStart,
                 end: rollbackStarted,
+                kind: rollbackCompleteEvent.kind,
                 group,
                 type: 'range',
                 className: 'red'
@@ -102,6 +108,7 @@ export class EventStoreUtils {
             content: label,
             start: rollbackStarted,
             end: rollbackEnd,
+            kind: rollbackCompleteEvent.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(rollbackCompleteEvent.eventProperties, rollbackStarted, rollbackEnd),
@@ -117,11 +124,13 @@ export class EventStoreUtils {
 
         const start = new Date(endDate.getTime() - duration).toISOString();
         const label = event.eventProperties.UpgradeDomains;
+
         items.add({
             id: event.eventInstanceId + label + event.eventProperties[targetVersionProperty],
             content: label,
             start,
             end,
+            kind: event.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
@@ -141,6 +150,7 @@ export class EventStoreUtils {
             content,
             start,
             end,
+            kind: event.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
@@ -163,6 +173,7 @@ export class EventStoreUtils {
             content,
             start,
             end,
+            kind: event.kind,
             group,
             type: 'range',
             title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end),
@@ -184,6 +195,58 @@ export class EventStoreUtils {
 export abstract class TimeLineGeneratorBase<T> {
     consume(events: T[], startOfRange: Date, endOfRange: Date): ITimelineData {
          throw new Error('NotImplementedError');
+    }
+
+    checkOverlappingTime(inputEvent: DataItem, iterEvent: DataItem) : boolean {  
+        let currDate = new Date(inputEvent.start);       
+        if (iterEvent.start) {                            
+            let startDate = new Date(iterEvent.start);
+            if (iterEvent.end) {
+                let endDate = new Date(iterEvent.end);
+                if (startDate <= currDate && currDate <= endDate) {
+                    // add new concurrent event
+                    return true;
+                }
+            }             
+            // this time window will be configurable, used for instantaneous current events
+            let timeWindowInMs = 10000000;
+            let start = new Date(currDate.getTime() - timeWindowInMs).toISOString();
+            let end = new Date(currDate.getTime() + timeWindowInMs).toISOString();
+            if (start <= iterEvent.start && iterEvent.start <= end) {
+                return true;
+            }            
+        }
+        return false;
+    }
+
+    getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: DataItem[], events: DataItem[]) : IConcurrentEvents[] {
+        /*
+            Grab the events that occur concurrently with an inputted current event.
+        */
+        let simulEvents : IConcurrentEvents[] = [];
+        // iterate through all the input events
+        inputEvents.forEach(inputEvent => {
+            // iterate through all configuration
+            configs.forEach(config => {
+                if (config.eventType == inputEvent.kind) {                                        
+                    // iterate through all events to find relevant ones
+                    events.forEach(iterEvent => {
+                        if (!config.relevantEventsType.includes(iterEvent.kind)) {
+                            return;
+                        }
+                        if (this.checkOverlappingTime(inputEvent, iterEvent)) {
+                            if (!inputEvent.related) {
+                                inputEvent.related = [];
+                            }
+                            inputEvent.related.push(iterEvent);
+                        }
+                    });
+                }
+            });
+            simulEvents.push(inputEvent);
+        });
+
+        return simulEvents;
     }
 
     generateTimeLineData(events: T[], startOfRange?: Date, endOfRange?: Date, nestedGroupLabel?: string): ITimelineData {
@@ -287,13 +350,14 @@ export class ClusterTimelineGenerator extends TimeLineGeneratorBase<ClusterEvent
         if (event.eventProperties.HealthState === 'Warning') {
             // for end date if we dont have a previously seen health report(list iterates newest to oldest) then we know its still the ongoing state
             const end = previousClusterHealthReport ? previousClusterHealthReport.timeStamp : endOfRange.toISOString();
-            const content = `${event.eventProperties.HealthState}`;
+            const content = `${event.eventProperties.HealthState}`;            
 
             items.add({
                 id: event.eventInstanceId + content,
                 content,
                 start: event.timeStamp,
                 end,
+                kind: event.kind,
                 group: ClusterTimelineGenerator.seedNodeStatus,
                 type: 'range',
                 title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, end),
@@ -551,6 +615,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         // state necessary for some events
         let previousApplicationUpgrade: ApplicationEvent;
         let upgradeApplicationStarted: ApplicationEvent;
+        
         const applicationRollBacks: Record<string, {complete: ApplicationEvent, start?: ApplicationEvent}> = {};
         const processExitedGroups: Record<string, DataGroup> = {};
         const containerExitedGroups: Record<string, DataGroup> = {};
@@ -629,7 +694,6 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
         };
     }
 
-
     parseApplicationProcessExited(event: FabricEventBase, items: DataSet<DataItem>, processExitedGroups: Record<string, DataGroup>) {
 
         const groupLabel = `${event.eventProperties.ServicePackageName}`;
@@ -642,6 +706,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
             id: event.eventInstanceId + label,
             content: '',
             start,
+            kind: event.kind,
             group: groupLabel,
             type: 'point',
             className: event.eventProperties.UnexpectedTermination ? 'red-point' : 'green-point',
@@ -661,6 +726,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
           id: event.eventInstanceId + label,
           content: '',
           start,
+          kind: event.kind,
           group: groupLabel,
           type: 'point',
           className: event.eventProperties.UnexpectedTermination ? 'red-point' : 'green-point',
@@ -829,6 +895,7 @@ export function parseEventsGenerically(events: FabricEvent[], textSearch: string
             content: '',
             id: index,
             start: event.timeStamp,
+            kind: event.kind,
             group: groupId,
             type: 'point',
             title: EventStoreUtils.tooltipFormat(event.raw, event.timeStamp),
