@@ -7,6 +7,7 @@ import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { IConcurrentEventsConfig, IConcurrentEvents } from 'src/app/modules/event-store/event-store/event-store.component';
+import { convertToObject } from 'typescript';
 
 /*
     NOTES:
@@ -198,7 +199,10 @@ export abstract class TimeLineGeneratorBase<T> {
     }
 
     checkOverlappingTime(inputEvent: DataItem, iterEvent: DataItem) : boolean {  
-        let currDate = new Date(inputEvent.start);       
+        let currDate = new Date(inputEvent.start);               
+        if (iterEvent.kind == "NodeDeactivateCompleted") {
+            console.log(iterEvent);
+        }
         if (iterEvent.start) {                            
             let startDate = new Date(iterEvent.start);
             if (iterEvent.end) {
@@ -209,7 +213,7 @@ export abstract class TimeLineGeneratorBase<T> {
                 }
             }             
             // this time window will be configurable, used for instantaneous current events
-            let timeWindowInMs = 10000000;
+            let timeWindowInMs = 10000 * 1000;
             let start = new Date(currDate.getTime() - timeWindowInMs).toISOString();
             let end = new Date(currDate.getTime() + timeWindowInMs).toISOString();
             if (start <= iterEvent.start && iterEvent.start <= end) {
@@ -223,7 +227,12 @@ export abstract class TimeLineGeneratorBase<T> {
         /*
             Grab the events that occur concurrently with an inputted current event.
         */
+
+        if (inputEvents.length == 0) return;
+
         let simulEvents : IConcurrentEvents[] = [];
+        let addedEvents : DataItem[] = [];
+
         // iterate through all the input events
         inputEvents.forEach(inputEvent => {
             // iterate through all configuration
@@ -239,6 +248,7 @@ export abstract class TimeLineGeneratorBase<T> {
                                 inputEvent.related = [];
                             }
                             inputEvent.related.push(iterEvent);
+                            addedEvents.push(iterEvent);
                         }
                     });
                 }
@@ -246,6 +256,7 @@ export abstract class TimeLineGeneratorBase<T> {
             simulEvents.push(inputEvent);
         });
 
+        this.getSimultaneousEventsForEvent(configs, addedEvents, events);
         return simulEvents;
     }
 
@@ -388,6 +399,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
       start: event.timeStamp,
       group: NodeTimelineGenerator.NodesFailedToOpenLabel,
       type: 'point',
+      kind: event.kind,
       title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, `${event.nodeName} failed to open with ${event.eventProperties['Error']}.`),
       className: 'red-point',
       subgroup: 'stack'
@@ -402,6 +414,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
       start: event.timeStamp,
       group: added ? NodeTimelineGenerator.NodesAddedToClusterLabel : NodeTimelineGenerator.NodesRemovedFromClusterLabel,
       type: 'point',
+      kind: event.kind,
       title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, label),
       className: 'orange-point',
       subgroup: 'stack'
@@ -416,6 +429,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
       content: label,
       start,
       end,
+      kind: event.kind,
       group: NodeTimelineGenerator.NodesDownLabel,
       type: 'range',
       title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
@@ -434,6 +448,7 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
       content: label,
       start,
       end,
+      kind: event.kind,
       group: NodeTimelineGenerator.NodesDownLabel,
       type: 'range',
       title: EventStoreUtils.tooltipFormat(event.eventProperties, start, end, label),
@@ -788,6 +803,7 @@ export class RepairTaskTimelineGenerator extends TimeLineGeneratorBase<RepairTas
                 start: task.startTime ,
                 end: task.inProgress ? new Date() : new Date(task.raw.History.CompletedUtcTimestamp),
                 type: 'range',
+                kind: "RepairJob",           
                 group: 'job',
                 subgroup: 'stack',
                 className: task.inProgress ? 'blue' : task.raw.ResultStatus === 'Succeeded' ? 'green' : 'red',

@@ -12,15 +12,47 @@ import { ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
+import { WHITE_ON_BLACK_CSS_CLASS } from '@angular/cdk/a11y/high-contrast-mode/high-contrast-mode-detector';
+import { LIFECYCLE_HOOKS_VALUES } from '@angular/compiler/src/lifecycle_reflector';
 
 export interface IQuickDates {
     display: string;
     hours: number;
 }
 
+export interface LevelColorComponent {
+    color: string;
+}
+
+export interface LevelComponent {
+    level: number;
+    color: string;
+    dataLabels: LevelColorComponent;
+    height: number;
+}
+
+export interface NodeComponent {
+    id: string;    
+    title: string;
+    layout?: string;
+}
+
+export interface OrgChartSeriesComponent {
+    type: string;
+    name: string;
+    keys: string[];
+    data: string[][];
+    levels: LevelComponent[];
+    nodes: NodeComponent[];
+    colorByPoint: boolean;
+    color: string;
+    dataLabels: LevelColorComponent;
+    borderColor: string;
+    nodeWidth: number;
+}
+
 export interface IConcurrentEventsConfig {
     eventType: string; // the event type we are investigating
-    eventsList: DataSet<DataItem>; // events we are investigating
     relevantEventsType: string[]; // possible causes we are considering
 }
 
@@ -234,20 +266,104 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     let randomItems = 1;
     let randomAppEvents : IConcurrentEvents[] = [];    
     for (let idx = 0; idx < appEvents.length; idx++) {
-        if (appEvents[idx].kind == "ApplicationProcessExited") randomAppEvents.push(appEvents[idx]);
+        if (appEvents[idx].kind == "ApplicationProcessExited" && appEvents[idx].id.includes("f710279f-7822-4a7d-950f-3e994dde22ac")) {
+            randomAppEvents.push(appEvents[idx]);
+        }
     }
 
     let newAppEventConfig: IConcurrentEventsConfig = {
-        eventType: "ApplicationProcessExited",
-        eventsList: randomAppEvents,
-        relevantEventsType: ["ApplicationUpgradeStarted", "ApplicationUpgradeCompleted"]
+        eventType: "ApplicationProcessExited",        
+        relevantEventsType: [
+            "ApplicationUpgradeStarted", 
+            "ApplicationUpgradeCompleted", 
+            "NodeDown", 
+            "NodeDeactivateCompleted",
+            "NodeRemovedFromCluster"
+        ]
     };
 
+    let nodeDownEventConfig: IConcurrentEventsConfig = {
+        eventType: "NodeDown",
+        relevantEventsType: ["ClusterUpgradeStarted", "ClusterUpgradeCompleted"]
+    }
+
+    let nodeRestartEventConfig: IConcurrentEventsConfig = {
+        eventType:"NodeDeactivateCompleted",
+        relevantEventsType: ["RepairJob"]
+    }
+
     concurrentEventsConfig.push(newAppEventConfig);
+    concurrentEventsConfig.push(nodeDownEventConfig);
+    concurrentEventsConfig.push(nodeRestartEventConfig);
 
     if (!appEventGenerator.timelineGenerator) return;
     let simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(concurrentEventsConfig, randomAppEvents, parsedEvents);
+    console.log("Simul Events: ", simulEvents);
+    let orgChart = this.convertToOrgChart(simulEvents);
+    console.log(JSON.stringify(orgChart));
     return simulEvents;
+  }
+
+  private convertToOrgChart(simulEvents: IConcurrentEvents[]) : OrgChartSeriesComponent {
+      let dataLabelsColor : LevelColorComponent = {
+          color: "black"
+      }
+
+      let res : OrgChartSeriesComponent = {
+          type: "organization",
+          name: "Highsoft",
+          keys: ["from", "to"],
+          data: [],
+          levels: [],
+          nodes: [],
+          colorByPoint: false,
+          color: "#007ad0",
+          dataLabels: dataLabelsColor,
+          borderColor: "white",
+          nodeWidth: 100
+      }
+      
+      // perform BFS to convert to organization chart
+      let queue = [];
+      simulEvents.forEach(simulEvent => queue.push(simulEvent));
+
+      let levels = 0;      
+      while (queue.length > 0) {
+          let currSize = queue.length;                    
+          for (let i = 0; i < currSize; i++) {
+            let currEvent = queue.shift();
+            let newNodeComponent : NodeComponent = {
+                id: currEvent.id,
+                title: currEvent.kind,                
+                layout: "hanging"
+            }            
+
+            if (currSize == 1) {
+                delete newNodeComponent["layout"];
+            }
+            res.nodes.push(newNodeComponent);
+
+            if (currEvent.related) {
+                currEvent.related.forEach(relatedEvent => {
+                    res.data.push([currEvent.id, relatedEvent.id]);
+                    queue.push(relatedEvent);
+                });
+            }
+          }  
+          levels++;
+      }      
+
+      let colors = ["red", "orange", "yellow", "green", "blue", "purple"];
+      for (let i = 0; i < levels; i++) {
+          let newLevelComponent : LevelComponent = {
+              level: i,
+              color: colors[i],
+              dataLabels: dataLabelsColor,
+              height: 20
+          }
+          res.levels.push(newLevelComponent);
+      }
+      return res;
   }
 
   public setTimelineData(): void {

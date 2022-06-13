@@ -232,7 +232,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
         }
         this.displayDuration = TimeUtils.formatDurationAsAspNetTimespan(this.duration);
 
-        try {
+        try {            
             this.executorData = JSON.parse(this.raw.ExecutorData);
 
             this.couldParseExecutorData = true;
