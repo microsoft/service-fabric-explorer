@@ -82,6 +82,10 @@ export class NodeCollection extends DataModelCollectionBase<Node> {
         return RoutesService.getNodesViewPath();
     }
 
+    public viewTypePath(nodeType: string): string {
+        return RoutesService.getNodeTypeViewPath(nodeType);
+    }
+
     public mergeClusterHealthStateChunk(clusterHealthChunk: IClusterHealthChunk): Observable<any> {
         return this.updateCollectionFromHealthChunkList(clusterHealthChunk.NodeHealthStateChunks, item => IdGenerator.node(item.NodeName)).pipe(map(() => {
             this.updateNodesHealthState();
