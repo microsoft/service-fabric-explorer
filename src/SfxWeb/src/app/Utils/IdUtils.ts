@@ -59,6 +59,10 @@ export class IdUtils {
         return decodeURIComponent(IdUtils.getParam(route, 'nodeName'));
     }
 
+    public static getNodeType(route: ActivatedRouteSnapshot): string {
+        return decodeURIComponent(IdUtils.getParam(route, 'nodeType'));
+    }
+
     public static getBackupPolicyName(route: ActivatedRouteSnapshot): string {
         return decodeURIComponent(IdUtils.getParam(route, 'backupPolicyName'));
     }
