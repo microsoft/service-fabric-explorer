@@ -23,6 +23,8 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
 
   fromDate: NgbDate;
   toDate: NgbDate;
+  currentStartTime: string;
+  currentEndTime: string;
 
   constructor(public calendar: NgbCalendar, public formatter: NgbDateParserFormatter) {
 
@@ -31,6 +33,8 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
   ngOnChanges(simple: SimpleChanges) {
     this.toDate = this.dateToNgbDate(this.currentEndDate);
     this.fromDate = this.dateToNgbDate(this.currentStartDate);
+    this.currentStartTime = this.currentStartDate.toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false });
+    this.currentEndTime = this.currentEndDate.toLocaleTimeString([], { hour: '2-digit', minute: "2-digit", hour12: false });
   }
 
   ngOnInit(){
@@ -56,13 +60,26 @@ export class DualDatePickerComponent implements OnInit, OnChanges {
       this.fromDate = date;
     }
     if (this.fromDate && this.toDate){
-      this.currentStartDate.setFullYear(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
-      this.currentEndDate.setFullYear(this.toDate.year, this.toDate.month - 1, this.toDate.day);
-      this.dateChanged.emit({
-        endDate: this.currentEndDate,
-        startDate: this.currentStartDate
-      });
+      this.emitState();
     }
+  }
+
+  onTimeSelection(date: string, isStartTime: boolean) {
+    const timeToBeUpdated = isStartTime ? this.currentStartDate : this.currentEndDate; let newTime = date.split(":");
+    let hour = parseInt(newTime[0]);
+    let minute = parseInt(newTime[1]);
+    timeToBeUpdated.setHours(hour);
+    timeToBeUpdated.setMinutes(minute);
+    this.emitState();
+  }
+
+  emitState() {
+    this.currentStartDate.setFullYear(this.fromDate.year, this.fromDate.month - 1, this.fromDate.day);
+    this.currentEndDate.setFullYear(this.toDate.year, this.toDate.month - 1, this.toDate.day);
+    this.dateChanged.emit({
+      endDate: this.currentEndDate,
+      startDate: this.currentStartDate
+    });
   }
 
   isHovered(date: NgbDate) {
