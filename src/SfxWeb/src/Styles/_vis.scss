@@ -21,7 +21,8 @@
   border-radius: 10px;
 }
 .vis-item.vis-range {
-    border-radius: 0px;
+  box-sizing: border-box;
+  border-radius: 5px;
 }
 .vis-item.vis-selected {
   border-color: green;
@@ -45,13 +46,17 @@
 }
 
 .vis-labelset .vis-label {
-  font-size: var(--font-size-medium);
-  border-color: var(--font-primary-color);
+  font-size: 11pt;
+  border: 0px solid #191919;
+  border-bottom: 1px solid var(--font-primary-color);
   color: var(--font-primary-color);
 }
 
 .vis-panel.vis-left {
   background-color: var(--accent-darkblue);
+  border: 1px solid var(--font-primary-color);
+  border-radius: 5px;
+  box-shadow: var(--primary-box-shadow);
 }
 .vis-ltr .vis-label.vis-nested-group .vis-inner {
   padding-left: 0px;
@@ -138,6 +143,9 @@
 
 .vis-timeline {
   overflow:visible !important;
+  border: 1px solid var(--font-primary-color);
+  border-radius: 5px;
+  margin: auto;
 }
 
 .timeline-button {
@@ -150,4 +158,14 @@
 .vis-label{
   background-color: var(--accent-darkblue);
   color: #dad7d7;
+}
+
+.vis-panel.vis-center {
+  border: 1px var(--accent-underline);
+  border-radius: 5px;
+}
+
+.vis-panel.vis-bottom {
+  border: 1px var(--accent-underline);
+  border-right: 0px;
 }

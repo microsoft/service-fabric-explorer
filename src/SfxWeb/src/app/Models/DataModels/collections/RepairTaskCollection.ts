@@ -42,10 +42,9 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
 
                 // set the longest approving job if executing has no timestamp but approving does
                 // showing that the current phase is in approving
-                if (executingPhase.timestamp === '' &&
-                    approving.timestamp !== RepairTask.NonStartedTimeStamp &&
+                if (approving.timestamp === "" &&
                     (!longRunningApprovalRepairTask ||
-                        approving.durationMilliseconds > longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds)) {
+                      task.getHistoryPhase('Preparing').durationMilliseconds > longRunningApprovalRepairTask.getHistoryPhase('Preparing').durationMilliseconds)) {
                         longRunningApprovalRepairTask = task;
                 }
 
@@ -62,7 +61,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         this.longRunningApprovalJob = longRunningApprovalRepairTask;
         this.longestExecutingJob = longRunningExecutingRepairTask;
 
-        if (longRunningApprovalRepairTask && longRunningApprovalRepairTask.getPhase('Approved').durationMilliseconds > RepairTaskCollection.minDurationApprovalbanner) {
+        if (longRunningApprovalRepairTask && longRunningApprovalRepairTask.getHistoryPhase('Preparing').durationMilliseconds > RepairTaskCollection.minDurationApprovalbanner) {
             this.data.warnings.addOrUpdateNotification({
                 message: `Action Required: There is a repair job (${longRunningApprovalRepairTask.id}) waiting for approval for ${longRunningApprovalRepairTask.displayDuration}. This can block updates to this cluster. Please see aka.ms/sflongapprovingjob for more information. `,
                 level: StatusWarningLevel.Warning,
