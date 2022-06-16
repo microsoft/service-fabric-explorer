@@ -10,6 +10,8 @@ import { FormsModule } from '@angular/forms';
 import { NgbButtonsModule, NgbDropdownModule, NgbModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { OptionPickerComponent } from './option-picker/option-picker.component';
+import { ConcurrentEventsVisualizationModule } from '../concurrent-events-visualization/concurrent-events-visualization.module';
+import { VisualizationToolComponent } from '../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 
 
 @NgModule({
@@ -22,7 +24,8 @@ import { OptionPickerComponent } from './option-picker/option-picker.component';
     NgbDropdownModule,
     SharedModule,
     NgbModule,
-    NgbTooltipModule
+    NgbTooltipModule,
+    ConcurrentEventsVisualizationModule
   ],
   exports: [EventStoreComponent, FullDescriptionComponent, RowDisplayComponent, EventStoreTimelineComponent, OptionPickerComponent],
 })

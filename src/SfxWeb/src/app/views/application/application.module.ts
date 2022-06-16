@@ -34,7 +34,7 @@ import { HealthStateModule } from 'src/app/modules/health-state/health-state.mod
     NgbButtonsModule,
     UpgradeProgressModule,
     ChartsModule,
-    HealthStateModule
+    HealthStateModule,    
   ]
 })
 export class ApplicationModule { }

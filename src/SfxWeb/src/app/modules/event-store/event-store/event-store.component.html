@@ -16,7 +16,9 @@
         </app-double-slider>
       </div>
     </div>
-
+    <div *ngIf="simulEvents" class="app-visualization-tool">      
+      <app-visualization-tool [simulEvents]="simulEvents"></app-visualization-tool>    
+    </div>
     <div>
       <p *ngIf="timeLineEventsData?.potentiallyMissingEvents" style="display: inline-block; margin-left: 10px;">
         <app-health-badge badgeClass="badge-warning"></app-health-badge>
