@@ -37,6 +37,7 @@ context('Cluster page', () => {
         cy.contains('1')
       })
 
+      cy.get('[role="alert"]').should('not.exist')
     })
 
     it('certificate expiring banner', () => {
@@ -49,6 +50,18 @@ context('Cluster page', () => {
 
       cy.contains('A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure.')
       cy.contains('Thumbprint : 52b0278d37cbfe68f8cdf04f423a994d66ceb932')
+    })
+
+    it('long running job in approval', () => {
+      cy.intercept(repairTask_route, { fixture: 'cluster-page/repair-jobs/long-running-approval.json' })
+
+      cy.visit('')
+
+      cy.contains('Action Required: There is a repair job (longrunningapprovaljobid) waiting for approval for')
+
+      cy.get('[title="Repair Jobs In Progress"]').within(() => {
+        cy.contains('1');
+      })
     })
 
   })
@@ -86,6 +99,22 @@ context('Cluster page', () => {
       cy.get('[data-cy=upgrade-bar-domain]').within(() => {
         cy.contains('74 milliseconds')
       })
+
+      cy.get('[data-cy=manualmode]').should('not.exist')
+
+      cy.get('[data-cy=upgradeHealthEvents]').within(() => {
+        checkTableSize(4);
+      })
+
+    })
+
+    it('upgrade in progress - manual mode', () => {
+      cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/manual-mode-upgrade.json' }).as("upgrade");
+      cy.visit('/#/details')
+
+      cy.wait("@upgrade")
+
+      cy.get('[data-cy=manualmode]').should('exist')
     })
 
     it('upgrade in progress - Node by Node', () => {
@@ -128,6 +157,27 @@ context('Cluster page', () => {
         cy.wait('@appinfo');
         cy.contains(serviceName)
 
+      })
+    })
+
+    it('failed upgrade', () => {
+      cy.intercept('GET', upgradeProgress_route, { fixture: 'cluster-page/upgrade/failed-upgrade.json' }).as("inprogres");
+
+      cy.visit('/#/details')
+
+      cy.wait("@inprogres")
+
+      cy.get('[data-cy=failedupgrade]').within(() => {
+
+        cy.get('[data-cy=failureoverview]').within(() => {
+          cy.contains('UpgradeDomainTimeout');
+          cy.contains('2022-03-10T16:13:59.906Z');
+        })
+
+        cy.get('[data-cy=failedud]').within(() => {
+          cy.contains('b-hrs-1_2');
+          cy.get('[data-cy=failedphase]')
+        })
       })
     })
 
@@ -538,7 +588,7 @@ context('Cluster page', () => {
         cy.contains('Completed Repair Tasks').click();
 
         cy.get('tbody > tr').first().within(() => {
-          cy.get('button').click();
+          cy.get('button').first().click();
         });
 
         cy.get('[data-cy=history]').within(() => {
@@ -568,7 +618,7 @@ context('Cluster page', () => {
 
       cy.get('[data-cy=pendingjobs]').within(() => {
         cy.get('tbody > tr').first().within(() => {
-          cy.get('button').click();
+          cy.get('button').first().click();
         });
 
         cy.get('[data-cy=history]').within(() => {

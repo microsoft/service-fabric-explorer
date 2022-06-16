@@ -166,16 +166,21 @@ export interface IRawClusterUpgradeDescription {
         SortOrder: string;
     }
 
+export interface IRawApplicationHealthPolicy {
+  ConsiderWarningAsError: boolean;
+  MaxPercentUnhealthyDeployedApplications: number;
+}
 export interface IRawUpgradeDescription {
-        Name: string;
-        TargetApplicationTypeVersion: string;
-        Parameters: IRawParameter[];
-        UpgradeKind: string;
-        RollingUpgradeMode: string;
-        UpgradeReplicaSetCheckTimeoutInSeconds: string;
-        ForceRestart: boolean;
-        MonitoringPolicy: IRawMonitoringPolicy;
-    }
+  Name: string;
+  TargetApplicationTypeVersion: string;
+  Parameters: IRawParameter[];
+  UpgradeKind: string;
+  RollingUpgradeMode: string;
+  UpgradeReplicaSetCheckTimeoutInSeconds: string;
+  ForceRestart: boolean;
+  MonitoringPolicy: IRawMonitoringPolicy;
+  ApplicationHealthPolicy: IRawApplicationHealthPolicy
+}
 
 export interface IRawUnhealthyEvaluation {
         HealthEvaluation: IRawHealthEvaluation;

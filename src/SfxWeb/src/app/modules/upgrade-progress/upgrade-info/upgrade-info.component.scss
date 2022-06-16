@@ -17,8 +17,30 @@ h5 {
 
 .overview-container {
   flex: 1;
-  min-width: 400px;
-  max-width: 600px;
+  min-width: 350px;
+  max-width: 400px;
   margin-right: 10px;
   margin-left: 10px;
+}
+
+
+.layout-container {
+  display: flex;
+  width: 100%;
+  flex-wrap: wrap;
+  justify-content: space-around;
+
+  &.failed {
+    border: 2px solid var(--badge-error);
+    padding: 10px;
+    border-left: 10px solid var(--badge-error);
+    border-radius: 5px;
+    margin-bottom: 10px;
+  }
+}
+
+
+.node-list {
+  flex: 2;
+  min-width: 500px;
 }

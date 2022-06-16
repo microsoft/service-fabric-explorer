@@ -2,7 +2,7 @@ import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { NavbarComponent } from './component/navbar/navbar.component';
 import { RouterModule } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ClipBoardComponent } from './component/clip-board/clip-board.component';
 import { HealthBadgeComponent } from './component/health-badge/health-badge.component';
 import { CandyBarCompactComponent } from './component/candy-bar-compact/candy-bar-compact.component';
