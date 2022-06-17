@@ -12,8 +12,7 @@ import { ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
-import { WHITE_ON_BLACK_CSS_CLASS } from '@angular/cdk/a11y/high-contrast-mode/high-contrast-mode-detector';
-import { LIFECYCLE_HOOKS_VALUES } from '@angular/compiler/src/lifecycle_reflector';
+import * as jsonData from '../../../Models/eventstore/relatedEventsConfigs.json';
 
 export interface IQuickDates {
     display: string;
@@ -204,12 +203,12 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       return combinedTimelineData;
   }
 
-  private getConcurrentEventsData(): DataSet<DataItem> {
+  private testAppEvent(parsedEvents : IConcurrentEvents[]) : void {
     /*
-        Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
+        Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
+        which events happen concurrently with these random events.
     */
     let appEvents = [];
-    let parsedEvents : IConcurrentEvents[] = [];
 
     let appEventGenerator = this.listEventStoreData[0];
     if (appEventGenerator.eventsList.lastRefreshWasSuccessful) {
@@ -218,7 +217,27 @@ export class EventStoreComponent implements OnInit, OnDestroy {
             consumed.items.forEach(item => appEvents.push(item));
         }
     }
-    
+
+    let randomAppEvents : IConcurrentEvents[] = [];    
+    for (let idx = 0; idx < appEvents.length; idx++) {
+        if (appEvents[idx].kind == "ApplicationProcessExited" && appEvents[idx].id.includes("f710279f-7822-4a7d-950f-3e994dde22ac")) {
+            randomAppEvents.push(appEvents[idx]);
+        }
+    }
+
+    // json data loaded from models eventstore
+    let concurrentEventsConfig : IConcurrentEventsConfig[] = jsonData;
+
+    if (!appEventGenerator.timelineGenerator) return;
+    this.simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(concurrentEventsConfig, randomAppEvents, parsedEvents);
+    console.log(this.simulEvents);
+  }
+
+  private getConcurrentEventsData(): DataSet<DataItem> {
+    /*
+        Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
+    */
+    let parsedEvents : IConcurrentEvents[] = [];
     for (const data of this.listEventStoreData) {
         if (data.eventsList.lastRefreshWasSuccessful) {
             if (data.timelineGenerator) {
@@ -227,48 +246,9 @@ export class EventStoreComponent implements OnInit, OnDestroy {
             }
         }
     }
-    
-    let concurrentEventsConfig: IConcurrentEventsConfig[] = [];
-    
-    /*
-        Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
-        which events happen concurrently with these random events.
-    */
-    let randomItems = 1;
-    let randomAppEvents : IConcurrentEvents[] = [];    
-    for (let idx = 0; idx < appEvents.length; idx++) {
-        if (appEvents[idx].kind == "ApplicationProcessExited" && appEvents[idx].id.includes("f710279f-7822-4a7d-950f-3e994dde22ac")) {
-            randomAppEvents.push(appEvents[idx]);
-        }
-    }
 
-    let newAppEventConfig: IConcurrentEventsConfig = {
-        eventType: "ApplicationProcessExited",        
-        relevantEventsType: [
-            "ApplicationUpgradeStarted", 
-            "ApplicationUpgradeCompleted", 
-            "NodeDown", 
-            "NodeDeactivateCompleted",
-            "NodeRemovedFromCluster"
-        ],
-    };
-
-    let nodeDownEventConfig: IConcurrentEventsConfig = {
-        eventType: "NodeDown",
-        relevantEventsType: ["ClusterUpgradeStarted", "ClusterUpgradeCompleted"]
-    }
-
-    let nodeRestartEventConfig: IConcurrentEventsConfig = {
-        eventType:"NodeDeactivateCompleted",
-        relevantEventsType: ["RepairJob"]
-    }
-
-    concurrentEventsConfig.push(newAppEventConfig);
-    concurrentEventsConfig.push(nodeDownEventConfig);
-    concurrentEventsConfig.push(nodeRestartEventConfig);
-
-    if (!appEventGenerator.timelineGenerator) return;
-    this.simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(concurrentEventsConfig, randomAppEvents, parsedEvents);        
+    // testing purposes
+    this.testAppEvent(parsedEvents);
   }
 
   public setTimelineData(): void {

@@ -7,7 +7,6 @@ import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { IConcurrentEventsConfig, IConcurrentEvents } from 'src/app/modules/event-store/event-store/event-store.component';
-import { convertToObject } from 'typescript';
 
 /*
     NOTES:
@@ -228,15 +227,14 @@ export abstract class TimeLineGeneratorBase<T> {
             Grab the events that occur concurrently with an inputted current event.
         */
 
-        if (inputEvents.length == 0) return;
-
         let simulEvents : IConcurrentEvents[] = [];
         let addedEvents : DataItem[] = [];
 
         // iterate through all the input events
         inputEvents.forEach(inputEvent => {
             // iterate through all configuration
-            configs.forEach(config => {
+            for (let i = 0; i < configs.length; i++) {
+                let config = configs[i];
                 if (config.eventType == inputEvent.kind) {                                        
                     // iterate through all events to find relevant ones
                     events.forEach(iterEvent => {
@@ -252,11 +250,11 @@ export abstract class TimeLineGeneratorBase<T> {
                         }
                     });
                 }
-            });
+            }
             simulEvents.push(inputEvent);
         });
 
-        this.getSimultaneousEventsForEvent(configs, addedEvents, events);
+        if (addedEvents.length > 0) this.getSimultaneousEventsForEvent(configs, addedEvents, events);
         return simulEvents;
     }
 

@@ -1,0 +1,18 @@
+[{
+    "eventType": "ApplicationProcessExited",        
+    "relevantEventsType": [
+        "ApplicationUpgradeStarted", 
+        "ApplicationUpgradeCompleted", 
+        "NodeDown", 
+        "NodeDeactivateCompleted",
+        "NodeRemovedFromCluster"
+    ]
+},
+{
+    "eventType": "NodeDown",
+    "relevantEventsType": ["ClusterUpgradeStarted", "ClusterUpgradeCompleted"]
+},
+{
+    "eventType": "NodeDeactivateCompleted",
+    "relevantEventsType": ["RepairJob"]
+}]

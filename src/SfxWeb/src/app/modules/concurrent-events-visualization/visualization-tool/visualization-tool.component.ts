@@ -1,4 +1,4 @@
-import { Component, OnInit, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, Input } from '@angular/core';
 import { IConcurrentEvents } from '../../event-store/event-store/event-store.component';
 import * as Highcharts from 'highcharts';
 import { Options } from 'highcharts';
@@ -17,8 +17,12 @@ HighchartsExporting(Highcharts);
   templateUrl: './visualization-tool.component.html',
   styleUrls: ['./visualization-tool.component.scss']
 })
-export class VisualizationToolComponent implements OnInit {
-  public options: any = {
+
+export class VisualizationToolComponent implements OnInit, OnChanges {
+
+  @Input() simulEvents : IConcurrentEvents[]
+
+  public options: Options = {
       chart: {
         height: 1000,
         inverted: true,
@@ -29,17 +33,6 @@ export class VisualizationToolComponent implements OnInit {
         style: {
           color: 'white',
           fontSize: '15px'
-        }
-      },
-      accessibility: {
-        point: {
-          descriptionFormatter: function (point) {
-            var nodeName = point.toNode.name,
-              nodeId = point.toNode.id,
-              nodeDesc = nodeName === nodeId ? nodeName : nodeName + ', ' + nodeId,
-              parentDesc = point.fromNode.id;
-            return point.index + '. ' + nodeDesc + ', reports to ' + parentDesc + '.';
-          }
         }
       },
       series: [],
@@ -56,15 +49,16 @@ export class VisualizationToolComponent implements OnInit {
   constructor() {
   }
 
-  @Input() simulEvents : IConcurrentEvents[]
+  ngOnInit() {    
+  }
 
-  ngOnInit(): void {    
-    this.options.series = [this.traverse(this.simulEvents)];
+  ngAfterViewInit(): void {
+    this.options.series = [this.traverse()];
     Highcharts.chart('container', this.options);
   }
 
-  traverse(simulEvents : IConcurrentEvents[]): any {
-    let res = {
+  traverse(): any {
+    let config = {
       type: 'organization',
       name: 'Highsoft',
       keys: ['from', 'to'],
@@ -81,8 +75,8 @@ export class VisualizationToolComponent implements OnInit {
     }
     // perform BFS to convert to organization chart
     let queue = [];
-    if (this.simulEvents) {      
-      this.simulEvents.forEach(simulEvent => queue.push(simulEvent));
+    if (this.simulEvents) {
+      queue = [...this.simulEvents];        
 
       let levels = 0;      
       let fontPrefix = "<p style='font-size: 12px; color: white;'>"
@@ -96,14 +90,15 @@ export class VisualizationToolComponent implements OnInit {
                   layout: "hanging",                                    
               }                          
 
+              // root node should not be hanging - this messes up the diagram
               if (currSize == 1) {
                   delete newNodeComponent["layout"];
               }
-              res.nodes.push(newNodeComponent);
+              config.nodes.push(newNodeComponent);
 
               if (currEvent.related) {
                   currEvent.related.forEach(relatedEvent => {
-                      res.data.push([fontPrefix + currEvent.id + "</p>", fontPrefix + relatedEvent.id + "</p>"]);
+                      config.data.push([`${fontPrefix}${currEvent.id}</p>`, `${fontPrefix}${relatedEvent.id}</p>`]);
                       queue.push(relatedEvent);
                   });
               }
@@ -117,19 +112,14 @@ export class VisualizationToolComponent implements OnInit {
               level: i,
               color: colors[i]
           }
-          res.levels.push(newLevelComponent);
-      }      
-      console.log("levels: ", res.levels);
+          config.levels.push(newLevelComponent);
+      }
     }
-    return res;
+    return config;
   }
 
   ngOnChanges(): void {    
-    let res = this.traverse(this.simulEvents);
-    console.log("Res Formatted: ", res);
-    console.log("Data: ", JSON.stringify(res.data));
-    this.options.series = [this.traverse(this.simulEvents)];
-    console.log("Options: ", JSON.stringify(this.options));
+    this.options.series = [this.traverse()];
     Highcharts.chart('container', this.options);
   }
 }
