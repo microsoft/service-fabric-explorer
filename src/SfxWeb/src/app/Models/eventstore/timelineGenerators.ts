@@ -230,8 +230,7 @@ export abstract class TimeLineGeneratorBase<T> {
         // iterate through all the input events
         inputEvents.forEach(inputEvent => {
             // iterate through all configuration
-            for (let i = 0; i < configs.length; i++) {
-                let config = configs[i];
+            configs.forEach(config => {
                 if (config.eventType == inputEvent.kind) {                                        
                     // iterate through all events to find relevant ones
                     events.forEach(iterEvent => {
@@ -247,7 +246,7 @@ export abstract class TimeLineGeneratorBase<T> {
                         }
                     });
                 }
-            }
+            });
             simulEvents.push(inputEvent);
         });
 

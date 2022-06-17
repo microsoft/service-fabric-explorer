@@ -1,4 +1,6 @@
-[{
+import { IConcurrentEventsConfig } from "src/app/modules/event-store/event-store/event-store.component";
+
+export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [{
     "eventType": "ApplicationProcessExited",        
     "relevantEventsType": [
         "ApplicationUpgradeStarted", 
@@ -15,4 +17,4 @@
 {
     "eventType": "NodeDeactivateCompleted",
     "relevantEventsType": ["RepairJob"]
-}]
+}];

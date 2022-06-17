@@ -12,7 +12,7 @@ import { ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
-import * as jsonData from '../../../Models/eventstore/relatedEventsConfigs.json';
+import { RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
 
 export interface IQuickDates {
     display: string;
@@ -223,13 +223,10 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         if (appEvents[idx].kind == "ApplicationProcessExited" && appEvents[idx].id.includes("f710279f-7822-4a7d-950f-3e994dde22ac")) {
             randomAppEvents.push(appEvents[idx]);
         }
-    }
-
-    // json data loaded from models eventstore
-    let concurrentEventsConfig : IConcurrentEventsConfig[] = jsonData;
+    }    
 
     if (!appEventGenerator.timelineGenerator) return;
-    this.simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(concurrentEventsConfig, randomAppEvents, parsedEvents);
+    this.simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(RelatedEventsConfigs, randomAppEvents, parsedEvents);
     console.log(this.simulEvents);
   }
 
