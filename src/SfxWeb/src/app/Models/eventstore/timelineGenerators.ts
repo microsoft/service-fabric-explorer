@@ -199,9 +199,6 @@ export abstract class TimeLineGeneratorBase<T> {
 
     checkOverlappingTime(inputEvent: DataItem, iterEvent: DataItem) : boolean {  
         let currDate = new Date(inputEvent.start);               
-        if (iterEvent.kind == "NodeDeactivateCompleted") {
-            console.log(iterEvent);
-        }
         if (iterEvent.start) {                            
             let startDate = new Date(iterEvent.start);
             if (iterEvent.end) {

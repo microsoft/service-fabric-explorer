@@ -22,7 +22,7 @@ import { AppInsightsErrorHandler } from './error-handling';
 @NgModule({
   declarations: [
     AppComponent,
-    TelemetrySnackBarComponent,
+    TelemetrySnackBarComponent
   ],
   imports: [
     BrowserModule,
