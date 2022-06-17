@@ -12,6 +12,7 @@ import { ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
+import { RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
 
 export interface IQuickDates {
     display: string;
@@ -20,7 +21,6 @@ export interface IQuickDates {
 
 export interface IConcurrentEventsConfig {
     eventType: string; // the event type we are investigating
-    eventsList: DataSet<DataItem>; // events we are investigating
     relevantEventsType: string[]; // possible causes we are considering
 }
 
@@ -81,6 +81,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
   public startDate: Date;
   public endDate: Date;
+
+  public simulEvents: IConcurrentEvents[];
 
   ngOnInit() {
       this.pshowAllEvents = this.checkAllOption();
@@ -201,12 +203,12 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       return combinedTimelineData;
   }
 
-  private getConcurrentEventsData(): DataSet<DataItem> {
+  private testAppEvent(parsedEvents : IConcurrentEvents[]) : void {
     /*
-        Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
+        Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
+        which events happen concurrently with these random events.
     */
     let appEvents = [];
-    let parsedEvents : IConcurrentEvents[] = [];
 
     let appEventGenerator = this.listEventStoreData[0];
     if (appEventGenerator.eventsList.lastRefreshWasSuccessful) {
@@ -215,7 +217,24 @@ export class EventStoreComponent implements OnInit, OnDestroy {
             consumed.items.forEach(item => appEvents.push(item));
         }
     }
-    
+
+    let randomAppEvents : IConcurrentEvents[] = [];    
+    for (let idx = 0; idx < appEvents.length; idx++) {
+        if (appEvents[idx].kind == "ApplicationProcessExited" && appEvents[idx].id.includes("f710279f-7822-4a7d-950f-3e994dde22ac")) {
+            randomAppEvents.push(appEvents[idx]);
+        }
+    }    
+
+    if (!appEventGenerator.timelineGenerator) return;
+    this.simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(RelatedEventsConfigs, randomAppEvents, parsedEvents);
+    console.log(this.simulEvents);
+  }
+
+  private getConcurrentEventsData(): DataSet<DataItem> {
+    /*
+        Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
+    */
+    let parsedEvents : IConcurrentEvents[] = [];
     for (const data of this.listEventStoreData) {
         if (data.eventsList.lastRefreshWasSuccessful) {
             if (data.timelineGenerator) {
@@ -224,30 +243,9 @@ export class EventStoreComponent implements OnInit, OnDestroy {
             }
         }
     }
-    
-    let concurrentEventsConfig: IConcurrentEventsConfig[] = [];
-    
-    /*
-        Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
-        which events happen concurrently with these random events.
-    */
-    let randomItems = 1;
-    let randomAppEvents : IConcurrentEvents[] = [];    
-    for (let idx = 0; idx < appEvents.length; idx++) {
-        if (appEvents[idx].kind == "ApplicationProcessExited") randomAppEvents.push(appEvents[idx]);
-    }
 
-    let newAppEventConfig: IConcurrentEventsConfig = {
-        eventType: "ApplicationProcessExited",
-        eventsList: randomAppEvents,
-        relevantEventsType: ["ApplicationUpgradeStarted", "ApplicationUpgradeCompleted"]
-    };
-
-    concurrentEventsConfig.push(newAppEventConfig);
-
-    if (!appEventGenerator.timelineGenerator) return;
-    let simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(concurrentEventsConfig, randomAppEvents, parsedEvents);
-    return simulEvents;
+    // testing purposes
+    this.testAppEvent(parsedEvents);
   }
 
   public setTimelineData(): void {

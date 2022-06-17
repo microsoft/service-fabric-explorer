@@ -1,7 +1,6 @@
 import { Component, OnInit, Injector } from '@angular/core';
 import { ApplicationBaseControllerDirective } from '../applicationBase';
 import { DataService } from 'src/app/services/data.service';
-import { ApplicationTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 import { IEventStoreData } from 'src/app/modules/event-store/event-store/event-store.component';
 import { IOptionConfig } from 'src/app/modules/event-store/option-picker/option-picker.component';
 
