@@ -1,4 +1,4 @@
-import { Component, OnInit, OnChanges, Input } from '@angular/core';
+import { Component, OnInit, OnChanges, AfterViewInit, Input } from '@angular/core';
 import { IConcurrentEvents } from '../../event-store/event-store/event-store.component';
 import * as Highcharts from 'highcharts';
 import { Options } from 'highcharts';
@@ -18,7 +18,7 @@ HighchartsExporting(Highcharts);
   styleUrls: ['./visualization-tool.component.scss']
 })
 
-export class VisualizationToolComponent implements OnInit, OnChanges {
+export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewInit {
 
   @Input() simulEvents : IConcurrentEvents[]
 
@@ -49,7 +49,8 @@ export class VisualizationToolComponent implements OnInit, OnChanges {
   constructor() {
   }
 
-  ngOnInit() {    
+  ngOnInit() {
+    console.log("Visualization Tool Created!");
   }
 
   ngAfterViewInit(): void {
