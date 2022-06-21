@@ -24,6 +24,7 @@ import { environment } from 'src/environments/environment';
 import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger';
 import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { IHttpRequest, IHttpResponse } from 'src/global';
+import { Utils } from 'src/app/Utils/Utils';
 @Injectable({
   providedIn: 'root'
 })
@@ -877,17 +878,31 @@ export class RestClientService {
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'DELETE', url }) : this.httpClient.delete<T>(environment.baseUrl  + url);
-      if (!messageHandler) {
-          messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
-      }
-      return this.handleResponse<T>(apiDesc, result as any, messageHandler);
+    const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'DELETE', url }) : this.httpClient.delete<T>(environment.baseUrl + url);
+    if (!messageHandler) {
+      messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
+    }
+    return this.handleResponse<T>(apiDesc, result as any, messageHandler);
   }
 
-    public requestAsync<T>(request: IHttpRequest): Observable<T> {
-      console.log(request);
-      return from(new Promise((resolve, reject) => {
-        window.electronInterop.sendHttpRequest(request).then((response) => {
+  public requestAsync<T>(request: IHttpRequest): Observable<T> {
+    return from(new Promise((resolve, reject) => {
+      const integration = StandaloneIntegration.integrationConfig;
+      const requestData = integration.passObjectAsString ? JSON.stringify(request) : request;
+      const caller = Utils.result2(window, integration.windowPath);
+      if(integration.handleAsCallBack) {
+        caller({"data": requestData, "Callback": (response) => {
+            if (integration.passObjectAsString) {
+              response = JSON.parse(response);
+            }
+            resolve(response.data);
+          }
+        })
+      }else{
+        caller(requestData).then((response, res) => {
+          if (integration.passObjectAsString) {
+            response = JSON.parse(response);
+          }
           if (response.statusCode.toString().startsWith("2")) {
             resolve(response.data);
           } else {
@@ -899,8 +914,7 @@ export class RestClientService {
             reject(r);
           }
           // only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
-        }
-        ).catch(err => {
+        }).catch(err => {
           console.log(err)
           const r = new HttpErrorResponse({
             status: 500,
@@ -909,8 +923,9 @@ export class RestClientService {
           });
           reject(r);
         });
-      }) as Promise<T>);
-}
+      }
+    }) as Promise<T>);
+  }
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {
     const data: IRequest = {

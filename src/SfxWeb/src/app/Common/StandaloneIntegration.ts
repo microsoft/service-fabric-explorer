@@ -4,11 +4,27 @@
 // -----------------------------------------------------------------------------
 import { environment } from 'src/environments/environment';
 
+export interface IntegrationConfig {
+  preloadFunction?: string;
+  windowPath: string;
+  passObjectAsString?: boolean;
+  handleAsCallBack?: boolean;
+}
+
 export class StandaloneIntegration {
     private static iclusterUrl: string = null;
+    private static integrationConfigCached: IntegrationConfig = null;
 
     public static isStandalone(): boolean {
-        return environment.electronWindow;
+      return environment.electronWindow;
+    }
+
+    public static get integrationConfig(): IntegrationConfig {
+      if(StandaloneIntegration.integrationConfigCached === null) {
+         const config = StandaloneIntegration.extractQueryItem(window.location.search, 'integrationConfig');
+         StandaloneIntegration.integrationConfigCached = JSON.parse(config);
+      }
+      return this.integrationConfigCached
     }
 
     public static get clusterUrl(): string {
