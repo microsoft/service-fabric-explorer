@@ -234,16 +234,37 @@ export abstract class TimeLineGeneratorBase<T> {
                 if (config.eventType == inputEvent.kind) {                                        
                     // iterate through all events to find relevant ones
                     events.forEach(iterEvent => {
-                        if (!config.relevantEventsType.includes(iterEvent.kind)) {
-                            return;
-                        }
-                        if (this.checkOverlappingTime(inputEvent, iterEvent)) {
-                            if (!inputEvent.related) {
-                                inputEvent.related = [];
+                        config.relevantEventsType.forEach(relevantEventType => {
+
+                            // check if event type is relevant
+                            if (relevantEventType.eventType == iterEvent.kind) {
+                                // see if each property mapping holds true
+                                let propMaps = true;
+                                let mappings = relevantEventType.propertyMappings;
+                                mappings.forEach(mapping => {
+                                    if (inputEvent[mapping[0]] != inputEvent[mapping[1]]) {
+                                        propMaps = false;
+                                    }
+                                });
+                                
+                                if (propMaps) {
+                                    /*
+                                        if (this.checkOverlappingTime(inputEvent, iterEvent)) {
+                                            if (!inputEvent.related) {
+                                                inputEvent.related = [];
+                                            }
+                                            inputEvent.related.push(iterEvent);
+                                            addedEvents.push(iterEvent);
+                                        }
+                                    */
+                                    if (!inputEvent.related) {
+                                        inputEvent.related = [];
+                                    }
+                                    inputEvent.related.push(iterEvent);
+                                    addedEvents.push(iterEvent);
+                                }
                             }
-                            inputEvent.related.push(iterEvent);
-                            addedEvents.push(iterEvent);
-                        }
+                        });                        
                     });
                 }
             });

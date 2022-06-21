@@ -19,9 +19,14 @@ export interface IQuickDates {
     hours: number;
 }
 
+export interface IRelevantEventsConfig {
+    eventType: string;
+    propertyMappings: [string, string][];
+}
+
 export interface IConcurrentEventsConfig {
     eventType: string; // the event type we are investigating
-    relevantEventsType: string[]; // possible causes we are considering
+    relevantEventsType: IRelevantEventsConfig[]; // possible causes we are considering  
 }
 
 export interface IConcurrentEvents extends DataItem {
@@ -184,7 +189,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                   console.error(e);
               }
           }
-          else{
+          else {
               this.failedRefresh = true;
           }
       }
