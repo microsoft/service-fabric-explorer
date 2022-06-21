@@ -34,7 +34,7 @@ Service Fabric Explorer consists of two main components, an AngularJS based appl
 To develop Service Fabric Explorer, the following components are required.
 
 * Git: https://git-scm.com/
-* Node.js (Latest is preferred): https://nodejs.org/
+* Node.js (use LTS version): https://nodejs.org/
 
 The recommended IDE for Service Fabric Explorer development is VSCode because VSCode is a cross-platform editor, which supports Windows, Linux and macOS. But you can use whatever editor to develop. 
 
