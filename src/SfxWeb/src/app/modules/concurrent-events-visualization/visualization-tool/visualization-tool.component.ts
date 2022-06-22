@@ -86,7 +86,7 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
           for (let i = 0; i < currSize; i++) {
               let currEvent = queue.shift();
               let newNodeComponent = {
-                  id: fontPrefix + currEvent.id + "</p>",
+                  id: fontPrefix + currEvent.eventInstanceId + "</p>",
                   title: currEvent.kind,
                   layout: "hanging",                                    
               }                          
@@ -99,7 +99,7 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
 
               if (currEvent.related) {
                   currEvent.related.forEach(relatedEvent => {
-                      config.data.push([`${fontPrefix}${currEvent.id}</p>`, `${fontPrefix}${relatedEvent.id}</p>`]);
+                      config.data.push([`${fontPrefix}${currEvent.eventInstanceId}</p>`, `${fontPrefix}${relatedEvent.eventInstanceId}</p>`]);
                       queue.push(relatedEvent);
                   });
               }

@@ -219,6 +219,21 @@ export abstract class TimeLineGeneratorBase<T> {
         return false;
     }
 
+    getPropValue(inputEvent : DataItem, sourcePropArr : string[], targetPropArr : string[]) {
+        let inputCurr = inputEvent;
+        let reached = true;        
+        for (let propIdx = 0; propIdx < sourcePropArr.length; propIdx++) {
+            let prop = sourcePropArr[propIdx];
+            if (prop in inputCurr) {
+                inputCurr = inputCurr[prop];                                            
+            } else {
+                reached = false;
+                break;
+            }
+        }
+        return reached ? inputCurr : null;
+    }
+    
     getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: DataItem[], events: DataItem[]) : IConcurrentEvents[] {
         /*
             Grab the events that occur concurrently with an inputted current event.
@@ -242,21 +257,20 @@ export abstract class TimeLineGeneratorBase<T> {
                                 let propMaps = true;
                                 let mappings = relevantEventType.propertyMappings;
                                 mappings.forEach(mapping => {
-                                    if (inputEvent[mapping[0]] != inputEvent[mapping[1]]) {
+                                    let sourcePropArr = mapping[0].split('.');
+                                    let targetPropArr = mapping[1].split('.');
+
+                                    let sourceVal = this.getPropValue(inputEvent, sourcePropArr, targetPropArr);
+                                    let targetVal = this.getPropValue(iterEvent, sourcePropArr, targetPropArr);
+                                    if (iterEvent.eventInstanceId == "fcd49c38-cba6-4b76-be3f-4c8c337a3bed") {
+                                        console.log(iterEvent);
+                                    }
+                                    if (sourceVal && targetVal && sourceVal != targetVal) {
                                         propMaps = false;
                                     }
                                 });
                                 
                                 if (propMaps) {
-                                    /*
-                                        if (this.checkOverlappingTime(inputEvent, iterEvent)) {
-                                            if (!inputEvent.related) {
-                                                inputEvent.related = [];
-                                            }
-                                            inputEvent.related.push(iterEvent);
-                                            addedEvents.push(iterEvent);
-                                        }
-                                    */
                                     if (!inputEvent.related) {
                                         inputEvent.related = [];
                                     }
