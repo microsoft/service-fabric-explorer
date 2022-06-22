@@ -19,9 +19,14 @@ export interface IQuickDates {
     hours: number;
 }
 
+export interface IPropertyMapping {
+    sourceProperty: string;
+    targetProperty: string;
+}
+
 export interface IRelevantEventsConfig {
     eventType: string;
-    propertyMappings: [string, string][];
+    propertyMappings: IPropertyMapping[];
 }
 
 export interface IConcurrentEventsConfig {
@@ -230,8 +235,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         if (data.eventsList.lastRefreshWasSuccessful) {
             if (data.timelineGenerator) {
                 data.getEvents().forEach(event => parsedEvents.push(event));
-                // let consumed = data.timelineGenerator.consume(data.getEvents(), this.startDate, this.endDate);
-                // consumed.items.forEach(item => parsedEvents.push(item));
             }
         }
     }

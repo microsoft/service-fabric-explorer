@@ -8,7 +8,12 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
         "relevantEventsType": [
             {
                 eventType: "NodeDown",
-                propertyMappings: [["nodeName", "nodeName"]]
+                propertyMappings: [
+                    {
+                        sourceProperty: "nodeName", 
+                        targetProperty: "nodeName"
+                    }
+                ]
             }
         ]
     },
@@ -17,7 +22,16 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
         "relevantEventsType": [
             {
                 eventType: "NodeDeactivateStarted",
-                propertyMappings: [["nodeName", "nodeName"], ["raw.NodeInstance", "raw.NodeInstance"]]
+                propertyMappings: [
+                    {
+                        sourceProperty: "nodeName",
+                        targetProperty: "nodeName"
+                    },
+                    {
+                        sourceProperty: "raw.NodeInstance",
+                        targetProperty: "raw.NodeInstance"
+                    }
+                ]                    
             }
         ]
     },    

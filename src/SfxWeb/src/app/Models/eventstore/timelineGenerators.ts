@@ -7,6 +7,7 @@ import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { IConcurrentEventsConfig, IConcurrentEvents } from 'src/app/modules/event-store/event-store/event-store.component';
+import { Utils } from 'src/app/Utils/Utils';
 
 /*
     NOTES:
@@ -218,21 +219,6 @@ export abstract class TimeLineGeneratorBase<T> {
         }
         return false;
     }
-
-    getPropValue(inputEvent : DataItem, sourcePropArr : string[], targetPropArr : string[]) {
-        let inputCurr = inputEvent;
-        let reached = true;        
-        for (let propIdx = 0; propIdx < sourcePropArr.length; propIdx++) {
-            let prop = sourcePropArr[propIdx];
-            if (prop in inputCurr) {
-                inputCurr = inputCurr[prop];                                            
-            } else {
-                reached = false;
-                break;
-            }
-        }
-        return reached ? inputCurr : null;
-    }
     
     getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: DataItem[], events: DataItem[]) : IConcurrentEvents[] {
         /*
@@ -256,15 +242,9 @@ export abstract class TimeLineGeneratorBase<T> {
                                 // see if each property mapping holds true
                                 let propMaps = true;
                                 let mappings = relevantEventType.propertyMappings;
-                                mappings.forEach(mapping => {
-                                    let sourcePropArr = mapping[0].split('.');
-                                    let targetPropArr = mapping[1].split('.');
-
-                                    let sourceVal = this.getPropValue(inputEvent, sourcePropArr, targetPropArr);
-                                    let targetVal = this.getPropValue(iterEvent, sourcePropArr, targetPropArr);
-                                    if (iterEvent.eventInstanceId == "fcd49c38-cba6-4b76-be3f-4c8c337a3bed") {
-                                        console.log(iterEvent);
-                                    }
+                                mappings.forEach(mapping => {                                    
+                                    let sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                    let targetVal = Utils.result(iterEvent, mapping.targetProperty);
                                     if (sourceVal && targetVal && sourceVal != targetVal) {
                                         propMaps = false;
                                     }
