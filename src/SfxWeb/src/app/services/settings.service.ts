@@ -1,7 +1,8 @@
 import { Injectable } from '@angular/core';
 import { ListColumnSetting, ListSettings, ListColumnSettingForBadge, ListColumnSettingForLink,
          ListColumnSettingWithCopyText, ListColumnSettingWithUtcTime, ListColumnSettingWithCustomComponent,
-         ListColumnSettingWithShorten } from '../Models/ListSettings';
+         ListColumnSettingWithShorten, 
+         ListColumnSettingWithFilter} from '../Models/ListSettings';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
 import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 import { NodeLoadInformation } from '../Models/DataModels/Node';
@@ -84,6 +85,21 @@ export class SettingsService {
               new ListColumnSettingWithCopyText('description', 'Description'),
               new ListColumnSettingWithUtcTime('sourceTimeStamp', 'Source UTC'),
           ]);
+  }
+
+  public getNewOrExistingNodeTypeListSettings(listKey: string = 'node Types') {
+      return this.getNewOrExistingListSettings(listKey, ['name'],
+      [
+        new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
+        new ListColumnSetting('raw.IpAddressOrFQDN', 'Address'),
+        new ListColumnSettingWithFilter('raw.UpgradeDomain', 'Upgrade Domain'),
+        new ListColumnSettingWithFilter('raw.FaultDomain', 'Fault Domain'),
+        new ListColumnSettingWithFilter('raw.IsSeedNode', 'Is Seed Node'),
+        new ListColumnSettingForBadge('healthState', 'Health State'),
+        new ListColumnSettingWithFilter('nodeStatus', 'Status'),
+        new ListColumnSettingWithFilter('raw.Id.Id', 'Node Id'),
+        new ListColumnSettingWithFilter('raw.CodeVersion', 'Code Version'),
+      ]);
   }
 
   public getNewOrExistingHealthEventsListSettings(listKey: string = 'health Events') {

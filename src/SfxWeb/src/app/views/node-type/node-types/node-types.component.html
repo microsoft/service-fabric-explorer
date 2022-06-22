@@ -2,5 +2,5 @@
     <app-dashboard-tile *ngFor="let tile of tiles" [data]="tile"></app-dashboard-tile>
 </div>
 <div class="detail-pane essen-pane">
-    <app-detail-list [listSettings]="listSettings" [list]="typeCollection" data-cy="nodesList"></app-detail-list>
+    <app-detail-list [listSettings]="nodeTypeListSettings" [list]="nodeTypeCollection" data-cy="nodesList"></app-detail-list>
 </div>

@@ -77,7 +77,7 @@ export class RoutesService {
   }
 
   public static getNodeTypeViewPath(nodeType: string): string {
-      return '/node-type/' + this.doubleEncode(nodeType);
+      return '/nodeType/' + this.doubleEncode(nodeType);
   }
 
   public static getSystemAppsViewPath(): string {

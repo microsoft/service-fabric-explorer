@@ -17,9 +17,9 @@ import { NodeTypeBaseControllerDirective } from '../NodeTypeBase';
 export class NodeTypesComponent extends NodeTypeBaseControllerDirective {
 
   nodes: NodeCollection;
-  listSettings: ListSettings;
+  nodeTypeListSettings: ListSettings;
   tiles: IDashboardViewModel[] = [];
-  typeCollection: any[];
+  nodeTypeCollection: any[];
 
   constructor(protected data: DataService, private settings: SettingsService, injector: Injector) {
     super(data, injector);
@@ -27,28 +27,17 @@ export class NodeTypesComponent extends NodeTypeBaseControllerDirective {
 
   setup() {
     this.nodes = this.data.nodes;
-    this.listSettings = this.settings.getNewOrExistingListSettings('nodes', ['name'], [
-      new ListColumnSettingForLink('name', 'Name', item => item.viewPath),
-      new ListColumnSetting('raw.IpAddressOrFQDN', 'Address'),
-      new ListColumnSettingWithFilter('raw.Type', 'Node Type'),
-      new ListColumnSettingWithFilter('raw.UpgradeDomain', 'Upgrade Domain'),
-      new ListColumnSettingWithFilter('raw.FaultDomain', 'Fault Domain'),
-      new ListColumnSettingWithFilter('raw.IsSeedNode', 'Is Seed Node'),
-      new ListColumnSettingForBadge('healthState', 'Health State'),
-      new ListColumnSettingWithFilter('nodeStatus', 'Status'),
-      new ListColumnSettingWithFilter('raw.Id.Id', 'Node Id'),
-      new ListColumnSettingWithFilter('raw.CodeVersion', 'Code Version'),
-  ]);
+    this.nodeTypeListSettings = this.settings.getNewOrExistingNodeTypeListSettings('nodes');
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.nodes.refresh(messageHandler).pipe(map(() => {
       this.tiles = [];
-      this.typeCollection = [];
+      this.nodeTypeCollection = [];
 
       this.nodes.collection.map(item => {
         if(this.nodeType == item.raw.Type) {
-          this.typeCollection.push(item);
+          this.nodeTypeCollection.push(item);
         }
       });
 
