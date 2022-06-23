@@ -245,7 +245,7 @@ export abstract class TimeLineGeneratorBase<T> {
                                 mappings.forEach(mapping => {                                    
                                     let sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
                                     let targetVal = Utils.result(iterEvent, mapping.targetProperty);
-                                    if (sourceVal && targetVal && sourceVal != targetVal) {
+                                    if (sourceVal != null && targetVal != null && sourceVal != targetVal) {
                                         propMaps = false;
                                     }
                                 });
