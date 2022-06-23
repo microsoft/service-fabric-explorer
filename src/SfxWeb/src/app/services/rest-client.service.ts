@@ -895,7 +895,17 @@ export class RestClientService {
             if (integration.passObjectAsString) {
               response = JSON.parse(response);
             }
-            resolve(response.data);
+
+            if(response.statusCode.toString().startsWith("2")) {
+              resolve(response.data);
+            }else{
+              const r = new HttpErrorResponse({
+                status: response.statusCode,
+                statusText: response.statusMessage,
+                error: response.data
+              });
+              reject(r);
+            }
           }
         })
       }else{
@@ -918,8 +928,6 @@ export class RestClientService {
           console.log(err)
           const r = new HttpErrorResponse({
             status: 500,
-            // statusText: err.,
-            // error: response.data
           });
           reject(r);
         });
