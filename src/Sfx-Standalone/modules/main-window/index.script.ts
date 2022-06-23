@@ -1,11 +1,8 @@
 import * as $ from "jquery";
 import { ClusterList } from "./cluster-list/cluster-list.script";
 import { ISettings } from "sfx.settings";
-import { IHttpClient } from "sfx.http";
-import { IMainWindow } from "sfx.main-window";
 
 (async () => {
-    console.log(window)
     const leftpanel = $("div#left-panel");
 
     try {       
@@ -40,13 +37,10 @@ import { IMainWindow } from "sfx.main-window";
         });
 
         const settings = await sfxModuleManager.getComponentAsync<ISettings>("settings.default");
-        const http = await sfxModuleManager.getComponentAsync<IHttpClient>("http.http-client.service-fabric");
-        const mw = await sfxModuleManager.getComponentAsync<IMainWindow>("sfx.main-window");
-        const clusterListComponent = new ClusterList(settings, http, mw);
+        const clusterListComponent = new ClusterList(settings);
         await clusterListComponent.setupAsync();
 
     } catch (error) {
         console.log(error);
     }
 })();
-

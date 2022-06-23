@@ -23,7 +23,6 @@
 /// <reference path="./modules/prompt.select-certificate/prompt.select-certificate.d.ts" />
 /// <reference path="./modules/prompt.connect-cluster/prompt.connect-cluster.d.ts" />
 /// <reference path="./modules/main-window/main-window.d.ts" />
-/// <reference path="./modules/prompt.add-cluster/prompt.add-cluster.d.ts" />
 
 declare module "sfx" {
     import { ISfxModuleManager } from "sfx.module-manager";

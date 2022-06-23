@@ -8,6 +8,7 @@ import {
     IPromptOptions
 } from "sfx.prompt";
 
+import { remote } from "../../utilities/electron-adapter";
 import * as utils from "donuts.node/utils";
 import { EventNames, ChannelNameFormat } from "./constants";
 import { ipcRenderer } from "electron";
@@ -15,16 +16,16 @@ import { ipcRenderer } from "electron";
 export class PromptContext implements IPromptContext {
     private readonly options: IPromptOptions;
 
-    private id: string = "";
+    private readonly promptWindow: Electron.BrowserWindow;
 
     public finish<TPromptResults>(results: TPromptResults): void {
-        ipcRenderer.send(utils.string.format(ChannelNameFormat, this.id, EventNames.Finished), results);
+        ipcRenderer.send(utils.string.format(ChannelNameFormat, this.promptWindow.id, EventNames.Finished), results);
+        this.promptWindow.close();
     }
 
     constructor() {
-        this.id = window.location.search.split("=")[1];
-        this.options = ipcRenderer.sendSync(utils.string.format(ChannelNameFormat, this.id, EventNames.RequestPromptOptions));
-        console.log(this)
+        this.promptWindow = remote.getCurrentWindow();
+        this.options = ipcRenderer.sendSync(utils.string.format(ChannelNameFormat, this.promptWindow.id, EventNames.RequestPromptOptions));
     }
 
     public get promptOptions(): IPromptOptions {

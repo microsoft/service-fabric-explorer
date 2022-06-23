@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { ICluster, IClusterAuth, IClusterListDataModel } from "sfx.cluster-list";
+import { IClusterListDataModel } from "sfx.cluster-list";
 
 export class ClusterListDataModel implements IClusterListDataModel {
     private folders: Array<Folder> = new Array<Folder>();
@@ -17,13 +17,13 @@ export class ClusterListDataModel implements IClusterListDataModel {
         this.folders.push(new Folder(label));
     }
 
-    public addCluster(displayName: string, endpoint: string, authInfo: IClusterAuth, folderName?: string) {
+    public addCluster(displayName: string, endpoint: string, folderName?: string) {
         if (!folderName) {
             // Put cluster to root            
             folderName = "";
         }
 
-        const cluster = new Cluster(displayName, endpoint, authInfo, folderName, true);
+        const cluster = new Cluster(displayName, endpoint, folderName, true);
         this.getFolder(folderName).clusters.push(cluster);        
     }
 
@@ -55,12 +55,12 @@ export class ClusterListDataModel implements IClusterListDataModel {
         let new_folder: Folder = this.getFolder(new_folder_label);
 
         if (new_folder) {
-            this.addCluster(cluster.displayName, cluster.endpoint, cluster.authentication, new_folder.name);
+            this.addCluster(cluster.displayName, cluster.endpoint, new_folder.name);
             this.removeCluster(cluster.displayName, old_folder.name);
         } else {
             this.addFolder(new_folder_label);
             new_folder = this.getFolder(new_folder_label);
-            this.addCluster(cluster.displayName, cluster.endpoint, cluster.authentication, new_folder.name);
+            this.addCluster(cluster.displayName, cluster.endpoint, new_folder.name);
             this.removeCluster(cluster.displayName, old_folder.name);
         }
     }
@@ -117,8 +117,14 @@ export interface IFolder {
     }
 }
 
+export interface ICluster {
+    displayName: string;
+    endpoint: string;
+    folder?: string;
+    currentInView: boolean;    
+}
 
 class Cluster implements ICluster {
-    constructor(public displayName: string, public endpoint: string, public authentication: IClusterAuth, public folder?: string, public currentInView: boolean = false) {
+    constructor(public displayName: string, public endpoint: string, public folder?: string, public currentInView: boolean = false) {
     }
 }

@@ -4,7 +4,7 @@
 //-----------------------------------------------------------------------------
 
 import * as $ from "jquery";
-import * as electron from "electron";
+import { electron } from "../../../utilities/electron-adapter";
 import { WebviewTag } from "electron";
 import { IDialogService, IDialogRenderingOption } from "sfx.main-window";
 
@@ -103,64 +103,6 @@ export class DialogService implements IDialogService {
 
     async closeInlineDialogAsync(): Promise<void> {
         $("#main-modal-dialog").modal("hide").remove();
-        return Promise.resolve();
-    }
-
-    async showInlineDialogAsync2(options: IDialogRenderingOption): Promise<void> {
-        if (!options.width) {
-            options.width = 600;
-        }
-
-        if (!options.height) {
-            options.height = 600;
-        }
-        
-        if (!options.footerHtml && options.footerButtons) {
-            let $footerButtons: JQLite = $("<div></div>");
-            options.footerButtons.forEach(option => {
-                let $button = $(`<button type="${option.type}" class="${option.cssClass}">${option.text}</button>`);
-                if (option.id) {
-                    $button.attr("id", option.id);
-                }
-
-                if (option.attributes) {
-                    for (let key in option.attributes) {
-                        $button.attr(key, option.attributes[key]);
-                    }
-                }
-
-                $footerButtons.append($button);
-            });
-
-            options.footerHtml = $footerButtons.html();
-        }
-
-        const template = `                       
-                <div class="modal-header">
-                    <h4 class="modal-title">${options.title}</h4>
-                </div>
-                <div class="modal-body">
-                    ${options.bodyHtml}
-                </div>
-                <div class="modal-footer">
-                    ${options.footerHtml}
-                </div>`.replace(/(?:\r\n|\r|\n)/g, "");
-
-        $(".modal-content").html(template);
-        $("#main-modal-dialog").modal();
-
-        $(".modal-body input[type='text']").keyup(($event) => {
-            const keyboardEvent = <KeyboardEvent>$event.originalEvent;
-
-            if (keyboardEvent.code === "Enter") {
-                $("button[type='submit']", $($event.target).parents(".modal-dialog")).first().click();
-            }
-        });
-
-        $(".modal-footer button[type='button']").last().click(() => {
-            $("#main-modal-dialog").modal("hide");
-        });
-        
         return Promise.resolve();
     }
 }

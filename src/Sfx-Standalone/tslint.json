@@ -46,7 +46,7 @@
         "no-shadowed-variable": false,
         "no-string-literal": false,
         "no-switch-case-fall-through": true,
-        "no-unused-expression": false,
+        "no-unused-expression": true,
         "no-var-keyword": true,
         "object-literal-sort-keys": false,
         "one-line": [
@@ -57,7 +57,15 @@
             "check-finally",
             "check-whitespace"
         ],
+        "quotemark": [
+            true,
+            "double",
+            "avoid-escape"
+        ],
         "radix": true,
+        "semicolon": [
+            true
+        ],
         "trailing-comma": [
             false,
             {

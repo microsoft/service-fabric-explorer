@@ -15,7 +15,7 @@ import {
 import { ICertificateInfo } from "sfx.cert";
 
 import * as crypto from "crypto";
-import { v4 as uuidv4 } from "uuid";
+import * as uuidv4 from "uuid/v4";
 import * as electron from "electron";
 
 function applyHeaders(requestHeaders: electron.ClientRequest, headers: Array<IHttpHeader>): void {

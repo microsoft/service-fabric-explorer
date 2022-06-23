@@ -3,7 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-import { app, ipcMain, Menu, MenuItemConstructorOptions } from "electron";
+import { app, Menu, MenuItemConstructorOptions } from "electron";
 
 async function startup(): Promise<void> {
     const log = await sfxModuleManager.getComponentAsync("logging.default");
@@ -18,14 +18,8 @@ async function startup(): Promise<void> {
                 await settings.getAsync<Array<MenuItemConstructorOptions>>("defaultMenu/" + process.platform)));
     }
 
-    // log.writeInfoAsync("Starting up connect-cluster prompt.");
+    log.writeInfoAsync("Starting up connect-cluster prompt.");
     const mainWindow = await sfxModuleManager.getComponentAsync("sfx.main-window");
-    const http = await sfxModuleManager.getComponentAsync("http.http-client.service-fabric");
-
-    ipcMain.handle('http-request', async (e, data) => {
-        return await http.requestAsync(data);
-    })
-
     await mainWindow.loadAsync();
 
     // Handle "window-all-closed" event.

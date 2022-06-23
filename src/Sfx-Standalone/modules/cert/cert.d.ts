@@ -35,7 +35,7 @@ declare module "sfx.cert" {
 
     export interface IPkiCertificateService {
         getCertificateInfosAsync(storeName: StoreName): Promise<Array<ICertificateInfo>>;
-        getCertificateAsync(thumbprint: string): Promise<IPfxCertificate>;
+        getCertificateAsync(certInfo: ICertificateInfo): Promise<IPfxCertificate>;
     }
 
     export interface ICertificateLoader {

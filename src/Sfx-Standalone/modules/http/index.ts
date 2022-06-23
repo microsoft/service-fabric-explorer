@@ -19,7 +19,6 @@ import * as shell from "donuts.node/shell";
         })
 
         .register<IHttpClient>({
-            singleton: true,
             name: "http-client.service-fabric",
             version: shell.getAppVersion(),
             descriptor: (log: Donuts.Logging.ILog, pkiSvc: IPkiCertificateService): Promise<IHttpClient> =>

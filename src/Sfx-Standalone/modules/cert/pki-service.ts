@@ -6,6 +6,7 @@
 import {
     IPkiCertificateService,
     ICertificateInfo,
+    StoreName,
     IPfxCertificate
 } from "sfx.cert";
 
@@ -21,7 +22,7 @@ enum StoreNames {
 }
 
 export class PkiService implements IPkiCertificateService {
-    public async getCertificateInfosAsync(storeName: StoreNames): Promise<Array<ICertificateInfo>> {
+    public async getCertificateInfosAsync(storeName: StoreName): Promise<Array<ICertificateInfo>> {
         if (process.platform !== "win32") {
             return undefined;
         }
@@ -41,13 +42,14 @@ export class PkiService implements IPkiCertificateService {
         return certJsonObjects;
     }
 
-    public async getCertificateAsync(thumbprint: string): Promise<IPfxCertificate> {
-        if (!thumbprint
-            || !utils.isString(thumbprint)) {
+    public async getCertificateAsync(certInfo: ICertificateInfo): Promise<IPfxCertificate> {
+        if (!certInfo
+            || !certInfo.thumbprint
+            || !utils.isString(certInfo.thumbprint)) {
             throw new Error("Invalid certInfo: missing thumbprint.");
         }
 
-        const cmdOutputs = await execAsync(`powershell -ExecutionPolicy Bypass -File "${local("./windows/Get-PfxCertificateData.ps1")}" -Thumbprint "${thumbprint}"`, { encoding: "utf8" });
+        const cmdOutputs = await execAsync(`powershell -ExecutionPolicy Bypass -File "${local("./windows/Get-PfxCertificateData.ps1")}" -Thumbprint "${certInfo.thumbprint}"`, { encoding: "utf8" });
         const pfxBase64Data = cmdOutputs.stdout;
 
         if (pfxBase64Data === "undefined") {

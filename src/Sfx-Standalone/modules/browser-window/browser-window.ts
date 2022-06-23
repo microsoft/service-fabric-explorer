@@ -73,11 +73,9 @@ export default async function createBrowserWindowAsync(
         icon: appUtils.getIconPath(),
         webPreferences: {
             preload: local("./preload.js"),
-            nodeIntegration: true,
-            // webviewTag: true,
-            contextIsolation: false
+            nodeIntegration: true
         },
-        title: "Service Fabric Explorer",
+        title: "Service Fabric Explorer"
     };
 
     if (utils.isObject(options)) {

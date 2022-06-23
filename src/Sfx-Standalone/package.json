@@ -15,25 +15,20 @@
   "author": "Microsoft Corporation",
   "license": "MIT",
   "dependencies": {
-    "@types/bootstrap": "^4.5.0",
-    "@types/react": "^17.0.39",
-    "@types/react-dom": "^17.0.11",
+    "@types/bootstrap": "^4.1.1",
     "angular": "^1.7.2",
     "applicationinsights": "^1.0.1",
-    "bootstrap": "^4.5.0",
-    "donuts.node": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.1.1/donuts.node-1.1.1.tgz",
-    "donuts.node-ipc": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.1.1/donuts.node-ipc-1.1.1.tgz",
-    "donuts.node-modularity": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.1.1/donuts.node-modularity-1.1.1.tgz",
-    "donuts.node-remote": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.1.1/donuts.node-remote-1.1.1.tgz",
-    "donuts.node-settings": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.1.1/donuts.node-settings-1.1.1.tgz",
+    "bootstrap": "^4.1.1",
+    "donuts.node": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-1.0.3.tgz",
+    "donuts.node-ipc": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-ipc-1.0.3.tgz",
+    "donuts.node-modularity": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-modularity-1.0.3.tgz",
+    "donuts.node-remote": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-remote-1.0.3.tgz",
+    "donuts.node-settings": "https://github.com/Microsoft/donuts.node/releases/download/donuts.node-1.0.3/donuts.node-settings-1.0.3.tgz",
     "jquery": "^3.5.0",
-    "react": "^17.0.2",
-    "react-dom": "^17.0.2",
     "semver": "^5.5.0",
     "tar": "^4.4.18",
     "tmp": "0.0.33",
-    "uuid": "^8.3.2",
-    "vue": "^3.2.31"
+    "uuid": "^3.3.2"
   },
   "devDependencies": {
     "@types/angular": "^1.6.39",
@@ -46,8 +41,8 @@
     "cookie.gulp-tsc": "https://github.com/microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.3/cookie.gulp-tsc-1.0.3.tgz",
     "cookie.gulp-tslint": "https://github.com/microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.3/cookie.gulp-tslint-1.0.3.tgz",
     "cookie.gulp-wix": "https://github.com/microsoft/cookie.gulp/releases/download/cookie.gulp-1.0.3/cookie.gulp-wix-1.0.3.tgz",
-    "electron": "^11.2.0",
+    "electron": "3.0.10",
     "gulp": "^4.0.0",
-    "typescript": "^4.5.5"
+    "typescript": "^3.1.3"
   }
 }

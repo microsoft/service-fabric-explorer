@@ -5,7 +5,6 @@
 
 import { bootstrap } from "../../bootstrap.module-manager";
 import * as appUtils from "../../utilities/appUtils";
-import * as electron from "electron";
 
 appUtils.logUnhandledRejection();
 

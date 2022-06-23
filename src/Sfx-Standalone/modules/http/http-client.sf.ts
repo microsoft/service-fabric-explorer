@@ -1,4 +1,4 @@
-//-----------------------------------------------------------------------------
+/-----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
@@ -21,21 +21,15 @@ import createAuthAadResponseHandler from "./response-handlers/auth.aad.sf";
 import createAuthWindowsResponseHandler from "./response-handlers/auth.windows";
 
 export default class ServiceFabricHttpClient extends HttpClient {
-    
+
+    private readonly trustedCerts: Donuts.IStringKeyDictionary<boolean>;
+
     constructor(log: Donuts.Logging.ILog, pkiSvc: IPkiCertificateService) {
         super(log, [], []);
 
-        const selectCert = () => {
-            const clusterAuthenticationMap = this.clusterAuthenticationMap;
-            const selectClientCertAsync =
-            async (urlString: string): Promise<string> => {
-                return clusterAuthenticationMap[urlString];
-            }
+        this.trustedCerts = Object.create(null);
 
-            return selectClientCertAsync;
-        }
-
-        const certResponseHandler = createAuthCertResponseHandler(pkiSvc, selectCert());
+        const certResponseHandler = createAuthCertResponseHandler(pkiSvc, this.selectClientCertAsync);
 
         this.requestHandlers.push(
             certResponseHandler.httpRequestHandler,
@@ -46,8 +40,7 @@ export default class ServiceFabricHttpClient extends HttpClient {
                         http: new HttpAgent({ keepAlive: true }),
                         https: new HttpsAgent({ keepAlive: true })
                     }
-                })
-                );
+                }));
 
         this.responseHandlers.push(
             createAuthAadResponseHandler(),
@@ -59,7 +52,39 @@ export default class ServiceFabricHttpClient extends HttpClient {
     }
 
     private checkServerCert = (serverName: string, cert: ICertificateInfo): boolean => {
-        return true;
+        const record = this.trustedCerts[cert.thumbprint];
+
+        if (typeof record === "boolean") {
+            return record;
+        }
+
+        const response = dialog.showMessageBox(
+            BrowserWindow.getFocusedWindow(),
+            {
+                type: "warning",
+                buttons: ["Yes", "No"],
+                title: "Untrusted certificate",
+                message: "Do you want to trust this certificate?",
+                detail:
+                    `Site: ${serverName} \r\n` +
+                    `Subject: ${cert.subjectName}\r\n` +
+                    `Issuer: ${cert.issuerName}\r\n` +
+                    `Serial: ${cert.serialNumber}\r\n` +
+                    `Starts: ${cert.validStart.toLocaleString()}\r\n` +
+                    `Util: ${cert.validExpiry.toLocaleString()}\r\n` +
+                    `Thumbprint: ${cert.thumbprint}`,
+                cancelId: 1,
+                defaultId: 0,
+                noLink: true,
+            });
+
+        return this.trustedCerts[cert.thumbprint] = response === 0;
     }
 
+    private selectClientCertAsync =
+        async (urlString: string, certInfos: Array<ICertificateInfo>): Promise<ICertificate | ICertificateInfo> => {
+            const prompt = await sfxModuleManager.getComponentAsync("prompt.select-certificate", certInfos);
+
+            return await prompt.openAsync();
+        }
 }

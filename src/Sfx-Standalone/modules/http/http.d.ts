@@ -3,10 +3,7 @@
 // Licensed under the MIT License. See License file under the project root for license information.
 //-----------------------------------------------------------------------------
 
-
 declare module "sfx.http" {
-    import { ICluster } from "sfx.cluster-list";
-
     import { IDictionary } from "sfx.common";
     import { ICertificate, ICertificateInfo } from "sfx.cert";
 
@@ -79,8 +76,6 @@ declare module "sfx.http" {
         traceAsync<T>(url: string, data: any): Promise<T>;
 
         requestAsync(request: IHttpRequest): Promise<IHttpResponse>;
-
-        registerClusterConfiguration(cluster: ICluster);
     }
 
     export type HttpRequestHandler = (pipleline: IHttpPipeline, request: IHttpRequest) => Promise<IHttpResponse>;
@@ -89,7 +84,7 @@ declare module "sfx.http" {
 
     export type ServerCertValidator = (serverName: string, cert: ICertificateInfo) => boolean;
 
-    export type ClientCertSelector = (url: string, certInfos: Array<ICertificateInfo>) => Promise<string>;
+    export type ClientCertSelector = (url: string, certInfos: Array<ICertificateInfo>) => Promise<ICertificate | ICertificateInfo>;
 }
 
 declare module "sfx.module-manager" {

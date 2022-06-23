@@ -62,11 +62,20 @@ async function handleRequestAsync(this: IContext, pipleline: IHttpPipeline, requ
 }
 
 async function getCertAsync(pkiSvc: IPkiCertificateService, selectClientCert: ClientCertSelector, url: string): Promise<ICertificate> {
-    const selectedCertInfo = await selectClientCert(url, []);
+    const certInfos = await pkiSvc.getCertificateInfosAsync("My");
+
+    const selectedCertInfo = await selectClientCert(url, certInfos);
     let selectedCert: ICertificate;
 
-    selectedCert = await pkiSvc.getCertificateAsync(selectedCertInfo);
+    if (isCertificateInfo(selectedCertInfo)) {
+        selectedCert = await pkiSvc.getCertificateAsync(selectedCertInfo);
 
+    } else if (isCertificate(selectedCertInfo)) {
+        selectedCert = selectedCertInfo;
+
+    } else {
+        return undefined;
+    }
 
     return selectedCert;
 }

@@ -5,7 +5,7 @@
 
 import { ICertificateInfo, ICertificate } from "sfx.cert";
 
-import * as electron from "electron";
+import { electron } from "../../utilities/electron-adapter";
 
 // JQuery & angular already referenced in select-certificate.html.
 declare const angular: angular.IAngularStatic;
@@ -73,11 +73,10 @@ declare const angular: angular.IAngularStatic;
                 }
 
                 promptContext.finish($scope.selectedCertInfo);
-                window.close();
             };
 
             $scope.browseCertFiles = () => {
-                const selectedFiles = electron.dialog.showOpenDialogSync({
+                const selectedFiles = electron.dialog.showOpenDialog({
                     title: "Open a client certificate ...",
                     filters: [
                         {
@@ -113,7 +112,7 @@ declare const angular: angular.IAngularStatic;
             };
 
             $scope.browseKeyFiles = () => {
-                const selectedFiles = electron.dialog.showOpenDialogSync({
+                const selectedFiles = electron.dialog.showOpenDialog({
                     title: "Open a key file for the client certificate ...",
                     filters: [
                         {
