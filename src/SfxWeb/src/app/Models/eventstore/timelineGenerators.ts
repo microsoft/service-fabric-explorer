@@ -227,6 +227,8 @@ export abstract class TimeLineGeneratorBase<T> {
 
         let simulEvents : IConcurrentEvents[] = [];
         let addedEvents : DataItem[] = [];
+        let sourceVal: any;
+        let targetVal: any;
 
         // iterate through all the input events
         inputEvents.forEach(inputEvent => {
@@ -238,19 +240,29 @@ export abstract class TimeLineGeneratorBase<T> {
                         config.relevantEventsType.forEach(relevantEventType => {
 
                             // check if event type is relevant
+                            if(iterEvent instanceof RepairTask) {
+                                iterEvent["kind"] = "RepairTask";
+                                iterEvent["eventInstanceId"] = iterEvent.raw.TaskId + "<br/><br/>Action: " + iterEvent.raw.Action ;
+                            }
                             if (relevantEventType.eventType == iterEvent.kind) {
                                 // see if each property mapping holds true
                                 let propMaps = true;
                                 let mappings = relevantEventType.propertyMappings;
-                                mappings.forEach(mapping => {                                    
-                                    let sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
-                                    let targetVal = Utils.result(iterEvent, mapping.targetProperty);
+                                mappings.forEach(mapping => {        
+                                    if(mapping.sourceProperty == "raw.BatchId") {
+                                        sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                        sourceVal = sourceVal.substring(sourceVal.indexOf("/") + 1);
+                                    } else {
+                                        sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                    }                           
+                                    targetVal = Utils.result(iterEvent, mapping.targetProperty);
                                     if (sourceVal != null && targetVal != null && sourceVal != targetVal) {
                                         propMaps = false;
                                     }
                                 });
                                 
                                 if (propMaps) {
+                                    console.log("iter:  ", iterEvent);
                                     if (!inputEvent.related) {
                                         inputEvent.related = [];
                                     }

@@ -34,5 +34,19 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                 ]                    
             }
         ]
+    },
+    {
+        "eventType": "NodeDeactivateStarted",
+        "relevantEventsType" : [
+            {
+                eventType: "RepairTask",
+                propertyMappings: [
+                    {
+                        sourceProperty: "raw.BatchId",
+                        targetProperty: "raw.TaskId"
+                    }
+                ]
+            }
+        ]
     },    
 ];
