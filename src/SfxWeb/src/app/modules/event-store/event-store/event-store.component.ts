@@ -19,16 +19,23 @@ export interface IQuickDates {
     hours: number;
 }
 
+export interface IPropertyMapping {
+    sourceProperty: string;
+    targetProperty: string;
+}
+
+export interface IRelevantEventsConfig {
+    eventType: string;
+    propertyMappings: IPropertyMapping[];
+}
+
 export interface IConcurrentEventsConfig {
     eventType: string; // the event type we are investigating
-    relevantEventsType: string[]; // possible causes we are considering
+    relevantEventsType: IRelevantEventsConfig[]; // possible causes we are considering  
 }
 
 export interface IConcurrentEvents extends DataItem {
     related: IConcurrentEvents[] // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
-    timestamp?: string,
-    start?: Date,
-    end?: Date
 }
 
 export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
@@ -184,7 +191,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                   console.error(e);
               }
           }
-          else{
+          else {
               this.failedRefresh = true;
           }
       }
@@ -203,49 +210,37 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       return combinedTimelineData;
   }
 
-  private testAppEvent(parsedEvents : IConcurrentEvents[]) : void {
+  private testEvent(parsedEvents : DataItem[]) : void {
     /*
         Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
         which events happen concurrently with these random events.
     */
-    let appEvents = [];
 
-    let appEventGenerator = this.listEventStoreData[0];
-    if (appEventGenerator.eventsList.lastRefreshWasSuccessful) {
-        if (appEventGenerator.timelineGenerator) {
-            let consumed = appEventGenerator.timelineGenerator.consume(appEventGenerator.getEvents(), this.startDate, this.endDate);
-            consumed.items.forEach(item => appEvents.push(item));
+    let inputEvents : DataItem[] = [];
+    parsedEvents.forEach(event => {
+        if (event.kind == "NodeDown" && event.eventInstanceId == "0209c2ec-e9f8-425d-a332-7b4e65097134") {
+            inputEvents.push(event);
         }
-    }
+    });    
 
-    let randomAppEvents : IConcurrentEvents[] = [];    
-    for (let idx = 0; idx < appEvents.length; idx++) {
-        if (appEvents[idx].kind == "ApplicationProcessExited" && appEvents[idx].id.includes("f710279f-7822-4a7d-950f-3e994dde22ac")) {
-            randomAppEvents.push(appEvents[idx]);
-        }
-    }    
-
-    if (!appEventGenerator.timelineGenerator) return;
-    this.simulEvents = appEventGenerator.timelineGenerator.getSimultaneousEventsForEvent(RelatedEventsConfigs, randomAppEvents, parsedEvents);
-    console.log(this.simulEvents);
+    this.simulEvents = this.listEventStoreData[0].timelineGenerator.getSimultaneousEventsForEvent(RelatedEventsConfigs, inputEvents, parsedEvents);
   }
 
   private getConcurrentEventsData(): DataSet<DataItem> {
     /*
         Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
     */
-    let parsedEvents : IConcurrentEvents[] = [];
+    let parsedEvents : DataItem[] = [];
     for (const data of this.listEventStoreData) {
         if (data.eventsList.lastRefreshWasSuccessful) {
             if (data.timelineGenerator) {
-                let consumed = data.timelineGenerator.consume(data.getEvents(), this.startDate, this.endDate);
-                consumed.items.forEach(item => parsedEvents.push(item));
+                data.getEvents().forEach(event => parsedEvents.push(event));
             }
         }
     }
 
-    // testing purposes
-    this.testAppEvent(parsedEvents);
+    // testing purposes    
+    this.testEvent(parsedEvents);
   }
 
   public setTimelineData(): void {

@@ -7,6 +7,7 @@ import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { IConcurrentEventsConfig, IConcurrentEvents } from 'src/app/modules/event-store/event-store/event-store.component';
+import { Utils } from 'src/app/Utils/Utils';
 
 /*
     NOTES:
@@ -218,7 +219,7 @@ export abstract class TimeLineGeneratorBase<T> {
         }
         return false;
     }
-
+    
     getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: DataItem[], events: DataItem[]) : IConcurrentEvents[] {
         /*
             Grab the events that occur concurrently with an inputted current event.
@@ -234,16 +235,30 @@ export abstract class TimeLineGeneratorBase<T> {
                 if (config.eventType == inputEvent.kind) {                                        
                     // iterate through all events to find relevant ones
                     events.forEach(iterEvent => {
-                        if (!config.relevantEventsType.includes(iterEvent.kind)) {
-                            return;
-                        }
-                        if (this.checkOverlappingTime(inputEvent, iterEvent)) {
-                            if (!inputEvent.related) {
-                                inputEvent.related = [];
+                        config.relevantEventsType.forEach(relevantEventType => {
+
+                            // check if event type is relevant
+                            if (relevantEventType.eventType == iterEvent.kind) {
+                                // see if each property mapping holds true
+                                let propMaps = true;
+                                let mappings = relevantEventType.propertyMappings;
+                                mappings.forEach(mapping => {                                    
+                                    let sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                    let targetVal = Utils.result(iterEvent, mapping.targetProperty);
+                                    if (sourceVal != null && targetVal != null && sourceVal != targetVal) {
+                                        propMaps = false;
+                                    }
+                                });
+                                
+                                if (propMaps) {
+                                    if (!inputEvent.related) {
+                                        inputEvent.related = [];
+                                    }
+                                    inputEvent.related.push(iterEvent);
+                                    addedEvents.push(iterEvent);
+                                }
                             }
-                            inputEvent.related.push(iterEvent);
-                            addedEvents.push(iterEvent);
-                        }
+                        });                        
                     });
                 }
             });
