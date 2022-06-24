@@ -262,7 +262,6 @@ export abstract class TimeLineGeneratorBase<T> {
                                 });
                                 
                                 if (propMaps) {
-                                    console.log("iter:  ", iterEvent);
                                     if (!inputEvent.related) {
                                         inputEvent.related = [];
                                     }

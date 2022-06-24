@@ -27,6 +27,7 @@ export interface IPropertyMapping {
 export interface IRelevantEventsConfig {
     eventType: string;
     propertyMappings: IPropertyMapping[];
+    result: string; //resulting property we want to display for events (ex. Repair Jobs action)
 }
 
 export interface IConcurrentEventsConfig {
@@ -247,7 +248,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
     forkJoin(timelineEventSubs).subscribe(() => {
         let concurrentEvents = this.getConcurrentEventsData();
-        console.log(concurrentEvents);
     })
   }
 
@@ -256,11 +256,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       forkJoin(timelineEventSubs).subscribe(() => {
           this.timeLineEventsData = this.getTimelineData();
       });
-
-    //   forkJoin(timelineEventSubs).subscribe(() => {
-    //       let concurrentEvents = this.getConcurrentEventsData();
-    //       console.log(concurrentEvents);
-    //   })
   }
 
   processData(option: IOptionData){
