@@ -5,7 +5,6 @@ import { retry, map } from 'rxjs/operators';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import AuthenticationContext, { Options } from 'adal-angular';
 import { StringUtils } from '../Utils/StringUtils';
-import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 
 @Injectable({
   providedIn: 'root'
@@ -13,7 +12,6 @@ import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 export class AdalService {
   private context: AuthenticationContext;
   public config: AadMetadata;
-
   public aadEnabled = false;
 
   constructor(private http: RestClientService) { }
@@ -34,11 +32,6 @@ export class AdalService {
 
           if (data.raw.metadata.login) {
             config.instance = StringUtils.EnsureEndsWith(data.raw.metadata.login, '/');
-          }
-
-          if (StandaloneIntegration.clusterUrl !== "") {
-            config.redirectUri = StandaloneIntegration.clusterUrl + "/Explorer/index.html";
-            config['postLogoutRedirectUri'] = StandaloneIntegration.clusterUrl + "/Explorer/index.html";
           }
 
           this.context = new AuthenticationContext(config);

@@ -102,7 +102,6 @@ export class Utils {
       if (propertyPath !== null)
       {
           propertyPath.split('.').forEach(path => {
-            console.log(value)
             value = value[path];
           });
       }

@@ -44,12 +44,11 @@ import { RestClientService } from './services/rest-client.service';
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     AdalService,
     DataService,
-    RestClientService,
     {
       provide: APP_INITIALIZER,
       useFactory: initApp,
       multi: true,
-      deps: [AdalService, RestClientService]
+      deps: [AdalService]
     },
     httpInterceptorProviders,
     { provide: ErrorHandler, useClass: AppInsightsErrorHandler }

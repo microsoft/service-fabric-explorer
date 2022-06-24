@@ -43,8 +43,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       this.timeLineEventsData = this.getTimelineData();
   }
 
-  public static MaxWindowInDays = 7;
-
   private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
   private debouncerHandlerSubscription: Subscription;
 
@@ -59,7 +57,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   @Input() listEventStoreData: IEventStoreData<any, any>[];
   @Input() optionsConfig: IOptionConfig;
   public startDateMin: Date;
-  public endDateMin: Date;
   public startDateMax: Date;
   public failedRefresh = false;
   public timeLineEventsData: ITimelineData;

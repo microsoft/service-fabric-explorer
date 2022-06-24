@@ -19,15 +19,14 @@ export class AuthInterceptor implements HttpInterceptor {
     if (this.adalService.aadEnabled){
         return this.adalService.acquireTokenResilient(this.adalService.config.raw.metadata.cluster)
         .pipe(mergeMap((token) => {
-          console.log(token);
-          if (token) {
+            if (token) {
             req = req.clone({
                 setHeaders: {
                 Authorization: 'Bearer ' + token
                 }
             });
             }
-          return next.handle(req);
+            return next.handle(req);
         }));
     }else{
         return next.handle(req);

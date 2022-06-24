@@ -51,7 +51,7 @@ export default class AuthProvider2 {
      * Initialize request objects used by this AuthModule.
      */
     private setRequestObjects(): void {
-        const redirect = "msal://redirect"; //`msal${this.metaData.metadata.cluster}://auth`
+        const redirect = "msal://redirect";
 
         this.authCodeUrlParams = {
             "scopes": ["user.read", ],
@@ -59,7 +59,7 @@ export default class AuthProvider2 {
         },
 
         this.authCodeRequest = {
-            "redirectUri": redirect, //`msal${this.metaData.metadata.cluster}://auth`,
+            "redirectUri": redirect,
             "scopes": ["User.Read"],
             code: null
         };
@@ -138,7 +138,6 @@ export default class AuthProvider2 {
         try {
             // Get Auth Code URL
             const authCodeUrl = await this.clientApplication.getAuthCodeUrl(authCodeUrlParams);
-
             const authCode = await this.listenForAuthCode(authCodeUrl, authWindow);
 
             // Use Authorization Code and PKCE Code verifier to make token request
@@ -166,7 +165,6 @@ export default class AuthProvider2 {
         if (!this.account) {
             this.account = await this.getAccount();
         }
-
         return this.account;
     }
 
@@ -181,7 +179,6 @@ export default class AuthProvider2 {
     private async listenForAuthCode(navigateUrl: string, authWindow: BrowserWindow): Promise<string> {
         // Set up custom file protocol to listen for redirect response
         const authCodeListener = new CustomFileProtocolListener('msal'); //`msal${this.metaData.metadata.cluster}`
-
         const codePromise = authCodeListener.start();
         authWindow.loadURL(navigateUrl);
         const code = await codePromise;
@@ -189,7 +186,7 @@ export default class AuthProvider2 {
         return code;
     }
 
-        /**
+    /**
      * Handles the response from a popup or redirect. If response is null, will check if we have any accounts and attempt to sign in.
      * @param response 
      */
@@ -199,7 +196,6 @@ export default class AuthProvider2 {
         } else {
             this.account = await this.getAccount();
         }
-
         return this.account;
     }
 
@@ -270,7 +266,6 @@ export class AADHandler implements IHTTPRequestTransformer {
             succesful = false;
             this.clusterManager.addClusterLogMessage(this.cluster.id, "Failed to initialize AAD configuration. This could mean the cluster is not reachable.")
         }
-
         return succesful;
     }
 
@@ -282,14 +277,11 @@ export class AADHandler implements IHTTPRequestTransformer {
         const token = await this.aadProvider.getToken();
 
         request.headers['Authorization'] = `Bearer ${token}`
-
         request.httpsAgent = new Agent({
             rejectUnauthorized: false
         })
-
         return request;
     }
-
 }
 
 export interface ILoggedInAccounts {
@@ -303,7 +295,6 @@ export class AADFactory implements IAuthOption {
         validators: ValidateProperty[] = [];
 
         public observable = new Subject<ILoggedInAccounts[]>();
-
         private existingAuthProviders: Record<string, AuthProvider2> = {};
 
         constructor(private clusterManager: ClusterManager) {}
@@ -336,9 +327,7 @@ export class AADFactory implements IAuthOption {
             }
 
             const newProvider = new AuthProvider2(metaData);
-
             this.existingAuthProviders[metaData.metadata.tenant] = newProvider;
-
             this.emitAccountsAndTenants();
 
             return newProvider;
@@ -353,13 +342,10 @@ export class AADFactory implements IAuthOption {
                 this.emitAccountsAndTenants();
             }
         }
-
-
 }
 
 
 export class AADHttpHandler extends BaseHttpHandler {
-
     type: string = aadClusterAuthType;
     private metaData: ISfAadMetadata;
     private aadProvider: AuthProvider2;

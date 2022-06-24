@@ -14,10 +14,6 @@
     "debug": "electron-forge start --inspect-electron"
   },
   "keywords": [],
-  "author": {
-    "name": "jeffj6123",
-    "email": "jeffrey.jarry@gmail.com"
-  },
   "license": "MIT",
   "config": {
     "forge": {
