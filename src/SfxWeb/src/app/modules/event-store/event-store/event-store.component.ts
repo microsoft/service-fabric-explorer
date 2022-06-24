@@ -215,10 +215,10 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
         which events happen concurrently with these random events.
     */
-
+    let eventInstanceId = (document.getElementById("eventId") as HTMLInputElement).value;
     let inputEvents : DataItem[] = [];
     parsedEvents.forEach(event => {
-        if (event.kind == "NodeDown" && event.eventInstanceId == "0209c2ec-e9f8-425d-a332-7b4e65097134") {
+        if (event.kind == "NodeDown" && event.eventInstanceId == eventInstanceId) {
             inputEvents.push(event);
         }
     });    
@@ -243,16 +243,24 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     this.testEvent(parsedEvents);
   }
 
+  public findConcurrentEvents(): void {
+    const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
+    forkJoin(timelineEventSubs).subscribe(() => {
+        let concurrentEvents = this.getConcurrentEventsData();
+        console.log(concurrentEvents);
+    })
+  }
+
   public setTimelineData(): void {
       const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());            
       forkJoin(timelineEventSubs).subscribe(() => {
           this.timeLineEventsData = this.getTimelineData();
       });
 
-      forkJoin(timelineEventSubs).subscribe(() => {
-          let concurrentEvents = this.getConcurrentEventsData();
-          console.log(concurrentEvents);
-      })
+    //   forkJoin(timelineEventSubs).subscribe(() => {
+    //       let concurrentEvents = this.getConcurrentEventsData();
+    //       console.log(concurrentEvents);
+    //   })
   }
 
   processData(option: IOptionData){

@@ -227,8 +227,6 @@ export abstract class TimeLineGeneratorBase<T> {
 
         let simulEvents : IConcurrentEvents[] = [];
         let addedEvents : DataItem[] = [];
-        let sourceVal: any;
-        let targetVal: any;
 
         // iterate through all the input events
         inputEvents.forEach(inputEvent => {
@@ -248,7 +246,9 @@ export abstract class TimeLineGeneratorBase<T> {
                                 // see if each property mapping holds true
                                 let propMaps = true;
                                 let mappings = relevantEventType.propertyMappings;
-                                mappings.forEach(mapping => {        
+                                mappings.forEach(mapping => {     
+                                    let sourceVal: any;
+                                    let targetVal: any;   
                                     if(mapping.sourceProperty == "raw.BatchId") {
                                         sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
                                         sourceVal = sourceVal.substring(sourceVal.indexOf("/") + 1);
