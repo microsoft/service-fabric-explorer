@@ -811,8 +811,7 @@ export class RestClientService {
           skipCacheToken = true;
       }
       // token to allow for invalidation of browser api call cache
-      return StandaloneIntegration.clusterUrl +
-          `/${path}${path.indexOf('?') === -1 ? '?' : '&'}api-version=${apiVersion ? apiVersion : RestClientService.defaultApiVersion}${skipCacheToken === true ? '' : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ''}`;
+      return `/${path}${path.indexOf('?') === -1 ? '?' : '&'}api-version=${apiVersion ? apiVersion : RestClientService.defaultApiVersion}${skipCacheToken === true ? '' : `&_cacheToken=${this.cacheAllowanceToken}`}${continuationToken ? `&ContinuationToken=${continuationToken}` : ''}`;
   }
 
   // eslint-disable-next-line max-len
@@ -839,6 +838,10 @@ export class RestClientService {
 
   }
 
+  private getBaseUrl() {
+    return environment.baseUrl || "";
+  }
+
     // eslint-disable-next-line max-len
   private getFullCollection2<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): Observable<T[]> {
       const appUrl = this.getApiUrl2(url, apiVersion, continuationToken, false, startDate, endDate, maxResults, latest);
@@ -854,7 +857,8 @@ export class RestClientService {
   }
 
   private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.get<T>(environment.baseUrl + url);
+    console.log(this.getBaseUrl, url)
+      const result = this.httpClient.get<T>(this.getBaseUrl() + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
       }
@@ -862,7 +866,7 @@ export class RestClientService {
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.post<T>(environment.baseUrl  + url, data);
+      const result = this.httpClient.post<T>(this.getBaseUrl()  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
@@ -870,7 +874,7 @@ export class RestClientService {
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.put<T>(environment.baseUrl  + url, data);
+      const result = this.httpClient.put<T>(this.getBaseUrl()  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
@@ -878,7 +882,7 @@ export class RestClientService {
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = this.httpClient.delete<T>(environment.baseUrl  + url);
+      const result = this.httpClient.delete<T>(this.getBaseUrl()  + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
       }

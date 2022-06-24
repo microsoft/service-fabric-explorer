@@ -1,4 +1,4 @@
-import { HttpRequest, HttpInterceptor, HttpHandler, HttpEvent, HTTP_INTERCEPTORS, HttpResponse } from '@angular/common/http';
+import { HttpRequest, HttpInterceptor, HttpHandler, HttpEvent, HTTP_INTERCEPTORS, HttpResponse, HttpErrorResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
 import { Observable } from 'rxjs';
 import { AdalService } from './services/adal.service';
@@ -6,6 +6,8 @@ import { finalize, map, mergeMap } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
 import { environment } from 'src/environments/environment';
+import { IHttpRequest, StandaloneIntegration } from './Common/StandaloneIntegration';
+import { Utils } from './Utils/Utils';
 
 /*
 The will intercept and allow the modification of every http request going in and out.
@@ -68,9 +70,83 @@ export class GlobalHeaderInterceptor implements HttpInterceptor {
  }
 }
 
+@Injectable()
+export class StandAloneInterceptor implements HttpInterceptor {
+  intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
+    if(!StandaloneIntegration.isStandalone()) {
+      return next.handle(req);
+    }
+
+    const data: IHttpRequest = {
+      url: req.url,
+      method: req.method,
+      headers: req.headers.keys().map(key => ({name: key, value: req.headers.get(key)})),
+      body: req.body
+    }
+
+    return new Observable(subscriber => {
+      const integration = StandaloneIntegration.integrationConfig;
+      const requestData = integration.passObjectAsString ? JSON.stringify(data) : data;
+      const caller = Utils.result2(window, integration.windowPath);
+
+      const handleResponse = (responseData) => {
+        if(integration.passObjectAsString) {
+          responseData = JSON.parse(responseData);
+        }
+
+        if(responseData.statusCode.toString().startsWith("2")) {
+          const httpResponse = new HttpResponse({
+            url: req.url,
+            status: responseData.statusCode,
+            body: responseData.data
+          })
+          subscriber.next(httpResponse);
+          subscriber.complete();
+        }else{
+          const r = new HttpErrorResponse({
+            status: responseData.statusCode,
+            statusText: responseData.statusMessage,
+            error: responseData.data
+          });
+          subscriber.error(r);
+          subscriber.complete();
+        }
+      }
+
+      if(integration.handleAsCallBack) {
+        try {
+          console.log(requestData)
+          caller({"data": requestData, "Callback": (response) => {
+            handleResponse(response);
+          }
+        })
+        } catch(err) {
+          console.log(err)
+          const r = new HttpErrorResponse({
+            status: 500,
+          });
+          subscriber.error(r);
+          subscriber.complete();
+        }
+      }else{
+        caller(requestData).then((response, res) => {
+          handleResponse(response);
+        }).catch(err => {
+          console.log(err)
+          const r = new HttpErrorResponse({
+            status: 500,
+          });
+          subscriber.error(r);
+          subscriber.complete();
+        });
+      }
+    });
+  }
+}
 
 /** Http interceptor providers in outside-in order */
 export const httpInterceptorProviders = [
+  { provide: HTTP_INTERCEPTORS, useClass: StandAloneInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: ReadOnlyHeaderInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: GlobalHeaderInterceptor, multi: true },

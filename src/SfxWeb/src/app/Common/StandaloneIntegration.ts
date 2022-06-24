@@ -2,18 +2,12 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // Licensed under the MIT License. See License file under the project root for license information.
 // -----------------------------------------------------------------------------
-
-
-type HttpMethod =
-    'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE' |
-    'HEAD' | 'CONNECT' | 'OPTIONS' | 'TRACE';
-
 interface IHttpHeader {
     name: string;
     value: string;
 }
 
-interface IHttpResponse {
+export interface IHttpResponse {
     httpVersion: string;
     statusCode: number;
     statusMessage: string;
@@ -24,67 +18,43 @@ interface IHttpResponse {
     body: Array<number>;
 }
 
-interface IHttpRequest {
-    method: HttpMethod;
+export interface IHttpRequest {
+    method: string;
     url: string;
     headers?: Array<IHttpHeader>;
     body?: any;
 }
 
-interface IHttpClient {
-    getRequestTemplateAsync(): Promise<IHttpRequest>;
-
-    setRequestTemplateAsync(template: IHttpRequest): Promise<void>;
-
-    getAsync<T>(url: string): Promise<T>;
-
-    postAsync<T>(url: string, data: any): Promise<T>;
-
-    putAsync<T>(url: string, data: any): Promise<T>;
-
-    patchAsync<T>(url: string, data: any): Promise<T>;
-
-    deleteAsync<T>(url: string): Promise<T>;
-
-    headAsync<T>(url: string): Promise<T>;
-
-    optionsAsync<T>(url: string, data: any): Promise<T>;
-
-    traceAsync<T>(url: string, data: any): Promise<T>;
-
-    requestAsync(request: IHttpRequest): Promise<IHttpResponse>;
+export interface IntegrationConfig {
+  preloadFunction?: string;
+  windowPath: string;
+  passObjectAsString?: boolean;
+  handleAsCallBack?: boolean;
 }
 
-
-declare const sfxModuleManager: {
-    getComponentAsync<T>(componentIdentity: string, ...extraArgs: Array<any>): Promise<T>;
-};
-
 export class StandaloneIntegration {
-    private static iclusterUrl: string = null;
+    public static clusterUrl: string = null;
+    public static integrationConfig: IntegrationConfig = null;
+
+    public static setConfiguration() {
+      try {
+        const config = StandaloneIntegration.extractQueryItem(window.location.search, 'integrationConfig');
+        StandaloneIntegration.integrationConfig = JSON.parse(config);
+        console.log(this.integrationConfig);
+      } catch {
+        console.log("could not load any standalone integrations")
+      }
+
+      try {
+        StandaloneIntegration.clusterUrl = StandaloneIntegration.extractQueryItem(window.location.search, 'targetcluster');
+        console.log(this.clusterUrl)
+      } catch {
+        console.log("could not load any cluster url")
+      }
+    }
 
     public static isStandalone(): boolean {
-        return typeof sfxModuleManager !== 'undefined' && sfxModuleManager !== null;
-    }
-
-    public static get clusterUrl(): string {
-        if (StandaloneIntegration.iclusterUrl == null) {
-            if (StandaloneIntegration.isStandalone()) {
-                StandaloneIntegration.iclusterUrl = StandaloneIntegration.extractQueryItem(window.location.search, 'targetcluster');
-            } else {
-                StandaloneIntegration.iclusterUrl = '';
-            }
-        }
-
-        return StandaloneIntegration.iclusterUrl;
-    }
-
-    public static getHttpClient(): Promise<IHttpClient> {
-        if (this.isStandalone()) {
-            return sfxModuleManager.getComponentAsync<IHttpClient>('http.http-client.service-fabric');
-        }
-
-        return undefined;
+      return !!(this.clusterUrl || this.integrationConfig);
     }
 
     private static extractQueryItem(queryString: string, name: string): string {
@@ -98,7 +68,6 @@ export class StandaloneIntegration {
                 }
             }
         }
-
         return null;
     }
 }

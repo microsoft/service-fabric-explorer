@@ -1,8 +1,15 @@
+import { StandaloneIntegration } from './Common/StandaloneIntegration';
 import { AdalService } from './services/adal.service';
 
 export function initApp(aadService: AdalService) {
   return async () => {
     try {
+      StandaloneIntegration.setConfiguration();
+      console.log(StandaloneIntegration)
+      if(StandaloneIntegration.isStandalone()) {
+        return;
+      }
+
       await aadService.load().toPromise();
 
       if (aadService.aadEnabled) {
