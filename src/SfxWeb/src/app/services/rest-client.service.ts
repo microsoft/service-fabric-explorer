@@ -19,7 +19,6 @@ import { Service } from '../Models/DataModels/Service';
 import { Partition } from '../Models/DataModels/Partition';
 import { ClusterEvent, NodeEvent, ApplicationEvent, ServiceEvent, PartitionEvent, ReplicaEvent,
          FabricEvent, EventsResponseAdapter, FabricEventBase } from '../Models/eventstore/Events';
-import { StandaloneIntegration } from '../Common/StandaloneIntegration';
 import { AadMetadata } from '../Models/DataModels/Aad';
 import { environment } from 'src/environments/environment';
 import { IRequest, NetworkDebugger } from '../Models/DataModels/networkDebugger';

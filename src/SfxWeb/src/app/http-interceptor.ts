@@ -6,8 +6,7 @@ import { finalize, map, mergeMap } from 'rxjs/operators';
 import { DataService } from './services/data.service';
 import { Constants } from './Common/Constants';
 import { environment } from 'src/environments/environment';
-import { IHttpRequest, StandaloneIntegration } from './Common/StandaloneIntegration';
-import { Utils } from './Utils/Utils';
+import { IHttpRequest, StandaloneIntegrationService } from './services/standalone-integration.service';
 
 /*
 The will intercept and allow the modification of every http request going in and out.
@@ -72,8 +71,9 @@ export class GlobalHeaderInterceptor implements HttpInterceptor {
 
 @Injectable()
 export class StandAloneInterceptor implements HttpInterceptor {
+  constructor(private standaloneIntegration: StandaloneIntegrationService) {}
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
-    if(!StandaloneIntegration.isStandalone()) {
+    if(!this.standaloneIntegration.isStandalone()) {
       return next.handle(req);
     }
 
@@ -85,9 +85,9 @@ export class StandAloneInterceptor implements HttpInterceptor {
     }
 
     return new Observable(subscriber => {
-      const integration = StandaloneIntegration.integrationConfig;
+      const integration = this.standaloneIntegration.integrationConfig;
       const requestData = integration.passObjectAsString ? JSON.stringify(data) : data;
-      const caller = Utils.result2(window, integration.windowPath);
+      const caller = this.standaloneIntegration.getIntegrationCaller();
 
       const handleResponse = (responseData) => {
         if(integration.passObjectAsString) {
