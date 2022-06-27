@@ -24,10 +24,11 @@ export interface IHttpRequest {
 }
 
 export interface IntegrationConfig {
-preloadFunction?: string;
-windowPath: string;
-passObjectAsString?: boolean;
-handleAsCallBack?: boolean;
+  preloadFunction?: string;
+  windowPath: string;
+  passObjectAsString?: boolean;
+  handleAsCallBack?: boolean;
+  isReadOnlyMode?: boolean;
 }
 
 @Injectable({

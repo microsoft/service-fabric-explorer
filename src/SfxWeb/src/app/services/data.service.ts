@@ -82,6 +82,7 @@ export class DataService {
 
     if(standalone.isStandalone()) {
       this.clusterNameMetadata = standalone.clusterUrl;
+      this.readOnlyHeader = !!standalone.integrationConfig.isReadOnlyMode;
     }
    }
 
