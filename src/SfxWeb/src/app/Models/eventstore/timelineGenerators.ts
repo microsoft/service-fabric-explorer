@@ -6,7 +6,7 @@ import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
-import { IConcurrentEventsConfig, IConcurrentEvents } from 'src/app/modules/event-store/event-store/event-store.component';
+import { IConcurrentEventsConfig, IConcurrentEvents, IRCAItem } from 'src/app/modules/event-store/event-store/event-store.component';
 import { Utils } from 'src/app/Utils/Utils';
 
 /*
@@ -220,7 +220,7 @@ export abstract class TimeLineGeneratorBase<T> {
         return false;
     }
     
-    getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: DataItem[], events: DataItem[]) : IConcurrentEvents[] {
+    getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: IRCAItem[], events: IRCAItem[]) : IConcurrentEvents[] {
         /*
             Grab the events that occur concurrently with an inputted current event.
         */
@@ -236,12 +236,6 @@ export abstract class TimeLineGeneratorBase<T> {
                     // iterate through all events to find relevant ones
                     events.forEach(iterEvent => {
                         config.relevantEventsType.forEach(relevantEventType => {
-
-                            // check if event type is relevant
-                            if(iterEvent instanceof RepairTask) {
-                                iterEvent["kind"] = "RepairTask";
-                                iterEvent["eventInstanceId"] = iterEvent.raw.TaskId + "<br/><br/>Action: " + iterEvent.raw.Action ;
-                            }
                             if (relevantEventType.eventType == iterEvent.kind) {
                                 // see if each property mapping holds true
                                 let propMaps = true;

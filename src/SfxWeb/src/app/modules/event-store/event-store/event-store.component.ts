@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineDataGenerator } from 'src/app/Models/eventstore/timelineGenerators';
+import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineDataGenerator, RepairTaskTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
 import { Subject, Subscription, forkJoin, of } from 'rxjs';
@@ -37,6 +37,11 @@ export interface IConcurrentEventsConfig {
 
 export interface IConcurrentEvents extends DataItem {
     related: IConcurrentEvents[] // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
+}
+
+export interface IRCAItem extends DataItem, IConcurrentEvents {
+    kind: string;
+    eventInstanceId: string;    
 }
 
 export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
@@ -211,13 +216,13 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       return combinedTimelineData;
   }
 
-  private testEvent(parsedEvents : DataItem[]) : void {
+  private testEvent(parsedEvents : IRCAItem[]) : void {
     /*
         Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
         which events happen concurrently with these random events.
     */
     let eventInstanceId = (document.getElementById("eventId") as HTMLInputElement).value;
-    let inputEvents : DataItem[] = [];
+    let inputEvents : IRCAItem[] = [];
     parsedEvents.forEach(event => {
         if (event.kind == "NodeDown" && event.eventInstanceId == eventInstanceId) {
             inputEvents.push(event);
@@ -236,6 +241,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         if (data.eventsList.lastRefreshWasSuccessful) {
             if (data.timelineGenerator) {
                 data.getEvents().forEach(event => parsedEvents.push(event));
+
             }
         }
     }

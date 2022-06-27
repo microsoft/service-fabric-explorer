@@ -10,7 +10,7 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                 eventType: "NodeDown",
                 propertyMappings: [
                     {
-                        sourceProperty: "nodeName", 
+                        sourceProperty: "nodeName",
                         targetProperty: "nodeName"
                     }
                 ],
@@ -33,7 +33,7 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "raw.NodeInstance"
                     }
                 ],
-                result: ""                    
+                result: ""
             }
         ]
     },
@@ -51,5 +51,5 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                 result: "raw.Action"
             }
         ]
-    },    
+    },
 ];
