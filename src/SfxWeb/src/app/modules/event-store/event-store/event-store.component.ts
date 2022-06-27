@@ -13,6 +13,7 @@ import { IOptionConfig, IOptionData } from '../option-picker/option-picker.compo
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
+import { Utils } from 'src/app/Utils/Utils';
 
 export interface IQuickDates {
     display: string;
@@ -229,8 +230,62 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         }
     });    
 
-    this.simulEvents = this.listEventStoreData[0].timelineGenerator.getSimultaneousEventsForEvent(RelatedEventsConfigs, inputEvents, parsedEvents);
+    this.simulEvents = this.getSimultaneousEventsForEvent(RelatedEventsConfigs, inputEvents, parsedEvents);
   }
+
+  private getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: IRCAItem[], events: IRCAItem[]) : IConcurrentEvents[] {
+        /*
+            Grab the events that occur concurrently with an inputted current event.
+        */
+
+        let simulEvents : IConcurrentEvents[] = [];
+        let addedEvents : DataItem[] = [];
+
+        // iterate through all the input events
+        inputEvents.forEach(inputEvent => {
+            // iterate through all configuration
+            configs.forEach(config => {
+                if (config.eventType == inputEvent.kind) {                                        
+                    // iterate through all events to find relevant ones
+                    events.forEach(iterEvent => {
+                        config.relevantEventsType.forEach(relevantEventType => {
+                            if (relevantEventType.eventType == iterEvent.kind) {
+                                // see if each property mapping holds true
+                                let propMaps = true;
+                                let mappings = relevantEventType.propertyMappings;
+                                mappings.forEach(mapping => {     
+                                    let sourceVal: any;
+                                    let targetVal: any;   
+                                    if(mapping.sourceProperty == "raw.BatchId") {
+                                        sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                        sourceVal = sourceVal.substring(sourceVal.indexOf("/") + 1);
+                                    } else {
+                                        sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                    }                           
+                                    targetVal = Utils.result(iterEvent, mapping.targetProperty);
+                                    if (sourceVal != null && targetVal != null && sourceVal != targetVal) {
+                                        propMaps = false;
+                                    }
+                                });
+                                
+                                if (propMaps) {
+                                    if (!inputEvent.related) {
+                                        inputEvent.related = [];
+                                    }
+                                    inputEvent.related.push(iterEvent);
+                                    addedEvents.push(iterEvent);
+                                }
+                            }
+                        });                        
+                    });
+                }
+            });
+            simulEvents.push(inputEvent);
+        });
+
+        if (addedEvents.length > 0) this.getSimultaneousEventsForEvent(configs, addedEvents, events);
+        return simulEvents;
+    }
 
   private getConcurrentEventsData(): DataSet<DataItem> {
     /*
