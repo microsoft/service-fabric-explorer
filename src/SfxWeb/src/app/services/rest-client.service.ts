@@ -856,7 +856,6 @@ export class RestClientService {
   }
 
   private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-    console.log(this.getBaseUrl, url)
       const result = this.httpClient.get<T>(this.getBaseUrl() + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
