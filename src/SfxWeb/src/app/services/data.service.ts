@@ -39,6 +39,7 @@ import { SettingsService } from './settings.service';
 import { RepairTask } from '../Models/DataModels/repairTask';
 import { ApplicationTimelineGenerator, ClusterTimelineGenerator, NodeTimelineGenerator, PartitionTimelineGenerator, RepairTaskTimelineGenerator } from '../Models/eventstore/timelineGenerators';
 import groupBy from 'lodash/groupBy';
+import { StandaloneIntegrationService } from './standalone-integration.service';
 
 @Injectable({
   providedIn: 'root'
@@ -66,7 +67,8 @@ export class DataService {
     public warnings: StatusWarningService,
     public storage: StorageService,
     public restClient: RestClientService,
-    public dialog: MatDialog
+    public dialog: MatDialog,
+    public standalone: StandaloneIntegrationService,
   ) {
     this.clusterUpgradeProgress = new ClusterUpgradeProgress(this);
     this.clusterManifest = new ClusterManifest(this);
@@ -77,6 +79,11 @@ export class DataService {
     this.systemApp = new SystemApplication(this);
     this.backupPolicies = new BackupPolicyCollection(this);
     this.repairCollection = new RepairTaskCollection(this);
+
+    if(standalone.isStandalone()) {
+      this.clusterNameMetadata = standalone.clusterUrl;
+      this.readOnlyHeader = !!standalone.integrationConfig.isReadOnlyMode;
+    }
    }
 
   public actionsEnabled(): boolean {
