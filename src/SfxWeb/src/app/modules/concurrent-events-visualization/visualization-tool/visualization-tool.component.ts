@@ -22,10 +22,10 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
 
   @Input() simulEvents : IConcurrentEvents[]
 
-  public minNodeHeight: number = 200;
-  public nameSizePx: number = 20;
-  public kindSizePx: number = 15;
-  public titleSizePx: number = 30;
+  private minNodeHeight: number = 200;
+  private nameSizePx: number = 20;
+  private kindSizePx: number = 15;
+  private titleSizePx: number = 30;
 
   public options: Options = {
       chart: {
