@@ -1,5 +1,5 @@
 import { Component, OnInit, OnChanges, AfterViewInit, Input } from '@angular/core';
-import { IConcurrentEvents } from '../../event-store/event-store/event-store.component';
+import { IConcurrentEvents, IEventResultMapping } from '../../event-store/event-store/event-store.component';
 import * as Highcharts from 'highcharts';
 import { Options } from 'highcharts';
 
@@ -7,6 +7,8 @@ import HighchartsSankey from "highcharts/modules/sankey";
 import HighchartsOrganization from "highcharts/modules/organization";
 import HighchartsExporting from "highcharts/modules/exporting";
 import { ConcurrentEventsVisualizationModule } from '../concurrent-events-visualization.module';
+import { EventResultConfigs } from 'src/app/Models/eventstore/EventResultConfigs';
+import { Utils } from 'src/app/Utils/Utils';
 
 HighchartsSankey(Highcharts);
 HighchartsOrganization(Highcharts);
@@ -26,6 +28,7 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
   private nameSizePx: number = 20;
   private kindSizePx: number = 15;
   private titleSizePx: number = 30;
+  private results : IEventResultMapping[] = EventResultConfigs;
 
   public options: Options = {
       chart: {
@@ -88,12 +91,18 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
       let fontPrefix = `<p style='font-size: ${this.nameSizePx}px; color: white;'>`
       let titlePrefix = `<p style='font-size: ${this.kindSizePx}px; color: white;'>`
       while (queue.length > 0) {
-          let currSize = queue.length;                    
+          let currSize = queue.length;
+          let action = "";               
           for (let i = 0; i < currSize; i++) {
               let currEvent = queue.shift();
+              this.results.forEach(result => {
+                if(result.eventType == currEvent.kind &&  Utils.result(currEvent, result.result)) {
+                  action = "Action: " + Utils.result(currEvent, result.result) + "<br/><br/>";
+                }
+              })
               let newNodeComponent = {
                   id: fontPrefix + currEvent.eventInstanceId + "</p>",
-                  title: titlePrefix + currEvent.kind + "</p>",
+                  title: titlePrefix + action + currEvent.kind + "</p>",
                   layout: "hanging",                                    
               }                          
 

@@ -25,10 +25,14 @@ export interface IPropertyMapping {
     targetProperty: string;
 }
 
+export interface IEventResultMapping {
+    eventType: string;
+    result: string; //resulting property we want to display for events (ex. Repair Jobs action)
+}
+
 export interface IRelevantEventsConfig {
     eventType: string;
     propertyMappings: IPropertyMapping[];
-    result: string; //resulting property we want to display for events (ex. Repair Jobs action)
 }
 
 export interface IConcurrentEventsConfig {

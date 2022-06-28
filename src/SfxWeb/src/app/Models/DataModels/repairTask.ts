@@ -80,7 +80,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
     constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef?: Date) {
         super(dataService, raw);
         this.updateInternal();
-        this.eventInstanceId = this.raw.TaskId + "<br/><br/>Action: " + this.raw.Action;
+        this.eventInstanceId = this.raw.TaskId;
     }
 
     /*

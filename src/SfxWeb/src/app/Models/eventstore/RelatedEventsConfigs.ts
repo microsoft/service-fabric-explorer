@@ -13,8 +13,7 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         sourceProperty: "nodeName",
                         targetProperty: "nodeName"
                     }
-                ],
-                result: ""
+                ]
             }
         ]
     },
@@ -32,8 +31,7 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         sourceProperty: "raw.NodeInstance",
                         targetProperty: "raw.NodeInstance"
                     }
-                ],
-                result: ""
+                ]
             }
         ]
     },
@@ -47,8 +45,7 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         sourceProperty: "raw.BatchId",
                         targetProperty: "raw.TaskId"
                     }
-                ],
-                result: "raw.Action"
+                ]
             }
         ]
     },
