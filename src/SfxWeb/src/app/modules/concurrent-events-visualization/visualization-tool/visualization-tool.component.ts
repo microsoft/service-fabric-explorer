@@ -22,9 +22,14 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
 
   @Input() simulEvents : IConcurrentEvents[]
 
+  public minNodeHeight: number = 150;
+  public nameSizePx: number = 20;
+  public kindSizePx: number = 15;
+  public titleSizePx: number = 30;
+
   public options: Options = {
       chart: {
-        height: 1000,
+        height: this.minNodeHeight * 5,
         inverted: true,
         backgroundColor: null
       },
@@ -32,7 +37,7 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
         text: 'Concurrent Events Visualization Tool',
         style: {
           color: 'white',
-          fontSize: '15px'
+          fontSize: `${this.titleSizePx}px`
         }
       },
       series: [],
@@ -69,10 +74,10 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
       colorByPoint: false,
       dataLabels: {
         color: 'white',
-        fontSize: '10px'
+        fontSize: '20px'
       },
       borderColor: 'white',
-      nodeWidth: 120
+      nodeWidth: this.minNodeHeight
     }
     // perform BFS to convert to organization chart
     let queue = [];
@@ -80,14 +85,15 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
       queue = [...this.simulEvents];        
 
       let levels = 0;      
-      let fontPrefix = "<p style='font-size: 12px; color: white;'>"
+      let fontPrefix = `<p style='font-size: ${this.nameSizePx}px; color: white;'>`
+      let titlePrefix = `<p style='font-size: ${this.kindSizePx}px; color: white;'>`
       while (queue.length > 0) {
           let currSize = queue.length;                    
           for (let i = 0; i < currSize; i++) {
               let currEvent = queue.shift();
               let newNodeComponent = {
                   id: fontPrefix + currEvent.eventInstanceId + "</p>",
-                  title: currEvent.kind,
+                  title: titlePrefix + currEvent.kind + "</p>",
                   layout: "hanging",                                    
               }                          
 

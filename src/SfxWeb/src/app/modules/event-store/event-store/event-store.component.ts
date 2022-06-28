@@ -225,7 +225,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     let eventInstanceId = (document.getElementById("eventId") as HTMLInputElement).value;
     let inputEvents : IRCAItem[] = [];
     parsedEvents.forEach(event => {
-        if (event.kind == "NodeDown" && event.eventInstanceId == eventInstanceId) {
+        if (event.eventInstanceId == eventInstanceId) {
             inputEvents.push(event);
         }
     });    
