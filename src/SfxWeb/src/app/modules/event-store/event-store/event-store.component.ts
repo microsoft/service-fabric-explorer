@@ -263,7 +263,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                         sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
                                     }                           
                                     targetVal = Utils.result(iterEvent, mapping.targetProperty);
-                                    if (sourceVal != null && targetVal != null && sourceVal != targetVal) {
+                                    if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
                                         propMaps = false;
                                     }
                                 });
@@ -294,10 +294,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     let parsedEvents : DataItem[] = [];
     for (const data of this.listEventStoreData) {
         if (data.eventsList.lastRefreshWasSuccessful) {
-            if (data.timelineGenerator) {
-                data.getEvents().forEach(event => parsedEvents.push(event));
-
-            }
+            data.getEvents().forEach(event => parsedEvents.push(event));            
         }
     }
 
@@ -308,8 +305,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   public findConcurrentEvents(): void {
     const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
     forkJoin(timelineEventSubs).subscribe(() => {
-        let concurrentEvents = this.getConcurrentEventsData();
-    })
+        this.getConcurrentEventsData();
+    });
   }
 
   public setTimelineData(): void {
