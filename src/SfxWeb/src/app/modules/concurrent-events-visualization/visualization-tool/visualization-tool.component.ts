@@ -22,14 +22,14 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
 
   @Input() simulEvents : IConcurrentEvents[]
 
-  public minNodeHeight: number = 150;
+  public minNodeHeight: number = 200;
   public nameSizePx: number = 20;
   public kindSizePx: number = 15;
   public titleSizePx: number = 30;
 
   public options: Options = {
       chart: {
-        height: this.minNodeHeight * 5,
+        height: 0,
         inverted: true,
         backgroundColor: null
       },
@@ -59,7 +59,7 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
   }
 
   ngAfterViewInit(): void {
-    this.options.series = [this.traverse()];
+    this.options.series = [this.traverse()];    
     Highcharts.chart('container', this.options);
   }
 
@@ -111,7 +111,9 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
               }
           }  
           levels++;
-      }      
+      }    
+      
+      this.options.chart.height = this.minNodeHeight * (levels + 1);
 
       let colors = ["#8F0600", "#2E8100", "#6C007F", "#1A386D"];
       for (let i = 0; i < levels; i++) {        
