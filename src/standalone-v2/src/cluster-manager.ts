@@ -90,7 +90,9 @@ export class ClusterManager {
                         const id = await this.mainWindow.addWindow({
                             id: cluster.id,
                             url: join(__dirname, "sfx", 'index.html'),
-                            queryParams: {'targetcluster': cluster.name},
+                            queryParams: {"targetcluster": cluster.name,
+                                          "integrationConfig": JSON.stringify({"windowPath": "electronInterop.sendHttpRequest"})
+                                          },
                         });
                         this.windowToCluster[id] = cluster;
             
