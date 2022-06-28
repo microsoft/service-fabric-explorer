@@ -91,9 +91,6 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
           let currSize = queue.length;                    
           for (let i = 0; i < currSize; i++) {
               let currEvent = queue.shift();
-              if (levels == 0 && currEvent.related) {                
-                currEvent.related = currEvent.related.slice(0, 5);
-              }
               let newNodeComponent = {
                   id: fontPrefix + currEvent.eventInstanceId + "</p>",
                   title: titlePrefix + currEvent.kind + "</p>",
