@@ -22,14 +22,14 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
 
   @Input() simulEvents : IConcurrentEvents[]
 
-  private minNodeHeight: number = 200;
+  private minNodeHeight: number = 300;
   private nameSizePx: number = 20;
   private kindSizePx: number = 15;
   private titleSizePx: number = 30;
 
   public options: Options = {
       chart: {
-        height: 0,
+        height: 0,        
         inverted: true,
         backgroundColor: null
       },
@@ -80,7 +80,7 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
       nodeWidth: this.minNodeHeight
     }
     // perform BFS to convert to organization chart
-    let queue = [];
+    let queue = [];    
     if (this.simulEvents) {
       queue = [...this.simulEvents];        
 
@@ -91,6 +91,9 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
           let currSize = queue.length;                    
           for (let i = 0; i < currSize; i++) {
               let currEvent = queue.shift();
+              if (levels == 0 && currEvent.related) {                
+                currEvent.related = currEvent.related.slice(0, 5);
+              }
               let newNodeComponent = {
                   id: fontPrefix + currEvent.eventInstanceId + "</p>",
                   title: titlePrefix + currEvent.kind + "</p>",
@@ -103,17 +106,17 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
               }
               config.nodes.push(newNodeComponent);
 
-              if (currEvent.related) {
-                  currEvent.related.forEach(relatedEvent => {
+              if (currEvent.related) {                  
+                  currEvent.related.forEach(relatedEvent => {                      
                       config.data.push([`${fontPrefix}${currEvent.eventInstanceId}</p>`, `${fontPrefix}${relatedEvent.eventInstanceId}</p>`]);
-                      queue.push(relatedEvent);
+                      queue.push(relatedEvent);                      
                   });
               }
           }  
           levels++;
       }    
       
-      this.options.chart.height = this.minNodeHeight * (levels + 1);
+      this.options.chart.height = this.minNodeHeight * (levels + 1);      
 
       let colors = ["#8F0600", "#2E8100", "#6C007F", "#1A386D"];
       for (let i = 0; i < levels; i++) {        
