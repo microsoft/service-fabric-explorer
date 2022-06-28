@@ -39,6 +39,7 @@ import { StandaloneIntegrationService } from './services/standalone-integration.
     MatSnackBarModule,
     DebuggingModule
   ],
+
   providers: [
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     AdalService,

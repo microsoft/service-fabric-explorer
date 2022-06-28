@@ -3,7 +3,7 @@ import { MessageService, MessageSeverity } from './message.service';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { HealthStateFilterFlags, IClusterHealthChunkQueryDescription } from '../Models/HealthChunkRawDataTypes';
 import { IResponseMessageHandler, ResponseMessageHandlers } from '../Common/ResponseMessageHandlers';
-import { from, Observable, of, throwError } from 'rxjs';
+import { Observable, of, throwError } from 'rxjs';
 import { IRawCollection, IRawClusterManifest, IRawClusterHealth, IRawClusterUpgradeProgress, IRawClusterLoadInformation,
         IRawDeployedContainerOnNetwork, IRawNode, IRawBackupPolicy, IRawApplicationBackupConfigurationInfo,
          IRawServiceBackupConfigurationInfo, IRawBackupProgressInfo, IRawRestoreProgressInfo, IRawPartitionBackupConfigurationInfo, IRawPartitionBackup, IRawNodeHealth,
@@ -896,8 +896,8 @@ export class RestClientService {
         statusCode: 200
     };
     return resultPromise.pipe(catchError((err: HttpErrorResponse) => {
-        console.log(JSON.stringify(err));
         const header = `${err.status.toString()} : ${apiDesc}`;
+
         const message = messageHandler.getErrorMessage(apiDesc, err);
         let displayMessage = '';
         if (message) {

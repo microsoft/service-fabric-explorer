@@ -8,8 +8,7 @@ export const environment = {
   version: 'test',
   assetBase: '',
   showBeta: true,
-  telemetryKey: '',
-  electronWindow: false
+  telemetryKey: ''
 };
 
 /*

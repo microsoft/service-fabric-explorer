@@ -1,4 +1,3 @@
-
 import { AdalService } from './services/adal.service';
 import { StandaloneIntegrationService } from './services/standalone-integration.service';
 
