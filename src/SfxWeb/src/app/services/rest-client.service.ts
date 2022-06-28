@@ -839,6 +839,10 @@ export class RestClientService {
 
   }
 
+  private getBaseUrl() {
+    return environment.baseUrl || "";
+  }
+
     // eslint-disable-next-line max-len
   private getFullCollection2<T>(url: string, apiDesc: string, apiVersion?: string, messageHandler?: IResponseMessageHandler, continuationToken?: string, startDate?: Date, endDate?: Date, maxResults?: number, latest?: boolean): Observable<T[]> {
       const appUrl = this.getApiUrl2(url, apiVersion, continuationToken, false, startDate, endDate, maxResults, latest);
@@ -854,7 +858,7 @@ export class RestClientService {
   }
 
   private get<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'GET', url }) : this.httpClient.get<T>(environment.baseUrl + url);
+      const result = this.httpClient.get<T>(this.getBaseUrl() + url);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.getResponseMessageHandler;
       }
@@ -862,7 +866,7 @@ export class RestClientService {
   }
 
   private post<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'POST', url, body: data }) : this.httpClient.post<T>(environment.baseUrl  + url, data);
+      const result = this.httpClient.post<T>(this.getBaseUrl()  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.postResponseMessageHandler;
       }
@@ -870,7 +874,7 @@ export class RestClientService {
   }
 
   private put<T>(url: string, apiDesc: string, data?: any, messageHandler?: IResponseMessageHandler): Observable<T> {
-      const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'PUT', url, body: data }) : this.httpClient.put<T>(environment.baseUrl  + url, data);
+      const result = this.httpClient.put<T>(this.getBaseUrl()  + url, data);
       if (!messageHandler) {
           messageHandler = ResponseMessageHandlers.putResponseMessageHandler;
       }
@@ -878,61 +882,11 @@ export class RestClientService {
   }
 
   private delete<T>(url: string, apiDesc: string, messageHandler?: IResponseMessageHandler): Observable<T> {
-    const result = StandaloneIntegration.isStandalone() ? this.requestAsync<T>({ method: 'DELETE', url }) : this.httpClient.delete<T>(environment.baseUrl + url);
-    if (!messageHandler) {
-      messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
-    }
-    return this.handleResponse<T>(apiDesc, result as any, messageHandler);
-  }
-
-  public requestAsync<T>(request: IHttpRequest): Observable<T> {
-    return from(new Promise((resolve, reject) => {
-      const integration = StandaloneIntegration.integrationConfig;
-      const requestData = integration.passObjectAsString ? JSON.stringify(request) : request;
-      const caller = Utils.result2(window, integration.windowPath);
-      if(integration.handleAsCallBack) {
-        caller({"data": requestData, "Callback": (response) => {
-            if (integration.passObjectAsString) {
-              response = JSON.parse(response);
-            }
-
-            if(response.statusCode.toString().startsWith("2")) {
-              resolve(response.data);
-            }else{
-              const r = new HttpErrorResponse({
-                status: response.statusCode,
-                statusText: response.statusMessage,
-                error: response.data
-              });
-              reject(r);
-            }
-          }
-        })
-      }else{
-        caller(requestData).then((response, res) => {
-          if (integration.passObjectAsString) {
-            response = JSON.parse(response);
-          }
-          if (response.statusCode.toString().startsWith("2")) {
-            resolve(response.data);
-          } else {
-            const r = new HttpErrorResponse({
-              status: response.statusCode,
-              statusText: response.statusMessage,
-              error: response.data
-            });
-            reject(r);
-          }
-          // only send the data because we are using Observable<T> instead of Observable<HttpResponse<T>>
-        }).catch(err => {
-          console.log(err)
-          const r = new HttpErrorResponse({
-            status: 500,
-          });
-          reject(r);
-        });
+      const result = this.httpClient.delete<T>(this.getBaseUrl()  + url);
+      if (!messageHandler) {
+          messageHandler = ResponseMessageHandlers.deleteResponseMessageHandler;
       }
-    }) as Promise<T>);
+      return this.handleResponse<T>(apiDesc, result as any, messageHandler);
   }
 
   private handleResponse<T>(apiDesc: string, resultPromise: Observable<any>, messageHandler?: IResponseMessageHandler): Observable<T> {

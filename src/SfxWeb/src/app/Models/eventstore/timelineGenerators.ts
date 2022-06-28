@@ -564,6 +564,7 @@ export class ApplicationTimelineGenerator extends TimeLineGeneratorBase<Applicat
                 EventStoreUtils.parseUpgradeDomain(event, items, ApplicationTimelineGenerator.upgradeDomainLabel, 'ApplicationTypeVersion');
             }else if (event.kind === 'ApplicationUpgradeCompleted') {
                 EventStoreUtils.parseUpgradeCompleted(event, items, ApplicationTimelineGenerator.applicationUpgradeLabel, 'ApplicationTypeVersion');
+                upgradeApplicationStarted = null;
                 previousApplicationUpgrade = event;
             }else if (event.kind === 'ApplicationProcessExited') {
                 this.parseApplicationProcessExited(event, items, processExitedGroups);
