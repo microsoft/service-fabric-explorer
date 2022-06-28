@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineDataGenerator } from 'src/app/Models/eventstore/timelineGenerators';
+import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineDataGenerator, RepairTaskTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
 import { Subject, Subscription, forkJoin, of } from 'rxjs';
@@ -13,6 +13,7 @@ import { IOptionConfig, IOptionData } from '../option-picker/option-picker.compo
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
+import { Utils } from 'src/app/Utils/Utils';
 
 export interface IQuickDates {
     display: string;
@@ -27,6 +28,7 @@ export interface IPropertyMapping {
 export interface IRelevantEventsConfig {
     eventType: string;
     propertyMappings: IPropertyMapping[];
+    result: string; //resulting property we want to display for events (ex. Repair Jobs action)
 }
 
 export interface IConcurrentEventsConfig {
@@ -36,6 +38,11 @@ export interface IConcurrentEventsConfig {
 
 export interface IConcurrentEvents extends DataItem {
     related: IConcurrentEvents[] // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
+}
+
+export interface IRCAItem extends DataItem, IConcurrentEvents {
+    kind: string;
+    eventInstanceId: string;    
 }
 
 export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
@@ -210,21 +217,75 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       return combinedTimelineData;
   }
 
-  private testEvent(parsedEvents : DataItem[]) : void {
+  private testEvent(parsedEvents : IRCAItem[]) : void {
     /*
         Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
         which events happen concurrently with these random events.
     */
-
-    let inputEvents : DataItem[] = [];
+    let eventInstanceId = (document.getElementById("eventId") as HTMLInputElement).value;
+    let inputEvents : IRCAItem[] = [];
     parsedEvents.forEach(event => {
-        if (event.kind == "NodeDown" && event.eventInstanceId == "0209c2ec-e9f8-425d-a332-7b4e65097134") {
+        if (event.kind == "NodeDown" && event.eventInstanceId == eventInstanceId) {
             inputEvents.push(event);
         }
     });    
 
-    this.simulEvents = this.listEventStoreData[0].timelineGenerator.getSimultaneousEventsForEvent(RelatedEventsConfigs, inputEvents, parsedEvents);
+    this.simulEvents = this.getSimultaneousEventsForEvent(RelatedEventsConfigs, inputEvents, parsedEvents);
   }
+
+  private getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: IRCAItem[], events: IRCAItem[]) : IConcurrentEvents[] {
+        /*
+            Grab the events that occur concurrently with an inputted current event.
+        */
+
+        let simulEvents : IConcurrentEvents[] = [];
+        let addedEvents : DataItem[] = [];
+
+        // iterate through all the input events
+        inputEvents.forEach(inputEvent => {
+            // iterate through all configuration
+            configs.forEach(config => {
+                if (config.eventType == inputEvent.kind) {                                        
+                    // iterate through all events to find relevant ones
+                    events.forEach(iterEvent => {
+                        config.relevantEventsType.forEach(relevantEventType => {
+                            if (relevantEventType.eventType == iterEvent.kind) {
+                                // see if each property mapping holds true
+                                let propMaps = true;
+                                let mappings = relevantEventType.propertyMappings;
+                                mappings.forEach(mapping => {     
+                                    let sourceVal: any;
+                                    let targetVal: any;   
+                                    if(mapping.sourceProperty == "raw.BatchId") {
+                                        sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                        sourceVal = sourceVal.substring(sourceVal.indexOf("/") + 1);
+                                    } else {
+                                        sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                    }                           
+                                    targetVal = Utils.result(iterEvent, mapping.targetProperty);
+                                    if (sourceVal != null && targetVal != null && sourceVal != targetVal) {
+                                        propMaps = false;
+                                    }
+                                });
+                                
+                                if (propMaps) {
+                                    if (!inputEvent.related) {
+                                        inputEvent.related = [];
+                                    }
+                                    inputEvent.related.push(iterEvent);
+                                    addedEvents.push(iterEvent);
+                                }
+                            }
+                        });                        
+                    });
+                }
+            });
+            simulEvents.push(inputEvent);
+        });
+
+        if (addedEvents.length > 0) this.getSimultaneousEventsForEvent(configs, addedEvents, events);
+        return simulEvents;
+    }
 
   private getConcurrentEventsData(): DataSet<DataItem> {
     /*
@@ -235,6 +296,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         if (data.eventsList.lastRefreshWasSuccessful) {
             if (data.timelineGenerator) {
                 data.getEvents().forEach(event => parsedEvents.push(event));
+
             }
         }
     }
@@ -243,16 +305,18 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     this.testEvent(parsedEvents);
   }
 
+  public findConcurrentEvents(): void {
+    const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
+    forkJoin(timelineEventSubs).subscribe(() => {
+        let concurrentEvents = this.getConcurrentEventsData();
+    })
+  }
+
   public setTimelineData(): void {
       const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());            
       forkJoin(timelineEventSubs).subscribe(() => {
           this.timeLineEventsData = this.getTimelineData();
       });
-
-      forkJoin(timelineEventSubs).subscribe(() => {
-          let concurrentEvents = this.getConcurrentEventsData();
-          console.log(concurrentEvents);
-      })
   }
 
   processData(option: IOptionData){

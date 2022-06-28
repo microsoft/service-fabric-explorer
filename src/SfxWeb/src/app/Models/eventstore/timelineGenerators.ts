@@ -6,7 +6,7 @@ import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { RepairTask } from 'src/app/Models/DataModels/repairTask';
-import { IConcurrentEventsConfig, IConcurrentEvents } from 'src/app/modules/event-store/event-store/event-store.component';
+import { IConcurrentEventsConfig, IConcurrentEvents, IRCAItem } from 'src/app/modules/event-store/event-store/event-store.component';
 import { Utils } from 'src/app/Utils/Utils';
 
 /*
@@ -218,55 +218,6 @@ export abstract class TimeLineGeneratorBase<T> {
             }            
         }
         return false;
-    }
-    
-    getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: DataItem[], events: DataItem[]) : IConcurrentEvents[] {
-        /*
-            Grab the events that occur concurrently with an inputted current event.
-        */
-
-        let simulEvents : IConcurrentEvents[] = [];
-        let addedEvents : DataItem[] = [];
-
-        // iterate through all the input events
-        inputEvents.forEach(inputEvent => {
-            // iterate through all configuration
-            configs.forEach(config => {
-                if (config.eventType == inputEvent.kind) {                                        
-                    // iterate through all events to find relevant ones
-                    events.forEach(iterEvent => {
-                        config.relevantEventsType.forEach(relevantEventType => {
-
-                            // check if event type is relevant
-                            if (relevantEventType.eventType == iterEvent.kind) {
-                                // see if each property mapping holds true
-                                let propMaps = true;
-                                let mappings = relevantEventType.propertyMappings;
-                                mappings.forEach(mapping => {                                    
-                                    let sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
-                                    let targetVal = Utils.result(iterEvent, mapping.targetProperty);
-                                    if (sourceVal != null && targetVal != null && sourceVal != targetVal) {
-                                        propMaps = false;
-                                    }
-                                });
-                                
-                                if (propMaps) {
-                                    if (!inputEvent.related) {
-                                        inputEvent.related = [];
-                                    }
-                                    inputEvent.related.push(iterEvent);
-                                    addedEvents.push(iterEvent);
-                                }
-                            }
-                        });                        
-                    });
-                }
-            });
-            simulEvents.push(inputEvent);
-        });
-
-        if (addedEvents.length > 0) this.getSimultaneousEventsForEvent(configs, addedEvents, events);
-        return simulEvents;
     }
 
     generateTimeLineData(events: T[], startOfRange?: Date, endOfRange?: Date, nestedGroupLabel?: string): ITimelineData {

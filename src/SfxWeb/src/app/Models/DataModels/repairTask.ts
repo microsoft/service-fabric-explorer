@@ -57,6 +57,8 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
     public isSecondRowCollapsed = true;
     public activeTab = 1;
 
+    public kind = "RepairTask";
+
     public impactedNodes: string[] = [];
     public history: IRepairTaskHistoryPhase[] = [];
     private timeStampsCollapses: Record<string, boolean> = {};
@@ -73,9 +75,12 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
     public executorData: any;
 
+    public eventInstanceId: string;
+
     constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef?: Date) {
         super(dataService, raw);
         this.updateInternal();
+        this.eventInstanceId = this.raw.TaskId + "<br/><br/>Action: " + this.raw.Action;
     }
 
     /*
