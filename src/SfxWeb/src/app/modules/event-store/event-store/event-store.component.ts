@@ -42,7 +42,8 @@ export interface IConcurrentEvents extends DataItem {
 
 export interface IRCAItem extends DataItem, IConcurrentEvents {
     kind: string;
-    eventInstanceId: string;    
+    eventInstanceId: string;
+    reasonForEvent: string;    
 }
 
 export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
@@ -240,6 +241,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
         let simulEvents : IConcurrentEvents[] = [];
         let addedEvents : DataItem[] = [];
+        let action = "";
 
         // iterate through all the input events
         inputEvents.forEach(inputEvent => {
@@ -272,6 +274,10 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                     if (!inputEvent.related) {
                                         inputEvent.related = [];
                                     }
+                                    if(Utils.result(iterEvent, relevantEventType.result)) {
+                                        action = "Action: " + Utils.result(iterEvent, relevantEventType.result) + "<br/><br/>";
+                                    }
+                                    iterEvent.reasonForEvent = action;
                                     inputEvent.related.push(iterEvent);
                                     addedEvents.push(iterEvent);
                                 }

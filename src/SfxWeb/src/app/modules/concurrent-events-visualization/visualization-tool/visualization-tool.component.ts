@@ -6,7 +6,6 @@ import { Options } from 'highcharts';
 import HighchartsSankey from "highcharts/modules/sankey";
 import HighchartsOrganization from "highcharts/modules/organization";
 import HighchartsExporting from "highcharts/modules/exporting";
-import { ConcurrentEventsVisualizationModule } from '../concurrent-events-visualization.module';
 
 HighchartsSankey(Highcharts);
 HighchartsOrganization(Highcharts);
@@ -88,12 +87,13 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
       let fontPrefix = `<p style='font-size: ${this.nameSizePx}px; color: white;'>`
       let titlePrefix = `<p style='font-size: ${this.kindSizePx}px; color: white;'>`
       while (queue.length > 0) {
-          let currSize = queue.length;                    
+          let currSize = queue.length;
           for (let i = 0; i < currSize; i++) {
               let currEvent = queue.shift();
+              let action = currEvent.reasonForEvent ? currEvent.reasonForEvent : "";
               let newNodeComponent = {
                   id: fontPrefix + currEvent.eventInstanceId + "</p>",
-                  title: titlePrefix + currEvent.kind + "</p>",
+                  title: titlePrefix + action + currEvent.kind + "</p>",
                   layout: "hanging",                                    
               }                          
 
