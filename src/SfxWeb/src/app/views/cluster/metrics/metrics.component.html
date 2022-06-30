@@ -1,5 +1,5 @@
 <div *ngIf="metricsViewModel">
-  <div style="display: flex; max-width: 100%;">
+  <div style="display: flex; max-width: 100%; flex-wrap: wrap;">
     <div>
       <div>
         <button (click)="toggleSide()" class="simple-button">Hide </button>
@@ -9,7 +9,7 @@
           <app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)" [showGroupByNodeType]="false" ></app-node-filter>
         </div>
 
-        <app-collapse-container buttonClass="underline" class="metrics-column">
+        <app-collapse-container buttonClass="underline" class="metrics-column" sectionName="Resource Capacity">
           <div collapse-header class="underline text-center title-container">
             Resource Capacity
           </div>
@@ -26,9 +26,9 @@
           </div>
         </app-collapse-container>
 
-        <app-collapse-container buttonClass="underline" class="metrics-column">
+        <app-collapse-container buttonClass="underline" class="metrics-column" sectionName="Load Metrics">
           <div collapse-header class="underline text-center title-container">
-            Load metrics
+            Load Metrics
           </div>
           <div collapse-body>
             <div class="metrics-column">
@@ -39,7 +39,7 @@
           </div>
         </app-collapse-container>
 
-        <app-collapse-container buttonClass="underline" class="metrics-column" [collapsed]="true">
+        <app-collapse-container buttonClass="underline" class="metrics-column" [collapsed]="true" sectionName="system Metrics">
           <div collapse-header class="underline text-center title-container">
             system Metrics
           </div>

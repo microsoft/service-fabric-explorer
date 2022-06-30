@@ -101,7 +101,7 @@
         </div>
 
         <div style="margin-top: 10px;" *ngIf="sortedFilteredList.length > listSettings.limit">
-            <ngb-pagination [collectionSize]="sortedFilteredList.length" [(page)]="page" [maxSize]="5" [rotate]="true" [boundaryLinks]="true"
+            <ngb-pagination [collectionSize]="sortedFilteredList.length" [(page)]="page" [maxSize]="3" [rotate]="true" [boundaryLinks]="true"
                             (pageChange)="pageChange($event)" style="display: inline-block;" [pageSize]="listSettings.limit"></ngb-pagination>
             <div style="float: right; margin-top: 10px;">
                 <span *ngIf="sortedFilteredList.length > listSettings.limit">

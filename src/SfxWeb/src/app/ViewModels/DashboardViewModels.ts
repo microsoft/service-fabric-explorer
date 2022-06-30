@@ -15,6 +15,7 @@ export interface IDashboardViewModel {
     dataPoints: IDashboardDataPointViewModel[];
     onClick(): void;
     getDataPointTooltip(dp: IDashboardDataPointViewModel): string;
+    acessibilityText?: string;
 }
 
 export interface IDashboardDataPointViewModel {
@@ -29,7 +30,7 @@ export interface IDashboardDataPointViewModel {
 export class DashboardViewModel implements IDashboardViewModel {
     public count = 0;
     public viewPath: string;
-
+    public acessibilityText?: string = "";
     public static fromHealthStateCount(
         title: string,
         titleInSingular: string,
@@ -45,6 +46,7 @@ export class DashboardViewModel implements IDashboardViewModel {
 
         const data = new DashboardViewModel(title, titleInSingular, dps, largeTile, routes, viewPath);
 
+
         return data;
     }
 
@@ -59,6 +61,7 @@ export class DashboardViewModel implements IDashboardViewModel {
         this.viewPath = viewPath;
         this.count = dataPoints.reduce((sum, d) => sum + d.count, 0);
         this.adjustCount();
+        this.acessibilityText = `${title} has ${dataPoints[0].count} in error, ${dataPoints[1].count} in warning and ${dataPoints[2].count} are healthy.`
     }
 
     public get displayTitle(): string {
