@@ -10,15 +10,6 @@ import { Utils } from 'src/app/Utils/Utils';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { environment } from 'src/environments/environment';
 
-// let isParent = (element: Element, s: Element) => {
-//   let el = element;
-//   do {
-//     if (Element.prototype.matches.call(element, s)) return element;
-//     el = (element.parentElement || element.parentNode) as Element;
-//   } while (element !== null && element.nodeType === 1);
-//   return null;
-// };
-
 @Component({
   selector: 'app-advanced-option',
   templateUrl: './advanced-option.component.html',
@@ -56,17 +47,25 @@ export class AdvancedOptionComponent implements OnInit {
 
   @HostListener("document:click", ["$event"])
   handleClickEvent(event: PointerEvent) {
-    if(this.dropdown.isOpen() && !event.target['closest']("#container")) {
+    try {
+      if(this.dropdown.isOpen() && !event.target['closest']("#container")) {
         this.dropdown.close();
+      }
+    } catch(e) {
+      console.log(e)
     }
   }
 
   @HostListener("document:keyup", ["$event"])
   handleEscapeKey(event: KeyboardEvent) {
-    if (event.key == "Escape") {
-      if (this.dropdown.isOpen() && this.tooltips.toArray().every(tooltip => !tooltip.isOpen())) {
-        this.dropdown.close();
+    try {
+      if (event.key == "Escape") {
+        if (this.dropdown.isOpen() && this.tooltips.toArray().every(tooltip => !tooltip.isOpen())) {
+          this.dropdown.close();
+        }
       }
+    } catch(e) {
+      console.log(e)
     }
   }
 
