@@ -80,7 +80,6 @@ export class DetailListComponent implements OnInit, OnDestroy {
         displayPath: this.displayPath
       });
 
-      this.liveAnnouncer.announce(`There are ${this.sortedFilteredList.length} items in the search result`);
    });
   }
 

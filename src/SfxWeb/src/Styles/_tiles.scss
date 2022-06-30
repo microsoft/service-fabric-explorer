@@ -55,6 +55,13 @@ $tile-width: 240px;
   grid-column: span 2;
 }
 
+@media (max-width: 400px) {
+  .long {
+    grid-column: span 1;
+    overflow: auto;
+  }
+}
+
 .tile-container {
   width: 100%;
   display: grid;
