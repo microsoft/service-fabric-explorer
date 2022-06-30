@@ -8,6 +8,7 @@ import { minLength, isString, endsWith } from '../mainWindow/validate';
 import { X509Certificate } from 'crypto';
 import { Logger } from '../logger';
 import { NotificationTypes } from '../notificationManager';
+import path from 'path';
 
 export function CertificateHandlerFactory(clusterManager: ClusterManager, logger: Logger): IAuthOption {
     return {
@@ -28,7 +29,6 @@ export function CertificateHandlerFactory(clusterManager: ClusterManager, logger
     }
 }
 
-
 export class CertificateHttpHandler extends BaseHttpHandler {
     protected httpsAgent: Agent;
 
@@ -47,16 +47,27 @@ export class CertificateHttpHandler extends BaseHttpHandler {
         try {
             let cert = await promises.readFile(auth.certificatePath);
 
+            let caCerts = null 
+ 
+            try {
+                if(auth.verifyConnection) {
+                    caCerts = await this.loadCAFolder();
+                }
+            } catch(e) {
+                succesful = false;
+                this.clusterManager.addClusterLogMessage(this.cluster.id, "Failed to CA Certificates : " + e)
+                return succesful;
+            }
             new X509Certificate(cert)
             
             this.logger.log(NotificationTypes.Info, `Loaded certificate for cluster ${cluster.id} from ${auth.certificatePath}`)
 
             this.httpsAgent = new Agent({
-                rejectUnauthorized: false,
+                ca: caCerts,
+                rejectUnauthorized: this.cluster.authentication.verifyConnection,
                 pfx: cert,
                 passphrase: auth.certificatePassword || ""
             })
-
         } catch (e) {
             console.log(e.toString());
             this.clusterManager.addClusterLogMessage(this.cluster.id, `Failed to load certificate. ${e.toString()}`);

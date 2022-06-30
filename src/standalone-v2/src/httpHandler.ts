@@ -1,6 +1,8 @@
 import { ClusterManager, ICluster, IClustherAuthCertificate } from "./cluster-manager";
 import axios, { AxiosRequestConfig } from 'axios';
 import { ValidateProperty } from "./mainWindow/validate";
+import { promises as fsPromises }  from 'fs';
+import path from "path";
 
 export type SslVersion =
     "TLS" | "TLS1.2" | "TLS1.1" | "TLS1.0" | "SSL3.0";
@@ -50,6 +52,16 @@ export interface IHttpHandler {
     testConnection(): Promise<boolean>;
 }
 
+export const loadFolderByExtension = async (folder: string, extensions: string[]) => {
+    const files = await fsPromises.readdir(folder);
+    const validFiles = files.filter(file => extensions.some(extension => file.toLowerCase().endsWith(extension.toLowerCase())))
+    return await attemptLoadMultipleFiles(validFiles.map(file => path.join(folder, file)));
+}
+
+export const attemptLoadMultipleFiles = async (fileLocations: string[] = []) => {
+    return await Promise.all(fileLocations.map(fileLocation => fsPromises.readFile(fileLocation)));
+}
+
 export class BaseHttpHandler implements IHttpHandler {
     type: string = "unsecure";
 
@@ -85,6 +97,14 @@ export class BaseHttpHandler implements IHttpHandler {
         }
 
         return success;
+    }
+
+    protected async loadCAFolder() {
+        if(this.cluster.authentication.certificateCaPaths) {
+            return await loadFolderByExtension(this.cluster.authentication.certificateCaPaths, ["crt"])
+        }else{
+            return [];
+        }
     }
 
     protected formatRequest(request: IHttpRequest, normalErrorResolution = false): AxiosRequestConfig {

@@ -20,9 +20,6 @@ export default function ClusterListItem(props: ClusterListItemProp) {
                 <div>
                     {props.cluster.name}
                 </div>
-                <div>
-                    {props.cluster.authentication.authType}
-                </div>
             </div>
             <div onClick={(e) => e.stopPropagation()}>
                 <DropDown dropdownToggle={<button className="flat-button"><span className="mif-more-vert"></span></button>} dropdownContent={

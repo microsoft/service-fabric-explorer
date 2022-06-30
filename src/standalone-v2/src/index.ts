@@ -139,9 +139,18 @@ const createWindow = async () => {
     }
   })
 
-  ipcMain.handle(MainWindowEvents.requestFileDialog, async (_, data: string) => {
+  ipcMain.handle(MainWindowEvents.requestFileDialog, async (_, data: string[]) => {
+    const acceptedTypes: ("openFile" |"openDirectory")[] = [];
+
+    if(data.includes('openFile')) {
+      acceptedTypes.push('openFile')
+    }
+    if(data.includes('openDirectory')) {
+      acceptedTypes.push('openDirectory')
+    }
+
     return await dialog.showOpenDialog({
-      properties: ['openFile']
+      properties: acceptedTypes
     })
   })
 

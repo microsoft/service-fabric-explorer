@@ -16,7 +16,7 @@ export default function Toggle(props: ToggleProps) {
     }
 
     return (<label className="switch">
-        <input type="checkbox" value={active.toString()} onChange={(event) => updateValue(event.target.checked)} />
+        <input type="checkbox" checked={active} onChange={(event) => updateValue(event.target.checked)} />
         <span className="slider"></span>
     </label>)
 }

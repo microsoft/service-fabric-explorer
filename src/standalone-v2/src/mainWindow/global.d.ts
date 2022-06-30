@@ -68,6 +68,6 @@ declare global {
     onAADConfigurationsChange(callback: onAADConfigurationsChange);
     logoutOfAad(tenant: string): Promise<any>;
 
-    requestFileDialog(data: any): Promise<any>;
+    requestFileDialog(data: string[]): Promise<any>;
 }
 

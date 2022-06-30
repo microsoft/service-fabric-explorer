@@ -236,54 +236,6 @@ export interface ISfAadMetadata {
     };
 }
 
-export class AADHandler implements IHTTPRequestTransformer {
-    type: string = aadClusterAuthType;
-    private metaData: ISfAadMetadata;
-    private aadProvider: AuthProvider2;
-    private cluster: ICluster;
-
-    constructor(private clusterManager: ClusterManager, private AADFactory: AADFactory) {}
-
-    async initialize(cluster: ICluster) {
-        this.cluster = cluster;
-        let succesful = true;
-        this.clusterManager.addClusterLogMessage(this.cluster.id, "Fetching AAD configuration")
-
-        try {
-            const url = `${this.cluster.url}/$/GetAadMetadata?api-version=1.0`;
-            const res = await axios.get<ISfAadMetadata>(url, {
-                httpsAgent: new Agent({
-                    rejectUnauthorized: false
-                })
-            });
-
-            this.metaData = res.data;
-            this.aadProvider = await this.AADFactory.getAuthProvider(res.data);
-            await this.aadProvider.getToken();
-
-            this.AADFactory.emitAccountsAndTenants();
-        } catch (e) {
-            succesful = false;
-            this.clusterManager.addClusterLogMessage(this.cluster.id, "Failed to initialize AAD configuration. This could mean the cluster is not reachable.")
-        }
-        return succesful;
-    }
-
-    getMetaData() {
-        return this.metaData;
-    }
-
-    async transformRequest(request: AxiosRequestConfig) {
-        const token = await this.aadProvider.getToken();
-
-        request.headers['Authorization'] = `Bearer ${token}`
-        request.httpsAgent = new Agent({
-            rejectUnauthorized: false
-        })
-        return request;
-    }
-}
-
 export interface ILoggedInAccounts {
     account: AccountInfo;
     tenant: string;
@@ -349,6 +301,8 @@ export class AADHttpHandler extends BaseHttpHandler {
     type: string = aadClusterAuthType;
     private metaData: ISfAadMetadata;
     private aadProvider: AuthProvider2;
+    private caCerts: Buffer[] = null;
+    protected httpsAgent: Agent;
 
     constructor(clusterManager: ClusterManager, private AADFactory: AADFactory) {
         super(clusterManager);
@@ -357,14 +311,28 @@ export class AADHttpHandler extends BaseHttpHandler {
     async initialize(cluster: ICluster) {
         this.cluster = cluster;
         let succesful = true;
+
+        try {
+            if(this.cluster.authentication.verifyConnection) {
+                this.caCerts = await this.loadCAFolder();
+            }
+
+            this.httpsAgent = new Agent({
+                ca: this.caCerts,
+                rejectUnauthorized: this.cluster.authentication.verifyConnection
+            })
+        } catch(e) {
+            succesful = false;
+            this.clusterManager.addClusterLogMessage(this.cluster.id, "Failed to CA Certificates : " + e)
+            return succesful;
+        }
+
         this.clusterManager.addClusterLogMessage(this.cluster.id, "Fetching AAD configuration")
 
         try {
             const url = `${this.cluster.url}/$/GetAadMetadata?api-version=1.0`;
             const res = await axios.get<ISfAadMetadata>(url, {
-                httpsAgent: new Agent({
-                    rejectUnauthorized: false
-                })
+                httpsAgent: this.httpsAgent
             });
 
             this.metaData = res.data;
@@ -387,11 +355,7 @@ export class AADHttpHandler extends BaseHttpHandler {
     async authenticateRequest(request: AxiosRequestConfig) {
         const token = await this.aadProvider.getToken();
         request.headers['Authorization'] = `Bearer ${token}`
-
-        request.httpsAgent = new Agent({
-            rejectUnauthorized: false
-        })
-
+        request.httpsAgent = this.httpsAgent;
         return request;
     }
 

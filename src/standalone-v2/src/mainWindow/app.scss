@@ -1,3 +1,6 @@
+@use 'toggle/toggle.scss';
+
+
 .root {
     height: 100%;
     overflow: auto;
@@ -49,12 +52,12 @@ h5 {
     padding-bottom: 5px;
     margin-bottom: 5px;
 
-    :first-child {
+    >:first-child {
         min-width: 40px;
         white-space: nowrap;
     }
 
-    :last-child {
+    >:last-child {
         flex: 1;
     }   
 }
@@ -68,7 +71,8 @@ h5 {
 .list-item {
     background-color: var(--accent-underline);
     border-radius: 10px;
-    margin: 5px;
+    margin: 2px;
+    padding: 5px;
     box-shadow: var(--primary-box-shadow);
     cursor: pointer;
     transition: background-color .25s;
@@ -78,7 +82,6 @@ h5 {
 }
 
 .list-item-inner {
-    padding: 5px;
     align-items: center;
     padding-left: 10px;
 }
@@ -195,11 +198,13 @@ input {
 }
 
 .folder {
-    border: 2px solid var(--accent-underline);
-    border-radius: 10px;
-
     .folder-name {
-        margin: 5px;
         font-size: 20px;
+        border-top: 2px solid var(--accent-underline);
+        margin: 5px 15px;
     }
+}
+
+.input-full {
+    width: 100%
 }

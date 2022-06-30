@@ -10,12 +10,15 @@ import { SettingsService } from "./settings";
 export interface IClusterAuth {
     authType: string;
     certificatePath?: string;
+    certificatePassword?: string;
+    certificateCaPaths?: string;
+    verifyConnection: boolean;
 }
 
 export interface IClustherAuthCertificate extends IClusterAuth{
     authType: "certificate",
-    certificatePath: string;
-    certificatePassword?: string;
+    certificatePassword: string;
+    certificateCaPaths: string;
 }
 
 export interface ICluster {
@@ -54,7 +57,8 @@ export class ClusterManager {
             url: "http://localhost:19080",
             name: "Localhost",
             authentication: {
-                authType: "unsecure"
+                authType: "unsecure",
+                verifyConnection: false
             },
             folder: 'default'
         },
