@@ -39,7 +39,7 @@ jobs:
             ${{ runner.os }}-
 
       - name: Install dependencies
-        run: npm ci -f
+        run: npm install
 
       - name: lint
         run: npm run lint
