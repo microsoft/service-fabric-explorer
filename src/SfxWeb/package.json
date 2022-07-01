@@ -57,6 +57,8 @@
   },
   "devDependencies": {
     "@angular-devkit/build-angular": "~13.3.8",
+    "@angular-devkit/core": "^13.3.8",
+    "@angular-devkit/schematics": "^13.3.8",
     "@angular-eslint/builder": "13.5.0",
     "@angular-eslint/eslint-plugin": "13.5.0",
     "@angular-eslint/eslint-plugin-template": "13.5.0",
@@ -69,6 +71,7 @@
     "@cypress/schematic": "^1.5.1",
     "@cypress/webpack-preprocessor": "^5.9.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@schematics/angular": "^13.3.8",
     "@types/adal": "^1.0.29",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.3",
