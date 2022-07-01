@@ -20,11 +20,11 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v2
-      - name: Use Node 16.x
+      - name: Use Node 14.x
 
         uses: actions/setup-node@v1
         with:
-          node-version: '16.x'
+          node-version: '14.x'
       - name: Cache node modules
         uses: actions/cache@v2
         env:
