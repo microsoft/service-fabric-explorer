@@ -76,7 +76,7 @@
         "karma-jasmine-html-reporter": "^1.5.0",
         "ngx-build-plus": "^13.0.1",
         "nyc": "^15.1.0",
-        "poppers.js": "^1.16.1",
+        "popper.js": "^1.16.1",
         "protractor": "~7.0.0",
         "source-map-support": "^0.5.20",
         "start-server-and-test": "^1.12.0",
@@ -12880,11 +12880,15 @@
         "node": ">=8"
       }
     },
-    "node_modules/poppers.js": {
+    "node_modules/popper.js": {
       "version": "1.16.1",
-      "resolved": "https://registry.npmjs.org/poppers.js/-/poppers.js-1.16.1.tgz",
-      "integrity": "sha512-Gq0/rdN/AvM97F8fsyGdg8xDA1CCTeJuJFLqAEa083dh0kDg4OKnRvfTHlr3hq3ccdcIG2WBu1yIQCrbpincFQ==",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/popper.js/-/popper.js-1.16.1.tgz",
+      "integrity": "sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==",
+      "deprecated": "You can find the new Popper v2 at @popperjs/core, this package is dedicated to the legacy v1",
+      "funding": {
+        "type": "opencollective",
+        "url": "https://opencollective.com/popperjs"
+      }
     },
     "node_modules/portfinder": {
       "version": "1.0.28",
@@ -24966,11 +24970,10 @@
         "find-up": "^4.0.0"
       }
     },
-    "poppers.js": {
+    "popper.js": {
       "version": "1.16.1",
-      "resolved": "https://registry.npmjs.org/poppers.js/-/poppers.js-1.16.1.tgz",
-      "integrity": "sha512-Gq0/rdN/AvM97F8fsyGdg8xDA1CCTeJuJFLqAEa083dh0kDg4OKnRvfTHlr3hq3ccdcIG2WBu1yIQCrbpincFQ==",
-      "dev": true
+      "resolved": "https://registry.npmjs.org/popper.js/-/popper.js-1.16.1.tgz",
+      "integrity": "sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ=="
     },
     "portfinder": {
       "version": "1.0.28",
