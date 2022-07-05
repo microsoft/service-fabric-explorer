@@ -5,7 +5,6 @@ import { IOnDateChange } from '../double-slider/double-slider.component';
 import { Subject, Subscription, forkJoin, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, finalize, subscribeOn } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
-import { hostViewClassName } from '@angular/compiler';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import { ListSettings } from 'src/app/Models/ListSettings';
