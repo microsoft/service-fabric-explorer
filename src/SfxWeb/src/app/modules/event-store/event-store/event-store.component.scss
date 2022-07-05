@@ -48,7 +48,7 @@ $border-radius: 5px;
 }
 
 .slider-wrapper {
-    min-width: 400px;
+    min-width: 300px;
     flex: 1;
     padding-left: 15px;
     margin-right: 15px;
@@ -56,6 +56,12 @@ $border-radius: 5px;
     app-double-slider {
         width: 90%;
     }
+}
+
+@media (max-width: 400px) {
+  .slider-wrapper {
+    min-width: 200px;
+  }
 }
 
 .flex-container {

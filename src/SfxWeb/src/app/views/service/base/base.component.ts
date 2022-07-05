@@ -91,7 +91,7 @@ export class BaseComponent extends ServiceBaseControllerDirective {
             route: './backup'
           });
       }
-      if (this.service.description.raw.ServiceTypeName === Constants.InfrastructureServiceType)
+      if (this.service.description?.raw?.ServiceTypeName === Constants.InfrastructureServiceType)
       {
         this.tabs.push({
           name: 'infrastructure jobs',

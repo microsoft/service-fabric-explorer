@@ -18,6 +18,7 @@ import { DebuggingModule } from './views/debugging/debugging.module';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { AppInsightsErrorHandler } from './error-handling';
+import { StandaloneIntegrationService } from './services/standalone-integration.service';
 
 import { FormsModule } from '@angular/forms';
 import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
@@ -50,11 +51,12 @@ import { NgbPaginationModule } from '@ng-bootstrap/ng-bootstrap';
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     AdalService,
     DataService,
+    StandaloneIntegrationService,
     {
       provide: APP_INITIALIZER,
       useFactory: initApp,
       multi: true,
-      deps: [AdalService]
+      deps: [AdalService, StandaloneIntegrationService]
     },
     httpInterceptorProviders,
     { provide: ErrorHandler, useClass: AppInsightsErrorHandler }

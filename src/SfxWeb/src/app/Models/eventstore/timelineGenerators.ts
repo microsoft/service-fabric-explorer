@@ -1,7 +1,7 @@
 
 
 import { FabricEventBase, ClusterEvent, NodeEvent, ApplicationEvent, FabricEvent, PartitionEvent } from './Events';
-import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
+import { DataGroup, DataItem, DataSet, IdType } from 'vis-timeline/standalone/esm';
 import padStart from 'lodash/padStart';
 import findIndex from 'lodash/findIndex';
 import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
@@ -201,7 +201,7 @@ export abstract class TimeLineGeneratorBase<T> {
             };
 
             // We should not add the already nested groups to the new event type one.
-            let groupsAlreadyNested: string[] = [];
+            let groupsAlreadyNested: IdType[] = [];
             data.groups.forEach(group => {
                 nestedElementGroup.nestedGroups.push(group.id);
                 if (group.nestedGroups){
@@ -326,7 +326,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
       type: 'point',
       title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, `${event.nodeName} failed to open with ${event.eventProperties['Error']}.`),
       className: 'red-point',
-      subgroup: 'stack'
+      subgroup: 'stack',
+      content: ''
     };
     return item;
   }
@@ -340,7 +341,8 @@ export class NodeTimelineGenerator extends TimeLineGeneratorBase<NodeEvent> {
       type: 'point',
       title: EventStoreUtils.tooltipFormat(event.eventProperties, event.timeStamp, null, label),
       className: 'orange-point',
-      subgroup: 'stack'
+      subgroup: 'stack',
+      content: ''
     };
     return item;
   };

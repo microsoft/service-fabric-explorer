@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, refresh, upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS } from './util';
+import { addDefaultFixtures, refresh, upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS } from './util.cy';
 
 context('Header', () => {
 

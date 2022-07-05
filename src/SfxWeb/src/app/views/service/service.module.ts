@@ -37,7 +37,6 @@ import { NgbPaginationModule, NgbDropdownModule, NgbTooltipModule } from '@ng-bo
     NgbPaginationModule,
     NgbDropdownModule,
     NgbTooltipModule
-  ],
-  entryComponents: [ScaleServiceComponent]
+  ]
 })
 export class ServiceModule { }

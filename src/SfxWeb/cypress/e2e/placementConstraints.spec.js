@@ -18,7 +18,7 @@ describe("Go to placement constraint page",() => {
         addRoute('manifest','placement-page/clusterManifest-placement.json',apiUrl(`/$/GetClusterManifest?`));
         addRoute('nodes','placement-page/nodes-placement.json',apiUrl(`/Nodes/?`));
         addRoute('constraints','placement-page/service-description-placement.json',apiUrl(routeFormatter(appName,serviceName)));
-        
+
         //addRoute("partitions", "partition-page/partitions.json", apiUrl(`${routeFormatter(appName, serviceName)}?*`));
         cy.visit(urlFormatter(appName, serviceName));
     });

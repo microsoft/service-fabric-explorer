@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { apiUrl, addDefaultFixtures, addRoute, FIXTURE_REF_APPS, apps_route, EMPTY_LIST_TEXT, refresh, FIXTURE_APPS } from './util';
+import { apiUrl, addDefaultFixtures, addRoute, FIXTURE_REF_APPS, apps_route, EMPTY_LIST_TEXT, refresh, FIXTURE_APPS } from './util.cy';
 
 const appName = "fabric:/VisualObjectsApplicationType";
 

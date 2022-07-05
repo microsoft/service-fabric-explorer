@@ -1,4 +1,4 @@
-import { addDefaultFixtures, apiUrl, addRoute } from './util';
+import { addDefaultFixtures, apiUrl, addRoute } from './util.cy';
 
 
 const infraService = "System%2FInfrastructureService%2FType134";
