@@ -35,7 +35,6 @@ import {ClipboardModule} from '@angular/cdk/clipboard';
 
 import { WarningComponent } from './component/warning/warning.component';
 import { NodeProperties } from './component/show-properties/nodeProperties.component';
-import { Fails } from './component/show-fails/fails.component';
 import { NodesList } from './component/show-nodes/nodesList.component';
 import { NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
 
@@ -52,7 +51,6 @@ import { NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
                  NodeFilterComponent,
                  WarningComponent,
                  NodeProperties,
-                 Fails,
                 NodesList],
   imports: [
     CommonModule,
@@ -70,6 +68,6 @@ import { NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
             FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
             StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent, WarningComponent,
-            NodeProperties,Fails,NodesList]
+            NodeProperties,NodesList]
 })
 export class SharedModule { }

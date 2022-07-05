@@ -128,6 +128,7 @@ export class DataModelBase<T> implements IDataModel<T> {
     public refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
         if (!this.refreshingPromise) {
             this.refreshingPromise = new Subject<any>();
+
             this.retrieveNewData(messageHandler).pipe(mergeMap((raw: T) => {
                 return this.update(raw);
             })).subscribe( data => {
@@ -144,7 +145,7 @@ export class DataModelBase<T> implements IDataModel<T> {
         return this.refreshingPromise ? this.refreshingPromise.asObservable() : of(null);
     }
 
-    public update(raw: T): Observable<any> {        
+    public update(raw: T): Observable<any> {
         if (raw) {
             this.isInitialized = true;
             this.raw = raw;
