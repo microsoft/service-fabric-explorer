@@ -22,6 +22,7 @@ export class AppComponent implements OnInit{
 
   smallScreenSize = false;
   smallScreenLeftPanelWidth = '0px';
+
   public assetBase = environment.assetBase;
   treeWidth = '450px';
   // preserve the existing size for using

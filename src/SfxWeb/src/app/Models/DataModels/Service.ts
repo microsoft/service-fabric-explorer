@@ -51,7 +51,7 @@ export class Service extends DataModelBase<IRawService> {
         if (this.data.actionsEnabled()) {
             this.setUpActions();
         }
-        
+
 
         this.cleanBackup = false;
     }
@@ -94,13 +94,7 @@ export class Service extends DataModelBase<IRawService> {
         return this.data.restClient.updateService(this.parent.id, this.id, updateServiceDescription);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawService> {
-        
-        return this.data.restClient.getService(this.parent.id, this.id, messageHandler);
-    }
-
     public getService(messageHandler?: IResponseMessageHandler): Observable<IRawService> {
-        
         return this.data.restClient.getService(this.parent.id, this.id, messageHandler);
     }
 
@@ -150,21 +144,21 @@ export class ServiceHealth extends HealthBase<IRawServiceHealth> {
         super(data, parent);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceHealth> {   
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceHealth> {
         return this.data.restClient.getServiceHealth(this.parent.parent.id, this.parent.id, this.eventsHealthStateFilter, this.partitionsHealthStateFilter, messageHandler);
     }
 }
 
 // all types of block list should extend this class
 class BlockList extends DataModelBase<IRawServiceBlockList>  {
-    public static readonly serviceListType:string = "Service";
-    public static readonly overallListType:string = "Overall";
-    public static readonly preferredPrimaryListType:string = "PreferredPrimary";
-    public static readonly placementTagsListType:string = "PlacementTags";
-    public static readonly runningTagsListType:string = "RunningTags";
+    public static readonly serviceListType: string = "Service";
+    public static readonly overallListType: string = "Overall";
+    public static readonly preferredPrimaryListType: string = "PreferredPrimary";
+    public static readonly placementTagsListType: string = "PlacementTags";
+    public static readonly runningTagsListType: string = "RunningTags";
 
-    protected serviceName:string;
-    protected listType : string;
+    protected serviceName: string;
+    protected listType: string;
 
     public constructor(data: DataService, public parent: Service,name: string, listType: string) {
         super(data, {}  as IRawServiceBlockList, parent);
@@ -172,13 +166,12 @@ class BlockList extends DataModelBase<IRawServiceBlockList>  {
         this.listType = listType;
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceBlockList> {      
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceBlockList> {
         return this.data.restClient.getServiceBlockList(this.serviceName, this.listType, messageHandler) ;
     }
 }
 
 export class ServiceBlockList extends BlockList  {
-
     public constructor(data:DataService, public parent: Service,name: string) {
         super(data, parent, name, BlockList.serviceListType);
     }
@@ -205,7 +198,7 @@ export class ServiceDescription extends DataModelBase<IRawServiceDescription> {
         super(data, null, parent);
     }
 
-    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceDescription> {      
+    protected retrieveNewData(messageHandler?: IResponseMessageHandler): Observable<IRawServiceDescription> {
         return this.data.restClient.getServiceDescription(this.parent.parent.id, this.parent.id, messageHandler);
     }
 }
