@@ -66,12 +66,14 @@ export class BaseComponent extends ServiceBaseControllerDirective {
     return this.data.clusterManifest.ensureInitialized().pipe(map(() => {
       this.tabs = this.tabs.filter(tab => tab.name !== 'backup' && tab.name !== 'infrastructure jobs' && tab.name !== "Placement Constraints");
 
-      if (this.service.description.raw.PlacementConstraints.length > 0) {
-        this.tabs.push({
-          name: 'Placement Constraints',
-          route: './placement'
-        });
-      }
+      this.data.versionCheck("9.1").then(valid => {
+        if (this.service.description.raw.PlacementConstraints.length > 0 && valid) {
+          this.tabs.push({
+            name: 'Placement Constraints',
+            route: './placement'
+          });
+        }
+      })
 
       if (this.data.clusterManifest.isBackupRestoreEnabled && this.service.isStatefulService
           && this.appTypeName !== Constants.SystemAppTypeName) {

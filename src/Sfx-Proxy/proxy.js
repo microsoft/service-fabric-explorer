@@ -57,7 +57,11 @@ const writeRequest = async (req, resp) => {
 }
 
 const loadRequest = async (req) => {
-    return JSON.parse(await fs.readFile(reformatUrl(req)));
+    try {
+        return JSON.parse(await fs.readFile(reformatUrl(req)));
+    } catch(e) {
+        console.log("FAILED TO LOAD: " + req)
+    }
 }
 
 const checkFile = async (req) => {

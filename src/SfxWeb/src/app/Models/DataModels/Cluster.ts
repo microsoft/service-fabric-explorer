@@ -160,7 +160,6 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
         const parser = new DOMParser();
         const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
 
-        // let $xml = $($.parseXML(this.raw.Manifest));
         const manifest = xml.getElementsByTagName('ClusterManifest')[0];
         this.clusterManifestName = manifest.getAttribute('Name');
 
@@ -189,11 +188,6 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
       const parser = new DOMParser();
       const xml = parser.parseFromString(this.raw.Manifest, 'text/xml');
       const manifest = xml.getElementsByTagName('ClusterManifest')[0];
-      /*
-        Node Type Name : {
-          properties : values
-        }
-      */
 
       let nodeTypes: INodeTypeInfo[] = []
       let XMLnodeTypes = manifest.getElementsByTagName("NodeTypes")[0].getElementsByTagName("NodeType");
@@ -217,15 +211,6 @@ export class ClusterManifest extends DataModelBase<IRawClusterManifest> {
       }
 
       return nodeTypes;
-
-      // this.data.nodes.collection.forEach(element => {
-      //   const property = nodeTypes[element.raw.Type];
-      //   nodes.push({
-      //     property,
-      //     name : element.raw.Name,
-      //   })
-      // });
-      // return nodes;
     }
 }
 
