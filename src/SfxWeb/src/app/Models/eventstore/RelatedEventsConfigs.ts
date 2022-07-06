@@ -14,10 +14,29 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "nodeName"
                     }
                 ],
+            }, 
+            {
+                eventType: "self",
+                propertyMappings: [
+                    {
+                        sourceProperty: "raw.ExitCode",
+                        targetProperty: "7148"
+                    }
+                ],
+                action: "Aborting since deactivation failed."
+            },
+            {
+                eventType: "self",
+                propertyMappings: [
+                    {
+                        sourceProperty: "raw.ExitCode",
+                        targetProperty: "0"
+                    }
+                ],
+                action: "Unexpected Termination - Please look at your application logs/dump or debug your code package for more details."
             }
         ],
-        "result": "",
-        "hasExitedCode": "raw.ExitCode"
+        "result": ""
     },
     {
         "eventType": "NodeDown",
@@ -36,8 +55,7 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                 ],
             }
         ],
-        "result": "",
-        "hasExitedCode": null
+        "result": ""
     },
     {
         "eventType": "NodeDeactivateStarted",
@@ -52,14 +70,12 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                 ],
             }
         ],
-        "result": "",
-        "hasExitedCode": null
+        "result": ""
     },
     {
         "eventType": "RepairTask",
         "relevantEventsType" : [
         ],
-        "result": "raw.Action",
-        "hasExitedCode": null
-    },
+        "result": "raw.Action"
+    },  
 ];
