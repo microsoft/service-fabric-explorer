@@ -34,8 +34,6 @@ import { NodeFilterComponent } from './component/node-filter/node-filter.compone
 import {ClipboardModule} from '@angular/cdk/clipboard';
 
 import { WarningComponent } from './component/warning/warning.component';
-import { NodeProperties } from './component/show-properties/nodeProperties.component';
-import { NodesList } from './component/show-nodes/nodesList.component';
 import { NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
 
 @NgModule({
@@ -49,9 +47,7 @@ import { NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
                  DisplayDurationComponent,
                  PhaseDiagramComponent,
                  NodeFilterComponent,
-                 WarningComponent,
-                 NodeProperties,
-                NodesList],
+                 WarningComponent],
   imports: [
     CommonModule,
     RouterModule,
@@ -67,7 +63,6 @@ import { NgbPaginationModule} from '@ng-bootstrap/ng-bootstrap';
             ActionCollectionDropDownComponent, InputComponent, ToastContainerComponent, CheckBoxComponent,
             ClusterUpgradeBannerComponent, DualDatePickerComponent, AdvancedOptionComponent, ReplicaAddressComponent,
             FormatDatePipe, LocalTimeComponent, DisplayTimeComponent, ToggleComponent, StatusResolverComponent,
-            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent, WarningComponent,
-            NodeProperties,NodesList]
+            StateInfoComponent, EssentialItemComponent, DisplayDurationComponent, PhaseDiagramComponent, NodeFilterComponent, WarningComponent]
 })
 export class SharedModule { }

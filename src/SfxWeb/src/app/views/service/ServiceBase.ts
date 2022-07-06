@@ -25,7 +25,6 @@ export class ServiceBaseControllerDirective extends BaseControllerDirective {
             return forkJoin([
               this.service.health.refresh(messageHandler),
               this.service.description.refresh(messageHandler),
-              this.service.serviceBlockList.refresh(messageHandler)
             ]);
         }));
     }

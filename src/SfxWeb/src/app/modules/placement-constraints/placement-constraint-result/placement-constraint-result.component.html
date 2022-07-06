@@ -1,0 +1,6 @@
+<div *ngIf="settings">
+  <h5 style="margin-bottom: 10px">
+    Node Placement Properties
+  </h5>
+  <app-detail-list [listSettings]="settings" [list]="items" [showTopOptions]="false" data-cy="validNodes" style="flex: 1;"></app-detail-list>
+</div>

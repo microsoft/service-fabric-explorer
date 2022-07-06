@@ -1,0 +1,7 @@
+<div class="flex-column">
+  <app-health-chart [data]="dataPoints" [title]="placementInfo.length" style="margin: auto;" width="150" innerArc="80%">
+  </app-health-chart>
+
+  <app-essential-item *ngFor="let item of items; let l = last" [item]="item" [underline]="false">
+  </app-essential-item>
+</div>
