@@ -108,6 +108,8 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
                       config.data.push([`${fontPrefix}${currEvent.eventInstanceId}</p>`, `${fontPrefix}${relatedEvent.eventInstanceId}</p>`]);
                       queue.push(relatedEvent);                      
                   });
+              } else {
+                config.data.push([`${fontPrefix}${currEvent.eventInstanceId}</p>`, `${fontPrefix}${currEvent.eventInstanceId}</p>`]);
               }
           }  
           levels++;

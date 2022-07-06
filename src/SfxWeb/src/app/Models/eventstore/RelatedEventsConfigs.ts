@@ -10,13 +10,14 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                 eventType: "NodeDown",
                 propertyMappings: [
                     {
-                        sourceProperty: "raw.NodeName",
+                        sourceProperty: "nodeName",
                         targetProperty: "nodeName"
                     }
                 ],
-                result: ""
             }
-        ]
+        ],
+        "result": "",
+        "hasExitedCode": "raw.ExitCode"
     },
     {
         "eventType": "NodeDown",
@@ -33,9 +34,10 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "raw.NodeInstance"
                     }
                 ],
-                result: ""
             }
-        ]
+        ],
+        "result": "",
+        "hasExitedCode": null
     },
     {
         "eventType": "NodeDeactivateStarted",
@@ -48,8 +50,16 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "raw.TaskId"
                     }
                 ],
-                result: "raw.Action"
             }
-        ]
+        ],
+        "result": "",
+        "hasExitedCode": null
+    },
+    {
+        "eventType": "RepairTask",
+        "relevantEventsType" : [
+        ],
+        "result": "raw.Action",
+        "hasExitedCode": null
     },
 ];
