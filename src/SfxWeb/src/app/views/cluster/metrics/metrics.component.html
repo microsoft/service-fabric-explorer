@@ -31,6 +31,7 @@
             Load Metrics
           </div>
           <div collapse-body>
+            <app-warning iconSize="mif-2x" description="Count, Primary Count, and Replica Count will not include services that use custom metrics"></app-warning>
             <div class="metrics-column">
               <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.metricsWithoutCapacities"
                 (click)="updateSelectedMetric(metric, metricsViewModel.metricsWithoutCapacities)">
