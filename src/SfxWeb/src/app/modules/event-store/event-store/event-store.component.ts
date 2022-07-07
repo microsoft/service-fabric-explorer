@@ -256,8 +256,25 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                         action = "Action: " + Utils.result(inputEvent, config.result) + "<br/><br/>";
                     }
                     inputEvent.reasonForEvent = action; 
-                    events.forEach(iterEvent => {
-                        config.relevantEventsType.forEach(relevantEventType => {
+                    config.relevantEventsType.forEach(relevantEventType => {
+                        if(relevantEventType.eventType == "self") {
+                            let propMaps = true;
+                            let mappings = relevantEventType.propertyMappings;
+                            mappings.forEach(mapping => {     
+                                let sourceVal: any;
+                                let targetVal: any;   
+                                sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                targetVal = mapping.targetProperty;
+                                if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
+                                    propMaps = false;
+                                }
+                            });
+                            if (propMaps) {
+                                action = "Action: " + relevantEventType.action + "<br/><br/>";
+                                inputEvent.reasonForEvent = action;
+                            }
+                        }
+                        events.forEach(iterEvent => {
                             if (relevantEventType.eventType == iterEvent.kind) {
                                 // see if each property mapping holds true
                                 let propMaps = true;
@@ -284,22 +301,22 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                     inputEvent.related.push(iterEvent);
                                     addedEvents.push(iterEvent);
                                 }
-                            } else if(relevantEventType.eventType == "self") {
-                                let propMaps = true;
-                                let mappings = relevantEventType.propertyMappings;
-                                mappings.forEach(mapping => {     
-                                    let sourceVal: any;
-                                    let targetVal: any;   
-                                    sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
-                                    targetVal = mapping.targetProperty;
-                                    if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
-                                        propMaps = false;
-                                    }
-                                });
-                                if (propMaps) {
-                                    action = "Action: " + relevantEventType.action + "<br/><br/>";
-                                    inputEvent.reasonForEvent = action;
-                                }
+                            // } else if(relevantEventType.eventType == "self") {
+                            //     let propMaps = true;
+                            //     let mappings = relevantEventType.propertyMappings;
+                            //     mappings.forEach(mapping => {     
+                            //         let sourceVal: any;
+                            //         let targetVal: any;   
+                            //         sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                            //         targetVal = mapping.targetProperty;
+                            //         if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
+                            //             propMaps = false;
+                            //         }
+                            //     });
+                            //     if (propMaps) {
+                            //         action = "Action: " + relevantEventType.action + "<br/><br/>";
+                            //         inputEvent.reasonForEvent = action;
+                            //     }
                             }
                         });                        
                     });
