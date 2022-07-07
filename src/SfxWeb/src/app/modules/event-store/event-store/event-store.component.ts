@@ -14,6 +14,8 @@ import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
 import { Utils } from 'src/app/Utils/Utils';
+import { rawListeners } from 'process';
+import { StringUtils } from 'src/app/Utils/StringUtils';
 
 export interface IQuickDates {
     display: string;
@@ -28,12 +30,13 @@ export interface IPropertyMapping {
 export interface IRelevantEventsConfig {
     eventType: string;
     propertyMappings: IPropertyMapping[];
-    result: string; //resulting property we want to display for events (ex. Repair Jobs action)
+    action? : string; //mainly being used for self referential purposes
 }
 
 export interface IConcurrentEventsConfig {
     eventType: string; // the event type we are investigating
-    relevantEventsType: IRelevantEventsConfig[]; // possible causes we are considering  
+    relevantEventsType: IRelevantEventsConfig[]; // possible causes we are considering
+    result: string; //resulting property we want to display for events (ex. Repair Jobs action)
 }
 
 export interface IConcurrentEvents extends DataItem {
@@ -249,8 +252,29 @@ export class EventStoreComponent implements OnInit, OnDestroy {
             configs.forEach(config => {
                 if (config.eventType == inputEvent.kind) {                                        
                     // iterate through all events to find relevant ones
-                    events.forEach(iterEvent => {
-                        config.relevantEventsType.forEach(relevantEventType => {
+                    if(Utils.result(inputEvent, config.result)) {
+                        action = "Action: " + Utils.result(inputEvent, config.result) + "<br/><br/>";
+                    }
+                    inputEvent.reasonForEvent = action; 
+                    config.relevantEventsType.forEach(relevantEventType => {
+                        if(relevantEventType.eventType == "self") {
+                            let propMaps = true;
+                            let mappings = relevantEventType.propertyMappings;
+                            mappings.forEach(mapping => {     
+                                let sourceVal: any;
+                                let targetVal: any;   
+                                sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                targetVal = mapping.targetProperty;
+                                if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
+                                    propMaps = false;
+                                }
+                            });
+                            if (propMaps) {
+                                action = "Action: " + relevantEventType.action + "<br/><br/>";
+                                inputEvent.reasonForEvent = action;
+                            }
+                        }
+                        events.forEach(iterEvent => {
                             if (relevantEventType.eventType == iterEvent.kind) {
                                 // see if each property mapping holds true
                                 let propMaps = true;
@@ -274,13 +298,25 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                     if (!inputEvent.related) {
                                         inputEvent.related = [];
                                     }
-                                    if(Utils.result(iterEvent, relevantEventType.result)) {
-                                        action = "Action: " + Utils.result(iterEvent, relevantEventType.result) + "<br/><br/>";
-                                    }
-                                    iterEvent.reasonForEvent = action;
                                     inputEvent.related.push(iterEvent);
                                     addedEvents.push(iterEvent);
                                 }
+                            // } else if(relevantEventType.eventType == "self") {
+                            //     let propMaps = true;
+                            //     let mappings = relevantEventType.propertyMappings;
+                            //     mappings.forEach(mapping => {     
+                            //         let sourceVal: any;
+                            //         let targetVal: any;   
+                            //         sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                            //         targetVal = mapping.targetProperty;
+                            //         if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
+                            //             propMaps = false;
+                            //         }
+                            //     });
+                            //     if (propMaps) {
+                            //         action = "Action: " + relevantEventType.action + "<br/><br/>";
+                            //         inputEvent.reasonForEvent = action;
+                            //     }
                             }
                         });                        
                     });
