@@ -9,6 +9,7 @@ import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
 export class WarningComponent {
 
   @Input() description: string = "";
+  @Input() iconSize: string = "mif-4x";
   //provide additional data in a list format
   @Input() descriptionList: string[] = [];
   @Input() link: string;
