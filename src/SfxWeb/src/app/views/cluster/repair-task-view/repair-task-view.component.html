@@ -33,7 +33,7 @@
             Condensed
         </a>
         <ng-template ngbNavContent>
-            <div style="display: flex;flex-direction: row;">
+            <div style="display: flex;flex-direction: row; gap: 15px">
                 <div *ngIf="item.raw.History" style="min-width: 400px;" data-cy="history">
                     <h5 style="border-bottom: 1px solid gray; padding-bottom: 5px">
                         History
@@ -59,8 +59,11 @@
                         </div>
                     </app-collapse-container>
                 </div>
-                <div *ngIf="item.couldParseExecutorData" style="margin-left: 15px;" data-cy="jobinfo">
-                    <div>
+                <div>
+                    <div *ngIf="stuckJobText" style="margin-bottom: 15px;" data-cy="node-stuck-warning">
+                      <app-warning [description]="stuckJobText" ></app-warning>
+                    </div>
+                    <div *ngIf="item.couldParseExecutorData" data-cy="jobinfo">
                         <h5>
                             Job Info
                         </h5>
