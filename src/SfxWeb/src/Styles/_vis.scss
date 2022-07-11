@@ -29,7 +29,7 @@
   background-color: lightgreen;
 }
 .vis-time-axis .vis-text {
-  color: var(--font-primary-color);
+  color: var(--font-primary-color) !important;
   padding-top: 10px;
   padding-left: 10px;
 }
@@ -49,7 +49,7 @@
   font-size: 11pt;
   border: 0px solid #191919;
   border-bottom: 1px solid var(--font-primary-color);
-  color: var(--font-primary-color);
+  color: var(--font-primary-color) !important;
 }
 
 .vis-panel.vis-left {
@@ -59,7 +59,7 @@
   box-shadow: var(--primary-box-shadow);
 }
 .vis-ltr .vis-label.vis-nested-group .vis-inner {
-  padding-left: 0px;
+  padding-left: 0px !important;
   white-space: pre;
 }
 
@@ -124,7 +124,7 @@
 
 .tooltip-test{
   font-size: var(--font-size-small);
-  color: var(--font-primary-color);
+  color: var(--font-primary-color) !important;
   padding: 5px;
   border: 1px solid var(--accent-darkblue);
   white-space: pre-wrap;
@@ -157,7 +157,7 @@
 
 .vis-label{
   background-color: var(--accent-darkblue);
-  color: #dad7d7;
+  color: #dad7d7 !important;
 }
 
 .vis-panel.vis-center {

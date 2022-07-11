@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, addRoute } from './util';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, addRoute } from './util.cy';
 
 const appName = "VisualObjectsApplicationType";
 const serviceName = "VisualObjects.ActorService";

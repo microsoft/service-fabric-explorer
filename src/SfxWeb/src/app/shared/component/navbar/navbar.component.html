@@ -1,20 +1,22 @@
 <div class="main-header">
-    <div class="detail-view-title-bar">
-        <div *ngIf="actions && actions.length > 0" class="actions">
-            <app-action-collection-drop-down [actionCollection]="actions" data-cy="actions"></app-action-collection-drop-down>
-        </div>
-        <h1 class="detail-view-title" [title]="name" *ngIf="type"  style="line-height: initial;">
-            <span data-cy="header">
-                <b>{{type}}</b>
-                <span *ngIf="name"> {{name}} </span>
-            </span>
-            <app-clip-board [text]="name" *ngIf="showCopy"></app-clip-board>
-        </h1>
-    <div class="detail-view-navbar" role="tablist" [attr.aria-label]="name" data-cy="navtabs">
-        <div class="detail-view-navbar-tab nav-wrapper" *ngFor="let tab of tabs; let i = index">
-            <a #rla="routerLinkActive" [attr.aria-selected]="rla.isActive" [routerLink]="tab.route" [title]="tab.name" role="tab" routerLinkActive="current" [routerLinkActiveOptions]="{ exact: true }" [id]="i" (keydown.space)="navigateBySpaceBar(tab.route)">{{tab.name}}</a>
-            <!-- <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div> -->
-        </div>
+  <div class="detail-view-title-bar">
+    <div class="left-side-header">
+      <h1 class="detail-view-title" [title]="name" *ngIf="type" style="line-height: initial;">
+        <span data-cy="header">
+          <b>{{type}}</b>
+          <span *ngIf="name"> {{name}} </span>
+        </span>
+        <app-clip-board [text]="name" *ngIf="showCopy"></app-clip-board>
+      </h1>
+      <div class="detail-view-navbar nav-wrapper" role="tablist" [attr.aria-label]="name" data-cy="navtabs">
+          <a  *ngFor="let tab of tabs; let i = index" #rla="routerLinkActive" [attr.aria-selected]="rla.isActive" [routerLink]="tab.route" [title]="tab.name"
+            [attr.aria-posinset]="i + 1" role="tab" routerLinkActive="current" [routerLinkActiveOptions]="{ exact: true }"
+            [id]="'tab' + i" (keydown.space)="navigateBySpaceBar(tab.route)" class="detail-view-navbar-tab nav-link">{{tab.name}}</a>
+          <!-- <div ng-if="tab.superscriptInHtml" class="tab-superscript {{::tab.superscriptClass}}" sfx-bind-html-compile="tab.superscriptInHtml()"></div> -->
+      </div>
+    </div>
+    <div *ngIf="actions && actions.length > 0" class="actions">
+      <app-action-collection-drop-down [actionCollection]="actions" data-cy="actions"></app-action-collection-drop-down>
     </div>
     <ng-content></ng-content>
-</div>
+  </div>
