@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineDataGenerator, RepairTaskTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
+import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
-import { Subject, Subscription, forkJoin, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, finalize, subscribeOn } from 'rxjs/operators';
+import { Subject, Subscription, forkJoin } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
-import { hostViewClassName } from '@angular/compiler';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
@@ -31,12 +30,13 @@ export interface IPropertyMapping {
 export interface IRelevantEventsConfig {
     eventType: string;
     propertyMappings: IPropertyMapping[];
-    result: string; //resulting property we want to display for events (ex. Repair Jobs action)
+    action? : string; //mainly being used for self referential purposes
 }
 
 export interface IConcurrentEventsConfig {
     eventType: string; // the event type we are investigating
-    relevantEventsType: IRelevantEventsConfig[]; // possible causes we are considering  
+    relevantEventsType: IRelevantEventsConfig[]; // possible causes we are considering
+    result: string; //resulting property we want to display for events (ex. Repair Jobs action)
 }
 
 export interface IConcurrentEvents extends DataItem {
@@ -246,8 +246,29 @@ export class EventStoreComponent implements OnInit, OnDestroy {
             configs.forEach(config => {
                 if (config.eventType == inputEvent.kind) {                                        
                     // iterate through all events to find relevant ones
-                    events.forEach(iterEvent => {
-                        config.relevantEventsType.forEach(relevantEventType => {
+                    if(Utils.result(inputEvent, config.result)) {
+                        action = "Action: " + Utils.result(inputEvent, config.result) + "<br/><br/>";
+                    }
+                    inputEvent.reasonForEvent = action; 
+                    config.relevantEventsType.forEach(relevantEventType => {
+                        if(relevantEventType.eventType == "self") {
+                            let propMaps = true;
+                            let mappings = relevantEventType.propertyMappings;
+                            mappings.forEach(mapping => {     
+                                let sourceVal: any;
+                                let targetVal: any;   
+                                sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                targetVal = mapping.targetProperty;
+                                if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
+                                    propMaps = false;
+                                }
+                            });
+                            if (propMaps) {
+                                action = "Action: " + relevantEventType.action + "<br/><br/>";
+                                inputEvent.reasonForEvent = action;
+                            }
+                        }
+                        events.forEach(iterEvent => {
                             if (relevantEventType.eventType == iterEvent.kind) {
                                 // see if each property mapping holds true
                                 let propMaps = true;
@@ -272,10 +293,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                     {
                                         inputEvent.related = [];
                                     }
-                                    if(Utils.result(iterEvent, relevantEventType.result)) {
-                                        action = "Action: " + Utils.result(iterEvent, relevantEventType.result); //+ "<br/><br/>";
-                                    }
-                                    iterEvent.reasonForEvent = action;
                                     inputEvent.related.push(iterEvent);
                                     addedEvents.push(iterEvent);
                                 }

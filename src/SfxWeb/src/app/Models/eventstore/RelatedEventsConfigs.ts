@@ -1,6 +1,4 @@
-import { AppInsightsErrorHandler } from "src/app/error-handling";
 import { IConcurrentEventsConfig } from "src/app/modules/event-store/event-store/event-store.component";
-import { IRelevantEventsConfig } from "src/app/modules/event-store/event-store/event-store.component";
 
 export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
     {
@@ -10,13 +8,33 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                 eventType: "NodeDown",
                 propertyMappings: [
                     {
-                        sourceProperty: "raw.NodeName",
+                        sourceProperty: "nodeName",
                         targetProperty: "nodeName"
                     }
                 ],
-                result: ""
+            }, 
+            {
+                eventType: "self",
+                propertyMappings: [
+                    {
+                        sourceProperty: "raw.ExitCode",
+                        targetProperty: "7148"
+                    }
+                ],
+                action: "Aborting since deactivation failed."
+            },
+            {
+                eventType: "self",
+                propertyMappings: [
+                    {
+                        sourceProperty: "raw.ExitCode",
+                        targetProperty: "0"
+                    }
+                ],
+                action: "Unexpected Termination - Please look at your application logs/dump or debug your code package for more details."
             }
-        ]
+        ],
+        "result": ""
     },
     {
         "eventType": "NodeDown",
@@ -33,9 +51,9 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "raw.NodeInstance"
                     }
                 ],
-                result: ""
             }
-        ]
+        ],
+        "result": ""
     },
     {
         "eventType": "NodeDeactivateStarted",
@@ -48,8 +66,14 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "raw.TaskId"
                     }
                 ],
-                result: "raw.Action"
             }
-        ]
+        ],
+        "result": ""
     },
+    {
+        "eventType": "RepairTask",
+        "relevantEventsType" : [
+        ],
+        "result": "raw.Action"
+    },  
 ];
