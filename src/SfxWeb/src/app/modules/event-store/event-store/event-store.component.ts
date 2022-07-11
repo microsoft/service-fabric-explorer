@@ -1,11 +1,10 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineDataGenerator, RepairTaskTimelineGenerator } from 'src/app/Models/eventstore/timelineGenerators';
+import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
-import { Subject, Subscription, forkJoin, of } from 'rxjs';
-import { debounceTime, distinctUntilChanged, finalize, subscribeOn } from 'rxjs/operators';
+import { Subject, Subscription, forkJoin } from 'rxjs';
+import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
-import { hostViewClassName } from '@angular/compiler';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import { ListSettings } from 'src/app/Models/ListSettings';
@@ -14,8 +13,6 @@ import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
 import { Utils } from 'src/app/Utils/Utils';
-import { rawListeners } from 'process';
-import { StringUtils } from 'src/app/Utils/StringUtils';
 
 export interface IQuickDates {
     display: string;
@@ -301,22 +298,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                     inputEvent.related.push(iterEvent);
                                     addedEvents.push(iterEvent);
                                 }
-                            // } else if(relevantEventType.eventType == "self") {
-                            //     let propMaps = true;
-                            //     let mappings = relevantEventType.propertyMappings;
-                            //     mappings.forEach(mapping => {     
-                            //         let sourceVal: any;
-                            //         let targetVal: any;   
-                            //         sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
-                            //         targetVal = mapping.targetProperty;
-                            //         if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
-                            //             propMaps = false;
-                            //         }
-                            //     });
-                            //     if (propMaps) {
-                            //         action = "Action: " + relevantEventType.action + "<br/><br/>";
-                            //         inputEvent.reasonForEvent = action;
-                            //     }
                             }
                         });                        
                     });
