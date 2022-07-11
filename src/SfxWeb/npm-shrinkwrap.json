@@ -20,7 +20,8 @@
         "@angular/platform-browser-dynamic": "^14.0.5",
         "@angular/router": "^14.0.5",
         "@microsoft/applicationinsights-web": "^2.5.10",
-        "@ng-bootstrap/ng-bootstrap": "^12.1.2",
+        "@ng-bootstrap/ng-bootstrap": "13.0.0-beta.1",
+        "@popperjs/core": "^2.10.2",
         "@types/adal-angular": "^1.0.1",
         "adal-angular": "^1.0.18",
         "bootstrap": "^4.4.1",
@@ -76,7 +77,6 @@
         "karma-jasmine-html-reporter": "^1.5.0",
         "ngx-build-plus": "^13.0.1",
         "nyc": "^15.1.0",
-        "popper.js": "^1.16.1",
         "protractor": "~7.0.0",
         "source-map-support": "^0.5.20",
         "start-server-and-test": "^1.12.0",
@@ -4205,16 +4205,17 @@
       "license": "MIT"
     },
     "node_modules/@ng-bootstrap/ng-bootstrap": {
-      "version": "12.1.2",
-      "license": "MIT",
+      "version": "13.0.0-beta.1",
+      "resolved": "https://registry.npmjs.org/@ng-bootstrap/ng-bootstrap/-/ng-bootstrap-13.0.0-beta.1.tgz",
+      "integrity": "sha512-kYZIMSPYU0nGdBwT/GMr/W2Upma3mpMmo/E8cl7rMvYJAavrhj1dJ48c6KimVnwHSh9Je2NUuqj5HtIdA5jAWQ==",
       "dependencies": {
         "tslib": "^2.3.0"
       },
       "peerDependencies": {
-        "@angular/common": "^13.0.0",
-        "@angular/core": "^13.0.0",
-        "@angular/forms": "^13.0.0",
-        "@angular/localize": "^13.0.0",
+        "@angular/common": "^14.0.0",
+        "@angular/core": "^14.0.0",
+        "@angular/forms": "^14.0.0",
+        "@angular/localize": "^14.0.0",
         "@popperjs/core": "^2.10.2",
         "rxjs": "^6.5.3 || ^7.4.0"
       }
@@ -4549,7 +4550,6 @@
     "node_modules/@popperjs/core": {
       "version": "2.11.5",
       "license": "MIT",
-      "peer": true,
       "funding": {
         "type": "opencollective",
         "url": "https://opencollective.com/popperjs"
@@ -16408,6 +16408,7 @@
       "resolved": "https://registry.npmjs.org/popper.js/-/popper.js-1.16.1.tgz",
       "integrity": "sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==",
       "deprecated": "You can find the new Popper v2 at @popperjs/core, this package is dedicated to the legacy v1",
+      "peer": true,
       "funding": {
         "type": "opencollective",
         "url": "https://opencollective.com/popperjs"
@@ -23325,7 +23326,9 @@
       "version": "1.1.0"
     },
     "@ng-bootstrap/ng-bootstrap": {
-      "version": "12.1.2",
+      "version": "13.0.0-beta.1",
+      "resolved": "https://registry.npmjs.org/@ng-bootstrap/ng-bootstrap/-/ng-bootstrap-13.0.0-beta.1.tgz",
+      "integrity": "sha512-kYZIMSPYU0nGdBwT/GMr/W2Upma3mpMmo/E8cl7rMvYJAavrhj1dJ48c6KimVnwHSh9Je2NUuqj5HtIdA5jAWQ==",
       "requires": {
         "tslib": "^2.3.0"
       }
@@ -23561,8 +23564,7 @@
       "dev": true
     },
     "@popperjs/core": {
-      "version": "2.11.5",
-      "peer": true
+      "version": "2.11.5"
     },
     "@schematics/angular": {
       "version": "14.0.5",
@@ -31609,7 +31611,8 @@
     "popper.js": {
       "version": "1.16.1",
       "resolved": "https://registry.npmjs.org/popper.js/-/popper.js-1.16.1.tgz",
-      "integrity": "sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ=="
+      "integrity": "sha512-Wb4p1J4zyFTbM+u6WuO4XstYx4Ky9Cewe4DWrel7B0w6VVICvPwdOpotjzcf6eD8TsckVnIMNONQyPIUFOUbCQ==",
+      "peer": true
     },
     "portfinder": {
       "version": "1.0.28",
