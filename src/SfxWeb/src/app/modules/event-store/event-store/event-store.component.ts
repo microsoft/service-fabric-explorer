@@ -306,17 +306,17 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     for (const data of this.listEventStoreData) {        
         let visPresentFlag = false;
         data.listSettings.columnSettings.forEach(setting => {
-            if (setting.propertyPath == "raw.visPresent") {
+            if (setting.propertyPath == "visPresent") {
                 visPresentFlag = true;
             }
         });
         if (!visPresentFlag) {        
             let newLogoSetting = new ListColumnSettingWithCustomComponent(
                 VisualizationLogoComponent,
-                "raw.visPresent", 
+                "visPresent", 
                 "RCA Vis Present",
                 {
-                    enableFilter: false,
+                    enableFilter: true,
                     colspan: 1
                 });  
             newLogoSetting.fixedWidthPx = 100;
