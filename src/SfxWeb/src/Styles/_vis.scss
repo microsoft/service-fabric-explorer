@@ -122,14 +122,36 @@
   border-width: 5px;
 }
 
-.tooltip-test{
+
+.inner-tooltip{
   font-size: var(--font-size-small);
   color: var(--font-primary-color) !important;
   padding: 5px;
   border: 1px solid var(--accent-darkblue);
-  white-space: pre-wrap;
   background-color: var(--primary-background-color);
   border-radius: var(--primary-border-radius);
+  line-height: 1;
+
+  table {
+    word-break: break-all;
+  }
+
+  .margin-bottom {
+    padding-bottom: 5px;
+  }
+
+  .nested-row {
+    display: flex;
+
+    .spacer-wrapper {
+      margin-right: 4px;
+    }
+
+    .white-space {
+      white-space: pre-wrap;
+    }
+  }
+
 }
 
 .vis-tooltip {
@@ -138,7 +160,7 @@
   background-color: var(--primary-background-color) !important;
   border-radius: var(--primary-border-radius) !important;
   box-shadow: var(--heavy-box-shadow) !important;
-  max-width: 50%;
+  max-width: 75%;
 }
 
 .vis-timeline {
