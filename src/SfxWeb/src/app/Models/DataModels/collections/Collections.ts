@@ -397,7 +397,7 @@ export abstract class EventListBase<T extends FabricEventBase> extends DataModel
             new ListColumnSetting('raw.timeStampString', 'Timestamp', {sortPropertyPaths: ['raw.timestamp']}),
             new ListColumnSetting('raw.timeStamp', 'Timestamp(UTC)')],
             [
-                new ListColumnSettingWithEventStoreFullDescription()
+                new ListColumnSettingWithEventStoreFullDescription(),                
             ],
             true,
             (item) => (Object.keys(item.raw.eventProperties).length > 0),
