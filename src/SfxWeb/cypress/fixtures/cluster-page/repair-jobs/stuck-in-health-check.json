@@ -1,0 +1,99 @@
+[
+  {
+    "Scope": {
+      "Kind": "Cluster"
+    },
+    "TaskId": "longrunninghealthcheckjobid",
+    "Version": "1812",
+    "Description": "",
+    "State": "Preparing",
+    "Flags": 1,
+    "Action": "SFExt-ScheduleEvents-PlatformUpdate",
+    "Target": {
+      "Kind": "Node",
+      "NodeNames": [
+        "node_1"
+      ]
+    },
+    "Executor": "SFExt-ScheduleEvents",
+    "ExecutorData": "",
+    "Impact": {
+      "Kind": "Node",
+      "NodeImpactList": [
+        {
+          "NodeName": "node_1",
+          "ImpactLevel": "Restart"
+        }
+      ]
+    },
+    "ResultStatus": "Pending",
+    "ResultCode": 0,
+    "ResultDetails": "",
+    "History": {
+      "CreatedUtcTimestamp": "2020-06-10T00:13:40.520Z",
+      "ClaimedUtcTimestamp": "2020-06-10T00:13:40.520Z",
+      "PreparingUtcTimestamp": "2020-06-10T00:13:40.520Z",
+      "ApprovedUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "ExecutingUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "RestoringUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "CompletedUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "PreparingHealthCheckStartUtcTimestamp": "2020-06-10T00:13:40.580Z",
+      "PreparingHealthCheckEndUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "RestoringHealthCheckStartUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "RestoringHealthCheckEndUtcTimestamp": "0001-01-01T00:00:00.000Z"
+    },
+    "PreparingHealthCheckState": "Skipped",
+    "RestoringHealthCheckState": "NotStarted",
+    "PerformPreparingHealthCheck": false,
+    "PerformRestoringHealthCheck": false
+  },
+  {
+    "Scope": {
+      "Kind": "Cluster"
+    },
+    "TaskId": "longrunningrestoring",
+    "Version": "1812",
+    "Description": "",
+    "State": "Restoring",
+    "Flags": 1,
+    "Action": "SFExt-ScheduleEvents-PlatformUpdate",
+    "Target": {
+      "Kind": "Node",
+      "NodeNames": [
+        "node_1"
+      ]
+    },
+    "Executor": "SFExt-ScheduleEvents",
+    "ExecutorData": "",
+    "Impact": {
+      "Kind": "Node",
+      "NodeImpactList": [
+        {
+          "NodeName": "node_1",
+          "ImpactLevel": "Restart"
+        }
+      ]
+    },
+    "ResultStatus": "Restoring",
+    "ResultCode": 0,
+    "ResultDetails": "",
+    "History": {
+      "CreatedUtcTimestamp": "2022-03-28T22:28:05.954Z",
+      "ClaimedUtcTimestamp": "2022-03-28T22:28:05.954Z",
+      "PreparingUtcTimestamp": "2022-03-28T22:28:05.954Z",
+      "ApprovedUtcTimestamp": "2022-03-28T22:29:06.079Z",
+      "ExecutingUtcTimestamp": "2022-03-28T22:30:06.079Z",
+      "RestoringUtcTimestamp": "2022-03-28T22:31:06.079Z",
+      "CompletedUtcTimestamp": "0001-01-01T00:00:00.000Z",
+      "PreparingHealthCheckStartUtcTimestamp": "2022-03-28T22:28:06.032Z",
+      "PreparingHealthCheckEndUtcTimestamp": "2022-03-28T22:28:06.079Z",
+      "RestoringHealthCheckStartUtcTimestamp": "2022-03-28T22:32:06.079Z",
+      "RestoringHealthCheckEndUtcTimestamp": "0001-01-01T00:00:00.000Z"
+    },
+    "PreparingHealthCheckState": "Skipped",
+    "RestoringHealthCheckState": "NotStarted",
+    "PerformPreparingHealthCheck": false,
+    "PerformRestoringHealthCheck": false
+  }
+
+]
