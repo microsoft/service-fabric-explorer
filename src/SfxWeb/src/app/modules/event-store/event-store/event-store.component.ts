@@ -40,6 +40,7 @@ export interface IConcurrentEventsConfig {
 }
 
 export interface IConcurrentEvents extends DataItem {
+    name?: string;
     related: IConcurrentEvents[] // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
 }
 
@@ -243,6 +244,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         // iterate through all the input events
         inputEvents.forEach(inputEvent => {
             // iterate through all configuration
+            if (inputEvent.eventInstanceId == "42e46f67-cae6-40d2-a101-042a3a61205d") {                
+            }
             configs.forEach(config => {
                 if (config.eventType == inputEvent.kind) {                                        
                     // iterate through all events to find relevant ones
@@ -264,7 +267,15 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 }
                             });
                             if (propMaps) {
-                                action = "Action: " + relevantEventType.action + "<br/><br/>";
+                                if (!inputEvent.related) {
+                                    inputEvent.related = [];
+                                }
+                                inputEvent.related.push(
+                                    {
+                                        name: "self", 
+                                        related: null
+                                    });
+                                action = "Action: " + relevantEventType.action;
                                 inputEvent.reasonForEvent = action;
                             }
                         }

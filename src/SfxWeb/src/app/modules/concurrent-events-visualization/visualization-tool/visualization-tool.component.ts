@@ -27,7 +27,7 @@ export interface IVisDict {
 export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewInit, DetailBaseComponent {
   private minNodeHeight: number = 50;
   private nameSizePx: number = 10;
-  private kindSizePx: number = 15;
+  private kindSizePx: number = 10;
   private titleSizePx: number = 20;
   private chart: Chart;
 
@@ -60,7 +60,7 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
       exporting: {
         allowHTML: true,
         sourceWidth: 600,
-        sourceHeight: 800
+        sourceHeight: 800,      
       }
   }
 
@@ -119,12 +119,14 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
               config.nodes.push(newNodeComponent);
 
               if (currEvent.related) {                  
-                  currEvent.related.forEach(relatedEvent => {                      
+                  currEvent.related.forEach(relatedEvent => {    
+                    if (relatedEvent.name == "self") {
+                      config.data.push([`${fontPrefix}${currEvent.eventInstanceId}</p>`, `${fontPrefix}${currEvent.eventInstanceId}</p>`]);                    
+                    } else {
                       config.data.push([`${fontPrefix}${currEvent.eventInstanceId}</p>`, `${fontPrefix}${relatedEvent.eventInstanceId}</p>`]);
                       queue.push(relatedEvent);                      
+                    }
                   });
-              } else {
-                config.data.push([`${fontPrefix}${currEvent.eventInstanceId}</p>`, `${fontPrefix}${currEvent.eventInstanceId}</p>`]);
               }
           }  
           levels++;
