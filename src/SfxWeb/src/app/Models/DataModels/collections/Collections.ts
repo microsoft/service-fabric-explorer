@@ -86,6 +86,11 @@ export class ApplicationCollection extends DataModelCollectionBase<Application> 
     }
 }
 
+export interface IAppTypeUsage {
+  activeAppTypes: ApplicationType[];
+  inactiveTypes: ApplicationType[];
+}
+
 export class ApplicationTypeGroupCollection extends DataModelCollectionBase<ApplicationTypeGroup> {
     public appTypeCount = 0;
     public constructor(data: DataService) {
@@ -105,7 +110,7 @@ export class ApplicationTypeGroupCollection extends DataModelCollectionBase<Appl
         }));
     }
 
-    public getAppTypeUsage() {
+    public getAppTypeUsage(): Observable<IAppTypeUsage> {
       return this.data.getApps(true).pipe(map(() => {
           // check on refresh which appTypes are being used by at least one application
           const activeAppTypes = [];

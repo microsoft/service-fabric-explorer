@@ -22,7 +22,7 @@ export class BaseComponent implements OnInit {
       route: './upgrades'
     },
     {
-      name: 'App Types',
+      name: 'app types',
       route: './apptypes'
     }
   ];

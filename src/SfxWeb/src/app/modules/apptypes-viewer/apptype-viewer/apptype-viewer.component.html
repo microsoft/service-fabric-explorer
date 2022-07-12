@@ -1,10 +1,10 @@
 <div class="tile-container" data-cy="tiles">
   <app-dashboard-text-tile [barClass]="'badge-upgrade-active'" [count]="usage.activeAppTypes.length" *ngIf="usage"
-    title="Active Application Types" style="display: block">
+    title="Active Application Types" style="display: block" data-cy="active-app-type">
   </app-dashboard-text-tile>
 
   <app-dashboard-text-tile [barClass]="'badge-upgrade-inactive'" [count]="usage.inactiveTypes.length" *ngIf="usage"
-    title="Unused Application Types" style="display: block">
+    title="Unused Application Types" style="display: block" data-cy="inactive-app-type">
   </app-dashboard-text-tile>
 </div>
 

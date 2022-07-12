@@ -2,6 +2,7 @@ import { Component, Injector } from '@angular/core';
 import { Observable } from 'rxjs';
 import { map, mergeMap } from 'rxjs/operators';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
+import { IAppTypeUsage } from 'src/app/Models/DataModels/collections/Collections';
 import { ListSettings } from 'src/app/Models/ListSettings';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -14,7 +15,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 })
 export class ApptypeViewerComponent extends BaseControllerDirective {
 
-  usage: any;
+  usage: IAppTypeUsage;
   activeAppTypesListSettings: ListSettings;
   appTypesListSettings: ListSettings;
 
