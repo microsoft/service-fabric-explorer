@@ -76,7 +76,7 @@ h5 {
     box-shadow: var(--primary-box-shadow);
     cursor: pointer;
     transition: background-color .25s;
-    &:hover {
+    &:hover, &:focus-within {
         background-color: var(--primary-background-color);
     }
 }
