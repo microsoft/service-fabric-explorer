@@ -16,13 +16,6 @@
       </div>
 
     </div>
-
-
-    <div class="detail-pane" *ngIf="upgradeProgress.unhealthyEvaluations.length > 0">
-      <h4>Unhealthy Evaluations (Upgrade)</h4>
-      <app-detail-list [list]="upgradeProgress.unhealthyEvaluations"
-        [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
-    </div>
   </div>
 
   <div class="layout-container">
@@ -85,5 +78,11 @@
       <app-upgrade-domain-progress [upgradeDomain]="upgradeProgress.nodesInProgress">
       </app-upgrade-domain-progress>
     </div>
+  </div>
+
+  <div class="detail-pane" *ngIf="upgradeProgress.unhealthyEvaluations.length > 0" data-cy="upgradeHealthEvents" style="margin-top: 10px;">
+    <h4>Unhealthy Evaluations (Upgrade)</h4>
+    <app-detail-list [list]="upgradeProgress.unhealthyEvaluations"
+      [listSettings]="upgradeProgressUnhealthyEvaluationsListSettings"></app-detail-list>
   </div>
 </div>

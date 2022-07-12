@@ -7,10 +7,10 @@
         </div>
         <div class="inner-content">
           <div>
-            <div *ngIf="alert.link">
+            <div>
               <div [innerHTML]="alert.message"></div>
 
-              <div class="link-out">
+              <div class="link-out" *ngIf="alert.link">
                 <a target="_blank" [href]="alert.link">{{alert.linkText ||
                   "Learn more"}}</a>
               </div>

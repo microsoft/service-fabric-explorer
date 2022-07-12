@@ -9,10 +9,10 @@
 @use 'Styles/detail_table';
 
 // Custom Theming for Angular Material
-@use '~@angular/cdk';
-@use '~@angular/material' as mat;
+@use '@angular/cdk';
+@use '@angular/material' as mat;
 // For more information: https://material.angular.io/guide/theming
-@import '~@angular/material/theming';
+@import '@angular/material/theming';
 // Plus imports for other components in your app.
 
 // Include the common styles for Angular Material. We include this here so that you only
@@ -312,6 +312,20 @@ table.detail-list {
     }
 }
 
+.simple-button-calendar {
+    border: #727272 1px solid;
+    color: var(--accent-darkblue);
+    border-radius: 0px 5px 5px 0px;
+    padding: 6px 12px;
+    cursor: pointer;
+    background-color: var(--primary-background-color);
+    transition: .25s box-shadow;
+
+    &:focus, &:hover {
+      box-shadow: var(--heavy-box-shadow);
+    }
+}
+
 .solid-button {
     border: var(--accent-darkblue) 1px solid;
     color: var(--font-primary-color);
@@ -435,7 +449,6 @@ table.detail-list {
     background-color: transparent;
     color: var(--font-primary-color);
 }
-
 
 .input-flat.ng-valid[required], .input-flat.ng-valid.required  {
     border-left: 5px solid var(--badge-ok);
@@ -671,4 +684,12 @@ table.detail-list {
   padding: 5px;
   padding-left: 10px;
   box-shadow: var(--primary-box-shadow);
+}
+
+.hidden {
+  visibility: hidden;
+}
+
+.visually-hidden {
+  display: none;
 }

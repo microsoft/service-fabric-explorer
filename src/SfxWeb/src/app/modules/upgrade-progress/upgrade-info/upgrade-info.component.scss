@@ -44,3 +44,10 @@ h5 {
   flex: 2;
   min-width: 500px;
 }
+
+
+@media (max-width: 400px) {
+  .overview-container {
+    min-width: 0;
+  }
+}

@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures,  FIXTURE_REF_CLUSTERHEALTHCHUNK, turnOffRefresh, refresh } from './util';
+import { addDefaultFixtures,  FIXTURE_REF_CLUSTERHEALTHCHUNK, turnOffRefresh, refresh } from './util.cy';
 
 const requestCount = '[data-cy=lastxrequests]';
 const infoPane = '[data-cy=info-pane]';
@@ -32,7 +32,7 @@ context('Network Page', () => {
             cy.get(requestCount).within(ele => {
                 requests = ele.text()
             })
-            
+
             //pause recording
             cy.get(recording).within(() => {
                 cy.get('input').click();
@@ -61,7 +61,7 @@ context('Network Page', () => {
             cy.get(requestCount).within(ele => {
                 expect(parseInt(ele.text())).to.be.greaterThan(0);
             })
-            
+
             //pause recording
             cy.contains("Clear Log").click();
             cy.get(requestCount).within(ele => {
@@ -77,5 +77,5 @@ context('Network Page', () => {
             })
         })
     })
-    
+
 })

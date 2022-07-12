@@ -3,7 +3,7 @@
 import {
   apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, checkTableSize,
   upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute, checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT, repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME, FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh
-} from './util';
+} from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
 const EVENT_TABS='[data-cy=eventtabs]'
@@ -37,6 +37,7 @@ context('Cluster page', () => {
         cy.contains('1')
       })
 
+      cy.get('[role="alert"]').should('not.exist')
     })
 
     it('certificate expiring banner', () => {
@@ -49,6 +50,18 @@ context('Cluster page', () => {
 
       cy.contains('A cluster certificate is set to expire soon. Replace it as soon as possible to avoid catastrophic failure.')
       cy.contains('Thumbprint : 52b0278d37cbfe68f8cdf04f423a994d66ceb932')
+    })
+
+    it('long running job in approval', () => {
+      cy.intercept(repairTask_route, { fixture: 'cluster-page/repair-jobs/long-running-approval.json' })
+
+      cy.visit('')
+
+      cy.contains('Action Required: There is a repair job (longrunningapprovaljobid) waiting for approval for')
+
+      cy.get('[title="Repair Jobs In Progress"]').within(() => {
+        cy.contains('1');
+      })
     })
 
   })
@@ -88,6 +101,10 @@ context('Cluster page', () => {
       })
 
       cy.get('[data-cy=manualmode]').should('not.exist')
+
+      cy.get('[data-cy=upgradeHealthEvents]').within(() => {
+        checkTableSize(4);
+      })
 
     })
 
@@ -571,7 +588,7 @@ context('Cluster page', () => {
         cy.contains('Completed Repair Tasks').click();
 
         cy.get('tbody > tr').first().within(() => {
-          cy.get('button').click();
+          cy.get('button').first().click();
         });
 
         cy.get('[data-cy=history]').within(() => {
@@ -601,7 +618,7 @@ context('Cluster page', () => {
 
       cy.get('[data-cy=pendingjobs]').within(() => {
         cy.get('tbody > tr').first().within(() => {
-          cy.get('button').click();
+          cy.get('button').first().click();
         });
 
         cy.get('[data-cy=history]').within(() => {

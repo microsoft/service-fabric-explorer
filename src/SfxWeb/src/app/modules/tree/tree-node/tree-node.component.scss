@@ -38,7 +38,7 @@ button {
       transition: 0.25s transform;
 
       &.rotated {
-        transform: rotate(-90deg);
+        transform: rotate(90deg);
       }
     }
   }
