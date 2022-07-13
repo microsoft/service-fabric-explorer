@@ -19,7 +19,6 @@ export interface IEventStoreRef extends ListColumnSetting {
 }
 
 export interface IItemNodeEvent {
-  visEvents?: IConcurrentEvents;
   raw: NodeEvent;
 }
 
@@ -35,6 +34,7 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
   private titleSizePx: number = 20;
   private chart: Chart;
 
+  visEvents : IConcurrentEvents;
   item : IItemNodeEvent;
   listSetting : IEventStoreRef;
 
@@ -76,18 +76,10 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
   }
 
   ngAfterViewInit(): void {
-    this.grabVisEvents();
+    this.visEvents = this.listSetting.eventStoreRef.visEventList.find(
+      visEvent => visEvent.eventInstanceId == this.item.raw.eventInstanceId).visEvent;
     this.options.series = [this.traverse()];
     this.chart = chart(this.container.nativeElement, this.options);    
-  }
-
-  grabVisEvents() : void {
-    for (let visEvent of this.listSetting.eventStoreRef.visEventList) {
-      if (visEvent.eventInstanceId == this.item.raw.eventInstanceId) {
-        this.item.visEvents = visEvent.visEvent;
-        break;
-      }
-    }
   }
 
   traverse(): SeriesOptionsType {
@@ -106,8 +98,8 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
     }
     // perform BFS to convert to organization chart
     let queue = [];    
-    if (this.item.visEvents) {
-      queue = [this.item.visEvents];        
+    if (this.visEvents) {
+      queue = [this.visEvents];        
 
       let levels = 0;      
       let fontPrefix = `<p style='font-size: ${this.nameSizePx}px; color: white;'>`

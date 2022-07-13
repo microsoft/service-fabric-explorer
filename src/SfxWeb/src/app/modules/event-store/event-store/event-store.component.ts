@@ -351,7 +351,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         for (const data of this.listEventStoreData) {                        
             data.eventsList.collection.forEach(event => {
                 if (Utils.result(event, "raw.eventInstanceId") == Utils.result(parsedEvent, "eventInstanceId")) {   
-                    event['visPresent'] = visPresent;
+                    event.visPresent = visPresent;
                 }
             });
         }
