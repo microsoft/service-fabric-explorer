@@ -7,7 +7,7 @@ import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
-import { ListColumnSetting, ListSettings } from 'src/app/Models/ListSettings';
+import { ListColumnSetting, ListColumnSettingWithEmbeddedVisTool, ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
@@ -50,8 +50,14 @@ export interface IRCAItem extends DataItem, IConcurrentEvents {
     reasonForEvent: string;    
 }
 
-export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
-    eventsList: T;
+export interface IVisEvent {
+    eventInstanceId: string;
+    visPresent: boolean;
+    visEvent: IConcurrentEvents;
+}
+
+export interface IEventStoreData<IVisPresentEvent, S> {
+    eventsList: IVisPresentEvent;
     timelineGenerator?: TimeLineGeneratorBase<S>;
     timelineData?: ITimelineData;
     displayName: string;
@@ -76,7 +82,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   }
 
   private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
-  private debouncerHandlerSubscription: Subscription;
+  private debouncerHandlerSubscription: Subscription;  
 
   public quickDates = [
       { display: 'Last 1 Hour', hours: 1 },
@@ -92,6 +98,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   public startDateMax: Date;
   public failedRefresh = false;
   public timeLineEventsData: ITimelineData;
+  public visEventList: IVisEvent[] = [];
 
   public transformText = 'Category,Kind';
 
@@ -243,14 +250,12 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
         // iterate through all the input events
         inputEvents.forEach(inputEvent => {
-            // iterate through all configuration
-            if (inputEvent.eventInstanceId == "42e46f67-cae6-40d2-a101-042a3a61205d") {                
-            }
+            // iterate through all configurations
             configs.forEach(config => {
                 if (config.eventType == inputEvent.kind) {                                        
                     // iterate through all events to find relevant ones
                     if(Utils.result(inputEvent, config.result)) {
-                        action = "Action: " + Utils.result(inputEvent, config.result) + "<br/><br/>";
+                        action = "Action: " + Utils.result(inputEvent, config.result);
                     }
                     inputEvent.reasonForEvent = action; 
                     config.relevantEventsType.forEach(relevantEventType => {
@@ -272,7 +277,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 }
                                 inputEvent.related.push(
                                     {
-                                        name: "self", 
+                                        name: "self",
                                         related: null
                                     });
                                 action = "Action: " + relevantEventType.action;
@@ -323,61 +328,63 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     /*
         Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
     */
-    let parsedEvents : DataItem[] = [];
+    let parsedEvents : IRCAItem[] = [];
     for (const data of this.listEventStoreData) {
         if (data.eventsList.lastRefreshWasSuccessful) {
             data.getEvents().forEach(event => parsedEvents.push(event));
         }
     }
     
-    // create a new setting component
-    for (const data of this.listEventStoreData) {        
-        let visPresentFlag = false;
-        data.listSettings.columnSettings.forEach(setting => {
-            if (setting.propertyPath == "visPresent") {
-                visPresentFlag = true;
-            }
-        });
-        if (!visPresentFlag) {        
-            let newLogoSetting = new ListColumnSettingWithCustomComponent(
-                VisualizationLogoComponent,
-                "visPresent", 
-                "RCA Vis Present",
-                {
-                    enableFilter: true,
-                    colspan: 1
-                });  
-            newLogoSetting.fixedWidthPx = 100;
-            data.listSettings.columnSettings.splice(1, 0, newLogoSetting);
-            data.listSettings.secondRowColumnSettings.push(new ListColumnSettingWithCustomComponent(
-                VisualizationToolComponent,
-                '',
-                '',
-                {
-                    enableFilter: false,
-                    colspan: -1
-                }
-            ));
-        }        
-    }
-
     // grab highcharts data for all events
     for (let parsedEvent of parsedEvents) {
         let rootEvent = this.testEvent(parsedEvent, parsedEvents)[0];
         let visPresent = false;
         if (rootEvent.related) {
             visPresent = true;
-            // console.log("Root Event: ", rootEvent);
         }        
+        let visEventItem : IVisEvent = {
+            visEvent: rootEvent,
+            visPresent: visPresent,
+            eventInstanceId: Utils.result(parsedEvent, "eventInstanceId")
+        }
+        this.visEventList.push(visEventItem);
+
         for (const data of this.listEventStoreData) {                        
             data.eventsList.collection.forEach(event => {
                 if (Utils.result(event, "raw.eventInstanceId") == Utils.result(parsedEvent, "eventInstanceId")) {   
                     event['visPresent'] = visPresent;
-                    event['visDict'] = rootEvent;
                 }
             });
         }
     }
+
+    for (const data of this.listEventStoreData) {        
+        let visPresentFlag = data.listSettings.columnSettings.some((setting) => { 
+            return setting.propertyPath == "visPresent" 
+        });        
+        if (!visPresentFlag) {        
+            let newLogoSetting = new ListColumnSettingWithCustomComponent(
+                VisualizationLogoComponent,
+                'visPresent',
+                'Visualization Present',                
+                {
+                    enableFilter: true,
+                    colspan: 1
+                });
+            newLogoSetting.fixedWidthPx = 100;
+            data.listSettings.columnSettings.splice(1, 0, newLogoSetting);
+            data.listSettings.secondRowColumnSettings.push(new ListColumnSettingWithEmbeddedVisTool(
+                VisualizationToolComponent,
+                '',
+                '',
+                this,
+                {
+                    enableFilter: false,
+                    colspan: -1
+                }
+            ));
+        }        
+    }    
   }  
 
   public setTimelineData(): void {

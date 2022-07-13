@@ -44,6 +44,8 @@ export class DataModelCollectionBase<T extends IDataModel<any>> implements IData
     public lastRefreshWasSuccessful = false;
     private clearOnFailureToUpdate = false;
 
+    public visPresent?: boolean;
+
     protected valueResolver: ValueResolver = new ValueResolver();
 
     private appendOnly: boolean;
