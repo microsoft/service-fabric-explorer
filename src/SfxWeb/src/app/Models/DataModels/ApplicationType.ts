@@ -82,6 +82,7 @@ export class ApplicationType extends DataModelBase<IRawApplicationType> {
 export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
     public apps: Application[] = [];
     public appTypes: ApplicationType[] = [];
+    public activeAppTypes: ApplicationType[] = [];
     public appsHealthState: ITextAndBadge = ValueResolver.healthStatuses[4];
 
     public constructor(data: DataService, appTypes: ApplicationType[]) {
@@ -110,9 +111,13 @@ export class ApplicationTypeGroup extends DataModelBase<IRawApplicationType> {
         this.appsHealthState = ValueResolver.healthStatuses[1];
       }
 
+      this.activeAppTypes = [];
       this.appTypes.forEach(appType => {
         const used = this.apps.some(app => app.raw.TypeVersion === appType.raw.Version);
         appType.isInUse = used;
+        if(used) {
+          this.activeAppTypes.push(appType)
+        }
       });
     }
 

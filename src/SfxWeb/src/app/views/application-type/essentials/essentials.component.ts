@@ -5,9 +5,7 @@ import { Observable } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { ApplicationType, ApplicationTypeGroup } from 'src/app/Models/DataModels/ApplicationType';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingForBadge, ListColumnSettingForLink } from 'src/app/Models/ListSettings';
-import { HtmlUtils } from 'src/app/Utils/HtmlUtils';
 import { ApplicationTypeBaseControllerDirective } from '../ApplicationTypeBase';
-import { ListColumnSettingForApplicationType } from '../action-row/action-row.component';
 import { map } from 'rxjs/operators';
 
 @Component({
@@ -39,10 +37,12 @@ export class EssentialsComponent extends ApplicationTypeBaseControllerDirective 
       new ListColumnSettingForBadge('healthState', 'Health State'),
       new ListColumnSettingWithFilter('raw.Status', 'Status'),
     ]);
+
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.data.getApps(true, messageHandler);
+    return this.data.getApps(true, messageHandler).pipe(map(() => {
+      this.activeAppTypes = this.appTypeGroup.activeAppTypes;
+    }))
   }
-
 }
