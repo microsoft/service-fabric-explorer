@@ -6,8 +6,7 @@ import { Subject, Subscription, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
-import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
-import { ListColumnSetting, ListColumnSettingWithEmbeddedVisTool, ListSettings } from 'src/app/Models/ListSettings';
+import { ListColumnSettingWithEmbeddedVisTool, ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
@@ -82,7 +81,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   }
 
   private debounceHandler: Subject<IOnDateChange> = new Subject<IOnDateChange>();
-  private debouncerHandlerSubscription: Subscription;  
+  private debouncerHandlerSubscription: Subscription;
 
   public quickDates = [
       { display: 'Last 1 Hour', hours: 1 },
@@ -121,7 +120,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
               this.startDate = new Date(dates.startDate);
               this.endDate = new Date(dates.endDate);
               this.setNewDateWindow();
-          });        
+          });
   }
 
   ngOnDestroy() {
@@ -301,7 +300,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                     targetVal = Utils.result(iterEvent, mapping.targetProperty);
                                     if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
                                         propMaps = false;
-                                    }                                    
+                                    }
                                 });
                                 
                                 if (propMaps) {

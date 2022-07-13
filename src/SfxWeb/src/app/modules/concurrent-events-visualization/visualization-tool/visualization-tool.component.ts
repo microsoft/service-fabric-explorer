@@ -1,14 +1,14 @@
 import { Component, OnInit, OnChanges, AfterViewInit, Input, ViewChild, ElementRef } from '@angular/core';
 import { EventStoreComponent, IConcurrentEvents } from '../../event-store/event-store/event-store.component';
 import * as Highcharts from 'highcharts';
-import { chart, Chart, Options, SeriesOptionsType, SeriesAbandsOptions, SeriesSankeyNodesOptionsObject } from 'highcharts';
+import { chart, Chart, Options, SeriesOptionsType, SeriesSankeyNodesOptionsObject } from 'highcharts';
 
 import HighchartsSankey from "highcharts/modules/sankey";
 import HighchartsOrganization from "highcharts/modules/organization";
 import HighchartsExporting from "highcharts/modules/exporting";
 import { DetailBaseComponent } from 'src/app/ViewModels/detail-table-base.component';
 import { ListColumnSetting } from 'src/app/Models/ListSettings';
-import { FabricEvent, FabricEventInstanceModel, NodeEvent } from 'src/app/Models/eventstore/Events';
+import { NodeEvent } from 'src/app/Models/eventstore/Events';
 
 HighchartsSankey(Highcharts);
 HighchartsOrganization(Highcharts);
@@ -64,7 +64,7 @@ export class VisualizationToolComponent implements OnInit, OnChanges, AfterViewI
       exporting: {
         allowHTML: true,
         sourceWidth: 600,
-        sourceHeight: 800,      
+        sourceHeight: 800,
       }
   }
 
