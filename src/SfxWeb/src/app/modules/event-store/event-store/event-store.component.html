@@ -54,16 +54,6 @@
 
       </div>
     </app-event-store-timeline><br>
-    <div class="flex-container wrap" >
-      <form (ngSubmit)="findConcurrentEvents()">
-        <span style="color:  var(--font-primary-color); font-size: 105%;">Node Down EventID:  </span>
-        <input class="input-flat-nodeDown height" type="text" id="eventId" size="20" name="eventId">
-        <input class="simple-button" type="submit" value="Submit"> 
-      </form>
-    </div>
-    <div *ngIf="simulEvents" class="app-visualization-tool">      
-      <app-visualization-tool [simulEvents]="simulEvents"></app-visualization-tool>    
-    </div>
   </div>
 </div>
 

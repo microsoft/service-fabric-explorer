@@ -31,8 +31,4 @@ export class EventsComponent extends BaseControllerDirective {
       enableRepairTasks: true
     };
    }
-
-   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.listEventStoreData[0].eventsList.refresh(new EventsStoreResponseMessageHandler(messageHandler));
-  }
 }

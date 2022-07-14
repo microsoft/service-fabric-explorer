@@ -6,13 +6,15 @@ import { Subject, Subscription, forkJoin } from 'rxjs';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
-import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
-import { ListSettings } from 'src/app/Models/ListSettings';
+import { ListColumnSettingWithEmbeddedVisTool, ListSettings } from 'src/app/Models/ListSettings';
 import { IOptionConfig, IOptionData } from '../option-picker/option-picker.component';
 import { TelemetryService } from 'src/app/services/telemetry.service';
 import { TelemetryEventNames } from 'src/app/Common/Constants';
 import { RelatedEventsConfigs } from '../../../Models/eventstore/RelatedEventsConfigs';
 import { Utils } from 'src/app/Utils/Utils';
+import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
+import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
+import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 
 export interface IQuickDates {
     display: string;
@@ -37,6 +39,7 @@ export interface IConcurrentEventsConfig {
 }
 
 export interface IConcurrentEvents extends DataItem {
+    name?: string;
     related: IConcurrentEvents[] // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
 }
 
@@ -46,8 +49,14 @@ export interface IRCAItem extends DataItem, IConcurrentEvents {
     reasonForEvent: string;    
 }
 
-export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
-    eventsList: T;
+export interface IVisEvent {
+    eventInstanceId: string;
+    visPresent: boolean;
+    visEvent: IConcurrentEvents;
+}
+
+export interface IEventStoreData<IVisPresentEvent, S> {
+    eventsList: IVisPresentEvent;
     timelineGenerator?: TimeLineGeneratorBase<S>;
     timelineData?: ITimelineData;
     displayName: string;
@@ -88,6 +97,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   public startDateMax: Date;
   public failedRefresh = false;
   public timeLineEventsData: ITimelineData;
+  public visEventList: IVisEvent[] = [];
 
   public transformText = 'Category,Kind';
 
@@ -218,20 +228,14 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       return combinedTimelineData;
   }
 
-  private testEvent(parsedEvents : IRCAItem[]) : void {
+  private testEvent(inputEvent: IRCAItem, parsedEvents : IRCAItem[]) : IConcurrentEvents[] {
     /*
         Section here is to test a random IConcurrentEventsConfig with three inputted random events and see
         which events happen concurrently with these random events.
     */
-    let eventInstanceId = (document.getElementById("eventId") as HTMLInputElement).value;
     let inputEvents : IRCAItem[] = [];
-    parsedEvents.forEach(event => {
-        if (event.eventInstanceId == eventInstanceId) {
-            inputEvents.push(event);
-        }
-    });    
-
-    this.simulEvents = this.getSimultaneousEventsForEvent(RelatedEventsConfigs, inputEvents, parsedEvents);
+    inputEvents.push(inputEvent);
+    return this.getSimultaneousEventsForEvent(RelatedEventsConfigs, inputEvents, parsedEvents);
   }
 
   private getSimultaneousEventsForEvent(configs: IConcurrentEventsConfig[], inputEvents: IRCAItem[], events: IRCAItem[]) : IConcurrentEvents[] {
@@ -245,12 +249,12 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
         // iterate through all the input events
         inputEvents.forEach(inputEvent => {
-            // iterate through all configuration
+            // iterate through all configurations
             configs.forEach(config => {
                 if (config.eventType == inputEvent.kind) {                                        
                     // iterate through all events to find relevant ones
                     if(Utils.result(inputEvent, config.result)) {
-                        action = "Action: " + Utils.result(inputEvent, config.result) + "<br/><br/>";
+                        action = "Action: " + Utils.result(inputEvent, config.result);
                     }
                     inputEvent.reasonForEvent = action; 
                     config.relevantEventsType.forEach(relevantEventType => {
@@ -267,7 +271,15 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 }
                             });
                             if (propMaps) {
-                                action = "Action: " + relevantEventType.action + "<br/><br/>";
+                                if (!inputEvent.related) {
+                                    inputEvent.related = [];
+                                }
+                                inputEvent.related.push(
+                                    {
+                                        name: "self",
+                                        related: null
+                                    });
+                                action = "Action: " + relevantEventType.action;
                                 inputEvent.reasonForEvent = action;
                             }
                         }
@@ -292,7 +304,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 });
                                 
                                 if (propMaps) {
-                                    if (!inputEvent.related) {
+                                    if (!inputEvent.related) 
+                                    {
                                         inputEvent.related = [];
                                     }
                                     inputEvent.related.push(iterEvent);
@@ -314,28 +327,70 @@ export class EventStoreComponent implements OnInit, OnDestroy {
     /*
         Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
     */
-    let parsedEvents : DataItem[] = [];
+    let parsedEvents : IRCAItem[] = [];
     for (const data of this.listEventStoreData) {
         if (data.eventsList.lastRefreshWasSuccessful) {
-            data.getEvents().forEach(event => parsedEvents.push(event));            
+            data.getEvents().forEach(event => parsedEvents.push(event));
+        }
+    }
+    
+    // grab highcharts data for all events
+    for (let parsedEvent of parsedEvents) {
+        let rootEvent = this.testEvent(parsedEvent, parsedEvents)[0];
+        let visPresent = false;
+        if (rootEvent.related) {
+            visPresent = true;
+        }        
+        let visEventItem : IVisEvent = {
+            visEvent: rootEvent,
+            visPresent: visPresent,
+            eventInstanceId: Utils.result(parsedEvent, "eventInstanceId")
+        }
+        this.visEventList.push(visEventItem);
+
+        for (const data of this.listEventStoreData) {                        
+            data.eventsList.collection.forEach(event => {
+                if (Utils.result(event, "raw.eventInstanceId") == Utils.result(parsedEvent, "eventInstanceId")) {   
+                    event.visPresent = visPresent;
+                }
+            });
         }
     }
 
-    // testing purposes    
-    this.testEvent(parsedEvents);
-  }
-
-  public findConcurrentEvents(): void {
-    const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
-    forkJoin(timelineEventSubs).subscribe(() => {
-        this.getConcurrentEventsData();
-    });
-  }
+    for (const data of this.listEventStoreData) {        
+        let visPresentFlag = data.listSettings.columnSettings.some((setting) => { 
+            return setting.propertyPath == "visPresent" 
+        });        
+        if (!visPresentFlag) {        
+            let newLogoSetting = new ListColumnSettingWithCustomComponent(
+                VisualizationLogoComponent,
+                'visPresent',
+                'Visualization Present',                
+                {
+                    enableFilter: true,
+                    colspan: 1
+                });
+            newLogoSetting.fixedWidthPx = 100;
+            data.listSettings.columnSettings.splice(1, 0, newLogoSetting);
+            data.listSettings.secondRowColumnSettings.push(new ListColumnSettingWithEmbeddedVisTool(
+                VisualizationToolComponent,
+                '',
+                '',
+                this,
+                {
+                    enableFilter: false,
+                    colspan: -1
+                }
+            ));
+        }        
+    }    
+  }  
 
   public setTimelineData(): void {
       const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());            
       forkJoin(timelineEventSubs).subscribe(() => {
           this.timeLineEventsData = this.getTimelineData();
+          this.getConcurrentEventsData();                    
       });
   }
 
@@ -347,6 +402,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       this.listEventStoreData = this.listEventStoreData.filter(item => item.displayName !== option.data.displayName);
     }
     this.setNewDateWindow(true);
+    this.getConcurrentEventsData();
   }
 
   setNewDates(dates: IOnDateChange) {
