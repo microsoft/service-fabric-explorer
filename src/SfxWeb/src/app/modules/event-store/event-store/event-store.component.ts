@@ -333,6 +333,9 @@ export class EventStoreComponent implements OnInit, OnDestroy {
             data.getEvents().forEach(event => parsedEvents.push(event));
         }
     }
+
+    // refresh vis-event-list
+    this.visEventList = [];
     
     // grab highcharts data for all events
     for (let parsedEvent of parsedEvents) {
