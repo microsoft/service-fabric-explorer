@@ -111,6 +111,7 @@ h5 {
 
 .add-button {
     display: flex;
+    gap: 5px;
     justify-content: center;
     align-content: center;
     font-size: 13px;
@@ -119,7 +120,6 @@ h5 {
     background-color: transparent;
 
     &:hover {
-        color: var(--accent-darkblue);
         background-color: var(--accent-underline);
     }
 }

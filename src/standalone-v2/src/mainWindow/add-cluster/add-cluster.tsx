@@ -60,7 +60,7 @@ export default function AddCluster(props: AddClusterProps) {
     const [folder, setFolder] = useState(props.initialState?.folder || "default");
     const [certificateInfo, setCertificateInfo] = useState<ICertificateInfo>({certificatePath: authType?.certificatePath || "",
                                                                               password: authType?.certificatePassword || ""});
-    const [verifyConnection, setVerifyConnection] = useState<boolean>(authType.verifyConnection);
+    const [verifyConnection, setVerifyConnection] = useState<boolean>(authType?.verifyConnection);
     const [certificateCaPaths, setCertificateCaPaths] = useState<string>(authType?.certificateCaPaths || "");
     const [id] = useState(props.initialState?.id || Math.random().toString());
     const clear = () => {

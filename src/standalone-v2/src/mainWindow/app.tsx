@@ -84,33 +84,32 @@ export default function App() {
     return (<div className="left-panel">
         <div>
             <h4 className="cluster-header cluster-title">
-                {/* <button className="flat-button round add-button">
-                    <span className="mif-home"></span>
-                </button> */}
                 <div style={{flex: '1', marginLeft: '10px'}}>
                     Clusters
                 </div>
-                {!showAddCluster &&
-                    <button className="flat-button round add-button text-show" onClick={() => { setAddCluster(true) }} >
-                        <span className='mif-plus icon'></span>
-                        <span className="text">Add Cluster</span>
-                    </button>
-                }
-
-                {!showBulk &&
-                <button className="flat-button round add-button text-show" onClick={() => { setBulk(true) }} >
-                    <span className='mif-import-export icon'></span>
-                    <span className="text">Import Clusters</span>
+                <button className="flat-button round add-button" onClick={() => { setAddCluster(true) }} >
+                    <span className='mif-plus icon'></span>
+                    <span className="text">Add</span>
                 </button>
-                }
+
+                <button className="flat-button round add-button" onClick={() => { setBulk(true) }} >
+                    <span className='mif-import-export icon'></span>
+                    <span className="text">Import</span>
+                </button>
             </h4>
 
             <div className="filter-list">
                 <div className="input-item">
-                    <span>Filter List</span>
+                    <span>Search</span>
                     <input className="input-flat" onChange={(input) => setFilerList(input.currentTarget.value)} value={filterList}></input>
                 </div>
             </div>
+            <div style={{display: 'flex', flexDirection: 'row-reverse', alignItems: 'center'}}>
+                    <span>
+                    Report a bug
+                    </span>
+                    <span className="mif-bug mif-lg flat-button round link"></span>
+                </div>
         </div>
 
         {showAddCluster && <div className="add-cluster essen-pane slide-open">
