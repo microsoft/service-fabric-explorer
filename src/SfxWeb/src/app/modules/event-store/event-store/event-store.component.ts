@@ -254,7 +254,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                 if (config.eventType == inputEvent.kind) {                                        
                     // iterate through all events to find relevant ones
                     if(Utils.result(inputEvent, config.result)) {
-                        action = "Action: " + Utils.result(inputEvent, config.result);
+                        action = "Action: " + Utils.result(inputEvent, config.result) + "<br/>";
                     }
                     inputEvent.reasonForEvent = action; 
                     config.relevantEventsType.forEach(relevantEventType => {
@@ -279,7 +279,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                         name: "self",
                                         related: null
                                     });
-                                action = "Action: " + relevantEventType.action;
+                                action = "Action: " + relevantEventType.action + "<br/>";
                                 inputEvent.reasonForEvent = action;
                             }
                         }
