@@ -62,6 +62,13 @@ export class BaseComponent implements OnInit {
           route: '/repairtasks'
         });
       }
+
+      if (this.dataService.clusterManifest.isRepairManagerEnabled) {
+        this.tabs = this.tabs.concat({
+          name: 'infrastructure',
+          route: '/infrastructure'
+        });
+      }
     });
 
     this.dataService.nodes.refresh().subscribe( () => {

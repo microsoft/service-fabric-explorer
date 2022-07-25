@@ -1,0 +1,42 @@
+<div class="tile-container">
+  <app-dashboard-text-tile [barClass]="executingMRJobs.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
+    [count]="executingMRJobs.length" *ngIf="executingMRJobs.length >= 0" title="Active Infrastructure Jobs"
+    style="display: block">
+  </app-dashboard-text-tile>
+
+  <app-dashboard-text-tile [barClass]="allPendingMRJobs.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
+    [count]="allPendingMRJobs.length" *ngIf="allPendingMRJobs.length >= 0" title="Pending Infrastrucutre Jobs "
+    style="display: block">
+  </app-dashboard-text-tile>
+</div>
+
+<div ngbNav #nav="ngbNav" class="nav-wrapper">
+  <div  [ngbNavItem]="infra.name" *ngFor="let infra of collection.collection">
+      <a ngbNavLink style="font-size: 12pt;" >
+          <div>
+            <div>
+              <app-health-badge></app-health-badge>
+            </div>
+            <div>
+              {{infra.name | stripPrefix}}
+            </div>
+            <span>{{infra.jobs.length}} </span>
+          </div>
+          <div class="chip-container">
+            <!-- <span class="chip concerning">
+              Concerning : <span> 1 </span>
+            </span> -->
+            <span class="chip">
+              Active : <span> 1 </span>
+            </span>
+            <span class="chip pending">
+              Pending : <span> 1</span>
+            </span>
+          </div>
+      </a>
+      <ng-template ngbNavContent>
+        {{infra.name}}
+      </ng-template>
+  </div>
+</div>
+<div [ngbNavOutlet]="nav"></div>

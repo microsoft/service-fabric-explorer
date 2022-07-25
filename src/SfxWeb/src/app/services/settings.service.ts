@@ -7,8 +7,8 @@ import { ClusterLoadInformation } from '../Models/DataModels/Cluster';
 import { NodeLoadInformation } from '../Models/DataModels/Node';
 import { MetricsViewModel } from '../ViewModels/MetricsViewModel';
 import { StorageService } from './storage.service';
-import { RepairTaskViewComponent } from '../views/cluster/repair-task-view/repair-task-view.component';
 import { QuestionToolTipComponent } from '../modules/detail-list-templates/question-tool-tip/question-tool-tip.component';
+import { RepairTaskViewComponent } from '../modules/repair-tasks/repair-task-view/repair-task-view.component';
 
 @Injectable({
   providedIn: 'root'

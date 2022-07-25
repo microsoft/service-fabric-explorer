@@ -16,7 +16,6 @@ import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
 import { InfrastructureJobsComponent } from './infrastructurejobs/infrastructurejobs.component';
 import { InfrastructureJobModule } from 'src/app/modules/infrastructure-job/infrastructure-job.module';
-import { ClusterModule } from '../cluster/cluster.module';
 
 
 @NgModule({
@@ -32,7 +31,6 @@ import { ClusterModule } from '../cluster/cluster.module';
         ChartsModule,
         HealthStateModule,
         InfrastructureJobModule,
-        ClusterModule
     ]
 })
 export class ServiceModule { }

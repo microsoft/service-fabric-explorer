@@ -3,24 +3,27 @@ import { CommonModule } from '@angular/common';
 import { InfrastructureJobTileComponent } from './infrastructure-job-tile/infrastructure-job-tile.component';
 import { SharedModule } from 'src/app/shared/shared.module';
 import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-templates.module';
-import { ClusterModule } from 'src/app/views/cluster/cluster.module';
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
+import { StripPrefixPipe } from './strip-prefix.pipe';
+import { RepairTasksModule } from '../repair-tasks/repair-tasks.module';
 
 
 
 @NgModule({
   declarations: [
-    InfrastructureJobTileComponent
+    InfrastructureJobTileComponent,
+    StripPrefixPipe
   ],
   imports: [
     CommonModule,
     SharedModule,
     DetailListTemplatesModule,
-    ClusterModule,
+    RepairTasksModule,
     NgbNavModule
   ],
   exports: [
-    InfrastructureJobTileComponent
+    InfrastructureJobTileComponent,
+    StripPrefixPipe
   ]
 })
 export class InfrastructureJobModule { }
