@@ -1,4 +1,4 @@
-import { Observable, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { StatusWarningLevel } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
@@ -12,6 +12,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
 
     repairTasks: RepairTask[] = [];
     completedRepairTasks: RepairTask[] = [];
+    jobsOfInterest: RepairTask[] = [];
 
     public longRunningApprovalJob: RepairTask;
     public longestExecutingJob: RepairTask;
@@ -72,7 +73,8 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
             this.data.warnings.removeNotificationById(RepairTaskCollection.bannerApprovalId);
         }
 
-        return of(null);
+        this.jobsOfInterest = this.repairTasks;
+        return forkJoin(this.repairTasks.map(task => task.updateInternal())).pipe(map(() => {console.log(this.repairTasks)}))
     }
 
     public getRepairJobsForANode(nodeName: string) {

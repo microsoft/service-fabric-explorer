@@ -14,12 +14,10 @@ import { BackupComponent } from './backup/backup.component';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { ChartsModule } from 'src/app/modules/charts/charts.module';
 import { HealthStateModule } from 'src/app/modules/health-state/health-state.module';
-import { InfrastructureJobsComponent } from './infrastructurejobs/infrastructurejobs.component';
-import { InfrastructureJobModule } from 'src/app/modules/infrastructure-job/infrastructure-job.module';
 
 
 @NgModule({
-    declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent, InfrastructureJobsComponent],
+    declarations: [EssentialsComponent, BaseComponent, DetailsComponent, ManifestComponent, EventsComponent, ScaleServiceComponent, BackupComponent],
     imports: [
         CommonModule,
         ServiceRoutingModule,
@@ -30,7 +28,6 @@ import { InfrastructureJobModule } from 'src/app/modules/infrastructure-job/infr
         ReactiveFormsModule,
         ChartsModule,
         HealthStateModule,
-        InfrastructureJobModule,
     ]
 })
 export class ServiceModule { }

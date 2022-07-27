@@ -1,7 +1,8 @@
 import { Component, Injector, OnInit } from '@angular/core';
-import { Observable, of } from 'rxjs';
+import { forkJoin, Observable, of } from 'rxjs';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { InfrastructureCollection } from 'src/app/Models/DataModels/collections/infrastructureCollection';
+import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { InfrastructureJob } from 'src/app/Models/DataModels/infrastructureJob';
 import { DataService } from 'src/app/services/data.service';
 import { SettingsService } from 'src/app/services/settings.service';
@@ -14,6 +15,7 @@ import { BaseControllerDirective } from 'src/app/ViewModels/BaseController';
 })
 export class InfrastructureViewComponent extends BaseControllerDirective {
   public collection: InfrastructureCollection;
+  public repairTaskCollection: RepairTaskCollection;
 
   allPendingMRJobs: InfrastructureJob[] = [];
   executingMRJobs: InfrastructureJob[] = [];
@@ -43,7 +45,7 @@ export class InfrastructureViewComponent extends BaseControllerDirective {
 
   setup() {
     this.collection = this.data.infrastructureCollection;
-    // this.repairTaskCollection = this.data.repairCollection;
+    this.repairTaskCollection = this.data.repairCollection;
     // this.timelineGenerator = new RepairTaskTimelineGenerator();
     // this.repairTaskListSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
     // this.completedRepairTaskListSettings = this.settings.getNewOrExistingCompletedRepairTaskListSettings();
@@ -63,7 +65,10 @@ export class InfrastructureViewComponent extends BaseControllerDirective {
   // }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
-    return this.collection.refresh(messageHandler);
+    return forkJoin([
+      this.collection.refresh(messageHandler),
+      this.repairTaskCollection.refresh(messageHandler)
+    ])
     // return this.repairTaskCollection.refresh(messageHandler).pipe(map(() => {
 
     //   const counter = new Counter();

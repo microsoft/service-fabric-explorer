@@ -6,24 +6,29 @@ import { DetailListTemplatesModule } from '../detail-list-templates/detail-list-
 import { NgbNavModule } from '@ng-bootstrap/ng-bootstrap';
 import { StripPrefixPipe } from './strip-prefix.pipe';
 import { RepairTasksModule } from '../repair-tasks/repair-tasks.module';
+import { InfrastructureOverviewComponent } from './infrastructure-overview/infrastructure-overview.component';
+import { ChartsModule } from '../charts/charts.module';
 
 
 
 @NgModule({
   declarations: [
     InfrastructureJobTileComponent,
-    StripPrefixPipe
+    StripPrefixPipe,
+    InfrastructureOverviewComponent
   ],
   imports: [
     CommonModule,
     SharedModule,
     DetailListTemplatesModule,
     RepairTasksModule,
-    NgbNavModule
+    NgbNavModule,
+    ChartsModule,
   ],
   exports: [
     InfrastructureJobTileComponent,
-    StripPrefixPipe
+    StripPrefixPipe,
+    InfrastructureOverviewComponent
   ]
 })
 export class InfrastructureJobModule { }

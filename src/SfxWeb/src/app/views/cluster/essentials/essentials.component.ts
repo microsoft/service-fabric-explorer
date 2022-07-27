@@ -16,7 +16,6 @@ import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUti
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
 
-
 @Component({
   selector: 'app-essentials',
   templateUrl: './essentials.component.html',
@@ -30,6 +29,7 @@ export class EssentialsComponent extends BaseControllerDirective {
   systemApp: SystemApplication;
   clusterManifest: ClusterManifest;
   repairtaskCollection: RepairTaskCollection;
+  repairTaskListSettings: ListSettings;
 
   nodesDashboard: IDashboardViewModel;
   appsDashboard: IDashboardViewModel;
@@ -49,22 +49,24 @@ export class EssentialsComponent extends BaseControllerDirective {
   }
 
   setup() {
-    this.clusterHealth = this.data.getClusterHealth(HealthStateFilterFlags.Default, HealthStateFilterFlags.None, HealthStateFilterFlags.None);
+    this.clusterHealth = this.data.clusterHealth;
     this.clusterUpgradeProgress = this.data.clusterUpgradeProgress;
     this.nodes = this.data.nodes;
     this.systemApp = this.data.systemApp;
     this.repairtaskCollection = this.data.repairCollection;
+    this.repairTaskListSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {
     return forkJoin([
       this.data.infrastructureCollection.ensureInitialized().pipe(map(() => console.log(this.data.infrastructureCollection))),
       this.clusterHealth.refresh(messageHandler).pipe(map((clusterHealth: ClusterHealth) => {
+        console.log(clusterHealth.raw.AggregatedHealthState)
         const nodesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Node);
-        this.nodesDashboard = DashboardViewModel.fromHealthStateCount('Nodes', 'Node', true, nodesHealthStateCount, this.data.routes, RoutesService.getNodesViewPath());
+        this.nodesDashboard = DashboardViewModel.fromHealthStateCount('Nodes', 'Node', false, nodesHealthStateCount, this.data.routes, RoutesService.getNodesViewPath());
 
         const appsHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Application);
-        this.appsDashboard = DashboardViewModel.fromHealthStateCount('Applications', 'Application', true, appsHealthStateCount, this.data.routes, RoutesService.getAppsViewPath());
+        this.appsDashboard = DashboardViewModel.fromHealthStateCount('Applications', 'Application', false, appsHealthStateCount, this.data.routes, RoutesService.getAppsViewPath());
 
         const servicesHealthStateCount = HealthUtils.getHealthStateCount(clusterHealth.raw, HealthStatisticsEntityKind.Service);
         this.servicesDashboard = DashboardViewModel.fromHealthStateCount('Services', 'Service', false, servicesHealthStateCount);

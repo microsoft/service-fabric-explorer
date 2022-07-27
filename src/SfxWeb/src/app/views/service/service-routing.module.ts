@@ -6,8 +6,6 @@ import { DetailsComponent } from './details/details.component';
 import { EventsComponent } from './events/events.component';
 import { ManifestComponent } from './manifest/manifest.component';
 import { BackupComponent } from './backup/backup.component';
-import { InfrastructureJobsComponent } from './infrastructurejobs/infrastructurejobs.component';
-
 
 const routes: Routes = [{
   path: '', component: BaseComponent, children: [
@@ -15,11 +13,9 @@ const routes: Routes = [{
     { path: 'details', component: DetailsComponent },
     { path: 'manifest', component: ManifestComponent },
     { path: 'events', component: EventsComponent },
-    { path: 'backup', component: BackupComponent },
-    { path: 'infrastructurejobs', component: InfrastructureJobsComponent}
-    ]
-  }
-];
+    { path: 'backup', component: BackupComponent }
+  ]
+}];
 
 @NgModule({
   imports: [RouterModule.forChild(routes)],
