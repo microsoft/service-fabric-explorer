@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH } from './util';
+import { addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH } from './util.cy';
 
 context('table', () => {
 

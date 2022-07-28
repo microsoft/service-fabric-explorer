@@ -105,7 +105,7 @@ export class RepairJobChartComponent implements OnInit, OnChanges {
         },
       ]
     };
-    this.chart = chart('container', options);
+    this.chart = chart('repair-job-chart-container', options);
     this.setGraph(this.jobs);
   }
 

@@ -1,3 +1,4 @@
+import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { Component, OnInit, Output, EventEmitter, Input } from '@angular/core';
 
 @Component({
@@ -27,6 +28,8 @@ export class RefreshRateComponent {
     5: '5',
   };
 
+  constructor(private liveAnnouncer: LiveAnnouncer) { }
+
   changed() {
     this.change(this.refreshRate);
   }
@@ -38,13 +41,11 @@ export class RefreshRateComponent {
     if (emitValue){
       this.rateChange.emit(this.displayRate);
     }
+
+    this.liveAnnouncer.announce(`The refresh rate is ${this.displayRate}`)
   }
 
   forceRefresh() {
     this.forceRefreshed.emit();
   }
-
-
-  constructor() { }
-
 }

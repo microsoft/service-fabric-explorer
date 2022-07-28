@@ -1,5 +1,5 @@
 import { Component, OnInit, Input, OnDestroy } from '@angular/core';
-import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
+import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically, ITimelineItem } from 'src/app/Models/eventstore/timelineGenerators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
 import { Subject, Subscription, forkJoin } from 'rxjs';
@@ -46,7 +46,7 @@ export interface IConcurrentEvents extends DataItem {
 export interface IRCAItem extends DataItem, IConcurrentEvents {
     kind: string;
     eventInstanceId: string;
-    reasonForEvent: string;    
+    reasonForEvent: string;
 }
 
 export interface IVisEvent {
@@ -176,7 +176,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
           start: this.startDate,
           end: this.endDate,
           groups: new DataSet<DataGroup>(),
-          items: new DataSet<DataItem>()
+          items: new DataSet<ITimelineItem>()
       };
   }
 
@@ -244,26 +244,26 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         */
 
         let simulEvents : IConcurrentEvents[] = [];
-        let addedEvents : DataItem[] = [];
+        let addedEvents : IRCAItem[] = [];
         let action = "";
 
         // iterate through all the input events
         inputEvents.forEach(inputEvent => {
             // iterate through all configurations
             configs.forEach(config => {
-                if (config.eventType == inputEvent.kind) {                                        
+                if (config.eventType == inputEvent.kind) {
                     // iterate through all events to find relevant ones
                     if(Utils.result(inputEvent, config.result)) {
                         action = "Action: " + Utils.result(inputEvent, config.result);
                     }
-                    inputEvent.reasonForEvent = action; 
+                    inputEvent.reasonForEvent = action;
                     config.relevantEventsType.forEach(relevantEventType => {
                         if(relevantEventType.eventType == "self") {
                             let propMaps = true;
                             let mappings = relevantEventType.propertyMappings;
-                            mappings.forEach(mapping => {     
+                            mappings.forEach(mapping => {
                                 let sourceVal: any;
-                                let targetVal: any;   
+                                let targetVal: any;
                                 sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
                                 targetVal = mapping.targetProperty;
                                 if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
@@ -278,7 +278,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                     {
                                         name: "self",
                                         related: null
-                                    });
+                                    } as IConcurrentEvents);
                                 action = "Action: " + relevantEventType.action;
                                 inputEvent.reasonForEvent = action;
                             }
@@ -288,23 +288,23 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 // see if each property mapping holds true
                                 let propMaps = true;
                                 let mappings = relevantEventType.propertyMappings;
-                                mappings.forEach(mapping => {     
+                                mappings.forEach(mapping => {
                                     let sourceVal: any;
-                                    let targetVal: any;   
+                                    let targetVal: any;
                                     if(mapping.sourceProperty == "raw.BatchId") {
                                         sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
                                         sourceVal = sourceVal.substring(sourceVal.indexOf("/") + 1);
                                     } else {
                                         sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
-                                    }                           
+                                    }
                                     targetVal = Utils.result(iterEvent, mapping.targetProperty);
                                     if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
                                         propMaps = false;
                                     }
                                 });
-                                
+
                                 if (propMaps) {
-                                    if (!inputEvent.related) 
+                                    if (!inputEvent.related)
                                     {
                                         inputEvent.related = [];
                                     }
@@ -312,7 +312,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                     addedEvents.push(iterEvent);
                                 }
                             }
-                        });                        
+                        });
                     });
                 }
             });
@@ -323,7 +323,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         return simulEvents;
     }
 
-  private getConcurrentEventsData(): DataSet<DataItem> {
+  private getConcurrentEventsData() {
     /*
         Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
     */
@@ -336,14 +336,14 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
     // refresh vis-event-list
     this.visEventList = [];
-    
+
     // grab highcharts data for all events
     for (let parsedEvent of parsedEvents) {
         let rootEvent = this.testEvent(parsedEvent, parsedEvents)[0];
         let visPresent = false;
         if (rootEvent.related) {
             visPresent = true;
-        }        
+        }
         let visEventItem : IVisEvent = {
             visEvent: rootEvent,
             visPresent: visPresent,
@@ -351,24 +351,24 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         }
         this.visEventList.push(visEventItem);
 
-        for (const data of this.listEventStoreData) {                        
+        for (const data of this.listEventStoreData) {
             data.eventsList.collection.forEach(event => {
-                if (Utils.result(event, "raw.eventInstanceId") == Utils.result(parsedEvent, "eventInstanceId")) {   
+                if (Utils.result(event, "raw.eventInstanceId") == Utils.result(parsedEvent, "eventInstanceId")) {
                     event.visPresent = visPresent;
                 }
             });
         }
     }
 
-    for (const data of this.listEventStoreData) {        
-        let visPresentFlag = data.listSettings.columnSettings.some((setting) => { 
-            return setting.propertyPath == "visPresent" 
-        });        
-        if (!visPresentFlag) {        
+    for (const data of this.listEventStoreData) {
+        let visPresentFlag = data.listSettings.columnSettings.some((setting) => {
+            return setting.propertyPath == "visPresent"
+        });
+        if (!visPresentFlag) {
             let newLogoSetting = new ListColumnSettingWithCustomComponent(
                 VisualizationLogoComponent,
                 'visPresent',
-                'Visualization Present',                
+                'Visualization Present',
                 {
                     enableFilter: true,
                     colspan: 1
@@ -385,15 +385,15 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                     colspan: -1
                 }
             ));
-        }        
-    }    
-  }  
+        }
+    }
+  }
 
   public setTimelineData(): void {
-      const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());            
+      const timelineEventSubs = this.listEventStoreData.map(data => data.eventsList.refresh());
       forkJoin(timelineEventSubs).subscribe(() => {
           this.timeLineEventsData = this.getTimelineData();
-          this.getConcurrentEventsData();                    
+          this.getConcurrentEventsData();
       });
   }
 

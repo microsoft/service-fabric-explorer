@@ -100,13 +100,13 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             { timestamp: this.raw.History.ClaimedUtcTimestamp, phase: 'Claimed' },
             { timestamp: this.raw.History.CreatedUtcTimestamp, phase: 'Created' },
             { timestamp: this.raw.History.PreparingUtcTimestamp, phase: 'Preparing' },
-            { timestamp: this.raw.History.PreparingHealthCheckStartUtcTimestamp, phase: 'Preparing Health Check start' },
-            { timestamp: this.raw.History.PreparingHealthCheckEndUtcTimestamp, phase: 'Preparing Health check End' },
+            { timestamp: this.raw.History.PreparingHealthCheckStartUtcTimestamp, phase: 'Preparing Health Check Start' },
+            { timestamp: this.raw.History.PreparingHealthCheckEndUtcTimestamp, phase: 'Preparing Health Check End' },
             { timestamp: this.raw.History.ApprovedUtcTimestamp, phase: 'Approved' },
             { timestamp: this.raw.History.ExecutingUtcTimestamp, phase: 'Executing' },
             { timestamp: this.raw.History.RestoringUtcTimestamp, phase: 'Restoring' },
-            { timestamp: this.raw.History.RestoringHealthCheckStartUtcTimestamp, phase: 'Restoring health check start' },
-            { timestamp: this.raw.History.RestoringHealthCheckEndUtcTimestamp, phase: 'Restoring Health check end' },
+            { timestamp: this.raw.History.RestoringHealthCheckStartUtcTimestamp, phase: 'Restoring Health Check Start' },
+            { timestamp: this.raw.History.RestoringHealthCheckEndUtcTimestamp, phase: 'Restoring Health Check End' },
             { timestamp: this.raw.History.CompletedUtcTimestamp, phase: 'Completed' },
         ];
 

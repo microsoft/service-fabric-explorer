@@ -93,7 +93,6 @@
           "builder": "ngx-build-plus:dev-server",
           "options": {
             "browserTarget": "SfxWeb:build",
-            "extraWebpackConfig": "./cypress/coverage.webpack.js",
             "proxyConfig": "proxy.conf.js"
           },
           "configurations": {

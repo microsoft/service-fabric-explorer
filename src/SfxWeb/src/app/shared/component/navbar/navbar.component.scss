@@ -11,6 +11,9 @@
     .detail-view-title-bar {
       padding-bottom: 18px;
       position: relative;
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
 
         .detail-view-title {
             overflow: hidden;
@@ -28,18 +31,16 @@
         justify-content: flex-start;
         flex-wrap: wrap;
         gap: 10px;
+        flex-wrap: wrap;
 
         .detail-view-navbar-tab {
             white-space: nowrap;
             text-overflow: ellipsis;
-
-            a {
-              text-align: right;
-              text-decoration: none;
-              text-transform: capitalize;
-              color: var(--font-accent-color);
-              font-size: var(--font-size-large);
-            }
+            text-align: right;
+            text-decoration: none;
+            text-transform: capitalize;
+            color: var(--font-accent-color);
+            font-size: var(--font-size-large);
 
             .tab-superscript {
                 display: inline-block;
@@ -102,10 +103,6 @@
     }
 
     .detail-view-navbar {
-            white-space: initial;
-            margin: 0px;
-            display: block;
-            flex-wrap: nowrap;
             .detail-view-navbar-tab {
                 min-width: initial;
                 overflow: initial;

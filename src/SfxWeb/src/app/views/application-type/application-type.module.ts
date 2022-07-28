@@ -14,17 +14,16 @@ import { NgbNavModule, NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 
 @NgModule({
-  declarations: [BaseComponent, EssentialsComponent, DetailsComponent, ActionRowComponent, CreateApplicationComponent],
-  imports: [
-    CommonModule,
-    ApplicationTypeRoutingModule,
-    SharedModule,
-    DetailListTemplatesModule,
-    ReactiveFormsModule,
-    FormsModule,
-    NgbNavModule,
-    NgbTooltipModule
-  ],
-  entryComponents: [ActionRowComponent]
+    declarations: [BaseComponent, EssentialsComponent, DetailsComponent, ActionRowComponent, CreateApplicationComponent],
+    imports: [
+        CommonModule,
+        ApplicationTypeRoutingModule,
+        SharedModule,
+        DetailListTemplatesModule,
+        ReactiveFormsModule,
+        FormsModule,
+        NgbNavModule,
+        NgbTooltipModule
+    ]
 })
 export class ApplicationTypeModule { }
