@@ -26,10 +26,15 @@ export interface IPropertyMapping {
     targetProperty: string;
 }
 
+export interface ITransform {
+    type : string;
+    value : string;
+}
+
 export interface IRelevantEventsConfig {
     eventType: string;
     propertyMappings: IPropertyMapping[];
-    action? : string; //mainly being used for self referential purposes
+    transform? : ITransform[]; //used to describe transformations that we want to make to strings
 }
 
 export interface IConcurrentEventsConfig {
@@ -108,6 +113,12 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   public endDate: Date;
 
   public simulEvents: IConcurrentEvents[];
+
+  public magicWand: { [K: string]: Function } = {
+    trimFront: this.trimFront,
+    trimBack: this.trimBack,
+    prefix: this.prefix,
+};
 
   ngOnInit() {
       this.pshowAllEvents = this.checkAllOption();
@@ -246,6 +257,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         let simulEvents : IConcurrentEvents[] = [];
         let addedEvents : DataItem[] = [];
         let action = "";
+        let parsed = "";
 
         // iterate through all the input events
         inputEvents.forEach(inputEvent => {
@@ -254,7 +266,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                 if (config.eventType == inputEvent.kind) {                                        
                     // iterate through all events to find relevant ones
                     if(Utils.result(inputEvent, config.result)) {
-                        action = "Action: " + Utils.result(inputEvent, config.result) + "<br/>";
+                        parsed = Utils.result(inputEvent, config.result);
+                        action = "Action: " + parsed + "<br/>";
                     }
                     inputEvent.reasonForEvent = action; 
                     config.relevantEventsType.forEach(relevantEventType => {
@@ -271,6 +284,16 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 }
                             });
                             if (propMaps) {
+                                if(Boolean(relevantEventType.transform)) {
+                                    let transformations = relevantEventType.transform;
+                                    transformations.forEach(transform => {
+                                        let func = transform.type;
+                                        let value = transform.value;
+                                        if(this.magicWand[func]) {
+                                            parsed = this.magicWand[func](parsed, value);
+                                        }
+                                    });
+                                }
                                 if (!inputEvent.related) {
                                     inputEvent.related = [];
                                 }
@@ -279,8 +302,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                         name: "self",
                                         related: null
                                     });
-                                action = "Action: " + relevantEventType.action + "<br/>";
-                                inputEvent.reasonForEvent = action;
+                                    action = "Action: " + parsed + "<br/>";
+                                    inputEvent.reasonForEvent = action;
                             }
                         }
                         events.forEach(iterEvent => {
@@ -321,6 +344,18 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
         if (addedEvents.length > 0) this.getSimultaneousEventsForEvent(configs, addedEvents, events);
         return simulEvents;
+    }
+
+    private trimFront(parsed: string, value: string): string {
+        return parsed.substring(parsed.indexOf(value) + 1);
+    }
+
+    private trimBack(parsed: string, value: string): string {
+        return parsed.substring(0, parsed.indexOf(value));
+    }
+
+    private prefix(parsed: string, value: string): string {
+        return value + parsed;
     }
 
   private getConcurrentEventsData(): DataSet<DataItem> {
