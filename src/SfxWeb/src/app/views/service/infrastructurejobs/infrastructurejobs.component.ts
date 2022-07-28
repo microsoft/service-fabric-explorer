@@ -34,15 +34,31 @@ export class InfrastructureJobsComponent extends ServiceBaseControllerDirective 
   }
 
   setup() {
-    this.allPendingMRJobsList = this.settings.getNewOrExistingListSettings('allMRJobs', ['raw.CurrentUD'], [
-      new ListColumnSetting('raw.Id', 'Job Id'),
-      new ListColumnSettingWithFilter('raw.CurrentUD', 'Current UD'),
-      new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
-      new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
-      new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
-      new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes', 2),
-      new ListColumnSetting('raw.IsThrottled', 'Throttled'),
-     ]);
+
+    if(this.data.versionCheck("9.1"))
+    {
+      this.allPendingMRJobsList = this.settings.getNewOrExistingListSettings('allMRJobs', ['raw.CurrentUD'], [
+        new ListColumnSetting('raw.Id', 'Job Id'),
+        new ListColumnSettingWithFilter('raw.CurrentUD', 'Current UD'),
+        new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
+        new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
+        new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
+        new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes', 2),
+        new ListColumnSetting('raw.IsThrottled', 'Throttled'),
+       ]);
+    }
+    else
+    {
+      this.allPendingMRJobsList = this.settings.getNewOrExistingListSettings('allMRJobs', ['raw.CurrentUD'], [
+        new ListColumnSetting('raw.Id', 'Job Id'),
+        new ListColumnSettingWithFilter('raw.CurrentUD', 'Current UD'),
+        new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
+        new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
+        new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
+        new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes', 2)
+       ]);
+    }
+    
 
     this.completedMRJobsList = this.settings.getNewOrExistingListSettings('completedMRJobs', [], [
       new ListColumnSetting('raw.Id', 'Job Id'),
