@@ -15,6 +15,7 @@ import { Utils } from 'src/app/Utils/Utils';
 import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSettings';
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
+import { Transforms } from 'src/app/Utils/Transforms';
 
 export interface IQuickDates {
     display: string;
@@ -28,13 +29,15 @@ export interface IPropertyMapping {
 
 export interface ITransform {
     type : string;
-    value : string;
+    value : any;
 }
 
 export interface IRelevantEventsConfig {
     eventType: string;
     propertyMappings: IPropertyMapping[];
-    transform? : ITransform[]; //used to describe transformations that we want to make to strings
+    selfTransform? : ITransform[]; //used to describe self transformations that we want to make to strings
+    sourceTransform? : ITransform[]; //used to describe source transformations that we want to make
+    targetTransform? : ITransform[]; //used to describe target transformations that we want to make
 }
 
 export interface IConcurrentEventsConfig {
@@ -115,9 +118,9 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   public simulEvents: IConcurrentEvents[];
 
   public magicWand: { [K: string]: Function } = {
-    trimFront: this.trimFront,
-    trimBack: this.trimBack,
-    prefix: this.prefix,
+    trimFront: Transforms.trimFront,
+    trimBack: Transforms.trimBack,
+    prefix: Transforms.prefix,
 };
 
   ngOnInit() {
@@ -284,13 +287,15 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 }
                             });
                             if (propMaps) {
-                                if(Boolean(relevantEventType.transform)) {
-                                    let transformations = relevantEventType.transform;
+                                if(relevantEventType.selfTransform) {
+                                    let transformations = relevantEventType.selfTransform;
                                     transformations.forEach(transform => {
                                         let func = transform.type;
                                         let value = transform.value;
                                         if(this.magicWand[func]) {
                                             parsed = this.magicWand[func](parsed, value);
+                                        } else {
+                                            throw new Error(`Method '${func}' is not implemented.`);
                                         }
                                     });
                                 }
@@ -315,17 +320,31 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                     let sourceVal: any;
                                     let targetVal: any;   
                                     sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
-                                    if(Boolean(relevantEventType.transform)) {
-                                        let transformations = relevantEventType.transform;
+                                    if(relevantEventType.sourceTransform) {
+                                        let transformations = relevantEventType.sourceTransform;
                                         transformations.forEach(transform => {
                                             let func = transform.type;
                                             let value = transform.value;
                                             if(this.magicWand[func]) {
                                                 sourceVal = this.magicWand[func](sourceVal, value);
+                                            } else {
+                                                throw new Error(`Method '${func}' is not implemented.`);
                                             }
                                         });
                                     }                           
                                     targetVal = Utils.result(iterEvent, mapping.targetProperty);
+                                    if(relevantEventType.targetTransform) {
+                                        let transformations = relevantEventType.targetTransform;
+                                        transformations.forEach(transform => {
+                                            let func = transform.type;
+                                            let value = transform.value;
+                                            if(this.magicWand[func]) {
+                                                targetVal = this.magicWand[func](targetVal, value);
+                                            } else {
+                                                throw new Error(`Method '${func}' is not implemented.`);
+                                            }
+                                        });
+                                    } 
                                     if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
                                         propMaps = false;
                                     }
@@ -351,17 +370,17 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         return simulEvents;
     }
 
-    private trimFront(parsed: string, value: string): string {
-        return parsed.substring(parsed.indexOf(value) + 1);
-    }
+    // private trimFront(parsed: string, value: string): string {
+    //     return parsed.substring(parsed.indexOf(value) + 1);
+    // }
 
-    private trimBack(parsed: string, value: string): string {
-        return parsed.substring(0, parsed.indexOf(value));
-    }
+    // private trimBack(parsed: string, value: string): string {
+    //     return parsed.substring(0, parsed.indexOf(value));
+    // }
 
-    private prefix(parsed: string, value: string): string {
-        return value + parsed;
-    }
+    // private prefix(parsed: string, value: string): string {
+    //     return value + parsed;
+    // }
 
   private getConcurrentEventsData(): DataSet<DataItem> {
     /*

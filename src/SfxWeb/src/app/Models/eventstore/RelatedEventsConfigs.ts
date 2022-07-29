@@ -21,7 +21,7 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "7147"
                     }
                 ],
-                transform: [
+                selfTransform: [
                     {
                         type: "trimFront",
                         value: "."
@@ -40,7 +40,7 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "3221225786"
                     }
                 ],
-                transform: [
+                selfTransform: [
                     {
                         type: "trimFront",
                         value: "."
@@ -59,7 +59,7 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "7148"
                     }
                 ],
-                transform: [
+                selfTransform: [
                     {
                         type: "trimFront",
                         value: "."
@@ -78,7 +78,7 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "0"
                     }
                 ],
-                transform: [
+                selfTransform: [
                     {
                         type: "trimFront",
                         value: "."
@@ -126,7 +126,7 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "raw.TaskId"
                     }
                 ],
-                transform: [
+                sourceTransform: [
                     {
                         type: "trimFront",
                         value: "/"
