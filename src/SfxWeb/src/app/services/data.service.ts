@@ -102,6 +102,21 @@ export class DataService {
     return this.storage.getValueBoolean(Constants.AdvancedModeKey, false);
   }
 
+  public async versionCheck(minVersion: string): Promise<boolean> {
+    const splitVersion = minVersion.split(".");
+    const upgradeInfo = await this.getClusterUpgradeProgress().toPromise();
+    const splitClusterVersion = upgradeInfo.raw.CodeVersion.split(".");
+
+    let higherVersion = true;
+    for(let i = 0; i < splitVersion.length; i++) {
+      if(+splitVersion[i] > +splitClusterVersion[i]) {
+        higherVersion = false;
+        break;
+      }
+    }
+    return higherVersion;
+  }
+
   public getClusterHealth(
     eventsHealthStateFilter: HealthStateFilterFlags = HealthStateFilterFlags.Default,
     nodesHealthStateFilter: HealthStateFilterFlags = HealthStateFilterFlags.Default,

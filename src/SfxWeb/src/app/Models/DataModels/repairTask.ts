@@ -229,7 +229,6 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
     private checkAndSetConcerningJob(): Observable<IConcerningJobInfo> {
       return new Observable(observer => {
         const emit = (data: IConcerningJobInfo) => {
-          console.log(data);
           observer.next(data);
           observer.complete();
         }
@@ -247,7 +246,6 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             data = data.filter(node => node);
             const nodesWithSeedNodeWarnings = data.filter(node => DeactivationUtils.hasSeedNodeSafetyCheck(node.raw.NodeDeactivationInfo));
             const nodesWithSafetyChecks = data.filter(node => node.raw.NodeDeactivationInfo.PendingSafetyChecks.length > 0);
-            console.log(data)
             //seed node related
             if(nodesWithSeedNodeWarnings.length > 0) {
               emit({
@@ -269,7 +267,6 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
             }else {
               // cluster health is not OK
               this.data.getDefaultClusterHealth().subscribe(clusterHealth => {
-                console.log(clusterHealth)
                 if(clusterHealth.raw.AggregatedHealthState !== "Ok") {
                   emit({
                     type: 'seedNode',
@@ -314,7 +311,6 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
             this.couldParseExecutorData = true;
         } catch (e) {
-            console.log(e);
             this.couldParseExecutorData = false;
         }
 

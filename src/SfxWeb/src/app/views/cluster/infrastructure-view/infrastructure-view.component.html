@@ -1,45 +1,36 @@
-<div class="tile-container">
-  <app-dashboard-text-tile [barClass]="executingMRJobs.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
-    [count]="executingMRJobs.length" *ngIf="executingMRJobs.length >= 0" title="Active Infrastructure Jobs"
-    style="display: block">
-  </app-dashboard-text-tile>
-
-  <app-dashboard-text-tile [barClass]="allPendingMRJobs.length > 0 ? 'badge-upgrade-active' : 'badge-upgrade-inactive'"
-    [count]="allPendingMRJobs.length" *ngIf="allPendingMRJobs.length >= 0" title="Pending Infrastrucutre Jobs "
-    style="display: block">
-  </app-dashboard-text-tile>
-</div>
-
-<div style="    margin: 15px 0px;">
-  <a href="https://docs.microsoft.com/azure/service-fabric/infrastructure-service-faq#faqs" target="_blank" class="essen-pane info-box">
+<div style="margin: 15px 0px;">
+  <a href="https://docs.microsoft.com/azure/service-fabric/infrastructure-service-faq#faqs" target="_blank"
+    class="essen-pane info-box">
     <span class="mif-info link"></span> Click here to learn more about Infrastructure jobs.
   </a>
 </div>
 
 <div *ngIf="collection.isInitialized" class="essen-pane">
   <div ngbNav #nav="ngbNav" class="nav-wrapper" activeIndex="0">
-    <div *ngFor="let infra of collection.collection; let i = index;" [ngbNavItem]="i" >
-        <a ngbNavLink style="font-size: 12pt;" >
-            <div style="display: flex;
-            justify-content: space-between;">
-              <div>
-                {{infra.name | stripPrefix}}
-              </div>
-            </div>
-            <div class="chip-container">
-              <span class="chip">
-                Active : <span> 1 </span>
-              </span>
-              <span class="chip pending">
-                Pending : <span> 1</span>
-              </span>
-            </div>
-        </a>
-        <ng-template ngbNavContent>
-          <app-infrastructure-overview [jobs]="infra.jobs" [repairCollection]="repairTaskCollection"></app-infrastructure-overview>
-        </ng-template>
+    <div *ngFor="let infra of collection.collection; let i = index;" [ngbNavItem]="i">
+      <a ngbNavLink style="font-size: 12pt;">
+        <div style="display: flex; gap: 10px;">
+            <i class="mif-notification warning-icon" tooltipClass="styled-tooltip" *ngIf="infra.isThrottled"
+            ngbTooltip="This infrastructure service has throttled jobs. This means there are jobs that are currently waiting."
+            container="body"></i>
+          <div>
+            {{infra.name | stripPrefix}}
+          </div>
+        </div>
+        <div class="chip-container">
+          <span class="chip">
+            Active : <span> {{infra.executingMRJobs.length}} </span>
+          </span>
+          <span class="chip pending">
+            Pending : <span> {{infra.allPendingMRJobs.length}} </span>
+          </span>
+        </div>
+      </a>
+      <ng-template ngbNavContent>
+        <app-infrastructure-overview [jobs]="infra.raw.Jobs" [repairCollection]="repairTaskCollection"
+          [collection]="infra"></app-infrastructure-overview>
+      </ng-template>
     </div>
   </div>
   <div [ngbNavOutlet]="nav" style="margin-top: 10px"></div>
-
 </div>

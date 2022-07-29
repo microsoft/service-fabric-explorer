@@ -10,7 +10,7 @@
     </h4>
 
     <div style="margin-bottom: 20px;" collapse-body class="nested-block">
-      <app-infrastructure-job-tile *ngFor="let job of executingMRJobs" [job]="job" style="margin-bottom: 15px;"></app-infrastructure-job-tile>
+      <app-infrastructure-job-tile *ngFor="let job of collection.executingMRJobs" [job]="job" style="margin-bottom: 15px;"></app-infrastructure-job-tile>
     </div>
   </app-collapse-container>
 </div>
@@ -21,7 +21,7 @@
       Pending Infrastructure Jobs
     </h4>
     <div class="nested-block" collapse-body>
-      <app-detail-list [list]="allPendingMRJobs" [listSettings]="allPendingMRJobsList">
+      <app-detail-list [list]="collection.allPendingMRJobs" [listSettings]="allPendingMRJobsList">
       </app-detail-list>
     </div>
   </app-collapse-container>
@@ -33,7 +33,7 @@
       Recently Completed Infrastructure Jobs
     </h4>
     <div class="nested-block" collapse-body>
-      <app-detail-list [list]="completedMRJobs" [listSettings]="completedMRJobsList">
+      <app-detail-list [list]="collection.completedMRJobs" [listSettings]="completedMRJobsList">
       </app-detail-list>
     </div>
   </app-collapse-container>

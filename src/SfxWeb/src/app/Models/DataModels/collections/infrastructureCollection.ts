@@ -3,21 +3,39 @@ import { map, mergeMap } from 'rxjs/operators';
 import { Constants, StatusWarningLevel } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
+import { DataModelBase } from '../Base';
 import { InfrastructureJob } from '../infrastructureJob';
-import { RepairTask, StatusCSS } from '../repairTask';
+import { RepairTask } from '../repairTask';
 import { DataModelCollectionBase } from './CollectionBase';
 
-export interface InfrastructureCollectionItem {
-  name: string;
-  jobs: InfrastructureJob[];
+export interface IInfrastructureCollectionItem {
+  Name: string;
+  Jobs: InfrastructureJob[];
 }
 
-export class InfrastructureCollection extends DataModelCollectionBase<InfrastructureJob> {
-  // static readonly minDurationApprovalbanner = 1000 * 60 * 15; // 15 minutes
-  // static readonly bannerApprovalId = 'repair-approval';
+export class InfrastructureCollectionItem extends DataModelBase<IInfrastructureCollectionItem> {
+  isThrottled: boolean = false;
 
-  repairTasks: RepairTask[] = [];
-  completedRepairTasks: RepairTask[] = [];
+  executingMRJobs: InfrastructureJob[] = [];
+  allPendingMRJobs: InfrastructureJob[] = [];
+  completedMRJobs: InfrastructureJob[] = [];
+
+  constructor(public data: DataService, public raw: IInfrastructureCollectionItem) {
+    super(data, raw);
+    this.updateInternal();
+  }
+
+  updateInternal(): Observable<any> {
+    this.isThrottled = this.raw.Jobs.some(job => job.raw.IsThrottled) || Math.random() > .5;
+    this.executingMRJobs = this.raw.Jobs.filter(job => job.raw.JobStatus === 'Executing' && Boolean(job.raw.IsActive))
+    this.allPendingMRJobs = this.raw.Jobs.filter(job => job.raw.JobStatus !== 'Completed' && !Boolean(job.raw.IsActive))
+    this.completedMRJobs = this.raw.Jobs.filter(job => job.raw.JobStatus === 'Completed');
+    return of(null);
+  }
+}
+
+export class InfrastructureCollection extends DataModelCollectionBase<InfrastructureCollectionItem> {
+  static readonly bannerThrottledJobs = 'throttled-banner';
 
   public longRunningApprovalJob: RepairTask;
   public longestExecutingJob: RepairTask;
@@ -28,69 +46,31 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
 
   protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
     return this.data.getSystemServices(true, messageHandler).pipe(mergeMap(services => {
-      console.log(services)
       const infrastructureServices = services.collection.filter(service => service.raw.TypeName === Constants.InfrastructureServiceType);
-      console.log(infrastructureServices)
       return forkJoin(infrastructureServices.map(service => this.data.restClient.getInfrastructureJobs(service.id).pipe
         (map(items => {
-          return {
-            name: service.name,
-            jobs: items.map(item => new InfrastructureJob(this.data, item))
-          }
+          return new InfrastructureCollectionItem(this.data, {
+            Name: service.name,
+            Jobs: items.map(item => new InfrastructureJob(this.data, item))
+          })
         }))))
     }))
   }
 
   protected updateInternal(): Observable<any> {
-
-    // let longRunningApprovalRepairTask: RepairTask = null;
-    // let longRunningExecutingRepairTask: RepairTask = null;
-
-    // this.repairTasks = [];
-    // this.completedRepairTasks = [];
-
-    // this.collection.forEach(task => {
-    //     if (task.inProgress) {
-    //         this.repairTasks.push(task);
-    //         const executingPhase = task.getPhase('Executing');
-    //         const approving = task.getPhase('Approved');
-
-    //         // set the longest approving job if executing has no timestamp but approving does
-    //         // showing that the current phase is in approving
-    //         if (approving.timestamp === "" &&
-    //             (!longRunningApprovalRepairTask ||
-    //               task.getHistoryPhase('Preparing').durationMilliseconds > longRunningApprovalRepairTask.getHistoryPhase('Preparing').durationMilliseconds)) {
-    //                 longRunningApprovalRepairTask = task;
-    //         }
-
-    //         if (task.raw.State === RepairTask.ExecutingStatus &&
-    //            (!longRunningExecutingRepairTask ||
-    //                 executingPhase.durationMilliseconds > longRunningExecutingRepairTask.getPhase('Executing').durationMilliseconds)) {
-    //                     longRunningExecutingRepairTask = task;
-    //         }
-    //     } else {
-    //         this.completedRepairTasks.push(task);
-    //     }
-    // });
-
-    // this.longRunningApprovalJob = longRunningApprovalRepairTask;
-    // this.longestExecutingJob = longRunningExecutingRepairTask;
-
-    // if (longRunningApprovalRepairTask && longRunningApprovalRepairTask.getHistoryPhase('Preparing').durationMilliseconds > RepairTaskCollection.minDurationApprovalbanner) {
-    //     this.data.warnings.addOrUpdateNotification({
-    //         message: `Action Required: There is a repair job (${longRunningApprovalRepairTask.id}) waiting for approval for ${longRunningApprovalRepairTask.displayDuration}. This can block updates to this cluster. Please see aka.ms/sflongapprovingjob for more information. `,
-    //         level: StatusWarningLevel.Warning,
-    //         priority: 4,
-    //         id: RepairTaskCollection.bannerApprovalId,
-    //     }, true);
-    // } else {
-    //     this.data.warnings.removeNotificationById(RepairTaskCollection.bannerApprovalId);
-    // }
-
+    const throttledIS = this.collection.filter(infra => infra.isThrottled);
+    if (throttledIS.length) {
+      this.data.warnings.addOrUpdateNotification({
+          message: `Active updates count has exceeded the max allowed for safe rollout of updates for
+                    ${throttledIS.map(is => is.name).join(",")}
+                    Once the existing updates complete, the pending updates will start automatically `,
+          level: StatusWarningLevel.Warning,
+          priority: 4,
+          id: InfrastructureCollection.bannerThrottledJobs,
+      }, true);
+  } else {
+      this.data.warnings.removeNotificationById(InfrastructureCollection.bannerThrottledJobs);
+  }
     return of(null);
   }
-
-  // public getRepairJobsForANode(nodeName: string) {
-  //   return this.collection.filter(task => task.raw.Target.NodeNames.includes(nodeName) || task.impactedNodes.includes(nodeName));
-  // }
 }

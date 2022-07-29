@@ -54,6 +54,25 @@ context('apps list page', () => {
         })
     })
 
+  describe("app types", () => {
+    it('view app types', () => {
+      cy.wait(FIXTURE_REF_APPS);
+
+      cy.get('[data-cy=navtabs]').within(() => {
+        cy.contains('app types').click();
+      })
+
+      cy.url().should('include', `/#/apps/apptypes`)
+      cy.get('[data-cy=active-app-type]').within(() => {
+        cy.contains("1")
+      })
+
+      cy.get('[data-cy=inactive-app-type]').within(() => {
+        cy.contains("1")
+      })
+    })
+  })
+
     describe("events", () => {
         it('view events', () => {
             cy.wait(FIXTURE_REF_APPS);

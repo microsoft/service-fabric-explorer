@@ -5,6 +5,8 @@ import { RepairTask } from 'src/app/Models/DataModels/repairTask';
 import { ListSettings, ListColumnSetting, ListColumnSettingWithFilter, ListColumnSettingWithShorten } from 'src/app/Models/ListSettings';
 import { SettingsService } from 'src/app/services/settings.service';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
+import { DataService } from 'src/app/services/data.service';
+import { InfrastructureCollectionItem } from 'src/app/Models/DataModels/collections/infrastructureCollection';
 
 @Component({
   selector: 'app-infrastructure-overview',
@@ -12,18 +14,15 @@ import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/Repa
   styleUrls: ['./infrastructure-overview.component.scss']
 })
 export class InfrastructureOverviewComponent implements OnInit, OnChanges {
+  @Input() collection: InfrastructureCollectionItem;
   @Input() jobs: InfrastructureJob[];
   @Input() repairCollection: RepairTaskCollection;
-
-  allPendingMRJobs: InfrastructureJob[] = [];
-  executingMRJobs: InfrastructureJob[] = [];
-  completedMRJobs: InfrastructureJob[] = [];
 
   allPendingMRJobsList: ListSettings;
   completedMRJobsList: ListSettings;
 
   infrastructureJobsSuggestion: string[] = [];
-  constructor(private settings: SettingsService) { }
+  constructor(private settings: SettingsService, private data: DataService) { }
 
   ngOnInit(): void {
     this.allPendingMRJobsList = this.settings.getNewOrExistingListSettings('allMRJobs', ['raw.CurrentUD'], [
@@ -33,7 +32,14 @@ export class InfrastructureOverviewComponent implements OnInit, OnChanges {
       new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
       new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
       new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes', 2),
-     ]);
+      new ListColumnSetting('raw.IsThrottled', 'Throttled'),
+    ]);
+
+    this.data.versionCheck("9.1").then(valid => {
+      if (valid && !this.allPendingMRJobsList.columnSettings.some(col => col.displayName === "Throttled")) {
+        this.allPendingMRJobsList.columnSettings.push(new ListColumnSetting('raw.IsThrottled', 'Throttled'))
+      }
+    })
 
     this.completedMRJobsList = this.settings.getNewOrExistingListSettings('completedMRJobs', [], [
       new ListColumnSetting('raw.Id', 'Job Id'),
@@ -44,12 +50,9 @@ export class InfrastructureOverviewComponent implements OnInit, OnChanges {
   }
 
   ngOnChanges(): void {
-    this.executingMRJobs = this.jobs.filter(job => job.raw.JobStatus === 'Executing' && Boolean(job.raw.IsActive))
-    this.allPendingMRJobs = this.jobs.filter(job => job.raw.JobStatus !== 'Completed' && !Boolean(job.raw.IsActive))
-    this.completedMRJobs = this.jobs.filter(job => job.raw.JobStatus === 'Completed');
     this.infrastructureJobsSuggestion = [];
 
-    if (this.executingMRJobs.some(job => {
+    if (this.collection.executingMRJobs.some(job => {
       const repairTask = this.repairCollection.collection.find(rt => rt.id === job.RepairTask.TaskId);
       if (repairTask && repairTask.raw.State === RepairTask.ExecutingStatus && repairTask.getPhase('Executing').durationMilliseconds >= Constants.MaxExecutingInfraJobDuration) {
         return true;
@@ -60,11 +63,11 @@ export class InfrastructureOverviewComponent implements OnInit, OnChanges {
       this.infrastructureJobsSuggestion.push(Constants.longExecutingInfraJobsSuggestion);
     };
 
-    if(this.executingMRJobs.some(job => job.RepairTask.State === 'Preparing'))
+    if(this.collection.executingMRJobs.some(job => job.RepairTask.State === 'Preparing'))
     {
       this.infrastructureJobsSuggestion.push(Constants.executingInfraJobsSuggestion);
     }
-    if (this.allPendingMRJobs.length !== 0 && this.executingMRJobs.length > 1)
+    if (this.collection.allPendingMRJobs.length !== 0 && this.collection.executingMRJobs.length > 1)
     {
       this.infrastructureJobsSuggestion.push(Constants.pendingInfraJobsSuggestion);
     }

@@ -629,7 +629,7 @@ context('Cluster page', () => {
       });
     })
 
-    it.only('view in progress repair job - stuck in health check', () => {
+    it('view in progress repair job - stuck in health check', () => {
       setup('cluster-page/repair-jobs/stuck-in-health-check.json')
 
       cy.get('[data-cy=pendingjobs]').within(() => {
@@ -663,4 +663,40 @@ context('Cluster page', () => {
       });
     })
   })
+
+  const infraService = "System%2FInfrastructureService%2FType134";
+
+  describe("systemService - infraservice", () => {
+    beforeEach(() => {
+      addDefaultFixtures();
+
+      addRoute("infra-service-data", "system-service/infrastructure-data.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/Type134*`))
+      addRoute("infra-service-info", "system-service/infra-service-info.json", apiUrl(`/Applications/System/$/GetServices/${infraService}?*`))
+      cy.visit(`/#/infrastructure`)
+    })
+
+    it.only('executing job', () => {
+      cy.get('[data-cy=navtabs]').within(() => {
+        cy.contains('infrastructure jobs').click();
+      })
+
+      cy.get('[data-cy=444703f2-0733-4537-9cf0-4a543ca12e91]').within(() => {
+        cy.get('[data-cy=overview]').within(() => {
+          cy.contains(' _primaray_0:ConfigurationUpdate ')
+          cy.contains('Acknowledged')
+        })
+      })
+
+      cy.get('[data-cy=completed]').click();
+
+      cy.contains('FFFFFFF')
+
+
+      //verify pending/active count
+      //verify amount of IS
+      //verify is throttling
+      //verify on landing that there are repair jobs of concern
+    })
+  })
+
 })

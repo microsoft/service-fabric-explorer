@@ -65,7 +65,7 @@ export class BaseComponent implements OnInit {
 
       if (this.dataService.clusterManifest.isRepairManagerEnabled) {
         this.tabs = this.tabs.concat({
-          name: 'infrastructure',
+          name: 'infrastructure jobs',
           route: '/infrastructure'
         });
       }
