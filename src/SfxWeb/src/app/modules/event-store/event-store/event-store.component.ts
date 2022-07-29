@@ -314,11 +314,16 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 mappings.forEach(mapping => {     
                                     let sourceVal: any;
                                     let targetVal: any;   
-                                    if(mapping.sourceProperty == "raw.BatchId") {
-                                        sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
-                                        sourceVal = sourceVal.substring(sourceVal.indexOf("/") + 1);
-                                    } else {
-                                        sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                    sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
+                                    if(Boolean(relevantEventType.transform)) {
+                                        let transformations = relevantEventType.transform;
+                                        transformations.forEach(transform => {
+                                            let func = transform.type;
+                                            let value = transform.value;
+                                            if(this.magicWand[func]) {
+                                                sourceVal = this.magicWand[func](sourceVal, value);
+                                            }
+                                        });
                                     }                           
                                     targetVal = Utils.result(iterEvent, mapping.targetProperty);
                                     if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
