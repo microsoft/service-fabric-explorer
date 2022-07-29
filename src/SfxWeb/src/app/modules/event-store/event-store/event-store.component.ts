@@ -370,18 +370,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         return simulEvents;
     }
 
-    // private trimFront(parsed: string, value: string): string {
-    //     return parsed.substring(parsed.indexOf(value) + 1);
-    // }
-
-    // private trimBack(parsed: string, value: string): string {
-    //     return parsed.substring(0, parsed.indexOf(value));
-    // }
-
-    // private prefix(parsed: string, value: string): string {
-    //     return value + parsed;
-    // }
-
   private getConcurrentEventsData(): DataSet<DataItem> {
     /*
         Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
