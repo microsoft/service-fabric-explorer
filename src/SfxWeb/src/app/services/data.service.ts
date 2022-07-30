@@ -126,7 +126,7 @@ export class DataService {
   }
 
   public getDefaultClusterHealth(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler) {
-    return this.clusterHealth.ensureInitialized(forceRefresh, messageHandler).pipe(map(() => {console.log(this.clusterHealth); return this.clusterHealth}));
+    return this.clusterHealth.ensureInitialized(forceRefresh, messageHandler).pipe(map(() => this.clusterHealth));
   }
 
   public getClusterManifest(forceRefresh: boolean = false, messageHandler?: IResponseMessageHandler): Observable<ClusterManifest> {
@@ -187,9 +187,7 @@ export class DataService {
   }
 
   public getNode(name: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<Node> {
-    console.log(name)
       return this.getNodes(false, messageHandler).pipe(mergeMap(collection => {
-        console.log(collection)
           return this.tryGetValidItem(collection, name, forceRefresh, messageHandler);
       }));
   }
@@ -425,7 +423,6 @@ export class DataService {
 
   private tryGetValidItem<T extends IDataModel<any>>(collection: IDataModelCollection<T>, uniqueId: string, forceRefresh?: boolean, messageHandler?: IResponseMessageHandler): Observable<any> {
     const item = collection.find(uniqueId);
-    console.log(item)
     if (item) {
         return item.ensureInitialized(forceRefresh, messageHandler);
     } else {

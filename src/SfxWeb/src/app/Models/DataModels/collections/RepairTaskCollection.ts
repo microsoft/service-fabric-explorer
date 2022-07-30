@@ -74,7 +74,7 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
         }
 
         this.jobsOfInterest = this.repairTasks;
-        return forkJoin(this.repairTasks.map(task => task.updateInternal())).pipe(map(() => {console.log(this.repairTasks)}))
+        return forkJoin(this.repairTasks.map(task => task.updateInternal()));
     }
 
     public getRepairJobsForANode(nodeName: string) {
