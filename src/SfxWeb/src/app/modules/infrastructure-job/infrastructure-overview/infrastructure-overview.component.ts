@@ -25,21 +25,7 @@ export class InfrastructureOverviewComponent implements OnInit, OnChanges {
   constructor(private settings: SettingsService, private data: DataService) { }
 
   ngOnInit(): void {
-    this.allPendingMRJobsList = this.settings.getNewOrExistingListSettings('allMRJobs', ['raw.CurrentUD'], [
-      new ListColumnSetting('raw.Id', 'Job Id'),
-      new ListColumnSettingWithFilter('raw.CurrentUD', 'Current UD'),
-      new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
-      new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
-      new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
-      new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes', 2),
-      new ListColumnSetting('raw.IsThrottled', 'Throttled'),
-    ]);
-
-    this.data.versionCheck("9.1").then(valid => {
-      if (valid && !this.allPendingMRJobsList.columnSettings.some(col => col.displayName === "Throttled")) {
-        this.allPendingMRJobsList.columnSettings.push(new ListColumnSetting('raw.IsThrottled', 'Throttled'))
-      }
-    })
+    this.allPendingMRJobsList = this.settings.getNewOrExistingInfrastructureSettings();
 
     this.completedMRJobsList = this.settings.getNewOrExistingListSettings('completedMRJobs', [], [
       new ListColumnSetting('raw.Id', 'Job Id'),

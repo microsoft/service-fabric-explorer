@@ -19,6 +19,7 @@ export class InfrastructureCollectionItem extends DataModelBase<IInfrastructureC
   executingMRJobs: InfrastructureJob[] = [];
   allPendingMRJobs: InfrastructureJob[] = [];
   completedMRJobs: InfrastructureJob[] = [];
+  throttledJobs: InfrastructureJob[] = [];
 
   constructor(public data: DataService, public raw: IInfrastructureCollectionItem) {
     super(data, raw);
@@ -30,6 +31,7 @@ export class InfrastructureCollectionItem extends DataModelBase<IInfrastructureC
     this.executingMRJobs = this.raw.Jobs.filter(job => job.raw.JobStatus === 'Executing' && Boolean(job.raw.IsActive))
     this.allPendingMRJobs = this.raw.Jobs.filter(job => job.raw.JobStatus !== 'Completed' && !Boolean(job.raw.IsActive))
     this.completedMRJobs = this.raw.Jobs.filter(job => job.raw.JobStatus === 'Completed');
+    this.throttledJobs = this.raw.Jobs.filter(job => job.raw.IsThrottled);
     return of(null);
   }
 }
@@ -37,8 +39,7 @@ export class InfrastructureCollectionItem extends DataModelBase<IInfrastructureC
 export class InfrastructureCollection extends DataModelCollectionBase<InfrastructureCollectionItem> {
   static readonly bannerThrottledJobs = 'throttled-banner';
 
-  public longRunningApprovalJob: RepairTask;
-  public longestExecutingJob: RepairTask;
+  public throttledJobs: InfrastructureJob[];
 
   public constructor(data: DataService) {
     super(data, parent);
@@ -58,8 +59,12 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
   }
 
   protected updateInternal(): Observable<any> {
+    this.throttledJobs = [];
+
     const throttledIS = this.collection.filter(infra => infra.isThrottled);
-    if (throttledIS.length) {
+    if (throttledIS.length > 0) {
+      throttledIS.forEach(is => this.throttledJobs = this.throttledJobs.concat(is.throttledJobs));
+
       this.data.warnings.addOrUpdateNotification({
           message: `Active updates count has exceeded the max allowed for safe rollout of updates for
                     ${throttledIS.map(is => is.name).join(",")}

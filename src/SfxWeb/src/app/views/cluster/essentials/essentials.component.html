@@ -23,18 +23,20 @@
     </app-dashboard-text-tile>
 </div>
 
-<div *ngIf="repairtaskCollection.jobsOfInterest.length > 0" class="essen-pane detail-pane" style="border: 2px solid var(--badge-warning);">
+<div *ngIf="repairtaskCollection.jobsOfInterest.length > 0 || infraCollection.throttledJobs.length > 0" class="essen-pane detail-pane" style="border: 2px solid var(--badge-warning);">
   <app-collapse-container sectionName="Potentially Stuck Repair Jobs" collapsed="false">
     <div collapse-header>
-            <h4>Potentially Stuck Repair Jobs</h4>
+            <h4>Potentially Stuck Repair Jobs and Throttled Infrastructure Jobs</h4>
     </div>
     <div collapse-body>
+      <h4 class="nested-header">Repair Jobs</h4>
       <app-detail-list [list]="repairtaskCollection.jobsOfInterest" [listSettings]="repairTaskListSettings" [showTopOptions]="false"></app-detail-list>
 
+      <h4 class="nested-header">Throttled Infrastructure Jobs</h4>
+      <app-detail-list [list]="infraCollection.throttledJobs" [listSettings]="infraSettings" [showTopOptions]="false"></app-detail-list>
+
     </div>
-    <div closed-body>
-      <!-- <app-upgrade-progress [upgradeDomains]="clusterUpgradeProgress.upgradeDomains"></app-upgrade-progress> -->
-    </div>
+
   </app-collapse-container>
 </div>
 

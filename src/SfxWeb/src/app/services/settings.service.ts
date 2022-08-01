@@ -245,6 +245,17 @@ export class SettingsService {
       false);
   }
 
+  public getNewOrExistingInfrastructureSettings() {
+    return this.getNewOrExistingListSettings('allMRJobs', ['raw.CurrentUD'], [
+      new ListColumnSetting('raw.Id', 'Job Id'),
+      new ListColumnSettingWithFilter('raw.CurrentUD', 'Current UD'),
+      new ListColumnSetting('raw.AcknowledgementStatus', 'Acknowledgement Status'),
+      new ListColumnSetting('raw.ImpactAction', 'Impact Action'),
+      new ListColumnSetting('RepairTask.TaskId', 'Repair Task'),
+      new ListColumnSettingWithShorten('raw.RoleInstancesToBeImpacted', 'Target Nodes', 2),
+    ]);
+  }
+
   // Update all existing list settings to use new limit
   private updatePaginationLimit(limit: number): void {
       Object.keys(this.listSettings).forEach(key => {

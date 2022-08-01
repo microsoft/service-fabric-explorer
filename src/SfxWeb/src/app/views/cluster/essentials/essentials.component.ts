@@ -15,6 +15,7 @@ import { RoutesService } from 'src/app/services/routes.service';
 import { HealthUtils, HealthStatisticsEntityKind } from 'src/app/Utils/healthUtils';
 import { RepairTaskCollection } from 'src/app/Models/DataModels/collections/RepairTaskCollection';
 import { IEssentialListItem } from 'src/app/modules/charts/essential-health-tile/essential-health-tile.component';
+import { InfrastructureCollection } from 'src/app/Models/DataModels/collections/infrastructureCollection';
 
 @Component({
   selector: 'app-essentials',
@@ -30,6 +31,8 @@ export class EssentialsComponent extends BaseControllerDirective {
   clusterManifest: ClusterManifest;
   repairtaskCollection: RepairTaskCollection;
   repairTaskListSettings: ListSettings;
+  infraCollection: InfrastructureCollection;
+  infraSettings: ListSettings;
 
   nodesDashboard: IDashboardViewModel;
   appsDashboard: IDashboardViewModel;
@@ -55,6 +58,9 @@ export class EssentialsComponent extends BaseControllerDirective {
     this.systemApp = this.data.systemApp;
     this.repairtaskCollection = this.data.repairCollection;
     this.repairTaskListSettings = this.settings.getNewOrExistingPendingRepairTaskListSettings();
+
+    this.infraCollection = this.data.infrastructureCollection;
+    this.infraSettings = this.settings.getNewOrExistingInfrastructureSettings();
   }
 
   refresh(messageHandler?: IResponseMessageHandler): Observable<any> {

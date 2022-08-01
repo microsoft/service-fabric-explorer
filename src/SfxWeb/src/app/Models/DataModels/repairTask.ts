@@ -3,7 +3,7 @@ import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { DataModelBase } from './Base';
 import { DataService } from 'src/app/services/data.service';
 import { forkJoin, Observable, of } from 'rxjs';
-import { catchError, map } from 'rxjs/operators';
+import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
 import { Node } from './Node';
 import { DeactivationUtils } from 'src/app/Utils/deactivationUtils';
 
@@ -85,7 +85,7 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
 
     constructor(public dataService: DataService, public raw: IRawRepairTask, private dateRef?: Date) {
         super(dataService, raw);
-        this.updateInternal();
+        this.updateInternal().subscribe();
     }
 
     /*
@@ -235,44 +235,45 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
         if(this.raw.State === "Executing" && this.getPhase("Executing").durationMilliseconds > (2 * 60 * 60 * 1000)) {
           emit({
             type: 'long-executing',
-            description: `This Repair task has been executing for ${this.duration} amount of time, which doesn't seem normal.
+            description: `This Repair task has been executing for ${this.displayDuration}, which doesn't seem normal.
                           This update can prevent other updates from going through.
-                          Please reach out to the Azure Compute teams (TenantManager/AzTec) to figure out why the platform updates are not completing.`
+                          Please reach out to the VMSS resource provider to figure out why the platform updates are not completing.`
           })
-        }else if (this.raw.State === "Preparing" && this.getPhase('Preparing Health Check Start').durationMilliseconds > (1000 * 60 * 15)) {
+        }else if (this.raw.State === "Preparing" && this.getPhase("Preparing Health Check Start").durationMilliseconds > (1000 * 60 * 15)) {
           forkJoin(this.impactedNodes.map(id => {
             return this.dataService.getNode(id, true).pipe(catchError(err => {console.log(err); return of(null)}));
-          })).subscribe((data: Node[]) => {
+          })).pipe(
+            defaultIfEmpty([]),
+          ).subscribe((data: Node[]) => {
             data = data.filter(node => node);
             const nodesWithSeedNodeWarnings = data.filter(node => DeactivationUtils.hasSeedNodeSafetyCheck(node.raw.NodeDeactivationInfo));
             const nodesWithSafetyChecks = data.filter(node => node.raw.NodeDeactivationInfo.PendingSafetyChecks.length > 0);
+
             //seed node related
             if(nodesWithSeedNodeWarnings.length > 0) {
               emit({
                 type: 'seedNode',
-                description: `Repair task X has been stuck in the preparing state, to disable the seed node Y for removal.
+                description: `This repair task is stuck in the ${this.raw.State} state, to disable the seed node ${this.raw.Impact.NodeImpactList[0].NodeName} for removal.
                  This is blocked by design to prevent any risk to the cluster availability.
                   There are multiple options available to come out of this state. Please follow the doc for details: {link to the public doc}`
               })
           // pending safety check which is NOT seednode related
             }else if(nodesWithSafetyChecks.length > 0){
               emit({
-                type: 'seedNode',
-                description: `This Repair task has been stuck in the preparing state for Y amount of time. This usually happens due to the following reasons:
-
-                Service health related issues. Please check the health of the service on the node: List<nodes stuck in preparing> and fix the service for the updates to get unblocked.
-
-                Service replica configuration for max/min replica count. Updates will not go through if the min replica configuration can't be ensured`
+                type: 'safetychecks',
+                description: `This Repair task is stuck in the ${this.raw.State} state for ${this.displayDuration}. This usually happens due to the following reasons:
+                Service health related issues. This is expected when the preparing/restoring health checks have been enabled in this cluster and there is any entity which is not healthy.
+                Please ensure all entities in the cluster like nodes and services are healthy for this check to pass and allow the updates to proceed.`
               })
             }else {
               // cluster health is not OK
               this.data.getDefaultClusterHealth().subscribe(clusterHealth => {
                 if(clusterHealth.raw.AggregatedHealthState !== "Ok") {
                   emit({
-                    type: 'seedNode',
-                    description: `This Repair task has been stuck in the restoring state, due to the cluster health related issues.
+                    type: 'clusterhealthcheck',
+                    description: `This Repair task is stuck in the ${this.raw.State} state, due to the cluster health related issues.
                                   This is expected when the restoring health checks have been enabled in this cluster and there is any
-                                  entity which is not healthy. Please ensure all entities in the cluster like nodes & services are healthy
+                                  entity which is not healthy. Please ensure all entities in the cluster like nodes and services are healthy
                                   for this check to pass and allow the updates to proceed.`
                   })
                 }else{
@@ -280,7 +281,6 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
                 }
               })
             }
-
           });
         }else{
           emit(null);
