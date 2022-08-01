@@ -8,8 +8,12 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                 eventType: "NodeDown",
                 propertyMappings: [
                     {
-                        sourceProperty: "nodeName",
+                        sourceProperty: "raw.NodeName",
                         targetProperty: "nodeName"
+                    },
+                    {
+                        sourceProperty: "raw.NodeInstance",
+                        targetProperty: "raw.NodeInstance"
                     }
                 ],
             }, 
