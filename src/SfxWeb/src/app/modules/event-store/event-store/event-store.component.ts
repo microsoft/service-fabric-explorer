@@ -288,16 +288,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                             });
                             if (propMaps) {
                                 if(relevantEventType.selfTransform) {
-                                    let transformations = relevantEventType.selfTransform;
-                                    transformations.forEach(transform => {
-                                        let func = transform.type;
-                                        let value = transform.value;
-                                        if(this.magicWand[func]) {
-                                            parsed = this.magicWand[func](parsed, value);
-                                        } else {
-                                            throw new Error(`Method '${func}' is not implemented.`);
-                                        }
-                                    });
+                                    parsed = this.getTransformations(relevantEventType.selfTransform, parsed);
                                 }
                                 if (!inputEvent.related) {
                                     inputEvent.related = [];
@@ -321,29 +312,11 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                     let targetVal: any;   
                                     sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
                                     if(relevantEventType.sourceTransform) {
-                                        let transformations = relevantEventType.sourceTransform;
-                                        transformations.forEach(transform => {
-                                            let func = transform.type;
-                                            let value = transform.value;
-                                            if(this.magicWand[func]) {
-                                                sourceVal = this.magicWand[func](sourceVal, value);
-                                            } else {
-                                                throw new Error(`Method '${func}' is not implemented.`);
-                                            }
-                                        });
+                                        sourceVal = this.getTransformations(relevantEventType.sourceTransform, sourceVal);
                                     }                           
                                     targetVal = Utils.result(iterEvent, mapping.targetProperty);
                                     if(relevantEventType.targetTransform) {
-                                        let transformations = relevantEventType.targetTransform;
-                                        transformations.forEach(transform => {
-                                            let func = transform.type;
-                                            let value = transform.value;
-                                            if(this.magicWand[func]) {
-                                                targetVal = this.magicWand[func](targetVal, value);
-                                            } else {
-                                                throw new Error(`Method '${func}' is not implemented.`);
-                                            }
-                                        });
+                                        targetVal = this.getTransformations(relevantEventType.targetTransform, targetVal);
                                     } 
                                     if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
                                         propMaps = false;
@@ -370,7 +343,22 @@ export class EventStoreComponent implements OnInit, OnDestroy {
         return simulEvents;
     }
 
-  private getConcurrentEventsData(): DataSet<DataItem> {
+    private getTransformations(transformations: ITransform[], parsed: any) {
+        transformations.forEach(transform => {
+            let func = transform.type;
+            let value = transform.value;
+            if(this.magicWand[func]) {
+                parsed = this.magicWand[func](parsed, value);
+            } else {
+                throw new Error(`Method '${func}' is not implemented.`);
+            }
+        });
+
+        return parsed;
+    }
+
+  
+    private getConcurrentEventsData(): DataSet<DataItem> {
     /*
         Grabs all the concurrent events data based on specific IConcurrentEventsConfig objects.
     */
