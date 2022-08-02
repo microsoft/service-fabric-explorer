@@ -73,8 +73,10 @@ export class RepairTaskCollection extends DataModelCollectionBase<RepairTask> {
             this.data.warnings.removeNotificationById(RepairTaskCollection.bannerApprovalId);
         }
 
-        this.jobsOfInterest = this.repairTasks;
-        return forkJoin(this.repairTasks.map(task => task.updateInternal()));
+        this.jobsOfInterest = [];
+        return forkJoin(this.repairTasks.map(task => task.updateInternal())).pipe(map(() => {
+          this.jobsOfInterest = this.repairTasks.filter(task => task.concerningJobInfo)
+        }));
     }
 
     public getRepairJobsForANode(nodeName: string) {

@@ -38,6 +38,7 @@ context('Cluster page', () => {
       })
 
       cy.get('[role="alert"]').should('not.exist')
+      cy.get('[role="jobs"]').should('not.exist')
     })
 
     it('certificate expiring banner', () => {
@@ -52,16 +53,21 @@ context('Cluster page', () => {
       cy.contains('Thumbprint : 52b0278d37cbfe68f8cdf04f423a994d66ceb932')
     })
 
-    it('long running job in approval', () => {
-      cy.intercept(repairTask_route, { fixture: 'cluster-page/repair-jobs/long-running-approval.json' })
+    it.only('long running job in approval', () => {
+      cy.intercept(repairTask_route, { fixture: 'cluster-page/repair-jobs/long-running-approval.json' }).as("repairTasks")
 
       cy.visit('')
 
-      cy.contains('Action Required: There is a repair job (longrunningapprovaljobid) waiting for approval for')
+      cy.contains('There is a repair job (longrunningapprovaljobid) waiting for approval for');
 
       cy.get('[title="Repair Jobs In Progress"]').within(() => {
-        cy.contains('1');
-      })
+        cy.contains('2');
+      });
+
+      cy.get('[data-cy="jobs"]').click().within(() => {
+        cy.contains('jobOfInterest')
+      });
+
     })
 
   })
@@ -675,7 +681,7 @@ context('Cluster page', () => {
       cy.visit(`/#/infrastructure`)
     })
 
-    it.only('executing job', () => {
+    it('executing job', () => {
       cy.get('[data-cy=navtabs]').within(() => {
         cy.contains('infrastructure jobs').click();
       })
