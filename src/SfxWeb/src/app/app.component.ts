@@ -1,4 +1,4 @@
-import { Component, OnInit, HostListener, ViewChild, ElementRef, Inject } from '@angular/core';
+import { Component, OnInit, HostListener, ViewChild, ElementRef, Inject, AfterViewInit } from '@angular/core';
 import { TreeService } from './services/tree.service';
 import { RefreshService } from './services/refresh.service';
 import { StorageService } from './services/storage.service';
@@ -10,13 +10,14 @@ import { TelemetryService } from './services/telemetry.service';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
 import { AadWrapperService } from './services/aad-wrapper.service';
+import { StandaloneIntegrationService } from './services/standalone-integration.service';
 
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
   styleUrls: ['./app.component.scss']
 })
-export class AppComponent implements OnInit{
+export class AppComponent implements OnInit {
   @ViewChild('main') main: ElementRef;
 
   smallScreenSize = false;
@@ -35,6 +36,7 @@ export class AppComponent implements OnInit{
   showTree = false;
 
   isIframe = false;
+  loadRouter = false;
 
   constructor(public treeService: TreeService,
               public refreshService: RefreshService,
@@ -43,19 +45,23 @@ export class AppComponent implements OnInit{
               public dataService: DataService,
               public liveAnnouncer: LiveAnnouncer,
               private snackBar: MatSnackBar,
-              public AadService: AadWrapperService
+              public AadService: AadWrapperService,
+              private standalone: StandaloneIntegrationService
               ) {
 
   }
 
   ngOnInit() {
     this.isIframe = window !== window.parent && !window.opener;
-    
     console.log(`SFX VERSION : ${environment.version}`);
 
-    this.AadService.init().subscribe(() => {
+    if(this.standalone.isStandalone()) {
       this.initializeView();
-    });
+    }else{
+      this.AadService.init().subscribe(() => {
+        this.initializeView();
+      });
+    }
 
     this.treeWidth = this.storageService.getValueString('treeWidth', '450px');
     this.rightOffset =  this.treeWidth;
@@ -75,6 +81,7 @@ export class AppComponent implements OnInit{
     this.treeService.refresh().subscribe();
     this.refreshService.init();
     this.showTree = true;
+    this.loadRouter = true;
   }
 
   @HostListener('window:resize', ['$event.target'])

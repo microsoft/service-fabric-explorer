@@ -71,7 +71,7 @@
     </button>
       <div class="left-panel left-bar"  [ngStyle]="{'width': smallScreenSize ? smallScreenLeftPanelWidth : treeWidth }">
           <nav class="tree-container" [attr.aria-hidden]="smallScreenSize ? smallScreenLeftPanelWidth === '0px' : false" role="navigation">
-            <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize" *ngIf="showTree" ></app-tree-view>
+            <app-tree-view (treeResize)="resize($event)" [smallWindowSize]="smallScreenSize" *ngIf="treeService.tree" ></app-tree-view>
           </nav>
           <div class="slider-bar" appDrag (dragFinish)="resize($event)" *ngIf="!smallScreenSize">
         </div>
@@ -84,7 +84,7 @@
             <span class=" expander-icon mif-vertical-align-bottom" [ngClass]="{'flip': treeWidth === '8px'}" placement="right"
                   [ngbTooltip]="(treeWidth === '8px' ? 'Expand' : 'Close') + ' tree view'"  tooltipClass="styled-tooltip" (click)="collapseSide()"></span>
           </div>
-          <router-outlet id="view-container" *ngIf="!isIframe" ></router-outlet>
+          <router-outlet id="view-container" *ngIf="!isIframe && loadRouter" ></router-outlet>
         </div>
       </main>
     </div>

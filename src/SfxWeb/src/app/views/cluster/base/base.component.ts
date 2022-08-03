@@ -42,9 +42,12 @@ export class BaseComponent implements OnInit {
   constructor(public tree: TreeService, public dataService: DataService) { }
 
   ngOnInit() {
-    this.tree.selectTreeNode([
-      IdGenerator.cluster()
-    ], true);
+
+    setTimeout(() => {
+      this.tree.selectTreeNode([
+        IdGenerator.cluster()
+      ], true);
+    }, 0)
 
     this.dataService.clusterManifest.ensureInitialized().subscribe(() => {
       if (this.dataService.clusterManifest.isEventStoreEnabled) {

@@ -26,7 +26,7 @@ export class AadWrapperService {
   init(): Observable<any> {
 
     if (this.aadEnabled) {
-      return       this.msalBroadcastService.inProgress$
+      return this.msalBroadcastService.inProgress$
       .pipe(
         filter((status: InteractionStatus) => status === InteractionStatus.None)
       )
