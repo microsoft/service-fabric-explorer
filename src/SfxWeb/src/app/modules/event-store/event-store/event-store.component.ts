@@ -276,7 +276,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 let targetVal: any;   
                                 sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
                                 targetVal = mapping.targetProperty;
-                                if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
+                                if (((sourceVal == null  || targetVal == null) || (sourceVal == undefined || targetVal == undefined)) || sourceVal != targetVal) {
                                     propMaps = false;
                                 }
                             });
@@ -312,7 +312,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                     if(relevantEventType.targetTransform) {
                                         targetVal = Transforms.getTransformations(relevantEventType.targetTransform, targetVal);
                                     } 
-                                    if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
+                                    if (((sourceVal == null  || targetVal == null) || (sourceVal == undefined || targetVal == undefined)) || sourceVal != targetVal) {
                                         propMaps = false;
                                     }
                                 });
