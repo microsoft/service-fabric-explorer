@@ -5,7 +5,6 @@ import { IOnDateChange } from '../double-slider/double-slider.component';
 import { Subject, Subscription, forkJoin, of } from 'rxjs';
 import { debounceTime, distinctUntilChanged, finalize, subscribeOn } from 'rxjs/operators';
 import { DataService } from 'src/app/services/data.service';
-import { hostViewClassName } from '@angular/compiler';
 import { DataGroup, DataItem, DataSet } from 'vis-timeline/standalone/esm';
 import { DataModelCollectionBase } from 'src/app/Models/DataModels/collections/CollectionBase';
 import { ListSettings } from 'src/app/Models/ListSettings';
@@ -47,11 +46,11 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   private debouncerHandlerSubscription: Subscription;
 
   public quickDates = [
-      { display: '1 Hour', hours: 1 },
-      { display: '3 Hours', hours: 3 },
-      { display: '6 Hours', hours: 6 },
-      { display: '1 Day', hours: 24 },
-      { display: '7 Days', hours: 168 }
+      { display: 'Last 1 Hour', hours: 1 },
+      { display: 'Last 3 Hours', hours: 3 },
+      { display: 'Last 6 Hours', hours: 6 },
+      { display: 'Last 1 Day', hours: 24 },
+      { display: 'Last 7 Days', hours: 168 }
   ];
 
   @Input() listEventStoreData: IEventStoreData<any, any>[];
@@ -201,7 +200,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
       this.listEventStoreData.push(option.data);
     }
     else{
-      this.listEventStoreData = this.listEventStoreData.filter(item => item !== option.data);
+      this.listEventStoreData = this.listEventStoreData.filter(item => item.displayName !== option.data.displayName);
     }
     this.setNewDateWindow(true);
   }

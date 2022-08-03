@@ -1,20 +1,20 @@
 .base-header {
-    cursor: pointer;
-    &:hover, &:focus-within {
-        // opacity: .7;
-        filter: brightness(100%);
-        background-color: rgba(255, 255, 255, 0.1);
-        // box-shadow: 0px -2px 20px 2px rgba(0, 0, 0, 0.4);
-    }
+  border-radius: var(--primary-border-radius);
+  cursor: pointer;
+  &:hover,
+  &:focus-within {
+    filter: brightness(100%);
+    background-color: rgba(255, 255, 255, 0.1);
+  }
 }
 
 .header-wrapper {
-    width: calc(100% - 25px);
-    display: inline-block;
+  width: calc(100% - 25px);
+  display: inline-block;
 }
 
 .status-icon {
-    width: 25px;
+  width: 25px;
 }
 
 button {

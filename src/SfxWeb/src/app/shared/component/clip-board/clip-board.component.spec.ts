@@ -1,14 +1,21 @@
+import {  Clipboard } from '@angular/cdk/clipboard';
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { NgbTooltipModule } from '@ng-bootstrap/ng-bootstrap';
 
 import { ClipBoardComponent } from './clip-board.component';
 
 describe('ClipBoardComponent', () => {
   let component: ClipBoardComponent;
   let fixture: ComponentFixture<ClipBoardComponent>;
+  let spy;
 
   beforeEach(waitForAsync(() => {
+    spy = jasmine.createSpyObj('Clipboard', ['copy']);
+
     TestBed.configureTestingModule({
-      declarations: [ ClipBoardComponent ]
+      imports: [NgbTooltipModule],
+      declarations: [ ClipBoardComponent ],
+      providers: [{provide: Clipboard, useValue: spy}]
     })
     .compileComponents();
   }));
@@ -19,7 +26,12 @@ describe('ClipBoardComponent', () => {
     fixture.detectChanges();
   });
 
-  it('should create', () => {
+  fit('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  fit('copy', () => {
+    component.copy();
+    expect(spy.copy.calls.count()).toBe(1);
   });
 });

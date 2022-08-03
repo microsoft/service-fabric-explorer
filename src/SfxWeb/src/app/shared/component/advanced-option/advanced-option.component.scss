@@ -23,6 +23,13 @@ tr {
 label {
   margin-bottom: 0px;
   width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  >:last-child {
+    margin-left: auto;
+  }
 }
 
 input {

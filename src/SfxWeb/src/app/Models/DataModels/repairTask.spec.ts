@@ -1,4 +1,4 @@
-import { RepairTask, InProgressStatus } from './repairTask';
+import { RepairTask, Status } from './repairTask';
 import { IRawRepairTask } from '../RawDataTypes';
 import { DataService } from 'src/app/services/data.service';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
@@ -104,12 +104,14 @@ describe('RepairTask', () => {
         const task = new RepairTask(dataService, testData, dateRef);
 
         expect(task.inProgress).toBe(true);
+        console.log(task.history)
         expect(task.history).toContain({
+            name: 'Executing',
             timestamp: '2020-07-17T03:17:48.437Z',
-            phase: 'Executing',
+            status: Status.inProgress,
+            textRight: TimeUtils.formatDurationAsAspNetTimespan(60 * 60 * 1000),
             duration: TimeUtils.formatDurationAsAspNetTimespan(60 * 60 * 1000),
             durationMilliseconds: 60 * 60 * 1000,
-            displayInfo: InProgressStatus,
         });
 
         expect(task.historyPhases[0].startCollapsed).toBeTruthy();

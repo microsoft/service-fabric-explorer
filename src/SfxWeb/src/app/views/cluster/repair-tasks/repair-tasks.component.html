@@ -53,14 +53,14 @@
                 Visualization
             </h4>
             <div collapse-body>
-                <div ngbNav #nav="ngbNav" [destroyOnHide]="false" (navChange)="changeChart()"  >
+                <div ngbNav #nav="ngbNav" [destroyOnHide]="false" (navChange)="changeChart()" class="nav-wrapper"  >
                     <div ngbNavItem>
                         <a ngbNavLink style="font-size: 12pt;">
                             Timeline
                         </a>
                         <ng-template ngbNavContent>
                             <div *ngIf="timelineData" style="margin-bottom: 20px;">
-                                <div data-cy="pendingjobs" class="essen-pane detail-pane" style="margin-bottom: 0px;">
+                                <div data-cy="pendingjobs" class="detail-pane" style="margin-bottom: 0px;">
                                     <app-collapse-container sectionName="Pending Repair Tasks" collapsed="true">
                                         <h4 collapse-header>
                                             Repair Task timeline Legend

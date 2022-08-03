@@ -1,0 +1,71 @@
+{
+  "CodeVersion": "7.1.456.9590",
+  "ConfigVersion": "10",
+  "UpgradeDomains": [
+      {
+          "Name": "0",
+          "State": "Completed"
+      },
+      {
+          "Name": "1",
+          "State": "Completed"
+      },
+      {
+          "Name": "2",
+          "State": "Completed"
+      },
+      {
+          "Name": "3",
+          "State": "Completed"
+      },
+      {
+          "Name": "4",
+          "State": "Completed"
+      }
+  ],
+  "UpgradeState": "RollingForwardCompleted",
+  "NextUpgradeDomain": "",
+  "RollingUpgradeMode": "UnmonitoredManual",
+  "UpgradeDescription": {
+      "CodeVersion": "7.1.456.9590",
+      "ConfigVersion": "10",
+      "UpgradeKind": "Rolling",
+      "RollingUpgradeMode": "UnmonitoredManual",
+      "UpgradeReplicaSetCheckTimeoutInSeconds": 4294967295,
+      "InstanceCloseDelayDurationInSeconds": 4294967295,
+      "ForceRestart": false,
+      "MonitoringPolicy": {
+          "FailureAction": "Rollback",
+          "HealthCheckWaitDurationInMilliseconds": "PT0H5M0S",
+          "HealthCheckStableDurationInMilliseconds": "PT0H5M0S",
+          "HealthCheckRetryTimeoutInMilliseconds": "PT0H40M0S",
+          "UpgradeTimeoutInMilliseconds": "PT16H0M0S",
+          "UpgradeDomainTimeoutInMilliseconds": "PT3H0M0S"
+      },
+      "ClusterHealthPolicy": {
+          "ConsiderWarningAsError": false,
+          "MaxPercentUnhealthyNodes": 100,
+          "MaxPercentUnhealthyApplications": 0
+      },
+      "EnableDeltaHealthEvaluation": true,
+      "ClusterUpgradeHealthPolicy": {
+          "MaxPercentDeltaUnhealthyNodes": 0,
+          "MaxPercentUpgradeDomainDeltaUnhealthyNodes": 0
+      },
+      "SortOrder": "Default"
+  },
+  "UpgradeDurationInMilliseconds": "PT0H55M4.49738S",
+  "UpgradeDomainDurationInMilliseconds": "PT0H0M0.0741611S",
+  "UnhealthyEvaluations": [],
+  "CurrentUpgradeDomainProgress": {
+      "DomainName": "",
+      "NodeUpgradeProgressList": []
+  },
+  "StartTimestampUtc": "2020-08-25T18:09:10.960Z",
+  "FailureTimestampUtc": "0001-01-01T00:00:00.000Z",
+  "FailureReason": "None",
+  "UpgradeDomainProgressAtFailure": {
+      "DomainName": "",
+      "NodeUpgradeProgressList": []
+  }
+}

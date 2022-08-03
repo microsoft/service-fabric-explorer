@@ -1,4 +1,4 @@
-import { Component, Input, OnChanges, OnInit } from '@angular/core';
+import { Component, Input, OnChanges, OnInit, TemplateRef } from '@angular/core';
 
 @Component({
   selector: 'app-phase-diagram',
@@ -7,10 +7,11 @@ import { Component, Input, OnChanges, OnInit } from '@angular/core';
 })
 export class PhaseDiagramComponent implements OnChanges {
 
+  @Input() middleItem: TemplateRef<any>;
   @Input() items: IProgressStatus[];
   @Input() currentIndex = 0;
   @Input() vertical = false;
-
+  @Input() failed: boolean = false; //treat in progress phases as failed
   public progress: IProgressStatusWithIndex[] = [];
   public wrapperClass = '';
 
@@ -26,6 +27,7 @@ export class PhaseDiagramComponent implements OnChanges {
   public cssClass = {
     '-1': 'done',
     0: 'in-progress',
+    '-2': 'failed',
     1: 'pending'
   };
 
@@ -35,8 +37,10 @@ export class PhaseDiagramComponent implements OnChanges {
 
     this.progress = this.items.map( (phase, index) => {
       return  {
+        ...phase,
         name: phase.name,
-        state: this.getPhaseReference(this.currentIndex, index + 1)
+        state: this.getPhaseReference(this.currentIndex, index + 1),
+        textRight: phase.textRight,
       };
     });
 
@@ -50,7 +54,7 @@ export class PhaseDiagramComponent implements OnChanges {
     }else if (diff <= -1) {
       return -1;
     }else{
-      return 0;
+      return this.failed ? -2 : 0;
     }
   }
 
@@ -59,6 +63,7 @@ export class PhaseDiagramComponent implements OnChanges {
 
 export interface IProgressStatus {
   name: string;
+  textRight?: string;
 }
 
 interface IProgressStatusWithIndex extends IProgressStatus {

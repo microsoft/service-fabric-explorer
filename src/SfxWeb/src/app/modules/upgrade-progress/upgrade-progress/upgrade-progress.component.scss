@@ -1,9 +1,7 @@
-@import "src/vars.scss";
-
 .upgrade-progress {
     background-color: transparent;
     padding: 1px;
-    font-size: $font-size-small;
+    font-size: var(--font-size-small);
     margin: 1px;
     border-spacing: 0;
 
@@ -30,48 +28,17 @@
 
 
 .badge-unknown {
-  background-color: $badge-unknown-color;
+  background-color: var(--badge-unknown);
 }
 
 .badge-ok {
-  background-color: #088105;
+  background-color: var(--badge-ok);
 }
 
 .badge-warning {
-  background-color: $azure-blue;
+  background-color: var(--accent-darkblue);
 }
 
 .badge-error {
-  background-color: $badge-error-color;
-}
-
-$dashboard-datapoint-leftbar-width: 3px;
-
-
-.dashboard-datapoint {
-  position: relative;
-  padding: 0 0 0 $dashboard-datapoint-leftbar-width + 5px;
-  display: inline-block;
-  margin: 5px;
-
-  .dashboard-datapoint-leftbar {
-      position: absolute;
-      left: 0;
-      top: 0;
-      bottom: 0;
-      width: $dashboard-datapoint-leftbar-width;
-  }
-
-  .dashboard-datapoint-title {
-      display: block;
-      line-height: 1;
-      margin-top: -2px;
-      font-size: 12pt;
-  }
-
-  .dashboard-datapoint-number {
-      display: block;
-      line-height: 1;
-      font-size: 24pt;
-  }
+  background-color: var(--badge-error);
 }

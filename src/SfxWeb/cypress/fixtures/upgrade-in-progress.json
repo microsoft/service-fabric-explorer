@@ -1,85 +1,154 @@
 {
+  "CodeVersion": "7.1.456.9590",
+  "ConfigVersion": "10",
+  "UpgradeDomains": [
+    {
+      "Name": "0",
+      "State": "Completed"
+    },
+    {
+      "Name": "1",
+      "State": "Completed"
+    },
+    {
+      "Name": "2",
+      "State": "Completed"
+    },
+    {
+      "Name": "3",
+      "State": "Completed"
+    },
+    {
+      "Name": "4",
+      "State": "InProgress"
+    }
+  ],
+  "UpgradeState": "RollingForwardInProgress",
+  "NextUpgradeDomain": "",
+  "RollingUpgradeMode": "Monitored",
+  "UpgradeDescription": {
     "CodeVersion": "7.1.456.9590",
     "ConfigVersion": "10",
-    "UpgradeDomains": [
-        {
-            "Name": "0",
-            "State": "Completed"
-        },
-        {
-            "Name": "1",
-            "State": "Completed"
-        },
-        {
-            "Name": "2",
-            "State": "Completed"
-        },
-        {
-            "Name": "3",
-            "State": "Completed"
-        },
-        {
-            "Name": "4",
-            "State": "InProgress"
-        }
-    ],
-    "UpgradeState": "RollingForwardInProgress",
-    "NextUpgradeDomain": "",
+    "UpgradeKind": "Rolling",
     "RollingUpgradeMode": "Monitored",
-    "UpgradeDescription": {
-        "CodeVersion": "7.1.456.9590",
-        "ConfigVersion": "10",
-        "UpgradeKind": "Rolling",
-        "RollingUpgradeMode": "Monitored",
-        "UpgradeReplicaSetCheckTimeoutInSeconds": 4294967295,
-        "InstanceCloseDelayDurationInSeconds": 4294967295,
-        "ForceRestart": false,
-        "MonitoringPolicy": {
-            "FailureAction": "Rollback",
-            "HealthCheckWaitDurationInMilliseconds": "PT0H5M0S",
-            "HealthCheckStableDurationInMilliseconds": "PT0H5M0S",
-            "HealthCheckRetryTimeoutInMilliseconds": "PT0H40M0S",
-            "UpgradeTimeoutInMilliseconds": "PT16H0M0S",
-            "UpgradeDomainTimeoutInMilliseconds": "PT3H0M0S"
-        },
-        "ClusterHealthPolicy": {
-            "ConsiderWarningAsError": false,
-            "MaxPercentUnhealthyNodes": 100,
-            "MaxPercentUnhealthyApplications": 0
-        },
-        "EnableDeltaHealthEvaluation": true,
-        "ClusterUpgradeHealthPolicy": {
-            "MaxPercentDeltaUnhealthyNodes": 0,
-            "MaxPercentUpgradeDomainDeltaUnhealthyNodes": 0
-        },
-        "SortOrder": "Default"
+    "UpgradeReplicaSetCheckTimeoutInSeconds": 4294967295,
+    "InstanceCloseDelayDurationInSeconds": 4294967295,
+    "ForceRestart": false,
+    "MonitoringPolicy": {
+      "FailureAction": "Rollback",
+      "HealthCheckWaitDurationInMilliseconds": "PT0H5M0S",
+      "HealthCheckStableDurationInMilliseconds": "PT0H5M0S",
+      "HealthCheckRetryTimeoutInMilliseconds": "PT0H40M0S",
+      "UpgradeTimeoutInMilliseconds": "PT16H0M0S",
+      "UpgradeDomainTimeoutInMilliseconds": "PT3H0M0S"
     },
-    "UpgradeDurationInMilliseconds": "PT0H55M4.49738S",
-    "UpgradeDomainDurationInMilliseconds": "PT0H0M0.0741611S",
-    "UnhealthyEvaluations": [],
-    "CurrentUpgradeDomainProgress": {
-        "DomainName": "4",
-        "NodeUpgradeProgressList": [
-            {
-                "NodeName" : "1",
-                "PendingSafetyChecks":[
-                    {
-                        "SafetyCheck" : {
-                            "Kind": "WaitForPrimarySwap",
-                            "PartitionId": "guidID"
-    
-                        }
-                    }
-                ],
-                "UpgradePhase": "Upgrading"
+    "ClusterHealthPolicy": {
+      "ConsiderWarningAsError": false,
+      "MaxPercentUnhealthyNodes": 100,
+      "MaxPercentUnhealthyApplications": 0
+    },
+    "EnableDeltaHealthEvaluation": true,
+    "ClusterUpgradeHealthPolicy": {
+      "MaxPercentDeltaUnhealthyNodes": 0,
+      "MaxPercentUpgradeDomainDeltaUnhealthyNodes": 0
+    },
+    "SortOrder": "Default"
+  },
+  "UpgradeDurationInMilliseconds": "PT0H55M4.49738S",
+  "UpgradeDomainDurationInMilliseconds": "PT0H0M0.0741611S",
+  "UnhealthyEvaluations": [
+    {
+      "HealthEvaluation": {
+        "Kind": "Event",
+        "Description": "'System.FM' reported Warning for property 'SeedNodeStatus'.",
+        "AggregatedHealthState": "Warning",
+        "UnhealthyEvent": {
+          "SourceId": "System.FM",
+          "Property": "SeedNodeStatus",
+          "HealthState": "Warning",
+          "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+          "Description": "Some seed nodes are unhealthy. Loss of a majority of seed nodes can cause cluster failure. \n1 out of 5 seed nodes are Down. Down seed nodes: \nNodeName(NodeId): _nt_4(16c24c9250e4bb878c26b5128f4deb05) Node Down At: 2020-08-19 21:18:36.942\nFor more information to fix this, see: http://aka.ms/sfhealth",
+          "SequenceNumber": "132423455171926088",
+          "RemoveWhenExpired": true,
+          "HealthReportId": "FM_7.0_1017",
+          "SourceUtcTimestamp": "2020-08-19T21:18:37.192Z",
+          "LastModifiedUtcTimestamp": "2020-08-19T21:18:54.118Z",
+          "IsExpired": false,
+          "LastOkTransitionAt": "0001-01-01T00:00:00.000Z",
+          "LastWarningTransitionAt": "2020-08-19T21:18:54.118Z",
+          "LastErrorTransitionAt": "0001-01-01T00:00:00.000Z"
+        },
+        "ConsiderWarningAsError": false
+      }
+    },
+    {
+      "HealthEvaluation": {
+        "Kind": "Nodes",
+        "Description": "20% (1/5) nodes are unhealthy. The evaluation tolerates 100% unhealthy nodes.",
+        "AggregatedHealthState": "Warning",
+        "UnhealthyEvaluations": [
+          {
+            "HealthEvaluation": {
+              "Kind": "Node",
+              "Description": "Node '_nt_4' is in Error.",
+              "AggregatedHealthState": "Error",
+              "NodeName": "_nt_4",
+              "UnhealthyEvaluations": [
+                {
+                  "HealthEvaluation": {
+                    "Kind": "Event",
+                    "Description": "'System.FM' reported Error for property 'State'.",
+                    "AggregatedHealthState": "Error",
+                    "UnhealthyEvent": {
+                      "SourceId": "System.FM",
+                      "Property": "State",
+                      "HealthState": "Error",
+                      "TimeToLiveInMilliSeconds": "P10675199DT2H48M5.4775807S",
+                      "Description": "Fabric node is down. For more information see: http://aka.ms/sfhealth",
+                      "SequenceNumber": "93",
+                      "RemoveWhenExpired": false,
+                      "HealthReportId": "FM_7.0_1013",
+                      "SourceUtcTimestamp": "2020-08-19T21:18:37.005Z",
+                      "LastModifiedUtcTimestamp": "2020-08-19T21:18:54.118Z",
+                      "IsExpired": false,
+                      "LastOkTransitionAt": "2020-08-19T21:18:54.118Z",
+                      "LastWarningTransitionAt": "0001-01-01T00:00:00.000Z",
+                      "LastErrorTransitionAt": "2020-08-19T21:18:54.118Z"
+                    },
+                    "ConsiderWarningAsError": false
+                  }
+                }
+              ]
             }
-        ]
-    },
-    "StartTimestampUtc": "2020-08-25T18:09:10.960Z",
-    "FailureTimestampUtc": "0001-01-01T00:00:00.000Z",
-    "FailureReason": "None",
-    "UpgradeDomainProgressAtFailure": {
-        "DomainName": "",
-        "NodeUpgradeProgressList": []
+          }
+        ],
+        "MaxPercentUnhealthyNodes": 100,
+        "TotalCount": 5
+      }
     }
+  ],
+  "CurrentUpgradeDomainProgress": {
+    "DomainName": "4",
+    "NodeUpgradeProgressList": [
+      {
+        "NodeName": "1",
+        "PendingSafetyChecks": [
+          {
+            "SafetyCheck": {
+              "Kind": "WaitForPrimarySwap",
+              "PartitionId": "guidID"
+            }
+          }
+        ],
+        "UpgradePhase": "Upgrading"
+      }
+    ]
+  },
+  "StartTimestampUtc": "2020-08-25T18:09:10.960Z",
+  "FailureTimestampUtc": "0001-01-01T00:00:00.000Z",
+  "FailureReason": "None",
+  "UpgradeDomainProgressAtFailure": {
+    "DomainName": "",
+    "NodeUpgradeProgressList": []
+  }
 }

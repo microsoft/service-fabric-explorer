@@ -1,5 +1,5 @@
 import { BrowserModule } from '@angular/platform-browser';
-import { NgModule, ErrorHandler } from '@angular/core';
+import { NgModule, ErrorHandler, APP_INITIALIZER } from '@angular/core';
 import { HttpClientModule } from '@angular/common/http';
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -19,6 +19,8 @@ import { AppInsightsErrorHandler } from './error-handling';
 import { MsalRedirectComponent } from '@azure/msal-angular';
 import { RestClientService } from './services/rest-client.service';
 import { MsalConfigDynamicModule } from './modules/msal-dynamic-config/msal-dynamic-config.module';
+import { StandaloneIntegrationService } from './services/standalone-integration.service';
+import { initApp } from './app-initializers';
 
 @NgModule({
   declarations: [
@@ -46,6 +48,14 @@ import { MsalConfigDynamicModule } from './modules/msal-dynamic-config/msal-dyna
     {provide: LocationStrategy, useClass: HashLocationStrategy},
     DataService,
     RestClientService,
+    StandaloneIntegrationService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: initApp,
+      multi: true,
+      deps: [StandaloneIntegrationService]
+    },
+    httpInterceptorProviders,
     { provide: ErrorHandler, useClass: AppInsightsErrorHandler }
   ],
   bootstrap: [AppComponent, MsalRedirectComponent],

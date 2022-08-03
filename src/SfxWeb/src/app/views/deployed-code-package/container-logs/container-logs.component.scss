@@ -1,0 +1,11 @@
+.tail-bar {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 5px;
+  align-items: center;
+  width: fit-content;
+
+  label {
+    font-size: var(--font-size-medium);
+  }
+}

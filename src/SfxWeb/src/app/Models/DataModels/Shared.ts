@@ -4,6 +4,7 @@ import { DataService } from 'src/app/services/data.service';
 import { UpgradeDomainStateRegexes, UpgradeDomainStateNames, BadgeConstants } from 'src/app/Common/Constants';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { checkForJson } from 'src/app/Utils/healthUtils';
+import { Utils } from 'src/app/Utils/Utils';
 
 // -----------------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
@@ -55,6 +56,9 @@ export class HealthEvaluation extends DataModelBase<IRawHealthEvaluation> {
 }
 
 export class LoadMetricInformation extends DataModelBase<IRawLoadMetricInformation> {
+
+  public color = Utils.randomColor();
+
     public decorators: IDecorators = {
         showList: [
             'Name',

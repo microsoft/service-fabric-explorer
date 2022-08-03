@@ -166,16 +166,21 @@ export interface IRawClusterUpgradeDescription {
         SortOrder: string;
     }
 
+export interface IRawApplicationHealthPolicy {
+  ConsiderWarningAsError: boolean;
+  MaxPercentUnhealthyDeployedApplications: number;
+}
 export interface IRawUpgradeDescription {
-        Name: string;
-        TargetApplicationTypeVersion: string;
-        Parameters: IRawParameter[];
-        UpgradeKind: string;
-        RollingUpgradeMode: string;
-        UpgradeReplicaSetCheckTimeoutInSeconds: string;
-        ForceRestart: boolean;
-        MonitoringPolicy: IRawMonitoringPolicy;
-    }
+  Name: string;
+  TargetApplicationTypeVersion: string;
+  Parameters: IRawParameter[];
+  UpgradeKind: string;
+  RollingUpgradeMode: string;
+  UpgradeReplicaSetCheckTimeoutInSeconds: string;
+  ForceRestart: boolean;
+  MonitoringPolicy: IRawMonitoringPolicy;
+  ApplicationHealthPolicy: IRawApplicationHealthPolicy
+}
 
 export interface IRawUnhealthyEvaluation {
         HealthEvaluation: IRawHealthEvaluation;
@@ -1068,6 +1073,51 @@ export interface IRawRepairTask {
         PerformRestoringHealthCheck?: boolean;
         scope?: any;
         ResultDetails?: string;
+    }
+
+export interface IRawInfrastructureJob {
+    Id: string;
+    IsActive: string;
+    ImpactAction: string;
+    JobStatus: string;
+    ImpactStep: string;
+    AcknowledgementStatus: string;
+    ActionStatus: string;
+    CurrentUD: string;
+    DeadlineforResponse: string;
+    CurrentlyImpactedRoleInstances: IRawRoleInstanceImpact[];
+    RepairTasks: InfraRepairTask[];
+    RoleInstancesToBeImpacted: string[];
+    IsThrottled: boolean;
+}
+export interface IRawInfraRepairTask {
+    TaskId: string;
+    State: string;
+}
+
+export class InfraRepairTask {
+
+    public constructor(taskId: string , state: string) {
+        this.State = state;
+        this.TaskId = taskId;
+    }
+    TaskId: string;
+    State: string;
+}
+
+export interface IRawRoleInstanceImpact {
+    Name: string;
+    UD: string;
+    ImpactTypes: string[];
+}
+
+
+export interface INodesStatusDetails {
+        nodeType: string;
+        statusTypeCounts: Record<string, number>;
+        warningCount: number;
+        errorCount: number;
+        okCount: number;
     }
 
 export enum NodeStatus {

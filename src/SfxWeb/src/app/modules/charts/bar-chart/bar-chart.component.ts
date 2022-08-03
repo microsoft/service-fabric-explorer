@@ -1,19 +1,21 @@
-import { Component, OnInit, Input, SimpleChanges, OnChanges } from '@angular/core';
-import { Chart, Options, chart  } from 'highcharts';
+import { Component, OnInit, Input, OnChanges, OnDestroy, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Chart, Options, chart, SeriesOptionsType, TooltipFormatterCallbackFunction  } from 'highcharts';
 
 @Component({
   selector: 'app-bar-chart',
   templateUrl: './bar-chart.component.html',
   styleUrls: ['./bar-chart.component.scss']
 })
-export class BarChartComponent implements OnInit, OnChanges {
+export class BarChartComponent implements AfterViewInit, OnChanges, OnDestroy {
 
   @Input() xAxisCategories: string[];
   @Input() dataSet: any[] = [];
   @Input() title = '';
   @Input() subtitle = '';
+  @Input() tooltip: TooltipFormatterCallbackFunction;
 
   private chart: Chart;
+  @ViewChild('container') private container: ElementRef;
 
   fontColor = {
                 color: '#fff'
@@ -21,11 +23,11 @@ export class BarChartComponent implements OnInit, OnChanges {
 
   public options: Options = {
     chart: {
-      height: '50%',
+      type: 'column',
       inverted: false,
       polar: false,
       animation: true,
-      backgroundColor: '#191919'
+      backgroundColor: '#191919',
     },
     title: {
       text: '',
@@ -48,8 +50,8 @@ export class BarChartComponent implements OnInit, OnChanges {
     }
    },
    legend: {
-    enabled: false
-   },
+      itemStyle: this.fontColor
+    },
     xAxis: {
       categories: [],
       lineColor: '#fff',
@@ -60,30 +62,56 @@ export class BarChartComponent implements OnInit, OnChanges {
     colorAxis: [{
       gridLineColor: '#fff'
     }],
-    series: [
-      {
-        name: '',
-        type: 'column',
-        data: [],
-        dataLabels: {
-          style: this.fontColor
-        }
-      }
-    ]
+    series: []
+
   };
   constructor() { }
 
-  ngOnChanges(changes: SimpleChanges) {
+  ngOnChanges() {
     if (this.chart){
-      this.chart.series[0].setData(this.dataSet);
+
+      this.chart.series.forEach(series => {
+        if (this.dataSet.every(set => set.label !== series.name)) {
+          series.remove();
+        }else{
+          series.update(this.dataSet.find(set => set.label === series.name));
+        }
+      });
+
+      this.mapData().forEach(item => {
+        if (this.chart.series.every(set => set.name !== item.name)) {
+          this.chart.addSeries(item);
+        }
+      });
+
       this.chart.title.update({text: this.title});
       this.chart.subtitle.update({text: this.subtitle});
       this.chart.xAxis[0].update({categories: this.xAxisCategories});
+
+        this.chart.tooltip.update({formatter: this.tooltip});
     }
   }
 
-  ngOnInit() {
-    this.chart = chart('container', this.options);
+  mapData(): SeriesOptionsType[] {
+    return this.dataSet.map<SeriesOptionsType>( (data, index) => {
+      return {
+        name: data.label,
+        type: 'column',
+        data: data.data,
+        dataLabels: {
+          style: this.fontColor
+        }
+      };
+    });
   }
 
+  ngAfterViewInit() {
+    this.chart = chart(this.container.nativeElement, this.options);
+  }
+
+  ngOnDestroy() {
+    if(this.chart) {
+      this.chart.destroy();
+    }
+  }
 }

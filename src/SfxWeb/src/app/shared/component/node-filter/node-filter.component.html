@@ -1,0 +1,43 @@
+<div class="layout">
+  <app-input data-cy="filter" placeholder="Filter nodes" [model]="filter" (changed)="filter = $event; updateNodes();">
+  </app-input>
+
+  <div class="layout-wrapper">
+    <div class="type-container">
+      <div ngbDropdown container="body" display="dynamic">
+        <button class="simple-button" ngbDropdownToggle>node Types</button>
+        <ul ngbDropdownMenu role="menu" class="dropdown-layout">
+          <li role="menuitem" *ngFor="let type of data.nodes.nodeTypes; let last = last;" class="item">
+            <label>
+              <input type="checkbox" (click)=" $event.stopPropagation()" [(ngModel)]="nodeTypeFilter[type]"
+                (ngModelChange)="updateNodes();" />
+              {{type}}
+            </label>
+          </li>
+        </ul>
+      </div>
+
+      <label data-cy="nodetype-filter" *ngIf="showGroupByNodeType">
+        Group By NodeType
+        <br>
+        <app-toggle [(state)]="groupByNodeType" (stateChange)="updateNodes();" style="float: left;"></app-toggle>
+      </label>
+    </div>
+    <div class="label-group flex-column">
+      <label>
+        <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
+        <app-toggle [(state)]="healthFilter.OK" color="green" (stateChange)="updateNodes();"></app-toggle>
+      </label>
+
+      <label>
+        <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
+        <app-toggle [(state)]="healthFilter.Warning" color="#f19d03" (stateChange)="updateNodes();"></app-toggle>
+      </label>
+
+      <label>
+        <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
+        <app-toggle [(state)]="healthFilter.Error" color="red" (stateChange)="updateNodes();"></app-toggle>
+      </label>
+    </div>
+  </div>
+</div>

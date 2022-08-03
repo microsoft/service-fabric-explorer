@@ -20,6 +20,10 @@ export class BaseComponent implements OnInit {
     {
       name: 'upgrades in progress',
       route: './upgrades'
+    },
+    {
+      name: 'app types',
+      route: './apptypes'
     }
   ];
   constructor(private tree: TreeService, private dataService: DataService) {

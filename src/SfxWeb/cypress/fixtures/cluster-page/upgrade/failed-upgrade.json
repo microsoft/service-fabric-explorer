@@ -1,0 +1,105 @@
+{
+  "CodeVersion": "8.2.1571.9590",
+  "ConfigVersion": "4",
+  "UpgradeDomains": [
+      {
+          "Name": "0",
+          "State": "Completed"
+      },
+      {
+          "Name": "1",
+          "State": "Completed"
+      },
+      {
+          "Name": "2",
+          "State": "Completed"
+      },
+      {
+          "Name": "3",
+          "State": "Completed"
+      },
+      {
+          "Name": "4",
+          "State": "Completed"
+      }
+  ],
+  "UpgradeUnits": [
+      {
+          "Name": "0",
+          "State": "Completed"
+      },
+      {
+          "Name": "1",
+          "State": "Completed"
+      },
+      {
+          "Name": "2",
+          "State": "Completed"
+      },
+      {
+          "Name": "3",
+          "State": "Completed"
+      },
+      {
+          "Name": "4",
+          "State": "Completed"
+      }
+  ],
+  "UpgradeState": "RollingForwardCompleted",
+  "NextUpgradeDomain": "",
+  "RollingUpgradeMode": "Monitored",
+  "UpgradeDescription": {
+      "CodeVersion": "8.2.1571.9590",
+      "ConfigVersion": "3",
+      "UpgradeKind": "Rolling",
+      "RollingUpgradeMode": "Monitored",
+      "UpgradeReplicaSetCheckTimeoutInSeconds": 4294967295,
+      "InstanceCloseDelayDurationInSeconds": 4294967295,
+      "ForceRestart": false,
+      "MonitoringPolicy": {
+          "FailureAction": "Rollback",
+          "HealthCheckWaitDurationInMilliseconds": "PT0H5M0S",
+          "HealthCheckStableDurationInMilliseconds": "PT0H5M0S",
+          "HealthCheckRetryTimeoutInMilliseconds": "PT0H40M0S",
+          "UpgradeTimeoutInMilliseconds": "PT16H0M0S",
+          "UpgradeDomainTimeoutInMilliseconds": "PT3H0M0S"
+      },
+      "ClusterHealthPolicy": {
+          "ConsiderWarningAsError": false,
+          "MaxPercentUnhealthyNodes": 100,
+          "MaxPercentUnhealthyApplications": 0,
+          "NodeTypeHealthPolicyMap": []
+      },
+      "EnableDeltaHealthEvaluation": true,
+      "ClusterUpgradeHealthPolicy": {
+          "MaxPercentDeltaUnhealthyNodes": 0,
+          "MaxPercentUpgradeDomainDeltaUnhealthyNodes": 0
+      },
+      "SortOrder": "Default"
+  },
+  "UpgradeDurationInMilliseconds": "PT0H55M4.65033S",
+  "UpgradeDomainDurationInMilliseconds": "PT0H0M0.0804175S",
+  "UnhealthyEvaluations": [],
+  "CurrentUpgradeDomainProgress": {
+      "NodeUpgradeProgressList": []
+  },
+  "CurrentUpgradeUnitsProgress": {
+      "NodeUpgradeProgressList": []
+  },
+  "StartTimestampUtc": "2022-03-10T16:13:59.906Z",
+  "FailureTimestampUtc": "2022-03-10T16:13:59.906Z",
+  "FailureReason": "UpgradeDomainTimeout",
+  "UpgradeDomainProgressAtFailure": {
+      "DomainName": "2",
+      "NodeUpgradeProgressList": [
+        {
+          "NodeName": "_b-hrs-1_2",
+          "UpgradePhase": "Upgrading",
+          "PendingSafetyChecks": [
+
+          ]
+        }
+      ]
+    },
+  "IsNodeByNode": false
+}

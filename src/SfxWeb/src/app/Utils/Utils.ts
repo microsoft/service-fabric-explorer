@@ -97,6 +97,17 @@ export class Utils {
         return value;
     }
 
+    public static result2(item: any, propertyPath: string) {
+      let value = item;
+      if (propertyPath !== null)
+      {
+          propertyPath.split('.').forEach(path => {
+            value = value[path];
+          });
+      }
+      return value;
+  }
+
     /**
      * Check if a giving object represents a Badge object
      */
@@ -180,6 +191,18 @@ export class Utils {
 
         list.splice(0, 0, data);
         onAddition(data);
+    }
+
+
+    private static randomInt(min: number, max: number) {
+      return Math.floor(Math.random() * (max - min + 1)) + min;
+    }
+
+    public static randomColor() {
+        const h = this.randomInt(0, 360);
+        const s = this.randomInt(42, 98);
+        const l = this.randomInt(40, 90);
+        return `hsl(${h},${s}%,${l}%)`;
     }
 
 }

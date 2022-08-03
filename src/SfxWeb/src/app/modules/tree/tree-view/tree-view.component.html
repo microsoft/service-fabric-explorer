@@ -1,23 +1,26 @@
 <div class="tree-wrapper">
     <div class="tree-header">
+        <div class="tree-guide">
+          <button class="toggle-button" (click)="goToTroubleshootingGuides()"><span class=" mif-info"></span> <span style="color:  var(--font-primary-color);"> Service Fabric Troubleshooting Guides</span></button>
+        </div>
         <div class="filter-items-container">
-          <label>
+          <label class="toggle-wrapper ">
             <app-health-badge [badgeClass]="'badge-ok'" [text]="'OK'"></app-health-badge>
 
             <app-toggle [(state)]="treeService.tree.showOkItems" color="green"></app-toggle>
           </label>
 
-          <label>
+          <label class="toggle-wrapper ">
             <app-health-badge [badgeClass]="'badge-warning'" [text]="'Warning'"></app-health-badge>
             <app-toggle [(state)]="treeService.tree.showWarningItems" color="#f19d03"></app-toggle>
           </label>
 
-          <label>
+          <label class="toggle-wrapper ">
             <app-health-badge [badgeClass]="'badge-error'" [text]="'Error'"></app-health-badge>
             <app-toggle [(state)]="treeService.tree.showErrorItems" color="red"></app-toggle>
           </label>
 
-          <label>
+          <label class="toggle-wrapper ">
             Sort by Health
             <app-toggle [(state)]="treeService.tree.orderbyHealthState" (stateChange)="sendHealthStateTelem()"></app-toggle>
           </label>
@@ -32,9 +35,9 @@
                 <span class=" mif-chevron-right mif-3x"></span>
             </button>
         </span>
-        <div class="tree-body" #tree style="height: 100%" >
+        <div class="tree-body" #tree >
             <div *ngIf="treeService.tree && !treeService.tree.isLoading && !treeService.tree.isEmpty"  class="tree-view">
-                <div class="tree" style="list-style: none" *ngIf="treeService.tree.childGroupViewModel" role="group">
+                <div class="tree" *ngIf="treeService.tree.childGroupViewModel" role="group">
                     <app-tree-node [node]="treeService.tree.childGroupViewModel" ></app-tree-node>
                 </div>
             </div>

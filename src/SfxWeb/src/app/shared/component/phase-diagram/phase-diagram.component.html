@@ -1,10 +1,16 @@
 
 <div class="flex-center" [ngClass]="wrapperClass">
-  <ng-container  *ngFor="let phase of progress; let l = last;" >
-    <div class="progress-item" [ngClass]="cssClass[phase.state]">
+  <ng-container  *ngFor="let phase of progress; let l = last;">
+    <div class="progress-item hover-row" [ngClass]="cssClass[phase.state]" [attr.data-cy]="cssClass[phase.state] + 'phase'" >
       <div class="text-description" >{{phase.name}}
       </div>
-      <span [ngClass]="iconMap[phase.state]"></span>
+      <div>
+        <span style="margin-right: 5px ;">{{phase.textRight}}</span>
+        <span [ngClass]="iconMap[phase.state]"></span>
+      </div>
+    </div>
+    <div style="width: fit-content;">
+      <ng-container *ngTemplateOutlet="middleItem; context: { data : phase}"></ng-container>
     </div>
     <div class="mif-arrow-right arrow" *ngIf="!l"></div>
   </ng-container>

@@ -1,0 +1,11 @@
+{
+  "ServiceKind": "Stateful",
+  "Name": "fabric:/System/InfrastructureService/Type134",
+  "TypeName": "InfrastructureServiceType",
+  "ManifestVersion": "8.2.1235.9590",
+  "HasPersistedState": false,
+  "HealthState": "Ok",
+  "ServiceStatus": "Active",
+  "IsServiceGroup": false,
+  "Id": "System/InfrastructureService/Type134"
+}

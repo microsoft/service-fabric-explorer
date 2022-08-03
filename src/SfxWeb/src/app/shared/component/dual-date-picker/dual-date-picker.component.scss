@@ -4,3 +4,30 @@
     border: none;
     padding: 0;
   }
+
+.height {
+  height: 33px;
+}
+
+.simple-button-calendar {
+  border: #727272 1px solid;
+  color: var(--accent-lightblue);
+  border-radius: 0px 5px 5px 0px;
+  padding: 6px 12px;
+  cursor: pointer;
+  background-color: var(--primary-background-color);
+  transition: .25s box-shadow;
+
+  &:focus, &:hover {
+    box-shadow: var(--heavy-box-shadow);
+  }
+}
+
+.input-flat-time {
+  padding: 3px 6px;
+  font-size: 8pt;
+  border: 1px solid #727272;
+  border-radius: 5px 0px 0px 5px;
+  background-color: transparent;
+  color: var(--font-primary-color);
+}

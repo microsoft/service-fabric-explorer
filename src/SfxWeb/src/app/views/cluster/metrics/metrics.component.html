@@ -1,30 +1,93 @@
 <div *ngIf="metricsViewModel">
-    <div style="padding-bottom: 15px;">
-        <div ngbDropdown container="body">
-            <button class="simple-button" ngbDropdownToggle>{{metricsViewModel.selectedMetrics[0].displayName}} :
-                {{metricsViewModel.selectedMetrics[0].hasCapacity ?
-                  metricsViewModel.selectedMetrics[0].loadCapacityRatioString : ""}}</button>
-            <div ngbDropdownMenu aria-labelledby="dropdownBasic1">
-                <div *ngFor="let metric of metricsViewModel.metrics" style="border-bottom: 1px solid gray;">
-                    <button *ngIf="metric.displayName !== metricsViewModel.selectedMetrics[0].displayName" ngbDropdownItem
-                    (click)="updateSelectedMetric(metric)" style="padding: 5px; ">
-                        {{metric.displayName}}
-                        <div style="float: right; margin-left: 5px;" *ngIf="metric.hasCapacity">
-                            {{metric.loadCapacityRatioString}}
-                        </div>
-                    </button>
-                </div>
-            </div>
+  <div style="display: flex; max-width: 100%; flex-wrap: wrap;">
+    <div>
+      <div>
+        <button (click)="toggleSide()" class="simple-button">Hide </button>
+      </div>
+      <div class="options-panel" [ngStyle]="{'max-width': (showOptions ? '100%' : '0')}">
+        <div class="essen-pane filter-container">
+          <app-node-filter [nodes]="nodes.collection" (filteredNodes)="setNodes($event)" [showGroupByNodeType]="false" ></app-node-filter>
         </div>
+
+        <app-collapse-container buttonClass="underline" class="metrics-column" sectionName="Resource Capacity">
+          <div collapse-header class="underline text-center title-container">
+            Resource Capacity
+          </div>
+          <div collapse-body>
+            <label style="margin-top: 10px;">
+              <app-toggle [(state)]="metricsViewModel.normalizeMetricsData"></app-toggle> Normalize metric
+              data
+            </label>
+            <div class="metrics-column">
+              <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.metricsWithCapacities"
+                (click)="updateSelectedMetric(metric, metricsViewModel.metricsWithCapacities)">
+              </app-metric-tile>
+            </div>
+          </div>
+        </app-collapse-container>
+
+        <app-collapse-container buttonClass="underline" class="metrics-column" sectionName="Load Metrics">
+          <div collapse-header class="underline text-center title-container">
+            Load Metrics
+          </div>
+          <div collapse-body>
+            <app-warning iconSize="mif-2x" description="Count, Primary Count, and Replica Count will not include services that use custom metrics"></app-warning>
+            <div class="metrics-column">
+              <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.metricsWithoutCapacities"
+                (click)="updateSelectedMetric(metric, metricsViewModel.metricsWithoutCapacities)">
+              </app-metric-tile>
+            </div>
+          </div>
+        </app-collapse-container>
+
+        <app-collapse-container buttonClass="underline" class="metrics-column" [collapsed]="true" sectionName="system Metrics">
+          <div collapse-header class="underline text-center title-container">
+            system Metrics
+          </div>
+          <div collapse-body>
+            <div class="metrics-column">
+              <app-metric-tile [metric]="metric" *ngFor="let metric of metricsViewModel.systemMetrics"
+                (click)="updateSelectedMetric(metric, metricsViewModel.systemMetrics)">
+              </app-metric-tile>
+            </div>
+          </div>
+        </app-collapse-container>
+      </div>
     </div>
 
-    <app-bar-chart [xAxisCategories]="tableData.categories"
-                    [dataSet]="tableData.dataPoints"
-                    [title]="tableData.title"
-                    [subtitle]="tableData.subtitle"></app-bar-chart>
-    
+    <div class="layout-container" data-cy="tabs">
+      <div ngbNav #nav="ngbNav" [destroyOnHide]="false" class="nav-wrapper">
+        <div [ngbNavItem]="1">
+          <a ngbNavLink style="font-size: 12pt;">
+            Chart
+          </a>
+          <ng-template ngbNavContent>
+            <app-bar-chart class="dynamic-bar-chart" [xAxisCategories]="tableData.categories"
+              [dataSet]="tableData.dataPoints" [title]="tableData.title" [tooltip]="tableData.tooltipFunction">
+            </app-bar-chart>
+          </ng-template>
+        </div>
+        <div [ngbNavItem]="2">
+          <a ngbNavLink style="font-size: 12pt;">
+            Map
+          </a>
+          <ng-template ngbNavContent>
+            <ng-template #customWrapperTemplate let-data="data">
+              <div *ngFor="let metric of metricsViewModel.selectedMetrics" class="node-row-item hover-row">
+                <span>{{metric.displayName}} :</span>
+                <span>{{data.loadInformation.metrics[metric.name]}}</span>
+              </div>
+            </ng-template>
+            <app-map [listTemplate]="customWrapperTemplate" [nodes]="filteredNodes">
+            </app-map>
+          </ng-template>
+        </div>
+      </div>
+      <div [ngbNavOutlet]="nav"></div>
+    </div>
+  </div>
 </div>
 
 <div *ngIf="!metricsViewModel" style="text-align: center;">
-    Loading Metrics
+  Loading Metrics
 </div>
