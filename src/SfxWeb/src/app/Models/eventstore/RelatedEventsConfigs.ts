@@ -8,8 +8,12 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                 eventType: "NodeDown",
                 propertyMappings: [
                     {
-                        sourceProperty: "nodeName",
+                        sourceProperty: "raw.NodeName",
                         targetProperty: "nodeName"
+                    },
+                    {
+                        sourceProperty: "raw.NodeInstance",
+                        targetProperty: "raw.NodeInstance"
                     }
                 ],
             }, 
@@ -18,10 +22,57 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                 propertyMappings: [
                     {
                         sourceProperty: "raw.ExitCode",
+                        targetProperty: "7147"
+                    }
+                ],
+                selfTransform: [
+                    {
+                        type: "trimFront",
+                        value: "."
+                    },
+                    {
+                        type: "trimBack",
+                        value: "For information"
+                    }
+                ]
+            },
+            {
+                eventType: "self",
+                propertyMappings: [
+                    {
+                        sourceProperty: "raw.ExitCode",
+                        targetProperty: "3221225786"
+                    }
+                ],
+                selfTransform: [
+                    {
+                        type: "trimFront",
+                        value: "."
+                    },
+                    {
+                        type: "trimBack",
+                        value: "For information"
+                    }
+                ]
+            },
+            {
+                eventType: "self",
+                propertyMappings: [
+                    {
+                        sourceProperty: "raw.ExitCode",
                         targetProperty: "7148"
                     }
                 ],
-                action: "Aborting since deactivation failed."
+                selfTransform: [
+                    {
+                        type: "trimFront",
+                        value: "."
+                    },
+                    {
+                        type: "trimBack",
+                        value: "For information"
+                    }
+                ]
             },
             {
                 eventType: "self",
@@ -31,10 +82,23 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "0"
                     }
                 ],
-                action: "Unexpected Termination - Please look at your application logs/dump or debug your code package for more details."
+                selfTransform: [
+                    {
+                        type: "trimFront",
+                        value: "."
+                    },
+                    {
+                        type: "trimBack",
+                        value: "For information"
+                    },
+                    {
+                        type: "prefix",
+                        value: "Unexpected Termination - "
+                    }
+                ]
             }
         ],
-        "result": ""
+        "result": "raw.ExitReason",
     },
     {
         "eventType": "NodeDown",
@@ -66,6 +130,12 @@ export let RelatedEventsConfigs : IConcurrentEventsConfig[] = [
                         targetProperty: "raw.TaskId"
                     }
                 ],
+                sourceTransform: [
+                    {
+                        type: "trimFront",
+                        value: "/"
+                    }
+                ]
             }
         ],
         "result": ""
