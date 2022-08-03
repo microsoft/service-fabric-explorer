@@ -8,6 +8,7 @@ import { Observable } from 'rxjs';
 import { IHttpRequest, StandaloneIntegrationService } from './services/standalone-integration.service';
 import { AadConfigService } from './modules/msal-dynamic-config/config-service.service';
 import { MsalService } from '@azure/msal-angular';
+
 /*
 The will intercept and allow the modification of every http request going in and out.
 */
@@ -36,39 +37,38 @@ export class AuthInterceptor implements HttpInterceptor {
   }
 }
 
-
 @Injectable()
 export class ReadOnlyHeaderInterceptor implements HttpInterceptor {
-  constructor(private dataService: DataService) {}
+  constructor(private dataService: DataService) { }
   intercept(req: HttpRequest<any>, next: HttpHandler):
     Observable<HttpEvent<any>> {
-        return next.handle(req).pipe(map(res => {
-            if (res instanceof HttpResponse) {
-                if ( res.headers.has(Constants.SfxReadonlyHeaderName)) {
-                    this.dataService.readOnlyHeader =  (res.headers.get(Constants.SfxReadonlyHeaderName) || res.headers.get(Constants.SfxReadonlyHeaderName.toLowerCase()) )  === '1';
-                }
+    return next.handle(req).pipe(map(res => {
+      if (res instanceof HttpResponse) {
+        if (res.headers.has(Constants.SfxReadonlyHeaderName)) {
+          this.dataService.readOnlyHeader = (res.headers.get(Constants.SfxReadonlyHeaderName) || res.headers.get(Constants.SfxReadonlyHeaderName.toLowerCase())) === '1';
+        }
 
-                if (res.headers.has(Constants.SfxClusterNameHeaderName)) {
-                    this.dataService.clusterNameMetadata = (res.headers.get(Constants.SfxClusterNameHeaderName) || res.headers.get(Constants.SfxClusterNameHeaderName).toLowerCase());
-                }
+        if (res.headers.has(Constants.SfxClusterNameHeaderName)) {
+          this.dataService.clusterNameMetadata = (res.headers.get(Constants.SfxClusterNameHeaderName) || res.headers.get(Constants.SfxClusterNameHeaderName).toLowerCase());
+        }
 
-              }
-            return res;
-        }));
+      }
+      return res;
+    }));
   }
 }
 
 @Injectable()
 export class GlobalHeaderInterceptor implements HttpInterceptor {
-  constructor() {}
+  constructor() { }
   intercept(req: HttpRequest<any>, next: HttpHandler): Observable<HttpEvent<any>> {
     let newHeaders = req.headers;
     // ADD ADDITIONAL HEADERS HERE
     newHeaders = newHeaders.append('x-servicefabricclienttype', 'SFX')
-                           .append('sfx-build', environment.version);
+      .append('sfx-build', environment.version);
 
-    return next.handle(req.clone({headers: newHeaders}));
- }
+    return next.handle(req.clone({ headers: newHeaders }));
+  }
 }
 
 @Injectable()
@@ -152,4 +152,5 @@ export const httpInterceptorProviders = [
   { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: ReadOnlyHeaderInterceptor, multi: true },
   { provide: HTTP_INTERCEPTORS, useClass: GlobalHeaderInterceptor, multi: true },
+  { provide: HTTP_INTERCEPTORS, useClass: AuthInterceptor, multi: true },
 ];

@@ -9,8 +9,6 @@ import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { TelemetryService } from './services/telemetry.service';
 import { MatSnackBar, MatSnackBarConfig } from '@angular/material/snack-bar';
 import { TelemetrySnackBarComponent } from './telemetry-snack-bar/telemetry-snack-bar.component';
-
-import { AadConfigService } from './modules/msal-dynamic-config/config-service.service';
 import { AadWrapperService } from './services/aad-wrapper.service';
 
 @Component({
@@ -36,6 +34,8 @@ export class AppComponent implements OnInit{
   hideSFXLogo = false;
   showTree = false;
 
+  isIframe = false;
+
   constructor(public treeService: TreeService,
               public refreshService: RefreshService,
               private storageService: StorageService,
@@ -48,7 +48,9 @@ export class AppComponent implements OnInit{
 
   }
 
-  async ngOnInit() {
+  ngOnInit() {
+    this.isIframe = window !== window.parent && !window.opener;
+    
     console.log(`SFX VERSION : ${environment.version}`);
 
     this.AadService.init().subscribe(() => {
@@ -79,7 +81,6 @@ export class AppComponent implements OnInit{
   onResize(event: Window) {
     this.checkWidth(event.innerWidth);
   }
-
 
   checkWidth(width: number) {
     const widthReduction = this.dataService.clusterUpgradeProgress.isInitialized && this.dataService.clusterUpgradeProgress.isUpgrading ? 300 : 0;

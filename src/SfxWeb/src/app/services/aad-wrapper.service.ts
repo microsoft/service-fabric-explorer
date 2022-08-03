@@ -2,8 +2,8 @@ import { Inject, Injectable } from '@angular/core';
 import { Observable, of } from 'rxjs';
 import { AadConfigService } from '../modules/msal-dynamic-config/config-service.service';
 import { MsalService, MsalBroadcastService, MSAL_GUARD_CONFIG, MsalGuardConfiguration } from '@azure/msal-angular';
-import { AuthenticationResult, BrowserUtils, EventMessage, EventType, InteractionStatus, InteractionType, PopupRequest, RedirectRequest } from '@azure/msal-browser';
-import { filter, map } from 'rxjs/operators';
+import { AuthenticationResult, EventMessage, EventType, InteractionStatus, PopupRequest } from '@azure/msal-browser';
+import { filter, map, mergeMap } from 'rxjs/operators';
 import { AccountInfo } from '@azure/msal-common';
 /*
 Wrapping around the config service in the MSAL module.
@@ -23,25 +23,26 @@ export class AadWrapperService {
               private msalBroadcastService: MsalBroadcastService,
               @Inject(MSAL_GUARD_CONFIG) private msalGuardConfig: MsalGuardConfiguration) { }
 
-    init(): Observable<any> {
-      if (this.aadEnabled) {
-        return new Observable( sub => {
-          this.msalBroadcastService.inProgress$
-          .pipe(
-            filter((status: InteractionStatus) => status === InteractionStatus.None),
-          ).pipe(map(() => {
-            this.checkAndSetActiveAccount();
-            sub.next(true);
-            sub.complete();
-          })).subscribe();
+  init(): Observable<any> {
 
-          this.loginPopup();
-        });
+    if (this.aadEnabled) {
+      return       this.msalBroadcastService.inProgress$
+      .pipe(
+        filter((status: InteractionStatus) => status === InteractionStatus.None)
+      )
+      .pipe(mergeMap(() => {
+        if (this.msalService.instance.getAllAccounts().length === 0) {
+          this.login();
+        }else{
+          this.checkAndSetActiveAccount();
+          return of(null)
+        }
+      }))
 
-      }else{
-        return of(null);
-      }
+    } else {
+      return of(null);
     }
+  }
 
   checkAndSetActiveAccount(){
     /**
@@ -57,18 +58,8 @@ export class AadWrapperService {
     this.user = this.msalService.instance.getActiveAccount();
   }
 
-  loginPopup() {
-    if (this.msalGuardConfig.authRequest){
-      this.msalService.loginPopup({...this.msalGuardConfig.authRequest} as PopupRequest)
-        .subscribe((response: AuthenticationResult) => {
-          this.msalService.instance.setActiveAccount(response.account);
-        });
-      } else {
-        this.msalService.loginPopup()
-          .subscribe((response: AuthenticationResult) => {
-            this.msalService.instance.setActiveAccount(response.account);
-      });
-    }
+  login() {
+    this.msalService.loginRedirect({...this.msalGuardConfig.authRequest} as PopupRequest)
   }
 
   logout() {

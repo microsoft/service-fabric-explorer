@@ -1,6 +1,6 @@
 /// <reference types="cypress" />
 
-import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, refresh, aad_route } from './util.cy';
+import { addDefaultFixtures, apiUrl, FIXTURE_REF_MANIFEST, EMPTY_LIST_TEXT, addRoute, apps_route } from './util';
 
 const appName = "VisualObjectsApplicationType";
 const waitRequest = "@getapp";
@@ -84,9 +84,9 @@ context('app', () => {
         })
 
       it('view details - no params', () => {
-        cy.intercept('GET', aad_route,
+        cy.intercept('GET', apps_route,
           {
-            fixture: "aad.json", headers: {
+            fixture: "applications.json", headers: {
               'sfx-readonly': '1'
             }
           })
