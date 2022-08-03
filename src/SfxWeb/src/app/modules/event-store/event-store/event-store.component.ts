@@ -117,12 +117,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
   public simulEvents: IConcurrentEvents[];
 
-  public magicWand: { [K: string]: Function } = {
-    trimFront: Transforms.trimFront,
-    trimBack: Transforms.trimBack,
-    prefix: Transforms.prefix,
-};
-
   ngOnInit() {
       this.pshowAllEvents = this.checkAllOption();
       this.showCorrelatedBtn = !this.pshowAllEvents;
@@ -288,7 +282,7 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                             });
                             if (propMaps) {
                                 if(relevantEventType.selfTransform) {
-                                    parsed = this.getTransformations(relevantEventType.selfTransform, parsed);
+                                    parsed = Transforms.getTransformations(relevantEventType.selfTransform, parsed);
                                 }
                                 if (!inputEvent.related) {
                                     inputEvent.related = [];
@@ -312,11 +306,11 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                     let targetVal: any;   
                                     sourceVal = Utils.result(inputEvent, mapping.sourceProperty);
                                     if(relevantEventType.sourceTransform) {
-                                        sourceVal = this.getTransformations(relevantEventType.sourceTransform, sourceVal);
+                                        sourceVal = Transforms.getTransformations(relevantEventType.sourceTransform, sourceVal);
                                     }                           
                                     targetVal = Utils.result(iterEvent, mapping.targetProperty);
                                     if(relevantEventType.targetTransform) {
-                                        targetVal = this.getTransformations(relevantEventType.targetTransform, targetVal);
+                                        targetVal = Transforms.getTransformations(relevantEventType.targetTransform, targetVal);
                                     } 
                                     if (sourceVal != null && sourceVal != undefined && targetVal != null && targetVal != undefined && sourceVal != targetVal) {
                                         propMaps = false;
@@ -341,20 +335,6 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
         if (addedEvents.length > 0) this.getSimultaneousEventsForEvent(configs, addedEvents, events);
         return simulEvents;
-    }
-
-    private getTransformations(transformations: ITransform[], parsed: any) {
-        transformations.forEach(transform => {
-            let func = transform.type;
-            let value = transform.value;
-            if(this.magicWand[func]) {
-                parsed = this.magicWand[func](parsed, value);
-            } else {
-                throw new Error(`Method '${func}' is not implemented.`);
-            }
-        });
-
-        return parsed;
     }
 
   
