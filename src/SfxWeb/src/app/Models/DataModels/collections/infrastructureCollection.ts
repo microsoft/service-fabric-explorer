@@ -3,9 +3,9 @@ import { map, mergeMap } from 'rxjs/operators';
 import { Constants, StatusWarningLevel } from 'src/app/Common/Constants';
 import { IResponseMessageHandler } from 'src/app/Common/ResponseMessageHandlers';
 import { DataService } from 'src/app/services/data.service';
+import { Counter } from 'src/app/Utils/Utils';
 import { DataModelBase } from '../Base';
 import { InfrastructureJob } from '../infrastructureJob';
-import { RepairTask } from '../repairTask';
 import { DataModelCollectionBase } from './CollectionBase';
 
 export interface IInfrastructureCollectionItem {
@@ -27,12 +27,12 @@ export class InfrastructureCollectionItem extends DataModelBase<IInfrastructureC
   }
 
   updateInternal(): Observable<any> {
-    this.isThrottled = this.raw.Jobs.some(job => job.raw.IsThrottled) || Math.random() > .5;
+    this.isThrottled = this.raw.Jobs.some(job => job.raw.IsThrottled);
     this.executingMRJobs = this.raw.Jobs.filter(job => job.raw.JobStatus === 'Executing' && Boolean(job.raw.IsActive))
     this.allPendingMRJobs = this.raw.Jobs.filter(job => job.raw.JobStatus !== 'Completed' && !Boolean(job.raw.IsActive))
     this.completedMRJobs = this.raw.Jobs.filter(job => job.raw.JobStatus === 'Completed');
     this.throttledJobs = this.raw.Jobs.filter(job => job.raw.IsThrottled);
-    return of(null);
+    return of(null)
   }
 }
 
@@ -43,6 +43,10 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
 
   public constructor(data: DataService) {
     super(data, parent);
+  }
+
+  public static stripPrefix(name: string) {
+    return name.replace(`fabric:/System/InfrastructureService/`, '')
   }
 
   protected retrieveNewCollection(messageHandler?: IResponseMessageHandler): Observable<any> {
@@ -66,16 +70,35 @@ export class InfrastructureCollection extends DataModelCollectionBase<Infrastruc
       throttledIS.forEach(is => this.throttledJobs = this.throttledJobs.concat(is.throttledJobs));
 
       this.data.warnings.addOrUpdateNotification({
-          message: `Active updates count has exceeded the max allowed for safe rollout of updates for
+        message: `Active updates count has exceeded the max allowed for safe rollout of updates for
                     ${throttledIS.map(is => is.name).join(",")}
                     Once the existing updates complete, the pending updates will start automatically `,
+        level: StatusWarningLevel.Warning,
+        priority: 4,
+        id: InfrastructureCollection.bannerThrottledJobs,
+      });
+    } else {
+      this.data.warnings.removeNotificationById(InfrastructureCollection.bannerThrottledJobs);
+    }
+    return this.data.getNodes().pipe(map(collection => {
+      const counter = new Counter();
+      collection.collection.forEach(node => {
+        counter.add(node.raw.Type);
+      })
+
+      const nodetypesWithoutEnoughNodes = this.collection.map(is => InfrastructureCollection.stripPrefix(is.name)).filter(is => counter.entries().find(count => count.key === is)?.value || 0 < 5);
+
+      if (nodetypesWithoutEnoughNodes.length > 0) {
+        this.data.warnings.addOrUpdateNotification({
+          message: `Nodetype${nodetypesWithoutEnoughNodes.length > 1 ? 's' : ''} ${nodetypesWithoutEnoughNodes.join()} ${nodetypesWithoutEnoughNodes.length > 1 ? 'are' : 'is'} deployed with less than 5 VMs. Atleast 5 VMs in the VMSS are required to be present for the platforms updates to work reliably.
+                    Please fix this misconfiguration as updates to such VMSS will be blocked soon and deployments will start failing. `,
           level: StatusWarningLevel.Warning,
           priority: 4,
-          id: InfrastructureCollection.bannerThrottledJobs,
-      }, true);
-  } else {
-      this.data.warnings.removeNotificationById(InfrastructureCollection.bannerThrottledJobs);
-  }
-    return of(null);
+          id: "isNotEnoughNodes",
+          link: 'https://docs.microsoft.com/en-us/azure/service-fabric/service-fabric-cluster-capacity#durability-characteristics-of-the-cluster',
+          linkText: 'Read here for more guidance.'
+        });
+      }
+    }))
   }
 }

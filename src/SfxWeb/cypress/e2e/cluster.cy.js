@@ -2,7 +2,11 @@
 
 import {
   apiUrl, addDefaultFixtures, FIXTURE_REF_CLUSTERHEALTH, nodes_route, checkTableSize,
-  upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute, checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT, repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME, FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh
+  upgradeProgress_route, FIXTURE_REF_UPGRADEPROGRESS, FIXTURE_REF_MANIFEST, addRoute,
+  checkTableErrorMessage, EMPTY_LIST_TEXT, FAILED_TABLE_TEXT, FAILED_LOAD_TEXT,
+  repairTask_route, manifest_route, CLUSTER_TAB_NAME, REPAIR_TASK_TAB_NAME,
+  FIXTURE_REF_NODES, FIXTURE_NODES, typeIntoInput, checkCheckBox, refresh,
+  FIXTURE_REF_SYSTEMAPPS, systemApps_route
 } from './util.cy';
 
 const LOAD_INFO = "getloadinfo"
@@ -53,12 +57,12 @@ context('Cluster page', () => {
       cy.contains('Thumbprint : 52b0278d37cbfe68f8cdf04f423a994d66ceb932')
     })
 
-    it.only('long running job in approval', () => {
+    it('long running job in approval', () => {
       cy.intercept(repairTask_route, { fixture: 'cluster-page/repair-jobs/long-running-approval.json' }).as("repairTasks")
 
       cy.visit('')
 
-      cy.contains('There is a repair job (longrunningapprovaljobid) waiting for approval for');
+      cy.contains('The repair job jobOfInterest is potentially stuck');
 
       cy.get('[title="Repair Jobs In Progress"]').within(() => {
         cy.contains('2');
@@ -670,14 +674,13 @@ context('Cluster page', () => {
     })
   })
 
-  const infraService = "System%2FInfrastructureService%2FType134";
-
   describe("systemService - infraservice", () => {
     beforeEach(() => {
       addDefaultFixtures();
 
       addRoute("infra-service-data", "system-service/infrastructure-data.json", apiUrl(`/$/InvokeInfrastructureQuery?api-version=6.0&Command=GetJobs&ServiceId=System/InfrastructureService/Type134*`))
-      addRoute("infra-service-info", "system-service/infra-service-info.json", apiUrl(`/Applications/System/$/GetServices/${infraService}?*`))
+      addRoute(FIXTURE_REF_SYSTEMAPPS, 'cluster-page/infra/systemServicesWithInfra.json', systemApps_route)
+
       cy.visit(`/#/infrastructure`)
     })
 
@@ -697,11 +700,14 @@ context('Cluster page', () => {
 
       cy.contains('FFFFFFF')
 
+      cy.get('[data-cy=throttled]')
 
-      //verify pending/active count
-      //verify amount of IS
-      //verify is throttling
-      //verify on landing that there are repair jobs of concern
+      //make sure both infra show up
+      cy.get('[data-cy="fabric:/System/InfrastructureService/Type135"]')
+      cy.get('[data-cy="fabric:/System/InfrastructureService/Type134"]').within(() => {
+        cy.contains('Active : 1')
+      })
+
     })
   })
 

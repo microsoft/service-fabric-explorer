@@ -6,6 +6,7 @@ import { forkJoin, Observable, of } from 'rxjs';
 import { catchError, defaultIfEmpty, map } from 'rxjs/operators';
 import { Node } from './Node';
 import { DeactivationUtils } from 'src/app/Utils/deactivationUtils';
+import { RepairTaskMessages } from 'src/app/Common/Constants';
 
 export enum RepairJobType {
     TenantUpdate = 'TenantUpdate',
@@ -49,6 +50,7 @@ export enum StatusCSS {
 export interface IConcerningJobInfo {
   type: string;
   description: string;
+  helpLink?: string;
 }
 
 
@@ -226,69 +228,59 @@ export class RepairTask extends DataModelBase<IRawRepairTask> {
         };
     }
 
-    private checkAndSetConcerningJob(): Observable<IConcerningJobInfo> {
-      return new Observable(observer => {
-        const emit = (data: IConcerningJobInfo) => {
-          observer.next(data);
-          observer.complete();
-        }
-        if(this.raw.State === "Executing" && this.getPhase("Executing").durationMilliseconds > (2 * 60 * 60 * 1000)) {
-          emit({
-            type: 'long-executing',
-            description: `This Repair task has been executing for ${this.displayDuration}, which doesn't seem normal.
-                          This update can prevent other updates from going through.
-                          Please reach out to the VMSS resource provider to figure out why the platform updates are not completing.`
-          })
-        }else if (this.raw.State === "Preparing" && this.getPhase("Preparing Health Check Start").durationMilliseconds > (1000 * 60 * 15)) {
-          forkJoin(this.impactedNodes.map(id => {
-            return this.dataService.getNode(id, true).pipe(catchError(err => {console.log(err); return of(null)}));
-          })).pipe(
-            defaultIfEmpty([]),
-          ).subscribe((data: Node[]) => {
-            data = data.filter(node => node);
-            const nodesWithSeedNodeWarnings = data.filter(node => DeactivationUtils.hasSeedNodeSafetyCheck(node.raw.NodeDeactivationInfo));
-            const nodesWithSafetyChecks = data.filter(node => node.raw.NodeDeactivationInfo.PendingSafetyChecks.length > 0);
+  private checkAndSetConcerningJob(): Observable<IConcerningJobInfo> {
+    return new Observable(observer => {
+      const emit = (data: IConcerningJobInfo) => {
+        observer.next(data);
+        observer.complete();
+      }
+      if (this.raw.State === "Executing" && this.getPhase("Executing").durationMilliseconds > (2 * 60 * 60 * 1000)) {
+        emit({
+          type: RepairTaskMessages.longExecutingId,
+          description: `This Repair task has been executing for ${this.displayDuration}, which doesn't seem normal. ${RepairTaskMessages.longExecutingMessage}`
+        })
+      } else if (this.raw.State === "Preparing" && this.getPhase("Preparing Health Check Start").durationMilliseconds > (1000 * 60 * 15) ||
+        this.raw.State === "Restoring" && this.getPhase("Restoring Health Check Start").durationMilliseconds > (1000 * 60 * 15)) {
+        forkJoin(this.impactedNodes.map(id => {
+          return this.dataService.getNode(id, true).pipe(catchError(err => { console.log(err); return of(null) }));
+        })).pipe(
+          defaultIfEmpty([]),
+        ).subscribe((data: Node[]) => {
+          data = data.filter(node => node);
+          const nodesWithSeedNodeWarnings = data.filter(node => DeactivationUtils.hasSeedNodeSafetyCheck(node.raw.NodeDeactivationInfo));
+          const nodesWithSafetyChecks = data.filter(node => node.raw.NodeDeactivationInfo.PendingSafetyChecks.length > 0);
 
-            //seed node related
-            if(nodesWithSeedNodeWarnings.length > 0) {
-              emit({
-                type: 'seedNode',
-                description: `This repair task is stuck in the ${this.raw.State} state, to disable the seed node ${this.raw.Impact.NodeImpactList[0].NodeName} for removal.
-                 This is blocked by design to prevent any risk to the cluster availability.
-                  There are multiple options available to come out of this state. Please follow the doc for details: {link to the public doc}`
-              })
-          // pending safety check which is NOT seednode related
-            }else if(nodesWithSafetyChecks.length > 0){
-              emit({
-                type: 'safetychecks',
-                description: `This Repair task is stuck in the ${this.raw.State} state for ${this.displayDuration}. This usually happens due to the following reasons:
-                Service health related issues. This is expected when the preparing/restoring health checks have been enabled in this cluster and there is any entity which is not healthy.
-                Please ensure all entities in the cluster like nodes and services are healthy for this check to pass and allow the updates to proceed.`
-              })
-            }else {
-              // cluster health is not OK
-              this.data.getDefaultClusterHealth().subscribe(clusterHealth => {
-                if(clusterHealth.raw.AggregatedHealthState !== "Ok") {
-                  emit({
-                    type: 'clusterhealthcheck',
-                    description: `This Repair task is stuck in the ${this.raw.State} state, due to the cluster health related issues.
-                                  This is expected when the restoring health checks have been enabled in this cluster and there is any
-                                  entity which is not healthy. Please ensure all entities in the cluster like nodes and services are healthy
-                                  for this check to pass and allow the updates to proceed.`
-                  })
-                }else{
-                  emit(null);
-                }
-              })
-            }
-          });
-        }else{
-          emit(null);
-        }
-
-      })
-
-    }
+          //seed node related
+          if (nodesWithSeedNodeWarnings.length > 0) {
+            emit({
+              type: RepairTaskMessages.seedNodeChecksId,
+              description: `This repair task is stuck in the ${this.raw.State} state. ${RepairTaskMessages.seedNodeChecks}`
+            })
+            // pending safety check which is NOT seednode related
+          } else if (nodesWithSafetyChecks.length > 0) {
+            emit({
+              type: RepairTaskMessages.safetyChecksId,
+              description: `This Repair task is stuck in the ${this.raw.State} state for ${this.displayDuration}. ${RepairTaskMessages.safetyChecks}`
+            })
+          } else {
+            // cluster health is not OK
+            this.data.getDefaultClusterHealth().subscribe(clusterHealth => {
+              if (clusterHealth.raw.AggregatedHealthState !== "Ok") {
+                emit({
+                  type: RepairTaskMessages.clusterHealthCheckId,
+                  description: `This Repair task is stuck in the ${this.raw.State} state. ${RepairTaskMessages.clusterHealthCheck}`
+                })
+              } else {
+                emit(null);
+              }
+            })
+          }
+        });
+      } else {
+        emit(null);
+      }
+    })
+  }
 
     updateInternal(): Observable<any> {
         if (this.raw.Impact) {

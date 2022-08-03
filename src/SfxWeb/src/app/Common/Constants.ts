@@ -226,3 +226,29 @@ export class TelemetryEventNames {
   public static listSize = 'set list size';
   public static advancedMode = 'enable advanced mode';
 }
+
+
+export class RepairTaskMessages {
+  public static longExecutingMessage = "This update can prevent other updates from going through. Please reach out to the VMSS resource provider to figure out why the platform updates are not completing.";
+  public static longExecutingId = "longExecuting";
+  public static seedNodeChecks = "Disabling a seed node can get stuck indefinitely. This is blocked by design to prevent any risk to the cluster availability. There are multiple options available to come out of this state.";
+  public static seedNodeChecksId = "seedNode";
+  public static safetyChecks = `This usually happens due to the following reasons:
+                                Service health related issues. This is expected when the preparing/restoring health checks have been enabled in this cluster and there is any entity which is not healthy.
+                                Please ensure all entities in the cluster like nodes and services are healthy for this check to pass and allow the updates to proceed.`
+  public static safetyChecksId = "safetychecks";
+  public static clusterHealthCheck = `This is due to cluster health related issues. This is expected when the restoring or preparing health checks have been enabled in this cluster and there is any
+                                      entity which is not healthy. Please ensure all entities in the cluster like nodes and services are healthy
+                                      for this check to pass and allow the updates to proceed.`;
+  public static clusterHealthCheckId = "clusterhealthcheck";
+
+  public static messageMap(id: string) {
+    const map = {};
+    map[RepairTaskMessages.longExecutingId] = "Repair jobs in the executing state for too long can cause issues. " +RepairTaskMessages.longExecutingMessage;
+    map[RepairTaskMessages.seedNodeChecksId] = RepairTaskMessages.seedNodeChecks;
+    map[RepairTaskMessages.safetyChecksId] = RepairTaskMessages.safetyChecks;
+    map[RepairTaskMessages.clusterHealthCheckId] = RepairTaskMessages.clusterHealthCheck;
+    return map[id];
+  }
+}
+
