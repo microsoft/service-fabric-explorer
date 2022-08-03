@@ -71,6 +71,7 @@
     "@cypress/schematic": "^2.0.0",
     "@cypress/webpack-preprocessor": "^5.9.1",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
+    "@schematics/angular": "^13.3.8",
     "@types/jasmine": "~3.6.0",
     "@types/jasminewd2": "~2.0.3",
     "@types/node": "^12.11.1",
