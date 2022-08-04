@@ -4,12 +4,12 @@ import { ITreeNode } from '../ViewModels/TreeTypes';
 import { IClusterHealthChunkQueryDescription, IClusterHealthChunk, HealthStateFilterFlags } from '../Models/HealthChunkRawDataTypes';
 import { DeployedReplicaCollection, DeployedCodePackageCollection } from '../Models/DataModels/collections/Collections';
 import { NodeStatusConstants, Constants } from '../Common/Constants';
-import { ClusterHealth, ClusterManifest } from '../Models/DataModels/Cluster';
+import { ClusterHealth } from '../Models/DataModels/Cluster';
 import { TreeViewModel } from '../ViewModels/TreeViewModel';
 import { DataService } from './data.service';
 import { RoutesService } from './routes.service';
 import { of, Observable, forkJoin } from 'rxjs';
-import { mergeMap, map, finalize, catchError, delay, defaultIfEmpty } from 'rxjs/operators';
+import { mergeMap, map, catchError } from 'rxjs/operators';
 import { SettingsService } from './settings.service';
 import { RefreshService } from './refresh.service';
 
