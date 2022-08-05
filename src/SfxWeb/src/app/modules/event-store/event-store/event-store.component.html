@@ -54,7 +54,12 @@
 
       </div>
     </app-event-store-timeline><br>
+
   </div>
+</div>
+
+<div *ngIf="visEventList.length > 0">
+  <app-rca-summary [events]="visEventList"></app-rca-summary>
 </div>
 
 <div class="essen-pane">

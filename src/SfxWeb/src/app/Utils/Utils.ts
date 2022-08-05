@@ -31,7 +31,7 @@ export class Utils {
     /**
      * implements lodash groupBy in es6. returns a dictionary of lists
      */
-    public static groupByFunc<T>(list: T[], keyFunction: (T) => string): Record<string, T[]> {
+    public static groupByFunc<T>(list: T[], keyFunction: (item: T) => string): Record<string, T[]> {
         return list.reduce( (previous, current) => { const key = keyFunction(current);
                                                      if (key in previous){
                                                         previous[key].push(current);

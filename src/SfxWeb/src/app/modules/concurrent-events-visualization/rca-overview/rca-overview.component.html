@@ -1,0 +1,10 @@
+<div style="width: fit-content; display: flex;" class="essen-pane">
+    <div>
+        <div #chart></div>
+    </div>
+    <div>
+        <h5>{{type}} - {{events.length}}</h5>
+        <app-essential-item *ngFor="let item of reasons; let l = last" [item]="item" [underline]="false">
+        </app-essential-item>
+    </div>
+</div>

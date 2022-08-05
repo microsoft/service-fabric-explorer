@@ -16,6 +16,7 @@ import { ListColumnSettingWithCustomComponent } from 'src/app/Models/ListSetting
 import { VisualizationToolComponent } from '../../concurrent-events-visualization/visualization-tool/visualization-tool.component';
 import { VisualizationLogoComponent } from '../../concurrent-events-visualization/visualization-logo/visualization-logo.component';
 import { Transforms } from 'src/app/Utils/Transforms';
+import { FabricEventBase } from 'src/app/Models/eventstore/Events';
 
 export interface IQuickDates {
     display: string;
@@ -46,14 +47,15 @@ export interface IConcurrentEventsConfig {
     result: string; //resulting property we want to display for events (ex. Repair Jobs action)
 }
 
-export interface IConcurrentEvents extends DataItem {
+export interface IConcurrentEvents extends FabricEventBase {
     name?: string;
     related: IConcurrentEvents[] // possibly related events now this could be recursive, i.e a node is down but that node down concurrent event would have its own info on whether it was due to a restart or a cluster upgrade
+    reasonForEvent: string;
 }
 
-export interface IRCAItem extends DataItem, IConcurrentEvents {
-    kind: string;
-    eventInstanceId: string;
+export interface IRCAItem extends IConcurrentEvents {
+    // kind: string;
+    // eventInstanceId: string;
     reasonForEvent: string;    
 }
 
@@ -290,8 +292,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                                 inputEvent.related.push(
                                     {
                                         name: "self",
-                                        related: null
-                                    });
+                                        related: null,
+                                    } as any); //todo figure this one out
                                     action = "Action: " + parsed + "<br/>";
                                     inputEvent.reasonForEvent = action;
                             }
@@ -401,7 +403,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
                 }
             ));
         }        
-    }    
+    }
+    console.log(this.visEventList)
   }  
 
   public setTimelineData(): void {
