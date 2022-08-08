@@ -19,6 +19,7 @@ import { HealthbadgeComponent } from '../modules/detail-list-templates/healthbad
 export class ListSettings {
     public search = '';
     public sortPropertyPaths: string[] = [];
+    public additionalSearchableProperties: string[] = [];
     public sortReverse = false;
 
     private iCurrentPage = 1;
@@ -114,6 +115,13 @@ export class ListSettings {
         if (this.columnSettings.length > 0) {
             const newObj = {};
             Utils.unique(this.columnSettings.concat(this.secondRowColumnSettings)).forEach(column => newObj[column.propertyPath] = column.getTextValue(item));
+
+            if(this.additionalSearchableProperties) {
+              this.additionalSearchableProperties.forEach(path => {
+                newObj[path] = Utils.result(item, path);
+              })
+            }
+
             return newObj;
         }
         return item;

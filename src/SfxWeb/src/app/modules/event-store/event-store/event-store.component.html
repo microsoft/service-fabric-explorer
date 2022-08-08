@@ -25,7 +25,7 @@
     </div>
   </div>
   <div *ngIf="timeLineEventsData">
-    <app-event-store-timeline [events]="timeLineEventsData">
+    <app-event-store-timeline [events]="timeLineEventsData" (itemClicked)="setSearch($event)">
       <div buttons class="flex-center">
         <span class="mif-info mif-lg correlated-icon" placement="right"  tooltipClass="styled-tooltip"
           ngbTooltip="Correlated: Only certain high value scenarios are plotted, created from multiple events.&#010;All: Every event listed is plotted."></span>
@@ -69,8 +69,8 @@
   <app-health-badge *ngIf="failedRefresh" text=" Some items failed to load." badgeClass="badge-warning">
   </app-health-badge>
 
-  <div ngbNav #nav="ngbNav" data-cy="eventtabs" class="nav-wrapper">
-    <div ngbNavItem *ngFor="let data of listEventStoreData">
+  <div ngbNav #nav="ngbNav" data-cy="eventtabs" class="nav-wrapper" [(activeId)]="activeTab">
+    <div ngbNavItem *ngFor="let data of listEventStoreData" [ngbNavItem]="data.displayName">
       <a ngbNavLink class="bar-name">
         <app-health-badge *ngIf="!data.eventsList.lastRefreshWasSuccessful" text="Error" [showText]="false"
           badgeClass="badge-error"></app-health-badge>

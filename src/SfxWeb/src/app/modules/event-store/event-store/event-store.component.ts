@@ -25,6 +25,7 @@ export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
     listSettings?: ListSettings;
     getEvents?(): S[];
     setDateWindow?(startDate: Date, endDate: Date): boolean;
+    timelineResolver?(id: string): boolean; //used to determine if the data contains a given event;
 }
 
 @Component({
@@ -68,6 +69,8 @@ export class EventStoreComponent implements OnInit, OnDestroy {
   public startDate: Date;
   public endDate: Date;
 
+  public activeTab: string;
+
   ngOnInit() {
       this.pshowAllEvents = this.checkAllOption();
       this.showCorrelatedBtn = !this.pshowAllEvents;
@@ -84,6 +87,20 @@ export class EventStoreComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
       this.debouncerHandlerSubscription.unsubscribe();
+  }
+
+  public setSearch(search?: string) {
+    if (search) {
+      const item = this.timeLineEventsData.items.get(search);
+      const id = (item.id as string).split('---')[1];
+      this.listEventStoreData.forEach((list, i) => {
+        if (list.timelineResolver(id)) {
+          this.activeTab = list.displayName
+          setTimeout(() =>
+            list.listSettings.search = id, 1)
+        }
+      })
+    }
   }
 
   public checkAllOption(): boolean {
