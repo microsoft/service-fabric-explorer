@@ -1,4 +1,4 @@
-import { Component, OnInit, Input, OnDestroy } from '@angular/core';
+import { Component, OnInit, Input, OnDestroy, OnChanges } from '@angular/core';
 import { ITimelineData, TimeLineGeneratorBase, parseEventsGenerically } from 'src/app/Models/eventstore/timelineGenerators';
 import { TimeUtils } from 'src/app/Utils/TimeUtils';
 import { IOnDateChange } from '../double-slider/double-slider.component';
@@ -33,7 +33,7 @@ export interface IEventStoreData<T extends DataModelCollectionBase<any>, S> {
     templateUrl: './event-store.component.html',
     styleUrls: ['./event-store.component.scss']
 })
-export class EventStoreComponent implements OnInit, OnDestroy {
+export class EventStoreComponent implements OnInit, OnDestroy, OnChanges {
 
   constructor(public dataService: DataService, private telemService: TelemetryService) { }
 
@@ -83,6 +83,10 @@ export class EventStoreComponent implements OnInit, OnDestroy {
               this.endDate = new Date(dates.endDate);
               this.setNewDateWindow();
           });
+  }
+
+  ngOnChanges(): void {
+    this.setTimelineData();
   }
 
   ngOnDestroy() {
